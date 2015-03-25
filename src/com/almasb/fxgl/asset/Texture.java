@@ -1,4 +1,4 @@
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.asset;
 
 import javafx.scene.image.ImageView;
 

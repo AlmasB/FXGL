@@ -1,11 +1,14 @@
 package com.almasb.fxgl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.CollisionHandler;
 import com.almasb.fxgl.entity.Entity;
 
@@ -33,6 +36,9 @@ public abstract class GameApplication extends Application {
 
     private Pane root, gameRoot, uiRoot;
     private Map<String, CollisionHandler> collisionHandlers = new HashMap<>();
+
+    private List<Entity> tmpAddList = new ArrayList<>();
+    private List<Entity> tmpRemoveList = new ArrayList<>();
 
     private AnimationTimer timer;
 
@@ -92,8 +98,12 @@ public abstract class GameApplication extends Application {
                     for (int j = i + 1; j < collidables.size(); j++) {
                         Entity e2 = collidables.get(j);
 
-                        String key = makeCollisionKey(e1.getType(), e2.getType());
+                        String key = e1.getType() + "," + e2.getType();
                         CollisionHandler handler = collisionHandlers.get(key);
+                        if (handler == null) {
+                            key = e2.getType() + "," + e1.getType();
+                            handler = collisionHandlers.get(key);
+                        }
 
                         if (handler != null && e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
                             if (key.startsWith(e1.getType()))
@@ -105,25 +115,21 @@ public abstract class GameApplication extends Application {
                 }
 
                 onUpdate(now);
+
+                gameRoot.getChildren().addAll(tmpAddList);
+                tmpAddList.clear();
+
+                gameRoot.getChildren().removeAll(tmpRemoveList);
+                tmpRemoveList.clear();
+
                 gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
             }
         };
         timer.start();
     }
 
-    private String makeCollisionKey(String a, String b) {
-        String key;
-        if (a.compareTo(b) <= 0) {
-            key = a + "," + b;
-        }
-        else {
-            key = b + "," + a;
-        }
-        return key;
-    }
-
     protected void addCollisionHandler(String typeA, String typeB, CollisionHandler handler) {
-        collisionHandlers.put(makeCollisionKey(typeA, typeB), handler);
+        collisionHandlers.put(typeA + "," + typeB, handler);
     }
 
     protected void setViewportOrigin(int x, int y) {
@@ -131,19 +137,19 @@ public abstract class GameApplication extends Application {
         gameRoot.setLayoutY(-y);
     }
 
-    protected List<Entity> getEntities(String type) {
+    protected List<Entity> getEntities(String... types) {
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
-                .filter(entity -> entity.getType().equals(type))
+                .filter(entity -> Arrays.asList(types).contains(entity.getType()))
                 .collect(Collectors.toList());
     }
 
     protected void addEntities(Entity... entities) {
-        gameRoot.getChildren().addAll(entities);
+        tmpAddList.addAll(Arrays.asList(entities));
     }
 
     protected void removeEntity(Entity entity) {
-        gameRoot.getChildren().remove(entity);
+        tmpRemoveList.add(entity);
     }
 
     private void processInput() {
