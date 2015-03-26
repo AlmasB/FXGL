@@ -2,13 +2,18 @@ package com.almasb.fxgl.asset;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
-
-import com.almasb.fxgl.FXGLLogger;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
+
+import com.almasb.fxgl.FXGLLogger;
 
 public class AssetManager {
 
@@ -19,52 +24,36 @@ public class AssetManager {
 
     private static final Logger log = FXGLLogger.getLogger("AssetManager");
 
-    public Texture loadTexture(String name) {
-        Texture texture = new Texture();
-
+    public Texture loadTexture(String name) throws Exception {
         try (InputStream is = getClass().getResourceAsStream(TEXTURES_DIR + name)) {
             if (is != null) {
-                Image image = new Image(is);
-                texture.setImage(image);
+                return new Texture(new Image(is));
             }
             else {
                 log.warning("Failed to load texture: " + name + " Check it exists in assets/textures/");
+                throw new IOException("Failed to load texture");
             }
         }
-        catch (IOException e) {
-            log.warning("Failed to load texture: " + name);
-            FXGLLogger.trace(e);
-        }
-
-        return texture;
     }
 
-    public Audio loadAudio(String name) {
-        Audio audio = new Audio();
-
-        try {
-            AudioClip clip = new AudioClip(getClass().getResource(AUDIO_DIR + name).toExternalForm());
-            audio.setAudioClip(clip);
-        }
-        catch (Exception e) {
-            log.warning("Failed to load audio: " + name + " Check it exists in assets/audio/");
-            FXGLLogger.trace(e);
-        }
-
-        return audio;
+    public AudioClip loadAudio(String name) throws Exception {
+        return new AudioClip(getClass().getResource(AUDIO_DIR + name).toExternalForm());
     }
 
-    public Music loadMusic(String name) {
-        Music music = new Music();
+    public Music loadMusic(String name) throws Exception {
+        return new Music(new Media(getClass().getResource(MUSIC_DIR + name).toExternalForm()));
+    }
 
-        try {
-            music.setMedia(new Media(getClass().getResource(MUSIC_DIR + name).toExternalForm()));
+    public void saveData(Serializable data, String fileName) throws Exception {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
+            oos.writeObject(data);
         }
-        catch (Exception e) {
-            log.warning("Failed to load music: " + name + " Check it exists in assets/music/");
-            FXGLLogger.trace(e);
-        }
+    }
 
-        return music;
+    @SuppressWarnings("unchecked")
+    public <T> T loadData(String fileName) throws Exception {
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            return (T)ois.readObject();
+        }
     }
 }

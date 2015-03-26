@@ -53,7 +53,7 @@ public final class FXGLLogger {
             consoleHandler.close();
     }
 
-    public static String trace(Exception e) {
+    public static String errorTraceAsString(Throwable e) {
         StringBuilder sb = new StringBuilder();
         sb.append("Exception occurred: " + e.getClass().getCanonicalName() + " : " + e.getMessage());
 

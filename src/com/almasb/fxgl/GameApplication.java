@@ -5,7 +5,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.asset.AssetManager;
@@ -15,6 +20,7 @@ import com.almasb.fxgl.entity.Entity;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -23,14 +29,25 @@ import javafx.stage.Stage;
 public abstract class GameApplication extends Application {
 
     static {
+        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
+            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").warning("Unhandled Exception");
+            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").warning(FXGLLogger.errorTraceAsString(error));
+        });
         FXGLLogger.init(Level.ALL);
         Version.print();
     }
+
+    protected static final Logger log = FXGLLogger.getLogger("FXGL.GameApplication");
 
     /**
      * A second in nanoseconds
      */
     protected static final long SECOND = 1000000000;
+
+    /**
+     * A minute in nanoseconds
+     */
+    protected static final long MINUTE = 60 * SECOND;
 
     private GameSettings settings = new GameSettings();
 
@@ -41,6 +58,7 @@ public abstract class GameApplication extends Application {
     private List<Entity> tmpRemoveList = new ArrayList<>();
 
     private AnimationTimer timer;
+    private ScheduledExecutorService scheduleThread = Executors.newSingleThreadScheduledExecutor();
 
     private Map<KeyCode, Boolean> keys = new HashMap<>();
     private Map<KeyCode, Runnable> keyPressActions = new HashMap<>();
@@ -56,6 +74,7 @@ public abstract class GameApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        log.finer("start()");
         initSettings(settings);
 
         gameRoot = new Pane();
@@ -79,6 +98,9 @@ public abstract class GameApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
         primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(event -> {
+            exit();
+        });
         primaryStage.show();
 
         timer = new AnimationTimer() {
@@ -182,6 +204,27 @@ public abstract class GameApplication extends Application {
     }
 
     protected void exit() {
+        log.finer("Closing");
+        scheduleThread.shutdown();
+        FXGLLogger.close();
         Platform.exit();
+    }
+
+    protected void runAtIntervalWhile(Runnable action, double interval, BooleanProperty whileCondition) {
+        if (!whileCondition.get()) {
+            return;
+        }
+
+        ScheduledFuture<?> task = scheduleThread.scheduleAtFixedRate(
+                () -> Platform.runLater(action), (long)interval, (long)interval, TimeUnit.NANOSECONDS);
+
+        whileCondition.addListener((obs, old, newValue) -> {
+            if (!newValue.booleanValue())
+                task.cancel(false);
+        });
+    }
+
+    protected void runOnceAfter(Runnable action, double delay) {
+        scheduleThread.schedule(() -> Platform.runLater(action), (long)delay, TimeUnit.NANOSECONDS);
     }
 }
