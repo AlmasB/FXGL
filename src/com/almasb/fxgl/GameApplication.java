@@ -73,9 +73,32 @@ public abstract class GameApplication extends Application {
     protected AssetManager assetManager = new AssetManager();
     protected long currentTime = 0;
 
+    /**
+     * Initialize game settings
+     *
+     * @param settings
+     */
     protected abstract void initSettings(GameSettings settings);
+
+    /**
+     * Initialize game objects, key bindings, collision handlers
+     *
+     * @param gameRoot
+     */
     protected abstract void initGame(Pane gameRoot);
+
+    /**
+     * Initiliaze UI objects
+     *
+     * @param uiRoot
+     */
     protected abstract void initUI(Pane uiRoot);
+
+    /**
+     * Main loop update phase, most of game logic and clean up
+     *
+     * @param now
+     */
     protected abstract void onUpdate(long now);
 
     /**
@@ -184,6 +207,13 @@ public abstract class GameApplication extends Application {
         gameRoot.setLayoutY(-y);
     }
 
+    /**
+     * Returns a list of entities whose type matches given
+     * arguments
+     *
+     * @param types
+     * @return
+     */
     protected List<Entity> getEntities(String... types) {
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
@@ -191,10 +221,20 @@ public abstract class GameApplication extends Application {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Add an entity/entities to the scenegraph
+     *
+     * @param entities
+     */
     protected void addEntities(Entity... entities) {
         tmpAddList.addAll(Arrays.asList(entities));
     }
 
+    /**
+     * Remove an entity from the scenegraph
+     *
+     * @param entity
+     */
     protected void removeEntity(Entity entity) {
         tmpRemoveList.add(entity);
     }
@@ -212,22 +252,49 @@ public abstract class GameApplication extends Application {
         return keys.getOrDefault(key, false);
     }
 
+    /**
+     * Add an action that is executed constantly
+     * WHILE the key is physically pressed
+     *
+     * @param key
+     * @param action
+     */
     protected void addKeyPressBinding(KeyCode key, Runnable action) {
         keyPressActions.put(key, action);
     }
 
+    /**
+     * Add an action that is executed only ONCE
+     * per single physical key press
+     *
+     * @param key
+     * @param action
+     */
     protected void addKeyTypedBinding(KeyCode key, Runnable action) {
         keyTypedActions.put(key, action);
     }
 
+    /**
+     * Pauses the main loop execution
+     */
     protected void pause() {
         timer.stop();
     }
 
+    /**
+     * Resumes the main loop execution
+     */
     protected void resume() {
         timer.start();
     }
 
+    /**
+     * This method will be automatically called when main window is closed
+     * This method will shutdown the threads and close the logger
+     *
+     * You can call this method when you want to quit the application manually
+     * from the game
+     */
     protected void exit() {
         log.finer("Closing");
         scheduleThread.shutdown();
