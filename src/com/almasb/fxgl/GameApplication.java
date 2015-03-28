@@ -51,6 +51,8 @@ public abstract class GameApplication extends Application {
 
     private GameSettings settings = new GameSettings();
 
+    protected Scene mainScene;
+    protected Stage mainStage;
     private Pane root, gameRoot, uiRoot;
     private Map<String, CollisionHandler> collisionHandlers = new HashMap<>();
 
@@ -64,6 +66,8 @@ public abstract class GameApplication extends Application {
     private Map<KeyCode, Runnable> keyPressActions = new HashMap<>();
     private Map<KeyCode, Runnable> keyTypedActions = new HashMap<>();
 
+    protected MouseState mouse = new MouseState();
+
     protected AssetManager assetManager = new AssetManager();
     protected long currentTime = 0;
 
@@ -72,10 +76,22 @@ public abstract class GameApplication extends Application {
     protected abstract void initUI(Pane uiRoot);
     protected abstract void onUpdate(long now);
 
+    /**
+     * This is called AFTER all init methods complete
+     * and BEFORE the main loop starts
+     *
+     * It is safe to use any protected fields at this stage
+     */
+    protected void postInit() {
+
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         log.finer("start()");
         initSettings(settings);
+
+        mainStage = primaryStage;
 
         gameRoot = new Pane();
         uiRoot = new Pane();
@@ -85,17 +101,22 @@ public abstract class GameApplication extends Application {
         initGame(gameRoot);
         initUI(uiRoot);
 
-        Scene scene = new Scene(root);
-        scene.setOnKeyPressed(event -> {
+        mainScene = new Scene(root);
+        mainScene.setOnKeyPressed(event -> {
             if (!isPressed(event.getCode()) && keyTypedActions.containsKey(event.getCode())) {
                 keyTypedActions.get(event.getCode()).run();
             }
 
             keys.put(event.getCode(), true);
         });
-        scene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
+        mainScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
 
-        primaryStage.setScene(scene);
+        mainScene.setOnMousePressed(event -> mouse.update(event.getSceneX(), event.getSceneY(), true));
+        mainScene.setOnMouseReleased(event -> mouse.update(event.getSceneX(), event.getSceneY(), false));
+        mainScene.setOnMouseDragged(event -> mouse.update(event.getSceneX(), event.getSceneY(), true));
+        mainScene.setOnMouseMoved(event -> mouse.update(event.getSceneX(), event.getSceneY(), false));
+
+        primaryStage.setScene(mainScene);
         primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(event -> {
@@ -147,6 +168,8 @@ public abstract class GameApplication extends Application {
                 gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
             }
         };
+
+        postInit();
         timer.start();
     }
 
@@ -210,13 +233,25 @@ public abstract class GameApplication extends Application {
         Platform.exit();
     }
 
+    /**
+     * The Runnable action will be scheduled for execution iff
+     * whileCondition is initially true. If that's the case
+     * then the action will be run instantly and then after given interval
+     * until whileCondition becomes false
+     *
+     * The action will be executed on JavaFX Application Thread
+     *
+     * @param action
+     * @param interval
+     * @param whileCondition
+     */
     protected void runAtIntervalWhile(Runnable action, double interval, BooleanProperty whileCondition) {
         if (!whileCondition.get()) {
             return;
         }
 
         ScheduledFuture<?> task = scheduleThread.scheduleAtFixedRate(
-                () -> Platform.runLater(action), (long)interval, (long)interval, TimeUnit.NANOSECONDS);
+                () -> Platform.runLater(action), 0, (long)interval, TimeUnit.NANOSECONDS);
 
         whileCondition.addListener((obs, old, newValue) -> {
             if (!newValue.booleanValue())
@@ -226,5 +261,16 @@ public abstract class GameApplication extends Application {
 
     protected void runOnceAfter(Runnable action, double delay) {
         scheduleThread.schedule(() -> Platform.runLater(action), (long)delay, TimeUnit.NANOSECONDS);
+    }
+
+    public static class MouseState {
+        public double x, y;
+        public boolean isPressed;
+
+        private void update(double x, double y, boolean isPressed) {
+            this.x = x;
+            this.y = y;
+            this.isPressed = isPressed;
+        }
     }
 }

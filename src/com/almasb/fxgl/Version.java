@@ -15,7 +15,7 @@ public final class Version {
     }
 
     public static int getPatch() {
-        return 3;
+        return 4;
     }
 
     public static void print() {
