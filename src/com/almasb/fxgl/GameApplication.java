@@ -23,6 +23,8 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -111,10 +113,10 @@ public abstract class GameApplication extends Application {
         });
         mainScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
 
-        mainScene.setOnMousePressed(event -> mouse.update(event.getSceneX(), event.getSceneY(), true));
-        mainScene.setOnMouseReleased(event -> mouse.update(event.getSceneX(), event.getSceneY(), false));
-        mainScene.setOnMouseDragged(event -> mouse.update(event.getSceneX(), event.getSceneY(), true));
-        mainScene.setOnMouseMoved(event -> mouse.update(event.getSceneX(), event.getSceneY(), false));
+        mainScene.setOnMousePressed(mouse::update);
+        mainScene.setOnMouseDragged(mouse::update);
+        mainScene.setOnMouseReleased(mouse::update);
+        mainScene.setOnMouseMoved(mouse::update);
 
         primaryStage.setScene(mainScene);
         primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
@@ -265,12 +267,44 @@ public abstract class GameApplication extends Application {
 
     public static class MouseState {
         public double x, y;
-        public boolean isPressed;
+        public boolean leftPressed, rightPressed;
+        private MouseEvent event;
 
-        private void update(double x, double y, boolean isPressed) {
-            this.x = x;
-            this.y = y;
-            this.isPressed = isPressed;
+        private void update(MouseEvent event) {
+            this.event = event;
+            this.x = event.getSceneX();
+            this.y = event.getSceneY();
+            if (leftPressed) {
+                if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {
+                    leftPressed = false;
+                }
+            }
+            else {
+                leftPressed = event.getButton() == MouseButton.PRIMARY && isPressed(event);
+            }
+
+            if (rightPressed) {
+                if (event.getButton() == MouseButton.SECONDARY && isReleased(event)) {
+                    rightPressed = false;
+                }
+            }
+            else {
+                rightPressed = event.getButton() == MouseButton.SECONDARY && isPressed(event);
+            }
+        }
+
+        private boolean isPressed(MouseEvent event) {
+            return event.getEventType() == MouseEvent.MOUSE_PRESSED
+                    || event.getEventType() == MouseEvent.MOUSE_DRAGGED;
+        }
+
+        private boolean isReleased(MouseEvent event) {
+            return event.getEventType() == MouseEvent.MOUSE_RELEASED
+                    || event.getEventType() == MouseEvent.MOUSE_MOVED;
+        }
+
+        public MouseEvent getEvent() {
+            return event;
         }
     }
 }
