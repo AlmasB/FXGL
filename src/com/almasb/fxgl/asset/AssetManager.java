@@ -15,6 +15,22 @@ import javafx.scene.media.Media;
 
 import com.almasb.fxgl.FXGLLogger;
 
+/**
+ * AssetManager handles all resource (asset) loading operations
+ *
+ * "assets" directory must be located in source folder - "src" by default
+ *
+ * AssetManager will look for resources (assets) under these specified directories
+ * <ul>
+ * <li>Texture - /assets/textures/</li>
+ * <li>AudioClip - /assets/audio/</li>
+ * <li>Music - /assets/music/</li>
+ * </ul>
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 public class AssetManager {
 
     private static final String ASSETS_DIR = "/assets/";

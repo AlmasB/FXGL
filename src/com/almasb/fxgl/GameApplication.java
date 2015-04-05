@@ -28,6 +28,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+/**
+ * To use FXGL extend this class and implement necessary methods
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 public abstract class GameApplication extends Application {
 
     static {
@@ -53,8 +60,16 @@ public abstract class GameApplication extends Application {
 
     private GameSettings settings = new GameSettings();
 
+    /**
+     * Reference to game scene
+     */
     protected Scene mainScene;
+
+    /**
+     * Reference to game window
+     */
     protected Stage mainStage;
+
     private Pane root, gameRoot, uiRoot;
     private Map<String, CollisionHandler> collisionHandlers = new HashMap<>();
 
@@ -68,9 +83,17 @@ public abstract class GameApplication extends Application {
     private Map<KeyCode, Runnable> keyPressActions = new HashMap<>();
     private Map<KeyCode, Runnable> keyTypedActions = new HashMap<>();
 
+    /**
+     * Holds mouse state information
+     */
     protected MouseState mouse = new MouseState();
 
     protected AssetManager assetManager = new AssetManager();
+
+    /**
+     * Current time in nanoseconds, equal to "now"
+     * Used for convenience as "now" can't be accessed outside {@link #onUpdate(long)}
+     */
     protected long currentTime = 0;
 
     /**
@@ -198,6 +221,30 @@ public abstract class GameApplication extends Application {
         timer.start();
     }
 
+    /**
+     * Registers a collision handler
+     * The order in which the types are passed to this method
+     * decides the order of objects being passed into the collision handler
+     *
+     * <pre>
+     * Example:
+     *
+     * addCollisionHandler("bullet", "enemy", (bullet, enemy) -> {
+     *      // CODE CALLED ON COLLISION
+     * });
+     *
+     * OR
+     *
+     * addCollisionHandler("enemy", "bullet", (enemy, bullet) -> {
+     *      // CODE CALLED ON COLLISION
+     * });
+     *
+     * </pre>
+     *
+     * @param typeA
+     * @param typeB
+     * @param handler
+     */
     protected void addCollisionHandler(String typeA, String typeB, CollisionHandler handler) {
         collisionHandlers.put(typeA + "," + typeB, handler);
     }
@@ -328,6 +375,14 @@ public abstract class GameApplication extends Application {
         });
     }
 
+    /**
+     * The Runnable action will be executed once after given delay
+     *
+     * The action will be executed on JavaFX Application Thread
+     *
+     * @param action
+     * @param delay
+     */
     protected void runOnceAfter(Runnable action, double delay) {
         scheduleThread.schedule(() -> Platform.runLater(action), (long)delay, TimeUnit.NANOSECONDS);
     }
