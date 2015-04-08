@@ -70,7 +70,9 @@ public abstract class GameApplication extends Application {
      */
     protected Stage mainStage;
 
-    private Pane root, gameRoot, uiRoot;
+    private Scene mainMenuScene;
+
+    private Pane root, gameRoot, uiRoot, mainMenuRoot;
     private Map<String, CollisionHandler> collisionHandlers = new HashMap<>();
 
     private List<Entity> tmpAddList = new ArrayList<>();
@@ -125,6 +127,19 @@ public abstract class GameApplication extends Application {
     protected abstract void onUpdate(long now);
 
     /**
+     * Override this method to initialize custom
+     * main menu
+     *
+     * If you do override it make sure to call {@link #startGame()}
+     * to start the game
+     *
+     * @param mainMenuRoot
+     */
+    protected void initMainMenu(Pane mainMenuRoot) {
+
+    }
+
+    /**
      * This is called AFTER all init methods complete
      * and BEFORE the main loop starts
      *
@@ -141,14 +156,17 @@ public abstract class GameApplication extends Application {
 
         mainStage = primaryStage;
 
+        mainMenuRoot = new Pane();
         gameRoot = new Pane();
         uiRoot = new Pane();
         root = new Pane(gameRoot, uiRoot);
         root.setPrefSize(settings.getWidth(), settings.getHeight());
 
+        initMainMenu(mainMenuRoot);
         initGame(gameRoot);
         initUI(uiRoot);
 
+        mainMenuScene = new Scene(mainMenuRoot);
         mainScene = new Scene(root);
         mainScene.setOnKeyPressed(event -> {
             if (!isPressed(event.getCode()) && keyTypedActions.containsKey(event.getCode())) {
@@ -164,7 +182,12 @@ public abstract class GameApplication extends Application {
         mainScene.setOnMouseReleased(mouse::update);
         mainScene.setOnMouseMoved(mouse::update);
 
-        primaryStage.setScene(mainScene);
+        boolean menuEnabled = mainMenuRoot.getChildren().size() > 0;
+
+        primaryStage.setScene(menuEnabled ? mainMenuScene : mainScene);
+        // 6 and 29 seem to be the frame lengths, at least on W8
+        primaryStage.setWidth(settings.getWidth() + 6);
+        primaryStage.setHeight(settings.getHeight() + 29);
         primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(event -> {
@@ -218,7 +241,9 @@ public abstract class GameApplication extends Application {
         };
 
         postInit();
-        timer.start();
+
+        if (!menuEnabled)
+            timer.start();
     }
 
     /**
@@ -321,6 +346,11 @@ public abstract class GameApplication extends Application {
         keyTypedActions.put(key, action);
     }
 
+    protected void startGame() {
+        mainStage.setScene(mainScene);
+        timer.start();
+    }
+
     /**
      * Pauses the main loop execution
      */
@@ -333,6 +363,18 @@ public abstract class GameApplication extends Application {
      */
     protected void resume() {
         timer.start();
+    }
+
+    /**
+     * Pauses the game and opens main menu
+     * Does nothing if main menu was not initialized
+     */
+    protected void openMainMenu() {
+        if (mainMenuRoot.getChildren().size() == 0)
+            return;
+
+        timer.stop();
+        mainStage.setScene(mainMenuScene);
     }
 
     /**
