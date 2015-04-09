@@ -170,10 +170,13 @@ public abstract class GameApplication extends Application {
         mainScene = new Scene(root);
         mainScene.setOnKeyPressed(event -> {
             if (!isPressed(event.getCode()) && keyTypedActions.containsKey(event.getCode())) {
+                keys.put(event.getCode(), true);
                 keyTypedActions.get(event.getCode()).run();
             }
+            else {
+                keys.put(event.getCode(), true);
+            }
 
-            keys.put(event.getCode(), true);
         });
         mainScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
 
@@ -374,6 +377,12 @@ public abstract class GameApplication extends Application {
             return;
 
         timer.stop();
+
+        // we are changing our scene so it is intuitive that
+        // all input gets cleared
+        keys.keySet().forEach(key -> keys.put(key, false));
+        mouse.leftPressed = false;
+        mouse.rightPressed = false;
         mainStage.setScene(mainMenuScene);
     }
 
