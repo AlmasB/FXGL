@@ -13,10 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.almasb.fxgl.asset.AssetManager;
-import com.almasb.fxgl.entity.CollisionHandler;
-import com.almasb.fxgl.entity.Entity;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,6 +23,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.entity.CollisionHandler;
+import com.almasb.fxgl.entity.Entity;
 
 /**
  * To use FXGL extend this class and implement necessary methods
@@ -206,7 +206,7 @@ public abstract class GameApplication extends Application {
 
                 List<Entity> collidables = gameRoot.getChildren().stream()
                         .map(node -> (Entity)node)
-                        .filter(entity -> entity.getProperty("usePhysics"))
+                        .filter(entity -> entity.getProperty(Entity.PR_USE_PHYSICS))
                         .collect(Collectors.toList());
 
                 for (int i = 0; i < collidables.size(); i++) {
@@ -231,12 +231,14 @@ public abstract class GameApplication extends Application {
                     }
                 }
 
+
                 onUpdate(now);
 
                 gameRoot.getChildren().addAll(tmpAddList);
                 tmpAddList.clear();
 
                 gameRoot.getChildren().removeAll(tmpRemoveList);
+                tmpRemoveList.forEach(entity -> entity.onClean());
                 tmpRemoveList.clear();
 
                 gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
@@ -277,9 +279,50 @@ public abstract class GameApplication extends Application {
         collisionHandlers.put(typeA + "," + typeB, handler);
     }
 
+    /**
+     * Sets viewport origin. Use it for camera movement
+     *
+     * Do NOT use if the viewport was bound
+     *
+     * @param x
+     * @param y
+     */
     protected void setViewportOrigin(int x, int y) {
         gameRoot.setLayoutX(-x);
         gameRoot.setLayoutY(-y);
+    }
+
+    /**
+     * Binds the viewport origin so that it follows the given entity
+     * distX and distY represent bound distance between entity and viewport origin
+     *
+     * <pre>
+     * Example:
+     *
+     * bindViewportOrigin(player, 640, 360);
+     *
+     * if the game is 1280x720, the code above centers the camera on player
+     * For most platformers / side scrollers use:
+     *
+     * bindViewportOriginX(player, 640);
+     *
+     * </pre>
+     *
+     * @param entity
+     * @param distX
+     * @param distY
+     */
+    protected void bindViewportOrigin(Entity entity, int distX, int distY) {
+        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
+        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
+    }
+
+    protected void bindViewportOriginX(Entity entity, int distX) {
+        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
+    }
+
+    protected void bindViewportOriginY(Entity entity, int distY) {
+        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
     }
 
     /**

@@ -3,6 +3,7 @@ package com.almasb.fxgl.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.text.Text;
@@ -11,10 +12,13 @@ import javafx.scene.text.Text;
  * A generic FXGL game object
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
+ * @version 1.1
  *
  */
 public class Entity extends Parent {
+
+    public static final String PR_TYPE = "PR_TYPE";
+    public static final String PR_USE_PHYSICS = "PR_USE_PHYSICS";
 
     private List<Control> controls = new ArrayList<>();
 
@@ -25,12 +29,12 @@ public class Entity extends Parent {
      * @param type
      */
     public Entity(String type) {
-        if (type.isEmpty())
-            throw new IllegalArgumentException("Entity type cannot be empty");
+        if (type == null || type.isEmpty())
+            type = "undefined";
 
-        setProperty("type", type);
-        setProperty("usePhysics", false);
+        setProperty(PR_TYPE, type);
         setGraphics(new Text("null"));
+        setUsePhysics(false);
     }
 
     /**
@@ -38,8 +42,35 @@ public class Entity extends Parent {
      *
      * @param b
      */
-    public void setUsePhysics(boolean b) {
-        setProperty("usePhysics", b);
+    public Entity setUsePhysics(boolean b) {
+        setProperty(PR_USE_PHYSICS, b);
+        return this;
+    }
+
+    /**
+     *
+     * @return entity position - translation from the parent's origin
+     */
+    public Point2D getPosition() {
+        return new Point2D(getTranslateX(), getTranslateY());
+    }
+
+    /**
+     * Equivalent to
+     *
+     * <pre>
+     * setTranslateX()
+     * setTranslateY()
+     * </pre>
+     *
+     * @param x
+     * @param y
+     * @return this entity
+     */
+    public Entity setPosition(double x, double y) {
+        setTranslateX(x);
+        setTranslateY(y);
+        return this;
     }
 
     /**
@@ -54,10 +85,19 @@ public class Entity extends Parent {
     }
 
     /**
+     * Translate (move) entity by vector
+     *
+     * @param vector
+     */
+    public void translate(Point2D vector) {
+        translate(vector.getX(), vector.getY());
+    }
+
+    /**
      * @return entity type
      */
     public String getType() {
-        return getProperty("type");
+        return getProperty(PR_TYPE);
     }
 
     /**
@@ -69,15 +109,33 @@ public class Entity extends Parent {
     }
 
     /**
-     * Set graphical representation of entity
-     * Each graphics object can only be associated with 1 entity
-     * as per JavaFX scene graph specification
+     * Set graphics for this entity
      *
      * @param graphics
+     * @return this entity
      */
-    public void setGraphics(Node graphics) {
+    public Entity setGraphics(Node graphics) {
         getChildren().clear();
         getChildren().add(graphics);
+        return this;
+    }
+
+    /**
+     * Do NOT call prior to adding the entity to root
+     *
+     * @return width of the bounding box of this entity
+     */
+    public double getWidth() {
+        return getBoundsInParent().getWidth();
+    }
+
+    /**
+     * Do NOT call prior to adding the entity to root
+     *
+     * @return height of the bounding box of this entity
+     */
+    public double getHeight() {
+        return getBoundsInParent().getHeight();
     }
 
     /**
@@ -85,8 +143,9 @@ public class Entity extends Parent {
      *
      * @param control
      */
-    public void addControl(Control control) {
+    public Entity addControl(Control control) {
         controls.add(control);
+        return this;
     }
 
     /**
@@ -109,6 +168,15 @@ public class Entity extends Parent {
     }
 
     /**
+     * Do NOT call manually. It is called automatically
+     * by FXGL GameApplication when entity has been removed
+     *
+     */
+    public final void onClean() {
+
+    }
+
+    /**
      * Set a custom property
      *
      * <pre>
@@ -121,8 +189,9 @@ public class Entity extends Parent {
      * @param name
      * @param value
      */
-    public void setProperty(String name, Object value) {
+    public Entity setProperty(String name, Object value) {
         getProperties().put(name, value);
+        return this;
     }
 
     /**
