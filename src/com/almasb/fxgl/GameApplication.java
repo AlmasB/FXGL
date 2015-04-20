@@ -106,6 +106,13 @@ public abstract class GameApplication extends Application {
     protected abstract void initSettings(GameSettings settings);
 
     /**
+     * Initialize game assets, such as Texture, AudioClip, Music
+     *
+     * @throws Exception
+     */
+    protected abstract void initAssets() throws Exception;
+
+    /**
      * Initialize game objects, key bindings, collision handlers
      *
      * @param gameRoot
@@ -161,6 +168,14 @@ public abstract class GameApplication extends Application {
         uiRoot = new Pane();
         root = new Pane(gameRoot, uiRoot);
         root.setPrefSize(settings.getWidth(), settings.getHeight());
+
+        try {
+            initAssets();
+        }
+        catch (Exception e) {
+            log.finer("Exception occurred during initAssets() - " + e.getMessage());
+            exit();
+        }
 
         initMainMenu(mainMenuRoot);
         initGame(gameRoot);

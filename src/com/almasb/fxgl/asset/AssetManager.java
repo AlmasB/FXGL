@@ -5,9 +5,18 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
@@ -71,5 +80,87 @@ public class AssetManager {
         try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
             return (T)ois.readObject();
         }
+    }
+
+    /**
+     * Pre-loads all textures / audio / music from
+     * their respective folders
+     *
+     * @return assets object holding cached resources
+     * @throws Exception
+     */
+    public Assets cache() throws Exception {
+        List<String> textures = loadFileNames(TEXTURES_DIR);
+        List<String> audio = loadFileNames(AUDIO_DIR);
+        List<String> music = loadFileNames(MUSIC_DIR);
+
+        Assets assets = new Assets();
+        for (String name : textures)
+            assets.putTexture(name, loadTexture(name));
+        for (String name : audio)
+            assets.putAudio(name, loadAudio(name));
+        for (String name : music)
+            assets.putMusic(name, loadMusic(name));
+
+        return assets;
+    }
+
+    /**
+     * Loads file names from a directory
+     *
+     * @param directory
+     * @return list of file names
+     * @throws Exception
+     */
+    private List<String> loadFileNames(String directory) throws Exception {
+        URL url = getClass().getResource(directory);
+        if (url != null) {
+            Path dir = Paths.get(url.toURI());
+
+            if (Files.exists(dir)) {
+                try (Stream<Path> files = Files.walk(dir)) {
+                    return files.filter(Files::isRegularFile)
+                                .map(file -> file.getFileName().toString())
+                                .collect(Collectors.toList());
+                }
+            }
+        }
+
+        return loadFileNamesJar(directory.substring(1));
+    }
+
+    /**
+     * Loads file names from a directory when running within a jar
+     *
+     * If it contains other folders they'll be searched too
+     *
+     * @param folderName
+     *            folder files of which need to be retrieved
+     * @return list of filenames
+     */
+    private static List<String> loadFileNamesJar(String folderName) {
+        List<String> fileNames = new ArrayList<>();
+        CodeSource src = AssetManager.class.getProtectionDomain().getCodeSource();
+        if (src != null) {
+            URL jar = src.getLocation();
+            try (InputStream is = jar.openStream();
+                    ZipInputStream zip = new ZipInputStream(is)) {
+                ZipEntry ze = null;
+                while ((ze = zip.getNextEntry()) != null) {
+                    String entryName = ze.getName();
+                    if (entryName.startsWith(folderName)) {
+                        fileNames.add(entryName.substring(entryName.indexOf(folderName) + folderName.length()));
+                    }
+                }
+            }
+            catch (IOException e) {
+                log.warning("Failed to load file names from jar - " + e.getMessage());
+            }
+        }
+        else {
+            log.warning("Failed to load file names from jar - No code source");
+        }
+
+        return fileNames;
     }
 }

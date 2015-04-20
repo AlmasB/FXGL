@@ -17,6 +17,8 @@ import javafx.scene.text.Text;
  */
 public class Entity extends Parent {
 
+    public static final Entity NULL = new Entity("");
+
     public static final String PR_TYPE = "PR_TYPE";
     public static final String PR_USE_PHYSICS = "PR_USE_PHYSICS";
 
@@ -35,6 +37,10 @@ public class Entity extends Parent {
         setProperty(PR_TYPE, type);
         setGraphics(new Text("null"));
         setUsePhysics(false);
+    }
+
+    public Entity(PropertyKey type) {
+        this(type.getUniqueKey());
     }
 
     /**
@@ -194,6 +200,11 @@ public class Entity extends Parent {
         return this;
     }
 
+    public Entity setProperty(PropertyKey key, Object value) {
+        getProperties().put(key.getUniqueKey(), value);
+        return this;
+    }
+
     /**
      * Get value of a custom property that was previously set
      * by {@link #setProperty(String, Object)}
@@ -214,5 +225,10 @@ public class Entity extends Parent {
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name) {
         return (T)getProperties().get(name);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getProperty(PropertyKey key) {
+        return (T)getProperties().get(key.getUniqueKey());
     }
 }
