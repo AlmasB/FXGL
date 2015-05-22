@@ -151,6 +151,9 @@ public class Entity extends Parent {
      */
     public Entity addControl(Control control) {
         controls.add(control);
+        if (control instanceof AbstractControl) {
+            ((AbstractControl) control).setEntity(this);
+        }
         return this;
     }
 
@@ -161,6 +164,23 @@ public class Entity extends Parent {
      */
     public void removeControl(Control control) {
         controls.remove(control);
+    }
+
+    /**
+     * Returns the first control that is an instance of the given class,
+     * or null if no such control exists.
+     *
+     * @param controlType The superclass of the control to look for
+     * @return The first instance in the list of the controlType class, or null
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Control> T getControl(Class<T> controlType) {
+        for (Control c : controls) {
+            if (controlType.isAssignableFrom(c.getClass())) {
+                return (T) c;
+            }
+        }
+        return null;
     }
 
     /**

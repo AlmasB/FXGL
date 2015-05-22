@@ -51,12 +51,12 @@ public abstract class GameApplication extends Application {
     /**
      * A second in nanoseconds
      */
-    protected static final long SECOND = 1000000000;
+    public static final long SECOND = 1000000000;
 
     /**
      * A minute in nanoseconds
      */
-    protected static final long MINUTE = 60 * SECOND;
+    public static final long MINUTE = 60 * SECOND;
 
     private GameSettings settings = new GameSettings();
 
