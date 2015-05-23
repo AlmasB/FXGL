@@ -47,9 +47,21 @@ public final class Assets {
         return cachedMusic.get(key);
     }
 
+    /**
+     * A convenience method to print all cached assets
+     */
     public void logCached() {
         log.info("Logging cached assets");
         cachedTextures.forEach((name, texture) -> log.info("Texture:" + name));
         cachedAudio.forEach((name, audio) -> log.info("Audio:" + name));
+        cachedMusic.forEach((name, music) -> log.info("Music:" + name));
+    }
+
+    /**
+     *
+     * @return  size of all cached assets
+     */
+    public int size() {
+        return cachedTextures.size() + cachedAudio.size() + cachedMusic.size();
     }
 }

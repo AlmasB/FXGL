@@ -100,6 +100,19 @@ public abstract class GameApplication extends Application {
      */
     protected long currentTime = 0;
 
+    private FPSCounter fpsCounter = new FPSCounter();
+    private FPSCounter fpsPerformanceCounter = new FPSCounter();
+
+    /**
+     * Average render FPS
+     */
+    protected int fps = 0;
+
+    /**
+     * Average performance FPS
+     */
+    protected int fpsPerformance = 0;
+
     /**
      * Initialize game settings
      *
@@ -218,6 +231,9 @@ public abstract class GameApplication extends Application {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                long startNanos = System.nanoTime();
+                long realFPS = now - currentTime;
+
                 currentTime = now;
                 processInput();
 
@@ -259,6 +275,9 @@ public abstract class GameApplication extends Application {
                 tmpRemoveList.clear();
 
                 gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
+
+                fpsPerformance = Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos)));
+                fps = Math.round(fpsCounter.count(SECOND / realFPS));
             }
         };
 
@@ -369,6 +388,8 @@ public abstract class GameApplication extends Application {
     /**
      * Add an entity/entities to the scenegraph
      *
+     * This is safe to be called from any thread
+     *
      * @param entities
      */
     protected void addEntities(Entity... entities) {
@@ -377,6 +398,8 @@ public abstract class GameApplication extends Application {
 
     /**
      * Remove an entity from the scenegraph
+     *
+     * This is safe to be called from any thread
      *
      * @param entity
      */
@@ -419,6 +442,10 @@ public abstract class GameApplication extends Application {
         keyTypedActions.put(key, action);
     }
 
+    /**
+     * Call this to manually start the game when you
+     * override {@link #initMainMenu(Pane)}
+     */
     protected void startGame() {
         mainStage.setScene(mainScene);
         timer.start();
@@ -500,6 +527,8 @@ public abstract class GameApplication extends Application {
      * The Runnable action will be executed once after given delay
      *
      * The action will be executed on JavaFX Application Thread
+     *
+     * Do NOT queue frequent tasks
      *
      * @param action
      * @param delay
