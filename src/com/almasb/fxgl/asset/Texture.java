@@ -8,4 +8,9 @@ public class Texture extends ImageView {
     /*package-private*/ Texture(Image image) {
         super(image);
     }
+
+    public StaticAnimatedTexture toStaticAnimatedTexture(int frames, double duration) {
+        StaticAnimatedTexture texture = new StaticAnimatedTexture(getImage(), frames, duration);
+        return texture;
+    }
 }

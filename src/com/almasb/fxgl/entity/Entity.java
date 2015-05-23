@@ -2,6 +2,7 @@ package com.almasb.fxgl.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -250,5 +251,28 @@ public class Entity extends Parent {
     @SuppressWarnings("unchecked")
     public <T> T getProperty(PropertyKey key) {
         return (T)getProperties().get(key.getUniqueKey());
+    }
+
+    private Consumer<Entity> onDestroy;
+
+    /**
+     * Call this to trigger onDeath event
+     * if it was previously set via {@link #setOnDestroy(Consumer)}
+     *
+     * In case {@link #setOnDestroy(Consumer)} was not set, this call
+     * does nothing
+     */
+    public void destroy() {
+        if (onDestroy != null)
+            onDestroy.accept(this);
+    }
+
+    /**
+     *
+     * @param onDeath   will be called when {@link #destroy()} called
+     *                  with this object as the argument
+     */
+    public void setOnDestroy(Consumer<Entity> onDestroy) {
+        this.onDestroy = onDestroy;
     }
 }

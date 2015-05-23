@@ -2,6 +2,9 @@ package com.almasb.fxgl.asset;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+
+import com.almasb.fxgl.FXGLLogger;
 
 import javafx.scene.media.AudioClip;
 
@@ -9,6 +12,8 @@ import javafx.scene.media.AudioClip;
  * Stores cached data
  */
 public final class Assets {
+
+    private static final Logger log = FXGLLogger.getLogger("Assets");
 
     private Map<String, Texture> cachedTextures = new HashMap<>();
     private Map<String, AudioClip> cachedAudio = new HashMap<>();
@@ -40,5 +45,11 @@ public final class Assets {
 
     public Music getMusic(String key) {
         return cachedMusic.get(key);
+    }
+
+    public void logCached() {
+        log.info("Logging cached assets");
+        cachedTextures.forEach((name, texture) -> log.info("Texture:" + name));
+        cachedAudio.forEach((name, audio) -> log.info("Audio:" + name));
     }
 }

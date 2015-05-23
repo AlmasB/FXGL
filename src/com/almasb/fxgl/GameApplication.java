@@ -17,11 +17,13 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import com.almasb.fxgl.asset.AssetManager;
@@ -348,9 +350,19 @@ public abstract class GameApplication extends Application {
      * @return
      */
     protected List<Entity> getEntities(String... types) {
+        List<String> list = Arrays.asList(types);
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
-                .filter(entity -> Arrays.asList(types).contains(entity.getType()))
+                .filter(entity -> list.contains(entity.getType()))
+                .collect(Collectors.toList());
+    }
+
+    protected List<Entity> getEntitiesInRange(Rectangle2D selection, String... types) {
+        Entity boundsEntity = new Entity("_internal").setPosition(selection.getMinX(), selection.getMinY());
+        boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
+
+        return getEntities(types).stream()
+                .filter(entity -> entity.getBoundsInParent().intersects(boundsEntity.getBoundsInParent()))
                 .collect(Collectors.toList());
     }
 
