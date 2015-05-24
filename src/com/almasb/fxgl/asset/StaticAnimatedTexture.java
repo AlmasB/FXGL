@@ -41,15 +41,11 @@ public class StaticAnimatedTexture extends Texture {
 
         SimpleIntegerProperty frameProperty = new SimpleIntegerProperty();
         frameProperty.addListener((obs, old, newValue) -> {
-            //if (newValue.intValue() != old.intValue())
-                this.setViewport(new Rectangle2D(newValue.intValue() * frameW, 0, frameW, image.getHeight()));
+            this.setViewport(new Rectangle2D(newValue.intValue() * frameW, 0, frameW, image.getHeight()));
         });
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(duration / GameApplication.SECOND), new KeyValue(frameProperty, frames - 1)));
         timeline.setCycleCount(Timeline.INDEFINITE);
-        //timeline.setAutoReverse(true);
         timeline.play();
     }
-
-
 }

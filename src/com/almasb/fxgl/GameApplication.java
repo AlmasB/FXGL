@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.CollisionHandler;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 
 /**
  * To use FXGL extend this class and implement necessary methods
@@ -362,6 +363,16 @@ public abstract class GameApplication extends Application {
     }
 
     /**
+     *
+     * @return  a list of ALL entities currently registered in {@link #gameRoot}
+     */
+    protected List<Entity> getAllEntities() {
+        return gameRoot.getChildren().stream()
+                .map(node -> (Entity)node)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Returns a list of entities whose type matches given
      * arguments
      *
@@ -535,6 +546,26 @@ public abstract class GameApplication extends Application {
      */
     protected void runOnceAfter(Runnable action, double delay) {
         scheduleThread.schedule(() -> Platform.runLater(action), (long)delay, TimeUnit.NANOSECONDS);
+    }
+
+    /**
+     * Register an FXGL event
+     *
+     * Add specific entity types if the event should be targetting
+     * a group. Otherwise all entities will be notified of the event
+     *
+     * @param event
+     * @param types
+     */
+    protected void postFXGLEvent(FXGLEvent event, String... types) {
+        if (types.length == 0) {
+            gameRoot.getChildren().stream()
+                .map(node -> (Entity) node)
+                .forEach(e -> e.fireFXGLEvent(event));
+        }
+        else {
+            getEntities(types).forEach(e -> e.fireFXGLEvent(event));
+        }
     }
 
     public static class MouseState {

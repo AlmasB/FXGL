@@ -1,7 +1,9 @@
 package com.almasb.fxgl.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javafx.geometry.Point2D;
@@ -168,6 +170,13 @@ public class Entity extends Parent {
     }
 
     /**
+     * Remove all behavior controls from entity
+     */
+    public void removeControls() {
+        controls.clear();
+    }
+
+    /**
      * Returns the first control that is an instance of the given class,
      * or null if no such control exists.
      *
@@ -200,7 +209,8 @@ public class Entity extends Parent {
      *
      */
     public final void onClean() {
-
+        getProperties().clear();
+        eventHandlers.clear();
     }
 
     /**
@@ -253,26 +263,17 @@ public class Entity extends Parent {
         return (T)getProperties().get(key.getUniqueKey());
     }
 
-    private Consumer<Entity> onDestroy;
+    private Map<String, Consumer<FXGLEvent> > eventHandlers = new HashMap<>();
 
-    /**
-     * Call this to trigger onDeath event
-     * if it was previously set via {@link #setOnDestroy(Consumer)}
-     *
-     * In case {@link #setOnDestroy(Consumer)} was not set, this call
-     * does nothing
-     */
-    public void destroy() {
-        if (onDestroy != null)
-            onDestroy.accept(this);
+    public void addFXGLEventHandler(FXGLEventType type, Consumer<FXGLEvent> eventHandler) {
+        eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 
-    /**
-     *
-     * @param onDeath   will be called when {@link #destroy()} called
-     *                  with this object as the argument
-     */
-    public void setOnDestroy(Consumer<Entity> onDestroy) {
-        this.onDestroy = onDestroy;
+    public void fireFXGLEvent(FXGLEvent event) {
+        if (event.getSource() == null)
+            event.setSource(this);
+
+        event.setTarget(this);
+        eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {}).accept(event);
     }
 }
