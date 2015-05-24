@@ -35,8 +35,15 @@ public final class Assets {
         cachedMusic.put(key, music);
     }
 
+    /**
+     * Returns a new copy of a cached texture so
+     * it is safe to use multiple times
+     *
+     * @param key
+     * @return
+     */
     public Texture getTexture(String key) {
-        return cachedTextures.get(key);
+        return cachedTextures.get(key).copy();
     }
 
     public AudioClip getAudio(String key) {

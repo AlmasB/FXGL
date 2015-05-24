@@ -42,8 +42,8 @@ public class Entity extends Parent {
         setUsePhysics(false);
     }
 
-    public Entity(PropertyKey type) {
-        this(type.getUniqueKey());
+    public Entity(EntityType type) {
+        this(type.getUniqueType());
     }
 
     /**
@@ -107,6 +107,16 @@ public class Entity extends Parent {
      */
     public String getType() {
         return getProperty(PR_TYPE);
+    }
+
+    /**
+     * Returns true if type of entity equals passed argument
+     *
+     * @param type
+     * @return
+     */
+    public boolean isType(EntityType type) {
+        return getType().equals(type.getUniqueType());
     }
 
     /**

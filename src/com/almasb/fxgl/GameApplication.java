@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.CollisionHandler;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 
 /**
@@ -143,6 +144,12 @@ public abstract class GameApplication extends Application {
     protected abstract void initUI(Pane uiRoot);
 
     /**
+     * Initiliaze input, i.e.
+     * bind key presses / key typed
+     */
+    protected abstract void initInput();
+
+    /**
      * Main loop update phase, most of game logic and clean up
      *
      * @param now
@@ -196,6 +203,7 @@ public abstract class GameApplication extends Application {
         initMainMenu(mainMenuRoot);
         initGame(gameRoot);
         initUI(uiRoot);
+        initInput();
 
         mainMenuScene = new Scene(mainMenuRoot);
         mainScene = new Scene(root);
@@ -317,6 +325,19 @@ public abstract class GameApplication extends Application {
     }
 
     /**
+     * Registers a collision handler
+     * The order in which the types are passed to this method
+     * decides the order of objects being passed into the collision handler
+     *
+     * @param typeA
+     * @param typeB
+     * @param handler
+     */
+    protected void addCollisionHandler(EntityType typeA, EntityType typeB, CollisionHandler handler) {
+        addCollisionHandler(typeA.getUniqueType(), typeB.getUniqueType(), handler);
+    }
+
+    /**
      * Sets viewport origin. Use it for camera movement
      *
      * Do NOT use if the viewport was bound
@@ -381,6 +402,24 @@ public abstract class GameApplication extends Application {
      */
     protected List<Entity> getEntities(String... types) {
         List<String> list = Arrays.asList(types);
+        return gameRoot.getChildren().stream()
+                .map(node -> (Entity)node)
+                .filter(entity -> list.contains(entity.getType()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of entities whose type matches given
+     * arguments
+     *
+     * @param types
+     * @return
+     */
+    protected List<Entity> getEntities(EntityType... types) {
+        List<String> list = Arrays.asList(types).stream()
+                .map(EntityType::getUniqueType)
+                .collect(Collectors.toList());
+
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
                 .filter(entity -> list.contains(entity.getType()))
