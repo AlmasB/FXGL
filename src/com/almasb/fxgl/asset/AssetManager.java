@@ -1,7 +1,9 @@
 package com.almasb.fxgl.asset;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -46,6 +48,8 @@ public class AssetManager {
     private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";
     private static final String AUDIO_DIR = ASSETS_DIR + "audio/";
     private static final String MUSIC_DIR = ASSETS_DIR + "music/";
+    private static final String TEXT_DIR = ASSETS_DIR + "text/";
+    private static final String BINARY_DIR = ASSETS_DIR + "data/";
 
     private static final Logger log = FXGLLogger.getLogger("AssetManager");
 
@@ -69,15 +73,49 @@ public class AssetManager {
         return new Music(new Media(getClass().getResource(MUSIC_DIR + name).toExternalForm()));
     }
 
+    public List<String> loadText(String name) throws Exception {
+        try (InputStream is = getClass().getResourceAsStream(TEXT_DIR + name);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            List<String> result = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.add(line);
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Save serializable data onto a disk file system
+     *
+     * @param data
+     * @param fileName
+     * @throws Exception
+     */
     public void saveData(Serializable data, String fileName) throws Exception {
         try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
             oos.writeObject(data);
         }
     }
 
+    /**
+     * Load serializable data from external (NOT jar where the app is running from)
+     * file on disk file system
+     *
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
     @SuppressWarnings("unchecked")
     public <T> T loadData(String fileName) throws Exception {
         try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            return (T)ois.readObject();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T loadDataInternal(String name) throws Exception {
+        try (ObjectInputStream ois = new ObjectInputStream(getClass().getResourceAsStream(BINARY_DIR + name))) {
             return (T)ois.readObject();
         }
     }
@@ -93,6 +131,8 @@ public class AssetManager {
         List<String> textures = loadFileNames(TEXTURES_DIR);
         List<String> audio = loadFileNames(AUDIO_DIR);
         List<String> music = loadFileNames(MUSIC_DIR);
+        List<String> text = loadFileNames(TEXT_DIR);
+        List<String> data = loadFileNames(BINARY_DIR);
 
         Assets assets = new Assets();
         for (String name : textures)
@@ -101,6 +141,10 @@ public class AssetManager {
             assets.putAudio(name, loadAudio(name));
         for (String name : music)
             assets.putMusic(name, loadMusic(name));
+        for (String name : text)
+            assets.putText(name, loadText(name));
+        for (String name : data)
+            assets.putData(name, loadDataInternal(name));
 
         return assets;
     }

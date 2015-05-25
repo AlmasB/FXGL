@@ -1,12 +1,14 @@
 package com.almasb.fxgl.asset;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLLogger;
-
 import javafx.scene.media.AudioClip;
+
+import com.almasb.fxgl.FXGLLogger;
 
 /**
  * Stores cached data
@@ -18,6 +20,8 @@ public final class Assets {
     private Map<String, Texture> cachedTextures = new HashMap<>();
     private Map<String, AudioClip> cachedAudio = new HashMap<>();
     private Map<String, Music> cachedMusic = new HashMap<>();
+    private Map<String, List<String> > cachedText = new HashMap<>();
+    private Map<String, Object> cachedData = new HashMap<>();
 
     /*package-private*/ Assets() {
 
@@ -33,6 +37,14 @@ public final class Assets {
 
     /*package-private*/ void putMusic(String key, Music music) {
         cachedMusic.put(key, music);
+    }
+
+    /*package-private*/ void putText(String key, List<String> text) {
+        cachedText.put(key, text);
+    }
+
+    /*package-private*/ void putData(String key, Object data) {
+        cachedData.put(key, data);
     }
 
     /**
@@ -55,6 +67,21 @@ public final class Assets {
     }
 
     /**
+     * Returns new list contains original text
+     *
+     * @param key
+     * @return
+     */
+    public List<String> getText(String key) {
+        return new ArrayList<>(cachedText.get(key));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getData(String key) {
+        return (T) cachedData.get(key);
+    }
+
+    /**
      * A convenience method to print all cached assets
      */
     public void logCached() {
@@ -62,6 +89,8 @@ public final class Assets {
         cachedTextures.forEach((name, texture) -> log.info("Texture:" + name));
         cachedAudio.forEach((name, audio) -> log.info("Audio:" + name));
         cachedMusic.forEach((name, music) -> log.info("Music:" + name));
+        cachedText.forEach((name, text) -> log.info("Text:" + name));
+        cachedData.forEach((name, data) -> log.info("Data:" + name));
     }
 
     /**
