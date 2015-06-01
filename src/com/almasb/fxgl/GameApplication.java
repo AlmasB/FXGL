@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.CollisionHandler;
+import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -427,7 +428,8 @@ public abstract class GameApplication extends Application {
     }
 
     protected List<Entity> getEntitiesInRange(Rectangle2D selection, String... types) {
-        Entity boundsEntity = new Entity("_internal").setPosition(selection.getMinX(), selection.getMinY());
+        Entity boundsEntity = Entity.noType();
+        boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
         boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
 
         return getEntities(types).stream()
@@ -443,7 +445,17 @@ public abstract class GameApplication extends Application {
      * @param entities
      */
     protected void addEntities(Entity... entities) {
-        tmpAddList.addAll(Arrays.asList(entities));
+        for (Entity e : entities) {
+            if (e instanceof CombinedEntity) {
+                tmpAddList.addAll(e.getChildrenUnmodifiable()
+                        .stream().map(node -> (Entity)node)
+                        .collect(Collectors.toList()));
+            }
+            else
+                tmpAddList.add(e);
+        }
+
+        //tmpAddList.addAll(Arrays.asList(entities));
     }
 
     /**

@@ -20,8 +20,6 @@ import javafx.scene.text.Text;
  */
 public class Entity extends Parent {
 
-    public static final Entity NULL = new Entity("");
-
     public static final String PR_TYPE = "PR_TYPE";
     public static final String PR_USE_PHYSICS = "PR_USE_PHYSICS";
 
@@ -29,21 +27,13 @@ public class Entity extends Parent {
 
     /**
      * Constructs an entity with given type
-     * Type must NOT be an empty string or null
      *
      * @param type
      */
-    public Entity(String type) {
-        if (type == null || type.isEmpty())
-            type = "undefined";
-
-        setProperty(PR_TYPE, type);
+    public Entity(EntityType type) {
+        setProperty(PR_TYPE, type.getUniqueType());
         setGraphics(new Text("null"));
         setUsePhysics(false);
-    }
-
-    public Entity(EntityType type) {
-        this(type.getUniqueType());
     }
 
     /**
@@ -117,14 +107,6 @@ public class Entity extends Parent {
      */
     public boolean isType(EntityType type) {
         return getType().equals(type.getUniqueType());
-    }
-
-    /**
-     *
-     * @return graphics object associated with entity
-     */
-    public Node getGraphics() {
-        return getChildren().get(0);
     }
 
     /**
@@ -221,6 +203,7 @@ public class Entity extends Parent {
     public final void onClean() {
         getProperties().clear();
         eventHandlers.clear();
+        getChildren().clear();
     }
 
     /**
@@ -285,5 +268,23 @@ public class Entity extends Parent {
 
         event.setTarget(this);
         eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {}).accept(event);
+    }
+
+    /**
+     * Returns a new entity without any type
+     *
+     * Use this method for background entity,
+     * range selection entity, etc when you are not
+     * going to use its type
+     *
+     * @return
+     */
+    public static Entity noType() {
+        return new Entity(new EntityType() {
+            @Override
+            public String getUniqueType() {
+                return "__anonymous__";
+            }
+        });
     }
 }
