@@ -55,11 +55,11 @@ public final class FXGLLogger {
 
     public static String errorTraceAsString(Throwable e) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Exception occurred: " + e.getClass().getCanonicalName() + " : " + e.getMessage());
+        sb.append("\n\nException occurred: " + e.getClass().getCanonicalName() + " : " + e.getMessage());
 
         StackTraceElement[] elements = e.getStackTrace();
         for (StackTraceElement el : elements) {
-            sb.append("E: " + el.toString());
+            sb.append("E: " + el.toString() + "\n");
         }
 
         return sb.toString();

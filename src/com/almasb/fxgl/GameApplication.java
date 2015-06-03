@@ -44,8 +44,11 @@ public abstract class GameApplication extends Application {
 
     static {
         Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
-            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").warning("Unhandled Exception");
-            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").warning(FXGLLogger.errorTraceAsString(error));
+            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe("Unhandled Exception");
+            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe(FXGLLogger.errorTraceAsString(error));
+            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe("Closing due to Unhandled Exception");
+            FXGLLogger.close();
+            System.exit(0);
         });
         FXGLLogger.init(Level.ALL);
         Version.print();
@@ -553,7 +556,7 @@ public abstract class GameApplication extends Application {
      * from the game
      */
     protected void exit() {
-        log.finer("Closing");
+        log.finer("Closing Normally");
         scheduleThread.shutdown();
         FXGLLogger.close();
         Platform.exit();
