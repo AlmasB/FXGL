@@ -1,5 +1,11 @@
 package com.almasb.fxgl;
 
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,14 +23,18 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
+import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.CollisionHandler;
@@ -620,6 +630,25 @@ public abstract class GameApplication extends Application {
         else {
             getEntities(types).forEach(e -> e.fireFXGLEvent(event));
         }
+    }
+
+    protected boolean saveScreenshot() {
+        Image fxImage = mainScene.snapshot(null);
+        BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
+
+        String fileName = "./" + settings.getTitle() + settings.getVersion()
+                + LocalDateTime.now() + ".png";
+
+        fileName = fileName.replace(":", "_");
+
+        try (OutputStream os = Files.newOutputStream(Paths.get(fileName))) {
+            return ImageIO.write(img, "png", os);
+        }
+        catch (Exception e) {
+            log.finer("Exception occurred during saveScreenshot() - " + e.getMessage());
+        }
+
+        return false;
     }
 
     public static class MouseState {
