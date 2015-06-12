@@ -164,7 +164,7 @@ public class AssetManager {
             if (Files.exists(dir)) {
                 try (Stream<Path> files = Files.walk(dir)) {
                     return files.filter(Files::isRegularFile)
-                                .map(file -> file.getFileName().toString())
+                                .map(file -> dir.relativize(file).toString().replace("\\", "/"))
                                 .collect(Collectors.toList());
                 }
             }
