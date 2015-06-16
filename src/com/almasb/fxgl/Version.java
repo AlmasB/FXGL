@@ -36,11 +36,11 @@ public final class Version {
     }
 
     public static int getMinor() {
-        return 0;
+        return 1;
     }
 
     public static int getPatch() {
-        return 9;
+        return 0;
     }
 
     public static void print() {

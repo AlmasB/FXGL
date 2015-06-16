@@ -40,7 +40,7 @@ import javafx.scene.text.Text;
  * A generic FXGL game object
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.1
+ * @version 1.2
  *
  */
 public class Entity extends Parent {
@@ -95,6 +95,21 @@ public class Entity extends Parent {
         setTranslateX(x);
         setTranslateY(y);
         return this;
+    }
+
+    /**
+     * Equivalent to
+     *
+     * <pre>
+     * setTranslateX()
+     * setTranslateY()
+     * </pre>
+     *
+     * @param position
+     * @return this entity
+     */
+    public Entity setPosition(Point2D position) {
+        return setPosition(position.getX(), position.getY());
     }
 
     /**
@@ -228,6 +243,7 @@ public class Entity extends Parent {
     public final void onClean() {
         getProperties().clear();
         eventHandlers.clear();
+        controls.clear();
         getChildren().clear();
     }
 
@@ -299,7 +315,8 @@ public class Entity extends Parent {
      * Returns a new entity without any type
      *
      * Use this method for background entity,
-     * range selection entity, etc when you are not
+     * range selection entity, temporary entity,
+     * etc when you are not
      * going to use its type
      *
      * @return
