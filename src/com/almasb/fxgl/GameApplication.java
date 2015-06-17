@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -136,6 +137,11 @@ public abstract class GameApplication extends Application {
      * Used for loading various assets
      */
     protected AssetManager assetManager = new AssetManager();
+
+    /**
+     * Default random number generator
+     */
+    protected Random random = new Random();
 
     /**
      * Current time in nanoseconds, equal to "now"
@@ -345,13 +351,13 @@ public abstract class GameApplication extends Application {
      * <pre>
      * Example:
      *
-     * addCollisionHandler("bullet", "enemy", (bullet, enemy) -> {
+     * addCollisionHandler(Type.BULLET, Type.ENEMY, (bullet, enemy) -> {
      *      // CODE CALLED ON COLLISION
      * });
      *
      * OR
      *
-     * addCollisionHandler("enemy", "bullet", (enemy, bullet) -> {
+     * addCollisionHandler(Type.ENEMY, Type.BULLET, (enemy, bullet) -> {
      *      // CODE CALLED ON COLLISION
      * });
      *
@@ -361,21 +367,30 @@ public abstract class GameApplication extends Application {
      * @param typeB
      * @param handler
      */
-    protected void addCollisionHandler(String typeA, String typeB, CollisionHandler handler) {
-        collisionHandlers.put(typeA + "," + typeB, handler);
+    public void addCollisionHandler(EntityType typeA, EntityType typeB, CollisionHandler handler) {
+        collisionHandlers.put(typeA.getUniqueType() + "," + typeB.getUniqueType(), handler);
     }
 
     /**
-     * Registers a collision handler
-     * The order in which the types are passed to this method
-     * decides the order of objects being passed into the collision handler
+     * Triggers a single collision event between e1 and e2
      *
-     * @param typeA
-     * @param typeB
-     * @param handler
+     * @param e1
+     * @param e2
      */
-    protected void addCollisionHandler(EntityType typeA, EntityType typeB, CollisionHandler handler) {
-        addCollisionHandler(typeA.getUniqueType(), typeB.getUniqueType(), handler);
+    public void triggerCollision(Entity e1, Entity e2) {
+        String key = e1.getType() + "," + e2.getType();
+        CollisionHandler handler = collisionHandlers.get(key);
+        if (handler == null) {
+            key = e2.getType() + "," + e1.getType();
+            handler = collisionHandlers.get(key);
+        }
+
+        if (handler != null) {
+            if (key.startsWith(e1.getType()))
+                handler.onCollision(e1, e2);
+            else
+                handler.onCollision(e2, e1);
+        }
     }
 
     /**
@@ -428,7 +443,7 @@ public abstract class GameApplication extends Application {
      *
      * @return  a list of ALL entities currently registered in {@link #gameRoot}
      */
-    protected List<Entity> getAllEntities() {
+    public List<Entity> getAllEntities() {
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
                 .collect(Collectors.toList());
@@ -441,7 +456,7 @@ public abstract class GameApplication extends Application {
      * @param types
      * @return
      */
-    protected List<Entity> getEntities(String... types) {
+    public List<Entity> getEntities(String... types) {
         List<String> list = Arrays.asList(types);
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
@@ -456,7 +471,7 @@ public abstract class GameApplication extends Application {
      * @param types
      * @return
      */
-    protected List<Entity> getEntities(EntityType... types) {
+    public List<Entity> getEntities(EntityType... types) {
         List<String> list = Arrays.asList(types).stream()
                 .map(EntityType::getUniqueType)
                 .collect(Collectors.toList());
@@ -467,7 +482,7 @@ public abstract class GameApplication extends Application {
                 .collect(Collectors.toList());
     }
 
-    protected List<Entity> getEntitiesInRange(Rectangle2D selection, String... types) {
+    public List<Entity> getEntitiesInRange(Rectangle2D selection, String... types) {
         Entity boundsEntity = Entity.noType();
         boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
         boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
@@ -484,7 +499,7 @@ public abstract class GameApplication extends Application {
      *
      * @param entities
      */
-    protected void addEntities(Entity... entities) {
+    public void addEntities(Entity... entities) {
         for (Entity e : entities) {
             if (e instanceof CombinedEntity) {
                 tmpAddList.addAll(e.getChildrenUnmodifiable()
@@ -505,7 +520,7 @@ public abstract class GameApplication extends Application {
      *
      * @param entity
      */
-    protected void removeEntity(Entity entity) {
+    public void removeEntity(Entity entity) {
         tmpRemoveList.add(entity);
     }
 
@@ -611,7 +626,7 @@ public abstract class GameApplication extends Application {
      * @param interval
      * @param whileCondition
      */
-    protected void runAtIntervalWhile(Runnable action, double interval, BooleanProperty whileCondition) {
+    public void runAtIntervalWhile(Runnable action, double interval, BooleanProperty whileCondition) {
         if (!whileCondition.get()) {
             return;
         }
@@ -635,7 +650,7 @@ public abstract class GameApplication extends Application {
      * @param action
      * @param delay
      */
-    protected void runOnceAfter(Runnable action, double delay) {
+    public void runOnceAfter(Runnable action, double delay) {
         scheduleThread.schedule(() -> Platform.runLater(action), (long)delay, TimeUnit.NANOSECONDS);
     }
 
@@ -648,7 +663,7 @@ public abstract class GameApplication extends Application {
      * @param event
      * @param types
      */
-    protected void postFXGLEvent(FXGLEvent event, String... types) {
+    public void postFXGLEvent(FXGLEvent event, String... types) {
         if (types.length == 0) {
             gameRoot.getChildren().stream()
                 .map(node -> (Entity) node)
