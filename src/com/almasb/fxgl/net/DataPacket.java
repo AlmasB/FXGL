@@ -23,28 +23,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.net;
 
-import java.util.logging.Logger;
+import java.io.Serializable;
 
-public final class Version {
+/**
+ * A wrapper for any java.io.Serializable data structure that needs to
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ * @param <T>
+ */
+public class DataPacket<T extends Serializable> implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    private static final Logger log = FXGLLogger.getLogger("Version");
+    private T data;
 
-    public static int getMajor() {
-        return 0;
+    public DataPacket(T data) {
+        this.data = data;
     }
 
-    public static int getMinor() {
-        return 1;
-    }
-
-    public static int getPatch() {
-        return 1;
-    }
-
-    public static void print() {
-        log.info("FXGL-" + getMajor() + "." + getMinor() + "." + getPatch());
-        log.info("Source code and latest builds at: https://github.com/AlmasB/FXGL");
+    public T getData() {
+        return data;
     }
 }
