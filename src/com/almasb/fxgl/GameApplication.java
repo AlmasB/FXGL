@@ -204,6 +204,15 @@ public abstract class GameApplication extends Application {
     protected abstract void onUpdate(long now);
 
     /**
+     * Default implementation does nothing
+     *
+     * Override to add your own cleanup
+     */
+    protected void onExit() {
+
+    }
+
+    /**
      * Override this method to initialize custom
      * main menu
      *
@@ -607,8 +616,9 @@ public abstract class GameApplication extends Application {
      * You can call this method when you want to quit the application manually
      * from the game
      */
-    protected void exit() {
+    protected final void exit() {
         log.finer("Closing Normally");
+        onExit();
         scheduleThread.shutdown();
         FXGLLogger.close();
         Platform.exit();
