@@ -1,5 +1,5 @@
 package com.almasb.fxgl.net;
 
-public enum ConnectionMessage {
-    CLOSE
+/* package-private */ enum ConnectionMessage {
+    OPEN, CLOSING, CLOSE
 }

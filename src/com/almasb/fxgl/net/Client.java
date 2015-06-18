@@ -56,22 +56,33 @@ public class Client {
         serverAddress = InetAddress.getByName(serverIP);
 
         latch = new CountDownLatch(2);
-        tcpThread.running = true;
-        udpThread.running = true;
         tcpThread.start();
         udpThread.start();
         return latch.await(10, TimeUnit.SECONDS);
     }
 
     public void disconnect() {
+        disconnectTCP();
+        disconnectUDP();
+    }
+
+    private void disconnectTCP() {
         try {
-            send(ConnectionMessage.CLOSE, NetworkProtocol.TCP);
+            send(ConnectionMessage.CLOSING, NetworkProtocol.TCP);
         }
         catch (Exception e) {
             log.warning("Client already disconnected");
         }
-
         tcpThread.running = false;
+    }
+
+    private void disconnectUDP() {
+        try {
+            send(ConnectionMessage.CLOSING, NetworkProtocol.UDP);
+        }
+        catch (Exception e) {
+            log.warning("Client already disconnected");
+        }
         udpThread.running = false;
     }
 
@@ -126,15 +137,21 @@ public class Client {
         @Override
         public void run() {
             try (Socket socket = new Socket(serverIP, tcpPort);
-                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
                 outputStream = out;
                 socket.setTcpNoDelay(true);
                 latch.countDown();
+                running = true;
 
                 while (running) {
                     Object data = in.readObject();
                     if (data == ConnectionMessage.CLOSE) {
+                        running = false;
+                        break;
+                    }
+                    if (data == ConnectionMessage.CLOSING) {
+                        sendTCP(ConnectionMessage.CLOSE);
                         running = false;
                         break;
                     }
@@ -143,11 +160,10 @@ public class Client {
                 }
             }
             catch (Exception e) {
-                if (running) {
-                    log.warning("Exception during TCP connection execution");
-                    log.warning(FXGLLogger.errorTraceAsString(e));
-                    return;
-                }
+                log.warning("Exception during TCP connection execution");
+                log.warning(FXGLLogger.errorTraceAsString(e));
+                running = false;
+                return;
             }
 
             log.info("TCP connection closed normally");
@@ -163,6 +179,9 @@ public class Client {
             try (DatagramSocket socket = new DatagramSocket()) {
                 outSocket = socket;
                 latch.countDown();
+                running = true;
+
+                sendUDP(ConnectionMessage.OPEN);
 
                 while (running) {
                     byte[] buf = new byte[16384];
@@ -175,17 +194,21 @@ public class Client {
                             running = false;
                             break;
                         }
+                        if (data == ConnectionMessage.CLOSING) {
+                            sendUDP(ConnectionMessage.CLOSE);
+                            running = false;
+                            break;
+                        }
 
                         parsers.getOrDefault(data.getClass(), d -> {}).parse((Serializable)data);
                     }
                 }
             }
             catch (Exception e) {
-                if (running) {
-                    log.warning("Exception during UDP connection execution");
-                    log.warning(FXGLLogger.errorTraceAsString(e));
-                    return;
-                }
+                log.warning("Exception during UDP connection execution");
+                log.warning(FXGLLogger.errorTraceAsString(e));
+                running = false;
+                return;
             }
 
             log.info("UDP connection closed normally");
