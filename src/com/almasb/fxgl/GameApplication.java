@@ -344,33 +344,37 @@ public abstract class GameApplication extends Application {
 
                 int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
                 if (index != -1) {
+                    Entity a, b;
+
                     CollisionPair collisionPair = collisionHandlers.get(index);
                     CollisionHandler handler = collisionPair.getHandler();
-                    if (!e1.isType(collisionPair.getA())) {
-                        Entity tmp = e1;
-                        e1 = e2;
-                        e2 = tmp;
+                    if (e1.isType(collisionPair.getA())) {
+                        a = e1;
+                        b = e2;
+                    }
+                    else {
+                        a = e2;
+                        b = e1;
                     }
 
-                    Pair<Entity> pair = new Pair<>(e1, e2);
+                    Pair<Entity> pair = new Pair<>(a, b);
 
                     if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
                         if (handler instanceof FullCollisionHandler) {
                             if (!collisions.contains(pair)) {
                                 FullCollisionHandler h = (FullCollisionHandler) handler;
-                                h.onCollisionBegin(e1, e2);
+                                h.onCollisionBegin(a, b);
 
                                 collisions.add(pair);
                             }
                         }
-
-                        handler.onCollision(e1, e2);
+                        handler.onCollision(a, b);
                     }
                     else {
                         if (handler instanceof FullCollisionHandler) {
                             if (collisions.contains(pair)) {
                                 FullCollisionHandler h = (FullCollisionHandler) handler;
-                                h.onCollisionEnd(e1, e2);
+                                h.onCollisionEnd(a, b);
 
                                 collisions.remove(pair);
                             }
