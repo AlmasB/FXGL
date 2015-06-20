@@ -68,6 +68,7 @@ import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.entity.FullCollisionHandler;
 import com.almasb.fxgl.entity.Pair;
 
 /**
@@ -305,32 +306,7 @@ public abstract class GameApplication extends Application {
 
                 currentTime = now;
                 processInput();
-
-                List<Entity> collidables = gameRoot.getChildren().stream()
-                        .map(node -> (Entity)node)
-                        .filter(entity -> entity.getProperty(Entity.PR_USE_PHYSICS))
-                        .collect(Collectors.toList());
-
-                for (int i = 0; i < collidables.size(); i++) {
-                    Entity e1 = collidables.get(i);
-
-                    for (int j = i + 1; j < collidables.size(); j++) {
-                        Entity e2 = collidables.get(j);
-
-                        int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
-                        if (index != -1) {
-                            CollisionPair pair = collisionHandlers.get(index);
-                            if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
-                                CollisionHandler handler = pair.getHandler();
-
-                                if (e1.isType(pair.getA()))
-                                    handler.onCollision(e1, e2);
-                                else
-                                    handler.onCollision(e2, e1);
-                            }
-                        }
-                    }
-                }
+                processCollisions();
 
                 onUpdate(now);
 
@@ -352,6 +328,57 @@ public abstract class GameApplication extends Application {
 
         if (!menuEnabled)
             timer.start();
+    }
+
+    private void processCollisions() {
+        List<Entity> collidables = gameRoot.getChildren().stream()
+                .map(node -> (Entity)node)
+                .filter(entity -> entity.getProperty(Entity.PR_USE_PHYSICS))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < collidables.size(); i++) {
+            Entity e1 = collidables.get(i);
+
+            for (int j = i + 1; j < collidables.size(); j++) {
+                Entity e2 = collidables.get(j);
+
+                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                if (index != -1) {
+                    CollisionPair collisionPair = collisionHandlers.get(index);
+                    CollisionHandler handler = collisionPair.getHandler();
+                    if (!e1.isType(collisionPair.getA())) {
+                        Entity tmp = e1;
+                        e1 = e2;
+                        e2 = tmp;
+                    }
+
+                    Pair<Entity> pair = new Pair<>(e1, e2);
+
+                    if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
+                        if (handler instanceof FullCollisionHandler) {
+                            if (!collisions.contains(pair)) {
+                                FullCollisionHandler h = (FullCollisionHandler) handler;
+                                h.onCollisionBegin(e1, e2);
+
+                                collisions.add(pair);
+                            }
+                        }
+
+                        handler.onCollision(e1, e2);
+                    }
+                    else {
+                        if (handler instanceof FullCollisionHandler) {
+                            if (collisions.contains(pair)) {
+                                FullCollisionHandler h = (FullCollisionHandler) handler;
+                                h.onCollisionEnd(e1, e2);
+
+                                collisions.remove(pair);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
