@@ -63,10 +63,12 @@ import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.CollisionHandler;
+import com.almasb.fxgl.entity.CollisionPair;
 import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.entity.Pair;
 
 /**
  * To use FXGL extend this class and implement necessary methods
@@ -116,7 +118,9 @@ public abstract class GameApplication extends Application {
     private Scene mainMenuScene;
 
     private Pane root, gameRoot, uiRoot, mainMenuRoot;
-    private Map<String, CollisionHandler> collisionHandlers = new HashMap<>();
+
+    private List<CollisionPair> collisionHandlers = new ArrayList<>();
+    private List<Pair<Entity> > collisions = new ArrayList<>();
 
     private List<Entity> tmpAddList = new ArrayList<>();
     private List<Entity> tmpRemoveList = new ArrayList<>();
@@ -313,22 +317,20 @@ public abstract class GameApplication extends Application {
                     for (int j = i + 1; j < collidables.size(); j++) {
                         Entity e2 = collidables.get(j);
 
-                        String key = e1.getType() + "," + e2.getType();
-                        CollisionHandler handler = collisionHandlers.get(key);
-                        if (handler == null) {
-                            key = e2.getType() + "," + e1.getType();
-                            handler = collisionHandlers.get(key);
-                        }
+                        int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                        if (index != -1) {
+                            CollisionPair pair = collisionHandlers.get(index);
+                            if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
+                                CollisionHandler handler = pair.getHandler();
 
-                        if (handler != null && e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
-                            if (key.startsWith(e1.getType()))
-                                handler.onCollision(e1, e2);
-                            else
-                                handler.onCollision(e2, e1);
+                                if (e1.isType(pair.getA()))
+                                    handler.onCollision(e1, e2);
+                                else
+                                    handler.onCollision(e2, e1);
+                            }
                         }
                     }
                 }
-
 
                 onUpdate(now);
 
@@ -377,7 +379,7 @@ public abstract class GameApplication extends Application {
      * @param handler
      */
     public void addCollisionHandler(EntityType typeA, EntityType typeB, CollisionHandler handler) {
-        collisionHandlers.put(typeA.getUniqueType() + "," + typeB.getUniqueType(), handler);
+        collisionHandlers.add(new CollisionPair(typeA, typeB, handler));
     }
 
     /**
@@ -387,15 +389,12 @@ public abstract class GameApplication extends Application {
      * @param e2
      */
     public void triggerCollision(Entity e1, Entity e2) {
-        String key = e1.getType() + "," + e2.getType();
-        CollisionHandler handler = collisionHandlers.get(key);
-        if (handler == null) {
-            key = e2.getType() + "," + e1.getType();
-            handler = collisionHandlers.get(key);
-        }
+        int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+        if (index != -1) {
+            CollisionPair pair = collisionHandlers.get(index);
+            CollisionHandler handler = pair.getHandler();
 
-        if (handler != null) {
-            if (key.startsWith(e1.getType()))
+            if (e1.isType(pair.getA()))
                 handler.onCollision(e1, e2);
             else
                 handler.onCollision(e2, e1);
@@ -465,21 +464,6 @@ public abstract class GameApplication extends Application {
      * @param types
      * @return
      */
-    public List<Entity> getEntities(String... types) {
-        List<String> list = Arrays.asList(types);
-        return gameRoot.getChildren().stream()
-                .map(node -> (Entity)node)
-                .filter(entity -> list.contains(entity.getType()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given
-     * arguments
-     *
-     * @param types
-     * @return
-     */
     public List<Entity> getEntities(EntityType... types) {
         List<String> list = Arrays.asList(types).stream()
                 .map(EntityType::getUniqueType)
@@ -487,11 +471,11 @@ public abstract class GameApplication extends Application {
 
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
-                .filter(entity -> list.contains(entity.getType()))
+                .filter(entity -> list.contains(entity.getTypeAsString()))
                 .collect(Collectors.toList());
     }
 
-    public List<Entity> getEntitiesInRange(Rectangle2D selection, String... types) {
+    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
         Entity boundsEntity = Entity.noType();
         boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
         boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
@@ -518,8 +502,6 @@ public abstract class GameApplication extends Application {
             else
                 tmpAddList.add(e);
         }
-
-        //tmpAddList.addAll(Arrays.asList(entities));
     }
 
     /**
@@ -673,7 +655,7 @@ public abstract class GameApplication extends Application {
      * @param event
      * @param types
      */
-    public void postFXGLEvent(FXGLEvent event, String... types) {
+    public void postFXGLEvent(FXGLEvent event, EntityType... types) {
         if (types.length == 0) {
             gameRoot.getChildren().stream()
                 .map(node -> (Entity) node)

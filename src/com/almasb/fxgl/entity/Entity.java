@@ -45,6 +45,7 @@ import javafx.scene.text.Text;
  */
 public class Entity extends Parent {
 
+    public static final String PR_ENTITY_TYPE = "PR_ENTITY_TYPE";
     public static final String PR_TYPE = "PR_TYPE";
     public static final String PR_USE_PHYSICS = "PR_USE_PHYSICS";
 
@@ -56,6 +57,7 @@ public class Entity extends Parent {
      * @param type
      */
     public Entity(EntityType type) {
+        setProperty(PR_ENTITY_TYPE, type);
         setProperty(PR_TYPE, type.getUniqueType());
         setGraphics(new Text("null"));
         setUsePhysics(false);
@@ -133,9 +135,17 @@ public class Entity extends Parent {
     }
 
     /**
+     *
      * @return entity type
      */
-    public String getType() {
+    public EntityType getEntityType() {
+        return getProperty(PR_ENTITY_TYPE);
+    }
+
+    /**
+     * @return entity type as String
+     */
+    public String getTypeAsString() {
         return getProperty(PR_TYPE);
     }
 
@@ -146,7 +156,7 @@ public class Entity extends Parent {
      * @return
      */
     public boolean isType(EntityType type) {
-        return getType().equals(type.getUniqueType());
+        return getTypeAsString().equals(type.getUniqueType());
     }
 
     /**
