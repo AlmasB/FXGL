@@ -62,6 +62,7 @@ import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.effect.ParticleManager;
 import com.almasb.fxgl.entity.CollisionHandler;
 import com.almasb.fxgl.entity.CollisionPair;
 import com.almasb.fxgl.entity.CombinedEntity;
@@ -142,6 +143,8 @@ public abstract class GameApplication extends Application {
      * Used for loading various assets
      */
     protected AssetManager assetManager = new AssetManager();
+
+    protected ParticleManager particleManager = new ParticleManager(this);
 
     /**
      * Default random number generator
