@@ -26,9 +26,7 @@
 package com.almasb.fxgl.net;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.DatagramPacket;
@@ -36,13 +34,32 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.FXGLLogger;
 
-public class Server {
+/**
+ * Server side of the network connection.
+ *
+ * Example:
+ * <pre>
+ *  // create server object with default params, note: no network operation yet
+ * Server server = new Server();
+ *  // add relevant parsers for messages from client
+ * server.addParser(String.class, data -> System.out.println(data));
+ *  // actual network operation
+ * server.start();
+ *  // send some messages
+ * server.send("This is an example message");
+ *  // when done, stop the server
+ * server.stop();
+ * </pre>
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
+public class Server extends NetworkConnection {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.Server");
 
@@ -52,8 +69,6 @@ public class Server {
     private InetAddress clientAddress;
     private int clientPort;
     private int tcpPort, udpPort;
-
-    private Map<Class<?>, DataParser<? super Serializable> > parsers = new HashMap<>();
 
     public Server() {
         this(NetworkConfig.DEFAULT_TCP_PORT, NetworkConfig.DEFAULT_UDP_PORT);
@@ -72,66 +87,31 @@ public class Server {
     }
 
     public void stop() {
-        try {
-            send(ConnectionMessage.CLOSING, NetworkProtocol.TCP);
-        }
-        catch (Exception e) {
-            log.warning("Server TCP already stopped or error: " + e.getMessage());
-        }
-
-        try {
-            send(ConnectionMessage.CLOSING, NetworkProtocol.UDP);
-        }
-        catch (Exception e) {
-            log.warning("Server UDP already stopped or error: " + e.getMessage());
-        }
+        sendClosingMessage();
 
         tcpThread.running = false;
         udpThread.running = false;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Serializable> void addParser(Class<T> cl, DataParser<T> parser) {
-        parsers.put(cl, (DataParser<? super Serializable>) parser);
+    @Override
+    protected void sendUDP(Serializable data) throws Exception {
+        if (udpThread.running) {
+            byte[] buf = toByteArray(data);
+            udpThread.outSocket.send(new DatagramPacket(buf, buf.length, clientAddress, clientPort));
+        }
+        else {
+            throw new IllegalStateException("UDP connection not active");
+        }
     }
 
-    public void send(Serializable data) throws Exception {
-        send(data, NetworkProtocol.UDP);
-    }
-
-    public void send(Serializable data, NetworkProtocol protocol) throws Exception {
-        if (protocol == NetworkProtocol.TCP)
-            sendTCP(data);
-        else
-            sendUDP(data);
-    }
-
-    private void sendTCP(Serializable data) throws Exception {
+    @Override
+    protected void sendTCP(Serializable data) throws Exception {
         if (tcpThread.running) {
             tcpThread.outputStream.writeObject(data);
         }
         else {
             throw new IllegalStateException("Client TCP is not connected");
         }
-    }
-
-    private void sendUDP(Serializable data) throws Exception {
-        if (udpThread.running) {
-            byte[] buf = toByteArray(data);
-            udpThread.outSocket.send(new DatagramPacket(buf, buf.length, clientAddress, clientPort));
-        }
-        else {
-            throw new IllegalStateException("Client UDP is not connected");
-        }
-    }
-
-    private static byte[] toByteArray(Serializable data) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ObjectOutput oo = new ObjectOutputStream(baos)) {
-            oo.writeObject(data);
-        }
-
-        return baos.toByteArray();
     }
 
     private class TCPConnectionThread extends Thread {
