@@ -23,6 +23,13 @@ FXGL 0.1.1 supports:
 * Simple Particles
 * Other minor game dev features
 
+FXGL 0.1.2 potential features:
+* App Video Output Scalability (Different Resolutions)
+* Dynamic Texture Animation (with Animation Channels)
+* FXGL Intro Video
+* Data Encryption
+* Data Compression
+
 # Examples
 Link - https://www.youtube.com/AlmasB0/videos
 Videos 18-23 will walk you through the basics of FXGL
