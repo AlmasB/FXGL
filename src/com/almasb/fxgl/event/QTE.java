@@ -6,6 +6,7 @@ import java.util.Queue;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -15,7 +16,7 @@ import javafx.scene.text.Text;
  * @version 1.0
  *
  */
-public final class QTE extends HBox {
+/*package-private*/ final class QTE extends HBox {
 
     private static final Font FONT = Font.font(28);
 
@@ -25,7 +26,7 @@ public final class QTE extends HBox {
 
     private Text text = new Text();
 
-    public QTE(QTEHandler handler, Runnable onFinishedScript, double appW, double appH, KeyCode... keys) {
+    /*package-private*/ QTE(QTEHandler handler, Runnable onFinishedScript, double appW, double appH, Color color, KeyCode... keys) {
         super(15);
 
         if (keys == null || keys.length == 0)
@@ -38,9 +39,12 @@ public final class QTE extends HBox {
 
         Line left = new Line(0, 0, appW / 2 - 20, 0);
         Line right = new Line(0, 0, appW / 2 - 20, 0);
+        left.setStroke(color);
+        right.setStroke(color);
 
         text.setText(queue.peek().toString());
         text.setFont(FONT);
+        text.setFill(color);
 
         setAlignment(Pos.CENTER);
         getChildren().addAll(left, text, right);

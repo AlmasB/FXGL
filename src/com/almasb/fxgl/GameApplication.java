@@ -56,16 +56,15 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.FullCollisionHandler;
 import com.almasb.fxgl.entity.Pair;
-import com.almasb.fxgl.event.QTE;
-import com.almasb.fxgl.event.QTEHandler;
+import com.almasb.fxgl.event.QTEManager;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -74,10 +73,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  * To use FXGL extend this class and implement necessary methods
@@ -152,6 +148,8 @@ public abstract class GameApplication extends Application {
     protected AssetManager assetManager = new AssetManager();
 
     protected ParticleManager particleManager = new ParticleManager(this);
+
+    protected QTEManager qteManager = new QTEManager(this);
 
     /**
      * Default random number generator
@@ -256,12 +254,20 @@ public abstract class GameApplication extends Application {
         initSettings(settings);
 
         mainStage = primaryStage;
+        // 6 and 29 seem to be the frame lengths, at least on W8
+        primaryStage.setWidth(settings.getWidth() + 6);
+        primaryStage.setHeight(settings.getHeight() + 29);
+        primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
+        primaryStage.setResizable(false);
 
         mainMenuRoot = new Pane();
         gameRoot = new Pane();
         uiRoot = new Pane();
         root = new Pane(gameRoot, uiRoot);
         root.setPrefSize(settings.getWidth(), settings.getHeight());
+
+        // init all managers here before anything else
+        qteManager.init();
 
         try {
             initAssets();
@@ -295,19 +301,12 @@ public abstract class GameApplication extends Application {
         mainScene.setOnMouseReleased(mouse::update);
         mainScene.setOnMouseMoved(mouse::update);
 
-        mainScene.addEventHandler(KeyEvent.KEY_RELEASED, this::qteHandler);
+        mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
 
         boolean menuEnabled = mainMenuRoot.getChildren().size() > 0;
 
         primaryStage.setScene(menuEnabled ? mainMenuScene : mainScene);
-        // 6 and 29 seem to be the frame lengths, at least on W8
-        primaryStage.setWidth(settings.getWidth() + 6);
-        primaryStage.setHeight(settings.getHeight() + 29);
-        primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
-        primaryStage.setResizable(false);
-        primaryStage.setOnCloseRequest(event -> {
-            exit();
-        });
+        primaryStage.setOnCloseRequest(event -> exit());
         primaryStage.show();
 
         timer = new AnimationTimer() {
@@ -558,6 +557,24 @@ public abstract class GameApplication extends Application {
         tmpRemoveList.add(entity);
     }
 
+    /**
+     * Equivalent to uiRoot.getChildren().add()
+     *
+     * @param n
+     */
+    public void addUINode(Node n) {
+        uiRoot.getChildren().add(n);
+    }
+
+    /**
+     * Equivalent to uiRoot.getChildren().remove()
+     *
+     * @param n
+     */
+    public void removeUINode(Node n) {
+        uiRoot.getChildren().remove(n);
+    }
+
     private void processInput() {
         keyPressActions.forEach((key, action) -> {if (isPressed(key)) action.run();});
     }
@@ -605,14 +622,14 @@ public abstract class GameApplication extends Application {
     /**
      * Pauses the main loop execution
      */
-    protected void pause() {
+    public void pause() {
         timer.stop();
     }
 
     /**
      * Resumes the main loop execution
      */
-    protected void resume() {
+    public void resume() {
         timer.start();
     }
 
@@ -733,59 +750,12 @@ public abstract class GameApplication extends Application {
         return false;
     }
 
-    private Text qteText = new Text("Prepare for QTE! Release ALL keys!");
-
-    private QTE currentQTE = null;
-
-    /**
-     * Called on Key Released Event. This is a JavaFX Event Handler
-     *
-     * @param event
-     */
-    private void qteHandler(KeyEvent event) {
-        if (currentQTE == null)
-            return;
-
-        currentQTE.pressed(event.getCode());
+    public double getWidth() {
+        return mainStage.getWidth();
     }
 
-    public void startQTE(double overallDuration, QTEHandler handler, KeyCode... keyCodes) {
-        pause();
-
-        qteText.setFont(Font.font(24));
-        qteText.setTranslateX(300);
-        qteText.setTranslateY(300);
-
-        uiRoot.getChildren().add(qteText);
-
-        TranslateTransition tt = new TranslateTransition(Duration.seconds(2), qteText);
-        tt.setToY(50);
-        tt.setOnFinished(event -> {
-            currentQTE = new QTE(handler, () -> {
-                uiRoot.getChildren().remove(currentQTE);
-                currentQTE = null;
-
-                resume();
-            }, mainStage.getWidth(), mainStage.getHeight(), keyCodes);
-
-            uiRoot.getChildren().remove(qteText);
-            uiRoot.getChildren().add(currentQTE);
-
-            runOnceAfter(() -> {
-                if (currentQTE != null) {
-                    uiRoot.getChildren().remove(currentQTE);
-
-                    if (currentQTE.isActive()) {
-                        handler.onFailure();
-                    }
-
-                    currentQTE = null;
-
-                    resume();
-                }
-            }, overallDuration);
-        });
-        tt.play();
+    public double getHeight() {
+        return mainStage.getHeight();
     }
 
     public static class MouseState {
