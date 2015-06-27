@@ -29,6 +29,7 @@ FXGL 0.1.2 potential features:
 * FXGL Intro Video
 * Data Encryption
 * Data Compression
+* Quick Time Events (QTE)
 
 # Examples
 Link - https://www.youtube.com/AlmasB0/videos

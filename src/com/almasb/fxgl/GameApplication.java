@@ -44,21 +44,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-
 import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
@@ -71,6 +56,28 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.FullCollisionHandler;
 import com.almasb.fxgl.entity.Pair;
+import com.almasb.fxgl.event.QTE;
+import com.almasb.fxgl.event.QTEHandler;
+
+import javafx.animation.AnimationTimer;
+import javafx.animation.TranslateTransition;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * To use FXGL extend this class and implement necessary methods
@@ -287,6 +294,8 @@ public abstract class GameApplication extends Application {
         mainScene.setOnMouseDragged(mouse::update);
         mainScene.setOnMouseReleased(mouse::update);
         mainScene.setOnMouseMoved(mouse::update);
+
+        mainScene.addEventHandler(KeyEvent.KEY_RELEASED, this::qteHandler);
 
         boolean menuEnabled = mainMenuRoot.getChildren().size() > 0;
 
@@ -722,6 +731,61 @@ public abstract class GameApplication extends Application {
         }
 
         return false;
+    }
+
+    private Text qteText = new Text("Prepare for QTE! Release ALL keys!");
+
+    private QTE currentQTE = null;
+
+    /**
+     * Called on Key Released Event. This is a JavaFX Event Handler
+     *
+     * @param event
+     */
+    private void qteHandler(KeyEvent event) {
+        if (currentQTE == null)
+            return;
+
+        currentQTE.pressed(event.getCode());
+    }
+
+    public void startQTE(double overallDuration, QTEHandler handler, KeyCode... keyCodes) {
+        pause();
+
+        qteText.setFont(Font.font(24));
+        qteText.setTranslateX(300);
+        qteText.setTranslateY(300);
+
+        uiRoot.getChildren().add(qteText);
+
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(2), qteText);
+        tt.setToY(50);
+        tt.setOnFinished(event -> {
+            currentQTE = new QTE(handler, () -> {
+                uiRoot.getChildren().remove(currentQTE);
+                currentQTE = null;
+
+                resume();
+            }, mainStage.getWidth(), mainStage.getHeight(), keyCodes);
+
+            uiRoot.getChildren().remove(qteText);
+            uiRoot.getChildren().add(currentQTE);
+
+            runOnceAfter(() -> {
+                if (currentQTE != null) {
+                    uiRoot.getChildren().remove(currentQTE);
+
+                    if (currentQTE.isActive()) {
+                        handler.onFailure();
+                    }
+
+                    currentQTE = null;
+
+                    resume();
+                }
+            }, overallDuration);
+        });
+        tt.play();
     }
 
     public static class MouseState {
