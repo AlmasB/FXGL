@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.2.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.2.0/distro-source/core/src/gwt-module.dtd">
+<module>
+  <inherits name="com.google.gwt.user.User" />
+  <source path="callbacks"/>
+  <source path="collision"/>
+  <source path="common"/>
+  <source path="dynamics"/>
+  <source path="pooling"/>
+
+  <super-source path="gwtemul" />
+</module>
