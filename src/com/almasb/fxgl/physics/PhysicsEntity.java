@@ -36,10 +36,6 @@ public final class PhysicsEntity extends Entity {
 
     public PhysicsEntity setBodyType(BodyType type) {
         bodyDef.type = type;
-//        switch (type) {
-//            // TODO: defaults?
-//        }
-
         return this;
     }
 
@@ -53,7 +49,7 @@ public final class PhysicsEntity extends Entity {
      * @return
      */
     public PhysicsEntity setLinearVelocity(Point2D vector) {
-        return setLinearVelocity(new Vec2(PhysicsManager.toMeters(vector.getX()),PhysicsManager.toMeters(vector.getY())));
+        return setBodyLinearVelocity(new Vec2(PhysicsManager.toMeters(vector.getX()), PhysicsManager.toMeters(-vector.getY())).mulLocal(60));
     }
 
     /**
@@ -61,7 +57,7 @@ public final class PhysicsEntity extends Entity {
      * @param vector x and y in meters
      * @return
      */
-    public PhysicsEntity setLinearVelocity(Vec2 vector) {
+    public PhysicsEntity setBodyLinearVelocity(Vec2 vector) {
         if (body == null)
             throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first");
 
