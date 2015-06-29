@@ -25,10 +25,14 @@
  */
 package com.almasb.fxgl.physics;
 
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
@@ -43,12 +47,44 @@ public final class PhysicsManager {
 
     public PhysicsManager(GameApplication app) {
         this.app = app;
+        world.setContactListener(new ContactListener() {
+
+            @Override
+            public void beginContact(Contact contact) {
+                PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
+                PhysicsEntity e2 = (PhysicsEntity) contact.getFixtureB().getBody().getUserData();
+
+                app.triggerCollision(e1, e2);
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {}
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {}
+        });
     }
 
+    /**
+     * Set gravity for the physics world
+     *
+     * @param x
+     * @param y
+     */
     public void setGravity(double x, double y) {
-        world.setGravity(new Vec2().addLocal((float)x,(float)y));
+        world.setGravity(new Vec2().addLocal((float)x,-(float)y));
     }
 
+    /**
+     * Do NOT call manually. This is the physics update tick
+     *
+     * @param now
+     */
     public void onUpdate(long now) {
         world.step(TIME_STEP, 8, 3);
 
@@ -64,7 +100,6 @@ public final class PhysicsManager {
                                     - toMeters(e.getLayoutBounds().getHeight() / 2)));
             e.setRotate(-Math.toDegrees(body.getAngle()));
         }
-
     }
 
     /**
