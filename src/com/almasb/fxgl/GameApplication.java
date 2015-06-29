@@ -57,6 +57,8 @@ import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.FullCollisionHandler;
 import com.almasb.fxgl.entity.Pair;
 import com.almasb.fxgl.event.QTEManager;
+import com.almasb.fxgl.physics.PhysicsEntity;
+import com.almasb.fxgl.physics.PhysicsManager;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -124,6 +126,12 @@ public abstract class GameApplication extends Application {
 
     private Pane root, gameRoot, uiRoot, mainMenuRoot;
 
+    /**
+     * These are current width and height of the scene
+     * NOT the window
+     */
+    private double currentWidth, currentHeight;
+
     private List<CollisionPair> collisionHandlers = new ArrayList<>();
     private List<Pair<Entity> > collisions = new ArrayList<>();
 
@@ -146,6 +154,8 @@ public abstract class GameApplication extends Application {
      * Used for loading various assets
      */
     protected AssetManager assetManager = new AssetManager();
+
+    protected PhysicsManager physicsManager = new PhysicsManager(this);
 
     protected ParticleManager particleManager = new ParticleManager(this);
 
@@ -253,6 +263,9 @@ public abstract class GameApplication extends Application {
         log.finer("start()");
         initSettings(settings);
 
+        currentWidth = settings.getWidth();
+        currentHeight = settings.getHeight();
+
         mainStage = primaryStage;
         // 6 and 29 seem to be the frame lengths, at least on W8
         primaryStage.setWidth(settings.getWidth() + 6);
@@ -312,26 +325,7 @@ public abstract class GameApplication extends Application {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                long startNanos = System.nanoTime();
-                long realFPS = now - currentTime;
-
-                currentTime = now;
-                processInput();
-                processCollisions();
-
-                onUpdate(now);
-
-                gameRoot.getChildren().addAll(tmpAddList);
-                tmpAddList.clear();
-
-                gameRoot.getChildren().removeAll(tmpRemoveList);
-                tmpRemoveList.forEach(entity -> entity.onClean());
-                tmpRemoveList.clear();
-
-                gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
-
-                fpsPerformance = Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos)));
-                fps = Math.round(fpsCounter.count(SECOND / realFPS));
+                processUpdate(now);
             }
         };
 
@@ -339,6 +333,40 @@ public abstract class GameApplication extends Application {
 
         if (!menuEnabled)
             timer.start();
+    }
+
+    /**
+     * This is the internal FXGL update tick,
+     * executed 60 times a second ~ every 0.166 (6) seconds
+     *
+     * @param now - The timestamp of the current frame given in nanoseconds
+     */
+    private void processUpdate(long now) {
+        long startNanos = System.nanoTime();
+        long realFPS = now - currentTime;
+
+        currentTime = now;
+        processInput();
+        processCollisions();
+        physicsManager.onUpdate(now);
+
+        onUpdate(now);
+
+        gameRoot.getChildren().addAll(tmpAddList);
+        tmpAddList.clear();
+
+        gameRoot.getChildren().removeAll(tmpRemoveList);
+        tmpRemoveList.stream()
+                    .filter(e -> e instanceof PhysicsEntity)
+                    .map(e -> (PhysicsEntity)e)
+                    .forEach(physicsManager::destroyBody);
+        tmpRemoveList.forEach(entity -> entity.onClean());
+        tmpRemoveList.clear();
+
+        gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
+
+        fpsPerformance = Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos)));
+        fps = Math.round(fpsCounter.count(SECOND / realFPS));
     }
 
     private void processCollisions() {
@@ -540,6 +568,10 @@ public abstract class GameApplication extends Application {
                 tmpAddList.addAll(e.getChildrenUnmodifiable()
                         .stream().map(node -> (Entity)node)
                         .collect(Collectors.toList()));
+            }
+            else if (e instanceof PhysicsEntity) {
+                physicsManager.createBody((PhysicsEntity) e);
+                tmpAddList.add(e);
             }
             else
                 tmpAddList.add(e);
@@ -751,11 +783,11 @@ public abstract class GameApplication extends Application {
     }
 
     public double getWidth() {
-        return mainStage.getWidth();
+        return currentWidth;
     }
 
     public double getHeight() {
-        return mainStage.getHeight();
+        return currentHeight;
     }
 
     public static class MouseState {

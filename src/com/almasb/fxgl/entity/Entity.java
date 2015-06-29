@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 /**
@@ -167,6 +168,13 @@ public class Entity extends Parent {
      */
     public Entity setGraphics(Node graphics) {
         getChildren().clear();
+
+        if (graphics instanceof Circle) {
+            Circle c = (Circle) graphics;
+            c.setCenterX(c.getRadius());
+            c.setCenterY(c.getRadius());
+        }
+
         getChildren().add(graphics);
         return this;
     }
@@ -313,6 +321,15 @@ public class Entity extends Parent {
         eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 
+    /**
+     * Fire (trigger) an FXGL event on this entity
+     * This entity becomes the target of the FXGL event
+     *
+     * If the FXGL event doesn't have a source, this
+     * entity will also become the source of the event
+     *
+     * @param event
+     */
     public void fireFXGLEvent(FXGLEvent event) {
         if (event.getSource() == null)
             event.setSource(this);
