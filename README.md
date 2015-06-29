@@ -9,8 +9,9 @@ in your IDE. That's it, you're all set!
 FXGL is in early stages of development. Hence, the API and functionality are likely to change from version to version. So I wouldn't recommend building a full scale application if you want to be able to use latest versions of FXGL.
 
 # Changelog
-FXGL 0.1.1 supports:
+FXGL 0.1.2 supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
+* JBox2D Physics Engine Integration (v.2.2.1.1, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
 * Basic Logging
 * Basic Performance Monitor
@@ -21,15 +22,16 @@ FXGL 0.1.1 supports:
 * Networking (both TCP and UDP)
 * AI Pathfinding (A star search)
 * Simple Particles
+* Quick Time Events (QTE)
 * Other minor game dev features
 
-FXGL 0.1.2 potential features:
+FXGL 0.1.3 potential features:
 * App Video Output Scalability (Different Resolutions)
 * Dynamic Texture Animation (with Animation Channels)
 * FXGL Intro Video
 * Data Encryption
 * Data Compression
-* Quick Time Events (QTE)
+* API Refinement (continuous, long-term)
 
 # Examples
 Link - https://www.youtube.com/AlmasB0/videos
