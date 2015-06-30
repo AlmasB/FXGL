@@ -459,10 +459,6 @@ public abstract class GameApplication extends Application {
      * @param e2
      */
     public void triggerCollision(Entity e1, Entity e2) {
-        if (!e1.<Boolean>getProperty(Entity.PR_USE_PHYSICS) || !e2.<Boolean>getProperty(Entity.PR_USE_PHYSICS)) {
-            return;
-        }
-
         int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
         if (index != -1) {
             CollisionPair pair = collisionHandlers.get(index);
