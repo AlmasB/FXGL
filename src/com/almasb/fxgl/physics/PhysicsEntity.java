@@ -37,6 +37,22 @@ import com.almasb.fxgl.entity.EntityType;
 
 import javafx.geometry.Point2D;
 
+/**
+ * An entity being managed by PhysicsManager and hence
+ * is being affected by physics space and its forces
+ *
+ * {@link #translate(Point2D)} and {@link #setTranslateX(double)}
+ * methods will NOT work. Use {@link #setLinearVelocity(Point2D)} to
+ * move the object.
+ *
+ * BodyType.KINEMATIC will retain its velocity at all times unless manually changed
+ * BodyType.DYNAMIC will lose its velocity over time based on external forces
+ * BodyType.STATIC doesn't move even if you set its velocity to non-zero
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 public final class PhysicsEntity extends Entity {
 
     /*package-private*/ FixtureDef fixtureDef = new FixtureDef();
@@ -44,6 +60,8 @@ public final class PhysicsEntity extends Entity {
 
     /*package-private*/ Body body;
     /*package-private*/ Fixture fixture;
+
+    private boolean raycastIgnored = false;
 
     public PhysicsEntity(EntityType type) {
         super(type);
@@ -64,20 +82,37 @@ public final class PhysicsEntity extends Entity {
         return this;
     }
 
-    public Vec2 getBodyPosition() {
-        return body.getPosition();
-    }
-
     /**
+     * Set linear velocity for a physics entity
+     *
+     * Use this method to move a physics entity
+     * Please note that the vector x and y are in pixels
      *
      * @param vector x and y in pixels
-     * @return
+     * @return this entity
      */
     public PhysicsEntity setLinearVelocity(Point2D vector) {
-        return setBodyLinearVelocity(new Vec2(PhysicsManager.toMeters(vector.getX()), PhysicsManager.toMeters(-vector.getY())).mulLocal(60));
+        return setBodyLinearVelocity(PhysicsManager.toVector(vector).mulLocal(60));
     }
 
     /**
+     * Set linear velocity for a physics entity
+     *
+     * Use this method to move a physics entity
+     * Please note that x and y are in pixels
+     *
+     * @param x and y in pixels
+     * @return this entity
+     */
+    public PhysicsEntity setLinearVelocity(double x, double y) {
+        return setLinearVelocity(new Point2D(x, y));
+    }
+
+    /**
+     * Set linear velocity for a physics entity
+     *
+     * Similar to {@link #setLinearVelocity(Point2D)} but
+     * x and y of the argument are in meters
      *
      * @param vector x and y in meters
      * @return
@@ -88,5 +123,34 @@ public final class PhysicsEntity extends Entity {
 
         body.setLinearVelocity(vector);
         return this;
+    }
+
+    /**
+     *
+     * @return linear velocity in pxels
+     */
+    public Point2D getLinearVelocity() {
+        if (body == null)
+            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first");
+
+        return PhysicsManager.toVector(body.getLinearVelocity().mul(1/60f));
+    }
+
+    /**
+     * Set true to make raycast ignore this entity
+     *
+     * @param b
+     */
+    public void setRaycastIgnored(boolean b) {
+        raycastIgnored = b;
+    }
+
+    /**
+     *
+     * @return true if raycast should ignore this entity,
+     *          false otherwise
+     */
+    public boolean isRaycastIgnored() {
+        return raycastIgnored;
     }
 }

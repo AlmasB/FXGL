@@ -25,18 +25,34 @@
  */
 package com.almasb.fxgl.physics;
 
+import java.util.Optional;
+
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 
+import javafx.geometry.Point2D;
+
+/**
+ * Manages physics entities and performs the physics tick
+ *
+ * Contains several static and instance methods
+ * to convert pixels coordinates to meters and vice versa
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 public final class PhysicsManager {
 
     private static final float TIME_STEP = 1 / 60.0f;
@@ -91,13 +107,13 @@ public final class PhysicsManager {
         for (Body body = world.getBodyList(); body != null; body = body.getNext()) {
             Entity e = (Entity) body.getUserData();
             e.setTranslateX(
-                    toPixels(
+                    Math.round(toPixels(
                             body.getPosition().x
-                                    - toMeters(e.getLayoutBounds().getWidth() / 2)));
+                                    - toMeters(e.getLayoutBounds().getWidth() / 2))));
             e.setTranslateY(
-                    toPixels(
+                    Math.round(toPixels(
                             toMeters(app.getHeight()) - body.getPosition().y
-                                    - toMeters(e.getLayoutBounds().getHeight() / 2)));
+                                    - toMeters(e.getLayoutBounds().getHeight() / 2))));
             e.setRotate(-Math.toDegrees(body.getAngle()));
         }
     }
@@ -136,11 +152,82 @@ public final class PhysicsManager {
         world.destroyBody(e.body);
     }
 
+    private EdgeCallback raycastCallback = new EdgeCallback();
+
+    /**
+     * Performs raycast from start to end
+     *
+     *
+     * @param start world point in pixels
+     * @param end world point in pixels
+     * @return result of raycast
+     */
+    public RaycastResult raycast(Point2D start, Point2D end) {
+        raycastCallback.reset();
+        world.raycast(raycastCallback, toPoint(start), toPoint(end));
+
+        PhysicsEntity entity = null;
+        Point2D point = null;
+
+        if (raycastCallback.fixture != null)
+            entity = (PhysicsEntity) raycastCallback.fixture.getBody().getUserData();
+
+        if (raycastCallback.point != null)
+            point = toPoint(raycastCallback.point);
+
+        return new RaycastResult(Optional.ofNullable(entity), Optional.ofNullable(point));
+    }
+
     public static float toMeters(double pixels) {
         return (float)pixels * 0.05f;
     }
 
     public static float toPixels(double meters) {
         return (float)meters * 20f;
+    }
+
+    public static Vec2 toVector(Point2D v) {
+        return new Vec2(toMeters(v.getX()), toMeters(-v.getY()));
+    }
+
+    public static Point2D toVector(Vec2 v) {
+        return new Point2D(toPixels(v.x), toPixels(-v.y));
+    }
+
+    public Vec2 toPoint(Point2D p) {
+        return new Vec2(toMeters(p.getX()), toMeters(app.getHeight() - p.getY()));
+    }
+
+    public Point2D toPoint(Vec2 p) {
+        return new Point2D(toPixels(p.x), toPixels(toMeters(app.getHeight()) - p.y));
+    }
+
+    private static class EdgeCallback implements RayCastCallback {
+        Fixture fixture;
+        Vec2 point;
+        //Vec2 normal;
+        float bestFraction = 1.0f;
+
+        @Override
+        public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
+            PhysicsEntity e = (PhysicsEntity) fixture.getBody().getUserData();
+            if (e.isRaycastIgnored())
+                return 1;
+
+            if (fraction < bestFraction) {
+                this.fixture = fixture;
+                this.point = point.clone();
+                //this.normal = normal.clone();
+                bestFraction = fraction;
+            }
+
+            return bestFraction;
+        }
+
+        void reset() {
+            fixture = null;
+            point = null;
+            bestFraction = 1.0f;
+        }
     }
 }
