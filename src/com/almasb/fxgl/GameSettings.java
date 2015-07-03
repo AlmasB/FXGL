@@ -39,6 +39,7 @@ public class GameSettings {
     private String version = "0.0";
     private int width = 800;
     private int height = 600;
+    private boolean introEnabled = true;
 
     public String getTitle() {
         return title;
@@ -70,5 +71,13 @@ public class GameSettings {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public boolean isIntroEnabled() {
+        return introEnabled;
+    }
+
+    public void setIntroEnabled(boolean b) {
+        introEnabled = b;
     }
 }

@@ -331,8 +331,27 @@ public abstract class GameApplication extends Application {
 
         postInit();
 
-        if (!menuEnabled)
-            timer.start();
+        if (settings.isIntroEnabled()) {
+            Intro intro = new Intro(getWidth(), getHeight(), () -> {
+                if (menuEnabled)
+                    mainMenuScene.setRoot(mainMenuRoot);
+                else {
+                    mainScene.setRoot(root);
+                    timer.start();
+                }
+            });
+
+            if (menuEnabled)
+                mainMenuScene.setRoot(intro);
+            else
+                mainScene.setRoot(intro);
+
+            intro.play();
+        }
+        else {
+            if (!menuEnabled)
+                timer.start();
+        }
     }
 
     /**
