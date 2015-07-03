@@ -44,7 +44,11 @@ public final class Version {
     }
 
     public static void print() {
-        log.info("FXGL-" + getMajor() + "." + getMinor() + "." + getPatch());
+        log.info("FXGL-" + getAsString());
         log.info("Source code and latest builds at: https://github.com/AlmasB/FXGL");
+    }
+
+    public static String getAsString() {
+        return getMajor() + "." + getMinor() + "." + getPatch();
     }
 }

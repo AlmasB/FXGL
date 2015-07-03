@@ -204,7 +204,7 @@ public abstract class GameApplication extends Application {
      *
      * @param gameRoot
      */
-    protected abstract void initGame(Pane gameRoot);
+    protected abstract void initGame();
 
     /**
      * Initiliaze UI objects
@@ -291,7 +291,7 @@ public abstract class GameApplication extends Application {
         }
 
         initMainMenu(mainMenuRoot);
-        initGame(gameRoot);
+        initGame();
         initUI(uiRoot);
         initInput();
 
