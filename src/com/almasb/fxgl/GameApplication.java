@@ -193,6 +193,15 @@ public abstract class GameApplication extends Application {
     protected abstract void initSettings(GameSettings settings);
 
     /**
+     * Override to use your custom intro video
+     *
+     * @return
+     */
+    protected Intro initIntroVideo() {
+        return new FXGLIntro(getWidth(), getHeight());
+    }
+
+    /**
      * Initialize game assets, such as Texture, AudioClip, Music
      *
      * @throws Exception
@@ -332,21 +341,24 @@ public abstract class GameApplication extends Application {
         postInit();
 
         if (settings.isIntroEnabled()) {
-            Intro intro = new Intro(getWidth(), getHeight(), () -> {
+            Intro intro = initIntroVideo();
+            if (intro == null)
+                intro = new FXGLIntro(getWidth(), getHeight());
+            intro.onFinished = () -> {
                 if (menuEnabled)
                     mainMenuScene.setRoot(mainMenuRoot);
                 else {
                     mainScene.setRoot(root);
                     timer.start();
                 }
-            });
+            };
 
             if (menuEnabled)
                 mainMenuScene.setRoot(intro);
             else
                 mainScene.setRoot(intro);
 
-            intro.play();
+            intro.startIntro();
         }
         else {
             if (!menuEnabled)

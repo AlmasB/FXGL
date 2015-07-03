@@ -26,12 +26,15 @@ FXGL 0.1.2 supports:
 * Other minor game dev features
 
 FXGL 0.1.3 potential features:
+* Better integration with JBox2D (raycast, various entity interactions)
+* FXGL Intro Video (also allow clients to use their own)
+
+Long-term Features:
 * App Video Output Scalability (Different Resolutions)
 * Dynamic Texture Animation (with Animation Channels)
-* FXGL Intro Video
-* Data Encryption
-* Data Compression
-* API Refinement (continuous, long-term)
+* API Refinement (this is a constant on-going goal) 
+* Data Encryption (save data, network communication) any other use cases?
+* Data Compression (save data, network communication) any other use cases?
 
 # Examples
 Link - https://www.youtube.com/AlmasB0/videos
