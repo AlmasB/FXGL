@@ -52,6 +52,8 @@ public class Entity extends Parent {
 
     private List<Control> controls = new ArrayList<>();
 
+    private boolean active = true;
+
     /**
      * Constructs an entity with given type
      *
@@ -259,10 +261,15 @@ public class Entity extends Parent {
      *
      */
     public final void onClean() {
+        active = false;
         getProperties().clear();
         eventHandlers.clear();
         controls.clear();
         getChildren().clear();
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     /**

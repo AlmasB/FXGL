@@ -84,8 +84,10 @@ public final class PhysicsManager {
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
-                    pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
-                    collisions.put(pair, app.getTick());
+                    if (!collisions.containsKey(pair)) {
+                        //pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
+                        collisions.put(pair, app.getTick());
+                    }
                 }
             }
 
@@ -98,8 +100,11 @@ public final class PhysicsManager {
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
-                    pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
-                    collisions.remove(pair);
+                    if (collisions.containsKey(pair)) {
+                        collisions.put(pair, -1L);
+                        //pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
+                        //collisions.remove(pair);
+                    }
                 }
             }
 
@@ -161,25 +166,41 @@ public final class PhysicsManager {
 
                     if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
                         if (!collisions.containsKey(pair)) {
-                            pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
+                            //pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
                             collisions.put(pair, app.getTick());
                         }
                     }
                     else {
                         if (collisions.containsKey(pair)) {
-                            pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
-                            collisions.remove(pair);
+                            //pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
+                            //collisions.remove(pair);
+                            collisions.put(pair, -1L);
                         }
                     }
                 }
             }
         }
 
+        List<CollisionPair> toRemove = new ArrayList<>();
         collisions.forEach((pair, tick) -> {
-            if (app.getTick() > tick) {
+            if (!pair.getA().isActive() || !pair.getB().isActive()) {
+                toRemove.add(pair);
+                return;
+            }
+
+            if (tick.longValue() == -1L) {
+                pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
+                toRemove.add(pair);
+            }
+            else if (app.getTick() == tick.longValue()) {
+                pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
+            }
+            else if (app.getTick() > tick) {
                 pair.getHandler().onCollision(pair.getA(), pair.getB());
             }
         });
+
+        toRemove.forEach(pair -> collisions.remove(pair));
     }
 
     /**
@@ -210,25 +231,6 @@ public final class PhysicsManager {
     public void addCollisionHandler(CollisionHandler handler) {
         collisionHandlers.add(handler);
     }
-
-//    /**
-//     * Triggers a single collision event between e1 and e2
-//     *
-//     * @param e1
-//     * @param e2
-//     */
-//    private void triggerCollisionPhysics(Entity e1, Entity e2) {
-//        int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
-//        if (index != -1) {
-//            CollisionPair pair = collisionHandlers.get(index);
-//            CollisionHandler handler = pair.getHandler();
-//
-//            if (e1.isType(pair.getA()))
-//                handler.onCollision(e1, e2);
-//            else
-//                handler.onCollision(e2, e1);
-//        }
-//    }
 
     /**
      * Set gravity for the physics world
