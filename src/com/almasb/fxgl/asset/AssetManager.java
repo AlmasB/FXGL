@@ -185,6 +185,9 @@ public class AssetManager {
     private List<String> loadFileNames(String directory) throws Exception {
         URL url = getClass().getResource(directory);
         if (url != null) {
+            if (url.toString().startsWith("jar"))
+                return loadFileNamesJar(directory.substring(1));
+
             Path dir = Paths.get(url.toURI());
 
             if (Files.exists(dir)) {
@@ -219,6 +222,8 @@ public class AssetManager {
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
                     if (entryName.startsWith(folderName)) {
+                        if (entryName.endsWith("/"))
+                            continue;
                         fileNames.add(entryName.substring(entryName.indexOf(folderName) + folderName.length()));
                     }
                 }
