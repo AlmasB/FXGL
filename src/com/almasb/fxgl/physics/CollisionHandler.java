@@ -23,44 +23,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.physics;
 
-public class Pair<T> {
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityType;
 
-    private T a, b;
+/**
+ * Handler for a collision that occurred between two entities
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
+public abstract class CollisionHandler extends Pair<EntityType> {
 
-    public Pair(T a, T b) {
-        if (a == null || b == null)
-            throw new IllegalArgumentException("Entities must not be null: "
-                    + a == null ? "a" : "b");
-        this.a = a;
-        this.b = b;
+    public CollisionHandler(EntityType a, EntityType b) {
+        super(a, b);
     }
 
-    public T getA() {
-        return a;
-    }
+    /**
+     * Called when entities A and B have just collided and weren't colliding in the last tick.
+     *
+     * @param a
+     * @param b
+     */
+    public abstract void onCollisionBegin(Entity a, Entity b);
 
-    public T getB() {
-        return b;
-    }
+    /**
+     * Called if entities A and B are currently colliding.
+     *
+     * This is called one tick after {@link #onCollisionBegin(Entity, Entity)}
+     * if the entities are still colliding
+     *
+     * @param a
+     * @param b
+     */
+    public abstract void onCollision(Entity a, Entity b);
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null)
-            return false;
-        if (o == this)
-            return true;
-        if (!(o instanceof Pair))
-            return false;
-
-        Pair<?> pair = (Pair<?>) o;
-        return (pair.a == a && pair.b == b)
-                || (pair.a == b && pair.b == a);
-    }
-
-    @Override
-    public int hashCode() {
-        return a.hashCode() + b.hashCode();
-    }
+    /**
+     * Called when entities A and B have just stopped colliding and were colliding in the last tick.
+     *
+     * @param a
+     * @param b
+     */
+    public abstract void onCollisionEnd(Entity a, Entity b);
 }

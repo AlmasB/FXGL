@@ -23,9 +23,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.physics;
 
-public interface FullCollisionHandler extends CollisionHandler {
-    public void onCollisionBegin(Entity a, Entity b);
-    public void onCollisionEnd(Entity a, Entity b);
+/**
+ * For internal use
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ * @param <T>
+ */
+/*package-private*/ class Pair<T> {
+
+    private T a, b;
+
+    public Pair(T a, T b) {
+        if (a == null || b == null)
+            throw new IllegalArgumentException("Objects must not be null: "
+                    + a == null ? "a" : "b");
+        this.a = a;
+        this.b = b;
+    }
+
+    public T getA() {
+        return a;
+    }
+
+    public T getB() {
+        return b;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Pair<?> pair = (Pair<?>) o;
+        return (pair.a == a && pair.b == b)
+                || (pair.a == b && pair.b == a);
+    }
+
+    @Override
+    public int hashCode() {
+        return a.hashCode() + b.hashCode();
+    }
 }

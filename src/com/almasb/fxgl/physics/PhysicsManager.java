@@ -25,6 +25,10 @@
  */
 package com.almasb.fxgl.physics;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.jbox2d.callbacks.ContactImpulse;
@@ -34,6 +38,7 @@ import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -44,10 +49,12 @@ import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 
 /**
- * Manages physics entities and performs the physics tick
+ * Manages physics entities, collision handling and performs the physics tick
  *
  * Contains several static and instance methods
  * to convert pixels coordinates to meters and vice versa
+ *
+ * Collision handling unifies how they are processed
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
@@ -61,39 +68,46 @@ public final class PhysicsManager {
 
     private World world = new World(new Vec2(0, -10));
 
+    private List<CollisionHandler> collisionHandlers = new ArrayList<>();
+
+    private Map<CollisionPair, Long> collisions = new HashMap<>();
+
     public PhysicsManager(GameApplication app) {
         this.app = app;
         world.setContactListener(new ContactListener() {
-
             @Override
             public void beginContact(Contact contact) {
                 PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
                 PhysicsEntity e2 = (PhysicsEntity) contact.getFixtureB().getBody().getUserData();
 
-                app.triggerCollision(e1, e2);
+                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                if (index != -1) {
+                    CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
+
+                    pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
+                    collisions.put(pair, app.getTick());
+                }
             }
 
             @Override
             public void endContact(Contact contact) {
+                PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
+                PhysicsEntity e2 = (PhysicsEntity) contact.getFixtureB().getBody().getUserData();
 
+                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                if (index != -1) {
+                    CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
+
+                    pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
+                    collisions.remove(pair);
+                }
             }
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {}
-
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {}
         });
-    }
-
-    /**
-     * Set gravity for the physics world
-     *
-     * @param x
-     * @param y
-     */
-    public void setGravity(double x, double y) {
-        world.setGravity(new Vec2().addLocal((float)x,-(float)y));
     }
 
     /**
@@ -103,6 +117,8 @@ public final class PhysicsManager {
      */
     public void onUpdate(long now) {
         world.step(TIME_STEP, 8, 3);
+
+        processCollisions();
 
         for (Body body = world.getBodyList(); body != null; body = body.getNext()) {
             Entity e = (Entity) body.getUserData();
@@ -116,6 +132,112 @@ public final class PhysicsManager {
                                     - toMeters(e.getLayoutBounds().getHeight() / 2))));
             e.setRotate(-Math.toDegrees(body.getAngle()));
         }
+    }
+
+    private void processCollisions() {
+        List<Entity> entities = app.getAllEntities();
+
+        for (int i = 0; i < entities.size(); i++) {
+            Entity e1 = entities.get(i);
+
+            for (int j = i + 1; j < entities.size(); j++) {
+                Entity e2 = entities.get(j);
+
+                if (e1 instanceof PhysicsEntity && e2 instanceof PhysicsEntity) {
+                    PhysicsEntity p1 = (PhysicsEntity) e1;
+                    PhysicsEntity p2 = (PhysicsEntity) e2;
+                    boolean skip = true;
+                    if ((p1.body.getType() == BodyType.KINEMATIC && p2.body.getType() == BodyType.STATIC)
+                            || (p2.body.getType() == BodyType.KINEMATIC && p1.body.getType() == BodyType.STATIC)) {
+                        skip = false;
+                    }
+                    if (skip)
+                        continue;
+                }
+
+                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                if (index != -1) {
+                    CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
+
+                    if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
+                        if (!collisions.containsKey(pair)) {
+                            pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
+                            collisions.put(pair, app.getTick());
+                        }
+                    }
+                    else {
+                        if (collisions.containsKey(pair)) {
+                            pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
+                            collisions.remove(pair);
+                        }
+                    }
+                }
+            }
+        }
+
+        collisions.forEach((pair, tick) -> {
+            if (app.getTick() > tick) {
+                pair.getHandler().onCollision(pair.getA(), pair.getB());
+            }
+        });
+    }
+
+    /**
+     * Registers a collision handler
+     * The order in which the types are passed to this method
+     * decides the order of objects being passed into the collision handler
+     *
+     * <pre>
+     * Example:
+     * physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
+     *      public void onCollisionBegin(Entity a, Entity b) {
+     *          // called when entities start touching
+     *      }
+     *      public void onCollision(Entity a, Entity b) {
+     *          // called when entities are touching
+     *      }
+     *      public void onCollisionEnd(Entity a, Entity b) {
+     *          // called when entities are separated and no longer touching
+     *      }
+     * });
+     *
+     * </pre>
+     *
+     * @param typeA
+     * @param typeB
+     * @param handler
+     */
+    public void addCollisionHandler(CollisionHandler handler) {
+        collisionHandlers.add(handler);
+    }
+
+//    /**
+//     * Triggers a single collision event between e1 and e2
+//     *
+//     * @param e1
+//     * @param e2
+//     */
+//    private void triggerCollisionPhysics(Entity e1, Entity e2) {
+//        int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+//        if (index != -1) {
+//            CollisionPair pair = collisionHandlers.get(index);
+//            CollisionHandler handler = pair.getHandler();
+//
+//            if (e1.isType(pair.getA()))
+//                handler.onCollision(e1, e2);
+//            else
+//                handler.onCollision(e2, e1);
+//        }
+//    }
+
+    /**
+     * Set gravity for the physics world
+     *
+     * @param x
+     * @param y
+     */
+    public void setGravity(double x, double y) {
+        world.setGravity(new Vec2().addLocal((float)x,-(float)y));
     }
 
     /**

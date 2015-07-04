@@ -23,14 +23,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.physics;
 
-public class CollisionPair extends Pair<EntityType> {
+import com.almasb.fxgl.entity.Entity;
+
+/*package-private*/ final class CollisionPair extends Pair<Entity> {
 
     private CollisionHandler handler;
 
-    public CollisionPair(EntityType a, EntityType b, CollisionHandler handler) {
-        super(a, b);
+    public CollisionPair(Entity a, Entity b, CollisionHandler handler) {
+        // we check the order here so that we won't have to do that every time
+        // when triggering collision between A and B
+        // this ensures that client gets back entities in the same order
+        // he registered the handler with
+        super(a.isType(handler.getA()) ? a : b, b.isType(handler.getB()) ? b : a);
         this.handler = handler;
     }
 

@@ -48,14 +48,10 @@ import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.effect.ParticleManager;
-import com.almasb.fxgl.entity.CollisionHandler;
-import com.almasb.fxgl.entity.CollisionPair;
 import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
-import com.almasb.fxgl.entity.FullCollisionHandler;
-import com.almasb.fxgl.entity.Pair;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
@@ -132,9 +128,6 @@ public abstract class GameApplication extends Application {
      */
     private double currentWidth, currentHeight;
 
-    private List<CollisionPair> collisionHandlers = new ArrayList<>();
-    private List<Pair<Entity> > collisions = new ArrayList<>();
-
     private List<Entity> tmpAddList = new ArrayList<>();
     private List<Entity> tmpRemoveList = new ArrayList<>();
 
@@ -171,6 +164,8 @@ public abstract class GameApplication extends Application {
      * Used for convenience as "now" can't be accessed outside {@link #onUpdate(long)}
      */
     protected long currentTime = 0;
+
+    protected long tick = 0;
 
     private FPSCounter fpsCounter = new FPSCounter();
     private FPSCounter fpsPerformanceCounter = new FPSCounter();
@@ -378,7 +373,7 @@ public abstract class GameApplication extends Application {
 
         currentTime = now;
         processInput();
-        processCollisions();
+
         physicsManager.onUpdate(now);
 
         onUpdate(now);
@@ -398,108 +393,8 @@ public abstract class GameApplication extends Application {
 
         fpsPerformance = Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos)));
         fps = Math.round(fpsCounter.count(SECOND / realFPS));
-    }
 
-    private void processCollisions() {
-        List<Entity> collidables = gameRoot.getChildren().stream()
-                .map(node -> (Entity)node)
-                .filter(entity -> entity.getProperty(Entity.PR_USE_PHYSICS))
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < collidables.size(); i++) {
-            Entity e1 = collidables.get(i);
-
-            for (int j = i + 1; j < collidables.size(); j++) {
-                Entity e2 = collidables.get(j);
-
-                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
-                if (index != -1) {
-                    Entity a, b;
-
-                    CollisionPair collisionPair = collisionHandlers.get(index);
-                    CollisionHandler handler = collisionPair.getHandler();
-                    if (e1.isType(collisionPair.getA())) {
-                        a = e1;
-                        b = e2;
-                    }
-                    else {
-                        a = e2;
-                        b = e1;
-                    }
-
-                    Pair<Entity> pair = new Pair<>(a, b);
-
-                    if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
-                        if (handler instanceof FullCollisionHandler) {
-                            if (!collisions.contains(pair)) {
-                                FullCollisionHandler h = (FullCollisionHandler) handler;
-                                h.onCollisionBegin(a, b);
-
-                                collisions.add(pair);
-                            }
-                        }
-                        handler.onCollision(a, b);
-                    }
-                    else {
-                        if (handler instanceof FullCollisionHandler) {
-                            if (collisions.contains(pair)) {
-                                FullCollisionHandler h = (FullCollisionHandler) handler;
-                                h.onCollisionEnd(a, b);
-
-                                collisions.remove(pair);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Registers a collision handler
-     * The order in which the types are passed to this method
-     * decides the order of objects being passed into the collision handler
-     *
-     * <pre>
-     * Example:
-     *
-     * addCollisionHandler(Type.BULLET, Type.ENEMY, (bullet, enemy) -> {
-     *      // CODE CALLED ON COLLISION
-     * });
-     *
-     * OR
-     *
-     * addCollisionHandler(Type.ENEMY, Type.BULLET, (enemy, bullet) -> {
-     *      // CODE CALLED ON COLLISION
-     * });
-     *
-     * </pre>
-     *
-     * @param typeA
-     * @param typeB
-     * @param handler
-     */
-    public void addCollisionHandler(EntityType typeA, EntityType typeB, CollisionHandler handler) {
-        collisionHandlers.add(new CollisionPair(typeA, typeB, handler));
-    }
-
-    /**
-     * Triggers a single collision event between e1 and e2
-     *
-     * @param e1
-     * @param e2
-     */
-    public void triggerCollision(Entity e1, Entity e2) {
-        int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
-        if (index != -1) {
-            CollisionPair pair = collisionHandlers.get(index);
-            CollisionHandler handler = pair.getHandler();
-
-            if (e1.isType(pair.getA()))
-                handler.onCollision(e1, e2);
-            else
-                handler.onCollision(e2, e1);
-        }
+        tick++;
     }
 
     /**
@@ -813,12 +708,28 @@ public abstract class GameApplication extends Application {
         return false;
     }
 
+    /**
+     *
+     * @return width of the main scene
+     */
     public double getWidth() {
         return currentWidth;
     }
 
+    /**
+     *
+     * @return height of the main scene
+     */
     public double getHeight() {
         return currentHeight;
+    }
+
+    /**
+     *
+     * @return current tick since the start of game
+     */
+    public long getTick() {
+        return tick;
     }
 
     public static class MouseState {
