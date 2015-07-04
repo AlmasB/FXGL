@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -140,13 +141,16 @@ public final class PhysicsManager {
     }
 
     private void processCollisions() {
-        List<Entity> entities = app.getAllEntities();
+        List<Entity> collidables = app.getAllEntities()
+                .stream()
+                .filter(Entity::isCollidable)
+                .collect(Collectors.toList());
 
-        for (int i = 0; i < entities.size(); i++) {
-            Entity e1 = entities.get(i);
+        for (int i = 0; i < collidables.size(); i++) {
+            Entity e1 = collidables.get(i);
 
-            for (int j = i + 1; j < entities.size(); j++) {
-                Entity e2 = entities.get(j);
+            for (int j = i + 1; j < collidables.size(); j++) {
+                Entity e2 = collidables.get(j);
 
                 if (e1 instanceof PhysicsEntity && e2 instanceof PhysicsEntity) {
                     PhysicsEntity p1 = (PhysicsEntity) e1;

@@ -48,11 +48,11 @@ public class Entity extends Parent {
 
     public static final String PR_ENTITY_TYPE = "PR_ENTITY_TYPE";
     public static final String PR_TYPE = "PR_TYPE";
-    public static final String PR_USE_PHYSICS = "PR_USE_PHYSICS";
 
     private List<Control> controls = new ArrayList<>();
 
     private boolean active = true;
+    private boolean collidable = false;
 
     /**
      * Constructs an entity with given type
@@ -63,7 +63,6 @@ public class Entity extends Parent {
         setProperty(PR_ENTITY_TYPE, type);
         setProperty(PR_TYPE, type.getUniqueType());
         setGraphics(new Text("null"));
-        setUsePhysics(false);
     }
 
     /**
@@ -71,8 +70,8 @@ public class Entity extends Parent {
      *
      * @param b
      */
-    public Entity setUsePhysics(boolean b) {
-        setProperty(PR_USE_PHYSICS, b);
+    public Entity setCollidable(boolean b) {
+        collidable = b;
         return this;
     }
 
@@ -270,6 +269,10 @@ public class Entity extends Parent {
 
     public boolean isActive() {
         return active;
+    }
+
+    public boolean isCollidable() {
+        return collidable;
     }
 
     /**
