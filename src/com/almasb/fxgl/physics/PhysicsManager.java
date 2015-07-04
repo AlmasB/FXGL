@@ -81,12 +81,14 @@ public final class PhysicsManager {
                 PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
                 PhysicsEntity e2 = (PhysicsEntity) contact.getFixtureB().getBody().getUserData();
 
+                if (!e1.isCollidable() || !e2.isCollidable())
+                    return;
+
                 int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
                     if (!collisions.containsKey(pair)) {
-                        //pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
                         collisions.put(pair, app.getTick());
                     }
                 }
@@ -97,14 +99,15 @@ public final class PhysicsManager {
                 PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
                 PhysicsEntity e2 = (PhysicsEntity) contact.getFixtureB().getBody().getUserData();
 
+                if (!e1.isCollidable() || !e2.isCollidable())
+                    return;
+
                 int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
                     if (collisions.containsKey(pair)) {
                         collisions.put(pair, -1L);
-                        //pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
-                        //collisions.remove(pair);
                     }
                 }
             }
@@ -170,14 +173,11 @@ public final class PhysicsManager {
 
                     if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
                         if (!collisions.containsKey(pair)) {
-                            //pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
                             collisions.put(pair, app.getTick());
                         }
                     }
                     else {
                         if (collisions.containsKey(pair)) {
-                            //pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
-                            //collisions.remove(pair);
                             collisions.put(pair, -1L);
                         }
                     }
