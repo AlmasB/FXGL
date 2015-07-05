@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,11 +43,11 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.almasb.fxgl.FXGLLogger;
+
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
-
-import com.almasb.fxgl.FXGLLogger;
 
 /**
  * AssetManager handles all resource (asset) loading operations
@@ -61,7 +59,8 @@ import com.almasb.fxgl.FXGLLogger;
  * <li>Texture - /assets/textures/</li>
  * <li>AudioClip - /assets/audio/</li>
  * <li>Music - /assets/music/</li>
- * <li>Text (List<String>) - /assets/text/</li>
+ * <li>Text (List&lt;String&gt;) - /assets/text/</li>
+ * <li>Data - /assets/data/</li>
  * </ul>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -108,34 +107,6 @@ public class AssetManager {
                 result.add(line);
             }
             return result;
-        }
-    }
-
-    /**
-     * Save serializable data onto a disk file system
-     *
-     * @param data
-     * @param fileName
-     * @throws Exception
-     */
-    public void saveData(Serializable data, String fileName) throws Exception {
-        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(fileName)))) {
-            oos.writeObject(data);
-        }
-    }
-
-    /**
-     * Load serializable data from external (NOT jar where the app is running from)
-     * file on disk file system
-     *
-     * @param fileName
-     * @return
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T loadData(String fileName) throws Exception {
-        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            return (T)ois.readObject();
         }
     }
 

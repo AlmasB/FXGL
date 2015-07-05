@@ -143,6 +143,8 @@ public abstract class GameApplication extends Application {
 
     protected QTEManager qteManager = new QTEManager(this);
 
+    protected SaveLoadManager saveLoadManager = new SaveLoadManager();
+
     /**
      * Default random number generator
      */
