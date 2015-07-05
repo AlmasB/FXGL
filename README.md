@@ -1,5 +1,5 @@
 # FXGL
-Simple and easy to use 2D gaming library based on JavaFX 8
+Simple and easy to use Java 2D gaming library based on JavaFX 8
 
 # Usage
 Download the latest .jar file under jar/ and add it to the build path
@@ -9,7 +9,7 @@ in your IDE. That's it, you're all set!
 FXGL is in early stages of development. Hence, the API and functionality are likely to change from version to version. So I wouldn't recommend building a full scale application if you want to be able to use latest versions of FXGL.
 
 # Changelog
-FXGL 0.1.3 supports:
+FXGL 0.1.3 (latest) supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
 * JBox2D Physics Engine Integration (v.2.2.1.1, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
@@ -27,16 +27,9 @@ FXGL 0.1.3 supports:
 * Intro Video / Animation (also supports custom intro)
 * Other minor game dev features
 
-Long-term Features:
-* App Video Output Scalability (Different Resolutions)
-* Dynamic Texture Animation (with Animation Channels)
-* API Refinement (this is a constant on-going goal) 
-* Data Encryption (save data, network communication) any other use cases?
-* Data Compression (save data, network communication) any other use cases?
-
 # Examples
-Link - https://www.youtube.com/AlmasB0/videos
-Videos 18-23 will walk you through the basics of FXGL
+Link - https://www.youtube.com/AlmasB0/videos<br />
+Videos marked "FXGL" will walk you through the basics
 
 # Use Case
 FXGL is perfect for small to medium sized games and for beginner / intermediate programmers in JavaFX.
