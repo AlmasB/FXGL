@@ -31,6 +31,10 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class SaveLoadManager {
 
@@ -40,18 +44,20 @@ public final class SaveLoadManager {
      * Save serializable data onto a disk file system under "saves/"
      * which is created if necessary in the directory where the game is run from
      *
+     * All extra directories will also be created if necessary
+     *
      * @param data
      * @param fileName
      * @throws Exception
      */
     public void save(Serializable data, String fileName) throws Exception {
-        Path saveDir = Paths.get("./" + SAVE_DIR);
+        Path saveFile = Paths.get("./" + SAVE_DIR + fileName);
 
-        if (!Files.exists(saveDir)) {
-            Files.createDirectory(saveDir);
+        if (!Files.exists(saveFile.getParent())) {
+            Files.createDirectories(saveFile.getParent());
         }
 
-        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get("./" + SAVE_DIR + fileName)))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(saveFile))) {
             oos.writeObject(data);
         }
     }
@@ -69,6 +75,31 @@ public final class SaveLoadManager {
     public <T> T load(String fileName) throws Exception {
         try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get("./" + SAVE_DIR + fileName)))) {
             return (T)ois.readObject();
+        }
+    }
+
+    /**
+     * Loads file names of existing saves from "saves/".
+     *
+     * Returns {@link Optional#empty()} if "saves/" directory
+     * doesn't exist or an exception occurred
+     *
+     * @return Optional containing list of file names
+     */
+    public Optional<List<String> > loadFileNames() {
+        Path saveDir = Paths.get("./" + SAVE_DIR);
+
+        if (!Files.exists(saveDir)) {
+            return Optional.empty();
+        }
+
+        try (Stream<Path> files = Files.walk(saveDir)) {
+            return Optional.of(files.filter(Files::isRegularFile)
+                        .map(file -> saveDir.relativize(file).toString().replace("\\", "/"))
+                        .collect(Collectors.toList()));
+        }
+        catch (Exception e) {
+            return Optional.empty();
         }
     }
 }
