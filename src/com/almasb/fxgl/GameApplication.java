@@ -264,9 +264,6 @@ public abstract class GameApplication extends Application {
         currentHeight = settings.getHeight();
 
         mainStage = primaryStage;
-        // 6 and 29 seem to be the frame lengths, at least on W8
-        primaryStage.setWidth(settings.getWidth() + 6);
-        primaryStage.setHeight(settings.getHeight() + 29);
         primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
         primaryStage.setResizable(false);
 
@@ -297,6 +294,10 @@ public abstract class GameApplication extends Application {
         inputManager.init(mainScene);
 
         mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
+
+        // ensure the window frame is just right for the scene size
+        primaryStage.setScene(mainScene);
+        primaryStage.sizeToScene();
 
         boolean menuEnabled = mainMenuRoot.getChildren().size() > 0;
 
