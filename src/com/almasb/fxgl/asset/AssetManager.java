@@ -67,7 +67,8 @@ import javafx.scene.media.Media;
  * @version 1.0
  *
  */
-public class AssetManager {
+public enum AssetManager {
+    INSTANCE;
 
     private static final String ASSETS_DIR = "/assets/";
     private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";

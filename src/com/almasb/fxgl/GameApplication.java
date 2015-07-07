@@ -130,25 +130,25 @@ public abstract class GameApplication extends Application {
     private AnimationTimer timer;
     private ScheduledExecutorService scheduleThread = Executors.newSingleThreadScheduledExecutor();
 
-    protected InputManager inputManager = new InputManager();
+    protected final InputManager inputManager = new InputManager();
 
     /**
      * Used for loading various assets
      */
-    protected AssetManager assetManager = new AssetManager();
+    protected final AssetManager assetManager = AssetManager.INSTANCE;
 
-    protected PhysicsManager physicsManager = new PhysicsManager(this);
+    protected final PhysicsManager physicsManager = new PhysicsManager(this);
 
-    protected ParticleManager particleManager = new ParticleManager(this);
+    protected final ParticleManager particleManager = new ParticleManager(this);
 
-    protected QTEManager qteManager = new QTEManager(this);
+    protected final QTEManager qteManager = new QTEManager(this);
 
-    protected SaveLoadManager saveLoadManager = new SaveLoadManager();
+    protected final SaveLoadManager saveLoadManager = new SaveLoadManager();
 
     /**
      * Default random number generator
      */
-    protected Random random = new Random();
+    protected final Random random = new Random();
 
     /**
      * Current time for this tick in nanoseconds

@@ -27,7 +27,7 @@ package com.almasb.fxgl;
 
 import java.util.Arrays;
 
-/*package-private*/ class FPSCounter {
+/*package-private*/ final class FPSCounter {
 
     private static final int MAX_SAMPLES = 100;
 
