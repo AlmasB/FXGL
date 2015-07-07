@@ -35,7 +35,7 @@ package com.almasb.fxgl.entity;
  * @version 1.0
  *
  */
-public class FXGLEvent {
+public final class FXGLEvent {
 
     private FXGLEventType type;
     private Entity source, target;

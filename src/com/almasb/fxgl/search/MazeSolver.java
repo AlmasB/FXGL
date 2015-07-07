@@ -30,7 +30,7 @@ import java.util.List;
 
 import com.almasb.fxgl.search.MazeGenerator.MazeCell;
 
-public class MazeSolver {
+public final class MazeSolver {
 
     public List<MazeCell> getPath(MazeCell[][] grid, MazeCell start, MazeCell target) {
         if (target.getNodeValue() == 1) // the target is an unwalkable node

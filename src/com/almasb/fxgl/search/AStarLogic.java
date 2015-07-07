@@ -34,7 +34,7 @@ import java.util.List;
  * @author AlmasB (almaslvl@gmail.com)
  * @version 1.0
  */
-public class AStarLogic {
+public final class AStarLogic {
 
     /**
      * Since the equality check is based on references

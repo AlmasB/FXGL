@@ -52,7 +52,7 @@ import com.almasb.fxgl.FXGLLogger;
  * @version 1.0
  *
  */
-public class MultiServer extends NetworkConnection {
+public final class MultiServer extends NetworkConnection {
     private static final Logger log = FXGLLogger.getLogger("FXGL.MultiServer");
 
     private TCPConnectionThread tcpThread = new TCPConnectionThread();

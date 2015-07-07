@@ -43,7 +43,7 @@ import javafx.util.Duration;
  * @version 1.0
  *
  */
-public class StaticAnimatedTexture extends Texture {
+public final class StaticAnimatedTexture extends Texture {
 
     private Timeline timeline;
 

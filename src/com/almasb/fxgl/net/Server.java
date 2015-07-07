@@ -59,7 +59,7 @@ import com.almasb.fxgl.FXGLLogger;
  * @version 1.0
  *
  */
-public class Server extends NetworkConnection {
+public final class Server extends NetworkConnection {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.Server");
 

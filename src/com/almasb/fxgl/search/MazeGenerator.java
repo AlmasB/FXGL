@@ -38,7 +38,7 @@ import java.util.List;
  * @author Almas Baimagambetov (ab607@uni.brighton.ac.uk)
  * @version 1.0
  */
-public class MazeGenerator {
+public final class MazeGenerator {
     private final int x;
     private final int y;
     private final int[][] maze;

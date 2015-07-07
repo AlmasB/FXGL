@@ -50,7 +50,7 @@ import com.almasb.fxgl.entity.Entity;
  * @version 1.0
  *
  */
-public class ParticleManager {
+public final class ParticleManager {
 
     private GameApplication app;
 

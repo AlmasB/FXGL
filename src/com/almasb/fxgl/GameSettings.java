@@ -33,7 +33,7 @@ package com.almasb.fxgl;
  * @version 1.0
  *
  */
-public class GameSettings {
+public final class GameSettings {
 
     private String title = "Untitled FXGL Game Application";
     private String version = "0.0";

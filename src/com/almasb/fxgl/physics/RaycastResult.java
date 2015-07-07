@@ -38,7 +38,7 @@ import javafx.geometry.Point2D;
  * @version 1.0
  *
  */
-public class RaycastResult {
+public final class RaycastResult {
 
     private Optional<PhysicsEntity> entity;
     private Optional<Point2D> point;
