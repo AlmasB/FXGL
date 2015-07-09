@@ -36,6 +36,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Provides access to mouse state and allows binding of actions
+ * to key and mouse events
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 public final class InputManager {
 
     private GameApplication app;
@@ -115,6 +123,13 @@ public final class InputManager {
         keyTypedActions.put(key, action);
     }
 
+    /**
+     * Add an action that is executed ONCE per single click of
+     * given mouse button
+     *
+     * @param btn
+     * @param action
+     */
     public void addMouseClickedBinding(MouseButton btn, Runnable action) {
         mainScene.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == btn) {
@@ -123,23 +138,44 @@ public final class InputManager {
         });
     }
 
+    /**
+     * Clears all input, that is releases all key presses and mouse clicks
+     * for a single frame
+     */
     public void clearAllInput() {
         keys.keySet().forEach(key -> keys.put(key, false));
         mouse.leftPressed = false;
         mouse.rightPressed = false;
     }
 
+    /**
+     * Returns mouse object that contains constantly updated
+     * data about mouse state
+     *
+     * @return
+     */
     public Mouse getMouse() {
         return mouse;
     }
 
+    /**
+     * Holds mouse state information
+     *
+     * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+     * @version 1.0
+     *
+     */
     public class Mouse {
         /**
          * Hold the value of x and y coordinate of the mouse cursor
-         * in the current frame (tick)
+         * in the current frame (tick) within the game with applied translations
          */
         public double x, y;
 
+        /**
+         * Hold the value of x and y coordinate of the mouse cursor
+         * in the current frame (tick) within the screen coordinate system
+         */
         public double screenX, screenY;
 
         /**
@@ -147,6 +183,10 @@ public final class InputManager {
          * mouse buttons in the current frame (tick)
          */
         public boolean leftPressed, rightPressed;
+
+        /**
+         * The last internal event
+         */
         private MouseEvent event;
 
         private void update(MouseEvent event) {

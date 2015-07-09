@@ -91,6 +91,9 @@ public abstract class GameApplication extends Application {
         Version.print();
     }
 
+    /**
+     * The logger
+     */
     protected static final Logger log = FXGLLogger.getLogger("FXGL.GameApplication");
 
     /**
@@ -115,8 +118,21 @@ public abstract class GameApplication extends Application {
      */
     protected Stage mainStage;
 
+    /**
+     * Scene for main menu
+     */
     private Scene mainMenuScene;
 
+    /**
+     * root - THE root of the {@link #mainScene}
+     * gameRoot - the root for entities (game objects)
+     * uiRoot - the overlay root above {@link #gameRoot}.
+     * uiRoot contains UI elements, native JavaFX nodes.
+     * May also contain entities as Entity is a subclass of Parent.
+     * uiRoot isn't affected by viewport movement
+     *
+     * mainMenuRoot - root of the {@link #mainMenuScene}
+     */
     private Pane root, gameRoot, uiRoot, mainMenuRoot;
 
     /**
@@ -128,9 +144,19 @@ public abstract class GameApplication extends Application {
     private List<Entity> tmpAddList = new ArrayList<>();
     private List<Entity> tmpRemoveList = new ArrayList<>();
 
+    /**
+     * The main loop timer
+     */
     private AnimationTimer timer;
+
+    /**
+     * The background thread for queueing up various tasks
+     */
     private ScheduledExecutorService scheduleThread = Executors.newSingleThreadScheduledExecutor();
 
+    /**
+     * Various managers that handle different aspects of the application
+     */
     protected final InputManager inputManager = new InputManager(this);
 
     /**
@@ -161,6 +187,9 @@ public abstract class GameApplication extends Application {
      */
     protected long tick = 0;
 
+    /**
+     * These are used to approximate FPS value
+     */
     private FPSCounter fpsCounter = new FPSCounter();
     private FPSCounter fpsPerformanceCounter = new FPSCounter();
 
@@ -408,12 +437,12 @@ public abstract class GameApplication extends Application {
      * <pre>
      * Example:
      *
-     * bindViewportOrigin(player, 640, 360);
+     * bindViewportOrigin(player, (int) (getWidth() / 2), (int) (getHeight() / 2));
      *
-     * if the game is 1280x720, the code above centers the camera on player
+     * the code above centers the camera on player
      * For most platformers / side scrollers use:
      *
-     * bindViewportOriginX(player, 640);
+     * bindViewportOriginX(player, (int) (getWidth() / 2));
      *
      * </pre>
      *
@@ -426,19 +455,31 @@ public abstract class GameApplication extends Application {
         gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
     }
 
+    /**
+     * Binds the viewport origin so that it follows the given entity
+     * distX represent bound distance in X axis between entity and viewport origin
+     *
+     * @param entity
+     * @param distX
+     */
     protected void bindViewportOriginX(Entity entity, int distX) {
         gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
     }
 
+    /**
+     * Binds the viewport origin so that it follows the given entity
+     * distY represent bound distance in Y axis between entity and viewport origin
+     *
+     * @param entity
+     * @param distY
+     */
     protected void bindViewportOriginY(Entity entity, int distY) {
         gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
     }
 
-    //protected Point2D getScreenPosition
-
     /**
      *
-     * @return  a list of ALL entities currently registered in {@link #gameRoot}
+     * @return  a list of ALL entities currently registered in the application
      */
     public List<Entity> getAllEntities() {
         return gameRoot.getChildren().stream()
@@ -450,13 +491,15 @@ public abstract class GameApplication extends Application {
      * Returns a list of entities whose type matches given
      * arguments
      *
+     * @param type
      * @param types
      * @return
      */
-    public List<Entity> getEntities(EntityType... types) {
+    public List<Entity> getEntities(EntityType type, EntityType... types) {
         List<String> list = Arrays.asList(types).stream()
                 .map(EntityType::getUniqueType)
                 .collect(Collectors.toList());
+        list.add(type.getUniqueType());
 
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
@@ -464,12 +507,22 @@ public abstract class GameApplication extends Application {
                 .collect(Collectors.toList());
     }
 
-    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
+    /**
+     * Returns a list of entities whose type matches given arguments and
+     * which are partially or entirely
+     * in the specified rectangular selection
+     *
+     * @param selection Rectangle2D that describes the selection box
+     * @param type
+     * @param types
+     * @return
+     */
+    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType type, EntityType... types) {
         Entity boundsEntity = Entity.noType();
         boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
         boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
 
-        return getEntities(types).stream()
+        return getEntities(type, types).stream()
                 .filter(entity -> entity.getBoundsInParent().intersects(boundsEntity.getBoundsInParent()))
                 .collect(Collectors.toList());
     }
@@ -509,12 +562,14 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Equivalent to uiRoot.getChildren().add()
+     * Equivalent to uiRoot.getChildren().addAll()
      *
      * @param n
+     * @param nodes
      */
-    public void addUINode(Node n) {
+    public void addUINodes(Node n, Node... nodes) {
         uiRoot.getChildren().add(n);
+        uiRoot.getChildren().addAll(nodes);
     }
 
     /**
@@ -525,8 +580,6 @@ public abstract class GameApplication extends Application {
     public void removeUINode(Node n) {
         uiRoot.getChildren().remove(n);
     }
-
-
 
     /**
      * Call this to manually start the game when you
@@ -623,23 +676,24 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Register an FXGL event
-     *
-     * Add specific entity types if the event should be targeting
-     * a group. Otherwise all entities will be notified of the event
+     * Fires an FXGL event on all entities whose type
+     * matches given arguments
      *
      * @param event
+     * @param type
      * @param types
      */
-    public void postFXGLEvent(FXGLEvent event, EntityType... types) {
-        if (types.length == 0) {
-            gameRoot.getChildren().stream()
-                .map(node -> (Entity) node)
-                .forEach(e -> e.fireFXGLEvent(event));
-        }
-        else {
-            getEntities(types).forEach(e -> e.fireFXGLEvent(event));
-        }
+    public void fireFXGLEvent(FXGLEvent event, EntityType type, EntityType... types) {
+        getEntities(type, types).forEach(e -> e.fireFXGLEvent(event));
+    }
+
+    /**
+     * Fires an FXGL event on all entities registered in the application
+     *
+     * @param event
+     */
+    public void fireFXGLEvent(FXGLEvent event) {
+        getAllEntities().forEach(e -> e.fireFXGLEvent(event));
     }
 
     /**
