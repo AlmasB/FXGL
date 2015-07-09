@@ -60,6 +60,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -130,7 +131,7 @@ public abstract class GameApplication extends Application {
     private AnimationTimer timer;
     private ScheduledExecutorService scheduleThread = Executors.newSingleThreadScheduledExecutor();
 
-    protected final InputManager inputManager = new InputManager();
+    protected final InputManager inputManager = new InputManager(this);
 
     /**
      * Used for loading various assets
@@ -255,6 +256,7 @@ public abstract class GameApplication extends Application {
 
     }
 
+    // TODO: modularize
     @Override
     public void start(Stage primaryStage) throws Exception {
         log.finer("start()");
@@ -268,13 +270,20 @@ public abstract class GameApplication extends Application {
         primaryStage.setResizable(false);
 
         mainMenuRoot = new Pane();
+        mainMenuRoot.setPrefSize(settings.getWidth(), settings.getHeight());
         gameRoot = new Pane();
         uiRoot = new Pane();
         root = new Pane(gameRoot, uiRoot);
         root.setPrefSize(settings.getWidth(), settings.getHeight());
 
+        // init scenes
+        mainMenuScene = new Scene(mainMenuRoot);
+        mainScene = new Scene(root);
+
         // init all managers here before anything else
+        inputManager.init(mainScene);
         qteManager.init();
+        mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
 
         try {
             initAssets();
@@ -288,12 +297,6 @@ public abstract class GameApplication extends Application {
         initGame();
         initUI(uiRoot);
         initInput();
-
-        mainMenuScene = new Scene(mainMenuRoot);
-        mainScene = new Scene(root);
-        inputManager.init(mainScene);
-
-        mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
 
         // ensure the window frame is just right for the scene size
         primaryStage.setScene(mainScene);
@@ -384,9 +387,18 @@ public abstract class GameApplication extends Application {
      * @param x
      * @param y
      */
-    protected void setViewportOrigin(int x, int y) {
+    public void setViewportOrigin(int x, int y) {
         gameRoot.setLayoutX(-x);
         gameRoot.setLayoutY(-y);
+    }
+
+    /**
+     * Note: viewport origin, like anything in a scene, has top-left origin point
+     *
+     * @return viewport origin
+     */
+    public Point2D getViewportOrigin() {
+        return new Point2D(-gameRoot.getLayoutX(), -gameRoot.getLayoutY());
     }
 
     /**
@@ -421,6 +433,8 @@ public abstract class GameApplication extends Application {
     protected void bindViewportOriginY(Entity entity, int distY) {
         gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
     }
+
+    //protected Point2D getScreenPosition
 
     /**
      *

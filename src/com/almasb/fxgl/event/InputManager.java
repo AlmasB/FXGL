@@ -28,12 +28,19 @@ package com.almasb.fxgl.event;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.almasb.fxgl.GameApplication;
+
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public final class InputManager {
+
+    private GameApplication app;
+
+    private Scene mainScene;
 
     /**
      * Holds mouse state information
@@ -44,7 +51,12 @@ public final class InputManager {
     private Map<KeyCode, Runnable> keyPressActions = new HashMap<>();
     private Map<KeyCode, Runnable> keyTypedActions = new HashMap<>();
 
+    public InputManager(GameApplication app) {
+        this.app = app;
+    }
+
     public void init(Scene mainScene) {
+        this.mainScene = mainScene;
         mainScene.setOnKeyPressed(event -> {
             if (!isPressed(event.getCode()) && keyTypedActions.containsKey(event.getCode())) {
                 keys.put(event.getCode(), true);
@@ -103,6 +115,14 @@ public final class InputManager {
         keyTypedActions.put(key, action);
     }
 
+    public void addMouseClickedBinding(MouseButton btn, Runnable action) {
+        mainScene.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton() == btn) {
+                action.run();
+            }
+        });
+    }
+
     public void clearAllInput() {
         keys.keySet().forEach(key -> keys.put(key, false));
         mouse.leftPressed = false;
@@ -113,12 +133,14 @@ public final class InputManager {
         return mouse;
     }
 
-    public static class Mouse {
+    public class Mouse {
         /**
          * Hold the value of x and y coordinate of the mouse cursor
          * in the current frame (tick)
          */
         public double x, y;
+
+        public double screenX, screenY;
 
         /**
          * Hold the state of left and right
@@ -129,8 +151,13 @@ public final class InputManager {
 
         private void update(MouseEvent event) {
             this.event = event;
-            this.x = event.getSceneX();
-            this.y = event.getSceneY();
+            this.screenX = event.getSceneX();
+            this.screenY = event.getSceneY();
+
+            Point2D origin = app.getViewportOrigin();
+            this.x = screenX + origin.getX();
+            this.y = screenY + origin.getY();
+
             if (leftPressed) {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {
                     leftPressed = false;
