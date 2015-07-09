@@ -79,6 +79,20 @@ public final class SaveLoadManager {
     }
 
     /**
+     *
+     * @param fileName
+     * @return true if file was deleted, false if file wasn't deleted for any reason
+     */
+    public boolean delete(String fileName) {
+        try {
+            return Files.deleteIfExists(Paths.get("./" + SAVE_DIR + fileName));
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Loads file names of existing saves from "saves/".
      *
      * Returns {@link Optional#empty()} if "saves/" directory
