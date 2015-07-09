@@ -34,16 +34,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import com.almasb.fxgl.TimerAction.TimerType;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.effect.ParticleManager;
 import com.almasb.fxgl.entity.CombinedEntity;
@@ -150,9 +147,9 @@ public abstract class GameApplication extends Application {
     private AnimationTimer timer;
 
     /**
-     * The background thread for queueing up various tasks
+     * List for all timer based actions
      */
-    private ScheduledExecutorService scheduleThread = Executors.newSingleThreadScheduledExecutor();
+    private List<TimerAction> timerActions = new ArrayList<>();
 
     /**
      * Various managers that handle different aspects of the application
@@ -383,6 +380,9 @@ public abstract class GameApplication extends Application {
         long realFPS = now_ - now;
 
         now = now_;
+
+        timerActions.forEach(action -> action.update(now));
+        timerActions.removeIf(TimerAction::isExpired);
 
         inputManager.onUpdate(now);
         physicsManager.onUpdate(now);
@@ -630,9 +630,18 @@ public abstract class GameApplication extends Application {
     protected final void exit() {
         log.finer("Closing Normally");
         onExit();
-        scheduleThread.shutdown();
         FXGLLogger.close();
         Platform.exit();
+    }
+
+    /**
+     * The Runnable action will be scheduled to run at given interval
+     *
+     * @param action the action
+     * @param interval time in nanoseconds
+     */
+    public void runAtInterval(Runnable action, double interval) {
+        timerActions.add(new TimerAction(now, interval, action, TimerType.INDEFINITE));
     }
 
     /**
@@ -640,8 +649,6 @@ public abstract class GameApplication extends Application {
      * whileCondition is initially true. If that's the case
      * then the action will be run instantly and then after given interval
      * until whileCondition becomes false
-     *
-     * The action will be executed on JavaFX Application Thread
      *
      * @param action
      * @param interval
@@ -651,28 +658,23 @@ public abstract class GameApplication extends Application {
         if (!whileCondition.get()) {
             return;
         }
-
-        ScheduledFuture<?> task = scheduleThread.scheduleAtFixedRate(
-                () -> Platform.runLater(action), 0, (long)interval, TimeUnit.NANOSECONDS);
+        TimerAction act = new TimerAction(now, interval, action, TimerType.INDEFINITE);
+        timerActions.add(act);
 
         whileCondition.addListener((obs, old, newValue) -> {
             if (!newValue.booleanValue())
-                task.cancel(false);
+                act.expire();
         });
     }
 
     /**
      * The Runnable action will be executed once after given delay
      *
-     * The action will be executed on JavaFX Application Thread
-     *
-     * Do NOT queue frequent tasks
-     *
      * @param action
      * @param delay
      */
     public void runOnceAfter(Runnable action, double delay) {
-        scheduleThread.schedule(() -> Platform.runLater(action), (long)delay, TimeUnit.NANOSECONDS);
+        timerActions.add(new TimerAction(now, delay, action, TimerType.ONCE));
     }
 
     /**

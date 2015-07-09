@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -51,7 +53,8 @@ public class Entity extends Parent {
 
     private List<Control> controls = new ArrayList<>();
 
-    private boolean active = true;
+    private BooleanProperty active = new SimpleBooleanProperty(true);
+    //private boolean active = true;
     private boolean collidable = false;
 
     /**
@@ -260,17 +263,32 @@ public class Entity extends Parent {
      *
      */
     public final void onClean() {
-        active = false;
+        active.set(false);
         getProperties().clear();
         eventHandlers.clear();
         controls.clear();
         getChildren().clear();
     }
 
-    public boolean isActive() {
+    public final BooleanProperty activeProperty() {
         return active;
     }
 
+    /**
+     * Entity is considered active from moment the object itself
+     * is created and until removeEntity() is called
+     *
+     * @return
+     */
+    public boolean isActive() {
+        return active.get();
+    }
+
+    /**
+     *
+     * @return true if the object participates in collision detection,
+     *      false otherwise
+     */
     public boolean isCollidable() {
         return collidable;
     }
