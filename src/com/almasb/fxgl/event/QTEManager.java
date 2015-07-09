@@ -79,7 +79,7 @@ public class QTEManager {
      * @param keyCodes keys that need to pressed during QTE, order determines how
      *          they appear on the screen
      */
-    public void startQTE(double overallDuration, QTEHandler handler, KeyCode... keyCodes) {
+    public void startQTE(double overallDuration, QTEHandler handler, KeyCode key, KeyCode... keyCodes) {
         app.pause();
         app.addUINodes(qteText);
 
@@ -93,7 +93,7 @@ public class QTEManager {
                 currentQTE = null;
 
                 app.resume();
-            }, app.getWidth(), app.getHeight(), color, keyCodes);
+            }, app.getWidth(), app.getHeight(), color, key, keyCodes);
 
             app.removeUINode(qteText);
             app.addUINodes(currentQTE);

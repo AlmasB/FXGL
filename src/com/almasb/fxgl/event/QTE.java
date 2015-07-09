@@ -51,16 +51,15 @@ import javafx.scene.text.Text;
 
     private Text text = new Text();
 
-    /*package-private*/ QTE(QTEHandler handler, Runnable onFinishedScript, double appW, double appH, Color color, KeyCode... keys) {
+    /*package-private*/ QTE(QTEHandler handler, Runnable onFinishedScript, double appW, double appH, Color color, KeyCode key, KeyCode... keys) {
         super(15);
-
-        if (keys == null || keys.length == 0)
-            throw new IllegalArgumentException("QTE keys must not be null or empty");
 
         this.handler = handler;
         this.onFinished = onFinishedScript;
-        for (KeyCode key : keys)
-            queue.offer(key);
+
+        queue.offer(key);
+        for (KeyCode k : keys)
+            queue.offer(k);
 
         Line left = new Line(0, 0, appW / 2 - 20, 0);
         Line right = new Line(0, 0, appW / 2 - 20, 0);
