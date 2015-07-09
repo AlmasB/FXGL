@@ -81,7 +81,7 @@ public class QTEManager {
      */
     public void startQTE(double overallDuration, QTEHandler handler, KeyCode... keyCodes) {
         app.pause();
-        app.addUINode(qteText);
+        app.addUINodes(qteText);
 
         qteText.setTranslateY(app.getHeight() / 2);
 
@@ -96,7 +96,7 @@ public class QTEManager {
             }, app.getWidth(), app.getHeight(), color, keyCodes);
 
             app.removeUINode(qteText);
-            app.addUINode(currentQTE);
+            app.addUINodes(currentQTE);
 
             app.runOnceAfter(() -> {
                 if (currentQTE != null) {
