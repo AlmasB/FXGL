@@ -86,17 +86,29 @@ public enum AssetManager {
             }
             else {
                 log.warning("Failed to load texture: " + name + " Check it exists in assets/textures/");
-                throw new IOException("Failed to load texture");
+                throw new IOException("Failed to load texture: " + name);
             }
         }
     }
 
     public AudioClip loadAudio(String name) throws Exception {
-        return new AudioClip(getClass().getResource(AUDIO_DIR + name).toExternalForm());
+        try {
+            return new AudioClip(getClass().getResource(AUDIO_DIR + name).toExternalForm());
+        }
+        catch (Exception e) {
+            log.warning("Failed to load audio: " + name + " Check it exists in assets/audio/");
+            throw new IOException("Failed to load audio: " + name);
+        }
     }
 
     public Music loadMusic(String name) throws Exception {
-        return new Music(new Media(getClass().getResource(MUSIC_DIR + name).toExternalForm()));
+        try {
+            return new Music(new Media(getClass().getResource(MUSIC_DIR + name).toExternalForm()));
+        }
+        catch (Exception e) {
+            log.warning("Failed to load music: " + name + " Check it exists in assets/music/");
+            throw new IOException("Failed to load music: " + name);
+        }
     }
 
     public List<String> loadText(String name) throws Exception {
