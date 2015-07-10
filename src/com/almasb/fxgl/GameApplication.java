@@ -99,10 +99,18 @@ public abstract class GameApplication extends Application {
     public static final long SECOND = 1000000000;
 
     /**
+     * Time per single frame in nanoseconds
+     */
+    public static final long TIME_PER_FRAME = SECOND / 60;
+
+    /**
      * A minute in nanoseconds
      */
     public static final long MINUTE = 60 * SECOND;
 
+    /**
+     * Settings for this game instance
+     */
     private GameSettings settings = new GameSettings();
 
     /**
@@ -151,7 +159,7 @@ public abstract class GameApplication extends Application {
      */
     private List<TimerAction> timerActions = new ArrayList<>();
 
-    /**
+    /*
      * Various managers that handle different aspects of the application
      */
     protected final InputManager inputManager = new InputManager(this);
@@ -175,12 +183,13 @@ public abstract class GameApplication extends Application {
     protected final Random random = new Random();
 
     /**
-     * Current time for this tick in nanoseconds
+     * Current time for this tick in nanoseconds. Also time elapsed
+     * from the start of game. This time does not change while the game is paused
      */
     protected long now = 0;
 
     /**
-     * Current tick
+     * Current tick. It is also number of ticks since start of game
      */
     protected long tick = 0;
 
@@ -189,6 +198,11 @@ public abstract class GameApplication extends Application {
      */
     private FPSCounter fpsCounter = new FPSCounter();
     private FPSCounter fpsPerformanceCounter = new FPSCounter();
+
+    /**
+     * Used as delta from internal JavaFX timestamp to calculate render FPS
+     */
+    private long fpsTime = 0;
 
     /**
      * Average render FPS
@@ -336,8 +350,8 @@ public abstract class GameApplication extends Application {
 
         timer = new AnimationTimer() {
             @Override
-            public void handle(long now_) {
-                processUpdate(now_);
+            public void handle(long internalTime) {
+                processUpdate(internalTime);
             }
         };
 
@@ -373,13 +387,12 @@ public abstract class GameApplication extends Application {
      * This is the internal FXGL update tick,
      * executed 60 times a second ~ every 0.166 (6) seconds
      *
-     * @param now_ - The timestamp of the current frame given in nanoseconds
+     * @param internalTime - The timestamp of the current frame given in nanoseconds
      */
-    private void processUpdate(long now_) {
+    private void processUpdate(long internalTime) {
         long startNanos = System.nanoTime();
-        long realFPS = now_ - now;
-
-        now = now_;
+        long realFPS = internalTime - fpsTime;
+        fpsTime = internalTime;
 
         timerActions.forEach(action -> action.update(now));
         timerActions.removeIf(TimerAction::isExpired);
@@ -406,6 +419,7 @@ public abstract class GameApplication extends Application {
         fps = Math.round(fpsCounter.count(SECOND / realFPS));
 
         tick++;
+        now += TIME_PER_FRAME;
     }
 
     /**
@@ -635,7 +649,10 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * The Runnable action will be scheduled to run at given interval
+     * The Runnable action will be scheduled to run at given interval.
+     * The action will run for the first time after given interval.
+     *
+     * Note: the scheduled action will not run while the game is paused
      *
      * @param action the action
      * @param interval time in nanoseconds
@@ -647,8 +664,12 @@ public abstract class GameApplication extends Application {
     /**
      * The Runnable action will be scheduled for execution iff
      * whileCondition is initially true. If that's the case
-     * then the action will be run instantly and then after given interval
-     * until whileCondition becomes false
+     * then the Runnable action will be scheduled to run at given interval.
+     * The action will run for the first time after given interval
+     *
+     * The action will be removed from schedule when whileCondition becomes {@code false}.
+     *
+     * Note: the scheduled action will not run while the game is paused
      *
      * @param action
      * @param interval
@@ -669,6 +690,8 @@ public abstract class GameApplication extends Application {
 
     /**
      * The Runnable action will be executed once after given delay
+     *
+     * Note: the scheduled action will not run while the game is paused
      *
      * @param action
      * @param delay
@@ -699,7 +722,7 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Saves a screenshot of the current main scene into a .png file
+     * Saves a screenshot of the current main scene into a ".png" file
      *
      * @return  true if the screenshot was saved successfully, false otherwise
      */
@@ -744,5 +767,13 @@ public abstract class GameApplication extends Application {
      */
     public long getTick() {
         return tick;
+    }
+
+    /**
+     *
+     * @return current time since start of game in nanoseconds
+     */
+    public long getNow() {
+        return now;
     }
 }

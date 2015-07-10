@@ -25,9 +25,14 @@
  */
 package com.almasb.fxgl.event;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import com.almasb.fxgl.GameApplication;
 
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -98,19 +103,24 @@ public class QTEManager {
             app.removeUINode(qteText);
             app.addUINodes(currentQTE);
 
-            app.runOnceAfter(() -> {
-                if (currentQTE != null) {
-                    app.removeUINode(currentQTE);
+            ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();
+            thread.schedule(() -> {
+                Platform.runLater(() -> {
+                    if (currentQTE != null) {
+                        app.removeUINode(currentQTE);
 
-                    if (currentQTE.isActive()) {
-                        handler.onFailure();
+                        if (currentQTE.isActive()) {
+                            handler.onFailure();
+                        }
+
+                        currentQTE = null;
+
+                        app.resume();
                     }
+                });
 
-                    currentQTE = null;
-
-                    app.resume();
-                }
-            }, overallDuration);
+                thread.shutdown();
+            }, (long)overallDuration, TimeUnit.NANOSECONDS);
         });
         tt.play();
     }
