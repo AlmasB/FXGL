@@ -40,7 +40,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class QTEManager {
+/**
+ * Allows user to create and configure QTE events.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
+public final class QTEManager {
 
     private GameApplication app;
 
@@ -53,12 +60,20 @@ public class QTEManager {
         this.app = app;
     }
 
+    /**
+     * Initialize the manager with application width and height
+     */
     public void init() {
         qteText.setFont(Font.font(24));
         qteText.setTranslateX(app.getWidth() / 2 - qteText.getLayoutBounds().getWidth() / 2);
         qteText.setTranslateY(app.getHeight() / 2);
     }
 
+    /**
+     * Set color for QTE text
+     *
+     * @param color
+     */
     public void setColor(Color color) {
         this.color = color;
         qteText.setFill(color);

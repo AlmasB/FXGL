@@ -143,6 +143,12 @@ public final class PhysicsManager {
         }
     }
 
+    /**
+     * Perform collision detection for all entities that have
+     * setCollidable(true) and if at least one entity is not PhysicsEntity.
+     * Subsequently fire collision handlers for all entities that have
+     * setCollidable(true).
+     */
     private void processCollisions() {
         List<Entity> collidables = app.getAllEntities()
                 .stream()
@@ -306,26 +312,62 @@ public final class PhysicsManager {
         return new RaycastResult(Optional.ofNullable(entity), Optional.ofNullable(point));
     }
 
+    /**
+     * Converts pixels to meters
+     *
+     * @param pixels
+     * @return
+     */
     public static float toMeters(double pixels) {
         return (float)pixels * 0.05f;
     }
 
+    /**
+     * Converts meters to pixels
+     *
+     * @param meters
+     * @return
+     */
     public static float toPixels(double meters) {
         return (float)meters * 20f;
     }
 
+    /**
+     * Converts a vector of type Point2D to vector of type Vec2
+     *
+     * @param v
+     * @return
+     */
     public static Vec2 toVector(Point2D v) {
         return new Vec2(toMeters(v.getX()), toMeters(-v.getY()));
     }
 
+    /**
+     * Converts a vector of type Vec2 to vector of type Point2D
+     *
+     * @param v
+     * @return
+     */
     public static Point2D toVector(Vec2 v) {
         return new Point2D(toPixels(v.x), toPixels(-v.y));
     }
 
+    /**
+     * Converts a point of type Point2D to point of type Vec2
+     *
+     * @param p
+     * @return
+     */
     public Vec2 toPoint(Point2D p) {
         return new Vec2(toMeters(p.getX()), toMeters(app.getHeight() - p.getY()));
     }
 
+    /**
+     * Converts a point of type Vec2 to point of type Point2D
+     *
+     * @param p
+     * @return
+     */
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(app.getHeight()) - p.y));
     }

@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Note: this class is yet not fully implemented
+ *
  * Modified and adapted for general use version of
  * recursive backtracking algorithm
  * shamelessly borrowed from the ruby at

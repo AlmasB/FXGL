@@ -63,10 +63,21 @@ public final class MultiServer extends NetworkConnection {
     private List<FullInetAddress> addresses = Collections.synchronizedList(new ArrayList<>());
     private int tcpPort, udpPort;
 
+    /**
+     * Constructs and configures a multi server with default ports
+     * No network operation is done at this point.
+     */
     public MultiServer() {
         this(NetworkConfig.DEFAULT_TCP_PORT, NetworkConfig.DEFAULT_UDP_PORT);
     }
 
+    /**
+     * Constructs and configures a multi server with specified ports
+     * No network operation is done at this point.
+     *
+     * @param tcpPort
+     * @param udpPort
+     */
     public MultiServer(int tcpPort, int udpPort) {
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
@@ -75,11 +86,23 @@ public final class MultiServer extends NetworkConnection {
         udpThread.setDaemon(true);
     }
 
+    /**
+     * Starts the server. This performs an actual network operation
+     * of binding to ports and listening for incoming connections.
+     */
     public void start() {
         tcpThread.start();
         udpThread.start();
     }
 
+    /**
+     * Sends a message to all connected clients that
+     * the server is about to shut down. Then stops the server
+     * and the connection threads.
+     *
+     * Further calls to {@link #send(Serializable)} will
+     * throw IllegalStateException
+     */
     public void stop() {
         sendClosingMessage();
 

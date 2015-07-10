@@ -35,6 +35,13 @@ import com.almasb.fxgl.FXGLLogger;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.Entity;
 
+/**
+ * Parser for levels represented by plain text
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 public final class TextLevelParser {
 
     private static final Logger log = FXGLLogger.getLogger("TextLevelParser");
@@ -43,14 +50,39 @@ public final class TextLevelParser {
 
     private char emptyChar = ' ';
 
+    /**
+     * Set the empty (ignored) character. If you don't
+     * set this, there will a warning generated for
+     * each such character.
+     *
+     * @param c
+     * @defaultValue ' '
+     */
     public void setEmptyChar(char c) {
         emptyChar = c;
     }
 
+    /**
+     * Register a callback that generates an entity when
+     * given character was found during parsing
+     *
+     * @param c
+     * @param producer
+     */
     public void addEntityProducer(char c, EntityProducer producer) {
         producers.put(c, producer);
     }
 
+    /**
+     * Parses a file with given filename into a Level object.
+     * The file must be located under "assets/text/". Only
+     * the name of the file without the "assets/text/" is required.
+     * It will be loaded by assetManager.loadText() method.
+     *
+     * @param levelFileName
+     * @return
+     * @throws Exception
+     */
     public Level parse(String levelFileName) throws Exception {
         AssetManager assetManager = AssetManager.INSTANCE;
         List<String> lines = assetManager.loadText(levelFileName);
@@ -85,8 +117,22 @@ public final class TextLevelParser {
         return level;
     }
 
+    /**
+     * A callback which is used as part of TextLevelParser.addEntityProducer()
+     * to convert text characters into entities.
+     *
+     */
     @FunctionalInterface
     public static interface EntityProducer {
+
+        /**
+         * Called when registered character was found during parsing.
+         * If your block is 40 units, then entity.setPosition(x*40, y*40);
+         *
+         * @param x column position of character
+         * @param y row position of character
+         * @return
+         */
         public Entity produce(double x, double y);
     }
 

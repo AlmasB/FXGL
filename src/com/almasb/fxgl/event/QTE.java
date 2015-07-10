@@ -37,6 +37,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
+ * Represents a QTE GUI element.
+ *
  * @author Almas Baimagambetov
  * @version 1.0
  *
@@ -51,6 +53,16 @@ import javafx.scene.text.Text;
 
     private Text text = new Text();
 
+    /**
+     *
+     * @param handler callback is notified whether qte was successful or not
+     * @param onFinishedScript is called when qte is no longer active
+     * @param appW scene width
+     * @param appH scene height
+     * @param color color for the GUI element
+     * @param key at least one key is required
+     * @param keys further keys
+     */
     /*package-private*/ QTE(QTEHandler handler, Runnable onFinishedScript, double appW, double appH, Color color, KeyCode key, KeyCode... keys) {
         super(15);
 
@@ -76,10 +88,19 @@ import javafx.scene.text.Text;
         setTranslateY(appH / 2);
     }
 
+    /**
+     *
+     * @return true if there are still keys to press, false otherwise
+     */
     public boolean isActive() {
         return !queue.isEmpty();
     }
 
+    /**
+     * Handles a single key press event from user
+     *
+     * @param key
+     */
     public void pressed(KeyCode key) {
         if (!isActive())
             return;

@@ -63,20 +63,46 @@ public final class PhysicsEntity extends Entity {
 
     private boolean raycastIgnored = false;
 
+    /**
+     * Constructs a PhysicsEntity with given type
+     *
+     * @param type
+     */
     public PhysicsEntity(EntityType type) {
         super(type);
     }
 
+    /**
+     * Set custom fixture definition to describe a generated
+     * fixture for this physics entity
+     *
+     * @param def
+     * @return this object
+     */
     public PhysicsEntity setFixtureDef(FixtureDef def) {
         fixtureDef = def;
         return this;
     }
 
+    /**
+     * Set custom body definition to describe a generated
+     * body for this physics entity
+     *
+     * @param def
+     * @return this entity
+     */
     public PhysicsEntity setBodyDef(BodyDef def) {
         bodyDef = def;
         return this;
     }
 
+    /**
+     * A convenience method to avoid setting body definition
+     * if only a change of body type is required
+     *
+     * @param type
+     * @return this entity
+     */
     public PhysicsEntity setBodyType(BodyType type) {
         bodyDef.type = type;
         return this;

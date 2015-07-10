@@ -26,11 +26,23 @@
 package com.almasb.fxgl.event;
 
 /**
+ * Callback to notify of QTE result
+ *
  * @author Almas Baimagambetov
  * @version 1.0
  *
  */
 public interface QTEHandler {
+
+    /**
+     * Called if QTE was successful, i.e. keys
+     * were pressed in correct order and in time
+     */
     public void onSuccess();
+
+    /**
+     * Called if QTE keys were not pressed in correct order,
+     * or the time has run out
+     */
     public void onFailure();
 }

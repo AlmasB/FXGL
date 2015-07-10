@@ -49,6 +49,10 @@ import com.almasb.fxgl.FXGLLogger;
 
     protected Map<Class<?>, DataParser<? super Serializable> > parsers = new HashMap<>();
 
+    /**
+     * Send a message (hint) that this end of connection is about
+     * to close
+     */
     protected void sendClosingMessage() {
         try {
             send(ConnectionMessage.CLOSING, NetworkProtocol.TCP);
@@ -65,15 +69,36 @@ import com.almasb.fxgl.FXGLLogger;
         }
     }
 
+    /**
+     * Register a parser for specified class. The parser
+     * will be called back when an instance of the class
+     * arrives from the other end of connection
+     *
+     * @param cl
+     * @param parser
+     */
     @SuppressWarnings("unchecked")
     public <T extends Serializable> void addParser(Class<T> cl, DataParser<T> parser) {
         parsers.put(cl, (DataParser<? super Serializable>) parser);
     }
 
+    /**
+     * Send data to the machine at the other end using UDP protocol
+     *
+     * @param data
+     * @throws Exception
+     */
     public void send(Serializable data) throws Exception {
         send(data, NetworkProtocol.UDP);
     }
 
+    /**
+     * Send data to the machine at the other end using specified protocol
+     *
+     * @param data
+     * @param protocol
+     * @throws Exception
+     */
     public void send(Serializable data, NetworkProtocol protocol) throws Exception {
         if (protocol == NetworkProtocol.TCP)
             sendTCP(data);

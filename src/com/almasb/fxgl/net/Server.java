@@ -70,10 +70,18 @@ public final class Server extends NetworkConnection {
     private int clientPort;
     private int tcpPort, udpPort;
 
+    /**
+     * Constructs and configures a single-client server with default ports
+     * No network operation is done at this point.
+     */
     public Server() {
         this(NetworkConfig.DEFAULT_TCP_PORT, NetworkConfig.DEFAULT_UDP_PORT);
     }
 
+    /**
+     * Constructs and configures a single-client server with default ports
+     * No network operation is done at this point.
+     */
     public Server(int tcpPort, int udpPort) {
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
@@ -81,11 +89,23 @@ public final class Server extends NetworkConnection {
         udpThread.setDaemon(true);
     }
 
+    /**
+     * Starts the server. This performs an actual network operation
+     * of binding to ports and listening for incoming connections.
+     */
     public void start() {
         tcpThread.start();
         udpThread.start();
     }
 
+    /**
+     * Sends a message to all connected clients that
+     * the server is about to shut down. Then stops the server
+     * and the connection threads.
+     *
+     * Further calls to {@link #send(Serializable)} will
+     * throw IllegalStateException
+     */
     public void stop() {
         sendClosingMessage();
 

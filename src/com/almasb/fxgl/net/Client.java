@@ -73,10 +73,25 @@ public final class Client extends NetworkConnection {
     private InetAddress serverAddress;
     private int tcpPort, udpPort;
 
+    /**
+     * Constructs a new client with given server IP configuration.
+     * No network operation is done at this point.
+     *
+     * @param serverIP
+     */
     public Client(String serverIP) {
         this(serverIP, NetworkConfig.DEFAULT_TCP_PORT, NetworkConfig.DEFAULT_UDP_PORT);
     }
 
+    /**
+     * Constructs a new client with given server IP and
+     * tcp/udp ports configuration.
+     * No network operation is done at this point.
+     *
+     * @param serverIP
+     * @param tcpPort
+     * @param udpPort
+     */
     public Client(String serverIP, int tcpPort, int udpPort) {
         this.serverIP = serverIP;
         this.tcpPort = tcpPort;
@@ -101,6 +116,13 @@ public final class Client extends NetworkConnection {
         return latch.await(10, TimeUnit.SECONDS);
     }
 
+    /**
+     * Sends a message to server that client is
+     * about to disconnect and shuts down connection threads.
+     *
+     * Further calls to {@link #send(Serializable)} will
+     * throw IllegalStateException
+     */
     public void disconnect() {
         sendClosingMessage();
 
