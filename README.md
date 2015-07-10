@@ -6,7 +6,11 @@ Download the latest .jar file under jar/ and add it to the build path
 in your IDE. That's it, you're all set!
 
 # Notes
-FXGL is in early stages of development. Hence, the API and functionality are likely to change from version to version. So I wouldn't recommend building a full scale application if you want to be able to use latest versions of FXGL.
+FXGL is in early stages of development. Hence, the API and functionality are likely to change from version to version.
+So I wouldn't recommend building a full scale application if you want to be able to use latest versions of FXGL.
+The plan is to make the API robust, stable and intuitive by v 0.5.
+(Considering 10 patches = 1 minor version bump, it's about 37 iterations from now). As of 0.1.4 the code is somewhat
+thoroughly documented with javadoc. If certain parts of documentation are ambiguous or incorrect please let me know.
 
 # Changelog
 FXGL 0.1.3 (latest) supports:
@@ -33,7 +37,10 @@ Videos marked "FXGL" will walk you through the basics
 
 # Use Case
 FXGL is perfect for small to medium sized games and for beginner / intermediate programmers in JavaFX.
-For larger projects it may not be as suitable, whereas advanced programmers will probably want to work
+It is primarily aimed at people who wish to learn and practise game development. Hence the readability of
+code is favored over performance. Nevertheless, as development progresses, the code may reach
+high level quality.
+For larger projects the library may not be as suitable, whereas advanced programmers will probably want to work
 with JavaFX directly. If you have a use case that FXGL doesn't cover, drop me an email stating the use case and what you have already tried.
 
 # Directory Structure for FXGL Applications
