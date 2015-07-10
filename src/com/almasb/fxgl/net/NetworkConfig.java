@@ -25,6 +25,13 @@
  */
 package com.almasb.fxgl.net;
 
+/**
+ * Holds default configuration values for network communication
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 /* package-private */ final class NetworkConfig {
 
     /* package-private */ static final int DEFAULT_TCP_PORT = 55555;

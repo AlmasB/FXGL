@@ -48,6 +48,9 @@ public final class Assets {
     private Map<String, List<String> > cachedText = new HashMap<>();
     private Map<String, Object> cachedData = new HashMap<>();
 
+    /**
+     * Prevent from instantiation outside of FXGL
+     */
     /*package-private*/ Assets() {
 
     }
@@ -74,7 +77,8 @@ public final class Assets {
 
     /**
      * Returns a new copy of a cached texture so
-     * it is safe to use multiple times
+     * it is safe to use multiple times.
+     * Returns null if the key was not found. Usually this means a typo.
      *
      * @param key
      * @return
@@ -83,16 +87,31 @@ public final class Assets {
         return cachedTextures.get(key).copy();
     }
 
+    /**
+     * Returns stored audio clip.
+     * Returns null if the key was not found. Usually this means a typo.
+     *
+     * @param key
+     * @return
+     */
     public AudioClip getAudio(String key) {
         return cachedAudio.get(key);
     }
 
+    /**
+     * Returns stored music object.
+     * Returns null if the key was not found. Usually this means a typo.
+     *
+     * @param key
+     * @return
+     */
     public Music getMusic(String key) {
         return cachedMusic.get(key);
     }
 
     /**
-     * Returns new list contains original text
+     * Returns new list contains original text.
+     * Returns null if the key was not found. Usually this means a typo.
      *
      * @param key
      * @return
@@ -101,13 +120,21 @@ public final class Assets {
         return new ArrayList<>(cachedText.get(key));
     }
 
+    /**
+     * Returns cached custom format data.
+     * Returns null if the key was not found. Usually this means a typo.
+     *
+     * @param key
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <T> T getData(String key) {
         return (T) cachedData.get(key);
     }
 
     /**
-     * A convenience method to print all cached assets
+     * A convenience method to print all cached assets.
+     * Useful for debugging.
      */
     public void logCached() {
         log.info("Logging cached assets");

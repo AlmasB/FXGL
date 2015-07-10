@@ -28,12 +28,32 @@ package com.almasb.fxgl.asset;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Represents a 2D image which can be set as graphics for an entity.
+ * The size ratio and viewport can be modified as necessary
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ * @apiNote This is essentially a wrapper around {@link javafx.scene.image.ImageView}
+ */
 public class Texture extends ImageView {
 
+    /**
+     * Prevent instantiation outside FXGL
+     *
+     * @param image the JavaFX image data
+     */
     /*package-private*/ Texture(Image image) {
         super(image);
     }
 
+    /**
+     * Converts the texture to animated texture
+     *
+     * @param frames number of frames in spritesheet
+     * @param duration overall duration in nanoseconds for animation
+     * @return new StaticAnimatedTexture
+     */
     public StaticAnimatedTexture toStaticAnimatedTexture(int frames, double duration) {
         StaticAnimatedTexture texture = new StaticAnimatedTexture(getImage(), frames, duration);
         return texture;

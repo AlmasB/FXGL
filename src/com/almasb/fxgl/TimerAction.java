@@ -25,7 +25,16 @@
  */
 package com.almasb.fxgl;
 
-/*package-private*/ class TimerAction {
+/**
+ * A wrapper for Runnable which is executed at given intervals.
+ * The timer can be made to expire, in which case the action
+ * will not execute
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
+/*package-private*/ final class TimerAction {
 
     public enum TimerType {
         ONCE, INDEFINITE
@@ -40,6 +49,13 @@ package com.almasb.fxgl;
 
     private TimerType type;
 
+    /**
+     *
+     * @param now current time in nanoseconds
+     * @param interval in nanoseconds
+     * @param action the action
+     * @param type ONCE or INDEFINITE
+     */
     public TimerAction(long now, double interval, Runnable action, TimerType type) {
         this.time = now;
         this.interval = interval;
@@ -47,6 +63,17 @@ package com.almasb.fxgl;
         this.type = type;
     }
 
+    /**
+     * Updates the state of this timer action.
+     * If the difference between current time
+     * and recorded time is greater than the interval
+     * then the action is executed and current time is recorded.
+     *
+     * Note: the action will not be executed if the timer
+     * has expired
+     *
+     * @param now current time in nanoseconds
+     */
     public void update(long now) {
         if (isExpired())
             return;
@@ -61,10 +88,18 @@ package com.almasb.fxgl;
         }
     }
 
+    /**
+     * Set the timer as expired. The action will no longer
+     * be executed
+     */
     public void expire() {
         expired = true;
     }
 
+    /**
+     *
+     * @return true if the timer has expired, false if active
+     */
     public boolean isExpired() {
         return expired;
     }

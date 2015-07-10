@@ -36,15 +36,27 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * Provides logging configuration of java.util.logging.Logger for the FXGL library
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 public final class FXGLLogger {
 
     private static Handler consoleHandler;
 
+    /**
+     * Initialize the logger with given level. This must be called
+     * prior to any logging calls
+     *
+     * @param logLevel
+     */
     public static void init(Level logLevel) {
         Formatter formatter = new Formatter() {
             @Override
             public String format(LogRecord record) {
-
                 StringBuilder sb = new StringBuilder();
 
                 Date date = new Date(record.getMillis());
@@ -73,11 +85,20 @@ public final class FXGLLogger {
         consoleHandler.setFormatter(formatter);
     }
 
+    /**
+     * Shuts down the logging tools
+     */
     public static void close() {
         if (consoleHandler != null)
             consoleHandler.close();
     }
 
+    /**
+     * Wraps the error stack trace into a single String
+     *
+     * @param e
+     * @return
+     */
     public static String errorTraceAsString(Throwable e) {
         StringBuilder sb = new StringBuilder();
         sb.append("\n\nException occurred: " + e.getClass().getCanonicalName() + " : " + e.getMessage());
@@ -90,6 +111,16 @@ public final class FXGLLogger {
         return sb.toString();
     }
 
+    /**
+     * <pre>
+     * Example:
+     *
+     * private static final Logger log = FXGLLogger.getLogger("YOUR_CLASS_NAME");
+     * </pre>
+     *
+     * @param name class name
+     * @return logger object
+     */
     public static Logger getLogger(String name) {
         Logger logger = Logger.getLogger(name);
         logger.setLevel(Level.ALL);

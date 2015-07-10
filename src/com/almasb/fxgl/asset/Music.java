@@ -44,23 +44,40 @@ public class Music {
         mediaPlayer = new MediaPlayer(media);
     }
 
+    /**
+     * Plays the music file once only
+     */
     public void playOnce() {
         mediaPlayer.setCycleCount(1);
         mediaPlayer.play();
     }
 
+    /**
+     * Resumes previously stopped or paused music.
+     * If it was paused, it will continue from that moment.
+     * If it was stopped, it will start from beginning
+     */
     public void resume() {
         mediaPlayer.play();
     }
 
+    /**
+     * Pauses music playback
+     */
     public void pause() {
         mediaPlayer.pause();
     }
 
+    /**
+     * Stops music playback
+     */
     public void stop() {
         mediaPlayer.stop();
     }
 
+    /**
+     * Plays the music indefinitely
+     */
     public void loop() {
         mediaPlayer.setCycleCount(Integer.MAX_VALUE);
         mediaPlayer.play();

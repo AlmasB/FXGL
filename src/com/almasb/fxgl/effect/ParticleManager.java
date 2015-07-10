@@ -44,7 +44,7 @@ import com.almasb.fxgl.entity.Entity;
 
 /**
  * Allows to call a few pre-configured special effects involving
- * particles
+ * particles. Note: this class is not yet complete
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
@@ -60,6 +60,15 @@ public final class ParticleManager {
         this.app = app;
     }
 
+    /**
+     * Spawns a given number of particles with given color
+     * that move outward in random directions from a given point up to given radius.
+     *
+     * @param point
+     * @param color
+     * @param radius
+     * @param numParticles
+     */
     public void spawnExplosion(Point2D point, Color color, int radius, int numParticles) {
         List<Entity> particles = new ArrayList<>();
 
@@ -105,6 +114,15 @@ public final class ParticleManager {
         app.runOnceAfter(() -> particles.forEach(app::removeEntity), 2 * GameApplication.SECOND);
     }
 
+    /**
+     * Spawns a given number of particles in random positions with given color
+     * that move towards a given point from given radius.
+     *
+     * @param point
+     * @param color
+     * @param radius
+     * @param numParticles
+     */
     public void spawnImplosion(Point2D point, Color color, int radius, int numParticles) {
         List<Entity> particles = new ArrayList<>();
 
@@ -143,6 +161,13 @@ public final class ParticleManager {
         app.runOnceAfter(() -> particles.forEach(app::removeEntity), 1 * GameApplication.SECOND);
     }
 
+    /**
+     * Returns a velocity vector with random direction
+     * and random magnitude but not greater than max
+     *
+     * @param max
+     * @return
+     */
     private Point2D getRandomVelocity(float max) {
         Point2D velocity = new Point2D(random.nextFloat() - 0.5f, random.nextFloat() - 0.5f).normalize();
 

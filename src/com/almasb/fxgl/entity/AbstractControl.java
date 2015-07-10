@@ -29,7 +29,8 @@ package com.almasb.fxgl.entity;
  * Provides basic functionality of a control. The difference in usage between
  * AbstractControl and Control is that Control can be used if the control
  * doesn't require instance fields, i.e. static and state-less. If
- * instance level fields are needed - use AbstractControl
+ * instance level fields are needed and constant access to Entity is required
+ * then use AbstractControl
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
@@ -39,10 +40,23 @@ public abstract class AbstractControl implements Control {
 
     protected Entity entity;
 
+    /**
+     * Set entity for this control instance. This is called
+     * by Entity during control attachment to entity
+     *
+     * @param entity
+     */
     /* package-private */ void setEntity(Entity entity) {
         this.entity = entity;
         initEntity(entity);
     }
 
+    /**
+     * This is called during control attachment to
+     * entity. Useful for setting properties required / used
+     * by control
+     *
+     * @param entity
+     */
     protected abstract void initEntity(Entity entity);
 }

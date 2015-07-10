@@ -45,9 +45,17 @@ public abstract class Intro extends Parent {
      */
     /*package-private*/ Runnable onFinished;
 
+    /**
+     * Closes intro and initializes the next game state, whether it's a menu or game.
+     *
+     * Note: call this when your intro completes
+     */
     public final void finishIntro() {
         onFinished.run();
     }
 
+    /**
+     * Starts the intro animation / video
+     */
     public abstract void startIntro();
 }

@@ -27,6 +27,22 @@ package com.almasb.fxgl.net;
 
 import java.io.Serializable;
 
+/**
+ * Parser for network data
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ * @param <T>
+ */
+@FunctionalInterface
 public interface DataParser<T extends Serializable> {
+
+    /**
+     * Called when data arrives from the other end
+     * of network connection
+     *
+     * @param data
+     */
     public void parse(T data);
 }

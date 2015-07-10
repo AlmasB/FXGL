@@ -35,6 +35,14 @@ import java.util.logging.Logger;
 
 import com.almasb.fxgl.FXGLLogger;
 
+/**
+ * Represents a communication between two machines over network.
+ *
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 /*package-private*/ abstract class NetworkConnection {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.NetworkConnection");

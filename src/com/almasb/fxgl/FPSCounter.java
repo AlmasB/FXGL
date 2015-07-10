@@ -27,6 +27,15 @@ package com.almasb.fxgl;
 
 import java.util.Arrays;
 
+/**
+ * Convenience class that buffers FPS values and calculates
+ * the arithmetic mean to approximate FPS value as it
+ * varies from frame to frame
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 /*package-private*/ final class FPSCounter {
 
     private static final int MAX_SAMPLES = 100;
@@ -39,6 +48,13 @@ import java.util.Arrays;
         Arrays.fill(values, 0.0f);
     }
 
+    /**
+     * Calculates average FPS and buffers given value
+     * for future corrections to the FPS value
+     *
+     * @param timeTookLastFrame
+     * @return
+     */
     public float count(float timeTookLastFrame) {
         sum -= values[index];
         sum += timeTookLastFrame;
