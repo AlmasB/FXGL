@@ -404,9 +404,8 @@ public abstract class GameApplication extends Application {
         }
         catch (Exception e) {
             log.severe("Exception occurred during initialization: " + e.getMessage());
-            StackTraceElement[] trace = e.getStackTrace();
 
-            Arrays.asList(trace)
+            Arrays.asList(e.getStackTrace())
                 .stream()
                 .map(StackTraceElement::toString)
                 .filter(s -> !s.contains("Unknown Source") && !s.contains("Native Method"))
