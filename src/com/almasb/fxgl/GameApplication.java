@@ -113,10 +113,35 @@ public abstract class GameApplication extends Application {
      */
     private GameSettings settings = new GameSettings();
 
+    /*
+     * All scenegraph roots
+     */
+    /**
+     * The root for entities (game objects)
+     */
+    private Pane gameRoot = new Pane();
+
+    /**
+     * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
+     * May also contain entities as Entity is a subclass of Parent.
+     * uiRoot isn't affected by viewport movement.
+     */
+    private Pane uiRoot = new Pane();
+
+    /**
+     * THE root of the {@link #mainScene}. Contains {@link #gameRoot} and {@link #uiRoot} in this order.
+     */
+    private Pane root = new Pane(gameRoot, uiRoot);
+
+    /**
+     * The root of the {@link #mainMenuScene}
+     */
+    private Pane mainMenuRoot = new Pane();
+
     /**
      * Reference to game scene
      */
-    protected Scene mainScene;
+    protected Scene mainScene = new Scene(root);
 
     /**
      * Reference to game window
@@ -126,19 +151,7 @@ public abstract class GameApplication extends Application {
     /**
      * Scene for main menu
      */
-    private Scene mainMenuScene;
-
-    /**
-     * root - THE root of the {@link #mainScene}
-     * gameRoot - the root for entities (game objects)
-     * uiRoot - the overlay root above {@link #gameRoot}.
-     * uiRoot contains UI elements, native JavaFX nodes.
-     * May also contain entities as Entity is a subclass of Parent.
-     * uiRoot isn't affected by viewport movement
-     *
-     * mainMenuRoot - root of the {@link #mainMenuScene}
-     */
-    private Pane root, gameRoot, uiRoot, mainMenuRoot;
+    private Scene mainMenuScene = new Scene(mainMenuRoot);
 
     /**
      * These are current width and height of the scene
@@ -152,7 +165,12 @@ public abstract class GameApplication extends Application {
     /**
      * The main loop timer
      */
-    private AnimationTimer timer;
+    private AnimationTimer timer = new AnimationTimer() {
+        @Override
+        public void handle(long internalTime) {
+            processUpdate(internalTime);
+        }
+    };
 
     /**
      * List for all timer based actions
@@ -238,22 +256,23 @@ public abstract class GameApplication extends Application {
     protected abstract void initAssets() throws Exception;
 
     /**
-     * Initialize game objects, key bindings, collision handlers
-     *
-     * @param gameRoot
+     * Initialize game objects
      */
     protected abstract void initGame();
 
     /**
-     * Initiliaze UI objects
-     *
-     * @param uiRoot
+     * Initiliaze collision handlers, physics properties
      */
-    protected abstract void initUI(Pane uiRoot);
+    protected abstract void initPhysics();
+
+    /**
+     * Initiliaze UI objects
+     */
+    protected abstract void initUI();
 
     /**
      * Initiliaze input, i.e.
-     * bind key presses / key typed
+     * bind key presses / key typed, bind mouse
      */
     protected abstract void initInput();
 
@@ -296,66 +315,45 @@ public abstract class GameApplication extends Application {
 
     }
 
-    // TODO: modularize
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        log.finer("start()");
-        initSettings(settings);
-
+    /**
+     * Set preferred sizes to roots and set
+     * stage properties
+     */
+    private void applySettings() {
         currentWidth = settings.getWidth();
         currentHeight = settings.getHeight();
 
-        mainStage = primaryStage;
-        primaryStage.setTitle(settings.getTitle() + " " + settings.getVersion());
-        primaryStage.setResizable(false);
+        mainStage.setTitle(settings.getTitle() + " " + settings.getVersion());
+        mainStage.setResizable(false);
 
-        mainMenuRoot = new Pane();
         mainMenuRoot.setPrefSize(settings.getWidth(), settings.getHeight());
-        gameRoot = new Pane();
-        uiRoot = new Pane();
-        root = new Pane(gameRoot, uiRoot);
         root.setPrefSize(settings.getWidth(), settings.getHeight());
 
-        // init scenes
-        mainMenuScene = new Scene(mainMenuRoot);
-        mainScene = new Scene(root);
+        // ensure the window frame is just right for the scene size
+        mainStage.setScene(mainScene);
+        mainStage.sizeToScene();
+    }
 
-        // init all managers here before anything else
+    /**
+     * Ensure managers are of legal state and ready
+     */
+    private void initManagers() {
         inputManager.init(mainScene);
         qteManager.init();
         mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
+    }
 
-        try {
-            initAssets();
-        }
-        catch (Exception e) {
-            log.finer("Exception occurred during initAssets() - " + e.getMessage());
-            exit();
-        }
-
-        initMainMenu(mainMenuRoot);
-        initGame();
-        initUI(uiRoot);
-        initInput();
-
-        // ensure the window frame is just right for the scene size
-        primaryStage.setScene(mainScene);
-        primaryStage.sizeToScene();
-
+    /**
+     * Opens and shows the actual window. Configures what parts of scenes
+     * need to be shown and in which
+     * order based on the subclass implementation of certain init methods
+     */
+    private void configureAndShowStage() {
         boolean menuEnabled = mainMenuRoot.getChildren().size() > 0;
 
-        primaryStage.setScene(menuEnabled ? mainMenuScene : mainScene);
-        primaryStage.setOnCloseRequest(event -> exit());
-        primaryStage.show();
-
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long internalTime) {
-                processUpdate(internalTime);
-            }
-        };
-
-        postInit();
+        mainStage.setScene(menuEnabled ? mainMenuScene : mainScene);
+        mainStage.setOnCloseRequest(event -> exit());
+        mainStage.show();
 
         if (settings.isIntroEnabled()) {
             Intro intro = initIntroVideo();
@@ -383,11 +381,48 @@ public abstract class GameApplication extends Application {
         }
     }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        log.finer("start()");
+        // capture the reference to primaryStage so we can access it
+        mainStage = primaryStage;
+
+        initSettings(settings);
+        applySettings();
+
+        initManagers();
+
+        try {
+            initAssets();
+            initMainMenu(mainMenuRoot);
+            initGame();
+            initPhysics();
+            initUI();
+            initInput();
+
+            postInit();
+        }
+        catch (Exception e) {
+            log.severe("Exception occurred during initialization: " + e.getMessage());
+            StackTraceElement[] trace = e.getStackTrace();
+
+            Arrays.asList(trace)
+                .stream()
+                .map(StackTraceElement::toString)
+                .filter(s -> !s.contains("Unknown Source") && !s.contains("Native Method"))
+                .map(s -> "Cause: " + s)
+                .forEachOrdered(log::severe);
+            exit();
+        }
+
+        configureAndShowStage();
+    }
+
     /**
      * This is the internal FXGL update tick,
      * executed 60 times a second ~ every 0.166 (6) seconds
      *
-     * @param internalTime - The timestamp of the current frame given in nanoseconds
+     * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
      */
     private void processUpdate(long internalTime) {
         long startNanos = System.nanoTime();
