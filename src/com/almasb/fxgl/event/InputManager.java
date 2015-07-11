@@ -90,6 +90,10 @@ public final class InputManager {
      */
     public void onUpdate(long now) {
         keyPressActions.forEach((key, action) -> {if (isPressed(key)) action.run();});
+
+        Point2D origin = app.getViewportOrigin();
+        mouse.x = mouse.screenX + origin.getX();
+        mouse.y = mouse.screenY + origin.getY();
     }
 
     /**
