@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -343,9 +342,9 @@ public class Entity extends Parent {
         return (T)getProperties().get(key.getUniqueKey());
     }
 
-    private Map<String, Consumer<FXGLEvent> > eventHandlers = new HashMap<>();
+    private Map<String, FXGLEventHandler> eventHandlers = new HashMap<>();
 
-    public void addFXGLEventHandler(FXGLEventType type, Consumer<FXGLEvent> eventHandler) {
+    public void addFXGLEventHandler(FXGLEventType type, FXGLEventHandler eventHandler) {
         eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 

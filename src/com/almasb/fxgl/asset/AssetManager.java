@@ -45,6 +45,8 @@ import java.util.zip.ZipInputStream;
 
 import com.almasb.fxgl.FXGLLogger;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
@@ -76,6 +78,7 @@ public enum AssetManager {
     private static final String MUSIC_DIR = ASSETS_DIR + "music/";
     private static final String TEXT_DIR = ASSETS_DIR + "text/";
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
+    private static final String UI_DIR = ASSETS_DIR + "ui/";
 
     private static final Logger log = FXGLLogger.getLogger("AssetManager");
 
@@ -122,6 +125,42 @@ public enum AssetManager {
             return result;
         }
     }
+
+//    public Parent loadUI(String name) throws Exception {
+//        try {
+//            URL url = getClass().getResource(UI_DIR + name);
+//            if (url == null) {
+//                log.warning("Failed to load UI: " + name + " Check it exists in assets/ui/");
+//                throw new IOException("Failed to load UI: " + name);
+//            }
+//
+//            return FXMLLoader.load(url);
+//        }
+//        catch (Exception e) {
+//            log.warning("Failed to load UI: " + name + " Check file for syntax errors");
+//            throw new IOException("Failed to load UI: " + name);
+//        }
+//    }
+//
+//    public Parent loadUI(String name, Object controller) throws Exception {
+//        try {
+//            URL url = getClass().getResource(UI_DIR + name);
+//            if (url == null) {
+//                log.warning("Failed to load UI: " + name + " Check it exists in assets/ui/");
+//                throw new IOException("Failed to load UI: " + name);
+//            }
+//
+//            FXMLLoader loader = new FXMLLoader(url);
+//            loader.setController(controller);
+//
+//            return loader.load();
+//        }
+//        catch (Exception e) {
+//            log.warning("Failed to load UI: " + name + " Check file for syntax errors");
+//            log.warning("Error message: " + e.getMessage());
+//            throw new IOException("Failed to load UI: " + name);
+//        }
+//    }
 
     @SuppressWarnings("unchecked")
     private <T> T loadDataInternal(String name) throws Exception {
