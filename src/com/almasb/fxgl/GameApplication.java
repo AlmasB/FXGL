@@ -595,6 +595,10 @@ public abstract class GameApplication extends Application {
             }
             else
                 tmpAddList.add(e);
+
+            double expire = e.getExpireTime();
+            if (expire > 0)
+                runOnceAfter(() -> removeEntity(e), expire);
         }
     }
 

@@ -47,14 +47,14 @@ import javafx.scene.text.Text;
  */
 public class Entity extends Parent {
 
-    public static final String PR_ENTITY_TYPE = "PR_ENTITY_TYPE";
-    public static final String PR_TYPE = "PR_TYPE";
+    private EntityType type;
 
     private List<Control> controls = new ArrayList<>();
 
     private BooleanProperty active = new SimpleBooleanProperty(true);
-    //private boolean active = true;
     private boolean collidable = false;
+
+    private double expireTime = 0;
 
     /**
      * Constructs an entity with given type
@@ -62,9 +62,33 @@ public class Entity extends Parent {
      * @param type
      */
     public Entity(EntityType type) {
-        setProperty(PR_ENTITY_TYPE, type);
-        setProperty(PR_TYPE, type.getUniqueType());
+        this.type = type;
         setGraphics(new Text("null"));
+    }
+
+    /**
+     *
+     * @return expireTime of entity, 0 if not set
+     */
+    public double getExpireTime() {
+        return expireTime;
+    }
+
+    /**
+     * Set expire time for this entity in nanoseconds.
+     * The timer starts when the entity is added to
+     * game scene. Calling this method after entity
+     * was added to scene has no effect.
+     *
+     * Once the timer has expired, the entity will
+     * be removed with removeEntity()
+     *
+     * @param nanoseconds
+     * @return this entity
+     */
+    public Entity setExpireTime(double nanoseconds) {
+        expireTime = nanoseconds;
+        return this;
     }
 
     /**
@@ -75,6 +99,14 @@ public class Entity extends Parent {
     public Entity setCollidable(boolean b) {
         collidable = b;
         return this;
+    }
+
+    /**
+     *
+     * @return center point of this entity
+     */
+    public Point2D getCenter() {
+        return getPosition().add(getWidth() / 2, getHeight() / 2);
     }
 
     /**
@@ -143,19 +175,20 @@ public class Entity extends Parent {
      * @return entity type
      */
     public EntityType getEntityType() {
-        return getProperty(PR_ENTITY_TYPE);
+        return type;
     }
 
     /**
      * @return entity type as String
      */
     public String getTypeAsString() {
-        return getProperty(PR_TYPE);
+        return type.getUniqueType();
     }
 
     /**
-     * Returns true if type of entity equals passed argument
+     * Returns true if type of entity equals passed argument.
      *
+     * @apiNote equivalent to <code>getTypeAsString().equals(type.getUniqueType())</code>
      * @param type
      * @return
      */
@@ -164,7 +197,8 @@ public class Entity extends Parent {
     }
 
     /**
-     * Set graphics for this entity
+     * Set graphics for this entity. The collision detection
+     * bounding box will use graphics object's size properties.
      *
      * @param graphics
      * @return this entity
@@ -183,21 +217,19 @@ public class Entity extends Parent {
     }
 
     /**
-     * Do NOT call prior to adding the entity to root
      *
      * @return width of the bounding box of this entity
      */
     public double getWidth() {
-        return getBoundsInParent().getWidth();
+        return getLayoutBounds().getWidth();
     }
 
     /**
-     * Do NOT call prior to adding the entity to root
      *
      * @return height of the bounding box of this entity
      */
     public double getHeight() {
-        return getBoundsInParent().getHeight();
+        return getLayoutBounds().getHeight();
     }
 
     /**
