@@ -394,7 +394,7 @@ public class Entity extends Parent {
             event.setSource(this);
 
         event.setTarget(this);
-        eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {}).accept(event);
+        eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {}).handle(event);
     }
 
     /**

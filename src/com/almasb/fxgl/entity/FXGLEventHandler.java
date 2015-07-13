@@ -25,9 +25,20 @@
  */
 package com.almasb.fxgl.entity;
 
-import java.util.function.Consumer;
-
+/**
+ * Handler for FXGL events fired on entities
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @version 1.0
+ *
+ */
 @FunctionalInterface
-public interface FXGLEventHandler extends Consumer<FXGLEvent> {
+public interface FXGLEventHandler {
 
+    /**
+     * Called when an event of registered type occurred
+     *
+     * @param event
+     */
+    public void handle(FXGLEvent event);
 }
