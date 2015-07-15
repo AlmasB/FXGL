@@ -116,4 +116,37 @@ public final class SaveLoadManager {
             return Optional.empty();
         }
     }
+
+    /**
+     * Loads last modified save file from "saves/"
+     *
+     * Returns {@link Optional#empty()} if "saves/" directory
+     * doesn't exist, an exception occurred or there are no save files
+     *
+     * @return last modified save file
+     */
+    public <T> Optional<T> loadLastModifiedFile() {
+        Path saveDir = Paths.get("./" + SAVE_DIR);
+
+        if (!Files.exists(saveDir)) {
+            return Optional.empty();
+        }
+
+        try (Stream<Path> files = Files.walk(saveDir)) {
+            Path file = files.filter(Files::isRegularFile).sorted((file1, file2) -> {
+                try {
+                    return Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1));
+                }
+                catch (Exception e) {
+                    return -1;
+                }
+            }).findFirst().orElseThrow(Exception::new);
+
+            String fileName = saveDir.relativize(file).toString().replace("\\", "/");
+            return Optional.of(load(fileName));
+        }
+        catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 }
