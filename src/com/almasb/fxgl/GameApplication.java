@@ -138,6 +138,8 @@ public abstract class GameApplication extends Application {
      */
     private Pane mainMenuRoot = new Pane();
 
+    // TODO: eventually mainScene and mainStage will become private
+    // when functionality is provided by appropriate managers
     /**
      * Reference to game scene
      */
