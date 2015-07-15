@@ -10,7 +10,9 @@ FXGL is in early stages of development. Hence, the API and functionality are lik
 So I wouldn't recommend building a full scale application if you want to be able to use latest versions of FXGL.
 The plan is to make the API robust, stable and intuitive by v 0.5.
 (Considering 10 patches = 1 minor version bump, it's about 37 iterations from now). As of 0.1.4 the code is somewhat
-thoroughly documented with javadoc. If certain parts of documentation are ambiguous or incorrect please let me know.
+thoroughly documented with javadoc. If certain parts of documentation are ambiguous or incorrect/missing please let me know. <br/>
+
+3D features and port to mobile will be considered in the future.
 
 # Changelog
 FXGL 0.1.3 (latest) supports:
