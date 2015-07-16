@@ -27,6 +27,7 @@ package com.almasb.fxgl;
 
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -258,6 +259,15 @@ public abstract class GameApplication extends Application {
     protected abstract void initAssets() throws Exception;
 
     /**
+     * Called when user selects "continue" or "load" from menu
+     *
+     * @param data
+     */
+    protected void loadSaveData(Serializable data) {
+
+    }
+
+    /**
      * Initialize game objects
      */
     protected abstract void initGame();
@@ -395,6 +405,9 @@ public abstract class GameApplication extends Application {
         initManagers();
 
         try {
+            FXGLMainMenu menu = new FXGLMainMenu(this);
+            mainScene.setRoot(menu.getRoot());
+
             initAssets();
             initMainMenu(mainMenuRoot);
             initGame();
@@ -815,5 +828,13 @@ public abstract class GameApplication extends Application {
      */
     public long getNow() {
         return now;
+    }
+
+    public GameSettings getSettings() {
+        return settings;
+    }
+
+    public SaveLoadManager getSaveLoadManager() {
+        return saveLoadManager;
     }
 }
