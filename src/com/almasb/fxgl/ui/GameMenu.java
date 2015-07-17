@@ -27,20 +27,55 @@ package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.GameApplication;
 
+import javafx.concurrent.Task;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
-public abstract class MainMenu {
+public abstract class GameMenu {
 
     protected final GameApplication app;
     protected final Pane root = new Pane();
 
-    public MainMenu(GameApplication app) {
+    private boolean canSwitch = false;
+
+    public GameMenu(GameApplication app) {
         this.app = app;
         root.setPrefSize(app.getWidth(), app.getHeight());
         root.setFocusTraversable(true);
     }
 
+    public final void setMenuKey(KeyCode key) {
+        root.setOnKeyPressed(event -> {
+            if (canSwitch && event.getCode() == key) {
+                canSwitch = false;
+                app.closeGameMenu();
+            }
+        });
+    }
+
+    public final void open() {
+        canSwitch = false;
+        Thread t = new Thread(new TimerTask());
+        t.setDaemon(true);
+        t.start();
+    }
+
     public final Pane getRoot() {
         return root;
+    }
+
+    private class TimerTask extends Task<Void> {
+        @Override
+        protected Void call() throws Exception {
+            try {
+                Thread.sleep(1000);
+            }
+            catch (Exception e) {
+                canSwitch = true;
+            }
+
+            canSwitch = true;
+            return null;
+        }
     }
 }

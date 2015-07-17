@@ -31,10 +31,10 @@ import java.util.Map;
 import com.almasb.fxgl.GameApplication;
 
 import javafx.geometry.Point2D;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 /**
  * Provides access to mouse state and allows binding of actions
@@ -48,7 +48,7 @@ public final class InputManager {
 
     private GameApplication app;
 
-    private Scene mainScene;
+    private Pane gameRoot;
 
     /**
      * Holds mouse state information
@@ -63,9 +63,9 @@ public final class InputManager {
         this.app = app;
     }
 
-    public void init(Scene mainScene) {
-        this.mainScene = mainScene;
-        mainScene.setOnKeyPressed(event -> {
+    public void init(Pane gameRoot) {
+        this.gameRoot = gameRoot;
+        gameRoot.setOnKeyPressed(event -> {
             if (!isPressed(event.getCode()) && keyTypedActions.containsKey(event.getCode())) {
                 keys.put(event.getCode(), true);
                 keyTypedActions.get(event.getCode()).run();
@@ -75,12 +75,16 @@ public final class InputManager {
             }
 
         });
-        mainScene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
+        gameRoot.setOnKeyReleased(event -> keys.put(event.getCode(), false));
 
-        mainScene.setOnMousePressed(mouse::update);
-        mainScene.setOnMouseDragged(mouse::update);
-        mainScene.setOnMouseReleased(mouse::update);
-        mainScene.setOnMouseMoved(mouse::update);
+        gameRoot.setOnMousePressed(mouse::update);
+        gameRoot.setOnMouseDragged(mouse::update);
+        gameRoot.setOnMouseReleased(mouse::update);
+        gameRoot.setOnMouseMoved(mouse::update);
+
+        // TODO: clean
+        addKeyTypedBinding(KeyCode.ESCAPE, app::openGameMenu);
+        //app.getMainMenu().setMenuKey(KeyCode.ESCAPE);
     }
 
     /**
@@ -105,6 +109,10 @@ public final class InputManager {
         return keys.getOrDefault(key, false);
     }
 
+//    public void setMenuKey(KeyCode key) {
+//        addKeyTypedBinding(key, app::openMainMenu);
+//    }
+
     /**
      * Add an action that is executed constantly
      * WHILE the key is physically pressed
@@ -127,6 +135,7 @@ public final class InputManager {
         keyTypedActions.put(key, action);
     }
 
+    // TODO: proper mouse bindings like keys
     /**
      * Add an action that is executed ONCE per single click of
      * given mouse button
@@ -135,7 +144,7 @@ public final class InputManager {
      * @param action
      */
     public void addMouseClickedBinding(MouseButton btn, Runnable action) {
-        mainScene.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        gameRoot.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == btn) {
                 action.run();
             }

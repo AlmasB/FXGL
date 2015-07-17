@@ -40,6 +40,7 @@ public final class GameSettings {
     private int width = 800;
     private int height = 600;
     private boolean introEnabled = true;
+    private boolean menuEnabled = true;
 
     public String getTitle() {
         return title;
@@ -79,5 +80,13 @@ public final class GameSettings {
 
     public void setIntroEnabled(boolean b) {
         introEnabled = b;
+    }
+
+    public boolean isMenuEnabled() {
+        return menuEnabled;
+    }
+
+    public void setMenuEnabled(boolean b) {
+        menuEnabled = b;
     }
 }

@@ -27,7 +27,7 @@ package com.almasb.fxgl;
 
 import java.io.Serializable;
 
-import com.almasb.fxgl.ui.MainMenu;
+import com.almasb.fxgl.ui.GameMenu;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
@@ -35,7 +35,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.KeyCode;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -51,20 +50,13 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-/**
- * This is the default FXGL menu used if the users
- * don't provide their own
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
- */
-public class FXGLMainMenu extends MainMenu {
+public class FXGLGameMenu extends GameMenu {
 
     private GameSettings settings;
 
     private double menuX, menuY;
 
-    public FXGLMainMenu(GameApplication app) {
+    public FXGLGameMenu(GameApplication app) {
         super(app);
         this.settings = app.getSettings();
 
@@ -94,15 +86,11 @@ public class FXGLMainMenu extends MainMenu {
     }
 
     private MenuBox createMainMenu() {
-        MenuItem itemContinue = new MenuItem("CONTINUE");
-        itemContinue.setEnabled(app.getSaveLoadManager().loadLastModifiedFile().isPresent());
-        itemContinue.setAction(() -> {
-            app.getSaveLoadManager().loadLastModifiedFile().ifPresent(data -> app.loadSaveData((Serializable)data));
-        });
+        MenuItem itemResume = new MenuItem("RESUME");
+        itemResume.setAction(app::closeGameMenu);
 
-        MenuItem itemNewGame = new MenuItem("NEW GAME");
+        MenuItem itemSave = new MenuItem("SAVE");
         // TODO:
-        itemNewGame.setAction(app::startGame);
 
         MenuItem itemLoad = new MenuItem("LOAD");
         itemLoad.setMenuContent(createContentLoad());
@@ -113,10 +101,11 @@ public class FXGLMainMenu extends MainMenu {
         MenuItem itemExtra = new MenuItem("EXTRA");
         itemExtra.setChild(createExtraMenu());
 
-        MenuItem itemExit = new MenuItem("EXIT");
-        itemExit.setAction(app::exit);
+        MenuItem itemExit = new MenuItem("EXIT TO MAIN MENU");
+        // TODO:
+        //itemExit.setAction(app::exit);
 
-        MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad, itemOptions, itemExtra, itemExit);
+        MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
         menu.setTranslateX(50);
         menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
         return menu;

@@ -52,6 +52,8 @@ import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.ui.GameMenu;
+import com.almasb.fxgl.ui.MainMenu;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -63,6 +65,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -135,26 +138,24 @@ public abstract class GameApplication extends Application {
     private Pane root = new Pane(gameRoot, uiRoot);
 
     /**
-     * The root of the {@link #mainMenuScene}
+     * Main menu, this is the menu shown at the start of game
      */
-    private Pane mainMenuRoot = new Pane();
-
-    // TODO: eventually mainScene and mainStage will become private
-    // when functionality is provided by appropriate managers
-    /**
-     * Reference to game scene
-     */
-    protected Scene mainScene = new Scene(root);
+    private MainMenu mainMenu;
 
     /**
-     * Reference to game window
+     * In-game menu, this is shown when menu key pressed during the game
      */
-    protected Stage mainStage;
+    private GameMenu gameMenu;
 
     /**
-     * Scene for main menu
+     * Game scene
      */
-    private Scene mainMenuScene = new Scene(mainMenuRoot);
+    private Scene mainScene = new Scene(root);
+
+    /**
+     * Game window
+     */
+    private Stage mainStage;
 
     /**
      * These are current width and height of the scene
@@ -252,6 +253,24 @@ public abstract class GameApplication extends Application {
     }
 
     /**
+     * Override to use your custom main menu
+     *
+     * @return
+     */
+    protected MainMenu initMainMenu() {
+        return new FXGLMainMenu(this);
+    }
+
+    /**
+     * Override to use your custom game menu
+     *
+     * @return
+     */
+    protected GameMenu initGameMenu() {
+        return new FXGLGameMenu(this);
+    }
+
+    /**
      * Initialize game assets, such as Texture, AudioClip, Music
      *
      * @throws Exception
@@ -264,7 +283,7 @@ public abstract class GameApplication extends Application {
      * @param data
      */
     protected void loadSaveData(Serializable data) {
-
+        log.warning("Called loadSaveData(), but it wasn't overriden!");
     }
 
     /**
@@ -305,19 +324,6 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Override this method to initialize custom
-     * main menu
-     *
-     * If you do override it make sure to call {@link #startGame()}
-     * to start the game
-     *
-     * @param mainMenuRoot
-     */
-    protected void initMainMenu(Pane mainMenuRoot) {
-
-    }
-
-    /**
      * This is called AFTER all init methods complete
      * and BEFORE the main loop starts
      *
@@ -335,11 +341,10 @@ public abstract class GameApplication extends Application {
         currentWidth = settings.getWidth();
         currentHeight = settings.getHeight();
 
+        root.setPrefSize(settings.getWidth(), settings.getHeight());
+
         mainStage.setTitle(settings.getTitle() + " " + settings.getVersion());
         mainStage.setResizable(false);
-
-        mainMenuRoot.setPrefSize(settings.getWidth(), settings.getHeight());
-        root.setPrefSize(settings.getWidth(), settings.getHeight());
 
         // ensure the window frame is just right for the scene size
         mainStage.setScene(mainScene);
@@ -350,7 +355,12 @@ public abstract class GameApplication extends Application {
      * Ensure managers are of legal state and ready
      */
     private void initManagers() {
-        inputManager.init(mainScene);
+        // we do this to be able to request focus
+        root.setFocusTraversable(true);
+        gameRoot.setFocusTraversable(true);
+        gameRoot.requestFocus();
+
+        inputManager.init(gameRoot);
         qteManager.init();
         mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
     }
@@ -361,9 +371,14 @@ public abstract class GameApplication extends Application {
      * order based on the subclass implementation of certain init methods
      */
     private void configureAndShowStage() {
-        boolean menuEnabled = mainMenuRoot.getChildren().size() > 0;
+        boolean menuEnabled = settings.isMenuEnabled();
 
-        mainStage.setScene(menuEnabled ? mainMenuScene : mainScene);
+        mainMenu = initMainMenu();
+        gameMenu = initGameMenu();
+
+        gameMenu.setMenuKey(KeyCode.ESCAPE);
+        mainScene.setRoot(menuEnabled ? mainMenu.getRoot() : root);
+
         mainStage.setOnCloseRequest(event -> exit());
         mainStage.show();
 
@@ -373,18 +388,14 @@ public abstract class GameApplication extends Application {
                 intro = new FXGLIntro(getWidth(), getHeight());
             intro.onFinished = () -> {
                 if (menuEnabled)
-                    mainMenuScene.setRoot(mainMenuRoot);
+                    mainScene.setRoot(mainMenu.getRoot());
                 else {
                     mainScene.setRoot(root);
                     timer.start();
                 }
             };
 
-            if (menuEnabled)
-                mainMenuScene.setRoot(intro);
-            else
-                mainScene.setRoot(intro);
-
+            mainScene.setRoot(intro);
             intro.startIntro();
         }
         else {
@@ -405,11 +416,7 @@ public abstract class GameApplication extends Application {
         initManagers();
 
         try {
-            FXGLMainMenu menu = new FXGLMainMenu(this);
-            mainScene.setRoot(menu.getRoot());
-
             initAssets();
-            initMainMenu(mainMenuRoot);
             initGame();
             initPhysics();
             initUI();
@@ -541,6 +548,17 @@ public abstract class GameApplication extends Application {
     }
 
     /**
+     * Set true if UI elements should forward mouse events
+     * to the game layer
+     *
+     * @param b
+     * @defaultValue false
+     */
+    protected void setUIMouseTransparent(boolean b) {
+        uiRoot.setMouseTransparent(b);
+    }
+
+    /**
      *
      * @return  a list of ALL entities currently registered in the application
      */
@@ -649,11 +667,10 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Call this to manually start the game when you
-     * override {@link #initMainMenu(Pane)}
+     * Call this to manually start the game
      */
     protected void startGame() {
-        mainStage.setScene(mainScene);
+        mainScene.setRoot(root);
         timer.start();
     }
 
@@ -673,18 +690,44 @@ public abstract class GameApplication extends Application {
 
     /**
      * Pauses the game and opens main menu
-     * Does nothing if main menu was not initialized
+     * Does nothing if menu is disabled in settings
      */
-    protected void openMainMenu() {
-        if (mainMenuRoot.getChildren().size() == 0)
+    public void openMainMenu() {
+        if (!settings.isMenuEnabled())
             return;
 
-        timer.stop();
+        // TODO: impl
+        // we should completely clean the game
+        // and return to state of main menu as if the app just started
 
-        // we are changing our scene so it is intuitive that
-        // all input gets cleared
+        pause();
+
         inputManager.clearAllInput();
-        mainStage.setScene(mainMenuScene);
+        mainScene.setRoot(mainMenu.getRoot());
+        mainMenu.getRoot().requestFocus();
+    }
+
+    public void openGameMenu() {
+        if (!settings.isMenuEnabled())
+            return;
+
+        pause();
+
+        root.getChildren().remove(uiRoot);
+        root.getChildren().add(gameMenu.getRoot());
+        gameMenu.getRoot().requestFocus();
+        gameMenu.open();
+    }
+
+    public void closeGameMenu() {
+        if (!settings.isMenuEnabled())
+            return;
+
+        inputManager.clearAllInput();
+        mainScene.setRoot(root);
+        gameRoot.requestFocus();
+
+        resume();
     }
 
     /**
@@ -828,6 +871,10 @@ public abstract class GameApplication extends Application {
      */
     public long getNow() {
         return now;
+    }
+
+    public MainMenu getMainMenu() {
+        return mainMenu;
     }
 
     public GameSettings getSettings() {
