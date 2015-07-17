@@ -27,6 +27,7 @@ package com.almasb.fxgl;
 
 import java.io.Serializable;
 
+import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.ui.MainMenu;
 
 import javafx.animation.FadeTransition;
@@ -97,7 +98,7 @@ public class FXGLMainMenu extends MainMenu {
         MenuItem itemContinue = new MenuItem("CONTINUE");
         itemContinue.setEnabled(app.getSaveLoadManager().loadLastModifiedFile().isPresent());
         itemContinue.setAction(() -> {
-            app.getSaveLoadManager().loadLastModifiedFile().ifPresent(data -> app.loadSaveData((Serializable)data));
+            app.getSaveLoadManager().loadLastModifiedFile().ifPresent(data -> app.loadState((Serializable)data));
         });
 
         MenuItem itemNewGame = new MenuItem("NEW GAME");
@@ -124,7 +125,16 @@ public class FXGLMainMenu extends MainMenu {
     private MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
         app.getSaveLoadManager().loadFileNames().ifPresent(names -> list.getItems().setAll(names));
-        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(24));
+        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
+
+        try {
+            String css = AssetManager.INSTANCE.loadCSS("listview.css");
+            list.getStylesheets().add(css);
+        }
+        catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
 
         if (list.getItems().size() > 0) {
             list.getSelectionModel().selectFirst();
@@ -138,7 +148,7 @@ public class FXGLMainMenu extends MainMenu {
 
             try {
                 Serializable data = app.getSaveLoadManager().load(fileName);
-                app.loadSaveData(data);
+                app.loadState(data);
             }
             catch (Exception e) {
                 Alert alert = new Alert(AlertType.ERROR);

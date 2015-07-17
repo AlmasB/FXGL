@@ -27,6 +27,7 @@ package com.almasb.fxgl;
 
 import java.io.Serializable;
 
+import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.ui.GameMenu;
 
 import javafx.animation.FadeTransition;
@@ -36,6 +37,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -91,7 +93,25 @@ public class FXGLGameMenu extends GameMenu {
         itemResume.setAction(app::closeGameMenu);
 
         MenuItem itemSave = new MenuItem("SAVE");
-        // TODO:
+        itemSave.setAction(() -> {
+            Serializable data = app.saveState();
+
+            if (data == null)
+                return;
+
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setContentText("Enter name for save file");
+            dialog.showAndWait().ifPresent(fileName -> {
+                try {
+                    app.getSaveLoadManager().save(data, fileName);
+                }
+                catch (Exception e) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setContentText("Failed to save file: " + fileName + ". Error: " + e.getMessage());
+                    alert.showAndWait();
+                }
+            });
+        });
 
         MenuItem itemLoad = new MenuItem("LOAD");
         itemLoad.setMenuContent(createContentLoad());
@@ -114,7 +134,16 @@ public class FXGLGameMenu extends GameMenu {
     private MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
         app.getSaveLoadManager().loadFileNames().ifPresent(names -> list.getItems().setAll(names));
-        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(24));
+        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
+
+        try {
+            String css = AssetManager.INSTANCE.loadCSS("listview.css");
+            list.getStylesheets().add(css);
+        }
+        catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
 
         if (list.getItems().size() > 0) {
             list.getSelectionModel().selectFirst();
@@ -128,7 +157,7 @@ public class FXGLGameMenu extends GameMenu {
 
             try {
                 Serializable data = app.getSaveLoadManager().load(fileName);
-                app.loadSaveData(data);
+                app.loadState(data);
             }
             catch (Exception e) {
                 Alert alert = new Alert(AlertType.ERROR);

@@ -281,12 +281,24 @@ public abstract class GameApplication extends Application {
     protected abstract void initAssets() throws Exception;
 
     /**
+     * Called when user selects "save" from menu
+     *
+     * Default implementation returns null
+     *
+     * @return data with required info about current state
+     */
+    protected Serializable saveState() {
+        log.warning("Called saveState(), but it wasn't overriden!");
+        return null;
+    }
+
+    /**
      * Called when user selects "continue" or "load" from menu
      *
      * @param data
      */
-    protected void loadSaveData(Serializable data) {
-        log.warning("Called loadSaveData(), but it wasn't overriden!");
+    protected void loadState(Serializable data) {
+        log.warning("Called loadState(), but it wasn't overriden!");
     }
 
     /**

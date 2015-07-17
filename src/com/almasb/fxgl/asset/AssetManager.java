@@ -79,6 +79,7 @@ public enum AssetManager {
     private static final String TEXT_DIR = ASSETS_DIR + "text/";
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
     private static final String UI_DIR = ASSETS_DIR + "ui/";
+    private static final String CSS_DIR = UI_DIR + "css/";
 
     private static final Logger log = FXGLLogger.getLogger("AssetManager");
 
@@ -166,6 +167,16 @@ public enum AssetManager {
     private <T> T loadDataInternal(String name) throws Exception {
         try (ObjectInputStream ois = new ObjectInputStream(getClass().getResourceAsStream(BINARY_DIR + name))) {
             return (T)ois.readObject();
+        }
+    }
+
+    public String loadCSS(String name) throws Exception {
+        try {
+            return getClass().getResource(CSS_DIR + name).toExternalForm();
+        }
+        catch (Exception e) {
+            log.warning("Failed to load css: " + name + " Check it exists in assets/ui/css/");
+            throw new IOException("Failed to load css: " + name);
         }
     }
 
