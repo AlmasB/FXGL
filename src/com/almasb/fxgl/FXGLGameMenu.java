@@ -72,6 +72,7 @@ public class FXGLGameMenu extends GameMenu {
 
         Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
         bg.setFill(Color.rgb(10, 1, 1));
+        bg.setOpacity(0.5);
 
         Title title = new Title(settings.getTitle());
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
@@ -102,8 +103,7 @@ public class FXGLGameMenu extends GameMenu {
         itemExtra.setChild(createExtraMenu());
 
         MenuItem itemExit = new MenuItem("EXIT TO MAIN MENU");
-        // TODO:
-        //itemExit.setAction(app::exit);
+        itemExit.setAction(app::exitToMainMenu);
 
         MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
         menu.setTranslateX(50);

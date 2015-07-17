@@ -45,12 +45,12 @@ public abstract class GameMenu {
     }
 
     public final void setMenuKey(KeyCode key) {
-        root.setOnKeyPressed(event -> {
-            if (canSwitch && event.getCode() == key) {
-                canSwitch = false;
-                app.closeGameMenu();
-            }
-        });
+//        root.setOnKeyPressed(event -> {
+//            if (canSwitch && event.getCode() == key) {
+//                canSwitch = false;
+//                app.closeGameMenu();
+//            }
+//        });
     }
 
     public final void open() {

@@ -81,10 +81,6 @@ public final class InputManager {
         gameRoot.setOnMouseDragged(mouse::update);
         gameRoot.setOnMouseReleased(mouse::update);
         gameRoot.setOnMouseMoved(mouse::update);
-
-        // TODO: clean
-        addKeyTypedBinding(KeyCode.ESCAPE, app::openGameMenu);
-        //app.getMainMenu().setMenuKey(KeyCode.ESCAPE);
     }
 
     /**
@@ -124,6 +120,10 @@ public final class InputManager {
         keyPressActions.put(key, action);
     }
 
+    public void removeKeyPressBinding(KeyCode key) {
+        keyPressActions.remove(key);
+    }
+
     /**
      * Add an action that is executed only ONCE
      * per single physical key press
@@ -133,6 +133,10 @@ public final class InputManager {
      */
     public void addKeyTypedBinding(KeyCode key, Runnable action) {
         keyTypedActions.put(key, action);
+    }
+
+    public void removeKeyTypedBinding(KeyCode key) {
+        keyTypedActions.remove(key);
     }
 
     // TODO: proper mouse bindings like keys

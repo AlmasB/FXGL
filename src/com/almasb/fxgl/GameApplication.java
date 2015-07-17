@@ -60,6 +60,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -146,6 +147,8 @@ public abstract class GameApplication extends Application {
      * In-game menu, this is shown when menu key pressed during the game
      */
     private GameMenu gameMenu;
+
+    private KeyCode menuKey = KeyCode.ESCAPE;
 
     /**
      * Game scene
@@ -376,6 +379,11 @@ public abstract class GameApplication extends Application {
         mainMenu = initMainMenu();
         gameMenu = initGameMenu();
 
+        if (menuEnabled) {
+            mainScene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyHandler);
+            //inputManager.addKeyTypedBinding(menuKey, this::openGameMenu);
+        }
+
         gameMenu.setMenuKey(KeyCode.ESCAPE);
         mainScene.setRoot(menuEnabled ? mainMenu.getRoot() : root);
 
@@ -403,6 +411,21 @@ public abstract class GameApplication extends Application {
                 timer.start();
         }
     }
+
+    private boolean isGameMenuOpen = false;
+
+    private EventHandler<KeyEvent> menuKeyHandler = e -> {
+        if (e.getCode() == menuKey) {
+            if (isGameMenuOpen) {
+                closeGameMenu();
+                isGameMenuOpen = false;
+            }
+            else {
+                openGameMenu();
+                isGameMenuOpen = true;
+            }
+        }
+    };
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -476,6 +499,11 @@ public abstract class GameApplication extends Application {
 
         tick++;
         now += TIME_PER_FRAME;
+    }
+
+    protected void setMenuKey(KeyCode key) {
+        menuKey = key;
+        //gameMenu.setMenuKey(key);
     }
 
     /**
@@ -689,10 +717,10 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Pauses the game and opens main menu
+     * Exits the current game and opens main menu
      * Does nothing if menu is disabled in settings
      */
-    public void openMainMenu() {
+    public void exitToMainMenu() {
         if (!settings.isMenuEnabled())
             return;
 
@@ -707,27 +735,40 @@ public abstract class GameApplication extends Application {
         mainMenu.getRoot().requestFocus();
     }
 
+    /**
+     * Pauses the game and opens in-game menu
+     * Does nothing if menu is disabled in settings
+     */
     public void openGameMenu() {
         if (!settings.isMenuEnabled())
             return;
 
+        //inputManager.removeKeyTypedBinding(menuKey);
         pause();
 
+        inputManager.clearAllInput();
         root.getChildren().remove(uiRoot);
         root.getChildren().add(gameMenu.getRoot());
         gameMenu.getRoot().requestFocus();
         gameMenu.open();
     }
 
+    /**
+     * Closes the game menu and resumes the game
+     * Does nothing if menu is disabled in settings
+     */
     public void closeGameMenu() {
         if (!settings.isMenuEnabled())
             return;
 
         inputManager.clearAllInput();
-        mainScene.setRoot(root);
+        root.getChildren().remove(gameMenu.getRoot());
+        root.getChildren().add(uiRoot);
         gameRoot.requestFocus();
 
         resume();
+
+        //inputManager.addKeyTypedBinding(menuKey, this::openGameMenu);
     }
 
     /**
@@ -875,6 +916,10 @@ public abstract class GameApplication extends Application {
 
     public MainMenu getMainMenu() {
         return mainMenu;
+    }
+
+    public GameMenu getGameMenu() {
+        return gameMenu;
     }
 
     public GameSettings getSettings() {
