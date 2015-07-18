@@ -45,16 +45,14 @@ import java.util.zip.ZipInputStream;
 
 import com.almasb.fxgl.FXGLLogger;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 
 /**
- * AssetManager handles all resource (asset) loading operations
+ * AssetManager handles all resource (asset) loading operations.
  *
- * "assets" directory must be located in source folder - "src" by default
+ * "assets" directory must be located in source folder ("src" by default).
  *
  * AssetManager will look for resources (assets) under these specified directories
  * <ul>
@@ -63,6 +61,8 @@ import javafx.scene.media.Media;
  * <li>Music - /assets/music/</li>
  * <li>Text (List&lt;String&gt;) - /assets/text/</li>
  * <li>Data - /assets/data/</li>
+ * <li>CSS - /assets/ui/css/</li>
+ * <li>App icons - /assets/ui/icons/</li>
  * </ul>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -80,6 +80,7 @@ public enum AssetManager {
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
     private static final String UI_DIR = ASSETS_DIR + "ui/";
     private static final String CSS_DIR = UI_DIR + "css/";
+    private static final String ICON_DIR = UI_DIR + "icons/";
 
     private static final Logger log = FXGLLogger.getLogger("AssetManager");
 
@@ -170,6 +171,14 @@ public enum AssetManager {
         }
     }
 
+    /**
+     * Returns external form of of URL to CSS file ready to be applied to UI elements.
+     * Can be applied by calling object.getStyleSheets().add()
+     *
+     * @param name
+     * @return
+     * @throws Exception
+     */
     public String loadCSS(String name) throws Exception {
         try {
             return getClass().getResource(CSS_DIR + name).toExternalForm();
@@ -177,6 +186,25 @@ public enum AssetManager {
         catch (Exception e) {
             log.warning("Failed to load css: " + name + " Check it exists in assets/ui/css/");
             throw new IOException("Failed to load css: " + name);
+        }
+    }
+
+    /**
+     * Loads an app icon from assets/ui/icons.
+     *
+     * @param name
+     * @return
+     * @throws Exception
+     */
+    public Image loadAppIcon(String name) throws Exception {
+        try (InputStream is = getClass().getResourceAsStream(ICON_DIR + name)) {
+            if (is != null) {
+                return new Image(is);
+            }
+            else {
+                log.warning("Failed to load icon: " + name + " Check it exists in assets/ui/icons/");
+                throw new IOException("Failed to load icon: " + name);
+            }
         }
     }
 

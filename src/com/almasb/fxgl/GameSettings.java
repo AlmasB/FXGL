@@ -41,6 +41,7 @@ public final class GameSettings {
     private int height = 600;
     private boolean introEnabled = true;
     private boolean menuEnabled = true;
+    private String iconFileName = "";
 
     public String getTitle() {
         return title;
@@ -88,5 +89,13 @@ public final class GameSettings {
 
     public void setMenuEnabled(boolean b) {
         menuEnabled = b;
+    }
+
+    public String getIconFileName() {
+        return iconFileName;
+    }
+
+    public void setIconFileName(String iconFileName) {
+        this.iconFileName = iconFileName;
     }
 }

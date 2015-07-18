@@ -65,6 +65,8 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -363,6 +365,15 @@ public abstract class GameApplication extends Application {
 
         mainStage.setTitle(settings.getTitle() + " " + settings.getVersion());
         mainStage.setResizable(false);
+
+        try {
+            String iconName = settings.getIconFileName();
+            if (!iconName.isEmpty()) {
+                Image icon = assetManager.loadAppIcon(iconName);
+                mainStage.getIcons().add(icon);
+            }
+        }
+        catch (Exception e) {}
 
         // ensure the window frame is just right for the scene size
         mainStage.setScene(mainScene);
@@ -735,15 +746,19 @@ public abstract class GameApplication extends Application {
         if (!settings.isMenuEnabled())
             return;
 
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setContentText("This operation is not yet supported!");
+        alert.showAndWait();
+
         // TODO: impl
         // we should completely clean the game
         // and return to state of main menu as if the app just started
 
-        pause();
-
-        inputManager.clearAllInput();
-        mainScene.setRoot(mainMenu.getRoot());
-        mainMenu.getRoot().requestFocus();
+//        pause();
+//
+//        inputManager.clearAllInput();
+//        mainScene.setRoot(mainMenu.getRoot());
+//        mainMenu.getRoot().requestFocus();
     }
 
     /**
