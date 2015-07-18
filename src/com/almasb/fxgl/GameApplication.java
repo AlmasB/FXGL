@@ -73,7 +73,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 /**
- * To use FXGL extend this class and implement necessary methods
+ * To use FXGL extend this class and implement necessary methods.
+ *
+ * Unless explicitly stated, methods are not thread-safe and must be
+ * executed on JavaFX Application Thread
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
@@ -651,8 +654,6 @@ public abstract class GameApplication extends Application {
     /**
      * Add an entity/entities to the scenegraph
      *
-     * This is safe to be called from any thread
-     *
      * @param entities
      */
     public void addEntities(Entity... entities) {
@@ -677,8 +678,6 @@ public abstract class GameApplication extends Application {
 
     /**
      * Remove an entity from the scenegraph
-     *
-     * This is safe to be called from any thread
      *
      * @param entity
      */
