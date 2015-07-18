@@ -406,8 +406,8 @@ public abstract class GameApplication extends Application {
         gameMenu = initGameMenu();
 
         if (menuEnabled) {
-            mainScene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyHandler);
-            //inputManager.addKeyTypedBinding(menuKey, this::openGameMenu);
+            mainScene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyPressedHandler);
+            mainScene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
         }
 
         gameMenu.setMenuKey(KeyCode.ESCAPE);
@@ -437,21 +437,6 @@ public abstract class GameApplication extends Application {
                 timer.start();
         }
     }
-
-    private boolean isGameMenuOpen = false;
-
-    private EventHandler<KeyEvent> menuKeyHandler = e -> {
-        if (e.getCode() == menuKey) {
-            if (isGameMenuOpen) {
-                closeGameMenu();
-                isGameMenuOpen = false;
-            }
-            else {
-                openGameMenu();
-                isGameMenuOpen = true;
-            }
-        }
-    };
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -529,7 +514,6 @@ public abstract class GameApplication extends Application {
 
     protected void setMenuKey(KeyCode key) {
         menuKey = key;
-        //gameMenu.setMenuKey(key);
     }
 
     /**
@@ -761,6 +745,29 @@ public abstract class GameApplication extends Application {
 //        mainMenu.getRoot().requestFocus();
     }
 
+    private boolean isGameMenuOpen = false;
+    private boolean canSwitchGameMenu = true;
+
+    private EventHandler<KeyEvent> menuKeyPressedHandler = e -> {
+        if (e.getCode() == menuKey) {
+            if (canSwitchGameMenu) {
+                if (isGameMenuOpen) {
+                    closeGameMenu();
+                }
+                else {
+                    openGameMenu();
+                }
+                canSwitchGameMenu = false;
+            }
+        }
+    };
+
+    private EventHandler<KeyEvent> menuKeyReleasedHandler = e -> {
+        if (e.getCode() == menuKey) {
+            canSwitchGameMenu = true;
+        }
+    };
+
     /**
      * Pauses the game and opens in-game menu
      * Does nothing if menu is disabled in settings
@@ -769,7 +776,6 @@ public abstract class GameApplication extends Application {
         if (!settings.isMenuEnabled())
             return;
 
-        //inputManager.removeKeyTypedBinding(menuKey);
         pause();
 
         inputManager.clearAllInput();
@@ -777,6 +783,8 @@ public abstract class GameApplication extends Application {
         root.getChildren().add(gameMenu.getRoot());
         gameMenu.getRoot().requestFocus();
         gameMenu.open();
+
+        isGameMenuOpen = true;
     }
 
     /**
@@ -794,7 +802,7 @@ public abstract class GameApplication extends Application {
 
         resume();
 
-        //inputManager.addKeyTypedBinding(menuKey, this::openGameMenu);
+        isGameMenuOpen = false;
     }
 
     /**
