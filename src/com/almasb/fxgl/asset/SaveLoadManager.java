@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.asset;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,7 +36,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class SaveLoadManager {
+public enum SaveLoadManager {
+    INSTANCE;
 
     private static final String SAVE_DIR = "saves/";
 

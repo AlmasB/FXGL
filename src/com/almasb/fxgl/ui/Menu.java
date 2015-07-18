@@ -29,12 +29,12 @@ import com.almasb.fxgl.GameApplication;
 
 import javafx.scene.layout.Pane;
 
-public abstract class MainMenu {
+public abstract class Menu {
 
     protected final GameApplication app;
     protected final Pane root = new Pane();
 
-    public MainMenu(GameApplication app) {
+    public Menu(GameApplication app) {
         this.app = app;
         root.setPrefSize(app.getWidth(), app.getHeight());
         root.setFocusTraversable(true);

@@ -43,6 +43,7 @@ import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.TimerAction.TimerType;
 import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.effect.ParticleManager;
 import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
@@ -52,8 +53,9 @@ import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
-import com.almasb.fxgl.ui.GameMenu;
-import com.almasb.fxgl.ui.MainMenu;
+import com.almasb.fxgl.ui.FXGLGameMenu;
+import com.almasb.fxgl.ui.FXGLMainMenu;
+import com.almasb.fxgl.ui.Menu;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -146,13 +148,16 @@ public abstract class GameApplication extends Application {
     /**
      * Main menu, this is the menu shown at the start of game
      */
-    private MainMenu mainMenu;
+    private Menu mainMenu;
 
     /**
      * In-game menu, this is shown when menu key pressed during the game
      */
-    private GameMenu gameMenu;
+    private Menu gameMenu;
 
+    /**
+     * The key that triggers opening/closing game menu
+     */
     private KeyCode menuKey = KeyCode.ESCAPE;
 
     /**
@@ -205,7 +210,7 @@ public abstract class GameApplication extends Application {
 
     protected final QTEManager qteManager = new QTEManager(this);
 
-    protected final SaveLoadManager saveLoadManager = new SaveLoadManager();
+    protected final SaveLoadManager saveLoadManager = SaveLoadManager.INSTANCE;
 
     /**
      * Default random number generator
@@ -265,7 +270,7 @@ public abstract class GameApplication extends Application {
      *
      * @return
      */
-    protected MainMenu initMainMenu() {
+    protected Menu initMainMenu() {
         return new FXGLMainMenu(this);
     }
 
@@ -274,7 +279,7 @@ public abstract class GameApplication extends Application {
      *
      * @return
      */
-    protected GameMenu initGameMenu() {
+    protected Menu initGameMenu() {
         return new FXGLGameMenu(this);
     }
 
@@ -292,7 +297,7 @@ public abstract class GameApplication extends Application {
      *
      * @return data with required info about current state
      */
-    protected Serializable saveState() {
+    public Serializable saveState() {
         log.warning("Called saveState(), but it wasn't overriden!");
         return null;
     }
@@ -302,7 +307,7 @@ public abstract class GameApplication extends Application {
      *
      * @param data
      */
-    protected void loadState(Serializable data) {
+    public void loadState(Serializable data) {
         log.warning("Called loadState(), but it wasn't overriden!");
     }
 
@@ -410,7 +415,6 @@ public abstract class GameApplication extends Application {
             mainScene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
         }
 
-        gameMenu.setMenuKey(KeyCode.ESCAPE);
         mainScene.setRoot(menuEnabled ? mainMenu.getRoot() : root);
 
         mainStage.setOnCloseRequest(event -> exit());
@@ -439,7 +443,7 @@ public abstract class GameApplication extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public final void start(Stage primaryStage) throws Exception {
         log.finer("start()");
         // capture the reference to primaryStage so we can access it
         mainStage = primaryStage;
@@ -512,7 +516,7 @@ public abstract class GameApplication extends Application {
         now += TIME_PER_FRAME;
     }
 
-    protected void setMenuKey(KeyCode key) {
+    protected final void setMenuKey(KeyCode key) {
         menuKey = key;
     }
 
@@ -524,7 +528,7 @@ public abstract class GameApplication extends Application {
      * @param x
      * @param y
      */
-    public void setViewportOrigin(int x, int y) {
+    public final void setViewportOrigin(int x, int y) {
         gameRoot.setLayoutX(-x);
         gameRoot.setLayoutY(-y);
     }
@@ -534,7 +538,7 @@ public abstract class GameApplication extends Application {
      *
      * @return viewport origin
      */
-    public Point2D getViewportOrigin() {
+    public final Point2D getViewportOrigin() {
         return new Point2D(-gameRoot.getLayoutX(), -gameRoot.getLayoutY());
     }
 
@@ -558,7 +562,7 @@ public abstract class GameApplication extends Application {
      * @param distX
      * @param distY
      */
-    protected void bindViewportOrigin(Entity entity, int distX, int distY) {
+    protected final void bindViewportOrigin(Entity entity, int distX, int distY) {
         gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
         gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
     }
@@ -570,7 +574,7 @@ public abstract class GameApplication extends Application {
      * @param entity
      * @param distX
      */
-    protected void bindViewportOriginX(Entity entity, int distX) {
+    protected final void bindViewportOriginX(Entity entity, int distX) {
         gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
     }
 
@@ -581,7 +585,7 @@ public abstract class GameApplication extends Application {
      * @param entity
      * @param distY
      */
-    protected void bindViewportOriginY(Entity entity, int distY) {
+    protected final void bindViewportOriginY(Entity entity, int distY) {
         gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
     }
 
@@ -592,7 +596,7 @@ public abstract class GameApplication extends Application {
      * @param b
      * @defaultValue false
      */
-    protected void setUIMouseTransparent(boolean b) {
+    protected final void setUIMouseTransparent(boolean b) {
         uiRoot.setMouseTransparent(b);
     }
 
@@ -600,7 +604,7 @@ public abstract class GameApplication extends Application {
      *
      * @return  a list of ALL entities currently registered in the application
      */
-    public List<Entity> getAllEntities() {
+    public final List<Entity> getAllEntities() {
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
                 .collect(Collectors.toList());
@@ -614,7 +618,7 @@ public abstract class GameApplication extends Application {
      * @param types
      * @return
      */
-    public List<Entity> getEntities(EntityType type, EntityType... types) {
+    public final List<Entity> getEntities(EntityType type, EntityType... types) {
         List<String> list = Arrays.asList(types).stream()
                 .map(EntityType::getUniqueType)
                 .collect(Collectors.toList());
@@ -636,7 +640,7 @@ public abstract class GameApplication extends Application {
      * @param types
      * @return
      */
-    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType type, EntityType... types) {
+    public final List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType type, EntityType... types) {
         Entity boundsEntity = Entity.noType();
         boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
         boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
@@ -651,7 +655,7 @@ public abstract class GameApplication extends Application {
      *
      * @param entities
      */
-    public void addEntities(Entity... entities) {
+    public final void addEntities(Entity... entities) {
         for (Entity e : entities) {
             if (e instanceof CombinedEntity) {
                 tmpAddList.addAll(e.getChildrenUnmodifiable()
@@ -676,7 +680,7 @@ public abstract class GameApplication extends Application {
      *
      * @param entity
      */
-    public void removeEntity(Entity entity) {
+    public final void removeEntity(Entity entity) {
         tmpRemoveList.add(entity);
     }
 
@@ -686,7 +690,7 @@ public abstract class GameApplication extends Application {
      * @param n
      * @param nodes
      */
-    public void addUINodes(Node n, Node... nodes) {
+    public final void addUINodes(Node n, Node... nodes) {
         uiRoot.getChildren().add(n);
         uiRoot.getChildren().addAll(nodes);
     }
@@ -696,14 +700,14 @@ public abstract class GameApplication extends Application {
      *
      * @param n
      */
-    public void removeUINode(Node n) {
+    public final void removeUINode(Node n) {
         uiRoot.getChildren().remove(n);
     }
 
     /**
      * Call this to manually start the game
      */
-    protected void startGame() {
+    public final void startGame() {
         mainScene.setRoot(root);
         timer.start();
     }
@@ -711,14 +715,14 @@ public abstract class GameApplication extends Application {
     /**
      * Pauses the main loop execution
      */
-    public void pause() {
+    public final void pause() {
         timer.stop();
     }
 
     /**
      * Resumes the main loop execution
      */
-    public void resume() {
+    public final void resume() {
         timer.start();
     }
 
@@ -726,7 +730,7 @@ public abstract class GameApplication extends Application {
      * Exits the current game and opens main menu
      * Does nothing if menu is disabled in settings
      */
-    public void exitToMainMenu() {
+    public final void exitToMainMenu() {
         if (!settings.isMenuEnabled())
             return;
 
@@ -772,7 +776,7 @@ public abstract class GameApplication extends Application {
      * Pauses the game and opens in-game menu
      * Does nothing if menu is disabled in settings
      */
-    public void openGameMenu() {
+    public final void openGameMenu() {
         if (!settings.isMenuEnabled())
             return;
 
@@ -782,7 +786,6 @@ public abstract class GameApplication extends Application {
         root.getChildren().remove(uiRoot);
         root.getChildren().add(gameMenu.getRoot());
         gameMenu.getRoot().requestFocus();
-        gameMenu.open();
 
         isGameMenuOpen = true;
     }
@@ -791,7 +794,7 @@ public abstract class GameApplication extends Application {
      * Closes the game menu and resumes the game
      * Does nothing if menu is disabled in settings
      */
-    public void closeGameMenu() {
+    public final void closeGameMenu() {
         if (!settings.isMenuEnabled())
             return;
 
@@ -812,7 +815,7 @@ public abstract class GameApplication extends Application {
      * You can call this method when you want to quit the application manually
      * from the game
      */
-    protected final void exit() {
+    public final void exit() {
         log.finer("Closing Normally");
         onExit();
         FXGLLogger.close();
@@ -828,7 +831,7 @@ public abstract class GameApplication extends Application {
      * @param action the action
      * @param interval time in nanoseconds
      */
-    public void runAtInterval(Runnable action, double interval) {
+    public final void runAtInterval(Runnable action, double interval) {
         timerActions.add(new TimerAction(now, interval, action, TimerType.INDEFINITE));
     }
 
@@ -846,7 +849,7 @@ public abstract class GameApplication extends Application {
      * @param interval
      * @param whileCondition
      */
-    public void runAtIntervalWhile(Runnable action, double interval, BooleanProperty whileCondition) {
+    public final void runAtIntervalWhile(Runnable action, double interval, BooleanProperty whileCondition) {
         if (!whileCondition.get()) {
             return;
         }
@@ -867,7 +870,7 @@ public abstract class GameApplication extends Application {
      * @param action
      * @param delay
      */
-    public void runOnceAfter(Runnable action, double delay) {
+    public final void runOnceAfter(Runnable action, double delay) {
         timerActions.add(new TimerAction(now, delay, action, TimerType.ONCE));
     }
 
@@ -879,7 +882,7 @@ public abstract class GameApplication extends Application {
      * @param type
      * @param types
      */
-    public void fireFXGLEvent(FXGLEvent event, EntityType type, EntityType... types) {
+    public final void fireFXGLEvent(FXGLEvent event, EntityType type, EntityType... types) {
         getEntities(type, types).forEach(e -> e.fireFXGLEvent(event));
     }
 
@@ -888,7 +891,7 @@ public abstract class GameApplication extends Application {
      *
      * @param event
      */
-    public void fireFXGLEvent(FXGLEvent event) {
+    public final void fireFXGLEvent(FXGLEvent event) {
         getAllEntities().forEach(e -> e.fireFXGLEvent(event));
     }
 
@@ -897,7 +900,7 @@ public abstract class GameApplication extends Application {
      *
      * @return  true if the screenshot was saved successfully, false otherwise
      */
-    protected boolean saveScreenshot() {
+    public final boolean saveScreenshot() {
         Image fxImage = mainScene.snapshot(null);
         BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
@@ -920,7 +923,7 @@ public abstract class GameApplication extends Application {
      *
      * @return width of the main scene
      */
-    public double getWidth() {
+    public final double getWidth() {
         return currentWidth;
     }
 
@@ -928,7 +931,7 @@ public abstract class GameApplication extends Application {
      *
      * @return height of the main scene
      */
-    public double getHeight() {
+    public final double getHeight() {
         return currentHeight;
     }
 
@@ -936,7 +939,7 @@ public abstract class GameApplication extends Application {
      *
      * @return current tick since the start of game
      */
-    public long getTick() {
+    public final long getTick() {
         return tick;
     }
 
@@ -944,23 +947,15 @@ public abstract class GameApplication extends Application {
      *
      * @return current time since start of game in nanoseconds
      */
-    public long getNow() {
+    public final long getNow() {
         return now;
     }
 
-    public MainMenu getMainMenu() {
-        return mainMenu;
-    }
-
-    public GameMenu getGameMenu() {
-        return gameMenu;
-    }
-
-    public GameSettings getSettings() {
+    /**
+     *
+     * @return pre-configured settings before game started
+     */
+    public final GameSettings getSettings() {
         return settings;
-    }
-
-    public SaveLoadManager getSaveLoadManager() {
-        return saveLoadManager;
     }
 }

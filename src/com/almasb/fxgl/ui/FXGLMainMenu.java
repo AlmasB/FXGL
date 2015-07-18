@@ -23,12 +23,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.ui;
 
 import java.io.Serializable;
 
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.GameSettings;
+import com.almasb.fxgl.Version;
 import com.almasb.fxgl.asset.AssetManager;
-import com.almasb.fxgl.ui.MainMenu;
+import com.almasb.fxgl.asset.SaveLoadManager;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
@@ -36,7 +39,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.KeyCode;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -59,7 +61,7 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class FXGLMainMenu extends MainMenu {
+public final class FXGLMainMenu extends Menu {
 
     private GameSettings settings;
 
@@ -96,9 +98,9 @@ public class FXGLMainMenu extends MainMenu {
 
     private MenuBox createMainMenu() {
         MenuItem itemContinue = new MenuItem("CONTINUE");
-        itemContinue.setEnabled(app.getSaveLoadManager().loadLastModifiedFile().isPresent());
+        itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadLastModifiedFile().isPresent());
         itemContinue.setAction(() -> {
-            app.getSaveLoadManager().loadLastModifiedFile().ifPresent(data -> app.loadState((Serializable)data));
+            SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> app.loadState((Serializable)data));
         });
 
         MenuItem itemNewGame = new MenuItem("NEW GAME");
@@ -124,17 +126,14 @@ public class FXGLMainMenu extends MainMenu {
 
     private MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
-        app.getSaveLoadManager().loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+        SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         try {
             String css = AssetManager.INSTANCE.loadCSS("listview.css");
             list.getStylesheets().add(css);
         }
-        catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+        catch (Exception e) {}
 
         if (list.getItems().size() > 0) {
             list.getSelectionModel().selectFirst();
@@ -147,7 +146,7 @@ public class FXGLMainMenu extends MainMenu {
                 return;
 
             try {
-                Serializable data = app.getSaveLoadManager().load(fileName);
+                Serializable data = SaveLoadManager.INSTANCE.load(fileName);
                 app.loadState(data);
             }
             catch (Exception e) {
@@ -163,7 +162,7 @@ public class FXGLMainMenu extends MainMenu {
                 return;
 
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setContentText(app.getSaveLoadManager().delete(fileName) ? "File was deleted" : "File couldn't be deleted");
+            alert.setContentText(SaveLoadManager.INSTANCE.delete(fileName) ? "File was deleted" : "File couldn't be deleted");
             alert.showAndWait();
 
             list.getItems().remove(fileName);
