@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.util;
 
 /**
  * A wrapper for Runnable which is executed at given intervals.
@@ -34,7 +34,7 @@ package com.almasb.fxgl;
  * @version 1.0
  *
  */
-/*package-private*/ final class TimerAction {
+public final class TimerAction {
 
     public enum TimerType {
         ONCE, INDEFINITE

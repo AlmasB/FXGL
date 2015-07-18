@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLLogger;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Parser for levels represented by plain text

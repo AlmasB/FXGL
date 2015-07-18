@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
-import com.almasb.fxgl.TimerAction.TimerType;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.effect.ParticleManager;
@@ -56,6 +55,11 @@ import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.ui.FXGLGameMenu;
 import com.almasb.fxgl.ui.FXGLMainMenu;
 import com.almasb.fxgl.ui.Menu;
+import com.almasb.fxgl.util.FPSCounter;
+import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.TimerAction;
+import com.almasb.fxgl.util.Version;
+import com.almasb.fxgl.util.TimerAction.TimerType;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;

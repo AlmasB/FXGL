@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLLogger;
+import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * MultiServer for multiple concurrent network connections (clients)

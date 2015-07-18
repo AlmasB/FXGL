@@ -23,39 +23,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.util;
 
-import java.util.logging.Logger;
+import java.util.Arrays;
 
 /**
- * Holds FXGL version in x.y.z format, where x - major, y - minor, z - patch versions
+ * Convenience class that buffers FPS values and calculates
+ * the arithmetic mean to approximate FPS value as it
+ * varies from frame to frame
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
  *
  */
-public final class Version {
+public final class FPSCounter {
 
-    private static final Logger log = FXGLLogger.getLogger("Version");
+    private static final int MAX_SAMPLES = 100;
 
-    public static int getMajor() {
-        return 0;
+    private final float[] values = new float[MAX_SAMPLES];
+    private float sum = 0.0f;
+    private int index = 0;
+
+    public FPSCounter() {
+        Arrays.fill(values, 0.0f);
     }
 
-    public static int getMinor() {
-        return 1;
-    }
+    /**
+     * Calculates average FPS and buffers given value
+     * for future corrections to the FPS value
+     *
+     * @param timeTookLastFrame
+     * @return
+     */
+    public float count(float timeTookLastFrame) {
+        sum -= values[index];
+        sum += timeTookLastFrame;
+        values[index] = timeTookLastFrame;
+        if (++index == values.length)
+            index = 0;
 
-    public static int getPatch() {
-        return 4;
-    }
-
-    public static void print() {
-        log.info("FXGL-" + getAsString());
-        log.info("Source code and latest builds at: https://github.com/AlmasB/FXGL");
-    }
-
-    public static String getAsString() {
-        return getMajor() + "." + getMinor() + "." + getPatch();
+        return sum / values.length;
     }
 }

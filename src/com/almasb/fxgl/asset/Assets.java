@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javafx.scene.media.AudioClip;
+import com.almasb.fxgl.util.FXGLLogger;
 
-import com.almasb.fxgl.FXGLLogger;
+import javafx.scene.media.AudioClip;
 
 /**
  * Stores cached data

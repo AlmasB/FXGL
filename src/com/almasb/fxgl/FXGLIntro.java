@@ -27,6 +27,8 @@ package com.almasb.fxgl;
 
 import java.util.Random;
 
+import com.almasb.fxgl.util.Version;
+
 import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;

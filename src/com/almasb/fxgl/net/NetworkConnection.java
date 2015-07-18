@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLLogger;
+import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Represents a communication between two machines over network.

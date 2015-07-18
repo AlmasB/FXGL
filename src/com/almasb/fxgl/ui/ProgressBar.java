@@ -27,7 +27,7 @@ package com.almasb.fxgl.ui;
 
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLLogger;
+import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;

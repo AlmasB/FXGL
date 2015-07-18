@@ -29,9 +29,9 @@ import java.io.Serializable;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
-import com.almasb.fxgl.Version;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;

@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.almasb.fxgl.FXGLLogger;
+import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;

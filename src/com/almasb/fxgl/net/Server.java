@@ -36,7 +36,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLLogger;
+import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Server side of the network connection.
