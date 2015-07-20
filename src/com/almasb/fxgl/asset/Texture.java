@@ -25,8 +25,13 @@
  */
 package com.almasb.fxgl.asset;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 
 /**
  * Represents a 2D image which can be set as graphics for an entity.
@@ -69,5 +74,44 @@ public class Texture extends ImageView {
      */
     public Texture copy() {
         return new Texture(getImage());
+    }
+
+    /**
+     * Given a rectangular area, produces a sub-texture of
+     * this texture.
+     *
+     * Rectangle cannot cover area outside of the original texture
+     * image.
+     *
+     * @param area
+     * @return
+     */
+    public Texture subTexture(Rectangle2D area) {
+        int minX = (int) area.getMinX();
+        int minY = (int) area.getMinY();
+        int maxX = (int) area.getMaxX();
+        int maxY = (int) area.getMaxY();
+
+        if (minX < 0)
+            throw new IllegalArgumentException("minX value of sub-texture cannot be negative");
+        if (minY < 0)
+            throw new IllegalArgumentException("minY value of sub-texture cannot be negative");
+        if (maxX > getImage().getWidth())
+            throw new IllegalArgumentException("maxX value of sub-texture cannot be greater than image width");
+        if (maxY > getImage().getHeight())
+            throw new IllegalArgumentException("maxY value of sub-texture cannot be greater than image height");
+
+        PixelReader pixelReader = getImage().getPixelReader();
+        WritableImage image = new WritableImage(maxX - minX, maxY - minY);
+        PixelWriter pixelWriter = image.getPixelWriter();
+
+        for (int y = minY; y < maxY; y++) {
+            for (int x = minX; x < maxX; x++) {
+                Color color = pixelReader.getColor(x, y);
+                pixelWriter.setColor(x - minX, y - minY, color);
+            }
+        }
+
+        return new Texture(image);
     }
 }
