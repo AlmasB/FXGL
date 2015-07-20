@@ -58,8 +58,8 @@ import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.FPSCounter;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.TimerAction;
-import com.almasb.fxgl.util.Version;
 import com.almasb.fxgl.util.TimerAction.TimerType;
+import com.almasb.fxgl.util.Version;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -71,8 +71,6 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -382,7 +380,9 @@ public abstract class GameApplication extends Application {
                 mainStage.getIcons().add(icon);
             }
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+            log.warning("Failed to load app icon: " + e.getMessage());
+        }
 
         // ensure the window frame is just right for the scene size
         mainStage.setScene(mainScene);
@@ -403,60 +403,7 @@ public abstract class GameApplication extends Application {
         mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
     }
 
-    /**
-     * Opens and shows the actual window. Configures what parts of scenes
-     * need to be shown and in which
-     * order based on the subclass implementation of certain init methods
-     */
-    private void configureAndShowStage() {
-        boolean menuEnabled = settings.isMenuEnabled();
-
-        mainMenu = initMainMenu();
-        gameMenu = initGameMenu();
-
-        if (menuEnabled) {
-            mainScene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyPressedHandler);
-            mainScene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
-        }
-
-        mainScene.setRoot(menuEnabled ? mainMenu.getRoot() : root);
-
-        mainStage.setOnCloseRequest(event -> exit());
-        mainStage.show();
-
-        if (settings.isIntroEnabled()) {
-            Intro intro = initIntroVideo();
-            if (intro == null)
-                intro = new FXGLIntro(getWidth(), getHeight());
-            intro.onFinished = () -> {
-                if (menuEnabled)
-                    mainScene.setRoot(mainMenu.getRoot());
-                else {
-                    mainScene.setRoot(root);
-                    timer.start();
-                }
-            };
-
-            mainScene.setRoot(intro);
-            intro.startIntro();
-        }
-        else {
-            if (!menuEnabled)
-                timer.start();
-        }
-    }
-
-    @Override
-    public final void start(Stage primaryStage) throws Exception {
-        log.finer("start()");
-        // capture the reference to primaryStage so we can access it
-        mainStage = primaryStage;
-
-        initSettings(settings);
-        applySettings();
-
-        initManagers();
-
+    private void initApp() {
         try {
             initAssets();
             initGame();
@@ -477,6 +424,59 @@ public abstract class GameApplication extends Application {
                 .forEachOrdered(log::severe);
             exit();
         }
+    }
+
+    /**
+     * Opens and shows the actual window. Configures what parts of scenes
+     * need to be shown and in which
+     * order based on the subclass implementation of certain init methods
+     */
+    private void configureAndShowStage() {
+        boolean menuEnabled = settings.isMenuEnabled();
+
+        if (menuEnabled) {
+            mainScene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyPressedHandler);
+            mainScene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
+            mainScene.setRoot(mainMenu.getRoot());
+        }
+
+        mainStage.setOnCloseRequest(event -> exit());
+        mainStage.show();
+
+        if (settings.isIntroEnabled()) {
+            Intro intro = initIntroVideo();
+            intro.onFinished = () -> {
+                if (menuEnabled) {
+                    mainScene.setRoot(mainMenu.getRoot());
+                }
+                else {
+                    startNewGame();
+                }
+            };
+
+            mainScene.setRoot(intro);
+            intro.startIntro();
+        }
+        else {
+            if (!menuEnabled) {
+                startNewGame();
+            }
+        }
+    }
+
+    @Override
+    public final void start(Stage primaryStage) throws Exception {
+        log.finer("start()");
+        // capture the reference to primaryStage so we can access it
+        mainStage = primaryStage;
+
+        initSettings(settings);
+        applySettings();
+
+        initManagers();
+
+        mainMenu = initMainMenu();
+        gameMenu = initGameMenu();
 
         configureAndShowStage();
     }
@@ -518,6 +518,138 @@ public abstract class GameApplication extends Application {
 
         tick++;
         now += TIME_PER_FRAME;
+    }
+
+    /**
+     * Call this to manually start the game
+     */
+    public final void startNewGame() {
+        initApp();
+
+        tick = 0;
+        now = 0;
+
+        mainScene.setRoot(root);
+        timer.start();
+    }
+
+    /**
+     * Pauses the main loop execution
+     */
+    public final void pause() {
+        timer.stop();
+    }
+
+    /**
+     * Resumes the main loop execution
+     */
+    public final void resume() {
+        timer.start();
+    }
+
+    /**
+     * Exits the current game and opens main menu
+     * Does nothing if menu is disabled in settings
+     */
+    public final void exitToMainMenu() {
+        if (!settings.isMenuEnabled())
+            return;
+
+        pause();
+
+        timerActions.clear();
+        gameRoot.getChildren().stream()
+                .filter(e -> e instanceof PhysicsEntity)
+                .map(e -> (PhysicsEntity)e)
+                .forEach(physicsManager::destroyBody);
+        gameRoot.getChildren().forEach(entity -> ((Entity)entity).onClean());
+
+        uiRoot.getChildren().clear();
+
+        tmpAddList.clear();
+        tmpRemoveList.clear();
+
+        inputManager.clearAllInput();
+
+        root.getChildren().remove(gameMenu.getRoot());
+        root.getChildren().add(uiRoot);
+        isGameMenuOpen = false;
+
+        mainScene.setRoot(mainMenu.getRoot());
+        mainMenu.getRoot().requestFocus();
+    }
+
+    private boolean isGameMenuOpen = false;
+    private boolean canSwitchGameMenu = true;
+
+    private EventHandler<KeyEvent> menuKeyPressedHandler = e -> {
+        if (e.getCode() == menuKey) {
+            if (canSwitchGameMenu) {
+                if (isGameMenuOpen) {
+                    closeGameMenu();
+                }
+                else {
+                    openGameMenu();
+                }
+                canSwitchGameMenu = false;
+            }
+        }
+    };
+
+    private EventHandler<KeyEvent> menuKeyReleasedHandler = e -> {
+        if (e.getCode() == menuKey) {
+            canSwitchGameMenu = true;
+        }
+    };
+
+    /**
+     * Pauses the game and opens in-game menu
+     * Does nothing if menu is disabled in settings
+     */
+    public final void openGameMenu() {
+        if (!settings.isMenuEnabled())
+            return;
+
+        pause();
+
+        inputManager.clearAllInput();
+        root.getChildren().remove(uiRoot);
+        root.getChildren().add(gameMenu.getRoot());
+        gameMenu.getRoot().requestFocus();
+
+        isGameMenuOpen = true;
+    }
+
+    /**
+     * Closes the game menu and resumes the game
+     * Does nothing if menu is disabled in settings
+     */
+    public final void closeGameMenu() {
+        if (!settings.isMenuEnabled())
+            return;
+
+        inputManager.clearAllInput();
+        root.getChildren().remove(gameMenu.getRoot());
+        root.getChildren().add(uiRoot);
+        gameRoot.requestFocus();
+
+        resume();
+
+        isGameMenuOpen = false;
+    }
+
+    /**
+     * This method will be automatically called when main window is closed
+     * This method will shutdown the threads and close the logger
+     *
+     * You can call this method when you want to quit the application manually
+     * from the game
+     */
+    public final void exit() {
+        log.finer("Closing Normally");
+        onExit();
+        FXGLLogger.close();
+        Platform.exit();
     }
 
     protected final void setMenuKey(KeyCode key) {
@@ -706,124 +838,6 @@ public abstract class GameApplication extends Application {
      */
     public final void removeUINode(Node n) {
         uiRoot.getChildren().remove(n);
-    }
-
-    /**
-     * Call this to manually start the game
-     */
-    public final void startGame() {
-        mainScene.setRoot(root);
-        timer.start();
-    }
-
-    /**
-     * Pauses the main loop execution
-     */
-    public final void pause() {
-        timer.stop();
-    }
-
-    /**
-     * Resumes the main loop execution
-     */
-    public final void resume() {
-        timer.start();
-    }
-
-    /**
-     * Exits the current game and opens main menu
-     * Does nothing if menu is disabled in settings
-     */
-    public final void exitToMainMenu() {
-        if (!settings.isMenuEnabled())
-            return;
-
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setContentText("This operation is not yet supported!");
-        alert.showAndWait();
-
-        // TODO: impl
-        // we should completely clean the game
-        // and return to state of main menu as if the app just started
-
-//        pause();
-//
-//        inputManager.clearAllInput();
-//        mainScene.setRoot(mainMenu.getRoot());
-//        mainMenu.getRoot().requestFocus();
-    }
-
-    private boolean isGameMenuOpen = false;
-    private boolean canSwitchGameMenu = true;
-
-    private EventHandler<KeyEvent> menuKeyPressedHandler = e -> {
-        if (e.getCode() == menuKey) {
-            if (canSwitchGameMenu) {
-                if (isGameMenuOpen) {
-                    closeGameMenu();
-                }
-                else {
-                    openGameMenu();
-                }
-                canSwitchGameMenu = false;
-            }
-        }
-    };
-
-    private EventHandler<KeyEvent> menuKeyReleasedHandler = e -> {
-        if (e.getCode() == menuKey) {
-            canSwitchGameMenu = true;
-        }
-    };
-
-    /**
-     * Pauses the game and opens in-game menu
-     * Does nothing if menu is disabled in settings
-     */
-    public final void openGameMenu() {
-        if (!settings.isMenuEnabled())
-            return;
-
-        pause();
-
-        inputManager.clearAllInput();
-        root.getChildren().remove(uiRoot);
-        root.getChildren().add(gameMenu.getRoot());
-        gameMenu.getRoot().requestFocus();
-
-        isGameMenuOpen = true;
-    }
-
-    /**
-     * Closes the game menu and resumes the game
-     * Does nothing if menu is disabled in settings
-     */
-    public final void closeGameMenu() {
-        if (!settings.isMenuEnabled())
-            return;
-
-        inputManager.clearAllInput();
-        root.getChildren().remove(gameMenu.getRoot());
-        root.getChildren().add(uiRoot);
-        gameRoot.requestFocus();
-
-        resume();
-
-        isGameMenuOpen = false;
-    }
-
-    /**
-     * This method will be automatically called when main window is closed
-     * This method will shutdown the threads and close the logger
-     *
-     * You can call this method when you want to quit the application manually
-     * from the game
-     */
-    public final void exit() {
-        log.finer("Closing Normally");
-        onExit();
-        FXGLLogger.close();
-        Platform.exit();
     }
 
     /**

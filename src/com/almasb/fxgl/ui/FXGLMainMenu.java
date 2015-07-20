@@ -104,7 +104,7 @@ public final class FXGLMainMenu extends Menu {
         });
 
         MenuItem itemNewGame = new MenuItem("NEW GAME");
-        itemNewGame.setAction(app::startGame);
+        itemNewGame.setAction(app::startNewGame);
 
         MenuItem itemLoad = new MenuItem("LOAD");
         itemLoad.setMenuContent(createContentLoad());
