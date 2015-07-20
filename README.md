@@ -15,7 +15,7 @@ thoroughly documented with javadoc. If certain parts of documentation are ambigu
 3D features and port to mobile will be considered in the future.
 
 # Changelog
-FXGL 0.1.3 (latest) supports:
+FXGL 0.1.4 (latest) supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
 * JBox2D Physics Engine Integration (v.2.2.1.1, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
@@ -31,7 +31,14 @@ FXGL 0.1.3 (latest) supports:
 * Simple Particles
 * Quick Time Events (QTE)
 * Intro Video / Animation (also supports custom intro)
+* Default Main Menu + Game Menu (also supports custom Main Menu and Game Menu)
+* Custom modifiable UI elements
+* Saving / Loading System
 * Other minor game dev features
+
+# Next Release Features
+The issue tracker contains information about possible features to be added in
+the next release.
 
 # Examples
 Link - https://www.youtube.com/AlmasB0/videos<br />
