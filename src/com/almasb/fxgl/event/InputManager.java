@@ -58,6 +58,7 @@ public final class InputManager {
     private Map<KeyCode, Boolean> keys = new HashMap<>();
     private Map<KeyCode, Runnable> keyPressActions = new HashMap<>();
     private Map<KeyCode, Runnable> keyTypedActions = new HashMap<>();
+    private Map<KeyCode, Runnable> keyReleasedActions = new HashMap<>();
 
     public InputManager(GameApplication app) {
         this.app = app;
@@ -75,7 +76,12 @@ public final class InputManager {
             }
 
         });
-        gameRoot.setOnKeyReleased(event -> keys.put(event.getCode(), false));
+        gameRoot.setOnKeyReleased(event -> {
+            keys.put(event.getCode(), false);
+            if (keyReleasedActions.containsKey(event.getCode())) {
+                keyReleasedActions.get(event.getCode()).run();
+            }
+        });
 
         gameRoot.setOnMousePressed(mouse::update);
         gameRoot.setOnMouseDragged(mouse::update);
@@ -105,10 +111,6 @@ public final class InputManager {
         return keys.getOrDefault(key, false);
     }
 
-//    public void setMenuKey(KeyCode key) {
-//        addKeyTypedBinding(key, app::openMainMenu);
-//    }
-
     /**
      * Add an action that is executed constantly
      * WHILE the key is physically pressed
@@ -120,6 +122,11 @@ public final class InputManager {
         keyPressActions.put(key, action);
     }
 
+    /**
+     * Removes action bound to the given key.
+     *
+     * @param key
+     */
     public void removeKeyPressBinding(KeyCode key) {
         keyPressActions.remove(key);
     }
@@ -135,8 +142,33 @@ public final class InputManager {
         keyTypedActions.put(key, action);
     }
 
+    /**
+     * Removes action bound to the given key.
+     *
+     * @param key
+     */
     public void removeKeyTypedBinding(KeyCode key) {
         keyTypedActions.remove(key);
+    }
+
+    /**
+     * Add an action that is executed once, when
+     * the key is released.
+     *
+     * @param key
+     * @param action
+     */
+    public void addKeyReleasedBinding(KeyCode key, Runnable action) {
+        keyReleasedActions.put(key, action);
+    }
+
+    /**
+     * Removes action bound to release of the given key.
+     *
+     * @param key
+     */
+    public void removeKeyReleasedBinding(KeyCode key) {
+        keyReleasedActions.remove(key);
     }
 
     // TODO: proper mouse bindings like keys

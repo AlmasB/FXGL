@@ -403,6 +403,9 @@ public abstract class GameApplication extends Application {
         mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
     }
 
+    /**
+     * Initialize user application
+     */
     private void initApp() {
         try {
             initAssets();
@@ -521,7 +524,8 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Call this to manually start the game
+     * Call this to manually start the game.
+     * To be used ONLY in menus.
      */
     public final void startNewGame() {
         initApp();
