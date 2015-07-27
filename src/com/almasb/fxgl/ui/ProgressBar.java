@@ -90,13 +90,15 @@ public final class ProgressBar extends Parent {
     private Label label = new Label();
     private Position labelPosition = Position.BOTTOM;
 
-    private boolean showChanges = true;
-
     private Paint traceFill = Color.WHITE;
 
     private Timeline timeline = new Timeline();
 
     public ProgressBar() {
+        this(true);
+    }
+
+    public ProgressBar(boolean showChanges) {
         innerBar.setTranslateX(5);
         innerBar.setTranslateY(3);
         innerBar.setFill(Color.rgb(255, 239, 211));
@@ -173,7 +175,6 @@ public final class ProgressBar extends Parent {
                 ft2.play();
             }
 
-
             // smooth fill animation
             timeline.stop();
             timeline.getKeyFrames().clear();
@@ -186,28 +187,19 @@ public final class ProgressBar extends Parent {
         getChildren().addAll(barGroup, label);
         setLabelPosition(labelPosition);
         setLabelVisible(false);
-        setShowChanges(true);
-    }
 
-    public void setShowChanges(boolean b) {
-        showChanges = b;
-        if (!b) {
-            innerBar.widthProperty()
-                    .bind(width.subtract(10).multiply(new DoubleBinding() {
-                        {
-                            super.bind(minValue, currentValue, maxValue);
-                        }
+        if (!showChanges) {
+            innerBar.widthProperty().bind(width.subtract(10).multiply(new DoubleBinding() {
+                {
+                    super.bind(minValue, currentValue, maxValue);
+                }
 
-                        @Override
-                        protected double computeValue() {
-                            return (currentValue.get() - minValue.get())
-                                    / (maxValue.get() - minValue.get());
-                        }
-
-                    }));
-        }
-        else {
-            innerBar.widthProperty().unbind();
+                @Override
+                protected double computeValue() {
+                    return (currentValue.get() - minValue.get())
+                            / (maxValue.get() - minValue.get());
+                }
+            }));
         }
     }
 
@@ -318,6 +310,10 @@ public final class ProgressBar extends Parent {
         minValue.set(value);
     }
 
+    public DoubleProperty minValueProperty() {
+        return minValue;
+    }
+
     public void setCurrentValue(double value) {
         if (value < minValue.get()) {
             log.warning("Current value < min value. Setting min value as current");
@@ -354,6 +350,10 @@ public final class ProgressBar extends Parent {
         maxValue.set(value);
     }
 
+    public DoubleProperty maxValueProperty() {
+        return maxValue;
+    }
+
     public static ProgressBar makeHPBar() {
         ProgressBar bar = new ProgressBar();
         bar.setHeight(25);
@@ -366,7 +366,6 @@ public final class ProgressBar extends Parent {
     public static ProgressBar makeSkillBar() {
         ProgressBar bar = new ProgressBar();
         bar.setHeight(25);
-        //bar.setBackgroundFill(Color.WHITE);
         bar.setFill(Color.BLUE.brighter().brighter());
         bar.setTraceFill(Color.BLUE);
         bar.setLabelVisible(true);
