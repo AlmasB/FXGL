@@ -39,6 +39,7 @@ public final class GameSettings {
     private String version = "0.0";
     private int width = 800;
     private int height = 600;
+    private boolean fullScreen = false;
     private boolean introEnabled = true;
     private boolean menuEnabled = true;
     private String iconFileName = "";
@@ -97,5 +98,13 @@ public final class GameSettings {
 
     public void setIconFileName(String iconFileName) {
         this.iconFileName = iconFileName;
+    }
+
+    public boolean isFullScreen() {
+        return fullScreen;
+    }
+
+    public void setFullScreen(boolean b) {
+        fullScreen = b;
     }
 }
