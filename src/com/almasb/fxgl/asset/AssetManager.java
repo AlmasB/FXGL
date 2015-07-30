@@ -61,6 +61,7 @@ import javafx.scene.media.Media;
  * <li>Music - /assets/music/</li>
  * <li>Text (List&lt;String&gt;) - /assets/text/</li>
  * <li>Data - /assets/data/</li>
+ * <li>Scripts - /assets/scripts/</li>
  * <li>CSS - /assets/ui/css/</li>
  * <li>App icons - /assets/ui/icons/</li>
  * </ul>
@@ -78,6 +79,7 @@ public enum AssetManager {
     private static final String MUSIC_DIR = ASSETS_DIR + "music/";
     private static final String TEXT_DIR = ASSETS_DIR + "text/";
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
+    private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
     private static final String UI_DIR = ASSETS_DIR + "ui/";
     private static final String CSS_DIR = UI_DIR + "css/";
     private static final String ICON_DIR = UI_DIR + "icons/";
@@ -125,6 +127,26 @@ public enum AssetManager {
                 result.add(line);
             }
             return result;
+        }
+        catch (Exception e) {
+            log.warning("Failed to load text: " + name + " Check it exists in assets/text/");
+            throw new IOException("Failed to load text: " + name);
+        }
+    }
+
+    public String loadScript(String name) throws Exception {
+        StringBuilder builder = new StringBuilder();
+        try (InputStream is = getClass().getResourceAsStream(SCRIPTS_DIR + name);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line + "\n");
+            }
+            return builder.toString();
+        }
+        catch (Exception e) {
+            log.warning("Failed to load script: " + name + " Check it exists in assets/scripts/");
+            throw new IOException("Failed to load script: " + name + " because: " + e.getMessage());
         }
     }
 
@@ -238,13 +260,17 @@ public enum AssetManager {
     }
 
     /**
-     * Loads file names from a directory
+     * Loads file names from a directory.
+     *
+     * Note: directory name must be in the format "/assets/...".
+     * Returned file names are relativized to the given directory name.
+     *
      *
      * @param directory
      * @return list of file names
      * @throws Exception
      */
-    private List<String> loadFileNames(String directory) throws Exception {
+    public List<String> loadFileNames(String directory) throws Exception {
         URL url = getClass().getResource(directory);
         if (url != null) {
             if (url.toString().startsWith("jar"))
