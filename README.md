@@ -1,9 +1,14 @@
 # FXGL
 Simple and easy to use Java 2D gaming library based on JavaFX 8
 
-# Usage
+# Setup (General)
 Download the latest .jar file under jar/ and add it to the build path
-in your IDE. That's it, you're all set!
+in your IDE. That's it, you're all set! See below setup for some IDEs
+
+# Setup (NetBeans, tested with 8.0.2)
+1. File -> New Project -> Java -> Java Application -> Next
+2. Choose Project Name (optional: create main class) -> Finish
+3. In the Projects view, right-click Libraries -> Add Jar/Folder -> Navigate and Select downloaded FXGL jar
 
 # Notes
 FXGL is in early stages of development. Hence, the API and functionality are likely to change from version to version.
@@ -53,7 +58,7 @@ For larger projects the library may not be as suitable, whereas advanced program
 with JavaFX directly. If you have a use case that FXGL doesn't cover, drop me an email stating the use case and what you have already tried.
 
 # Directory Structure for FXGL Applications
-This somewhat matches the Eclipse structure but should work with other IDEs (TODO: needs verification).
+This matches the Eclipse/NetBeans structure but should work with other IDEs.
 This allows easy packaging and deployment, as all assets packaged into jar will continue loading with
 exactly the same code.
 
