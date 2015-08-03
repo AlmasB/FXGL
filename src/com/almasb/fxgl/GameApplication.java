@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -69,10 +70,12 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -82,10 +85,9 @@ import javafx.stage.Stage;
  * To use FXGL extend this class and implement necessary methods.
  *
  * Unless explicitly stated, methods are not thread-safe and must be
- * executed on JavaFX Application Thread
+ * executed on JavaFX Application Thread.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  *
  */
 public abstract class GameApplication extends Application {
@@ -128,7 +130,20 @@ public abstract class GameApplication extends Application {
     private GameSettings settings = new GameSettings();
 
     /*
-     * All scenegraph roots
+     * All scene graph roots. Although uiRoot is drawn on top of gameRoot,
+     * they are at the same level in the scene graph.
+     *
+     *                  mainStage
+     *                      |
+     *                      |
+     *                  mainScene
+     *                      |
+     *                      |
+     *                    root         <--> (mainMenu root)
+     *                   /    \
+     *                  /      \
+     *              gameRoot   uiRoot  <--> (gameMenu root)
+     *
      */
     /**
      * The root for entities (game objects)
@@ -140,7 +155,7 @@ public abstract class GameApplication extends Application {
      * May also contain entities as Entity is a subclass of Parent.
      * uiRoot isn't affected by viewport movement.
      */
-    private Pane uiRoot = new Pane();
+    private Group uiRoot = new Group();
 
     /**
      * THE root of the {@link #mainScene}. Contains {@link #gameRoot} and {@link #uiRoot} in this order.
@@ -175,6 +190,8 @@ public abstract class GameApplication extends Application {
     /**
      * These are current width and height of the scene
      * NOT the window
+     *
+     * TODO: we don't need these, set the scene size and use that instead.
      */
     private double currentWidth, currentHeight;
 
@@ -194,7 +211,7 @@ public abstract class GameApplication extends Application {
     /**
      * List for all timer based actions
      */
-    private List<TimerAction> timerActions = new ArrayList<>();
+    private List<TimerAction> timerActions = new CopyOnWriteArrayList<>();
 
     /*
      * Various managers that handle different aspects of the application
@@ -387,6 +404,15 @@ public abstract class GameApplication extends Application {
         // ensure the window frame is just right for the scene size
         mainStage.setScene(mainScene);
         mainStage.sizeToScene();
+
+        if (settings.isFullScreen()) {
+            mainStage.setFullScreenExitHint("");
+            // we don't want the user to be able to exit full screen manually
+            // but only through settings menu
+            // so we set key combination to something obscure which isn't likely to be pressed
+            mainStage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
+            mainStage.setFullScreen(true);
+        }
     }
 
     /**
@@ -398,7 +424,7 @@ public abstract class GameApplication extends Application {
         gameRoot.setFocusTraversable(true);
         gameRoot.requestFocus();
 
-        inputManager.init(gameRoot);
+        inputManager.init(mainScene);
         qteManager.init();
         mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
     }
@@ -465,6 +491,11 @@ public abstract class GameApplication extends Application {
                 startNewGame();
             }
         }
+    }
+
+    @Override
+    public final void init() {
+        instance = this;
     }
 
     @Override
@@ -643,8 +674,7 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * This method will be automatically called when main window is closed
-     * This method will shutdown the threads and close the logger
+     * This method will be automatically called when main window is closed.
      *
      * You can call this method when you want to quit the application manually
      * from the game
@@ -656,6 +686,12 @@ public abstract class GameApplication extends Application {
         Platform.exit();
     }
 
+    /**
+     * Set the key which will open/close game menu.
+     * By default it's KeyCode.ESCAPE
+     *
+     * @param key
+     */
     protected final void setMenuKey(KeyCode key) {
         menuKey = key;
     }
@@ -773,7 +809,7 @@ public abstract class GameApplication extends Application {
     /**
      * Returns a list of entities whose type matches given arguments and
      * which are partially or entirely
-     * in the specified rectangular selection
+     * in the specified rectangular selection.
      *
      * @param selection Rectangle2D that describes the selection box
      * @param type
@@ -791,9 +827,9 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Add an entity/entities to the scenegraph
+     * Add an entity/entities to the scene graph.
      *
-     * @param entities
+     * @param entities to add
      */
     public final void addEntities(Entity... entities) {
         for (Entity e : entities) {
@@ -816,16 +852,16 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Remove an entity from the scenegraph
+     * Remove given entity from the scene graph.
      *
-     * @param entity
+     * @param entity to remove
      */
     public final void removeEntity(Entity entity) {
         tmpRemoveList.add(entity);
     }
 
     /**
-     * Equivalent to uiRoot.getChildren().addAll()
+     * Add a node to the UI overlay.
      *
      * @param n
      * @param nodes
@@ -836,7 +872,7 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Equivalent to uiRoot.getChildren().remove()
+     * Remove given node from the UI overlay.
      *
      * @param n
      */
@@ -848,7 +884,7 @@ public abstract class GameApplication extends Application {
      * The Runnable action will be scheduled to run at given interval.
      * The action will run for the first time after given interval.
      *
-     * Note: the scheduled action will not run while the game is paused
+     * Note: the scheduled action will not run while the game is paused.
      *
      * @param action the action
      * @param interval time in nanoseconds
@@ -958,6 +994,18 @@ public abstract class GameApplication extends Application {
     }
 
     /**
+     * Returns the visual area within the application window,
+     * excluding window borders.
+     *
+     * Equivalent to new Rectangle2D(0, 0, getWidth(), getHeight()).
+     *
+     * @return screen bounds
+     */
+    public final Rectangle2D getScreenBounds() {
+        return new Rectangle2D(0, 0, getWidth(), getHeight());
+    }
+
+    /**
      *
      * @return current tick since the start of game
      */
@@ -979,5 +1027,25 @@ public abstract class GameApplication extends Application {
      */
     public final GameSettings getSettings() {
         return settings;
+    }
+
+    /**
+     *
+     * @return true if game menu is open, false otherwise
+     */
+    public boolean isGameMenuOpen() {
+        return isGameMenuOpen;
+    }
+
+    private static GameApplication instance;
+
+    /**
+     * This will be set during initialization, AFTER instance fields and BEFORE initSettings().
+     * Internally FXGL modules must NOT rely on this.
+     *
+     * @return singleton instance of the current game application
+     */
+    public static final GameApplication getInstance() {
+        return instance;
     }
 }

@@ -31,24 +31,22 @@ import java.util.Map;
 import com.almasb.fxgl.GameApplication;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 
 /**
  * Provides access to mouse state and allows binding of actions
  * to key and mouse events
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class InputManager {
 
     private GameApplication app;
 
-    private Pane gameRoot;
+    private Scene gameScene;
 
     /**
      * Holds mouse state information
@@ -64,9 +62,12 @@ public final class InputManager {
         this.app = app;
     }
 
-    public void init(Pane gameRoot) {
-        this.gameRoot = gameRoot;
-        gameRoot.setOnKeyPressed(event -> {
+    public void init(Scene mainScene) {
+        this.gameScene = mainScene;
+        gameScene.setOnKeyPressed(event -> {
+            if (app.isGameMenuOpen())
+                return;
+
             if (!isPressed(event.getCode()) && keyTypedActions.containsKey(event.getCode())) {
                 keys.put(event.getCode(), true);
                 keyTypedActions.get(event.getCode()).run();
@@ -76,17 +77,20 @@ public final class InputManager {
             }
 
         });
-        gameRoot.setOnKeyReleased(event -> {
+        gameScene.setOnKeyReleased(event -> {
+            if (app.isGameMenuOpen())
+                return;
+
             keys.put(event.getCode(), false);
             if (keyReleasedActions.containsKey(event.getCode())) {
                 keyReleasedActions.get(event.getCode()).run();
             }
         });
 
-        gameRoot.setOnMousePressed(mouse::update);
-        gameRoot.setOnMouseDragged(mouse::update);
-        gameRoot.setOnMouseReleased(mouse::update);
-        gameRoot.setOnMouseMoved(mouse::update);
+        gameScene.setOnMousePressed(mouse::update);
+        gameScene.setOnMouseDragged(mouse::update);
+        gameScene.setOnMouseReleased(mouse::update);
+        gameScene.setOnMouseMoved(mouse::update);
     }
 
     /**
@@ -171,7 +175,7 @@ public final class InputManager {
         keyReleasedActions.remove(key);
     }
 
-    // TODO: proper mouse bindings like keys
+    // TODO: proper mouse bindings like keys, debug number of clicks
     /**
      * Add an action that is executed ONCE per single click of
      * given mouse button
@@ -180,7 +184,10 @@ public final class InputManager {
      * @param action
      */
     public void addMouseClickedBinding(MouseButton btn, Runnable action) {
-        gameRoot.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        gameScene.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (app.isGameMenuOpen())
+                return;
+
             if (event.getButton() == btn) {
                 action.run();
             }
@@ -211,8 +218,6 @@ public final class InputManager {
      * Holds mouse state information
      *
      * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
-     * @version 1.0
-     *
      */
     public class Mouse {
         /**
@@ -239,6 +244,9 @@ public final class InputManager {
         private MouseEvent event;
 
         private void update(MouseEvent event) {
+            if (app.isGameMenuOpen())
+                return;
+
             this.event = event;
             this.screenX = event.getSceneX();
             this.screenY = event.getSceneY();
@@ -276,7 +284,12 @@ public final class InputManager {
                     || event.getEventType() == MouseEvent.MOUSE_MOVED;
         }
 
-        public MouseEvent getEvent() {
+        /**
+         * It's unlikely that you'll need this.
+         *
+         * @return last JavaFX mouse event
+         */
+        public final MouseEvent getEvent() {
             return event;
         }
     }
