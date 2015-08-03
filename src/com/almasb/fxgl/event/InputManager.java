@@ -102,8 +102,8 @@ public final class InputManager {
         keyPressActions.forEach((key, action) -> {if (isPressed(key)) action.run();});
 
         Point2D origin = app.getViewportOrigin();
-        mouse.x = mouse.screenX + origin.getX();
-        mouse.y = mouse.screenY + origin.getY();
+        mouse.x = mouse.screenX / app.getSizeRatio() + origin.getX();
+        mouse.y = mouse.screenY / app.getSizeRatio() + origin.getY();
     }
 
     /**
@@ -219,7 +219,9 @@ public final class InputManager {
      *
      * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
      */
-    public class Mouse {
+    public final class Mouse {
+        private Mouse() {}
+
         /**
          * Hold the value of x and y coordinate of the mouse cursor
          * in the current frame (tick) within the game with applied translations
@@ -252,8 +254,8 @@ public final class InputManager {
             this.screenY = event.getSceneY();
 
             Point2D origin = app.getViewportOrigin();
-            this.x = screenX + origin.getX();
-            this.y = screenY + origin.getY();
+            this.x = screenX / app.getSizeRatio() + origin.getX();
+            this.y = screenY / app.getSizeRatio() + origin.getY();
 
             if (leftPressed) {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {

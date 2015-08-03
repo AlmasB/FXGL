@@ -79,6 +79,8 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -385,7 +387,26 @@ public abstract class GameApplication extends Application {
         currentWidth = settings.getWidth();
         currentHeight = settings.getHeight();
 
-        root.setPrefSize(settings.getWidth(), settings.getHeight());
+        Rectangle2D bounds = settings.isFullScreen() ? Screen.getPrimary().getBounds() : Screen.getPrimary().getVisualBounds();
+
+        if (settings.getWidth() <= bounds.getWidth()
+                && settings.getHeight() <= bounds.getHeight()) {
+            root.setPrefSize(settings.getWidth(), settings.getHeight());
+        }
+        else {
+            double ratio = settings.getWidth() * 1.0 / settings.getHeight();
+
+            for (int newWidth = (int)bounds.getWidth(); newWidth > 0; newWidth--) {
+                if (newWidth / ratio <= bounds.getHeight()) {
+                    root.setPrefSize(newWidth, (int)(newWidth / ratio));
+
+                    double newSizeRatio = newWidth * 1.0 / settings.getWidth();
+                    root.getTransforms().add(new Scale(newSizeRatio, newSizeRatio));
+                    sizeRatio = newSizeRatio;
+                    break;
+                }
+            }
+        }
 
         mainStage.setTitle(settings.getTitle() + " " + settings.getVersion());
         mainStage.setResizable(false);
@@ -1035,6 +1056,12 @@ public abstract class GameApplication extends Application {
      */
     public boolean isGameMenuOpen() {
         return isGameMenuOpen;
+    }
+
+    private double sizeRatio = 1.0;
+
+    public final double getSizeRatio() {
+        return sizeRatio;
     }
 
     private static GameApplication instance;
