@@ -44,7 +44,7 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.FXGLManager;
 import com.almasb.fxgl.entity.Entity;
 
 import javafx.geometry.Point2D;
@@ -61,11 +61,9 @@ import javafx.geometry.Point2D;
  * @version 1.0
  *
  */
-public final class PhysicsManager {
+public final class PhysicsManager extends FXGLManager {
 
     private static final float TIME_STEP = 1 / 60.0f;
-
-    private GameApplication app;
 
     private World world = new World(new Vec2(0, -10));
 
@@ -73,8 +71,7 @@ public final class PhysicsManager {
 
     private Map<CollisionPair, Long> collisions = new HashMap<>();
 
-    public PhysicsManager(GameApplication app) {
-        this.app = app;
+    public PhysicsManager() {
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -120,11 +117,12 @@ public final class PhysicsManager {
     }
 
     /**
-     * Do NOT call manually. This is the physics update tick
+     * This is the physics update tick
      *
      * @param now
      */
-    public void onUpdate(long now) {
+    @Override
+    protected void onUpdate(long now) {
         world.step(TIME_STEP, 8, 3);
 
         processCollisions();

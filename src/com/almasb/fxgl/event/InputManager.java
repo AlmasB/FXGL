@@ -28,7 +28,7 @@ package com.almasb.fxgl.event;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.FXGLManager;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
@@ -42,9 +42,7 @@ import javafx.scene.input.MouseEvent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class InputManager {
-
-    private GameApplication app;
+public final class InputManager extends FXGLManager {
 
     private Scene gameScene;
 
@@ -57,10 +55,6 @@ public final class InputManager {
     private Map<KeyCode, Runnable> keyPressActions = new HashMap<>();
     private Map<KeyCode, Runnable> keyTypedActions = new HashMap<>();
     private Map<KeyCode, Runnable> keyReleasedActions = new HashMap<>();
-
-    public InputManager(GameApplication app) {
-        this.app = app;
-    }
 
     public void init(Scene mainScene) {
         this.gameScene = mainScene;
@@ -94,11 +88,12 @@ public final class InputManager {
     }
 
     /**
-     * Do NOT call manually. Called by FXGL GameApplication
+     * Called by FXGL GameApplication to process all input.
      *
      * @param now
      */
-    public void onUpdate(long now) {
+    @Override
+    protected void onUpdate(long now) {
         keyPressActions.forEach((key, action) -> {if (isPressed(key)) action.run();});
 
         Point2D origin = app.getViewportOrigin();

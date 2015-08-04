@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.FXGLManager;
 
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -47,18 +47,12 @@ import javafx.util.Duration;
  * @version 1.0
  *
  */
-public final class QTEManager {
-
-    private GameApplication app;
+public final class QTEManager extends FXGLManager {
 
     private Color color = Color.BLACK;
     private Text qteText = new Text("Prepare for QTE! Release ALL keys!");
 
     private QTE currentQTE = null;
-
-    public QTEManager(GameApplication app) {
-        this.app = app;
-    }
 
     /**
      * Initialize the manager with application width and height
@@ -138,5 +132,10 @@ public final class QTEManager {
             }, (long)overallDuration, TimeUnit.NANOSECONDS);
         });
         tt.play();
+    }
+
+    @Override
+    protected void onUpdate(long now) {
+
     }
 }

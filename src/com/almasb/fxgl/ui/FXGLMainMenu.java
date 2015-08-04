@@ -63,13 +63,10 @@ import javafx.util.Duration;
  */
 public final class FXGLMainMenu extends Menu {
 
-    private GameSettings settings;
-
     private double menuX, menuY;
 
     public FXGLMainMenu(GameApplication app) {
         super(app);
-        this.settings = app.getSettings();
 
         MenuBox menu = createMainMenu();
         menuX = 50;
@@ -84,11 +81,11 @@ public final class FXGLMainMenu extends Menu {
         Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
         bg.setFill(Color.rgb(10, 1, 1));
 
-        Title title = new Title(settings.getTitle());
+        Title title = new Title(app.getTitle());
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
         title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-        Text version = new Text("v" + settings.getVersion());
+        Text version = new Text("v" + app.getVersion());
         version.setTranslateY(app.getHeight() - 2);
         version.setFill(Color.WHITE);
         version.setFont(Font.font(18));

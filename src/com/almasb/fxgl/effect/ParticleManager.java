@@ -38,6 +38,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
+import com.almasb.fxgl.FXGLManager;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
@@ -50,15 +51,9 @@ import com.almasb.fxgl.entity.Entity;
  * @version 1.0
  *
  */
-public final class ParticleManager {
-
-    private GameApplication app;
+public final class ParticleManager extends FXGLManager {
 
     private Random random = new Random();
-
-    public ParticleManager(GameApplication app) {
-        this.app = app;
-    }
 
     /**
      * Spawns a given number of particles with given color
@@ -174,5 +169,11 @@ public final class ParticleManager {
         float rand = random.nextFloat() * 5 + 1;
         float particleSpeed = max * (1f - 0.6f / rand);
         return velocity.multiply(particleSpeed);
+    }
+
+    @Override
+    protected void onUpdate(long now) {
+        // TODO Auto-generated method stub
+
     }
 }

@@ -66,7 +66,7 @@ import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -107,6 +107,23 @@ public abstract class GameApplication extends Application {
         Version.print();
     }
 
+    private static GameApplication instance;
+
+    /**
+     *
+     * @return singleton instance of the current game application
+     */
+    public static final GameApplication getInstance() {
+        return instance;
+    }
+
+    {
+        // make sure first thing we do is get back the reference from JavaFX
+        // so that anything can now use getInstance()
+        log.finer("clinit()");
+        instance = this;
+    }
+
     /**
      * The logger
      */
@@ -128,9 +145,10 @@ public abstract class GameApplication extends Application {
     public static final long MINUTE = 60 * SECOND;
 
     /**
-     * Settings for this game instance
+     * Settings for this game instance. This is an internal copy
+     * of the settings so that they will not be modified during game lifetime.
      */
-    private GameSettings settings = new GameSettings();
+    private GameSettings settings;
 
     /*
      * All scene graph roots. Although uiRoot is drawn on top of gameRoot,
@@ -190,14 +208,6 @@ public abstract class GameApplication extends Application {
      */
     private Stage mainStage;
 
-    /**
-     * These are current width and height of the scene
-     * NOT the window
-     *
-     * TODO: we don't need these, set the scene size and use that instead.
-     */
-    private double currentWidth, currentHeight;
-
     private List<Entity> tmpAddList = new ArrayList<>();
     private List<Entity> tmpRemoveList = new ArrayList<>();
 
@@ -219,18 +229,18 @@ public abstract class GameApplication extends Application {
     /*
      * Various managers that handle different aspects of the application
      */
-    protected final InputManager inputManager = new InputManager(this);
+    protected final InputManager inputManager = new InputManager();
 
     /**
      * Used for loading various assets
      */
     protected final AssetManager assetManager = AssetManager.INSTANCE;
 
-    protected final PhysicsManager physicsManager = new PhysicsManager(this);
+    protected final PhysicsManager physicsManager = new PhysicsManager();
 
-    protected final ParticleManager particleManager = new ParticleManager(this);
+    protected final ParticleManager particleManager = new ParticleManager();
 
-    protected final QTEManager qteManager = new QTEManager(this);
+    protected final QTEManager qteManager = new QTEManager();
 
     protected final SaveLoadManager saveLoadManager = SaveLoadManager.INSTANCE;
 
@@ -385,9 +395,6 @@ public abstract class GameApplication extends Application {
      * stage properties
      */
     private void applySettings() {
-        currentWidth = settings.getWidth();
-        currentHeight = settings.getHeight();
-
         Rectangle2D bounds = settings.isFullScreen() ? Screen.getPrimary().getBounds() : Screen.getPrimary().getVisualBounds();
 
         if (settings.getWidth() <= bounds.getWidth()
@@ -515,9 +522,13 @@ public abstract class GameApplication extends Application {
         }
     }
 
+    public GameApplication() {
+        log.finer("GameApplication()");
+    }
+
     @Override
     public final void init() {
-        instance = this;
+        log.finer("init()");
     }
 
     @Override
@@ -526,7 +537,10 @@ public abstract class GameApplication extends Application {
         // capture the reference to primaryStage so we can access it
         mainStage = primaryStage;
 
-        initSettings(settings);
+        GameSettings localSettings = new GameSettings();
+        initSettings(localSettings);
+        settings = new GameSettings(localSettings);
+
         applySettings();
 
         initManagers();
@@ -563,8 +577,8 @@ public abstract class GameApplication extends Application {
         tmpRemoveList.clear();
 
         // update managers
-        inputManager.onUpdate(now);
-        physicsManager.onUpdate(now);
+        ((FXGLManager)inputManager).onUpdate(now);
+        ((FXGLManager)physicsManager).onUpdate(now);
 
         // update app
         onUpdate();
@@ -948,7 +962,7 @@ public abstract class GameApplication extends Application {
      * @param interval
      * @param whileCondition
      */
-    public final void runAtIntervalWhile(Runnable action, double interval, BooleanProperty whileCondition) {
+    public final void runAtIntervalWhile(Runnable action, double interval, ReadOnlyBooleanProperty whileCondition) {
         if (!whileCondition.get()) {
             return;
         }
@@ -995,7 +1009,7 @@ public abstract class GameApplication extends Application {
         Image fxImage = mainScene.snapshot(null);
         BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
-        String fileName = "./" + settings.getTitle() + settings.getVersion()
+        String fileName = "./" + getTitle() + getVersion()
                 + LocalDateTime.now() + ".png";
 
         fileName = fileName.replace(":", "_");
@@ -1021,7 +1035,7 @@ public abstract class GameApplication extends Application {
      * @return target width
      */
     public final double getWidth() {
-        return currentWidth;
+        return settings.getWidth();
     }
 
     /**
@@ -1035,7 +1049,7 @@ public abstract class GameApplication extends Application {
      * @return target height
      */
     public final double getHeight() {
-        return currentHeight;
+        return settings.getHeight();
     }
 
     /**
@@ -1051,6 +1065,22 @@ public abstract class GameApplication extends Application {
      */
     public final Rectangle2D getScreenBounds() {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
+    }
+
+    /**
+     *
+     * @return game title
+     */
+    public final String getTitle() {
+        return settings.getTitle();
+    }
+
+    /**
+     *
+     * @return application version
+     */
+    public final String getVersion() {
+        return settings.getVersion();
     }
 
     /**
@@ -1071,14 +1101,6 @@ public abstract class GameApplication extends Application {
 
     /**
      *
-     * @return pre-configured settings before game started
-     */
-    public final GameSettings getSettings() {
-        return settings;
-    }
-
-    /**
-     *
      * @return true if game menu is open, false otherwise
      */
     public boolean isGameMenuOpen() {
@@ -1095,17 +1117,5 @@ public abstract class GameApplication extends Application {
      */
     public final double getSizeRatio() {
         return sizeRatio;
-    }
-
-    private static GameApplication instance;
-
-    /**
-     * This will be set during initialization, AFTER instance fields and BEFORE initSettings().
-     * Internally FXGL modules must NOT rely on this.
-     *
-     * @return singleton instance of the current game application
-     */
-    public static final GameApplication getInstance() {
-        return instance;
     }
 }

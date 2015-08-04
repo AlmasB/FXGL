@@ -26,8 +26,10 @@
 package com.almasb.fxgl;
 
 /**
- * Data structure for variables that are typically
- * initialised before the application (game) starts
+ * Data structure for variables that are
+ * initialised before the application (game) starts.
+ *
+ * Modifying any data after the start of the game has no effect.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -41,6 +43,28 @@ public final class GameSettings {
     private boolean introEnabled = true;
     private boolean menuEnabled = true;
     private String iconFileName = "";
+
+    /**
+     * Constructs game settings with default parameters
+     */
+    public GameSettings() {}
+
+    /**
+     * Constructs new game settings with parameters
+     * copied from given.
+     *
+     * @param copy
+     */
+    public GameSettings(GameSettings copy) {
+        this.title = copy.title;
+        this.version = copy.version;
+        this.width = copy.width;
+        this.height = copy.height;
+        this.fullScreen = copy.fullScreen;
+        this.introEnabled = copy.introEnabled;
+        this.menuEnabled = copy.menuEnabled;
+        this.iconFileName = copy.iconFileName;
+    }
 
     public String getTitle() {
         return title;

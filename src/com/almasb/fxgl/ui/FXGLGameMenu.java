@@ -28,7 +28,6 @@ package com.almasb.fxgl.ui;
 import java.io.Serializable;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.util.Version;
@@ -63,13 +62,10 @@ import javafx.util.Duration;
  */
 public final class FXGLGameMenu extends Menu {
 
-    private GameSettings settings;
-
     private double menuX, menuY;
 
     public FXGLGameMenu(GameApplication app) {
         super(app);
-        this.settings = app.getSettings();
 
         MenuBox menu = createMainMenu();
         menuX = 50;
@@ -85,11 +81,11 @@ public final class FXGLGameMenu extends Menu {
         bg.setFill(Color.rgb(10, 1, 1));
         bg.setOpacity(0.5);
 
-        Title title = new Title(settings.getTitle());
+        Title title = new Title(app.getTitle());
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
         title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-        Text version = new Text("v" + settings.getVersion());
+        Text version = new Text("v" + app.getVersion());
         version.setTranslateY(app.getHeight() - 2);
         version.setFill(Color.WHITE);
         version.setFont(Font.font(18));
