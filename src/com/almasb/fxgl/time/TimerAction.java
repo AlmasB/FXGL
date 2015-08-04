@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.util;
+package com.almasb.fxgl.time;
 
 /**
  * A wrapper for Runnable which is executed at given intervals.

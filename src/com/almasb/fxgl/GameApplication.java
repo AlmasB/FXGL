@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -54,19 +53,16 @@ import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.FXGLGameMenu;
 import com.almasb.fxgl.ui.FXGLMainMenu;
 import com.almasb.fxgl.ui.Menu;
-import com.almasb.fxgl.util.FPSCounter;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.TimerAction;
-import com.almasb.fxgl.util.TimerAction.TimerType;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -79,7 +75,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -222,13 +221,11 @@ public abstract class GameApplication extends Application {
     };
 
     /**
-     * List for all timer based actions
-     */
-    private List<TimerAction> timerActions = new CopyOnWriteArrayList<>();
-
-    /*
      * Various managers that handle different aspects of the application
+     * and need to be updated together with game world tick.
      */
+    private List<FXGLManager> managers = new ArrayList<>();
+
     protected final InputManager inputManager = new InputManager();
 
     /**
@@ -237,6 +234,8 @@ public abstract class GameApplication extends Application {
     protected final AssetManager assetManager = AssetManager.INSTANCE;
 
     protected final PhysicsManager physicsManager = new PhysicsManager();
+
+    protected final TimerManager timerManager = new TimerManager();
 
     protected final ParticleManager particleManager = new ParticleManager();
 
@@ -259,27 +258,6 @@ public abstract class GameApplication extends Application {
      * Current tick. It is also number of ticks since start of game
      */
     protected long tick = 0;
-
-    /**
-     * These are used to approximate FPS value
-     */
-    private FPSCounter fpsCounter = new FPSCounter();
-    private FPSCounter fpsPerformanceCounter = new FPSCounter();
-
-    /**
-     * Used as delta from internal JavaFX timestamp to calculate render FPS
-     */
-    private long fpsTime = 0;
-
-    /**
-     * Average render FPS
-     */
-    protected int fps = 0;
-
-    /**
-     * Average performance FPS
-     */
-    protected int fpsPerformance = 0;
 
     /**
      * Initialize game settings
@@ -442,6 +420,16 @@ public abstract class GameApplication extends Application {
             mainStage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
             mainStage.setFullScreen(true);
         }
+
+        if (settings.isFPSShown()) {
+            Text fpsText = new Text();
+            fpsText.setFill(Color.AZURE);
+            fpsText.setFont(Font.font(24));
+            fpsText.setTranslateY(getHeight() - 40);
+            fpsText.textProperty().bind(timerManager.fpsProperty().asString("FPS: [%d]\n")
+                    .concat(timerManager.performanceFPSProperty().asString("Performance: [%d]")));
+            addUINodes(fpsText);
+        }
     }
 
     /**
@@ -456,6 +444,11 @@ public abstract class GameApplication extends Application {
         inputManager.init(mainScene);
         qteManager.init();
         mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
+
+        // register managers that need to be updated
+        managers.add(inputManager);
+        managers.add(physicsManager);
+        managers.add(timerManager);
     }
 
     /**
@@ -551,6 +544,11 @@ public abstract class GameApplication extends Application {
         configureAndShowStage();
     }
 
+    @Override
+    public final void stop() {
+        log.finer("stop()");
+    }
+
     /**
      * This is the internal FXGL update tick,
      * executed 60 times a second ~ every 0.166 (6) seconds
@@ -558,12 +556,7 @@ public abstract class GameApplication extends Application {
      * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
      */
     private void processUpdate(long internalTime) {
-        long startNanos = System.nanoTime();
-        long realFPS = internalTime - fpsTime;
-        fpsTime = internalTime;
-
-        timerActions.forEach(action -> action.update(now));
-        timerActions.removeIf(TimerAction::isExpired);
+        timerManager.tickStart(internalTime);
 
         gameRoot.getChildren().addAll(tmpAddList);
         tmpAddList.clear();
@@ -577,19 +570,18 @@ public abstract class GameApplication extends Application {
         tmpRemoveList.clear();
 
         // update managers
-        ((FXGLManager)inputManager).onUpdate(now);
-        ((FXGLManager)physicsManager).onUpdate(now);
+        managers.forEach(manager -> manager.onUpdate(now));
 
         // update app
         onUpdate();
+
         // update entities
         gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
 
-        fpsPerformance = Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos)));
-        fps = Math.round(fpsCounter.count(SECOND / realFPS));
-
         tick++;
         now += TIME_PER_FRAME;
+
+        timerManager.tickEnd();
     }
 
     /**
@@ -630,7 +622,7 @@ public abstract class GameApplication extends Application {
 
         pause();
 
-        timerActions.clear();
+        timerManager.clearActions();
         gameRoot.getChildren().stream()
                 .filter(e -> e instanceof PhysicsEntity)
                 .map(e -> (PhysicsEntity)e)
@@ -726,9 +718,9 @@ public abstract class GameApplication extends Application {
 
     /**
      * Set the key which will open/close game menu.
-     * By default it's KeyCode.ESCAPE
      *
      * @param key
+     * @defaultValue KeyCode.ESCAPE
      */
     protected final void setMenuKey(KeyCode key) {
         menuKey = key;
@@ -902,7 +894,7 @@ public abstract class GameApplication extends Application {
 
             double expire = e.getExpireTime();
             if (expire > 0)
-                runOnceAfter(() -> removeEntity(e), expire);
+                timerManager.runOnceAfter(() -> removeEntity(e), expire);
         }
     }
 
@@ -933,58 +925,6 @@ public abstract class GameApplication extends Application {
      */
     public final void removeUINode(Node n) {
         uiRoot.getChildren().remove(n);
-    }
-
-    /**
-     * The Runnable action will be scheduled to run at given interval.
-     * The action will run for the first time after given interval.
-     *
-     * Note: the scheduled action will not run while the game is paused.
-     *
-     * @param action the action
-     * @param interval time in nanoseconds
-     */
-    public final void runAtInterval(Runnable action, double interval) {
-        timerActions.add(new TimerAction(now, interval, action, TimerType.INDEFINITE));
-    }
-
-    /**
-     * The Runnable action will be scheduled for execution iff
-     * whileCondition is initially true. If that's the case
-     * then the Runnable action will be scheduled to run at given interval.
-     * The action will run for the first time after given interval
-     *
-     * The action will be removed from schedule when whileCondition becomes {@code false}.
-     *
-     * Note: the scheduled action will not run while the game is paused
-     *
-     * @param action
-     * @param interval
-     * @param whileCondition
-     */
-    public final void runAtIntervalWhile(Runnable action, double interval, ReadOnlyBooleanProperty whileCondition) {
-        if (!whileCondition.get()) {
-            return;
-        }
-        TimerAction act = new TimerAction(now, interval, action, TimerType.INDEFINITE);
-        timerActions.add(act);
-
-        whileCondition.addListener((obs, old, newValue) -> {
-            if (!newValue.booleanValue())
-                act.expire();
-        });
-    }
-
-    /**
-     * The Runnable action will be executed once after given delay
-     *
-     * Note: the scheduled action will not run while the game is paused
-     *
-     * @param action
-     * @param delay
-     */
-    public final void runOnceAfter(Runnable action, double delay) {
-        timerActions.add(new TimerAction(now, delay, action, TimerType.ONCE));
     }
 
     /**
@@ -1117,5 +1057,13 @@ public abstract class GameApplication extends Application {
      */
     public final double getSizeRatio() {
         return sizeRatio;
+    }
+
+    /**
+     *
+     * @return timer manager
+     */
+    public final TimerManager getTimerManager() {
+        return timerManager;
     }
 }

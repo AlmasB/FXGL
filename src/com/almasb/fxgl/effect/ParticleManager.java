@@ -106,7 +106,7 @@ public final class ParticleManager extends FXGLManager {
             app.addEntities(particle);
         }
 
-        app.runOnceAfter(() -> particles.forEach(app::removeEntity), 2 * GameApplication.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 2 * GameApplication.SECOND);
     }
 
     /**
@@ -153,7 +153,7 @@ public final class ParticleManager extends FXGLManager {
             app.addEntities(particle);
         }
 
-        app.runOnceAfter(() -> particles.forEach(app::removeEntity), 1 * GameApplication.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 1 * GameApplication.SECOND);
     }
 
     /**

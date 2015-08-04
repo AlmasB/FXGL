@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.util;
+package com.almasb.fxgl.time;
 
 import java.util.Arrays;
 
@@ -33,10 +33,8 @@ import java.util.Arrays;
  * varies from frame to frame
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
-public final class FPSCounter {
+/*package-private*/ final class FPSCounter {
 
     private static final int MAX_SAMPLES = 100;
 

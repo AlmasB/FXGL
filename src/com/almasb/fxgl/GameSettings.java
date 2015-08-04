@@ -43,6 +43,7 @@ public final class GameSettings {
     private boolean introEnabled = true;
     private boolean menuEnabled = true;
     private String iconFileName = "";
+    private boolean showFPS = true;
 
     /**
      * Constructs game settings with default parameters
@@ -64,6 +65,7 @@ public final class GameSettings {
         this.introEnabled = copy.introEnabled;
         this.menuEnabled = copy.menuEnabled;
         this.iconFileName = copy.iconFileName;
+        this.showFPS = copy.showFPS;
     }
 
     public String getTitle() {
@@ -190,5 +192,20 @@ public final class GameSettings {
      */
     public void setFullScreen(boolean b) {
         fullScreen = b;
+    }
+
+    public boolean isFPSShown() {
+        return showFPS;
+    }
+
+    /**
+     * Setting to true will show render and performance FPS
+     * in the bottom left corner.
+     *
+     * @param b
+     * @defaultValue true
+     */
+    public void setShowFPS(boolean b) {
+        showFPS = b;
     }
 }
