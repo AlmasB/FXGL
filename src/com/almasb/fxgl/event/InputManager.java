@@ -94,11 +94,24 @@ public final class InputManager extends FXGLManager {
      */
     @Override
     protected void onUpdate(long now) {
-        keyPressActions.forEach((key, action) -> {if (isPressed(key)) action.run();});
+        if (processActions)
+            keyPressActions.forEach((key, action) -> {if (isPressed(key)) action.run();});
 
         Point2D origin = app.getViewportOrigin();
         mouse.x = mouse.screenX / app.getSizeRatio() + origin.getX();
         mouse.y = mouse.screenY / app.getSizeRatio() + origin.getY();
+    }
+
+    private boolean processActions = true;
+
+    /**
+     * Setting to false will not run any actions bound to key/mouse press.
+     * The events will still continue to be registered.
+     *
+     * @param b
+     */
+    public void setProcessActions(boolean b) {
+        processActions = b;
     }
 
     /**
@@ -183,7 +196,7 @@ public final class InputManager extends FXGLManager {
             if (app.isGameMenuOpen())
                 return;
 
-            if (event.getButton() == btn) {
+            if (event.getButton() == btn && processActions) {
                 action.run();
             }
         });
