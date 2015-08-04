@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -798,28 +799,23 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     *
-     * @return  a list of ALL entities currently registered in the application
-     */
-    public final List<Entity> getAllEntities() {
-        return gameRoot.getChildren().stream()
-                .map(node -> (Entity)node)
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Returns a list of entities whose type matches given
-     * arguments
+     * arguments. If no arguments were given, returns list
+     * of ALL entities currently registered in the scene graph
      *
      * @param type
      * @param types
      * @return
      */
-    public final List<Entity> getEntities(EntityType type, EntityType... types) {
+    public final List<Entity> getEntities(EntityType... types) {
+        if (types.length == 0)
+            return gameRoot.getChildren().stream()
+                    .map(node -> (Entity)node)
+                    .collect(Collectors.toList());
+
         List<String> list = Arrays.asList(types).stream()
                 .map(EntityType::getUniqueType)
                 .collect(Collectors.toList());
-        list.add(type.getUniqueType());
 
         return gameRoot.getChildren().stream()
                 .map(node -> (Entity)node)
@@ -832,19 +828,41 @@ public abstract class GameApplication extends Application {
      * which are partially or entirely
      * in the specified rectangular selection.
      *
+     * If no arguments were given, a list of all entities satisfying the
+     * requirement is returned.
+     *
      * @param selection Rectangle2D that describes the selection box
      * @param type
      * @param types
      * @return
      */
-    public final List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType type, EntityType... types) {
+    public final List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
         Entity boundsEntity = Entity.noType();
         boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
         boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
 
-        return getEntities(type, types).stream()
+        return getEntities(types).stream()
                 .filter(entity -> entity.getBoundsInParent().intersects(boundsEntity.getBoundsInParent()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the closest entity to the given entity with given type.
+     * If no types were specified, the closest entity is returned. The given
+     * entity itself is never returned.
+     *
+     * If there no entities satisfying the requirement, {@link Optional#empty()}
+     * is returned.
+     *
+     * @param entity
+     * @param types
+     * @return
+     */
+    public final Optional<Entity> getClosestEntity(Entity entity, EntityType... types) {
+        return getEntities(types).stream()
+                .filter(e -> e != entity)
+                .sorted((e1, e2) -> (int)e1.distance(entity) - (int)e2.distance(entity))
+                .findFirst();
     }
 
     /**
@@ -955,23 +973,15 @@ public abstract class GameApplication extends Application {
 
     /**
      * Fires an FXGL event on all entities whose type
-     * matches given arguments
+     * matches given arguments. If types were not given,
+     * fires an FXGL event on all entities registered in the scene graph.
      *
      * @param event
      * @param type
      * @param types
      */
-    public final void fireFXGLEvent(FXGLEvent event, EntityType type, EntityType... types) {
-        getEntities(type, types).forEach(e -> e.fireFXGLEvent(event));
-    }
-
-    /**
-     * Fires an FXGL event on all entities registered in the application
-     *
-     * @param event
-     */
-    public final void fireFXGLEvent(FXGLEvent event) {
-        getAllEntities().forEach(e -> e.fireFXGLEvent(event));
+    public final void fireFXGLEvent(FXGLEvent event, EntityType... types) {
+        getEntities(types).forEach(e -> e.fireFXGLEvent(event));
     }
 
     /**

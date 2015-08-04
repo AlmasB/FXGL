@@ -151,6 +151,17 @@ public class Entity extends Parent {
     }
 
     /**
+     * Returns distance from center of this entity to
+     * center of the given entity.
+     *
+     * @param other
+     * @return distance between two entities
+     */
+    public final double distance(Entity other) {
+        return getCenter().distance(other.getCenter());
+    }
+
+    /**
      * Translate (move) entity by vector (x, y)
      *
      * @param x
@@ -216,6 +227,7 @@ public class Entity extends Parent {
         return this;
     }
 
+    // TODO: check various rotations and angles
     /**
      *
      * @return width of the bounding box of this entity

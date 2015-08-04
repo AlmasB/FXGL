@@ -150,7 +150,7 @@ public final class PhysicsManager {
      * setCollidable(true).
      */
     private void processCollisions() {
-        List<Entity> collidables = app.getAllEntities()
+        List<Entity> collidables = app.getEntities()
                 .stream()
                 .filter(Entity::isCollidable)
                 .collect(Collectors.toList());
