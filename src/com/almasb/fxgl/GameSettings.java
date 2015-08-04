@@ -30,8 +30,6 @@ package com.almasb.fxgl;
  * initialised before the application (game) starts
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class GameSettings {
 
@@ -48,6 +46,13 @@ public final class GameSettings {
         return title;
     }
 
+    /**
+     * Set title of the game. This will be shown as the
+     * window header if the game isn't fullscreen.
+     *
+     * @param title
+     * @defaultValue "Untitled FXGL Game Application"
+     */
     public void setTitle(String title) {
         this.title = title;
     }
@@ -56,6 +61,16 @@ public final class GameSettings {
         return width;
     }
 
+    /**
+     * Set target width. If the screen width is smaller,
+     * the game will automatically scale down the image
+     * while maintaining the aspect ratio.
+     *
+     * All the game logic must use target width and height.
+     *
+     * @param width
+     * @defaultValue 800
+     */
     public void setWidth(int width) {
         this.width = width;
     }
@@ -64,6 +79,16 @@ public final class GameSettings {
         return height;
     }
 
+    /**
+     * Set target height. If the height width is smaller,
+     * the game will automatically scale down the image
+     * while maintaining the aspect ratio.
+     *
+     * All the game logic must use target width and height.
+     *
+     * @param height
+     * @defaultValue 600
+     */
     public void setHeight(int height) {
         this.height = height;
     }
@@ -72,6 +97,12 @@ public final class GameSettings {
         return version;
     }
 
+    /**
+     * Set version of the game.
+     *
+     * @param version
+     * @defaultValue 0.0
+     */
     public void setVersion(String version) {
         this.version = version;
     }
@@ -80,6 +111,13 @@ public final class GameSettings {
         return introEnabled;
     }
 
+    /**
+     * If set to true, the intro video/animation will
+     * be played before the start of the game
+     *
+     * @param b
+     * @defaultValue true
+     */
     public void setIntroEnabled(boolean b) {
         introEnabled = b;
     }
@@ -88,6 +126,12 @@ public final class GameSettings {
         return menuEnabled;
     }
 
+    /**
+     * Setting to true enables main and game menu.
+     *
+     * @param b
+     * @defaultValue true
+     */
     public void setMenuEnabled(boolean b) {
         menuEnabled = b;
     }
@@ -96,6 +140,16 @@ public final class GameSettings {
         return iconFileName;
     }
 
+    /**
+     * Set file name of the icon to be used
+     * as the application icon.
+     *
+     * The file must be placed under /assets/ui/icons/ .
+     * The name must be given in the form relative to that
+     * path. E.g. "icon.png"
+     *
+     * @param iconFileName
+     */
     public void setIconFileName(String iconFileName) {
         this.iconFileName = iconFileName;
     }
@@ -104,6 +158,12 @@ public final class GameSettings {
         return fullScreen;
     }
 
+    /**
+     * Setting to true will start the game in fullscreen mode.
+     *
+     * @param b
+     * @defaultValue false
+     */
     public void setFullScreen(boolean b) {
         fullScreen = b;
     }

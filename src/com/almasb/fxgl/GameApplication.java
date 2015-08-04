@@ -1011,16 +1011,28 @@ public abstract class GameApplication extends Application {
     }
 
     /**
+     * Returns target width of the application. This is the
+     * width that was set using GameSettings.
+     * Note that the resulting
+     * width of the scene might be different due to end user screen, in
+     * which case transformations will be automatically scaled down
+     * to ensure identical image on all screens.
      *
-     * @return width of the main scene
+     * @return target width
      */
     public final double getWidth() {
         return currentWidth;
     }
 
     /**
+     * Returns target height of the application. This is the
+     * height that was set using GameSettings.
+     * Note that the resulting
+     * height of the scene might be different due to end user screen, in
+     * which case transformations will be automatically scaled down
+     * to ensure identical image on all screens.
      *
-     * @return height of the main scene
+     * @return target height
      */
     public final double getHeight() {
         return currentHeight;
@@ -1028,7 +1040,10 @@ public abstract class GameApplication extends Application {
 
     /**
      * Returns the visual area within the application window,
-     * excluding window borders.
+     * excluding window borders. Note that it will return the
+     * rectangle with set target width and height, not actual
+     * screen width and height. Meaning on smaller screens
+     * the area will correctly return the GameSettings' width and height.
      *
      * Equivalent to new Rectangle2D(0, 0, getWidth(), getHeight()).
      *
@@ -1072,6 +1087,12 @@ public abstract class GameApplication extends Application {
 
     private double sizeRatio = 1.0;
 
+    /**
+     * Returns the size ratio of the screen
+     * resolution over the target resolution
+     *
+     * @return
+     */
     public final double getSizeRatio() {
         return sizeRatio;
     }

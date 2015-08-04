@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -39,11 +39,12 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 /**
- * A generic FXGL game object
+ * A generic FXGL game object. Any game object "should" be
+ * of type Entity. Although not recommended and is rarely necessary,
+ * it is possible
+ * for a game object to extend this class to add extra functionality.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.2
- *
  */
 public class Entity extends Parent {
 
@@ -51,9 +52,12 @@ public class Entity extends Parent {
 
     private List<Control> controls = new ArrayList<>();
 
-    private BooleanProperty active = new SimpleBooleanProperty(true);
     private boolean collidable = false;
 
+    /**
+     * Used by temporary entities so that they are
+     * automatically removed from the scene graph.
+     */
     private double expireTime = 0;
 
     /**
@@ -70,7 +74,7 @@ public class Entity extends Parent {
      *
      * @return expireTime of entity, 0 if not set
      */
-    public double getExpireTime() {
+    public final double getExpireTime() {
         return expireTime;
     }
 
@@ -86,7 +90,7 @@ public class Entity extends Parent {
      * @param nanoseconds
      * @return this entity
      */
-    public Entity setExpireTime(double nanoseconds) {
+    public final Entity setExpireTime(double nanoseconds) {
         expireTime = nanoseconds;
         return this;
     }
@@ -96,7 +100,7 @@ public class Entity extends Parent {
      *
      * @param b
      */
-    public Entity setCollidable(boolean b) {
+    public final Entity setCollidable(boolean b) {
         collidable = b;
         return this;
     }
@@ -105,7 +109,7 @@ public class Entity extends Parent {
      *
      * @return center point of this entity
      */
-    public Point2D getCenter() {
+    public final Point2D getCenter() {
         return getPosition().add(getWidth() / 2, getHeight() / 2);
     }
 
@@ -113,7 +117,7 @@ public class Entity extends Parent {
      *
      * @return entity position - translation from the parent's origin
      */
-    public Point2D getPosition() {
+    public final Point2D getPosition() {
         return new Point2D(getTranslateX(), getTranslateY());
     }
 
@@ -129,7 +133,7 @@ public class Entity extends Parent {
      * @param y
      * @return this entity
      */
-    public Entity setPosition(double x, double y) {
+    public final Entity setPosition(double x, double y) {
         setTranslateX(x);
         setTranslateY(y);
         return this;
@@ -146,7 +150,7 @@ public class Entity extends Parent {
      * @param position
      * @return this entity
      */
-    public Entity setPosition(Point2D position) {
+    public final Entity setPosition(Point2D position) {
         return setPosition(position.getX(), position.getY());
     }
 
@@ -167,7 +171,7 @@ public class Entity extends Parent {
      * @param x
      * @param y
      */
-    public void translate(double x, double y) {
+    public final void translate(double x, double y) {
         setTranslateX(getTranslateX() + x);
         setTranslateY(getTranslateY() + y);
     }
@@ -177,7 +181,7 @@ public class Entity extends Parent {
      *
      * @param vector
      */
-    public void translate(Point2D vector) {
+    public final void translate(Point2D vector) {
         translate(vector.getX(), vector.getY());
     }
 
@@ -185,14 +189,14 @@ public class Entity extends Parent {
      *
      * @return entity type
      */
-    public EntityType getEntityType() {
+    public final EntityType getEntityType() {
         return type;
     }
 
     /**
      * @return entity type as String
      */
-    public String getTypeAsString() {
+    public final String getTypeAsString() {
         return type.getUniqueType();
     }
 
@@ -203,7 +207,7 @@ public class Entity extends Parent {
      * @param type
      * @return
      */
-    public boolean isType(EntityType type) {
+    public final boolean isType(EntityType type) {
         return getTypeAsString().equals(type.getUniqueType());
     }
 
@@ -214,7 +218,7 @@ public class Entity extends Parent {
      * @param graphics
      * @return this entity
      */
-    public Entity setGraphics(Node graphics) {
+    public final Entity setGraphics(Node graphics) {
         getChildren().clear();
 
         if (graphics instanceof Circle) {
@@ -232,7 +236,7 @@ public class Entity extends Parent {
      *
      * @return width of the bounding box of this entity
      */
-    public double getWidth() {
+    public final double getWidth() {
         return getLayoutBounds().getWidth();
     }
 
@@ -240,7 +244,7 @@ public class Entity extends Parent {
      *
      * @return height of the bounding box of this entity
      */
-    public double getHeight() {
+    public final double getHeight() {
         return getLayoutBounds().getHeight();
     }
 
@@ -249,7 +253,7 @@ public class Entity extends Parent {
      *
      * @param control
      */
-    public Entity addControl(Control control) {
+    public final Entity addControl(Control control) {
         controls.add(control);
         if (control instanceof AbstractControl) {
             ((AbstractControl) control).setEntity(this);
@@ -262,14 +266,14 @@ public class Entity extends Parent {
      *
      * @param control
      */
-    public void removeControl(Control control) {
+    public final void removeControl(Control control) {
         controls.remove(control);
     }
 
     /**
      * Remove all behavior controls from entity
      */
-    public void removeControls() {
+    public final void removeControls() {
         controls.clear();
     }
 
@@ -281,7 +285,7 @@ public class Entity extends Parent {
      * @return The first instance in the list of the controlType class, or null
      */
     @SuppressWarnings("unchecked")
-    public <T extends Control> T getControl(Class<T> controlType) {
+    public final <T extends Control> T getControl(Class<T> controlType) {
         for (Control c : controls) {
             if (controlType.isAssignableFrom(c.getClass())) {
                 return (T) c;
@@ -326,8 +330,14 @@ public class Entity extends Parent {
         getChildren().clear();
     }
 
-    public final BooleanProperty activeProperty() {
-        return active;
+    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(true);
+
+    /**
+     *
+     * @return active property of this entity
+     */
+    public final ReadOnlyBooleanProperty activeProperty() {
+        return active.getReadOnlyProperty();
     }
 
     /**
@@ -336,7 +346,7 @@ public class Entity extends Parent {
      *
      * @return
      */
-    public boolean isActive() {
+    public final boolean isActive() {
         return active.get();
     }
 
@@ -345,7 +355,7 @@ public class Entity extends Parent {
      * @return true if the object participates in collision detection,
      *      false otherwise
      */
-    public boolean isCollidable() {
+    public final boolean isCollidable() {
         return collidable;
     }
 
@@ -362,12 +372,19 @@ public class Entity extends Parent {
      * @param name
      * @param value
      */
-    public Entity setProperty(String name, Object value) {
+    public final Entity setProperty(String name, Object value) {
         getProperties().put(name, value);
         return this;
     }
 
-    public Entity setProperty(PropertyKey key, Object value) {
+    /**
+     * Set a custom property
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public final Entity setProperty(PropertyKey key, Object value) {
         getProperties().put(key.getUniqueKey(), value);
         return this;
     }
@@ -390,31 +407,55 @@ public class Entity extends Parent {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T> T getProperty(String name) {
+    public final <T> T getProperty(String name) {
         return (T)getProperties().get(name);
     }
 
+    /**
+     * Get value of a custom property that was previously set
+     * by {@link #setProperty(PropertyKey, Object)}
+     *
+     * <pre>
+     * Example:
+     *
+     * if (player.<Boolean>getProperty(SomeKey.ALIVE)) {
+     *      // property "alive" is true
+     * }
+     *
+     * int hp = player.getProperty(SomeKey.HP);
+     * </pre>
+     *
+     * @param name
+     * @return
+     */
     @SuppressWarnings("unchecked")
-    public <T> T getProperty(PropertyKey key) {
+    public final <T> T getProperty(PropertyKey key) {
         return (T)getProperties().get(key.getUniqueKey());
     }
 
     private Map<String, FXGLEventHandler> eventHandlers = new HashMap<>();
 
-    public void addFXGLEventHandler(FXGLEventType type, FXGLEventHandler eventHandler) {
+    /**
+     * Register an event handler for FXGLEventType. The handler will
+     * be notified when an event of the type occurs on this entity.
+     *
+     * @param type
+     * @param eventHandler
+     */
+    public final void addFXGLEventHandler(FXGLEventType type, FXGLEventHandler eventHandler) {
         eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 
     /**
      * Fire (trigger) an FXGL event on this entity
-     * This entity becomes the target of the FXGL event
+     * This entity becomes the target of the FXGL event.
      *
      * If the FXGL event doesn't have a source, this
-     * entity will also become the source of the event
+     * entity will also become the source of the event.
      *
      * @param event
      */
-    public void fireFXGLEvent(FXGLEvent event) {
+    public final void fireFXGLEvent(FXGLEvent event) {
         if (event.getSource() == null)
             event.setSource(this);
 
@@ -423,16 +464,16 @@ public class Entity extends Parent {
     }
 
     /**
-     * Returns a new entity without any type
+     * Returns a new entity without any type.
      *
      * Use this method for background entity,
      * range selection entity, temporary entity,
      * etc when you are not
-     * going to use its type
+     * going to use its type.
      *
      * @return
      */
-    public static Entity noType() {
+    public static final Entity noType() {
         return new Entity(new EntityType() {
             @Override
             public String getUniqueType() {
