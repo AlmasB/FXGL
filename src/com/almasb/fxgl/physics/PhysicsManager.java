@@ -193,7 +193,8 @@ public final class PhysicsManager {
 
         List<CollisionPair> toRemove = new ArrayList<>();
         collisions.forEach((pair, tick) -> {
-            if (!pair.getA().isActive() || !pair.getB().isActive()) {
+            if (!pair.getA().isActive() || !pair.getB().isActive()
+                    || !pair.getA().isCollidable() || !pair.getB().isCollidable()) {
                 toRemove.add(pair);
                 return;
             }

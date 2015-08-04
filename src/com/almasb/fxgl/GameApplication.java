@@ -551,11 +551,6 @@ public abstract class GameApplication extends Application {
         timerActions.forEach(action -> action.update(now));
         timerActions.removeIf(TimerAction::isExpired);
 
-        inputManager.onUpdate(now);
-        physicsManager.onUpdate(now);
-
-        onUpdate();
-
         gameRoot.getChildren().addAll(tmpAddList);
         tmpAddList.clear();
 
@@ -567,6 +562,13 @@ public abstract class GameApplication extends Application {
         tmpRemoveList.forEach(entity -> entity.onClean());
         tmpRemoveList.clear();
 
+        // update managers
+        inputManager.onUpdate(now);
+        physicsManager.onUpdate(now);
+
+        // update app
+        onUpdate();
+        // update entities
         gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
 
         fpsPerformance = Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos)));

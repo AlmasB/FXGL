@@ -290,6 +290,18 @@ public class Entity extends Parent {
         return null;
     }
 
+    private boolean controlsEnabled = true;
+
+    /**
+     * Setting this to false will disable each control's update
+     * until this has been set back to true.
+     *
+     * @param b
+     */
+    public final void setControlsEnabled(boolean b) {
+        controlsEnabled = b;
+    }
+
     /**
      * Do NOT call manually. It is called automatically
      * by FXGL GameApplication
@@ -297,7 +309,8 @@ public class Entity extends Parent {
      * @param now
      */
     public final void onUpdate(long now) {
-        controls.forEach(control -> control.onUpdate(this, now));
+        if (controlsEnabled)
+            controls.forEach(control -> control.onUpdate(this, now));
     }
 
     /**
