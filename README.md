@@ -2,6 +2,15 @@
 Simple and easy to use Java 2D gaming library based on JavaFX 8<br/>
 <img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL.png" />
 
+# Few Simple Projects So Far<br/>
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Menu.jpg" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Pacman.png" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Physics.jpg" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Platformer.jpg" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_RPG.png" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Wars.jpg" />
+Sprites can be found on http://opengameart.org/
+
 # Prerequisites
 Oracle JDK 1.8.0_40+
 
