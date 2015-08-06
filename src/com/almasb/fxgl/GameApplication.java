@@ -1047,6 +1047,9 @@ public abstract class GameApplication extends Application {
         return isGameMenuOpen;
     }
 
+    /**
+     * Equals user system width / target width
+     */
     private double sizeRatio = 1.0;
 
     /**
