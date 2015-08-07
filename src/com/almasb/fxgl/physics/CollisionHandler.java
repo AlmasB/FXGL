@@ -29,11 +29,11 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 
 /**
- * Handler for a collision that occurred between two entities
+ * Handler for a collision that occurred between two entities.
+ * Subclasses should override only those callbacks they are
+ * interested in.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public abstract class CollisionHandler extends Pair<EntityType> {
 
@@ -47,7 +47,7 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    public abstract void onCollisionBegin(Entity a, Entity b);
+    public void onCollisionBegin(Entity a, Entity b) {}
 
     /**
      * Called if entities A and B are currently colliding.
@@ -58,7 +58,7 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    public abstract void onCollision(Entity a, Entity b);
+    public void onCollision(Entity a, Entity b) {}
 
     /**
      * Called when entities A and B have just stopped colliding and were colliding in the last tick.
@@ -66,5 +66,5 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    public abstract void onCollisionEnd(Entity a, Entity b);
+    public void onCollisionEnd(Entity a, Entity b) {}
 }

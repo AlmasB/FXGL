@@ -29,6 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.almasb.fxgl.FXGLManager;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.time.TimerManager;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -37,11 +42,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-
-import com.almasb.fxgl.FXGLManager;
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.entity.Control;
-import com.almasb.fxgl.entity.Entity;
 
 /**
  * Allows to call a few pre-configured special effects involving
@@ -106,7 +106,7 @@ public final class ParticleManager extends FXGLManager {
             app.addEntities(particle);
         }
 
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 2 * GameApplication.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 2 * TimerManager.SECOND);
     }
 
     /**
@@ -153,7 +153,7 @@ public final class ParticleManager extends FXGLManager {
             app.addEntities(particle);
         }
 
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 1 * GameApplication.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 1 * TimerManager.SECOND);
     }
 
     /**

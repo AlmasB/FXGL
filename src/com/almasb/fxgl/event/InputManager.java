@@ -30,6 +30,9 @@ import java.util.Map;
 
 import com.almasb.fxgl.FXGLManager;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -51,33 +54,100 @@ public final class InputManager extends FXGLManager {
      */
     private Mouse mouse = new Mouse();
 
-    private Map<KeyCode, Boolean> keys = new HashMap<>();
-    private Map<KeyCode, Runnable> keyPressActions = new HashMap<>();
-    private Map<KeyCode, Runnable> keyTypedActions = new HashMap<>();
-    private Map<KeyCode, Runnable> keyReleasedActions = new HashMap<>();
+    private Map<KeyCode, UserAction> keyBindings = new HashMap<>();
+    private Map<MouseButton, UserAction> mouseBindings = new HashMap<>();
+
+    // TODO: replace with observable maps
+    /**
+     * Returns a new map containing keys and actions bound
+     * to those keys
+     *
+     * @return key bindings
+     */
+    public Map<KeyCode, UserAction> getKeyBindings() {
+        return new HashMap<>(keyBindings);
+    }
+
+    /**
+     * Returns a new map containing mouse buttons and actions bound
+     * to those buttons
+     *
+     * @return mouse bindings
+     */
+    public Map<MouseButton, UserAction> getMouseBindings() {
+        return new HashMap<>(mouseBindings);
+    }
+
+    //private Map<KeyCode, Boolean> keys = new HashMap<>();
+
+    private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
+
+    public InputManager() {
+        currentActions.addListener(new ListChangeListener<UserAction>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends UserAction> c) {
+                while (c.next()) {
+                    if (!processActions)
+                        continue;
+
+                    if (c.wasAdded()) {
+                        c.getAddedSubList().forEach(action -> action.onActionBegin());
+                    }
+                    else if (c.wasRemoved()) {
+                        c.getRemoved().forEach(action -> action.onActionEnd());
+                    }
+                }
+            }
+        });
+    }
 
     public void init(Scene mainScene) {
         this.gameScene = mainScene;
         gameScene.setOnKeyPressed(event -> {
-            if (app.isGameMenuOpen())
+            if (app.isGameMenuOpen() || app.isMainMenuOpen())
                 return;
 
-            if (!isPressed(event.getCode()) && keyTypedActions.containsKey(event.getCode())) {
-                keys.put(event.getCode(), true);
-                keyTypedActions.get(event.getCode()).run();
-            }
-            else {
-                keys.put(event.getCode(), true);
+            KeyCode key = event.getCode();
+            UserAction action = keyBindings.get(key);
+
+            if (action != null && !currentActions.contains(action)) {
+                currentActions.add(action);
             }
 
         });
         gameScene.setOnKeyReleased(event -> {
-            if (app.isGameMenuOpen())
+            if (app.isGameMenuOpen() || app.isMainMenuOpen())
                 return;
 
-            keys.put(event.getCode(), false);
-            if (keyReleasedActions.containsKey(event.getCode())) {
-                keyReleasedActions.get(event.getCode()).run();
+            KeyCode key = event.getCode();
+            UserAction action = keyBindings.get(key);
+
+            if (action != null) {
+                currentActions.remove(action);
+            }
+        });
+
+        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            if (app.isGameMenuOpen() || app.isMainMenuOpen())
+                return;
+
+            MouseButton btn = event.getButton();
+            UserAction action = mouseBindings.get(btn);
+
+            if (action != null) {
+                currentActions.add(action);
+            }
+        });
+
+        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+            if (app.isGameMenuOpen() || app.isMainMenuOpen())
+                return;
+
+            MouseButton btn = event.getButton();
+            UserAction action = mouseBindings.get(btn);
+
+            if (action != null) {
+                currentActions.remove(action);
             }
         });
 
@@ -94,8 +164,9 @@ public final class InputManager extends FXGLManager {
      */
     @Override
     protected void onUpdate(long now) {
-        if (processActions)
-            keyPressActions.forEach((key, action) -> {if (isPressed(key)) action.run();});
+        if (processActions) {
+            currentActions.forEach(UserAction::onAction);
+        }
 
         Point2D origin = app.getViewportOrigin();
         mouse.x = mouse.screenX / app.getSizeRatio() + origin.getX();
@@ -114,102 +185,31 @@ public final class InputManager extends FXGLManager {
         processActions = b;
     }
 
-    /**
-     * @param key
-     * @return
-     *          true iff key is currently pressed
-     */
-    private boolean isPressed(KeyCode key) {
-        return keys.getOrDefault(key, false);
-    }
-
-    /**
-     * Add an action that is executed constantly
-     * WHILE the key is physically pressed
-     *
-     * @param key
-     * @param action
-     */
-    public void addKeyPressBinding(KeyCode key, Runnable action) {
-        keyPressActions.put(key, action);
-    }
-
-    /**
-     * Removes action bound to the given key.
-     *
-     * @param key
-     */
-    public void removeKeyPressBinding(KeyCode key) {
-        keyPressActions.remove(key);
-    }
-
-    /**
-     * Add an action that is executed only ONCE
-     * per single physical key press
-     *
-     * @param key
-     * @param action
-     */
-    public void addKeyTypedBinding(KeyCode key, Runnable action) {
-        keyTypedActions.put(key, action);
-    }
-
-    /**
-     * Removes action bound to the given key.
-     *
-     * @param key
-     */
-    public void removeKeyTypedBinding(KeyCode key) {
-        keyTypedActions.remove(key);
-    }
-
-    /**
-     * Add an action that is executed once, when
-     * the key is released.
-     *
-     * @param key
-     * @param action
-     */
-    public void addKeyReleasedBinding(KeyCode key, Runnable action) {
-        keyReleasedActions.put(key, action);
-    }
-
-    /**
-     * Removes action bound to release of the given key.
-     *
-     * @param key
-     */
-    public void removeKeyReleasedBinding(KeyCode key) {
-        keyReleasedActions.remove(key);
-    }
-
-    // TODO: proper mouse bindings like keys, debug number of clicks
-    /**
-     * Add an action that is executed ONCE per single click of
-     * given mouse button
-     *
-     * @param btn
-     * @param action
-     */
-    public void addMouseClickedBinding(MouseButton btn, Runnable action) {
-        gameScene.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (app.isGameMenuOpen())
-                return;
-
-            if (event.getButton() == btn && processActions) {
-                action.run();
-            }
-        });
-    }
+//    /**
+//     * @param key
+//     * @return
+//     *          true iff key is currently pressed
+//     */
+//    private boolean isPressed(KeyCode key) {
+//        return keys.getOrDefault(key, false);
+//    }
 
     /**
      * Clears all input, that is releases all key presses and mouse clicks
      * for a single frame
      */
     public void clearAllInput() {
-        keys.keySet().forEach(key -> keys.put(key, false));
+        currentActions.clear();
         mouse.leftPressed = false;
         mouse.rightPressed = false;
+    }
+
+    public void addAction(UserAction action, MouseButton btn) {
+        mouseBindings.put(btn, action);
+    }
+
+    public void addAction(UserAction action, KeyCode key) {
+        keyBindings.put(key, action);
     }
 
     /**
@@ -254,7 +254,7 @@ public final class InputManager extends FXGLManager {
         private MouseEvent event;
 
         private void update(MouseEvent event) {
-            if (app.isGameMenuOpen())
+            if (app.isGameMenuOpen() || app.isMainMenuOpen())
                 return;
 
             this.event = event;

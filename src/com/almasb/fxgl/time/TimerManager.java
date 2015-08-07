@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.almasb.fxgl.FXGLManager;
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.time.TimerAction.TimerType;
 
 import javafx.beans.property.IntegerProperty;
@@ -39,9 +38,65 @@ import javafx.beans.property.SimpleIntegerProperty;
 public final class TimerManager extends FXGLManager {
 
     /**
+     * A second in nanoseconds
+     */
+    public static final long SECOND = 1000000000;
+
+    /**
+     * A minute in nanoseconds
+     */
+    public static final long MINUTE = 60 * SECOND;
+
+    /**
+     * Time per single frame in nanoseconds
+     */
+    public static final long TIME_PER_FRAME = SECOND / 60;
+
+    /**
      * List for all timer based actions
      */
     private List<TimerAction> timerActions = new CopyOnWriteArrayList<>();
+
+    /**
+     * Holds current tick (frame)
+     */
+    private long tick = 0;
+
+    /**
+     * Returns current tick (frame). When the game has just started,
+     * the first cycle in the loop will have tick == 1,
+     * second cycle - 2 and so on.
+     *
+     * The update to this number happens when a new update cycle starts.
+     *
+     * @return current tick
+     */
+    public long getTick() {
+        return tick;
+    }
+
+    /**
+     * Resets current tick to 0.
+     */
+    public void resetTicks() {
+        tick = 0;
+    }
+
+    /**
+     * Time for this tick in nanoseconds.
+     */
+    private long now = 0;
+
+    /**
+     * Current time for this tick in nanoseconds. Also time elapsed
+     * from the start of game. This time does not change while the game is paused.
+     * This time does not change while within the same tick.
+     *
+     * @return
+     */
+    public long getNow() {
+        return now;
+    }
 
     /**
      * These are used to approximate FPS value
@@ -101,10 +156,13 @@ public final class TimerManager extends FXGLManager {
 
     /**
      * Called at the start of a game update tick.
+     * This is where tick becomes tick + 1.
      *
      * @param internalTime
      */
     public void tickStart(long internalTime) {
+        tick++;
+        now = (getTick() - 1) * TIME_PER_FRAME;
         startNanos = System.nanoTime();
         realFPS = internalTime - fpsTime;
         fpsTime = internalTime;
@@ -114,8 +172,8 @@ public final class TimerManager extends FXGLManager {
      * Called at the end of a game update tick.
      */
     public void tickEnd() {
-        performanceFPS.set(Math.round(fpsPerformanceCounter.count(GameApplication.SECOND / (System.nanoTime() - startNanos))));
-        fps.set(Math.round(fpsCounter.count(GameApplication.SECOND / realFPS)));
+        performanceFPS.set(Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos))));
+        fps.set(Math.round(fpsCounter.count(SECOND / realFPS)));
     }
 
     @Override

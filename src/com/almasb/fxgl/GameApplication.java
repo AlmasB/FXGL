@@ -116,6 +116,15 @@ public abstract class GameApplication extends Application {
         return instance;
     }
 
+    /*
+     * Order of execution.
+     *
+     * 1. the following initializer block (clinit)
+     * 2. instance fields
+     * 3. ctor()
+     * 4. init()
+     * 5. start()
+     */
     {
         // make sure first thing we do is get back the reference from JavaFX
         // so that anything can now use getInstance()
@@ -127,21 +136,6 @@ public abstract class GameApplication extends Application {
      * The logger
      */
     protected static final Logger log = FXGLLogger.getLogger("FXGL.GameApplication");
-
-    /**
-     * A second in nanoseconds
-     */
-    public static final long SECOND = 1000000000;
-
-    /**
-     * Time per single frame in nanoseconds
-     */
-    public static final long TIME_PER_FRAME = SECOND / 60;
-
-    /**
-     * A minute in nanoseconds
-     */
-    public static final long MINUTE = 60 * SECOND;
 
     /**
      * Settings for this game instance. This is an internal copy
@@ -247,17 +241,6 @@ public abstract class GameApplication extends Application {
      * Default random number generator
      */
     protected final Random random = new Random();
-
-    /**
-     * Current time for this tick in nanoseconds. Also time elapsed
-     * from the start of game. This time does not change while the game is paused
-     */
-    protected long now = 0;
-
-    /**
-     * Current tick. It is also number of ticks since start of game
-     */
-    protected long tick = 0;
 
     /**
      * Initialize game settings
@@ -489,6 +472,7 @@ public abstract class GameApplication extends Application {
             mainScene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyPressedHandler);
             mainScene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
             mainScene.setRoot(mainMenu.getRoot());
+            isMainMenuOpen = true;
         }
 
         mainStage.setOnCloseRequest(event -> exit());
@@ -556,31 +540,28 @@ public abstract class GameApplication extends Application {
      * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
      */
     private void processUpdate(long internalTime) {
+        // this will set up current tick and current time
+        // for the rest modules of the game to use
         timerManager.tickStart(internalTime);
 
-        gameRoot.getChildren().addAll(tmpAddList);
-        tmpAddList.clear();
+        // add new entities to the scene graph
+        addPendingEntities();
 
-        gameRoot.getChildren().removeAll(tmpRemoveList);
-        tmpRemoveList.stream()
-                    .filter(e -> e instanceof PhysicsEntity)
-                    .map(e -> (PhysicsEntity)e)
-                    .forEach(physicsManager::destroyBody);
-        tmpRemoveList.forEach(entity -> entity.onClean());
-        tmpRemoveList.clear();
+        // remove old entities from the scene graph
+        removeAndCleanPendingEntities();
 
         // update managers
-        managers.forEach(manager -> manager.onUpdate(now));
+        managers.forEach(manager -> manager.onUpdate(getNow()));
 
         // update app
         onUpdate();
 
-        // update entities
-        gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(now));
+        // update entities in the scene graph
+        gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(getNow()));
 
-        tick++;
-        now += TIME_PER_FRAME;
-
+        // this is only end for our processing tick for basic profiling
+        // the actual JavaFX tick ends when our new tick begins. So
+        // JavaFX event callbacks will properly fire within the same "our" tick.
         timerManager.tickEnd();
     }
 
@@ -591,11 +572,12 @@ public abstract class GameApplication extends Application {
     public final void startNewGame() {
         initApp();
 
-        tick = 0;
-        now = 0;
+        getTimerManager().resetTicks();
 
         mainScene.setRoot(root);
         timer.start();
+
+        isMainMenuOpen = false;
     }
 
     /**
@@ -639,11 +621,13 @@ public abstract class GameApplication extends Application {
         root.getChildren().remove(gameMenu.getRoot());
         root.getChildren().add(uiRoot);
         isGameMenuOpen = false;
+        isMainMenuOpen = true;
 
         mainScene.setRoot(mainMenu.getRoot());
         mainMenu.getRoot().requestFocus();
     }
 
+    private boolean isMainMenuOpen = false;
     private boolean isGameMenuOpen = false;
     private boolean canSwitchGameMenu = true;
 
@@ -874,7 +858,10 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Add an entity/entities to the scene graph.
+     * Add entity(-ies) to the scene graph.
+     * The entity(-ies) will be added in the next tick.
+     *
+     * TODO: the logic should be moved to {@link #addPendingEntities()}
      *
      * @param entities to add
      */
@@ -905,6 +892,36 @@ public abstract class GameApplication extends Application {
      */
     public final void removeEntity(Entity entity) {
         tmpRemoveList.add(entity);
+    }
+
+    /**
+     * This is where we actually add the entities to the scene graph,
+     * which were pushed
+     * to waiting queue by {@link #addEntities(Entity...)}
+     * in the previous tick. We also clear the queue.
+     */
+    private void addPendingEntities() {
+        gameRoot.getChildren().addAll(tmpAddList);
+        tmpAddList.clear();
+    }
+
+    /**
+     * This is where we actually remove the entities from the scene graph,
+     * which were pushed to waiting queue for removal by {@link #removeEntity(Entity)}
+     * in the previous tick.
+     * If entity is a PhysicsEntity, its physics properties get destroyed.
+     * Finally, entity's onClean() will be called
+     *
+     * We also clear the queue.
+     */
+    private void removeAndCleanPendingEntities() {
+        gameRoot.getChildren().removeAll(tmpRemoveList);
+        tmpRemoveList.stream()
+                    .filter(e -> e instanceof PhysicsEntity)
+                    .map(e -> (PhysicsEntity)e)
+                    .forEach(physicsManager::destroyBody);
+        tmpRemoveList.forEach(entity -> entity.onClean());
+        tmpRemoveList.clear();
     }
 
     /**
@@ -1025,10 +1042,10 @@ public abstract class GameApplication extends Application {
 
     /**
      *
-     * @return current tick since the start of game
+     * @return current tick
      */
     public final long getTick() {
-        return tick;
+        return getTimerManager().getTick();
     }
 
     /**
@@ -1036,14 +1053,22 @@ public abstract class GameApplication extends Application {
      * @return current time since start of game in nanoseconds
      */
     public final long getNow() {
-        return now;
+        return getTimerManager().getNow();
+    }
+
+    /**
+     *
+     * @return true if in main menu
+     */
+    public final boolean isMainMenuOpen() {
+        return isMainMenuOpen;
     }
 
     /**
      *
      * @return true if game menu is open, false otherwise
      */
-    public boolean isGameMenuOpen() {
+    public final boolean isGameMenuOpen() {
         return isGameMenuOpen;
     }
 
