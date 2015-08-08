@@ -148,7 +148,8 @@ public final class PhysicsManager extends FXGLManager {
      * setCollidable(true).
      */
     private void processCollisions() {
-        List<Entity> collidables = app.getEntities()
+        List<Entity> collidables = app.getSceneManager()
+                .getEntities()
                 .stream()
                 .filter(Entity::isCollidable)
                 .collect(Collectors.toList());

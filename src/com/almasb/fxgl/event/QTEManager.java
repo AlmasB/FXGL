@@ -95,7 +95,7 @@ public final class QTEManager extends FXGLManager {
      */
     public void startQTE(double overallDuration, QTEHandler handler, KeyCode key, KeyCode... keyCodes) {
         app.pause();
-        app.addUINodes(qteText);
+        app.getSceneManager().addUINodes(qteText);
 
         qteText.setTranslateY(app.getHeight() / 2);
 
@@ -103,20 +103,20 @@ public final class QTEManager extends FXGLManager {
         tt.setToY(50);
         tt.setOnFinished(event -> {
             currentQTE = new QTE(handler, () -> {
-                app.removeUINode(currentQTE);
+                app.getSceneManager().removeUINode(currentQTE);
                 currentQTE = null;
 
                 app.resume();
             }, app.getWidth(), app.getHeight(), color, key, keyCodes);
 
-            app.removeUINode(qteText);
-            app.addUINodes(currentQTE);
+            app.getSceneManager().removeUINode(qteText);
+            app.getSceneManager().addUINodes(currentQTE);
 
             ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();
             thread.schedule(() -> {
                 Platform.runLater(() -> {
                     if (currentQTE != null) {
-                        app.removeUINode(currentQTE);
+                        app.getSceneManager().removeUINode(currentQTE);
 
                         if (currentQTE.isActive()) {
                             handler.onFailure();

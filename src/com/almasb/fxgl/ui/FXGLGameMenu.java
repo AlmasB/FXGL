@@ -95,7 +95,7 @@ public final class FXGLGameMenu extends Menu {
 
     private MenuBox createMainMenu() {
         MenuItem itemResume = new MenuItem("RESUME");
-        itemResume.setAction(app::closeGameMenu);
+        itemResume.setAction(app.getSceneManager()::closeGameMenu);
 
         MenuItem itemSave = new MenuItem("SAVE");
         itemSave.setAction(() -> {
@@ -128,7 +128,7 @@ public final class FXGLGameMenu extends Menu {
         itemExtra.setChild(createExtraMenu());
 
         MenuItem itemExit = new MenuItem("EXIT TO MAIN MENU");
-        itemExit.setAction(app::exitToMainMenu);
+        itemExit.setAction(app.getSceneManager()::exitToMainMenu);
 
         MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
         menu.setTranslateX(50);

@@ -25,33 +25,19 @@
  */
 package com.almasb.fxgl;
 
-import java.awt.image.BufferedImage;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.effect.ParticleManager;
-import com.almasb.fxgl.entity.CombinedEntity;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
-import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.FXGLGameMenu;
@@ -63,24 +49,13 @@ import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -143,66 +118,10 @@ public abstract class GameApplication extends Application {
      */
     private GameSettings settings;
 
-    /*
-     * All scene graph roots. Although uiRoot is drawn on top of gameRoot,
-     * they are at the same level in the scene graph.
-     *
-     *                  mainStage
-     *                      |
-     *                      |
-     *                  mainScene
-     *                      |
-     *                      |
-     *                    root         <--> (mainMenu root)
-     *                   /    \
-     *                  /      \
-     *              gameRoot   uiRoot  <--> (gameMenu root)
-     *
-     */
-    /**
-     * The root for entities (game objects)
-     */
-    private Pane gameRoot = new Pane();
-
-    /**
-     * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
-     * May also contain entities as Entity is a subclass of Parent.
-     * uiRoot isn't affected by viewport movement.
-     */
-    private Group uiRoot = new Group();
-
-    /**
-     * THE root of the {@link #mainScene}. Contains {@link #gameRoot} and {@link #uiRoot} in this order.
-     */
-    private Pane root = new Pane(gameRoot, uiRoot);
-
-    /**
-     * Main menu, this is the menu shown at the start of game
-     */
-    private Menu mainMenu;
-
-    /**
-     * In-game menu, this is shown when menu key pressed during the game
-     */
-    private Menu gameMenu;
-
-    /**
-     * The key that triggers opening/closing game menu
-     */
-    private KeyCode menuKey = KeyCode.ESCAPE;
-
-    /**
-     * Game scene
-     */
-    private Scene mainScene = new Scene(root);
-
     /**
      * Game window
      */
-    private Stage mainStage;
-
-    private List<Entity> tmpAddList = new ArrayList<>();
-    private List<Entity> tmpRemoveList = new ArrayList<>();
+    private Stage stage;
 
     /**
      * The main loop timer
@@ -220,21 +139,13 @@ public abstract class GameApplication extends Application {
      */
     private List<FXGLManager> managers = new ArrayList<>();
 
+    protected final SceneManager sceneManager = new SceneManager();
     protected final InputManager inputManager = new InputManager();
-
-    /**
-     * Used for loading various assets
-     */
     protected final AssetManager assetManager = AssetManager.INSTANCE;
-
     protected final PhysicsManager physicsManager = new PhysicsManager();
-
     protected final TimerManager timerManager = new TimerManager();
-
     protected final ParticleManager particleManager = new ParticleManager();
-
     protected final QTEManager qteManager = new QTEManager();
-
     protected final SaveLoadManager saveLoadManager = SaveLoadManager.INSTANCE;
 
     /**
@@ -356,35 +267,18 @@ public abstract class GameApplication extends Application {
      * stage properties
      */
     private void applySettings() {
-        Rectangle2D bounds = settings.isFullScreen() ? Screen.getPrimary().getBounds() : Screen.getPrimary().getVisualBounds();
+        stage.setTitle(getTitle() + " " + getVersion());
+        stage.setResizable(false);
 
-        if (settings.getWidth() <= bounds.getWidth()
-                && settings.getHeight() <= bounds.getHeight()) {
-            root.setPrefSize(settings.getWidth(), settings.getHeight());
-        }
-        else {
-            double ratio = settings.getWidth() * 1.0 / settings.getHeight();
-
-            for (int newWidth = (int)bounds.getWidth(); newWidth > 0; newWidth--) {
-                if (newWidth / ratio <= bounds.getHeight()) {
-                    root.setPrefSize(newWidth, (int)(newWidth / ratio));
-
-                    double newSizeRatio = newWidth * 1.0 / settings.getWidth();
-                    root.getTransforms().add(new Scale(newSizeRatio, newSizeRatio));
-                    sizeRatio = newSizeRatio;
-                    break;
-                }
-            }
-        }
-
-        mainStage.setTitle(settings.getTitle() + " " + settings.getVersion());
-        mainStage.setResizable(false);
+        sceneManager.setPrefSize(getWidth(), getHeight());
+        if (isMenuEnabled())
+            sceneManager.configureMenu();
 
         try {
             String iconName = settings.getIconFileName();
             if (!iconName.isEmpty()) {
                 Image icon = assetManager.loadAppIcon(iconName);
-                mainStage.getIcons().add(icon);
+                stage.getIcons().add(icon);
             }
         }
         catch (Exception e) {
@@ -392,16 +286,16 @@ public abstract class GameApplication extends Application {
         }
 
         // ensure the window frame is just right for the scene size
-        mainStage.setScene(mainScene);
-        mainStage.sizeToScene();
+        stage.setScene(getSceneManager().getScene());
+        stage.sizeToScene();
 
         if (settings.isFullScreen()) {
-            mainStage.setFullScreenExitHint("");
+            stage.setFullScreenExitHint("");
             // we don't want the user to be able to exit full screen manually
             // but only through settings menu
             // so we set key combination to something obscure which isn't likely to be pressed
-            mainStage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
-            mainStage.setFullScreen(true);
+            stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
+            stage.setFullScreen(true);
         }
 
         if (settings.isFPSShown()) {
@@ -411,7 +305,7 @@ public abstract class GameApplication extends Application {
             fpsText.setTranslateY(getHeight() - 40);
             fpsText.textProperty().bind(timerManager.fpsProperty().asString("FPS: [%d]\n")
                     .concat(timerManager.performanceFPSProperty().asString("Performance: [%d]")));
-            addUINodes(fpsText);
+            sceneManager.addUINodes(fpsText);
         }
     }
 
@@ -419,19 +313,15 @@ public abstract class GameApplication extends Application {
      * Ensure managers are of legal state and ready
      */
     private void initManagers() {
-        // we do this to be able to request focus
-        root.setFocusTraversable(true);
-        gameRoot.setFocusTraversable(true);
-        gameRoot.requestFocus();
-
-        inputManager.init(mainScene);
+        inputManager.init(sceneManager.getScene());
         qteManager.init();
-        mainScene.addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
+        sceneManager.getScene().addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
 
         // register managers that need to be updated
         managers.add(inputManager);
         managers.add(physicsManager);
         managers.add(timerManager);
+        managers.add(sceneManager);
     }
 
     /**
@@ -466,37 +356,10 @@ public abstract class GameApplication extends Application {
      * order based on the subclass implementation of certain init methods
      */
     private void configureAndShowStage() {
-        boolean menuEnabled = settings.isMenuEnabled();
+        stage.setOnCloseRequest(event -> exit());
+        stage.show();
 
-        if (menuEnabled) {
-            mainScene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyPressedHandler);
-            mainScene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
-            mainScene.setRoot(mainMenu.getRoot());
-            isMainMenuOpen = true;
-        }
-
-        mainStage.setOnCloseRequest(event -> exit());
-        mainStage.show();
-
-        if (settings.isIntroEnabled()) {
-            Intro intro = initIntroVideo();
-            intro.onFinished = () -> {
-                if (menuEnabled) {
-                    mainScene.setRoot(mainMenu.getRoot());
-                }
-                else {
-                    startNewGame();
-                }
-            };
-
-            mainScene.setRoot(intro);
-            intro.startIntro();
-        }
-        else {
-            if (!menuEnabled) {
-                startNewGame();
-            }
-        }
+        getSceneManager().onStageShow();
     }
 
     public GameApplication() {
@@ -512,7 +375,7 @@ public abstract class GameApplication extends Application {
     public final void start(Stage primaryStage) throws Exception {
         log.finer("start()");
         // capture the reference to primaryStage so we can access it
-        mainStage = primaryStage;
+        stage = primaryStage;
 
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
@@ -521,9 +384,6 @@ public abstract class GameApplication extends Application {
         applySettings();
 
         initManagers();
-
-        mainMenu = initMainMenu();
-        gameMenu = initGameMenu();
 
         configureAndShowStage();
     }
@@ -544,20 +404,11 @@ public abstract class GameApplication extends Application {
         // for the rest modules of the game to use
         timerManager.tickStart(internalTime);
 
-        // add new entities to the scene graph
-        addPendingEntities();
-
-        // remove old entities from the scene graph
-        removeAndCleanPendingEntities();
-
         // update managers
         managers.forEach(manager -> manager.onUpdate(getNow()));
 
         // update app
         onUpdate();
-
-        // update entities in the scene graph
-        gameRoot.getChildren().stream().map(node -> (Entity)node).forEach(entity -> entity.onUpdate(getNow()));
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
@@ -574,10 +425,8 @@ public abstract class GameApplication extends Application {
 
         getTimerManager().resetTicks();
 
-        mainScene.setRoot(root);
+        getSceneManager().returnFromMainMenu();
         timer.start();
-
-        isMainMenuOpen = false;
     }
 
     /**
@@ -595,99 +444,6 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Exits the current game and opens main menu
-     * Does nothing if menu is disabled in settings
-     */
-    public final void exitToMainMenu() {
-        if (!settings.isMenuEnabled())
-            return;
-
-        pause();
-
-        timerManager.clearActions();
-        gameRoot.getChildren().stream()
-                .filter(e -> e instanceof PhysicsEntity)
-                .map(e -> (PhysicsEntity)e)
-                .forEach(physicsManager::destroyBody);
-        gameRoot.getChildren().forEach(entity -> ((Entity)entity).onClean());
-
-        uiRoot.getChildren().clear();
-
-        tmpAddList.clear();
-        tmpRemoveList.clear();
-
-        inputManager.clearAllInput();
-
-        root.getChildren().remove(gameMenu.getRoot());
-        root.getChildren().add(uiRoot);
-        isGameMenuOpen = false;
-        isMainMenuOpen = true;
-
-        mainScene.setRoot(mainMenu.getRoot());
-        mainMenu.getRoot().requestFocus();
-    }
-
-    private boolean isMainMenuOpen = false;
-    private boolean isGameMenuOpen = false;
-    private boolean canSwitchGameMenu = true;
-
-    private EventHandler<KeyEvent> menuKeyPressedHandler = e -> {
-        if (e.getCode() == menuKey) {
-            if (canSwitchGameMenu) {
-                if (isGameMenuOpen) {
-                    closeGameMenu();
-                }
-                else {
-                    openGameMenu();
-                }
-                canSwitchGameMenu = false;
-            }
-        }
-    };
-
-    private EventHandler<KeyEvent> menuKeyReleasedHandler = e -> {
-        if (e.getCode() == menuKey) {
-            canSwitchGameMenu = true;
-        }
-    };
-
-    /**
-     * Pauses the game and opens in-game menu
-     * Does nothing if menu is disabled in settings
-     */
-    public final void openGameMenu() {
-        if (!settings.isMenuEnabled())
-            return;
-
-        pause();
-
-        inputManager.clearAllInput();
-        root.getChildren().remove(uiRoot);
-        root.getChildren().add(gameMenu.getRoot());
-        gameMenu.getRoot().requestFocus();
-
-        isGameMenuOpen = true;
-    }
-
-    /**
-     * Closes the game menu and resumes the game
-     * Does nothing if menu is disabled in settings
-     */
-    public final void closeGameMenu() {
-        if (!settings.isMenuEnabled())
-            return;
-
-        inputManager.clearAllInput();
-        root.getChildren().remove(gameMenu.getRoot());
-        root.getChildren().add(uiRoot);
-        gameRoot.requestFocus();
-
-        resume();
-
-        isGameMenuOpen = false;
-    }
-
-    /**
      * This method will be automatically called when main window is closed.
      *
      * You can call this method when you want to quit the application manually
@@ -698,287 +454,6 @@ public abstract class GameApplication extends Application {
         onExit();
         FXGLLogger.close();
         Platform.exit();
-    }
-
-    /**
-     * Set the key which will open/close game menu.
-     *
-     * @param key
-     * @defaultValue KeyCode.ESCAPE
-     */
-    protected final void setMenuKey(KeyCode key) {
-        menuKey = key;
-    }
-
-    /**
-     * Sets viewport origin. Use it for camera movement
-     *
-     * Do NOT use if the viewport was bound
-     *
-     * @param x
-     * @param y
-     */
-    public final void setViewportOrigin(int x, int y) {
-        gameRoot.setLayoutX(-x);
-        gameRoot.setLayoutY(-y);
-    }
-
-    /**
-     * Note: viewport origin, like anything in a scene, has top-left origin point
-     *
-     * @return viewport origin
-     */
-    public final Point2D getViewportOrigin() {
-        return new Point2D(-gameRoot.getLayoutX(), -gameRoot.getLayoutY());
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX and distY represent bound distance between entity and viewport origin
-     *
-     * <pre>
-     * Example:
-     *
-     * bindViewportOrigin(player, (int) (getWidth() / 2), (int) (getHeight() / 2));
-     *
-     * the code above centers the camera on player
-     * For most platformers / side scrollers use:
-     *
-     * bindViewportOriginX(player, (int) (getWidth() / 2));
-     *
-     * </pre>
-     *
-     * @param entity
-     * @param distX
-     * @param distY
-     */
-    protected final void bindViewportOrigin(Entity entity, int distX, int distY) {
-        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
-        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX represent bound distance in X axis between entity and viewport origin
-     *
-     * @param entity
-     * @param distX
-     */
-    protected final void bindViewportOriginX(Entity entity, int distX) {
-        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distY represent bound distance in Y axis between entity and viewport origin
-     *
-     * @param entity
-     * @param distY
-     */
-    protected final void bindViewportOriginY(Entity entity, int distY) {
-        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
-    }
-
-    /**
-     * Set true if UI elements should forward mouse events
-     * to the game layer
-     *
-     * @param b
-     * @defaultValue false
-     */
-    protected final void setUIMouseTransparent(boolean b) {
-        uiRoot.setMouseTransparent(b);
-    }
-
-    /**
-     * Returns a list of entities whose type matches given
-     * arguments. If no arguments were given, returns list
-     * of ALL entities currently registered in the scene graph
-     *
-     * @param type
-     * @param types
-     * @return
-     */
-    public final List<Entity> getEntities(EntityType... types) {
-        if (types.length == 0)
-            return gameRoot.getChildren().stream()
-                    .map(node -> (Entity)node)
-                    .collect(Collectors.toList());
-
-        List<String> list = Arrays.asList(types).stream()
-                .map(EntityType::getUniqueType)
-                .collect(Collectors.toList());
-
-        return gameRoot.getChildren().stream()
-                .map(node -> (Entity)node)
-                .filter(entity -> list.contains(entity.getTypeAsString()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which are partially or entirely
-     * in the specified rectangular selection.
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement is returned.
-     *
-     * @param selection Rectangle2D that describes the selection box
-     * @param type
-     * @param types
-     * @return
-     */
-    public final List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
-        Entity boundsEntity = Entity.noType();
-        boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
-        boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
-
-        return getEntities(types).stream()
-                .filter(entity -> entity.getBoundsInParent().intersects(boundsEntity.getBoundsInParent()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the closest entity to the given entity with given type.
-     * If no types were specified, the closest entity is returned. The given
-     * entity itself is never returned.
-     *
-     * If there no entities satisfying the requirement, {@link Optional#empty()}
-     * is returned.
-     *
-     * @param entity
-     * @param types
-     * @return
-     */
-    public final Optional<Entity> getClosestEntity(Entity entity, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e != entity)
-                .sorted((e1, e2) -> (int)e1.distance(entity) - (int)e2.distance(entity))
-                .findFirst();
-    }
-
-    /**
-     * Add entity(-ies) to the scene graph.
-     * The entity(-ies) will be added in the next tick.
-     *
-     * TODO: the logic should be moved to {@link #addPendingEntities()}
-     *
-     * @param entities to add
-     */
-    public final void addEntities(Entity... entities) {
-        for (Entity e : entities) {
-            if (e instanceof CombinedEntity) {
-                tmpAddList.addAll(e.getChildrenUnmodifiable()
-                        .stream().map(node -> (Entity)node)
-                        .collect(Collectors.toList()));
-            }
-            else if (e instanceof PhysicsEntity) {
-                physicsManager.createBody((PhysicsEntity) e);
-                tmpAddList.add(e);
-            }
-            else
-                tmpAddList.add(e);
-
-            double expire = e.getExpireTime();
-            if (expire > 0)
-                timerManager.runOnceAfter(() -> removeEntity(e), expire);
-        }
-    }
-
-    /**
-     * Remove given entity from the scene graph.
-     *
-     * @param entity to remove
-     */
-    public final void removeEntity(Entity entity) {
-        tmpRemoveList.add(entity);
-    }
-
-    /**
-     * This is where we actually add the entities to the scene graph,
-     * which were pushed
-     * to waiting queue by {@link #addEntities(Entity...)}
-     * in the previous tick. We also clear the queue.
-     */
-    private void addPendingEntities() {
-        gameRoot.getChildren().addAll(tmpAddList);
-        tmpAddList.clear();
-    }
-
-    /**
-     * This is where we actually remove the entities from the scene graph,
-     * which were pushed to waiting queue for removal by {@link #removeEntity(Entity)}
-     * in the previous tick.
-     * If entity is a PhysicsEntity, its physics properties get destroyed.
-     * Finally, entity's onClean() will be called
-     *
-     * We also clear the queue.
-     */
-    private void removeAndCleanPendingEntities() {
-        gameRoot.getChildren().removeAll(tmpRemoveList);
-        tmpRemoveList.stream()
-                    .filter(e -> e instanceof PhysicsEntity)
-                    .map(e -> (PhysicsEntity)e)
-                    .forEach(physicsManager::destroyBody);
-        tmpRemoveList.forEach(entity -> entity.onClean());
-        tmpRemoveList.clear();
-    }
-
-    /**
-     * Add a node to the UI overlay.
-     *
-     * @param n
-     * @param nodes
-     */
-    public final void addUINodes(Node n, Node... nodes) {
-        uiRoot.getChildren().add(n);
-        uiRoot.getChildren().addAll(nodes);
-    }
-
-    /**
-     * Remove given node from the UI overlay.
-     *
-     * @param n
-     */
-    public final void removeUINode(Node n) {
-        uiRoot.getChildren().remove(n);
-    }
-
-    /**
-     * Fires an FXGL event on all entities whose type
-     * matches given arguments. If types were not given,
-     * fires an FXGL event on all entities registered in the scene graph.
-     *
-     * @param event
-     * @param type
-     * @param types
-     */
-    public final void fireFXGLEvent(FXGLEvent event, EntityType... types) {
-        getEntities(types).forEach(e -> e.fireFXGLEvent(event));
-    }
-
-    /**
-     * Saves a screenshot of the current main scene into a ".png" file
-     *
-     * @return  true if the screenshot was saved successfully, false otherwise
-     */
-    public final boolean saveScreenshot() {
-        Image fxImage = mainScene.snapshot(null);
-        BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
-
-        String fileName = "./" + getTitle() + getVersion()
-                + LocalDateTime.now() + ".png";
-
-        fileName = fileName.replace(":", "_");
-
-        try (OutputStream os = Files.newOutputStream(Paths.get(fileName))) {
-            return ImageIO.write(img, "png", os);
-        }
-        catch (Exception e) {
-            log.finer("Exception occurred during saveScreenshot() - " + e.getMessage());
-        }
-
-        return false;
     }
 
     /**
@@ -1058,10 +533,34 @@ public abstract class GameApplication extends Application {
 
     /**
      *
+     * @return is the game full screen
+     */
+    public final boolean isFullScreen() {
+        return settings.isFullScreen();
+    }
+
+    /**
+     *
+     * @return true is intro is enabled in settings
+     */
+    public final boolean isIntroEnabled() {
+        return settings.isIntroEnabled();
+    }
+
+    /**
+     *
+     * @return true if menu is enabled in settings
+     */
+    public final boolean isMenuEnabled() {
+        return settings.isMenuEnabled();
+    }
+
+    /**
+     *
      * @return true if in main menu
      */
     public final boolean isMainMenuOpen() {
-        return isMainMenuOpen;
+        return getSceneManager().isMainMenuOpen();
     }
 
     /**
@@ -1069,22 +568,7 @@ public abstract class GameApplication extends Application {
      * @return true if game menu is open, false otherwise
      */
     public final boolean isGameMenuOpen() {
-        return isGameMenuOpen;
-    }
-
-    /**
-     * Equals user system width / target width
-     */
-    private double sizeRatio = 1.0;
-
-    /**
-     * Returns the size ratio of the screen
-     * resolution over the target resolution
-     *
-     * @return
-     */
-    public final double getSizeRatio() {
-        return sizeRatio;
+        return getSceneManager().isGameMenuOpen();
     }
 
     /**
@@ -1093,5 +577,29 @@ public abstract class GameApplication extends Application {
      */
     public final TimerManager getTimerManager() {
         return timerManager;
+    }
+
+    /**
+     *
+     * @return scene manager
+     */
+    public final SceneManager getSceneManager() {
+        return sceneManager;
+    }
+
+    /**
+     *
+     * @return physics manager
+     */
+    public final PhysicsManager getPhysicsManager() {
+        return physicsManager;
+    }
+
+    /**
+     *
+     * @return input manager
+     */
+    public final InputManager getInputManager() {
+        return inputManager;
     }
 }

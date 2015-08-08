@@ -168,9 +168,9 @@ public final class InputManager extends FXGLManager {
             currentActions.forEach(UserAction::onAction);
         }
 
-        Point2D origin = app.getViewportOrigin();
-        mouse.x = mouse.screenX / app.getSizeRatio() + origin.getX();
-        mouse.y = mouse.screenY / app.getSizeRatio() + origin.getY();
+        Point2D origin = app.getSceneManager().getViewportOrigin();
+        mouse.x = mouse.screenX / app.getSceneManager().getSizeRatio() + origin.getX();
+        mouse.y = mouse.screenY / app.getSceneManager().getSizeRatio() + origin.getY();
     }
 
     private boolean processActions = true;
@@ -261,9 +261,9 @@ public final class InputManager extends FXGLManager {
             this.screenX = event.getSceneX();
             this.screenY = event.getSceneY();
 
-            Point2D origin = app.getViewportOrigin();
-            this.x = screenX / app.getSizeRatio() + origin.getX();
-            this.y = screenY / app.getSizeRatio() + origin.getY();
+            Point2D origin = app.getSceneManager().getViewportOrigin();
+            this.x = screenX / app.getSceneManager().getSizeRatio() + origin.getX();
+            this.y = screenY / app.getSceneManager().getSizeRatio() + origin.getY();
 
             if (leftPressed) {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {

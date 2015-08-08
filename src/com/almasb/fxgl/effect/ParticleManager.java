@@ -103,10 +103,10 @@ public final class ParticleManager extends FXGLManager {
             ft.play();
 
             particles.add(particle);
-            app.addEntities(particle);
+            app.getSceneManager().addEntities(particle);
         }
 
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 2 * TimerManager.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), 2 * TimerManager.SECOND);
     }
 
     /**
@@ -150,10 +150,10 @@ public final class ParticleManager extends FXGLManager {
             tt.play();
 
             particles.add(particle);
-            app.addEntities(particle);
+            app.getSceneManager().addEntities(particle);
         }
 
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app::removeEntity), 1 * TimerManager.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), 1 * TimerManager.SECOND);
     }
 
     /**
