@@ -58,7 +58,10 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 
@@ -145,6 +148,22 @@ public final class SceneManager extends FXGLManager {
     private List<Entity> removeQueue = new ArrayList<>();
 
     /*package-private*/ SceneManager() {
+    }
+
+    /*package-private*/ void init() {
+        setPrefSize(app.getWidth(), app.getHeight());
+        if (app.isMenuEnabled())
+            configureMenu();
+
+        if (app.isFPSShown()) {
+            Text fpsText = new Text();
+            fpsText.setFill(Color.AZURE);
+            fpsText.setFont(Font.font(24));
+            fpsText.setTranslateY(app.getHeight() - 40);
+            fpsText.textProperty().bind(app.getTimerManager().fpsProperty().asString("FPS: [%d]\n")
+                    .concat(app.getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
+            addUINodes(fpsText);
+        }
     }
 
     /*package-private*/ void setPrefSize(double width, double height) {

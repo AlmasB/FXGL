@@ -50,12 +50,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -118,10 +113,6 @@ public abstract class GameApplication extends Application {
      */
     private GameSettings settings;
 
-    /**
-     * Game window
-     */
-    private Stage stage;
 
     /**
      * The main loop timer
@@ -139,6 +130,7 @@ public abstract class GameApplication extends Application {
      */
     private List<FXGLManager> managers = new ArrayList<>();
 
+    private StageManager stageManager = new StageManager();
     protected final SceneManager sceneManager = new SceneManager();
     protected final InputManager inputManager = new InputManager();
     protected final AssetManager assetManager = AssetManager.INSTANCE;
@@ -263,58 +255,12 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Set preferred sizes to roots and set
-     * stage properties
-     */
-    private void applySettings() {
-        stage.setTitle(getTitle() + " " + getVersion());
-        stage.setResizable(false);
-
-        sceneManager.setPrefSize(getWidth(), getHeight());
-        if (isMenuEnabled())
-            sceneManager.configureMenu();
-
-        try {
-            String iconName = settings.getIconFileName();
-            if (!iconName.isEmpty()) {
-                Image icon = assetManager.loadAppIcon(iconName);
-                stage.getIcons().add(icon);
-            }
-        }
-        catch (Exception e) {
-            log.warning("Failed to load app icon: " + e.getMessage());
-        }
-
-        // ensure the window frame is just right for the scene size
-        stage.setScene(getSceneManager().getScene());
-        stage.sizeToScene();
-
-        if (settings.isFullScreen()) {
-            stage.setFullScreenExitHint("");
-            // we don't want the user to be able to exit full screen manually
-            // but only through settings menu
-            // so we set key combination to something obscure which isn't likely to be pressed
-            stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
-            stage.setFullScreen(true);
-        }
-
-        if (settings.isFPSShown()) {
-            Text fpsText = new Text();
-            fpsText.setFill(Color.AZURE);
-            fpsText.setFont(Font.font(24));
-            fpsText.setTranslateY(getHeight() - 40);
-            fpsText.textProperty().bind(timerManager.fpsProperty().asString("FPS: [%d]\n")
-                    .concat(timerManager.performanceFPSProperty().asString("Performance: [%d]")));
-            sceneManager.addUINodes(fpsText);
-        }
-    }
-
-    /**
      * Ensure managers are of legal state and ready
      */
     private void initManagers() {
         inputManager.init(sceneManager.getScene());
         qteManager.init();
+        sceneManager.init();
         sceneManager.getScene().addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
 
         // register managers that need to be updated
@@ -350,18 +296,6 @@ public abstract class GameApplication extends Application {
         }
     }
 
-    /**
-     * Opens and shows the actual window. Configures what parts of scenes
-     * need to be shown and in which
-     * order based on the subclass implementation of certain init methods
-     */
-    private void configureAndShowStage() {
-        stage.setOnCloseRequest(event -> exit());
-        stage.show();
-
-        getSceneManager().onStageShow();
-    }
-
     public GameApplication() {
         log.finer("GameApplication()");
     }
@@ -374,18 +308,16 @@ public abstract class GameApplication extends Application {
     @Override
     public final void start(Stage primaryStage) throws Exception {
         log.finer("start()");
-        // capture the reference to primaryStage so we can access it
-        stage = primaryStage;
 
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = new GameSettings(localSettings);
 
-        applySettings();
-
         initManagers();
 
-        configureAndShowStage();
+        stageManager.init(primaryStage);
+        stageManager.show();
+        sceneManager.onStageShow();
     }
 
     @Override
@@ -517,6 +449,14 @@ public abstract class GameApplication extends Application {
 
     /**
      *
+     * @return icon file name
+     */
+    public final String getIconFileName() {
+        return settings.getIconFileName();
+    }
+
+    /**
+     *
      * @return current tick
      */
     public final long getTick() {
@@ -529,6 +469,14 @@ public abstract class GameApplication extends Application {
      */
     public final long getNow() {
         return getTimerManager().getNow();
+    }
+
+    /**
+     *
+     * @return if FPS needs to be shown
+     */
+    public final boolean isFPSShown() {
+        return settings.isFPSShown();
     }
 
     /**
@@ -601,5 +549,13 @@ public abstract class GameApplication extends Application {
      */
     public final InputManager getInputManager() {
         return inputManager;
+    }
+
+    /**
+     *
+     * @return asset manager
+     */
+    public final AssetManager getAssetManager() {
+        return assetManager;
     }
 }
