@@ -54,6 +54,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -83,6 +84,8 @@ public final class SceneManager extends FXGLManager {
      */
     private Group gameRoot = new Group();
 
+    private Canvas particlesCanvas = new Canvas();
+
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
      * May also contain entities as Entity is a subclass of Parent.
@@ -110,7 +113,7 @@ public final class SceneManager extends FXGLManager {
     /**
      * THE root of the {@link #mainScene}. Contains {@link #gameRoot} and {@link #uiRoot} in this order.
      */
-    private Pane root = new Pane(gameRoot, uiRoot);
+    private Pane root = new Pane(gameRoot, particlesCanvas, uiRoot);
 
     /**
      * Game scene
@@ -152,6 +155,10 @@ public final class SceneManager extends FXGLManager {
 
     /*package-private*/ void init() {
         setPrefSize(app.getWidth(), app.getHeight());
+        // TODO: do we set real size or scaled size?
+        particlesCanvas.setWidth(app.getWidth());
+        particlesCanvas.setHeight(app.getHeight());
+
         if (app.isMenuEnabled())
             configureMenu();
 
