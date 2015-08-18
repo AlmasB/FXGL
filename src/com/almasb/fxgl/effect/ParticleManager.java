@@ -39,6 +39,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
@@ -157,6 +158,39 @@ public final class ParticleManager extends FXGLManager {
     }
 
     /**
+     * Spawns given number of particles with given color at position.
+     * They will then create a "spark" effect.
+     *
+     * @param position
+     * @param color
+     * @param numParticles
+     */
+    public void spawnSparks(Point2D position, Color color, int numParticles) {
+        for (int i = 0; i < numParticles; i++) {
+            Entity particle = Entity.noType();
+            particle.setPosition(position.add(0, 10));
+            particle.setExpireTime(TimerManager.SECOND * 2);
+
+            Circle graphics = new Circle(1);
+            graphics.setFill(color);
+
+            particle.setGraphics(graphics);
+            particle.addControl(new Control() {
+                Point2D vector = new Point2D(random.nextFloat() - 0.5f, random.nextFloat() - 5f);
+
+                @Override
+                public void onUpdate(Entity entity, long now) {
+                    entity.translate(vector);
+                    vector = vector.add(0, random.nextFloat() / 2);
+                    entity.setOpacity(entity.getOpacity() - 0.016);
+                }
+            });
+
+            app.getSceneManager().addEntities(particle);
+        }
+    }
+
+    /**
      * Returns a velocity vector with random direction
      * and random magnitude but not greater than max
      *
@@ -172,8 +206,5 @@ public final class ParticleManager extends FXGLManager {
     }
 
     @Override
-    protected void onUpdate(long now) {
-        // TODO Auto-generated method stub
-
-    }
+    protected void onUpdate(long now) {}
 }

@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
@@ -55,6 +56,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -85,6 +88,8 @@ public final class SceneManager extends FXGLManager {
     private Group gameRoot = new Group();
 
     private Canvas particlesCanvas = new Canvas();
+
+    private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -406,7 +411,7 @@ public final class SceneManager extends FXGLManager {
                     .filter(e -> e instanceof PhysicsEntity)
                     .map(e -> (PhysicsEntity)e)
                     .forEach(app.getPhysicsManager()::destroyBody);
-        removeQueue.forEach(Entity::onClean);
+        removeQueue.forEach(Entity::clean);
         removeQueue.clear();
     }
 
@@ -418,7 +423,18 @@ public final class SceneManager extends FXGLManager {
     protected void onUpdate(long now) {
         registerPendingEntities();
         removePendingEntities();
-        entities.forEach(e -> e.onUpdate(now));
+
+        particlesGC.setGlobalAlpha(1);
+        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
+        particlesGC.clearRect(0, 0, app.getWidth(), app.getHeight());
+
+        entities.forEach(e -> {
+            e.update(now);
+
+            if (e instanceof ParticleEntity) {
+                ((ParticleEntity)e).renderParticles(particlesGC, getViewportOrigin());
+            }
+        });
     }
 
     /**
@@ -613,7 +629,7 @@ public final class SceneManager extends FXGLManager {
                 .filter(e -> e instanceof PhysicsEntity)
                 .map(e -> (PhysicsEntity)e)
                 .forEach(app.getPhysicsManager()::destroyBody);
-        entities.forEach(entity -> ((Entity)entity).onClean());
+        entities.forEach(entity -> ((Entity)entity).clean());
         entities.clear();
 
         gameRoot.getChildren().clear();

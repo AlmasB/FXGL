@@ -265,8 +265,9 @@ public abstract class GameApplication extends Application {
 
         // register managers that need to be updated
         managers.add(inputManager);
-        managers.add(physicsManager);
         managers.add(timerManager);
+        managers.add(physicsManager);
+        managers.add(particleManager);
         managers.add(sceneManager);
     }
 

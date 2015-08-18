@@ -43,6 +43,26 @@ public final class TimerManager extends FXGLManager {
     public static final long SECOND = 1000000000;
 
     /**
+     * Returns given value of seconds in nanoseconds
+     *
+     * @param seconds
+     * @return
+     */
+    public static double toNanos(double seconds) {
+        return seconds * SECOND;
+    }
+
+    /**
+     * Returns given value of nanoseconds in seconds
+     *
+     * @param nanos
+     * @return
+     */
+    public static double toSeconds(double nanos) {
+        return nanos / SECOND;
+    }
+
+    /**
      * A minute in nanoseconds
      */
     public static final long MINUTE = 60 * SECOND;

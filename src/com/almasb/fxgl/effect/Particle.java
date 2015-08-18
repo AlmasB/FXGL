@@ -33,12 +33,12 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Paint;
 
 /**
- * Simple particle represented by a javafx.scene.shape.Circle.
+ * Simple particle represented by a circle.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-/*package-private*/ class Particle {
+public class Particle {
 
     /**
      * Top-left x
@@ -50,40 +50,62 @@ import javafx.scene.paint.Paint;
      */
     private double y;
 
-    private Point2D velocity;
-    private double radius;
+    private double velX;
+    private double velY;
 
-    private double alpha = 1.0;
-    private double expireTime;
+    private Point2D gravity;
+
+    private double radiusX;
+    private double radiusY;
+    private Point2D scale;
+
+    private double life = 1.0;
+    private double decay;
+
     private Paint color;
     private BlendMode blendMode;
 
-    /*package-private*/ Particle(double x, double y, double radius, Point2D vel, double expireTime, Paint color, BlendMode blendMode) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.velocity = vel;
-        this.expireTime = expireTime;
+    public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, double expireTime, Paint color, BlendMode blendMode) {
+        this.x = position.getX();
+        this.y = position.getY();
+        this.radiusX = radius;
+        this.radiusY = radius;
+        this.scale = scale;
+        this.velX = vel.getX();
+        this.velY = vel.getY();
+        this.gravity = gravity;
         this.color = color;
         this.blendMode = blendMode;
+        this.decay = TimerManager.TIME_PER_FRAME / expireTime;
     }
 
+    /**
+     *
+     *
+     * @return true if particle died
+     */
     /*package-private*/ boolean update() {
-        x += velocity.getX();
-        y += velocity.getY();
+        x += velX;
+        y += velY;
 
-        expireTime -= TimerManager.TIME_PER_FRAME;
-        alpha -= 3 * TimerManager.toSeconds(TimerManager.TIME_PER_FRAME) * Math.random();
-        if (expireTime <= 0 || alpha <= 0)
+        velX += gravity.getX();
+        velY += gravity.getY();
+
+        radiusX += scale.getX();
+        radiusY += scale.getY();
+
+        life -= decay;
+
+        if (life <= 0)
             return true;
 
         return false;
     }
 
     /*package-private*/ void render(GraphicsContext g, Point2D viewportOrigin) {
-        g.setGlobalAlpha(alpha);
+        g.setGlobalAlpha(life);
         g.setGlobalBlendMode(blendMode);
         g.setFill(color);
-        g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radius, radius);
+        g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radiusX, radiusY);
     }
 }

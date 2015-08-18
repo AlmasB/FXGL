@@ -312,23 +312,35 @@ public class Entity extends Parent {
      *
      * @param now
      */
-    public final void onUpdate(long now) {
+    public final void update(long now) {
         if (controlsEnabled)
             controls.forEach(control -> control.onUpdate(this, now));
+        onUpdate(now);
     }
+
+    /**
+     * Can be overridden to provide subclass implementation.
+     */
+    protected void onUpdate(long now) {}
 
     /**
      * Do NOT call manually. It is called automatically
      * by FXGL GameApplication when entity has been removed
      *
      */
-    public final void onClean() {
+    public final void clean() {
         active.set(false);
+        onClean();
         getProperties().clear();
         eventHandlers.clear();
         controls.clear();
         getChildren().clear();
     }
+
+    /**
+     * Can be overridden to provide subclass implementation.
+     */
+    protected void onClean() {}
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(true);
 
