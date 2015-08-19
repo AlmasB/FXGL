@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.effect;
 
+import java.util.function.Consumer;
+
 import com.almasb.fxgl.time.TimerManager;
 
 import javafx.geometry.Point2D;
@@ -104,6 +106,8 @@ public class Particle {
      */
     private BlendMode blendMode;
 
+    private Consumer<Particle> control;
+
     public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, double expireTime, Paint color, BlendMode blendMode) {
         this.x = position.getX();
         this.y = position.getY();
@@ -116,6 +120,10 @@ public class Particle {
         this.color = color;
         this.blendMode = blendMode;
         this.decay = TimerManager.TIME_PER_FRAME / expireTime;
+    }
+
+    public void setControl(Consumer<Particle> control) {
+        this.control = control;
     }
 
     /**
@@ -133,7 +141,10 @@ public class Particle {
 
         life -= decay;
 
-        if (life <= 0)
+        if (control != null)
+            control.accept(this);
+
+        if (life <= 0 || radiusX <= 0 || radiusY <= 0)
             return true;
 
         return false;
@@ -152,5 +163,81 @@ public class Particle {
         g.setGlobalBlendMode(blendMode);
         g.setFill(color);
         g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radiusX, radiusY);
+    }
+
+    public double getVelX() {
+        return velX;
+    }
+
+    public void setVelX(double velX) {
+        this.velX = velX;
+    }
+
+    public double getVelY() {
+        return velY;
+    }
+
+    public void setVelY(double velY) {
+        this.velY = velY;
+    }
+
+    public Point2D getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(Point2D gravity) {
+        this.gravity = gravity;
+    }
+
+    public double getRadiusX() {
+        return radiusX;
+    }
+
+    public void setRadiusX(double radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    public double getRadiusY() {
+        return radiusY;
+    }
+
+    public void setRadiusY(double radiusY) {
+        this.radiusY = radiusY;
+    }
+
+    public Point2D getScale() {
+        return scale;
+    }
+
+    public void setScale(Point2D scale) {
+        this.scale = scale;
+    }
+
+    public double getDecay() {
+        return decay;
+    }
+
+    public void setDecay(double decay) {
+        this.decay = decay;
+    }
+
+    public Paint getColor() {
+        return color;
+    }
+
+    public void setColor(Paint color) {
+        this.color = color;
+    }
+
+    public BlendMode getBlendMode() {
+        return blendMode;
+    }
+
+    public void setBlendMode(BlendMode blendMode) {
+        this.blendMode = blendMode;
+    }
+
+    public double getLife() {
+        return life;
     }
 }
