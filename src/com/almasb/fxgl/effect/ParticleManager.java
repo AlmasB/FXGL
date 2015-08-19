@@ -46,10 +46,9 @@ import javafx.util.Duration;
 
 /**
  * Allows to call a few pre-configured special effects involving
- * particles. Note: this class is not yet complete
+ * particles.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  *
  */
 public final class ParticleManager extends FXGLManager {

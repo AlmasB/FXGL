@@ -41,28 +41,67 @@ import javafx.scene.paint.Paint;
 public class Particle {
 
     /**
-     * Top-left x
+     * Top-left x in game world
      */
     private double x;
 
     /**
-     * Top-left y
+     * Top-left y in game world
      */
     private double y;
 
+    /**
+     * Velocity x
+     */
     private double velX;
+
+    /**
+     * Velocity y
+     */
     private double velY;
 
+    /**
+     * Velocity acceleration
+     */
     private Point2D gravity;
 
+    /**
+     * Radius in X
+     */
     private double radiusX;
+
+    /**
+     * Radius in Y
+     */
     private double radiusY;
+
+    /**
+     * Radius change (acceleration)
+     */
     private Point2D scale;
 
+    /**
+     * Percentage ratio of particle lifetime.
+     * 1.0 = 100% (just spawned).
+     * 0.5 =  50% (has spent 50% of its time).
+     * 0.0 =   0% (dead).
+     */
     private double life = 1.0;
+
+    /**
+     * Percentage ratio by which life is reduced
+     * every frame.
+     */
     private double decay;
 
+    /**
+     * Color used when rendering
+     */
     private Paint color;
+
+    /**
+     * Blend mode used when rendering
+     */
     private BlendMode blendMode;
 
     public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, double expireTime, Paint color, BlendMode blendMode) {
@@ -80,8 +119,6 @@ public class Particle {
     }
 
     /**
-     *
-     *
      * @return true if particle died
      */
     /*package-private*/ boolean update() {
@@ -102,6 +139,14 @@ public class Particle {
         return false;
     }
 
+    /**
+     * Renders particle to g context. Takes into
+     * account the viewport origin, so if particle
+     * XY is outside the viewport it will not be seen.
+     *
+     * @param g
+     * @param viewportOrigin
+     */
     /*package-private*/ void render(GraphicsContext g, Point2D viewportOrigin) {
         g.setGlobalAlpha(life);
         g.setGlobalBlendMode(blendMode);

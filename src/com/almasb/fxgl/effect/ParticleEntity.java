@@ -35,15 +35,38 @@ import com.almasb.fxgl.entity.EntityType;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
-public class ParticleEntity extends Entity {
+/**
+ * Particles are attached to ParticleEntity so they can be part of the
+ * scenegraph. The actual render of particles happens on Canvas.
+ *
+ * Translation of this entity will also affect the position of newly
+ * spawned particles.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
+public final class ParticleEntity extends Entity {
 
+    /**
+     * Particles attached to entity
+     */
     private List<Particle> particles = new ArrayList<>();
+
+    /**
+     * Particle emitter used to create new particles
+     */
     private ParticleEmitter emitter;
 
     public ParticleEntity(EntityType type) {
         super(type);
     }
 
+    /**
+     * Set particle emitter to this entity.
+     * The emitter determines the particle behavior
+     *
+     * @param emitter
+     */
     public void setEmitter(ParticleEmitter emitter) {
         this.emitter = emitter;
     }
@@ -67,6 +90,12 @@ public class ParticleEntity extends Entity {
         particles.clear();
     }
 
+    /**
+     * Do NOT call manually.
+     *
+     * @param g
+     * @param viewportOrigin
+     */
     public void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
         particles.forEach(p -> p.render(g, viewportOrigin));
     }

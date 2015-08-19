@@ -31,6 +31,14 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * A general particle emitter with a few default settings.
+ * Subclass implementations provide the actual logic for how
+ * particles are emitted and their behavior.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public abstract class ParticleEmitter {
 
     private static final List<Particle> EMPTY = new ArrayList<>();
@@ -40,14 +48,34 @@ public abstract class ParticleEmitter {
     private double emissionRate = 1.0;
     private double rateAC = 0;
 
+    /**
+     *
+     * @return number of particles being spawned per emission
+     */
     public final int getNumParticles() {
         return numParticles;
     }
 
+    /**
+     * Set number of particles being spawned per emission.
+     *
+     * @param numParticles
+     */
     public final void setNumParticles(int numParticles) {
         this.numParticles = numParticles;
     }
 
+    /**
+     * Set the emission rate. The value will be effectively
+     * clamped to [0..1].
+     * <li> 1.0 - emission will occur every frame </li>
+     * <li> 0.5 - emission will occur every 2nd frame </li>
+     * <li> 0.33 - emission will occur every 3rd frame </li>
+     * <li> 0.0 - emission will never occur </li>
+     * etc.
+     *
+     * @param emissionRate
+     */
     public final void setEmissionRate(double emissionRate) {
         this.emissionRate = emissionRate;
     }
@@ -62,7 +90,7 @@ public abstract class ParticleEmitter {
     }
 
     /**
-     * Returns a value in [min..max)
+     * Returns a value in [min..max).
      *
      * @param min
      * @param max
@@ -72,6 +100,16 @@ public abstract class ParticleEmitter {
         return rand() * (max - min) + min;
     }
 
+    /**
+     * Emits {@link #numParticles} particles at x, y. This is
+     * called every frame, however {@link #emissionRate} will
+     * decide whether to spawn particles or not. If the emitter
+     * is not ready, an empty list is returned.
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     /*package-private*/ final List<Particle> emit(double x, double y) {
         rateAC += emissionRate;
         if (rateAC < 1) {
