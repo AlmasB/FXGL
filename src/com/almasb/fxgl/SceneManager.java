@@ -53,6 +53,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
+import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -160,9 +161,10 @@ public final class SceneManager extends FXGLManager {
 
     /*package-private*/ void init() {
         setPrefSize(app.getWidth(), app.getHeight());
-        // TODO: do we set real size or scaled size?
+
         particlesCanvas.setWidth(app.getWidth());
         particlesCanvas.setHeight(app.getHeight());
+        particlesCanvas.setMouseTransparent(true);
 
         if (app.isMenuEnabled())
             configureMenu();
@@ -515,6 +517,24 @@ public final class SceneManager extends FXGLManager {
      */
     public void setUIMouseTransparent(boolean b) {
         uiRoot.setMouseTransparent(b);
+    }
+
+    /**
+     * Sets global game cursor using given name to find
+     * the image cursor within assets/ui/cursors/.
+     * Hotspot is location of the pointer end on the image.
+     *
+     * @param imageName
+     * @param hotspot
+     */
+    public void setCursor(String imageName, Point2D hotspot) {
+        try {
+            getScene().setCursor(new ImageCursor(app.getAssetManager().loadCursorImage(imageName),
+                    hotspot.getX(), hotspot.getY()));
+        }
+        catch (Exception e) {
+            log.warning("Failed to set cursor: " + e.getMessage());
+        }
     }
 
     /**

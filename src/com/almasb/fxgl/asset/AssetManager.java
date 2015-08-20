@@ -67,7 +67,6 @@ import javafx.scene.media.Media;
  * </ul>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  *
  */
 public enum AssetManager {
@@ -80,9 +79,11 @@ public enum AssetManager {
     private static final String TEXT_DIR = ASSETS_DIR + "text/";
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
     private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
+
     private static final String UI_DIR = ASSETS_DIR + "ui/";
     private static final String CSS_DIR = UI_DIR + "css/";
     private static final String ICON_DIR = UI_DIR + "icons/";
+    private static final String CURSORS_DIR = UI_DIR + "cursors/";
 
     private static final Logger log = FXGLLogger.getLogger("AssetManager");
 
@@ -147,6 +148,18 @@ public enum AssetManager {
         catch (Exception e) {
             log.warning("Failed to load script: " + name + " Check it exists in assets/scripts/");
             throw new IOException("Failed to load script: " + name + " because: " + e.getMessage());
+        }
+    }
+
+    public Image loadCursorImage(String name) throws Exception {
+        try (InputStream is = getClass().getResourceAsStream(CURSORS_DIR + name)) {
+            if (is != null) {
+                return new Image(is);
+            }
+            else {
+                log.warning("Failed to load cursor image: " + name + " Check it exists in assets/ui/cursors/");
+                throw new IOException("Failed to load cursor image: " + name);
+            }
         }
     }
 

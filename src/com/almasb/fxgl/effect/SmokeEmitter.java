@@ -32,7 +32,13 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-public class SmokeEmitter extends ParticleEmitter {
+/**
+ * Emitter for basic smoke effect.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
+public final class SmokeEmitter extends ParticleEmitter {
 
     private Paint color = Color.rgb(230, 230, 230);
 
@@ -41,9 +47,18 @@ public class SmokeEmitter extends ParticleEmitter {
         setEmissionRate(1);
     }
 
+    /**
+     * Sets color of smoke particles.
+     *
+     * @param color
+     */
+    public void setColor(Paint color) {
+        this.color = color;
+    }
+
     @Override
     protected Particle emit(int i, double x, double y) {
-        Point2D spawn = new Point2D(i * (rand() - 0.5), (rand() - 1));
+        //Point2D spawn = new Point2D(i * (rand() - 0.5), (rand() - 1));
         Particle p = new Particle(new Point2D(x, y).add(rand(-1, 1), 0),
                 new Point2D((rand() * 0.1) , rand() * -0.02 - 2.4),
                 new Point2D(rand(0.00, 0.00), rand() * -0.03),

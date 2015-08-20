@@ -34,6 +34,7 @@ import com.almasb.fxgl.time.TimerAction.TimerType;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.util.Duration;
 
 public final class TimerManager extends FXGLManager {
 
@@ -252,6 +253,10 @@ public final class TimerManager extends FXGLManager {
      */
     public void runOnceAfter(Runnable action, double delay) {
         timerActions.add(new TimerAction(app.getNow(), delay, action, TimerType.ONCE));
+    }
+
+    public void runOnceAfter(Runnable action, Duration delay) {
+        timerActions.add(new TimerAction(app.getNow(), delay.toMillis() * 1000000, action, TimerType.ONCE));
     }
 
     /**
