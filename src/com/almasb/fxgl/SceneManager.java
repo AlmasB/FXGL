@@ -81,7 +81,7 @@ public final class SceneManager extends FXGLManager {
     private static final Logger log = FXGLLogger.getLogger("SceneManager");
 
     //private static final int GAME_ROOT_LAYER = 0;
-    private static final int UI_ROOT_LAYER = 1;
+    private static final int UI_ROOT_LAYER = 2;
 
     /**
      * Root for entities
@@ -580,6 +580,9 @@ public final class SceneManager extends FXGLManager {
     }
 
     private EventHandler<KeyEvent> menuKeyPressedHandler = e -> {
+        if (isMainMenuOpen())
+            return;
+
         if (e.getCode() == menuKey) {
             if (canSwitchGameMenu) {
                 if (isGameMenuOpen) {
