@@ -33,13 +33,14 @@ in your IDE. That's it, you're all set! See below setup for some IDEs
 FXGL is in early stages of development. Hence, the API and functionality are likely to change from version to version.
 So I wouldn't recommend building a full scale application if you want to be able to use latest versions of FXGL.
 The plan is to make the API robust, stable and intuitive by v 0.5.
-(Considering 10 patches = 1 minor version bump, it's about 37 iterations from now). As of 0.1.4 the code is somewhat
-thoroughly documented with javadoc. If certain parts of documentation are ambiguous or incorrect/missing please let me know. <br/>
+(Considering 10 patches = 1 minor version bump, it's a long way from now). As of 0.1.4 the code is somewhat
+thoroughly documented with javadoc. If certain parts of documentation are ambiguous or incorrect/missing please let me know.
+Any testing, feedback and bug reports are welcome <br/>
 
 3D features and port to mobile will be considered in the future.
 
 # Changelog
-FXGL 0.1.4 (latest) supports:
+FXGL 0.1.5 (latest) supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
 * JBox2D Physics Engine Integration (v.2.2.1.1, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
@@ -50,13 +51,14 @@ FXGL 0.1.4 (latest) supports:
 * Input Bindings
 * Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", custom binary formats)
 * Automated Collision Handling (also unified, physics collisions are hooked into FXGL)
+* Automated Target Screen Resolution (+Fullscreen)
 * Networking (both TCP and UDP)
 * AI Pathfinding (A star search)
-* Simple Particles
+* Simple Particle System with Canvas Rendering
 * Quick Time Events (QTE)
 * Intro Video / Animation (also supports custom intro)
 * Default Main Menu + Game Menu (also supports custom Main Menu and Game Menu)
-* Custom modifiable UI elements
+* Custom Modifiable UI elements
 * Saving / Loading System
 * Other minor game dev features
 
