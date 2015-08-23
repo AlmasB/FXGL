@@ -31,8 +31,6 @@ import java.util.logging.Logger;
  * Holds FXGL version in x.y.z format, where x - major, y - minor, z - patch versions
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class Version {
 
@@ -47,7 +45,7 @@ public final class Version {
     }
 
     public static int getPatch() {
-        return 5;
+        return 6;
     }
 
     public static void print() {
