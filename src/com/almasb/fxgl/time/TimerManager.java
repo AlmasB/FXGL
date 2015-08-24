@@ -39,39 +39,32 @@ import javafx.util.Duration;
 public final class TimerManager extends FXGLManager {
 
     /**
-     * A second in nanoseconds
+     * Time per frame in seconds.
+     *
+     * @return 0.166(6)
      */
-    public static final long SECOND = 1000000000;
+    public static double tpfSeconds() {
+        return 1.0 / 60;
+    }
 
     /**
-     * Returns given value of seconds in nanoseconds
+     * Timer per frame in nanoseconds.
+     *
+     * @return 16666666
+     */
+    public static long tpfNanos() {
+        return 1000000000L / 60;
+    }
+
+    /**
+     * Converts seconds to nanoseconds.
      *
      * @param seconds
      * @return
      */
-    public static double toNanos(double seconds) {
-        return seconds * SECOND;
+    public static long secondsToNanos(double seconds) {
+        return (long)(seconds * 1000000000L);
     }
-
-    /**
-     * Returns given value of nanoseconds in seconds
-     *
-     * @param nanos
-     * @return
-     */
-    public static double toSeconds(double nanos) {
-        return nanos / SECOND;
-    }
-
-    /**
-     * A minute in nanoseconds
-     */
-    public static final long MINUTE = 60 * SECOND;
-
-    /**
-     * Time per single frame in nanoseconds
-     */
-    public static final long TIME_PER_FRAME = SECOND / 60;
 
     /**
      * List for all timer based actions
@@ -183,7 +176,7 @@ public final class TimerManager extends FXGLManager {
      */
     public void tickStart(long internalTime) {
         tick++;
-        now = (getTick() - 1) * TIME_PER_FRAME;
+        now = (getTick() - 1) * tpfNanos();
         startNanos = System.nanoTime();
         realFPS = internalTime - fpsTime;
         fpsTime = internalTime;
@@ -193,8 +186,8 @@ public final class TimerManager extends FXGLManager {
      * Called at the end of a game update tick.
      */
     public void tickEnd() {
-        performanceFPS.set(Math.round(fpsPerformanceCounter.count(SECOND / (System.nanoTime() - startNanos))));
-        fps.set(Math.round(fpsCounter.count(SECOND / realFPS)));
+        performanceFPS.set(Math.round(fpsPerformanceCounter.count(secondsToNanos(1) / (System.nanoTime() - startNanos))));
+        fps.set(Math.round(fpsCounter.count(secondsToNanos(1) / realFPS)));
     }
 
     @Override
@@ -210,9 +203,9 @@ public final class TimerManager extends FXGLManager {
      * Note: the scheduled action will not run while the game is paused.
      *
      * @param action the action
-     * @param interval time in nanoseconds
+     * @param interval time
      */
-    public void runAtInterval(Runnable action, double interval) {
+    public void runAtInterval(Runnable action, Duration interval) {
         timerActions.add(new TimerAction(app.getNow(), interval, action, TimerType.INDEFINITE));
     }
 
@@ -230,7 +223,7 @@ public final class TimerManager extends FXGLManager {
      * @param interval
      * @param whileCondition
      */
-    public void runAtIntervalWhile(Runnable action, double interval, ReadOnlyBooleanProperty whileCondition) {
+    public void runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition) {
         if (!whileCondition.get()) {
             return;
         }
@@ -251,12 +244,8 @@ public final class TimerManager extends FXGLManager {
      * @param action
      * @param delay
      */
-    public void runOnceAfter(Runnable action, double delay) {
-        timerActions.add(new TimerAction(app.getNow(), delay, action, TimerType.ONCE));
-    }
-
     public void runOnceAfter(Runnable action, Duration delay) {
-        timerActions.add(new TimerAction(app.getNow(), delay.toMillis() * 1000000, action, TimerType.ONCE));
+        timerActions.add(new TimerAction(app.getNow(), delay, action, TimerType.ONCE));
     }
 
     /**

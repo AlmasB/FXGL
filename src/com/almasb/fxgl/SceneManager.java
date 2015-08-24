@@ -69,6 +69,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 /**
  * Handles everything to do with modifying the scene.
@@ -389,8 +390,8 @@ public final class SceneManager extends FXGLManager {
             else
                 gameRoot.getChildren().add(e);
 
-            double expire = e.getExpireTime();
-            if (expire > 0)
+            Duration expire = e.getExpireTime();
+            if (expire != Duration.ZERO)
                 app.getTimerManager().runOnceAfter(() -> removeEntity(e), expire);
         }
 

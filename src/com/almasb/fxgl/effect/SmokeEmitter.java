@@ -25,12 +25,11 @@
  */
 package com.almasb.fxgl.effect;
 
-import com.almasb.fxgl.time.TimerManager;
-
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 
 /**
  * Emitter for basic smoke effect.
@@ -64,7 +63,7 @@ public final class SmokeEmitter extends ParticleEmitter {
                 new Point2D(rand(0.00, 0.00), rand() * -0.03),
                 rand(9, 10),
                 new Point2D(-0.01, -0.05),
-                TimerManager.toNanos(rand(6, 10)),
+                Duration.seconds(rand(6, 10)),
                 color,
                 BlendMode.ADD);
 

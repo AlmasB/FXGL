@@ -32,7 +32,6 @@ import java.util.Random;
 import com.almasb.fxgl.FXGLManager;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.TimerManager;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -106,7 +105,7 @@ public final class ParticleManager extends FXGLManager {
             app.getSceneManager().addEntities(particle);
         }
 
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), 2 * TimerManager.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), Duration.seconds(2));
     }
 
     /**
@@ -153,7 +152,7 @@ public final class ParticleManager extends FXGLManager {
             app.getSceneManager().addEntities(particle);
         }
 
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), 1 * TimerManager.SECOND);
+        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), Duration.seconds(1));
     }
 
     /**
@@ -168,7 +167,7 @@ public final class ParticleManager extends FXGLManager {
         for (int i = 0; i < numParticles; i++) {
             Entity particle = Entity.noType();
             particle.setPosition(position.add(0, 10));
-            particle.setExpireTime(TimerManager.SECOND * 2);
+            particle.setExpireTime(Duration.seconds(2));
 
             Circle graphics = new Circle(1);
             graphics.setFill(color);

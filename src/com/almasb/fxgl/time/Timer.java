@@ -23,32 +23,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.control;
+package com.almasb.fxgl.time;
 
-import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.TimerManager;
+import com.almasb.fxgl.GameApplication;
 
-public final class HorizontalMovementControl extends AbstractControl {
+import javafx.util.Duration;
 
-    private double radius;
-    private double speed;
-    private double t = 0.0;
-    private double x, y;
+public class Timer {
 
-    public HorizontalMovementControl(double speed, double radius) {
-        this.radius = radius;
-        this.speed = speed;
-    }
+    private static final TimerManager timerManager = GameApplication.getInstance().getTimerManager();
 
-    @Override
-    protected void initEntity(Entity entity) {
-        x = entity.getTranslateX();
-        y = entity.getTranslateY();
-    }
+    private long time = 0;
 
-    @Override
-    public void onUpdate(Entity entity, long now) {
-        entity.setTranslateX(entity.getTranslateX() + TimerManager.tpfSeconds() * speed);
+    public boolean elapsed(Duration duration) {
+        long now = timerManager.getNow();
+        if (now - time >= TimerManager.secondsToNanos(duration.toSeconds())) {
+            time = now;
+            return true;
+        }
+
+        return false;
     }
 }

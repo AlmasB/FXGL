@@ -33,6 +33,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 
 /**
  * Simple particle represented by a circle.
@@ -108,7 +109,7 @@ public class Particle {
 
     private Consumer<Particle> control;
 
-    public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, double expireTime, Paint color, BlendMode blendMode) {
+    public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
         this.x = position.getX();
         this.y = position.getY();
         this.radiusX = radius;
@@ -119,7 +120,7 @@ public class Particle {
         this.gravity = gravity;
         this.color = color;
         this.blendMode = blendMode;
-        this.decay = TimerManager.TIME_PER_FRAME / expireTime;
+        this.decay = TimerManager.tpfSeconds() / expireTime.toSeconds();
     }
 
     public void setControl(Consumer<Particle> control) {

@@ -25,14 +25,14 @@
  */
 package com.almasb.fxgl.time;
 
+import javafx.util.Duration;
+
 /**
  * A wrapper for Runnable which is executed at given intervals.
  * The timer can be made to expire, in which case the action
  * will not execute
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class TimerAction {
 
@@ -52,13 +52,13 @@ public final class TimerAction {
     /**
      *
      * @param now current time in nanoseconds
-     * @param interval in nanoseconds
+     * @param interval
      * @param action the action
      * @param type ONCE or INDEFINITE
      */
-    public TimerAction(long now, double interval, Runnable action, TimerType type) {
+    public TimerAction(long now, Duration interval, Runnable action, TimerType type) {
         this.time = now;
-        this.interval = interval;
+        this.interval = TimerManager.secondsToNanos(interval.toSeconds());
         this.action = action;
         this.type = type;
     }

@@ -27,12 +27,11 @@ package com.almasb.fxgl.effect;
 
 import java.util.function.Supplier;
 
-import com.almasb.fxgl.time.TimerManager;
-
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 
 /**
  * Predefined emitter that creates fire effect.
@@ -104,7 +103,7 @@ public final class FireEmitter extends ParticleEmitter {
                 gravity,
                 rand(sizeMin, sizeMax),
                 new Point2D(rand(-0.01, 0.01) * 10, rand() * -0.1),
-                TimerManager.toNanos(1),
+                Duration.seconds(1),
                 color,
                 i < getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_DODGE);
         return p;

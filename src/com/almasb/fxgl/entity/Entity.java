@@ -37,6 +37,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * A generic FXGL game object. Any game object "should" be
@@ -58,7 +59,7 @@ public class Entity extends Parent {
      * Used by temporary entities so that they are
      * automatically removed from the scene graph.
      */
-    private double expireTime = 0;
+    private Duration expireTime = Duration.ZERO;
 
     /**
      * Constructs an entity with given type
@@ -74,12 +75,12 @@ public class Entity extends Parent {
      *
      * @return expireTime of entity, 0 if not set
      */
-    public final double getExpireTime() {
+    public final Duration getExpireTime() {
         return expireTime;
     }
 
     /**
-     * Set expire time for this entity in nanoseconds.
+     * Set expire time for this entity.
      * The timer starts when the entity is added to
      * game scene. Calling this method after entity
      * was added to scene has no effect.
@@ -87,11 +88,11 @@ public class Entity extends Parent {
      * Once the timer has expired, the entity will
      * be removed with removeEntity()
      *
-     * @param nanoseconds
+     * @param duration
      * @return this entity
      */
-    public final Entity setExpireTime(double nanoseconds) {
-        expireTime = nanoseconds;
+    public final Entity setExpireTime(Duration duration) {
+        expireTime = duration;
         return this;
     }
 

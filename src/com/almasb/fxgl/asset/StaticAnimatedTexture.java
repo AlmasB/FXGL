@@ -25,8 +25,6 @@
  */
 package com.almasb.fxgl.asset;
 
-import com.almasb.fxgl.time.TimerManager;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -40,8 +38,6 @@ import javafx.util.Duration;
  * loops through its frames constantly
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class StaticAnimatedTexture extends Texture {
 
@@ -52,9 +48,8 @@ public final class StaticAnimatedTexture extends Texture {
      * @param image     actual image
      * @param frames    number of frames in spritesheet
      * @param duration duration of the animation
-     *      use GameApplication.SECOND * n for convenience
      */
-    /*package-private*/ StaticAnimatedTexture(Image image, int frames, double duration) {
+    /*package-private*/ StaticAnimatedTexture(Image image, int frames, Duration duration) {
         super(image);
 
         final double frameW = image.getWidth() / frames;
@@ -69,7 +64,7 @@ public final class StaticAnimatedTexture extends Texture {
             this.setViewport(new Rectangle2D(newValue.intValue() * frameW, 0, frameW, image.getHeight()));
         });
 
-        timeline = new Timeline(new KeyFrame(Duration.seconds(duration / TimerManager.SECOND), new KeyValue(frameProperty, frames - 1)));
+        timeline = new Timeline(new KeyFrame(duration, new KeyValue(frameProperty, frames - 1)));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }

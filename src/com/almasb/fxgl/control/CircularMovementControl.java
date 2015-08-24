@@ -27,6 +27,7 @@ package com.almasb.fxgl.control;
 
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.time.TimerManager;
 
 public final class CircularMovementControl extends AbstractControl {
 
@@ -51,7 +52,7 @@ public final class CircularMovementControl extends AbstractControl {
         x = entity.getTranslateX() - Math.cos(t) * radius;
         y = entity.getTranslateY() - Math.sin(t) * radius;
 
-        t += 0.016 * speed;
+        t += TimerManager.tpfSeconds() * speed;
 
         entity.setTranslateX(x + Math.cos(t) * radius);
         entity.setTranslateY(y + Math.sin(t) * radius);
