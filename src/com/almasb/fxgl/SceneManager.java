@@ -368,6 +368,24 @@ public final class SceneManager extends FXGLManager {
     }
 
     /**
+     * Returns an entity at given position. The position x and y
+     * must equal to entity's position x and y.
+     *
+     * Returns {@link Optional#empty()} if no entity was found at
+     * given position.
+     *
+     * @param position
+     * @return
+     */
+    public Optional<Entity> getEntityAt(Point2D position) {
+        return app.getSceneManager()
+                    .getEntities()
+                    .stream()
+                    .filter(e -> e.getPosition().equals(position))
+                    .findAny();
+    }
+
+    /**
      * This is where we actually add the entities to the scene graph,
      * which were pushed
      * to waiting queue by {@link #addEntities(Entity...)}
