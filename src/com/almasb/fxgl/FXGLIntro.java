@@ -29,12 +29,18 @@ import java.util.Random;
 
 import com.almasb.fxgl.util.Version;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Point3D;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.HLineTo;
@@ -51,8 +57,6 @@ import javafx.util.Duration;
  * This is the default FXGL Intro animation
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 /*package-private*/ final class FXGLIntro extends Intro {
     private double w, h;
@@ -78,10 +82,12 @@ import javafx.util.Duration;
         l.setTranslateY(h);
         l.setRotate(180);
 
+        Group fxglText = new Group(f, x, g, l);
+
         Text poweredText = makePoweredBy();
         Text version = makeVersion();
 
-        getChildren().addAll(new Rectangle(w, h), f, x, g, l, poweredText, version);
+        getChildren().addAll(new Rectangle(w, h), fxglText, poweredText, version);
 
         double originX = w / 2 - f.getLayoutBounds().getWidth() * 4 / 2;
         double dx = f.getLayoutBounds().getWidth();
@@ -112,6 +118,25 @@ import javafx.util.Duration;
             rt.setAxis(new Point3D(0, 0, 1));
             rt.setByAngle(-180);
             rt.setOnFinished(e -> {
+
+                Light.Point light = new Light.Point();
+                light.setX(-300);
+                light.setY(0);
+                light.setZ(100);
+
+                Lighting lighting = new Lighting();
+                lighting.setLight(light);
+                lighting.setSurfaceScale(2.0);
+
+                fxglText.setEffect(lighting);
+
+                Timeline timeline = new Timeline();
+                KeyFrame frame = new KeyFrame(Duration.seconds(2.5),
+                        new KeyValue(light.xProperty(), 300),
+                        new KeyValue(light.zProperty(), -10));
+                timeline.getKeyFrames().add(frame);
+                timeline.play();
+
                 double t = 0;
                 for (int i = 0; i < 50; i++) {
                     Circle c = new Circle(1);
