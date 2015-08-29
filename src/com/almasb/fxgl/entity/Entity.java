@@ -33,6 +33,7 @@ import java.util.Map;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
@@ -164,6 +165,26 @@ public class Entity extends Parent {
      */
     public final double distance(Entity other) {
         return getCenter().distance(other.getCenter());
+    }
+
+    /**
+     * Returns an area around the entity with given width and height
+     * in each direction of the entity + the area of entity itself.
+     * This can be used to find the range of an exploding bomb, or
+     * area around the player with interactive entities. This can be
+     * used together with {@link com.almasb.fxgl.SceneManager#getEntitiesInRange(Rectangle2D, EntityType...)}.
+     *
+     * @param width
+     * @param height
+     * @return
+     */
+    public final Rectangle2D computeRange(double width, double height) {
+        double x = getTranslateX() - width;
+        double y = getTranslateY() - height;
+        double w = getTranslateX() + getWidth() + width - x;
+        double h = getTranslateY() + getHeight() + height - y;
+
+        return new Rectangle2D(x, y, w, h);
     }
 
     /**
