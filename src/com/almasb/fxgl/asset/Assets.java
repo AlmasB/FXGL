@@ -78,58 +78,78 @@ public final class Assets {
     /**
      * Returns a new copy of a cached texture so
      * it is safe to use multiple times.
-     * Returns null if the key was not found. Usually this means a typo.
      *
      * @param key
      * @return
+     * @throws IllegalArgumentException if no such texture exists
      */
     public Texture getTexture(String key) {
-        return cachedTextures.get(key).copy();
+        Texture original = cachedTextures.get(key);
+        if (original != null)
+            return original.copy();
+        else
+            throw new IllegalArgumentException("No cached texture found with name: " + key);
     }
 
     /**
      * Returns stored audio clip.
-     * Returns null if the key was not found. Usually this means a typo.
      *
      * @param key
      * @return
+     * @throws IllegalArgumentException if no such audio exists
      */
     public AudioClip getAudio(String key) {
-        return cachedAudio.get(key);
+        AudioClip audio = cachedAudio.get(key);
+        if (audio != null)
+            return audio;
+        else
+            throw new IllegalArgumentException("No cached audio found with name: " + key);
     }
 
     /**
      * Returns stored music object.
-     * Returns null if the key was not found. Usually this means a typo.
      *
      * @param key
      * @return
+     * @throws IllegalArgumentException if no such music exists
      */
     public Music getMusic(String key) {
-        return cachedMusic.get(key);
+        Music music = cachedMusic.get(key);
+        if (music != null)
+            return music;
+        else
+            throw new IllegalArgumentException("No cached music found with name: " + key);
     }
 
     /**
      * Returns new list contains original text.
-     * Returns null if the key was not found. Usually this means a typo.
      *
      * @param key
      * @return
+     * @throws IllegalArgumentException if no such text exists
      */
     public List<String> getText(String key) {
-        return new ArrayList<>(cachedText.get(key));
+        List<String> text = cachedText.get(key);
+        if (text != null)
+            return new ArrayList<>(text);
+        else
+            throw new IllegalArgumentException("No cached text found with name: " + key);
     }
 
     /**
      * Returns cached custom format data.
-     * Returns null if the key was not found. Usually this means a typo.
      *
      * @param key
      * @return
+     * @throws IllegalArgumentException if no such data exists
      */
     @SuppressWarnings("unchecked")
     public <T> T getData(String key) {
-        return (T) cachedData.get(key);
+        Object data = cachedData.get(key);
+        if (data != null)
+            return (T) data;
+        else
+            throw new IllegalArgumentException("No cached data found with name: " + key);
     }
 
     /**
@@ -150,6 +170,7 @@ public final class Assets {
      * @return  size of all cached assets
      */
     public int size() {
-        return cachedTextures.size() + cachedAudio.size() + cachedMusic.size();
+        return cachedTextures.size() + cachedAudio.size() + cachedMusic.size()
+            + cachedText.size() + cachedData.size();
     }
 }
