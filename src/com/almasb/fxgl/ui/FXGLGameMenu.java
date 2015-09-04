@@ -81,11 +81,11 @@ public final class FXGLGameMenu extends Menu {
         bg.setFill(Color.rgb(10, 1, 1));
         bg.setOpacity(0.5);
 
-        Title title = new Title(app.getTitle());
+        Title title = new Title(app.getSettings().getTitle());
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
         title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-        Text version = new Text("v" + app.getVersion());
+        Text version = new Text("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
         version.setFill(Color.WHITE);
         version.setFont(Font.font(18));

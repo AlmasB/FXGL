@@ -70,9 +70,10 @@ public abstract class GameApplication extends Application {
             FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe(FXGLLogger.errorTraceAsString(error));
             FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe("Closing due to Unhandled Exception");
             FXGLLogger.close();
+            FXGLExceptionHandler.INSTANCE.handle(error);
             System.exit(0);
         });
-        FXGLLogger.init(Level.ALL);
+        FXGLLogger.init(Level.CONFIG);
         Version.print();
     }
 
@@ -111,8 +112,7 @@ public abstract class GameApplication extends Application {
      * Settings for this game instance. This is an internal copy
      * of the settings so that they will not be modified during game lifetime.
      */
-    private GameSettings settings;
-
+    private ReadOnlyGameSettings settings;
 
     /**
      * The main loop timer
@@ -293,6 +293,7 @@ public abstract class GameApplication extends Application {
                 .filter(s -> !s.contains("Unknown Source") && !s.contains("Native Method"))
                 .map(s -> "Cause: " + s)
                 .forEachOrdered(log::severe);
+            FXGLExceptionHandler.INSTANCE.handle(e);
             exit();
         }
     }
@@ -312,7 +313,26 @@ public abstract class GameApplication extends Application {
 
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
-        settings = new GameSettings(localSettings);
+        settings = new ReadOnlyGameSettings(localSettings);
+
+        Level logLevel = Level.ALL;
+        switch (settings.getApplicationMode()) {
+            case DEVELOPER:
+                logLevel = Level.CONFIG;
+                break;
+            case RELEASE:
+                logLevel = Level.SEVERE;
+                break;
+            case DEBUG: // fallthru
+            default:
+                break;
+        }
+
+        FXGLLogger.init(logLevel);
+
+        log.info("Application Mode: " + settings.getApplicationMode());
+        log.info("Log Level: " + logLevel);
+
 
         initManagers();
 
@@ -400,7 +420,7 @@ public abstract class GameApplication extends Application {
      * @return target width
      */
     public final double getWidth() {
-        return settings.getWidth();
+        return getSettings().getWidth();
     }
 
     /**
@@ -414,7 +434,7 @@ public abstract class GameApplication extends Application {
      * @return target height
      */
     public final double getHeight() {
-        return settings.getHeight();
+        return getSettings().getHeight();
     }
 
     /**
@@ -434,30 +454,6 @@ public abstract class GameApplication extends Application {
 
     /**
      *
-     * @return game title
-     */
-    public final String getTitle() {
-        return settings.getTitle();
-    }
-
-    /**
-     *
-     * @return application version
-     */
-    public final String getVersion() {
-        return settings.getVersion();
-    }
-
-    /**
-     *
-     * @return icon file name
-     */
-    public final String getIconFileName() {
-        return settings.getIconFileName();
-    }
-
-    /**
-     *
      * @return current tick
      */
     public final long getTick() {
@@ -470,54 +466,6 @@ public abstract class GameApplication extends Application {
      */
     public final long getNow() {
         return getTimerManager().getNow();
-    }
-
-    /**
-     *
-     * @return if FPS needs to be shown
-     */
-    public final boolean isFPSShown() {
-        return settings.isFPSShown();
-    }
-
-    /**
-     *
-     * @return is the game full screen
-     */
-    public final boolean isFullScreen() {
-        return settings.isFullScreen();
-    }
-
-    /**
-     *
-     * @return true is intro is enabled in settings
-     */
-    public final boolean isIntroEnabled() {
-        return settings.isIntroEnabled();
-    }
-
-    /**
-     *
-     * @return true if menu is enabled in settings
-     */
-    public final boolean isMenuEnabled() {
-        return settings.isMenuEnabled();
-    }
-
-    /**
-     *
-     * @return true if in main menu
-     */
-    public final boolean isMainMenuOpen() {
-        return getSceneManager().isMainMenuOpen();
-    }
-
-    /**
-     *
-     * @return true if game menu is open, false otherwise
-     */
-    public final boolean isGameMenuOpen() {
-        return getSceneManager().isGameMenuOpen();
     }
 
     /**
@@ -558,5 +506,13 @@ public abstract class GameApplication extends Application {
      */
     public final AssetManager getAssetManager() {
         return assetManager;
+    }
+
+    /**
+     *
+     * @return read only copy of game settings
+     */
+    public final ReadOnlyGameSettings getSettings() {
+        return settings;
     }
 }

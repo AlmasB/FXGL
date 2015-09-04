@@ -53,7 +53,7 @@ import javafx.stage.Stage;
 
     /*package-private*/ void init(Stage stage) {
         this.stage = stage;
-        stage.setTitle(app.getTitle() + " " + app.getVersion());
+        stage.setTitle(app.getSettings().getTitle() + " " + app.getSettings().getVersion());
         stage.setResizable(false);
 
         // ensure the window frame is just right for the scene size
@@ -63,7 +63,7 @@ import javafx.stage.Stage;
 
         setAppIcon();
 
-        if (app.isFullScreen()) {
+        if (app.getSettings().isFullScreen()) {
             stage.setFullScreenExitHint("");
             // we don't want the user to be able to exit full screen manually
             // but only through settings menu
@@ -82,7 +82,7 @@ import javafx.stage.Stage;
 
     private void setAppIcon() {
         try {
-            String iconName = app.getIconFileName();
+            String iconName = app.getSettings().getIconFileName();
             if (!iconName.isEmpty()) {
                 Image icon = app.getAssetManager().loadAppIcon(iconName);
                 stage.getIcons().add(icon);

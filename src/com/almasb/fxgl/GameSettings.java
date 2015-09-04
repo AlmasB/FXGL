@@ -33,44 +33,7 @@ package com.almasb.fxgl;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class GameSettings {
-
-    private String title = "Untitled FXGL Game Application";
-    private String version = "0.0";
-    private int width = 800;
-    private int height = 600;
-    private boolean fullScreen = false;
-    private boolean introEnabled = true;
-    private boolean menuEnabled = true;
-    private String iconFileName = "";
-    private boolean showFPS = true;
-
-    /**
-     * Constructs game settings with default parameters
-     */
-    public GameSettings() {}
-
-    /**
-     * Constructs new game settings with parameters
-     * copied from given.
-     *
-     * @param copy
-     */
-    public GameSettings(GameSettings copy) {
-        this.title = copy.title;
-        this.version = copy.version;
-        this.width = copy.width;
-        this.height = copy.height;
-        this.fullScreen = copy.fullScreen;
-        this.introEnabled = copy.introEnabled;
-        this.menuEnabled = copy.menuEnabled;
-        this.iconFileName = copy.iconFileName;
-        this.showFPS = copy.showFPS;
-    }
-
-    public String getTitle() {
-        return title;
-    }
+public final class GameSettings extends ReadOnlyGameSettings {
 
     /**
      * Set title of the game. This will be shown as the
@@ -81,10 +44,6 @@ public final class GameSettings {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getWidth() {
-        return width;
     }
 
     /**
@@ -101,10 +60,6 @@ public final class GameSettings {
         this.width = width;
     }
 
-    public int getHeight() {
-        return height;
-    }
-
     /**
      * Set target height. If the height width is smaller,
      * the game will automatically scale down the image
@@ -119,10 +74,6 @@ public final class GameSettings {
         this.height = height;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
     /**
      * Set version of the game.
      *
@@ -131,10 +82,6 @@ public final class GameSettings {
      */
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public boolean isIntroEnabled() {
-        return introEnabled;
     }
 
     /**
@@ -148,10 +95,6 @@ public final class GameSettings {
         introEnabled = b;
     }
 
-    public boolean isMenuEnabled() {
-        return menuEnabled;
-    }
-
     /**
      * Setting to true enables main and game menu.
      *
@@ -160,10 +103,6 @@ public final class GameSettings {
      */
     public void setMenuEnabled(boolean b) {
         menuEnabled = b;
-    }
-
-    public String getIconFileName() {
-        return iconFileName;
     }
 
     /**
@@ -180,10 +119,6 @@ public final class GameSettings {
         this.iconFileName = iconFileName;
     }
 
-    public boolean isFullScreen() {
-        return fullScreen;
-    }
-
     /**
      * Setting to true will start the game in fullscreen mode.
      *
@@ -192,10 +127,6 @@ public final class GameSettings {
      */
     public void setFullScreen(boolean b) {
         fullScreen = b;
-    }
-
-    public boolean isFPSShown() {
-        return showFPS;
     }
 
     /**
@@ -207,5 +138,15 @@ public final class GameSettings {
      */
     public void setShowFPS(boolean b) {
         showFPS = b;
+    }
+
+    /**
+     * Sets application run mode. See {@link ApplicationMode} for more info.
+     *
+     * @param mode
+     * @defaultValue {@link ApplicationMode#DEVELOPER}
+     */
+    public void setApplicationMode(ApplicationMode mode) {
+        this.appMode = mode;
     }
 }

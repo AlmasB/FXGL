@@ -54,6 +54,11 @@ public final class FXGLLogger {
      * @param logLevel
      */
     public static void init(Level logLevel) {
+        if (consoleHandler != null) {
+            consoleHandler.setLevel(logLevel);
+            return;
+        }
+
         Formatter formatter = new Formatter() {
             @Override
             public String format(LogRecord record) {

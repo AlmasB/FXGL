@@ -138,6 +138,11 @@ public final class SceneManager extends FXGLManager {
     private Menu gameMenu;
 
     /**
+     * Is menu enabled in settings
+     */
+    private boolean isMenuEnabled;
+
+    /**
      * The key that triggers opening/closing game menu
      */
     private KeyCode menuKey = KeyCode.ESCAPE;
@@ -161,16 +166,18 @@ public final class SceneManager extends FXGLManager {
     }
 
     /*package-private*/ void init() {
+        isMenuEnabled = app.getSettings().isMenuEnabled();
+
         setPrefSize(app.getWidth(), app.getHeight());
 
         particlesCanvas.setWidth(app.getWidth());
         particlesCanvas.setHeight(app.getHeight());
         particlesCanvas.setMouseTransparent(true);
 
-        if (app.isMenuEnabled())
+        if (isMenuEnabled)
             configureMenu();
 
-        if (app.isFPSShown()) {
+        if (app.getSettings().isFPSShown()) {
             Text fpsText = new Text();
             fpsText.setFill(Color.AZURE);
             fpsText.setFont(Font.font(24));
@@ -182,7 +189,7 @@ public final class SceneManager extends FXGLManager {
     }
 
     /*package-private*/ void setPrefSize(double width, double height) {
-        Rectangle2D bounds = app.isFullScreen()
+        Rectangle2D bounds = app.getSettings().isFullScreen()
                 ? Screen.getPrimary().getBounds()
                 : Screen.getPrimary().getVisualBounds();
 
@@ -218,10 +225,10 @@ public final class SceneManager extends FXGLManager {
     }
 
     /*package-private*/ void onStageShow() {
-        if (app.isIntroEnabled()) {
+        if (app.getSettings().isIntroEnabled()) {
             Intro intro = app.initIntroVideo();
             intro.onFinished = () -> {
-                if (app.isMenuEnabled()) {
+                if (isMenuEnabled) {
                     scene.setRoot(mainMenu.getRoot());
                 }
                 else {
@@ -233,7 +240,7 @@ public final class SceneManager extends FXGLManager {
             intro.startIntro();
         }
         else {
-            if (!app.isMenuEnabled()) {
+            if (!isMenuEnabled) {
                 app.startNewGame();
             }
         }
@@ -626,7 +633,7 @@ public final class SceneManager extends FXGLManager {
      * Does nothing if menu is disabled in settings
      */
     public void openGameMenu() {
-        if (!app.isMenuEnabled())
+        if (!isMenuEnabled)
             return;
 
         app.pause();
@@ -641,7 +648,7 @@ public final class SceneManager extends FXGLManager {
      * Does nothing if menu is disabled in settings
      */
     public void closeGameMenu() {
-        if (!app.isMenuEnabled())
+        if (!isMenuEnabled)
             return;
 
         app.getInputManager().clearAllInput();
@@ -661,7 +668,7 @@ public final class SceneManager extends FXGLManager {
      * Does nothing if menu is disabled in settings
      */
     public void exitToMainMenu() {
-        if (!app.isMenuEnabled())
+        if (!isMenuEnabled)
             return;
 
         app.pause();
@@ -698,7 +705,7 @@ public final class SceneManager extends FXGLManager {
         Image fxImage = scene.snapshot(null);
         BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
-        String fileName = "./" + app.getTitle() + app.getVersion()
+        String fileName = "./" + app.getSettings().getTitle() + app.getSettings().getVersion()
                 + LocalDateTime.now() + ".png";
 
         fileName = fileName.replace(":", "_");

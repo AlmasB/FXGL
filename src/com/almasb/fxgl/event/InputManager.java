@@ -104,7 +104,7 @@ public final class InputManager extends FXGLManager {
     public void init(Scene mainScene) {
         this.gameScene = mainScene;
         gameScene.setOnKeyPressed(event -> {
-            if (app.isGameMenuOpen() || app.isMainMenuOpen())
+            if (isAnyMenuOpen())
                 return;
 
             KeyCode key = event.getCode();
@@ -116,7 +116,7 @@ public final class InputManager extends FXGLManager {
 
         });
         gameScene.setOnKeyReleased(event -> {
-            if (app.isGameMenuOpen() || app.isMainMenuOpen())
+            if (isAnyMenuOpen())
                 return;
 
             KeyCode key = event.getCode();
@@ -128,7 +128,7 @@ public final class InputManager extends FXGLManager {
         });
 
         gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-            if (app.isGameMenuOpen() || app.isMainMenuOpen())
+            if (isAnyMenuOpen())
                 return;
 
             MouseButton btn = event.getButton();
@@ -140,7 +140,7 @@ public final class InputManager extends FXGLManager {
         });
 
         gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            if (app.isGameMenuOpen() || app.isMainMenuOpen())
+            if (isAnyMenuOpen())
                 return;
 
             MouseButton btn = event.getButton();
@@ -155,6 +155,10 @@ public final class InputManager extends FXGLManager {
         gameScene.setOnMouseDragged(mouse::update);
         gameScene.setOnMouseReleased(mouse::update);
         gameScene.setOnMouseMoved(mouse::update);
+    }
+
+    private boolean isAnyMenuOpen() {
+        return app.getSceneManager().isGameMenuOpen() || app.getSceneManager().isMainMenuOpen();
     }
 
     /**
@@ -254,7 +258,7 @@ public final class InputManager extends FXGLManager {
         private MouseEvent event;
 
         private void update(MouseEvent event) {
-            if (app.isGameMenuOpen() || app.isMainMenuOpen())
+            if (isAnyMenuOpen())
                 return;
 
             this.event = event;
