@@ -27,7 +27,6 @@ package com.almasb.fxgl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -66,12 +65,7 @@ public abstract class GameApplication extends Application {
 
     static {
         Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
-            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe("Unhandled Exception");
-            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe(FXGLLogger.errorTraceAsString(error));
-            FXGLLogger.getLogger("FXGL.DefaultErrorHandler").severe("Closing due to Unhandled Exception");
-            FXGLLogger.close();
             FXGLExceptionHandler.INSTANCE.handle(error);
-            System.exit(0);
         });
         FXGLLogger.init(Level.CONFIG);
         Version.print();
@@ -286,15 +280,7 @@ public abstract class GameApplication extends Application {
         }
         catch (Exception e) {
             log.severe("Exception occurred during initialization: " + e.getMessage());
-
-            Arrays.asList(e.getStackTrace())
-                .stream()
-                .map(StackTraceElement::toString)
-                .filter(s -> !s.contains("Unknown Source") && !s.contains("Native Method"))
-                .map(s -> "Cause: " + s)
-                .forEachOrdered(log::severe);
             FXGLExceptionHandler.INSTANCE.handle(e);
-            exit();
         }
     }
 
@@ -407,6 +393,7 @@ public abstract class GameApplication extends Application {
         onExit();
         FXGLLogger.close();
         Platform.exit();
+        System.exit(0);
     }
 
     /**
