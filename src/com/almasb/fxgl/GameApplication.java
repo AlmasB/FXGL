@@ -253,6 +253,8 @@ public abstract class GameApplication extends Application {
      */
     private void initManagers() {
         inputManager.init(sceneManager.getScene());
+        initInput();
+
         qteManager.init();
         sceneManager.init();
         sceneManager.getScene().addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
@@ -274,7 +276,7 @@ public abstract class GameApplication extends Application {
             initGame();
             initPhysics();
             initUI();
-            initInput();
+
 
             postInit();
         }

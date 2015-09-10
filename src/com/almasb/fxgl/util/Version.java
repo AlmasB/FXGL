@@ -53,7 +53,27 @@ public final class Version {
         log.info("Source code and latest builds at: https://github.com/AlmasB/FXGL");
     }
 
+    /**
+     *
+     * @return compile time version of FXGL
+     */
     public static String getAsString() {
         return getMajor() + "." + getMinor() + "." + getPatch();
+    }
+
+    /**
+     *
+     * @return compile time version of JavaFX
+     */
+    public static String getJavaFXAsString() {
+        return "8.0.60";
+    }
+
+    /**
+     *
+     * @return compile time version of JBox2D
+     */
+    public static String getJBox2DAsString() {
+        return "2.2.1.1";
     }
 }

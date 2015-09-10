@@ -26,20 +26,27 @@
 package com.almasb.fxgl.ui;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -188,6 +195,8 @@ public final class FXGLGameMenu extends Menu {
 
     private MenuBox createOptionsMenu() {
         MenuItem itemControls = new MenuItem("CONTROLS");
+        itemControls.setMenuContent(createContentControls());
+
         MenuItem itemVideo = new MenuItem("VIDEO");
         MenuItem itemAudio = new MenuItem("AUDIO");
 
@@ -225,6 +234,31 @@ public final class FXGLGameMenu extends Menu {
         textDev.setFill(Color.WHITE);
 
         return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
+    }
+
+    private MenuContent createContentControls() {
+
+//        Map<KeyCode, UserAction> bindings = app.getInputManager().getKeyBindings();
+//
+//        ListView<String> list = new ListView<>();
+//        list.getItems().addAll(bindings.entrySet()
+//                .stream()
+//                .map(entry -> entry.getKey().toString() + " " + entry.getValue().getName())
+//                .collect(Collectors.toList()));
+//
+//        ObservableMap<String, String> map = FXCollections.observableHashMap();
+//        map.addListener(new MapChangeListener<String, String>() {
+//
+//            @Override
+//            public void onChanged(MapChangeListener.Change<? extends String, ? extends String> change) {
+//                // TODO Auto-generated method stub
+//
+//            }
+//
+//        });
+
+
+        return new MenuContent();
     }
 
     private void switchMenuTo(MenuBox menu) {

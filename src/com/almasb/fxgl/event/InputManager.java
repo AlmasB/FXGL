@@ -25,9 +25,6 @@
  */
 package com.almasb.fxgl.event;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.almasb.fxgl.FXGLManager;
 
 import javafx.collections.FXCollections;
@@ -36,6 +33,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
@@ -47,6 +45,8 @@ import javafx.scene.input.MouseEvent;
  */
 public final class InputManager extends FXGLManager {
 
+    //private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
+
     private Scene gameScene;
 
     /**
@@ -54,32 +54,23 @@ public final class InputManager extends FXGLManager {
      */
     private Mouse mouse = new Mouse();
 
-    private Map<KeyCode, UserAction> keyBindings = new HashMap<>();
-    private Map<MouseButton, UserAction> mouseBindings = new HashMap<>();
-
-    // TODO: replace with observable maps
     /**
-     * Returns a new map containing keys and actions bound
-     * to those keys
-     *
-     * @return key bindings
+     * Contains a list of user actions and keys/mouse buttons which trigger those
+     * actions.
      */
-    public Map<KeyCode, UserAction> getKeyBindings() {
-        return new HashMap<>(keyBindings);
+    private ObservableList<InputBinding> bindings = FXCollections.observableArrayList();
+
+    /**
+     *
+     * @return unmodifiable view of the input bindings registered
+     */
+    public ObservableList<InputBinding> getBindings() {
+        return FXCollections.unmodifiableObservableList(bindings);
     }
 
     /**
-     * Returns a new map containing mouse buttons and actions bound
-     * to those buttons
-     *
-     * @return mouse bindings
+     * Currently active actions.
      */
-    public Map<MouseButton, UserAction> getMouseBindings() {
-        return new HashMap<>(mouseBindings);
-    }
-
-    //private Map<KeyCode, Boolean> keys = new HashMap<>();
-
     private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
 
     public InputManager() {
@@ -103,58 +94,63 @@ public final class InputManager extends FXGLManager {
 
     public void init(Scene mainScene) {
         this.gameScene = mainScene;
-        gameScene.setOnKeyPressed(event -> {
-            if (isAnyMenuOpen())
-                return;
 
-            KeyCode key = event.getCode();
-            UserAction action = keyBindings.get(key);
-
-            if (action != null && !currentActions.contains(action)) {
-                currentActions.add(action);
-            }
-
+        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            handlePressed(new Trigger(event.getCode()));
         });
-        gameScene.setOnKeyReleased(event -> {
-            if (isAnyMenuOpen())
-                return;
 
-            KeyCode key = event.getCode();
-            UserAction action = keyBindings.get(key);
-
-            if (action != null) {
-                currentActions.remove(action);
-            }
+        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            handleReleased(new Trigger(event.getCode()));
         });
 
         gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-            if (isAnyMenuOpen())
-                return;
-
-            MouseButton btn = event.getButton();
-            UserAction action = mouseBindings.get(btn);
-
-            if (action != null) {
-                currentActions.add(action);
-            }
+            handlePressed(new Trigger(event.getButton()));
         });
-
         gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            if (isAnyMenuOpen())
-                return;
-
-            MouseButton btn = event.getButton();
-            UserAction action = mouseBindings.get(btn);
-
-            if (action != null) {
-                currentActions.remove(action);
-            }
+            handleReleased(new Trigger(event.getButton()));
         });
 
         gameScene.setOnMousePressed(mouse::update);
         gameScene.setOnMouseDragged(mouse::update);
         gameScene.setOnMouseReleased(mouse::update);
         gameScene.setOnMouseMoved(mouse::update);
+    }
+
+    private void handlePressed(Trigger trigger) {
+        if (isAnyMenuOpen())
+            return;
+
+        bindings.stream()
+            .filter(binding -> {
+                if (trigger.key == null) {
+                    return binding.isTriggered(trigger.btn);
+                }
+                else {
+                    return binding.isTriggered(trigger.key);
+                }
+            })
+            .findAny()
+            .map(InputBinding::getAction)
+            .filter(action -> !currentActions.contains(action))
+            .ifPresent(currentActions::add);
+    }
+
+    private void handleReleased(Trigger trigger) {
+        if (isAnyMenuOpen())
+            return;
+
+        bindings.stream()
+            .filter(binding -> {
+                if (trigger.key == null) {
+                    return binding.isTriggered(trigger.btn);
+                }
+                else {
+                    return binding.isTriggered(trigger.key);
+                }
+            })
+            .findAny()
+            .map(InputBinding::getAction)
+            .ifPresent(currentActions::remove);
     }
 
     private boolean isAnyMenuOpen() {
@@ -189,15 +185,6 @@ public final class InputManager extends FXGLManager {
         processActions = b;
     }
 
-//    /**
-//     * @param key
-//     * @return
-//     *          true iff key is currently pressed
-//     */
-//    private boolean isPressed(KeyCode key) {
-//        return keys.getOrDefault(key, false);
-//    }
-
     /**
      * Clears all input, that is releases all key presses and mouse clicks
      * for a single frame
@@ -208,12 +195,61 @@ public final class InputManager extends FXGLManager {
         mouse.rightPressed = false;
     }
 
+    /**
+     * Bind given action to a mouse button.
+     *
+     * @param action
+     * @param btn
+     */
     public void addAction(UserAction action, MouseButton btn) {
-        mouseBindings.put(btn, action);
+        bindings.add(new InputBinding(action, btn));
     }
 
+    /**
+     * Bind given action to a keyboard key.
+     *
+     * @param action
+     * @param key
+     */
     public void addAction(UserAction action, KeyCode key) {
-        keyBindings.put(key, action);
+        bindings.add(new InputBinding(action, key));
+    }
+
+    /**
+     * Find binding for given action.
+     * TODO: throw exception ASAP if not found
+     *
+     * @param action
+     * @return
+     */
+    private InputBinding getBinding(UserAction action) {
+        return bindings.stream()
+                .filter(binding -> binding.getAction().equals(action))
+                .findAny()
+                .get();
+    }
+
+    // TODO: don't allow to bind to existing keys
+    /**
+     * Rebinds an action to given key. Previously bound key will
+     * be cleared.
+     *
+     * @param action
+     * @param key
+     */
+    public void rebind(UserAction action, KeyCode key) {
+        getBinding(action).setTrigger(key);
+    }
+
+    /**
+     * Rebinds an action to given mouse button.
+     * Previously bound button will be cleared.
+     *
+     * @param action
+     * @param btn
+     */
+    public void rebind(UserAction action, MouseButton btn) {
+        getBinding(action).setTrigger(btn);
     }
 
     /**
@@ -305,6 +341,23 @@ public final class InputManager extends FXGLManager {
          */
         public final MouseEvent getEvent() {
             return event;
+        }
+    }
+
+    /**
+     * Convenience wrapper for input types.
+     *
+     */
+    private static class Trigger {
+        private KeyCode key;
+        private MouseButton btn;
+
+        public Trigger(KeyCode key) {
+            this.key = key;
+        }
+
+        public Trigger(MouseButton btn) {
+            this.btn = btn;
         }
     }
 }

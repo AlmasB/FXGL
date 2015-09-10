@@ -28,18 +28,23 @@ package com.almasb.fxgl.ui;
 import java.io.Serializable;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.event.InputBinding;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -52,6 +57,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 /**
@@ -147,6 +155,7 @@ public final class FXGLMainMenu extends Menu {
                 app.loadState(data);
             }
             catch (Exception e) {
+                // TODO: use custom stages, as alerts will kick users from the fullscreen
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setContentText("Failed to load file: " + fileName + ". Error: " + e.getMessage());
                 alert.showAndWait();
@@ -173,6 +182,8 @@ public final class FXGLMainMenu extends Menu {
 
     private MenuBox createOptionsMenu() {
         MenuItem itemControls = new MenuItem("CONTROLS");
+        itemControls.setMenuContent(createContentControls());
+
         MenuItem itemVideo = new MenuItem("VIDEO");
         MenuItem itemAudio = new MenuItem("AUDIO");
 
@@ -193,11 +204,11 @@ public final class FXGLMainMenu extends Menu {
         textHead.setFont(font);
         textHead.setFill(Color.WHITE);
 
-        Text textJFX = new Text("Graphics and Application Framework: JavaFX 8.0.51");
+        Text textJFX = new Text("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
         textJFX.setFont(font);
         textJFX.setFill(Color.WHITE);
 
-        Text textJBOX = new Text("Physics Engine: JBox2d 2.2.1.1 (jbox2d.org)");
+        Text textJBOX = new Text("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
         textJBOX.setFont(font);
         textJBOX.setFill(Color.WHITE);
 
@@ -210,6 +221,64 @@ public final class FXGLMainMenu extends Menu {
         textDev.setFill(Color.WHITE);
 
         return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
+    }
+
+    private MenuContent createContentControls() {
+        Font font = Font.font(18);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(50);
+
+        int i = 0;
+        for (InputBinding binding : app.getInputManager().getBindings()) {
+            Text actionName = new Text(binding.getAction().getName());
+            actionName.setFont(font);
+            actionName.setFill(Color.WHITE);
+
+            MenuItem triggerName = new MenuItem("");
+            triggerName.text.textProperty().bind(binding.triggerNameProperty());
+            triggerName.setOnMouseClicked(event -> {
+                Rectangle rect = new Rectangle(250, 100);
+                rect.setStroke(Color.AZURE);
+
+                Text text = new Text("PRESS ANY KEY");
+                text.setFill(Color.WHITE);
+                text.setFont(Font.font(24));
+
+                Stage stage = new Stage(StageStyle.TRANSPARENT);
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.initOwner(root.getScene().getWindow());
+
+                Scene scene = new Scene(new StackPane(rect, text));
+                scene.setOnKeyPressed(e -> {
+                    app.getInputManager().rebind(binding.getAction(), e.getCode());
+                    stage.close();
+                });
+                scene.setOnMouseClicked(e -> {
+                    app.getInputManager().rebind(binding.getAction(), e.getButton());
+                    stage.close();
+                });
+
+                stage.setScene(scene);
+                stage.show();
+            });
+
+            grid.addRow(i++, actionName, triggerName);
+
+            GridPane.setHalignment(actionName, HPos.RIGHT);
+            GridPane.setHalignment(triggerName, HPos.LEFT);
+        }
+
+        ScrollPane scroll = new ScrollPane(grid);
+        scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+        scroll.setMaxHeight(app.getHeight() / 2);
+        scroll.setStyle("-fx-background: black;");
+
+        HBox hbox = new HBox(scroll);
+        hbox.setAlignment(Pos.CENTER);
+
+        return new MenuContent(hbox);
     }
 
     private void switchMenuTo(MenuBox menu) {
@@ -295,6 +364,8 @@ public final class FXGLMainMenu extends Menu {
         private MenuBox child;
         private MenuContent menuContent;
 
+        private Text text = new Text();
+
         public MenuItem(String name) {
             LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, new Stop[] {
                     new Stop(0.5, Color.hsb(33, 0.7, 0.7)),
@@ -304,7 +375,7 @@ public final class FXGLMainMenu extends Menu {
             Rectangle bg = new Rectangle(200, 30);
             bg.setOpacity(0.4);
 
-            Text text = new Text(name);
+            text.setText(name);
             text.setFill(Color.DARKGREY);
             text.setFont(Font.font("", FontWeight.SEMI_BOLD, 22));
 

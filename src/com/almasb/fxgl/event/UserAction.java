@@ -56,6 +56,24 @@ public abstract class UserAction {
         return name;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof UserAction))
+            return false;
+
+        return name.equals(((UserAction)o).name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
     /**
      * Called once in the same tick when triggered.
      */
