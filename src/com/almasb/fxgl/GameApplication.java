@@ -218,35 +218,46 @@ public abstract class GameApplication extends Application {
 
     /**
      * Initiliaze input, i.e.
-     * bind key presses / key typed, bind mouse
+     * bind key presses / key typed, bind mouse.
+     *
+     * This method is called prior to any game init.
+     * The only valid code is adding user actions to inputManager:
+     *
+     * <pre>
+     * inputManager.addAction(new UserAction("Move Left") {
+     *      protected void onAction() {
+     *          player.translate(-5, 0);
+     *      }
+     * }, KeyCode.A);
+     * </pre>
      */
     protected abstract void initInput();
 
     /**
-     * Main loop update phase, most of game logic and clean up
-     *
-     * @param now
+     * Main loop update phase, most of game logic.
      */
     protected abstract void onUpdate();
 
     /**
-     * Default implementation does nothing
+     * Default implementation does nothing.
      *
      * Override to add your own cleanup
      */
-    protected void onExit() {
-
-    }
+    protected void onExit() {}
 
     /**
-     * This is called AFTER all init methods complete
-     * and BEFORE the main loop starts
+     * Default implementation does nothing.
      *
-     * It is safe to use any protected fields at this stage
+     * This method is called just before the game menu opens.
      */
-    protected void postInit() {
+    protected void onMenuOpen() {}
 
-    }
+    /**
+     * Default implementation does nothing.
+     *
+     * This method is called right after the game menu closes.
+     */
+    protected void onMenuClose() {}
 
     /**
      * Ensure managers are of legal state and ready
@@ -276,23 +287,11 @@ public abstract class GameApplication extends Application {
             initGame();
             initPhysics();
             initUI();
-
-
-            postInit();
         }
         catch (Exception e) {
             log.severe("Exception occurred during initialization: " + e.getMessage());
             FXGLExceptionHandler.INSTANCE.handle(e);
         }
-    }
-
-    public GameApplication() {
-        log.finer("GameApplication()");
-    }
-
-    @Override
-    public final void init() {
-        log.finer("init()");
     }
 
     @Override
@@ -327,11 +326,6 @@ public abstract class GameApplication extends Application {
         stageManager.init(primaryStage);
         stageManager.show();
         sceneManager.onStageShow();
-    }
-
-    @Override
-    public final void stop() {
-        log.finer("stop()");
     }
 
     /**

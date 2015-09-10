@@ -644,6 +644,7 @@ public final class SceneManager extends FXGLManager {
         if (!isMenuEnabled)
             return;
 
+        app.onMenuOpen();
         app.pause();
         app.getInputManager().clearAllInput();
         root.getChildren().set(UI_ROOT_LAYER, gameMenu.getRoot());
@@ -662,6 +663,7 @@ public final class SceneManager extends FXGLManager {
         app.getInputManager().clearAllInput();
         root.getChildren().set(UI_ROOT_LAYER, uiRoot);
         app.resume();
+        app.onMenuClose();
 
         isGameMenuOpen = false;
     }
