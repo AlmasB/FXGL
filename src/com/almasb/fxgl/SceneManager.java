@@ -58,6 +58,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Dialog;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -701,6 +702,17 @@ public final class SceneManager extends FXGLManager {
         isMainMenuOpen = true;
 
         scene.setRoot(mainMenu.getRoot());
+    }
+
+    public <T> Optional<T> showAndWait(Dialog<T> dialog) {
+        app.pause();
+        app.getInputManager().clearAllInput();
+
+        dialog.initOwner(scene.getWindow());
+        Optional<T> result = dialog.showAndWait();
+
+        app.resume();
+        return result;
     }
 
     /**
