@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.event;
 
+import java.util.Optional;
+
 import com.almasb.fxgl.FXGLManager;
 
 import javafx.collections.FXCollections;
@@ -217,39 +219,58 @@ public final class InputManager extends FXGLManager {
 
     /**
      * Find binding for given action.
-     * TODO: throw exception ASAP if not found
      *
      * @param action
      * @return
      */
-    private InputBinding getBinding(UserAction action) {
+    private Optional<InputBinding> findBindingByAction(UserAction action) {
         return bindings.stream()
                 .filter(binding -> binding.getAction().equals(action))
-                .findAny()
-                .get();
+                .findAny();
     }
 
-    // TODO: don't allow to bind to existing keys
+    private boolean isKeyBound(KeyCode key) {
+        return bindings.stream()
+                .anyMatch(binding -> binding.isTriggered(key));
+    }
+
+    private boolean isButtonBound(MouseButton btn) {
+        return bindings.stream()
+                .anyMatch(binding -> binding.isTriggered(btn));
+    }
+
     /**
-     * Rebinds an action to given key. Previously bound key will
-     * be cleared.
+     * Rebinds an action to given key.
      *
      * @param action
      * @param key
+     * @return true if rebound, false if action not found or
+     *      there is another action bound to key
      */
-    public void rebind(UserAction action, KeyCode key) {
-        getBinding(action).setTrigger(key);
+    public boolean rebind(UserAction action, KeyCode key) {
+        Optional<InputBinding> maybeBinding = findBindingByAction(action);
+        if (!maybeBinding.isPresent() || isKeyBound(key))
+            return false;
+
+        maybeBinding.get().setTrigger(key);
+        return true;
     }
 
     /**
      * Rebinds an action to given mouse button.
-     * Previously bound button will be cleared.
      *
      * @param action
      * @param btn
+     * @return true if rebound, false if action not found or
+     *      there is another action bound to mosue button
      */
-    public void rebind(UserAction action, MouseButton btn) {
-        getBinding(action).setTrigger(btn);
+    public boolean rebind(UserAction action, MouseButton btn) {
+        Optional<InputBinding> maybeBinding = findBindingByAction(action);
+        if (!maybeBinding.isPresent() || isButtonBound(btn))
+            return false;
+
+        maybeBinding.get().setTrigger(btn);
+        return true;
     }
 
     /**

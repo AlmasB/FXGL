@@ -198,6 +198,8 @@ public final class SceneManager extends FXGLManager {
             root.setPrefSize(app.getWidth(), app.getHeight());
         }
         else {
+            log.finer("App width > screen width");
+
             double ratio = app.getWidth() * 1.0 / app.getHeight();
 
             for (int newWidth = (int)bounds.getWidth(); newWidth > 0; newWidth--) {
@@ -211,12 +213,16 @@ public final class SceneManager extends FXGLManager {
                     break;
                 }
             }
+
+            log.finer("Size ratio: " + sizeRatio);
         }
     }
 
     /*package-private*/ void configureMenu() {
         mainMenu = app.initMainMenu();
         gameMenu = app.initGameMenu();
+        mainMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
+        gameMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
 
         scene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyPressedHandler);
         scene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
@@ -227,6 +233,7 @@ public final class SceneManager extends FXGLManager {
     /*package-private*/ void onStageShow() {
         if (app.getSettings().isIntroEnabled()) {
             Intro intro = app.initIntroVideo();
+            intro.getTransforms().add(new Scale(sizeRatio, sizeRatio));
             intro.onFinished = () -> {
                 if (isMenuEnabled) {
                     scene.setRoot(mainMenu.getRoot());

@@ -25,26 +25,27 @@
  */
 package com.almasb.fxgl;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.util.FXGLLogger;
 
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public enum FXGLExceptionHandler implements ExceptionHandler {
 
     INSTANCE;
 
     private final Logger log = FXGLLogger.getLogger("FXGLExceptionHandler");
+
+    private boolean exitPending = false;
 
     /**
      * Handles "Unhandled" exception by following these steps:
@@ -54,50 +55,75 @@ public enum FXGLExceptionHandler implements ExceptionHandler {
      */
     @Override
     public void handle(Throwable e) {
+        GameApplication.getInstance().pause();
+
         log.severe("Unhandled Exception:");
         log.severe(FXGLLogger.errorTraceAsString(e));
         log.severe("Application will now exit");
 
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Unhandled Exception");
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(GameApplication.getInstance().getSceneManager().getScene().getWindow());
 
-        final DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.setContentText("Exception details:");
-        dialogPane.getButtonTypes().addAll(ButtonType.OK);
+        Rectangle rect = new Rectangle(450, 200);
+        rect.setStroke(Color.RED);
 
-        String message = e.getMessage();
+        Text text = new Text(e.getMessage() == null ? "Ooops :'(" : e.getMessage());
+        text.setFill(Color.WHITE);
+        text.setFont(Font.font(36));
 
-        dialogPane.setContentText(message != null ? message : "Ooops :'(");
-        dialog.initModality(Modality.APPLICATION_MODAL);
+        Scene scene = new Scene(new StackPane(rect, text));
+        scene.setOnKeyPressed(event -> {
+            stage.close();
+        });
+        scene.setOnMouseClicked(event -> {
+            stage.close();
+        });
 
-        ApplicationMode appMode = GameApplication.getInstance().getSettings().getApplicationMode();
-        if (appMode != ApplicationMode.RELEASE) {
-            Label label = new Label("Exception stacktrace:");
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.close();
+        stage.setScene(scene);
+        stage.centerOnScreen();
+        stage.showAndWait();
 
-            TextArea textArea = new TextArea(sw.toString());
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
-            textArea.setPrefSize(600, 600);
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
-
-            GridPane.setVgrow(textArea, Priority.ALWAYS);
-            GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-            GridPane root = new GridPane();
-            root.setVisible(false);
-            root.setMaxWidth(Double.MAX_VALUE);
-            root.add(label, 0, 0);
-            root.add(textArea, 0, 1);
-
-            dialogPane.setExpandableContent(root);
-        }
-
-        dialog.showAndWait();
+//        Dialog<ButtonType> dialog = new Dialog<>();
+//        dialog.setTitle("Unhandled Exception");
+//
+//        final DialogPane dialogPane = dialog.getDialogPane();
+//        dialogPane.setContentText("Exception details:");
+//        dialogPane.getButtonTypes().addAll(ButtonType.OK);
+//
+//        String message = e.getMessage();
+//
+//        dialogPane.setContentText(message != null ? message : "Ooops :'(");
+//        dialog.initModality(Modality.APPLICATION_MODAL);
+//
+//        ApplicationMode appMode = GameApplication.getInstance().getSettings().getApplicationMode();
+//        if (appMode != ApplicationMode.RELEASE) {
+//            Label label = new Label("Exception stacktrace:");
+//            StringWriter sw = new StringWriter();
+//            PrintWriter pw = new PrintWriter(sw);
+//            e.printStackTrace(pw);
+//            pw.close();
+//
+//            TextArea textArea = new TextArea(sw.toString());
+//            textArea.setEditable(false);
+//            textArea.setWrapText(true);
+//            textArea.setPrefSize(600, 600);
+//            textArea.setMaxWidth(Double.MAX_VALUE);
+//            textArea.setMaxHeight(Double.MAX_VALUE);
+//
+//            GridPane.setVgrow(textArea, Priority.ALWAYS);
+//            GridPane.setHgrow(textArea, Priority.ALWAYS);
+//
+//            GridPane root = new GridPane();
+//            root.setVisible(false);
+//            root.setMaxWidth(Double.MAX_VALUE);
+//            root.add(label, 0, 0);
+//            root.add(textArea, 0, 1);
+//
+//            dialogPane.setExpandableContent(root);
+//        }
+//
+//        dialog.showAndWait();
         GameApplication.getInstance().exit();
     }
 }
