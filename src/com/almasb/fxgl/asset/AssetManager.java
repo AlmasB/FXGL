@@ -48,6 +48,7 @@ import com.almasb.fxgl.util.FXGLLogger;
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
+import javafx.scene.text.Font;
 
 /**
  * AssetManager handles all resource (asset) loading operations.
@@ -63,6 +64,7 @@ import javafx.scene.media.Media;
  * <li>Data - /assets/data/</li>
  * <li>Scripts - /assets/scripts/</li>
  * <li>CSS - /assets/ui/css/</li>
+ * <li>Font - /assets/ui/fonts/</li>
  * <li>App icons - /assets/ui/icons/</li>
  * </ul>
  *
@@ -82,6 +84,7 @@ public enum AssetManager {
 
     private static final String UI_DIR = ASSETS_DIR + "ui/";
     private static final String CSS_DIR = UI_DIR + "css/";
+    private static final String FONTS_DIR = UI_DIR + "fonts/";
     private static final String ICON_DIR = UI_DIR + "icons/";
     private static final String CURSORS_DIR = UI_DIR + "cursors/";
 
@@ -225,6 +228,26 @@ public enum AssetManager {
     }
 
     /**
+     * Loads a native JavaFX font with given name and size from assets/ui/fonts/
+     *
+     * @param name
+     * @param size
+     * @return
+     * @throws Exception
+     */
+    public Font loadFont(String name, double size) throws Exception {
+        try (InputStream is = getClass().getResourceAsStream(FONTS_DIR + name)) {
+            if (is != null) {
+                return Font.loadFont(is, size);
+            }
+            else {
+                log.warning("Failed to load font: " + name + " Check it exists in assets/ui/fonts/");
+                throw new IOException("Failed to load font: " + name);
+            }
+        }
+    }
+
+    /**
      * Loads an app icon from assets/ui/icons.
      *
      * @param name
@@ -255,6 +278,7 @@ public enum AssetManager {
         List<String> audio = loadFileNames(AUDIO_DIR);
         List<String> music = loadFileNames(MUSIC_DIR);
         List<String> text = loadFileNames(TEXT_DIR);
+        List<String> fonts = loadFileNames(FONTS_DIR);
         List<String> data = loadFileNames(BINARY_DIR);
 
         Assets assets = new Assets();
@@ -268,6 +292,8 @@ public enum AssetManager {
             assets.putText(name, loadText(name));
         for (String name : data)
             assets.putData(name, loadDataInternal(name));
+        for (String name : fonts)
+            assets.putFont(name, loadFont(name, 12));
 
         return assets;
     }

@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.scene.media.AudioClip;
+import javafx.scene.text.Font;
 
 /**
  * Stores cached data
@@ -42,10 +43,12 @@ public final class Assets {
 
     private static final Logger log = FXGLLogger.getLogger("Assets");
 
+    // TODO: generalize this
     private Map<String, Texture> cachedTextures = new HashMap<>();
     private Map<String, AudioClip> cachedAudio = new HashMap<>();
     private Map<String, Music> cachedMusic = new HashMap<>();
     private Map<String, List<String> > cachedText = new HashMap<>();
+    private Map<String, Font> cachedFonts = new HashMap<>();
     private Map<String, Object> cachedData = new HashMap<>();
 
     /**
@@ -69,6 +72,10 @@ public final class Assets {
 
     /*package-private*/ void putText(String key, List<String> text) {
         cachedText.put(key, text);
+    }
+
+    /*package-private*/ void putFont(String key, Font font) {
+        cachedFonts.put(key, font);
     }
 
     /*package-private*/ void putData(String key, Object data) {
@@ -137,6 +144,20 @@ public final class Assets {
     }
 
     /**
+     * Returns stored font.
+     *
+     * @param key
+     * @return
+     */
+    public Font getFont(String key) {
+        Font font = cachedFonts.get(key);
+        if (font != null)
+            return font;
+        else
+            throw new IllegalArgumentException("No cached font found with name: " + key);
+    }
+
+    /**
      * Returns cached custom format data.
      *
      * @param key
@@ -162,6 +183,7 @@ public final class Assets {
         cachedAudio.forEach((name, audio) -> log.info("Audio:" + name));
         cachedMusic.forEach((name, music) -> log.info("Music:" + name));
         cachedText.forEach((name, text) -> log.info("Text:" + name));
+        cachedFonts.forEach((name, font) -> log.info("Font:" + name));
         cachedData.forEach((name, data) -> log.info("Data:" + name));
     }
 
@@ -171,6 +193,6 @@ public final class Assets {
      */
     public int size() {
         return cachedTextures.size() + cachedAudio.size() + cachedMusic.size()
-            + cachedText.size() + cachedData.size();
+            + cachedText.size() + cachedFonts.size() + cachedData.size();
     }
 }
