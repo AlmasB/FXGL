@@ -44,6 +44,7 @@ import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -278,6 +279,39 @@ public final class SceneManager extends FXGLManager {
     }
 
     /**
+     * Returns render group for entity based on entity's
+     * render layer. If no such group exists, a new group
+     * will be created for that layer and placed
+     * in the scene graph according to its layer index.
+     *
+     * @param e
+     * @return
+     */
+    private Group getRenderLayerFor(Entity e) {
+        Integer renderLayer = e.getRenderLayer().index();
+        Group group = gameRoot.getChildren()
+                .stream()
+                .filter(n -> (int)n.getUserData() == renderLayer)
+                .findAny()
+                .map(n -> (Group)n)
+                .orElse(new Group());
+
+
+        if (group.getUserData() == null) {
+            log.finer("Creating render group for layer: " + e.getRenderLayer().asString());
+            group.setUserData(renderLayer);
+            gameRoot.getChildren().add(group);
+        }
+
+        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
+        tmpGroups.sort((g1, g2) -> (int)g1.getUserData() - (int)g2.getUserData());
+
+        gameRoot.getChildren().setAll(tmpGroups);
+
+        return group;
+    }
+
+    /**
      * Add entity(-ies) to the scene graph.
      * The entity(-ies) will be added in the next tick.
      *
@@ -364,6 +398,23 @@ public final class SceneManager extends FXGLManager {
     }
 
     /**
+     * Returns a list of entities whose type matches given arguments and
+     * which have the given render layer index
+     *
+     * If no arguments were given, a list of all entities satisfying the
+     * requirement (i.e. render layer) is returned.
+     *
+     * @param layer
+     * @param types
+     * @return
+     */
+    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
+        return getEntities(types).stream()
+                .filter(e -> e.getRenderLayer().index() == layer.index())
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Returns the closest entity to the given entity with given type.
      * If no types were specified, the closest entity is returned. The given
      * entity itself is never returned.
@@ -412,16 +463,17 @@ public final class SceneManager extends FXGLManager {
 
             // TODO: check combined
             if (e instanceof CombinedEntity) {
-                gameRoot.getChildren().addAll(e.getChildrenUnmodifiable()
+                getRenderLayerFor(e).getChildren().addAll(e.getChildrenUnmodifiable()
                         .stream().map(node -> (Entity)node)
                         .collect(Collectors.toList()));
             }
             else if (e instanceof PhysicsEntity) {
                 app.getPhysicsManager().createBody((PhysicsEntity) e);
-                gameRoot.getChildren().add(e);
+                getRenderLayerFor(e).getChildren().add(e);
             }
-            else
-                gameRoot.getChildren().add(e);
+            else {
+                getRenderLayerFor(e).getChildren().add(e);
+            }
 
             Duration expire = e.getExpireTime();
             if (expire != Duration.ZERO)
@@ -442,7 +494,11 @@ public final class SceneManager extends FXGLManager {
      */
     private void removePendingEntities() {
         entities.removeAll(removeQueue);
-        gameRoot.getChildren().removeAll(removeQueue);
+
+        removeQueue.forEach(e -> {
+            getRenderLayerFor(e).getChildren().remove(e);
+        });
+
         removeQueue.stream()
                     .filter(e -> e instanceof PhysicsEntity)
                     .map(e -> (PhysicsEntity)e)
@@ -706,6 +762,14 @@ public final class SceneManager extends FXGLManager {
         scene.setRoot(mainMenu.getRoot());
     }
 
+    /**
+     * Shows given dialog and blocks execution of the game
+     * until the dialog is dismissed. Returns the result
+     * from the dialog.
+     *
+     * @param dialog
+     * @return
+     */
     public <T> Optional<T> showAndWait(Dialog<T> dialog) {
         app.pause();
         app.getInputManager().clearAllInput();

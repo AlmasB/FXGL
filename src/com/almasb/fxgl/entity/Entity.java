@@ -497,6 +497,16 @@ public class Entity extends Parent {
         eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {}).handle(event);
     }
 
+    private RenderLayer renderLayer = RenderLayer.TOP;
+
+    public final void setRenderLayer(RenderLayer layer) {
+        this.renderLayer = layer;
+    }
+
+    public final RenderLayer getRenderLayer() {
+        return renderLayer;
+    }
+
     /**
      * Returns a new entity without any type.
      *
