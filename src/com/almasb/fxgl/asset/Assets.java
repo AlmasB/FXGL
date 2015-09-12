@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 
 import com.almasb.fxgl.util.FXGLLogger;
 
-import javafx.scene.media.AudioClip;
 import javafx.scene.text.Font;
 
 /**
@@ -45,7 +44,7 @@ public final class Assets {
 
     // TODO: generalize this
     private Map<String, Texture> cachedTextures = new HashMap<>();
-    private Map<String, AudioClip> cachedAudio = new HashMap<>();
+    private Map<String, Sound> cachedSounds = new HashMap<>();
     private Map<String, Music> cachedMusic = new HashMap<>();
     private Map<String, List<String> > cachedText = new HashMap<>();
     private Map<String, Font> cachedFonts = new HashMap<>();
@@ -62,8 +61,8 @@ public final class Assets {
         cachedTextures.put(key, texture);
     }
 
-    /*package-private*/ void putAudio(String key, AudioClip audio) {
-        cachedAudio.put(key, audio);
+    /*package-private*/ void putSound(String key, Sound sound) {
+        cachedSounds.put(key, sound);
     }
 
     /*package-private*/ void putMusic(String key, Music music) {
@@ -105,12 +104,12 @@ public final class Assets {
      * @return
      * @throws IllegalArgumentException if no such audio exists
      */
-    public AudioClip getAudio(String key) {
-        AudioClip audio = cachedAudio.get(key);
+    public Sound getSound(String key) {
+        Sound audio = cachedSounds.get(key);
         if (audio != null)
             return audio;
         else
-            throw new IllegalArgumentException("No cached audio found with name: " + key);
+            throw new IllegalArgumentException("No cached sound found with name: " + key);
     }
 
     /**
@@ -180,7 +179,7 @@ public final class Assets {
     public void logCached() {
         log.info("Logging cached assets");
         cachedTextures.forEach((name, texture) -> log.info("Texture:" + name));
-        cachedAudio.forEach((name, audio) -> log.info("Audio:" + name));
+        cachedSounds.forEach((name, audio) -> log.info("Sound:" + name));
         cachedMusic.forEach((name, music) -> log.info("Music:" + name));
         cachedText.forEach((name, text) -> log.info("Text:" + name));
         cachedFonts.forEach((name, font) -> log.info("Font:" + name));
@@ -192,7 +191,7 @@ public final class Assets {
      * @return  size of all cached assets
      */
     public int size() {
-        return cachedTextures.size() + cachedAudio.size() + cachedMusic.size()
+        return cachedTextures.size() + cachedSounds.size() + cachedMusic.size()
             + cachedText.size() + cachedFonts.size() + cachedData.size();
     }
 }

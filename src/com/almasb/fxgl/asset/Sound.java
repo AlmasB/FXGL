@@ -25,44 +25,51 @@
  */
 package com.almasb.fxgl.asset;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
 
 /**
- * Represents a long-term audio in mp3 file. Use for
- * background (looping) music or recorded dialogues.
+ * Represents a short sound in .wav file.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
  */
-public final class Music {
+public final class Sound {
 
-    /*package-private*/ final MediaPlayer mediaPlayer;
+    /*package-private*/ final AudioClip clip;
 
-    /*package-private*/ Music(Media media) {
-        mediaPlayer = new MediaPlayer(media);
+    /*package-private*/ Sound(AudioClip clip) {
+        this.clip = clip;
     }
 
     public void setBalance(double balance) {
-        mediaPlayer.setBalance(balance);
+        clip.setBalance(balance);
     }
 
     public double getBalance() {
-        return mediaPlayer.getBalance();
+        return clip.getBalance();
+    }
+
+    public void setPan(double pan) {
+        clip.setPan(pan);
+    }
+
+    public double getPan() {
+        return clip.getPan();
     }
 
     public void setRate(double rate) {
-        mediaPlayer.setRate(rate);
+        clip.setRate(rate);
     }
 
     public double getRate() {
-        return mediaPlayer.getRate();
+        return clip.getRate();
     }
 
     public void setCycleCount(int count) {
-        mediaPlayer.setCycleCount(count);
+        clip.setCycleCount(count);
     }
 
     public double getCycleCount() {
-        return mediaPlayer.getCycleCount();
+        return clip.getCycleCount();
     }
 }

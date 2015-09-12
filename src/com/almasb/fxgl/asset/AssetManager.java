@@ -58,7 +58,7 @@ import javafx.scene.text.Font;
  * AssetManager will look for resources (assets) under these specified directories
  * <ul>
  * <li>Texture - /assets/textures/</li>
- * <li>AudioClip - /assets/audio/</li>
+ * <li>Sound - /assets/sounds/</li>
  * <li>Music - /assets/music/</li>
  * <li>Text (List&lt;String&gt;) - /assets/text/</li>
  * <li>Data - /assets/data/</li>
@@ -76,7 +76,7 @@ public enum AssetManager {
 
     private static final String ASSETS_DIR = "/assets/";
     private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";
-    private static final String AUDIO_DIR = ASSETS_DIR + "audio/";
+    private static final String SOUNDS_DIR = ASSETS_DIR + "sounds/";
     private static final String MUSIC_DIR = ASSETS_DIR + "music/";
     private static final String TEXT_DIR = ASSETS_DIR + "text/";
     private static final String KV_DIR = ASSETS_DIR + "kv/";
@@ -103,13 +103,13 @@ public enum AssetManager {
         }
     }
 
-    public AudioClip loadAudio(String name) throws Exception {
+    public Sound loadSound(String name) throws Exception {
         try {
-            return new AudioClip(getClass().getResource(AUDIO_DIR + name).toExternalForm());
+            return new Sound(new AudioClip(getClass().getResource(SOUNDS_DIR + name).toExternalForm()));
         }
         catch (Exception e) {
-            log.warning("Failed to load audio: " + name + " Check it exists in assets/audio/");
-            throw new IOException("Failed to load audio: " + name);
+            log.warning("Failed to load sound: " + name + " Check it exists in assets/sounds/");
+            throw new IOException("Failed to load sound: " + name);
         }
     }
 
@@ -286,7 +286,7 @@ public enum AssetManager {
      */
     public Assets cache() throws Exception {
         List<String> textures = loadFileNames(TEXTURES_DIR);
-        List<String> audio = loadFileNames(AUDIO_DIR);
+        List<String> audio = loadFileNames(SOUNDS_DIR);
         List<String> music = loadFileNames(MUSIC_DIR);
         List<String> text = loadFileNames(TEXT_DIR);
         List<String> fonts = loadFileNames(FONTS_DIR);
@@ -296,7 +296,7 @@ public enum AssetManager {
         for (String name : textures)
             assets.putTexture(name, loadTexture(name));
         for (String name : audio)
-            assets.putAudio(name, loadAudio(name));
+            assets.putSound(name, loadSound(name));
         for (String name : music)
             assets.putMusic(name, loadMusic(name));
         for (String name : text)

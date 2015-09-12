@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.AudioManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.effect.ParticleManager;
 import com.almasb.fxgl.event.InputManager;
@@ -126,6 +127,7 @@ public abstract class GameApplication extends Application {
 
     private StageManager stageManager = new StageManager();
     protected final SceneManager sceneManager = new SceneManager();
+    protected final AudioManager audioManager = new AudioManager();
     protected final InputManager inputManager = new InputManager();
     protected final AssetManager assetManager = AssetManager.INSTANCE;
     protected final PhysicsManager physicsManager = new PhysicsManager();
@@ -276,6 +278,7 @@ public abstract class GameApplication extends Application {
         managers.add(physicsManager);
         managers.add(particleManager);
         managers.add(sceneManager);
+        managers.add(audioManager);
     }
 
     /**
@@ -465,6 +468,14 @@ public abstract class GameApplication extends Application {
      */
     public final SceneManager getSceneManager() {
         return sceneManager;
+    }
+
+    /**
+     *
+     * @return audio manager
+     */
+    public final AudioManager getAudioManager() {
+        return audioManager;
     }
 
     /**
