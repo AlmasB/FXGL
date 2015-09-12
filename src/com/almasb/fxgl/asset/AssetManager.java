@@ -79,6 +79,7 @@ public enum AssetManager {
     private static final String AUDIO_DIR = ASSETS_DIR + "audio/";
     private static final String MUSIC_DIR = ASSETS_DIR + "music/";
     private static final String TEXT_DIR = ASSETS_DIR + "text/";
+    private static final String KV_DIR = ASSETS_DIR + "kv/";
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
     private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
 
@@ -135,6 +136,16 @@ public enum AssetManager {
         catch (Exception e) {
             log.warning("Failed to load text: " + name + " Check it exists in assets/text/");
             throw new IOException("Failed to load text: " + name);
+        }
+    }
+
+    public KVFile loadKV(String name) throws Exception {
+        try {
+            return new KVFile(Files.readAllLines(Paths.get(getClass().getResource(KV_DIR + name).toURI())));
+        }
+        catch (Exception e) {
+            log.warning("Failed to load kv file: " + name + " Check it exists in assets/kv/");
+            throw new IOException("Failed to load kv file: " + name);
         }
     }
 
