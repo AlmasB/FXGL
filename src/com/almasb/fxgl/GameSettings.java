@@ -149,4 +149,14 @@ public final class GameSettings extends ReadOnlyGameSettings {
     public void setApplicationMode(ApplicationMode mode) {
         this.appMode = mode;
     }
+
+    /**
+     * Sets the name of the default font. The font file
+     * must be located in assets/ui/fonts/
+     *
+     * @param name
+     */
+    public void setDefaultFontName(String name) {
+        this.defaultFontName = name;
+    }
 }

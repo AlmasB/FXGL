@@ -37,6 +37,7 @@ public class ReadOnlyGameSettings {
     protected String iconFileName = "";
     protected boolean showFPS = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
+    protected String defaultFontName = "Copperplate_Gothic_Light_Regular.ttf";
 
     /**
      * Constructs game settings with default parameters
@@ -60,6 +61,7 @@ public class ReadOnlyGameSettings {
         this.iconFileName = copy.iconFileName;
         this.showFPS = copy.showFPS;
         this.appMode = copy.appMode;
+        this.defaultFontName = copy.defaultFontName;
     }
 
     public final String getTitle() {
@@ -100,5 +102,9 @@ public class ReadOnlyGameSettings {
 
     public final ApplicationMode getApplicationMode() {
         return appMode;
+    }
+
+    public final String getDefaultFontName() {
+        return defaultFontName;
     }
 }

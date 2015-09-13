@@ -266,6 +266,7 @@ public abstract class GameApplication extends Application {
      */
     private void initManagers() {
         inputManager.init(sceneManager.getScene());
+        // TODO: possibly move back
         initInput();
 
         qteManager.init();

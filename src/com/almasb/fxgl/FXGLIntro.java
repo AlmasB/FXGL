@@ -49,7 +49,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -162,14 +161,14 @@ import javafx.util.Duration;
     private Text makeLetter(String letter) {
         Text text = new Text(letter);
         text.setFill(Color.WHITESMOKE);
-        text.setFont(Font.font(72));
+        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(72));
         return text;
     }
 
     private Text makeVersion() {
         Text text = new Text(Version.getAsString() + " by AlmasB");
         text.setVisible(false);
-        text.setFont(Font.font(18));
+        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
         text.setFill(Color.ALICEBLUE);
         text.setTranslateY(h - 5);
         return text;
@@ -178,7 +177,7 @@ import javafx.util.Duration;
     private Text makePoweredBy() {
         Text text = new Text("Powered By");
         text.setVisible(false);
-        text.setFont(Font.font(18));
+        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
         text.setFill(Color.WHITE);
         text.setTranslateX(w / 2 - text.getLayoutBounds().getWidth() / 2);
         text.setTranslateY(h / 2 - 80);

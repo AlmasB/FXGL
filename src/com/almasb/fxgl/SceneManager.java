@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
@@ -168,6 +169,13 @@ public final class SceneManager extends FXGLManager {
     }
 
     /*package-private*/ void init() {
+        try {
+            setDefaultFont(AssetManager.INSTANCE.loadFont(app.getSettings().getDefaultFontName(), 24));
+        }
+        catch (Exception e) {
+            log.warning("Failed to set default font. Using System default");
+        }
+
         isMenuEnabled = app.getSettings().isMenuEnabled();
 
         setPrefSize(app.getWidth(), app.getHeight());
@@ -182,7 +190,7 @@ public final class SceneManager extends FXGLManager {
         if (app.getSettings().isFPSShown()) {
             Text fpsText = new Text();
             fpsText.setFill(Color.AZURE);
-            fpsText.setFont(Font.font(24));
+            fpsText.setFont(getDefaultFont(24));
             fpsText.setTranslateY(app.getHeight() - 40);
             fpsText.textProperty().bind(app.getTimerManager().fpsProperty().asString("FPS: [%d]\n")
                     .concat(app.getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
@@ -625,6 +633,20 @@ public final class SceneManager extends FXGLManager {
         catch (Exception e) {
             log.warning("Failed to set cursor: " + e.getMessage());
         }
+    }
+
+    private Font defaultFont = Font.getDefault();
+
+    public Font getDefaultFont() {
+        return defaultFont;
+    }
+
+    public Font getDefaultFont(double size) {
+        return new Font(defaultFont.getName(), size);
+    }
+
+    private void setDefaultFont(Font font) {
+        defaultFont = font;
     }
 
     /**

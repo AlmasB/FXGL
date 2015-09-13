@@ -55,7 +55,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -96,7 +95,7 @@ public final class FXGLMainMenu extends Menu {
         Text version = new Text("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
         version.setFill(Color.WHITE);
-        version.setFont(Font.font(18));
+        version.setFont(app.getSceneManager().getDefaultFont(18));
 
         root.getChildren().addAll(bg, title, version, menu, menuContent);
     }
@@ -198,7 +197,7 @@ public final class FXGLMainMenu extends Menu {
     }
 
     private MenuContent createContentCredits() {
-        Font font = Font.font(18);
+        Font font = app.getSceneManager().getDefaultFont(18);
 
         Text textHead = new Text("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
         textHead.setFont(font);
@@ -224,7 +223,7 @@ public final class FXGLMainMenu extends Menu {
     }
 
     private MenuContent createContentControls() {
-        Font font = Font.font(18);
+        Font font = app.getSceneManager().getDefaultFont(18);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -244,7 +243,7 @@ public final class FXGLMainMenu extends Menu {
 
                 Text text = new Text("PRESS ANY KEY");
                 text.setFill(Color.WHITE);
-                text.setFont(Font.font(24));
+                text.setFont(app.getSceneManager().getDefaultFont(24));
 
                 Stage stage = new Stage(StageStyle.TRANSPARENT);
                 stage.initModality(Modality.WINDOW_MODAL);
@@ -312,7 +311,7 @@ public final class FXGLMainMenu extends Menu {
         public Title(String name) {
             text = new Text(name);
             text.setFill(Color.WHITE);
-            text.setFont(Font.font("", FontWeight.SEMI_BOLD, 50));
+            text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(50));
 
             Rectangle bg = new Rectangle(text.getLayoutBounds().getWidth() + 20, 60);
             bg.setStroke(Color.WHITE);
@@ -377,7 +376,7 @@ public final class FXGLMainMenu extends Menu {
 
             text.setText(name);
             text.setFill(Color.DARKGREY);
-            text.setFont(Font.font("", FontWeight.SEMI_BOLD, 22));
+            text.setFont(app.getSceneManager().getDefaultFont(22));
 
             setAlignment(Pos.CENTER);
             getChildren().addAll(bg, text);
