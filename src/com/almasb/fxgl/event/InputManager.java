@@ -26,8 +26,10 @@
 package com.almasb.fxgl.event;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import com.almasb.fxgl.FXGLManager;
+import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -47,7 +49,7 @@ import javafx.scene.input.MouseEvent;
  */
 public final class InputManager extends FXGLManager {
 
-    //private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
 
     private Scene gameScene;
 
@@ -205,6 +207,7 @@ public final class InputManager extends FXGLManager {
      */
     public void addAction(UserAction action, MouseButton btn) {
         bindings.add(new InputBinding(action, btn));
+        log.finer("Registered new action: " + action + " to " + btn);
     }
 
     /**
@@ -215,6 +218,7 @@ public final class InputManager extends FXGLManager {
      */
     public void addAction(UserAction action, KeyCode key) {
         bindings.add(new InputBinding(action, key));
+        log.finer("Registered new action: " + action + " to " + key);
     }
 
     /**
