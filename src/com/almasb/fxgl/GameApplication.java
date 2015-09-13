@@ -43,6 +43,7 @@ import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.FXGLGameMenu;
 import com.almasb.fxgl.ui.FXGLMainMenu;
 import com.almasb.fxgl.ui.Menu;
+import com.almasb.fxgl.util.FXGLExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 

@@ -23,13 +23,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.ApplicationMode;
+import com.almasb.fxgl.GameApplication;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;

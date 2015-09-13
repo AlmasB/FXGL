@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.util;
 
 public interface ExceptionHandler {
     public void handle(Throwable e);

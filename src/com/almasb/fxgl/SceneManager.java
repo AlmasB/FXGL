@@ -267,7 +267,7 @@ public final class SceneManager extends FXGLManager {
      *
      * @return JavaFX scene
      */
-    /*package-private*/ Scene getScene() {
+    public Scene getScene() {
         return scene;
     }
 
@@ -282,7 +282,7 @@ public final class SceneManager extends FXGLManager {
      *
      * @return
      */
-    public final double getSizeRatio() {
+    public double getSizeRatio() {
         return sizeRatio;
     }
 
