@@ -55,6 +55,10 @@ public final class AudioManager extends FXGLManager {
 
     private DoubleProperty globalMusicVolume = new SimpleDoubleProperty(1.0);
 
+    /**
+     *
+     * @return global music volume property
+     */
     public DoubleProperty globalMusicVolumeProperty() {
         return globalMusicVolume;
     }
@@ -79,6 +83,10 @@ public final class AudioManager extends FXGLManager {
 
     private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(1.0);
 
+    /**
+     *
+     * @return global sound volume property
+     */
     public DoubleProperty globalSoundVolumeProperty() {
         return globalSoundVolume;
     }

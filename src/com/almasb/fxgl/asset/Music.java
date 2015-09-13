@@ -42,26 +42,62 @@ public final class Music {
         mediaPlayer = new MediaPlayer(media);
     }
 
+    /**
+     * The balance, or left-right setting, of the audio output. The range of
+     * effective values is <code>[-1.0,&nbsp;1.0]</code> with <code>-1.0</code>
+     * being full left, <code>0.0</code> center, and <code>1.0</code> full right.
+     * The default value is <code>0.0</code>.
+     *
+     * @param balance
+     */
     public void setBalance(double balance) {
         mediaPlayer.setBalance(balance);
     }
 
+    /**
+     *
+     * @return balance of the audio output
+     */
     public double getBalance() {
         return mediaPlayer.getBalance();
     }
 
+    /**
+     * The rate at which the media should be played. For example, a rate of
+     * <code>1.0</code> plays the media at its normal (encoded) playback rate,
+     * <code>2.0</code> plays back at twice the normal rate, etc. The currently
+     * supported range of rates is <code>[0.0,&nbsp;8.0]</code>. The default
+     * value is <code>1.0</code>.
+     *
+     * @param rate
+     */
     public void setRate(double rate) {
         mediaPlayer.setRate(rate);
     }
 
+    /**
+     *
+     * @return music rate
+     */
     public double getRate() {
         return mediaPlayer.getRate();
     }
 
+    /**
+     * Set number of times the music will be played. Setting
+     * to {@link Integer#MAX_VALUE} effectively loops the music.
+     * Useful for background music.
+     *
+     * @param count
+     */
     public void setCycleCount(int count) {
         mediaPlayer.setCycleCount(count);
     }
 
+    /**
+     *
+     * @return number of times the music to be played
+     */
     public double getCycleCount() {
         return mediaPlayer.getCycleCount();
     }

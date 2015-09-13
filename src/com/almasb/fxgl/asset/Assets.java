@@ -102,12 +102,12 @@ public final class Assets {
      *
      * @param key
      * @return
-     * @throws IllegalArgumentException if no such audio exists
+     * @throws IllegalArgumentException if no such sound exists
      */
     public Sound getSound(String key) {
-        Sound audio = cachedSounds.get(key);
-        if (audio != null)
-            return audio;
+        Sound sound = cachedSounds.get(key);
+        if (sound != null)
+            return sound;
         else
             throw new IllegalArgumentException("No cached sound found with name: " + key);
     }

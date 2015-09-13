@@ -637,14 +637,33 @@ public final class SceneManager extends FXGLManager {
 
     private Font defaultFont = Font.getDefault();
 
+    /**
+     * Returns default font. This is either
+     * user font if set via {@link GameSettings#setDefaultFontName(String)}.
+     * If not, then default FXGL font. If the user found couldn't be loaded,
+     * then the System default font.
+     *
+     * @return
+     */
     public Font getDefaultFont() {
         return defaultFont;
     }
 
+    /**
+     * Returns default font {@link #getDefaultFont()} with given size.
+     *
+     * @param size
+     * @return
+     */
     public Font getDefaultFont(double size) {
         return new Font(defaultFont.getName(), size);
     }
 
+    /**
+     * Set the default font.
+     *
+     * @param font
+     */
     private void setDefaultFont(Font font) {
         defaultFont = font;
     }
