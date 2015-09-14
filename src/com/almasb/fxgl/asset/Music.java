@@ -37,6 +37,7 @@ import javafx.scene.media.MediaPlayer;
 public final class Music {
 
     /*package-private*/ final MediaPlayer mediaPlayer;
+    /*package-private*/ boolean isStopped = false;
 
     /*package-private*/ Music(Media media) {
         mediaPlayer = new MediaPlayer(media);

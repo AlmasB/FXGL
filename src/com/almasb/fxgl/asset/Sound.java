@@ -36,6 +36,7 @@ import javafx.scene.media.AudioClip;
 public final class Sound {
 
     /*package-private*/ final AudioClip clip;
+    ///*package-private*/ boolean isStopped = false;
 
     /*package-private*/ Sound(AudioClip clip) {
         this.clip = clip;

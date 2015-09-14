@@ -28,12 +28,13 @@ package com.almasb.fxgl.asset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.almasb.fxgl.FXGLManager;
+import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.media.MediaPlayer.Status;
 
 /**
  * Controls playback and the volume of {@link com.almasb.fxgl.asset.Sound}
@@ -42,6 +43,8 @@ import javafx.scene.media.MediaPlayer.Status;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class AudioManager extends FXGLManager {
+
+    private static final Logger log = FXGLLogger.getLogger("FXGL.AudioManager");
 
     /**
      * Contains sounds which are currently playing.
@@ -147,10 +150,12 @@ public final class AudioManager extends FXGLManager {
      * @param music
      */
     public void playMusic(Music music) {
-        if (!activeMusic.contains(music))
+        if (!activeMusic.contains(music)) {
             activeMusic.add(music);
+        }
         music.mediaPlayer.volumeProperty().bind(globalMusicVolumeProperty());
         music.mediaPlayer.play();
+        music.isStopped = false;
     }
 
     /**
@@ -185,6 +190,7 @@ public final class AudioManager extends FXGLManager {
         if (activeMusic.contains(music)) {
             activeMusic.remove(music);
             music.mediaPlayer.stop();
+            music.isStopped = true;
         }
     }
 
@@ -209,15 +215,24 @@ public final class AudioManager extends FXGLManager {
      * to be started by {@link #playMusic(Music)}.
      */
     public void stopAllMusic() {
+        log.finer("Stopping all music. Active music size: " + activeMusic.size());
         for (Iterator<Music> it = activeMusic.iterator(); it.hasNext(); ) {
-            it.next().mediaPlayer.stop();
+            Music music = it.next();
+            music.mediaPlayer.stop();
+            music.isStopped = true;
             it.remove();
         }
     }
 
     @Override
     protected void onUpdate(long now) {
+        for (Music music : activeMusic) {
+            if (music.mediaPlayer.getCurrentTime().equals(music.mediaPlayer.getTotalDuration())) {
+                music.isStopped = true;
+            }
+        }
+
         activeSounds.removeIf(sound -> !sound.clip.isPlaying());
-        activeMusic.removeIf(music -> music.mediaPlayer.getStatus() == Status.STOPPED);
+        activeMusic.removeIf(music -> music.isStopped);
     }
 }
