@@ -67,6 +67,16 @@ public final class TimerManager extends FXGLManager {
     }
 
     /**
+     * Converts type Duration to nanoseconds.
+     *
+     * @param duration
+     * @return
+     */
+    public static long toNanos(Duration duration) {
+        return secondsToNanos(duration.toSeconds());
+    }
+
+    /**
      * List for all timer based actions
      */
     private List<TimerAction> timerActions = new CopyOnWriteArrayList<>();
