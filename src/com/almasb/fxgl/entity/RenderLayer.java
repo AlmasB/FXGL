@@ -25,14 +25,42 @@
  */
 package com.almasb.fxgl.entity;
 
+/**
+ * Represents a layer which is used to group objects being rendered.
+ * Layers are rendered from lower index value to higher index value.
+ * Objects with higher index value will be rendered on top of objects
+ * with lower index value.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public interface RenderLayer {
+
+    /**
+     * Returns a human readable name for this layer.
+     *
+     * @return layer name
+     */
     public String name();
+
+    /**
+     * Returns index value for this layer.
+     *
+     * @return layer index
+     */
     public int index();
 
+    /**
+     *
+     * @return string representation of render layer
+     */
     default public String asString() {
         return name() + "(" + index() + ")";
     }
 
+    /**
+     * Default render layer for entities with no specified
+     * render layer.
+     */
     public static final RenderLayer TOP = new RenderLayer() {
         @Override
         public String name() {

@@ -499,10 +499,32 @@ public class Entity extends Parent {
 
     private RenderLayer renderLayer = RenderLayer.TOP;
 
-    public final void setRenderLayer(RenderLayer layer) {
+    /**
+     * Set render layer for this entity. Render layer determines
+     * how an entity is rendered relative to other entities. The layer
+     * with higher index() will be rendered on top of the layer with
+     * lower index(). By default an entity has the very top layer with
+     * highest index equal to {@link Integer#MAX_VALUE}.
+     *
+     * The render layer can only
+     * be set before adding entity to the scene. If the entity is
+     * already registered in the scene graph, this method will throw
+     * IllegalStateException.
+     *
+     * TODO: fix if set render layer after adding to scene graph
+     * entity won't be removed properly (test)
+     *
+     * @param layer
+     */
+    public final Entity setRenderLayer(RenderLayer layer) {
         this.renderLayer = layer;
+        return this;
     }
 
+    /**
+     *
+     * @return render layer for entity
+     */
     public final RenderLayer getRenderLayer() {
         return renderLayer;
     }
