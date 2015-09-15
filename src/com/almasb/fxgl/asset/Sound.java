@@ -119,7 +119,26 @@ public final class Sound {
      *
      * @return number of times sound to be played
      */
-    public double getCycleCount() {
+    public int getCycleCount() {
         return clip.getCycleCount();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Sound [sourceURL=");
+        builder.append(clip.getSource());
+        builder.append(", balance=");
+        builder.append(getBalance());
+        builder.append(", volume=");
+        builder.append(clip.getVolume());
+        builder.append(", pan=");
+        builder.append(getPan());
+        builder.append(", rate=");
+        builder.append(getRate());
+        builder.append(", cycleCount=");
+        builder.append(getCycleCount());
+        builder.append("]");
+        return builder.toString();
     }
 }

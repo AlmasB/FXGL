@@ -94,6 +94,14 @@ public final class FXGLEvent {
 
     @Override
     public String toString() {
-        return type.getUniqueType();
+        StringBuilder builder = new StringBuilder();
+        builder.append("FXGLEvent [type=");
+        builder.append(type.getUniqueType());
+        builder.append(", source=");
+        builder.append(source);
+        builder.append(", target=");
+        builder.append(target);
+        builder.append("]");
+        return builder.toString();
     }
 }

@@ -114,4 +114,15 @@ public class Texture extends ImageView {
 
         return new Texture(image);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Texture [fitWidth=");
+        builder.append(getFitWidth());
+        builder.append(", fitHeight=");
+        builder.append(getFitHeight());
+        builder.append("]");
+        return builder.toString();
+    }
 }

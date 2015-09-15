@@ -566,6 +566,23 @@ public class Entity extends Parent {
         return renderLayer;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Entity [type=");
+        builder.append(getTypeAsString());
+        builder.append(", collidable=");
+        builder.append(collidable);
+        builder.append(", alive=");
+        builder.append(isAlive());
+        builder.append(", active=");
+        builder.append(isActive());
+        builder.append(", renderLayer=");
+        builder.append(renderLayer.asString());
+        builder.append("]");
+        return builder.toString();
+    }
+
     /**
      * Returns a new entity without any type.
      *

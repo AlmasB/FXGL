@@ -170,4 +170,13 @@ public final class KVFile {
 
         return instance;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("KVFile [entries=");
+        builder.append(entries.toString());
+        builder.append("]");
+        return builder.toString();
+    }
 }

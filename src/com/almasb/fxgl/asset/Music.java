@@ -99,7 +99,22 @@ public final class Music {
      *
      * @return number of times the music to be played
      */
-    public double getCycleCount() {
+    public int getCycleCount() {
         return mediaPlayer.getCycleCount();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Music [balance=");
+        builder.append(getBalance());
+        builder.append(", volume=");
+        builder.append(mediaPlayer.getVolume());
+        builder.append(", rate=");
+        builder.append(getRate());
+        builder.append(", cycleCount=");
+        builder.append(getCycleCount());
+        builder.append("]");
+        return builder.toString();
     }
 }
