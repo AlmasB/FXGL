@@ -40,7 +40,7 @@ public class ReadOnlyGameSettings {
     protected boolean fullScreen = false;
     protected boolean introEnabled = true;
     protected boolean menuEnabled = true;
-    protected String iconFileName = "";
+    protected String iconFileName = "fxgl_icon.png";
     protected boolean showFPS = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected String defaultFontName = "Copperplate_Gothic_Light_Regular.ttf";
