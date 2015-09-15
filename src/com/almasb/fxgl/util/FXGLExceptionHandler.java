@@ -41,6 +41,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 
+/**
+ * Default FXGL exception handler for unhandled exceptions, most
+ * of which will have runtime nature.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public enum FXGLExceptionHandler implements ExceptionHandler {
 
     INSTANCE;
