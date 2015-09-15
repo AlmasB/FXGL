@@ -57,7 +57,7 @@ import javafx.util.Pair;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class KVFile {
+public final class KVFile {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.KVFile");
 
@@ -72,6 +72,18 @@ public class KVFile {
         return valid;
     };
 
+    /**
+     * Constructs KVFile from lines of plain text.
+     * Each line must be in format:
+     *
+     * <pre>
+     * key = value
+     * </pre>
+     *
+     * Emptry spaces are ignored before, after and inbetween tokens.
+     *
+     * @param fileLines
+     */
     public KVFile(List<String> fileLines) {
         entries = fileLines.stream()
                 .map(s -> s.split("=", 2))
@@ -121,6 +133,15 @@ public class KVFile {
         }
     }
 
+    /**
+     * A factory constructor for KVFile, which also populates the
+     * created instance with key-value data from given object using
+     * its declared fields.
+     *
+     * @param data
+     * @return
+     * @throws Exception
+     */
     public static KVFile from(Object data) throws Exception {
         KVFile file = new KVFile();
 
@@ -133,6 +154,14 @@ public class KVFile {
         return file;
     }
 
+    /**
+     * Converts an instance of KVFile to instance of the data
+     * structure and populates its fields with appropriate values.
+     *
+     * @param type
+     * @return
+     * @throws Exception
+     */
     public <T> T to(Class<T> type) throws Exception {
         T instance = type.newInstance();
 

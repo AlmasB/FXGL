@@ -35,10 +35,15 @@ package com.almasb.fxgl.entity;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  *
  */
 public interface PropertyKey {
+
+    /**
+     * Returns unique string representation of key.
+     *
+     * @return
+     */
     default public String getUniqueKey() {
         return getClass().getCanonicalName() + "." + toString();
     }

@@ -35,13 +35,21 @@ public class Timer {
 
     private long time = 0;
 
-    public boolean elapsed(Duration duration) {
-        long now = timerManager.getNow();
-        if (now - time >= TimerManager.secondsToNanos(duration.toSeconds())) {
-            time = now;
-            return true;
-        }
+    /**
+     * Captures current time.
+     */
+    public void capture() {
+        time = timerManager.getNow();
+    }
 
-        return false;
+    /**
+     * Returns true if difference between captured time
+     * and now is greater or equal to given duration.
+     *
+     * @param duration
+     * @return
+     */
+    public boolean elapsed(Duration duration) {
+        return timerManager.getNow() - time >= TimerManager.toNanos(duration);
     }
 }

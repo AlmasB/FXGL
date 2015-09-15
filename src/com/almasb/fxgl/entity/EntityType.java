@@ -36,10 +36,14 @@ package com.almasb.fxgl.entity;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public interface EntityType {
+
+    /**
+     * Returns unique string literal for type.
+     *
+     * @return
+     */
     default public String getUniqueType() {
         return getClass().getCanonicalName() + "." + toString();
     }

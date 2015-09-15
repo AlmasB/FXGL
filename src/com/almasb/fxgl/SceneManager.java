@@ -82,7 +82,7 @@ import javafx.util.Duration;
  */
 public final class SceneManager extends FXGLManager {
 
-    private static final Logger log = FXGLLogger.getLogger("SceneManager");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
     //private static final int GAME_ROOT_LAYER = 0;
     private static final int UI_ROOT_LAYER = 2;
@@ -118,6 +118,16 @@ public final class SceneManager extends FXGLManager {
      *                  /      \
      *              gameRoot   uiRoot  <--> (gameMenu root)
      *
+     *
+     * From the rendering perspective it looks like this:
+     *
+     *                entity render layers (from lower index to higher index)
+     *                      ||
+     *                particle layer
+     *                      ||
+     *                   UI layer
+     *                      ||
+     *                   menu layer
      */
 
     /**

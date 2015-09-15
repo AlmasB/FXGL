@@ -439,6 +439,7 @@ public class Entity extends Parent {
      *
      * @param name
      * @param value
+     * @return this entity
      */
     public final Entity setProperty(String name, Object value) {
         getProperties().put(name, value);
@@ -450,7 +451,7 @@ public class Entity extends Parent {
      *
      * @param key
      * @param value
-     * @return
+     * @return this entity
      */
     public final Entity setProperty(PropertyKey key, Object value) {
         getProperties().put(key.getUniqueKey(), value);
@@ -547,6 +548,7 @@ public class Entity extends Parent {
      *
      * @param layer
      * @throws IllegalStateException
+     * @return this entity
      */
     public final Entity setRenderLayer(RenderLayer layer) {
         if (isActive())

@@ -120,6 +120,11 @@ public final class InputManager extends FXGLManager {
         gameScene.setOnMouseMoved(mouse::update);
     }
 
+    /**
+     * Handle pressed event for given trigger.
+     *
+     * @param trigger
+     */
     private void handlePressed(Trigger trigger) {
         if (isAnyMenuOpen())
             return;
@@ -139,6 +144,11 @@ public final class InputManager extends FXGLManager {
             .ifPresent(currentActions::add);
     }
 
+    /**
+     * Handle released event for given trigger
+     *
+     * @param trigger
+     */
     private void handleReleased(Trigger trigger) {
         if (isAnyMenuOpen())
             return;
@@ -157,6 +167,10 @@ public final class InputManager extends FXGLManager {
             .ifPresent(currentActions::remove);
     }
 
+    /**
+     *
+     * @return true if any menu is currently open, false otherwise
+     */
     private boolean isAnyMenuOpen() {
         return app.getSceneManager().isGameMenuOpen() || app.getSceneManager().isMainMenuOpen();
     }
@@ -233,11 +247,21 @@ public final class InputManager extends FXGLManager {
                 .findAny();
     }
 
+    /**
+     *
+     * @param key
+     * @return true if an action is already bound to given key
+     */
     private boolean isKeyBound(KeyCode key) {
         return bindings.stream()
                 .anyMatch(binding -> binding.isTriggered(key));
     }
 
+    /**
+     *
+     * @param btn
+     * @return true if an action is already bound to given button
+     */
     private boolean isButtonBound(MouseButton btn) {
         return bindings.stream()
                 .anyMatch(binding -> binding.isTriggered(btn));

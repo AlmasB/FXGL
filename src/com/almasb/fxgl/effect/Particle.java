@@ -123,6 +123,11 @@ public class Particle {
         this.decay = TimerManager.tpfSeconds() / expireTime.toSeconds();
     }
 
+    /**
+     * Set a direct controller to this particle.
+     *
+     * @param control
+     */
     public void setControl(Consumer<Particle> control) {
         this.control = control;
     }

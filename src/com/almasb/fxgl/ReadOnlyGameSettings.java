@@ -25,6 +25,12 @@
  */
 package com.almasb.fxgl;
 
+/**
+ * A copy of GameSettings with public getters only.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public class ReadOnlyGameSettings {
 
     protected String title = "Untitled FXGL Game Application";

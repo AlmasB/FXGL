@@ -32,7 +32,6 @@ package com.almasb.fxgl.entity;
  * it is equal to target.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  *
  */
 public final class FXGLEvent {
@@ -40,15 +39,30 @@ public final class FXGLEvent {
     private FXGLEventType type;
     private Entity source, target;
 
+    /**
+     * Constructs a new FXGL event with given type.
+     *
+     * @param type
+     */
     public FXGLEvent(FXGLEventType type) {
         this(type, null);
     }
 
+    /**
+     * Constructs a new FXGL event with given type and source.
+     *
+     * @param type
+     * @param source
+     */
     public FXGLEvent(FXGLEventType type, Entity source) {
         this.type = type;
         this.source = source;
     }
 
+    /**
+     *
+     * @return event type
+     */
     public FXGLEventType getType() {
         return type;
     }

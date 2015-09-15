@@ -57,6 +57,11 @@ public final class ParticleEntity extends Entity {
      */
     private ParticleEmitter emitter;
 
+    /**
+     * Constructs new particle entity with given type.
+     *
+     * @param type
+     */
     public ParticleEntity(EntityType type) {
         super(type);
     }

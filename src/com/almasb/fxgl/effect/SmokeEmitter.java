@@ -41,6 +41,9 @@ public final class SmokeEmitter extends ParticleEmitter {
 
     private Paint color = Color.rgb(230, 230, 230);
 
+    /**
+     * Constructs new smoke emitter with default settings.
+     */
     public SmokeEmitter() {
         setNumParticles(5);
         setEmissionRate(1);

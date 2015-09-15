@@ -59,7 +59,7 @@ public class Texture extends ImageView {
      * @param duration overall duration (for all frames) of the animation
      * @return new StaticAnimatedTexture
      */
-    public StaticAnimatedTexture toStaticAnimatedTexture(int frames, Duration duration) {
+    public final StaticAnimatedTexture toStaticAnimatedTexture(int frames, Duration duration) {
         StaticAnimatedTexture texture = new StaticAnimatedTexture(getImage(), frames, duration);
         return texture;
     }
@@ -72,7 +72,7 @@ public class Texture extends ImageView {
      *
      * @return new Texture with same image
      */
-    public Texture copy() {
+    public final Texture copy() {
         return new Texture(getImage());
     }
 
@@ -86,7 +86,7 @@ public class Texture extends ImageView {
      * @param area
      * @return
      */
-    public Texture subTexture(Rectangle2D area) {
+    public final Texture subTexture(Rectangle2D area) {
         int minX = (int) area.getMinX();
         int minY = (int) area.getMinY();
         int maxX = (int) area.getMaxX();

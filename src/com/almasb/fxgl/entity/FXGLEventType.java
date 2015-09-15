@@ -36,10 +36,18 @@ package com.almasb.fxgl.entity;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  *
  */
 public interface FXGLEventType {
+
+    /**
+     * Returns unique string literal representation of
+     * the event type. Unique means that <b>NO</b> two event types
+     * when called <code> event1.getUniqueType().equals(event2.getUniqueType())</code>
+     * return true.
+     *
+     * @return
+     */
     default public String getUniqueType() {
         return getClass().getCanonicalName() + "." + toString();
     }

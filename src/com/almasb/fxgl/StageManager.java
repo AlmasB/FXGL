@@ -44,7 +44,7 @@ import javafx.stage.Stage;
     /**
      * The logger
      */
-    private static final Logger log = FXGLLogger.getLogger("StageManager");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.StageManager");
 
     /**
      * Game window

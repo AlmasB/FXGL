@@ -29,6 +29,12 @@ import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.TimerManager;
 
+/**
+ * API NOT READY FOR USE
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public final class CircularMovementControl extends AbstractControl {
 
     private double radius;

@@ -47,6 +47,9 @@ public final class FireEmitter extends ParticleEmitter {
     private Supplier<Point2D> velocityFunction = () -> new Point2D(rand(-0.5, 0.5) * 0.25, rand() * -1);
     private Point2D gravity = Point2D.ZERO;
 
+    /**
+     * Constructs fire emitter with default settings.
+     */
     public FireEmitter() {
         setNumParticles(15);
         setEmissionRate(0.5);

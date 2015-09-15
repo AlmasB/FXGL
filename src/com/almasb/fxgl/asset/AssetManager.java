@@ -89,7 +89,7 @@ public enum AssetManager {
     private static final String ICON_DIR = UI_DIR + "icons/";
     private static final String CURSORS_DIR = UI_DIR + "cursors/";
 
-    private static final Logger log = FXGLLogger.getLogger("AssetManager");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.AssetManager");
 
     public Texture loadTexture(String name) throws Exception {
         try (InputStream is = getClass().getResourceAsStream(TEXTURES_DIR + name)) {
@@ -286,7 +286,7 @@ public enum AssetManager {
      */
     public Assets cache() throws Exception {
         List<String> textures = loadFileNames(TEXTURES_DIR);
-        List<String> audio = loadFileNames(SOUNDS_DIR);
+        List<String> sounds = loadFileNames(SOUNDS_DIR);
         List<String> music = loadFileNames(MUSIC_DIR);
         List<String> text = loadFileNames(TEXT_DIR);
         List<String> fonts = loadFileNames(FONTS_DIR);
@@ -295,7 +295,7 @@ public enum AssetManager {
         Assets assets = new Assets();
         for (String name : textures)
             assets.putTexture(name, loadTexture(name));
-        for (String name : audio)
+        for (String name : sounds)
             assets.putSound(name, loadSound(name));
         for (String name : music)
             assets.putMusic(name, loadMusic(name));

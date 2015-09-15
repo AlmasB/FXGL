@@ -40,9 +40,8 @@ import javafx.scene.text.Font;
  */
 public final class Assets {
 
-    private static final Logger log = FXGLLogger.getLogger("Assets");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.Assets");
 
-    // TODO: generalize this
     private Map<String, Texture> cachedTextures = new HashMap<>();
     private Map<String, Sound> cachedSounds = new HashMap<>();
     private Map<String, Music> cachedMusic = new HashMap<>();
@@ -179,7 +178,7 @@ public final class Assets {
     public void logCached() {
         log.info("Logging cached assets");
         cachedTextures.forEach((name, texture) -> log.info("Texture:" + name));
-        cachedSounds.forEach((name, audio) -> log.info("Sound:" + name));
+        cachedSounds.forEach((name, sound) -> log.info("Sound:" + name));
         cachedMusic.forEach((name, music) -> log.info("Music:" + name));
         cachedText.forEach((name, text) -> log.info("Text:" + name));
         cachedFonts.forEach((name, font) -> log.info("Font:" + name));
