@@ -32,10 +32,12 @@ import java.util.Map;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -70,6 +72,7 @@ public class Entity extends Parent {
     public Entity(EntityType type) {
         this.type = type;
         setGraphics(new Text("null"));
+        sceneProperty().addListener(sceneListener);
     }
 
     /**
@@ -351,6 +354,8 @@ public class Entity extends Parent {
      *
      */
     public final void clean() {
+        sceneProperty().removeListener(sceneListener);
+        alive.set(false);
         active.set(false);
         onClean();
         getProperties().clear();
@@ -364,7 +369,27 @@ public class Entity extends Parent {
      */
     protected void onClean() {}
 
-    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(true);
+    private ReadOnlyBooleanWrapper alive = new ReadOnlyBooleanWrapper(true);
+
+    /**
+     *
+     * @return alive property of this entity
+     */
+    public final ReadOnlyBooleanProperty aliveProperty() {
+        return alive.getReadOnlyProperty();
+    }
+
+    /**
+     * Entity is considered alive from moment the object itself
+     * is created and until removeEntity() is called
+     *
+     * @return
+     */
+    public final boolean isAlive() {
+        return alive.get();
+    }
+
+    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
     /**
      *
@@ -375,14 +400,23 @@ public class Entity extends Parent {
     }
 
     /**
-     * Entity is considered active from moment the object itself
-     * is created and until removeEntity() is called
+     * Entity is "active" from the moment it is registered in the
+     * scene graph via SceneManager.addEntities() and until it is
+     * removed by SceneManager.removeEntity().
      *
-     * @return
+     * @return true if entity is active, else false
      */
     public final boolean isActive() {
         return active.get();
     }
+
+    private ChangeListener<Scene> sceneListener = (obs, oldScene, newScene) -> {
+        if (newScene != null) {
+            active.set(true);
+        }
+
+        // TODO: possibly add callback to clean() and remove external dependencies
+    };
 
     /**
      *
@@ -511,12 +545,13 @@ public class Entity extends Parent {
      * already registered in the scene graph, this method will throw
      * IllegalStateException.
      *
-     * TODO: fix if set render layer after adding to scene graph
-     * entity won't be removed properly (test)
-     *
      * @param layer
+     * @throws IllegalStateException
      */
     public final Entity setRenderLayer(RenderLayer layer) {
+        if (isActive())
+            throw new IllegalStateException("Can't set render layer to active entity.");
+
         this.renderLayer = layer;
         return this;
     }
