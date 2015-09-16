@@ -36,6 +36,14 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.image.Image;
 
+/**
+ * Represents a dynamic animated texture. It is similar to StaticAnimatedTexture,
+ * but has animation channels, like WALK, RUN, IDLE, ATTACK, etc. which can
+ * be set dynamically to alter the animation.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public final class DynamicAnimatedTexture extends Texture {
 
     private List<AnimationChannel> animationChannels = new ArrayList<>();
@@ -53,6 +61,13 @@ public final class DynamicAnimatedTexture extends Texture {
         setAnimationChannel(initialChannel);
     }
 
+    /**
+     * Set animation channel. If animation channel wasn't registered
+     * when creating instance of DynamicAnimatedTexture, this method
+     * will throw IllegalArgumentException
+     *
+     * @param channel
+     */
     public void setAnimationChannel(AnimationChannel channel) {
         if (!animationChannels.contains(channel)) {
             throw new IllegalArgumentException("Channel: [" + channel + "] is not registered for this texture.");

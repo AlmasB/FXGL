@@ -28,20 +28,65 @@ package com.almasb.fxgl.asset;
 import javafx.geometry.Rectangle2D;
 import javafx.util.Duration;
 
+/**
+ * Represents one of the animation channels from spritesheet.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public interface AnimationChannel {
+
+    /**
+     * Area to be used to select a sub-texture from a spritesheet.
+     *
+     * @return
+     */
     public Rectangle2D area();
+
+    /**
+     *
+     * @return number of frames in this animation
+     */
     public int frames();
+
+    /**
+     *
+     * @return total duration of the animation
+     */
     public Duration duration();
+
+    /**
+     *
+     * @return name of the animation
+     */
     public String name();
 
+    /**
+     * Computes frame width based on the area width
+     * and number of frames.
+     *
+     * @return frame width
+     */
     default public double computeFrameWidth() {
         return area().getWidth() / frames();
     }
 
+    /**
+     * Computes frame height based on the area height.
+     *
+     * @return frame height
+     */
     default public double computeFrameHeight() {
         return area().getHeight();
     }
 
+    /**
+     * Computes the viewport for given frame. Frames
+     * start from 0.
+     *
+     * @param frame
+     * @return
+     */
     default public Rectangle2D computeViewport(int frame) {
         double frameW = computeFrameWidth();
         Rectangle2D area = area();

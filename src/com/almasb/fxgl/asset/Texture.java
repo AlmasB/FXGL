@@ -64,6 +64,13 @@ public class Texture extends ImageView {
         return texture;
     }
 
+    /**
+     * Converts the texture to dynamically animated texture.
+     *
+     * @param initialChannel
+     * @param channels
+     * @return new DynamicAnimatedTexture
+     */
     public final DynamicAnimatedTexture toDynamicAnimatedTexture(AnimationChannel initialChannel, AnimationChannel... channels) {
         return new DynamicAnimatedTexture(getImage(), initialChannel, channels);
     }
@@ -72,7 +79,12 @@ public class Texture extends ImageView {
      * Call this to create a new texture if you are
      * planning to use the same image as graphics
      * for multiple entities. This is required because
-     * same Node can only have 1 parent
+     * same Node can only have 1 parent.
+     *
+     * Do NOT invoke on instances of StaticAnimatedTexture or
+     * DynamicAnimatedTexture, use {@link #toStaticAnimatedTexture(int, Duration)}
+     * or {@link #toDynamicAnimatedTexture(AnimationChannel, AnimationChannel...)}
+     * instead.
      *
      * @return new Texture with same image
      */
