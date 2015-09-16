@@ -64,6 +64,10 @@ public class Texture extends ImageView {
         return texture;
     }
 
+    public final DynamicAnimatedTexture toDynamicAnimatedTexture(AnimationChannel initialChannel, AnimationChannel... channels) {
+        return new DynamicAnimatedTexture(getImage(), initialChannel, channels);
+    }
+
     /**
      * Call this to create a new texture if you are
      * planning to use the same image as graphics
