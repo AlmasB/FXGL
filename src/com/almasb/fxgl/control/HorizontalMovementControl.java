@@ -37,9 +37,12 @@ import com.almasb.fxgl.time.TimerManager;
  */
 public final class HorizontalMovementControl extends AbstractControl {
 
+    @SuppressWarnings("unused")
     private double radius;
     private double speed;
+    @SuppressWarnings("unused")
     private double t = 0.0;
+    @SuppressWarnings("unused")
     private double x, y;
 
     public HorizontalMovementControl(double speed, double radius) {

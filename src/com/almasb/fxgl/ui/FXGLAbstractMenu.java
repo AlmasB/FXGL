@@ -344,6 +344,7 @@ public abstract class FXGLAbstractMenu extends Menu {
 
     protected class MenuItem extends StackPane {
         private MenuBox parent;
+        @SuppressWarnings("unused")
         private MenuBox child;
         private MenuContent menuContent;
 
