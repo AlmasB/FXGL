@@ -822,13 +822,19 @@ public final class SceneManager extends FXGLManager {
      * @return
      */
     public <T> Optional<T> showAndWait(Dialog<T> dialog) {
-        app.pause();
+        boolean paused = isGameMenuOpen() || isMainMenuOpen();
+
+        if (!paused)
+            app.pause();
+
         app.getInputManager().clearAllInput();
 
         dialog.initOwner(scene.getWindow());
         Optional<T> result = dialog.showAndWait();
 
-        app.resume();
+        if (!paused)
+            app.resume();
+
         return result;
     }
 
