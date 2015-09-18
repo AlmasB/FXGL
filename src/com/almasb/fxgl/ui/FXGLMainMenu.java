@@ -71,6 +71,4 @@ public final class FXGLMainMenu extends FXGLAbstractMenu {
         menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
         return menu;
     }
-
-
 }

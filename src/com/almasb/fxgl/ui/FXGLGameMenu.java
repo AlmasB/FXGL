@@ -30,19 +30,6 @@ import java.io.Serializable;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
 
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.scene.control.TextInputDialog;
 
 /**
@@ -76,10 +63,7 @@ public final class FXGLGameMenu extends FXGLAbstractMenu {
                     SaveLoadManager.INSTANCE.save(data, fileName);
                 }
                 catch (Exception e) {
-                    // TODO: use custom stages, as alerts will kick users from the fullscreen
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setContentText("Failed to save file: " + fileName + ". Error: " + e.getMessage());
-                    alert.showAndWait();
+                    app.getSceneManager().showMessageBox("Failed to save file: " + fileName + ".\nError: " + e.getMessage());
                 }
             });
         });
@@ -95,34 +79,11 @@ public final class FXGLGameMenu extends FXGLAbstractMenu {
 
         MenuItem itemExit = new MenuItem("MAIN MENU");
         itemExit.setAction(() -> {
-            Text text = new Text("Are you sure?\nAll unsaved progress will be lost!");
-            text.setFill(Color.WHITE);
-            text.setFont(app.getSceneManager().getDefaultFont(18));
-
-            Rectangle rect = new Rectangle(200 + 200 + 100, 200);
-            rect.setStroke(Color.AZURE);
-
-            Stage stage = new Stage(StageStyle.TRANSPARENT);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(root.getScene().getWindow());
-
-            MenuItem btnOK = new MenuItem("OK");
-            btnOK.setAction(() -> {
-                app.getSceneManager().exitToMainMenu();
-                stage.close();
+            app.getSceneManager().showConfirmationBox("Are you sure?\nAll unsaved progress will be lost!", yes -> {
+                if (yes) {
+                    app.getSceneManager().exitToMainMenu();
+                }
             });
-            MenuItem btnCancel = new MenuItem("CANCEL");
-            btnCancel.setAction(stage::close);
-
-            HBox hbox = new HBox(btnOK, btnCancel);
-            hbox.setAlignment(Pos.CENTER);
-
-            VBox root = new VBox(50, text, hbox);
-            root.setAlignment(Pos.CENTER);
-            Scene scene = new Scene(new StackPane(rect, root));
-
-            stage.setScene(scene);
-            stage.show();
         });
 
         MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);

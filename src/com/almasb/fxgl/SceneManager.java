@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.physics.PhysicsEntity;
+import com.almasb.fxgl.ui.FXGLDialogBox;
 import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.FXGLLogger;
 
@@ -161,6 +163,11 @@ public final class SceneManager extends FXGLManager {
     private KeyCode menuKey = KeyCode.ESCAPE;
 
     /**
+     * The dialog box used to communicate with the user.
+     */
+    private FXGLDialogBox dialogBox;
+
+    /**
      * List of entities currently in the scene graph.
      */
     private List<Entity> entities = new ArrayList<>();
@@ -181,9 +188,21 @@ public final class SceneManager extends FXGLManager {
     /*package-private*/ void init() {
         try {
             setDefaultFont(AssetManager.INSTANCE.loadFont(app.getSettings().getDefaultFontName(), 24));
+            root.getStylesheets().add(AssetManager.INSTANCE.loadCSS("fxgl_button.css"));
+            dialogBox = new FXGLDialogBox();
+            dialogBox.setOnShown(e -> {
+                if (!(isGameMenuOpen() || isMainMenuOpen()))
+                    app.pause();
+
+                app.getInputManager().clearAllInput();
+            });
+            dialogBox.setOnHidden(e -> {
+                if (!(isGameMenuOpen() || isMainMenuOpen()))
+                    app.resume();
+            });
         }
         catch (Exception e) {
-            log.warning("Failed to set default font. Using System default");
+            log.warning("Failed to init FXGL scene manager style. Using defaults. Error: " + e.getMessage());
         }
 
         isMenuEnabled = app.getSettings().isMenuEnabled();
@@ -815,13 +834,14 @@ public final class SceneManager extends FXGLManager {
 
     /**
      * Shows given dialog and blocks execution of the game
-     * until the dialog is dismissed. Returns the result
-     * from the dialog.
+     * until the dialog is dismissed. The provided callback
+     * will be called with the dialog result as parameter when the dialog
+     * closes.
      *
      * @param dialog
-     * @return
+     * @param resultCallback
      */
-    public <T> Optional<T> showAndWait(Dialog<T> dialog) {
+    public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
         boolean paused = isGameMenuOpen() || isMainMenuOpen();
 
         if (!paused)
@@ -830,12 +850,46 @@ public final class SceneManager extends FXGLManager {
         app.getInputManager().clearAllInput();
 
         dialog.initOwner(scene.getWindow());
-        Optional<T> result = dialog.showAndWait();
+        dialog.setOnCloseRequest(e -> {
+            if (!paused)
+                app.resume();
 
-        if (!paused)
-            app.resume();
+            resultCallback.accept(dialog.getResult());
+        });
+        dialog.show();
+    }
 
-        return result;
+    /**
+     * Shows a blocking (stops game execution) message box
+     * with OK button. On button press, the message box
+     * will be dismissed.
+     *
+     * @param message the message to show
+     */
+    public void showMessageBox(String message) {
+        dialogBox.showMessageBox(message);
+    }
+
+    /**
+     * Shows a blocking message box with YES and NO buttons.
+     * The callback is invoked with the user answer as parameter.
+     *
+     * @param message
+     * @param resultCallback
+     */
+    public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
+        dialogBox.showConfirmationBox(message, resultCallback);
+    }
+
+    /**
+     * Shows a blocking message box with OK button and input field.
+     * The callback is invoked with the field text as parameter.
+     *
+     * @param message
+     * @param resultCallback
+     */
+    public void showInputBox(String message, Consumer<String> resultCallback) {
+        dialogBox.showInputBox(message, resultCallback);
     }
 
     /**
