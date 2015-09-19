@@ -349,6 +349,7 @@ public final class SceneManager implements UpdateTickListener {
             if (!saveFileName.isEmpty()) {
                 try {
                     Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
+                    clearSceneGraph();
                     app.loadState(data);
                     app.startNewGame();
                     setScene(gameScene);
@@ -360,6 +361,7 @@ public final class SceneManager implements UpdateTickListener {
             }
             else {
                 SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
+                    clearSceneGraph();
                     app.loadState((Serializable) data);
                     app.startNewGame();
                     setScene(gameScene);
@@ -391,6 +393,7 @@ public final class SceneManager implements UpdateTickListener {
             if (!saveFileName.isEmpty()) {
                 try {
                     Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
+                    clearSceneGraph();
                     app.loadState(data);
                     app.startNewGame();
                     setScene(gameScene);
@@ -402,6 +405,7 @@ public final class SceneManager implements UpdateTickListener {
             }
             else {
                 SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
+                    clearSceneGraph();
                     app.loadState((Serializable) data);
                     app.startNewGame();
                     setScene(gameScene);
