@@ -25,34 +25,32 @@
  */
 package com.almasb.fxgl.ui;
 
-import java.io.Serializable;
+import java.util.logging.Logger;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.InputBinding;
+import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -62,12 +60,20 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-public abstract class FXGLAbstractMenu extends Menu {
+public abstract class FXGLMenu extends Pane {
 
+    /**
+     * The logger
+     */
+    protected static final Logger log = FXGLLogger.getLogger("FXGLMenu");
+
+    protected GameApplication app;
     private double menuX, menuY;
 
-    public FXGLAbstractMenu(GameApplication app) {
-        super(app);
+    public FXGLMenu(GameApplication app) {
+        this.app = app;
+
+        setPrefSize(app.getWidth(), app.getHeight());
 
         MenuBox menu = createMenuBody();
         menuX = 50;
@@ -89,9 +95,9 @@ public abstract class FXGLAbstractMenu extends Menu {
         Text version = new Text("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
         version.setFill(Color.WHITE);
-        version.setFont(app.getSceneManager().getDefaultFont(18));
+        version.setFont(UIFactory.newFont(18));
 
-        root.getChildren().addAll(bg, title, version, menu, menuContent);
+        getChildren().addAll(bg, title, version, menu, menuContent);
     }
 
     protected abstract MenuBox createMenuBody();
@@ -101,42 +107,26 @@ public abstract class FXGLAbstractMenu extends Menu {
         SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
-        try {
-            String css = AssetManager.INSTANCE.loadCSS("listview.css");
-            list.getStylesheets().add(css);
-        }
-        catch (Exception e) {}
-
         if (list.getItems().size() > 0) {
             list.getSelectionModel().selectFirst();
         }
 
         MenuItem btnLoad = new MenuItem("LOAD");
-        btnLoad.setAction(() -> {
+        btnLoad.setOnAction(e -> {
             String fileName = list.getSelectionModel().getSelectedItem();
+
             if (fileName == null)
                 return;
 
-            try {
-                Serializable data = SaveLoadManager.INSTANCE.load(fileName);
-                app.loadState(data);
-            }
-            catch (Exception e) {
-                // TODO: use custom stages, as alerts will kick users from the fullscreen
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setContentText("Failed to load file: " + fileName + ". Error: " + e.getMessage());
-                alert.showAndWait();
-            }
+            btnLoad.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.LOAD, fileName));
         });
         MenuItem btnDelete = new MenuItem("DELETE");
-        btnDelete.setAction(() -> {
+        btnDelete.setOnAction(e -> {
             String fileName = list.getSelectionModel().getSelectedItem();
             if (fileName == null)
                 return;
 
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setContentText(SaveLoadManager.INSTANCE.delete(fileName) ? "File was deleted" : "File couldn't be deleted");
-            alert.showAndWait();
+            UIFactory.getDialogBox().showMessageBox(SaveLoadManager.INSTANCE.delete(fileName) ? "File was deleted" : "File couldn't be deleted");
 
             list.getItems().remove(fileName);
         });
@@ -184,22 +174,22 @@ public abstract class FXGLAbstractMenu extends Menu {
 
     private void addNewInputBinding(InputBinding binding, GridPane grid) {
         Text actionName = new Text(binding.getAction().getName());
-        actionName.setFont(app.getSceneManager().getDefaultFont(18));
+        actionName.setFont(UIFactory.newFont(18));
         actionName.setFill(Color.WHITE);
 
         MenuItem triggerName = new MenuItem("");
-        triggerName.text.textProperty().bind(binding.triggerNameProperty());
+        triggerName.textProperty().bind(binding.triggerNameProperty());
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
 
             Text text = new Text("PRESS ANY KEY");
             text.setFill(Color.WHITE);
-            text.setFont(app.getSceneManager().getDefaultFont(24));
+            text.setFont(UIFactory.newFont(24));
 
             Stage stage = new Stage(StageStyle.TRANSPARENT);
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(root.getScene().getWindow());
+            stage.initOwner(getScene().getWindow());
 
             Scene scene = new Scene(new StackPane(rect, text));
             scene.setOnKeyPressed(e -> {
@@ -239,7 +229,7 @@ public abstract class FXGLAbstractMenu extends Menu {
     }
 
     private MenuContent createContentCredits() {
-        Font font = app.getSceneManager().getDefaultFont(18);
+        Font font = UIFactory.newFont(18);
 
         Text textHead = new Text("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
         textHead.setFont(font);
@@ -265,7 +255,7 @@ public abstract class FXGLAbstractMenu extends Menu {
     }
 
     private void switchMenuTo(MenuBox menu) {
-        Node oldMenu = root.getChildren().get(3);
+        Node oldMenu = getChildren().get(3);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
         ft.setToValue(0);
@@ -273,7 +263,7 @@ public abstract class FXGLAbstractMenu extends Menu {
             menu.setTranslateX(menuX);
             menu.setTranslateY(menuY);
             menu.setOpacity(0);
-            root.getChildren().set(3, menu);
+            getChildren().set(3, menu);
             oldMenu.setOpacity(1);
 
             FadeTransition ft2 = new FadeTransition(Duration.seconds(0.33), menu);
@@ -286,7 +276,7 @@ public abstract class FXGLAbstractMenu extends Menu {
     private void switchMenuContentTo(MenuContent content) {
         content.setTranslateX(menuX * 2 + 200);
         content.setTranslateY(menuY);
-        root.getChildren().set(4, content);
+        getChildren().set(4, content);
     }
 
     protected static class Title extends StackPane {
@@ -295,7 +285,7 @@ public abstract class FXGLAbstractMenu extends Menu {
         public Title(String name) {
             text = new Text(name);
             text.setFill(Color.WHITE);
-            text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(50));
+            text.setFont(UIFactory.newFont(50));
 
             Rectangle bg = new Rectangle(text.getLayoutBounds().getWidth() + 20, 60);
             bg.setStroke(Color.WHITE);
@@ -342,47 +332,14 @@ public abstract class FXGLAbstractMenu extends Menu {
         }
     }
 
-    protected class MenuItem extends StackPane {
+    protected class MenuItem extends FXGLButton {
         private MenuBox parent;
         @SuppressWarnings("unused")
         private MenuBox child;
         private MenuContent menuContent;
 
-        private Text text = new Text();
-
         public MenuItem(String name) {
-            LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, new Stop[] {
-                    new Stop(0.5, Color.hsb(33, 0.7, 0.7)),
-                    new Stop(1, Color.hsb(100, 0.8, 1))
-            });
-
-            Rectangle bg = new Rectangle(200, 30);
-            bg.setOpacity(0.4);
-
-            text.setText(name);
-            text.setFill(Color.DARKGREY);
-            text.setFont(app.getSceneManager().getDefaultFont(22));
-
-            setAlignment(Pos.CENTER);
-            getChildren().addAll(bg, text);
-
-            setOnMouseEntered(event -> {
-                bg.setFill(gradient);
-                text.setFill(Color.WHITE);
-            });
-
-            setOnMouseExited(event -> {
-                bg.setFill(Color.BLACK);
-                text.setFill(Color.DARKGREY);
-            });
-
-            setOnMousePressed(event -> {
-                bg.setFill(Color.GOLD);
-            });
-
-            setOnMouseReleased(event -> {
-                bg.setFill(gradient);
-            });
+            super(name);
         }
 
         public void setParent(MenuBox menu) {
@@ -391,7 +348,7 @@ public abstract class FXGLAbstractMenu extends Menu {
 
         public void setMenuContent(MenuContent content) {
             menuContent = content;
-            this.setOnMouseClicked(event -> {
+            this.addEventHandler(ActionEvent.ACTION, event -> {
                 switchMenuContentTo(menuContent);
             });
         }
@@ -402,18 +359,12 @@ public abstract class FXGLAbstractMenu extends Menu {
             MenuItem back = new MenuItem("BACK");
             menu.getChildren().add(0, back);
 
-            back.setOnMouseClicked(evt -> {
+            back.addEventHandler(ActionEvent.ACTION, event -> {
                 switchMenuTo(MenuItem.this.parent);
             });
 
-            this.setOnMouseClicked(event -> {
+            this.addEventHandler(ActionEvent.ACTION, event -> {
                 switchMenuTo(menu);
-            });
-        }
-
-        public void setAction(Runnable action) {
-            this.setOnMouseClicked(event -> {
-                action.run();
             });
         }
 

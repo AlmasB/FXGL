@@ -25,30 +25,23 @@
  */
 package com.almasb.fxgl.event;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import com.almasb.fxgl.FXGLManager;
-
-import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 /**
+ * INCOMPLETE API DO NOT USE
+ *
  * Allows user to create and configure QTE events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
  *
  */
-public final class QTEManager extends FXGLManager {
+public final class QTEManager {
 
+    @SuppressWarnings("unused")
     private Color color = Color.BLACK;
     private Text qteText = new Text("Prepare for QTE! Release ALL keys!");
 
@@ -58,9 +51,9 @@ public final class QTEManager extends FXGLManager {
      * Initialize the manager with application width and height
      */
     public void init() {
-        qteText.setFont(Font.font(24));
-        qteText.setTranslateX(app.getWidth() / 2 - qteText.getLayoutBounds().getWidth() / 2);
-        qteText.setTranslateY(app.getHeight() / 2);
+//        qteText.setFont(Font.font(24));
+//        qteText.setTranslateX(app.getWidth() / 2 - qteText.getLayoutBounds().getWidth() / 2);
+//        qteText.setTranslateY(app.getHeight() / 2);
     }
 
     /**
@@ -94,48 +87,43 @@ public final class QTEManager extends FXGLManager {
      *          they appear on the screen
      */
     public void startQTE(double overallDuration, QTEHandler handler, KeyCode key, KeyCode... keyCodes) {
-        app.pause();
-        app.getSceneManager().addUINodes(qteText);
-
-        qteText.setTranslateY(app.getHeight() / 2);
-
-        TranslateTransition tt = new TranslateTransition(Duration.seconds(2), qteText);
-        tt.setToY(50);
-        tt.setOnFinished(event -> {
-            currentQTE = new QTE(handler, () -> {
-                app.getSceneManager().removeUINode(currentQTE);
-                currentQTE = null;
-
-                app.resume();
-            }, app.getWidth(), app.getHeight(), color, key, keyCodes);
-
-            app.getSceneManager().removeUINode(qteText);
-            app.getSceneManager().addUINodes(currentQTE);
-
-            ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();
-            thread.schedule(() -> {
-                Platform.runLater(() -> {
-                    if (currentQTE != null) {
-                        app.getSceneManager().removeUINode(currentQTE);
-
-                        if (currentQTE.isActive()) {
-                            handler.onFailure();
-                        }
-
-                        currentQTE = null;
-
-                        app.resume();
-                    }
-                });
-
-                thread.shutdown();
-            }, (long)overallDuration, TimeUnit.NANOSECONDS);
-        });
-        tt.play();
-    }
-
-    @Override
-    protected void onUpdate(long now) {
-
+//        app.pause();
+//        app.getSceneManager().addUINodes(qteText);
+//
+//        qteText.setTranslateY(app.getHeight() / 2);
+//
+//        TranslateTransition tt = new TranslateTransition(Duration.seconds(2), qteText);
+//        tt.setToY(50);
+//        tt.setOnFinished(event -> {
+//            currentQTE = new QTE(handler, () -> {
+//                app.getSceneManager().removeUINode(currentQTE);
+//                currentQTE = null;
+//
+//                app.resume();
+//            }, app.getWidth(), app.getHeight(), color, key, keyCodes);
+//
+//            app.getSceneManager().removeUINode(qteText);
+//            app.getSceneManager().addUINodes(currentQTE);
+//
+//            ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();
+//            thread.schedule(() -> {
+//                Platform.runLater(() -> {
+//                    if (currentQTE != null) {
+//                        app.getSceneManager().removeUINode(currentQTE);
+//
+//                        if (currentQTE.isActive()) {
+//                            handler.onFailure();
+//                        }
+//
+//                        currentQTE = null;
+//
+//                        app.resume();
+//                    }
+//                });
+//
+//                thread.shutdown();
+//            }, (long)overallDuration, TimeUnit.NANOSECONDS);
+//        });
+//        tt.play();
     }
 }

@@ -25,9 +25,9 @@
  */
 package s1basicapp;
 
-import com.almasb.fxgl.ApplicationMode;
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.GameSettings;
+import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.util.ApplicationMode;
 
 /**
  * This is an example of a basic FXGL game application.

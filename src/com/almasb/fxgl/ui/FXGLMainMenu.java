@@ -25,10 +25,9 @@
  */
 package com.almasb.fxgl.ui;
 
-import java.io.Serializable;
-
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.event.MenuEvent;
 
 /**
  * This is the default FXGL menu used if the users
@@ -37,7 +36,7 @@ import com.almasb.fxgl.asset.SaveLoadManager;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public final class FXGLMainMenu extends FXGLAbstractMenu {
+public final class FXGLMainMenu extends FXGLMenu {
 
     public FXGLMainMenu(GameApplication app) {
         super(app);
@@ -47,12 +46,14 @@ public final class FXGLMainMenu extends FXGLAbstractMenu {
     protected MenuBox createMenuBody() {
         MenuItem itemContinue = new MenuItem("CONTINUE");
         itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadLastModifiedFile().isPresent());
-        itemContinue.setAction(() -> {
-            SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> app.loadState((Serializable)data));
+        itemContinue.setOnAction(e -> {
+            itemContinue.fireEvent(new MenuEvent(MenuEvent.LOAD));
         });
 
         MenuItem itemNewGame = new MenuItem("NEW GAME");
-        itemNewGame.setAction(app::startNewGame);
+        itemNewGame.setOnAction(e -> {
+            itemNewGame.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.NEW_GAME));
+        });
 
         MenuItem itemLoad = new MenuItem("LOAD");
         itemLoad.setMenuContent(createContentLoad());
@@ -64,7 +65,12 @@ public final class FXGLMainMenu extends FXGLAbstractMenu {
         itemExtra.setChild(createExtraMenu());
 
         MenuItem itemExit = new MenuItem("EXIT");
-        itemExit.setAction(app::exit);
+        itemExit.setOnAction(e -> {
+            UIFactory.getDialogBox().showConfirmationBox("Exit the game?", yes -> {
+                if (yes)
+                    itemExit.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.EXIT));
+            });
+        });
 
         MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad, itemOptions, itemExtra, itemExit);
         menu.setTranslateX(50);

@@ -25,13 +25,15 @@
  */
 package com.almasb.fxgl.time;
 
-import com.almasb.fxgl.GameApplication;
-
 import javafx.util.Duration;
 
-public class Timer {
+public final class Timer {
 
-    private static final TimerManager timerManager = GameApplication.getInstance().getTimerManager();
+    private TimerManager manager;
+
+    /*package-private*/ Timer(TimerManager manager) {
+        this.manager = manager;
+    }
 
     private long time = 0;
 
@@ -39,7 +41,7 @@ public class Timer {
      * Captures current time.
      */
     public void capture() {
-        time = timerManager.getNow();
+        time = manager.getNow();
     }
 
     /**
@@ -50,6 +52,6 @@ public class Timer {
      * @return
      */
     public boolean elapsed(Duration duration) {
-        return timerManager.getNow() - time >= TimerManager.toNanos(duration);
+        return manager.getNow() - time >= TimerManager.toNanos(duration);
     }
 }

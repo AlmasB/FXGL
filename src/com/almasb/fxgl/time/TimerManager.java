@@ -28,15 +28,17 @@ package com.almasb.fxgl.time;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.almasb.fxgl.FXGLManager;
 import com.almasb.fxgl.time.TimerAction.TimerType;
+import com.almasb.fxgl.util.UpdateTickListener;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
+import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Duration;
 
-public final class TimerManager extends FXGLManager {
+public final class TimerManager implements UpdateTickListener {
 
     /**
      * Time per frame in seconds.
@@ -84,7 +86,11 @@ public final class TimerManager extends FXGLManager {
     /**
      * Holds current tick (frame)
      */
-    private long tick = 0;
+    private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper(0);
+
+    public ReadOnlyLongProperty tickProperty() {
+        return tick.getReadOnlyProperty();
+    }
 
     /**
      * Returns current tick (frame). When the game has just started,
@@ -96,14 +102,14 @@ public final class TimerManager extends FXGLManager {
      * @return current tick
      */
     public long getTick() {
-        return tick;
+        return tick.get();
     }
 
     /**
      * Resets current tick to 0.
      */
     public void resetTicks() {
-        tick = 0;
+        tick.set(0);
     }
 
     /**
@@ -185,7 +191,7 @@ public final class TimerManager extends FXGLManager {
      * @param internalTime
      */
     public void tickStart(long internalTime) {
-        tick++;
+        tick.set(tick.get() + 1);
         now = (getTick() - 1) * tpfNanos();
         startNanos = System.nanoTime();
         realFPS = internalTime - fpsTime;
@@ -201,7 +207,7 @@ public final class TimerManager extends FXGLManager {
     }
 
     @Override
-    protected void onUpdate(long now) {
+    public void onUpdate(long now) {
         timerActions.forEach(action -> action.update(now));
         timerActions.removeIf(TimerAction::isExpired);
     }
@@ -216,7 +222,7 @@ public final class TimerManager extends FXGLManager {
      * @param interval time
      */
     public void runAtInterval(Runnable action, Duration interval) {
-        timerActions.add(new TimerAction(app.getNow(), interval, action, TimerType.INDEFINITE));
+        timerActions.add(new TimerAction(getNow(), interval, action, TimerType.INDEFINITE));
     }
 
     /**
@@ -237,7 +243,7 @@ public final class TimerManager extends FXGLManager {
         if (!whileCondition.get()) {
             return;
         }
-        TimerAction act = new TimerAction(app.getNow(), interval, action, TimerType.INDEFINITE);
+        TimerAction act = new TimerAction(getNow(), interval, action, TimerType.INDEFINITE);
         timerActions.add(act);
 
         whileCondition.addListener((obs, old, newValue) -> {
@@ -255,7 +261,7 @@ public final class TimerManager extends FXGLManager {
      * @param delay
      */
     public void runOnceAfter(Runnable action, Duration delay) {
-        timerActions.add(new TimerAction(app.getNow(), delay, action, TimerType.ONCE));
+        timerActions.add(new TimerAction(getNow(), delay, action, TimerType.ONCE));
     }
 
     /**
@@ -263,5 +269,9 @@ public final class TimerManager extends FXGLManager {
      */
     public void clearActions() {
         timerActions.clear();
+    }
+
+    public Timer newTimer() {
+        return new Timer(this);
     }
 }

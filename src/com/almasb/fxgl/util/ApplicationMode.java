@@ -23,24 +23,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.util;
 
-import com.almasb.fxgl.GameApplication;
+/**
+ * Runtime mode of the application. Primarily affects
+ * how logging and exception reporting are handled.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
+public enum ApplicationMode {
+    /**
+     * All logging levels and full exception stacktrace.
+     */
+    DEBUG,
 
-import javafx.scene.layout.Pane;
+    /**
+     * Config logging level and full exception stacktrace.
+     */
+    DEVELOPER,
 
-public abstract class Menu {
-
-    protected final GameApplication app;
-    protected final Pane root = new Pane();
-
-    public Menu(GameApplication app) {
-        this.app = app;
-        root.setPrefSize(app.getWidth(), app.getHeight());
-        root.setFocusTraversable(true);
-    }
-
-    public final Pane getRoot() {
-        return root;
-    }
+    /**
+     * Severe logging level and only exception message.
+     */
+    RELEASE
 }

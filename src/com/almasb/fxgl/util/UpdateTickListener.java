@@ -23,39 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.util;
 
-import javafx.scene.Parent;
-
-/**
- * Intro animation / video played before game starts
- * if intro is enabled in settings
- *
- * Call {@link #finishIntro()} when your intro completed
- * so that the game can proceed to the next state
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
- */
-public abstract class Intro extends Parent {
-
-    /**
-     * This is set by FXGL GameApplication
-     */
-    /*package-private*/ Runnable onFinished;
-
-    /**
-     * Closes intro and initializes the next game state, whether it's a menu or game.
-     *
-     * Note: call this when your intro completes
-     */
-    public final void finishIntro() {
-        onFinished.run();
-    }
-
-    /**
-     * Starts the intro animation / video
-     */
-    public abstract void startIntro();
+public interface UpdateTickListener {
+    public void onUpdate(long now);
 }

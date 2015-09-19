@@ -25,11 +25,9 @@
  */
 package com.almasb.fxgl.effect;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import com.almasb.fxgl.FXGLManager;
+import com.almasb.fxgl.SceneManager;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 
@@ -50,9 +48,14 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public final class ParticleManager extends FXGLManager {
+public final class ParticleManager {
 
+    private SceneManager sceneManager;
     private Random random = new Random();
+
+    public ParticleManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
 
     /**
      * Spawns a given number of particles with given color
@@ -64,8 +67,6 @@ public final class ParticleManager extends FXGLManager {
      * @param numParticles
      */
     public void spawnExplosion(Point2D point, Color color, int radius, int numParticles) {
-        List<Entity> particles = new ArrayList<>();
-
         for (int i = 0; i < numParticles; i++) {
             Rectangle rect = new Rectangle(10, 1);
             rect.setFill(color);
@@ -73,7 +74,8 @@ public final class ParticleManager extends FXGLManager {
             Entity particle = Entity.noType()
                     .setGraphics(rect)
                     .setPosition(point)
-                    .setProperty("v", getRandomVelocity(radius));
+                    .setProperty("v", getRandomVelocity(radius))
+                    .setExpireTime(Duration.seconds(2));
 
             particle.addControl(new Control() {
                 @Override
@@ -101,11 +103,8 @@ public final class ParticleManager extends FXGLManager {
             ft.setToValue(0);
             ft.play();
 
-            particles.add(particle);
-            app.getSceneManager().addEntities(particle);
+            sceneManager.addEntities(particle);
         }
-
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), Duration.seconds(2));
     }
 
     /**
@@ -118,15 +117,14 @@ public final class ParticleManager extends FXGLManager {
      * @param numParticles
      */
     public void spawnImplosion(Point2D point, Color color, int radius, int numParticles) {
-        List<Entity> particles = new ArrayList<>();
-
         for (int i = 0; i < numParticles; i++) {
             Rectangle rect = new Rectangle(10, 1);
             rect.setFill(color);
 
             Entity particle = Entity.noType()
                     .setGraphics(rect)
-                    .setPosition(point.add(getRandomVelocity(radius)));
+                    .setPosition(point.add(getRandomVelocity(radius)))
+                    .setExpireTime(Duration.seconds(1));
 
             particle.addControl(new Control() {
                 @Override
@@ -148,11 +146,8 @@ public final class ParticleManager extends FXGLManager {
             tt.setInterpolator(Interpolator.LINEAR);
             tt.play();
 
-            particles.add(particle);
-            app.getSceneManager().addEntities(particle);
+            sceneManager.addEntities(particle);
         }
-
-        app.getTimerManager().runOnceAfter(() -> particles.forEach(app.getSceneManager()::removeEntity), Duration.seconds(1));
     }
 
     /**
@@ -184,7 +179,7 @@ public final class ParticleManager extends FXGLManager {
                 }
             });
 
-            app.getSceneManager().addEntities(particle);
+            sceneManager.addEntities(particle);
         }
     }
 
@@ -202,7 +197,4 @@ public final class ParticleManager extends FXGLManager {
         float particleSpeed = max * (1f - 0.6f / rand);
         return velocity.multiply(particleSpeed);
     }
-
-    @Override
-    protected void onUpdate(long now) {}
 }

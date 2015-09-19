@@ -25,11 +25,11 @@
  */
 package s2initgame;
 
-import com.almasb.fxgl.ApplicationMode;
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.util.ApplicationMode;
 
 import javafx.scene.shape.Rectangle;
 

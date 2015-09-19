@@ -25,29 +25,52 @@
  */
 package com.almasb.fxgl.ui;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
-public class FXGLButton extends Button {
-    public FXGLButton() {
-        this("");
+public final class UIFactory {
+
+    private static Font defaultFont;
+    private static Stage mainStage;
+
+    public static void init(Stage stage, Font font) {
+        mainStage = stage;
+        defaultFont = font;
     }
 
-    public FXGLButton(String text) {
-        super(text);
-        getStyleClass().setAll("fxgl_button");
-        setFont(UIFactory.newFont(22));
-        setAlignment(Pos.CENTER);
-        setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ENTER) {
-                fire();
-            }
-        });
+    public static Font newFont(double size) {
+        return new Font(defaultFont.getName(), size);
     }
 
-    @Override
-    protected double computePrefWidth(double height) {
-        return 200;
+    public static Text newText(String message) {
+        return newText(message, Color.WHITE, 18);
+    }
+
+    public static Text newText(String message, double fontSize) {
+        return newText(message, Color.WHITE, fontSize);
+    }
+
+    public static Text newText(String message, Color textColor, double fontSize) {
+        Text text = new Text(message);
+        text.setFill(textColor);
+        text.setFont(newFont(fontSize));
+        return text;
+    }
+
+    public static Button newButton(String text) {
+        return new FXGLButton(text);
+    }
+
+    private static FXGLDialogBox dialogBox;
+
+    public static FXGLDialogBox getDialogBox() {
+        if (dialogBox == null) {
+            dialogBox = new FXGLDialogBox(mainStage);
+        }
+
+        return dialogBox;
     }
 }

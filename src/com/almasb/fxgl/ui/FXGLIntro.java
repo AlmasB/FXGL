@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.ui;
 
 import java.util.Random;
 
@@ -57,7 +57,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-/*package-private*/ final class FXGLIntro extends Intro {
+public final class FXGLIntro extends Intro {
     private double w, h;
 
     private ParallelTransition animation;
@@ -161,14 +161,14 @@ import javafx.util.Duration;
     private Text makeLetter(String letter) {
         Text text = new Text(letter);
         text.setFill(Color.WHITESMOKE);
-        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(72));
+        text.setFont(UIFactory.newFont(72));
         return text;
     }
 
     private Text makeVersion() {
         Text text = new Text(Version.getAsString() + " by AlmasB");
         text.setVisible(false);
-        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
+        text.setFont(UIFactory.newFont(18));
         text.setFill(Color.ALICEBLUE);
         text.setTranslateY(h - 5);
         return text;
@@ -177,7 +177,7 @@ import javafx.util.Duration;
     private Text makePoweredBy() {
         Text text = new Text("Powered By");
         text.setVisible(false);
-        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
+        text.setFont(UIFactory.newFont(18));
         text.setFill(Color.WHITE);
         text.setTranslateX(w / 2 - text.getLayoutBounds().getWidth() / 2);
         text.setTranslateY(h / 2 - 80);

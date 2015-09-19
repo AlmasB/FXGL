@@ -28,8 +28,9 @@ package com.almasb.fxgl.event;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLManager;
+import com.almasb.fxgl.SceneManager;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.UpdateTickListener;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -47,11 +48,9 @@ import javafx.scene.input.MouseEvent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class InputManager extends FXGLManager {
+public final class InputManager implements UpdateTickListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
-
-    private Scene gameScene;
 
     /**
      * Holds mouse state information
@@ -77,7 +76,13 @@ public final class InputManager extends FXGLManager {
      */
     private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
 
-    public InputManager() {
+    private SceneManager sceneManager;
+
+    public InputManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+
+        Scene scene = sceneManager.getGameScene();
+
         currentActions.addListener(new ListChangeListener<UserAction>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends UserAction> c) {
@@ -94,30 +99,26 @@ public final class InputManager extends FXGLManager {
                 }
             }
         });
-    }
 
-    public void init(Scene mainScene) {
-        this.gameScene = mainScene;
-
-        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             handlePressed(new Trigger(event.getCode()));
         });
 
-        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+        scene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             handleReleased(new Trigger(event.getCode()));
         });
 
-        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             handlePressed(new Trigger(event.getButton()));
         });
-        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             handleReleased(new Trigger(event.getButton()));
         });
 
-        gameScene.setOnMousePressed(mouse::update);
-        gameScene.setOnMouseDragged(mouse::update);
-        gameScene.setOnMouseReleased(mouse::update);
-        gameScene.setOnMouseMoved(mouse::update);
+        scene.setOnMousePressed(mouse::update);
+        scene.setOnMouseDragged(mouse::update);
+        scene.setOnMouseReleased(mouse::update);
+        scene.setOnMouseMoved(mouse::update);
     }
 
     /**
@@ -126,9 +127,6 @@ public final class InputManager extends FXGLManager {
      * @param trigger
      */
     private void handlePressed(Trigger trigger) {
-        if (isAnyMenuOpen())
-            return;
-
         bindings.stream()
             .filter(binding -> {
                 if (trigger.key == null) {
@@ -150,9 +148,6 @@ public final class InputManager extends FXGLManager {
      * @param trigger
      */
     private void handleReleased(Trigger trigger) {
-        if (isAnyMenuOpen())
-            return;
-
         bindings.stream()
             .filter(binding -> {
                 if (trigger.key == null) {
@@ -168,27 +163,19 @@ public final class InputManager extends FXGLManager {
     }
 
     /**
-     *
-     * @return true if any menu is currently open, false otherwise
-     */
-    private boolean isAnyMenuOpen() {
-        return app.getSceneManager().isGameMenuOpen() || app.getSceneManager().isMainMenuOpen();
-    }
-
-    /**
      * Called by FXGL GameApplication to process all input.
      *
      * @param now
      */
     @Override
-    protected void onUpdate(long now) {
+    public void onUpdate(long now) {
         if (processActions) {
             currentActions.forEach(UserAction::onAction);
         }
 
-        Point2D origin = app.getSceneManager().getViewportOrigin();
-        mouse.x = mouse.screenX / app.getSceneManager().getSizeRatio() + origin.getX();
-        mouse.y = mouse.screenY / app.getSceneManager().getSizeRatio() + origin.getY();
+        Point2D origin = sceneManager.getViewportOrigin();
+        mouse.x = mouse.screenX / sceneManager.getSizeRatio() + origin.getX();
+        mouse.y = mouse.screenY / sceneManager.getSizeRatio() + origin.getY();
     }
 
     private boolean processActions = true;
@@ -343,16 +330,13 @@ public final class InputManager extends FXGLManager {
         private MouseEvent event;
 
         private void update(MouseEvent event) {
-            if (isAnyMenuOpen())
-                return;
-
             this.event = event;
             this.screenX = event.getSceneX();
             this.screenY = event.getSceneY();
 
-            Point2D origin = app.getSceneManager().getViewportOrigin();
-            this.x = screenX / app.getSceneManager().getSizeRatio() + origin.getX();
-            this.y = screenY / app.getSceneManager().getSizeRatio() + origin.getY();
+            Point2D origin = sceneManager.getViewportOrigin();
+            this.x = screenX / sceneManager.getSizeRatio() + origin.getX();
+            this.y = screenY / sceneManager.getSizeRatio() + origin.getY();
 
             if (leftPressed) {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {

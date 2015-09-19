@@ -23,7 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.settings;
+
+import com.almasb.fxgl.util.ApplicationMode;
 
 /**
  * A copy of GameSettings with public getters only.

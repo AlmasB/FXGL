@@ -25,12 +25,8 @@
  */
 package com.almasb.fxgl.ui;
 
-import java.io.Serializable;
-
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.SaveLoadManager;
-
-import javafx.scene.control.TextInputDialog;
+import com.almasb.fxgl.event.MenuEvent;
 
 /**
  * This is the default FXGL game menu
@@ -38,7 +34,7 @@ import javafx.scene.control.TextInputDialog;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public final class FXGLGameMenu extends FXGLAbstractMenu {
+public final class FXGLGameMenu extends FXGLMenu {
 
     public FXGLGameMenu(GameApplication app) {
         super(app);
@@ -47,24 +43,12 @@ public final class FXGLGameMenu extends FXGLAbstractMenu {
     @Override
     protected MenuBox createMenuBody() {
         MenuItem itemResume = new MenuItem("RESUME");
-        itemResume.setAction(app.getSceneManager()::closeGameMenu);
+        itemResume.setOnAction(e -> itemResume.fireEvent(new MenuEvent(MenuEvent.RESUME)));
 
         MenuItem itemSave = new MenuItem("SAVE");
-        itemSave.setAction(() -> {
-            Serializable data = app.saveState();
-
-            if (data == null)
-                return;
-
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setContentText("Enter name for save file");
-            dialog.showAndWait().ifPresent(fileName -> {
-                try {
-                    SaveLoadManager.INSTANCE.save(data, fileName);
-                }
-                catch (Exception e) {
-                    app.getSceneManager().showMessageBox("Failed to save file: " + fileName + ".\nError: " + e.getMessage());
-                }
+        itemSave.setOnAction(e -> {
+            UIFactory.getDialogBox().showInputBox("Enter save file name", name -> {
+                itemSave.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.SAVE, name));
             });
         });
 
@@ -78,11 +62,10 @@ public final class FXGLGameMenu extends FXGLAbstractMenu {
         itemExtra.setChild(createExtraMenu());
 
         MenuItem itemExit = new MenuItem("MAIN MENU");
-        itemExit.setAction(() -> {
-            app.getSceneManager().showConfirmationBox("Are you sure?\nAll unsaved progress will be lost!", yes -> {
-                if (yes) {
-                    app.getSceneManager().exitToMainMenu();
-                }
+        itemExit.setOnAction(e -> {
+            UIFactory.getDialogBox().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
+                if (yes)
+                    itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
             });
         });
 

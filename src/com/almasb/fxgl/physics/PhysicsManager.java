@@ -44,9 +44,13 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import com.almasb.fxgl.FXGLManager;
+import com.almasb.fxgl.SceneManager;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.util.UpdateTickListener;
 
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Point2D;
 
 /**
@@ -58,12 +62,12 @@ import javafx.geometry.Point2D;
  * Collision handling unifies how they are processed
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
-public final class PhysicsManager extends FXGLManager {
+public final class PhysicsManager implements UpdateTickListener {
 
     private static final float TIME_STEP = 1 / 60.0f;
+
+    private SceneManager sceneManager;
 
     private World world = new World(new Vec2(0, -10));
 
@@ -71,7 +75,15 @@ public final class PhysicsManager extends FXGLManager {
 
     private Map<CollisionPair, Long> collisions = new HashMap<>();
 
-    public PhysicsManager() {
+    private LongProperty tick = new SimpleLongProperty(0);
+
+    private double appHeight;
+
+    public PhysicsManager(double appHeight, ReadOnlyLongProperty tick, SceneManager sceneManager) {
+        this.appHeight = appHeight;
+        this.tick.bind(tick);
+        this.sceneManager = sceneManager;
+
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -86,7 +98,7 @@ public final class PhysicsManager extends FXGLManager {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
                     if (!collisions.containsKey(pair)) {
-                        collisions.put(pair, app.getTick());
+                        collisions.put(pair, tick.get());
                     }
                 }
             }
@@ -122,7 +134,7 @@ public final class PhysicsManager extends FXGLManager {
      * @param now
      */
     @Override
-    protected void onUpdate(long now) {
+    public void onUpdate(long now) {
         world.step(TIME_STEP, 8, 3);
 
         processCollisions();
@@ -135,7 +147,7 @@ public final class PhysicsManager extends FXGLManager {
                                     - toMeters(e.getLayoutBounds().getWidth() / 2))));
             e.setTranslateY(
                     Math.round(toPixels(
-                            toMeters(app.getHeight()) - body.getPosition().y
+                            toMeters(appHeight) - body.getPosition().y
                                     - toMeters(e.getLayoutBounds().getHeight() / 2))));
             e.setRotate(-Math.toDegrees(body.getAngle()));
         }
@@ -148,8 +160,7 @@ public final class PhysicsManager extends FXGLManager {
      * setCollidable(true).
      */
     private void processCollisions() {
-        List<Entity> collidables = app.getSceneManager()
-                .getEntities()
+        List<Entity> collidables = sceneManager.getEntities()
                 .stream()
                 .filter(Entity::isCollidable)
                 .collect(Collectors.toList());
@@ -178,7 +189,7 @@ public final class PhysicsManager extends FXGLManager {
 
                     if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
                         if (!collisions.containsKey(pair)) {
-                            collisions.put(pair, app.getTick());
+                            collisions.put(pair, tick.get());
                         }
                     }
                     else {
@@ -191,21 +202,21 @@ public final class PhysicsManager extends FXGLManager {
         }
 
         List<CollisionPair> toRemove = new ArrayList<>();
-        collisions.forEach((pair, tick) -> {
+        collisions.forEach((pair, cachedTick) -> {
             if (!pair.getA().isActive() || !pair.getB().isActive()
                     || !pair.getA().isCollidable() || !pair.getB().isCollidable()) {
                 toRemove.add(pair);
                 return;
             }
 
-            if (tick.longValue() == -1L) {
+            if (cachedTick.longValue() == -1L) {
                 pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
                 toRemove.add(pair);
             }
-            else if (app.getTick() == tick.longValue()) {
+            else if (tick.get() == cachedTick.longValue()) {
                 pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
             }
-            else if (app.getTick() > tick) {
+            else if (tick.get() > cachedTick) {
                 pair.getHandler().onCollision(pair.getA(), pair.getB());
             }
         });
@@ -270,7 +281,7 @@ public final class PhysicsManager extends FXGLManager {
             e.fixtureDef.shape = rectShape;
         }
 
-        e.bodyDef.position.set(toMeters(x + w / 2), toMeters(app.getHeight() - (y + h / 2)));
+        e.bodyDef.position.set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
         e.body = world.createBody(e.bodyDef);
         e.fixture = e.body.createFixture(e.fixtureDef);
         e.body.setUserData(e);
@@ -359,7 +370,7 @@ public final class PhysicsManager extends FXGLManager {
      * @return
      */
     public Vec2 toPoint(Point2D p) {
-        return new Vec2(toMeters(p.getX()), toMeters(app.getHeight() - p.getY()));
+        return new Vec2(toMeters(p.getX()), toMeters(appHeight - p.getY()));
     }
 
     /**
@@ -369,7 +380,7 @@ public final class PhysicsManager extends FXGLManager {
      * @return
      */
     public Point2D toPoint(Vec2 p) {
-        return new Point2D(toPixels(p.x), toPixels(toMeters(app.getHeight()) - p.y));
+        return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }
 
     private static class EdgeCallback implements RayCastCallback {

@@ -27,6 +27,7 @@ package com.almasb.fxgl;
 
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -41,19 +42,25 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.CombinedEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.ui.FXGLDialogBox;
-import com.almasb.fxgl.ui.Menu;
+import com.almasb.fxgl.ui.FXGLMenuFactory;
+import com.almasb.fxgl.ui.Intro;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.UpdateTickListener;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -70,10 +77,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -82,20 +89,23 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public final class SceneManager extends FXGLManager {
+public final class SceneManager implements UpdateTickListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
-    //private static final int GAME_ROOT_LAYER = 0;
-    private static final int UI_ROOT_LAYER = 2;
-
     /**
-     * Root for entities
+     * Root for entities, it is affected by viewport movement.
      */
     private Group gameRoot = new Group();
 
+    /**
+     * Canvas for particles to accelerate drawing.
+     */
     private Canvas particlesCanvas = new Canvas();
 
+    /**
+     * Graphics context for drawing particles.
+     */
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
     /**
@@ -105,52 +115,39 @@ public final class SceneManager extends FXGLManager {
      */
     private Group uiRoot = new Group();
 
-    /*
-     * All scene graph roots. Although uiRoot is drawn on top of gameRoot,
-     * they are at the same level in the scene graph.
-     *
-     *                  mainStage
-     *                      |
-     *                      |
-     *                  mainScene
-     *                      |
-     *                      |
-     *                    root         <--> (mainMenu root)
-     *                   /    \
-     *                  /      \
-     *              gameRoot   uiRoot  <--> (gameMenu root)
-     *
-     *
-     * From the rendering perspective it looks like this:
-     *
-     *                entity render layers (from lower index to higher index)
-     *                      ||
-     *                particle layer
-     *                      ||
-     *                   UI layer
-     *                      ||
-     *                   menu layer
-     */
-
     /**
-     * THE root of the {@link #mainScene}. Contains {@link #gameRoot} and {@link #uiRoot} in this order.
+     * THE root of the {@link #gameScene}. Contains {@link #gameRoot}, {@link #particlesCanvas}
+     * and {@link #uiRoot} in this order.
      */
     private Pane root = new Pane(gameRoot, particlesCanvas, uiRoot);
+
+    /*
+     * FXGL Scene Graph
+     *
+     * Scenes: gameScene <-> mainMenu <-> gameMenu
+     *            |
+     *         gameRoot (entities)
+     *         (render layers from low to high index)
+     *            |
+     *         particles layers
+     *            |
+     *         uiRoot
+     */
 
     /**
      * Game scene
      */
-    private Scene scene = new Scene(root);
+    private Scene gameScene = new Scene(root);
 
     /**
      * Main menu, this is the menu shown at the start of game
      */
-    private Menu mainMenu;
+    private Scene mainMenu;
 
     /**
      * In-game menu, this is shown when menu key pressed during the game
      */
-    private Menu gameMenu;
+    private Scene gameMenu;
 
     /**
      * Is menu enabled in settings
@@ -182,22 +179,43 @@ public final class SceneManager extends FXGLManager {
      */
     private List<Entity> removeQueue = new ArrayList<>();
 
-    /*package-private*/ SceneManager() {
-    }
+    /**
+     * Game application instance.
+     */
+    private GameApplication app;
 
-    /*package-private*/ void init() {
+    /**
+     * Main stage.
+     */
+    private Stage stage;
+
+    /**
+     * FXGL CSS.
+     */
+    private String fxglCSS;
+
+    /**
+     * Constructs scene manager.
+     *
+     * @param app instance of game application
+     * @param stage main stage
+     */
+    /*package-private*/ SceneManager(GameApplication app, Stage stage) {
+        this.app = app;
+        this.stage = stage;
+
         try {
-            setDefaultFont(AssetManager.INSTANCE.loadFont(app.getSettings().getDefaultFontName(), 24));
-            root.getStylesheets().add(AssetManager.INSTANCE.loadCSS("fxgl_button.css"));
-            dialogBox = new FXGLDialogBox();
+            fxglCSS = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
+            root.getStylesheets().add(fxglCSS);
+            dialogBox = UIFactory.getDialogBox();
             dialogBox.setOnShown(e -> {
-                if (!(isGameMenuOpen() || isMainMenuOpen()))
+                if (!menuOpenProperty().get())
                     app.pause();
 
                 app.getInputManager().clearAllInput();
             });
             dialogBox.setOnHidden(e -> {
-                if (!(isGameMenuOpen() || isMainMenuOpen()))
+                if (!menuOpenProperty().get())
                     app.resume();
             });
         }
@@ -206,6 +224,7 @@ public final class SceneManager extends FXGLManager {
         }
 
         isMenuEnabled = app.getSettings().isMenuEnabled();
+        menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
 
         setPrefSize(app.getWidth(), app.getHeight());
 
@@ -213,13 +232,10 @@ public final class SceneManager extends FXGLManager {
         particlesCanvas.setHeight(app.getHeight());
         particlesCanvas.setMouseTransparent(true);
 
-        if (isMenuEnabled)
-            configureMenu();
-
         if (app.getSettings().isFPSShown()) {
             Text fpsText = new Text();
             fpsText.setFill(Color.AZURE);
-            fpsText.setFont(getDefaultFont(24));
+            fpsText.setFont(UIFactory.newFont(24));
             fpsText.setTranslateY(app.getHeight() - 40);
             fpsText.textProperty().bind(app.getTimerManager().fpsProperty().asString("FPS: [%d]\n")
                     .concat(app.getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
@@ -227,7 +243,15 @@ public final class SceneManager extends FXGLManager {
         }
     }
 
-    /*package-private*/ void setPrefSize(double width, double height) {
+    /**
+     * Set preferred size to game scene root and stage.
+     * Computes {@link #sizeRatio} and scales the root
+     * if necessary
+     *
+     * @param width
+     * @param height
+     */
+    private void setPrefSize(double width, double height) {
         Rectangle2D bounds = app.getSettings().isFullScreen()
                 ? Screen.getPrimary().getBounds()
                 : Screen.getPrimary().getVisualBounds();
@@ -237,7 +261,7 @@ public final class SceneManager extends FXGLManager {
             root.setPrefSize(app.getWidth(), app.getHeight());
         }
         else {
-            log.finer("App width > screen width");
+            log.finer("App size > screen size");
 
             double ratio = app.getWidth() * 1.0 / app.getHeight();
 
@@ -255,53 +279,194 @@ public final class SceneManager extends FXGLManager {
 
             log.finer("Size ratio: " + sizeRatio);
         }
+
+        stage.setScene(gameScene);
+        stage.sizeToScene();
     }
 
-    /*package-private*/ void configureMenu() {
-        mainMenu = app.initMainMenu();
-        gameMenu = app.initGameMenu();
-        mainMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
-        gameMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
+    private boolean canSwitchGameMenu = true;
 
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, menuKeyPressedHandler);
-        scene.addEventHandler(KeyEvent.KEY_RELEASED, menuKeyReleasedHandler);
-        scene.setRoot(mainMenu.getRoot());
-        isMainMenuOpen = true;
+    /**
+     * Applies FXGL CSS to menu roots.
+     * Scales menu roots appropriately based on {@link #sizeRatio}.
+     * Registers event handlers to menus.
+     */
+    private void configureMenu() {
+        menuOpenProperty().addListener((obs, oldState, newState) -> {
+            if (newState.booleanValue()) {
+                log.finer("Playing State -> Menu State");
+                app.onMenuOpen();
+            }
+            else {
+                log.finer("Menu State -> Playing State");
+                app.onMenuClose();
+            }
+        });
+
+        FXGLMenuFactory menuFactory = app.initMenuFactory();
+
+        mainMenu = new Scene(menuFactory.newMainMenu(app));
+        gameMenu = new Scene(menuFactory.newGameMenu(app));
+
+        if (sizeRatio != 1.0) {
+            log.finer("Scaing menu scenes with ratio: " + sizeRatio);
+            mainMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
+            gameMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
+        }
+        mainMenu.getStylesheets().add(fxglCSS);
+        gameMenu.getStylesheets().add(fxglCSS);
+
+        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (isMenuEnabled && event.getCode() == menuKey && canSwitchGameMenu) {
+                openGameMenu();
+                canSwitchGameMenu = false;
+            }
+        });
+        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == menuKey)
+                canSwitchGameMenu = true;
+        });
+
+
+        gameMenu.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == menuKey && canSwitchGameMenu) {
+                closeGameMenu();
+                canSwitchGameMenu = false;
+            }
+        });
+        gameMenu.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == menuKey)
+                canSwitchGameMenu = true;
+        });
+
+
+        mainMenu.addEventHandler(MenuEvent.NEW_GAME, event -> {
+            app.startNewGame();
+            setScene(gameScene);
+        });
+        mainMenu.addEventHandler(MenuEvent.LOAD, event -> {
+            String saveFileName = event.getData().map(name -> (String)name).orElse("");
+            if (!saveFileName.isEmpty()) {
+                try {
+                    Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
+                    app.loadState(data);
+                    app.startNewGame();
+                    setScene(gameScene);
+                }
+                catch (Exception e) {
+                    log.warning("Failed to load save data: " + e.getMessage());
+                    showMessageBox("Failed to load save data: " + e.getMessage());
+                }
+            }
+            else {
+                SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
+                    app.loadState((Serializable) data);
+                    app.startNewGame();
+                    setScene(gameScene);
+                });
+            }
+        });
+
+        mainMenu.addEventHandler(MenuEvent.EXIT, event -> {
+            app.exit();
+        });
+
+        gameMenu.addEventHandler(MenuEvent.RESUME, event -> {
+            this.closeGameMenu();
+        });
+        gameMenu.addEventHandler(MenuEvent.SAVE, event -> {
+            String saveFileName = event.getData().map(name -> (String)name).orElse("");
+            if (!saveFileName.isEmpty()) {
+                try {
+                    SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName);
+                }
+                catch (Exception e) {
+                    log.warning("Failed to save game data: " + e.getMessage());
+                    showMessageBox("Failed to save game data: " + e.getMessage());
+                }
+            }
+        });
+        gameMenu.addEventHandler(MenuEvent.LOAD, event -> {
+            String saveFileName = event.getData().map(name -> (String)name).orElse("");
+            if (!saveFileName.isEmpty()) {
+                try {
+                    Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
+                    app.loadState(data);
+                    app.startNewGame();
+                    setScene(gameScene);
+                }
+                catch (Exception e) {
+                    log.warning("Failed to load save data: " + e.getMessage());
+                    showMessageBox("Failed to load save data: " + e.getMessage());
+                }
+            }
+            else {
+                SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
+                    app.loadState((Serializable) data);
+                    app.startNewGame();
+                    setScene(gameScene);
+                });
+            }
+        });
+        gameMenu.addEventHandler(MenuEvent.EXIT, event -> {
+            this.exitToMainMenu();
+        });
     }
 
+    /**
+     * Called right after the main stage is shown.
+     */
     /*package-private*/ void onStageShow() {
+        if (isMenuEnabled)
+            configureMenu();
+
         if (app.getSettings().isIntroEnabled()) {
+            log.finer("Intro is enabled");
             Intro intro = app.initIntroVideo();
             intro.getTransforms().add(new Scale(sizeRatio, sizeRatio));
-            intro.onFinished = () -> {
+            intro.setOnFinished(() -> {
+                gameScene.setRoot(root);
+
                 if (isMenuEnabled) {
-                    scene.setRoot(mainMenu.getRoot());
+                    setScene(mainMenu);
                 }
                 else {
                     app.startNewGame();
+                    setScene(gameScene);
                 }
-            };
+            });
 
-            scene.setRoot(intro);
+            gameScene.setRoot(intro);
             intro.startIntro();
         }
         else {
-            if (!isMenuEnabled) {
+            log.finer("Intro not enabled");
+            if (isMenuEnabled) {
+                setScene(mainMenu);
+            }
+            else {
                 app.startNewGame();
+                setScene(gameScene);
             }
         }
+
+        log.finer("Scene size: " + stage.getScene().getWidth() + "," + stage.getScene().getHeight());
+        log.finer("Stage size: " + stage.getWidth() + "," + stage.getHeight());
     }
 
     /**
+     * Changes current scene to given scene.
      *
-     * @return JavaFX scene
+     * @param scene
      */
-    public Scene getScene() {
-        return scene;
+    private void setScene(Scene scene) {
+        menuOpen.set(scene == mainMenu || scene == gameMenu);
+
+        stage.setScene(scene);
     }
 
     /**
-     * Equals user system width / target width
+     * Equals user system width / target width.
      */
     private double sizeRatio = 1.0;
 
@@ -313,6 +478,14 @@ public final class SceneManager extends FXGLManager {
      */
     public double getSizeRatio() {
         return sizeRatio;
+    }
+
+    /**
+     *
+     * @return game scene
+     */
+    public Scene getGameScene() {
+        return gameScene;
     }
 
     /**
@@ -545,11 +718,31 @@ public final class SceneManager extends FXGLManager {
     }
 
     /**
+     * Cleans all registered entities. Clears add and remove queues.
+     * Clears gameRoot and uiRoot.
+     */
+    private void clearSceneGraph() {
+        entities.stream()
+            .filter(e -> e instanceof PhysicsEntity)
+            .map(e -> (PhysicsEntity) e)
+            .forEach(app.getPhysicsManager()::destroyBody);
+
+        entities.forEach(entity -> ((Entity) entity).clean());
+        entities.clear();
+
+        gameRoot.getChildren().clear();
+        uiRoot.getChildren().clear();
+
+        addQueue.clear();
+        removeQueue.clear();
+    }
+
+    /**
      * Called by GameApplication to update state of entities
      * and the scene graph.
      */
     @Override
-    protected void onUpdate(long now) {
+    public void onUpdate(long now) {
         registerPendingEntities();
         removePendingEntities();
 
@@ -567,9 +760,9 @@ public final class SceneManager extends FXGLManager {
     }
 
     /**
-     * Sets viewport origin. Use it for camera movement
+     * Sets viewport origin. Use it for camera movement.
      *
-     * Do NOT use if the viewport was bound
+     * Do NOT use if the viewport was bound.
      *
      * @param x
      * @param y
@@ -580,7 +773,7 @@ public final class SceneManager extends FXGLManager {
     }
 
     /**
-     * Note: viewport origin, like anything in a scene, has top-left origin point
+     * Note: viewport origin, like anything in a scene, has top-left origin point.
      *
      * @return viewport origin
      */
@@ -615,7 +808,7 @@ public final class SceneManager extends FXGLManager {
 
     /**
      * Binds the viewport origin so that it follows the given entity
-     * distX represent bound distance in X axis between entity and viewport origin
+     * distX represent bound distance in X axis between entity and viewport origin.
      *
      * @param entity
      * @param distX
@@ -626,7 +819,7 @@ public final class SceneManager extends FXGLManager {
 
     /**
      * Binds the viewport origin so that it follows the given entity
-     * distY represent bound distance in Y axis between entity and viewport origin
+     * distY represent bound distance in Y axis between entity and viewport origin.
      *
      * @param entity
      * @param distY
@@ -654,47 +847,14 @@ public final class SceneManager extends FXGLManager {
      * @param imageName
      * @param hotspot
      */
-    public void setCursor(String imageName, Point2D hotspot) {
+    public void setGameCursor(String imageName, Point2D hotspot) {
         try {
-            getScene().setCursor(new ImageCursor(app.getAssetManager().loadCursorImage(imageName),
+            gameScene.setCursor(new ImageCursor(app.getAssetManager().loadCursorImage(imageName),
                     hotspot.getX(), hotspot.getY()));
         }
         catch (Exception e) {
             log.warning("Failed to set cursor: " + e.getMessage());
         }
-    }
-
-    private Font defaultFont = Font.getDefault();
-
-    /**
-     * Returns default font. This is either
-     * user font if set via {@link GameSettings#setDefaultFontName(String)}.
-     * If not, then default FXGL font. If the user found couldn't be loaded,
-     * then the System default font.
-     *
-     * @return
-     */
-    public Font getDefaultFont() {
-        return defaultFont;
-    }
-
-    /**
-     * Returns default font {@link #getDefaultFont()} with given size.
-     *
-     * @param size
-     * @return
-     */
-    public Font getDefaultFont(double size) {
-        return new Font(defaultFont.getName(), size);
-    }
-
-    /**
-     * Set the default font.
-     *
-     * @param font
-     */
-    private void setDefaultFont(Font font) {
-        defaultFont = font;
     }
 
     /**
@@ -709,24 +869,22 @@ public final class SceneManager extends FXGLManager {
         getEntities(types).forEach(e -> e.fireFXGLEvent(event));
     }
 
-    private boolean isMainMenuOpen = false;
-    private boolean isGameMenuOpen = false;
-    private boolean canSwitchGameMenu = true;
+    private ReadOnlyBooleanWrapper menuOpen;
 
     /**
      *
-     * @return true if in main menu
+     * @return property tracking if any is open
      */
-    public boolean isMainMenuOpen() {
-        return isMainMenuOpen;
+    public ReadOnlyBooleanProperty menuOpenProperty() {
+        return menuOpen.getReadOnlyProperty();
     }
 
     /**
      *
-     * @return true if game menu is open, false otherwise
+     * @return true if any menu is open
      */
-    public boolean isGameMenuOpen() {
-        return isGameMenuOpen;
+    public boolean isMenuOpen() {
+        return menuOpen.get();
     }
 
     /**
@@ -739,97 +897,35 @@ public final class SceneManager extends FXGLManager {
         menuKey = key;
     }
 
-    private EventHandler<KeyEvent> menuKeyPressedHandler = e -> {
-        if (isMainMenuOpen())
-            return;
-
-        if (e.getCode() == menuKey) {
-            if (canSwitchGameMenu) {
-                if (isGameMenuOpen) {
-                    closeGameMenu();
-                }
-                else {
-                    openGameMenu();
-                }
-                canSwitchGameMenu = false;
-            }
-        }
-    };
-
-    private EventHandler<KeyEvent> menuKeyReleasedHandler = e -> {
-        if (e.getCode() == menuKey) {
-            canSwitchGameMenu = true;
-        }
-    };
-
     /**
      * Pauses the game and opens in-game menu.
      * Does nothing if menu is disabled in settings
      */
-    public void openGameMenu() {
-        if (!isMenuEnabled)
-            return;
-
-        app.onMenuOpen();
+    private void openGameMenu() {
         app.pause();
-        app.getInputManager().clearAllInput();
-        root.getChildren().set(UI_ROOT_LAYER, gameMenu.getRoot());
-
-        isGameMenuOpen = true;
+        setScene(gameMenu);
     }
 
     /**
      * Closes the game menu and resumes the game.
      * Does nothing if menu is disabled in settings
      */
-    public void closeGameMenu() {
-        if (!isMenuEnabled)
-            return;
-
-        app.getInputManager().clearAllInput();
-        root.getChildren().set(UI_ROOT_LAYER, uiRoot);
+    private void closeGameMenu() {
+        setScene(gameScene);
         app.resume();
-        app.onMenuClose();
-
-        isGameMenuOpen = false;
-    }
-
-    /*package-private*/ void returnFromMainMenu() {
-        scene.setRoot(root);
-        isMainMenuOpen = false;
     }
 
     /**
      * Exits the current game and opens main menu.
      * Does nothing if menu is disabled in settings
      */
-    public void exitToMainMenu() {
-        if (!isMenuEnabled)
-            return;
-
+    private void exitToMainMenu() {
         app.pause();
         app.getTimerManager().clearActions();
 
-        entities.stream()
-                .filter(e -> e instanceof PhysicsEntity)
-                .map(e -> (PhysicsEntity)e)
-                .forEach(app.getPhysicsManager()::destroyBody);
-        entities.forEach(entity -> ((Entity)entity).clean());
-        entities.clear();
+        clearSceneGraph();
 
-        gameRoot.getChildren().clear();
-        uiRoot.getChildren().clear();
-
-        addQueue.clear();
-        removeQueue.clear();
-
-        app.getInputManager().clearAllInput();
-        root.getChildren().set(UI_ROOT_LAYER, uiRoot);
-
-        isGameMenuOpen = false;
-        isMainMenuOpen = true;
-
-        scene.setRoot(mainMenu.getRoot());
+        setScene(mainMenu);
     }
 
     /**
@@ -842,14 +938,14 @@ public final class SceneManager extends FXGLManager {
      * @param resultCallback
      */
     public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
-        boolean paused = isGameMenuOpen() || isMainMenuOpen();
+        boolean paused = menuOpenProperty().get();
 
         if (!paused)
             app.pause();
 
         app.getInputManager().clearAllInput();
 
-        dialog.initOwner(scene.getWindow());
+        dialog.initOwner(gameScene.getWindow());
         dialog.setOnCloseRequest(e -> {
             if (!paused)
                 app.resume();
@@ -898,7 +994,7 @@ public final class SceneManager extends FXGLManager {
      * @return  true if the screenshot was saved successfully, false otherwise
      */
     public boolean saveScreenshot() {
-        Image fxImage = scene.snapshot(null);
+        Image fxImage = gameScene.snapshot(null);
         BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
         String fileName = "./" + app.getSettings().getTitle() + app.getSettings().getVersion()

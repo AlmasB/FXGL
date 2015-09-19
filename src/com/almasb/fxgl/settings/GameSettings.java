@@ -23,7 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.settings;
+
+import com.almasb.fxgl.util.ApplicationMode;
 
 /**
  * Data structure for variables that are
@@ -158,5 +160,9 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setDefaultFontName(String name) {
         this.defaultFontName = name;
+    }
+
+    public ReadOnlyGameSettings toReadOnly() {
+        return new ReadOnlyGameSettings(this);
     }
 }

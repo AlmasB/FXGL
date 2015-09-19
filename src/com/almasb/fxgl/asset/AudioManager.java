@@ -30,8 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.FXGLManager;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.UpdateTickListener;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -42,7 +42,7 @@ import javafx.beans.property.SimpleDoubleProperty;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AudioManager extends FXGLManager {
+public final class AudioManager implements UpdateTickListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AudioManager");
 
@@ -225,7 +225,7 @@ public final class AudioManager extends FXGLManager {
     }
 
     @Override
-    protected void onUpdate(long now) {
+    public void onUpdate(long now) {
         for (Music music : activeMusic) {
             if (music.mediaPlayer.getCurrentTime().equals(music.mediaPlayer.getTotalDuration())) {
                 music.isStopped = true;

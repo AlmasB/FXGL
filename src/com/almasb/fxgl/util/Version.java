@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  */
 public final class Version {
 
-    private static final Logger log = FXGLLogger.getLogger("Version");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.Version");
 
     public static int getMajor() {
         return 0;

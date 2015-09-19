@@ -28,7 +28,6 @@ package com.almasb.fxgl.ui;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.util.FXGLLogger;
 
@@ -46,6 +45,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 /**
  * Default FXGL dialog box. Represented by a rectangle with a black
@@ -65,24 +65,22 @@ public final class FXGLDialogBox extends Stage {
     private StackPane root = new StackPane();
     private Scene scene = new Scene(root);
 
-    public FXGLDialogBox() {
+    public FXGLDialogBox(Window owner) {
         initStyle(StageStyle.TRANSPARENT);
         initModality(Modality.WINDOW_MODAL);
-        initOwner(GameApplication.getInstance().getSceneManager().getScene().getWindow());
+        initOwner(owner);
         setScene(scene);
 
         try {
-            root.getStylesheets().add(AssetManager.INSTANCE.loadCSS("fxgl_button.css"));
+            root.getStylesheets().add(AssetManager.INSTANCE.loadCSS("fxgl_dark.css"));
         }
         catch (Exception e) {
-            log.warning("Failed to apply fxgl_button.css stylesheet: " + e.getMessage());
+            log.warning("Failed to apply fxgl_dark.css stylesheet: " + e.getMessage());
         }
     }
 
     public void showMessageBox(String message) {
-        Text text = new Text(message);
-        text.setFill(Color.WHITE);
-        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
+        Text text = createMessage(message);
 
         FXGLButton btnOK = new FXGLButton("OK");
         btnOK.setOnAction(e -> {
@@ -98,9 +96,7 @@ public final class FXGLDialogBox extends Stage {
     }
 
     public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
-        Text text = new Text(message);
-        text.setFill(Color.WHITE);
-        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
+        Text text = createMessage(message);
 
         FXGLButton btnYes = new FXGLButton("YES");
         btnYes.setOnAction(e -> {
@@ -126,15 +122,14 @@ public final class FXGLDialogBox extends Stage {
     }
 
     public void showInputBox(String message, Consumer<String> resultCallback) {
-        Text text = new Text(message);
-        text.setFill(Color.WHITE);
-        text.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
+        Text text = createMessage(message);
 
         TextField field = new TextField();
         field.setMaxWidth(Math.max(text.getLayoutBounds().getWidth(), 200));
-        field.setFont(GameApplication.getInstance().getSceneManager().getDefaultFont(18));
+        field.setFont(UIFactory.newFont(18));
 
         FXGLButton btnOK = new FXGLButton("OK");
+        btnOK.disableProperty().bind(field.textProperty().isEmpty());
         btnOK.setOnAction(e -> {
             close();
             resultCallback.accept(field.getText());
@@ -162,5 +157,10 @@ public final class FXGLDialogBox extends Stage {
         box.setStroke(Color.AZURE);
 
         root.getChildren().setAll(box, n);
+    }
+
+    private Text createMessage(String message) {
+        Text text = UIFactory.newText(message);
+        return text;
     }
 }

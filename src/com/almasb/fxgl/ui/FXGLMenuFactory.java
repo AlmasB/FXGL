@@ -23,41 +23,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.almasb.fxgl.ui;
 
-.fxgl_button {
-    -fx-padding: 5 22 5 22;
-    -fx-border-width: 0;
+import com.almasb.fxgl.GameApplication;
 
-    -fx-background-color: transparent;
-    -fx-text-fill: #a9a9a9;
+public abstract class FXGLMenuFactory {
+
+    public abstract FXGLMenu newMainMenu(GameApplication app);
+    public abstract FXGLMenu newGameMenu(GameApplication app);
 }
-
-.fxgl_button:hover {
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, rgba(179, 122, 54, 0.6) 0%, rgba(0, 92, 31, 0.8) 100%);
-    -fx-text-fill: white;
-}
-
-.fxgl_button:pressed, .fxgl_button:default:hover:pressed {
-    -fx-background-color: rgba(255, 215, 25, 0.8);
-    -fx-text-fill: white;
-}
-
-.fxgl_button:focused {
-    -fx-text-fill: white;
-}
-
-/*
-.fxgl_button:disabled, .fxgl_button:default:disabled {
-    -fx-opacity: 0.4;
-    -fx-background-color: #1d1d1d;
-    -fx-text-fill: white;
-}
-
-.fxgl_button:default {
-    -fx-background-color: #008287;
-    -fx-text-fill: #ffffff;
-}
-
-.fxgl_button:default:hover {
-    -fx-background-color: #219297;
-}*/

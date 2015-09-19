@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.ApplicationMode;
 import com.almasb.fxgl.GameApplication;
 
 import javafx.scene.control.ButtonType;
@@ -54,23 +53,13 @@ public enum FXGLExceptionHandler implements ExceptionHandler {
 
     private final Logger log = FXGLLogger.getLogger("FXGLExceptionHandler");
 
-    /**
-     * Handles "Unhandled" exception by following these steps:
-     * Pauses the game execution.
-     * Logs the exception.
-     * Displays exception dialog with info.
-     * Exits the application on dialog close.
-     */
     @Override
     public void handle(Throwable e) {
-        GameApplication.getInstance().pause();
-
         log.severe("Unhandled Exception:");
         log.severe(FXGLLogger.errorTraceAsString(e));
         log.severe("Application will now exit");
 
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.initOwner(GameApplication.getInstance().getSceneManager().getScene().getWindow());
         dialog.setTitle("Unhandled Exception");
 
         final DialogPane dialogPane = dialog.getDialogPane();
@@ -110,6 +99,5 @@ public enum FXGLExceptionHandler implements ExceptionHandler {
         }
 
         dialog.showAndWait();
-        GameApplication.getInstance().exit();
     }
 }

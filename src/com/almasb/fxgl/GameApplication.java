@@ -28,7 +28,6 @@ package com.almasb.fxgl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,19 +38,26 @@ import com.almasb.fxgl.effect.ParticleManager;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.FXGLGameMenu;
+import com.almasb.fxgl.ui.FXGLIntro;
 import com.almasb.fxgl.ui.FXGLMainMenu;
-import com.almasb.fxgl.ui.Menu;
+import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.ui.FXGLMenuFactory;
+import com.almasb.fxgl.ui.Intro;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.UpdateTickListener;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 /**
@@ -65,14 +71,6 @@ import javafx.stage.Stage;
  */
 public abstract class GameApplication extends Application {
 
-    static {
-        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
-            FXGLExceptionHandler.INSTANCE.handle(error);
-        });
-        FXGLLogger.init(Level.CONFIG);
-        Version.print();
-    }
-
     private static GameApplication instance;
 
     /**
@@ -81,6 +79,16 @@ public abstract class GameApplication extends Application {
      */
     public static final GameApplication getInstance() {
         return instance;
+    }
+
+    static {
+        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
+            instance.pause();
+            FXGLExceptionHandler.INSTANCE.handle(error);
+            instance.exit();
+        });
+        FXGLLogger.init(Level.CONFIG);
+        Version.print();
     }
 
     /*
@@ -121,72 +129,66 @@ public abstract class GameApplication extends Application {
     };
 
     /**
-     * Various managers that handle different aspects of the application
-     * and need to be updated together with game world tick.
+     * List of update listeners. They are notified on each update tick (frame).
      */
-    private List<FXGLManager> managers = new ArrayList<>();
+    private List<UpdateTickListener> updateTickListeners = new ArrayList<>();
 
-    private StageManager stageManager = new StageManager();
-    protected final SceneManager sceneManager = new SceneManager();
+    protected SceneManager sceneManager;
     protected final AudioManager audioManager = new AudioManager();
-    protected final InputManager inputManager = new InputManager();
+    protected InputManager inputManager;
     protected final AssetManager assetManager = AssetManager.INSTANCE;
-    protected final PhysicsManager physicsManager = new PhysicsManager();
+    protected PhysicsManager physicsManager;
     protected final TimerManager timerManager = new TimerManager();
-    protected final ParticleManager particleManager = new ParticleManager();
+    protected ParticleManager particleManager;
     protected final QTEManager qteManager = new QTEManager();
     protected final SaveLoadManager saveLoadManager = SaveLoadManager.INSTANCE;
 
     /**
-     * Default random number generator
-     */
-    protected final Random random = new Random();
-
-    /**
-     * Initialize game settings
+     * Initialize game settings.
      *
      * @param settings
      */
     protected abstract void initSettings(GameSettings settings);
 
     /**
-     * Override to use your custom intro video
+     * Override to use your custom intro video.
      *
-     * @return
+     * @return intro animation
      */
     protected Intro initIntroVideo() {
         return new FXGLIntro(getWidth(), getHeight());
     }
 
     /**
-     * Override to use your custom main menu
+     * Override to user your custom menus.
      *
-     * @return
+     * @return menu factory for creating main and game menus
      */
-    protected Menu initMainMenu() {
-        return new FXGLMainMenu(this);
+    protected FXGLMenuFactory initMenuFactory() {
+        return new FXGLMenuFactory() {
+            @Override
+            public FXGLMenu newMainMenu(GameApplication app) {
+                return new FXGLMainMenu(app);
+            }
+
+            @Override
+            public FXGLMenu newGameMenu(GameApplication app) {
+                return new FXGLGameMenu(app);
+            }
+        };
     }
 
     /**
-     * Override to use your custom game menu
-     *
-     * @return
-     */
-    protected Menu initGameMenu() {
-        return new FXGLGameMenu(this);
-    }
-
-    /**
-     * Initialize game assets, such as Texture, AudioClip, Music
+     * Initialize game assets, such as Texture, Sound, Music, etc.
      *
      * @throws Exception
      */
     protected abstract void initAssets() throws Exception;
 
     /**
-     * Called when user selects "save" from menu
+     * Called when MenuEvent.SAVE occurs.
      *
-     * Default implementation returns null
+     * Default implementation returns null.
      *
      * @return data with required info about current state
      */
@@ -196,26 +198,26 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Called when user selects "continue" or "load" from menu
+     * Called when MenuEvent.LOAD occurs.
      *
-     * @param data
+     * @param data previously saved data
      */
     public void loadState(Serializable data) {
         log.warning("Called loadState(), but it wasn't overriden!");
     }
 
     /**
-     * Initialize game objects
+     * Initialize game objects.
      */
     protected abstract void initGame();
 
     /**
-     * Initiliaze collision handlers, physics properties
+     * Initiliaze collision handlers, physics properties.
      */
     protected abstract void initPhysics();
 
     /**
-     * Initiliaze UI objects
+     * Initiliaze UI objects.
      */
     protected abstract void initUI();
 
@@ -244,67 +246,84 @@ public abstract class GameApplication extends Application {
     /**
      * Default implementation does nothing.
      *
-     * Override to add your own cleanup
+     * Override to add your own cleanup. This will be called
+     * prior to application exit.
      */
     protected void onExit() {}
 
     /**
      * Default implementation does nothing.
      *
-     * This method is called just before the game menu opens.
+     * This method is called during the transition from playing state
+     * to menu state.
      */
     protected void onMenuOpen() {}
 
     /**
      * Default implementation does nothing.
      *
-     * This method is called right after the game menu closes.
+     * This method is called during the transition from menu state
+     * to playing state.
      */
     protected void onMenuClose() {}
 
     /**
-     * Ensure managers are of legal state and ready
+     * Ensure managers are of legal state and ready.
      */
-    private void initManagers() {
-        inputManager.init(sceneManager.getScene());
+    private void initManagers(Stage stage) {
+        sceneManager = new SceneManager(this, stage);
+        inputManager = new InputManager(sceneManager);
+        physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty(), sceneManager);
+        particleManager = new ParticleManager(sceneManager);
+
+        // we call this early to process user input bindings
+        // so we can correctly display them in menus
         initInput();
 
-        qteManager.init();
-        sceneManager.init();
-        sceneManager.getScene().addEventHandler(KeyEvent.KEY_RELEASED, qteManager::keyReleasedHandler);
-
-        // register managers that need to be updated
-        managers.add(inputManager);
-        managers.add(timerManager);
-        managers.add(physicsManager);
-        managers.add(particleManager);
-        managers.add(sceneManager);
-        managers.add(audioManager);
+        updateTickListeners.add(inputManager);
+        updateTickListeners.add(timerManager);
+        updateTickListeners.add(physicsManager);
+        updateTickListeners.add(sceneManager);
+        updateTickListeners.add(audioManager);
     }
 
     /**
-     * Initialize user application
+     * Configure main stage based on user settings.
+     *
+     * @param stage
+     * @throws Exception
      */
-    private void initApp() {
-        try {
-            initAssets();
-            initGame();
-            initPhysics();
-            initUI();
-        }
-        catch (Exception e) {
-            log.severe("Exception occurred during initialization: " + e.getMessage());
-            FXGLExceptionHandler.INSTANCE.handle(e);
+    private void initStage(Stage stage) throws Exception {
+        stage.setTitle(settings.getTitle() + " " + settings.getVersion());
+        stage.setResizable(false);
+        stage.setOnCloseRequest(e -> {
+            e.consume();
+
+            UIFactory.getDialogBox().showConfirmationBox("Exit the game?", yes -> {
+                if (yes)
+                    exit();
+            });
+        });
+        stage.getIcons().add(AssetManager.INSTANCE.loadAppIcon(settings.getIconFileName()));
+
+        if (settings.isFullScreen()) {
+            stage.setFullScreenExitHint("");
+            // we don't want the user to be able to exit full screen manually
+            // but only through settings menu
+            // so we set key combination to something obscure which isn't likely
+            // to be pressed
+            stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
+            stage.setFullScreen(true);
         }
     }
 
     @Override
-    public final void start(Stage primaryStage) throws Exception {
+    public final void start(Stage stage) throws Exception {
         log.finer("start()");
 
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
-        settings = new ReadOnlyGameSettings(localSettings);
+        settings = localSettings.toReadOnly();
 
         Level logLevel = Level.ALL;
         switch (settings.getApplicationMode()) {
@@ -319,22 +338,21 @@ public abstract class GameApplication extends Application {
                 break;
         }
 
+        UIFactory.init(stage, assetManager.loadFont(settings.getDefaultFontName(), 14));
         FXGLLogger.init(logLevel);
 
         log.info("Application Mode: " + settings.getApplicationMode());
         log.info("Log Level: " + logLevel);
 
-
-        initManagers();
-
-        stageManager.init(primaryStage);
-        stageManager.show();
+        initManagers(stage);
+        initStage(stage);
+        stage.show();
         sceneManager.onStageShow();
     }
 
     /**
      * This is the internal FXGL update tick,
-     * executed 60 times a second ~ every 0.166 (6) seconds
+     * executed 60 times a second ~ every 0.166 (6) seconds.
      *
      * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
      */
@@ -343,8 +361,8 @@ public abstract class GameApplication extends Application {
         // for the rest modules of the game to use
         timerManager.tickStart(internalTime);
 
-        // update managers
-        managers.forEach(manager -> manager.onUpdate(getNow()));
+        // fire listeners
+        updateTickListeners.forEach(listener -> listener.onUpdate(getNow()));
 
         // update app
         onUpdate();
@@ -356,39 +374,56 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Call this to manually start the game.
-     * To be used ONLY in menus.
+     * Initialize user application.
      */
-    public final void startNewGame() {
+    private void initApp() {
+        try {
+            initAssets();
+            initGame();
+            initPhysics();
+            initUI();
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Initialization Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * (Re-)initializes the user application, resets the managers
+     * and starts the game.
+     */
+    /*package-private*/ final void startNewGame() {
         initApp();
 
         getTimerManager().resetTicks();
+        getTimerManager().clearActions();
+        getInputManager().clearAllInput();
 
-        getSceneManager().returnFromMainMenu();
         timer.start();
     }
 
     /**
-     * Pauses the main loop execution
+     * Pauses the main loop execution.
      */
-    public final void pause() {
+    /*package-private*/ final void pause() {
         timer.stop();
+        getInputManager().clearAllInput();
     }
 
     /**
-     * Resumes the main loop execution
+     * Resumes the main loop execution.
      */
-    public final void resume() {
+    /*package-private*/ final void resume() {
+        getInputManager().clearAllInput();
         timer.start();
     }
 
     /**
-     * This method will be automatically called when main window is closed.
+     * Exits the application.
      *
-     * You can call this method when you want to quit the application manually
-     * from the game
+     * This method will be automatically called when main window is closed.
      */
-    public final void exit() {
+    /*package-private*/ final void exit() {
         log.finer("Closing Normally");
         onExit();
         FXGLLogger.close();
