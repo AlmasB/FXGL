@@ -58,10 +58,26 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
+ * The initialization process can be seen below (irrelevant phases are omitted):
+ *
+ * <ol>
+ * <li>Instance fields of YOUR subclass of GameApplication</li>
+ * <li>initSettings()</li>
+ * <li>All FXGL managers (after this you can safely call get*Manager()</li>
+ * <li>initInput()</li>
+ * <li>initMenuFactory() (if enabled)</li>
+ * <li>initIntroVideo() (if enabled)</li>
+ * <li>initAssets()</li>
+ * <li>initGame()</li>
+ * <li>initPhysics()</li>
+ * <li>initUI()</li>
+ * <li>Start of main game loop execution</li>
+ * </ol>
  *
  * Unless explicitly stated, methods are not thread-safe and must be
  * executed on JavaFX Application Thread.
@@ -76,7 +92,10 @@ public abstract class GameApplication extends Application {
     /**
      *
      * @return singleton instance of the current game application
+     * @deprecated applications should not rely on global access.
+     *          This method will be removed in future versions.
      */
+    @Deprecated
     public static final GameApplication getInstance() {
         return instance;
     }
@@ -133,15 +152,15 @@ public abstract class GameApplication extends Application {
      */
     private List<UpdateTickListener> updateTickListeners = new ArrayList<>();
 
-    protected SceneManager sceneManager;
-    protected final AudioManager audioManager = new AudioManager();
-    protected InputManager inputManager;
-    protected final AssetManager assetManager = AssetManager.INSTANCE;
-    protected PhysicsManager physicsManager;
-    protected final TimerManager timerManager = new TimerManager();
-    protected ParticleManager particleManager;
-    protected final QTEManager qteManager = new QTEManager();
-    protected final SaveLoadManager saveLoadManager = SaveLoadManager.INSTANCE;
+    private SceneManager sceneManager;
+    private AudioManager audioManager;
+    private InputManager inputManager;
+    private AssetManager assetManager;
+    private PhysicsManager physicsManager;
+    private TimerManager timerManager;
+    private ParticleManager particleManager;
+    private QTEManager qteManager;
+    private SaveLoadManager saveLoadManager;
 
     /**
      * Initialize game settings.
@@ -151,13 +170,23 @@ public abstract class GameApplication extends Application {
     protected abstract void initSettings(GameSettings settings);
 
     /**
-     * Override to use your custom intro video.
+     * Initiliaze input, i.e.
+     * bind key presses / key typed, bind mouse.
      *
-     * @return intro animation
+     * This method is called prior to any game init.
+     *
+     * <pre>
+     * Example:
+     *
+     * InputManager input = getInputManager();
+     * input.addAction(new UserAction("Move Left") {
+     *      protected void onAction() {
+     *          player.translate(-5, 0);
+     *      }
+     * }, KeyCode.A);
+     * </pre>
      */
-    protected Intro initIntroVideo() {
-        return new FXGLIntro(getWidth(), getHeight());
-    }
+    protected abstract void initInput();
 
     /**
      * Override to user your custom menus.
@@ -176,6 +205,15 @@ public abstract class GameApplication extends Application {
                 return new FXGLGameMenu(app);
             }
         };
+    }
+
+    /**
+     * Override to use your custom intro video.
+     *
+     * @return intro animation
+     */
+    protected Intro initIntroVideo() {
+        return new FXGLIntro(getWidth(), getHeight());
     }
 
     /**
@@ -222,34 +260,9 @@ public abstract class GameApplication extends Application {
     protected abstract void initUI();
 
     /**
-     * Initiliaze input, i.e.
-     * bind key presses / key typed, bind mouse.
-     *
-     * This method is called prior to any game init.
-     * The only valid code is adding user actions to inputManager:
-     *
-     * <pre>
-     * inputManager.addAction(new UserAction("Move Left") {
-     *      protected void onAction() {
-     *          player.translate(-5, 0);
-     *      }
-     * }, KeyCode.A);
-     * </pre>
-     */
-    protected abstract void initInput();
-
-    /**
      * Main loop update phase, most of game logic.
      */
     protected abstract void onUpdate();
-
-    /**
-     * Default implementation does nothing.
-     *
-     * Override to add your own cleanup. This will be called
-     * prior to application exit.
-     */
-    protected void onExit() {}
 
     /**
      * Default implementation does nothing.
@@ -268,13 +281,29 @@ public abstract class GameApplication extends Application {
     protected void onMenuClose() {}
 
     /**
+     * Default implementation does nothing.
+     *
+     * Override to add your own cleanup. This will be called
+     * prior to application exit.
+     */
+    protected void onExit() {}
+
+    /**
      * Ensure managers are of legal state and ready.
      */
     private void initManagers(Stage stage) {
+        assetManager = AssetManager.INSTANCE;
+        saveLoadManager = SaveLoadManager.INSTANCE;
+
+        timerManager = new TimerManager();
         sceneManager = new SceneManager(this, stage);
         inputManager = new InputManager(sceneManager);
+
         physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty(), sceneManager);
         particleManager = new ParticleManager(sceneManager);
+
+        audioManager = new AudioManager();
+        qteManager = new QTEManager();
 
         // we call this early to process user input bindings
         // so we can correctly display them in menus
@@ -338,7 +367,7 @@ public abstract class GameApplication extends Application {
                 break;
         }
 
-        UIFactory.init(stage, assetManager.loadFont(settings.getDefaultFontName(), 14));
+        UIFactory.init(stage, AssetManager.INSTANCE.loadFont(settings.getDefaultFontName(), 14));
         FXGLLogger.init(logLevel);
 
         log.info("Application Mode: " + settings.getApplicationMode());
@@ -347,7 +376,7 @@ public abstract class GameApplication extends Application {
         initManagers(stage);
         initStage(stage);
         stage.show();
-        sceneManager.onStageShow();
+        getSceneManager().onStageShow();
     }
 
     /**
@@ -382,6 +411,14 @@ public abstract class GameApplication extends Application {
             initGame();
             initPhysics();
             initUI();
+
+            if (getSettings().isFPSShown()) {
+                Text fpsText = UIFactory.newText("", 24);
+                fpsText.setTranslateY(getSettings().getHeight() - 40);
+                fpsText.textProperty().bind(getTimerManager().fpsProperty().asString("FPS: [%d]\n")
+                        .concat(getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
+                getSceneManager().addUINodes(fpsText);
+            }
         }
         catch (Exception e) {
             throw new RuntimeException("Initialization Error: " + e.getMessage());
@@ -524,6 +561,14 @@ public abstract class GameApplication extends Application {
 
     /**
      *
+     * @return particle manager
+     */
+    public final ParticleManager getParticleManager() {
+        return particleManager;
+    }
+
+    /**
+     *
      * @return input manager
      */
     public final InputManager getInputManager() {
@@ -536,6 +581,22 @@ public abstract class GameApplication extends Application {
      */
     public final AssetManager getAssetManager() {
         return assetManager;
+    }
+
+    /**
+     *
+     * @return save load manager
+     */
+    public final SaveLoadManager getSaveLoadManager() {
+        return saveLoadManager;
+    }
+
+    /**
+     *
+     * @return QTE manager
+     */
+    public final QTEManager getQTEManager() {
+        return qteManager;
     }
 
     /**

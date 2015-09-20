@@ -75,9 +75,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -231,16 +229,6 @@ public final class SceneManager implements UpdateTickListener {
         particlesCanvas.setWidth(app.getWidth());
         particlesCanvas.setHeight(app.getHeight());
         particlesCanvas.setMouseTransparent(true);
-
-        if (app.getSettings().isFPSShown()) {
-            Text fpsText = new Text();
-            fpsText.setFill(Color.AZURE);
-            fpsText.setFont(UIFactory.newFont(24));
-            fpsText.setTranslateY(app.getHeight() - 40);
-            fpsText.textProperty().bind(app.getTimerManager().fpsProperty().asString("FPS: [%d]\n")
-                    .concat(app.getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
-            addUINodes(fpsText);
-        }
     }
 
     /**
