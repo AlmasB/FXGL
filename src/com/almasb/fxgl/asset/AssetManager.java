@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,11 +63,13 @@ import javafx.scene.text.Font;
  * <li>Sound - /assets/sounds/</li>
  * <li>Music - /assets/music/</li>
  * <li>Text (List&lt;String&gt;) - /assets/text/</li>
+ * <li>KVFile - /assets/kv/</li>
  * <li>Data - /assets/data/</li>
  * <li>Scripts - /assets/scripts/</li>
  * <li>CSS - /assets/ui/css/</li>
  * <li>Font - /assets/ui/fonts/</li>
  * <li>App icons - /assets/ui/icons/</li>
+ * <li>Cursors - /assets/ui/cursors/</li>
  * </ul>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -74,106 +78,206 @@ import javafx.scene.text.Font;
 public enum AssetManager {
     INSTANCE;
 
-    private static final String ASSETS_DIR = "/assets/";
-    private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";
-    private static final String SOUNDS_DIR = ASSETS_DIR + "sounds/";
-    private static final String MUSIC_DIR = ASSETS_DIR + "music/";
-    private static final String TEXT_DIR = ASSETS_DIR + "text/";
-    private static final String KV_DIR = ASSETS_DIR + "kv/";
-    private static final String BINARY_DIR = ASSETS_DIR + "data/";
-    private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
+    private static final String ASSETS_DIR      = "/assets/";
+    private static final String TEXTURES_DIR    = ASSETS_DIR + "textures/";
+    private static final String SOUNDS_DIR      = ASSETS_DIR + "sounds/";
+    private static final String MUSIC_DIR       = ASSETS_DIR + "music/";
+    private static final String TEXT_DIR        = ASSETS_DIR + "text/";
+    private static final String KV_DIR          = ASSETS_DIR + "kv/";
+    private static final String BINARY_DIR      = ASSETS_DIR + "data/";
+    private static final String SCRIPTS_DIR     = ASSETS_DIR + "scripts/";
 
-    private static final String UI_DIR = ASSETS_DIR + "ui/";
-    private static final String CSS_DIR = UI_DIR + "css/";
-    private static final String FONTS_DIR = UI_DIR + "fonts/";
-    private static final String ICON_DIR = UI_DIR + "icons/";
-    private static final String CURSORS_DIR = UI_DIR + "cursors/";
+    private static final String UI_DIR          = ASSETS_DIR + "ui/";
+    private static final String CSS_DIR         = UI_DIR + "css/";
+    private static final String FONTS_DIR       = UI_DIR + "fonts/";
+    private static final String ICON_DIR        = UI_DIR + "icons/";
+    private static final String CURSORS_DIR     = UI_DIR + "cursors/";
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetManager");
 
-    public Texture loadTexture(String name) throws Exception {
-        try (InputStream is = getClass().getResourceAsStream(TEXTURES_DIR + name)) {
-            if (is != null) {
-                return new Texture(new Image(is));
-            }
-            else {
-                log.warning("Failed to load texture: " + name + " Check it exists in assets/textures/");
-                throw new IOException("Failed to load texture: " + name);
-            }
+    /**
+     * Loads texture with given name from {@value #TEXTURES_DIR}.
+     * Either returns a valid texture or throws an exception in case of errors.
+     *
+     * <p>
+     * Supported image formats are:
+     * <ul>
+     * <li><a href="http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx">BMP</a></li>
+     * <li><a href="http://www.w3.org/Graphics/GIF/spec-gif89a.txt">GIF</a></li>
+     * <li><a href="http://www.ijg.org">JPEG</a></li>
+     * <li><a href="http://www.libpng.org/pub/png/spec/">PNG</a></li>
+     * </ul>
+     * </p>
+     *
+     * @param name  texture name without the {@value #TEXTURES_DIR}, e.g. "player.png"
+     * @return  texture
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Texture loadTexture(String name) {
+        try (InputStream is = getStream(TEXTURES_DIR + name)) {
+            return new Texture(new Image(is));
+        }
+        catch (Exception e) {
+            throw loadFailed(name, e);
         }
     }
 
-    public Sound loadSound(String name) throws Exception {
+    /**
+     * Loads sound with given name from {@value #SOUNDS_DIR}.
+     * Either returns a valid sound or throws an exception in case of errors.
+     *
+     * Supported sound format:
+     * <li>WAV</li>
+     *
+     * @param name  sound name without the {@value #SOUNDS_DIR}, e.g. "explosion.wav"
+     * @return  sound
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Sound loadSound(String name) {
         try {
-            return new Sound(new AudioClip(getClass().getResource(SOUNDS_DIR + name).toExternalForm()));
+            return new Sound(new AudioClip(getURL(SOUNDS_DIR + name).toExternalForm()));
         }
         catch (Exception e) {
-            log.warning("Failed to load sound: " + name + " Check it exists in assets/sounds/");
-            throw new IOException("Failed to load sound: " + name);
+            throw loadFailed(name, e);
         }
     }
 
-    public Music loadMusic(String name) throws Exception {
+    /**
+     * Loads sound with given name from {@value #MUSIC_DIR}.
+     * Either returns a valid sound or throws an exception in case of errors.
+     *
+     * Supported sound format:
+     * <li>MP3</li>
+     *
+     * @param name  music name without the {@value #MUSIC_DIR}, e.g. "background_music.mp3"
+     * @return  music
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Music loadMusic(String name) {
         try {
-            return new Music(new Media(getClass().getResource(MUSIC_DIR + name).toExternalForm()));
+            return new Music(new Media(getURL(MUSIC_DIR + name).toExternalForm()));
         }
         catch (Exception e) {
-            log.warning("Failed to load music: " + name + " Check it exists in assets/music/");
-            throw new IOException("Failed to load music: " + name);
+            throw loadFailed(name, e);
         }
     }
 
-    public List<String> loadText(String name) throws Exception {
-        try (InputStream is = getClass().getResourceAsStream(TEXT_DIR + name);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-            List<String> result = new ArrayList<>();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result.add(line);
-            }
-            return result;
-        }
-        catch (Exception e) {
-            log.warning("Failed to load text: " + name + " Check it exists in assets/text/");
-            throw new IOException("Failed to load text: " + name);
-        }
+    /**
+     * Loads text file with given name from {@value #TEXT_DIR}
+     * into List<String> where each element represents a line
+     * within the file. Either returns a valid list with lines read from the file
+     * or throws an exception in case of errors
+     *
+     * @param name  text file name without the {@value #TEXT_DIR}, e.g. "level_0.txt"
+     * @return
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public List<String> loadText(String name) {
+        return readAllLines(TEXT_DIR + name);
     }
 
-    public KVFile loadKV(String name) throws Exception {
-        try {
-            return new KVFile(Files.readAllLines(Paths.get(getClass().getResource(KV_DIR + name).toURI())));
-        }
-        catch (Exception e) {
-            log.warning("Failed to load kv file: " + name + " Check it exists in assets/kv/");
-            throw new IOException("Failed to load kv file: " + name);
-        }
+    /**
+     * Loads KVFile with given name from {@value #KV_DIR}.
+     * Either returns a valid KVFile or throws exception in case of errors.
+     *
+     * @param name  KVFile name without the {@value #KV_DIR}, .e.g "settings.kv"
+     * @return
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public KVFile loadKV(String name) {
+        return new KVFile(readAllLines(KV_DIR + name));
     }
 
-    public String loadScript(String name) throws Exception {
+    /**
+     * Loads script with given name from {@value #SCRIPTS_DIR} as a single string.
+     * Either returns loaded string or throws exception in case of errors.
+     *
+     * @param name  script file without the {@value #SCRIPTS_DIR}, e.g. "skill_heal.js"
+     * @return
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public String loadScript(String name) {
         StringBuilder builder = new StringBuilder();
-        try (InputStream is = getClass().getResourceAsStream(SCRIPTS_DIR + name);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line + "\n");
-            }
-            return builder.toString();
+        readAllLines(SCRIPTS_DIR + name)
+            .forEach(line -> builder.append(line + "\n"));
+        return builder.toString();
+    }
+
+    /**
+     * Loads cursor image with given name from {@value #CURSORS_DIR}.
+     * Either returns a valid image or throws exception in case of errors.
+     *
+     * @param name  image name without the {@value #CURSORS_DIR}, e.g. "attack_cursor.png"
+     * @return
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Image loadCursorImage(String name) {
+        try (InputStream is = getStream(CURSORS_DIR + name)) {
+            return new Image(is);
         }
         catch (Exception e) {
-            log.warning("Failed to load script: " + name + " Check it exists in assets/scripts/");
-            throw new IOException("Failed to load script: " + name + " because: " + e.getMessage());
+            throw loadFailed(name, e);
         }
     }
 
-    public Image loadCursorImage(String name) throws Exception {
-        try (InputStream is = getClass().getResourceAsStream(CURSORS_DIR + name)) {
-            if (is != null) {
-                return new Image(is);
-            }
-            else {
-                log.warning("Failed to load cursor image: " + name + " Check it exists in assets/ui/cursors/");
-                throw new IOException("Failed to load cursor image: " + name);
-            }
+    /**
+     * Returns external form of of URL to CSS file (from {@value #CSS_DIR} ready to be applied to UI elements.
+     * Can be applied by calling object.getStyleSheets().add().
+     * Either returns ready CSS or throws exception in case of errors.
+     *
+     * @param name  CSS file name without the {@value #CSS_DIR}, e.g. "ui_button.css"
+     * @return
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public String loadCSS(String name) {
+        try {
+            return getURL(CSS_DIR + name).toExternalForm();
+        }
+        catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
+     * Loads a native JavaFX font with given name and size from {@value #FONTS_DIR}.
+     * Either returns a valid font or throws exception in case of errors
+     *
+     * <p>
+     * Supported font formats are:
+     * <ul>
+     * <li>TTF</li>
+     * <li>OTF</li>
+     * </ul>
+     * </p>
+     *
+     * @param name  font file name without the {@value #FONTS_DIR}, e.g. "quest_font.ttf"
+     * @param size
+     * @return  font
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Font loadFont(String name, double size) {
+        try (InputStream is = getStream(FONTS_DIR + name)) {
+            return Font.loadFont(is, size);
+        }
+        catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
+     * Loads an app icon from {@value #ICON_DIR}.
+     * Either returns a valid image or throws an exception in case of errors.
+     *
+     * @param name  image name without the {@value #ICON_DIR}, e.g. "app_icon.png"
+     * @return
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Image loadAppIcon(String name) {
+        try (InputStream is = getStream(ICON_DIR + name)) {
+            return new Image(is);
+        }
+        catch (Exception e) {
+            throw loadFailed(name, e);
         }
     }
 
@@ -215,65 +319,67 @@ public enum AssetManager {
 
     @SuppressWarnings("unchecked")
     private <T> T loadDataInternal(String name) throws Exception {
-        try (ObjectInputStream ois = new ObjectInputStream(getClass().getResourceAsStream(BINARY_DIR + name))) {
+        try (ObjectInputStream ois = new ObjectInputStream(getStream(BINARY_DIR + name))) {
             return (T)ois.readObject();
         }
     }
 
     /**
-     * Returns external form of of URL to CSS file ready to be applied to UI elements.
-     * Can be applied by calling object.getStyleSheets().add()
+     * Returns a valid URL to resource or throws {@link IllegalArgumentException}.
      *
      * @param name
      * @return
-     * @throws Exception
      */
-    public String loadCSS(String name) throws Exception {
+    private URL getURL(String name) {
+        URL url = getClass().getResource(name);
+        if (url == null) {
+            throw new IllegalArgumentException("Asset \"" + name + "\" was not found!");
+        }
+
+        return url;
+    }
+
+    /**
+     * Opens a stream to resource with given name. The caller is responsible for
+     * closing the stream. Either returns a valid stream or throws an exception.
+     *
+     * @param name resource name
+     * @return resource stream
+     * @throws IllegalArgumentException if any error occurs or stream is null
+     */
+    private InputStream getStream(String name) {
         try {
-            return getClass().getResource(CSS_DIR + name).toExternalForm();
+            InputStream is = getURL(name).openStream();
+            if (is == null)
+                throw new IOException("Input stream to \"" + name + "\" is null!");
+            return is;
+        }
+        catch (IOException e) {
+            throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Read all lines from a file. Bytes from the file are decoded into characters
+     * using the {@link StandardCharsets#UTF_8 UTF-8} {@link Charset charset}.
+     *
+     * @param name
+     * @return  the lines from the file as a {@code List}
+     */
+    private List<String> readAllLines(String name) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(name)))) {
+            List<String> result = new ArrayList<>();
+
+            for (;;) {
+                String line = reader.readLine();
+                if (line == null)
+                    break;
+                result.add(line);
+            }
+            return result;
         }
         catch (Exception e) {
-            log.warning("Failed to load css: " + name + " Check it exists in assets/ui/css/");
-            throw new IOException("Failed to load css: " + name);
-        }
-    }
-
-    /**
-     * Loads a native JavaFX font with given name and size from assets/ui/fonts/
-     *
-     * @param name
-     * @param size
-     * @return
-     * @throws Exception
-     */
-    public Font loadFont(String name, double size) throws Exception {
-        try (InputStream is = getClass().getResourceAsStream(FONTS_DIR + name)) {
-            if (is != null) {
-                return Font.loadFont(is, size);
-            }
-            else {
-                log.warning("Failed to load font: " + name + " Check it exists in assets/ui/fonts/");
-                throw new IOException("Failed to load font: " + name);
-            }
-        }
-    }
-
-    /**
-     * Loads an app icon from assets/ui/icons.
-     *
-     * @param name
-     * @return
-     * @throws Exception
-     */
-    public Image loadAppIcon(String name) throws Exception {
-        try (InputStream is = getClass().getResourceAsStream(ICON_DIR + name)) {
-            if (is != null) {
-                return new Image(is);
-            }
-            else {
-                log.warning("Failed to load icon: " + name + " Check it exists in assets/ui/icons/");
-                throw new IOException("Failed to load icon: " + name);
-            }
+            throw loadFailed(name, e);
         }
     }
 
@@ -375,5 +481,17 @@ public enum AssetManager {
         }
 
         return fileNames;
+    }
+
+    /**
+     * Constructs new IllegalArgumentException with "load failed" message
+     * and with relevant information about the asset.
+     *
+     * @param assetName
+     * @param error
+     * @return
+     */
+    private IllegalArgumentException loadFailed(String assetName, Throwable error) {
+        return new IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.getMessage());
     }
 }
