@@ -23,22 +23,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.util;
+package com.almasb.fxgl.asset;
+
+import javafx.scene.text.Font;
 
 /**
- * An interface for handling exceptions.
+ * A convenience wrapper for native JavaFX Font.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public interface ExceptionHandler {
+public final class FontFactory {
+    private Font font;
+
+    /*package-private*/ FontFactory(Font font) {
+        this.font = font;
+    }
 
     /**
-     * Handles given exception. It is up to
-     * the implementation to decide how it should log / display
-     * the exception.
+     * Construct new native JavaFX font with given size.
+     * The font used is the same as the one used in factory
+     * construction.
      *
-     * @param e
+     * @param size
+     * @return
      */
-    public void handle(Throwable e);
+    public Font newFont(double size) {
+        return new Font(font.getName(), size);
+    }
 }

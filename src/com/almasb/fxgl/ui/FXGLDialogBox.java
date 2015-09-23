@@ -25,6 +25,11 @@
  */
 package com.almasb.fxgl.ui;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -65,21 +70,26 @@ public final class FXGLDialogBox extends Stage {
     private StackPane root = new StackPane();
     private Scene scene = new Scene(root);
 
-    public FXGLDialogBox(Window owner) {
+    /*package-private*/ FXGLDialogBox(Window owner) {
         initStyle(StageStyle.TRANSPARENT);
         initModality(Modality.WINDOW_MODAL);
         initOwner(owner);
         setScene(scene);
 
-        try {
-            root.getStylesheets().add(AssetManager.INSTANCE.loadCSS("fxgl_dark.css"));
-        }
-        catch (Exception e) {
-            log.warning("Failed to apply fxgl_dark.css stylesheet: " + e.getMessage());
-        }
+        root.getStylesheets().add(AssetManager.INSTANCE.loadCSS("fxgl_dark.css"));
     }
 
+    /**
+     * Shows a simple message box with OK button.
+     *
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param message
+     */
     public void showMessageBox(String message) {
+        if (isShowing())
+            log.warning("1 Dialog is already showing!");
+
         Text text = createMessage(message);
 
         FXGLButton btnOK = new FXGLButton("OK");
@@ -95,7 +105,68 @@ public final class FXGLDialogBox extends Stage {
         show();
     }
 
+    /**
+     * Shows an error box with OK and LOG buttons.
+     *
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param error
+     */
+    public void showErrorBox(Throwable error) {
+        if (isShowing())
+            log.warning("1 Dialog is already showing!");
+
+        Text text = createMessage("Error: " + (error.getMessage() == null ? "NPE" : error.getMessage()));
+
+        FXGLButton btnOK = new FXGLButton("OK");
+        btnOK.setOnAction(e -> {
+            close();
+        });
+
+        FXGLButton btnLog = new FXGLButton("LOG");
+        btnLog.setOnAction(e -> {
+            close();
+
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            error.printStackTrace(pw);
+            pw.close();
+
+            try {
+                Files.write(Paths.get("LastException.log"), Arrays.asList(sw.toString().split("\n")));
+                showMessageBox("Log has been saved as LastException.log");
+            }
+            catch (Exception ex) {
+                showMessageBox("Failed to save log file");
+            }
+        });
+
+        HBox hbox = new HBox(btnOK, btnLog);
+        hbox.setAlignment(Pos.CENTER);
+
+        VBox vbox = new VBox(50, text, hbox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 400), text.getLayoutBounds().getHeight() * 2 + 50));
+
+        setContent(vbox);
+        show();
+    }
+
+    /**
+     * Shows confirmation message box with YES and NO buttons.
+     *
+     * The callback function will be invoked with boolean answer
+     * as parameter.
+     *
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param message
+     * @param resultCallback
+     */
     public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
+        if (isShowing())
+            log.warning("1 Dialog is already showing!");
+
         Text text = createMessage(message);
 
         FXGLButton btnYes = new FXGLButton("YES");
@@ -121,7 +192,23 @@ public final class FXGLDialogBox extends Stage {
         show();
     }
 
+    /**
+     * Shows input box with input field and OK button.
+     * The button will stay disabled until there is at least
+     * 1 character in the input field.
+     *
+     * The callback function will be invoked with input field text
+     * as parameter.
+     *
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param message
+     * @param resultCallback
+     */
     public void showInputBox(String message, Consumer<String> resultCallback) {
+        if (isShowing())
+            log.warning("1 Dialog is already showing!");
+
         Text text = createMessage(message);
 
         TextField field = new TextField();

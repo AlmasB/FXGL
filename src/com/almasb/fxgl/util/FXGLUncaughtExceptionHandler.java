@@ -27,9 +27,6 @@ package com.almasb.fxgl.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.logging.Logger;
-
-import com.almasb.fxgl.GameApplication;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -41,26 +38,19 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 
 /**
- * Default FXGL exception handler for unhandled exceptions, most
- * of which will have runtime nature.
+ * Default FXGL exception handler for runtime uncaught exceptions
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public enum FXGLExceptionHandler implements ExceptionHandler {
+public final class FXGLUncaughtExceptionHandler implements ExceptionHandler {
 
-    INSTANCE;
-
-    private final Logger log = FXGLLogger.getLogger("FXGLExceptionHandler");
+    //private static final Logger log = FXGLLogger.getLogger("FXGLExceptionHandler");
 
     @Override
     public void handle(Throwable e) {
-        log.severe("Unhandled Exception:");
-        log.severe(FXGLLogger.errorTraceAsString(e));
-        log.severe("Application will now exit");
-
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Unhandled Exception");
+        dialog.setTitle("Uncaught Exception");
 
         final DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.setContentText("Exception details:");
@@ -71,33 +61,29 @@ public enum FXGLExceptionHandler implements ExceptionHandler {
         dialogPane.setContentText(message != null ? message : "Ooops :'(");
         dialog.initModality(Modality.APPLICATION_MODAL);
 
-        ApplicationMode appMode = GameApplication.getInstance().getSettings().getApplicationMode();
-        if (appMode != ApplicationMode.RELEASE) {
-            Label label = new Label("Exception stacktrace:");
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.close();
+        Label label = new Label("Exception stacktrace:");
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        pw.close();
 
-            TextArea textArea = new TextArea(sw.toString());
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
-            textArea.setPrefSize(600, 600);
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
+        TextArea textArea = new TextArea(sw.toString());
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefSize(600, 600);
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
 
-            GridPane.setVgrow(textArea, Priority.ALWAYS);
-            GridPane.setHgrow(textArea, Priority.ALWAYS);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-            GridPane root = new GridPane();
-            root.setVisible(false);
-            root.setMaxWidth(Double.MAX_VALUE);
-            root.add(label, 0, 0);
-            root.add(textArea, 0, 1);
+        GridPane root = new GridPane();
+        root.setVisible(false);
+        root.setMaxWidth(Double.MAX_VALUE);
+        root.add(label, 0, 0);
+        root.add(textArea, 0, 1);
 
-            dialogPane.setExpandableContent(root);
-        }
-
+        dialogPane.setExpandableContent(root);
         dialog.showAndWait();
     }
 }

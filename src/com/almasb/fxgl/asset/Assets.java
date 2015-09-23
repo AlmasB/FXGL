@@ -33,10 +33,8 @@ import java.util.logging.Logger;
 
 import com.almasb.fxgl.util.FXGLLogger;
 
-import javafx.scene.text.Font;
-
 /**
- * Stores cached data
+ * Stores cached assets.
  */
 public final class Assets {
 
@@ -46,7 +44,7 @@ public final class Assets {
     private Map<String, Sound> cachedSounds = new HashMap<>();
     private Map<String, Music> cachedMusic = new HashMap<>();
     private Map<String, List<String> > cachedText = new HashMap<>();
-    private Map<String, Font> cachedFonts = new HashMap<>();
+    private Map<String, FontFactory> cachedFonts = new HashMap<>();
     private Map<String, Object> cachedData = new HashMap<>();
 
     /**
@@ -72,8 +70,8 @@ public final class Assets {
         cachedText.put(key, text);
     }
 
-    /*package-private*/ void putFont(String key, Font font) {
-        cachedFonts.put(key, font);
+    /*package-private*/ void putFontFactory(String key, FontFactory fontFactory) {
+        cachedFonts.put(key, fontFactory);
     }
 
     /*package-private*/ void putData(String key, Object data) {
@@ -147,12 +145,12 @@ public final class Assets {
      * @param key
      * @return
      */
-    public Font getFont(String key) {
-        Font font = cachedFonts.get(key);
-        if (font != null)
-            return font;
+    public FontFactory getFontFactory(String key) {
+        FontFactory fontFactory = cachedFonts.get(key);
+        if (fontFactory != null)
+            return fontFactory;
         else
-            throw new IllegalArgumentException("No cached font found with name: " + key);
+            throw new IllegalArgumentException("No cached font factory found with name: " + key);
     }
 
     /**

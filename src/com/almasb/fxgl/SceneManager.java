@@ -218,7 +218,8 @@ public final class SceneManager implements UpdateTickListener {
             });
         }
         catch (Exception e) {
-            log.warning("Failed to init FXGL scene manager style. Using defaults. Error: " + e.getMessage());
+            //log.warning("Failed to init FXGL scene manager style. Using defaults. Error: " + e.getMessage());
+            GameApplication.getDefaultCheckedExceptionHandler().handle(e);
         }
 
         isMenuEnabled = app.getSettings().isMenuEnabled();

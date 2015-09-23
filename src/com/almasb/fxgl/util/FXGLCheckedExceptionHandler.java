@@ -25,20 +25,18 @@
  */
 package com.almasb.fxgl.util;
 
+import com.almasb.fxgl.ui.UIFactory;
+
 /**
- * An interface for handling exceptions.
+ * Default FXGL exception handler for checked exceptions.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public interface ExceptionHandler {
+public class FXGLCheckedExceptionHandler implements ExceptionHandler {
 
-    /**
-     * Handles given exception. It is up to
-     * the implementation to decide how it should log / display
-     * the exception.
-     *
-     * @param e
-     */
-    public void handle(Throwable e);
+    @Override
+    public void handle(Throwable e) {
+        UIFactory.getDialogBox().showErrorBox(e);
+    }
 }

@@ -239,8 +239,10 @@ public enum AssetManager {
     }
 
     /**
-     * Loads a native JavaFX font with given name and size from {@value #FONTS_DIR}.
-     * Either returns a valid font or throws exception in case of errors
+     * Loads a native JavaFX font with given name from {@value #FONTS_DIR}
+     * wrapped in a FontFactory, which later can be used to produce fonts
+     * with different sizes without accessing the font file.
+     * Either returns a valid font factory or throws exception in case of errors
      *
      * <p>
      * Supported font formats are:
@@ -251,13 +253,12 @@ public enum AssetManager {
      * </p>
      *
      * @param name  font file name without the {@value #FONTS_DIR}, e.g. "quest_font.ttf"
-     * @param size
-     * @return  font
+     * @return  font factory
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public Font loadFont(String name, double size) {
+    public FontFactory loadFont(String name) {
         try (InputStream is = getStream(FONTS_DIR + name)) {
-            return Font.loadFont(is, size);
+            return new FontFactory(Font.loadFont(is, 12));
         }
         catch (Exception e) {
             throw loadFailed(name, e);
@@ -410,7 +411,7 @@ public enum AssetManager {
         for (String name : data)
             assets.putData(name, loadDataInternal(name));
         for (String name : fonts)
-            assets.putFont(name, loadFont(name, 12));
+            assets.putFontFactory(name, loadFont(name));
 
         return assets;
     }

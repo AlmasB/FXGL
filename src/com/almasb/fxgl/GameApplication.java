@@ -48,8 +48,10 @@ import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLMenuFactory;
 import com.almasb.fxgl.ui.Intro;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.FXGLExceptionHandler;
+import com.almasb.fxgl.util.ExceptionHandler;
+import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import com.almasb.fxgl.util.UpdateTickListener;
 import com.almasb.fxgl.util.Version;
 
@@ -101,11 +103,6 @@ public abstract class GameApplication extends Application {
     }
 
     static {
-        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
-            instance.pause();
-            FXGLExceptionHandler.INSTANCE.handle(error);
-            instance.exit();
-        });
         FXGLLogger.init(Level.CONFIG);
         Version.print();
     }
@@ -124,6 +121,47 @@ public abstract class GameApplication extends Application {
         // so that anything can now use getInstance()
         log.finer("clinit()");
         instance = this;
+        setDefaultUncaughtExceptionHandler(new FXGLUncaughtExceptionHandler());
+        setDefaultCheckedExceptionHandler(new FXGLCheckedExceptionHandler());
+    }
+
+    private static ExceptionHandler defaultCheckedExceptionHandler;
+
+    /**
+     *
+     * @return handler for checked exceptions
+     */
+    public static ExceptionHandler getDefaultCheckedExceptionHandler() {
+        return defaultCheckedExceptionHandler;
+    }
+
+    /**
+     * Set handler for checked exceptions
+     *
+     * @param handler
+     */
+    public static final void setDefaultCheckedExceptionHandler(ExceptionHandler handler) {
+        defaultCheckedExceptionHandler = error -> {
+            log.warning("Checked Exception:");
+            log.warning(FXGLLogger.errorTraceAsString(error));
+            handler.handle(error);
+        };
+    }
+
+    /**
+     * Set handler for runtime uncaught exceptions
+     *
+     * @param handler
+     */
+    public final void setDefaultUncaughtExceptionHandler(ExceptionHandler handler) {
+        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
+            pause();
+            log.severe("Uncaught Exception:");
+            log.severe(FXGLLogger.errorTraceAsString(error));
+            log.severe("Application will now exit");
+            handler.handle(error);
+            exit();
+        });
     }
 
     /**
@@ -152,6 +190,9 @@ public abstract class GameApplication extends Application {
      */
     private List<UpdateTickListener> updateTickListeners = new ArrayList<>();
 
+    /*
+     * Various game state managers.
+     */
     private SceneManager sceneManager;
     private AudioManager audioManager;
     private InputManager inputManager;
@@ -322,7 +363,7 @@ public abstract class GameApplication extends Application {
      * @param stage
      * @throws Exception
      */
-    private void initStage(Stage stage) throws Exception {
+    private void initStage(Stage stage) {
         stage.setTitle(settings.getTitle() + " " + settings.getVersion());
         stage.setResizable(false);
         stage.setOnCloseRequest(e -> {
@@ -367,7 +408,7 @@ public abstract class GameApplication extends Application {
                 break;
         }
 
-        UIFactory.init(stage, AssetManager.INSTANCE.loadFont(settings.getDefaultFontName(), 14));
+        UIFactory.init(stage, AssetManager.INSTANCE.loadFont(settings.getDefaultFontName()));
         FXGLLogger.init(logLevel);
 
         log.info("Application Mode: " + settings.getApplicationMode());
