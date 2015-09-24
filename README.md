@@ -73,7 +73,7 @@ The issue tracker contains information about possible features to be added in
 the next release.
 
 # Examples
-Video Tutorials Playlist - https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp <br/>
+Video Tutorials Playlist - <a href="https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp">YouTube Link</a> <br/>
 The videos will walk you through the basics.
 
 # Use Case
