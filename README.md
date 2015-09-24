@@ -39,26 +39,32 @@ Any testing, feedback and bug reports are welcome <br/>
 
 3D features and port to mobile will be considered in the future.
 
+# Basic Usage
+The samples/ folder will be constantly updated to include demonstrations of various features.
+
 # Changelog
-FXGL 0.1.5 (latest) supports:
+FXGL 0.1.6 (latest) supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
 * JBox2D Physics Engine Integration (v.2.2.1.1, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
 * Basic Logging
 * Basic Performance Monitor
-* Entity Component System
+* Basic Audio System
+* Basic Particle System with Canvas Rendering
+* Multi-Layer Rendering
+* Entity Component/Control System
+* Time Management System
 * Global and Scoped Event System
-* Input Bindings
-* Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", custom binary formats)
+* Input Bindings (Keys + Mouse)
+* Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf" custom binary formats)
 * Automated Collision Handling (also unified, physics collisions are hooked into FXGL)
 * Automated Target Screen Resolution (+Fullscreen)
 * Networking (both TCP and UDP)
 * AI Pathfinding (A star search)
-* Simple Particle System with Canvas Rendering
-* Quick Time Events (QTE)
+* Quick Time Events (QTE) (<b>API INCOMPLETE</b>)
 * Intro Video / Animation (also supports custom intro)
-* Default Main Menu + Game Menu (also supports custom Main Menu and Game Menu)
-* Custom Modifiable UI elements
+* Main Menu + Game Menu (also supports custom Main Menu and Game Menu)
+* Custom Modifiable UI elements (Dialogs, Bars, Buttons, etc)
 * Saving / Loading System
 * Other minor game dev features
 
