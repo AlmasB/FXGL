@@ -41,7 +41,7 @@ public abstract class Intro extends Parent {
     /**
      * Called when intro finished.
      */
-    /*package-private*/ Runnable onFinished;
+    private Runnable onFinished;
 
     /**
      * Do NOT call. This is set by FXGL.

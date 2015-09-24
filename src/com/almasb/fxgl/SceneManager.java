@@ -202,25 +202,19 @@ public final class SceneManager implements UpdateTickListener {
         this.app = app;
         this.stage = stage;
 
-        try {
-            fxglCSS = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
-            root.getStylesheets().add(fxglCSS);
-            dialogBox = UIFactory.getDialogBox();
-            dialogBox.setOnShown(e -> {
-                if (!menuOpenProperty().get())
-                    app.pause();
+        fxglCSS = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
+        root.getStylesheets().add(fxglCSS);
+        dialogBox = UIFactory.getDialogBox();
+        dialogBox.setOnShown(e -> {
+            if (!menuOpenProperty().get())
+                app.pause();
 
-                app.getInputManager().clearAllInput();
-            });
-            dialogBox.setOnHidden(e -> {
-                if (!menuOpenProperty().get())
-                    app.resume();
-            });
-        }
-        catch (Exception e) {
-            //log.warning("Failed to init FXGL scene manager style. Using defaults. Error: " + e.getMessage());
-            GameApplication.getDefaultCheckedExceptionHandler().handle(e);
-        }
+            app.getInputManager().clearAllInput();
+        });
+        dialogBox.setOnHidden(e -> {
+            if (!menuOpenProperty().get())
+                app.resume();
+        });
 
         isMenuEnabled = app.getSettings().isMenuEnabled();
         menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
@@ -414,7 +408,6 @@ public final class SceneManager implements UpdateTickListener {
             configureMenu();
 
         if (app.getSettings().isIntroEnabled()) {
-            log.finer("Intro is enabled");
             Intro intro = app.initIntroVideo();
             intro.getTransforms().add(new Scale(sizeRatio, sizeRatio));
             intro.setOnFinished(() -> {
@@ -433,7 +426,6 @@ public final class SceneManager implements UpdateTickListener {
             intro.startIntro();
         }
         else {
-            log.finer("Intro not enabled");
             if (isMenuEnabled) {
                 setScene(mainMenu);
             }

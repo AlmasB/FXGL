@@ -27,6 +27,13 @@ package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.GameApplication;
 
+/**
+ * Menu creation methods can be overriden to use
+ * custom main/game menus.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public abstract class FXGLMenuFactory {
 
     public abstract FXGLMenu newMainMenu(GameApplication app);
