@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -500,6 +501,40 @@ public class Entity extends Parent {
     @SuppressWarnings("unchecked")
     public final <T> T getProperty(PropertyKey key) {
         return (T)getProperties().get(key.getUniqueKey());
+    }
+
+    /**
+     * Adds given component to this entity.
+     * Only 1 component with the same type can be registered.
+     * Anonymous components are NOT allowed.
+     *
+     * @param c
+     * @return this entity
+     * @throws IllegalArgumentException if a component with same type
+     *      already registered
+     */
+    public final Entity addComponent(Component c) {
+        Class<?> type = c.getClass();
+        if (type.getCanonicalName() == null) {
+            throw new IllegalArgumentException("Anonymous components are not allowed! - " + type.getName());
+        }
+
+        if (getProperties().containsKey(type)) {
+            throw new IllegalArgumentException("Entity already has a component with type: " + type.getCanonicalName());
+        }
+        getProperties().put(type, c);
+        return this;
+    }
+
+    /**
+     * Returns component of given type if registered. The type
+     * must be exactly the same as the type of the instance registered.
+     *
+     * @param type
+     * @return
+     */
+    public final <T extends Component> Optional<T> getComponent(Class<T> type) {
+        return Optional.ofNullable(type.cast(getProperties().get(type)));
     }
 
     private Map<String, FXGLEventHandler> eventHandlers = new HashMap<>();

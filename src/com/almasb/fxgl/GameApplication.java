@@ -462,7 +462,7 @@ public abstract class GameApplication extends Application {
             }
         }
         catch (Exception e) {
-            throw new RuntimeException("Initialization Error: " + e.getMessage());
+            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
         }
     }
 
