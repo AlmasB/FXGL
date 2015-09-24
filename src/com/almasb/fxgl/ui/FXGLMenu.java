@@ -54,13 +54,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+/**
+ * Subclass of Pane that can be populated to work as
+ * a main/game menu
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
 public abstract class FXGLMenu extends Pane {
 
     /**
@@ -93,10 +99,8 @@ public abstract class FXGLMenu extends Pane {
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
         title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-        Text version = new Text("v" + app.getSettings().getVersion());
+        Text version = UIFactory.newText("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
-        version.setFill(Color.WHITE);
-        version.setFont(UIFactory.newFont(18));
 
         getChildren().addAll(bg, title, version, menu, menuContent);
     }
@@ -174,9 +178,7 @@ public abstract class FXGLMenu extends Pane {
     }
 
     private void addNewInputBinding(InputBinding binding, GridPane grid) {
-        Text actionName = new Text(binding.getAction().getName());
-        actionName.setFont(UIFactory.newFont(18));
-        actionName.setFill(Color.WHITE);
+        Text actionName = UIFactory.newText(binding.getAction().getName());
 
         MenuItem triggerName = new MenuItem("");
         triggerName.textProperty().bind(binding.triggerNameProperty());
@@ -184,9 +186,7 @@ public abstract class FXGLMenu extends Pane {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
 
-            Text text = new Text("PRESS ANY KEY");
-            text.setFill(Color.WHITE);
-            text.setFont(UIFactory.newFont(24));
+            Text text = UIFactory.newText("PRESS ANY KEY", 24);
 
             Stage stage = new Stage(StageStyle.TRANSPARENT);
             stage.initModality(Modality.WINDOW_MODAL);
@@ -250,27 +250,11 @@ public abstract class FXGLMenu extends Pane {
     }
 
     private MenuContent createContentCredits() {
-        Font font = UIFactory.newFont(18);
-
-        Text textHead = new Text("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
-        textHead.setFont(font);
-        textHead.setFill(Color.WHITE);
-
-        Text textJFX = new Text("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
-        textJFX.setFont(font);
-        textJFX.setFill(Color.WHITE);
-
-        Text textJBOX = new Text("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
-        textJBOX.setFont(font);
-        textJBOX.setFill(Color.WHITE);
-
-        Text textAuthor = new Text("Author: Almas Baimagambetov (AlmasB)");
-        textAuthor.setFont(font);
-        textAuthor.setFill(Color.WHITE);
-
-        Text textDev = new Text("Source code available: https://github.com/AlmasB/FXGL");
-        textDev.setFont(font);
-        textDev.setFill(Color.WHITE);
+        Text textHead   = UIFactory.newText("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
+        Text textJFX    = UIFactory.newText("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
+        Text textJBOX   = UIFactory.newText("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
+        Text textAuthor = UIFactory.newText("Author: Almas Baimagambetov (AlmasB)");
+        Text textDev    = UIFactory.newText("Source code available: https://github.com/AlmasB/FXGL");
 
         return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
     }
@@ -304,9 +288,7 @@ public abstract class FXGLMenu extends Pane {
         private Text text;
 
         public Title(String name) {
-            text = new Text(name);
-            text.setFill(Color.WHITE);
-            text.setFont(UIFactory.newFont(50));
+            text = UIFactory.newText(name, 50);
 
             Rectangle bg = new Rectangle(text.getLayoutBounds().getWidth() + 20, 60);
             bg.setStroke(Color.WHITE);
