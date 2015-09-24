@@ -45,6 +45,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -211,12 +212,32 @@ public abstract class FXGLMenu extends Pane {
         GridPane.setHalignment(triggerName, HPos.LEFT);
     }
 
+    private MenuContent createContentAudio() {
+        Slider sliderMusic = new Slider(0, 1, 1);
+        app.getAudioManager().globalMusicVolumeProperty().bindBidirectional(sliderMusic.valueProperty());
+
+        Text textMusic = UIFactory.newText("Music Volume: ");
+        Text percentMusic = UIFactory.newText("");
+        percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"));
+
+        Slider sliderSound = new Slider(0, 1, 1);
+        app.getAudioManager().globalSoundVolumeProperty().bindBidirectional(sliderSound.valueProperty());
+
+        Text textSound = UIFactory.newText("Sound Volume: ");
+        Text percentSound = UIFactory.newText("");
+        percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"));
+
+        return new MenuContent(new HBox(textMusic, sliderMusic, percentMusic),
+                new HBox(textSound, sliderSound, percentSound));
+    }
+
     protected MenuBox createOptionsMenu() {
         MenuItem itemControls = new MenuItem("CONTROLS");
         itemControls.setMenuContent(createContentControls());
 
         MenuItem itemVideo = new MenuItem("VIDEO");
         MenuItem itemAudio = new MenuItem("AUDIO");
+        itemAudio.setMenuContent(createContentAudio());
 
         return new MenuBox(200, itemControls, itemVideo, itemAudio);
     }
