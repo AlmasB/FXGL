@@ -73,8 +73,8 @@ The issue tracker contains information about possible features to be added in
 the next release.
 
 # Examples
-Link - https://www.youtube.com/AlmasB0/videos<br />
-Videos marked "FXGL" will walk you through the basics
+Video Tutorials Playlist - https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp <br/>
+The videos will walk you through the basics.
 
 # Use Case
 FXGL is perfect for small to medium sized games and for beginner / intermediate programmers in JavaFX.
