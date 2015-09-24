@@ -46,6 +46,10 @@ public class BasicGameApplication extends GameApplication {
         PLAYER
     }
 
+    // make the field instance level
+    // but do NOT init here for properly functioning save-load system
+    private Entity player;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
@@ -60,12 +64,15 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
+    protected void initInput() {}
+
+    @Override
     protected void initAssets() throws Exception {}
 
     @Override
     protected void initGame() {
         // 2. create entity
-        Entity player = new Entity(Type.PLAYER);
+        player = new Entity(Type.PLAYER);
 
         // set entity position to x = 100, y = 100
         player.setPosition(100, 100);
@@ -85,9 +92,6 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initUI() {}
-
-    @Override
-    protected void initInput() {}
 
     @Override
     protected void onUpdate() {}

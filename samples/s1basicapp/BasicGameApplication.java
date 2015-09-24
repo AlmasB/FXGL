@@ -51,6 +51,9 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
+    protected void initInput() {}
+
+    @Override
     protected void initAssets() throws Exception {}
 
     @Override
@@ -61,9 +64,6 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initUI() {}
-
-    @Override
-    protected void initInput() {}
 
     @Override
     protected void onUpdate() {}

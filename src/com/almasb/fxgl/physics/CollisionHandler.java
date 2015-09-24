@@ -47,7 +47,7 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    public void onCollisionBegin(Entity a, Entity b) {}
+    protected void onCollisionBegin(Entity a, Entity b) {}
 
     /**
      * Called if entities A and B are currently colliding.
@@ -58,7 +58,7 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    public void onCollision(Entity a, Entity b) {}
+    protected void onCollision(Entity a, Entity b) {}
 
     /**
      * Called when entities A and B have just stopped colliding and were colliding in the last tick.
@@ -66,5 +66,5 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    public void onCollisionEnd(Entity a, Entity b) {}
+    protected void onCollisionEnd(Entity a, Entity b) {}
 }
