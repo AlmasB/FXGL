@@ -2,20 +2,17 @@
 Simple and easy to use Java 2D gaming library based on JavaFX 8<br/>
 <img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL.png" />
 
-# Few Simple Projects So Far<br/>
-<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Menu.jpg" />
-<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Pacman.png" />
-<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Physics.jpg" />
-<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Platformer.jpg" />
-<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_RPG.png" />
-<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL24_FXWars2.jpg" />
-Sprites can be found on http://opengameart.org/
-
 # Prerequisites
 Oracle JDK 1.8.0_40+
 
+# Build
+```bash
+mvn package
+```
+This will generate FXGL-x.y.z.jar, sources and javadoc.
+
 # Setup (General)
-Download the latest .jar file under jar/ and add it to the build path
+Download the latest .jar from jar/ (or the one built yourself) and add it to the build path
 in your IDE. That's it, you're all set! See below setup for some IDEs
 
 # Setup (NetBeans, tested with 8.0.2)
@@ -100,6 +97,15 @@ project directory (typically project name)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ui/css (stylesheets for customizing UI elements)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ui/fonts (fonts ".ttf", ".otf")<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(your packages / code)
+            
+# Few Simple Projects So Far<br/>
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Menu.jpg" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Pacman.png" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Physics.jpg" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Platformer.jpg" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_RPG.png" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL24_FXWars2.jpg" />
+Sprites can be found on http://opengameart.org/
             
 # License
 MIT, so you can do anything you want with the code. Most of the code is for teaching purposes, so it probably doesn't have much production value.
