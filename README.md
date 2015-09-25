@@ -1,6 +1,6 @@
 # FXGL
 Simple and easy to use Java 2D gaming library based on JavaFX 8<br/>
-<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL.png" />
+[![Release](https://img.shields.io/github/release/AlmasB/FXGL.svg?label=maven)](https://jitpack.io/#AlmasB/FXGL)
 
 # Prerequisites
 Oracle JDK 1.8.0_40+
