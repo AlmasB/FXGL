@@ -11,6 +11,35 @@ mvn package
 ```
 This will generate FXGL-x.y.z.jar, sources and javadoc.
 
+# Setup
+Depending on what IDE or build tool you are using choose appropriate setup steps.
+
+# Setup (Maven)
+```maven
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+
+<dependency>
+    <groupId>com.github.AlmasB</groupId>
+    <artifactId>FXGL</artifactId>
+    <version>0.1.6-beta</version>
+</dependency>
+```
+
+# Setup (Gradle)
+```gradle
+repositories {
+    // ...
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+        compile 'com.github.AlmasB:FXGL:0.1.6-beta'
+}
+```
+
 # Setup (General)
 Download the latest .jar from jar/ (or the one built yourself) and add it to the build path
 in your IDE. That's it, you're all set! See below setup for some IDEs
