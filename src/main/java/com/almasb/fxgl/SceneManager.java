@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -91,45 +91,11 @@ public final class SceneManager implements UpdateTickListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
-    /**
-     * Root for entities, it is affected by viewport movement.
-     */
-    private Group gameRoot = new Group();
-
-    /**
-     * Canvas for particles to accelerate drawing.
-     */
-    private Canvas particlesCanvas = new Canvas();
-
-    /**
-     * Graphics context for drawing particles.
-     */
-    private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
-
-    /**
-     * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
-     * May also contain entities as Entity is a subclass of Parent.
-     * uiRoot isn't affected by viewport movement.
-     */
-    private Group uiRoot = new Group();
-
-    /**
-     * THE root of the {@link #gameScene}. Contains {@link #gameRoot}, {@link #particlesCanvas}
-     * and {@link #uiRoot} in this order.
-     */
-    private Pane root = new Pane(gameRoot, particlesCanvas, uiRoot);
-
     /*
      * FXGL Scene Graph
      *
-     * Scenes: gameScene <-> mainMenu <-> gameMenu
-     *            |
-     *         gameRoot (entities)
-     *         (render layers from low to high index)
-     *            |
-     *         particles layers
-     *            |
-     *         uiRoot
+     * Scenes: gameScene <-> mainMenu <-> gameMenu | gameRoot (entities) (render
+     * layers from low to high index) | particles layers | uiRoot
      */
 
     /**
@@ -163,21 +129,6 @@ public final class SceneManager implements UpdateTickListener {
     private FXGLDialogBox dialogBox;
 
     /**
-     * List of entities currently in the scene graph.
-     */
-    private List<Entity> entities = new ArrayList<>();
-
-    /**
-     * List of entities waiting to be added to scene graph.
-     */
-    private List<Entity> addQueue = new ArrayList<>();
-
-    /**
-     * List of entities waiting to be removed from scene graph.
-     */
-    private List<Entity> removeQueue = new ArrayList<>();
-
-    /**
      * Game application instance.
      */
     private GameApplication app;
@@ -195,10 +146,12 @@ public final class SceneManager implements UpdateTickListener {
     /**
      * Constructs scene manager.
      *
-     * @param app instance of game application
-     * @param stage main stage
+     * @param app
+     *            instance of game application
+     * @param stage
+     *            main stage
      */
-    /*package-private*/ SceneManager(GameApplication app, Stage stage) {
+    /* package-private */ SceneManager(GameApplication app, Stage stage) {
         this.app = app;
         this.stage = stage;
 
@@ -220,16 +173,11 @@ public final class SceneManager implements UpdateTickListener {
         menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
 
         setPrefSize(app.getWidth(), app.getHeight());
-
-        particlesCanvas.setWidth(app.getWidth());
-        particlesCanvas.setHeight(app.getHeight());
-        particlesCanvas.setMouseTransparent(true);
     }
 
     /**
-     * Set preferred size to game scene root and stage.
-     * Computes {@link #sizeRatio} and scales the root
-     * if necessary
+     * Set preferred size to game scene root and stage. Computes
+     * {@link #sizeRatio} and scales the root if necessary
      *
      * @param width
      * @param height
@@ -248,13 +196,15 @@ public final class SceneManager implements UpdateTickListener {
 
             double ratio = app.getWidth() * 1.0 / app.getHeight();
 
-            for (int newWidth = (int)bounds.getWidth(); newWidth > 0; newWidth--) {
+            for (int newWidth = (int) bounds
+                    .getWidth(); newWidth > 0; newWidth--) {
                 if (newWidth / ratio <= bounds.getHeight()) {
-                    root.setPrefSize(newWidth, (int)(newWidth / ratio));
+                    root.setPrefSize(newWidth, (int) (newWidth / ratio));
 
                     double newSizeRatio = newWidth * 1.0 / app.getWidth();
                     root.getTransforms().clear();
-                    root.getTransforms().add(new Scale(newSizeRatio, newSizeRatio));
+                    root.getTransforms()
+                            .add(new Scale(newSizeRatio, newSizeRatio));
                     sizeRatio = newSizeRatio;
                     break;
                 }
@@ -270,9 +220,8 @@ public final class SceneManager implements UpdateTickListener {
     private boolean canSwitchGameMenu = true;
 
     /**
-     * Applies FXGL CSS to menu roots.
-     * Scales menu roots appropriately based on {@link #sizeRatio}.
-     * Registers event handlers to menus.
+     * Applies FXGL CSS to menu roots. Scales menu roots appropriately based on
+     * {@link #sizeRatio}. Registers event handlers to menus.
      */
     private void configureMenu() {
         menuOpenProperty().addListener((obs, oldState, newState) -> {
@@ -293,14 +242,17 @@ public final class SceneManager implements UpdateTickListener {
 
         if (sizeRatio != 1.0) {
             log.finer("Scaing menu scenes with ratio: " + sizeRatio);
-            mainMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
-            gameMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
+            mainMenu.getRoot().getTransforms()
+                    .add(new Scale(sizeRatio, sizeRatio));
+            gameMenu.getRoot().getTransforms()
+                    .add(new Scale(sizeRatio, sizeRatio));
         }
         mainMenu.getStylesheets().add(fxglCSS);
         gameMenu.getStylesheets().add(fxglCSS);
 
         gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (isMenuEnabled && event.getCode() == menuKey && canSwitchGameMenu) {
+            if (isMenuEnabled && event.getCode() == menuKey
+                    && canSwitchGameMenu) {
                 openGameMenu();
                 canSwitchGameMenu = false;
             }
@@ -309,7 +261,6 @@ public final class SceneManager implements UpdateTickListener {
             if (event.getCode() == menuKey)
                 canSwitchGameMenu = true;
         });
-
 
         gameMenu.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == menuKey && canSwitchGameMenu) {
@@ -322,16 +273,17 @@ public final class SceneManager implements UpdateTickListener {
                 canSwitchGameMenu = true;
         });
 
-
         mainMenu.addEventHandler(MenuEvent.NEW_GAME, event -> {
             app.startNewGame();
             setScene(gameScene);
         });
         mainMenu.addEventHandler(MenuEvent.LOAD, event -> {
-            String saveFileName = event.getData().map(name -> (String)name).orElse("");
+            String saveFileName = event.getData().map(name -> (String) name)
+                    .orElse("");
             if (!saveFileName.isEmpty()) {
                 try {
-                    Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
+                    Serializable data = SaveLoadManager.INSTANCE
+                            .load(saveFileName);
                     clearSceneGraph();
                     app.loadState(data);
                     app.startNewGame();
@@ -339,11 +291,13 @@ public final class SceneManager implements UpdateTickListener {
                 }
                 catch (Exception e) {
                     log.warning("Failed to load save data: " + e.getMessage());
-                    showMessageBox("Failed to load save data: " + e.getMessage());
+                    showMessageBox(
+                            "Failed to load save data: " + e.getMessage());
                 }
             }
             else {
-                SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
+                SaveLoadManager.INSTANCE.loadLastModifiedFile()
+                        .ifPresent(data -> {
                     clearSceneGraph();
                     app.loadState((Serializable) data);
                     app.startNewGame();
@@ -360,22 +314,27 @@ public final class SceneManager implements UpdateTickListener {
             this.closeGameMenu();
         });
         gameMenu.addEventHandler(MenuEvent.SAVE, event -> {
-            String saveFileName = event.getData().map(name -> (String)name).orElse("");
+            String saveFileName = event.getData().map(name -> (String) name)
+                    .orElse("");
             if (!saveFileName.isEmpty()) {
                 try {
-                    SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName);
+                    SaveLoadManager.INSTANCE
+                            .save(app.saveState(), saveFileName);
                 }
                 catch (Exception e) {
                     log.warning("Failed to save game data: " + e.getMessage());
-                    showMessageBox("Failed to save game data: " + e.getMessage());
+                    showMessageBox(
+                            "Failed to save game data: " + e.getMessage());
                 }
             }
         });
         gameMenu.addEventHandler(MenuEvent.LOAD, event -> {
-            String saveFileName = event.getData().map(name -> (String)name).orElse("");
+            String saveFileName = event.getData().map(name -> (String) name)
+                    .orElse("");
             if (!saveFileName.isEmpty()) {
                 try {
-                    Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
+                    Serializable data = SaveLoadManager.INSTANCE
+                            .load(saveFileName);
                     clearSceneGraph();
                     app.loadState(data);
                     app.startNewGame();
@@ -383,11 +342,13 @@ public final class SceneManager implements UpdateTickListener {
                 }
                 catch (Exception e) {
                     log.warning("Failed to load save data: " + e.getMessage());
-                    showMessageBox("Failed to load save data: " + e.getMessage());
+                    showMessageBox(
+                            "Failed to load save data: " + e.getMessage());
                 }
             }
             else {
-                SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
+                SaveLoadManager.INSTANCE.loadLastModifiedFile()
+                        .ifPresent(data -> {
                     clearSceneGraph();
                     app.loadState((Serializable) data);
                     app.startNewGame();
@@ -403,7 +364,7 @@ public final class SceneManager implements UpdateTickListener {
     /**
      * Called right after the main stage is shown.
      */
-    /*package-private*/ void onStageShow() {
+    /* package-private */ void onStageShow() {
         if (isMenuEnabled)
             configureMenu();
 
@@ -435,7 +396,8 @@ public final class SceneManager implements UpdateTickListener {
             }
         }
 
-        log.finer("Scene size: " + stage.getScene().getWidth() + "," + stage.getScene().getHeight());
+        log.finer("Scene size: " + stage.getScene().getWidth() + ","
+                + stage.getScene().getHeight());
         log.finer("Stage size: " + stage.getWidth() + "," + stage.getHeight());
     }
 
@@ -456,8 +418,8 @@ public final class SceneManager implements UpdateTickListener {
     private double sizeRatio = 1.0;
 
     /**
-     * Returns the size ratio of the screen
-     * resolution over the target resolution
+     * Returns the size ratio of the screen resolution over the target
+     * resolution
      *
      * @return
      */
@@ -474,183 +436,9 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Returns render group for entity based on entity's
-     * render layer. If no such group exists, a new group
-     * will be created for that layer and placed
-     * in the scene graph according to its layer index.
-     *
-     * @param e
-     * @return
-     */
-    private Group getRenderLayerFor(Entity e) {
-        Integer renderLayer = e.getRenderLayer().index();
-        Group group = gameRoot.getChildren()
-                .stream()
-                .filter(n -> (int)n.getUserData() == renderLayer)
-                .findAny()
-                .map(n -> (Group)n)
-                .orElse(new Group());
-
-
-        if (group.getUserData() == null) {
-            log.finer("Creating render group for layer: " + e.getRenderLayer().asString());
-            group.setUserData(renderLayer);
-            gameRoot.getChildren().add(group);
-        }
-
-        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        tmpGroups.sort((g1, g2) -> (int)g1.getUserData() - (int)g2.getUserData());
-
-        gameRoot.getChildren().setAll(tmpGroups);
-
-        return group;
-    }
-
-    /**
-     * Add entity(-ies) to the scene graph.
-     * The entity(-ies) will be added in the next tick.
-     *
-     * @param entity to add
-     * @param entities to add
-     */
-    public void addEntities(Entity entity, Entity... entities) {
-        addQueue.add(entity);
-        for (Entity e : entities)
-            addQueue.add(e);
-    }
-
-    /**
-     * Remove given entity from the scene graph.
-     * The entity will be removed in the next tick.
-     *
-     * @param entity to remove
-     */
-    public void removeEntity(Entity entity) {
-        removeQueue.add(entity);
-    }
-
-    /**
-     * Add a node to the UI overlay.
-     *
-     * @param n
-     * @param nodes
-     */
-    public void addUINodes(Node node, Node... nodes) {
-        uiRoot.getChildren().add(node);
-        uiRoot.getChildren().addAll(nodes);
-    }
-
-    /**
-     * Remove given node from the UI overlay.
-     *
-     * @param n
-     */
-    public void removeUINode(Node n) {
-        uiRoot.getChildren().remove(n);
-    }
-
-    /**
-     * Returns a list of entities whose type matches given
-     * arguments. If no arguments were given, returns list
-     * of ALL entities currently registered in the scene graph.
-     *
-     * @param types
-     * @return
-     */
-    public List<Entity> getEntities(EntityType... types) {
-        if (types.length == 0)
-            return new ArrayList<>(entities);
-
-        List<String> list = Arrays.asList(types).stream()
-                .map(EntityType::getUniqueType)
-                .collect(Collectors.toList());
-
-        return entities.stream()
-                .filter(entity -> list.contains(entity.getTypeAsString()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which are partially or entirely
-     * in the specified rectangular selection.
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement is returned.
-     *
-     * @param selection Rectangle2D that describes the selection box
-     * @param types
-     * @return
-     */
-    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
-        Entity boundsEntity = Entity.noType();
-        boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
-        boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
-
-        return getEntities(types).stream()
-                .filter(entity -> entity.getBoundsInParent().intersects(boundsEntity.getBoundsInParent()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which have the given render layer index
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement (i.e. render layer) is returned.
-     *
-     * @param layer
-     * @param types
-     * @return
-     */
-    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e.getRenderLayer().index() == layer.index())
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the closest entity to the given entity with given type.
-     * If no types were specified, the closest entity is returned. The given
-     * entity itself is never returned.
-     *
-     * If there no entities satisfying the requirement, {@link Optional#empty()}
-     * is returned.
-     *
-     * @param entity
-     * @param types
-     * @return
-     */
-    public Optional<Entity> getClosestEntity(Entity entity, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e != entity)
-                .sorted((e1, e2) -> (int)e1.distance(entity) - (int)e2.distance(entity))
-                .findFirst();
-    }
-
-    /**
-     * Returns an entity at given position. The position x and y
-     * must equal to entity's position x and y.
-     *
-     * Returns {@link Optional#empty()} if no entity was found at
-     * given position.
-     *
-     * @param position
-     * @return
-     */
-    public Optional<Entity> getEntityAt(Point2D position) {
-        return app.getSceneManager()
-                    .getEntities()
-                    .stream()
-                    .filter(e -> e.getPosition().equals(position))
-                    .findAny();
-    }
-
-    /**
-     * This is where we actually add the entities to the scene graph,
-     * which were pushed
-     * to waiting queue by {@link #addEntities(Entity...)}
-     * in the previous tick. We also clear the queue.
+     * This is where we actually add the entities to the scene graph, which were
+     * pushed to waiting queue by {@link #addEntities(Entity...)} in the
+     * previous tick. We also clear the queue.
      */
     private void registerPendingEntities() {
         for (Entity e : addQueue) {
@@ -658,9 +446,10 @@ public final class SceneManager implements UpdateTickListener {
 
             // TODO: check combined
             if (e instanceof CombinedEntity) {
-                getRenderLayerFor(e).getChildren().addAll(e.getChildrenUnmodifiable()
-                        .stream().map(node -> (Entity)node)
-                        .collect(Collectors.toList()));
+                getRenderLayerFor(e).getChildren().addAll(
+                        e.getChildrenUnmodifiable().stream()
+                                .map(node -> (Entity) node)
+                                .collect(Collectors.toList()));
             }
             else if (e instanceof PhysicsEntity) {
                 app.getPhysicsManager().createBody((PhysicsEntity) e);
@@ -672,18 +461,18 @@ public final class SceneManager implements UpdateTickListener {
 
             Duration expire = e.getExpireTime();
             if (expire != Duration.ZERO)
-                app.getTimerManager().runOnceAfter(() -> removeEntity(e), expire);
+                app.getTimerManager()
+                        .runOnceAfter(() -> removeEntity(e), expire);
         }
 
         addQueue.clear();
     }
 
     /**
-     * This is where we actually remove the entities from the scene graph,
-     * which were pushed to waiting queue for removal by {@link #removeEntity(Entity)}
-     * in the previous tick.
-     * If entity is a PhysicsEntity, its physics properties get destroyed.
-     * Finally, entity's onClean() will be called
+     * This is where we actually remove the entities from the scene graph, which
+     * were pushed to waiting queue for removal by {@link #removeEntity(Entity)}
+     * in the previous tick. If entity is a PhysicsEntity, its physics
+     * properties get destroyed. Finally, entity's onClean() will be called
      *
      * We also clear the queue.
      */
@@ -694,23 +483,21 @@ public final class SceneManager implements UpdateTickListener {
             getRenderLayerFor(e).getChildren().remove(e);
         });
 
-        removeQueue.stream()
-                    .filter(e -> e instanceof PhysicsEntity)
-                    .map(e -> (PhysicsEntity)e)
-                    .forEach(app.getPhysicsManager()::destroyBody);
+        removeQueue.stream().filter(e -> e instanceof PhysicsEntity)
+                .map(e -> (PhysicsEntity) e)
+                .forEach(app.getPhysicsManager()::destroyBody);
         removeQueue.forEach(Entity::clean);
         removeQueue.clear();
     }
 
     /**
-     * Cleans all registered entities. Clears add and remove queues.
-     * Clears gameRoot and uiRoot.
+     * Cleans all registered entities. Clears add and remove queues. Clears
+     * gameRoot and uiRoot.
      */
     private void clearSceneGraph() {
-        entities.stream()
-            .filter(e -> e instanceof PhysicsEntity)
-            .map(e -> (PhysicsEntity) e)
-            .forEach(app.getPhysicsManager()::destroyBody);
+        entities.stream().filter(e -> e instanceof PhysicsEntity)
+                .map(e -> (PhysicsEntity) e)
+                .forEach(app.getPhysicsManager()::destroyBody);
 
         entities.forEach(entity -> ((Entity) entity).clean());
         entities.clear();
@@ -723,11 +510,11 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Called by GameApplication to update state of entities
-     * and the scene graph.
+     * Called by GameApplication to update state of entities and the scene
+     * graph.
      */
     @Override
-    public void onUpdate(long now) {
+    public void onUpdate() {
         registerPendingEntities();
         removePendingEntities();
 
@@ -739,119 +526,10 @@ public final class SceneManager implements UpdateTickListener {
             e.update(now);
 
             if (e instanceof ParticleEntity) {
-                ((ParticleEntity)e).renderParticles(particlesGC, getViewportOrigin());
+                ((ParticleEntity) e)
+                        .renderParticles(particlesGC, getViewportOrigin());
             }
         });
-    }
-
-    /**
-     * Sets viewport origin. Use it for camera movement.
-     *
-     * Do NOT use if the viewport was bound.
-     *
-     * @param x
-     * @param y
-     */
-    public void setViewportOrigin(int x, int y) {
-        gameRoot.setLayoutX(-x);
-        gameRoot.setLayoutY(-y);
-    }
-
-    /**
-     * Note: viewport origin, like anything in a scene, has top-left origin point.
-     *
-     * @return viewport origin
-     */
-    public Point2D getViewportOrigin() {
-        return new Point2D(-gameRoot.getLayoutX(), -gameRoot.getLayoutY());
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX and distY represent bound distance between entity and viewport origin
-     *
-     * <pre>
-     * Example:
-     *
-     * bindViewportOrigin(player, (int) (getWidth() / 2), (int) (getHeight() / 2));
-     *
-     * the code above centers the camera on player
-     * For most platformers / side scrollers use:
-     *
-     * bindViewportOriginX(player, (int) (getWidth() / 2));
-     *
-     * </pre>
-     *
-     * @param entity
-     * @param distX
-     * @param distY
-     */
-    public void bindViewportOrigin(Entity entity, int distX, int distY) {
-        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
-        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX represent bound distance in X axis between entity and viewport origin.
-     *
-     * @param entity
-     * @param distX
-     */
-    public void bindViewportOriginX(Entity entity, int distX) {
-        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distY represent bound distance in Y axis between entity and viewport origin.
-     *
-     * @param entity
-     * @param distY
-     */
-    public void bindViewportOriginY(Entity entity, int distY) {
-        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
-    }
-
-    /**
-     * Set true if UI elements should forward mouse events
-     * to the game layer
-     *
-     * @param b
-     * @defaultValue false
-     */
-    public void setUIMouseTransparent(boolean b) {
-        uiRoot.setMouseTransparent(b);
-    }
-
-    /**
-     * Sets global game cursor using given name to find
-     * the image cursor within assets/ui/cursors/.
-     * Hotspot is location of the pointer end on the image.
-     *
-     * @param imageName
-     * @param hotspot
-     */
-    public void setGameCursor(String imageName, Point2D hotspot) {
-        try {
-            gameScene.setCursor(new ImageCursor(app.getAssetManager().loadCursorImage(imageName),
-                    hotspot.getX(), hotspot.getY()));
-        }
-        catch (Exception e) {
-            log.warning("Failed to set cursor: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Fires an FXGL event on all entities whose type
-     * matches given arguments. If types were not given,
-     * fires an FXGL event on all entities registered in the scene graph.
-     *
-     * @param event
-     * @param types
-     */
-    public void fireFXGLEvent(FXGLEvent event, EntityType... types) {
-        getEntities(types).forEach(e -> e.fireFXGLEvent(event));
     }
 
     private ReadOnlyBooleanWrapper menuOpen;
@@ -883,8 +561,8 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Pauses the game and opens in-game menu.
-     * Does nothing if menu is disabled in settings
+     * Pauses the game and opens in-game menu. Does nothing if menu is disabled
+     * in settings
      */
     private void openGameMenu() {
         app.pause();
@@ -892,8 +570,8 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Closes the game menu and resumes the game.
-     * Does nothing if menu is disabled in settings
+     * Closes the game menu and resumes the game. Does nothing if menu is
+     * disabled in settings
      */
     private void closeGameMenu() {
         setScene(gameScene);
@@ -901,8 +579,8 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Exits the current game and opens main menu.
-     * Does nothing if menu is disabled in settings
+     * Exits the current game and opens main menu. Does nothing if menu is
+     * disabled in settings
      */
     private void exitToMainMenu() {
         app.pause();
@@ -914,10 +592,9 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Shows given dialog and blocks execution of the game
-     * until the dialog is dismissed. The provided callback
-     * will be called with the dialog result as parameter when the dialog
-     * closes.
+     * Shows given dialog and blocks execution of the game until the dialog is
+     * dismissed. The provided callback will be called with the dialog result as
+     * parameter when the dialog closes.
      *
      * @param dialog
      * @param resultCallback
@@ -941,30 +618,31 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Shows a blocking (stops game execution) message box
-     * with OK button. On button press, the message box
-     * will be dismissed.
+     * Shows a blocking (stops game execution) message box with OK button. On
+     * button press, the message box will be dismissed.
      *
-     * @param message the message to show
+     * @param message
+     *            the message to show
      */
     public void showMessageBox(String message) {
         dialogBox.showMessageBox(message);
     }
 
     /**
-     * Shows a blocking message box with YES and NO buttons.
-     * The callback is invoked with the user answer as parameter.
+     * Shows a blocking message box with YES and NO buttons. The callback is
+     * invoked with the user answer as parameter.
      *
      * @param message
      * @param resultCallback
      */
-    public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
+    public void showConfirmationBox(String message,
+            Consumer<Boolean> resultCallback) {
         dialogBox.showConfirmationBox(message, resultCallback);
     }
 
     /**
-     * Shows a blocking message box with OK button and input field.
-     * The callback is invoked with the field text as parameter.
+     * Shows a blocking message box with OK button and input field. The callback
+     * is invoked with the field text as parameter.
      *
      * @param message
      * @param resultCallback
@@ -976,14 +654,14 @@ public final class SceneManager implements UpdateTickListener {
     /**
      * Saves a screenshot of the current main scene into a ".png" file
      *
-     * @return  true if the screenshot was saved successfully, false otherwise
+     * @return true if the screenshot was saved successfully, false otherwise
      */
     public boolean saveScreenshot() {
-        Image fxImage = gameScene.snapshot(null);
+        Image fxImage = scene.snapshot(null);
         BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
-        String fileName = "./" + app.getSettings().getTitle() + app.getSettings().getVersion()
-                + LocalDateTime.now() + ".png";
+        String fileName = "./" + app.getSettings().getTitle()
+                + app.getSettings().getVersion() + LocalDateTime.now() + ".png";
 
         fileName = fileName.replace(":", "_");
 
@@ -991,7 +669,9 @@ public final class SceneManager implements UpdateTickListener {
             return ImageIO.write(img, "png", os);
         }
         catch (Exception e) {
-            log.finer("Exception occurred during saveScreenshot() - " + e.getMessage());
+            log.finer(
+                    "Exception occurred during saveScreenshot() - "
+                            + e.getMessage());
         }
 
         return false;

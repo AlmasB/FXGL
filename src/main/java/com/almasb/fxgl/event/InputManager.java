@@ -28,7 +28,7 @@ package com.almasb.fxgl.event;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.SceneManager;
+import com.almasb.fxgl.entity.v2.GameScene;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.UpdateTickListener;
 
@@ -36,7 +36,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -76,12 +75,10 @@ public final class InputManager implements UpdateTickListener {
      */
     private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
 
-    private SceneManager sceneManager;
+    private GameScene scene;
 
-    public InputManager(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
-
-        Scene scene = sceneManager.getGameScene();
+    public InputManager(GameScene gameScene) {
+        this.scene = gameScene;
 
         currentActions.addListener(new ListChangeListener<UserAction>() {
             @Override
@@ -115,10 +112,10 @@ public final class InputManager implements UpdateTickListener {
             handleReleased(new Trigger(event.getButton()));
         });
 
-        scene.setOnMousePressed(mouse::update);
-        scene.setOnMouseDragged(mouse::update);
-        scene.setOnMouseReleased(mouse::update);
-        scene.setOnMouseMoved(mouse::update);
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
+        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
+        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
+        scene.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
     }
 
     /**
@@ -168,14 +165,14 @@ public final class InputManager implements UpdateTickListener {
      * @param now
      */
     @Override
-    public void onUpdate(long now) {
+    public void onUpdate() {
         if (processActions) {
             currentActions.forEach(UserAction::onAction);
         }
 
-        Point2D origin = sceneManager.getViewportOrigin();
-        mouse.x = mouse.screenX / sceneManager.getSizeRatio() + origin.getX();
-        mouse.y = mouse.screenY / sceneManager.getSizeRatio() + origin.getY();
+        Point2D mousePoint = scene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
+        mouse.x = mousePoint.getX();
+        mouse.y = mousePoint.getY();
     }
 
     private boolean processActions = true;
@@ -334,9 +331,9 @@ public final class InputManager implements UpdateTickListener {
             this.screenX = event.getSceneX();
             this.screenY = event.getSceneY();
 
-            Point2D origin = sceneManager.getViewportOrigin();
-            this.x = screenX / sceneManager.getSizeRatio() + origin.getX();
-            this.y = screenY / sceneManager.getSizeRatio() + origin.getY();
+            Point2D mousePoint = scene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
+            this.x = mousePoint.getX();
+            this.y = mousePoint.getY();
 
             if (leftPressed) {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {

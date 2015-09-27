@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,191 +25,37 @@
  */
 package com.almasb.fxgl.entity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
+import com.almasb.fxgl.util.FXGLLogger;
+
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
- * A generic FXGL game object. Any game object "should" be
- * of type Entity. Although not recommended and is rarely necessary,
- * it is possible
- * for a game object to extend this class to add extra functionality.
+ * A generic FXGL game object. Any game object "should" be of type Entity.
+ * Although not recommended and is rarely necessary, it is possible for a game
+ * object to extend this class to add extra functionality.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Entity extends Parent {
+public class Entity {
+
+    /**
+     * The logger
+     */
+    protected static final Logger log = FXGLLogger.getLogger("FXGL.Entity");
 
     private EntityType type;
-
-    private List<Control> controls = new ArrayList<>();
-
-    private boolean collidable = false;
-
-    /**
-     * Used by temporary entities so that they are
-     * automatically removed from the scene graph.
-     */
-    private Duration expireTime = Duration.ZERO;
-
-    /**
-     * Constructs an entity with given type
-     *
-     * @param type
-     */
-    public Entity(EntityType type) {
-        this.type = type;
-        setGraphics(new Text("null"));
-        sceneProperty().addListener(sceneListener);
-    }
-
-    /**
-     *
-     * @return expireTime of entity, 0 if not set
-     */
-    public final Duration getExpireTime() {
-        return expireTime;
-    }
-
-    /**
-     * Set expire time for this entity.
-     * The timer starts when the entity is added to
-     * game scene. Calling this method after entity
-     * was added to scene has no effect.
-     *
-     * Once the timer has expired, the entity will
-     * be removed with removeEntity()
-     *
-     * @param duration
-     * @return this entity
-     */
-    public final Entity setExpireTime(Duration duration) {
-        expireTime = duration;
-        return this;
-    }
-
-    /**
-     * Allow this entity to participate in collision detection
-     *
-     * @param b
-     */
-    public final Entity setCollidable(boolean b) {
-        collidable = b;
-        return this;
-    }
-
-    /**
-     *
-     * @return center point of this entity
-     */
-    public final Point2D getCenter() {
-        return getPosition().add(getWidth() / 2, getHeight() / 2);
-    }
-
-    /**
-     *
-     * @return entity position - translation from the parent's origin
-     */
-    public final Point2D getPosition() {
-        return new Point2D(getTranslateX(), getTranslateY());
-    }
-
-    /**
-     * Equivalent to
-     *
-     * <pre>
-     * setTranslateX()
-     * setTranslateY()
-     * </pre>
-     *
-     * @param x
-     * @param y
-     * @return this entity
-     */
-    public final Entity setPosition(double x, double y) {
-        setTranslateX(x);
-        setTranslateY(y);
-        return this;
-    }
-
-    /**
-     * Equivalent to
-     *
-     * <pre>
-     * setTranslateX()
-     * setTranslateY()
-     * </pre>
-     *
-     * @param position
-     * @return this entity
-     */
-    public final Entity setPosition(Point2D position) {
-        return setPosition(position.getX(), position.getY());
-    }
-
-    /**
-     * Returns distance from center of this entity to
-     * center of the given entity.
-     *
-     * @param other
-     * @return distance between two entities
-     */
-    public final double distance(Entity other) {
-        return getCenter().distance(other.getCenter());
-    }
-
-    /**
-     * Returns an area around the entity with given width and height
-     * in each direction of the entity + the area of entity itself.
-     * This can be used to find the range of an exploding bomb, or
-     * area around the player with interactive entities. This can be
-     * used together with {@link com.almasb.fxgl.SceneManager#getEntitiesInRange(Rectangle2D, EntityType...)}.
-     *
-     * @param width
-     * @param height
-     * @return
-     */
-    public final Rectangle2D computeRange(double width, double height) {
-        double x = getTranslateX() - width;
-        double y = getTranslateY() - height;
-        double w = getTranslateX() + getWidth() + width - x;
-        double h = getTranslateY() + getHeight() + height - y;
-
-        return new Rectangle2D(x, y, w, h);
-    }
-
-    /**
-     * Translate (move) entity by vector (x, y)
-     *
-     * @param x
-     * @param y
-     */
-    public final void translate(double x, double y) {
-        setTranslateX(getTranslateX() + x);
-        setTranslateY(getTranslateY() + y);
-    }
-
-    /**
-     * Translate (move) entity by vector
-     *
-     * @param vector
-     */
-    public final void translate(Point2D vector) {
-        translate(vector.getX(), vector.getY());
-    }
 
     /**
      *
@@ -229,7 +75,8 @@ public class Entity extends Parent {
     /**
      * Returns true if type of entity equals passed argument.
      *
-     * @apiNote equivalent to <code>getTypeAsString().equals(type.getUniqueType())</code>
+     * @apiNote equivalent to
+     *          <code>getTypeAsString().equals(type.getUniqueType())</code>
      * @param type
      * @return
      */
@@ -238,14 +85,140 @@ public class Entity extends Parent {
     }
 
     /**
-     * Set graphics for this entity. The collision detection
-     * bounding box will use graphics object's size properties.
+     * Constructs an entity with given type
+     *
+     * @param type
+     */
+    public Entity(EntityType type) {
+        this.type = type;
+    }
+
+    private EntityView fxNode = new EntityView();
+
+    public final DoubleProperty xProperty() {
+        return fxNode.translateXProperty();
+    }
+
+    public final double getX() {
+        return xProperty().get();
+    }
+
+    public final void setX(double x) {
+        xProperty().set(x);
+    }
+
+    public final DoubleProperty yProperty() {
+        return fxNode.translateYProperty();
+    }
+
+    public final double getY() {
+        return yProperty().get();
+    }
+
+    public final void setY(double y) {
+        yProperty().set(y);
+    }
+
+    /**
+     *
+     * @return absolute position of entity
+     */
+    public final Point2D getPosition() {
+        return new Point2D(getX(), getY());
+    }
+
+    /**
+     * Set absolute position of entity to given point.
+     *
+     * @param x
+     * @param y
+     * @return this entity
+     */
+    public final Entity setPosition(double x, double y) {
+        setX(x);
+        setY(y);
+        return this;
+    }
+
+    /**
+     * Set absolute position of entity to given point.
+     *
+     * @param position
+     * @return this entity
+     */
+    public final Entity setPosition(Point2D position) {
+        return setPosition(position.getX(), position.getY());
+    }
+
+    /**
+     * Translate (move) entity by vector (x, y)
+     *
+     * @param x
+     * @param y
+     */
+    public final void translate(double x, double y) {
+        setX(getX() + x);
+        setY(getY() + y);
+    }
+
+    /**
+     * Translate (move) entity by vector
+     *
+     * @param vector
+     */
+    public final void translate(Point2D vector) {
+        translate(vector.getX(), vector.getY());
+    }
+
+    /**
+     * Returns distance from center of this entity to center of the given
+     * entity.
+     *
+     * @param other
+     * @return distance between two entities
+     */
+    public final double distance(Entity other) {
+        return getCenter().distance(other.getCenter());
+    }
+
+    /**
+     *
+     * @return center point of this entity
+     */
+    public final Point2D getCenter() {
+        return getPosition().add(getWidth() / 2, getHeight() / 2);
+    }
+
+    /**
+     * Returns an area around the entity with given width and height in each
+     * direction of the entity + the area of entity itself. This can be used to
+     * find the range of an exploding bomb, or area around the player with
+     * interactive entities. This can be used together with
+     * {@link com.almasb.fxgl.SceneManager#getEntitiesInRange(Rectangle2D, EntityType...)}
+     * .
+     *
+     * @param width
+     * @param height
+     * @return
+     */
+    public final Rectangle2D computeRange(double width, double height) {
+        double x = getX() - width;
+        double y = getY() - height;
+        double w = getX() + getWidth() + width - x;
+        double h = getY() + getHeight() + height - y;
+
+        return new Rectangle2D(x, y, w, h);
+    }
+
+    /**
+     * Set graphics for this entity. The collision detection bounding box will
+     * use graphics object's size properties.
      *
      * @param graphics
      * @return this entity
      */
     public final Entity setGraphics(Node graphics) {
-        getChildren().clear();
+        fxNode.removeChildren();
 
         if (graphics instanceof Circle) {
             Circle c = (Circle) graphics;
@@ -253,17 +226,16 @@ public class Entity extends Parent {
             c.setCenterY(c.getRadius());
         }
 
-        getChildren().add(graphics);
+        fxNode.addChild(graphics);
         return this;
     }
 
-    // TODO: check various rotations and angles
     /**
      *
      * @return width of the bounding box of this entity
      */
     public final double getWidth() {
-        return getLayoutBounds().getWidth();
+        return fxNode.getLayoutBounds().getWidth();
     }
 
     /**
@@ -271,20 +243,27 @@ public class Entity extends Parent {
      * @return height of the bounding box of this entity
      */
     public final double getHeight() {
-        return getLayoutBounds().getHeight();
+        return fxNode.getLayoutBounds().getHeight();
     }
 
-    /**
-     * Add behavior to entity
-     *
-     * @param control
-     */
-    public final Entity addControl(Control control) {
-        controls.add(control);
+    private Map<Class<? extends Control>, Control> controls = new HashMap<>();
+
+    public final <T extends Control> Optional<T> getControl(Class<T> type) {
+        return Optional.ofNullable(type.cast(controls.get(type)));
+    }
+
+    public final void addControl(Control control) {
+        Class<? extends Control> type = control.getClass();
+        if (controls.containsKey(type)) {
+            throw new IllegalArgumentException(
+                    "Entity already has a control with type: "
+                            + type.getCanonicalName());
+        }
+
+        controls.put(type, control);
         if (control instanceof AbstractControl) {
             ((AbstractControl) control).setEntity(this);
         }
-        return this;
     }
 
     /**
@@ -292,8 +271,13 @@ public class Entity extends Parent {
      *
      * @param control
      */
-    public final void removeControl(Control control) {
-        controls.remove(control);
+    public final void removeControl(Class<? extends Control> type) {
+        Control c = controls.remove(type);
+        if (c == null) {
+            log.warning(
+                    "Attempted to remove control but entity doesn't have a control with type: "
+                            + type.getSimpleName());
+        }
     }
 
     /**
@@ -303,72 +287,88 @@ public class Entity extends Parent {
         controls.clear();
     }
 
+    private Map<Class<? extends Component>, Component> components = new HashMap<>();
+
     /**
-     * Returns the first control that is an instance of the given class,
-     * or null if no such control exists.
+     * Returns component of given type if registered. The type must be exactly
+     * the same as the type of the instance registered.
      *
-     * @param controlType The superclass of the control to look for
-     * @return The first instance in the list of the controlType class, or null
+     * @param type
+     * @return
      */
-    @SuppressWarnings("unchecked")
-    public final <T extends Control> T getControl(Class<T> controlType) {
-        for (Control c : controls) {
-            if (controlType.isAssignableFrom(c.getClass())) {
-                return (T) c;
-            }
+    public final <T extends Component> Optional<T> getComponent(Class<T> type) {
+        return Optional.ofNullable(type.cast(components.get(type)));
+    }
+
+    /**
+     * Adds given component to this entity. Only 1 component with the same type
+     * can be registered. Anonymous components are NOT allowed.
+     *
+     * @param component
+     * @return this entity
+     * @throws IllegalArgumentException
+     *             if a component with same type already registered
+     */
+    public final Entity addComponent(Component component) {
+        Class<? extends Component> type = component.getClass();
+        if (type.getCanonicalName() == null) {
+            throw new IllegalArgumentException(
+                    "Anonymous components are not allowed! - "
+                            + type.getName());
         }
-        return null;
+
+        if (components.containsKey(type)) {
+            throw new IllegalArgumentException(
+                    "Entity already has a component with type: "
+                            + type.getCanonicalName());
+        }
+        components.put(type, component);
+        return this;
     }
 
-    private boolean controlsEnabled = true;
-
     /**
-     * Setting this to false will disable each control's update
-     * until this has been set back to true.
+     * Remove a component with given type from this entity.
      *
-     * @param b
+     * @param type
+     *            - type of the component to remove
      */
-    public final void setControlsEnabled(boolean b) {
-        controlsEnabled = b;
+    public final void removeComponent(Class<? extends Component> type) {
+        Component c = components.remove(type);
+        if (c == null) {
+            log.warning(
+                    "Attempted to remove component but entity doesn't have a component with type: "
+                            + type.getSimpleName());
+        }
     }
 
+    private boolean collidable = false;
+
     /**
-     * Do NOT call manually. It is called automatically
-     * by FXGL GameApplication
      *
-     * @param now
+     * @return true if the object participates in collision detection, false
+     *         otherwise
      */
-    public final void update(long now) {
-        if (controlsEnabled)
-            controls.forEach(control -> control.onUpdate(this, now));
-        onUpdate(now);
+    public final boolean isCollidable() {
+        return collidable;
     }
 
     /**
-     * Can be overridden to provide subclass implementation.
-     */
-    protected void onUpdate(long now) {}
-
-    /**
-     * Do NOT call manually. It is called automatically
-     * by FXGL GameApplication when entity has been removed
+     * Enable/disable ability for this entity to participate in collision
+     * detection. If collision handler is registered (via PhysicsManager) and
+     * both entities have collidable set to true, then the handler will be
+     * notified of the collision event.
      *
+     * @param collidable
+     *            - true enables collision detection, false - disables
      */
-    public final void clean() {
-        sceneProperty().removeListener(sceneListener);
-        alive.set(false);
-        active.set(false);
-        onClean();
-        getProperties().clear();
-        eventHandlers.clear();
-        controls.clear();
-        getChildren().clear();
+    public final void setCollidable(boolean collidable) {
+        this.collidable = collidable;
     }
 
-    /**
-     * Can be overridden to provide subclass implementation.
-     */
-    protected void onClean() {}
+    public boolean isCollidingWith(Entity other) {
+        return this.fxNode.getBoundsInParent()
+                .intersects(other.fxNode.getBoundsInParent());
+    }
 
     private ReadOnlyBooleanWrapper alive = new ReadOnlyBooleanWrapper(true);
 
@@ -381,8 +381,8 @@ public class Entity extends Parent {
     }
 
     /**
-     * Entity is considered alive from moment the object itself
-     * is created and until removeEntity() is called
+     * Entity is considered alive from moment the object itself is created and
+     * until removeEntity() is called
      *
      * @return
      */
@@ -401,9 +401,8 @@ public class Entity extends Parent {
     }
 
     /**
-     * Entity is "active" from the moment it is registered in the
-     * scene graph via SceneManager.addEntities() and until it is
-     * removed by SceneManager.removeEntity().
+     * Entity is "active" from the moment it is registered in the game world
+     * and until it is removed from the game world.
      *
      * @return true if entity is active, else false
      */
@@ -411,151 +410,108 @@ public class Entity extends Parent {
         return active.get();
     }
 
-    private ChangeListener<Scene> sceneListener = (obs, oldScene, newScene) -> {
-        if (newScene != null) {
-            active.set(true);
-        }
-
-        // TODO: possibly add callback to clean() and remove external dependencies
-    };
+    /**
+     * Used by temporary entities so that they are automatically removed from
+     * the scene graph.
+     */
+    private Duration expireTime = Duration.ZERO;
 
     /**
      *
-     * @return true if the object participates in collision detection,
-     *      false otherwise
+     * @return expireTime of entity, 0 if not set
      */
-    public final boolean isCollidable() {
-        return collidable;
+    public final Duration getExpireTime() {
+        return expireTime;
     }
 
     /**
-     * Set a custom property
+     * Set expire time for this entity. The timer starts when the entity is
+     * added to game scene. Calling this method after entity was added to scene
+     * has no effect.
      *
-     * <pre>
-     * Example:
+     * Once the timer has expired, the entity will be removed with
+     * removeEntity()
      *
-     * player.setProperty("hp", 200);
-     * player.setProperty("alive", true);
-     * </pre>
-     *
-     * @param name
-     * @param value
+     * @param duration
      * @return this entity
      */
-    public final Entity setProperty(String name, Object value) {
-        getProperties().put(name, value);
+    public final Entity setExpireTime(Duration duration) {
+        expireTime = duration;
         return this;
     }
 
+    private boolean controlsEnabled = true;
+
     /**
-     * Set a custom property
+     * Setting this to false will disable each control's update until this has
+     * been set back to true.
      *
-     * @param key
-     * @param value
-     * @return this entity
+     * @param b
      */
-    public final Entity setProperty(PropertyKey key, Object value) {
-        getProperties().put(key.getUniqueKey(), value);
-        return this;
+    public final void setControlsEnabled(boolean b) {
+        controlsEnabled = b;
     }
 
     /**
-     * Get value of a custom property that was previously set
-     * by {@link #setProperty(String, Object)}
+     * Do NOT call manually. It is called automatically by FXGL GameApplication
      *
-     * <pre>
-     * Example:
-     *
-     * if (player.<Boolean>getProperty("alive")) {
-     *      // property "alive" is true
-     * }
-     *
-     * int hp = player.getProperty("hp");
-     * </pre>
-     *
-     * @param name
-     * @return
+     * @param now
      */
-    @SuppressWarnings("unchecked")
-    public final <T> T getProperty(String name) {
-        return (T)getProperties().get(name);
+    public final void update() {
+//        if (controlsEnabled)
+//            controls.forEach(control -> control.onUpdate(this, now));
+        onUpdate();
     }
 
     /**
-     * Get value of a custom property that was previously set
-     * by {@link #setProperty(PropertyKey, Object)}
-     *
-     * <pre>
-     * Example:
-     *
-     * if (player.<Boolean>getProperty(SomeKey.ALIVE)) {
-     *      // property "alive" is true
-     * }
-     *
-     * int hp = player.getProperty(SomeKey.HP);
-     * </pre>
-     *
-     * @param name
-     * @return
+     * Can be overridden to provide subclass implementation.
      */
-    @SuppressWarnings("unchecked")
-    public final <T> T getProperty(PropertyKey key) {
-        return (T)getProperties().get(key.getUniqueKey());
+    protected void onUpdate() {}
+
+    public final void init() {
+        active.set(true);
     }
 
     /**
-     * Adds given component to this entity.
-     * Only 1 component with the same type can be registered.
-     * Anonymous components are NOT allowed.
+     * Do NOT call manually. It is called automatically by FXGL GameApplication
+     * when entity has been removed
      *
-     * @param c
-     * @return this entity
-     * @throws IllegalArgumentException if a component with same type
-     *      already registered
      */
-    public final Entity addComponent(Component c) {
-        Class<?> type = c.getClass();
-        if (type.getCanonicalName() == null) {
-            throw new IllegalArgumentException("Anonymous components are not allowed! - " + type.getName());
-        }
-
-        if (getProperties().containsKey(type)) {
-            throw new IllegalArgumentException("Entity already has a component with type: " + type.getCanonicalName());
-        }
-        getProperties().put(type, c);
-        return this;
+    public final void clean() {
+        alive.set(false);
+        active.set(false);
+        onClean();
+        eventHandlers.clear();
+        controls.clear();
+        components.clear();
+        fxNode.removeChildren();
     }
 
     /**
-     * Returns component of given type if registered. The type
-     * must be exactly the same as the type of the instance registered.
-     *
-     * @param type
-     * @return
+     * Can be overridden to provide subclass implementation.
      */
-    public final <T extends Component> Optional<T> getComponent(Class<T> type) {
-        return Optional.ofNullable(type.cast(getProperties().get(type)));
-    }
+    protected void onClean() {}
 
     private Map<String, FXGLEventHandler> eventHandlers = new HashMap<>();
 
     /**
-     * Register an event handler for FXGLEventType. The handler will
-     * be notified when an event of the type occurs on this entity.
+     * Register an event handler for FXGLEventType. The handler will be notified
+     * when an event of the type occurs on this entity.
      *
      * @param type
      * @param eventHandler
      */
-    public final void addFXGLEventHandler(FXGLEventType type, FXGLEventHandler eventHandler) {
+    public final void addFXGLEventHandler(FXGLEventType type,
+            FXGLEventHandler eventHandler) {
         eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 
     /**
-     * Fire (trigger) an FXGL event on this entity
-     * This entity becomes the target of the FXGL event.
+     * Fire (trigger) an FXGL event on this entity This entity becomes the
+     * target of the FXGL event.
      *
-     * If the FXGL event doesn't have a source, this
-     * entity will also become the source of the event.
+     * If the FXGL event doesn't have a source, this entity will also become the
+     * source of the event.
      *
      * @param event
      */
@@ -564,22 +520,22 @@ public class Entity extends Parent {
             event.setSource(this);
 
         event.setTarget(this);
-        eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {}).handle(event);
+        eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {
+        }).handle(event);
     }
 
     private RenderLayer renderLayer = RenderLayer.TOP;
 
     /**
-     * Set render layer for this entity. Render layer determines
-     * how an entity is rendered relative to other entities. The layer
-     * with higher index() will be rendered on top of the layer with
-     * lower index(). By default an entity has the very top layer with
-     * highest index equal to {@link Integer#MAX_VALUE}.
+     * Set render layer for this entity. Render layer determines how an entity
+     * is rendered relative to other entities. The layer with higher index()
+     * will be rendered on top of the layer with lower index(). By default an
+     * entity has the very top layer with highest index equal to
+     * {@link Integer#MAX_VALUE}.
      *
-     * The render layer can only
-     * be set before adding entity to the scene. If the entity is
-     * already registered in the scene graph, this method will throw
-     * IllegalStateException.
+     * The render layer can only be set before adding entity to the scene. If
+     * the entity is already registered in the scene graph, this method will
+     * throw IllegalStateException.
      *
      * @param layer
      * @throws IllegalStateException
@@ -587,7 +543,8 @@ public class Entity extends Parent {
      */
     public final Entity setRenderLayer(RenderLayer layer) {
         if (isActive())
-            throw new IllegalStateException("Can't set render layer to active entity.");
+            throw new IllegalStateException(
+                    "Can't set render layer to active entity.");
 
         this.renderLayer = layer;
         return this;
@@ -621,10 +578,8 @@ public class Entity extends Parent {
     /**
      * Returns a new entity without any type.
      *
-     * Use this method for background entity,
-     * range selection entity, temporary entity,
-     * etc when you are not
-     * going to use its type.
+     * Use this method for background entity, range selection entity, temporary
+     * entity, etc when you are not going to use its type.
      *
      * @return
      */

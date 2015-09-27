@@ -37,7 +37,10 @@ import com.almasb.fxgl.settings.GameSettings;
 public class TestGameApplication extends GameApplication {
 
     @Override
-    protected void initSettings(GameSettings settings) {}
+    protected void initSettings(GameSettings settings) {
+        settings.setIntroEnabled(false);
+        settings.setMenuEnabled(false);
+    }
 
     @Override
     protected void initInput() {}

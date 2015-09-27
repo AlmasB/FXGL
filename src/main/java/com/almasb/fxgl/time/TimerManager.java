@@ -207,7 +207,7 @@ public final class TimerManager implements UpdateTickListener {
     }
 
     @Override
-    public void onUpdate(long now) {
+    public void onUpdate() {
         timerActions.forEach(action -> action.update(now));
         timerActions.removeIf(TimerAction::isExpired);
     }

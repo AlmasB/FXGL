@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -44,8 +43,8 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import com.almasb.fxgl.SceneManager;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.v2.GameWorld;
 import com.almasb.fxgl.util.UpdateTickListener;
 
 import javafx.beans.property.LongProperty;
@@ -67,9 +66,9 @@ public final class PhysicsManager implements UpdateTickListener {
 
     private static final float TIME_STEP = 1 / 60.0f;
 
-    private SceneManager sceneManager;
+    private GameWorld gameWorld;
 
-    private World world = new World(new Vec2(0, -10));
+    private World physicsWorld = new World(new Vec2(0, -10));
 
     private List<CollisionHandler> collisionHandlers = new ArrayList<>();
 
@@ -79,12 +78,12 @@ public final class PhysicsManager implements UpdateTickListener {
 
     private double appHeight;
 
-    public PhysicsManager(double appHeight, ReadOnlyLongProperty tick, SceneManager sceneManager) {
+    public PhysicsManager(double appHeight, ReadOnlyLongProperty tick, GameWorld gameWorld) {
         this.appHeight = appHeight;
         this.tick.bind(tick);
-        this.sceneManager = sceneManager;
+        this.gameWorld = gameWorld;
 
-        world.setContactListener(new ContactListener() {
+        physicsWorld.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
                 PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
@@ -134,22 +133,22 @@ public final class PhysicsManager implements UpdateTickListener {
      * @param now
      */
     @Override
-    public void onUpdate(long now) {
-        world.step(TIME_STEP, 8, 3);
+    public void onUpdate() {
+        physicsWorld.step(TIME_STEP, 8, 3);
 
         processCollisions();
 
-        for (Body body = world.getBodyList(); body != null; body = body.getNext()) {
+        for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
             Entity e = (Entity) body.getUserData();
-            e.setTranslateX(
+            e.setX(
                     Math.round(toPixels(
                             body.getPosition().x
-                                    - toMeters(e.getLayoutBounds().getWidth() / 2))));
-            e.setTranslateY(
+                                    - toMeters(e.getWidth() / 2))));
+            e.setY(
                     Math.round(toPixels(
                             toMeters(appHeight) - body.getPosition().y
-                                    - toMeters(e.getLayoutBounds().getHeight() / 2))));
-            e.setRotate(-Math.toDegrees(body.getAngle()));
+                                    - toMeters(e.getHeight() / 2))));
+            //e.setRotate(-Math.toDegrees(body.getAngle()));
         }
     }
 
@@ -160,10 +159,7 @@ public final class PhysicsManager implements UpdateTickListener {
      * setCollidable(true).
      */
     private void processCollisions() {
-        List<Entity> collidables = sceneManager.getEntities()
-                .stream()
-                .filter(Entity::isCollidable)
-                .collect(Collectors.toList());
+        List<Entity> collidables = gameWorld.getEntities(Entity::isCollidable);
 
         for (int i = 0; i < collidables.size(); i++) {
             Entity e1 = collidables.get(i);
@@ -187,7 +183,7 @@ public final class PhysicsManager implements UpdateTickListener {
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
-                    if (e1.getBoundsInParent().intersects(e2.getBoundsInParent())) {
+                    if (e1.isCollidingWith(e2)) {
                         if (!collisions.containsKey(pair)) {
                             collisions.put(pair, tick.get());
                         }
@@ -260,7 +256,7 @@ public final class PhysicsManager implements UpdateTickListener {
      * @param y
      */
     public void setGravity(double x, double y) {
-        world.setGravity(new Vec2().addLocal((float)x,-(float)y));
+        physicsWorld.setGravity(new Vec2().addLocal((float)x,-(float)y));
     }
 
     /**
@@ -270,10 +266,10 @@ public final class PhysicsManager implements UpdateTickListener {
      * @param e
      */
     public void createBody(PhysicsEntity e) {
-        double x = e.getTranslateX(),
-                y = e.getTranslateY(),
-                w = e.getLayoutBounds().getWidth(),
-                h = e.getLayoutBounds().getHeight();
+        double x = e.getX(),
+                y = e.getY(),
+                w = e.getWidth(),
+                h = e.getHeight();
 
         if (e.fixtureDef.shape == null) {
             PolygonShape rectShape = new PolygonShape();
@@ -282,7 +278,7 @@ public final class PhysicsManager implements UpdateTickListener {
         }
 
         e.bodyDef.position.set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
-        e.body = world.createBody(e.bodyDef);
+        e.body = physicsWorld.createBody(e.bodyDef);
         e.fixture = e.body.createFixture(e.fixtureDef);
         e.body.setUserData(e);
     }
@@ -294,7 +290,7 @@ public final class PhysicsManager implements UpdateTickListener {
      * @param e
      */
     public void destroyBody(PhysicsEntity e) {
-        world.destroyBody(e.body);
+        physicsWorld.destroyBody(e.body);
     }
 
     private EdgeCallback raycastCallback = new EdgeCallback();
@@ -309,7 +305,7 @@ public final class PhysicsManager implements UpdateTickListener {
      */
     public RaycastResult raycast(Point2D start, Point2D end) {
         raycastCallback.reset();
-        world.raycast(raycastCallback, toPoint(start), toPoint(end));
+        physicsWorld.raycast(raycastCallback, toPoint(start), toPoint(end));
 
         PhysicsEntity entity = null;
         Point2D point = null;

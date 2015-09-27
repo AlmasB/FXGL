@@ -77,11 +77,11 @@ public final class ParticleEntity extends Entity {
     }
 
     @Override
-    protected void onUpdate(long now) {
+    protected void onUpdate() {
         if (emitter == null)
             return;
 
-        particles.addAll(emitter.emit(getTranslateX(), getTranslateY()));
+        particles.addAll(emitter.emit(getX(), getY()));
 
         for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
             Particle p = it.next();

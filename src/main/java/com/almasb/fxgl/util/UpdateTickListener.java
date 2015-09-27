@@ -32,5 +32,5 @@ package com.almasb.fxgl.util;
  *
  */
 public interface UpdateTickListener {
-    public void onUpdate(long now);
+    public void onUpdate();
 }

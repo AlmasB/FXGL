@@ -52,12 +52,12 @@ public final class HorizontalMovementControl extends AbstractControl {
 
     @Override
     protected void initEntity(Entity entity) {
-        x = entity.getTranslateX();
-        y = entity.getTranslateY();
+//        x = entity.getTranslateX();
+//        y = entity.getTranslateY();
     }
 
     @Override
     public void onUpdate(Entity entity, long now) {
-        entity.setTranslateX(entity.getTranslateX() + TimerManager.tpfSeconds() * speed);
+        //entity.setTranslateX(entity.getTranslateX() + TimerManager.tpfSeconds() * speed);
     }
 }

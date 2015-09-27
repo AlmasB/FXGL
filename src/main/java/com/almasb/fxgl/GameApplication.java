@@ -35,8 +35,12 @@ import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.AudioManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.effect.ParticleManager;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.v2.GameScene;
+import com.almasb.fxgl.entity.v2.GameWorld;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
+import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -58,10 +62,13 @@ import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.collections.ListChangeListener.Change;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -184,6 +191,39 @@ public abstract class GameApplication extends Application {
             processUpdate(internalTime);
         }
     };
+
+    private GameWorld gameWorld = new GameWorld();
+    private GameScene gameScene;
+
+
+    private void initW() {
+        gameWorld.entitiesProperty().addListener((ListChangeListener.Change<? extends Entity> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Entity e : c.getAddedSubList()) {
+                        if (e instanceof PhysicsEntity) {
+                            physicsManager.createBody((PhysicsEntity) e);
+                        }
+
+                        Duration expire = e.getExpireTime();
+                        if (expire != Duration.ZERO)
+                            getTimerManager().runOnceAfter(() -> gameWorld.removeEntity(e), expire);
+                    }
+                }
+                else if (c.wasRemoved()) {
+                    for (Entity e : c.getRemoved()) {
+                        if (e instanceof PhysicsEntity) {
+                            physicsManager.destroyBody((PhysicsEntity) e);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+
+
 
     /**
      * List of update listeners. They are notified on each update tick (frame).
@@ -338,10 +378,10 @@ public abstract class GameApplication extends Application {
 
         timerManager = new TimerManager();
         sceneManager = new SceneManager(this, stage);
-        inputManager = new InputManager(sceneManager);
+        inputManager = new InputManager(gameScene);
 
-        physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty(), sceneManager);
-        particleManager = new ParticleManager(sceneManager);
+        physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty(), gameWorld);
+        particleManager = new ParticleManager();
 
         audioManager = new AudioManager();
         qteManager = new QTEManager();
@@ -432,7 +472,7 @@ public abstract class GameApplication extends Application {
         timerManager.tickStart(internalTime);
 
         // fire listeners
-        updateTickListeners.forEach(listener -> listener.onUpdate(getNow()));
+        //updateTickListeners.forEach(listener -> listener.onUpdate(getNow()));
 
         // update app
         onUpdate();
@@ -453,13 +493,13 @@ public abstract class GameApplication extends Application {
             initPhysics();
             initUI();
 
-            if (getSettings().isFPSShown()) {
-                Text fpsText = UIFactory.newText("", 24);
-                fpsText.setTranslateY(getSettings().getHeight() - 40);
-                fpsText.textProperty().bind(getTimerManager().fpsProperty().asString("FPS: [%d]\n")
-                        .concat(getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
-                getSceneManager().addUINodes(fpsText);
-            }
+//            if (getSettings().isFPSShown()) {
+//                Text fpsText = UIFactory.newText("", 24);
+//                fpsText.setTranslateY(getSettings().getHeight() - 40);
+//                fpsText.textProperty().bind(getTimerManager().fpsProperty().asString("FPS: [%d]\n")
+//                        .concat(getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
+//                getSceneManager().addUINodes(fpsText);
+//            }
         }
         catch (Exception e) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);

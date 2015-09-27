@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,14 +25,20 @@
  */
 package com.almasb.fxgl.test.entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
+import java.util.Optional;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.entity.AbstractControl;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.DoubleComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.test.TestGameApplication;
@@ -47,29 +53,121 @@ public class EntityTest {
         TEST_ENTITY
     }
 
-    @Before
-    public void setUp() {
-        Thread t = new Thread(() ->
-            Application.launch(TestGameApplication.class, new String[] {}));
-        t.setDaemon(true);
-        t.start();
-    }
+    private Entity testEntity;
 
-    @After
-    public void tearDown() {
-        Platform.exit();
+    @Before
+    public void initEntity() {
+        testEntity = new Entity(Type.TEST_ENTITY);
     }
 
     @Test
-    public void essentials() {
-        Entity entity = new Entity(Type.TEST_ENTITY);
+    public void essentials() throws Exception {
+        assertTrue(testEntity.isAlive());
+        assertFalse(testEntity.isActive());
 
-        assertTrue(entity.isAlive());
-        assertFalse(entity.isActive());
+        assertEquals(Point2D.ZERO, testEntity.getPosition());
 
-        assertEquals(Point2D.ZERO, entity.getPosition());
-
-        assertEquals(Type.TEST_ENTITY, entity.getEntityType());
-        assertEquals(Type.TEST_ENTITY.getUniqueType(), entity.getTypeAsString());
+        assertEquals(Type.TEST_ENTITY, testEntity.getEntityType());
+        assertEquals(
+                Type.TEST_ENTITY.getUniqueType(),
+                    testEntity.getTypeAsString());
     }
+
+    @Test
+    public void controls() {
+        TestControl control = new TestControl();
+        testEntity.addControl(control);
+        assertEquals(control, testEntity.getControl(TestControl.class));
+
+        testEntity.removeControl(control);
+        assertEquals(null, testEntity.getControl(TestControl.class));
+
+        testEntity.addControl(control);
+        assertEquals(control, testEntity.getControl(TestControl.class));
+
+        testEntity.removeControls();
+        assertEquals(null, testEntity.getControl(TestControl.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void controlsDuplicate() {
+        testEntity.addControl(new TestControl());
+        testEntity.addControl(new TestControl());
+    }
+
+    @Test
+    public void components() {
+        HPComponent hp = new HPComponent(100);
+        testEntity.addComponent(hp);
+
+        Optional<HPComponent> maybe = testEntity
+                .getComponent(HPComponent.class);
+
+        assertTrue(maybe.isPresent());
+        assertEquals(hp, maybe.get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void componentsAnonymous() {
+        testEntity.addComponent(new Component() {});
+        testEntity.addComponent(new DoubleComponent() {});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void componentsDuplicate() {
+        HPComponent hp1 = new HPComponent(100);
+        HPComponent hp2 = new HPComponent(100);
+
+        testEntity.addComponent(hp1);
+        testEntity.addComponent(hp2);
+    }
+
+    private class TestControl extends AbstractControl {
+
+        @Override
+        protected void initEntity(Entity entity) {
+            assertEquals(testEntity, entity);
+        }
+
+        @Override
+        public void onUpdate(Entity entity, long now) {
+
+        }
+    }
+
+    private class HPComponent extends DoubleComponent {
+        public HPComponent(double value) {
+            super(value);
+        }
+    }
+
+    // private enum Type implements EntityType {
+    // TEST_ENTITY
+    // }
+    //
+    // private static GameApplication app;
+    // private Entity testEntity;
+    //
+    // @BeforeClass
+    // public static void setupFramework() {
+    // Thread t = new Thread(() ->
+    // Application.launch(TestGameApplication.class, new String[] {}));
+    // t.setDaemon(true);
+    // t.start();
+    //
+    // while ((app = TestGameApplication.getInstance()) == null) {
+    // try {
+    // Thread.sleep(10);
+    // }
+    // catch (InterruptedException e) {
+    // e.printStackTrace();
+    // }
+    // }
+    // }
+    //
+    // @AfterClass
+    // public static void exitFramework() {
+    // Platform.exit();
+    // }
+
 }

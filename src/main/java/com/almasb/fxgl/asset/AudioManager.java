@@ -225,7 +225,7 @@ public final class AudioManager implements UpdateTickListener {
     }
 
     @Override
-    public void onUpdate(long now) {
+    public void onUpdate() {
         for (Music music : activeMusic) {
             if (music.mediaPlayer.getCurrentTime().equals(music.mediaPlayer.getTotalDuration())) {
                 music.isStopped = true;

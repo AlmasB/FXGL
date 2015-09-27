@@ -23,44 +23,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.control;
+package com.almasb.fxgl.test.entity;
 
-import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.TimerManager;
+import org.junit.Test;
 
-/**
- * API NOT READY FOR USE
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
- */
-public final class CircularMovementControl extends AbstractControl {
+import javafx.scene.Parent;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
-    private double radius;
-    private double speed;
-    private double t = 0.0;
-    private double x, y;
+public class JFXTest {
 
-    public CircularMovementControl(double speed, double radius) {
-        this.radius = radius;
-        this.speed = speed;
+    @Test
+    public void createParent() {
+        Parent parent = new Parent() {};
+
+        Circle circle = new Circle(5);
+        Rectangle rect = new Rectangle(40, 40);
     }
 
-    @Override
-    protected void initEntity(Entity entity) {
-//        x = entity.getTranslateX();
-//        y = entity.getTranslateY();
+    @Test
+    public void createText() {
+        Text text = new Text();
     }
 
-    @Override
-    public void onUpdate(Entity entity, long now) {
-//        x = entity.getTranslateX() - Math.cos(t) * radius;
-//        y = entity.getTranslateY() - Math.sin(t) * radius;
-//
-//        t += TimerManager.tpfSeconds() * speed;
-//
-//        entity.setTranslateX(x + Math.cos(t) * radius);
-//        entity.setTranslateY(y + Math.sin(t) * radius);
+    @Test
+    public void createEntity() {
+        //Entity entity = Entity.noType();
     }
 }

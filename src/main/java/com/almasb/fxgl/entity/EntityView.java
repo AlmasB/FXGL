@@ -23,44 +23,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.control;
+package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.TimerManager;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 
-/**
- * API NOT READY FOR USE
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
- */
-public final class CircularMovementControl extends AbstractControl {
+public final class EntityView extends Parent {
 
-    private double radius;
-    private double speed;
-    private double t = 0.0;
-    private double x, y;
-
-    public CircularMovementControl(double speed, double radius) {
-        this.radius = radius;
-        this.speed = speed;
+    public void addChild(Node node) {
+        getChildren().add(node);
     }
 
-    @Override
-    protected void initEntity(Entity entity) {
-//        x = entity.getTranslateX();
-//        y = entity.getTranslateY();
-    }
-
-    @Override
-    public void onUpdate(Entity entity, long now) {
-//        x = entity.getTranslateX() - Math.cos(t) * radius;
-//        y = entity.getTranslateY() - Math.sin(t) * radius;
-//
-//        t += TimerManager.tpfSeconds() * speed;
-//
-//        entity.setTranslateX(x + Math.cos(t) * radius);
-//        entity.setTranslateY(y + Math.sin(t) * radius);
+    public void removeChildren() {
+        getChildren().clear();
     }
 }
