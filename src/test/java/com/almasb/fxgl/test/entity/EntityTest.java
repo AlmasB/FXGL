@@ -68,25 +68,29 @@ public class EntityTest {
         assertEquals(Point2D.ZERO, testEntity.getPosition());
 
         assertEquals(Type.TEST_ENTITY, testEntity.getEntityType());
-        assertEquals(
-                Type.TEST_ENTITY.getUniqueType(),
-                    testEntity.getTypeAsString());
+        assertEquals(Type.TEST_ENTITY.getUniqueType(), testEntity.getTypeAsString());
+        assertTrue(testEntity.isType(Type.TEST_ENTITY));
     }
 
     @Test
     public void controls() {
         TestControl control = new TestControl();
         testEntity.addControl(control);
-        assertEquals(control, testEntity.getControl(TestControl.class));
 
-        testEntity.removeControl(control);
-        assertEquals(null, testEntity.getControl(TestControl.class));
+        Optional<TestControl> maybe = testEntity.getControl(TestControl.class);
+        assertTrue(maybe.isPresent());
+        assertEquals(control, maybe.get());
+
+        testEntity.removeControl(TestControl.class);
+        assertFalse(testEntity.getControl(TestControl.class).isPresent());
 
         testEntity.addControl(control);
-        assertEquals(control, testEntity.getControl(TestControl.class));
+        maybe = testEntity.getControl(TestControl.class);
+        assertTrue(maybe.isPresent());
+        assertEquals(control, maybe.get());
 
         testEntity.removeControls();
-        assertEquals(null, testEntity.getControl(TestControl.class));
+        assertFalse(testEntity.getControl(TestControl.class).isPresent());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -100,8 +104,7 @@ public class EntityTest {
         HPComponent hp = new HPComponent(100);
         testEntity.addComponent(hp);
 
-        Optional<HPComponent> maybe = testEntity
-                .getComponent(HPComponent.class);
+        Optional<HPComponent> maybe = testEntity.getComponent(HPComponent.class);
 
         assertTrue(maybe.isPresent());
         assertEquals(hp, maybe.get());
