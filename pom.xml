@@ -109,6 +109,11 @@
 									<placement>a</placement>
 									<head>Default Value:</head>
 								</tag>
+								<tag>
+								    <name>implNote</name>
+								    <placement>a</placement>
+								    <head>Implementation Note:</head>
+								</tag>
 							</tags>
 						</configuration>
 					</execution>
