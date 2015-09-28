@@ -1,6 +1,7 @@
 ## FXGL
 Simple and easy to use JavaFX 8 game library<br/>
 [![Release](https://img.shields.io/github/release/AlmasB/FXGL.svg?label=maven)](https://jitpack.io/#AlmasB/FXGL)
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Use Case
 FXGL is perfect for small to medium sized games and for beginner / intermediate programmers in JavaFX.
