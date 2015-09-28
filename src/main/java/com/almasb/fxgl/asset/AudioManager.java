@@ -30,8 +30,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -42,7 +43,7 @@ import javafx.beans.property.SimpleDoubleProperty;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AudioManager implements UpdateTickListener {
+public final class AudioManager implements WorldStateListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AudioManager");
 
@@ -225,7 +226,19 @@ public final class AudioManager implements UpdateTickListener {
     }
 
     @Override
-    public void onUpdate() {
+    public void onEntityAdded(Entity entity) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onWorldUpdate() {
         for (Music music : activeMusic) {
             if (music.mediaPlayer.getCurrentTime().equals(music.mediaPlayer.getTotalDuration())) {
                 music.isStopped = true;
@@ -234,5 +247,11 @@ public final class AudioManager implements UpdateTickListener {
 
         activeSounds.removeIf(sound -> !sound.clip.isPlaying());
         activeMusic.removeIf(music -> music.isStopped);
+    }
+
+    @Override
+    public void onWorldReset() {
+        // TODO Auto-generated method stub
+
     }
 }

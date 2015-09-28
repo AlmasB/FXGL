@@ -54,7 +54,7 @@ public final class CircularMovementControl extends AbstractControl {
     }
 
     @Override
-    public void onUpdate(Entity entity, long now) {
+    public void onUpdate(Entity entity) {
 //        x = entity.getTranslateX() - Math.cos(t) * radius;
 //        y = entity.getTranslateY() - Math.sin(t) * radius;
 //

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -44,8 +45,7 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.v2.GameWorld;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
@@ -62,13 +62,13 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class PhysicsManager implements UpdateTickListener {
+public final class PhysicsManager implements WorldStateListener {
 
     private static final float TIME_STEP = 1 / 60.0f;
 
-    private GameWorld gameWorld;
-
     private World physicsWorld = new World(new Vec2(0, -10));
+
+    private List<Entity> entities = new ArrayList<>();
 
     private List<CollisionHandler> collisionHandlers = new ArrayList<>();
 
@@ -78,10 +78,9 @@ public final class PhysicsManager implements UpdateTickListener {
 
     private double appHeight;
 
-    public PhysicsManager(double appHeight, ReadOnlyLongProperty tick, GameWorld gameWorld) {
+    public PhysicsManager(double appHeight, ReadOnlyLongProperty tick) {
         this.appHeight = appHeight;
         this.tick.bind(tick);
-        this.gameWorld = gameWorld;
 
         physicsWorld.setContactListener(new ContactListener() {
             @Override
@@ -128,38 +127,15 @@ public final class PhysicsManager implements UpdateTickListener {
     }
 
     /**
-     * This is the physics update tick
-     *
-     * @param now
-     */
-    @Override
-    public void onUpdate() {
-        physicsWorld.step(TIME_STEP, 8, 3);
-
-        processCollisions();
-
-        for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
-            Entity e = (Entity) body.getUserData();
-            e.setX(
-                    Math.round(toPixels(
-                            body.getPosition().x
-                                    - toMeters(e.getWidth() / 2))));
-            e.setY(
-                    Math.round(toPixels(
-                            toMeters(appHeight) - body.getPosition().y
-                                    - toMeters(e.getHeight() / 2))));
-            //e.setRotate(-Math.toDegrees(body.getAngle()));
-        }
-    }
-
-    /**
      * Perform collision detection for all entities that have
      * setCollidable(true) and if at least one entity is not PhysicsEntity.
      * Subsequently fire collision handlers for all entities that have
      * setCollidable(true).
      */
     private void processCollisions() {
-        List<Entity> collidables = gameWorld.getEntities(Entity::isCollidable);
+        List<Entity> collidables = entities.stream()
+                .filter(Entity::isCollidable)
+                .collect(Collectors.toList());
 
         for (int i = 0; i < collidables.size(); i++) {
             Entity e1 = collidables.get(i);
@@ -407,4 +383,41 @@ public final class PhysicsManager implements UpdateTickListener {
             bestFraction = 1.0f;
         }
     }
+
+    @Override
+    public void onEntityAdded(Entity entity) {
+        entities.add(entity);
+        if (entity instanceof PhysicsEntity)
+            createBody((PhysicsEntity) entity);
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+        entities.remove(entity);
+        if (entity instanceof PhysicsEntity)
+            destroyBody((PhysicsEntity) entity);
+    }
+
+    @Override
+    public void onWorldUpdate() {
+        physicsWorld.step(TIME_STEP, 8, 3);
+
+        processCollisions();
+
+        for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
+            Entity e = (Entity) body.getUserData();
+            e.setX(
+                    Math.round(toPixels(
+                            body.getPosition().x
+                                    - toMeters(e.getWidth() / 2))));
+            e.setY(
+                    Math.round(toPixels(
+                            toMeters(appHeight) - body.getPosition().y
+                                    - toMeters(e.getHeight() / 2))));
+            //e.setRotate(-Math.toDegrees(body.getAngle()));
+        }
+    }
+
+    @Override
+    public void onWorldReset() {}
 }

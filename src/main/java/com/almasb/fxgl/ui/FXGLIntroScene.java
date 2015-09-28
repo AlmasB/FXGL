@@ -26,10 +26,8 @@
 package com.almasb.fxgl.ui;
 
 import java.util.Random;
-import java.util.logging.Logger;
 
 import com.almasb.fxgl.settings.SceneSettings;
-import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.KeyFrame;
@@ -53,7 +51,6 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
 /**
@@ -63,7 +60,7 @@ import javafx.util.Duration;
  */
 public final class FXGLIntroScene extends IntroScene {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGLIntroScene");
+    //private static final Logger log = FXGLLogger.getLogger("FXGLIntroScene");
 
     private double w, h;
 

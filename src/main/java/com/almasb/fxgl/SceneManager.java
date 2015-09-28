@@ -25,12 +25,19 @@
  */
 package com.almasb.fxgl;
 
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.entity.v2.GameScene;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLDialogBox;
@@ -39,18 +46,19 @@ import com.almasb.fxgl.ui.IntroScene;
 import com.almasb.fxgl.ui.MenuFactory;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Dialog;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 
 /**
  * Handles everything to do with modifying the scene.
@@ -58,7 +66,7 @@ import javafx.stage.Stage;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public final class SceneManager implements UpdateTickListener {
+public final class SceneManager {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
@@ -96,10 +104,6 @@ public final class SceneManager implements UpdateTickListener {
      */
     private GameApplication app;
 
-    /**
-     * Main stage.
-     */
-    private Stage stage;
     private Scene scene;
 
     private SceneSettings sceneSettings;
@@ -112,9 +116,8 @@ public final class SceneManager implements UpdateTickListener {
      * @param stage
      *            main stage
      */
-    /* package-private */ SceneManager(GameApplication app, Stage stage, Scene scene) {
+    /* package-private */ SceneManager(GameApplication app, Scene scene) {
         this.app = app;
-        this.stage = stage;
         this.scene = scene;
 
         scene.addEventFilter(EventType.ROOT, event -> {
@@ -124,7 +127,6 @@ public final class SceneManager implements UpdateTickListener {
 
         sceneSettings = computeSceneSettings(app.getWidth(), app.getHeight());
         gameScene = new GameScene(sceneSettings);
-
 
         dialogBox = UIFactory.getDialogBox();
         dialogBox.setOnShown(e -> {
@@ -184,8 +186,7 @@ public final class SceneManager implements UpdateTickListener {
     private boolean canSwitchGameMenu = true;
 
     /**
-     * Applies FXGL CSS to menu roots. Scales menu roots appropriately based on
-     * {@link #sizeRatio}. Registers event handlers to menus.
+     * Registers event handlers to menus.
      */
     private void configureMenu() {
         menuOpenProperty().addListener((obs, oldState, newState) -> {
@@ -264,7 +265,7 @@ public final class SceneManager implements UpdateTickListener {
         if (!saveFileName.isEmpty()) {
             try {
                 Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
-                gameScene.reset();
+                app.reset();
                 app.loadState(data);
                 app.startNewGame();
                 setScene(gameScene);
@@ -276,7 +277,7 @@ public final class SceneManager implements UpdateTickListener {
         }
         else {
             SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
-                gameScene.reset();
+                app.reset();
                 app.loadState((Serializable) data);
                 app.startNewGame();
                 setScene(gameScene);
@@ -315,8 +316,6 @@ public final class SceneManager implements UpdateTickListener {
                 setScene(gameScene);
             }
         }
-
-        stage.sizeToScene();
     }
 
     public GameScene getGameScene() {
@@ -388,102 +387,93 @@ public final class SceneManager implements UpdateTickListener {
      */
     private void exitToMainMenu() {
         app.pause();
-        app.getTimerManager().clearActions();
-
-        gameScene.reset();
-
+        app.reset();
         setScene(mainMenuScene);
     }
 
-//    /**
-//     * Shows given dialog and blocks execution of the game until the dialog is
-//     * dismissed. The provided callback will be called with the dialog result as
-//     * parameter when the dialog closes.
-//     *
-//     * @param dialog
-//     * @param resultCallback
-//     */
-//    public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
-//        boolean paused = menuOpenProperty().get();
-//
-//        if (!paused)
-//            app.pause();
-//
-//        app.getInputManager().clearAllInput();
-//
-//        dialog.initOwner(gameScene.getWindow());
-//        dialog.setOnCloseRequest(e -> {
-//            if (!paused)
-//                app.resume();
-//
-//            resultCallback.accept(dialog.getResult());
-//        });
-//        dialog.show();
-//    }
-//
-//    /**
-//     * Shows a blocking (stops game execution) message box with OK button. On
-//     * button press, the message box will be dismissed.
-//     *
-//     * @param message
-//     *            the message to show
-//     */
-//    public void showMessageBox(String message) {
-//        dialogBox.showMessageBox(message);
-//    }
-//
-//    /**
-//     * Shows a blocking message box with YES and NO buttons. The callback is
-//     * invoked with the user answer as parameter.
-//     *
-//     * @param message
-//     * @param resultCallback
-//     */
-//    public void showConfirmationBox(String message,
-//            Consumer<Boolean> resultCallback) {
-//        dialogBox.showConfirmationBox(message, resultCallback);
-//    }
-//
-//    /**
-//     * Shows a blocking message box with OK button and input field. The callback
-//     * is invoked with the field text as parameter.
-//     *
-//     * @param message
-//     * @param resultCallback
-//     */
-//    public void showInputBox(String message, Consumer<String> resultCallback) {
-//        dialogBox.showInputBox(message, resultCallback);
-//    }
+    /**
+     * Shows given dialog and blocks execution of the game until the dialog is
+     * dismissed. The provided callback will be called with the dialog result as
+     * parameter when the dialog closes.
+     *
+     * @param dialog
+     * @param resultCallback
+     */
+    public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
+        boolean paused = menuOpenProperty().get();
+
+        if (!paused)
+            app.pause();
+
+        app.getInputManager().clearAllInput();
+
+        dialog.initOwner(scene.getWindow());
+        dialog.setOnCloseRequest(e -> {
+            if (!paused)
+                app.resume();
+
+            resultCallback.accept(dialog.getResult());
+        });
+        dialog.show();
+    }
+
+    /**
+     * Shows a blocking (stops game execution) message box with OK button. On
+     * button press, the message box will be dismissed.
+     *
+     * @param message
+     *            the message to show
+     */
+    public void showMessageBox(String message) {
+        dialogBox.showMessageBox(message);
+    }
+
+    /**
+     * Shows a blocking message box with YES and NO buttons. The callback is
+     * invoked with the user answer as parameter.
+     *
+     * @param message
+     * @param resultCallback
+     */
+    public void showConfirmationBox(String message,
+            Consumer<Boolean> resultCallback) {
+        dialogBox.showConfirmationBox(message, resultCallback);
+    }
+
+    /**
+     * Shows a blocking message box with OK button and input field. The callback
+     * is invoked with the field text as parameter.
+     *
+     * @param message
+     * @param resultCallback
+     */
+    public void showInputBox(String message, Consumer<String> resultCallback) {
+        dialogBox.showInputBox(message, resultCallback);
+    }
 
     /**
      * Saves a screenshot of the current main scene into a ".png" file
      *
      * @return true if the screenshot was saved successfully, false otherwise
      */
-//    public boolean saveScreenshot() {
-//        Image fxImage = currentScene.getFXScene().snapshot(null);
-//        BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
-//
-//        String fileName = "./" + app.getSettings().getTitle()
-//                + app.getSettings().getVersion() + LocalDateTime.now() + ".png";
-//
-//        fileName = fileName.replace(":", "_");
-//
-//        try (OutputStream os = Files.newOutputStream(Paths.get(fileName))) {
-//            return ImageIO.write(img, "png", os);
-//        }
-//        catch (Exception e) {
-//            log.finer(
-//                    "Exception occurred during saveScreenshot() - "
-//                            + e.getMessage());
-//        }
-//
-//        return false;
-//    }
+    public boolean saveScreenshot() {
+        Image fxImage = scene.snapshot(null);
+        BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
-    @Override
-    public void onUpdate() {
-        // TODO Auto-generated method stub
+        String fileName = "./" + app.getSettings().getTitle()
+                + app.getSettings().getVersion() + LocalDateTime.now() + ".png";
 
+        fileName = fileName.replace(":", "_");
+
+        try (OutputStream os = Files.newOutputStream(Paths.get(fileName))) {
+            return ImageIO.write(img, "png", os);
+        }
+        catch (Exception e) {
+            log.finer(
+                    "Exception occurred during saveScreenshot() - "
+                            + e.getMessage());
+        }
+
+        return false;
     }
 }

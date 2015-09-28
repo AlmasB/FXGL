@@ -57,7 +57,7 @@ public final class HorizontalMovementControl extends AbstractControl {
     }
 
     @Override
-    public void onUpdate(Entity entity, long now) {
+    public void onUpdate(Entity entity) {
         //entity.setTranslateX(entity.getTranslateX() + TimerManager.tpfSeconds() * speed);
     }
 }

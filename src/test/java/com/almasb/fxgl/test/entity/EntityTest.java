@@ -89,7 +89,7 @@ public class EntityTest {
         assertTrue(maybe.isPresent());
         assertEquals(control, maybe.get());
 
-        testEntity.removeControls();
+        testEntity.removeAllControls();
         assertFalse(testEntity.getControl(TestControl.class).isPresent());
     }
 

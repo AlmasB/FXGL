@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity.v2;
+package com.almasb.fxgl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLScene;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -43,9 +43,8 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.layout.Pane;
 
-public final class GameScene extends FXGLScene implements UpdateTickListener {
+public final class GameScene extends FXGLScene implements WorldStateListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
@@ -73,19 +72,11 @@ public final class GameScene extends FXGLScene implements UpdateTickListener {
      */
     private Group uiRoot = new Group();
 
-    /**
-     * THE root of the {@link #gameScene}. Contains {@link #gameRoot}, {@link #particlesCanvas}
-     * and {@link #uiRoot} in this order.
-     */
-    private Pane root;
-
     public GameScene(SceneSettings settings) {
         super(settings);
 
-        root = getRoot();
         getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
-        // TODO: check scaling
         initParticlesCanvas();
     }
 
@@ -93,21 +84,6 @@ public final class GameScene extends FXGLScene implements UpdateTickListener {
         particlesCanvas.setWidth(getWidth());
         particlesCanvas.setHeight(getHeight());
         particlesCanvas.setMouseTransparent(true);
-    }
-
-    public void addEntities(Entity... entities) {
-        for (Entity e : entities) {
-            getRenderLayer(e.getRenderLayer()).getChildren().add(e.getView());
-
-            if (e instanceof ParticleEntity) {
-                particles.add((ParticleEntity) e);
-            }
-        }
-    }
-
-    public void removeEntity(Entity e) {
-        getRenderLayer(e.getRenderLayer()).getChildren().remove(e.getView());
-        particles.remove(e);
     }
 
     public void addUINode(Node node) {
@@ -135,23 +111,6 @@ public final class GameScene extends FXGLScene implements UpdateTickListener {
 
     public void removeUINodes(Node... nodes) {
         uiRoot.getChildren().removeAll(nodes);
-    }
-
-    public void reset() {
-        unbindViewportOrigin();
-        particles.clear();
-        gameRoot.getChildren().clear();
-        uiRoot.getChildren().clear();
-        root.getChildren().clear();
-    }
-
-    @Override
-    public void onUpdate() {
-        particlesGC.setGlobalAlpha(1);
-        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
-        particlesGC.clearRect(0, 0, getWidth(), getHeight());
-
-        particles.forEach(p -> p.renderParticles(particlesGC, getViewportOrigin()));
     }
 
     /**
@@ -280,5 +239,40 @@ public final class GameScene extends FXGLScene implements UpdateTickListener {
      */
     public void setUIMouseTransparent(boolean b) {
         uiRoot.setMouseTransparent(b);
+    }
+
+    @Override
+    public void onEntityAdded(Entity entity) {
+        //log.finer("Attaching " + entity + " to the scene");
+        getRenderLayer(entity.getRenderLayer()).getChildren().add(entity.getView());
+
+        if (entity instanceof ParticleEntity) {
+            particles.add((ParticleEntity) entity);
+        }
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+        getRenderLayer(entity.getRenderLayer()).getChildren().remove(entity.getView());
+        particles.remove(entity);
+    }
+
+    @Override
+    public void onWorldUpdate() {
+        particlesGC.setGlobalAlpha(1);
+        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
+        particlesGC.clearRect(0, 0, getWidth(), getHeight());
+
+        particles.forEach(p -> p.renderParticles(particlesGC, getViewportOrigin()));
+    }
+
+    @Override
+    public void onWorldReset() {
+        log.finer("Resetting game scene");
+
+        unbindViewportOrigin();
+        particles.clear();
+        gameRoot.getChildren().clear();
+        uiRoot.getChildren().clear();
     }
 }

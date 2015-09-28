@@ -27,9 +27,12 @@ package com.almasb.fxgl.time;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.TimerAction.TimerType;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -38,7 +41,9 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Duration;
 
-public final class TimerManager implements UpdateTickListener {
+public final class TimerManager implements WorldStateListener {
+
+    private static final Logger log = FXGLLogger.getLogger("FXGL.TimerManager");
 
     /**
      * Time per frame in seconds.
@@ -109,6 +114,8 @@ public final class TimerManager implements UpdateTickListener {
      * Resets current tick to 0.
      */
     public void resetTicks() {
+        log.finer("Resetting ticks to 0");
+
         tick.set(0);
     }
 
@@ -206,12 +213,6 @@ public final class TimerManager implements UpdateTickListener {
         fps.set(Math.round(fpsCounter.count(secondsToNanos(1) / realFPS)));
     }
 
-    @Override
-    public void onUpdate() {
-        timerActions.forEach(action -> action.update(now));
-        timerActions.removeIf(TimerAction::isExpired);
-    }
-
     /**
      * The Runnable action will be scheduled to run at given interval.
      * The action will run for the first time after given interval.
@@ -268,10 +269,33 @@ public final class TimerManager implements UpdateTickListener {
      * Clears all registered timer based actions.
      */
     public void clearActions() {
+        log.finer("Clearing all scheduled actions");
         timerActions.clear();
     }
 
     public Timer newTimer() {
         return new Timer(this);
+    }
+
+    @Override
+    public void onEntityAdded(Entity entity) {
+        Duration expire = entity.getExpireTime();
+        if (expire != Duration.ZERO)
+            runOnceAfter(() -> entity.removeFromWorld(), expire);
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {}
+
+    @Override
+    public void onWorldUpdate() {
+        timerActions.forEach(action -> action.update(now));
+        timerActions.removeIf(TimerAction::isExpired);
+    }
+
+    @Override
+    public void onWorldReset() {
+        resetTicks();
+        clearActions();
     }
 }

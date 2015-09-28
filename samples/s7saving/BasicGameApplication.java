@@ -23,7 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s5ui;
+package s7saving;
+
+import java.io.Serializable;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
@@ -35,6 +37,7 @@ import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -49,8 +52,9 @@ public class BasicGameApplication extends GameApplication {
 
     private Entity player, enemy;
 
-    // 1. declare JavaFX Text
     private Text uiText;
+
+    private Point2D playerPosition, enemyPosition;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -85,18 +89,41 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
+    public Serializable saveState() {
+        String data = "";
+        data += player.getX() + "," + player.getY();
+        data += ",";
+        data += enemy.getX() + "," + enemy.getY();
+        return data;
+    }
+
+    @Override
+    public void loadState(Serializable loadData) {
+        String data = (String) loadData;
+        String[] values = data.split(",");
+
+        playerPosition = new Point2D(Double.parseDouble(values[0]), Double.parseDouble(values[1]));
+        enemyPosition = new Point2D(Double.parseDouble(values[2]), Double.parseDouble(values[3]));
+    }
+
+    @Override
     protected void initAssets() throws Exception {}
 
     @Override
     protected void initGame() {
+        if (playerPosition == null)
+            playerPosition = new Point2D(100, 100);
+        if (enemyPosition == null)
+            enemyPosition = new Point2D(200, 100);
+
         player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
+        player.setPosition(playerPosition);
 
         Rectangle graphics = new Rectangle(40, 40);
         player.setGraphics(graphics);
 
         enemy = new Entity(Type.ENEMY);
-        enemy.setPosition(200, 100);
+        enemy.setPosition(enemyPosition);
 
         Rectangle enemyGraphics = new Rectangle(40, 40);
         enemyGraphics.setFill(Color.RED);
@@ -126,18 +153,14 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initUI() {
-        // 2. initialize the object
         uiText = new Text();
         uiText.setFont(Font.font(18));
 
-        // 3. position the object
         uiText.setTranslateX(600);
         uiText.setTranslateY(100);
 
-        // 4. bind text property to player entity's X position
         uiText.textProperty().bind(player.xProperty().asString());
 
-        // 5. add UI object to scene
         getGameScene().addUINodes(uiText);
     }
 

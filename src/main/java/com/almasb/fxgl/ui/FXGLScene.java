@@ -25,11 +25,6 @@
  */
 package com.almasb.fxgl.ui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.settings.SceneSettings;
 
@@ -39,7 +34,6 @@ import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 
@@ -56,10 +50,6 @@ public abstract class FXGLScene {
         root.setPrefSize(settings.getScaledWidth(), settings.getScaledHeight());
         root.getTransforms().setAll(new Scale(settings.getScaleRatio(), settings.getScaleRatio()));
         root.getStylesheets().add(settings.getCSS());
-    }
-
-    public Scene getScene() {
-        return getRoot().getScene();
     }
 
     public Pane getRoot() {
@@ -81,6 +71,11 @@ public abstract class FXGLScene {
     public <T extends Event> void addEventHandler(EventType<T> eventType,
             EventHandler<? super T> eventHandler) {
         eventHandlers.addEventHandler(eventType, eventHandler);
+    }
+
+    public <T extends Event> void removeEventHandler(EventType<T> eventType,
+            EventHandler<? super T> eventHandler) {
+        eventHandlers.removeEventHandler(eventType, eventHandler);
     }
 
     public void fireEvent(Event event) {

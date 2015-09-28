@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.almasb.fxgl.GameWorld;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.beans.property.DoubleProperty;
@@ -93,6 +94,20 @@ public class Entity {
         this.type = type;
     }
 
+    private GameWorld world;
+
+    public void setWorld(GameWorld world) {
+        this.world = world;
+    }
+
+    public GameWorld getWorld() {
+        return world;
+    }
+
+    public void removeFromWorld() {
+        getWorld().removeEntity(this);
+    }
+
     private EntityView view = new EntityView();
 
     public EntityView getView() {
@@ -138,10 +153,9 @@ public class Entity {
      * @param y
      * @return this entity
      */
-    public final Entity setPosition(double x, double y) {
+    public final void setPosition(double x, double y) {
         setX(x);
         setY(y);
-        return this;
     }
 
     /**
@@ -150,8 +164,8 @@ public class Entity {
      * @param position
      * @return this entity
      */
-    public final Entity setPosition(Point2D position) {
-        return setPosition(position.getX(), position.getY());
+    public final void setPosition(Point2D position) {
+        setPosition(position.getX(), position.getY());
     }
 
     /**
@@ -221,7 +235,7 @@ public class Entity {
      * @param graphics
      * @return this entity
      */
-    public final Entity setGraphics(Node graphics) {
+    public final void setGraphics(Node graphics) {
         view.removeChildren();
 
         if (graphics instanceof Circle) {
@@ -231,7 +245,6 @@ public class Entity {
         }
 
         view.addChild(graphics);
-        return this;
     }
 
     /**
@@ -287,7 +300,7 @@ public class Entity {
     /**
      * Remove all behavior controls from entity
      */
-    public final void removeControls() {
+    public final void removeAllControls() {
         controls.clear();
     }
 
@@ -309,11 +322,10 @@ public class Entity {
      * can be registered. Anonymous components are NOT allowed.
      *
      * @param component
-     * @return this entity
      * @throws IllegalArgumentException
      *             if a component with same type already registered
      */
-    public final Entity addComponent(Component component) {
+    public final void addComponent(Component component) {
         Class<? extends Component> type = component.getClass();
         if (type.getCanonicalName() == null) {
             throw new IllegalArgumentException(
@@ -327,7 +339,6 @@ public class Entity {
                             + type.getCanonicalName());
         }
         components.put(type, component);
-        return this;
     }
 
     /**
@@ -437,11 +448,9 @@ public class Entity {
      * removeEntity()
      *
      * @param duration
-     * @return this entity
      */
-    public final Entity setExpireTime(Duration duration) {
+    public final void setExpireTime(Duration duration) {
         expireTime = duration;
-        return this;
     }
 
     private boolean controlsEnabled = true;
@@ -462,8 +471,8 @@ public class Entity {
      * @param now
      */
     public final void update() {
-//        if (controlsEnabled)
-//            controls.forEach(control -> control.onUpdate(this, now));
+        if (controlsEnabled)
+            controls.values().forEach(c -> c.onUpdate(this));
         onUpdate();
     }
 
@@ -508,6 +517,11 @@ public class Entity {
     public final void addFXGLEventHandler(FXGLEventType type,
             FXGLEventHandler eventHandler) {
         eventHandlers.put(type.getUniqueType(), eventHandler);
+    }
+
+    public final void removeFXGLEventHandler(FXGLEventType type,
+            FXGLEventHandler eventHandler) {
+        eventHandlers.remove(type.getUniqueType());
     }
 
     /**

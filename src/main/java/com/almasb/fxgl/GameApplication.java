@@ -26,8 +26,6 @@
 package com.almasb.fxgl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,12 +33,8 @@ import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.AudioManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.effect.ParticleManager;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.v2.GameScene;
-import com.almasb.fxgl.entity.v2.GameWorld;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
-import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -58,19 +52,17 @@ import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
-import com.almasb.fxgl.util.UpdateTickListener;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -236,6 +228,20 @@ public abstract class GameApplication extends Application {
     protected abstract void initInput();
 
     /**
+     * Override to use your custom intro video.
+     *
+     * @return intro animation
+     */
+    protected IntroFactory initIntroFactory() {
+        return new IntroFactory() {
+            @Override
+            public IntroScene newIntro(SceneSettings settings) {
+                return new FXGLIntroScene(settings);
+            }
+        };
+    }
+
+    /**
      * Override to user your custom menus.
      *
      * @return menu factory for creating main and game menus
@@ -250,20 +256,6 @@ public abstract class GameApplication extends Application {
             @Override
             public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
                 return new FXGLGameMenu(app, settings);
-            }
-        };
-    }
-
-    /**
-     * Override to use your custom intro video.
-     *
-     * @return intro animation
-     */
-    protected IntroFactory initIntroFactory() {
-        return new IntroFactory() {
-            @Override
-            public IntroScene newIntro(SceneSettings settings) {
-                return new FXGLIntroScene(settings);
             }
         };
     }
@@ -351,55 +343,22 @@ public abstract class GameApplication extends Application {
 
         Scene scene = new Scene(new Pane());
         stage.setScene(scene);
-        sceneManager = new SceneManager(this, stage, scene);
-        inputManager = new InputManager(getSceneManager().getGameScene(), scene);
+        sceneManager = new SceneManager(this, scene);
+        inputManager = new InputManager(getSceneManager().getGameScene());
 
-        physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty(), gameWorld);
+        physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty());
         particleManager = new ParticleManager();
 
         audioManager = new AudioManager();
         qteManager = new QTEManager();
-
-        // we call this early to process user input bindings
-        // so we can correctly display them in menus
-        initInput();
-        initWorld();
     }
 
     private void initWorld() {
-        gameWorld.entitiesProperty().addListener((ListChangeListener.Change<? extends Entity> c) -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    for (Entity e : c.getAddedSubList()) {
-                        if (e instanceof PhysicsEntity) {
-                            physicsManager.createBody((PhysicsEntity) e);
-                        }
-
-                        getSceneManager().getGameScene().addEntities(e);
-
-                        Duration expire = e.getExpireTime();
-                        if (expire != Duration.ZERO)
-                            getTimerManager().runOnceAfter(() -> gameWorld.removeEntity(e), expire);
-                    }
-                }
-                else if (c.wasRemoved()) {
-                    for (Entity e : c.getRemoved()) {
-                        if (e instanceof PhysicsEntity) {
-                            physicsManager.destroyBody((PhysicsEntity) e);
-                        }
-
-                        getSceneManager().getGameScene().removeEntity(e);
-                    }
-                }
-            }
-        });
-
-        gameWorld.addUpdateTickListener(inputManager);
-        gameWorld.addUpdateTickListener(timerManager);
-        gameWorld.addUpdateTickListener(physicsManager);
-        gameWorld.addUpdateTickListener(sceneManager);
-        gameWorld.addUpdateTickListener(sceneManager.getGameScene());
-        gameWorld.addUpdateTickListener(audioManager);
+        gameWorld.addWorldStateListener(inputManager);
+        gameWorld.addWorldStateListener(timerManager);
+        gameWorld.addWorldStateListener(physicsManager);
+        gameWorld.addWorldStateListener(getGameScene());
+        gameWorld.addWorldStateListener(audioManager);
     }
 
     /**
@@ -432,6 +391,7 @@ public abstract class GameApplication extends Application {
         }
 
         stage.setOnShowing(e -> getSceneManager().onStageShow());
+        stage.sizeToScene();
     }
 
     @Override
@@ -462,6 +422,10 @@ public abstract class GameApplication extends Application {
         log.info("Log Level: " + logLevel);
 
         initManagers(stage);
+        // we call this early to process user input bindings
+        // so we can correctly display them in menus
+        initInput();
+        initWorld();
         initStage(stage);
 
         stage.show();
@@ -480,7 +444,7 @@ public abstract class GameApplication extends Application {
      */
     private void processUpdate(long internalTime) {
         // this will set up current tick and current time
-        // for the rest modules of the game to use
+        // for the rest of the game modules to use
         timerManager.tickStart(internalTime);
 
         gameWorld.update();
@@ -495,19 +459,21 @@ public abstract class GameApplication extends Application {
      * Initialize user application.
      */
     private void initApp() {
+        log.finer("Initializing app");
+
         try {
             initAssets();
             initGame();
             initPhysics();
             initUI();
 
-//            if (getSettings().isFPSShown()) {
-//                Text fpsText = UIFactory.newText("", 24);
-//                fpsText.setTranslateY(getSettings().getHeight() - 40);
-//                fpsText.textProperty().bind(getTimerManager().fpsProperty().asString("FPS: [%d]\n")
-//                        .concat(getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
-//                getSceneManager().addUINodes(fpsText);
-//            }
+            if (getSettings().isFPSShown()) {
+                Text fpsText = UIFactory.newText("", 24);
+                fpsText.setTranslateY(getSettings().getHeight() - 40);
+                fpsText.textProperty().bind(getTimerManager().fpsProperty().asString("FPS: [%d]\n")
+                        .concat(getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
+                getGameScene().addUINode(fpsText);
+            }
         }
         catch (Exception e) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
@@ -519,12 +485,8 @@ public abstract class GameApplication extends Application {
      * and starts the game.
      */
     /*package-private*/ final void startNewGame() {
+        log.finer("Starting new game");
         initApp();
-
-        getTimerManager().resetTicks();
-        getTimerManager().clearActions();
-        getInputManager().clearAllInput();
-
         timer.start();
     }
 
@@ -532,6 +494,7 @@ public abstract class GameApplication extends Application {
      * Pauses the main loop execution.
      */
     /*package-private*/ final void pause() {
+        log.finer("Pausing main loop");
         timer.stop();
         getInputManager().clearAllInput();
     }
@@ -540,8 +503,13 @@ public abstract class GameApplication extends Application {
      * Resumes the main loop execution.
      */
     /*package-private*/ final void resume() {
+        log.finer("Resuming main loop");
         getInputManager().clearAllInput();
         timer.start();
+    }
+
+    /*package-private*/ final void reset() {
+        gameWorld.reset();
     }
 
     /**
@@ -550,7 +518,7 @@ public abstract class GameApplication extends Application {
      * This method will be automatically called when main window is closed.
      */
     /*package-private*/ final void exit() {
-        log.finer("Closing Normally");
+        log.finer("Exiting Normally");
         onExit();
         FXGLLogger.close();
         Platform.exit();

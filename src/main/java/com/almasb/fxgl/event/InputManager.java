@@ -28,15 +28,15 @@ package com.almasb.fxgl.event;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.entity.v2.GameScene;
+import com.almasb.fxgl.GameScene;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -48,7 +48,7 @@ import javafx.scene.input.MouseEvent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class InputManager implements UpdateTickListener {
+public final class InputManager implements WorldStateListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
 
@@ -78,7 +78,7 @@ public final class InputManager implements UpdateTickListener {
 
     private GameScene gameScene;
 
-    public InputManager(GameScene gameScene, Scene scene) {
+    public InputManager(GameScene gameScene) {
         this.gameScene = gameScene;
 
         currentActions.addListener(new ListChangeListener<UserAction>() {
@@ -160,22 +160,6 @@ public final class InputManager implements UpdateTickListener {
             .ifPresent(currentActions::remove);
     }
 
-    /**
-     * Called by FXGL GameApplication to process all input.
-     *
-     * @param now
-     */
-    @Override
-    public void onUpdate() {
-        if (processActions) {
-            currentActions.forEach(UserAction::onAction);
-        }
-
-        Point2D mousePoint = gameScene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
-        mouse.x = mousePoint.getX();
-        mouse.y = mousePoint.getY();
-    }
-
     private boolean processActions = true;
 
     /**
@@ -193,6 +177,8 @@ public final class InputManager implements UpdateTickListener {
      * for a single frame
      */
     public void clearAllInput() {
+        log.finer("Clearing active input actions");
+
         currentActions.clear();
         mouse.leftPressed = false;
         mouse.rightPressed = false;
@@ -390,5 +376,27 @@ public final class InputManager implements UpdateTickListener {
         public Trigger(MouseButton btn) {
             this.btn = btn;
         }
+    }
+
+    @Override
+    public void onEntityAdded(Entity entity) {}
+
+    @Override
+    public void onEntityRemoved(Entity entity) {}
+
+    @Override
+    public void onWorldUpdate() {
+        if (processActions) {
+            currentActions.forEach(UserAction::onAction);
+        }
+
+        Point2D mousePoint = gameScene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
+        mouse.x = mousePoint.getX();
+        mouse.y = mousePoint.getY();
+    }
+
+    @Override
+    public void onWorldReset() {
+        clearAllInput();
     }
 }

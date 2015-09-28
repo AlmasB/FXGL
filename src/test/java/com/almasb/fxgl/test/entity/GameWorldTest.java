@@ -33,9 +33,9 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.almasb.fxgl.GameWorld;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.v2.GameWorld;
 
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;

@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity.v2;
+package com.almasb.fxgl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,10 +39,8 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.WorldStateListener;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Rectangle;
@@ -54,18 +52,12 @@ public final class GameWorld {
      */
     protected static final Logger log = FXGLLogger.getLogger("FXGL.GameWorld");
 
-    public GameWorld() {
-
-    }
+    public GameWorld() {}
 
     /**
      * List of entities currently in the world.
      */
-    private ObservableList<Entity> entities = FXCollections.observableArrayList();
-
-    public ObservableList<Entity> entitiesProperty() {
-        return FXCollections.unmodifiableObservableList(entities);
-    }
+    private List<Entity> entities = new ArrayList<>();
 
     /**
      * List of entities waiting to be added to game world.
@@ -218,29 +210,44 @@ public final class GameWorld {
         getEntities(types).forEach(e -> e.fireFXGLEvent(event));
     }
 
-    private List<UpdateTickListener> listeners = new CopyOnWriteArrayList<>();
+    private List<WorldStateListener> worldStateListeners = new CopyOnWriteArrayList<>();
 
-    public void addUpdateTickListener(UpdateTickListener listener) {
-        listeners.add(listener);
+    public void addWorldStateListener(WorldStateListener listener) {
+        worldStateListeners.add(listener);
     }
 
-    public void removeUpdateTickListener(UpdateTickListener listener) {
-        listeners.remove(listener);
+    public void removeWorldStateListener(WorldStateListener listener) {
+        worldStateListeners.remove(listener);
     }
 
     private void registerPendingEntities() {
         entities.addAll(addQueue);
-        addQueue.forEach(Entity::init);
+        addQueue.forEach(e -> {
+            e.setWorld(this);
+            e.init();
+            worldStateListeners.forEach(l -> {
+                l.onEntityAdded(e);
+            });
+        });
         addQueue.clear();
     }
 
     private void removeAndCleanPendingEntities() {
         entities.removeAll(removeQueue);
-        removeQueue.forEach(Entity::clean);
+        removeQueue.forEach(e -> {
+            worldStateListeners.forEach(l -> {
+                l.onEntityRemoved(e);
+            });
+            e.clean();
+        });
         removeQueue.clear();
     }
 
-    public void reset() {
+    /*package-private*/ void reset() {
+        log.finer("Resetting game world");
+
+        worldStateListeners.forEach(WorldStateListener::onWorldReset);
+
         registerPendingEntities();
         removeAndCleanPendingEntities();
 
@@ -248,11 +255,14 @@ public final class GameWorld {
         entities.clear();
     }
 
-    public void update() {
+    /*package-private*/ void update() {
+        //log.finer("Game world update");
+        //log.finer("Entities size: " + entities.size());
+
         registerPendingEntities();
         removeAndCleanPendingEntities();
 
-        listeners.forEach(UpdateTickListener::onUpdate);
+        worldStateListeners.forEach(WorldStateListener::onWorldUpdate);
         entities.forEach(Entity::update);
     }
 }
