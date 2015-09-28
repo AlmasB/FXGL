@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.test.entity;
+package com.almasb.fxgl.entity;
 
 import org.junit.Test;
 
@@ -51,4 +51,33 @@ public class JFXTest {
     public void createEntity() {
         //Entity entity = Entity.noType();
     }
+
+    // private enum Type implements EntityType {
+    // TEST_ENTITY
+    // }
+    //
+    // private static GameApplication app;
+    // private Entity testEntity;
+    //
+    // @BeforeClass
+    // public static void setupFramework() {
+    // Thread t = new Thread(() ->
+    // Application.launch(TestGameApplication.class, new String[] {}));
+    // t.setDaemon(true);
+    // t.start();
+    //
+    // while ((app = TestGameApplication.getInstance()) == null) {
+    // try {
+    // Thread.sleep(10);
+    // }
+    // catch (InterruptedException e) {
+    // e.printStackTrace();
+    // }
+    // }
+    // }
+    //
+    // @AfterClass
+    // public static void exitFramework() {
+    // Platform.exit();
+    // }
 }

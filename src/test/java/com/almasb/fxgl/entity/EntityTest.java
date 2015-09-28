@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.test.entity;
+package com.almasb.fxgl.entity;
 
 import static org.junit.Assert.*;
 
@@ -36,12 +36,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.TestGameApplication;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.DoubleComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.test.TestGameApplication;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -133,7 +133,7 @@ public class EntityTest {
         }
 
         @Override
-        public void onUpdate(Entity entity, long now) {
+        public void onUpdate(Entity entity) {
 
         }
     }
@@ -143,34 +143,4 @@ public class EntityTest {
             super(value);
         }
     }
-
-    // private enum Type implements EntityType {
-    // TEST_ENTITY
-    // }
-    //
-    // private static GameApplication app;
-    // private Entity testEntity;
-    //
-    // @BeforeClass
-    // public static void setupFramework() {
-    // Thread t = new Thread(() ->
-    // Application.launch(TestGameApplication.class, new String[] {}));
-    // t.setDaemon(true);
-    // t.start();
-    //
-    // while ((app = TestGameApplication.getInstance()) == null) {
-    // try {
-    // Thread.sleep(10);
-    // }
-    // catch (InterruptedException e) {
-    // e.printStackTrace();
-    // }
-    // }
-    // }
-    //
-    // @AfterClass
-    // public static void exitFramework() {
-    // Platform.exit();
-    // }
-
 }

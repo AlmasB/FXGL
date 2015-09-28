@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.test;
+package com.almasb.fxgl;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;

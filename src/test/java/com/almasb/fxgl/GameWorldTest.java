@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.test.entity;
+package com.almasb.fxgl;
 
 import static org.junit.Assert.*;
 
@@ -62,10 +62,10 @@ public class GameWorldTest {
         entity.setGraphics(new Rectangle(40, 40));
 
         gameWorld.addEntities(entity);
-        assertEquals(0, gameWorld.entitiesProperty().size());
+        assertEquals(0, gameWorld.getEntities().size());
 
         gameWorld.update();
-        assertEquals(1, gameWorld.entitiesProperty().size());
+        assertEquals(1, gameWorld.getEntities().size());
 
         List<Entity> list = gameWorld.getEntities(Type.TEST_ENTITY);
         assertEquals(1, list.size());
@@ -84,10 +84,10 @@ public class GameWorldTest {
         assertEquals(entity, list.get(0));
 
         gameWorld.removeEntity(entity);
-        assertEquals(1, gameWorld.entitiesProperty().size());
+        assertEquals(1, gameWorld.getEntities().size());
 
         gameWorld.update();
-        assertEquals(0, gameWorld.entitiesProperty().size());
+        assertEquals(0, gameWorld.getEntities().size());
     }
 
     @Test
@@ -111,5 +111,6 @@ public class GameWorldTest {
 
         gameWorld.update();
         assertTrue(entity.isActive());
+        assertEquals(gameWorld, entity.getWorld());
     }
 }

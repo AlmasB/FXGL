@@ -102,7 +102,7 @@ public class BasicGameApplication extends GameApplication {
         player.setCollidable(true);
         enemy.setCollidable(true);
 
-        getSceneManager().addEntities(player, enemy);
+        getGameWorld().addEntities(player, enemy);
     }
 
     @Override
