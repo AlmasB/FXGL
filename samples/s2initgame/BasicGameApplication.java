@@ -84,7 +84,7 @@ public class BasicGameApplication extends GameApplication {
         player.setGraphics(graphics);
 
         // 4. add entity to scene graph
-        getSceneManager().addEntities(player);
+        getGameWorld().addEntity(player);
     }
 
     @Override

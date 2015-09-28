@@ -36,6 +36,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -75,10 +76,10 @@ public final class InputManager implements UpdateTickListener {
      */
     private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
 
-    private GameScene scene;
+    private GameScene gameScene;
 
-    public InputManager(GameScene gameScene) {
-        this.scene = gameScene;
+    public InputManager(GameScene gameScene, Scene scene) {
+        this.gameScene = gameScene;
 
         currentActions.addListener(new ListChangeListener<UserAction>() {
             @Override
@@ -97,25 +98,25 @@ public final class InputManager implements UpdateTickListener {
             }
         });
 
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             handlePressed(new Trigger(event.getCode()));
         });
 
-        scene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             handleReleased(new Trigger(event.getCode()));
         });
 
-        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             handlePressed(new Trigger(event.getButton()));
         });
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             handleReleased(new Trigger(event.getButton()));
         });
 
-        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
-        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
-        scene.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
     }
 
     /**
@@ -170,7 +171,7 @@ public final class InputManager implements UpdateTickListener {
             currentActions.forEach(UserAction::onAction);
         }
 
-        Point2D mousePoint = scene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
+        Point2D mousePoint = gameScene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
         mouse.x = mousePoint.getX();
         mouse.y = mousePoint.getY();
     }
@@ -331,7 +332,7 @@ public final class InputManager implements UpdateTickListener {
             this.screenX = event.getSceneX();
             this.screenY = event.getSceneY();
 
-            Point2D mousePoint = scene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
+            Point2D mousePoint = gameScene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
             this.x = mousePoint.getX();
             this.y = mousePoint.getY();
 

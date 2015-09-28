@@ -240,7 +240,7 @@ public final class GameWorld {
         removeQueue.clear();
     }
 
-    public void destroy() {
+    public void reset() {
         registerPendingEntities();
         removeAndCleanPendingEntities();
 

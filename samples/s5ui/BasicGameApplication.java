@@ -54,15 +54,15 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(1280);
+        settings.setHeight(720);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class BasicGameApplication extends GameApplication {
         player.setCollidable(true);
         enemy.setCollidable(true);
 
-        getSceneManager().addEntities(player, enemy);
+        getGameWorld().addEntities(player, enemy);
     }
 
     @Override
@@ -135,10 +135,10 @@ public class BasicGameApplication extends GameApplication {
         uiText.setTranslateY(100);
 
         // 4. bind text property to player entity's X position
-        uiText.textProperty().bind(player.translateXProperty().asString());
+        uiText.textProperty().bind(player.xProperty().asString());
 
         // 5. add UI object to scene
-        getSceneManager().addUINodes(uiText);
+        getGameScene().addUINodes(uiText);
     }
 
     @Override

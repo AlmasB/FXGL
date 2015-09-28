@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.ui;
 
-import javafx.scene.Parent;
+import com.almasb.fxgl.settings.SceneSettings;
 
 /**
  * Intro animation / video played before game starts
@@ -36,7 +36,11 @@ import javafx.scene.Parent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class Intro extends Parent {
+public abstract class IntroScene extends FXGLScene {
+
+    public IntroScene(SceneSettings settings) {
+        super(settings);
+    }
 
     /**
      * Called when intro finished.

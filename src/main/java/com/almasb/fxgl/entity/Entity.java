@@ -93,10 +93,14 @@ public class Entity {
         this.type = type;
     }
 
-    private EntityView fxNode = new EntityView();
+    private EntityView view = new EntityView();
+
+    public EntityView getView() {
+        return view;
+    }
 
     public final DoubleProperty xProperty() {
-        return fxNode.translateXProperty();
+        return view.translateXProperty();
     }
 
     public final double getX() {
@@ -108,7 +112,7 @@ public class Entity {
     }
 
     public final DoubleProperty yProperty() {
-        return fxNode.translateYProperty();
+        return view.translateYProperty();
     }
 
     public final double getY() {
@@ -218,7 +222,7 @@ public class Entity {
      * @return this entity
      */
     public final Entity setGraphics(Node graphics) {
-        fxNode.removeChildren();
+        view.removeChildren();
 
         if (graphics instanceof Circle) {
             Circle c = (Circle) graphics;
@@ -226,7 +230,7 @@ public class Entity {
             c.setCenterY(c.getRadius());
         }
 
-        fxNode.addChild(graphics);
+        view.addChild(graphics);
         return this;
     }
 
@@ -235,7 +239,7 @@ public class Entity {
      * @return width of the bounding box of this entity
      */
     public final double getWidth() {
-        return fxNode.getLayoutBounds().getWidth();
+        return view.getLayoutBounds().getWidth();
     }
 
     /**
@@ -243,7 +247,7 @@ public class Entity {
      * @return height of the bounding box of this entity
      */
     public final double getHeight() {
-        return fxNode.getLayoutBounds().getHeight();
+        return view.getLayoutBounds().getHeight();
     }
 
     private Map<Class<? extends Control>, Control> controls = new HashMap<>();
@@ -366,8 +370,8 @@ public class Entity {
     }
 
     public boolean isCollidingWith(Entity other) {
-        return this.fxNode.getBoundsInParent()
-                .intersects(other.fxNode.getBoundsInParent());
+        return this.view.getBoundsInParent()
+                .intersects(other.view.getBoundsInParent());
     }
 
     private ReadOnlyBooleanWrapper alive = new ReadOnlyBooleanWrapper(true);
@@ -484,7 +488,7 @@ public class Entity {
         eventHandlers.clear();
         controls.clear();
         components.clear();
-        fxNode.removeChildren();
+        view.removeChildren();
     }
 
     /**

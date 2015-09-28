@@ -27,6 +27,7 @@ package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.settings.SceneSettings;
 
 /**
  * This is the default FXGL game menu
@@ -36,8 +37,8 @@ import com.almasb.fxgl.event.MenuEvent;
  */
 public final class FXGLGameMenu extends FXGLMenu {
 
-    public FXGLGameMenu(GameApplication app) {
-        super(app);
+    public FXGLGameMenu(GameApplication app, SceneSettings settings) {
+        super(app, settings);
     }
 
     @Override

@@ -29,24 +29,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.ui.FXGLScene;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.UpdateTickListener;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.ImageCursor;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.Scale;
 
-public final class GameScene {
+public final class GameScene extends FXGLScene implements UpdateTickListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
@@ -65,6 +64,8 @@ public final class GameScene {
      */
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
+    private List<ParticleEntity> particles = new ArrayList<>();
+
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
      * May also contain entities as Entity is a subclass of Parent.
@@ -76,30 +77,37 @@ public final class GameScene {
      * THE root of the {@link #gameScene}. Contains {@link #gameRoot}, {@link #particlesCanvas}
      * and {@link #uiRoot} in this order.
      */
-    private Pane root = new Pane(gameRoot, particlesCanvas, uiRoot);
+    private Pane root;
 
-    private Scene scene = new Scene(root);
+    public GameScene(SceneSettings settings) {
+        super(settings);
 
-    private double sizeRatio;
-
-    public GameScene(double width, double height, double sizeRatio) {
-        this.sizeRatio = sizeRatio;
-
-        root.setPrefSize(width, height);
-        root.getTransforms().add(new Scale(sizeRatio, sizeRatio));
+        root = getRoot();
+        getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         // TODO: check scaling
-        initParticlesCanvas(width, height);
+        initParticlesCanvas();
     }
 
-    private void initParticlesCanvas(double width, double height) {
-        particlesCanvas.setWidth(width);
-        particlesCanvas.setHeight(height);
+    private void initParticlesCanvas() {
+        particlesCanvas.setWidth(getWidth());
+        particlesCanvas.setHeight(getHeight());
         particlesCanvas.setMouseTransparent(true);
     }
 
-    public void addGameNode() {
+    public void addEntities(Entity... entities) {
+        for (Entity e : entities) {
+            getRenderLayer(e.getRenderLayer()).getChildren().add(e.getView());
 
+            if (e instanceof ParticleEntity) {
+                particles.add((ParticleEntity) e);
+            }
+        }
+    }
+
+    public void removeEntity(Entity e) {
+        getRenderLayer(e.getRenderLayer()).getChildren().remove(e.getView());
+        particles.remove(e);
     }
 
     public void addUINode(Node node) {
@@ -129,9 +137,21 @@ public final class GameScene {
         uiRoot.getChildren().removeAll(nodes);
     }
 
-    public <T extends Event> void addEventHandler(EventType<T> eventType,
-            EventHandler<? super T> eventHandler) {
-        scene.addEventHandler(eventType, eventHandler);
+    public void reset() {
+        unbindViewportOrigin();
+        particles.clear();
+        gameRoot.getChildren().clear();
+        uiRoot.getChildren().clear();
+        root.getChildren().clear();
+    }
+
+    @Override
+    public void onUpdate() {
+        particlesGC.setGlobalAlpha(1);
+        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
+        particlesGC.clearRect(0, 0, getWidth(), getHeight());
+
+        particles.forEach(p -> p.renderParticles(particlesGC, getViewportOrigin()));
     }
 
     /**
@@ -143,9 +163,8 @@ public final class GameScene {
      * @param e
      * @return
      */
-    //private Group getRenderLayer(RenderLayer layer)
-    private Group getRenderLayerFor(Entity e) {
-        Integer renderLayer = e.getRenderLayer().index();
+    private Group getRenderLayer(RenderLayer layer) {
+        Integer renderLayer = layer.index();
         Group group = gameRoot.getChildren()
                 .stream()
                 .filter(n -> (int)n.getUserData() == renderLayer)
@@ -155,7 +174,7 @@ public final class GameScene {
 
 
         if (group.getUserData() == null) {
-            log.finer("Creating render group for layer: " + e.getRenderLayer().asString());
+            log.finer("Creating render group for layer: " + layer.asString());
             group.setUserData(renderLayer);
             gameRoot.getChildren().add(group);
         }
@@ -175,7 +194,7 @@ public final class GameScene {
      * @return
      */
     public Point2D screenToGame(Point2D screenPoint) {
-        return screenPoint.multiply(1.0 / sizeRatio).add(getViewportOrigin());
+        return screenPoint.multiply(1.0 / getScaleRatio()).add(getViewportOrigin());
     }
 
     /**
@@ -247,6 +266,11 @@ public final class GameScene {
         gameRoot.layoutYProperty().bind(entity.yProperty().negate().add(distY));
     }
 
+    public void unbindViewportOrigin() {
+        gameRoot.layoutXProperty().unbind();
+        gameRoot.layoutYProperty().unbind();
+    }
+
     /**
      * Set true if UI elements should forward mouse events
      * to the game layer
@@ -256,18 +280,5 @@ public final class GameScene {
      */
     public void setUIMouseTransparent(boolean b) {
         uiRoot.setMouseTransparent(b);
-    }
-
-    /**
-     * Sets global game cursor using given name to find
-     * the image cursor within assets/ui/cursors/.
-     * Hotspot is location of the pointer end on the image.
-     *
-     * @param imageName
-     * @param hotspot
-     */
-    public void setGameCursor(String imageName, Point2D hotspot) {
-        scene.setCursor(new ImageCursor(AssetManager.INSTANCE.loadCursorImage(imageName),
-                hotspot.getX(), hotspot.getY()));
     }
 }

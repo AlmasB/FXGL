@@ -87,7 +87,7 @@ public class BasicGameApplication extends GameApplication {
         Rectangle graphics = new Rectangle(40, 40);
         player.setGraphics(graphics);
 
-        getSceneManager().addEntities(player);
+        getGameWorld().addEntity(player);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    public void onUpdate() {}
 
     public static void main(String[] args) {
         launch(args);

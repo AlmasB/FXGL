@@ -39,15 +39,15 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(1440);
+        settings.setHeight(1440);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setIntroEnabled(true);
+        settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override

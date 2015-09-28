@@ -26,7 +26,10 @@
 package com.almasb.fxgl.ui;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
+import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.KeyFrame;
@@ -50,6 +53,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
 /**
@@ -57,16 +61,21 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLIntro extends Intro {
+public final class FXGLIntroScene extends IntroScene {
+
+    private static final Logger log = FXGLLogger.getLogger("FXGLIntroScene");
+
     private double w, h;
 
     private ParallelTransition animation;
 
     private Random random = new Random();
 
-    public FXGLIntro(double w, double h) {
-        this.w = w;
-        this.h = h;
+    public FXGLIntroScene(SceneSettings settings) {
+        super(settings);
+
+        w = settings.getTargetWidth();
+        h = settings.getTargetHeight();
 
         Text f = makeLetter("F");
         Text x = makeLetter("X");
@@ -86,7 +95,7 @@ public final class FXGLIntro extends Intro {
         Text poweredText = makePoweredBy();
         Text version = makeVersion();
 
-        getChildren().addAll(new Rectangle(w, h), fxglText, poweredText, version);
+        getRoot().getChildren().addAll(new Rectangle(w, h), fxglText, poweredText, version);
 
         double originX = w / 2 - f.getLayoutBounds().getWidth() * 4 / 2;
         double dx = f.getLayoutBounds().getWidth();
@@ -143,7 +152,7 @@ public final class FXGLIntro extends Intro {
                     c.setTranslateX(-5);
                     c.setTranslateY(h / 2 + 10);
 
-                    getChildren().add(c);
+                    getRoot().getChildren().add(c);
 
                     PathTransition pt = new PathTransition(Duration.seconds(1 + t), getPath(f, l), c);
                     if (i == 49)
