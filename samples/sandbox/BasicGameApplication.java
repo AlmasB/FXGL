@@ -23,7 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s5ui;
+package sandbox;
+
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
@@ -31,12 +34,15 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -44,25 +50,25 @@ import javafx.scene.text.Text;
 public class BasicGameApplication extends GameApplication {
 
     private enum Type implements EntityType {
-        PLAYER, ENEMY
+        PLAYER, ENEMY, BOX, CRATE
     }
 
     private Entity player, enemy;
+    private PhysicsEntity box;
 
-    // 1. declare JavaFX Text
-    private Text uiText;
+    private Text debug, debug2;
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(800);
+        settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(true);
+        settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
@@ -72,16 +78,85 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                player.translate(-5, 0);
+                //enemy.rotateBy(-5);
+                player.translate(-1, 0);
             }
         }, KeyCode.A);
 
         input.addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                player.translate(5, 0);
+                //enemy.rotateBy(5);
+                player.translate(1, 0);
             }
         }, KeyCode.D);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                //enemy.setRotation(0);
+                player.translate(0, -1);
+            }
+        }, KeyCode.W);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                //enemy.setRotation(90);
+                player.translate(0, 1);
+            }
+        }, KeyCode.S);
+
+        input.addAction(new UserAction("Move Left") {
+            @Override
+            protected void onAction() {
+                enemy.rotateBy(-5);
+                //player.translate(-1, 0);
+            }
+        }, KeyCode.LEFT);
+
+        input.addAction(new UserAction("Move Right") {
+            @Override
+            protected void onAction() {
+                enemy.rotateBy(5);
+                //player.translate(1, 0);
+            }
+        }, KeyCode.RIGHT);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                enemy.setRotation(0);
+                //player.translate(0, -1);
+            }
+        }, KeyCode.UP);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                enemy.setRotation(90);
+                //player.translate(0, 1);
+            }
+        }, KeyCode.DOWN);
+
+        input.addAction(new UserAction("Spawn") {
+            @Override
+            protected void onActionBegin() {
+                PhysicsEntity b = new PhysicsEntity(Type.CRATE);
+                Rectangle r = new Rectangle(40, 40);
+                r.setFill(Color.BLUE);
+                b.setView(r);
+                b.setBodyType(BodyType.DYNAMIC);
+                b.setPosition(input.getMouse().x, input.getMouse().y);
+
+                FixtureDef fd = new FixtureDef();
+                fd.density = 0.05f;
+
+                b.setFixtureDef(fd);
+
+                getGameWorld().addEntity(b);
+            }
+        }, MouseButton.PRIMARY);
     }
 
     @Override
@@ -90,17 +165,21 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void initGame() {
         player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
-
-        Rectangle graphics = new Rectangle(40, 40);
+        Circle graphics = new Circle(40);
         player.setView(graphics);
 
-        enemy = new Entity(Type.ENEMY);
-        enemy.setPosition(200, 100);
+        player.setPosition(100, 100);
 
-        Rectangle enemyGraphics = new Rectangle(40, 40);
+
+
+        enemy = new Entity(Type.ENEMY);
+        Rectangle enemyGraphics = new Rectangle(200, 40);
         enemyGraphics.setFill(Color.RED);
         enemy.setView(enemyGraphics);
+
+        enemy.setPosition(200, 100);
+
+
 
         // we need to set collidable to true
         // so that collision system can 'see' them
@@ -108,6 +187,13 @@ public class BasicGameApplication extends GameApplication {
         enemy.setCollidable(true);
 
         getGameWorld().addEntities(player, enemy);
+
+        box = new PhysicsEntity(Type.ENEMY);
+        box.setView(new Rectangle(500, 100));
+        box.setPosition(0, 500);
+
+
+        getGameWorld().addEntity(box);
     }
 
     @Override
@@ -118,31 +204,35 @@ public class BasicGameApplication extends GameApplication {
             // the order of their types passed into constructor
             @Override
             protected void onCollisionBegin(Entity player, Entity enemy) {
-                player.translate(-10, 0);
-                enemy.translate(10, 0);
+                debug2.setText("collision");
+            }
+
+            @Override
+            protected void onCollisionEnd(Entity player, Entity enemy) {
+                debug2.setText("");
             }
         });
     }
 
     @Override
     protected void initUI() {
-        // 2. initialize the object
-        uiText = new Text();
-        uiText.setFont(Font.font(18));
+        debug = new Text();
+        debug.setTranslateX(50);
+        debug.setTranslateY(200);
+        debug.setFont(Font.font(18));
+        debug.setWrappingWidth(400);
 
-        // 3. position the object
-        uiText.setTranslateX(600);
-        uiText.setTranslateY(100);
+        debug2 = new Text();
+        debug2.setTranslateY(50);
 
-        // 4. bind text property to player entity's X position
-        uiText.textProperty().bind(player.xProperty().asString());
 
-        // 5. add UI object to scene
-        getGameScene().addUINodes(uiText);
+        getGameScene().addUINodes(debug, debug2);
     }
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate() {
+        debug.setText(enemy.getView().getBoundsInParent().toString() + " " + enemy.getX());
+    }
 
     public static void main(String[] args) {
         launch(args);

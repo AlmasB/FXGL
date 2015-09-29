@@ -81,7 +81,7 @@ public class BasicGameApplication extends GameApplication {
         Rectangle graphics = new Rectangle(40, 40);
 
         // set graphics to entity
-        player.setGraphics(graphics);
+        player.setView(graphics);
 
         // 4. add entity to scene graph
         getGameWorld().addEntity(player);

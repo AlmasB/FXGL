@@ -120,14 +120,14 @@ public class BasicGameApplication extends GameApplication {
         player.setPosition(playerPosition);
 
         Rectangle graphics = new Rectangle(40, 40);
-        player.setGraphics(graphics);
+        player.setView(graphics);
 
         enemy = new Entity(Type.ENEMY);
         enemy.setPosition(enemyPosition);
 
         Rectangle enemyGraphics = new Rectangle(40, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setGraphics(enemyGraphics);
+        enemy.setView(enemyGraphics);
 
         // we need to set collidable to true
         // so that collision system can 'see' them
