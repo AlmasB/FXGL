@@ -184,6 +184,7 @@ public final class InputManager implements WorldStateListener {
         mouse.rightPressed = false;
     }
 
+    // TODO: throw exception if same action name
     /**
      * Bind given action to a mouse button.
      *

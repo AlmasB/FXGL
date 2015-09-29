@@ -25,21 +25,26 @@
  */
 package com.almasb.fxgl.entity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.GameWorld;
+import com.almasb.fxgl.physics.CollisionResult;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
-import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 /**
@@ -104,8 +109,15 @@ public class Entity {
      *
      * @param world the game world the entity is attached to
      */
-    public void setWorld(GameWorld world) {
+    public void init(GameWorld world) {
+        if (generateHitBoxesFromView && sceneView != null) {
+            addHitBox(new HitBox("__BODY__", new BoundingBox(0, 0,
+                    sceneView.getLayoutBounds().getWidth(),
+                    sceneView.getLayoutBounds().getHeight())));
+        }
+
         this.world = world;
+        active.set(true);
     }
 
     /**
@@ -122,37 +134,30 @@ public class Entity {
         getWorld().removeEntity(this);
     }
 
-    private EntityView view = new EntityView();
+    private EntityView sceneView;
 
-    public EntityView getView() {
-        return view;
+    public final EntityView getSceneView() {
+        return sceneView;
     }
 
-    /**
-     * Set graphics for this entity. The collision detection bounding box will
-     * use graphics object's size properties.
-     *
-     * @param graphics
-     * @return this entity
-     */
-    public final void setView(Node graphics) {
-        view.removeChildren();
+    public final void setSceneView(EntityView view) {
+        if (this.sceneView != null)
+            throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");
+        if (isActive())
+            throw new IllegalStateException("Entity already part of the world");
 
-        if (graphics instanceof Circle) {
-            Circle c = (Circle) graphics;
-            c.setCenterX(c.getRadius());
-            c.setCenterY(c.getRadius());
-        }
-
-        view.addChild(graphics);
+        this.sceneView = view;
+        view.setEntity(this);
     }
+
+    private DoubleProperty x = new SimpleDoubleProperty();
 
     /**
      *
      * @return  x property
      */
     public final DoubleProperty xProperty() {
-        return view.translateXProperty();
+        return x;
     }
 
     /**
@@ -175,12 +180,14 @@ public class Entity {
         xProperty().set(x);
     }
 
+    private DoubleProperty y = new SimpleDoubleProperty();
+
     /**
      *
      * @return  y property
      */
     public final DoubleProperty yProperty() {
-        return view.translateYProperty();
+        return y;
     }
 
     /**
@@ -251,6 +258,12 @@ public class Entity {
         translate(vector.getX(), vector.getY());
     }
 
+    private DoubleProperty rotation = new SimpleDoubleProperty();
+
+    public final DoubleProperty rotationProperty() {
+        return rotation;
+    }
+
     /**
      * Returns absolute angle of the entity rotation
      * in degrees.
@@ -258,7 +271,7 @@ public class Entity {
      * @return  rotation angle
      */
     public final double getRotation() {
-        return view.getRotate();
+        return rotationProperty().get();
     }
 
     /**
@@ -268,7 +281,7 @@ public class Entity {
      * @param angle the new rotation angle
      */
     public final void setRotation(double angle) {
-        view.setRotate(angle);
+        rotationProperty().set(angle);
     }
 
     /**
@@ -278,6 +291,32 @@ public class Entity {
      */
     public final void rotateBy(double byAngle) {
         setRotation(getRotation() + byAngle);
+    }
+
+    private List<HitBox> hitBoxes = new ArrayList<>();
+
+    public final void addHitBox(HitBox hitBox) {
+        hitBoxes.add(hitBox);
+    }
+
+    private boolean generateHitBoxesFromView = true;
+
+    public void setGenerateHitBoxesFromView(boolean b) {
+        generateHitBoxesFromView = b;
+    }
+
+    public final CollisionResult checkCollision(Entity other) {
+        for (HitBox box1 : hitBoxes) {
+            Bounds b = box1.translate(getX(), getY());
+            for (HitBox box2 : other.hitBoxes) {
+                Bounds b2 = box2.translate(other.getX(), other.getY());
+                if (b.intersects(b2)) {
+                    return new CollisionResult(box1, box2);
+                }
+            }
+        }
+
+        return CollisionResult.NO_COLLISION;
     }
 
     /**
@@ -320,12 +359,26 @@ public class Entity {
         return new Rectangle2D(x, y, w, h);
     }
 
+    private double computeWidth() {
+        return hitBoxes.stream()
+                .mapToDouble(HitBox::getMaxX)
+                .max()
+                .orElse(0);
+    }
+
+    private double computeHeight() {
+        return hitBoxes.stream()
+                .mapToDouble(HitBox::getMaxY)
+                .max()
+                .orElse(0);
+    }
+
     /**
      *
      * @return width of the bounding box of this entity
      */
     public final double getWidth() {
-        return view.getLayoutBounds().getWidth();
+        return computeWidth();
     }
 
     /**
@@ -333,7 +386,7 @@ public class Entity {
      * @return height of the bounding box of this entity
      */
     public final double getHeight() {
-        return view.getLayoutBounds().getHeight();
+        return computeHeight();
     }
 
     /**
@@ -481,16 +534,10 @@ public class Entity {
      * both entities have collidable set to true, then the handler will be
      * notified of the collision event.
      *
-     * @param collidable
-     *            - true enables collision detection, false - disables
+     * @param collidable    true enables collision detection, false - disables
      */
     public final void setCollidable(boolean collidable) {
         this.collidable = collidable;
-    }
-
-    public boolean isCollidingWith(Entity other) {
-        return this.view.getBoundsInParent()
-                .intersects(other.view.getBoundsInParent());
     }
 
     private ReadOnlyBooleanWrapper alive = new ReadOnlyBooleanWrapper(true);
@@ -589,10 +636,6 @@ public class Entity {
      */
     protected void onUpdate() {}
 
-    public final void init() {
-        active.set(true);
-    }
-
     /**
      * Do NOT call manually. It is called automatically by FXGL GameApplication
      * when entity has been removed
@@ -605,7 +648,7 @@ public class Entity {
         eventHandlers.clear();
         controls.clear();
         components.clear();
-        view.removeChildren();
+        //view.removeChildren();
     }
 
     /**
@@ -650,40 +693,6 @@ public class Entity {
         }).handle(event);
     }
 
-    private RenderLayer renderLayer = RenderLayer.TOP;
-
-    /**
-     * Set render layer for this entity. Render layer determines how an entity
-     * is rendered relative to other entities. The layer with higher index()
-     * will be rendered on top of the layer with lower index(). By default an
-     * entity has the very top layer with highest index equal to
-     * {@link Integer#MAX_VALUE}.
-     *
-     * The render layer can only be set before adding entity to the scene. If
-     * the entity is already registered in the scene graph, this method will
-     * throw IllegalStateException.
-     *
-     * @param layer
-     * @throws IllegalStateException
-     * @return this entity
-     */
-    public final Entity setRenderLayer(RenderLayer layer) {
-        if (isActive())
-            throw new IllegalStateException(
-                    "Can't set render layer to active entity.");
-
-        this.renderLayer = layer;
-        return this;
-    }
-
-    /**
-     *
-     * @return render layer for entity
-     */
-    public final RenderLayer getRenderLayer() {
-        return renderLayer;
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -695,8 +704,6 @@ public class Entity {
         builder.append(isAlive());
         builder.append(", active=");
         builder.append(isActive());
-        builder.append(", renderLayer=");
-        builder.append(renderLayer.asString());
         builder.append("]");
         return builder.toString();
     }

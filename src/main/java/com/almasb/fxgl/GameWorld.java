@@ -37,13 +37,10 @@ import java.util.stream.Collectors;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
-import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Represents pure logical state of game.
@@ -151,8 +148,7 @@ public final class GameWorld {
     private void registerAndInitPendingEntities() {
         entities.addAll(addQueue);
         addQueue.forEach(e -> {
-            e.setWorld(this);
-            e.init();
+            e.init(this);
             worldStateListeners.forEach(l -> {
                 l.onEntityAdded(e);
             });
@@ -248,44 +244,44 @@ public final class GameWorld {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which are partially or entirely
-     * in the specified rectangular selection.
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement is returned.
-     *
-     * @param selection Rectangle2D that describes the selection box
-     * @param types entity types
-     * @return  list of entities in the range
-     */
-    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
-        Entity boundsEntity = Entity.noType();
-        boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
-        boundsEntity.setView(new Rectangle(selection.getWidth(), selection.getHeight()));
+//    /**
+//     * Returns a list of entities whose type matches given arguments and
+//     * which are partially or entirely
+//     * in the specified rectangular selection.
+//     *
+//     * If no arguments were given, a list of all entities satisfying the
+//     * requirement is returned.
+//     *
+//     * @param selection Rectangle2D that describes the selection box
+//     * @param types entity types
+//     * @return  list of entities in the range
+//     */
+//    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
+//        Entity boundsEntity = Entity.noType();
+//        boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
+//        boundsEntity.setView(new Rectangle(selection.getWidth(), selection.getHeight()));
+//
+//        return getEntities(types).stream()
+//                .filter(entity -> entity.isCollidingWith(boundsEntity))
+//                .collect(Collectors.toList());
+//    }
 
-        return getEntities(types).stream()
-                .filter(entity -> entity.isCollidingWith(boundsEntity))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which have the given render layer index
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement (i.e. render layer) is returned.
-     *
-     * @param layer render layer
-     * @param types entity types
-     * @return  list of entities in the layer
-     */
-    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e.getRenderLayer().index() == layer.index())
-                .collect(Collectors.toList());
-    }
+//    /**
+//     * Returns a list of entities whose type matches given arguments and
+//     * which have the given render layer index
+//     *
+//     * If no arguments were given, a list of all entities satisfying the
+//     * requirement (i.e. render layer) is returned.
+//     *
+//     * @param layer render layer
+//     * @param types entity types
+//     * @return  list of entities in the layer
+//     */
+//    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
+//        return getEntities(types).stream()
+//                .filter(e -> e.getRenderLayer().index() == layer.index())
+//                .collect(Collectors.toList());
+//    }
 
     /**
      * Returns the closest entity to the given entity with given type.

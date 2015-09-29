@@ -241,10 +241,14 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         uiRoot.setMouseTransparent(b);
     }
 
+    public void addGameNode(Node node) {
+        getRenderLayer(RenderLayer.TOP).getChildren().add(node);
+    }
+
     @Override
     public void onEntityAdded(Entity entity) {
         //log.finer("Attaching " + entity + " to the scene");
-        getRenderLayer(entity.getRenderLayer()).getChildren().add(entity.getView());
+        getRenderLayer(entity.getSceneView().getRenderLayer()).getChildren().add(entity.getSceneView());
 
         if (entity instanceof ParticleEntity) {
             particles.add((ParticleEntity) entity);
@@ -253,7 +257,7 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        getRenderLayer(entity.getRenderLayer()).getChildren().remove(entity.getView());
+        getRenderLayer(entity.getSceneView().getRenderLayer()).getChildren().remove(entity.getSceneView());
         particles.remove(entity);
     }
 

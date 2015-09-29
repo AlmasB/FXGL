@@ -27,14 +27,93 @@ package com.almasb.fxgl.entity;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.shape.Circle;
 
-public final class EntityView extends Parent {
+/**
+ * Represents the visual aspect of entity.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
+public class EntityView extends Parent {
 
-    public void addChild(Node node) {
+    private Entity entity;
+
+    public EntityView(Entity entity) {
+        this.entity = entity;
+    }
+
+    public EntityView(Entity entity, Node graphics) {
+        this.entity = entity;
+        addNode(graphics);
+    }
+
+    /**
+     * Constructor for EntityView to be added to entity as scene view.
+     *
+     * @param graphics
+     */
+    public EntityView(Node graphics) {
+        addNode(graphics);
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    /*package-private*/ void setEntity(Entity entity) {
+        if (this.entity != null)
+            throw new IllegalStateException("View already has source entity");
+
+        this.entity = entity;
+        initAsSceneView();
+    }
+
+    private final void initAsSceneView() {
+        this.translateXProperty().bind(entity.xProperty());
+        this.translateYProperty().bind(entity.yProperty());
+        this.rotateProperty().bind(entity.rotationProperty());
+    }
+
+    public final void addNode(Node node) {
+        if (node instanceof Circle) {
+            Circle c = (Circle) node;
+            c.setCenterX(c.getRadius());
+            c.setCenterY(c.getRadius());
+        }
+
         getChildren().add(node);
     }
 
-    public void removeChildren() {
-        getChildren().clear();
+    private RenderLayer renderLayer = RenderLayer.TOP;
+
+    /**
+     * Set render layer for this entity. Render layer determines how an entity
+     * is rendered relative to other entities. The layer with higher index()
+     * will be rendered on top of the layer with lower index(). By default an
+     * entity has the very top layer with highest index equal to
+     * {@link Integer#MAX_VALUE}.
+     *
+     * The render layer can only be set before adding entity to the scene. If
+     * the entity is already registered in the scene graph, this method will
+     * throw IllegalStateException.
+     *
+     * @param layer
+     * @throws IllegalStateException
+     */
+    public final void setRenderLayer(RenderLayer layer) {
+        if (entity.isActive())
+            throw new IllegalStateException(
+                    "Can't set render layer to active view.");
+
+        this.renderLayer = layer;
+    }
+
+    /**
+     *
+     * @return render layer for entity
+     */
+    public final RenderLayer getRenderLayer() {
+        return renderLayer;
     }
 }

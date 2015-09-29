@@ -88,7 +88,7 @@ public class SceneScaleTest extends GameApplication {
     private Entity createEntity(double x, double y) {
         Entity e = new Entity(Type.TEST);
         e.setPosition(x, y);
-        e.setView(new Rectangle(40, 40));
+        e.setSceneView(new Rectangle(40, 40));
 
         getGameWorld().addEntity(e);
         return e;

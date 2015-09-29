@@ -72,6 +72,18 @@ public final class PhysicsEntity extends Entity {
         super(type);
     }
 
+    /*package-private*/ Runnable onInitPhysics;
+
+    /*package-private*/ void onInitPhysics() {
+        if (onInitPhysics != null) {
+            onInitPhysics.run();
+        }
+    }
+
+    public void setOnPhysicsInitialized(Runnable code) {
+        onInitPhysics = code;
+    }
+
     /**
      * Set custom fixture definition to describe a generated
      * fixture for this physics entity
@@ -160,6 +172,18 @@ public final class PhysicsEntity extends Entity {
             throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first");
 
         return PhysicsManager.toVector(body.getLinearVelocity().mul(1/60f));
+    }
+
+    /**
+     * Set velocity (angle in deg) at which the entity will rotate per tick.
+     *
+     * @param velocity  value in ~ degrees per tick
+     */
+    public void setAngularVelocity(double velocity) {
+        if (body == null)
+            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first");
+
+        body.setAngularVelocity((float) -velocity);
     }
 
     /**

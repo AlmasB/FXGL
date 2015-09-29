@@ -41,6 +41,8 @@ public abstract class CollisionHandler extends Pair<EntityType> {
         super(a, b);
     }
 
+    protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {}
+
     /**
      * Called when entities A and B have just collided and weren't colliding in the last tick.
      *

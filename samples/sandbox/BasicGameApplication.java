@@ -29,16 +29,20 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
 
+import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -145,9 +149,10 @@ public class BasicGameApplication extends GameApplication {
                 PhysicsEntity b = new PhysicsEntity(Type.CRATE);
                 Rectangle r = new Rectangle(40, 40);
                 r.setFill(Color.BLUE);
-                b.setView(r);
+                b.setSceneView(new EntityView(r));
                 b.setBodyType(BodyType.DYNAMIC);
                 b.setPosition(input.getMouse().x, input.getMouse().y);
+                //b.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40)));
 
                 FixtureDef fd = new FixtureDef();
                 fd.density = 0.05f;
@@ -155,6 +160,20 @@ public class BasicGameApplication extends GameApplication {
                 b.setFixtureDef(fd);
 
                 getGameWorld().addEntity(b);
+
+//                b.rotationProperty().addListener((obs, old, newValue) -> {
+//                    System.out.println(newValue.doubleValue() - old.doubleValue());
+//                });
+
+//                b.addControl(new Control() {
+//
+//                    @Override
+//                    public void onUpdate(Entity entity) {
+//                        System.out.println(entity.getRotation());
+//                    }
+//                });
+
+                b.setOnPhysicsInitialized(() -> b.setAngularVelocity(5));
             }
         }, MouseButton.PRIMARY);
     }
@@ -166,8 +185,11 @@ public class BasicGameApplication extends GameApplication {
     protected void initGame() {
         player = new Entity(Type.PLAYER);
         Circle graphics = new Circle(40);
-        player.setView(graphics);
+        player.setSceneView(new EntityView(graphics) {
 
+        });
+
+        //player.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 80, 80)));
         player.setPosition(100, 100);
 
 
@@ -175,8 +197,9 @@ public class BasicGameApplication extends GameApplication {
         enemy = new Entity(Type.ENEMY);
         Rectangle enemyGraphics = new Rectangle(200, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setView(enemyGraphics);
+        enemy.setSceneView(new EntityView(enemyGraphics));
 
+        //enemy.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 200, 40)));
         enemy.setPosition(200, 100);
 
 
@@ -189,11 +212,29 @@ public class BasicGameApplication extends GameApplication {
         getGameWorld().addEntities(player, enemy);
 
         box = new PhysicsEntity(Type.ENEMY);
-        box.setView(new Rectangle(500, 100));
+        box.setSceneView(new EntityView(new Rectangle(500, 100)));
         box.setPosition(0, 500);
+        //box.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 500, 100)));
 
 
         getGameWorld().addEntity(box);
+
+        getGameScene().addGameNode(new PlayerView());
+    }
+
+    private class PlayerView extends EntityView {
+
+        public PlayerView() {
+            super(player);
+
+            Text text = new Text();
+            text.textProperty().bind(player.xProperty().asString().concat(player.yProperty().asString()));
+
+            addNode(text);
+            setTranslateX(300);
+            setTranslateY(300);
+        }
+
     }
 
     @Override
@@ -231,7 +272,7 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void onUpdate() {
-        debug.setText(enemy.getView().getBoundsInParent().toString() + " " + enemy.getX());
+        //debug.setText(enemy.getView().getBoundsInParent().toString() + " " + enemy.getX());
     }
 
     public static void main(String[] args) {

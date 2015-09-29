@@ -28,13 +28,16 @@ package s4physics;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
 
+import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -77,6 +80,20 @@ public class BasicGameApplication extends GameApplication {
                 player.translate(5, 0);
             }
         }, KeyCode.D);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                player.translate(0, -5);
+            }
+        }, KeyCode.W);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                player.translate(0, 5);
+            }
+        }, KeyCode.S);
     }
 
     @Override
@@ -88,19 +105,23 @@ public class BasicGameApplication extends GameApplication {
         player.setPosition(100, 100);
 
         Rectangle graphics = new Rectangle(40, 40);
-        player.setView(graphics);
+        player.setSceneView(new EntityView(player, graphics));
 
         enemy = new Entity(Type.ENEMY);
         enemy.setPosition(200, 100);
 
         Rectangle enemyGraphics = new Rectangle(40, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setView(enemyGraphics);
+        enemy.setSceneView(new EntityView(enemy, enemyGraphics));
 
         // we need to set collidable to true
         // so that collision system can 'see' them
         player.setCollidable(true);
         enemy.setCollidable(true);
+
+        player.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40)));
+        player.addHitBox(new HitBox("BODY", new BoundingBox(0, 40, 40, 40)));
+        enemy.addHitBox(new HitBox("MAIN_BODY", new BoundingBox(0, 0, 40, 40)));
 
         getGameWorld().addEntities(player, enemy);
     }
@@ -109,6 +130,11 @@ public class BasicGameApplication extends GameApplication {
     protected void initPhysics() {
         PhysicsManager physics = getPhysicsManager();
         physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
+            @Override
+            protected void onHitBoxTrigger(Entity player, Entity enemy, HitBox playerBox, HitBox enemyBox) {
+                System.out.println(playerBox.getName() + " X " + enemyBox.getName());
+            }
+
             // the order of entities determined by
             // the order of their types passed into constructor
             @Override

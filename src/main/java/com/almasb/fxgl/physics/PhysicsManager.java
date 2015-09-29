@@ -159,9 +159,12 @@ public final class PhysicsManager implements WorldStateListener {
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
-                    if (e1.isCollidingWith(e2)) {
+                    CollisionResult result = e1.checkCollision(e2);
+
+                    if (result.hasCollided()) {
                         if (!collisions.containsKey(pair)) {
                             collisions.put(pair, tick.get());
+                            pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
                         }
                     }
                     else {
@@ -387,8 +390,11 @@ public final class PhysicsManager implements WorldStateListener {
     @Override
     public void onEntityAdded(Entity entity) {
         entities.add(entity);
-        if (entity instanceof PhysicsEntity)
-            createBody((PhysicsEntity) entity);
+        if (entity instanceof PhysicsEntity) {
+            PhysicsEntity pEntity = (PhysicsEntity) entity;
+            createBody(pEntity);
+            pEntity.onInitPhysics();
+        }
     }
 
     @Override
