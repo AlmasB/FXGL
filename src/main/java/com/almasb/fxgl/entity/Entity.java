@@ -86,24 +86,38 @@ public class Entity {
     }
 
     /**
-     * Constructs an entity with given type
+     * Constructs an entity with given type.
      *
-     * @param type
+     * @param type  the type of entity
      */
     public Entity(EntityType type) {
         this.type = type;
     }
 
+    /**
+     * The world the entity is attached to.
+     */
     private GameWorld world;
 
+    /**
+     * Set the game world.
+     *
+     * @param world the game world the entity is attached to
+     */
     public void setWorld(GameWorld world) {
         this.world = world;
     }
 
+    /**
+     * @return  The world the entity is attached to.
+     */
     public GameWorld getWorld() {
         return world;
     }
 
+    /**
+     * Removes entity from the game world.
+     */
     public void removeFromWorld() {
         getWorld().removeEntity(this);
     }
@@ -114,26 +128,77 @@ public class Entity {
         return view;
     }
 
+    /**
+     * Set graphics for this entity. The collision detection bounding box will
+     * use graphics object's size properties.
+     *
+     * @param graphics
+     * @return this entity
+     */
+    public final void setView(Node graphics) {
+        view.removeChildren();
+
+        if (graphics instanceof Circle) {
+            Circle c = (Circle) graphics;
+            c.setCenterX(c.getRadius());
+            c.setCenterY(c.getRadius());
+        }
+
+        view.addChild(graphics);
+    }
+
+    /**
+     *
+     * @return  x property
+     */
     public final DoubleProperty xProperty() {
         return view.translateXProperty();
     }
 
+    /**
+     * Returns x coordinate of the entity's position.
+     * Note: transformations like rotation may affect
+     * the visual position but will not affect the value retrieved.
+     *
+     * @return  x coordinate
+     */
     public final double getX() {
         return xProperty().get();
     }
 
+    /**
+     * Set x position
+     *
+     * @param x coordinate of entity position
+     */
     public final void setX(double x) {
         xProperty().set(x);
     }
 
+    /**
+     *
+     * @return  y property
+     */
     public final DoubleProperty yProperty() {
         return view.translateYProperty();
     }
 
+    /**
+     * Returns y coordinate of the entity's position.
+     * Note: transformations like rotation may affect
+     * the visual position but will not affect the value retrieved.
+     *
+     * @return  y coordinate
+     */
     public final double getY() {
         return yProperty().get();
     }
 
+    /**
+     * Set y position.
+     *
+     * @param y coordinate of entity position
+     */
     public final void setY(double y) {
         yProperty().set(y);
     }
@@ -149,9 +214,8 @@ public class Entity {
     /**
      * Set absolute position of entity to given point.
      *
-     * @param x
-     * @param y
-     * @return this entity
+     * @param x coordinate of entity position
+     * @param y coordinate of entity position
      */
     public final void setPosition(double x, double y) {
         setX(x);
@@ -161,18 +225,17 @@ public class Entity {
     /**
      * Set absolute position of entity to given point.
      *
-     * @param position
-     * @return this entity
+     * @param position  absolute position in game world
      */
     public final void setPosition(Point2D position) {
         setPosition(position.getX(), position.getY());
     }
 
     /**
-     * Translate (move) entity by vector (x, y)
+     * Translate (move) entity by vector (x, y).
      *
-     * @param x
-     * @param y
+     * @param x units
+     * @param y units
      */
     public final void translate(double x, double y) {
         setX(getX() + x);
@@ -180,19 +243,48 @@ public class Entity {
     }
 
     /**
-     * Translate (move) entity by vector
+     * Translate (move) entity by vector.
      *
-     * @param vector
+     * @param vector    translate vector
      */
     public final void translate(Point2D vector) {
         translate(vector.getX(), vector.getY());
     }
 
     /**
+     * Returns absolute angle of the entity rotation
+     * in degrees.
+     *
+     * @return  rotation angle
+     */
+    public final double getRotation() {
+        return view.getRotate();
+    }
+
+    /**
+     * Set absolute rotation of the entity view in
+     * degrees.
+     *
+     * @param angle the new rotation angle
+     */
+    public final void setRotation(double angle) {
+        view.setRotate(angle);
+    }
+
+    /**
+     * Rotate entity view by given angle.
+     *
+     * @param byAngle   rotation angle in degrees
+     */
+    public final void rotateBy(double byAngle) {
+        setRotation(getRotation() + byAngle);
+    }
+
+    /**
      * Returns distance from center of this entity to center of the given
      * entity.
      *
-     * @param other
+     * @param other the other entity
      * @return distance between two entities
      */
     public final double distance(Entity other) {
@@ -212,7 +304,7 @@ public class Entity {
      * direction of the entity + the area of entity itself. This can be used to
      * find the range of an exploding bomb, or area around the player with
      * interactive entities. This can be used together with
-     * {@link com.almasb.fxgl.SceneManager#getEntitiesInRange(Rectangle2D, EntityType...)}
+     * {@link com.almasb.fxgl.GameWorld#getEntitiesInRange(Rectangle2D, EntityType...)}
      * .
      *
      * @param width
@@ -226,25 +318,6 @@ public class Entity {
         double h = getY() + getHeight() + height - y;
 
         return new Rectangle2D(x, y, w, h);
-    }
-
-    /**
-     * Set graphics for this entity. The collision detection bounding box will
-     * use graphics object's size properties.
-     *
-     * @param graphics
-     * @return this entity
-     */
-    public final void setGraphics(Node graphics) {
-        view.removeChildren();
-
-        if (graphics instanceof Circle) {
-            Circle c = (Circle) graphics;
-            c.setCenterX(c.getRadius());
-            c.setCenterY(c.getRadius());
-        }
-
-        view.addChild(graphics);
     }
 
     /**
@@ -263,12 +336,42 @@ public class Entity {
         return view.getLayoutBounds().getHeight();
     }
 
+    /**
+     * Maps control type to control object.
+     * Ensuring that only 1 object is registered per type.
+     */
     private Map<Class<? extends Control>, Control> controls = new HashMap<>();
 
+    /**
+     * Returns control of given type or {@link Optional#empty()} if
+     * no such type is registered on this entity.
+     *
+     * @param type  control type
+     * @return  control
+     */
     public final <T extends Control> Optional<T> getControl(Class<T> type) {
         return Optional.ofNullable(type.cast(controls.get(type)));
     }
 
+    /**
+     * Adds behavior to entity.
+     * Only 1 control per type is allowed.
+     * Anonymous controls are not allowed.
+     *
+     * <pre>
+     * E.g.
+     * entity.addControl(new GravityControl());
+     *
+     * // next line will throw IllegalArgumentException because of duplicate
+     * entity.addControl(new GravityControl());
+     *
+     * // next line will throw IllegalArgumentException because of anonymous
+     * entity.addControl(new Control() {
+     * });
+     * </pre>
+     *
+     * @param control   the behavior
+     */
     public final void addControl(Control control) {
         Class<? extends Control> type = control.getClass();
         if (controls.containsKey(type)) {
@@ -284,9 +387,9 @@ public class Entity {
     }
 
     /**
-     * Remove behavior from entity
+     * Remove behavior from entity of given type.
      *
-     * @param control
+     * @param type  the control type to remove
      */
     public final void removeControl(Class<? extends Control> type) {
         Control c = controls.remove(type);
@@ -298,12 +401,15 @@ public class Entity {
     }
 
     /**
-     * Remove all behavior controls from entity
+     * Remove all behavior controls from entity.
      */
     public final void removeAllControls() {
         controls.clear();
     }
 
+    /**
+     * Maps component types to components.
+     */
     private Map<Class<? extends Component>, Component> components = new HashMap<>();
 
     /**
@@ -318,12 +424,14 @@ public class Entity {
     }
 
     /**
-     * Adds given component to this entity. Only 1 component with the same type
-     * can be registered. Anonymous components are NOT allowed.
+     * Adds given component to this entity.
+     * Only 1 component with the same type can be registered.
+     * Anonymous components are NOT allowed.
      *
      * @param component
      * @throws IllegalArgumentException
      *             if a component with same type already registered
+     *             or anonymous
      */
     public final void addComponent(Component component) {
         Class<? extends Component> type = component.getClass();

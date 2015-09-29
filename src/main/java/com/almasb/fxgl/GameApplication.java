@@ -448,6 +448,7 @@ public abstract class GameApplication extends Application {
         timerManager.tickStart(internalTime);
 
         gameWorld.update();
+        onUpdate();
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So

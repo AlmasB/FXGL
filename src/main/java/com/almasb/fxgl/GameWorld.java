@@ -263,7 +263,7 @@ public final class GameWorld {
     public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
         Entity boundsEntity = Entity.noType();
         boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
-        boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
+        boundsEntity.setView(new Rectangle(selection.getWidth(), selection.getHeight()));
 
         return getEntities(types).stream()
                 .filter(entity -> entity.isCollidingWith(boundsEntity))

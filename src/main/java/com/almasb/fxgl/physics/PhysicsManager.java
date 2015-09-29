@@ -414,7 +414,7 @@ public final class PhysicsManager implements WorldStateListener {
                     Math.round(toPixels(
                             toMeters(appHeight) - body.getPosition().y
                                     - toMeters(e.getHeight() / 2))));
-            //e.setRotate(-Math.toDegrees(body.getAngle()));
+            e.setRotation(-Math.toDegrees(body.getAngle()));
         }
     }
 

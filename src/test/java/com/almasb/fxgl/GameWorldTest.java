@@ -59,7 +59,7 @@ public class GameWorldTest {
     public void entities() {
         Entity entity = new Entity(Type.TEST_ENTITY);
         entity.setPosition(100, 100);
-        entity.setGraphics(new Rectangle(40, 40));
+        entity.setView(new Rectangle(40, 40));
 
         gameWorld.addEntities(entity);
         assertEquals(0, gameWorld.getEntities().size());
