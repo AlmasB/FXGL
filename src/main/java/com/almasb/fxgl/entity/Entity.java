@@ -140,6 +140,7 @@ public class Entity {
         return sceneView;
     }
 
+    // TODO: pass node and create view inside
     public final void setSceneView(EntityView view) {
         if (this.sceneView != null)
             throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");

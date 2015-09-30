@@ -172,22 +172,22 @@ public final class GameWorld {
      * Does NOT clear state listeners.
      *
      * <ol>
-     * <li>Fires {@link WorldStateListener#onWorldReset()}</li>
      * <li>Registers waiting "add" entities</li>
      * <li>Removes waiting "remove" entities</li>
      * <li>Cleans and removes all entities</li>
+     * <li>Fires {@link WorldStateListener#onWorldReset()}</li>
      * </ol>
      */
     /*package-private*/ void reset() {
         log.finer("Resetting game world");
-
-        worldStateListeners.forEach(WorldStateListener::onWorldReset);
 
         registerAndInitPendingEntities();
         removeAndCleanPendingEntities();
 
         entities.forEach(Entity::clean);
         entities.clear();
+
+        worldStateListeners.forEach(WorldStateListener::onWorldReset);
     }
 
     /**

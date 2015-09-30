@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.AudioManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.effect.ParticleManager;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsManager;
@@ -197,7 +196,6 @@ public abstract class GameApplication extends Application {
     private AssetManager assetManager;
     private PhysicsManager physicsManager;
     private TimerManager timerManager;
-    private ParticleManager particleManager;
     private QTEManager qteManager;
     private SaveLoadManager saveLoadManager;
 
@@ -347,7 +345,6 @@ public abstract class GameApplication extends Application {
         inputManager = new InputManager(getSceneManager().getGameScene());
 
         physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty());
-        particleManager = new ParticleManager();
 
         audioManager = new AudioManager();
         qteManager = new QTEManager();
@@ -623,14 +620,6 @@ public abstract class GameApplication extends Application {
      */
     public final PhysicsManager getPhysicsManager() {
         return physicsManager;
-    }
-
-    /**
-     *
-     * @return particle manager
-     */
-    public final ParticleManager getParticleManager() {
-        return particleManager;
     }
 
     /**

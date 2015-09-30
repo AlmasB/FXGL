@@ -23,9 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s5ui;
+package s8particles;
 
 import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.effect.ExplosionEmitter;
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.EntityView;
@@ -37,6 +39,7 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -45,7 +48,7 @@ import javafx.scene.text.Text;
 public class BasicGameApplication extends GameApplication {
 
     private enum Type implements EntityType {
-        PLAYER, ENEMY
+        PLAYER, ENEMY, EXPLOSION
     }
 
     private Entity player, enemy;
@@ -61,10 +64,12 @@ public class BasicGameApplication extends GameApplication {
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(true);
+        settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }
+
+    private ParticleEntity explosion;
 
     @Override
     protected void initInput() {
@@ -83,6 +88,28 @@ public class BasicGameApplication extends GameApplication {
                 player.translate(5, 0);
             }
         }, KeyCode.D);
+
+        input.addAction(new UserAction("Spawn Explosion") {
+            @Override
+            protected void onActionBegin() {
+                explosion = new ParticleEntity(Type.EXPLOSION);
+                explosion.setPosition(input.getMouse().x, input.getMouse().y);
+
+                explosion.setSceneView(new EntityView(new Text()));
+
+                ExplosionEmitter emitter = new ExplosionEmitter();
+                explosion.setEmitter(emitter);
+
+                getGameWorld().addEntities(explosion);
+            }
+        }, MouseButton.PRIMARY);
+
+        input.addAction(new UserAction("Remove Explosion") {
+            @Override
+            protected void onActionBegin() {
+                getGameWorld().removeEntity(explosion);
+            }
+        }, MouseButton.SECONDARY);
     }
 
     @Override

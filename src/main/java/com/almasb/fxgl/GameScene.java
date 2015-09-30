@@ -245,6 +245,7 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         getRenderLayer(RenderLayer.TOP).getChildren().add(node);
     }
 
+    // TODO: check if entity has scene view and add if it does
     @Override
     public void onEntityAdded(Entity entity) {
         //log.finer("Attaching " + entity + " to the scene");

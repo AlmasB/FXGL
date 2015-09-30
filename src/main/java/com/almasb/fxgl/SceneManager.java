@@ -61,7 +61,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Screen;
 
 /**
- * Handles everything to do with modifying the scene.
+ * Manages interactions between FXGL scenes and allows
+ * creating scene-independent dialog boxes.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
@@ -70,7 +71,16 @@ public final class SceneManager {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
+    /**
+     * Game scene, this is where all in-game objects are shown.
+     */
     private GameScene gameScene;
+
+    /**
+     * Intro scene, this is shown when the application started,
+     * before menus and game.
+     */
+    private IntroScene introScene;
 
     /**
      * Main menu, this is the menu shown at the start of game
@@ -82,6 +92,9 @@ public final class SceneManager {
      */
     private FXGLScene gameMenuScene;
 
+    /**
+     * Reference to current shown scene.
+     */
     private FXGLScene currentScene;
 
     /**
@@ -104,8 +117,16 @@ public final class SceneManager {
      */
     private GameApplication app;
 
+    /**
+     * Underlying JavaFX scene. We only 1 scene to avoid
+     * problems in fullscreen mode. Switching between scenes
+     * in FS mode will otherwise temporarily toggle FS.
+     */
     private Scene scene;
 
+    /**
+     * Settings for all scenes to apply.
+     */
     private SceneSettings sceneSettings;
 
     /**
@@ -113,21 +134,28 @@ public final class SceneManager {
      *
      * @param app
      *            instance of game application
-     * @param stage
-     *            main stage
+     * @param scene
+     *            main scene
      */
     /* package-private */ SceneManager(GameApplication app, Scene scene) {
         this.app = app;
         this.scene = scene;
 
+        /*
+         * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
+         * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
+         * So we copy the occurred event and reroute to whichever FXGL scene is current.
+         */
         scene.addEventFilter(EventType.ROOT, event -> {
             Event copy = event.copyFor(null, null);
             currentScene.fireEvent(copy);
         });
 
+        // TODO: work on order of init
         sceneSettings = computeSceneSettings(app.getWidth(), app.getHeight());
         gameScene = new GameScene(sceneSettings);
 
+        // TODO: why do we do it here?
         dialogBox = UIFactory.getDialogBox();
         dialogBox.setOnShown(e -> {
             if (!menuOpenProperty().get())
@@ -145,13 +173,14 @@ public final class SceneManager {
     }
 
     /**
-     * Set preferred size to game scene root and stage. Computes
-     * {@link #sizeRatio} and scales the root if necessary
+     * TODO: update javadoc
      *
-     * @param width
-     * @param height
+     * @param width target (app) width
+     * @param height    target (app) height
+     * @return  scene settings with computed values
      */
     private SceneSettings computeSceneSettings(double width, double height) {
+        // TODO: make these into params
         Rectangle2D bounds = app.getSettings().isFullScreen()
                 ? Screen.getPrimary().getBounds()
                 : Screen.getPrimary().getVisualBounds();
@@ -186,6 +215,7 @@ public final class SceneManager {
     private boolean canSwitchGameMenu = true;
 
     /**
+     * Creates Main and Game menu scenes.
      * Registers event handlers to menus.
      */
     private void configureMenu() {
@@ -285,6 +315,11 @@ public final class SceneManager {
         }
     }
 
+    private void configureIntro() {
+        introScene = app.initIntroFactory().newIntro(sceneSettings);
+        introScene.setOnFinished(this::showGame);
+    }
+
     /**
      * Called right before the main stage is shown.
      */
@@ -293,31 +328,30 @@ public final class SceneManager {
             configureMenu();
 
         if (app.getSettings().isIntroEnabled()) {
-            IntroScene intro = app.initIntroFactory().newIntro(sceneSettings);
-            intro.setOnFinished(() -> {
-                if (isMenuEnabled) {
-                    setScene(mainMenuScene);
-                }
-                else {
-                    app.startNewGame();
-                    setScene(gameScene);
-                }
-            });
+            configureIntro();
 
-            setScene(intro);
-            intro.startIntro();
+            setScene(introScene);
+            introScene.startIntro();
         }
         else {
-            if (isMenuEnabled) {
-                setScene(mainMenuScene);
-            }
-            else {
-                app.startNewGame();
-                setScene(gameScene);
-            }
+            showGame();
         }
     }
 
+    private void showGame() {
+        if (isMenuEnabled) {
+            setScene(mainMenuScene);
+        }
+        else {
+            app.startNewGame();
+            setScene(gameScene);
+        }
+    }
+
+    /**
+     *
+     * @return  game scene
+     */
     public GameScene getGameScene() {
         return gameScene;
     }
@@ -325,7 +359,7 @@ public final class SceneManager {
     /**
      * Changes current scene to given scene.
      *
-     * @param scene
+     * @param scene the scene to set as active
      */
     private void setScene(FXGLScene scene) {
         currentScene = scene;
@@ -339,7 +373,7 @@ public final class SceneManager {
 
     /**
      *
-     * @return property tracking if any is open
+     * @return property tracking if any menu is open
      */
     public ReadOnlyBooleanProperty menuOpenProperty() {
         return menuOpen.getReadOnlyProperty();
@@ -356,7 +390,7 @@ public final class SceneManager {
     /**
      * Set the key which will open/close game menu.
      *
-     * @param key
+     * @param key   the key
      * @defaultValue KeyCode.ESCAPE
      */
     public void setMenuKey(KeyCode key) {
@@ -364,8 +398,7 @@ public final class SceneManager {
     }
 
     /**
-     * Pauses the game and opens in-game menu. Does nothing if menu is disabled
-     * in settings
+     * Pauses the game and opens in-game menu.
      */
     private void openGameMenu() {
         app.pause();
@@ -373,8 +406,7 @@ public final class SceneManager {
     }
 
     /**
-     * Closes the game menu and resumes the game. Does nothing if menu is
-     * disabled in settings
+     * Closes the game menu and resumes the game.
      */
     private void closeGameMenu() {
         setScene(gameScene);
@@ -382,8 +414,7 @@ public final class SceneManager {
     }
 
     /**
-     * Exits the current game and opens main menu. Does nothing if menu is
-     * disabled in settings
+     * Resets and exits the current game and opens main menu.
      */
     private void exitToMainMenu() {
         app.pause();

@@ -46,7 +46,12 @@ public abstract class ParticleEmitter {
     private Random random = new Random();
     private int numParticles = 25;
     private double emissionRate = 1.0;
-    private double rateAC = 0;
+
+    /**
+     * Emission rate accumulator. Default value 1.0
+     * so that when emitter starts working, it will emit in the same frame
+     */
+    private double rateAC = 1.0;
 
     /**
      *
@@ -112,7 +117,7 @@ public abstract class ParticleEmitter {
      */
     /*package-private*/ final List<Particle> emit(double x, double y) {
         rateAC += emissionRate;
-        if (rateAC < 1) {
+        if (rateAC < 1 || emissionRate == 0) {
             return EMPTY;
         }
 
