@@ -12,6 +12,10 @@
 /bin
 /target
 
+# IntelliJ IDEA
+.idea/
+*.iml
+
 # maven #
 dependency-reduced-pom.xml
 
