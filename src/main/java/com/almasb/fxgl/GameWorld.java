@@ -159,9 +159,7 @@ public final class GameWorld {
     private void removeAndCleanPendingEntities() {
         entities.removeAll(removeQueue);
         removeQueue.forEach(e -> {
-            worldStateListeners.forEach(l -> {
-                l.onEntityRemoved(e);
-            });
+            worldStateListeners.forEach(l -> l.onEntityRemoved(e));
             e.clean();
         });
         removeQueue.clear();

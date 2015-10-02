@@ -3,6 +3,7 @@ package manual;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -88,7 +89,7 @@ public class SceneScaleTest extends GameApplication {
     private Entity createEntity(double x, double y) {
         Entity e = new Entity(Type.TEST);
         e.setPosition(x, y);
-        e.setSceneView(new Rectangle(40, 40));
+        e.setSceneView(new EntityView(new Rectangle(40, 40)));
 
         getGameWorld().addEntity(e);
         return e;

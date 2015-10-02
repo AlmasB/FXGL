@@ -219,8 +219,8 @@ public final class SceneManager {
      * Registers event handlers to menus.
      */
     private void configureMenu() {
-        menuOpenProperty().addListener((obs, oldState, newState) -> {
-            if (newState.booleanValue()) {
+        menuOpenProperty().addListener((obs, wasOpen, isOpen) -> {
+            if (isOpen) {
                 log.finer("Playing State -> Menu State");
                 app.onMenuOpen();
             }
@@ -427,7 +427,7 @@ public final class SceneManager {
      * dismissed. The provided callback will be called with the dialog result as
      * parameter when the dialog closes.
      *
-     * @param dialog
+     * @param dialog    JavaFX dialog
      * @param resultCallback
      */
     public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
@@ -463,8 +463,8 @@ public final class SceneManager {
      * Shows a blocking message box with YES and NO buttons. The callback is
      * invoked with the user answer as parameter.
      *
-     * @param message
-     * @param resultCallback
+     * @param message   message to show
+     * @param resultCallback    the function to be called
      */
     public void showConfirmationBox(String message,
             Consumer<Boolean> resultCallback) {
@@ -475,8 +475,8 @@ public final class SceneManager {
      * Shows a blocking message box with OK button and input field. The callback
      * is invoked with the field text as parameter.
      *
-     * @param message
-     * @param resultCallback
+     * @param message   message to show
+     * @param resultCallback    the function to be called
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
         dialogBox.showInputBox(message, resultCallback);
