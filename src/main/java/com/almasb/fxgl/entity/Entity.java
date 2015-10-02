@@ -45,6 +45,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.util.Duration;
 
 /**
@@ -141,14 +142,13 @@ public class Entity {
     }
 
     // TODO: pass node and create view inside
-    public final void setSceneView(EntityView view) {
+    public final void setSceneView(Node view) {
         if (this.sceneView != null)
             throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");
         if (isActive())
             throw new IllegalStateException("Entity already part of the world");
 
-        this.sceneView = view;
-        view.setEntity(this);
+        this.sceneView = new EntityView(this, view);
     }
 
     private DoubleProperty x = new SimpleDoubleProperty();
@@ -623,8 +623,6 @@ public class Entity {
 
     /**
      * Do NOT call manually. It is called automatically by FXGL GameApplication
-     *
-     * @param now
      */
     public final void update() {
         if (controlsEnabled)

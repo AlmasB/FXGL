@@ -39,34 +39,33 @@ public class EntityView extends Parent {
 
     private Entity entity;
 
+    /**
+     * Scene view ctor
+     *
+     * @param entity    the entity creating the view
+     * @param graphics  the view for that entity
+     */
+    /*package-private*/ EntityView(Entity entity, Node graphics) {
+        this.entity = entity;
+        addNode(graphics);
+        initAsSceneView();
+    }
+
+    /**
+     * Constructs new view for given entity
+     *
+     * @param entity    the entity
+     */
     public EntityView(Entity entity) {
         this.entity = entity;
     }
 
-    public EntityView(Entity entity, Node graphics) {
-        this.entity = entity;
-        addNode(graphics);
-    }
-
     /**
-     * Constructor for EntityView to be added to entity as scene view.
      *
-     * @param graphics
+     * @return  source entity of this view
      */
-    public EntityView(Node graphics) {
-        addNode(graphics);
-    }
-
     public Entity getEntity() {
         return entity;
-    }
-
-    /*package-private*/ void setEntity(Entity entity) {
-        if (this.entity != null)
-            throw new IllegalStateException("View already has source entity");
-
-        this.entity = entity;
-        initAsSceneView();
     }
 
     private final void initAsSceneView() {
