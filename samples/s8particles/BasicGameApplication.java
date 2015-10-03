@@ -95,8 +95,6 @@ public class BasicGameApplication extends GameApplication {
                 explosion = new ParticleEntity(Type.EXPLOSION);
                 explosion.setPosition(input.getMouse().x, input.getMouse().y);
 
-                explosion.setSceneView(new EntityView(new Text()));
-
                 ExplosionEmitter emitter = new ExplosionEmitter();
                 explosion.setEmitter(emitter);
 
@@ -121,14 +119,14 @@ public class BasicGameApplication extends GameApplication {
         player.setPosition(100, 100);
 
         Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(new EntityView(graphics));
+        player.setSceneView(graphics);
 
         enemy = new Entity(Type.ENEMY);
         enemy.setPosition(200, 100);
 
         Rectangle enemyGraphics = new Rectangle(40, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(new EntityView(enemyGraphics));
+        enemy.setSceneView(enemyGraphics);
 
         // we need to set collidable to true
         // so that collision system can 'see' them

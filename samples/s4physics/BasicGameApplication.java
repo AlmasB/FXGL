@@ -39,6 +39,7 @@ import com.almasb.fxgl.util.ApplicationMode;
 
 import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -105,14 +106,17 @@ public class BasicGameApplication extends GameApplication {
         player.setPosition(100, 100);
 
         Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(new EntityView(player, graphics));
+        Rectangle graphics2 = new Rectangle(40, 40);
+        graphics2.setFill(Color.BLUE);
+
+        player.setSceneView(new VBox(graphics, graphics2));
 
         enemy = new Entity(Type.ENEMY);
         enemy.setPosition(200, 100);
 
         Rectangle enemyGraphics = new Rectangle(40, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(new EntityView(enemy, enemyGraphics));
+        enemy.setSceneView(enemyGraphics);
 
         // we need to set collidable to true
         // so that collision system can 'see' them

@@ -149,7 +149,7 @@ public class BasicGameApplication extends GameApplication {
                 PhysicsEntity b = new PhysicsEntity(Type.CRATE);
                 Rectangle r = new Rectangle(40, 40);
                 r.setFill(Color.BLUE);
-                b.setSceneView(new EntityView(r));
+                b.setSceneView(r);
                 b.setBodyType(BodyType.DYNAMIC);
                 b.setPosition(input.getMouse().x, input.getMouse().y);
                 //b.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40)));
@@ -185,9 +185,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initGame() {
         player = new Entity(Type.PLAYER);
         Circle graphics = new Circle(40);
-        player.setSceneView(new EntityView(graphics) {
-
-        });
+        player.setSceneView(graphics);
 
         //player.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 80, 80)));
         player.setPosition(100, 100);
@@ -197,7 +195,7 @@ public class BasicGameApplication extends GameApplication {
         enemy = new Entity(Type.ENEMY);
         Rectangle enemyGraphics = new Rectangle(200, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(new EntityView(enemyGraphics));
+        enemy.setSceneView(enemyGraphics);
 
         //enemy.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 200, 40)));
         enemy.setPosition(200, 100);
@@ -212,7 +210,7 @@ public class BasicGameApplication extends GameApplication {
         getGameWorld().addEntities(player, enemy);
 
         box = new PhysicsEntity(Type.ENEMY);
-        box.setSceneView(new EntityView(new Rectangle(500, 100)));
+        box.setSceneView(new Rectangle(500, 100));
         box.setPosition(0, 500);
         //box.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 500, 100)));
 

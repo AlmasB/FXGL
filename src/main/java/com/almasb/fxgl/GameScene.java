@@ -86,31 +86,42 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         particlesCanvas.setMouseTransparent(true);
     }
 
+    /**
+     * Add a node to the UI overlay.
+     *
+     * @param node UI node to add
+     */
     public void addUINode(Node node) {
         uiRoot.getChildren().add(node);
     }
 
     /**
-     * Add a node to the UI overlay.
+     * Add nodes to the UI overlay.
      *
-     * @param n
-     * @param nodes
+     * @param nodes UI nodes to add
      */
     public void addUINodes(Node... nodes) {
-        uiRoot.getChildren().addAll(nodes);
+        for (Node node : nodes)
+            addUINode(node);
     }
 
     /**
      * Remove given node from the UI overlay.
      *
-     * @param n
+     * @param n node to remove
      */
     public void removeUINode(Node n) {
         uiRoot.getChildren().remove(n);
     }
 
+    /**
+     * Remove nodes from the UI overlay.
+     *
+     * @param nodes nodes to remove
+     */
     public void removeUINodes(Node... nodes) {
-        uiRoot.getChildren().removeAll(nodes);
+        for (Node node : nodes)
+            removeUINode(node);
     }
 
     /**
@@ -119,8 +130,8 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
      * will be created for that layer and placed
      * in the scene graph according to its layer index.
      *
-     * @param e
-     * @return
+     * @param layer render layer
+     * @return render group
      */
     private Group getRenderLayer(RenderLayer layer) {
         Integer renderLayer = layer.index();
@@ -149,8 +160,8 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
     /**
      * Converts a point on screen to a point within game scene.
      *
-     * @param screenPoint
-     * @return
+     * @param screenPoint point in UI coordinates
+     * @return point in game coordinates
      */
     public Point2D screenToGame(Point2D screenPoint) {
         return screenPoint.multiply(1.0 / getScaleRatio()).add(getViewportOrigin());
@@ -161,8 +172,8 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
      * <p>
      * Do NOT use if the viewport was bound.
      *
-     * @param x
-     * @param y
+     * @param x x coordinate
+     * @param y y coordinate
      */
     public void setViewportOrigin(int x, int y) {
         gameRoot.setLayoutX(-x);
@@ -207,8 +218,8 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
      * Binds the viewport origin so that it follows the given entity
      * distX represent bound distance in X axis between entity and viewport origin.
      *
-     * @param entity
-     * @param distX
+     * @param entity entity to follow
+     * @param distX distance in X between origin and entity
      */
     public void bindViewportOriginX(Entity entity, int distX) {
         gameRoot.layoutXProperty().bind(entity.xProperty().negate().add(distX));
@@ -218,8 +229,8 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
      * Binds the viewport origin so that it follows the given entity
      * distY represent bound distance in Y axis between entity and viewport origin.
      *
-     * @param entity
-     * @param distY
+     * @param entity entity to follow
+     * @param distY distance in Y between origin and entity
      */
     public void bindViewportOriginY(Entity entity, int distY) {
         gameRoot.layoutYProperty().bind(entity.yProperty().negate().add(distY));
@@ -232,9 +243,9 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
 
     /**
      * Set true if UI elements should forward mouse events
-     * to the game layer
+     * to the game layer.
      *
-     * @param b
+     * @param b flag
      * @defaultValue false
      */
     public void setUIMouseTransparent(boolean b) {
@@ -245,11 +256,12 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         getRenderLayer(RenderLayer.TOP).getChildren().add(node);
     }
 
-    // TODO: check if entity has scene view and add if it does
     @Override
     public void onEntityAdded(Entity entity) {
         //log.finer("Attaching " + entity + " to the scene");
-        getRenderLayer(entity.getSceneView().getRenderLayer()).getChildren().add(entity.getSceneView());
+        entity.getSceneView().ifPresent(view -> {
+            getRenderLayer(view.getRenderLayer()).getChildren().add(view);
+        });
 
         if (entity instanceof ParticleEntity) {
             particles.add((ParticleEntity) entity);
@@ -258,7 +270,9 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        getRenderLayer(entity.getSceneView().getRenderLayer()).getChildren().remove(entity.getSceneView());
+        entity.getSceneView().ifPresent(view ->
+                getRenderLayer(view.getRenderLayer()).getChildren().remove(view));
+
         particles.remove(entity);
     }
 

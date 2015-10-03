@@ -136,11 +136,15 @@ public class Entity {
 
     private EntityView sceneView;
 
-    public final EntityView getSceneView() {
-        return sceneView;
+    /**
+     *
+     * @return optional containing scene view or Optional.empty()
+     * if entity doesn't have a scene view
+     */
+    public final Optional<EntityView> getSceneView() {
+        return Optional.ofNullable(sceneView);
     }
 
-    // TODO: pass node and create view inside
     public final void setSceneView(Node view) {
         if (this.sceneView != null)
             throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");
