@@ -38,24 +38,24 @@ public interface AnimationChannel {
     /**
      * Area to be used to select a sub-texture from a spritesheet.
      *
-     * @return
+     * @return area
      */
-    public Rectangle2D area();
+    Rectangle2D area();
 
     /**
      * @return number of frames in this animation
      */
-    public int frames();
+    int frames();
 
     /**
      * @return total duration of the animation
      */
-    public Duration duration();
+    Duration duration();
 
     /**
      * @return name of the animation
      */
-    public String name();
+    String name();
 
     /**
      * Computes frame width based on the area width
@@ -63,7 +63,7 @@ public interface AnimationChannel {
      *
      * @return frame width
      */
-    default public double computeFrameWidth() {
+    default double computeFrameWidth() {
         return area().getWidth() / frames();
     }
 
@@ -72,7 +72,7 @@ public interface AnimationChannel {
      *
      * @return frame height
      */
-    default public double computeFrameHeight() {
+    default double computeFrameHeight() {
         return area().getHeight();
     }
 
@@ -80,10 +80,10 @@ public interface AnimationChannel {
      * Computes the viewport for given frame. Frames
      * start from 0.
      *
-     * @param frame
-     * @return
+     * @param frame frame number
+     * @return viewport area for frame
      */
-    default public Rectangle2D computeViewport(int frame) {
+    default Rectangle2D computeViewport(int frame) {
         double frameW = computeFrameWidth();
         Rectangle2D area = area();
         return new Rectangle2D(frame * frameW, area.getMinY(), frameW, area.getHeight());
