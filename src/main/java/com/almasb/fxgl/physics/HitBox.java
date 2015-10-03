@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 
@@ -32,6 +33,25 @@ public final class HitBox {
     private Bounds bounds;
     private String name;
 
+    /**
+     * Creates a hit box with given name and bounds.
+     * The bounds are calculated from the local entity origin
+     * in local coordinates.
+     * <p>
+     * For example: an entity with width 40 and height 80 could have 2 hit boxes.
+     * one for HEAD and one for BODY as follows:
+     * </p>
+     * <pre>
+     *     Entity entity = ...
+     *     entity.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40));
+     *     entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 40, 40, 40));
+     *
+     * </pre>
+     * Note, the 2nd bounding box has y = 40.
+     *
+     * @param name hit box name
+     * @param bounds hit box bounds
+     */
     public HitBox(String name, BoundingBox bounds) {
         this.name = name;
         this.bounds = bounds;
@@ -50,6 +70,10 @@ public final class HitBox {
         return bounds.getMaxY();
     }
 
+    /**
+     *
+     * @return hit box name
+     */
     public String getName() {
         return name;
     }

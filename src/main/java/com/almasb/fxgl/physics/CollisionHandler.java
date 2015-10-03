@@ -37,18 +37,33 @@ import com.almasb.fxgl.entity.EntityType;
  */
 public abstract class CollisionHandler extends Pair<EntityType> {
 
+    /**
+     * The order of types determines the order of entities in callbacks.
+     *
+     * @param a entity type of the first entity
+     * @param b entity type of the second entity
+     */
     public CollisionHandler(EntityType a, EntityType b) {
         super(a, b);
     }
 
+    /**
+     * Called once per collision during the same tick when collision occurred.
+     * Only the first hit box in the collision is passed.
+     *
+     * @param a first entity
+     * @param b second entity
+     * @param boxA hit box of first entity
+     * @param boxB hit box of second entity
+     */
     protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
     }
 
     /**
      * Called when entities A and B have just collided and weren't colliding in the last tick.
      *
-     * @param a
-     * @param b
+     * @param a first entity
+     * @param b second entity
      */
     protected void onCollisionBegin(Entity a, Entity b) {
     }
@@ -59,8 +74,8 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * This is called one tick after {@link #onCollisionBegin(Entity, Entity)}
      * if the entities are still colliding
      *
-     * @param a
-     * @param b
+     * @param a first entity
+     * @param b second entity
      */
     protected void onCollision(Entity a, Entity b) {
     }
@@ -68,8 +83,8 @@ public abstract class CollisionHandler extends Pair<EntityType> {
     /**
      * Called when entities A and B have just stopped colliding and were colliding in the last tick.
      *
-     * @param a
-     * @param b
+     * @param a first entity
+     * @param b second entity
      */
     protected void onCollisionEnd(Entity a, Entity b) {
     }
