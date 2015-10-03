@@ -82,8 +82,8 @@ public final class Assets {
      * Returns a new copy of a cached texture so
      * it is safe to use multiple times.
      *
-     * @param key
-     * @return
+     * @param key texture name
+     * @return texture
      * @throws IllegalArgumentException if no such texture exists
      */
     public Texture getTexture(String key) {
@@ -95,10 +95,10 @@ public final class Assets {
     }
 
     /**
-     * Returns stored audio clip.
+     * Returns stored sound.
      *
-     * @param key
-     * @return
+     * @param key sound name
+     * @return sound
      * @throws IllegalArgumentException if no such sound exists
      */
     public Sound getSound(String key) {
@@ -112,8 +112,8 @@ public final class Assets {
     /**
      * Returns stored music object.
      *
-     * @param key
-     * @return
+     * @param key music file name
+     * @return music object
      * @throws IllegalArgumentException if no such music exists
      */
     public Music getMusic(String key) {
@@ -127,8 +127,8 @@ public final class Assets {
     /**
      * Returns new list contains original text.
      *
-     * @param key
-     * @return
+     * @param key text file name
+     * @return text as list of lines
      * @throws IllegalArgumentException if no such text exists
      */
     public List<String> getText(String key) {
@@ -140,10 +140,10 @@ public final class Assets {
     }
 
     /**
-     * Returns stored font.
+     * Returns stored font factory.
      *
-     * @param key
-     * @return
+     * @param key font name
+     * @return font factory for given font name
      */
     public FontFactory getFontFactory(String key) {
         FontFactory fontFactory = cachedFonts.get(key);
@@ -156,8 +156,8 @@ public final class Assets {
     /**
      * Returns cached custom format data.
      *
-     * @param key
-     * @return
+     * @param key data file name
+     * @return data
      * @throws IllegalArgumentException if no such data exists
      */
     @SuppressWarnings("unchecked")

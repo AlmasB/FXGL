@@ -47,7 +47,7 @@ public final class Sound {
      * being full left, <code>0.0</code> center, and <code>1.0</code> full right.
      * The default value is <code>0.0</code>.
      *
-     * @param balance
+     * @param balance sound balance
      */
     public void setBalance(double balance) {
         clip.setBalance(balance);
@@ -69,7 +69,7 @@ public final class Sound {
      * much higher cost in CPU overhead so this is not recommended for mono
      * clips.
      *
-     * @param pan
+     * @param pan sound pan
      */
     public void setPan(double pan) {
         clip.setPan(pan);
@@ -88,7 +88,7 @@ public final class Sound {
      * internally. Normal playback for a clip is 1.0; any other rate will affect
      * pitch and duration accordingly.
      *
-     * @param rate
+     * @param rate sound rate
      */
     public void setRate(double rate) {
         clip.setRate(rate);
@@ -105,7 +105,7 @@ public final class Sound {
      * The number of times the sound is to be played
      * in the range [1..Integer.MAX_VALUE]
      *
-     * @param count
+     * @param count number of times to play
      */
     public void setCycleCount(int count) {
         clip.setCycleCount(count);

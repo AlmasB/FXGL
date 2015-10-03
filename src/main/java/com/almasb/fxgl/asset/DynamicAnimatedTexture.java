@@ -26,6 +26,7 @@
 package com.almasb.fxgl.asset;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.animation.KeyFrame;
@@ -55,8 +56,7 @@ public final class DynamicAnimatedTexture extends Texture {
         super(image);
         timeline.setCycleCount(Timeline.INDEFINITE);
 
-        for (AnimationChannel c : channels)
-            animationChannels.add(c);
+        Collections.addAll(animationChannels, channels);
         setAnimationChannel(initialChannel);
     }
 
@@ -65,7 +65,7 @@ public final class DynamicAnimatedTexture extends Texture {
      * when creating instance of DynamicAnimatedTexture, this method
      * will throw IllegalArgumentException
      *
-     * @param channel
+     * @param channel animation channel
      */
     public void setAnimationChannel(AnimationChannel channel) {
         if (!animationChannels.contains(channel)) {
@@ -80,9 +80,7 @@ public final class DynamicAnimatedTexture extends Texture {
             frame.removeListener(frameListener);
         }
 
-        frameListener = (obs, old, newFrame) -> {
-            setViewport(channel.computeViewport(newFrame.intValue()));
-        };
+        frameListener = (obs, old, newFrame) -> setViewport(channel.computeViewport(newFrame.intValue()));
         frame.addListener(frameListener);
 
         timeline.getKeyFrames().setAll(new KeyFrame(channel.duration(), new KeyValue(frame, channel.frames() - 1)));

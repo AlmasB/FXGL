@@ -45,7 +45,7 @@ public final class StaticAnimatedTexture extends Texture {
 
     /**
      * @param image    actual image
-     * @param frames   number of frames in spritesheet
+     * @param frames   number of frames in sprite sheet
      * @param duration duration of the animation
      */
     StaticAnimatedTexture(Image image, int frames, Duration duration) {

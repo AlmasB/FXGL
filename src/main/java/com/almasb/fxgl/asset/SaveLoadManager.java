@@ -47,8 +47,8 @@ public enum SaveLoadManager {
      * <p>
      * All extra directories will also be created if necessary
      *
-     * @param data
-     * @param fileName
+     * @param data data to save
+     * @param fileName to save as
      * @throws Exception
      */
     public void save(Serializable data, String fileName) throws Exception {
@@ -68,8 +68,8 @@ public enum SaveLoadManager {
      * file on disk file system from "saves/" directory which is
      * in the directory where the game is run from
      *
-     * @param fileName
-     * @return
+     * @param fileName file name to load from
+     * @return instance of deserialized data structure
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
@@ -80,7 +80,7 @@ public enum SaveLoadManager {
     }
 
     /**
-     * @param fileName
+     * @param fileName name of the file to delete
      * @return true if file was deleted, false if file wasn't deleted for any reason
      */
     public boolean delete(String fileName) {

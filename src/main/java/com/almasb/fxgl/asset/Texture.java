@@ -55,20 +55,19 @@ public class Texture extends ImageView {
     /**
      * Converts the texture to animated texture
      *
-     * @param frames   number of frames in spritesheet
+     * @param frames   number of frames in sprite sheet
      * @param duration overall duration (for all frames) of the animation
      * @return new StaticAnimatedTexture
      */
     public final StaticAnimatedTexture toStaticAnimatedTexture(int frames, Duration duration) {
-        StaticAnimatedTexture texture = new StaticAnimatedTexture(getImage(), frames, duration);
-        return texture;
+        return new StaticAnimatedTexture(getImage(), frames, duration);
     }
 
     /**
      * Converts the texture to dynamically animated texture.
      *
-     * @param initialChannel
-     * @param channels
+     * @param initialChannel the channel set at the beginning
+     * @param channels animation channels
      * @return new DynamicAnimatedTexture
      */
     public final DynamicAnimatedTexture toDynamicAnimatedTexture(AnimationChannel initialChannel, AnimationChannel... channels) {
@@ -99,8 +98,8 @@ public class Texture extends ImageView {
      * Rectangle cannot cover area outside of the original texture
      * image.
      *
-     * @param area
-     * @return
+     * @param area area of the original texture that represents sub-texture
+     * @return sub-texture
      */
     public final Texture subTexture(Rectangle2D area) {
         int minX = (int) area.getMinX();
@@ -133,12 +132,6 @@ public class Texture extends ImageView {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Texture [fitWidth=");
-        builder.append(getFitWidth());
-        builder.append(", fitHeight=");
-        builder.append(getFitHeight());
-        builder.append("]");
-        return builder.toString();
+        return "Texture [fitWidth=" + getFitWidth() + ", fitHeight=" + getFitHeight() + "]";
     }
 }

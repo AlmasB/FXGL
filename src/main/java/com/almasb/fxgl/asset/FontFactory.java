@@ -44,8 +44,8 @@ public final class FontFactory {
      * The font used is the same as the one used in factory
      * construction.
      *
-     * @param size
-     * @return
+     * @param size font size
+     * @return font
      */
     public Font newFont(double size) {
         return new Font(font.getName(), size);

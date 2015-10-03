@@ -49,7 +49,7 @@ public final class Music {
      * being full left, <code>0.0</code> center, and <code>1.0</code> full right.
      * The default value is <code>0.0</code>.
      *
-     * @param balance
+     * @param balance the music balance
      */
     public void setBalance(double balance) {
         mediaPlayer.setBalance(balance);
@@ -69,7 +69,7 @@ public final class Music {
      * supported range of rates is <code>[0.0,&nbsp;8.0]</code>. The default
      * value is <code>1.0</code>.
      *
-     * @param rate
+     * @param rate music rate
      */
     public void setRate(double rate) {
         mediaPlayer.setRate(rate);
@@ -87,7 +87,7 @@ public final class Music {
      * to {@link Integer#MAX_VALUE} effectively loops the music.
      * Useful for background music.
      *
-     * @param count
+     * @param count number of times to play
      */
     public void setCycleCount(int count) {
         mediaPlayer.setCycleCount(count);

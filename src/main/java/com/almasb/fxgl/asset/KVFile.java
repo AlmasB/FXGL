@@ -79,9 +79,9 @@ public final class KVFile {
      * key = value
      * </pre>
      * <p>
-     * Emptry spaces are ignored before, after and inbetween tokens.
+     * Empty spaces are ignored before, after and inbetween tokens.
      *
-     * @param fileLines
+     * @param fileLines list of lines from file
      */
     public KVFile(List<String> fileLines) {
         entries = fileLines.stream()
@@ -138,8 +138,8 @@ public final class KVFile {
      * created instance with key-value data from given object using
      * its declared fields.
      *
-     * @param data
-     * @return
+     * @param data object to convert to kv file
+     * @return kv file
      * @throws Exception
      */
     public static KVFile from(Object data) throws Exception {
@@ -158,8 +158,8 @@ public final class KVFile {
      * Converts an instance of KVFile to instance of the data
      * structure and populates its fields with appropriate values.
      *
-     * @param type
-     * @return
+     * @param type data structure type
+     * @return instance of type
      * @throws Exception
      */
     public <T> T to(Class<T> type) throws Exception {
@@ -173,10 +173,6 @@ public final class KVFile {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("KVFile [entries=");
-        builder.append(entries.toString());
-        builder.append("]");
-        return builder.toString();
+        return "KVFile [entries=" + entries.toString() + "]";
     }
 }
