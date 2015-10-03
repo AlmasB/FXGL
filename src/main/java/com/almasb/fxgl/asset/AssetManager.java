@@ -451,7 +451,7 @@ public enum AssetManager {
             URL jar = src.getLocation();
             try (InputStream is = jar.openStream();
                  ZipInputStream zip = new ZipInputStream(is)) {
-                ZipEntry ze;if
+                ZipEntry ze;
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
                     if (entryName.startsWith(folderName)) {
