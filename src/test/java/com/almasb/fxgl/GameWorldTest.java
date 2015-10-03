@@ -56,10 +56,8 @@ public class GameWorldTest {
     }
 
     @Test
-    public void entities() {
+    public void addRemoveEntities() {
         Entity entity = new Entity(Type.TEST_ENTITY);
-        entity.setPosition(100, 100);
-        entity.setSceneView(new Rectangle(40, 40));
 
         gameWorld.addEntities(entity);
         assertEquals(0, gameWorld.getEntities().size());
@@ -71,13 +69,7 @@ public class GameWorldTest {
         assertEquals(1, list.size());
         assertEquals(entity, list.get(0));
 
-//        list = gameWorld.getEntitiesByLayer(entity.getRenderLayer());
-//        assertEquals(1, list.size());
-//        assertEquals(entity, list.get(0));
 
-        Optional<Entity> maybe = gameWorld.getEntityAt(new Point2D(100, 100));
-        assertTrue(maybe.isPresent());
-        assertEquals(entity, maybe.get());
 
 //        list = gameWorld.getEntitiesInRange(new Rectangle2D(50, 50, 100, 100));
 //        assertEquals(1, list.size());
@@ -91,7 +83,40 @@ public class GameWorldTest {
     }
 
     @Test
-    public void reconstruction() {
+    public void getEntityAt() {
+        Entity entity = new Entity(Type.TEST_ENTITY);
+        entity.setPosition(100, 100);
+
+        gameWorld.addEntities(entity);
+        assertEquals(0, gameWorld.getEntities().size());
+
+        gameWorld.update();
+        assertEquals(1, gameWorld.getEntities().size());
+
+        Optional<Entity> maybe = gameWorld.getEntityAt(new Point2D(100, 100));
+        assertTrue(maybe.isPresent());
+        assertEquals(entity, maybe.get());
+    }
+
+    @Test
+    public void getEntitiesFiltered() {
+        Entity entity = new Entity(Type.TEST_ENTITY);
+        entity.setPosition(100, 100);
+        entity.setSceneView(new Rectangle(40, 40));
+
+        gameWorld.addEntities(entity);
+        assertEquals(0, gameWorld.getEntities().size());
+
+        gameWorld.update();
+        assertEquals(1, gameWorld.getEntities().size());
+
+        List<Entity> list = gameWorld.getEntitiesFiltered(e -> e.getPosition().equals(new Point2D(100, 100)));
+        assertEquals(1, list.size());
+        assertEquals(entity, list.get(0));
+    }
+
+    @Test
+    public void reset() {
         Entity entity = new Entity(Type.TEST_ENTITY);
 
         gameWorld.addEntities(entity);
