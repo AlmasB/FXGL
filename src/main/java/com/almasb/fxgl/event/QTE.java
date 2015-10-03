@@ -39,6 +39,8 @@ import javafx.scene.text.Text;
 /**
  * Represents a QTE GUI element.
  *
+ * API NOT READY FOR USE
+ *
  * @author Almas Baimagambetov
  * @version 1.0
  */

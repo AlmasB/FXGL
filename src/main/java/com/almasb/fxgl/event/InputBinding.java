@@ -64,7 +64,7 @@ public final class InputBinding {
     }
 
     /**
-     * @param k
+     * @param k key
      * @return true iff given key is a trigger to this binding
      */
     boolean isTriggered(KeyCode k) {
@@ -72,7 +72,7 @@ public final class InputBinding {
     }
 
     /**
-     * @param b
+     * @param b mouse button
      * @return true iff given button is a trigger to this binding
      */
     boolean isTriggered(MouseButton b) {
@@ -83,7 +83,7 @@ public final class InputBinding {
      * Set key trigger. This will remove any other triggers
      * associated with this input binding.
      *
-     * @param k
+     * @param k key
      */
     void setTrigger(KeyCode k) {
         this.btn = Optional.empty();
@@ -95,7 +95,7 @@ public final class InputBinding {
      * Set mouse button trigger. This will remove any other triggers
      * associated with this input binding.
      *
-     * @param b
+     * @param b mouse button
      */
     void setTrigger(MouseButton b) {
         this.key = Optional.empty();

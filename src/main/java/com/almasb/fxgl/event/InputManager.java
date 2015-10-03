@@ -80,36 +80,24 @@ public final class InputManager implements WorldStateListener {
     public InputManager(GameScene gameScene) {
         this.gameScene = gameScene;
 
-        currentActions.addListener(new ListChangeListener<UserAction>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends UserAction> c) {
-                while (c.next()) {
-                    if (!processActions)
-                        continue;
+        currentActions.addListener((ListChangeListener.Change<? extends UserAction> c) -> {
+            while (c.next()) {
+                if (!processActions)
+                    continue;
 
-                    if (c.wasAdded()) {
-                        c.getAddedSubList().forEach(action -> action.onActionBegin());
-                    } else if (c.wasRemoved()) {
-                        c.getRemoved().forEach(action -> action.onActionEnd());
-                    }
+                if (c.wasAdded()) {
+                    c.getAddedSubList().forEach(UserAction::onActionBegin);
+                } else if (c.wasRemoved()) {
+                    c.getRemoved().forEach(UserAction::onActionEnd);
                 }
             }
         });
 
-        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            handlePressed(new Trigger(event.getCode()));
-        });
+        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event.getCode())));
+        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event.getCode())));
 
-        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            handleReleased(new Trigger(event.getCode()));
-        });
-
-        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-            handlePressed(new Trigger(event.getButton()));
-        });
-        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            handleReleased(new Trigger(event.getButton()));
-        });
+        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event.getButton())));
+        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event.getButton())));
 
         gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
         gameScene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
@@ -120,7 +108,7 @@ public final class InputManager implements WorldStateListener {
     /**
      * Handle pressed event for given trigger.
      *
-     * @param trigger
+     * @param trigger the trigger
      */
     private void handlePressed(Trigger trigger) {
         bindings.stream()
@@ -140,7 +128,7 @@ public final class InputManager implements WorldStateListener {
     /**
      * Handle released event for given trigger
      *
-     * @param trigger
+     * @param trigger the trigger
      */
     private void handleReleased(Trigger trigger) {
         bindings.stream()
@@ -162,7 +150,7 @@ public final class InputManager implements WorldStateListener {
      * Setting to false will not run any actions bound to key/mouse press.
      * The events will still continue to be registered.
      *
-     * @param b
+     * @param b process actions flag
      */
     public void setProcessActions(boolean b) {
         processActions = b;
@@ -185,8 +173,8 @@ public final class InputManager implements WorldStateListener {
     /**
      * Bind given action to a mouse button.
      *
-     * @param action
-     * @param btn
+     * @param action the action to bind
+     * @param btn the mouse button
      */
     public void addAction(UserAction action, MouseButton btn) {
         bindings.add(new InputBinding(action, btn));
@@ -196,8 +184,8 @@ public final class InputManager implements WorldStateListener {
     /**
      * Bind given action to a keyboard key.
      *
-     * @param action
-     * @param key
+     * @param action the action to bind
+     * @param key the key
      */
     public void addAction(UserAction action, KeyCode key) {
         bindings.add(new InputBinding(action, key));
@@ -207,8 +195,8 @@ public final class InputManager implements WorldStateListener {
     /**
      * Find binding for given action.
      *
-     * @param action
-     * @return
+     * @param action the user action
+     * @return input binding
      */
     private Optional<InputBinding> findBindingByAction(UserAction action) {
         return bindings.stream()
@@ -217,7 +205,7 @@ public final class InputManager implements WorldStateListener {
     }
 
     /**
-     * @param key
+     * @param key the key to check
      * @return true if an action is already bound to given key
      */
     private boolean isKeyBound(KeyCode key) {
@@ -226,7 +214,7 @@ public final class InputManager implements WorldStateListener {
     }
 
     /**
-     * @param btn
+     * @param btn the mouse button to check
      * @return true if an action is already bound to given button
      */
     private boolean isButtonBound(MouseButton btn) {
@@ -237,8 +225,8 @@ public final class InputManager implements WorldStateListener {
     /**
      * Rebinds an action to given key.
      *
-     * @param action
-     * @param key
+     * @param action the user action
+     * @param key the key to rebind to
      * @return true if rebound, false if action not found or
      * there is another action bound to key
      */
@@ -254,10 +242,10 @@ public final class InputManager implements WorldStateListener {
     /**
      * Rebinds an action to given mouse button.
      *
-     * @param action
-     * @param btn
+     * @param action the user action
+     * @param btn the mouse button
      * @return true if rebound, false if action not found or
-     * there is another action bound to mosue button
+     * there is another action bound to mouse button
      */
     public boolean rebind(UserAction action, MouseButton btn) {
         Optional<InputBinding> maybeBinding = findBindingByAction(action);
@@ -270,9 +258,9 @@ public final class InputManager implements WorldStateListener {
 
     /**
      * Returns mouse object that contains constantly updated
-     * data about mouse state
+     * data about mouse state.
      *
-     * @return
+     * @return mouse object
      */
     public Mouse getMouse() {
         return mouse;

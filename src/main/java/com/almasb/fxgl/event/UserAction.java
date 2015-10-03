@@ -56,10 +56,7 @@ public abstract class UserAction {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof UserAction))
-            return false;
-
-        return name.equals(((UserAction) o).name);
+        return o instanceof UserAction && name.equals(((UserAction) o).name);
     }
 
     @Override
