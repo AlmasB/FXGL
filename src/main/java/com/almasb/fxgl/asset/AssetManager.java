@@ -165,7 +165,7 @@ public enum AssetManager {
      * or throws an exception in case of errors
      *
      * @param name text file name without the {@value #TEXT_DIR}, e.g. "level_0.txt"
-     * @return
+     * @return list of lines from file
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public List<String> loadText(String name) {
@@ -177,7 +177,7 @@ public enum AssetManager {
      * Either returns a valid KVFile or throws exception in case of errors.
      *
      * @param name KVFile name without the {@value #KV_DIR}, .e.g "settings.kv"
-     * @return
+     * @return kv file
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public KVFile loadKV(String name) {
@@ -189,13 +189,13 @@ public enum AssetManager {
      * Either returns loaded string or throws exception in case of errors.
      *
      * @param name script file without the {@value #SCRIPTS_DIR}, e.g. "skill_heal.js"
-     * @return
+     * @return script as a String
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public String loadScript(String name) {
         StringBuilder builder = new StringBuilder();
         readAllLines(SCRIPTS_DIR + name)
-                .forEach(line -> builder.append(line + "\n"));
+                .forEach(line -> builder.append(line).append('\n'));
         return builder.toString();
     }
 
@@ -204,7 +204,7 @@ public enum AssetManager {
      * Either returns a valid image or throws exception in case of errors.
      *
      * @param name image name without the {@value #CURSORS_DIR}, e.g. "attack_cursor.png"
-     * @return
+     * @return cursor image
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Image loadCursorImage(String name) {
@@ -221,7 +221,7 @@ public enum AssetManager {
      * Either returns ready CSS or throws exception in case of errors.
      *
      * @param name CSS file name without the {@value #CSS_DIR}, e.g. "ui_button.css"
-     * @return
+     * @return css URL external form
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public String loadCSS(String name) {
@@ -263,7 +263,7 @@ public enum AssetManager {
      * Either returns a valid image or throws an exception in case of errors.
      *
      * @param name image name without the {@value #ICON_DIR}, e.g. "app_icon.png"
-     * @return
+     * @return app icon image
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Image loadAppIcon(String name) {
@@ -320,8 +320,8 @@ public enum AssetManager {
     /**
      * Returns a valid URL to resource or throws {@link IllegalArgumentException}.
      *
-     * @param name
-     * @return
+     * @param name resource name
+     * @return URL to resource
      */
     private URL getURL(String name) {
         URL url = getClass().getResource(name);
@@ -355,7 +355,7 @@ public enum AssetManager {
      * Read all lines from a file. Bytes from the file are decoded into characters
      * using the {@link StandardCharsets#UTF_8 UTF-8} {@link Charset charset}.
      *
-     * @param name
+     * @param name resource name
      * @return the lines from the file as a {@code List}
      */
     private List<String> readAllLines(String name) {
@@ -412,7 +412,7 @@ public enum AssetManager {
      * Note: directory name must be in the format "/assets/...".
      * Returned file names are relativized to the given directory name.
      *
-     * @param directory
+     * @param directory name of directory
      * @return list of file names
      * @throws Exception
      */
@@ -451,7 +451,7 @@ public enum AssetManager {
             URL jar = src.getLocation();
             try (InputStream is = jar.openStream();
                  ZipInputStream zip = new ZipInputStream(is)) {
-                ZipEntry ze = null;
+                ZipEntry ze;if
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
                     if (entryName.startsWith(folderName)) {
@@ -474,9 +474,9 @@ public enum AssetManager {
      * Constructs new IllegalArgumentException with "load failed" message
      * and with relevant information about the asset.
      *
-     * @param assetName
-     * @param error
-     * @return
+     * @param assetName name of the asset load of which failed
+     * @param error the error that occurred
+     * @return instance of IAE to be thrown
      */
     private IllegalArgumentException loadFailed(String assetName, Throwable error) {
         return new IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.getMessage());
