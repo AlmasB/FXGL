@@ -125,7 +125,7 @@ public class Particle {
     /**
      * Set a direct controller to this particle.
      *
-     * @param control
+     * @param control particle control
      */
     public void setControl(Consumer<Particle> control) {
         this.control = control;
@@ -149,10 +149,7 @@ public class Particle {
         if (control != null)
             control.accept(this);
 
-        if (life <= 0 || radiusX <= 0 || radiusY <= 0)
-            return true;
-
-        return false;
+        return life <= 0 || radiusX <= 0 || radiusY <= 0;
     }
 
     /**
@@ -160,8 +157,8 @@ public class Particle {
      * account the viewport origin, so if particle
      * XY is outside the viewport it will not be seen.
      *
-     * @param g
-     * @param viewportOrigin
+     * @param g graphics context
+     * @param viewportOrigin viewport origin
      */
     void render(GraphicsContext g, Point2D viewportOrigin) {
         g.setGlobalAlpha(life);

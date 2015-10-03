@@ -57,7 +57,7 @@ public final class FireEmitter extends ParticleEmitter {
     /**
      * Set color to fire particles.
      *
-     * @param color
+     * @param color particles color
      */
     public void setColor(Paint color) {
         this.color = color;
@@ -67,8 +67,8 @@ public final class FireEmitter extends ParticleEmitter {
      * Set size to fire particles. The created size
      * will vary between min and max
      *
-     * @param min
-     * @param max
+     * @param min minimum size
+     * @param max maximum size
      */
     public void setSize(double min, double max) {
         sizeMin = min;
@@ -80,8 +80,8 @@ public final class FireEmitter extends ParticleEmitter {
      * the fire particles' movement will be biased towards
      * the vector.
      *
-     * @param x
-     * @param y
+     * @param x vector x
+     * @param y vector y
      */
     public void setGravity(double x, double y) {
         gravity = new Point2D(x, y);
@@ -91,7 +91,7 @@ public final class FireEmitter extends ParticleEmitter {
      * Set initial velocity function to particles. The function will
      * be called every time to get a new velocity for a new particle.
      *
-     * @param function
+     * @param function velocity generator function
      */
     public void setInitialVelocityFunction(Supplier<Point2D> function) {
         velocityFunction = function;
@@ -100,7 +100,7 @@ public final class FireEmitter extends ParticleEmitter {
     @Override
     protected Particle emit(int i, double x, double y) {
         Point2D spawn = new Point2D(i * (rand() - 0.5), (rand() - 1));
-        Particle p = new Particle(new Point2D(x, y).add(spawn),
+        return new Particle(new Point2D(x, y).add(spawn),
                 velocityFunction.get(),
                 gravity,
                 rand(sizeMin, sizeMax),
@@ -108,6 +108,5 @@ public final class FireEmitter extends ParticleEmitter {
                 Duration.seconds(1),
                 color,
                 i < getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_DODGE);
-        return p;
     }
 }

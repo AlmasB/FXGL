@@ -41,7 +41,7 @@ public final class ExplosionEmitter extends ParticleEmitter {
     protected Particle emit(int i, double x, double y) {
         Point2D vel = new Point2D(Math.cos(i), Math.sin(i));
 
-        Particle p = new Particle(new Point2D(x, y),
+        return new Particle(new Point2D(x, y),
                 vel.multiply(0.75),
                 Point2D.ZERO,
                 rand(5, 20),
@@ -49,6 +49,5 @@ public final class ExplosionEmitter extends ParticleEmitter {
                 Duration.seconds(0.5),
                 Color.rgb((int) rand(200, 255), 30, 20),
                 i < getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_BURN);
-        return p;
     }
 }

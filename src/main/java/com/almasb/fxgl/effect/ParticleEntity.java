@@ -37,7 +37,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Particles are attached to ParticleEntity so they can be part of the
- * scenegraph. The actual render of particles happens on Canvas.
+ * scene graph. The actual render of particles happens on Canvas.
  * <p>
  * Translation of this entity will also affect the position of newly
  * spawned particles.
@@ -59,7 +59,7 @@ public final class ParticleEntity extends Entity {
     /**
      * Constructs new particle entity with given type.
      *
-     * @param type
+     * @param type entity type
      */
     public ParticleEntity(EntityType type) {
         super(type);
@@ -69,7 +69,7 @@ public final class ParticleEntity extends Entity {
      * Set particle emitter to this entity.
      * The emitter determines the particle behavior
      *
-     * @param emitter
+     * @param emitter the emitter
      */
     public void setEmitter(ParticleEmitter emitter) {
         this.emitter = emitter;
@@ -97,8 +97,8 @@ public final class ParticleEntity extends Entity {
     /**
      * Do NOT call manually.
      *
-     * @param g
-     * @param viewportOrigin
+     * @param g graphics context
+     * @param viewportOrigin viewport origin
      */
     public void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
         particles.forEach(p -> p.render(g, viewportOrigin));

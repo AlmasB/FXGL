@@ -51,7 +51,7 @@ public final class SmokeEmitter extends ParticleEmitter {
     /**
      * Sets color of smoke particles.
      *
-     * @param color
+     * @param color particles color
      */
     public void setColor(Paint color) {
         this.color = color;

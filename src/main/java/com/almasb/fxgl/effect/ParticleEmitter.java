@@ -62,7 +62,7 @@ public abstract class ParticleEmitter {
     /**
      * Set number of particles being spawned per emission.
      *
-     * @param numParticles
+     * @param numParticles number of particles
      */
     public final void setNumParticles(int numParticles) {
         this.numParticles = numParticles;
@@ -77,7 +77,7 @@ public abstract class ParticleEmitter {
      * <li> 0.0 - emission will never occur </li>
      * etc.
      *
-     * @param emissionRate
+     * @param emissionRate emission rate
      */
     public final void setEmissionRate(double emissionRate) {
         this.emissionRate = emissionRate;
@@ -86,7 +86,7 @@ public abstract class ParticleEmitter {
     /**
      * Returns a value in [0..1).
      *
-     * @return
+     * @return random value between 0 (incl) and 1 (excl)
      */
     protected final double rand() {
         return random.nextDouble();
@@ -95,9 +95,9 @@ public abstract class ParticleEmitter {
     /**
      * Returns a value in [min..max).
      *
-     * @param min
-     * @param max
-     * @return
+     * @param min min bounds
+     * @param max max bounds
+     * @return a random value between min (incl) and max (excl)
      */
     protected final double rand(double min, double max) {
         return rand() * (max - min) + min;
@@ -109,9 +109,9 @@ public abstract class ParticleEmitter {
      * decide whether to spawn particles or not. If the emitter
      * is not ready, an empty list is returned.
      *
-     * @param x
-     * @param y
-     * @return
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return list of particles spawned
      */
     final List<Particle> emit(double x, double y) {
         rateAC += emissionRate;
@@ -127,7 +127,7 @@ public abstract class ParticleEmitter {
 
     /**
      * Emits a single particle with index i. x and y
-     * are coords of the particle entity this emitter is attached to.
+     * are coordinates of the particle entity this emitter is attached to.
      *
      * @param i particle index from 0 to {@link #numParticles}
      * @param x top left X of the particle entity
