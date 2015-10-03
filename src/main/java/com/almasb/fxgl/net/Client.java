@@ -57,7 +57,6 @@ import com.almasb.fxgl.util.FXGLLogger;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 public final class Client extends NetworkConnection {
 
@@ -76,7 +75,7 @@ public final class Client extends NetworkConnection {
      * Constructs a new client with given server IP configuration.
      * No network operation is done at this point.
      *
-     * @param serverIP
+     * @param serverIP ip of the server machine
      */
     public Client(String serverIP) {
         this(serverIP, NetworkConfig.DEFAULT_TCP_PORT, NetworkConfig.DEFAULT_UDP_PORT);
@@ -87,9 +86,9 @@ public final class Client extends NetworkConnection {
      * tcp/udp ports configuration.
      * No network operation is done at this point.
      *
-     * @param serverIP
-     * @param tcpPort
-     * @param udpPort
+     * @param serverIP ip of the server machine
+     * @param tcpPort tcp port to use
+     * @param udpPort udp port to use
      */
     public Client(String serverIP, int tcpPort, int udpPort) {
         this.serverIP = serverIP;

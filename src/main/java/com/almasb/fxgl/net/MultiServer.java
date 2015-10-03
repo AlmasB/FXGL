@@ -49,7 +49,6 @@ import com.almasb.fxgl.util.FXGLLogger;
  * called to attempt a clean shutdown of the server
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 public final class MultiServer extends NetworkConnection {
     private static final Logger log = FXGLLogger.getLogger("FXGL.MultiServer");
@@ -57,9 +56,9 @@ public final class MultiServer extends NetworkConnection {
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();
 
-    private List<TCPThread> tcpThreads = Collections.synchronizedList(new ArrayList<>());
+    private final List<TCPThread> tcpThreads = Collections.synchronizedList(new ArrayList<>());
 
-    private List<FullInetAddress> addresses = Collections.synchronizedList(new ArrayList<>());
+    private final List<FullInetAddress> addresses = Collections.synchronizedList(new ArrayList<>());
     private int tcpPort, udpPort;
 
     /**
@@ -74,8 +73,8 @@ public final class MultiServer extends NetworkConnection {
      * Constructs and configures a multi server with specified ports
      * No network operation is done at this point.
      *
-     * @param tcpPort
-     * @param udpPort
+     * @param tcpPort tcp port to use
+     * @param udpPort udp port to use
      */
     public MultiServer(int tcpPort, int udpPort) {
         this.tcpPort = tcpPort;
@@ -108,7 +107,7 @@ public final class MultiServer extends NetworkConnection {
         tcpThread.running = false;
         try {
             tcpThread.server.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         tcpThreads.forEach(t -> t.running = false);
@@ -136,15 +135,13 @@ public final class MultiServer extends NetworkConnection {
     @Override
     protected void sendTCP(Serializable data) throws Exception {
         synchronized (tcpThreads) {
-            for (TCPThread tcpThread : tcpThreads) {
-                if (tcpThread.running) {
-                    try {
-                        tcpThread.outputStream.writeObject(data);
-                    } catch (Exception e) {
-                        log.warning("Failed to send TCP message: " + e.getMessage());
-                    }
+            tcpThreads.stream().filter(tcpThread -> tcpThread.running).forEach(tcpThread -> {
+                try {
+                    tcpThread.outputStream.writeObject(data);
+                } catch (Exception e) {
+                    log.warning("Failed to send TCP message: " + e.getMessage());
                 }
-            }
+            });
         }
     }
 
@@ -178,7 +175,7 @@ public final class MultiServer extends NetworkConnection {
 
             try {
                 server.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             log.info("TCP connection closed normally");
         }
@@ -222,7 +219,7 @@ public final class MultiServer extends NetworkConnection {
                 tcpThreads.remove(this);
                 try {
                     socket.close();
-                } catch (IOException e1) {
+                } catch (IOException ignored) {
                 }
                 return;
             }
@@ -230,7 +227,7 @@ public final class MultiServer extends NetworkConnection {
             tcpThreads.remove(this);
             try {
                 socket.close();
-            } catch (IOException e1) {
+            } catch (IOException ignored) {
             }
             log.info("TCP connection closed normally");
         }

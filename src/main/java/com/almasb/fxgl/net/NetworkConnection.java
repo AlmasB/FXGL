@@ -39,7 +39,6 @@ import com.almasb.fxgl.util.FXGLLogger;
  * Represents a communication between two machines over network.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 abstract class NetworkConnection {
 
@@ -70,8 +69,8 @@ abstract class NetworkConnection {
      * will be called back when an instance of the class
      * arrives from the other end of connection
      *
-     * @param cl
-     * @param parser
+     * @param cl data structure class
+     * @param parser the data parser
      */
     @SuppressWarnings("unchecked")
     public <T extends Serializable> void addParser(Class<T> cl, DataParser<T> parser) {
@@ -79,9 +78,9 @@ abstract class NetworkConnection {
     }
 
     /**
-     * Send data to the machine at the other end using UDP protocol
+     * Send data to the machine at the other end using UDP protocol.
      *
-     * @param data
+     * @param data the data object
      * @throws Exception
      */
     public void send(Serializable data) throws Exception {
@@ -91,8 +90,8 @@ abstract class NetworkConnection {
     /**
      * Send data to the machine at the other end using specified protocol
      *
-     * @param data
-     * @param protocol
+     * @param data the data object
+     * @param protocol the protocol to use
      * @throws Exception
      */
     public void send(Serializable data, NetworkProtocol protocol) throws Exception {
