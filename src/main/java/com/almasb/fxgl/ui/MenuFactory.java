@@ -33,10 +33,10 @@ import com.almasb.fxgl.settings.SceneSettings;
  * custom main/game menus.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class MenuFactory {
 
     public abstract FXGLMenu newMainMenu(GameApplication app, SceneSettings settings);
+
     public abstract FXGLMenu newGameMenu(GameApplication app, SceneSettings settings);
 }

@@ -36,8 +36,7 @@ public interface Control {
     /**
      * Called as part of the main loop, a single update tick
      *
-     * @param entity
-     *              the entity to which this control was added
+     * @param entity the entity to which this control was added
      */
     public void onUpdate(Entity entity);
 }

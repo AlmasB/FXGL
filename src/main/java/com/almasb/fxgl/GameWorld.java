@@ -49,7 +49,6 @@ import javafx.geometry.Point2D;
  * for various state changes.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class GameWorld {
 
@@ -66,7 +65,7 @@ public final class GameWorld {
     /**
      * Register a world state listener.
      *
-     * @param listener  the listener to add
+     * @param listener the listener to add
      */
     public void addWorldStateListener(WorldStateListener listener) {
         worldStateListeners.add(listener);
@@ -75,7 +74,7 @@ public final class GameWorld {
     /**
      * Remove registered world state listener.
      *
-     * @param listener  the listener to remove
+     * @param listener the listener to remove
      */
     public void removeWorldStateListener(WorldStateListener listener) {
         worldStateListeners.remove(listener);
@@ -84,7 +83,8 @@ public final class GameWorld {
     /**
      * Hidden ctor.
      */
-    /*package-private*/ GameWorld() {}
+    GameWorld() {
+    }
 
     /**
      * List of entities currently in the world.
@@ -105,7 +105,7 @@ public final class GameWorld {
      * Places an entity in the queue to be added to the world.
      * The entity will be added to the world in the tick.
      *
-     * @param entityToAdd    the entity to add to world
+     * @param entityToAdd the entity to add to world
      */
     public void addEntity(Entity entityToAdd) {
         addQueue.add(entityToAdd);
@@ -115,7 +115,7 @@ public final class GameWorld {
      * Places entities in the queue to be added to the world.
      * The entities will be added to the world in the tick.
      *
-     * @param entitiesToAdd      the entities to add to world
+     * @param entitiesToAdd the entities to add to world
      */
     public void addEntities(Entity... entitiesToAdd) {
         for (Entity e : entitiesToAdd) {
@@ -127,7 +127,7 @@ public final class GameWorld {
      * Places an entity in the queue to be removed from the world.
      * The entity will be removed in the next tick.
      *
-     * @param entityToRemove    the entity to remove from world
+     * @param entityToRemove the entity to remove from world
      */
     public void removeEntity(Entity entityToRemove) {
         removeQueue.add(entityToRemove);
@@ -137,7 +137,7 @@ public final class GameWorld {
      * Places entities in the queue to be removed from the world.
      * The entities will be removed in the next tick.
      *
-     * @param entitiesToRemove   the entity to remove from world
+     * @param entitiesToRemove the entity to remove from world
      */
     public void removeEntities(Entity... entitiesToRemove) {
         for (Entity e : entitiesToRemove) {
@@ -168,7 +168,7 @@ public final class GameWorld {
     /**
      * Resets the world to its initial state.
      * Does NOT clear state listeners.
-     *
+     * <p>
      * <ol>
      * <li>Registers waiting "add" entities</li>
      * <li>Removes waiting "remove" entities</li>
@@ -176,7 +176,7 @@ public final class GameWorld {
      * <li>Fires {@link WorldStateListener#onWorldReset()}</li>
      * </ol>
      */
-    /*package-private*/ void reset() {
+    void reset() {
         log.finer("Resetting game world");
 
         registerAndInitPendingEntities();
@@ -190,7 +190,7 @@ public final class GameWorld {
 
     /**
      * Performs a single world update tick.
-     *
+     * <p>
      * <ol>
      * <li>Registers waiting "add" entities</li>
      * <li>Removes waiting "remove" entities</li>
@@ -198,7 +198,7 @@ public final class GameWorld {
      * <li>Updates all entities</li>
      * </ol>
      */
-    /*package-private*/ void update() {
+    void update() {
         //log.finer("Game world update");
 
         registerAndInitPendingEntities();
@@ -213,8 +213,8 @@ public final class GameWorld {
      * arguments. If no arguments were given, returns list
      * of ALL entities currently registered in the scene graph.
      *
-     * @param types      entity types to select
-     * @return       list of entities with types
+     * @param types entity types to select
+     * @return list of entities with types
      */
     public List<Entity> getEntities(EntityType... types) {
         if (types.length == 0)
@@ -233,8 +233,8 @@ public final class GameWorld {
      * Returns a list of entities which are filtered by
      * given predicate.
      *
-     * @param predicate  filter
-     * @return   list of entities that satisfy given predicate
+     * @param predicate filter
+     * @return list of entities that satisfy given predicate
      */
     public List<Entity> getEntitiesFiltered(Predicate<Entity> predicate) {
         return entities.stream()
@@ -285,30 +285,30 @@ public final class GameWorld {
      * Returns the closest entity to the given entity with given type.
      * If no types were specified, the closest entity is returned. The given
      * entity itself is never returned.
-     *
+     * <p>
      * If there no entities satisfying the requirement, {@link Optional#empty()}
      * is returned.
      *
-     * @param entity    selected entity
-     * @param types entity types
-     * @return  closest entity to selected entity with type
+     * @param entity selected entity
+     * @param types  entity types
+     * @return closest entity to selected entity with type
      */
     public Optional<Entity> getClosestEntity(Entity entity, EntityType... types) {
         return getEntities(types).stream()
                 .filter(e -> e != entity)
-                .sorted((e1, e2) -> (int)e1.distance(entity) - (int)e2.distance(entity))
+                .sorted((e1, e2) -> (int) e1.distance(entity) - (int) e2.distance(entity))
                 .findFirst();
     }
 
     /**
      * Returns an entity at given position. The position x and y
      * must equal to entity's position x and y.
-     *
+     * <p>
      * Returns {@link Optional#empty()} if no entity was found at
      * given position.
      *
-     * @param position  point in the world
-     * @return  entity at point
+     * @param position point in the world
+     * @return entity at point
      */
     public Optional<Entity> getEntityAt(Point2D position) {
         return getEntities()

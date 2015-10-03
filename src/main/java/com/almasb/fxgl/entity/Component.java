@@ -28,7 +28,7 @@ package com.almasb.fxgl.entity;
 /**
  * Represents a single component (property) of an entity,
  * e.g. HP, Mana, Weapon, Name, Money.
- *
+ * <p>
  * <pre>
  * Example:
  *
@@ -46,7 +46,6 @@ package com.almasb.fxgl.entity;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public interface Component {
 

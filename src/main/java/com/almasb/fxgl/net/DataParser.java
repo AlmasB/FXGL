@@ -30,10 +30,9 @@ import java.io.Serializable;
 /**
  * Parser for network data
  *
+ * @param <T>
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
- * @param <T>
  */
 @FunctionalInterface
 public interface DataParser<T extends Serializable> {

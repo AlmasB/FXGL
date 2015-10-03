@@ -65,7 +65,6 @@ import javafx.util.Duration;
  * a main/game menu
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class FXGLMenu extends FXGLScene {
 
@@ -86,7 +85,7 @@ public abstract class FXGLMenu extends FXGLScene {
         menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
         // just a placeholder
-        MenuBox menuContent = new MenuBox((int)app.getWidth() - 300 - 50);
+        MenuBox menuContent = new MenuBox((int) app.getWidth() - 300 - 50);
         menuContent.setTranslateX(300);
         menuContent.setTranslateY(menu.getTranslateY());
         menuContent.setVisible(false);
@@ -249,11 +248,11 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     private MenuContent createContentCredits() {
-        Text textHead   = UIFactory.newText("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
-        Text textJFX    = UIFactory.newText("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
-        Text textJBOX   = UIFactory.newText("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
+        Text textHead = UIFactory.newText("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
+        Text textJFX = UIFactory.newText("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
+        Text textJBOX = UIFactory.newText("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
         Text textAuthor = UIFactory.newText("Author: Almas Baimagambetov (AlmasB)");
-        Text textDev    = UIFactory.newText("Source code available: https://github.com/AlmasB/FXGL");
+        Text textDev = UIFactory.newText("Source code available: https://github.com/AlmasB/FXGL");
 
         return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
     }
@@ -386,10 +385,10 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected class MenuContent extends VBox {
         public MenuContent(Node... items) {
-            getChildren().add(createSeparator((int)app.getWidth() - 300 - 50));
+            getChildren().add(createSeparator((int) app.getWidth() - 300 - 50));
 
             for (Node item : items) {
-                getChildren().addAll(item, createSeparator((int)app.getWidth() - 300 - 50));
+                getChildren().addAll(item, createSeparator((int) app.getWidth() - 300 - 50));
             }
         }
 

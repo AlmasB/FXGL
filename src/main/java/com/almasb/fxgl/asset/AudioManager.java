@@ -60,7 +60,6 @@ public final class AudioManager implements WorldStateListener {
     private DoubleProperty globalMusicVolume = new SimpleDoubleProperty(1.0);
 
     /**
-     *
      * @return global music volume property
      */
     public DoubleProperty globalMusicVolumeProperty() {
@@ -68,7 +67,6 @@ public final class AudioManager implements WorldStateListener {
     }
 
     /**
-     *
      * @return global music volume
      */
     public double getGlobalMusicVolume() {
@@ -88,7 +86,6 @@ public final class AudioManager implements WorldStateListener {
     private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(1.0);
 
     /**
-     *
      * @return global sound volume property
      */
     public DoubleProperty globalSoundVolumeProperty() {
@@ -96,7 +93,6 @@ public final class AudioManager implements WorldStateListener {
     }
 
     /**
-     *
      * @return global sound volume
      */
     public double getGlobalSoundVolume() {

@@ -29,7 +29,6 @@ package com.almasb.fxgl.util;
  * Listener for game update ticks, which occur every 1/60 sec.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public interface UpdateTickListener {
     public void onUpdate();

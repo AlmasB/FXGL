@@ -41,7 +41,8 @@ public abstract class CollisionHandler extends Pair<EntityType> {
         super(a, b);
     }
 
-    protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {}
+    protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
+    }
 
     /**
      * Called when entities A and B have just collided and weren't colliding in the last tick.
@@ -49,18 +50,20 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    protected void onCollisionBegin(Entity a, Entity b) {}
+    protected void onCollisionBegin(Entity a, Entity b) {
+    }
 
     /**
      * Called if entities A and B are currently colliding.
-     *
+     * <p>
      * This is called one tick after {@link #onCollisionBegin(Entity, Entity)}
      * if the entities are still colliding
      *
      * @param a
      * @param b
      */
-    protected void onCollision(Entity a, Entity b) {}
+    protected void onCollision(Entity a, Entity b) {
+    }
 
     /**
      * Called when entities A and B have just stopped colliding and were colliding in the last tick.
@@ -68,5 +71,6 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a
      * @param b
      */
-    protected void onCollisionEnd(Entity a, Entity b) {}
+    protected void onCollisionEnd(Entity a, Entity b) {
+    }
 }

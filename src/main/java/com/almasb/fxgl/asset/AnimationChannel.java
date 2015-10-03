@@ -32,7 +32,6 @@ import javafx.util.Duration;
  * Represents one of the animation channels from spritesheet.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public interface AnimationChannel {
 
@@ -44,19 +43,16 @@ public interface AnimationChannel {
     public Rectangle2D area();
 
     /**
-     *
      * @return number of frames in this animation
      */
     public int frames();
 
     /**
-     *
      * @return total duration of the animation
      */
     public Duration duration();
 
     /**
-     *
      * @return name of the animation
      */
     public String name();

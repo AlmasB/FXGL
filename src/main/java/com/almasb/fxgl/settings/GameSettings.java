@@ -30,7 +30,7 @@ import com.almasb.fxgl.util.ApplicationMode;
 /**
  * Data structure for variables that are
  * initialised before the application (game) starts.
- *
+ * <p>
  * Modifying any data after the start of the game has no effect.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -52,7 +52,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * Set target width. If the screen width is smaller,
      * the game will automatically scale down the image
      * while maintaining the aspect ratio.
-     *
+     * <p>
      * All the game logic must use target width and height.
      *
      * @param width
@@ -66,7 +66,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * Set target height. If the height width is smaller,
      * the game will automatically scale down the image
      * while maintaining the aspect ratio.
-     *
+     * <p>
      * All the game logic must use target width and height.
      *
      * @param height
@@ -110,7 +110,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Set file name of the icon to be used
      * as the application icon.
-     *
+     * <p>
      * The file must be placed under /assets/ui/icons/ .
      * The name must be given in the form relative to that
      * path. E.g. "icon.png"

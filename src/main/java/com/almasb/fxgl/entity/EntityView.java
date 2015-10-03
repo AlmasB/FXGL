@@ -33,7 +33,6 @@ import javafx.scene.shape.Circle;
  * Represents the visual aspect of entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class EntityView extends Parent {
 
@@ -42,10 +41,10 @@ public class EntityView extends Parent {
     /**
      * Scene view ctor
      *
-     * @param entity    the entity creating the view
-     * @param graphics  the view for that entity
+     * @param entity   the entity creating the view
+     * @param graphics the view for that entity
      */
-    /*package-private*/ EntityView(Entity entity, Node graphics) {
+    EntityView(Entity entity, Node graphics) {
         this.entity = entity;
         addNode(graphics);
         initAsSceneView();
@@ -54,15 +53,14 @@ public class EntityView extends Parent {
     /**
      * Constructs new view for given entity
      *
-     * @param entity    the entity
+     * @param entity the entity
      */
     public EntityView(Entity entity) {
         this.entity = entity;
     }
 
     /**
-     *
-     * @return  source entity of this view
+     * @return source entity of this view
      */
     public Entity getEntity() {
         return entity;
@@ -92,7 +90,7 @@ public class EntityView extends Parent {
      * will be rendered on top of the layer with lower index(). By default an
      * entity has the very top layer with highest index equal to
      * {@link Integer#MAX_VALUE}.
-     *
+     * <p>
      * The render layer can only be set before adding entity to the scene. If
      * the entity is already registered in the scene graph, this method will
      * throw IllegalStateException.
@@ -109,7 +107,6 @@ public class EntityView extends Parent {
     }
 
     /**
-     *
      * @return render layer for entity
      */
     public final RenderLayer getRenderLayer() {

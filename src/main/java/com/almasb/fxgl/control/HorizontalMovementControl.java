@@ -33,7 +33,6 @@ import com.almasb.fxgl.time.TimerManager;
  * API NOT READY FOR USE
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class HorizontalMovementControl extends AbstractControl {
 

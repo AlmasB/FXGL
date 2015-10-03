@@ -36,11 +36,10 @@ import javafx.stage.Stage;
 /**
  * A collection of static methods that return UI controls to unify
  * the look across FXGL.
- *
+ * <p>
  * API NOT COMPLETE. DO NOT USE.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class UIFactory {
 

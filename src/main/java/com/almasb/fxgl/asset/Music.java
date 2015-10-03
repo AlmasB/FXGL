@@ -36,10 +36,10 @@ import javafx.scene.media.MediaPlayer;
  */
 public final class Music {
 
-    /*package-private*/ final MediaPlayer mediaPlayer;
-    /*package-private*/ boolean isStopped = false;
+    final MediaPlayer mediaPlayer;
+    boolean isStopped = false;
 
-    /*package-private*/ Music(Media media) {
+    Music(Media media) {
         mediaPlayer = new MediaPlayer(media);
     }
 
@@ -56,7 +56,6 @@ public final class Music {
     }
 
     /**
-     *
      * @return balance of the audio output
      */
     public double getBalance() {
@@ -77,7 +76,6 @@ public final class Music {
     }
 
     /**
-     *
      * @return music rate
      */
     public double getRate() {
@@ -96,7 +94,6 @@ public final class Music {
     }
 
     /**
-     *
      * @return number of times the music to be played
      */
     public int getCycleCount() {

@@ -27,7 +27,7 @@ package com.almasb.fxgl.entity;
 
 /**
  * A type of event. For extra safety use enums.
- *
+ * <p>
  * Example:
  * <pre>
  *     private enum Event implements FXGLEventType {
@@ -36,7 +36,6 @@ package com.almasb.fxgl.entity;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public interface FXGLEventType {
 

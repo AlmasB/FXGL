@@ -30,7 +30,7 @@ import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * Represents a Object value based component.
- *
+ * <p>
  * <pre>
  * Example:
  *
@@ -49,7 +49,6 @@ import javafx.beans.property.SimpleObjectProperty;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class ObjectComponent<T> implements Component {
     private ObjectProperty<T> property;
@@ -72,7 +71,6 @@ public abstract class ObjectComponent<T> implements Component {
     }
 
     /**
-     *
      * @return value property
      */
     public final ObjectProperty<T> valueProperty() {
@@ -80,7 +78,6 @@ public abstract class ObjectComponent<T> implements Component {
     }
 
     /**
-     *
      * @return value held by this component
      */
     public final T getValue() {

@@ -36,29 +36,26 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 public final class RaycastResult {
 
     private Optional<PhysicsEntity> entity;
     private Optional<Point2D> point;
 
-    /*package-private*/ RaycastResult(Optional<PhysicsEntity> entity, Optional<Point2D> point) {
+    RaycastResult(Optional<PhysicsEntity> entity, Optional<Point2D> point) {
         this.entity = entity;
         this.point = point;
     }
 
     /**
-     *
      * @return the first physics entity that collided with the ray
-     *          whose raycastIgnored flag is false
+     * whose raycastIgnored flag is false
      */
     public Optional<PhysicsEntity> getEntity() {
         return entity;
     }
 
     /**
-     *
      * @return the collision point in world coordinates
      */
     public Optional<Point2D> getPoint() {

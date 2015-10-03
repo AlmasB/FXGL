@@ -50,11 +50,10 @@ public final class TimerAction {
     private TimerType type;
 
     /**
-     *
-     * @param now current time in nanoseconds
+     * @param now      current time in nanoseconds
      * @param interval
-     * @param action the action
-     * @param type ONCE or INDEFINITE
+     * @param action   the action
+     * @param type     ONCE or INDEFINITE
      */
     public TimerAction(long now, Duration interval, Runnable action, TimerType type) {
         this.time = now;
@@ -68,7 +67,7 @@ public final class TimerAction {
      * If the difference between current time
      * and recorded time is greater than the interval
      * then the action is executed and current time is recorded.
-     *
+     * <p>
      * Note: the action will not be executed if the timer
      * has expired
      *
@@ -97,7 +96,6 @@ public final class TimerAction {
     }
 
     /**
-     *
      * @return true if the timer has expired, false if active
      */
     public boolean isExpired() {

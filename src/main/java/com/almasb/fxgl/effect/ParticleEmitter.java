@@ -37,7 +37,6 @@ import java.util.stream.IntStream;
  * particles are emitted and their behavior.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class ParticleEmitter {
 
@@ -54,7 +53,6 @@ public abstract class ParticleEmitter {
     private double rateAC = 1.0;
 
     /**
-     *
      * @return number of particles being spawned per emission
      */
     public final int getNumParticles() {
@@ -115,7 +113,7 @@ public abstract class ParticleEmitter {
      * @param y
      * @return
      */
-    /*package-private*/ final List<Particle> emit(double x, double y) {
+    final List<Particle> emit(double x, double y) {
         rateAC += emissionRate;
         if (rateAC < 1 || emissionRate == 0) {
             return EMPTY;

@@ -30,7 +30,6 @@ package com.almasb.fxgl.search;
  *
  * @author AlmasB (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 public class AStarNode {
 
@@ -62,7 +61,7 @@ public class AStarNode {
         return hCost;
     }
 
-    /*package-private*/ void setGCost(int gCost) {
+    void setGCost(int gCost) {
         this.gCost = gCost;
     }
 

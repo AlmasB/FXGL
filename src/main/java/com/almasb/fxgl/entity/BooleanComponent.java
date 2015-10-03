@@ -30,7 +30,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * Represents a boolean value based component.
- *
+ * <p>
  * <pre>
  * Example:
  *
@@ -48,7 +48,6 @@ import javafx.beans.property.SimpleBooleanProperty;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class BooleanComponent implements Component {
     private BooleanProperty property;
@@ -71,7 +70,6 @@ public abstract class BooleanComponent implements Component {
     }
 
     /**
-     *
      * @return value property
      */
     public final BooleanProperty valueProperty() {
@@ -79,7 +77,6 @@ public abstract class BooleanComponent implements Component {
     }
 
     /**
-     *
      * @return value held by this component
      */
     public final boolean getValue() {

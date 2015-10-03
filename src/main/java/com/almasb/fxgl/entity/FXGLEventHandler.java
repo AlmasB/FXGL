@@ -30,7 +30,6 @@ package com.almasb.fxgl.entity;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 @FunctionalInterface
 public interface FXGLEventHandler {

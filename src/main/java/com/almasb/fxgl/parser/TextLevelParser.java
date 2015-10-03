@@ -40,7 +40,6 @@ import com.almasb.fxgl.util.FXGLLogger;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 public final class TextLevelParser {
 
@@ -103,8 +102,7 @@ public final class TextLevelParser {
                 if (producer != null) {
                     Entity e = producer.produce(j, i);
                     level.entities.add(e);
-                }
-                else if (c != emptyChar) {
+                } else if (c != emptyChar) {
                     log.warning("No producer found for character: " + c);
                 }
             }
@@ -120,7 +118,6 @@ public final class TextLevelParser {
     /**
      * A callback which is used as part of TextLevelParser.addEntityProducer()
      * to convert text characters into entities.
-     *
      */
     @FunctionalInterface
     public static interface EntityProducer {
@@ -143,10 +140,10 @@ public final class TextLevelParser {
         /**
          * Prevent initializing from outside
          */
-        private Level() {}
+        private Level() {
+        }
 
         /**
-         *
          * @return new list containing entities for this level
          */
         public List<Entity> getEntities() {
@@ -154,7 +151,6 @@ public final class TextLevelParser {
         }
 
         /**
-         *
          * @return new array containing entities for this level
          */
         public Entity[] getEntitiesAsArray() {
@@ -162,7 +158,6 @@ public final class TextLevelParser {
         }
 
         /**
-         *
          * @return max width of the level in number of characters
          */
         public int getWidth() {
@@ -170,7 +165,6 @@ public final class TextLevelParser {
         }
 
         /**
-         *
          * @return max height of the level in number of characters
          */
         public int getHeight() {

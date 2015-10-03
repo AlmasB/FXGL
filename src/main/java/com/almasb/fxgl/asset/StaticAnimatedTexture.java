@@ -44,12 +44,11 @@ public final class StaticAnimatedTexture extends Texture {
     private Timeline timeline;
 
     /**
-     *
-     * @param image     actual image
-     * @param frames    number of frames in spritesheet
+     * @param image    actual image
+     * @param frames   number of frames in spritesheet
      * @param duration duration of the animation
      */
-    /*package-private*/ StaticAnimatedTexture(Image image, int frames, Duration duration) {
+    StaticAnimatedTexture(Image image, int frames, Duration duration) {
         super(image);
 
         final double frameW = image.getWidth() / frames;

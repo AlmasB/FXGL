@@ -31,7 +31,7 @@ public final class Timer {
 
     private TimerManager manager;
 
-    /*package-private*/ Timer(TimerManager manager) {
+    Timer(TimerManager manager) {
         this.manager = manager;
     }
 

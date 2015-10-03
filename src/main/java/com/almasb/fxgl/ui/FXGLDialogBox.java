@@ -61,7 +61,6 @@ import javafx.stage.Window;
  * connection to the game.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FXGLDialogBox extends Stage {
 
@@ -70,7 +69,7 @@ public final class FXGLDialogBox extends Stage {
     private StackPane root = new StackPane();
     private Scene scene = new Scene(root);
 
-    /*package-private*/ FXGLDialogBox(Window owner) {
+    FXGLDialogBox(Window owner) {
         initStyle(StageStyle.TRANSPARENT);
         initModality(Modality.WINDOW_MODAL);
         initOwner(owner);
@@ -81,7 +80,7 @@ public final class FXGLDialogBox extends Stage {
 
     /**
      * Shows a simple message box with OK button.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
      * @param message
@@ -107,7 +106,7 @@ public final class FXGLDialogBox extends Stage {
 
     /**
      * Shows an error box with OK and LOG buttons.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
      * @param error
@@ -135,8 +134,7 @@ public final class FXGLDialogBox extends Stage {
             try {
                 Files.write(Paths.get("LastException.log"), Arrays.asList(sw.toString().split("\n")));
                 showMessageBox("Log has been saved as LastException.log");
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 showMessageBox("Failed to save log file");
             }
         });
@@ -154,10 +152,10 @@ public final class FXGLDialogBox extends Stage {
 
     /**
      * Shows confirmation message box with YES and NO buttons.
-     *
+     * <p>
      * The callback function will be invoked with boolean answer
      * as parameter.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
      * @param message
@@ -196,10 +194,10 @@ public final class FXGLDialogBox extends Stage {
      * Shows input box with input field and OK button.
      * The button will stay disabled until there is at least
      * 1 character in the input field.
-     *
+     * <p>
      * The callback function will be invoked with input field text
      * as parameter.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
      * @param message

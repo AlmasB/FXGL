@@ -34,8 +34,8 @@ public final class SceneSettings {
     private final String css;
 
     public SceneSettings(double width, double height,
-            double scaledWidth, double scaledHeight,
-            String css) {
+                         double scaledWidth, double scaledHeight,
+                         String css) {
         this.targetWidth = width;
         this.targetHeight = height;
         this.scaledWidth = scaledWidth;

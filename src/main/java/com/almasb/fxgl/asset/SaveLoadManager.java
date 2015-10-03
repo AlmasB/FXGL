@@ -44,7 +44,7 @@ public enum SaveLoadManager {
     /**
      * Save serializable data onto a disk file system under "saves/"
      * which is created if necessary in the directory where the game is run from
-     *
+     * <p>
      * All extra directories will also be created if necessary
      *
      * @param data
@@ -75,33 +75,31 @@ public enum SaveLoadManager {
     @SuppressWarnings("unchecked")
     public <T> T load(String fileName) throws Exception {
         try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get("./" + SAVE_DIR + fileName)))) {
-            return (T)ois.readObject();
+            return (T) ois.readObject();
         }
     }
 
     /**
-     *
      * @param fileName
      * @return true if file was deleted, false if file wasn't deleted for any reason
      */
     public boolean delete(String fileName) {
         try {
             return Files.deleteIfExists(Paths.get("./" + SAVE_DIR + fileName));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
     /**
      * Loads file names of existing saves from "saves/".
-     *
+     * <p>
      * Returns {@link Optional#empty()} if "saves/" directory
      * doesn't exist or an exception occurred
      *
      * @return Optional containing list of file names
      */
-    public Optional<List<String> > loadFileNames() {
+    public Optional<List<String>> loadFileNames() {
         Path saveDir = Paths.get("./" + SAVE_DIR);
 
         if (!Files.exists(saveDir)) {
@@ -110,17 +108,16 @@ public enum SaveLoadManager {
 
         try (Stream<Path> files = Files.walk(saveDir)) {
             return Optional.of(files.filter(Files::isRegularFile)
-                        .map(file -> saveDir.relativize(file).toString().replace("\\", "/"))
-                        .collect(Collectors.toList()));
-        }
-        catch (Exception e) {
+                    .map(file -> saveDir.relativize(file).toString().replace("\\", "/"))
+                    .collect(Collectors.toList()));
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
 
     /**
      * Loads last modified save file from "saves/"
-     *
+     * <p>
      * Returns {@link Optional#empty()} if "saves/" directory
      * doesn't exist, an exception occurred or there are no save files
      *
@@ -137,16 +134,14 @@ public enum SaveLoadManager {
             Path file = files.filter(Files::isRegularFile).sorted((file1, file2) -> {
                 try {
                     return Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1));
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     return -1;
                 }
             }).findFirst().orElseThrow(Exception::new);
 
             String fileName = saveDir.relativize(file).toString().replace("\\", "/");
             return Optional.of(load(fileName));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return Optional.empty();
         }
     }

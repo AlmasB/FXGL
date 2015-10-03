@@ -30,7 +30,6 @@ package com.almasb.fxgl.net;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 /* package-private */ final class NetworkConfig {
 

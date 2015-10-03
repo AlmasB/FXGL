@@ -35,7 +35,6 @@ import javafx.util.Duration;
  * Emitter for basic smoke effect.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class SmokeEmitter extends ParticleEmitter {
 
@@ -62,7 +61,7 @@ public final class SmokeEmitter extends ParticleEmitter {
     protected Particle emit(int i, double x, double y) {
         //Point2D spawn = new Point2D(i * (rand() - 0.5), (rand() - 1));
         Particle p = new Particle(new Point2D(x, y).add(rand(-1, 1), 0),
-                new Point2D((rand() * 0.1) , rand() * -0.02 - 2.4),
+                new Point2D((rand() * 0.1), rand() * -0.02 - 2.4),
                 new Point2D(rand(0.00, 0.00), rand() * -0.03),
                 rand(9, 10),
                 new Point2D(-0.01, -0.05),

@@ -40,7 +40,6 @@ import javafx.util.Duration;
  * On/Off toggle switch.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class ToggleSwitch extends Parent {
 
@@ -53,7 +52,6 @@ public final class ToggleSwitch extends Parent {
     }
 
     /**
-     *
      * @return true if switch is ON, false - if OFF
      */
     public boolean isSwitchedOn() {

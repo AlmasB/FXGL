@@ -69,12 +69,12 @@ public abstract class FXGLScene {
     }
 
     public <T extends Event> void addEventHandler(EventType<T> eventType,
-            EventHandler<? super T> eventHandler) {
+                                                  EventHandler<? super T> eventHandler) {
         eventHandlers.addEventHandler(eventType, eventHandler);
     }
 
     public <T extends Event> void removeEventHandler(EventType<T> eventType,
-            EventHandler<? super T> eventHandler) {
+                                                     EventHandler<? super T> eventHandler) {
         eventHandlers.removeEventHandler(eventType, eventHandler);
     }
 

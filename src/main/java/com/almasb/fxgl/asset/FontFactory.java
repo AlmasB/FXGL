@@ -31,12 +31,11 @@ import javafx.scene.text.Font;
  * A convenience wrapper for native JavaFX Font.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FontFactory {
     private Font font;
 
-    /*package-private*/ FontFactory(Font font) {
+    FontFactory(Font font) {
         this.font = font;
     }
 

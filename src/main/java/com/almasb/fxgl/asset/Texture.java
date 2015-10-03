@@ -48,14 +48,14 @@ public class Texture extends ImageView {
      *
      * @param image the JavaFX image data
      */
-    /*package-private*/ Texture(Image image) {
+    Texture(Image image) {
         super(image);
     }
 
     /**
      * Converts the texture to animated texture
      *
-     * @param frames number of frames in spritesheet
+     * @param frames   number of frames in spritesheet
      * @param duration overall duration (for all frames) of the animation
      * @return new StaticAnimatedTexture
      */
@@ -80,7 +80,7 @@ public class Texture extends ImageView {
      * planning to use the same image as graphics
      * for multiple entities. This is required because
      * same Node can only have 1 parent.
-     *
+     * <p>
      * Do NOT invoke on instances of StaticAnimatedTexture or
      * DynamicAnimatedTexture, use {@link #toStaticAnimatedTexture(int, Duration)}
      * or {@link #toDynamicAnimatedTexture(AnimationChannel, AnimationChannel...)}
@@ -95,7 +95,7 @@ public class Texture extends ImageView {
     /**
      * Given a rectangular area, produces a sub-texture of
      * this texture.
-     *
+     * <p>
      * Rectangle cannot cover area outside of the original texture
      * image.
      *

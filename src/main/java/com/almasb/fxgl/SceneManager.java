@@ -65,7 +65,6 @@ import javafx.stage.Screen;
  * creating scene-independent dialog boxes.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class SceneManager {
 
@@ -132,10 +131,8 @@ public final class SceneManager {
     /**
      * Constructs scene manager.
      *
-     * @param app
-     *            instance of game application
-     * @param scene
-     *            main scene
+     * @param app   instance of game application
+     * @param scene main scene
      */
     /* package-private */ SceneManager(GameApplication app, Scene scene) {
         this.app = app;
@@ -175,9 +172,9 @@ public final class SceneManager {
     /**
      * TODO: update javadoc
      *
-     * @param width target (app) width
-     * @param height    target (app) height
-     * @return  scene settings with computed values
+     * @param width  target (app) width
+     * @param height target (app) height
+     * @return scene settings with computed values
      */
     private SceneSettings computeSceneSettings(double width, double height) {
         // TODO: make these into params
@@ -204,7 +201,7 @@ public final class SceneManager {
             }
 
             log.finer("Target size: " + width + "x" + height + "@" + 1.0);
-            log.finer("New size:    " + newW  + "x" + newH   + "@" + newScale);
+            log.finer("New size:    " + newW + "x" + newH + "@" + newScale);
         }
 
         String css = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
@@ -223,8 +220,7 @@ public final class SceneManager {
             if (isOpen) {
                 log.finer("Playing State -> Menu State");
                 app.onMenuOpen();
-            }
-            else {
+            } else {
                 log.finer("Menu State -> Playing State");
                 app.onMenuClose();
             }
@@ -276,8 +272,7 @@ public final class SceneManager {
             if (!saveFileName.isEmpty()) {
                 try {
                     SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     log.warning("Failed to save game data: " + e.getMessage());
                     //showMessageBox("Failed to save game data: " + e.getMessage());
                 }
@@ -299,13 +294,11 @@ public final class SceneManager {
                 app.loadState(data);
                 app.startNewGame();
                 setScene(gameScene);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Failed to load save data: " + e.getMessage());
                 //showMessageBox("Failed to load save data: " + e.getMessage());
             }
-        }
-        else {
+        } else {
             SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
                 app.reset();
                 app.loadState((Serializable) data);
@@ -332,8 +325,7 @@ public final class SceneManager {
 
             setScene(introScene);
             introScene.startIntro();
-        }
-        else {
+        } else {
             showGame();
         }
     }
@@ -341,16 +333,14 @@ public final class SceneManager {
     private void showGame() {
         if (isMenuEnabled) {
             setScene(mainMenuScene);
-        }
-        else {
+        } else {
             app.startNewGame();
             setScene(gameScene);
         }
     }
 
     /**
-     *
-     * @return  game scene
+     * @return game scene
      */
     public GameScene getGameScene() {
         return gameScene;
@@ -372,7 +362,6 @@ public final class SceneManager {
     private ReadOnlyBooleanWrapper menuOpen;
 
     /**
-     *
      * @return property tracking if any menu is open
      */
     public ReadOnlyBooleanProperty menuOpenProperty() {
@@ -380,7 +369,6 @@ public final class SceneManager {
     }
 
     /**
-     *
      * @return true if any menu is open
      */
     public boolean isMenuOpen() {
@@ -390,7 +378,7 @@ public final class SceneManager {
     /**
      * Set the key which will open/close game menu.
      *
-     * @param key   the key
+     * @param key the key
      * @defaultValue KeyCode.ESCAPE
      */
     public void setMenuKey(KeyCode key) {
@@ -427,7 +415,7 @@ public final class SceneManager {
      * dismissed. The provided callback will be called with the dialog result as
      * parameter when the dialog closes.
      *
-     * @param dialog    JavaFX dialog
+     * @param dialog         JavaFX dialog
      * @param resultCallback
      */
     public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
@@ -452,8 +440,7 @@ public final class SceneManager {
      * Shows a blocking (stops game execution) message box with OK button. On
      * button press, the message box will be dismissed.
      *
-     * @param message
-     *            the message to show
+     * @param message the message to show
      */
     public void showMessageBox(String message) {
         dialogBox.showMessageBox(message);
@@ -463,11 +450,11 @@ public final class SceneManager {
      * Shows a blocking message box with YES and NO buttons. The callback is
      * invoked with the user answer as parameter.
      *
-     * @param message   message to show
-     * @param resultCallback    the function to be called
+     * @param message        message to show
+     * @param resultCallback the function to be called
      */
     public void showConfirmationBox(String message,
-            Consumer<Boolean> resultCallback) {
+                                    Consumer<Boolean> resultCallback) {
         dialogBox.showConfirmationBox(message, resultCallback);
     }
 
@@ -475,8 +462,8 @@ public final class SceneManager {
      * Shows a blocking message box with OK button and input field. The callback
      * is invoked with the field text as parameter.
      *
-     * @param message   message to show
-     * @param resultCallback    the function to be called
+     * @param message        message to show
+     * @param resultCallback the function to be called
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
         dialogBox.showInputBox(message, resultCallback);
@@ -498,8 +485,7 @@ public final class SceneManager {
 
         try (OutputStream os = Files.newOutputStream(Paths.get(fileName))) {
             return ImageIO.write(img, "png", os);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.finer(
                     "Exception occurred during saveScreenshot() - "
                             + e.getMessage());

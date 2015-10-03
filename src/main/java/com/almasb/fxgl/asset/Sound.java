@@ -31,14 +31,13 @@ import javafx.scene.media.AudioClip;
  * Represents a short sound in .wav file.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class Sound {
 
-    /*package-private*/ final AudioClip clip;
-    ///*package-private*/ boolean isStopped = false;
+    final AudioClip clip;
+    // boolean isStopped = false;
 
-    /*package-private*/ Sound(AudioClip clip) {
+    Sound(AudioClip clip) {
         this.clip = clip;
     }
 
@@ -55,9 +54,8 @@ public final class Sound {
     }
 
     /**
-    *
-    * @return balance of the audio output
-    */
+     * @return balance of the audio output
+     */
     public double getBalance() {
         return clip.getBalance();
     }
@@ -78,7 +76,6 @@ public final class Sound {
     }
 
     /**
-     *
      * @return sound pan value
      */
     public double getPan() {
@@ -98,7 +95,6 @@ public final class Sound {
     }
 
     /**
-     *
      * @return sound rate
      */
     public double getRate() {
@@ -116,7 +112,6 @@ public final class Sound {
     }
 
     /**
-     *
      * @return number of times sound to be played
      */
     public int getCycleCount() {

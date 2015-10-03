@@ -33,7 +33,6 @@ import com.almasb.fxgl.settings.SceneSettings;
  * This is the default FXGL game menu
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FXGLGameMenu extends FXGLMenu {
 

@@ -126,9 +126,9 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         Integer renderLayer = layer.index();
         Group group = gameRoot.getChildren()
                 .stream()
-                .filter(n -> (int)n.getUserData() == renderLayer)
+                .filter(n -> (int) n.getUserData() == renderLayer)
                 .findAny()
-                .map(n -> (Group)n)
+                .map(n -> (Group) n)
                 .orElse(new Group());
 
 
@@ -139,7 +139,7 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         }
 
         List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        tmpGroups.sort((g1, g2) -> (int)g1.getUserData() - (int)g2.getUserData());
+        tmpGroups.sort((g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
 
         gameRoot.getChildren().setAll(tmpGroups);
 
@@ -158,7 +158,7 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
 
     /**
      * Sets viewport origin. Use it for camera movement.
-     *
+     * <p>
      * Do NOT use if the viewport was bound.
      *
      * @param x
@@ -181,7 +181,7 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
     /**
      * Binds the viewport origin so that it follows the given entity
      * distX and distY represent bound distance between entity and viewport origin
-     *
+     * <p>
      * <pre>
      * Example:
      *

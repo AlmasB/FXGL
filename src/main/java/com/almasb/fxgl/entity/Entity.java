@@ -65,7 +65,6 @@ public class Entity {
     private EntityType type;
 
     /**
-     *
      * @return entity type
      */
     public final EntityType getEntityType() {
@@ -82,10 +81,10 @@ public class Entity {
     /**
      * Returns true if type of entity equals passed argument.
      *
-     * @apiNote equivalent to
-     *          <code>getTypeAsString().equals(type.getUniqueType())</code>
      * @param type
      * @return
+     * @apiNote equivalent to
+     * <code>getTypeAsString().equals(type.getUniqueType())</code>
      */
     public final boolean isType(EntityType type) {
         return getTypeAsString().equals(type.getUniqueType());
@@ -94,7 +93,7 @@ public class Entity {
     /**
      * Constructs an entity with given type.
      *
-     * @param type  the type of entity
+     * @param type the type of entity
      */
     public Entity(EntityType type) {
         this.type = type;
@@ -122,7 +121,7 @@ public class Entity {
     }
 
     /**
-     * @return  The world the entity is attached to.
+     * @return The world the entity is attached to.
      */
     public GameWorld getWorld() {
         return world;
@@ -154,8 +153,7 @@ public class Entity {
     private DoubleProperty x = new SimpleDoubleProperty();
 
     /**
-     *
-     * @return  x property
+     * @return x property
      */
     public final DoubleProperty xProperty() {
         return x;
@@ -166,7 +164,7 @@ public class Entity {
      * Note: transformations like rotation may affect
      * the visual position but will not affect the value retrieved.
      *
-     * @return  x coordinate
+     * @return x coordinate
      */
     public final double getX() {
         return xProperty().get();
@@ -184,8 +182,7 @@ public class Entity {
     private DoubleProperty y = new SimpleDoubleProperty();
 
     /**
-     *
-     * @return  y property
+     * @return y property
      */
     public final DoubleProperty yProperty() {
         return y;
@@ -196,7 +193,7 @@ public class Entity {
      * Note: transformations like rotation may affect
      * the visual position but will not affect the value retrieved.
      *
-     * @return  y coordinate
+     * @return y coordinate
      */
     public final double getY() {
         return yProperty().get();
@@ -212,7 +209,6 @@ public class Entity {
     }
 
     /**
-     *
      * @return absolute position of entity
      */
     public final Point2D getPosition() {
@@ -233,7 +229,7 @@ public class Entity {
     /**
      * Set absolute position of entity to given point.
      *
-     * @param position  absolute position in game world
+     * @param position absolute position in game world
      */
     public final void setPosition(Point2D position) {
         setPosition(position.getX(), position.getY());
@@ -253,7 +249,7 @@ public class Entity {
     /**
      * Translate (move) entity by vector.
      *
-     * @param vector    translate vector
+     * @param vector translate vector
      */
     public final void translate(Point2D vector) {
         translate(vector.getX(), vector.getY());
@@ -269,7 +265,7 @@ public class Entity {
      * Returns absolute angle of the entity rotation
      * in degrees.
      *
-     * @return  rotation angle
+     * @return rotation angle
      */
     public final double getRotation() {
         return rotationProperty().get();
@@ -288,7 +284,7 @@ public class Entity {
     /**
      * Rotate entity view by given angle.
      *
-     * @param byAngle   rotation angle in degrees
+     * @param byAngle rotation angle in degrees
      */
     public final void rotateBy(double byAngle) {
         setRotation(getRotation() + byAngle);
@@ -332,7 +328,6 @@ public class Entity {
     }
 
     /**
-     *
      * @return center point of this entity
      */
     public final Point2D getCenter() {
@@ -375,7 +370,6 @@ public class Entity {
     }
 
     /**
-     *
      * @return width of the bounding box of this entity
      */
     public final double getWidth() {
@@ -383,7 +377,6 @@ public class Entity {
     }
 
     /**
-     *
      * @return height of the bounding box of this entity
      */
     public final double getHeight() {
@@ -400,8 +393,8 @@ public class Entity {
      * Returns control of given type or {@link Optional#empty()} if
      * no such type is registered on this entity.
      *
-     * @param type  control type
-     * @return  control
+     * @param type control type
+     * @return control
      */
     public final <T extends Control> Optional<T> getControl(Class<T> type) {
         return Optional.ofNullable(type.cast(controls.get(type)));
@@ -411,7 +404,7 @@ public class Entity {
      * Adds behavior to entity.
      * Only 1 control per type is allowed.
      * Anonymous controls are not allowed.
-     *
+     * <p>
      * <pre>
      * E.g.
      * entity.addControl(new GravityControl());
@@ -424,7 +417,7 @@ public class Entity {
      * });
      * </pre>
      *
-     * @param control   the behavior
+     * @param control the behavior
      */
     public final void addControl(Control control) {
         Class<? extends Control> type = control.getClass();
@@ -443,7 +436,7 @@ public class Entity {
     /**
      * Remove behavior from entity of given type.
      *
-     * @param type  the control type to remove
+     * @param type the control type to remove
      */
     public final void removeControl(Class<? extends Control> type) {
         Control c = controls.remove(type);
@@ -483,9 +476,8 @@ public class Entity {
      * Anonymous components are NOT allowed.
      *
      * @param component
-     * @throws IllegalArgumentException
-     *             if a component with same type already registered
-     *             or anonymous
+     * @throws IllegalArgumentException if a component with same type already registered
+     *                                  or anonymous
      */
     public final void addComponent(Component component) {
         Class<? extends Component> type = component.getClass();
@@ -506,8 +498,7 @@ public class Entity {
     /**
      * Remove a component with given type from this entity.
      *
-     * @param type
-     *            - type of the component to remove
+     * @param type - type of the component to remove
      */
     public final void removeComponent(Class<? extends Component> type) {
         Component c = components.remove(type);
@@ -521,9 +512,8 @@ public class Entity {
     private boolean collidable = false;
 
     /**
-     *
      * @return true if the object participates in collision detection, false
-     *         otherwise
+     * otherwise
      */
     public final boolean isCollidable() {
         return collidable;
@@ -535,7 +525,7 @@ public class Entity {
      * both entities have collidable set to true, then the handler will be
      * notified of the collision event.
      *
-     * @param collidable    true enables collision detection, false - disables
+     * @param collidable true enables collision detection, false - disables
      */
     public final void setCollidable(boolean collidable) {
         this.collidable = collidable;
@@ -544,7 +534,6 @@ public class Entity {
     private ReadOnlyBooleanWrapper alive = new ReadOnlyBooleanWrapper(true);
 
     /**
-     *
      * @return alive property of this entity
      */
     public final ReadOnlyBooleanProperty aliveProperty() {
@@ -564,7 +553,6 @@ public class Entity {
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
     /**
-     *
      * @return active property of this entity
      */
     public final ReadOnlyBooleanProperty activeProperty() {
@@ -588,7 +576,6 @@ public class Entity {
     private Duration expireTime = Duration.ZERO;
 
     /**
-     *
      * @return expireTime of entity, 0 if not set
      */
     public final Duration getExpireTime() {
@@ -599,7 +586,7 @@ public class Entity {
      * Set expire time for this entity. The timer starts when the entity is
      * added to game scene. Calling this method after entity was added to scene
      * has no effect.
-     *
+     * <p>
      * Once the timer has expired, the entity will be removed with
      * removeEntity()
      *
@@ -633,12 +620,12 @@ public class Entity {
     /**
      * Can be overridden to provide subclass implementation.
      */
-    protected void onUpdate() {}
+    protected void onUpdate() {
+    }
 
     /**
      * Do NOT call manually. It is called automatically by FXGL GameApplication
      * when entity has been removed
-     *
      */
     public final void clean() {
         alive.set(false);
@@ -653,7 +640,8 @@ public class Entity {
     /**
      * Can be overridden to provide subclass implementation.
      */
-    protected void onClean() {}
+    protected void onClean() {
+    }
 
     private Map<String, FXGLEventHandler> eventHandlers = new HashMap<>();
 
@@ -665,19 +653,19 @@ public class Entity {
      * @param eventHandler
      */
     public final void addFXGLEventHandler(FXGLEventType type,
-            FXGLEventHandler eventHandler) {
+                                          FXGLEventHandler eventHandler) {
         eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 
     public final void removeFXGLEventHandler(FXGLEventType type,
-            FXGLEventHandler eventHandler) {
+                                             FXGLEventHandler eventHandler) {
         eventHandlers.remove(type.getUniqueType());
     }
 
     /**
      * Fire (trigger) an FXGL event on this entity This entity becomes the
      * target of the FXGL event.
-     *
+     * <p>
      * If the FXGL event doesn't have a source, this entity will also become the
      * source of the event.
      *
@@ -709,7 +697,7 @@ public class Entity {
 
     /**
      * Returns a new entity without any type.
-     *
+     * <p>
      * Use this method for background entity, range selection entity, temporary
      * entity, etc when you are not going to use its type.
      *

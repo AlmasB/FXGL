@@ -47,7 +47,7 @@ public final class ExplosionEmitter extends ParticleEmitter {
                 rand(5, 20),
                 new Point2D(rand() * -0.1, rand() * -0.1),
                 Duration.seconds(0.5),
-                Color.rgb((int)rand(200, 255), 30, 20),
+                Color.rgb((int) rand(200, 255), 30, 20),
                 i < getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_BURN);
         return p;
     }

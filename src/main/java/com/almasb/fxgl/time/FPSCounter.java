@@ -34,7 +34,7 @@ import java.util.Arrays;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-/*package-private*/ final class FPSCounter {
+final class FPSCounter {
 
     private static final int MAX_SAMPLES = 100;
 

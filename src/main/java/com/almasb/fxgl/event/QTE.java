@@ -41,9 +41,8 @@ import javafx.scene.text.Text;
  *
  * @author Almas Baimagambetov
  * @version 1.0
- *
  */
-/*package-private*/ final class QTE extends HBox {
+final class QTE extends HBox {
 
     private static final Font FONT = Font.font(28);
 
@@ -54,16 +53,15 @@ import javafx.scene.text.Text;
     private Text text = new Text();
 
     /**
-     *
-     * @param handler callback is notified whether qte was successful or not
+     * @param handler          callback is notified whether qte was successful or not
      * @param onFinishedScript is called when qte is no longer active
-     * @param appW scene width
-     * @param appH scene height
-     * @param color color for the GUI element
-     * @param key at least one key is required
-     * @param keys further keys
+     * @param appW             scene width
+     * @param appH             scene height
+     * @param color            color for the GUI element
+     * @param key              at least one key is required
+     * @param keys             further keys
      */
-    /*package-private*/ QTE(QTEHandler handler, Runnable onFinishedScript, double appW, double appH, Color color, KeyCode key, KeyCode... keys) {
+    QTE(QTEHandler handler, Runnable onFinishedScript, double appW, double appH, Color color, KeyCode key, KeyCode... keys) {
         super(15);
 
         this.handler = handler;
@@ -89,7 +87,6 @@ import javafx.scene.text.Text;
     }
 
     /**
-     *
      * @return true if there are still keys to press, false otherwise
      */
     public boolean isActive() {
@@ -111,12 +108,10 @@ import javafx.scene.text.Text;
             queue.clear();
             handler.onFailure();
             onFinished.run();
-        }
-        else {
+        } else {
             if (isActive()) {
                 text.setText(queue.peek().toString());
-            }
-            else {
+            } else {
                 handler.onSuccess();
                 onFinished.run();
             }

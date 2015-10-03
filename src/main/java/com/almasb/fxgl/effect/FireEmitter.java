@@ -37,7 +37,6 @@ import javafx.util.Duration;
  * Predefined emitter that creates fire effect.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FireEmitter extends ParticleEmitter {
 

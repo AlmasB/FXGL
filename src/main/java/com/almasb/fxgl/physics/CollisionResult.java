@@ -34,7 +34,8 @@ public final class CollisionResult {
 
     private boolean collided = false;
 
-    private CollisionResult() {}
+    private CollisionResult() {
+    }
 
     public CollisionResult(HitBox boxA, HitBox boxB) {
         this.boxA = boxA;

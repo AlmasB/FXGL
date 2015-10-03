@@ -30,7 +30,7 @@ import com.almasb.fxgl.settings.SceneSettings;
 /**
  * Intro animation / video played before game starts
  * if intro is enabled in settings
- *
+ * <p>
  * Call {@link #finishIntro()} when your intro completed
  * so that the game can proceed to the next state
  *
@@ -58,7 +58,7 @@ public abstract class IntroScene extends FXGLScene {
 
     /**
      * Closes intro and initializes the next game state, whether it's a menu or game.
-     *
+     * <p>
      * Note: call this when your intro completes, otherwise
      * the game won't proceed to next state.
      */

@@ -39,7 +39,6 @@ import javafx.util.Duration;
  * Simple particle represented by a circle.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class Particle {
 
@@ -135,7 +134,7 @@ public class Particle {
     /**
      * @return true if particle died
      */
-    /*package-private*/ boolean update() {
+    boolean update() {
         x += velX;
         y += velY;
 
@@ -164,7 +163,7 @@ public class Particle {
      * @param g
      * @param viewportOrigin
      */
-    /*package-private*/ void render(GraphicsContext g, Point2D viewportOrigin) {
+    void render(GraphicsContext g, Point2D viewportOrigin) {
         g.setGlobalAlpha(life);
         g.setGlobalBlendMode(blendMode);
         g.setFill(color);

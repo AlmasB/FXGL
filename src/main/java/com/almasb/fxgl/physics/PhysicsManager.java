@@ -54,10 +54,10 @@ import javafx.geometry.Point2D;
 
 /**
  * Manages physics entities, collision handling and performs the physics tick
- *
+ * <p>
  * Contains several static and instance methods
  * to convert pixels coordinates to meters and vice versa
- *
+ * <p>
  * Collision handling unifies how they are processed
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -120,9 +120,12 @@ public final class PhysicsManager implements WorldStateListener {
             }
 
             @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {}
+            public void preSolve(Contact contact, Manifold oldManifold) {
+            }
+
             @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {}
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+            }
         });
     }
 
@@ -166,8 +169,7 @@ public final class PhysicsManager implements WorldStateListener {
                             collisions.put(pair, tick.get());
                             pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
                         }
-                    }
-                    else {
+                    } else {
                         if (collisions.containsKey(pair)) {
                             collisions.put(pair, -1L);
                         }
@@ -187,11 +189,9 @@ public final class PhysicsManager implements WorldStateListener {
             if (cachedTick.longValue() == -1L) {
                 pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
                 toRemove.add(pair);
-            }
-            else if (tick.get() == cachedTick.longValue()) {
+            } else if (tick.get() == cachedTick.longValue()) {
                 pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
-            }
-            else if (tick.get() > cachedTick) {
+            } else if (tick.get() > cachedTick) {
                 pair.getHandler().onCollision(pair.getA(), pair.getB());
             }
         });
@@ -203,7 +203,7 @@ public final class PhysicsManager implements WorldStateListener {
      * Registers a collision handler
      * The order in which the types are passed to this method
      * decides the order of objects being passed into the collision handler
-     *
+     * <p>
      * <pre>
      * Example:
      * physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
@@ -235,7 +235,7 @@ public final class PhysicsManager implements WorldStateListener {
      * @param y
      */
     public void setGravity(double x, double y) {
-        physicsWorld.setGravity(new Vec2().addLocal((float)x,-(float)y));
+        physicsWorld.setGravity(new Vec2().addLocal((float) x, -(float) y));
     }
 
     /**
@@ -277,9 +277,8 @@ public final class PhysicsManager implements WorldStateListener {
     /**
      * Performs raycast from start to end
      *
-     *
      * @param start world point in pixels
-     * @param end world point in pixels
+     * @param end   world point in pixels
      * @return result of raycast
      */
     public RaycastResult raycast(Point2D start, Point2D end) {
@@ -305,7 +304,7 @@ public final class PhysicsManager implements WorldStateListener {
      * @return
      */
     public static float toMeters(double pixels) {
-        return (float)pixels * 0.05f;
+        return (float) pixels * 0.05f;
     }
 
     /**
@@ -315,7 +314,7 @@ public final class PhysicsManager implements WorldStateListener {
      * @return
      */
     public static float toPixels(double meters) {
-        return (float)meters * 20f;
+        return (float) meters * 20f;
     }
 
     /**
@@ -425,5 +424,6 @@ public final class PhysicsManager implements WorldStateListener {
     }
 
     @Override
-    public void onWorldReset() {}
+    public void onWorldReset() {
+    }
 }

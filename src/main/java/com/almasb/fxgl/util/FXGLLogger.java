@@ -41,7 +41,6 @@ import java.util.logging.Logger;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 public final class FXGLLogger {
 

@@ -38,12 +38,11 @@ import javafx.scene.canvas.GraphicsContext;
 /**
  * Particles are attached to ParticleEntity so they can be part of the
  * scenegraph. The actual render of particles happens on Canvas.
- *
+ * <p>
  * Translation of this entity will also affect the position of newly
  * spawned particles.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class ParticleEntity extends Entity {
 

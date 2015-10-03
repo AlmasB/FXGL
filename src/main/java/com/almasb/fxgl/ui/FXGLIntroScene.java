@@ -106,11 +106,11 @@ public final class FXGLIntroScene extends IntroScene {
         tt2.setToY(h / 2);
 
         TranslateTransition tt3 = new TranslateTransition(Duration.seconds(1), g);
-        tt3.setToX(originX + dx*2);
+        tt3.setToX(originX + dx * 2);
         tt3.setToY(h / 2);
 
         TranslateTransition tt4 = new TranslateTransition(Duration.seconds(1), l);
-        tt4.setToX(originX + dx*3.3);
+        tt4.setToX(originX + dx * 3.3);
         tt4.setToY(h / 2);
 
         animation = new ParallelTransition(tt, tt2, tt3, tt4);

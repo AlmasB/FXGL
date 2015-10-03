@@ -30,7 +30,6 @@ package com.almasb.fxgl.util;
  * how logging and exception reporting are handled.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public enum ApplicationMode {
     /**

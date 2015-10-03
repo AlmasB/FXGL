@@ -53,7 +53,7 @@ import javafx.util.Duration;
 /**
  * A generic progress bar. Can be used to show
  * health, mana, experience, quest progress, reloading times, etc
- *
+ * <p>
  * <pre>
  * Example:
  *
@@ -150,7 +150,7 @@ public final class ProgressBar extends Parent {
             FadeTransition ft = new FadeTransition(Duration.seconds(0.66), text);
             ft.setToValue(0);
 
-            ParallelTransition pt = new ParallelTransition( ft);
+            ParallelTransition pt = new ParallelTransition(ft);
             pt.setOnFinished(e -> barGroup.getChildren().remove(text));
             pt.play();
 
@@ -229,8 +229,7 @@ public final class ProgressBar extends Parent {
             barGroup.translateYProperty().unbind();
             barGroup.setTranslateX(0);
             barGroup.setTranslateY(0);
-        }
-        else if (!getChildren().contains(label)) {
+        } else if (!getChildren().contains(label)) {
             getChildren().add(label);
             setLabelPosition(labelPosition);
         }

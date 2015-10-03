@@ -28,12 +28,11 @@ package com.almasb.fxgl.physics;
 /**
  * For internal use
  *
+ * @param <T>
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
- * @param <T>
  */
-/*package-private*/ class Pair<T> {
+class Pair<T> {
 
     private T a, b;
 

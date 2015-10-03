@@ -30,7 +30,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * Represents an int value based component.
- *
+ * <p>
  * <pre>
  * Example:
  *
@@ -48,7 +48,6 @@ import javafx.beans.property.SimpleIntegerProperty;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class IntegerComponent implements Component {
     private IntegerProperty property;
@@ -71,7 +70,6 @@ public abstract class IntegerComponent implements Component {
     }
 
     /**
-     *
      * @return value property
      */
     public final IntegerProperty valueProperty() {
@@ -79,7 +77,6 @@ public abstract class IntegerComponent implements Component {
     }
 
     /**
-     *
      * @return value held by this component
      */
     public final int getValue() {

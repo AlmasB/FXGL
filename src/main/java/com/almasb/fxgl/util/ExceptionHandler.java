@@ -29,7 +29,6 @@ package com.almasb.fxgl.util;
  * An interface for handling exceptions.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public interface ExceptionHandler {
 

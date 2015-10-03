@@ -70,7 +70,7 @@ public final class TimerManager implements WorldStateListener {
      * @return
      */
     public static long secondsToNanos(double seconds) {
-        return (long)(seconds * 1000000000L);
+        return (long) (seconds * 1000000000L);
     }
 
     /**
@@ -101,7 +101,7 @@ public final class TimerManager implements WorldStateListener {
      * Returns current tick (frame). When the game has just started,
      * the first cycle in the loop will have tick == 1,
      * second cycle - 2 and so on.
-     *
+     * <p>
      * The update to this number happens when a new update cycle starts.
      *
      * @return current tick
@@ -152,7 +152,6 @@ public final class TimerManager implements WorldStateListener {
     private IntegerProperty fps = new SimpleIntegerProperty();
 
     /**
-     *
      * @return average render FPS
      */
     public int getFPS() {
@@ -160,7 +159,6 @@ public final class TimerManager implements WorldStateListener {
     }
 
     /**
-     *
      * @return average render FPS property
      */
     public IntegerProperty fpsProperty() {
@@ -173,7 +171,6 @@ public final class TimerManager implements WorldStateListener {
     private IntegerProperty performanceFPS = new SimpleIntegerProperty();
 
     /**
-     *
      * @return Average performance FPS
      */
     public int getPerformanceFPS() {
@@ -181,7 +178,6 @@ public final class TimerManager implements WorldStateListener {
     }
 
     /**
-     *
      * @return Average performance FPS property
      */
     public IntegerProperty performanceFPSProperty() {
@@ -216,10 +212,10 @@ public final class TimerManager implements WorldStateListener {
     /**
      * The Runnable action will be scheduled to run at given interval.
      * The action will run for the first time after given interval.
-     *
+     * <p>
      * Note: the scheduled action will not run while the game is paused.
      *
-     * @param action the action
+     * @param action   the action
      * @param interval time
      */
     public void runAtInterval(Runnable action, Duration interval) {
@@ -231,9 +227,9 @@ public final class TimerManager implements WorldStateListener {
      * whileCondition is initially true. If that's the case
      * then the Runnable action will be scheduled to run at given interval.
      * The action will run for the first time after given interval
-     *
+     * <p>
      * The action will be removed from schedule when whileCondition becomes {@code false}.
-     *
+     * <p>
      * Note: the scheduled action will not run while the game is paused
      *
      * @param action
@@ -255,7 +251,7 @@ public final class TimerManager implements WorldStateListener {
 
     /**
      * The Runnable action will be executed once after given delay
-     *
+     * <p>
      * Note: the scheduled action will not run while the game is paused
      *
      * @param action
@@ -285,7 +281,8 @@ public final class TimerManager implements WorldStateListener {
     }
 
     @Override
-    public void onEntityRemoved(Entity entity) {}
+    public void onEntityRemoved(Entity entity) {
+    }
 
     @Override
     public void onWorldUpdate() {

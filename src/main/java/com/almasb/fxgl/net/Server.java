@@ -40,7 +40,7 @@ import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Server side of the network connection.
- *
+ * <p>
  * Example:
  * <pre>
  *  // create server object with default params, note: no network operation yet
@@ -57,7 +57,6 @@ import com.almasb.fxgl.util.FXGLLogger;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 public final class Server extends NetworkConnection {
 
@@ -102,7 +101,7 @@ public final class Server extends NetworkConnection {
      * Sends a message to all connected clients that
      * the server is about to shut down. Then stops the server
      * and the connection threads.
-     *
+     * <p>
      * Further calls to {@link #send(Serializable)} will
      * throw IllegalStateException
      */
@@ -118,8 +117,7 @@ public final class Server extends NetworkConnection {
         if (udpThread.running) {
             byte[] buf = toByteArray(data);
             udpThread.outSocket.send(new DatagramPacket(buf, buf.length, clientAddress, clientPort));
-        }
-        else {
+        } else {
             throw new IllegalStateException("UDP connection not active");
         }
     }
@@ -128,8 +126,7 @@ public final class Server extends NetworkConnection {
     protected void sendTCP(Serializable data) throws Exception {
         if (tcpThread.running) {
             tcpThread.outputStream.writeObject(data);
-        }
-        else {
+        } else {
             throw new IllegalStateException("Client TCP is not connected");
         }
     }
@@ -141,9 +138,9 @@ public final class Server extends NetworkConnection {
         @Override
         public void run() {
             try (ServerSocket server = new ServerSocket(tcpPort);
-                    Socket socket = server.accept();
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+                 Socket socket = server.accept();
+                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
                 outputStream = out;
                 socket.setTcpNoDelay(true);
                 running = true;
@@ -160,11 +157,11 @@ public final class Server extends NetworkConnection {
                         break;
                     }
 
-                    parsers.getOrDefault(data.getClass(), d -> {}).parse((Serializable)data);
+                    parsers.getOrDefault(data.getClass(), d -> {
+                    }).parse((Serializable) data);
                 }
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Exception during TCP connection execution: " + e.getMessage());
                 running = false;
                 return;
@@ -206,11 +203,11 @@ public final class Server extends NetworkConnection {
                             break;
                         }
 
-                        parsers.getOrDefault(data.getClass(), d -> {}).parse((Serializable)data);
+                        parsers.getOrDefault(data.getClass(), d -> {
+                        }).parse((Serializable) data);
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Exception during UDP connection execution: " + e.getMessage());
                 running = false;
                 return;

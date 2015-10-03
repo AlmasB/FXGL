@@ -64,7 +64,6 @@ public final class InputManager implements WorldStateListener {
     private ObservableList<InputBinding> bindings = FXCollections.observableArrayList();
 
     /**
-     *
      * @return unmodifiable view of the input bindings registered
      */
     public ObservableList<InputBinding> getBindings() {
@@ -90,8 +89,7 @@ public final class InputManager implements WorldStateListener {
 
                     if (c.wasAdded()) {
                         c.getAddedSubList().forEach(action -> action.onActionBegin());
-                    }
-                    else if (c.wasRemoved()) {
+                    } else if (c.wasRemoved()) {
                         c.getRemoved().forEach(action -> action.onActionEnd());
                     }
                 }
@@ -126,18 +124,17 @@ public final class InputManager implements WorldStateListener {
      */
     private void handlePressed(Trigger trigger) {
         bindings.stream()
-            .filter(binding -> {
-                if (trigger.key == null) {
-                    return binding.isTriggered(trigger.btn);
-                }
-                else {
-                    return binding.isTriggered(trigger.key);
-                }
-            })
-            .findAny()
-            .map(InputBinding::getAction)
-            .filter(action -> !currentActions.contains(action))
-            .ifPresent(currentActions::add);
+                .filter(binding -> {
+                    if (trigger.key == null) {
+                        return binding.isTriggered(trigger.btn);
+                    } else {
+                        return binding.isTriggered(trigger.key);
+                    }
+                })
+                .findAny()
+                .map(InputBinding::getAction)
+                .filter(action -> !currentActions.contains(action))
+                .ifPresent(currentActions::add);
     }
 
     /**
@@ -147,17 +144,16 @@ public final class InputManager implements WorldStateListener {
      */
     private void handleReleased(Trigger trigger) {
         bindings.stream()
-            .filter(binding -> {
-                if (trigger.key == null) {
-                    return binding.isTriggered(trigger.btn);
-                }
-                else {
-                    return binding.isTriggered(trigger.key);
-                }
-            })
-            .findAny()
-            .map(InputBinding::getAction)
-            .ifPresent(currentActions::remove);
+                .filter(binding -> {
+                    if (trigger.key == null) {
+                        return binding.isTriggered(trigger.btn);
+                    } else {
+                        return binding.isTriggered(trigger.key);
+                    }
+                })
+                .findAny()
+                .map(InputBinding::getAction)
+                .ifPresent(currentActions::remove);
     }
 
     private boolean processActions = true;
@@ -185,6 +181,7 @@ public final class InputManager implements WorldStateListener {
     }
 
     // TODO: throw exception if same action name
+
     /**
      * Bind given action to a mouse button.
      *
@@ -220,7 +217,6 @@ public final class InputManager implements WorldStateListener {
     }
 
     /**
-     *
      * @param key
      * @return true if an action is already bound to given key
      */
@@ -230,7 +226,6 @@ public final class InputManager implements WorldStateListener {
     }
 
     /**
-     *
      * @param btn
      * @return true if an action is already bound to given button
      */
@@ -245,7 +240,7 @@ public final class InputManager implements WorldStateListener {
      * @param action
      * @param key
      * @return true if rebound, false if action not found or
-     *      there is another action bound to key
+     * there is another action bound to key
      */
     public boolean rebind(UserAction action, KeyCode key) {
         Optional<InputBinding> maybeBinding = findBindingByAction(action);
@@ -262,7 +257,7 @@ public final class InputManager implements WorldStateListener {
      * @param action
      * @param btn
      * @return true if rebound, false if action not found or
-     *      there is another action bound to mosue button
+     * there is another action bound to mosue button
      */
     public boolean rebind(UserAction action, MouseButton btn) {
         Optional<InputBinding> maybeBinding = findBindingByAction(action);
@@ -289,7 +284,8 @@ public final class InputManager implements WorldStateListener {
      * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
      */
     public final class Mouse {
-        private Mouse() {}
+        private Mouse() {
+        }
 
         /**
          * Hold the value of x and y coordinate of the mouse cursor
@@ -327,8 +323,7 @@ public final class InputManager implements WorldStateListener {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {
                     leftPressed = false;
                 }
-            }
-            else {
+            } else {
                 leftPressed = event.getButton() == MouseButton.PRIMARY && isPressed(event);
             }
 
@@ -336,8 +331,7 @@ public final class InputManager implements WorldStateListener {
                 if (event.getButton() == MouseButton.SECONDARY && isReleased(event)) {
                     rightPressed = false;
                 }
-            }
-            else {
+            } else {
                 rightPressed = event.getButton() == MouseButton.SECONDARY && isPressed(event);
             }
         }
@@ -364,7 +358,6 @@ public final class InputManager implements WorldStateListener {
 
     /**
      * Convenience wrapper for input types.
-     *
      */
     private static class Trigger {
         private KeyCode key;
@@ -380,10 +373,12 @@ public final class InputManager implements WorldStateListener {
     }
 
     @Override
-    public void onEntityAdded(Entity entity) {}
+    public void onEntityAdded(Entity entity) {
+    }
 
     @Override
-    public void onEntityRemoved(Entity entity) {}
+    public void onEntityRemoved(Entity entity) {
+    }
 
     @Override
     public void onWorldUpdate() {

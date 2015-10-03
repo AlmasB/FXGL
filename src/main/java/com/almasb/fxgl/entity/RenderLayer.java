@@ -50,7 +50,6 @@ public interface RenderLayer {
     public int index();
 
     /**
-     *
      * @return string representation of render layer
      */
     default public String asString() {

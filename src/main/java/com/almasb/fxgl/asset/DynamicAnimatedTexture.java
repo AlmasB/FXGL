@@ -42,7 +42,6 @@ import javafx.scene.image.Image;
  * be set dynamically to alter the animation.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class DynamicAnimatedTexture extends Texture {
 
@@ -52,7 +51,7 @@ public final class DynamicAnimatedTexture extends Texture {
 
     private Timeline timeline = new Timeline();
 
-    /*package-private*/ DynamicAnimatedTexture(Image image, AnimationChannel initialChannel, AnimationChannel... channels) {
+    DynamicAnimatedTexture(Image image, AnimationChannel initialChannel, AnimationChannel... channels) {
         super(image);
         timeline.setCycleCount(Timeline.INDEFINITE);
 

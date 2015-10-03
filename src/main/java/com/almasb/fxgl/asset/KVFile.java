@@ -40,7 +40,7 @@ import javafx.util.Pair;
 /**
  * Represents a simple key value file, similar to {@link java.util.Properties}.
  * However, it is easier to work with in the fxgl asset management context.
- *
+ * <p>
  * <pre>
  * Example of a .kv file:
  *
@@ -50,18 +50,17 @@ import javafx.util.Pair;
  * canJump = true
  *
  * </pre>
- *
+ * <p>
  * Only primitive types and String are supported. The resulting data type
  * will be determined by the field type with matching name.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class KVFile {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.KVFile");
 
-    private List<Pair<String, String> > entries = new ArrayList<>();
+    private List<Pair<String, String>> entries = new ArrayList<>();
 
     private Predicate<String[]> validEntry = kv -> {
         boolean valid = true;
@@ -75,11 +74,11 @@ public final class KVFile {
     /**
      * Constructs KVFile from lines of plain text.
      * Each line must be in format:
-     *
+     * <p>
      * <pre>
      * key = value
      * </pre>
-     *
+     * <p>
      * Emptry spaces are ignored before, after and inbetween tokens.
      *
      * @param fileLines
@@ -92,7 +91,8 @@ public final class KVFile {
                 .collect(Collectors.toList());
     }
 
-    private KVFile() {}
+    private KVFile() {
+    }
 
     private void setKV(Object instance, String key, String value) throws Exception {
         Field field = instance.getClass().getDeclaredField(key);

@@ -27,7 +27,7 @@ package com.almasb.fxgl.entity;
 
 /**
  * A type of entity. For extra safety use enums.
- *
+ * <p>
  * Example:
  * <pre>
  *     private enum Type implements EntityType {

@@ -35,7 +35,6 @@ import com.almasb.fxgl.settings.SceneSettings;
  * don't provide their own
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FXGLMainMenu extends FXGLMenu {
 

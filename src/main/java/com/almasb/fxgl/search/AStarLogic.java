@@ -77,8 +77,7 @@ public final class AStarLogic {
                             temp[i].setParent(current);
                             temp[i].setGCost(newG);
                         }
-                    }
-                    else {
+                    } else {
                         temp[i].setParent(current);
                         temp[i].setGCost(current.getGCost() + 10);
                         open.add(temp[i]);

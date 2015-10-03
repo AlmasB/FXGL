@@ -29,7 +29,10 @@ import com.almasb.fxgl.entity.Entity;
 
 public interface WorldStateListener {
     public void onEntityAdded(Entity entity);
+
     public void onEntityRemoved(Entity entity);
+
     public void onWorldUpdate();
+
     public void onWorldReset();
 }
