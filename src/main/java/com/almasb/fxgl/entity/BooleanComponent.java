@@ -63,7 +63,7 @@ public abstract class BooleanComponent implements Component {
      * Constructs a boolean value component with given
      * initial value.
      *
-     * @param initialValue
+     * @param initialValue initial value
      */
     public BooleanComponent(boolean initialValue) {
         property = new SimpleBooleanProperty(initialValue);
@@ -86,7 +86,7 @@ public abstract class BooleanComponent implements Component {
     /**
      * Set value to this component.
      *
-     * @param value
+     * @param value new value
      */
     public final void setValue(boolean value) {
         property.set(value);

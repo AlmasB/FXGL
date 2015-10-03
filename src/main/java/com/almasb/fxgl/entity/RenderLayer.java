@@ -40,19 +40,19 @@ public interface RenderLayer {
      *
      * @return layer name
      */
-    public String name();
+    String name();
 
     /**
      * Returns index value for this layer.
      *
      * @return layer index
      */
-    public int index();
+    int index();
 
     /**
      * @return string representation of render layer
      */
-    default public String asString() {
+    default String asString() {
         return name() + "(" + index() + ")";
     }
 
@@ -60,7 +60,7 @@ public interface RenderLayer {
      * Default render layer for entities with no specified
      * render layer.
      */
-    public static final RenderLayer TOP = new RenderLayer() {
+    RenderLayer TOP = new RenderLayer() {
         @Override
         public String name() {
             return "TOP";

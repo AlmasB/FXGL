@@ -45,9 +45,9 @@ public interface FXGLEventType {
      * when called <code> event1.getUniqueType().equals(event2.getUniqueType())</code>
      * return true.
      *
-     * @return
+     * @return unique type as String
      */
-    default public String getUniqueType() {
+    default String getUniqueType() {
         return getClass().getCanonicalName() + "." + toString();
     }
 }

@@ -38,5 +38,5 @@ public interface Control {
      *
      * @param entity the entity to which this control was added
      */
-    public void onUpdate(Entity entity);
+    void onUpdate(Entity entity);
 }

@@ -63,7 +63,7 @@ public abstract class IntegerComponent implements Component {
      * Constructs an int value component with given
      * initial value.
      *
-     * @param initialValue
+     * @param initialValue the initial value
      */
     public IntegerComponent(int initialValue) {
         property = new SimpleIntegerProperty(initialValue);
@@ -86,7 +86,7 @@ public abstract class IntegerComponent implements Component {
     /**
      * Set value to this component.
      *
-     * @param value
+     * @param value new value
      */
     public final void setValue(int value) {
         property.set(value);

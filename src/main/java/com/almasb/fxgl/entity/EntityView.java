@@ -66,7 +66,7 @@ public class EntityView extends Parent {
         return entity;
     }
 
-    private final void initAsSceneView() {
+    private void initAsSceneView() {
         this.translateXProperty().bind(entity.xProperty());
         this.translateYProperty().bind(entity.yProperty());
         this.rotateProperty().bind(entity.rotationProperty());
@@ -95,7 +95,7 @@ public class EntityView extends Parent {
      * the entity is already registered in the scene graph, this method will
      * throw IllegalStateException.
      *
-     * @param layer
+     * @param layer the render layer
      * @throws IllegalStateException
      */
     public final void setRenderLayer(RenderLayer layer) {

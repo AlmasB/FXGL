@@ -37,7 +37,7 @@ public interface FXGLEventHandler {
     /**
      * Called when an event of registered type occurred
      *
-     * @param event
+     * @param event the FXGL event
      */
     public void handle(FXGLEvent event);
 }

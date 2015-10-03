@@ -81,9 +81,9 @@ public class Entity {
     /**
      * Returns true if type of entity equals passed argument.
      *
-     * @param type
-     * @return
-     * @apiNote equivalent to
+     * @param type entity type
+     * @return true if entity has given type, false otherwise
+     * @implNote equivalent to
      * <code>getTypeAsString().equals(type.getUniqueType())</code>
      */
     public final boolean isType(EntityType type) {
@@ -346,9 +346,9 @@ public class Entity {
      * {@link com.almasb.fxgl.GameWorld#getEntitiesInRange(Rectangle2D, EntityType...)}
      * .
      *
-     * @param width
-     * @param height
-     * @return
+     * @param width radius width
+     * @param height radius height
+     * @return computed area
      */
     public final Rectangle2D computeRange(double width, double height) {
         double x = getX() - width;
@@ -467,8 +467,8 @@ public class Entity {
      * Returns component of given type if registered. The type must be exactly
      * the same as the type of the instance registered.
      *
-     * @param type
-     * @return
+     * @param type component type
+     * @return component
      */
     public final <T extends Component> Optional<T> getComponent(Class<T> type) {
         return Optional.ofNullable(type.cast(components.get(type)));
@@ -479,7 +479,7 @@ public class Entity {
      * Only 1 component with the same type can be registered.
      * Anonymous components are NOT allowed.
      *
-     * @param component
+     * @param component the component
      * @throws IllegalArgumentException if a component with same type already registered
      *                                  or anonymous
      */
@@ -548,7 +548,7 @@ public class Entity {
      * Entity is considered alive from moment the object itself is created and
      * until removeEntity() is called
      *
-     * @return
+     * @return true if entity is alive, false otherwise
      */
     public final boolean isAlive() {
         return alive.get();
@@ -594,7 +594,7 @@ public class Entity {
      * Once the timer has expired, the entity will be removed with
      * removeEntity()
      *
-     * @param duration
+     * @param duration time after which the entity will be removed from world
      */
     public final void setExpireTime(Duration duration) {
         expireTime = duration;
@@ -606,7 +606,7 @@ public class Entity {
      * Setting this to false will disable each control's update until this has
      * been set back to true.
      *
-     * @param b
+     * @param b controls enabled flag
      */
     public final void setControlsEnabled(boolean b) {
         controlsEnabled = b;
@@ -653,17 +653,23 @@ public class Entity {
      * Register an event handler for FXGLEventType. The handler will be notified
      * when an event of the type occurs on this entity.
      *
-     * @param type
-     * @param eventHandler
+     * @param type event type
+     * @param eventHandler event handler
      */
     public final void addFXGLEventHandler(FXGLEventType type,
                                           FXGLEventHandler eventHandler) {
         eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 
+    /**
+     * Removes an event handler for FXGLEventType.
+     *
+     * @param type event type
+     * @param eventHandler event handler
+     */
     public final void removeFXGLEventHandler(FXGLEventType type,
                                              FXGLEventHandler eventHandler) {
-        eventHandlers.remove(type.getUniqueType());
+        eventHandlers.remove(type, eventHandler);
     }
 
     /**
@@ -673,7 +679,7 @@ public class Entity {
      * If the FXGL event doesn't have a source, this entity will also become the
      * source of the event.
      *
-     * @param event
+     * @param event FXGL event
      */
     public final void fireFXGLEvent(FXGLEvent event) {
         if (event.getSource() == null)
@@ -705,7 +711,7 @@ public class Entity {
      * Use this method for background entity, range selection entity, temporary
      * entity, etc when you are not going to use its type.
      *
-     * @return
+     * @return entity with no type
      */
     public static final Entity noType() {
         return new Entity(new EntityType() {

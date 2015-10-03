@@ -63,7 +63,7 @@ public abstract class DoubleComponent implements Component {
      * Constructs a double value component with given
      * initial value.
      *
-     * @param initialValue
+     * @param initialValue initial value
      */
     public DoubleComponent(double initialValue) {
         property = new SimpleDoubleProperty(initialValue);
@@ -86,7 +86,7 @@ public abstract class DoubleComponent implements Component {
     /**
      * Set value to this component.
      *
-     * @param value
+     * @param value new value
      */
     public final void setValue(double value) {
         property.set(value);

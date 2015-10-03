@@ -64,7 +64,7 @@ public abstract class ObjectComponent<T> implements Component {
      * Constructs an object value component with given
      * initial value.
      *
-     * @param initialValue
+     * @param initialValue the initial value
      */
     public ObjectComponent(T initialValue) {
         property = new SimpleObjectProperty<>(initialValue);
@@ -87,7 +87,7 @@ public abstract class ObjectComponent<T> implements Component {
     /**
      * Set value to this component.
      *
-     * @param value
+     * @param value new value
      */
     public final void setValue(T value) {
         property.set(value);

@@ -63,7 +63,7 @@ public abstract class StringComponent implements Component {
      * Constructs a string value component with given
      * initial value.
      *
-     * @param initialValue
+     * @param initialValue the initial value
      */
     public StringComponent(String initialValue) {
         property = new SimpleStringProperty(initialValue);
@@ -86,7 +86,7 @@ public abstract class StringComponent implements Component {
     /**
      * Set value to this component.
      *
-     * @param value
+     * @param value new value
      */
     public final void setValue(String value) {
         property.set(value);

@@ -41,7 +41,7 @@ public final class FXGLEvent {
     /**
      * Constructs a new FXGL event with given type.
      *
-     * @param type
+     * @param type event type
      */
     public FXGLEvent(FXGLEventType type) {
         this(type, null);
@@ -50,8 +50,8 @@ public final class FXGLEvent {
     /**
      * Constructs a new FXGL event with given type and source.
      *
-     * @param type
-     * @param source
+     * @param type event type
+     * @param source event source
      */
     public FXGLEvent(FXGLEventType type, Entity source) {
         this.type = type;

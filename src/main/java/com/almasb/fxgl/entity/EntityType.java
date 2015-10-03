@@ -42,9 +42,9 @@ public interface EntityType {
     /**
      * Returns unique string literal for type.
      *
-     * @return
+     * @return unique type as String
      */
-    default public String getUniqueType() {
+    default String getUniqueType() {
         return getClass().getCanonicalName() + "." + toString();
     }
 }
