@@ -66,8 +66,8 @@ public final class TimerManager implements WorldStateListener {
     /**
      * Converts seconds to nanoseconds.
      *
-     * @param seconds
-     * @return
+     * @param seconds value in seconds
+     * @return value in nanoseconds
      */
     public static long secondsToNanos(double seconds) {
         return (long) (seconds * 1000000000L);
@@ -76,8 +76,8 @@ public final class TimerManager implements WorldStateListener {
     /**
      * Converts type Duration to nanoseconds.
      *
-     * @param duration
-     * @return
+     * @param duration value as Duration
+     * @return value in nanoseconds
      */
     public static long toNanos(Duration duration) {
         return secondsToNanos(duration.toSeconds());
@@ -129,7 +129,7 @@ public final class TimerManager implements WorldStateListener {
      * from the start of game. This time does not change while the game is paused.
      * This time does not change while within the same tick.
      *
-     * @return
+     * @return current time in nanoseconds
      */
     public long getNow() {
         return now;
@@ -191,7 +191,7 @@ public final class TimerManager implements WorldStateListener {
      * Called at the start of a game update tick.
      * This is where tick becomes tick + 1.
      *
-     * @param internalTime
+     * @param internalTime internal JavaFX time
      */
     public void tickStart(long internalTime) {
         tick.set(tick.get() + 1);
@@ -232,9 +232,9 @@ public final class TimerManager implements WorldStateListener {
      * <p>
      * Note: the scheduled action will not run while the game is paused
      *
-     * @param action
-     * @param interval
-     * @param whileCondition
+     * @param action         action to execute
+     * @param interval       interval between executions
+     * @param whileCondition condition
      */
     public void runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition) {
         if (!whileCondition.get()) {
@@ -243,8 +243,8 @@ public final class TimerManager implements WorldStateListener {
         TimerAction act = new TimerAction(getNow(), interval, action, TimerType.INDEFINITE);
         timerActions.add(act);
 
-        whileCondition.addListener((obs, old, newValue) -> {
-            if (!newValue.booleanValue())
+        whileCondition.addListener((obs, old, isTrue) -> {
+            if (!isTrue)
                 act.expire();
         });
     }
@@ -254,8 +254,8 @@ public final class TimerManager implements WorldStateListener {
      * <p>
      * Note: the scheduled action will not run while the game is paused
      *
-     * @param action
-     * @param delay
+     * @param action action to execute
+     * @param delay  delay after which to execute
      */
     public void runOnceAfter(Runnable action, Duration delay) {
         timerActions.add(new TimerAction(getNow(), delay, action, TimerType.ONCE));
@@ -269,6 +269,11 @@ public final class TimerManager implements WorldStateListener {
         timerActions.clear();
     }
 
+    /**
+     * Constructs a new Timer object.
+     *
+     * @return new timer
+     */
     public Timer newTimer() {
         return new Timer(this);
     }
@@ -277,7 +282,7 @@ public final class TimerManager implements WorldStateListener {
     public void onEntityAdded(Entity entity) {
         Duration expire = entity.getExpireTime();
         if (expire != Duration.ZERO)
-            runOnceAfter(() -> entity.removeFromWorld(), expire);
+            runOnceAfter(entity::removeFromWorld, expire);
     }
 
     @Override

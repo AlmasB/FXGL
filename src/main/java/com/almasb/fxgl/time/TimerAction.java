@@ -51,7 +51,7 @@ public final class TimerAction {
 
     /**
      * @param now      current time in nanoseconds
-     * @param interval
+     * @param interval interval duration
      * @param action   the action
      * @param type     ONCE or INDEFINITE
      */

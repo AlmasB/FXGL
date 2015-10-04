@@ -48,8 +48,8 @@ public final class Timer {
      * Returns true if difference between captured time
      * and now is greater or equal to given duration.
      *
-     * @param duration
-     * @return
+     * @param duration time duration to check
+     * @return true if elapsed, false otherwise
      */
     public boolean elapsed(Duration duration) {
         return manager.getNow() - time >= TimerManager.toNanos(duration);

@@ -50,8 +50,8 @@ final class FPSCounter {
      * Calculates average FPS and buffers given value
      * for future corrections to the FPS value
      *
-     * @param timeTookLastFrame
-     * @return
+     * @param timeTookLastFrame how long it took to compute last frame
+     * @return average FPS
      */
     public float count(float timeTookLastFrame) {
         sum -= values[index];
