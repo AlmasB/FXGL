@@ -56,7 +56,7 @@ public class ReadOnlyGameSettings {
      * Constructs new game settings with parameters
      * copied from given.
      *
-     * @param copy
+     * @param copy game settings to copy from
      */
     ReadOnlyGameSettings(ReadOnlyGameSettings copy) {
         this.title = copy.title;
