@@ -87,8 +87,8 @@ public abstract class FXGLScene {
      * the image cursor within assets/ui/cursors/.
      * Hotspot is location of the pointer end on the image.
      *
-     * @param imageName
-     * @param hotspot
+     * @param imageName name of image file
+     * @param hotspot hotspot location
      */
     public void setCursor(String imageName, Point2D hotspot) {
         root.setCursor(new ImageCursor(AssetManager.INSTANCE.loadCursorImage(imageName),

@@ -36,7 +36,21 @@ import com.almasb.fxgl.settings.SceneSettings;
  */
 public abstract class MenuFactory {
 
+    /**
+     * Called to construct main menu.
+     *
+     * @param app game application
+     * @param settings scene settings
+     * @return main menu
+     */
     public abstract FXGLMenu newMainMenu(GameApplication app, SceneSettings settings);
 
+    /**
+     * Called to construct game menu.
+     *
+     * @param app game application
+     * @param settings scene settings
+     * @return game menu
+     */
     public abstract FXGLMenu newGameMenu(GameApplication app, SceneSettings settings);
 }

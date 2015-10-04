@@ -29,6 +29,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 
+/**
+ * JavaFX Button styled with FXGL CSS.
+ */
 public class FXGLButton extends Button {
     public FXGLButton() {
         this("");

@@ -148,15 +148,10 @@ public abstract class FXGLMenu extends FXGLScene {
         grid.setHgap(50);
 
         // add listener for new ones
-        app.getInputManager().getBindings().addListener(new ListChangeListener<InputBinding>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends InputBinding> c) {
-                while (c.next()) {
-                    if (c.wasAdded()) {
-                        c.getAddedSubList().forEach(binding -> {
-                            addNewInputBinding(binding, grid);
-                        });
-                    }
+        app.getInputManager().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    c.getAddedSubList().forEach(binding -> addNewInputBinding(binding, grid));
                 }
             }
         });

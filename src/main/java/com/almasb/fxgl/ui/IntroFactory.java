@@ -28,5 +28,12 @@ package com.almasb.fxgl.ui;
 import com.almasb.fxgl.settings.SceneSettings;
 
 public abstract class IntroFactory {
+
+    /**
+     * Called to construct intro scene.
+     *
+     * @param settings scene settings
+     * @return intro scene
+     */
     public abstract IntroScene newIntro(SceneSettings settings);
 }

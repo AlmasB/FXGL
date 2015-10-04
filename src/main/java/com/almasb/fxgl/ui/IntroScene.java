@@ -50,7 +50,7 @@ public abstract class IntroScene extends FXGLScene {
     /**
      * Do NOT call. This is set by FXGL.
      *
-     * @param onFinished
+     * @param onFinished code to call on finish
      */
     public final void setOnFinished(Runnable onFinished) {
         this.onFinished = onFinished;
