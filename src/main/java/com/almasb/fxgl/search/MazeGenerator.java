@@ -30,15 +30,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Note: this class is yet not fully implemented
+ * API INCOMPLETE
  * <p>
  * Modified and adapted for general use version of
  * recursive backtracking algorithm
  * shamelessly borrowed from the ruby at
  * http://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
  *
- * @author Almas Baimagambetov (ab607@uni.brighton.ac.uk)
- * @version 1.0
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class MazeGenerator {
     private final int x;
@@ -206,14 +205,12 @@ public final class MazeGenerator {
             W.opposite = E;
         }
 
-        private DIR(int bit, int dx, int dy) {
+        DIR(int bit, int dx, int dy) {
             this.bit = bit;
             this.dx = dx;
             this.dy = dy;
         }
     }
-
-    ;
 
     public static class MazeCell extends AStarNode {
         public MazeCell(int x, int y, int hCost) {
