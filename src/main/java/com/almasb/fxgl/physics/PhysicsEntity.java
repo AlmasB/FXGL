@@ -41,7 +41,7 @@ import javafx.geometry.Point2D;
  * An entity being managed by PhysicsManager and hence
  * is being affected by physics space and its forces
  * <p>
- * {@link #translate(Point2D)} and {@link #setTranslateX(double)}
+ * {@link #translate(Point2D)} and {@link #setX(double)}
  * methods will NOT work. Use {@link #setLinearVelocity(Point2D)} to
  * move the object.
  * <p>
@@ -50,7 +50,6 @@ import javafx.geometry.Point2D;
  * BodyType.STATIC doesn't move even if you set its velocity to non-zero
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 public final class PhysicsEntity extends Entity {
 
@@ -65,7 +64,7 @@ public final class PhysicsEntity extends Entity {
     /**
      * Constructs a PhysicsEntity with given type
      *
-     * @param type
+     * @param type entity type
      */
     public PhysicsEntity(EntityType type) {
         super(type);
@@ -87,36 +86,30 @@ public final class PhysicsEntity extends Entity {
      * Set custom fixture definition to describe a generated
      * fixture for this physics entity
      *
-     * @param def
-     * @return this object
+     * @param def fixture definition
      */
-    public PhysicsEntity setFixtureDef(FixtureDef def) {
+    public void setFixtureDef(FixtureDef def) {
         fixtureDef = def;
-        return this;
     }
 
     /**
      * Set custom body definition to describe a generated
      * body for this physics entity
      *
-     * @param def
-     * @return this entity
+     * @param def body definition
      */
-    public PhysicsEntity setBodyDef(BodyDef def) {
+    public void setBodyDef(BodyDef def) {
         bodyDef = def;
-        return this;
     }
 
     /**
      * A convenience method to avoid setting body definition
      * if only a change of body type is required
      *
-     * @param type
-     * @return this entity
+     * @param type body type
      */
-    public PhysicsEntity setBodyType(BodyType type) {
+    public void setBodyType(BodyType type) {
         bodyDef.type = type;
-        return this;
     }
 
     /**
@@ -126,10 +119,9 @@ public final class PhysicsEntity extends Entity {
      * Please note that the vector x and y are in pixels
      *
      * @param vector x and y in pixels
-     * @return this entity
      */
-    public PhysicsEntity setLinearVelocity(Point2D vector) {
-        return setBodyLinearVelocity(PhysicsManager.toVector(vector).mulLocal(60));
+    public void setLinearVelocity(Point2D vector) {
+        setBodyLinearVelocity(PhysicsManager.toVector(vector).mulLocal(60));
     }
 
     /**
@@ -139,10 +131,9 @@ public final class PhysicsEntity extends Entity {
      * Please note that x and y are in pixels
      *
      * @param x and y in pixels
-     * @return this entity
      */
-    public PhysicsEntity setLinearVelocity(double x, double y) {
-        return setLinearVelocity(new Point2D(x, y));
+    public void setLinearVelocity(double x, double y) {
+        setLinearVelocity(new Point2D(x, y));
     }
 
     /**
@@ -152,22 +143,22 @@ public final class PhysicsEntity extends Entity {
      * x and y of the argument are in meters
      *
      * @param vector x and y in meters
-     * @return
      */
-    public PhysicsEntity setBodyLinearVelocity(Vec2 vector) {
+    public void setBodyLinearVelocity(Vec2 vector) {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first");
+            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first." +
+                    "Note: entity is only added in the next tick");
 
         body.setLinearVelocity(vector);
-        return this;
     }
 
     /**
-     * @return linear velocity in pxels
+     * @return linear velocity in pixels
      */
     public Point2D getLinearVelocity() {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first");
+            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first" +
+                    "Note: entity is only added in the next tick");
 
         return PhysicsManager.toVector(body.getLinearVelocity().mul(1 / 60f));
     }
@@ -179,7 +170,8 @@ public final class PhysicsEntity extends Entity {
      */
     public void setAngularVelocity(double velocity) {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first");
+            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first" +
+                    "Note: entity is only added in the next tick");
 
         body.setAngularVelocity((float) -velocity);
     }
@@ -187,7 +179,7 @@ public final class PhysicsEntity extends Entity {
     /**
      * Set true to make raycast ignore this entity
      *
-     * @param b
+     * @param b raycast flag
      */
     public void setRaycastIgnored(boolean b) {
         raycastIgnored = b;

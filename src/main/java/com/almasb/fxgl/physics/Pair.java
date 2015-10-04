@@ -38,8 +38,7 @@ class Pair<T> {
 
     public Pair(T a, T b) {
         if (a == null || b == null)
-            throw new IllegalArgumentException("Objects must not be null: "
-                    + a == null ? "a" : "b");
+            throw new IllegalArgumentException("Objects must not be null:");
         this.a = a;
         this.b = b;
     }

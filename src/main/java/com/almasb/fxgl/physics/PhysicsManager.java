@@ -186,17 +186,17 @@ public final class PhysicsManager implements WorldStateListener {
                 return;
             }
 
-            if (cachedTick.longValue() == -1L) {
+            if (cachedTick == -1L) {
                 pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
                 toRemove.add(pair);
-            } else if (tick.get() == cachedTick.longValue()) {
+            } else if (tick.get() == cachedTick) {
                 pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
             } else if (tick.get() > cachedTick) {
                 pair.getHandler().onCollision(pair.getA(), pair.getB());
             }
         });
 
-        toRemove.forEach(pair -> collisions.remove(pair));
+        toRemove.forEach(collisions::remove);
     }
 
     /**
@@ -220,31 +220,28 @@ public final class PhysicsManager implements WorldStateListener {
      *
      * </pre>
      *
-     * @param typeA
-     * @param typeB
-     * @param handler
+     * @param handler collision handler
      */
     public void addCollisionHandler(CollisionHandler handler) {
         collisionHandlers.add(handler);
     }
 
     /**
-     * Set gravity for the physics world
+     * Set gravity for the physics world.
      *
-     * @param x
-     * @param y
+     * @param x vector x
+     * @param y vector y
      */
     public void setGravity(double x, double y) {
         physicsWorld.setGravity(new Vec2().addLocal((float) x, -(float) y));
     }
 
     /**
-     * Do NOT call manually. This is called by FXGL Application
-     * to create a physics body in physics space (world)
+     * Create physics body and attach to physics world.
      *
-     * @param e
+     * @param e physics entity
      */
-    public void createBody(PhysicsEntity e) {
+    private void createBody(PhysicsEntity e) {
         double x = e.getX(),
                 y = e.getY(),
                 w = e.getWidth(),
@@ -263,12 +260,11 @@ public final class PhysicsManager implements WorldStateListener {
     }
 
     /**
-     * Do NOT call manually. This is called by FXGL Application
-     * to destroy a physics body in physics space (world)
+     * Destroy body and remove from physics world.
      *
-     * @param e
+     * @param e physics entity
      */
-    public void destroyBody(PhysicsEntity e) {
+    private void destroyBody(PhysicsEntity e) {
         physicsWorld.destroyBody(e.body);
     }
 
@@ -300,8 +296,8 @@ public final class PhysicsManager implements WorldStateListener {
     /**
      * Converts pixels to meters
      *
-     * @param pixels
-     * @return
+     * @param pixels value in pixels
+     * @return value in meters
      */
     public static float toMeters(double pixels) {
         return (float) pixels * 0.05f;
@@ -310,8 +306,8 @@ public final class PhysicsManager implements WorldStateListener {
     /**
      * Converts meters to pixels
      *
-     * @param meters
-     * @return
+     * @param meters value in meters
+     * @return value in pixels
      */
     public static float toPixels(double meters) {
         return (float) meters * 20f;
@@ -320,8 +316,8 @@ public final class PhysicsManager implements WorldStateListener {
     /**
      * Converts a vector of type Point2D to vector of type Vec2
      *
-     * @param v
-     * @return
+     * @param v vector in pixels
+     * @return vector in meters
      */
     public static Vec2 toVector(Point2D v) {
         return new Vec2(toMeters(v.getX()), toMeters(-v.getY()));
@@ -330,8 +326,8 @@ public final class PhysicsManager implements WorldStateListener {
     /**
      * Converts a vector of type Vec2 to vector of type Point2D
      *
-     * @param v
-     * @return
+     * @param v vector in meters
+     * @return vector in pixels
      */
     public static Point2D toVector(Vec2 v) {
         return new Point2D(toPixels(v.x), toPixels(-v.y));
@@ -340,8 +336,8 @@ public final class PhysicsManager implements WorldStateListener {
     /**
      * Converts a point of type Point2D to point of type Vec2
      *
-     * @param p
-     * @return
+     * @param p point in pixels
+     * @return point in meters
      */
     public Vec2 toPoint(Point2D p) {
         return new Vec2(toMeters(p.getX()), toMeters(appHeight - p.getY()));
@@ -350,8 +346,8 @@ public final class PhysicsManager implements WorldStateListener {
     /**
      * Converts a point of type Vec2 to point of type Point2D
      *
-     * @param p
-     * @return
+     * @param p point in meters
+     * @return point in pixels
      */
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
