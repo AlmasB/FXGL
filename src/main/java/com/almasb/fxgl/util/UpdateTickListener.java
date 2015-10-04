@@ -31,5 +31,5 @@ package com.almasb.fxgl.util;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface UpdateTickListener {
-    public void onUpdate();
+    void onUpdate();
 }

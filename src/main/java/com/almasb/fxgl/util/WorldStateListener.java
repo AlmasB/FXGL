@@ -28,11 +28,11 @@ package com.almasb.fxgl.util;
 import com.almasb.fxgl.entity.Entity;
 
 public interface WorldStateListener {
-    public void onEntityAdded(Entity entity);
+    void onEntityAdded(Entity entity);
 
-    public void onEntityRemoved(Entity entity);
+    void onEntityRemoved(Entity entity);
 
-    public void onWorldUpdate();
+    void onWorldUpdate();
 
-    public void onWorldReset();
+    void onWorldReset();
 }

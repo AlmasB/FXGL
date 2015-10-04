@@ -50,7 +50,7 @@ public final class FXGLLogger {
      * Initialize the logger with given level. This must be called
      * prior to any logging calls
      *
-     * @param logLevel
+     * @param logLevel logging level
      */
     public static void init(Level logLevel) {
         if (consoleHandler != null) {
@@ -100,8 +100,8 @@ public final class FXGLLogger {
     /**
      * Wraps the error stack trace into a single String
      *
-     * @param e
-     * @return
+     * @param e error
+     * @return stack trace as String
      */
     public static String errorTraceAsString(Throwable e) {
         StringBuilder sb = new StringBuilder();
@@ -109,7 +109,7 @@ public final class FXGLLogger {
 
         StackTraceElement[] elements = e.getStackTrace();
         for (StackTraceElement el : elements) {
-            sb.append("E: " + el.toString() + "\n");
+            sb.append("E: ").append(el.toString()).append('\n');
         }
 
         return sb.toString();

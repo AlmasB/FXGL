@@ -37,7 +37,7 @@ public interface ExceptionHandler {
      * the implementation to decide how it should log / display
      * the exception.
      *
-     * @param e
+     * @param e error
      */
-    public void handle(Throwable e);
+    void handle(Throwable e);
 }
