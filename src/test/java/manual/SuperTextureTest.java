@@ -40,6 +40,7 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.HorizontalDirection;
+import javafx.geometry.VerticalDirection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -112,7 +113,10 @@ public class SuperTextureTest extends GameApplication {
         Texture brick = assets.getTexture("brick.png");
         Texture brick2 = assets.getTexture("brick2.png");
 
-        player.setSceneView(brick.superTexture(brick2, HorizontalDirection.RIGHT));
+        // 32x32
+        // 64x64, 32x32
+        player.setSceneView(brick.superTexture(brick2, HorizontalDirection.RIGHT)
+                                .superTexture(brick2, VerticalDirection.UP));
 
         enemy = new Entity(Type.ENEMY);
         enemy.setPosition(200, 100);
@@ -127,8 +131,10 @@ public class SuperTextureTest extends GameApplication {
         enemy.setCollidable(true);
 
         player.setGenerateHitBoxesFromView(false);
-        player.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 64, 64)));
-        player.addHitBox(new HitBox("ARM", new BoundingBox(64, 0, 32, 32)));
+        player.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 32, 32)));
+        player.addHitBox(new HitBox("ARM", new BoundingBox(64, 32, 32, 32)));
+        player.addHitBox(new HitBox("BODY", new BoundingBox(0, 32, 64, 64)));
+
         enemy.addHitBox(new HitBox("MAIN_BODY", new BoundingBox(0, 0, 40, 40)));
 
         getGameWorld().addEntities(player, enemy);

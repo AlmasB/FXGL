@@ -27,6 +27,7 @@ package com.almasb.fxgl.asset;
 
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.VerticalDirection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -131,6 +132,14 @@ public class Texture extends ImageView {
         return new Texture(image);
     }
 
+    /**
+     * Generates a new texture which combines this and given texture.
+     * The given texture is appended based on the direction provided.
+     *
+     * @param other the texture to append to this one
+     * @param direction the direction to append from
+     * @return new combined texture
+     */
     public final Texture superTexture(Texture other, HorizontalDirection direction) {
         Image leftImage, rightImage;
 
@@ -162,6 +171,57 @@ public class Texture extends ImageView {
                 } else {
                     if (y < rightImage.getHeight()) {
                         color = rightReader.getColor(x - (int)leftImage.getWidth(), y);
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                }
+
+                pixelWriter.setColor(x, y, color);
+            }
+        }
+
+        return new Texture(image);
+    }
+
+    /**
+     * Generates a new texture which combines this and given texture.
+     * The given texture is appended based on the direction provided.
+     *
+     * @param other the texture to append to this one
+     * @param direction the direction to append from
+     * @return new combined texture
+     */
+    public final Texture superTexture(Texture other, VerticalDirection direction) {
+        Image topImage, bottomImage;
+
+        if (direction == VerticalDirection.DOWN) {
+            topImage = this.getImage();
+            bottomImage = other.getImage();
+        } else {
+            topImage = other.getImage();
+            bottomImage = this.getImage();
+        }
+
+        int width = (int) Math.max(topImage.getWidth(), bottomImage.getWidth());
+        int height = (int) (topImage.getHeight() + bottomImage.getHeight());
+
+        PixelReader topReader = topImage.getPixelReader();
+        PixelReader bottomReader = bottomImage.getPixelReader();
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter pixelWriter = image.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color color;
+                if (y < topImage.getHeight()) {
+                    if (x < topImage.getWidth()) {
+                        color = topReader.getColor(x, y);
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                } else {
+                    if (x < bottomImage.getWidth()) {
+                        color = bottomReader.getColor(x, y - (int)topImage.getHeight());
                     } else {
                         color = Color.TRANSPARENT;
                     }
