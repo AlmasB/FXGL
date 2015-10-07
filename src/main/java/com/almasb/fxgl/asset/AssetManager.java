@@ -252,7 +252,10 @@ public enum AssetManager {
      */
     public FontFactory loadFont(String name) {
         try (InputStream is = getStream(FONTS_DIR + name)) {
-            return new FontFactory(Font.loadFont(is, 12));
+        	Font font = Font.loadFont(is, 12);
+        	if (font == null)
+        		font = Font.font(12);
+            return new FontFactory(font);
         } catch (Exception e) {
             throw loadFailed(name, e);
         }

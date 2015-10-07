@@ -36,6 +36,8 @@ public final class FontFactory {
     private Font font;
 
     FontFactory(Font font) {
+    	if (font == null)
+    		throw new IllegalArgumentException("Font cannot be null");
         this.font = font;
     }
 
