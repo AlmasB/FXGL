@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.asset;
 
+import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -124,6 +125,49 @@ public class Texture extends ImageView {
             for (int x = minX; x < maxX; x++) {
                 Color color = pixelReader.getColor(x, y);
                 pixelWriter.setColor(x - minX, y - minY, color);
+            }
+        }
+
+        return new Texture(image);
+    }
+
+    public final Texture superTexture(Texture other, HorizontalDirection direction) {
+        Image leftImage, rightImage;
+
+        if (direction == HorizontalDirection.LEFT) {
+            leftImage = other.getImage();
+            rightImage = this.getImage();
+        } else {
+            leftImage = this.getImage();
+            rightImage = other.getImage();
+        }
+
+        int width = (int) (leftImage.getWidth() + rightImage.getWidth());
+        int height = (int) Math.max(leftImage.getHeight(), rightImage.getHeight());
+
+        PixelReader leftReader = leftImage.getPixelReader();
+        PixelReader rightReader = rightImage.getPixelReader();
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter pixelWriter = image.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color color;
+                if (x < leftImage.getWidth()) {
+                    if (y < leftImage.getHeight()) {
+                        color = leftReader.getColor(x, y);
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                } else {
+                    if (y < rightImage.getHeight()) {
+                        color = rightReader.getColor(x - (int)leftImage.getWidth(), y);
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                }
+
+                pixelWriter.setColor(x, y, color);
             }
         }
 
