@@ -415,7 +415,6 @@ public abstract class GameApplication extends Application {
         FXGLLogger.init(logLevel);
 
         log.info("Application Mode: " + settings.getApplicationMode());
-        log.info("Log Level: " + logLevel);
 
         initManagers(stage);
         // we call this early to process user input bindings
