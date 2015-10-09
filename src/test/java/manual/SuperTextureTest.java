@@ -29,6 +29,8 @@ package manual;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
+import com.almasb.fxgl.effect.ImplosionEmitter;
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.event.InputManager;
@@ -92,6 +94,16 @@ public class SuperTextureTest extends GameApplication {
         }, KeyCode.W);
 
         input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onActionBegin() {
+                ParticleEntity test = new ParticleEntity(Type.ENEMY);
+                test.setPosition(player.getPosition());
+                ImplosionEmitter emitter = new ImplosionEmitter();
+                test.setEmitter(emitter);
+
+                getGameWorld().addEntity(test);
+            }
+
             @Override
             protected void onAction() {
                 player.translate(0, 5);
