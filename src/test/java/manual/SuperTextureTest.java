@@ -30,7 +30,9 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.effect.ImplosionEmitter;
+import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEntity;
+import com.almasb.fxgl.effect.SparkEmitter;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.event.InputManager;
@@ -98,7 +100,7 @@ public class SuperTextureTest extends GameApplication {
             protected void onActionBegin() {
                 ParticleEntity test = new ParticleEntity(Type.ENEMY);
                 test.setPosition(player.getPosition());
-                ImplosionEmitter emitter = new ImplosionEmitter();
+                ParticleEmitter emitter = new SparkEmitter();
                 test.setEmitter(emitter);
 
                 getGameWorld().addEntity(test);
