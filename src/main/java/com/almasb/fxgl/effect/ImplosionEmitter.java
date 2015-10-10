@@ -34,11 +34,13 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ImplosionEmitter extends ParticleEmitter {
+public final class ImplosionEmitter extends ParticleEmitter {
 
     public ImplosionEmitter() {
         setNumParticles(100);
         setEmissionRate(0.0166);
+        setSize(5, 20);
+        setColorFunction(() -> Color.rgb((int) rand(200, 255), 30, 20));
     }
 
     @Override
@@ -49,10 +51,10 @@ public class ImplosionEmitter extends ParticleEmitter {
         return new Particle(newPos,
                 newPos.subtract(new Point2D(x, y)).multiply(-0.05),
                 Point2D.ZERO,
-                rand(5, 20),
+                getRandomSize(),
                 new Point2D(rand() * -0.1, rand() * -0.1),
                 Duration.seconds(0.5),
-                Color.rgb((int) rand(200, 255), 30, 20),
+                getColorFunction().get(),
                 i < getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_DODGE);
     }
 }

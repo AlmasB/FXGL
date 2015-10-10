@@ -38,23 +38,15 @@ import javafx.util.Duration;
  */
 public final class SmokeEmitter extends ParticleEmitter {
 
-    private Paint color = Color.rgb(230, 230, 230);
-
     /**
      * Constructs new smoke emitter with default settings.
      */
     public SmokeEmitter() {
         setNumParticles(5);
         setEmissionRate(1);
-    }
-
-    /**
-     * Sets color of smoke particles.
-     *
-     * @param color particles color
-     */
-    public void setColor(Paint color) {
-        this.color = color;
+        setSize(9, 10);
+        setColorFunction(() -> Color.rgb(230, 230, 230));
+        setGravityFunction(() -> new Point2D(0, rand() * -0.03));
     }
 
     @Override
@@ -62,11 +54,11 @@ public final class SmokeEmitter extends ParticleEmitter {
         //Point2D spawn = new Point2D(i * (rand() - 0.5), (rand() - 1));
         Particle p = new Particle(new Point2D(x, y).add(rand(-1, 1), 0),
                 new Point2D((rand() * 0.1), rand() * -0.02 - 2.4),
-                new Point2D(rand(0.00, 0.00), rand() * -0.03),
-                rand(9, 10),
+                getGravityFunction().get(),
+                getRandomSize(),
                 new Point2D(-0.01, -0.05),
                 Duration.seconds(rand(6, 10)),
-                color,
+                getColorFunction().get(),
                 BlendMode.ADD);
 
         p.setControl(particle -> {

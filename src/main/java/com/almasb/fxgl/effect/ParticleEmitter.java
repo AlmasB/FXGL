@@ -25,9 +25,14 @@
  */
 package com.almasb.fxgl.effect;
 
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -45,6 +50,92 @@ public abstract class ParticleEmitter {
     private Random random = new Random();
     private int numParticles = 25;
     private double emissionRate = 1.0;
+
+    private double sizeMin = 9;
+    private double sizeMax = 12;
+
+    /**
+     *
+     * @return minimum particle size
+     */
+    public final double getSizeMin() {
+        return sizeMin;
+    }
+
+    /**
+     *
+     * @return maximum particle size
+     */
+    public final double getSizeMax() {
+        return sizeMax;
+    }
+
+    /**
+     *
+     * @return random size between min and max size
+     */
+    protected final double getRandomSize() {
+        return rand(getSizeMin(), getSizeMax());
+    }
+
+    /**
+     * Set size to particles.
+     * The created size will be a random value
+     * between min (incl) and max (excl).
+     *
+     * @param min minimum size
+     * @param max maximum size
+     */
+    public final void setSize(double min, double max) {
+        sizeMin = min;
+        sizeMax = max;
+    }
+
+    private Supplier<Paint> colorFunction = () -> Color.TRANSPARENT;
+
+    /**
+     *
+     * @return particles color function
+     */
+    public final Supplier<Paint> getColorFunction() {
+        return colorFunction;
+    }
+
+    /**
+     * Set color function to particles created by this emitter.
+     * The supplier function will be invoked every time a new
+     * particle is emitted.
+     *
+     * @param colorFunction particles color function.
+     */
+    public final void setColorFunction(Supplier<Paint> colorFunction) {
+        this.colorFunction = colorFunction;
+    }
+
+    private Supplier<Point2D> gravityFunction = () -> Point2D.ZERO;
+
+    /**
+     *
+     * @return gravity function
+     */
+    public final Supplier<Point2D> getGravityFunction() {
+        return gravityFunction;
+    }
+
+    /**
+     * Set gravity function. The supplier function is invoked
+     * every time when a new particle is spawned.
+     *
+     * Adds gravitational pull to particles. Once created
+     * the particle's movement will be biased towards
+     * the vector.
+     *
+     * @param gravityFunction gravity vector supplier function
+     * @defaultValue (0, 0)
+     */
+    public final void setGravityFunction(Supplier<Point2D> gravityFunction) {
+        this.gravityFunction = gravityFunction;
+    }
 
     /**
      * Emission rate accumulator. Default value 1.0

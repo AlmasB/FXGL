@@ -32,13 +32,21 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
+ * Emitter for basic "sparks" effect.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class SparkEmitter extends ParticleEmitter {
+public final class SparkEmitter extends ParticleEmitter {
 
+    /**
+     * Constructs sparks emitter with default settings.
+     */
     public SparkEmitter() {
         setNumParticles(30);
         setEmissionRate(0.0166 / 2);
+        setSize(1, 2);
+        setColorFunction(() -> Color.rgb(30, 35, (int) rand(200, 255)));
+        setGravityFunction(() -> new Point2D(0, rand(0.01, 0.015)));
     }
 
     @Override
@@ -47,11 +55,11 @@ public class SparkEmitter extends ParticleEmitter {
 
         return new Particle(new Point2D(x, y),
                 vel.multiply(0.1),
-                new Point2D(0, rand(0.01, 0.015)),
-                rand(1, 2),
+                getGravityFunction().get(),
+                getRandomSize(),
                 Point2D.ZERO,
                 Duration.seconds(2),
-                Color.rgb(30, 35, (int) rand(200, 255)),
+                getColorFunction().get(),
                 BlendMode.ADD);
     }
 }
