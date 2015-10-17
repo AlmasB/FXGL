@@ -27,6 +27,7 @@ package com.almasb.fxgl;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,6 +117,39 @@ public class GameWorldTest {
     }
 
     @Test
+    public void getEntitiesInRange() {
+        Entity entity = new Entity(Type.TEST_ENTITY);
+        entity.setPosition(100, 100);
+        entity.setSceneView(new Rectangle(40, 40));
+
+        Entity entity2 = new Entity(Type.TEST_ENTITY);
+        entity2.setPosition(200, 100);
+        entity2.setSceneView(new Rectangle(40, 40));
+
+        Entity entity3 = new Entity(Type.TEST_ENTITY);
+        entity3.setPosition(300, 100);
+        entity3.setSceneView(new Rectangle(40, 40));
+
+        gameWorld.addEntities(entity, entity2, entity3);
+        gameWorld.update();
+
+        List<Entity> list = gameWorld.getEntitiesInRange(new Rectangle2D(150, 50, 100, 150));
+        assertEquals(1, list.size());
+        assertEquals(entity2, list.get(0));
+
+        list = gameWorld.getEntitiesInRange(new Rectangle2D(150, 50, 180, 150));
+        assertEquals(2, list.size());
+        assertListContains(list, entity2, entity3);
+
+        list = gameWorld.getEntitiesInRange(new Rectangle2D(100, 50, 300, 150));
+        assertEquals(3, list.size());
+        assertListContains(list, entity, entity2, entity3);
+
+        list = gameWorld.getEntitiesInRange(new Rectangle2D(0, 0, 50, 50));
+        assertEquals(0, list.size());
+    }
+
+    @Test
     public void reset() {
         Entity entity = new Entity(Type.TEST_ENTITY);
 
@@ -137,5 +171,9 @@ public class GameWorldTest {
         gameWorld.update();
         assertTrue(entity.isActive());
         assertEquals(gameWorld, entity.getWorld());
+    }
+
+    private static boolean assertListContains(List<?> list, Object... objects) {
+        return list.containsAll(Arrays.asList(objects));
     }
 }

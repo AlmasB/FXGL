@@ -37,10 +37,14 @@ import java.util.stream.Collectors;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.shape.Rectangle;
 
 /**
  * Represents pure logical state of game.
@@ -242,27 +246,27 @@ public final class GameWorld {
                 .collect(Collectors.toList());
     }
 
-//    /**
-//     * Returns a list of entities whose type matches given arguments and
-//     * which are partially or entirely
-//     * in the specified rectangular selection.
-//     *
-//     * If no arguments were given, a list of all entities satisfying the
-//     * requirement is returned.
-//     *
-//     * @param selection Rectangle2D that describes the selection box
-//     * @param types entity types
-//     * @return  list of entities in the range
-//     */
-//    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
-//        Entity boundsEntity = Entity.noType();
-//        boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
-//        boundsEntity.setView(new Rectangle(selection.getWidth(), selection.getHeight()));
-//
-//        return getEntities(types).stream()
-//                .filter(entity -> entity.isCollidingWith(boundsEntity))
-//                .collect(Collectors.toList());
-//    }
+    /**
+     * Returns a list of entities whose type matches given arguments and
+     * which are partially or entirely
+     * in the specified rectangular selection.
+     *
+     * If no arguments were given, a list of all entities satisfying the
+     * requirement is returned.
+     *
+     * @param selection Rectangle2D that describes the selection box
+     * @param types entity types
+     * @return  list of entities in the range
+     */
+    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
+        Entity boundsEntity = Entity.noType();
+        boundsEntity.addHitBox(new HitBox("__RANGE__",
+                new BoundingBox(selection.getMinX(), selection.getMinY(), selection.getWidth(), selection.getHeight())));
+
+        return getEntities(types).stream()
+                .filter(entity -> entity.isCollidingWith(boundsEntity))
+                .collect(Collectors.toList());
+    }
 
 //    /**
 //     * Returns a list of entities whose type matches given arguments and

@@ -321,6 +321,15 @@ public class Entity {
     }
 
     /**
+     * @param other the other entity
+     * @return true iff this entity is colliding with other based on
+     * their hit boxes, in current frame
+     */
+    public final boolean isCollidingWith(Entity other) {
+        return checkCollision(other) != CollisionResult.NO_COLLISION;
+    }
+
+    /**
      * Returns distance from center of this entity to center of the given
      * entity.
      *
