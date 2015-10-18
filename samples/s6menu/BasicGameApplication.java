@@ -23,25 +23,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s4physics;
+package s6menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
-
-import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class BasicGameApplication extends GameApplication {
 
@@ -51,6 +48,8 @@ public class BasicGameApplication extends GameApplication {
 
     private Entity player, enemy;
 
+    private Text uiText;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
@@ -58,8 +57,12 @@ public class BasicGameApplication extends GameApplication {
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
+
+        // 1. set intro enabled to true
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+
+        // 2. set menu enabled to true
+        settings.setMenuEnabled(true);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
@@ -115,7 +118,7 @@ public class BasicGameApplication extends GameApplication {
         enemyGraphics.setFill(Color.RED);
         enemy.setSceneView(enemyGraphics);
 
-        // 1. we need to set collidable to true
+        // we need to set collidable to true
         // so that collision system can 'see' them
         player.setCollidable(true);
         enemy.setCollidable(true);
@@ -125,17 +128,9 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        // 2. get physics manager and register a collision handler
-        // between Type.PLAYER and Type.ENEMY
-
         PhysicsManager physics = getPhysicsManager();
         physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
-            @Override
-            protected void onHitBoxTrigger(Entity player, Entity enemy, HitBox playerBox, HitBox enemyBox) {
-                System.out.println(playerBox.getName() + " X " + enemyBox.getName());
-            }
-
-            // the order of entities is determined by
+            // the order of entities determined by
             // the order of their types passed into constructor
             @Override
             protected void onCollisionBegin(Entity player, Entity enemy) {
@@ -146,7 +141,15 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+        uiText = new Text();
+        uiText.setFont(Font.font(18));
+        uiText.setTranslateX(600);
+        uiText.setTranslateY(100);
+        uiText.textProperty().bind(player.xProperty().asString());
+
+        getGameScene().addUINodes(uiText);
+    }
 
     @Override
     protected void onUpdate() {}

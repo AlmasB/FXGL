@@ -55,15 +55,15 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(800);
+        settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(true);
+        settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
@@ -83,6 +83,20 @@ public class BasicGameApplication extends GameApplication {
                 player.translate(5, 0);
             }
         }, KeyCode.D);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                player.translate(0, -5);
+            }
+        }, KeyCode.W);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                player.translate(0, 5);
+            }
+        }, KeyCode.S);
     }
 
     @Override

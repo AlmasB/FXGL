@@ -83,7 +83,7 @@ public class BasicGameApplication extends GameApplication {
         // set graphics to entity
         player.setSceneView(graphics);
 
-        // 4. add entity to scene graph
+        // 4. add entity to game world
         getGameWorld().addEntity(player);
     }
 
