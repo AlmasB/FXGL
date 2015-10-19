@@ -44,128 +44,63 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class BasicGameApplication extends GameApplication {
 
     private enum Type implements EntityType {
-        PLAYER, ENEMY, EXPLOSION
+        EXPLOSION
     }
-
-    private Entity player, enemy;
-
-    // 1. declare JavaFX Text
-    private Text uiText;
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(800);
+        settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
-
-    private ParticleEntity explosion;
 
     @Override
     protected void initInput() {
         InputManager input = getInputManager();
 
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                player.translate(-5, 0);
-            }
-        }, KeyCode.A);
-
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                player.translate(5, 0);
-            }
-        }, KeyCode.D);
-
         input.addAction(new UserAction("Spawn Explosion") {
             @Override
             protected void onActionBegin() {
-                explosion = new ParticleEntity(Type.EXPLOSION);
+                // 1. create particle entity
+                ParticleEntity explosion = new ParticleEntity(Type.EXPLOSION);
                 explosion.setPosition(input.getMouse().x, input.getMouse().y);
 
+                // 2. create and configure emitter
                 ExplosionEmitter emitter = new ExplosionEmitter();
                 explosion.setEmitter(emitter);
 
+                // 3. set expiry time to 0.5 seconds
+                // After 0.5 secs the entity will be removed from world
+                explosion.setExpireTime(Duration.seconds(0.5));
+
+                // 4. add entity to game world
                 getGameWorld().addEntities(explosion);
             }
         }, MouseButton.PRIMARY);
-
-        input.addAction(new UserAction("Remove Explosion") {
-            @Override
-            protected void onActionBegin() {
-                getGameWorld().removeEntity(explosion);
-            }
-        }, MouseButton.SECONDARY);
     }
 
     @Override
     protected void initAssets() throws Exception {}
 
     @Override
-    protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
-
-        Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(graphics);
-
-        enemy = new Entity(Type.ENEMY);
-        enemy.setPosition(200, 100);
-
-        Rectangle enemyGraphics = new Rectangle(40, 40);
-        enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(enemyGraphics);
-
-        // we need to set collidable to true
-        // so that collision system can 'see' them
-        player.setCollidable(true);
-        enemy.setCollidable(true);
-
-        getGameWorld().addEntities(player, enemy);
-    }
+    protected void initGame() {}
 
     @Override
-    protected void initPhysics() {
-        PhysicsManager physics = getPhysicsManager();
-        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
-            // the order of entities determined by
-            // the order of their types passed into constructor
-            @Override
-            protected void onCollisionBegin(Entity player, Entity enemy) {
-                player.translate(-10, 0);
-                enemy.translate(10, 0);
-            }
-        });
-    }
+    protected void initPhysics() {}
 
     @Override
-    protected void initUI() {
-        // 2. initialize the object
-        uiText = new Text();
-        uiText.setFont(Font.font(18));
-
-        // 3. position the object
-        uiText.setTranslateX(600);
-        uiText.setTranslateY(100);
-
-        // 4. bind text property to player entity's X position
-        uiText.textProperty().bind(player.xProperty().asString());
-
-        // 5. add UI object to scene
-        getGameScene().addUINodes(uiText);
-    }
+    protected void initUI() {}
 
     @Override
     protected void onUpdate() {}
