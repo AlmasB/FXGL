@@ -54,19 +54,20 @@ public class BasicGameApplication extends GameApplication {
 
     private Text uiText;
 
+    // 1. the data to save/load
     private Point2D playerPosition, enemyPosition;
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(800);
+        settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
+        settings.setIntroEnabled(true);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
@@ -86,8 +87,23 @@ public class BasicGameApplication extends GameApplication {
                 player.translate(5, 0);
             }
         }, KeyCode.D);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                player.translate(0, -5);
+            }
+        }, KeyCode.W);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                player.translate(0, 5);
+            }
+        }, KeyCode.S);
     }
 
+    // 2. override and specify how to serialize
     @Override
     public Serializable saveState() {
         String data = "";
@@ -97,6 +113,7 @@ public class BasicGameApplication extends GameApplication {
         return data;
     }
 
+    // 3. override and specify how to deserialize
     @Override
     public void loadState(Serializable loadData) {
         String data = (String) loadData;
@@ -111,6 +128,9 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initGame() {
+        // TODO: fix bug, if loaded once then exited and started new game
+        // app thinks it loaded saved game
+
         if (playerPosition == null)
             playerPosition = new Point2D(100, 100);
         if (enemyPosition == null)
