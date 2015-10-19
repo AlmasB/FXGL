@@ -64,6 +64,11 @@ in your IDE. That's it, you're all set! See below setup for some IDEs
 3. Right-click on the created project -> Build Path -> Configure Build Path -> 
     Libraries Tab -> Add External JAR -> Navigate and Select downloaded FXGL jar
     
+## Setup (IntelliJ IDEA, tested with 14.1)
+1. Create Project
+2. File -> Project Structure
+3. Libraries -> Add Java -> Navigate and Select downloaded FXGL jar
+    
 ## Directory Structure for FXGL Applications
 This matches the Eclipse/NetBeans structure but should work with other IDEs.
 This allows easy packaging and deployment, as all assets packaged into jar will continue loading with
