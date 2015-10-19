@@ -168,15 +168,19 @@ public final class InputManager implements WorldStateListener {
         mouse.rightPressed = false;
     }
 
-    // TODO: throw exception if same action name
-
     /**
      * Bind given action to a mouse button.
      *
      * @param action the action to bind
      * @param btn the mouse button
+     * @throws IllegalArgumentException if action with same name exists
      */
     public void addAction(UserAction action, MouseButton btn) {
+        if (findBindingByAction(action).isPresent()) {
+            throw new IllegalArgumentException("Action with name \"" + action.getName()
+                + "\" already exists");
+        }
+
         bindings.add(new InputBinding(action, btn));
         log.finer("Registered new action: " + action + " to " + btn);
     }
@@ -186,8 +190,14 @@ public final class InputManager implements WorldStateListener {
      *
      * @param action the action to bind
      * @param key the key
+     * @throws IllegalArgumentException if action with same name exists
      */
     public void addAction(UserAction action, KeyCode key) {
+        if (findBindingByAction(action).isPresent()) {
+            throw new IllegalArgumentException("Action with name \"" + action.getName()
+                    + "\" already exists");
+        }
+
         bindings.add(new InputBinding(action, key));
         log.finer("Registered new action: " + action + " to " + key);
     }

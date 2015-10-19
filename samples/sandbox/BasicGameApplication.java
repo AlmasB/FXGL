@@ -70,9 +70,9 @@ public class BasicGameApplication extends GameApplication {
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class BasicGameApplication extends GameApplication {
             }
         }, KeyCode.S);
 
-        input.addAction(new UserAction("Move Left") {
+        input.addAction(new UserAction("Rotate Left") {
             @Override
             protected void onAction() {
                 enemy.rotateBy(-5);
@@ -119,7 +119,7 @@ public class BasicGameApplication extends GameApplication {
             }
         }, KeyCode.LEFT);
 
-        input.addAction(new UserAction("Move Right") {
+        input.addAction(new UserAction("Rotate Right") {
             @Override
             protected void onAction() {
                 enemy.rotateBy(5);
@@ -127,7 +127,7 @@ public class BasicGameApplication extends GameApplication {
             }
         }, KeyCode.RIGHT);
 
-        input.addAction(new UserAction("Move Up") {
+        input.addAction(new UserAction("Rotate Up") {
             @Override
             protected void onAction() {
                 enemy.setRotation(0);
@@ -135,7 +135,7 @@ public class BasicGameApplication extends GameApplication {
             }
         }, KeyCode.UP);
 
-        input.addAction(new UserAction("Move Down") {
+        input.addAction(new UserAction("Rotate Down") {
             @Override
             protected void onAction() {
                 enemy.setRotation(90);
