@@ -23,11 +23,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s1basicapp;
+package s10realphysics;
 
 import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.event.InputManager;
+import com.almasb.fxgl.event.UserAction;
+import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -36,6 +45,10 @@ import com.almasb.fxgl.util.ApplicationMode;
  *
  */
 public class BasicGameApplication extends GameApplication {
+
+    private enum Type implements EntityType {
+        GROUND, BOX
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -51,13 +64,47 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
+    protected void initInput() {
+        InputManager input = getInputManager();
+
+        input.addAction(new UserAction("Spawn Box") {
+            @Override
+            protected void onActionBegin() {
+                // 1. create physics entity
+                PhysicsEntity box = new PhysicsEntity(Type.GROUND);
+                box.setPosition(input.getMouse().x, input.getMouse().y);
+
+                // 2. set body type to dynamic for moving entities
+                // not controlled by user
+                box.setBodyType(BodyType.DYNAMIC);
+
+                // 3. set various physics properties
+                FixtureDef fd = new FixtureDef();
+                fd.density = 0.5f;
+                fd.restitution = 0.3f;
+                box.setFixtureDef(fd);
+
+                Rectangle rect = new Rectangle(40, 40);
+                rect.setFill(Color.BLUE);
+                box.setSceneView(rect);
+
+                getGameWorld().addEntity(box);
+            }
+        }, MouseButton.PRIMARY);
+    }
 
     @Override
     protected void initAssets() throws Exception {}
 
     @Override
-    protected void initGame() {}
+    protected void initGame() {
+        // 4. by default a physics entity is statis
+        PhysicsEntity ground = new PhysicsEntity(Type.GROUND);
+        ground.setPosition(0, 500);
+        ground.setSceneView(new Rectangle(800, 100));
+
+        getGameWorld().addEntity(ground);
+    }
 
     @Override
     protected void initPhysics() {}
