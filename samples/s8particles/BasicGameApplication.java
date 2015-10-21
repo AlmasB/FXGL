@@ -74,7 +74,7 @@ public class BasicGameApplication extends GameApplication {
             protected void onActionBegin() {
                 // 1. create particle entity
                 ParticleEntity explosion = new ParticleEntity(Type.EXPLOSION);
-                explosion.setPosition(input.getMouse().x, input.getMouse().y);
+                explosion.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
 
                 // 2. create and configure emitter
                 ExplosionEmitter emitter = new ExplosionEmitter();

@@ -72,7 +72,7 @@ public class BasicGameApplication extends GameApplication {
             protected void onActionBegin() {
                 // 1. create physics entity
                 PhysicsEntity box = new PhysicsEntity(Type.GROUND);
-                box.setPosition(input.getMouse().x, input.getMouse().y);
+                box.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
 
                 // 2. set body type to dynamic for moving entities
                 // not controlled by user

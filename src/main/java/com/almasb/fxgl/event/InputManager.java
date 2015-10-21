@@ -286,36 +286,77 @@ public final class InputManager implements WorldStateListener {
         }
 
         /**
-         * Hold the value of x and y coordinate of the mouse cursor
-         * in the current frame (tick) within the game with applied translations
+         *
+         * @return mouse x in game coordinate system
          */
-        public double x, y;
+        public double getGameX() {
+            return gameScene.screenToGame(new Point2D(screenX, screenY)).getX();
+        }
 
         /**
-         * Hold the value of x and y coordinate of the mouse cursor
+         *
+         * @return mouse y in game coordinate system
+         */
+        public double getGameY() {
+            return gameScene.screenToGame(new Point2D(screenX, screenY)).getY();
+        }
+
+        /**
+         * Hold the value of gameX and y coordinate of the mouse cursor
          * in the current frame (tick) within the screen coordinate system
          */
-        public double screenX, screenY;
+        private double screenX, screenY;
+
+        /**
+         *
+         * @return mouse x in screen coordinate system
+         */
+        public double getScreenX() {
+            return screenX;
+        }
+
+        /**
+         *
+         * @return mouse y in screen coordinate system
+         */
+        public double getScreenY() {
+            return screenY;
+        }
 
         /**
          * Hold the state of left and right
          * mouse buttons in the current frame (tick)
          */
-        public boolean leftPressed, rightPressed;
+        private boolean leftPressed, rightPressed;
+
+        /**
+         *
+         * @return true iff left mouse button is pressed
+         */
+        public boolean isLeftPressed() {
+            return leftPressed;
+        }
+
+        /**
+         *
+         * @return true iff right mouse button is pressed
+         */
+        public boolean isRightPressed() {
+            return rightPressed;
+        }
 
         /**
          * The last internal event
          */
         private MouseEvent event;
 
+        /**
+         * Update state of mouse with data from JavaFX mouse event.
+         */
         private void update(MouseEvent event) {
             this.event = event;
             this.screenX = event.getSceneX();
             this.screenY = event.getSceneY();
-
-            Point2D mousePoint = gameScene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
-            this.x = mousePoint.getX();
-            this.y = mousePoint.getY();
 
             if (leftPressed) {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {
@@ -349,7 +390,7 @@ public final class InputManager implements WorldStateListener {
          *
          * @return last JavaFX mouse event
          */
-        public final MouseEvent getEvent() {
+        public MouseEvent getEvent() {
             return event;
         }
     }
@@ -383,10 +424,6 @@ public final class InputManager implements WorldStateListener {
         if (processActions) {
             currentActions.forEach(UserAction::onAction);
         }
-
-        Point2D mousePoint = gameScene.screenToGame(new Point2D(mouse.screenX, mouse.screenY));
-        mouse.x = mousePoint.getX();
-        mouse.y = mousePoint.getY();
     }
 
     @Override

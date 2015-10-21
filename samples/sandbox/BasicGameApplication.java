@@ -151,7 +151,7 @@ public class BasicGameApplication extends GameApplication {
                 r.setFill(Color.BLUE);
                 b.setSceneView(r);
                 b.setBodyType(BodyType.DYNAMIC);
-                b.setPosition(input.getMouse().x, input.getMouse().y);
+                b.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
                 //b.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40)));
 
                 FixtureDef fd = new FixtureDef();
