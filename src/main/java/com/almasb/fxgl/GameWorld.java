@@ -44,7 +44,6 @@ import com.almasb.fxgl.util.WorldStateListener;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Represents pure logical state of game.
@@ -153,9 +152,7 @@ public final class GameWorld {
         entities.addAll(addQueue);
         addQueue.forEach(e -> {
             e.init(this);
-            worldStateListeners.forEach(l -> {
-                l.onEntityAdded(e);
-            });
+            worldStateListeners.forEach(l -> l.onEntityAdded(e));
         });
         addQueue.clear();
     }

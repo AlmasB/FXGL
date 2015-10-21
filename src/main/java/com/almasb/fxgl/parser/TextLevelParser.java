@@ -36,10 +36,9 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
 
 /**
- * Parser for levels represented by plain text
+ * Parser for levels represented by plain text.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 public final class TextLevelParser {
 
@@ -54,7 +53,7 @@ public final class TextLevelParser {
      * set this, there will a warning generated for
      * each such character.
      *
-     * @param c
+     * @param c the character that represents empty tile
      * @defaultValue ' '
      */
     public void setEmptyChar(char c) {
@@ -65,8 +64,8 @@ public final class TextLevelParser {
      * Register a callback that generates an entity when
      * given character was found during parsing
      *
-     * @param c
-     * @param producer
+     * @param c character
+     * @param producer entity producer
      */
     public void addEntityProducer(char c, EntityProducer producer) {
         producers.put(c, producer);
@@ -78,9 +77,9 @@ public final class TextLevelParser {
      * the name of the file without the "assets/text/" is required.
      * It will be loaded by assetManager.loadText() method.
      *
-     * @param levelFileName
-     * @return
-     * @throws Exception
+     * @param levelFileName file name
+     * @return parsed Level
+     * @throws Exception if file cannot be loaded
      */
     public Level parse(String levelFileName) throws Exception {
         AssetManager assetManager = AssetManager.INSTANCE;
@@ -120,7 +119,7 @@ public final class TextLevelParser {
      * to convert text characters into entities.
      */
     @FunctionalInterface
-    public static interface EntityProducer {
+    public interface EntityProducer {
 
         /**
          * Called when registered character was found during parsing.
@@ -128,9 +127,9 @@ public final class TextLevelParser {
          *
          * @param x column position of character
          * @param y row position of character
-         * @return
+         * @return entity
          */
-        public Entity produce(double x, double y);
+        Entity produce(double x, double y);
     }
 
     public static final class Level {

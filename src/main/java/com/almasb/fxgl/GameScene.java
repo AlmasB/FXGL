@@ -205,9 +205,9 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
      *
      * </pre>
      *
-     * @param entity
-     * @param distX
-     * @param distY
+     * @param entity the entity to follow
+     * @param distX distance in X between origin and entity
+     * @param distY distance in Y between origin and entity
      */
     public void bindViewportOrigin(Entity entity, int distX, int distY) {
         gameRoot.layoutXProperty().bind(entity.xProperty().negate().add(distX));

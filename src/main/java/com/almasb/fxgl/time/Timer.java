@@ -27,6 +27,12 @@ package com.almasb.fxgl.time;
 
 import javafx.util.Duration;
 
+/**
+ * A simple timer that uses TimerManager to synchronize
+ * time with the game world tick.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class Timer {
 
     private TimerManager manager;

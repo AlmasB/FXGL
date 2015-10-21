@@ -134,7 +134,7 @@ public abstract class GameApplication extends Application {
     /**
      * Set handler for checked exceptions
      *
-     * @param handler
+     * @param handler exception handler
      */
     public static final void setDefaultCheckedExceptionHandler(ExceptionHandler handler) {
         defaultCheckedExceptionHandler = error -> {
@@ -147,7 +147,7 @@ public abstract class GameApplication extends Application {
     /**
      * Set handler for runtime uncaught exceptions
      *
-     * @param handler
+     * @param handler exception handler
      */
     public final void setDefaultUncaughtExceptionHandler(ExceptionHandler handler) {
         Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
@@ -198,7 +198,7 @@ public abstract class GameApplication extends Application {
     /**
      * Initialize game settings.
      *
-     * @param settings
+     * @param settings game settings
      */
     protected abstract void initSettings(GameSettings settings);
 
@@ -349,6 +349,9 @@ public abstract class GameApplication extends Application {
         qteManager = new QTEManager();
     }
 
+    /**
+     * Registers world state listeners.
+     */
     private void initWorld() {
         gameWorld.addWorldStateListener(inputManager);
         gameWorld.addWorldStateListener(timerManager);
@@ -360,8 +363,7 @@ public abstract class GameApplication extends Application {
     /**
      * Configure main stage based on user settings.
      *
-     * @param stage
-     * @throws Exception
+     * @param stage the stage
      */
     private void initStage(Stage stage) {
         stage.setTitle(settings.getTitle() + " " + settings.getVersion());
@@ -503,6 +505,9 @@ public abstract class GameApplication extends Application {
         timer.start();
     }
 
+    /**
+     * Reset the application and game world.
+     */
     final void reset() {
         gameWorld.reset();
     }
@@ -520,10 +525,18 @@ public abstract class GameApplication extends Application {
         System.exit(0);
     }
 
+    /**
+     *
+     * @return game world
+     */
     public final GameWorld getGameWorld() {
         return gameWorld;
     }
 
+    /**
+     *
+     * @return game scene
+     */
     public final GameScene getGameScene() {
         return getSceneManager().getGameScene();
     }

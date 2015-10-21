@@ -260,13 +260,9 @@ public final class SceneManager {
         });
         mainMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
 
-        mainMenuScene.addEventHandler(MenuEvent.EXIT, event -> {
-            app.exit();
-        });
+        mainMenuScene.addEventHandler(MenuEvent.EXIT, event -> app.exit());
 
-        gameMenuScene.addEventHandler(MenuEvent.RESUME, event -> {
-            this.closeGameMenu();
-        });
+        gameMenuScene.addEventHandler(MenuEvent.RESUME, event -> this.closeGameMenu());
         gameMenuScene.addEventHandler(MenuEvent.SAVE, event -> {
             String saveFileName = event.getData().map(name -> (String) name).orElse("");
             if (!saveFileName.isEmpty()) {
@@ -279,9 +275,7 @@ public final class SceneManager {
             }
         });
         gameMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
-        gameMenuScene.addEventHandler(MenuEvent.EXIT, event -> {
-            this.exitToMainMenu();
-        });
+        gameMenuScene.addEventHandler(MenuEvent.EXIT, event -> this.exitToMainMenu());
     }
 
     private void handleMenuEventLoad(MenuEvent event) {
@@ -416,7 +410,7 @@ public final class SceneManager {
      * parameter when the dialog closes.
      *
      * @param dialog         JavaFX dialog
-     * @param resultCallback
+     * @param resultCallback the function to be called
      */
     public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
         boolean paused = menuOpenProperty().get();

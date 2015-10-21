@@ -31,6 +31,11 @@ import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
 
+/**
+ * An event type that occurs within menus.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class MenuEvent extends Event {
 
     private static final long serialVersionUID = 1L;

@@ -29,14 +29,14 @@ import javafx.geometry.Rectangle2D;
 import javafx.util.Duration;
 
 /**
- * Represents one of the animation channels from spritesheet.
+ * Represents one of the animation channels from sprite sheet.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface AnimationChannel {
 
     /**
-     * Area to be used to select a sub-texture from a spritesheet.
+     * Area to be used to select a sub-texture from a sprite sheet.
      *
      * @return area
      */

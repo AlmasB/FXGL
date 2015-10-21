@@ -41,6 +41,13 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Duration;
 
+/**
+ * Contains convenience methods and manages timer based actions.
+ * Computes time taken by each frame.
+ * Keeps track of tick and global time.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class TimerManager implements WorldStateListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.TimerManager");
@@ -93,6 +100,10 @@ public final class TimerManager implements WorldStateListener {
      */
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper(0);
 
+    /**
+     *
+     * @return tick
+     */
     public ReadOnlyLongProperty tickProperty() {
         return tick.getReadOnlyProperty();
     }

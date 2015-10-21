@@ -81,7 +81,7 @@ public final class MazeSolver {
                 open.remove(current);
                 current = getSmallest(open);
                 if (current == null)
-                    return new ArrayList<MazeCell>();
+                    return new ArrayList<>();
             }
         }
 

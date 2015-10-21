@@ -29,7 +29,6 @@ package com.almasb.fxgl.entity;
  * Handler for FXGL events fired on entities
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 @FunctionalInterface
 public interface FXGLEventHandler {
@@ -39,5 +38,5 @@ public interface FXGLEventHandler {
      *
      * @param event the FXGL event
      */
-    public void handle(FXGLEvent event);
+    void handle(FXGLEvent event);
 }
