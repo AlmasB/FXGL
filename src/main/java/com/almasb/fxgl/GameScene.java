@@ -236,6 +236,9 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         gameRoot.layoutYProperty().bind(entity.yProperty().negate().add(distY));
     }
 
+    /**
+     * Releases viewport from being bound to an entity.
+     */
     public void unbindViewportOrigin() {
         gameRoot.layoutXProperty().unbind();
         gameRoot.layoutYProperty().unbind();

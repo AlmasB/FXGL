@@ -105,11 +105,18 @@ public class Entity {
     private GameWorld world;
 
     /**
-     * Set the game world.
+     * Sets the game world. Generates hit boxes from scene view
+     * if enabled and scene view exists for this entity.
+     * Sets active property to true.
+     *
+     * DO NOT CALL MANUALLY.
      *
      * @param world the game world the entity is attached to
      */
     public void init(GameWorld world) {
+        if (isActive())
+            throw new IllegalStateException("Attempted to init active entity");
+
         if (generateHitBoxesFromView && sceneView != null) {
             addHitBox(new HitBox("__BODY__", new BoundingBox(0, 0,
                     sceneView.getLayoutBounds().getWidth(),
@@ -294,18 +301,42 @@ public class Entity {
         setRotation(getRotation() + byAngle);
     }
 
+    /**
+     * Contains all hit boxes (collision bounding boxes) for this entity.
+     */
     private List<HitBox> hitBoxes = new ArrayList<>();
 
+    /**
+     * Add a hit (collision) bounding box.
+     *
+     * @param hitBox the bounding box
+     */
     public final void addHitBox(HitBox hitBox) {
         hitBoxes.add(hitBox);
     }
 
     private boolean generateHitBoxesFromView = true;
 
-    public void setGenerateHitBoxesFromView(boolean b) {
+    /**
+     * Set to false if hit boxes have been added manually.
+     * Otherwise, FXGL will attempt to generate another hit box
+     * from the scene view.
+     *
+     * @param b flag
+     * @defaultValue true
+     */
+    public final void setGenerateHitBoxesFromView(boolean b) {
         generateHitBoxesFromView = b;
     }
 
+    /**
+     * Checks for collision with another entity. Returns collision result
+     * containing the first hit box that triggered collision.
+     * If no collision - {@link CollisionResult#NO_COLLISION} will be returned.
+     *
+     * @param other entity to check collision against
+     * @return collision result
+     */
     public final CollisionResult checkCollision(Entity other) {
         for (HitBox box1 : hitBoxes) {
             Bounds b = box1.translate(getX(), getY());
@@ -368,14 +399,32 @@ public class Entity {
         return new Rectangle2D(x, y, w, h);
     }
 
+    /**
+     * Computes width of entity based on its hit boxes.
+     *
+     * @return width
+     * @implNote it computes the rightmost point in X, so
+     * it will return incorrect width if hit box doesn't start from 0
+     */
     private double computeWidth() {
+        // we take maxX because even if entity is translated
+        // maxX is relative to entity's 0 origin
         return hitBoxes.stream()
                 .mapToDouble(HitBox::getMaxX)
                 .max()
                 .orElse(0);
     }
 
+    /**
+     * Computes height of entity based on its hit boxes.
+     *
+     * @return height
+     * @implNote it computes the highest point in Y, so
+     * it will return incorrect height if hit box doesn't start from 0
+     */
     private double computeHeight() {
+        // we take maxY because even if entity is translated
+        // maxY is relative to entity's 0 origin
         return hitBoxes.stream()
                 .mapToDouble(HitBox::getMaxY)
                 .max()
@@ -539,6 +588,7 @@ public class Entity {
      * notified of the collision event.
      *
      * @param collidable true enables collision detection, false - disables
+     * @defaultValue false
      */
     public final void setCollidable(boolean collidable) {
         this.collidable = collidable;

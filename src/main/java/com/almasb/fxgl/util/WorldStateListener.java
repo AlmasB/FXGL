@@ -27,7 +27,17 @@ package com.almasb.fxgl.util;
 
 import com.almasb.fxgl.entity.Entity;
 
+/**
+ * Listener for changes to the world state.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public interface WorldStateListener {
+
+    /**
+     *
+     * @param entity
+     */
     void onEntityAdded(Entity entity);
 
     void onEntityRemoved(Entity entity);

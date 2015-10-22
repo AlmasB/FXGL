@@ -29,6 +29,8 @@ import static org.junit.Assert.*;
 
 import java.util.Optional;
 
+import com.almasb.fxgl.physics.HitBox;
+import javafx.geometry.BoundingBox;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -123,6 +125,34 @@ public class EntityTest {
 
         testEntity.addComponent(hp1);
         testEntity.addComponent(hp2);
+    }
+
+    @Test
+    public void getWidth() {
+        assertEquals(0, testEntity.getWidth(), 0.1);
+
+        testEntity.addHitBox(new HitBox("TEST", new BoundingBox(0, 0, 40, 40)));
+        assertEquals(40, testEntity.getWidth(), 0.1);
+
+        testEntity.translate(50, 0);
+        assertEquals(40, testEntity.getWidth(), 0.1);
+
+        testEntity.addHitBox(new HitBox("TEST2", new BoundingBox(20, 0, 40, 20)));
+        assertEquals(60, testEntity.getWidth(), 0.1);
+    }
+
+    @Test
+    public void getHeight() {
+        assertEquals(0, testEntity.getHeight(), 0.1);
+
+        testEntity.addHitBox(new HitBox("TEST", new BoundingBox(0, 0, 40, 40)));
+        assertEquals(40, testEntity.getHeight(), 0.1);
+
+        testEntity.translate(0, 50);
+        assertEquals(40, testEntity.getHeight(), 0.1);
+
+        testEntity.addHitBox(new HitBox("TEST2", new BoundingBox(0, 30, 40, 20)));
+        assertEquals(50, testEntity.getHeight(), 0.1);
     }
 
     private class TestControl extends AbstractControl {
