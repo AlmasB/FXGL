@@ -65,7 +65,7 @@ public class EntityView extends Parent {
     /**
      * @return source entity of this view
      */
-    public Entity getEntity() {
+    public final Entity getEntity() {
         return entity;
     }
 
@@ -81,6 +81,11 @@ public class EntityView extends Parent {
         this.scaleXProperty().bind(xFlipped);
     }
 
+    /**
+     * Add a child node.
+     *
+     * @param node graphics
+     */
     public final void addNode(Node node) {
         if (node instanceof Circle) {
             Circle c = (Circle) node;
@@ -89,6 +94,13 @@ public class EntityView extends Parent {
         }
 
         getChildren().add(node);
+    }
+
+    /**
+     * Removes all children nodes attached to view.
+     */
+    public final void removeChildren() {
+        getChildren().clear();
     }
 
     private RenderLayer renderLayer = RenderLayer.TOP;
