@@ -74,6 +74,7 @@ public class SuperTextureTest extends GameApplication {
         input.addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
+                player.setXFlipped(true);
                 player.translate(-5, 0);
             }
         }, KeyCode.A);
@@ -81,6 +82,7 @@ public class SuperTextureTest extends GameApplication {
         input.addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
+                player.setXFlipped(false);
                 player.translate(5, 0);
             }
         }, KeyCode.D);
@@ -95,13 +97,13 @@ public class SuperTextureTest extends GameApplication {
         input.addAction(new UserAction("Move Down") {
             @Override
             protected void onActionBegin() {
-                ParticleEntity test = new ParticleEntity(Type.ENEMY);
-                test.setPosition(player.getPosition());
-                ParticleEmitter emitter = new FireEmitter();
-                //emitter.setColorFunction(() -> Color.RED);
-                test.setEmitter(emitter);
-
-                getGameWorld().addEntity(test);
+//                ParticleEntity test = new ParticleEntity(Type.ENEMY);
+//                test.setPosition(player.getPosition());
+//                ParticleEmitter emitter = new FireEmitter();
+//                //emitter.setColorFunction(() -> Color.RED);
+//                test.setEmitter(emitter);
+//
+//                getGameWorld().addEntity(test);
             }
 
             @Override

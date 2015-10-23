@@ -37,10 +37,7 @@ import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -152,6 +149,12 @@ public class Entity {
         return Optional.ofNullable(sceneView);
     }
 
+    /**
+     * Sets the primary view (graphics) for this entity. The view will be used to visualize this entity
+     * in the scene.
+     *
+     * @param view graphics
+     */
     public final void setSceneView(Node view) {
         if (this.sceneView != null)
             throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");
@@ -268,6 +271,10 @@ public class Entity {
 
     private DoubleProperty rotation = new SimpleDoubleProperty();
 
+    /**
+     *
+     * @return rotation
+     */
     public final DoubleProperty rotationProperty() {
         return rotation;
     }
@@ -285,6 +292,8 @@ public class Entity {
     /**
      * Set absolute rotation of the entity view in
      * degrees.
+     * Note: this doesn't affect hit boxes. For more accurate
+     * collisions use {@link com.almasb.fxgl.physics.PhysicsEntity}.
      *
      * @param angle the new rotation angle
      */
@@ -294,11 +303,42 @@ public class Entity {
 
     /**
      * Rotate entity view by given angle.
+     * Note: this doesn't affect hit boxes. For more accurate
+     * collisions use {@link com.almasb.fxgl.physics.PhysicsEntity}.
      *
      * @param byAngle rotation angle in degrees
      */
     public final void rotateBy(double byAngle) {
         setRotation(getRotation() + byAngle);
+    }
+
+    private BooleanProperty xFlipped = new SimpleBooleanProperty(false);
+
+    /**
+     *
+     * @return x flipped property
+     */
+    public final BooleanProperty xFlippedProperty() {
+        return xFlipped;
+    }
+
+    /**
+     *
+     * @return true iff x axis is flipped
+     */
+    public final boolean isXFlipped() {
+        return xFlippedProperty().get();
+    }
+
+    /**
+     * Flip X axis of the entity. If set to true, the scene view
+     * will be drawn from right to left. This also affects hit boxes
+     *
+     * @param b x flipped flag
+     * @defaultValue false
+     */
+    public final void setXFlipped(boolean b) {
+        xFlippedProperty().set(b);
     }
 
     /**
@@ -339,9 +379,11 @@ public class Entity {
      */
     public final CollisionResult checkCollision(Entity other) {
         for (HitBox box1 : hitBoxes) {
-            Bounds b = box1.translate(getX(), getY());
+            Bounds b = isXFlipped() ? box1.translateXFlipped(getX(), getY(), getWidth()) : box1.translate(getX(), getY());
             for (HitBox box2 : other.hitBoxes) {
-                Bounds b2 = box2.translate(other.getX(), other.getY());
+                Bounds b2 = other.isXFlipped()
+                        ? box2.translateXFlipped(other.getX(), other.getY(), other.getWidth())
+                        : box2.translate(other.getX(), other.getY());
                 if (b.intersects(b2)) {
                     return new CollisionResult(box1, box2);
                 }

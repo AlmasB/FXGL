@@ -35,14 +35,27 @@ import com.almasb.fxgl.entity.Entity;
 public interface WorldStateListener {
 
     /**
+     * Called after an entity is added to world and fully initialized.
      *
-     * @param entity
+     * @param entity the entity
      */
     void onEntityAdded(Entity entity);
 
+    /**
+     * Called after an entity is removed from the world and before
+     * it is completely cleaned.
+     *
+     * @param entity the entity
+     */
     void onEntityRemoved(Entity entity);
 
+    /**
+     * Called every tick, after entities have been added / removed for that tick..
+     */
     void onWorldUpdate();
 
+    /**
+     * Called after the world state has been completely reset.
+     */
     void onWorldReset();
 }

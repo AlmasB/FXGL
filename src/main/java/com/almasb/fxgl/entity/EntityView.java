@@ -25,6 +25,9 @@
  */
 package com.almasb.fxgl.entity;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.NumberBinding;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
@@ -66,10 +69,16 @@ public class EntityView extends Parent {
         return entity;
     }
 
+    /**
+     * Binds X Y and rotation of the view to entity's properties.
+     */
     private void initAsSceneView() {
         this.translateXProperty().bind(entity.xProperty());
         this.translateYProperty().bind(entity.yProperty());
         this.rotateProperty().bind(entity.rotationProperty());
+
+        NumberBinding xFlipped = Bindings.when(entity.xFlippedProperty()).then(-1).otherwise(1);
+        this.scaleXProperty().bind(xFlipped);
     }
 
     public final void addNode(Node node) {
