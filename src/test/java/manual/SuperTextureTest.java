@@ -32,6 +32,7 @@ import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.effect.*;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -43,9 +44,11 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.VerticalDirection;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -111,6 +114,13 @@ public class SuperTextureTest extends GameApplication {
                 player.translate(0, 5);
             }
         }, KeyCode.S);
+
+        input.addAction(new UserAction("Clean") {
+            @Override
+            protected void onActionBegin() {
+                player.removeFromWorld();
+            }
+        }, MouseButton.SECONDARY);
     }
 
     @Override
@@ -152,6 +162,13 @@ public class SuperTextureTest extends GameApplication {
         enemy.addHitBox(new HitBox("MAIN_BODY", new BoundingBox(0, 0, 40, 40)));
 
         getGameWorld().addEntities(player, enemy);
+
+        EntityView view = new EntityView(player);
+        view.setTranslateX(300);
+        view.setTranslateY(100);
+        view.addNode(new Text(player.getTypeAsString()));
+
+        getGameScene().addGameView(view);
     }
 
     @Override

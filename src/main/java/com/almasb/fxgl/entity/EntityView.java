@@ -25,12 +25,16 @@
  */
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.NumberBinding;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
+
+import java.util.logging.Logger;
 
 /**
  * Represents the visual aspect of entity.
@@ -38,6 +42,8 @@ import javafx.scene.shape.Circle;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class EntityView extends Parent {
+
+    protected static final Logger log = FXGLLogger.getLogger("FXGL.EntityView");
 
     private Entity entity;
 
@@ -51,6 +57,11 @@ public class EntityView extends Parent {
         this.entity = entity;
         addNode(graphics);
         initAsSceneView();
+
+        entity.activeProperty().addListener(((obs, old, isActive) -> {
+            if (!isActive)
+                removeFromScene();
+        }));
     }
 
     /**
@@ -60,6 +71,11 @@ public class EntityView extends Parent {
      */
     public EntityView(Entity entity) {
         this.entity = entity;
+
+        entity.activeProperty().addListener(((obs, old, isActive) -> {
+            if (!isActive)
+                removeFromScene();
+        }));
     }
 
     /**
@@ -77,12 +93,12 @@ public class EntityView extends Parent {
         this.translateYProperty().bind(entity.yProperty());
         this.rotateProperty().bind(entity.rotationProperty());
 
-        NumberBinding xFlipped = Bindings.when(entity.xFlippedProperty()).then(-1).otherwise(1);
-        this.scaleXProperty().bind(xFlipped);
+        NumberBinding scaleX = Bindings.when(entity.xFlippedProperty()).then(-1).otherwise(1);
+        this.scaleXProperty().bind(scaleX);
     }
 
     /**
-     * Add a child node.
+     * Add a child node to this view.
      *
      * @param node graphics
      */
@@ -97,10 +113,26 @@ public class EntityView extends Parent {
     }
 
     /**
-     * Removes all children nodes attached to view.
+     * Removes a child node attached to this view.
+     *
+     * @param node graphics
      */
-    public final void removeChildren() {
+    public final void removeNode(Node node) {
+        getChildren().remove(node);
+    }
+
+    /**
+     * Removes this view from scene and clears its children nodes.
+     */
+    public final void removeFromScene() {
         getChildren().clear();
+
+        try {
+            ((Group)getParent()).getChildren().remove(this);
+        } catch (Exception e) {
+            log.warning("View wasn't removed from scene because parent is not of type Group: "
+                    + e.getMessage());
+        }
     }
 
     private RenderLayer renderLayer = RenderLayer.TOP;

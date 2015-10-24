@@ -217,7 +217,7 @@ public class BasicGameApplication extends GameApplication {
 
         getGameWorld().addEntity(box);
 
-        getGameScene().addGameNode(new PlayerView());
+        getGameScene().addGameView(new PlayerView());
     }
 
     private class PlayerView extends EntityView {

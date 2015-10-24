@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLScene;
@@ -122,6 +123,24 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
     public void removeUINodes(Node... nodes) {
         for (Node node : nodes)
             removeUINode(node);
+    }
+
+    /**
+     * Add a view to the game root.
+     *
+     * @param view view to add
+     */
+    public void addGameView(EntityView view) {
+        getRenderLayer(view.getRenderLayer()).getChildren().add(view);
+    }
+
+    /**
+     * Remove a view from the game root.
+     *
+     * @param view view to remove
+     */
+    public void removeGameView(EntityView view) {
+        view.removeFromScene();
     }
 
     /**
@@ -255,10 +274,6 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         uiRoot.setMouseTransparent(b);
     }
 
-    public void addGameNode(Node node) {
-        getRenderLayer(RenderLayer.TOP).getChildren().add(node);
-    }
-
     @Override
     public void onEntityAdded(Entity entity) {
         //log.finer("Attaching " + entity + " to the scene");
@@ -273,8 +288,8 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entity.getSceneView().ifPresent(view ->
-                getRenderLayer(view.getRenderLayer()).getChildren().remove(view));
+//        entity.getSceneView().ifPresent(view ->
+//                getRenderLayer(view.getRenderLayer()).getChildren().remove(view));
 
         particles.remove(entity);
     }
