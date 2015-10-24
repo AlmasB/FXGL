@@ -66,12 +66,34 @@ public class EntityTest {
     public void essentials() throws Exception {
         assertTrue(testEntity.isAlive());
         assertFalse(testEntity.isActive());
+        assertFalse(testEntity.isCollidable());
 
         assertEquals(Point2D.ZERO, testEntity.getPosition());
 
         assertEquals(Type.TEST_ENTITY, testEntity.getEntityType());
         assertEquals(Type.TEST_ENTITY.getUniqueType(), testEntity.getTypeAsString());
         assertTrue(testEntity.isType(Type.TEST_ENTITY));
+
+        testEntity.translate(15, 20);
+        assertEquals(15, testEntity.getX(), 0.1);
+        assertEquals(20, testEntity.getY(), 0.1);
+        assertEquals(new Point2D(15, 20), testEntity.getPosition());
+
+        testEntity.setX(50);
+        assertEquals(50, testEntity.getX(), 0.1);
+        testEntity.setY(300);
+        assertEquals(300, testEntity.getY(), 0.1);
+
+        testEntity.rotateBy(50);
+        assertEquals(50, testEntity.getRotation(), 0.1);
+        testEntity.rotateBy(45);
+        assertEquals(95, testEntity.getRotation(), 0.1);
+        testEntity.setRotation(-30);
+        assertEquals(-30, testEntity.getRotation(), 0.1);
+
+        assertFalse(testEntity.isXFlipped());
+        testEntity.setXFlipped(true);
+        assertTrue(testEntity.isXFlipped());
     }
 
     @Test
