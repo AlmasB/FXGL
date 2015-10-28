@@ -313,6 +313,17 @@ public class Entity {
     }
 
     private BooleanProperty xFlipped = new SimpleBooleanProperty(false);
+    private double xFlipLine = 0;
+
+    /**
+     * Line to flip around. E.g. an entity with texture 200x100 as scene view
+     * with xFlipLine = 100 will be mirrored perfectly.
+     *
+     * @return vertical line at X point to use as pivot point for flip
+     */
+    public final double getXFlipLine() {
+        return xFlipLine;
+    }
 
     /**
      *
@@ -338,6 +349,19 @@ public class Entity {
      * @defaultValue false
      */
     public final void setXFlipped(boolean b) {
+        xFlippedProperty().set(b);
+    }
+
+    /**
+     * Flip X axis of the entity. If set to true, the scene view
+     * will be drawn from right to left. This also affects hit boxes
+     *
+     * @param b x flipped flag
+     * @param xFlipLine x flip line (pivot line)
+     * @defaultValue false
+     */
+    public final void setXFlipped(boolean b, double xFlipLine) {
+        this.xFlipLine = xFlipLine;
         xFlippedProperty().set(b);
     }
 

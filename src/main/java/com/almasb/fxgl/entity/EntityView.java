@@ -26,13 +26,11 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.util.FXGLLogger;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.IntegerBinding;
-import javafx.beans.binding.NumberBinding;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
+import javafx.scene.transform.Scale;
 
 import java.util.logging.Logger;
 
@@ -56,12 +54,28 @@ public class EntityView extends Parent {
     EntityView(Entity entity, Node graphics) {
         this.entity = entity;
         addNode(graphics);
+
+        // TODO: add as debug
+        // fix bounds computation as scaling isnt taken into account
+//        Rectangle bg = new Rectangle(graphics.getLayoutBounds().getWidth(),
+//                graphics.getLayoutBounds().getHeight());
+//        bg.setFill(null);
+//        bg.setStroke(Color.BLACK);
+//
+//        addNode(bg);
+
         initAsSceneView();
 
         entity.activeProperty().addListener(((obs, old, isActive) -> {
             if (!isActive)
                 removeFromScene();
         }));
+
+//        graphics.layoutBoundsProperty().addListener((obs, old, newBounds) -> {
+//            System.out.println(newBounds);
+//            bg.setWidth(newBounds.getWidth());
+//            bg.setHeight(newBounds.getHeight());
+//        });
     }
 
     /**
@@ -93,8 +107,13 @@ public class EntityView extends Parent {
         this.translateYProperty().bind(entity.yProperty());
         this.rotateProperty().bind(entity.rotationProperty());
 
-        NumberBinding scaleX = Bindings.when(entity.xFlippedProperty()).then(-1).otherwise(1);
-        this.scaleXProperty().bind(scaleX);
+        entity.xFlippedProperty().addListener(((obs, oldValue, isFlipped) -> {
+            if (isFlipped) {
+                getTransforms().setAll(new Scale(-1, 1, entity.getXFlipLine(), 0));
+            } else {
+                getTransforms().clear();
+            }
+        }));
     }
 
     /**
