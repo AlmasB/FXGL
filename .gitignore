@@ -21,3 +21,5 @@ dependency-reduced-pom.xml
 
 # logs #
 *.log
+/logs
+*.lck
