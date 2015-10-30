@@ -18,7 +18,7 @@ Oracle JDK 1.8.0_40+
 ```bash
 mvn package
 ```
-This will generate FXGL-x.y.z.jar, sources and javadoc.
+This will generate FXGL-0.1.7.jar, sources and javadoc.
 
 ## Setup
 Depending on what IDE or build tool you are using choose appropriate setup steps.
@@ -50,7 +50,7 @@ dependencies {
 ```
 
 ## Setup (General)
-Download the latest FXGL-x.y.z.jar from https://github.com/AlmasB/FXGL/releases (or the one built yourself) and add it to the build path
+Download FXGL-0.1.7.jar from <a href="https://github.com/AlmasB/FXGL/releases">Releases</a> (or the one built yourself) and add it to the build path
 in your IDE. That's it, you're all set! See below setup for some IDEs
 
 ## Setup (NetBeans, tested with 8.0.2)
