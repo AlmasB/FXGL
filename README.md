@@ -50,7 +50,7 @@ dependencies {
 ```
 
 ## Setup (General)
-Download the latest .jar from jar/ (or the one built yourself) and add it to the build path
+Download the latest FXGL-x.y.z.jar from https://github.com/AlmasB/FXGL/releases (or the one built yourself) and add it to the build path
 in your IDE. That's it, you're all set! See below setup for some IDEs
 
 ## Setup (NetBeans, tested with 8.0.2)
