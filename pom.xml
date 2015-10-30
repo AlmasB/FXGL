@@ -9,7 +9,7 @@
 
 	<name>FXGL</name>
 	<description>Simple JavaFX Game Library</description>
-	<url>https://jitpack.io/#AlmasB/FXGL/v0.1.6</url>
+	<url>https://jitpack.io/#AlmasB/FXGL/0.1.7</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
