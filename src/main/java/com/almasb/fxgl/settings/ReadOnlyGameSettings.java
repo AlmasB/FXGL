@@ -31,7 +31,6 @@ import com.almasb.fxgl.util.ApplicationMode;
  * A copy of GameSettings with public getters only.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class ReadOnlyGameSettings {
 
@@ -50,15 +49,16 @@ public class ReadOnlyGameSettings {
     /**
      * Constructs game settings with default parameters
      */
-    /*package-private*/ ReadOnlyGameSettings() {}
+    ReadOnlyGameSettings() {
+    }
 
     /**
      * Constructs new game settings with parameters
      * copied from given.
      *
-     * @param copy
+     * @param copy game settings to copy from
      */
-    /*package-private*/ ReadOnlyGameSettings(ReadOnlyGameSettings copy) {
+    ReadOnlyGameSettings(ReadOnlyGameSettings copy) {
         this.title = copy.title;
         this.version = copy.version;
         this.width = copy.width;

@@ -23,48 +23,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.ui;
+
+import com.almasb.fxgl.settings.SceneSettings;
 
 /**
- * An entity that is created by combining several entities
- *
- * Use this when the entity is represented by non regular graphics
- * or when "hit-box" collision detection is required
- *
- * Example:
- * <pre>
- *       Entity playerHead = new Entity(Type.PLAYER_HEAD);
- *       playerHead.setPosition(0, 0)
- *                  .setUsePhysics(true)
- *                  .setGraphics(new Rectangle(10, 40));
- *
- *       Entity playerBody = new Entity(Type.PLAYER_BODY);
- *       playerBody.setPosition(10, 40)
- *                  .setUsePhysics(true)
- *                  .setGraphics(new Rectangle(40, 40));
- *
- *       CombinedEntity player = new CombinedEntity(Type.PLAYER);
- *       player.attach(playerHead);
- *       player.attach(playerBody);
- *
- *       // note only the combined entity needs to be added
- *       addEntities(player);
- * </pre>
+ * Intro animation / video played before game starts
+ * if intro is enabled in settings
+ * <p>
+ * Call {@link #finishIntro()} when your intro completed
+ * so that the game can proceed to the next state
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
-public class CombinedEntity extends Entity {
+public abstract class IntroScene extends FXGLScene {
 
-    public CombinedEntity(EntityType type) {
-        super(type);
-        getChildren().clear();
+    public IntroScene(SceneSettings settings) {
+        super(settings);
     }
 
-    public void attach(Entity e) {
-        getChildren().add(e);
-        e.translateXProperty().bind(translateXProperty().add(e.getTranslateX()));
-        e.translateYProperty().bind(translateYProperty().add(e.getTranslateY()));
+    /**
+     * Called when intro finished.
+     */
+    private Runnable onFinished;
+
+    /**
+     * Do NOT call. This is set by FXGL.
+     *
+     * @param onFinished code to call on finish
+     */
+    public final void setOnFinished(Runnable onFinished) {
+        this.onFinished = onFinished;
     }
+
+    /**
+     * Closes intro and initializes the next game state, whether it's a menu or game.
+     * <p>
+     * Note: call this when your intro completes, otherwise
+     * the game won't proceed to next state.
+     */
+    public final void finishIntro() {
+        onFinished.run();
+    }
+
+    /**
+     * Starts the intro animation / video
+     */
+    public abstract void startIntro();
 }

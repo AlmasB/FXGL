@@ -27,9 +27,12 @@ package com.almasb.fxgl.time;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.TimerAction.TimerType;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -38,7 +41,16 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Duration;
 
-public final class TimerManager implements UpdateTickListener {
+/**
+ * Contains convenience methods and manages timer based actions.
+ * Computes time taken by each frame.
+ * Keeps track of tick and global time.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+public final class TimerManager implements WorldStateListener {
+
+    private static final Logger log = FXGLLogger.getLogger("FXGL.TimerManager");
 
     /**
      * Time per frame in seconds.
@@ -61,18 +73,18 @@ public final class TimerManager implements UpdateTickListener {
     /**
      * Converts seconds to nanoseconds.
      *
-     * @param seconds
-     * @return
+     * @param seconds value in seconds
+     * @return value in nanoseconds
      */
     public static long secondsToNanos(double seconds) {
-        return (long)(seconds * 1000000000L);
+        return (long) (seconds * 1000000000L);
     }
 
     /**
      * Converts type Duration to nanoseconds.
      *
-     * @param duration
-     * @return
+     * @param duration value as Duration
+     * @return value in nanoseconds
      */
     public static long toNanos(Duration duration) {
         return secondsToNanos(duration.toSeconds());
@@ -88,6 +100,10 @@ public final class TimerManager implements UpdateTickListener {
      */
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper(0);
 
+    /**
+     *
+     * @return tick
+     */
     public ReadOnlyLongProperty tickProperty() {
         return tick.getReadOnlyProperty();
     }
@@ -96,7 +112,7 @@ public final class TimerManager implements UpdateTickListener {
      * Returns current tick (frame). When the game has just started,
      * the first cycle in the loop will have tick == 1,
      * second cycle - 2 and so on.
-     *
+     * <p>
      * The update to this number happens when a new update cycle starts.
      *
      * @return current tick
@@ -109,6 +125,8 @@ public final class TimerManager implements UpdateTickListener {
      * Resets current tick to 0.
      */
     public void resetTicks() {
+        log.finer("Resetting ticks to 0");
+
         tick.set(0);
     }
 
@@ -122,7 +140,7 @@ public final class TimerManager implements UpdateTickListener {
      * from the start of game. This time does not change while the game is paused.
      * This time does not change while within the same tick.
      *
-     * @return
+     * @return current time in nanoseconds
      */
     public long getNow() {
         return now;
@@ -145,7 +163,6 @@ public final class TimerManager implements UpdateTickListener {
     private IntegerProperty fps = new SimpleIntegerProperty();
 
     /**
-     *
      * @return average render FPS
      */
     public int getFPS() {
@@ -153,7 +170,6 @@ public final class TimerManager implements UpdateTickListener {
     }
 
     /**
-     *
      * @return average render FPS property
      */
     public IntegerProperty fpsProperty() {
@@ -166,7 +182,6 @@ public final class TimerManager implements UpdateTickListener {
     private IntegerProperty performanceFPS = new SimpleIntegerProperty();
 
     /**
-     *
      * @return Average performance FPS
      */
     public int getPerformanceFPS() {
@@ -174,7 +189,6 @@ public final class TimerManager implements UpdateTickListener {
     }
 
     /**
-     *
      * @return Average performance FPS property
      */
     public IntegerProperty performanceFPSProperty() {
@@ -188,7 +202,7 @@ public final class TimerManager implements UpdateTickListener {
      * Called at the start of a game update tick.
      * This is where tick becomes tick + 1.
      *
-     * @param internalTime
+     * @param internalTime internal JavaFX time
      */
     public void tickStart(long internalTime) {
         tick.set(tick.get() + 1);
@@ -206,19 +220,13 @@ public final class TimerManager implements UpdateTickListener {
         fps.set(Math.round(fpsCounter.count(secondsToNanos(1) / realFPS)));
     }
 
-    @Override
-    public void onUpdate(long now) {
-        timerActions.forEach(action -> action.update(now));
-        timerActions.removeIf(TimerAction::isExpired);
-    }
-
     /**
      * The Runnable action will be scheduled to run at given interval.
      * The action will run for the first time after given interval.
-     *
+     * <p>
      * Note: the scheduled action will not run while the game is paused.
      *
-     * @param action the action
+     * @param action   the action
      * @param interval time
      */
     public void runAtInterval(Runnable action, Duration interval) {
@@ -230,14 +238,14 @@ public final class TimerManager implements UpdateTickListener {
      * whileCondition is initially true. If that's the case
      * then the Runnable action will be scheduled to run at given interval.
      * The action will run for the first time after given interval
-     *
+     * <p>
      * The action will be removed from schedule when whileCondition becomes {@code false}.
-     *
+     * <p>
      * Note: the scheduled action will not run while the game is paused
      *
-     * @param action
-     * @param interval
-     * @param whileCondition
+     * @param action         action to execute
+     * @param interval       interval between executions
+     * @param whileCondition condition
      */
     public void runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition) {
         if (!whileCondition.get()) {
@@ -246,19 +254,19 @@ public final class TimerManager implements UpdateTickListener {
         TimerAction act = new TimerAction(getNow(), interval, action, TimerType.INDEFINITE);
         timerActions.add(act);
 
-        whileCondition.addListener((obs, old, newValue) -> {
-            if (!newValue.booleanValue())
+        whileCondition.addListener((obs, old, isTrue) -> {
+            if (!isTrue)
                 act.expire();
         });
     }
 
     /**
      * The Runnable action will be executed once after given delay
-     *
+     * <p>
      * Note: the scheduled action will not run while the game is paused
      *
-     * @param action
-     * @param delay
+     * @param action action to execute
+     * @param delay  delay after which to execute
      */
     public void runOnceAfter(Runnable action, Duration delay) {
         timerActions.add(new TimerAction(getNow(), delay, action, TimerType.ONCE));
@@ -268,10 +276,39 @@ public final class TimerManager implements UpdateTickListener {
      * Clears all registered timer based actions.
      */
     public void clearActions() {
+        log.finer("Clearing all scheduled actions");
         timerActions.clear();
     }
 
+    /**
+     * Constructs a new Timer object.
+     *
+     * @return new timer
+     */
     public Timer newTimer() {
         return new Timer(this);
+    }
+
+    @Override
+    public void onEntityAdded(Entity entity) {
+        Duration expire = entity.getExpireTime();
+        if (expire != Duration.ZERO)
+            runOnceAfter(entity::removeFromWorld, expire);
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+    }
+
+    @Override
+    public void onWorldUpdate() {
+        timerActions.forEach(action -> action.update(now));
+        timerActions.removeIf(TimerAction::isExpired);
+    }
+
+    @Override
+    public void onWorldReset() {
+        resetTicks();
+        clearActions();
     }
 }

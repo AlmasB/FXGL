@@ -45,7 +45,7 @@ public final class Version {
     }
 
     public static int getPatch() {
-        return 6;
+        return 7;
     }
 
     public static void print() {
@@ -54,7 +54,6 @@ public final class Version {
     }
 
     /**
-     *
      * @return compile time version of FXGL
      */
     public static String getAsString() {
@@ -62,7 +61,6 @@ public final class Version {
     }
 
     /**
-     *
      * @return compile time version of JavaFX
      */
     public static String getJavaFXAsString() {
@@ -70,7 +68,6 @@ public final class Version {
     }
 
     /**
-     *
      * @return compile time version of JBox2D
      */
     public static String getJBox2DAsString() {

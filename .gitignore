@@ -12,8 +12,14 @@
 /bin
 /target
 
+# IntelliJ IDEA
+.idea/
+*.iml
+
 # maven #
 dependency-reduced-pom.xml
 
 # logs #
 *.log
+/logs
+*.lck

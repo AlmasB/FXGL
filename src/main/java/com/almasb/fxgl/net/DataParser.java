@@ -30,10 +30,8 @@ import java.io.Serializable;
 /**
  * Parser for network data
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  * @param <T>
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @FunctionalInterface
 public interface DataParser<T extends Serializable> {
@@ -42,7 +40,7 @@ public interface DataParser<T extends Serializable> {
      * Called when data arrives from the other end
      * of network connection
      *
-     * @param data
+     * @param data the data object
      */
-    public void parse(T data);
+    void parse(T data);
 }

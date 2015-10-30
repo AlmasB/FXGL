@@ -32,7 +32,6 @@ package com.almasb.fxgl.event;
  * using InputManager.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class UserAction {
 
@@ -49,7 +48,6 @@ public abstract class UserAction {
     }
 
     /**
-     *
      * @return action name
      */
     public final String getName() {
@@ -58,10 +56,7 @@ public abstract class UserAction {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof UserAction))
-            return false;
-
-        return name.equals(((UserAction)o).name);
+        return o instanceof UserAction && name.equals(((UserAction) o).name);
     }
 
     @Override
@@ -77,16 +72,19 @@ public abstract class UserAction {
     /**
      * Called once in the same tick when triggered.
      */
-    protected void onActionBegin() {}
+    protected void onActionBegin() {
+    }
 
     /**
      * Called as long as the trigger is being held (pressed).
      * Starts from the next tick from the one when was triggered
      */
-    protected void onAction() {}
+    protected void onAction() {
+    }
 
     /**
      * Called once in the same tick when trigger was released.
      */
-    protected void onActionEnd() {}
+    protected void onActionEnd() {
+    }
 }

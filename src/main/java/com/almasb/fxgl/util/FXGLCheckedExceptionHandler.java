@@ -31,7 +31,6 @@ import com.almasb.fxgl.ui.UIFactory;
  * Default FXGL exception handler for checked exceptions.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class FXGLCheckedExceptionHandler implements ExceptionHandler {
 

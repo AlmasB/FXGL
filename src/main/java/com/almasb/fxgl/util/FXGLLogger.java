@@ -25,37 +25,36 @@
  */
 package com.almasb.fxgl.util;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
- * Provides logging configuration of java.util.logging.Logger for the FXGL library
+ * Provides logging configuration of java.util.logging.Logger for the FXGL library.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class FXGLLogger {
 
-    private static Handler consoleHandler;
+    private static Handler consoleHandler, fileHandler;
+
+    private static Logger log;
 
     /**
      * Initialize the logger with given level. This must be called
      * prior to any logging calls
      *
-     * @param logLevel
+     * @param logLevel logging level
      */
     public static void init(Level logLevel) {
         if (consoleHandler != null) {
             consoleHandler.setLevel(logLevel);
+            log.info("Logger level set to: " + logLevel);
             return;
         }
 
@@ -85,15 +84,36 @@ public final class FXGLLogger {
             }
         };
 
+        try {
+            Path logDir = Paths.get("logs/");
+            if (!Files.exists(logDir)) {
+                Files.createDirectory(logDir);
+            }
+
+            fileHandler = new FileHandler("logs/FXGL-" + LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("dd MMM yyyy HH-mm-ss-SSS")) + ".log",
+                    1024 * 1024, 1);
+            fileHandler.setLevel(Level.ALL);
+            fileHandler.setFormatter(formatter);
+        } catch (Exception ignored) {}
+
         consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(logLevel);
         consoleHandler.setFormatter(formatter);
+
+        log = getLogger("FXGLLogger");
+        log.info("Logger initialized with level: " + logLevel);
     }
 
     /**
      * Shuts down the logging tools
      */
     public static void close() {
+        if (log != null)
+            log.finer("Logger is closing");
+
+        if (fileHandler != null)
+            fileHandler.close();
         if (consoleHandler != null)
             consoleHandler.close();
     }
@@ -101,16 +121,18 @@ public final class FXGLLogger {
     /**
      * Wraps the error stack trace into a single String
      *
-     * @param e
-     * @return
+     * @param e error
+     * @return stack trace as String
      */
     public static String errorTraceAsString(Throwable e) {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n\nException occurred: " + e.getClass().getCanonicalName() + " : " + e.getMessage());
+        sb.append("\n\nException occurred: ")
+                .append(e.getClass().getCanonicalName())
+                .append(" : ").append(e.getMessage());
 
         StackTraceElement[] elements = e.getStackTrace();
         for (StackTraceElement el : elements) {
-            sb.append("E: " + el.toString() + "\n");
+            sb.append("E: ").append(el.toString()).append('\n');
         }
 
         return sb.toString();
@@ -135,6 +157,11 @@ public final class FXGLLogger {
             logger.addHandler(consoleHandler);
         else
             System.out.println("No console logger. Was FXGLLogger.init() called?");
+
+        if (fileHandler != null)
+            logger.addHandler(fileHandler);
+        else
+            System.out.println("No file logger. Was FXGLLogger.init() called?");
 
         return logger;
     }

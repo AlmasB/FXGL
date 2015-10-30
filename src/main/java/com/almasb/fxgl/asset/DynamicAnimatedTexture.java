@@ -26,6 +26,7 @@
 package com.almasb.fxgl.asset;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.animation.KeyFrame;
@@ -42,22 +43,24 @@ import javafx.scene.image.Image;
  * be set dynamically to alter the animation.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class DynamicAnimatedTexture extends Texture {
 
     private List<AnimationChannel> animationChannels = new ArrayList<>();
+    private AnimationChannel defaultChannel;
+    private AnimationChannel currentChannel;
+
     private IntegerProperty frame = new SimpleIntegerProperty(0);
     private ChangeListener<Number> frameListener;
 
     private Timeline timeline = new Timeline();
 
-    /*package-private*/ DynamicAnimatedTexture(Image image, AnimationChannel initialChannel, AnimationChannel... channels) {
+    DynamicAnimatedTexture(Image image, AnimationChannel initialChannel, AnimationChannel... channels) {
         super(image);
+        this.defaultChannel = initialChannel;
         timeline.setCycleCount(Timeline.INDEFINITE);
 
-        for (AnimationChannel c : channels)
-            animationChannels.add(c);
+        Collections.addAll(animationChannels, channels);
         setAnimationChannel(initialChannel);
     }
 
@@ -66,12 +69,19 @@ public final class DynamicAnimatedTexture extends Texture {
      * when creating instance of DynamicAnimatedTexture, this method
      * will throw IllegalArgumentException
      *
-     * @param channel
+     * @param channel animation channel
      */
     public void setAnimationChannel(AnimationChannel channel) {
         if (!animationChannels.contains(channel)) {
             throw new IllegalArgumentException("Channel: [" + channel + "] is not registered for this texture.");
         }
+
+        if (currentChannel == channel)
+            return;
+
+        currentChannel = channel;
+        timeline.setCycleCount(currentChannel == defaultChannel ? Timeline.INDEFINITE : 1);
+        timeline.setOnFinished(currentChannel == defaultChannel ? null : e -> setAnimationChannel(defaultChannel));
 
         setFitWidth(channel.computeFrameWidth());
         setFitHeight(channel.computeFrameHeight());
@@ -81,12 +91,15 @@ public final class DynamicAnimatedTexture extends Texture {
             frame.removeListener(frameListener);
         }
 
-        frameListener = (obs, old, newFrame) -> {
-            setViewport(channel.computeViewport(newFrame.intValue()));
-        };
+        frame.set(0);
+        frameListener = (obs, old, newFrame) -> setViewport(channel.computeViewport(newFrame.intValue()));
         frame.addListener(frameListener);
 
         timeline.getKeyFrames().setAll(new KeyFrame(channel.duration(), new KeyValue(frame, channel.frames() - 1)));
-        timeline.play();
+        timeline.playFromStart();
+    }
+
+    public AnimationChannel getCurrentChannel() {
+        return currentChannel;
     }
 }

@@ -54,9 +54,9 @@ import javafx.scene.text.Font;
 
 /**
  * AssetManager handles all resource (asset) loading operations.
- *
+ * <p>
  * "assets" directory must be located in source folder ("src" by default).
- *
+ * <p>
  * AssetManager will look for resources (assets) under these specified directories
  * <ul>
  * <li>Texture - /assets/textures/</li>
@@ -73,32 +73,31 @@ import javafx.scene.text.Font;
  * </ul>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public enum AssetManager {
     INSTANCE;
 
-    private static final String ASSETS_DIR      = "/assets/";
-    private static final String TEXTURES_DIR    = ASSETS_DIR + "textures/";
-    private static final String SOUNDS_DIR      = ASSETS_DIR + "sounds/";
-    private static final String MUSIC_DIR       = ASSETS_DIR + "music/";
-    private static final String TEXT_DIR        = ASSETS_DIR + "text/";
-    private static final String KV_DIR          = ASSETS_DIR + "kv/";
-    private static final String BINARY_DIR      = ASSETS_DIR + "data/";
-    private static final String SCRIPTS_DIR     = ASSETS_DIR + "scripts/";
+    private static final String ASSETS_DIR = "/assets/";
+    private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";
+    private static final String SOUNDS_DIR = ASSETS_DIR + "sounds/";
+    private static final String MUSIC_DIR = ASSETS_DIR + "music/";
+    private static final String TEXT_DIR = ASSETS_DIR + "text/";
+    private static final String KV_DIR = ASSETS_DIR + "kv/";
+    private static final String BINARY_DIR = ASSETS_DIR + "data/";
+    private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
 
-    private static final String UI_DIR          = ASSETS_DIR + "ui/";
-    private static final String CSS_DIR         = UI_DIR + "css/";
-    private static final String FONTS_DIR       = UI_DIR + "fonts/";
-    private static final String ICON_DIR        = UI_DIR + "icons/";
-    private static final String CURSORS_DIR     = UI_DIR + "cursors/";
+    private static final String UI_DIR = ASSETS_DIR + "ui/";
+    private static final String CSS_DIR = UI_DIR + "css/";
+    private static final String FONTS_DIR = UI_DIR + "fonts/";
+    private static final String ICON_DIR = UI_DIR + "icons/";
+    private static final String CURSORS_DIR = UI_DIR + "cursors/";
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetManager");
 
     /**
      * Loads texture with given name from {@value #TEXTURES_DIR}.
      * Either returns a valid texture or throws an exception in case of errors.
-     *
+     * <p>
      * <p>
      * Supported image formats are:
      * <ul>
@@ -109,15 +108,14 @@ public enum AssetManager {
      * </ul>
      * </p>
      *
-     * @param name  texture name without the {@value #TEXTURES_DIR}, e.g. "player.png"
-     * @return  texture
+     * @param name texture name without the {@value #TEXTURES_DIR}, e.g. "player.png"
+     * @return texture
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Texture loadTexture(String name) {
         try (InputStream is = getStream(TEXTURES_DIR + name)) {
             return new Texture(new Image(is));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -125,19 +123,18 @@ public enum AssetManager {
     /**
      * Loads sound with given name from {@value #SOUNDS_DIR}.
      * Either returns a valid sound or throws an exception in case of errors.
-     *
+     * <p>
      * Supported sound format:
      * <li>WAV</li>
      *
-     * @param name  sound name without the {@value #SOUNDS_DIR}, e.g. "explosion.wav"
-     * @return  sound
+     * @param name sound name without the {@value #SOUNDS_DIR}, e.g. "explosion.wav"
+     * @return sound
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Sound loadSound(String name) {
         try {
             return new Sound(new AudioClip(getURL(SOUNDS_DIR + name).toExternalForm()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -145,19 +142,18 @@ public enum AssetManager {
     /**
      * Loads sound with given name from {@value #MUSIC_DIR}.
      * Either returns a valid sound or throws an exception in case of errors.
-     *
+     * <p>
      * Supported sound format:
      * <li>MP3</li>
      *
-     * @param name  music name without the {@value #MUSIC_DIR}, e.g. "background_music.mp3"
-     * @return  music
+     * @param name music name without the {@value #MUSIC_DIR}, e.g. "background_music.mp3"
+     * @return music
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Music loadMusic(String name) {
         try {
             return new Music(new Media(getURL(MUSIC_DIR + name).toExternalForm()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -168,8 +164,8 @@ public enum AssetManager {
      * within the file. Either returns a valid list with lines read from the file
      * or throws an exception in case of errors
      *
-     * @param name  text file name without the {@value #TEXT_DIR}, e.g. "level_0.txt"
-     * @return
+     * @param name text file name without the {@value #TEXT_DIR}, e.g. "level_0.txt"
+     * @return list of lines from file
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public List<String> loadText(String name) {
@@ -180,8 +176,8 @@ public enum AssetManager {
      * Loads KVFile with given name from {@value #KV_DIR}.
      * Either returns a valid KVFile or throws exception in case of errors.
      *
-     * @param name  KVFile name without the {@value #KV_DIR}, .e.g "settings.kv"
-     * @return
+     * @param name KVFile name without the {@value #KV_DIR}, .e.g "settings.kv"
+     * @return kv file
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public KVFile loadKV(String name) {
@@ -192,14 +188,14 @@ public enum AssetManager {
      * Loads script with given name from {@value #SCRIPTS_DIR} as a single string.
      * Either returns loaded string or throws exception in case of errors.
      *
-     * @param name  script file without the {@value #SCRIPTS_DIR}, e.g. "skill_heal.js"
-     * @return
+     * @param name script file without the {@value #SCRIPTS_DIR}, e.g. "skill_heal.js"
+     * @return script as a String
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public String loadScript(String name) {
         StringBuilder builder = new StringBuilder();
         readAllLines(SCRIPTS_DIR + name)
-            .forEach(line -> builder.append(line + "\n"));
+                .forEach(line -> builder.append(line).append('\n'));
         return builder.toString();
     }
 
@@ -207,15 +203,14 @@ public enum AssetManager {
      * Loads cursor image with given name from {@value #CURSORS_DIR}.
      * Either returns a valid image or throws exception in case of errors.
      *
-     * @param name  image name without the {@value #CURSORS_DIR}, e.g. "attack_cursor.png"
-     * @return
+     * @param name image name without the {@value #CURSORS_DIR}, e.g. "attack_cursor.png"
+     * @return cursor image
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Image loadCursorImage(String name) {
         try (InputStream is = getStream(CURSORS_DIR + name)) {
             return new Image(is);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -225,15 +220,14 @@ public enum AssetManager {
      * Can be applied by calling object.getStyleSheets().add().
      * Either returns ready CSS or throws exception in case of errors.
      *
-     * @param name  CSS file name without the {@value #CSS_DIR}, e.g. "ui_button.css"
-     * @return
+     * @param name CSS file name without the {@value #CSS_DIR}, e.g. "ui_button.css"
+     * @return css URL external form
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public String loadCSS(String name) {
         try {
             return getURL(CSS_DIR + name).toExternalForm();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -243,7 +237,7 @@ public enum AssetManager {
      * wrapped in a FontFactory, which later can be used to produce fonts
      * with different sizes without accessing the font file.
      * Either returns a valid font factory or throws exception in case of errors
-     *
+     * <p>
      * <p>
      * Supported font formats are:
      * <ul>
@@ -252,15 +246,17 @@ public enum AssetManager {
      * </ul>
      * </p>
      *
-     * @param name  font file name without the {@value #FONTS_DIR}, e.g. "quest_font.ttf"
-     * @return  font factory
+     * @param name font file name without the {@value #FONTS_DIR}, e.g. "quest_font.ttf"
+     * @return font factory
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public FontFactory loadFont(String name) {
         try (InputStream is = getStream(FONTS_DIR + name)) {
-            return new FontFactory(Font.loadFont(is, 12));
-        }
-        catch (Exception e) {
+            Font font = Font.loadFont(is, 12);
+            if (font == null)
+                font = Font.font(12);
+            return new FontFactory(font);
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -269,15 +265,14 @@ public enum AssetManager {
      * Loads an app icon from {@value #ICON_DIR}.
      * Either returns a valid image or throws an exception in case of errors.
      *
-     * @param name  image name without the {@value #ICON_DIR}, e.g. "app_icon.png"
-     * @return
+     * @param name image name without the {@value #ICON_DIR}, e.g. "app_icon.png"
+     * @return app icon image
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Image loadAppIcon(String name) {
         try (InputStream is = getStream(ICON_DIR + name)) {
             return new Image(is);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -321,15 +316,15 @@ public enum AssetManager {
     @SuppressWarnings("unchecked")
     private <T> T loadDataInternal(String name) throws Exception {
         try (ObjectInputStream ois = new ObjectInputStream(getStream(BINARY_DIR + name))) {
-            return (T)ois.readObject();
+            return (T) ois.readObject();
         }
     }
 
     /**
      * Returns a valid URL to resource or throws {@link IllegalArgumentException}.
      *
-     * @param name
-     * @return
+     * @param name resource name
+     * @return URL to resource
      */
     private URL getURL(String name) {
         URL url = getClass().getResource(name);
@@ -354,8 +349,7 @@ public enum AssetManager {
             if (is == null)
                 throw new IOException("Input stream to \"" + name + "\" is null!");
             return is;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e.getMessage());
         }
     }
@@ -364,22 +358,21 @@ public enum AssetManager {
      * Read all lines from a file. Bytes from the file are decoded into characters
      * using the {@link StandardCharsets#UTF_8 UTF-8} {@link Charset charset}.
      *
-     * @param name
-     * @return  the lines from the file as a {@code List}
+     * @param name resource name
+     * @return the lines from the file as a {@code List}
      */
     private List<String> readAllLines(String name) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(name)))) {
             List<String> result = new ArrayList<>();
 
-            for (;;) {
+            for (; ; ) {
                 String line = reader.readLine();
                 if (line == null)
                     break;
                 result.add(line);
             }
             return result;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw loadFailed(name, e);
         }
     }
@@ -418,12 +411,11 @@ public enum AssetManager {
 
     /**
      * Loads file names from a directory.
-     *
+     * <p>
      * Note: directory name must be in the format "/assets/...".
      * Returned file names are relativized to the given directory name.
      *
-     *
-     * @param directory
+     * @param directory name of directory
      * @return list of file names
      * @throws Exception
      */
@@ -438,8 +430,8 @@ public enum AssetManager {
             if (Files.exists(dir)) {
                 try (Stream<Path> files = Files.walk(dir)) {
                     return files.filter(Files::isRegularFile)
-                                .map(file -> dir.relativize(file).toString().replace("\\", "/"))
-                                .collect(Collectors.toList());
+                            .map(file -> dir.relativize(file).toString().replace("\\", "/"))
+                            .collect(Collectors.toList());
                 }
             }
         }
@@ -449,11 +441,10 @@ public enum AssetManager {
 
     /**
      * Loads file names from a directory when running within a jar
-     *
+     * <p>
      * If it contains other folders they'll be searched too
      *
-     * @param folderName
-     *            folder files of which need to be retrieved
+     * @param folderName folder files of which need to be retrieved
      * @return list of filenames
      */
     private static List<String> loadFileNamesJar(String folderName) {
@@ -462,8 +453,8 @@ public enum AssetManager {
         if (src != null) {
             URL jar = src.getLocation();
             try (InputStream is = jar.openStream();
-                    ZipInputStream zip = new ZipInputStream(is)) {
-                ZipEntry ze = null;
+                 ZipInputStream zip = new ZipInputStream(is)) {
+                ZipEntry ze;
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
                     if (entryName.startsWith(folderName)) {
@@ -472,12 +463,10 @@ public enum AssetManager {
                         fileNames.add(entryName.substring(entryName.indexOf(folderName) + folderName.length()));
                     }
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 log.warning("Failed to load file names from jar - " + e.getMessage());
             }
-        }
-        else {
+        } else {
             log.warning("Failed to load file names from jar - No code source");
         }
 
@@ -488,9 +477,9 @@ public enum AssetManager {
      * Constructs new IllegalArgumentException with "load failed" message
      * and with relevant information about the asset.
      *
-     * @param assetName
-     * @param error
-     * @return
+     * @param assetName name of the asset load of which failed
+     * @param error the error that occurred
+     * @return instance of IAE to be thrown
      */
     private IllegalArgumentException loadFailed(String assetName, Throwable error) {
         return new IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.getMessage());

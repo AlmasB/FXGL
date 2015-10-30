@@ -41,7 +41,6 @@ import javafx.stage.Modality;
  * Default FXGL exception handler for runtime uncaught exceptions
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FXGLUncaughtExceptionHandler implements ExceptionHandler {
 

@@ -41,7 +41,7 @@ import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Client side of the network connection.
- *
+ * <p>
  * Example:
  * <pre>
  *  // server ip
@@ -57,8 +57,6 @@ import com.almasb.fxgl.util.FXGLLogger;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class Client extends NetworkConnection {
 
@@ -77,7 +75,7 @@ public final class Client extends NetworkConnection {
      * Constructs a new client with given server IP configuration.
      * No network operation is done at this point.
      *
-     * @param serverIP
+     * @param serverIP ip of the server machine
      */
     public Client(String serverIP) {
         this(serverIP, NetworkConfig.DEFAULT_TCP_PORT, NetworkConfig.DEFAULT_UDP_PORT);
@@ -88,9 +86,9 @@ public final class Client extends NetworkConnection {
      * tcp/udp ports configuration.
      * No network operation is done at this point.
      *
-     * @param serverIP
-     * @param tcpPort
-     * @param udpPort
+     * @param serverIP ip of the server machine
+     * @param tcpPort tcp port to use
+     * @param udpPort udp port to use
      */
     public Client(String serverIP, int tcpPort, int udpPort) {
         this.serverIP = serverIP;
@@ -119,7 +117,7 @@ public final class Client extends NetworkConnection {
     /**
      * Sends a message to server that client is
      * about to disconnect and shuts down connection threads.
-     *
+     * <p>
      * Further calls to {@link #send(Serializable)} will
      * throw IllegalStateException
      */
@@ -135,8 +133,7 @@ public final class Client extends NetworkConnection {
         if (udpThread.running) {
             byte[] buf = toByteArray(data);
             udpThread.outSocket.send(new DatagramPacket(buf, buf.length, serverAddress, udpPort));
-        }
-        else {
+        } else {
             throw new IllegalStateException("UDP connection not active");
         }
     }
@@ -145,8 +142,7 @@ public final class Client extends NetworkConnection {
     protected void sendTCP(Serializable data) throws Exception {
         if (tcpThread.running) {
             tcpThread.outputStream.writeObject(data);
-        }
-        else {
+        } else {
             throw new IllegalStateException("Client TCP is not connected");
         }
     }
@@ -158,8 +154,8 @@ public final class Client extends NetworkConnection {
         @Override
         public void run() {
             try (Socket socket = new Socket(serverIP, tcpPort);
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
                 outputStream = out;
                 socket.setTcpNoDelay(true);
                 latch.countDown();
@@ -177,10 +173,10 @@ public final class Client extends NetworkConnection {
                         break;
                     }
 
-                    parsers.getOrDefault(data.getClass(), d -> {}).parse((Serializable)data);
+                    parsers.getOrDefault(data.getClass(), d -> {
+                    }).parse((Serializable) data);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Exception during TCP connection execution: " + e.getMessage());
                 running = false;
                 return;
@@ -220,11 +216,11 @@ public final class Client extends NetworkConnection {
                             break;
                         }
 
-                        parsers.getOrDefault(data.getClass(), d -> {}).parse((Serializable)data);
+                        parsers.getOrDefault(data.getClass(), d -> {
+                        }).parse((Serializable) data);
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Exception during UDP connection execution: " + e.getMessage());
                 running = false;
                 return;

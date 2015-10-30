@@ -30,15 +30,20 @@ import java.util.List;
 
 import com.almasb.fxgl.search.MazeGenerator.MazeCell;
 
+/**
+ * API INCOMPLETE
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class MazeSolver {
 
     public List<MazeCell> getPath(MazeCell[][] grid, MazeCell start, MazeCell target) {
         if (target.getNodeValue() == 1) // the target is an unwalkable node
-            return new ArrayList<MazeCell>();  // return empty path
+            return new ArrayList<>();  // return empty path
 
-        List<MazeCell> open = new ArrayList<MazeCell>();
-        List<MazeCell> closed = new ArrayList<MazeCell>();
-        List<MazeCell> path = new ArrayList<MazeCell>();
+        List<MazeCell> open = new ArrayList<>();
+        List<MazeCell> closed = new ArrayList<>();
+        List<MazeCell> path = new ArrayList<>();
 
         MazeCell current = start;
 
@@ -63,8 +68,7 @@ public final class MazeSolver {
                             temp[i].setParent(current);
                             temp[i].setGCost(newG);
                         }
-                    }
-                    else {
+                    } else {
                         temp[i].setParent(current);
                         temp[i].setGCost(current.getGCost() + 10);
                         open.add(temp[i]);
@@ -77,7 +81,7 @@ public final class MazeSolver {
                 open.remove(current);
                 current = getSmallest(open);
                 if (current == null)
-                    return new ArrayList<MazeCell>();
+                    return new ArrayList<>();
             }
         }
 

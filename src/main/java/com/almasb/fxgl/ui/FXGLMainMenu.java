@@ -28,18 +28,18 @@ package com.almasb.fxgl.ui;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.settings.SceneSettings;
 
 /**
  * This is the default FXGL menu used if the users
  * don't provide their own
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FXGLMainMenu extends FXGLMenu {
 
-    public FXGLMainMenu(GameApplication app) {
-        super(app);
+    public FXGLMainMenu(GameApplication app, SceneSettings settings) {
+        super(app, settings);
     }
 
     @Override

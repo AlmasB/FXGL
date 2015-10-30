@@ -25,7 +25,9 @@
  */
 package com.almasb.fxgl.asset;
 
+import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.VerticalDirection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -48,27 +50,26 @@ public class Texture extends ImageView {
      *
      * @param image the JavaFX image data
      */
-    /*package-private*/ Texture(Image image) {
+    Texture(Image image) {
         super(image);
     }
 
     /**
      * Converts the texture to animated texture
      *
-     * @param frames number of frames in spritesheet
+     * @param frames   number of frames in sprite sheet
      * @param duration overall duration (for all frames) of the animation
      * @return new StaticAnimatedTexture
      */
     public final StaticAnimatedTexture toStaticAnimatedTexture(int frames, Duration duration) {
-        StaticAnimatedTexture texture = new StaticAnimatedTexture(getImage(), frames, duration);
-        return texture;
+        return new StaticAnimatedTexture(getImage(), frames, duration);
     }
 
     /**
      * Converts the texture to dynamically animated texture.
      *
-     * @param initialChannel
-     * @param channels
+     * @param initialChannel the channel set at the beginning
+     * @param channels animation channels
      * @return new DynamicAnimatedTexture
      */
     public final DynamicAnimatedTexture toDynamicAnimatedTexture(AnimationChannel initialChannel, AnimationChannel... channels) {
@@ -80,7 +81,7 @@ public class Texture extends ImageView {
      * planning to use the same image as graphics
      * for multiple entities. This is required because
      * same Node can only have 1 parent.
-     *
+     * <p>
      * Do NOT invoke on instances of StaticAnimatedTexture or
      * DynamicAnimatedTexture, use {@link #toStaticAnimatedTexture(int, Duration)}
      * or {@link #toDynamicAnimatedTexture(AnimationChannel, AnimationChannel...)}
@@ -95,12 +96,12 @@ public class Texture extends ImageView {
     /**
      * Given a rectangular area, produces a sub-texture of
      * this texture.
-     *
+     * <p>
      * Rectangle cannot cover area outside of the original texture
      * image.
      *
-     * @param area
-     * @return
+     * @param area area of the original texture that represents sub-texture
+     * @return sub-texture
      */
     public final Texture subTexture(Rectangle2D area) {
         int minX = (int) area.getMinX();
@@ -131,14 +132,110 @@ public class Texture extends ImageView {
         return new Texture(image);
     }
 
+    /**
+     * Generates a new texture which combines this and given texture.
+     * The given texture is appended based on the direction provided.
+     *
+     * @param other the texture to append to this one
+     * @param direction the direction to append from
+     * @return new combined texture
+     */
+    public final Texture superTexture(Texture other, HorizontalDirection direction) {
+        Image leftImage, rightImage;
+
+        if (direction == HorizontalDirection.LEFT) {
+            leftImage = other.getImage();
+            rightImage = this.getImage();
+        } else {
+            leftImage = this.getImage();
+            rightImage = other.getImage();
+        }
+
+        int width = (int) (leftImage.getWidth() + rightImage.getWidth());
+        int height = (int) Math.max(leftImage.getHeight(), rightImage.getHeight());
+
+        PixelReader leftReader = leftImage.getPixelReader();
+        PixelReader rightReader = rightImage.getPixelReader();
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter pixelWriter = image.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color color;
+                if (x < leftImage.getWidth()) {
+                    if (y < leftImage.getHeight()) {
+                        color = leftReader.getColor(x, y);
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                } else {
+                    if (y < rightImage.getHeight()) {
+                        color = rightReader.getColor(x - (int)leftImage.getWidth(), y);
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                }
+
+                pixelWriter.setColor(x, y, color);
+            }
+        }
+
+        return new Texture(image);
+    }
+
+    /**
+     * Generates a new texture which combines this and given texture.
+     * The given texture is appended based on the direction provided.
+     *
+     * @param other the texture to append to this one
+     * @param direction the direction to append from
+     * @return new combined texture
+     */
+    public final Texture superTexture(Texture other, VerticalDirection direction) {
+        Image topImage, bottomImage;
+
+        if (direction == VerticalDirection.DOWN) {
+            topImage = this.getImage();
+            bottomImage = other.getImage();
+        } else {
+            topImage = other.getImage();
+            bottomImage = this.getImage();
+        }
+
+        int width = (int) Math.max(topImage.getWidth(), bottomImage.getWidth());
+        int height = (int) (topImage.getHeight() + bottomImage.getHeight());
+
+        PixelReader topReader = topImage.getPixelReader();
+        PixelReader bottomReader = bottomImage.getPixelReader();
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter pixelWriter = image.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color color;
+                if (y < topImage.getHeight()) {
+                    if (x < topImage.getWidth()) {
+                        color = topReader.getColor(x, y);
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                } else {
+                    if (x < bottomImage.getWidth()) {
+                        color = bottomReader.getColor(x, y - (int)topImage.getHeight());
+                    } else {
+                        color = Color.TRANSPARENT;
+                    }
+                }
+
+                pixelWriter.setColor(x, y, color);
+            }
+        }
+
+        return new Texture(image);
+    }
+
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Texture [fitWidth=");
-        builder.append(getFitWidth());
-        builder.append(", fitHeight=");
-        builder.append(getFitHeight());
-        builder.append("]");
-        return builder.toString();
+        return "Texture [fitWidth=" + getFitWidth() + ", fitHeight=" + getFitHeight() + "]";
     }
 }

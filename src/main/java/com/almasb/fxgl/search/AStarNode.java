@@ -28,9 +28,7 @@ package com.almasb.fxgl.search;
 /**
  * A* Node
  *
- * @author AlmasB (almaslvl@gmail.com)
- * @version 1.0
- *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class AStarNode {
 
@@ -62,7 +60,7 @@ public class AStarNode {
         return hCost;
     }
 
-    /*package-private*/ void setGCost(int gCost) {
+    void setGCost(int gCost) {
         this.gCost = gCost;
     }
 

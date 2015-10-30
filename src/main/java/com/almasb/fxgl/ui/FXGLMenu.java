@@ -31,6 +31,7 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.InputBinding;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 
@@ -48,7 +49,6 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -65,9 +65,8 @@ import javafx.util.Duration;
  * a main/game menu
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
-public abstract class FXGLMenu extends Pane {
+public abstract class FXGLMenu extends FXGLScene {
 
     /**
      * The logger
@@ -77,17 +76,16 @@ public abstract class FXGLMenu extends Pane {
     protected GameApplication app;
     private double menuX, menuY;
 
-    public FXGLMenu(GameApplication app) {
+    public FXGLMenu(GameApplication app, SceneSettings settings) {
+        super(settings);
         this.app = app;
-
-        setPrefSize(app.getWidth(), app.getHeight());
 
         MenuBox menu = createMenuBody();
         menuX = 50;
         menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
         // just a placeholder
-        MenuBox menuContent = new MenuBox((int)app.getWidth() - 300 - 50);
+        MenuBox menuContent = new MenuBox((int) app.getWidth() - 300 - 50);
         menuContent.setTranslateX(300);
         menuContent.setTranslateY(menu.getTranslateY());
         menuContent.setVisible(false);
@@ -102,7 +100,7 @@ public abstract class FXGLMenu extends Pane {
         Text version = UIFactory.newText("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
 
-        getChildren().addAll(bg, title, version, menu, menuContent);
+        getRoot().getChildren().addAll(bg, title, version, menu, menuContent);
     }
 
     protected abstract MenuBox createMenuBody();
@@ -150,15 +148,10 @@ public abstract class FXGLMenu extends Pane {
         grid.setHgap(50);
 
         // add listener for new ones
-        app.getInputManager().getBindings().addListener(new ListChangeListener<InputBinding>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends InputBinding> c) {
-                while (c.next()) {
-                    if (c.wasAdded()) {
-                        c.getAddedSubList().forEach(binding -> {
-                            addNewInputBinding(binding, grid);
-                        });
-                    }
+        app.getInputManager().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    c.getAddedSubList().forEach(binding -> addNewInputBinding(binding, grid));
                 }
             }
         });
@@ -190,7 +183,7 @@ public abstract class FXGLMenu extends Pane {
 
             Stage stage = new Stage(StageStyle.TRANSPARENT);
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getScene().getWindow());
+            stage.initOwner(getRoot().getScene().getWindow());
 
             Scene scene = new Scene(new StackPane(rect, text));
             scene.setOnKeyPressed(e -> {
@@ -250,17 +243,17 @@ public abstract class FXGLMenu extends Pane {
     }
 
     private MenuContent createContentCredits() {
-        Text textHead   = UIFactory.newText("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
-        Text textJFX    = UIFactory.newText("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
-        Text textJBOX   = UIFactory.newText("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
+        Text textHead = UIFactory.newText("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
+        Text textJFX = UIFactory.newText("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
+        Text textJBOX = UIFactory.newText("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
         Text textAuthor = UIFactory.newText("Author: Almas Baimagambetov (AlmasB)");
-        Text textDev    = UIFactory.newText("Source code available: https://github.com/AlmasB/FXGL");
+        Text textDev = UIFactory.newText("Source code available: https://github.com/AlmasB/FXGL");
 
         return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
     }
 
     private void switchMenuTo(MenuBox menu) {
-        Node oldMenu = getChildren().get(3);
+        Node oldMenu = getRoot().getChildren().get(3);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
         ft.setToValue(0);
@@ -268,7 +261,7 @@ public abstract class FXGLMenu extends Pane {
             menu.setTranslateX(menuX);
             menu.setTranslateY(menuY);
             menu.setOpacity(0);
-            getChildren().set(3, menu);
+            getRoot().getChildren().set(3, menu);
             oldMenu.setOpacity(1);
 
             FadeTransition ft2 = new FadeTransition(Duration.seconds(0.33), menu);
@@ -281,7 +274,7 @@ public abstract class FXGLMenu extends Pane {
     private void switchMenuContentTo(MenuContent content) {
         content.setTranslateX(menuX * 2 + 200);
         content.setTranslateY(menuY);
-        getChildren().set(4, content);
+        getRoot().getChildren().set(4, content);
     }
 
     protected static class Title extends StackPane {
@@ -387,10 +380,10 @@ public abstract class FXGLMenu extends Pane {
 
     protected class MenuContent extends VBox {
         public MenuContent(Node... items) {
-            getChildren().add(createSeparator((int)app.getWidth() - 300 - 50));
+            getChildren().add(createSeparator((int) app.getWidth() - 300 - 50));
 
             for (Node item : items) {
-                getChildren().addAll(item, createSeparator((int)app.getWidth() - 300 - 50));
+                getChildren().addAll(item, createSeparator((int) app.getWidth() - 300 - 50));
             }
         }
 

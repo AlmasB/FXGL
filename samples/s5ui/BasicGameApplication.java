@@ -28,6 +28,7 @@ package s5ui;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -82,6 +83,20 @@ public class BasicGameApplication extends GameApplication {
                 player.translate(5, 0);
             }
         }, KeyCode.D);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                player.translate(0, -5);
+            }
+        }, KeyCode.W);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                player.translate(0, 5);
+            }
+        }, KeyCode.S);
     }
 
     @Override
@@ -93,21 +108,21 @@ public class BasicGameApplication extends GameApplication {
         player.setPosition(100, 100);
 
         Rectangle graphics = new Rectangle(40, 40);
-        player.setGraphics(graphics);
+        player.setSceneView(graphics);
 
         enemy = new Entity(Type.ENEMY);
         enemy.setPosition(200, 100);
 
         Rectangle enemyGraphics = new Rectangle(40, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setGraphics(enemyGraphics);
+        enemy.setSceneView(enemyGraphics);
 
         // we need to set collidable to true
         // so that collision system can 'see' them
         player.setCollidable(true);
         enemy.setCollidable(true);
 
-        getSceneManager().addEntities(player, enemy);
+        getGameWorld().addEntities(player, enemy);
     }
 
     @Override
@@ -135,10 +150,10 @@ public class BasicGameApplication extends GameApplication {
         uiText.setTranslateY(100);
 
         // 4. bind text property to player entity's X position
-        uiText.textProperty().bind(player.translateXProperty().asString());
+        uiText.textProperty().bind(player.xProperty().asString());
 
         // 5. add UI object to scene
-        getSceneManager().addUINodes(uiText);
+        getGameScene().addUINodes(uiText);
     }
 
     @Override

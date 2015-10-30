@@ -4,12 +4,16 @@
 
 	<groupId>com.github.AlmasB</groupId>
 	<artifactId>FXGL</artifactId>
-	<version>0.1.6</version>
+	<version>0.1.7-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>FXGL</name>
 	<description>Simple JavaFX Game Library</description>
-	<url>https://jitpack.io/#AlmasB/FXGL/v0.1.6</url>
+	<url>https://jitpack.io/#AlmasB/FXGL/0.1.7</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -31,6 +35,12 @@
 				</excludes>
 			</resource>
 		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
 
 		<plugins>
 			<plugin>
@@ -80,7 +90,7 @@
 				</executions>
 			</plugin>
 
-			<plugin>
+			<plugin>  <!-- Create javadoc.jar -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.3</version>
@@ -92,6 +102,19 @@
 						</goals>
 						<configuration> <!-- add this to disable checking -->
 							<additionalparam>-Xdoclint:none</additionalparam>
+
+							<tags>
+								<tag>
+									<name>defaultValue</name>
+									<placement>a</placement>
+									<head>Default Value:</head>
+								</tag>
+								<tag>
+								    <name>implNote</name>
+								    <placement>a</placement>
+								    <head>Implementation Note:</head>
+								</tag>
+							</tags>
 						</configuration>
 					</execution>
 				</executions>

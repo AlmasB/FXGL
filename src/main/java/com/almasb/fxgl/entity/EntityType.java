@@ -27,7 +27,7 @@ package com.almasb.fxgl.entity;
 
 /**
  * A type of entity. For extra safety use enums.
- *
+ * <p>
  * Example:
  * <pre>
  *     private enum Type implements EntityType {
@@ -42,9 +42,9 @@ public interface EntityType {
     /**
      * Returns unique string literal for type.
      *
-     * @return
+     * @return unique type as String
      */
-    default public String getUniqueType() {
+    default String getUniqueType() {
         return getClass().getCanonicalName() + "." + toString();
     }
 }

@@ -40,7 +40,6 @@ import javafx.util.Duration;
  * On/Off toggle switch.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class ToggleSwitch extends Parent {
 
@@ -53,7 +52,6 @@ public final class ToggleSwitch extends Parent {
     }
 
     /**
-     *
      * @return true if switch is ON, false - if OFF
      */
     public boolean isSwitchedOn() {
@@ -85,16 +83,16 @@ public final class ToggleSwitch extends Parent {
 
         getChildren().addAll(background, trigger);
 
-        switchedOnProperty().addListener((obs, oldState, newState) -> {
+        switchedOnProperty().addListener((obs, oldState, isOn) -> {
             if (animating) {
                 animation.stop();
             }
 
             animating = true;
 
-            translateAnimation.setToX(newState.booleanValue() ? 100 - 50 : 0);
-            fillAnimation.setFromValue(newState.booleanValue() ? Color.WHITE : colorOn);
-            fillAnimation.setToValue(newState.booleanValue() ? colorOn : Color.WHITE);
+            translateAnimation.setToX(isOn ? 100 - 50 : 0);
+            fillAnimation.setFromValue(isOn ? Color.WHITE : colorOn);
+            fillAnimation.setToValue(isOn ? colorOn : Color.WHITE);
 
             animation.setOnFinished(e -> {
                 animating = false;

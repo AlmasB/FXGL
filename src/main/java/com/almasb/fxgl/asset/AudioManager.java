@@ -30,8 +30,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -42,7 +43,7 @@ import javafx.beans.property.SimpleDoubleProperty;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AudioManager implements UpdateTickListener {
+public final class AudioManager implements WorldStateListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AudioManager");
 
@@ -59,7 +60,6 @@ public final class AudioManager implements UpdateTickListener {
     private DoubleProperty globalMusicVolume = new SimpleDoubleProperty(1.0);
 
     /**
-     *
      * @return global music volume property
      */
     public DoubleProperty globalMusicVolumeProperty() {
@@ -67,7 +67,6 @@ public final class AudioManager implements UpdateTickListener {
     }
 
     /**
-     *
      * @return global music volume
      */
     public double getGlobalMusicVolume() {
@@ -78,7 +77,7 @@ public final class AudioManager implements UpdateTickListener {
      * Set global music volume in the range [0..1],
      * where 0 = 0%, 1 = 100%
      *
-     * @param volume
+     * @param volume music volume
      */
     public void setGlobalMusicVolume(double volume) {
         globalMusicVolumeProperty().set(volume);
@@ -87,7 +86,6 @@ public final class AudioManager implements UpdateTickListener {
     private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(1.0);
 
     /**
-     *
      * @return global sound volume property
      */
     public DoubleProperty globalSoundVolumeProperty() {
@@ -95,7 +93,6 @@ public final class AudioManager implements UpdateTickListener {
     }
 
     /**
-     *
      * @return global sound volume
      */
     public double getGlobalSoundVolume() {
@@ -106,7 +103,7 @@ public final class AudioManager implements UpdateTickListener {
      * Set global sound volume in the range [0..1],
      * where 0 = 0%, 1 = 100%
      *
-     * @param volume
+     * @param volume sound volume
      */
     public void setGlobalSoundVolume(double volume) {
         globalSoundVolumeProperty().set(volume);
@@ -115,7 +112,7 @@ public final class AudioManager implements UpdateTickListener {
     /**
      * Plays given sound based on its properties.
      *
-     * @param sound
+     * @param sound sound to play
      */
     public void playSound(Sound sound) {
         if (!activeSounds.contains(sound))
@@ -127,7 +124,7 @@ public final class AudioManager implements UpdateTickListener {
     /**
      * Stops playing given sound.
      *
-     * @param sound
+     * @param sound sound to stop
      */
     public void stopSound(Sound sound) {
         activeSounds.remove(sound);
@@ -147,7 +144,7 @@ public final class AudioManager implements UpdateTickListener {
     /**
      * Plays given music based on its properties.
      *
-     * @param music
+     * @param music music to play
      */
     public void playMusic(Music music) {
         if (!activeMusic.contains(music)) {
@@ -162,7 +159,7 @@ public final class AudioManager implements UpdateTickListener {
      * Pauses given music if it was previously started with {@link #playSound(Sound)}.
      * It can then be restarted by {@link #resumeMusic(Music)}.
      *
-     * @param music
+     * @param music music to pause
      */
     public void pauseMusic(Music music) {
         if (activeMusic.contains(music))
@@ -172,7 +169,7 @@ public final class AudioManager implements UpdateTickListener {
     /**
      * Resumes previously paused {@link #pauseMusic(Music)} music.
      *
-     * @param music
+     * @param music music to resume
      */
     public void resumeMusic(Music music) {
         if (activeMusic.contains(music))
@@ -184,7 +181,7 @@ public final class AudioManager implements UpdateTickListener {
      * using {@link #resumeMusic(Music)}. The music object needs
      * to be started again by {@link #playMusic(Music)}.
      *
-     * @param music
+     * @param music music to stop
      */
     public void stopMusic(Music music) {
         if (activeMusic.contains(music)) {
@@ -225,14 +222,21 @@ public final class AudioManager implements UpdateTickListener {
     }
 
     @Override
-    public void onUpdate(long now) {
-        for (Music music : activeMusic) {
-            if (music.mediaPlayer.getCurrentTime().equals(music.mediaPlayer.getTotalDuration())) {
-                music.isStopped = true;
-            }
-        }
+    public void onEntityAdded(Entity entity) {}
+
+    @Override
+    public void onEntityRemoved(Entity entity) {}
+
+    @Override
+    public void onWorldUpdate() {
+        activeMusic.stream()
+                .filter(music -> music.mediaPlayer.getCurrentTime().equals(music.mediaPlayer.getTotalDuration()))
+                .forEach(music -> music.isStopped = true);
 
         activeSounds.removeIf(sound -> !sound.clip.isPlaying());
         activeMusic.removeIf(music -> music.isStopped);
     }
+
+    @Override
+    public void onWorldReset() {}
 }

@@ -30,15 +30,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Note: this class is yet not fully implemented
- *
+ * API INCOMPLETE
+ * <p>
  * Modified and adapted for general use version of
  * recursive backtracking algorithm
  * shamelessly borrowed from the ruby at
  * http://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
  *
- * @author Almas Baimagambetov (ab607@uni.brighton.ac.uk)
- * @version 1.0
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class MazeGenerator {
     private final int x;
@@ -65,7 +64,7 @@ public final class MazeGenerator {
 
         for (int i = 0; i < y; ++i) {
             for (int j = 0; j < x; ++j) {
-                MazeCell cell = new MazeCell(j, i, Math.abs(x-1-j) + Math.abs(y-1-i));
+                MazeCell cell = new MazeCell(j, i, Math.abs(x - 1 - j) + Math.abs(y - 1 - i));
                 if ((maze[j][i] & 1) == 0) cell.topWall = true;
                 if ((maze[j][i] & 8) == 0) cell.leftWall = true;
 
@@ -75,15 +74,14 @@ public final class MazeGenerator {
     }
 
     public void solve() {
-        List<MazeCell> path = new MazeSolver().getPath(theMaze, theMaze[0][0], theMaze[x-1][y-1]);
+        List<MazeCell> path = new MazeSolver().getPath(theMaze, theMaze[0][0], theMaze[x - 1][y - 1]);
         for (MazeCell cell : path) {
             cell.value = 9;
             display();
 
             try {
                 Thread.sleep(1000);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -108,8 +106,7 @@ public final class MazeGenerator {
 
             try {
                 Thread.sleep(1000);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -208,17 +205,18 @@ public final class MazeGenerator {
             W.opposite = E;
         }
 
-        private DIR(int bit, int dx, int dy) {
+        DIR(int bit, int dx, int dy) {
             this.bit = bit;
             this.dx = dx;
             this.dy = dy;
         }
-    };
+    }
 
     public static class MazeCell extends AStarNode {
         public MazeCell(int x, int y, int hCost) {
             super(x, y, hCost, 0);
         }
+
         public boolean topWall = false, leftWall = false;
         public int value = 0;
     }

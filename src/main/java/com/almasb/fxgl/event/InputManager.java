@@ -28,15 +28,15 @@ package com.almasb.fxgl.event;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.SceneManager;
+import com.almasb.fxgl.GameScene;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
+import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -48,7 +48,7 @@ import javafx.scene.input.MouseEvent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class InputManager implements UpdateTickListener {
+public final class InputManager implements WorldStateListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
 
@@ -64,7 +64,6 @@ public final class InputManager implements UpdateTickListener {
     private ObservableList<InputBinding> bindings = FXCollections.observableArrayList();
 
     /**
-     *
      * @return unmodifiable view of the input bindings registered
      */
     public ObservableList<InputBinding> getBindings() {
@@ -76,106 +75,73 @@ public final class InputManager implements UpdateTickListener {
      */
     private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
 
-    private SceneManager sceneManager;
+    private GameScene gameScene;
 
-    public InputManager(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
+    public InputManager(GameScene gameScene) {
+        this.gameScene = gameScene;
 
-        Scene scene = sceneManager.getGameScene();
+        currentActions.addListener((ListChangeListener.Change<? extends UserAction> c) -> {
+            while (c.next()) {
+                if (!processActions)
+                    continue;
 
-        currentActions.addListener(new ListChangeListener<UserAction>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends UserAction> c) {
-                while (c.next()) {
-                    if (!processActions)
-                        continue;
-
-                    if (c.wasAdded()) {
-                        c.getAddedSubList().forEach(action -> action.onActionBegin());
-                    }
-                    else if (c.wasRemoved()) {
-                        c.getRemoved().forEach(action -> action.onActionEnd());
-                    }
+                if (c.wasAdded()) {
+                    c.getAddedSubList().forEach(UserAction::onActionBegin);
+                } else if (c.wasRemoved()) {
+                    c.getRemoved().forEach(UserAction::onActionEnd);
                 }
             }
         });
 
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            handlePressed(new Trigger(event.getCode()));
-        });
+        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event.getCode())));
+        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event.getCode())));
 
-        scene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            handleReleased(new Trigger(event.getCode()));
-        });
+        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event.getButton())));
+        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event.getButton())));
 
-        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-            handlePressed(new Trigger(event.getButton()));
-        });
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            handleReleased(new Trigger(event.getButton()));
-        });
-
-        scene.setOnMousePressed(mouse::update);
-        scene.setOnMouseDragged(mouse::update);
-        scene.setOnMouseReleased(mouse::update);
-        scene.setOnMouseMoved(mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
+        gameScene.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
     }
 
     /**
      * Handle pressed event for given trigger.
      *
-     * @param trigger
+     * @param trigger the trigger
      */
     private void handlePressed(Trigger trigger) {
         bindings.stream()
-            .filter(binding -> {
-                if (trigger.key == null) {
-                    return binding.isTriggered(trigger.btn);
-                }
-                else {
-                    return binding.isTriggered(trigger.key);
-                }
-            })
-            .findAny()
-            .map(InputBinding::getAction)
-            .filter(action -> !currentActions.contains(action))
-            .ifPresent(currentActions::add);
+                .filter(binding -> {
+                    if (trigger.key == null) {
+                        return binding.isTriggered(trigger.btn);
+                    } else {
+                        return binding.isTriggered(trigger.key);
+                    }
+                })
+                .findAny()
+                .map(InputBinding::getAction)
+                .filter(action -> !currentActions.contains(action))
+                .ifPresent(currentActions::add);
     }
 
     /**
      * Handle released event for given trigger
      *
-     * @param trigger
+     * @param trigger the trigger
      */
     private void handleReleased(Trigger trigger) {
         bindings.stream()
-            .filter(binding -> {
-                if (trigger.key == null) {
-                    return binding.isTriggered(trigger.btn);
-                }
-                else {
-                    return binding.isTriggered(trigger.key);
-                }
-            })
-            .findAny()
-            .map(InputBinding::getAction)
-            .ifPresent(currentActions::remove);
-    }
-
-    /**
-     * Called by FXGL GameApplication to process all input.
-     *
-     * @param now
-     */
-    @Override
-    public void onUpdate(long now) {
-        if (processActions) {
-            currentActions.forEach(UserAction::onAction);
-        }
-
-        Point2D origin = sceneManager.getViewportOrigin();
-        mouse.x = mouse.screenX / sceneManager.getSizeRatio() + origin.getX();
-        mouse.y = mouse.screenY / sceneManager.getSizeRatio() + origin.getY();
+                .filter(binding -> {
+                    if (trigger.key == null) {
+                        return binding.isTriggered(trigger.btn);
+                    } else {
+                        return binding.isTriggered(trigger.key);
+                    }
+                })
+                .findAny()
+                .map(InputBinding::getAction)
+                .ifPresent(currentActions::remove);
     }
 
     private boolean processActions = true;
@@ -184,7 +150,7 @@ public final class InputManager implements UpdateTickListener {
      * Setting to false will not run any actions bound to key/mouse press.
      * The events will still continue to be registered.
      *
-     * @param b
+     * @param b process actions flag
      */
     public void setProcessActions(boolean b) {
         processActions = b;
@@ -195,6 +161,8 @@ public final class InputManager implements UpdateTickListener {
      * for a single frame
      */
     public void clearAllInput() {
+        log.finer("Clearing active input actions");
+
         currentActions.clear();
         mouse.leftPressed = false;
         mouse.rightPressed = false;
@@ -203,10 +171,16 @@ public final class InputManager implements UpdateTickListener {
     /**
      * Bind given action to a mouse button.
      *
-     * @param action
-     * @param btn
+     * @param action the action to bind
+     * @param btn the mouse button
+     * @throws IllegalArgumentException if action with same name exists
      */
     public void addAction(UserAction action, MouseButton btn) {
+        if (findBindingByAction(action).isPresent()) {
+            throw new IllegalArgumentException("Action with name \"" + action.getName()
+                + "\" already exists");
+        }
+
         bindings.add(new InputBinding(action, btn));
         log.finer("Registered new action: " + action + " to " + btn);
     }
@@ -214,10 +188,16 @@ public final class InputManager implements UpdateTickListener {
     /**
      * Bind given action to a keyboard key.
      *
-     * @param action
-     * @param key
+     * @param action the action to bind
+     * @param key the key
+     * @throws IllegalArgumentException if action with same name exists
      */
     public void addAction(UserAction action, KeyCode key) {
+        if (findBindingByAction(action).isPresent()) {
+            throw new IllegalArgumentException("Action with name \"" + action.getName()
+                    + "\" already exists");
+        }
+
         bindings.add(new InputBinding(action, key));
         log.finer("Registered new action: " + action + " to " + key);
     }
@@ -225,8 +205,8 @@ public final class InputManager implements UpdateTickListener {
     /**
      * Find binding for given action.
      *
-     * @param action
-     * @return
+     * @param action the user action
+     * @return input binding
      */
     private Optional<InputBinding> findBindingByAction(UserAction action) {
         return bindings.stream()
@@ -235,8 +215,7 @@ public final class InputManager implements UpdateTickListener {
     }
 
     /**
-     *
-     * @param key
+     * @param key the key to check
      * @return true if an action is already bound to given key
      */
     private boolean isKeyBound(KeyCode key) {
@@ -245,8 +224,7 @@ public final class InputManager implements UpdateTickListener {
     }
 
     /**
-     *
-     * @param btn
+     * @param btn the mouse button to check
      * @return true if an action is already bound to given button
      */
     private boolean isButtonBound(MouseButton btn) {
@@ -257,10 +235,10 @@ public final class InputManager implements UpdateTickListener {
     /**
      * Rebinds an action to given key.
      *
-     * @param action
-     * @param key
+     * @param action the user action
+     * @param key the key to rebind to
      * @return true if rebound, false if action not found or
-     *      there is another action bound to key
+     * there is another action bound to key
      */
     public boolean rebind(UserAction action, KeyCode key) {
         Optional<InputBinding> maybeBinding = findBindingByAction(action);
@@ -274,10 +252,10 @@ public final class InputManager implements UpdateTickListener {
     /**
      * Rebinds an action to given mouse button.
      *
-     * @param action
-     * @param btn
+     * @param action the user action
+     * @param btn the mouse button
      * @return true if rebound, false if action not found or
-     *      there is another action bound to mosue button
+     * there is another action bound to mouse button
      */
     public boolean rebind(UserAction action, MouseButton btn) {
         Optional<InputBinding> maybeBinding = findBindingByAction(action);
@@ -290,9 +268,9 @@ public final class InputManager implements UpdateTickListener {
 
     /**
      * Returns mouse object that contains constantly updated
-     * data about mouse state
+     * data about mouse state.
      *
-     * @return
+     * @return mouse object
      */
     public Mouse getMouse() {
         return mouse;
@@ -304,46 +282,87 @@ public final class InputManager implements UpdateTickListener {
      * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
      */
     public final class Mouse {
-        private Mouse() {}
+        private Mouse() {
+        }
 
         /**
-         * Hold the value of x and y coordinate of the mouse cursor
-         * in the current frame (tick) within the game with applied translations
+         *
+         * @return mouse x in game coordinate system
          */
-        public double x, y;
+        public double getGameX() {
+            return gameScene.screenToGame(new Point2D(screenX, screenY)).getX();
+        }
 
         /**
-         * Hold the value of x and y coordinate of the mouse cursor
+         *
+         * @return mouse y in game coordinate system
+         */
+        public double getGameY() {
+            return gameScene.screenToGame(new Point2D(screenX, screenY)).getY();
+        }
+
+        /**
+         * Hold the value of gameX and y coordinate of the mouse cursor
          * in the current frame (tick) within the screen coordinate system
          */
-        public double screenX, screenY;
+        private double screenX, screenY;
+
+        /**
+         *
+         * @return mouse x in screen coordinate system
+         */
+        public double getScreenX() {
+            return screenX;
+        }
+
+        /**
+         *
+         * @return mouse y in screen coordinate system
+         */
+        public double getScreenY() {
+            return screenY;
+        }
 
         /**
          * Hold the state of left and right
          * mouse buttons in the current frame (tick)
          */
-        public boolean leftPressed, rightPressed;
+        private boolean leftPressed, rightPressed;
+
+        /**
+         *
+         * @return true iff left mouse button is pressed
+         */
+        public boolean isLeftPressed() {
+            return leftPressed;
+        }
+
+        /**
+         *
+         * @return true iff right mouse button is pressed
+         */
+        public boolean isRightPressed() {
+            return rightPressed;
+        }
 
         /**
          * The last internal event
          */
         private MouseEvent event;
 
+        /**
+         * Update state of mouse with data from JavaFX mouse event.
+         */
         private void update(MouseEvent event) {
             this.event = event;
             this.screenX = event.getSceneX();
             this.screenY = event.getSceneY();
 
-            Point2D origin = sceneManager.getViewportOrigin();
-            this.x = screenX / sceneManager.getSizeRatio() + origin.getX();
-            this.y = screenY / sceneManager.getSizeRatio() + origin.getY();
-
             if (leftPressed) {
                 if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {
                     leftPressed = false;
                 }
-            }
-            else {
+            } else {
                 leftPressed = event.getButton() == MouseButton.PRIMARY && isPressed(event);
             }
 
@@ -351,8 +370,7 @@ public final class InputManager implements UpdateTickListener {
                 if (event.getButton() == MouseButton.SECONDARY && isReleased(event)) {
                     rightPressed = false;
                 }
-            }
-            else {
+            } else {
                 rightPressed = event.getButton() == MouseButton.SECONDARY && isPressed(event);
             }
         }
@@ -372,14 +390,13 @@ public final class InputManager implements UpdateTickListener {
          *
          * @return last JavaFX mouse event
          */
-        public final MouseEvent getEvent() {
+        public MouseEvent getEvent() {
             return event;
         }
     }
 
     /**
      * Convenience wrapper for input types.
-     *
      */
     private static class Trigger {
         private KeyCode key;
@@ -392,5 +409,25 @@ public final class InputManager implements UpdateTickListener {
         public Trigger(MouseButton btn) {
             this.btn = btn;
         }
+    }
+
+    @Override
+    public void onEntityAdded(Entity entity) {
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+    }
+
+    @Override
+    public void onWorldUpdate() {
+        if (processActions) {
+            currentActions.forEach(UserAction::onAction);
+        }
+    }
+
+    @Override
+    public void onWorldReset() {
+        clearAllInput();
     }
 }

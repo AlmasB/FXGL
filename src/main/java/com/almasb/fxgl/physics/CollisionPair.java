@@ -27,7 +27,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.entity.Entity;
 
-/*package-private*/ final class CollisionPair extends Pair<Entity> {
+final class CollisionPair extends Pair<Entity> {
 
     private CollisionHandler handler;
 

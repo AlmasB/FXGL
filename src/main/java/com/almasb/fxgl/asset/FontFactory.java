@@ -31,12 +31,13 @@ import javafx.scene.text.Font;
  * A convenience wrapper for native JavaFX Font.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FontFactory {
     private Font font;
 
-    /*package-private*/ FontFactory(Font font) {
+    FontFactory(Font font) {
+        if (font == null)
+            throw new IllegalArgumentException("Font cannot be null");
         this.font = font;
     }
 
@@ -45,8 +46,8 @@ public final class FontFactory {
      * The font used is the same as the one used in factory
      * construction.
      *
-     * @param size
-     * @return
+     * @param size font size
+     * @return font
      */
     public Font newFont(double size) {
         return new Font(font.getName(), size);

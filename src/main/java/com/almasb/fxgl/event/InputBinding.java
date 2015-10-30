@@ -47,38 +47,35 @@ public final class InputBinding {
     private ReadOnlyStringWrapper triggerName = new ReadOnlyStringWrapper();
 
     /**
-     *
      * @return read only property containing trigger name
      */
     public ReadOnlyStringProperty triggerNameProperty() {
         return triggerName.getReadOnlyProperty();
     }
 
-    /*package-private*/ InputBinding(UserAction action, KeyCode key) {
+    InputBinding(UserAction action, KeyCode key) {
         this.action = action;
         setTrigger(key);
     }
 
-    /*package-private*/ InputBinding(UserAction action, MouseButton btn) {
+    InputBinding(UserAction action, MouseButton btn) {
         this.action = action;
         setTrigger(btn);
     }
 
     /**
-     *
-     * @param k
+     * @param k key
      * @return true iff given key is a trigger to this binding
      */
-    /*package-private*/ boolean isTriggered(KeyCode k) {
+    boolean isTriggered(KeyCode k) {
         return key.filter(keyCode -> keyCode == k).isPresent();
     }
 
     /**
-     *
-     * @param b
+     * @param b mouse button
      * @return true iff given button is a trigger to this binding
      */
-    /*package-private*/ boolean isTriggered(MouseButton b) {
+    boolean isTriggered(MouseButton b) {
         return btn.filter(button -> button == b).isPresent();
     }
 
@@ -86,9 +83,9 @@ public final class InputBinding {
      * Set key trigger. This will remove any other triggers
      * associated with this input binding.
      *
-     * @param k
+     * @param k key
      */
-    /*package-private*/ void setTrigger(KeyCode k) {
+    void setTrigger(KeyCode k) {
         this.btn = Optional.empty();
         this.key = Optional.of(k);
         triggerName.set(k.getName());
@@ -98,9 +95,9 @@ public final class InputBinding {
      * Set mouse button trigger. This will remove any other triggers
      * associated with this input binding.
      *
-     * @param b
+     * @param b mouse button
      */
-    /*package-private*/ void setTrigger(MouseButton b) {
+    void setTrigger(MouseButton b) {
         this.key = Optional.empty();
         this.btn = Optional.of(b);
         triggerName.set(b.toString());
@@ -110,14 +107,13 @@ public final class InputBinding {
      * Removes any triggers associated with
      * this binding.
      */
-    /*package-private*/ void removeTriggers() {
+    void removeTriggers() {
         key = Optional.empty();
         btn = Optional.empty();
         triggerName.set("UNDEFINED");
     }
 
     /**
-     *
      * @return user action associated with this input binding
      */
     public UserAction getAction() {

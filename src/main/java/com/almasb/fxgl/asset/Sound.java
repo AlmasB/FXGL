@@ -31,14 +31,13 @@ import javafx.scene.media.AudioClip;
  * Represents a short sound in .wav file.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class Sound {
 
-    /*package-private*/ final AudioClip clip;
-    ///*package-private*/ boolean isStopped = false;
+    final AudioClip clip;
+    // boolean isStopped = false;
 
-    /*package-private*/ Sound(AudioClip clip) {
+    Sound(AudioClip clip) {
         this.clip = clip;
     }
 
@@ -48,16 +47,15 @@ public final class Sound {
      * being full left, <code>0.0</code> center, and <code>1.0</code> full right.
      * The default value is <code>0.0</code>.
      *
-     * @param balance
+     * @param balance sound balance
      */
     public void setBalance(double balance) {
         clip.setBalance(balance);
     }
 
     /**
-    *
-    * @return balance of the audio output
-    */
+     * @return balance of the audio output
+     */
     public double getBalance() {
         return clip.getBalance();
     }
@@ -71,14 +69,13 @@ public final class Sound {
      * much higher cost in CPU overhead so this is not recommended for mono
      * clips.
      *
-     * @param pan
+     * @param pan sound pan
      */
     public void setPan(double pan) {
         clip.setPan(pan);
     }
 
     /**
-     *
      * @return sound pan value
      */
     public double getPan() {
@@ -91,14 +88,13 @@ public final class Sound {
      * internally. Normal playback for a clip is 1.0; any other rate will affect
      * pitch and duration accordingly.
      *
-     * @param rate
+     * @param rate sound rate
      */
     public void setRate(double rate) {
         clip.setRate(rate);
     }
 
     /**
-     *
      * @return sound rate
      */
     public double getRate() {
@@ -109,14 +105,13 @@ public final class Sound {
      * The number of times the sound is to be played
      * in the range [1..Integer.MAX_VALUE]
      *
-     * @param count
+     * @param count number of times to play
      */
     public void setCycleCount(int count) {
         clip.setCycleCount(count);
     }
 
     /**
-     *
      * @return number of times sound to be played
      */
     public int getCycleCount() {

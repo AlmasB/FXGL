@@ -32,12 +32,11 @@ import javafx.scene.text.Text;
 
 /**
  * INCOMPLETE API DO NOT USE
- *
+ * <p>
  * Allows user to create and configure QTE events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 public final class QTEManager {
 
@@ -82,9 +81,9 @@ public final class QTEManager {
      * Start a Quick Time Event
      *
      * @param overallDuration in nanoseconds for the whole event, i.e. for all keys
-     * @param handler the handler for the event
-     * @param keyCodes keys that need to pressed during QTE, order determines how
-     *          they appear on the screen
+     * @param handler         the handler for the event
+     * @param keyCodes        keys that need to pressed during QTE, order determines how
+     *                        they appear on the screen
      */
     public void startQTE(double overallDuration, QTEHandler handler, KeyCode key, KeyCode... keyCodes) {
 //        app.pause();

@@ -30,7 +30,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 
 /**
  * Represents a double value based component.
- *
+ * <p>
  * <pre>
  * Example:
  *
@@ -48,7 +48,6 @@ import javafx.beans.property.SimpleDoubleProperty;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class DoubleComponent implements Component {
     private DoubleProperty property;
@@ -64,14 +63,13 @@ public abstract class DoubleComponent implements Component {
      * Constructs a double value component with given
      * initial value.
      *
-     * @param initialValue
+     * @param initialValue initial value
      */
     public DoubleComponent(double initialValue) {
         property = new SimpleDoubleProperty(initialValue);
     }
 
     /**
-     *
      * @return value property
      */
     public final DoubleProperty valueProperty() {
@@ -79,7 +77,6 @@ public abstract class DoubleComponent implements Component {
     }
 
     /**
-     *
      * @return value held by this component
      */
     public final double getValue() {
@@ -89,7 +86,7 @@ public abstract class DoubleComponent implements Component {
     /**
      * Set value to this component.
      *
-     * @param value
+     * @param value new value
      */
     public final void setValue(double value) {
         property.set(value);

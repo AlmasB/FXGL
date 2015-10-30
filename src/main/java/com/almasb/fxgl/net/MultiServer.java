@@ -44,13 +44,11 @@ import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * MultiServer for multiple concurrent network connections (clients)
- *
+ * <p>
  * Since there isn't a 1 to 1 connection, {@link #stop()} must be explicitly
  * called to attempt a clean shutdown of the server
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
- *
  */
 public final class MultiServer extends NetworkConnection {
     private static final Logger log = FXGLLogger.getLogger("FXGL.MultiServer");
@@ -58,9 +56,9 @@ public final class MultiServer extends NetworkConnection {
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();
 
-    private List<TCPThread> tcpThreads = Collections.synchronizedList(new ArrayList<>());
+    private final List<TCPThread> tcpThreads = Collections.synchronizedList(new ArrayList<>());
 
-    private List<FullInetAddress> addresses = Collections.synchronizedList(new ArrayList<>());
+    private final List<FullInetAddress> addresses = Collections.synchronizedList(new ArrayList<>());
     private int tcpPort, udpPort;
 
     /**
@@ -75,8 +73,8 @@ public final class MultiServer extends NetworkConnection {
      * Constructs and configures a multi server with specified ports
      * No network operation is done at this point.
      *
-     * @param tcpPort
-     * @param udpPort
+     * @param tcpPort tcp port to use
+     * @param udpPort udp port to use
      */
     public MultiServer(int tcpPort, int udpPort) {
         this.tcpPort = tcpPort;
@@ -99,7 +97,7 @@ public final class MultiServer extends NetworkConnection {
      * Sends a message to all connected clients that
      * the server is about to shut down. Then stops the server
      * and the connection threads.
-     *
+     * <p>
      * Further calls to {@link #send(Serializable)} will
      * throw IllegalStateException
      */
@@ -109,8 +107,8 @@ public final class MultiServer extends NetworkConnection {
         tcpThread.running = false;
         try {
             tcpThread.server.close();
+        } catch (IOException ignored) {
         }
-        catch (IOException e) {}
 
         tcpThreads.forEach(t -> t.running = false);
         udpThread.running = false;
@@ -124,14 +122,12 @@ public final class MultiServer extends NetworkConnection {
                 for (FullInetAddress addr : addresses) {
                     try {
                         udpThread.outSocket.send(new DatagramPacket(buf, buf.length, addr.address, addr.port));
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         log.warning("Failed to send UDP message: " + e.getMessage());
                     }
                 }
             }
-        }
-        else {
+        } else {
             throw new IllegalStateException("UDP connection not active");
         }
     }
@@ -139,16 +135,13 @@ public final class MultiServer extends NetworkConnection {
     @Override
     protected void sendTCP(Serializable data) throws Exception {
         synchronized (tcpThreads) {
-            for (TCPThread tcpThread : tcpThreads) {
-                if (tcpThread.running) {
-                    try {
-                        tcpThread.outputStream.writeObject(data);
-                    }
-                    catch (Exception e) {
-                        log.warning("Failed to send TCP message: " + e.getMessage());
-                    }
+            tcpThreads.stream().filter(tcpThread -> tcpThread.running).forEach(tcpThread -> {
+                try {
+                    tcpThread.outputStream.writeObject(data);
+                } catch (Exception e) {
+                    log.warning("Failed to send TCP message: " + e.getMessage());
                 }
-            }
+            });
         }
     }
 
@@ -160,8 +153,7 @@ public final class MultiServer extends NetworkConnection {
         public void run() {
             try {
                 server = new ServerSocket(tcpPort);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Exception during TCP connection creation: " + e.getMessage());
                 running = false;
                 return;
@@ -176,16 +168,15 @@ public final class MultiServer extends NetworkConnection {
                     t.setDaemon(true);
                     tcpThreads.add(t);
                     t.start();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     log.warning("Exception during TCP connection execution: " + e.getMessage());
                 }
             }
 
             try {
                 server.close();
+            } catch (Exception ignored) {
             }
-            catch (Exception e) {}
             log.info("TCP connection closed normally");
         }
     }
@@ -202,7 +193,7 @@ public final class MultiServer extends NetworkConnection {
         @Override
         public void run() {
             try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
                 outputStream = out;
                 socket.setTcpNoDelay(true);
                 running = true;
@@ -219,25 +210,25 @@ public final class MultiServer extends NetworkConnection {
                         break;
                     }
 
-                    parsers.getOrDefault(data.getClass(), d -> {}).parse((Serializable)data);
+                    parsers.getOrDefault(data.getClass(), d -> {
+                    }).parse((Serializable) data);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Exception during TCP connection execution: " + e.getMessage());
                 running = false;
                 tcpThreads.remove(this);
                 try {
                     socket.close();
+                } catch (IOException ignored) {
                 }
-                catch (IOException e1) {}
                 return;
             }
 
             tcpThreads.remove(this);
             try {
                 socket.close();
+            } catch (IOException ignored) {
             }
-            catch (IOException e1) {}
             log.info("TCP connection closed normally");
         }
     }
@@ -277,15 +268,14 @@ public final class MultiServer extends NetworkConnection {
                                 continue;
                             }
 
-                            parsers.getOrDefault(data.getClass(), d -> {}).parse((Serializable)data);
+                            parsers.getOrDefault(data.getClass(), d -> {
+                            }).parse((Serializable) data);
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         log.warning("Exception during UDP connection execution: " + e.getMessage());
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.warning("Exception during UDP connection execution: " + e.getMessage());
                 running = false;
                 return;
@@ -298,6 +288,7 @@ public final class MultiServer extends NetworkConnection {
     private static class FullInetAddress {
         private InetAddress address;
         private int port;
+
         public FullInetAddress(InetAddress address, int port) {
             this.address = address;
             this.port = port;

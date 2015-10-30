@@ -32,6 +32,11 @@ import javax.script.ScriptEngineManager;
 
 import com.almasb.fxgl.asset.AssetManager;
 
+/**
+ * Allows to parse valid javascript source files.
+ * Once parsed, {@link #callFunction(String, Object...)}
+ * can be used to invoke a JS function.
+ */
 public final class JavaScriptParser {
     private ScriptEngineManager manager = new ScriptEngineManager();
     private ScriptEngine engine = manager.getEngineByName("nashorn");
@@ -45,6 +50,15 @@ public final class JavaScriptParser {
         invocableEngine = (Invocable) engine;
     }
 
+    /**
+     * Invoked a JS function.
+     *
+     * @param name function name
+     * @param args function arguments
+     * @param <T> return type
+     * @return object returned by function
+     * @throws Exception if any error occurred during invocation
+     */
     @SuppressWarnings("unchecked")
     public <T> T callFunction(String name, Object... args) throws Exception {
         return (T) invocableEngine.invokeFunction(name, args);

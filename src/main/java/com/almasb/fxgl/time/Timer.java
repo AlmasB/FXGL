@@ -27,11 +27,17 @@ package com.almasb.fxgl.time;
 
 import javafx.util.Duration;
 
+/**
+ * A simple timer that uses TimerManager to synchronize
+ * time with the game world tick.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class Timer {
 
     private TimerManager manager;
 
-    /*package-private*/ Timer(TimerManager manager) {
+    Timer(TimerManager manager) {
         this.manager = manager;
     }
 
@@ -48,8 +54,8 @@ public final class Timer {
      * Returns true if difference between captured time
      * and now is greater or equal to given duration.
      *
-     * @param duration
-     * @return
+     * @param duration time duration to check
+     * @return true if elapsed, false otherwise
      */
     public boolean elapsed(Duration duration) {
         return manager.getNow() - time >= TimerManager.toNanos(duration);

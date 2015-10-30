@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -31,121 +31,70 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.CombinedEntity;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.FXGLEvent;
-import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.MenuEvent;
-import com.almasb.fxgl.physics.PhysicsEntity;
+import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLDialogBox;
-import com.almasb.fxgl.ui.FXGLMenuFactory;
-import com.almasb.fxgl.ui.Intro;
+import com.almasb.fxgl.ui.FXGLScene;
+import com.almasb.fxgl.ui.IntroScene;
+import com.almasb.fxgl.ui.MenuFactory;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Point2D;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.ImageCursor;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Dialog;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
- * Handles everything to do with modifying the scene.
+ * Manages interactions between FXGL scenes and allows
+ * creating scene-independent dialog boxes.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
-public final class SceneManager implements UpdateTickListener {
+public final class SceneManager {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
     /**
-     * Root for entities, it is affected by viewport movement.
+     * Game scene, this is where all in-game objects are shown.
      */
-    private Group gameRoot = new Group();
+    private GameScene gameScene;
 
     /**
-     * Canvas for particles to accelerate drawing.
+     * Intro scene, this is shown when the application started,
+     * before menus and game.
      */
-    private Canvas particlesCanvas = new Canvas();
-
-    /**
-     * Graphics context for drawing particles.
-     */
-    private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
-
-    /**
-     * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
-     * May also contain entities as Entity is a subclass of Parent.
-     * uiRoot isn't affected by viewport movement.
-     */
-    private Group uiRoot = new Group();
-
-    /**
-     * THE root of the {@link #gameScene}. Contains {@link #gameRoot}, {@link #particlesCanvas}
-     * and {@link #uiRoot} in this order.
-     */
-    private Pane root = new Pane(gameRoot, particlesCanvas, uiRoot);
-
-    /*
-     * FXGL Scene Graph
-     *
-     * Scenes: gameScene <-> mainMenu <-> gameMenu
-     *            |
-     *         gameRoot (entities)
-     *         (render layers from low to high index)
-     *            |
-     *         particles layers
-     *            |
-     *         uiRoot
-     */
-
-    /**
-     * Game scene
-     */
-    private Scene gameScene = new Scene(root);
+    private IntroScene introScene;
 
     /**
      * Main menu, this is the menu shown at the start of game
      */
-    private Scene mainMenu;
+    private FXGLScene mainMenuScene;
 
     /**
      * In-game menu, this is shown when menu key pressed during the game
      */
-    private Scene gameMenu;
+    private FXGLScene gameMenuScene;
+
+    /**
+     * Reference to current shown scene.
+     */
+    private FXGLScene currentScene;
 
     /**
      * Is menu enabled in settings
@@ -163,47 +112,47 @@ public final class SceneManager implements UpdateTickListener {
     private FXGLDialogBox dialogBox;
 
     /**
-     * List of entities currently in the scene graph.
-     */
-    private List<Entity> entities = new ArrayList<>();
-
-    /**
-     * List of entities waiting to be added to scene graph.
-     */
-    private List<Entity> addQueue = new ArrayList<>();
-
-    /**
-     * List of entities waiting to be removed from scene graph.
-     */
-    private List<Entity> removeQueue = new ArrayList<>();
-
-    /**
      * Game application instance.
      */
     private GameApplication app;
 
     /**
-     * Main stage.
+     * Underlying JavaFX scene. We only 1 scene to avoid
+     * problems in fullscreen mode. Switching between scenes
+     * in FS mode will otherwise temporarily toggle FS.
      */
-    private Stage stage;
+    private Scene scene;
 
     /**
-     * FXGL CSS.
+     * Settings for all scenes to apply.
      */
-    private String fxglCSS;
+    private SceneSettings sceneSettings;
 
     /**
      * Constructs scene manager.
      *
-     * @param app instance of game application
-     * @param stage main stage
+     * @param app   instance of game application
+     * @param scene main scene
      */
-    /*package-private*/ SceneManager(GameApplication app, Stage stage) {
+    /* package-private */ SceneManager(GameApplication app, Scene scene) {
         this.app = app;
-        this.stage = stage;
+        this.scene = scene;
 
-        fxglCSS = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
-        root.getStylesheets().add(fxglCSS);
+        /*
+         * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
+         * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
+         * So we copy the occurred event and reroute to whichever FXGL scene is current.
+         */
+        scene.addEventFilter(EventType.ROOT, event -> {
+            Event copy = event.copyFor(null, null);
+            currentScene.fireEvent(copy);
+        });
+
+        // TODO: work on order of init
+        sceneSettings = computeSceneSettings(app.getWidth(), app.getHeight());
+        gameScene = new GameScene(sceneSettings);
+
+        // TODO: why do we do it here?
         dialogBox = UIFactory.getDialogBox();
         dialogBox.setOnShown(e -> {
             if (!menuOpenProperty().get())
@@ -218,89 +167,73 @@ public final class SceneManager implements UpdateTickListener {
 
         isMenuEnabled = app.getSettings().isMenuEnabled();
         menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
-
-        setPrefSize(app.getWidth(), app.getHeight());
-
-        particlesCanvas.setWidth(app.getWidth());
-        particlesCanvas.setHeight(app.getHeight());
-        particlesCanvas.setMouseTransparent(true);
     }
 
     /**
-     * Set preferred size to game scene root and stage.
-     * Computes {@link #sizeRatio} and scales the root
-     * if necessary
+     * TODO: update javadoc
      *
-     * @param width
-     * @param height
+     * @param width  target (app) width
+     * @param height target (app) height
+     * @return scene settings with computed values
      */
-    private void setPrefSize(double width, double height) {
+    private SceneSettings computeSceneSettings(double width, double height) {
+        // TODO: make these into params
         Rectangle2D bounds = app.getSettings().isFullScreen()
                 ? Screen.getPrimary().getBounds()
                 : Screen.getPrimary().getVisualBounds();
 
-        if (app.getWidth() <= bounds.getWidth()
-                && app.getHeight() <= bounds.getHeight()) {
-            root.setPrefSize(app.getWidth(), app.getHeight());
-        }
-        else {
+        double newW = width;
+        double newH = height;
+        double newScale = 1.0;
+
+        if (width > bounds.getWidth() || height > bounds.getHeight()) {
             log.finer("App size > screen size");
 
-            double ratio = app.getWidth() * 1.0 / app.getHeight();
+            double ratio = width / height;
 
-            for (int newWidth = (int)bounds.getWidth(); newWidth > 0; newWidth--) {
+            for (int newWidth = (int) bounds.getWidth(); newWidth > 0; newWidth--) {
                 if (newWidth / ratio <= bounds.getHeight()) {
-                    root.setPrefSize(newWidth, (int)(newWidth / ratio));
-
-                    double newSizeRatio = newWidth * 1.0 / app.getWidth();
-                    root.getTransforms().clear();
-                    root.getTransforms().add(new Scale(newSizeRatio, newSizeRatio));
-                    sizeRatio = newSizeRatio;
+                    newW = newWidth;
+                    newH = newWidth / ratio;
+                    newScale = newWidth / width;
                     break;
                 }
             }
 
-            log.finer("Size ratio: " + sizeRatio);
+            log.finer("Target size: " + width + "x" + height + "@" + 1.0);
+            log.finer("New size:    " + newW + "x" + newH + "@" + newScale);
         }
 
-        stage.setScene(gameScene);
-        stage.sizeToScene();
+        String css = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
+
+        return new SceneSettings(width, height, newW, newH, css);
     }
 
     private boolean canSwitchGameMenu = true;
 
     /**
-     * Applies FXGL CSS to menu roots.
-     * Scales menu roots appropriately based on {@link #sizeRatio}.
+     * Creates Main and Game menu scenes.
      * Registers event handlers to menus.
      */
     private void configureMenu() {
-        menuOpenProperty().addListener((obs, oldState, newState) -> {
-            if (newState.booleanValue()) {
+        menuOpenProperty().addListener((obs, wasOpen, isOpen) -> {
+            if (isOpen) {
                 log.finer("Playing State -> Menu State");
                 app.onMenuOpen();
-            }
-            else {
+            } else {
                 log.finer("Menu State -> Playing State");
                 app.onMenuClose();
             }
         });
 
-        FXGLMenuFactory menuFactory = app.initMenuFactory();
+        MenuFactory menuFactory = app.initMenuFactory();
 
-        mainMenu = new Scene(menuFactory.newMainMenu(app));
-        gameMenu = new Scene(menuFactory.newGameMenu(app));
-
-        if (sizeRatio != 1.0) {
-            log.finer("Scaing menu scenes with ratio: " + sizeRatio);
-            mainMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
-            gameMenu.getRoot().getTransforms().add(new Scale(sizeRatio, sizeRatio));
-        }
-        mainMenu.getStylesheets().add(fxglCSS);
-        gameMenu.getStylesheets().add(fxglCSS);
+        mainMenuScene = menuFactory.newMainMenu(app, sceneSettings);
+        gameMenuScene = menuFactory.newGameMenu(app, sceneSettings);
 
         gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (isMenuEnabled && event.getCode() == menuKey && canSwitchGameMenu) {
+            if (isMenuEnabled && event.getCode() == menuKey
+                    && canSwitchGameMenu) {
                 openGameMenu();
                 canSwitchGameMenu = false;
             }
@@ -310,562 +243,126 @@ public final class SceneManager implements UpdateTickListener {
                 canSwitchGameMenu = true;
         });
 
-
-        gameMenu.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        gameMenuScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == menuKey && canSwitchGameMenu) {
                 closeGameMenu();
                 canSwitchGameMenu = false;
             }
         });
-        gameMenu.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+        gameMenuScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == menuKey)
                 canSwitchGameMenu = true;
         });
 
-
-        mainMenu.addEventHandler(MenuEvent.NEW_GAME, event -> {
+        mainMenuScene.addEventHandler(MenuEvent.NEW_GAME, event -> {
             app.startNewGame();
             setScene(gameScene);
         });
-        mainMenu.addEventHandler(MenuEvent.LOAD, event -> {
-            String saveFileName = event.getData().map(name -> (String)name).orElse("");
-            if (!saveFileName.isEmpty()) {
-                try {
-                    Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
-                    clearSceneGraph();
-                    app.loadState(data);
-                    app.startNewGame();
-                    setScene(gameScene);
-                }
-                catch (Exception e) {
-                    log.warning("Failed to load save data: " + e.getMessage());
-                    showMessageBox("Failed to load save data: " + e.getMessage());
-                }
-            }
-            else {
-                SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
-                    clearSceneGraph();
-                    app.loadState((Serializable) data);
-                    app.startNewGame();
-                    setScene(gameScene);
-                });
-            }
-        });
+        mainMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
 
-        mainMenu.addEventHandler(MenuEvent.EXIT, event -> {
-            app.exit();
-        });
+        mainMenuScene.addEventHandler(MenuEvent.EXIT, event -> app.exit());
 
-        gameMenu.addEventHandler(MenuEvent.RESUME, event -> {
-            this.closeGameMenu();
-        });
-        gameMenu.addEventHandler(MenuEvent.SAVE, event -> {
-            String saveFileName = event.getData().map(name -> (String)name).orElse("");
+        gameMenuScene.addEventHandler(MenuEvent.RESUME, event -> this.closeGameMenu());
+        gameMenuScene.addEventHandler(MenuEvent.SAVE, event -> {
+            String saveFileName = event.getData().map(name -> (String) name).orElse("");
             if (!saveFileName.isEmpty()) {
                 try {
                     SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     log.warning("Failed to save game data: " + e.getMessage());
-                    showMessageBox("Failed to save game data: " + e.getMessage());
+                    //showMessageBox("Failed to save game data: " + e.getMessage());
                 }
             }
         });
-        gameMenu.addEventHandler(MenuEvent.LOAD, event -> {
-            String saveFileName = event.getData().map(name -> (String)name).orElse("");
-            if (!saveFileName.isEmpty()) {
-                try {
-                    Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
-                    clearSceneGraph();
-                    app.loadState(data);
-                    app.startNewGame();
-                    setScene(gameScene);
-                }
-                catch (Exception e) {
-                    log.warning("Failed to load save data: " + e.getMessage());
-                    showMessageBox("Failed to load save data: " + e.getMessage());
-                }
+        gameMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
+        gameMenuScene.addEventHandler(MenuEvent.EXIT, event -> this.exitToMainMenu());
+    }
+
+    private void handleMenuEventLoad(MenuEvent event) {
+        String saveFileName = event.getData().map(name -> (String) name)
+                .orElse("");
+        if (!saveFileName.isEmpty()) {
+            try {
+                Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
+                app.reset();
+                app.loadState(data);
+                app.startNewGame();
+                setScene(gameScene);
+            } catch (Exception e) {
+                log.warning("Failed to load save data: " + e.getMessage());
+                //showMessageBox("Failed to load save data: " + e.getMessage());
             }
-            else {
-                SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
-                    clearSceneGraph();
-                    app.loadState((Serializable) data);
-                    app.startNewGame();
-                    setScene(gameScene);
-                });
-            }
-        });
-        gameMenu.addEventHandler(MenuEvent.EXIT, event -> {
-            this.exitToMainMenu();
-        });
+        } else {
+            SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
+                app.reset();
+                app.loadState((Serializable) data);
+                app.startNewGame();
+                setScene(gameScene);
+            });
+        }
+    }
+
+    private void configureIntro() {
+        introScene = app.initIntroFactory().newIntro(sceneSettings);
+        introScene.setOnFinished(this::showGame);
     }
 
     /**
-     * Called right after the main stage is shown.
+     * Called right before the main stage is shown.
      */
-    /*package-private*/ void onStageShow() {
+    /* package-private */ void onStageShow() {
         if (isMenuEnabled)
             configureMenu();
 
         if (app.getSettings().isIntroEnabled()) {
-            Intro intro = app.initIntroVideo();
-            intro.getTransforms().add(new Scale(sizeRatio, sizeRatio));
-            intro.setOnFinished(() -> {
-                gameScene.setRoot(root);
+            configureIntro();
 
-                if (isMenuEnabled) {
-                    setScene(mainMenu);
-                }
-                else {
-                    app.startNewGame();
-                    setScene(gameScene);
-                }
-            });
-
-            gameScene.setRoot(intro);
-            intro.startIntro();
+            setScene(introScene);
+            introScene.startIntro();
+        } else {
+            showGame();
         }
-        else {
-            if (isMenuEnabled) {
-                setScene(mainMenu);
-            }
-            else {
-                app.startNewGame();
-                setScene(gameScene);
-            }
-        }
+    }
 
-        log.finer("Scene size: " + stage.getScene().getWidth() + "," + stage.getScene().getHeight());
-        log.finer("Stage size: " + stage.getWidth() + "," + stage.getHeight());
+    private void showGame() {
+        if (isMenuEnabled) {
+            setScene(mainMenuScene);
+        } else {
+            app.startNewGame();
+            setScene(gameScene);
+        }
+    }
+
+    /**
+     * @return game scene
+     */
+    public GameScene getGameScene() {
+        return gameScene;
     }
 
     /**
      * Changes current scene to given scene.
      *
-     * @param scene
+     * @param scene the scene to set as active
      */
-    private void setScene(Scene scene) {
-        menuOpen.set(scene == mainMenu || scene == gameMenu);
+    private void setScene(FXGLScene scene) {
+        currentScene = scene;
 
-        stage.setScene(scene);
-    }
+        menuOpen.set(scene == mainMenuScene || scene == gameMenuScene);
 
-    /**
-     * Equals user system width / target width.
-     */
-    private double sizeRatio = 1.0;
-
-    /**
-     * Returns the size ratio of the screen
-     * resolution over the target resolution
-     *
-     * @return
-     */
-    public double getSizeRatio() {
-        return sizeRatio;
-    }
-
-    /**
-     *
-     * @return game scene
-     */
-    public Scene getGameScene() {
-        return gameScene;
-    }
-
-    /**
-     * Returns render group for entity based on entity's
-     * render layer. If no such group exists, a new group
-     * will be created for that layer and placed
-     * in the scene graph according to its layer index.
-     *
-     * @param e
-     * @return
-     */
-    private Group getRenderLayerFor(Entity e) {
-        Integer renderLayer = e.getRenderLayer().index();
-        Group group = gameRoot.getChildren()
-                .stream()
-                .filter(n -> (int)n.getUserData() == renderLayer)
-                .findAny()
-                .map(n -> (Group)n)
-                .orElse(new Group());
-
-
-        if (group.getUserData() == null) {
-            log.finer("Creating render group for layer: " + e.getRenderLayer().asString());
-            group.setUserData(renderLayer);
-            gameRoot.getChildren().add(group);
-        }
-
-        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        tmpGroups.sort((g1, g2) -> (int)g1.getUserData() - (int)g2.getUserData());
-
-        gameRoot.getChildren().setAll(tmpGroups);
-
-        return group;
-    }
-
-    /**
-     * Add entity(-ies) to the scene graph.
-     * The entity(-ies) will be added in the next tick.
-     *
-     * @param entity to add
-     * @param entities to add
-     */
-    public void addEntities(Entity entity, Entity... entities) {
-        addQueue.add(entity);
-        for (Entity e : entities)
-            addQueue.add(e);
-    }
-
-    /**
-     * Remove given entity from the scene graph.
-     * The entity will be removed in the next tick.
-     *
-     * @param entity to remove
-     */
-    public void removeEntity(Entity entity) {
-        removeQueue.add(entity);
-    }
-
-    /**
-     * Add a node to the UI overlay.
-     *
-     * @param n
-     * @param nodes
-     */
-    public void addUINodes(Node node, Node... nodes) {
-        uiRoot.getChildren().add(node);
-        uiRoot.getChildren().addAll(nodes);
-    }
-
-    /**
-     * Remove given node from the UI overlay.
-     *
-     * @param n
-     */
-    public void removeUINode(Node n) {
-        uiRoot.getChildren().remove(n);
-    }
-
-    /**
-     * Returns a list of entities whose type matches given
-     * arguments. If no arguments were given, returns list
-     * of ALL entities currently registered in the scene graph.
-     *
-     * @param types
-     * @return
-     */
-    public List<Entity> getEntities(EntityType... types) {
-        if (types.length == 0)
-            return new ArrayList<>(entities);
-
-        List<String> list = Arrays.asList(types).stream()
-                .map(EntityType::getUniqueType)
-                .collect(Collectors.toList());
-
-        return entities.stream()
-                .filter(entity -> list.contains(entity.getTypeAsString()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which are partially or entirely
-     * in the specified rectangular selection.
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement is returned.
-     *
-     * @param selection Rectangle2D that describes the selection box
-     * @param types
-     * @return
-     */
-    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
-        Entity boundsEntity = Entity.noType();
-        boundsEntity.setPosition(selection.getMinX(), selection.getMinY());
-        boundsEntity.setGraphics(new Rectangle(selection.getWidth(), selection.getHeight()));
-
-        return getEntities(types).stream()
-                .filter(entity -> entity.getBoundsInParent().intersects(boundsEntity.getBoundsInParent()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which have the given render layer index
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement (i.e. render layer) is returned.
-     *
-     * @param layer
-     * @param types
-     * @return
-     */
-    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e.getRenderLayer().index() == layer.index())
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the closest entity to the given entity with given type.
-     * If no types were specified, the closest entity is returned. The given
-     * entity itself is never returned.
-     *
-     * If there no entities satisfying the requirement, {@link Optional#empty()}
-     * is returned.
-     *
-     * @param entity
-     * @param types
-     * @return
-     */
-    public Optional<Entity> getClosestEntity(Entity entity, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e != entity)
-                .sorted((e1, e2) -> (int)e1.distance(entity) - (int)e2.distance(entity))
-                .findFirst();
-    }
-
-    /**
-     * Returns an entity at given position. The position x and y
-     * must equal to entity's position x and y.
-     *
-     * Returns {@link Optional#empty()} if no entity was found at
-     * given position.
-     *
-     * @param position
-     * @return
-     */
-    public Optional<Entity> getEntityAt(Point2D position) {
-        return app.getSceneManager()
-                    .getEntities()
-                    .stream()
-                    .filter(e -> e.getPosition().equals(position))
-                    .findAny();
-    }
-
-    /**
-     * This is where we actually add the entities to the scene graph,
-     * which were pushed
-     * to waiting queue by {@link #addEntities(Entity...)}
-     * in the previous tick. We also clear the queue.
-     */
-    private void registerPendingEntities() {
-        for (Entity e : addQueue) {
-            entities.add(e);
-
-            // TODO: check combined
-            if (e instanceof CombinedEntity) {
-                getRenderLayerFor(e).getChildren().addAll(e.getChildrenUnmodifiable()
-                        .stream().map(node -> (Entity)node)
-                        .collect(Collectors.toList()));
-            }
-            else if (e instanceof PhysicsEntity) {
-                app.getPhysicsManager().createBody((PhysicsEntity) e);
-                getRenderLayerFor(e).getChildren().add(e);
-            }
-            else {
-                getRenderLayerFor(e).getChildren().add(e);
-            }
-
-            Duration expire = e.getExpireTime();
-            if (expire != Duration.ZERO)
-                app.getTimerManager().runOnceAfter(() -> removeEntity(e), expire);
-        }
-
-        addQueue.clear();
-    }
-
-    /**
-     * This is where we actually remove the entities from the scene graph,
-     * which were pushed to waiting queue for removal by {@link #removeEntity(Entity)}
-     * in the previous tick.
-     * If entity is a PhysicsEntity, its physics properties get destroyed.
-     * Finally, entity's onClean() will be called
-     *
-     * We also clear the queue.
-     */
-    private void removePendingEntities() {
-        entities.removeAll(removeQueue);
-
-        removeQueue.forEach(e -> {
-            getRenderLayerFor(e).getChildren().remove(e);
-        });
-
-        removeQueue.stream()
-                    .filter(e -> e instanceof PhysicsEntity)
-                    .map(e -> (PhysicsEntity)e)
-                    .forEach(app.getPhysicsManager()::destroyBody);
-        removeQueue.forEach(Entity::clean);
-        removeQueue.clear();
-    }
-
-    /**
-     * Cleans all registered entities. Clears add and remove queues.
-     * Clears gameRoot and uiRoot.
-     */
-    private void clearSceneGraph() {
-        entities.stream()
-            .filter(e -> e instanceof PhysicsEntity)
-            .map(e -> (PhysicsEntity) e)
-            .forEach(app.getPhysicsManager()::destroyBody);
-
-        entities.forEach(entity -> ((Entity) entity).clean());
-        entities.clear();
-
-        gameRoot.getChildren().clear();
-        uiRoot.getChildren().clear();
-
-        addQueue.clear();
-        removeQueue.clear();
-    }
-
-    /**
-     * Called by GameApplication to update state of entities
-     * and the scene graph.
-     */
-    @Override
-    public void onUpdate(long now) {
-        registerPendingEntities();
-        removePendingEntities();
-
-        particlesGC.setGlobalAlpha(1);
-        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
-        particlesGC.clearRect(0, 0, app.getWidth(), app.getHeight());
-
-        entities.forEach(e -> {
-            e.update(now);
-
-            if (e instanceof ParticleEntity) {
-                ((ParticleEntity)e).renderParticles(particlesGC, getViewportOrigin());
-            }
-        });
-    }
-
-    /**
-     * Sets viewport origin. Use it for camera movement.
-     *
-     * Do NOT use if the viewport was bound.
-     *
-     * @param x
-     * @param y
-     */
-    public void setViewportOrigin(int x, int y) {
-        gameRoot.setLayoutX(-x);
-        gameRoot.setLayoutY(-y);
-    }
-
-    /**
-     * Note: viewport origin, like anything in a scene, has top-left origin point.
-     *
-     * @return viewport origin
-     */
-    public Point2D getViewportOrigin() {
-        return new Point2D(-gameRoot.getLayoutX(), -gameRoot.getLayoutY());
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX and distY represent bound distance between entity and viewport origin
-     *
-     * <pre>
-     * Example:
-     *
-     * bindViewportOrigin(player, (int) (getWidth() / 2), (int) (getHeight() / 2));
-     *
-     * the code above centers the camera on player
-     * For most platformers / side scrollers use:
-     *
-     * bindViewportOriginX(player, (int) (getWidth() / 2));
-     *
-     * </pre>
-     *
-     * @param entity
-     * @param distX
-     * @param distY
-     */
-    public void bindViewportOrigin(Entity entity, int distX, int distY) {
-        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
-        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX represent bound distance in X axis between entity and viewport origin.
-     *
-     * @param entity
-     * @param distX
-     */
-    public void bindViewportOriginX(Entity entity, int distX) {
-        gameRoot.layoutXProperty().bind(entity.translateXProperty().negate().add(distX));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distY represent bound distance in Y axis between entity and viewport origin.
-     *
-     * @param entity
-     * @param distY
-     */
-    public void bindViewportOriginY(Entity entity, int distY) {
-        gameRoot.layoutYProperty().bind(entity.translateYProperty().negate().add(distY));
-    }
-
-    /**
-     * Set true if UI elements should forward mouse events
-     * to the game layer
-     *
-     * @param b
-     * @defaultValue false
-     */
-    public void setUIMouseTransparent(boolean b) {
-        uiRoot.setMouseTransparent(b);
-    }
-
-    /**
-     * Sets global game cursor using given name to find
-     * the image cursor within assets/ui/cursors/.
-     * Hotspot is location of the pointer end on the image.
-     *
-     * @param imageName
-     * @param hotspot
-     */
-    public void setGameCursor(String imageName, Point2D hotspot) {
-        try {
-            gameScene.setCursor(new ImageCursor(app.getAssetManager().loadCursorImage(imageName),
-                    hotspot.getX(), hotspot.getY()));
-        }
-        catch (Exception e) {
-            log.warning("Failed to set cursor: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Fires an FXGL event on all entities whose type
-     * matches given arguments. If types were not given,
-     * fires an FXGL event on all entities registered in the scene graph.
-     *
-     * @param event
-     * @param types
-     */
-    public void fireFXGLEvent(FXGLEvent event, EntityType... types) {
-        getEntities(types).forEach(e -> e.fireFXGLEvent(event));
+        this.scene.setRoot(scene.getRoot());
     }
 
     private ReadOnlyBooleanWrapper menuOpen;
 
     /**
-     *
-     * @return property tracking if any is open
+     * @return property tracking if any menu is open
      */
     public ReadOnlyBooleanProperty menuOpenProperty() {
         return menuOpen.getReadOnlyProperty();
     }
 
     /**
-     *
      * @return true if any menu is open
      */
     public boolean isMenuOpen() {
@@ -875,7 +372,7 @@ public final class SceneManager implements UpdateTickListener {
     /**
      * Set the key which will open/close game menu.
      *
-     * @param key
+     * @param key the key
      * @defaultValue KeyCode.ESCAPE
      */
     public void setMenuKey(KeyCode key) {
@@ -884,16 +381,14 @@ public final class SceneManager implements UpdateTickListener {
 
     /**
      * Pauses the game and opens in-game menu.
-     * Does nothing if menu is disabled in settings
      */
     private void openGameMenu() {
         app.pause();
-        setScene(gameMenu);
+        setScene(gameMenuScene);
     }
 
     /**
      * Closes the game menu and resumes the game.
-     * Does nothing if menu is disabled in settings
      */
     private void closeGameMenu() {
         setScene(gameScene);
@@ -901,26 +396,21 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Exits the current game and opens main menu.
-     * Does nothing if menu is disabled in settings
+     * Resets and exits the current game and opens main menu.
      */
     private void exitToMainMenu() {
         app.pause();
-        app.getTimerManager().clearActions();
-
-        clearSceneGraph();
-
-        setScene(mainMenu);
+        app.reset();
+        setScene(mainMenuScene);
     }
 
     /**
-     * Shows given dialog and blocks execution of the game
-     * until the dialog is dismissed. The provided callback
-     * will be called with the dialog result as parameter when the dialog
-     * closes.
+     * Shows given dialog and blocks execution of the game until the dialog is
+     * dismissed. The provided callback will be called with the dialog result as
+     * parameter when the dialog closes.
      *
-     * @param dialog
-     * @param resultCallback
+     * @param dialog         JavaFX dialog
+     * @param resultCallback the function to be called
      */
     public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
         boolean paused = menuOpenProperty().get();
@@ -930,7 +420,7 @@ public final class SceneManager implements UpdateTickListener {
 
         app.getInputManager().clearAllInput();
 
-        dialog.initOwner(gameScene.getWindow());
+        dialog.initOwner(scene.getWindow());
         dialog.setOnCloseRequest(e -> {
             if (!paused)
                 app.resume();
@@ -941,9 +431,8 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Shows a blocking (stops game execution) message box
-     * with OK button. On button press, the message box
-     * will be dismissed.
+     * Shows a blocking (stops game execution) message box with OK button. On
+     * button press, the message box will be dismissed.
      *
      * @param message the message to show
      */
@@ -952,22 +441,23 @@ public final class SceneManager implements UpdateTickListener {
     }
 
     /**
-     * Shows a blocking message box with YES and NO buttons.
-     * The callback is invoked with the user answer as parameter.
+     * Shows a blocking message box with YES and NO buttons. The callback is
+     * invoked with the user answer as parameter.
      *
-     * @param message
-     * @param resultCallback
+     * @param message        message to show
+     * @param resultCallback the function to be called
      */
-    public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
+    public void showConfirmationBox(String message,
+                                    Consumer<Boolean> resultCallback) {
         dialogBox.showConfirmationBox(message, resultCallback);
     }
 
     /**
-     * Shows a blocking message box with OK button and input field.
-     * The callback is invoked with the field text as parameter.
+     * Shows a blocking message box with OK button and input field. The callback
+     * is invoked with the field text as parameter.
      *
-     * @param message
-     * @param resultCallback
+     * @param message        message to show
+     * @param resultCallback the function to be called
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
         dialogBox.showInputBox(message, resultCallback);
@@ -976,22 +466,23 @@ public final class SceneManager implements UpdateTickListener {
     /**
      * Saves a screenshot of the current main scene into a ".png" file
      *
-     * @return  true if the screenshot was saved successfully, false otherwise
+     * @return true if the screenshot was saved successfully, false otherwise
      */
     public boolean saveScreenshot() {
-        Image fxImage = gameScene.snapshot(null);
+        Image fxImage = scene.snapshot(null);
         BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
-        String fileName = "./" + app.getSettings().getTitle() + app.getSettings().getVersion()
-                + LocalDateTime.now() + ".png";
+        String fileName = "./" + app.getSettings().getTitle()
+                + app.getSettings().getVersion() + LocalDateTime.now() + ".png";
 
         fileName = fileName.replace(":", "_");
 
         try (OutputStream os = Files.newOutputStream(Paths.get(fileName))) {
             return ImageIO.write(img, "png", os);
-        }
-        catch (Exception e) {
-            log.finer("Exception occurred during saveScreenshot() - " + e.getMessage());
+        } catch (Exception e) {
+            log.finer(
+                    "Exception occurred during saveScreenshot() - "
+                            + e.getMessage());
         }
 
         return false;

@@ -33,7 +33,6 @@ import com.almasb.fxgl.time.TimerManager;
  * API NOT READY FOR USE
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class CircularMovementControl extends AbstractControl {
 
@@ -49,18 +48,18 @@ public final class CircularMovementControl extends AbstractControl {
 
     @Override
     protected void initEntity(Entity entity) {
-        x = entity.getTranslateX();
-        y = entity.getTranslateY();
+//        x = entity.getTranslateX();
+//        y = entity.getTranslateY();
     }
 
     @Override
-    public void onUpdate(Entity entity, long now) {
-        x = entity.getTranslateX() - Math.cos(t) * radius;
-        y = entity.getTranslateY() - Math.sin(t) * radius;
-
-        t += TimerManager.tpfSeconds() * speed;
-
-        entity.setTranslateX(x + Math.cos(t) * radius);
-        entity.setTranslateY(y + Math.sin(t) * radius);
+    public void onUpdate(Entity entity) {
+//        x = entity.getTranslateX() - Math.cos(t) * radius;
+//        y = entity.getTranslateY() - Math.sin(t) * radius;
+//
+//        t += TimerManager.tpfSeconds() * speed;
+//
+//        entity.setTranslateX(x + Math.cos(t) * radius);
+//        entity.setTranslateY(y + Math.sin(t) * radius);
     }
 }

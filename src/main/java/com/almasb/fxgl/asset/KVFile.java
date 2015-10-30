@@ -40,7 +40,7 @@ import javafx.util.Pair;
 /**
  * Represents a simple key value file, similar to {@link java.util.Properties}.
  * However, it is easier to work with in the fxgl asset management context.
- *
+ * <p>
  * <pre>
  * Example of a .kv file:
  *
@@ -50,18 +50,17 @@ import javafx.util.Pair;
  * canJump = true
  *
  * </pre>
- *
+ * <p>
  * Only primitive types and String are supported. The resulting data type
  * will be determined by the field type with matching name.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class KVFile {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.KVFile");
 
-    private List<Pair<String, String> > entries = new ArrayList<>();
+    private List<Pair<String, String>> entries = new ArrayList<>();
 
     private Predicate<String[]> validEntry = kv -> {
         boolean valid = true;
@@ -75,14 +74,14 @@ public final class KVFile {
     /**
      * Constructs KVFile from lines of plain text.
      * Each line must be in format:
-     *
+     * <p>
      * <pre>
      * key = value
      * </pre>
+     * <p>
+     * Empty spaces are ignored before, after and inbetween tokens.
      *
-     * Emptry spaces are ignored before, after and inbetween tokens.
-     *
-     * @param fileLines
+     * @param fileLines list of lines from file
      */
     public KVFile(List<String> fileLines) {
         entries = fileLines.stream()
@@ -92,7 +91,8 @@ public final class KVFile {
                 .collect(Collectors.toList());
     }
 
-    private KVFile() {}
+    private KVFile() {
+    }
 
     private void setKV(Object instance, String key, String value) throws Exception {
         Field field = instance.getClass().getDeclaredField(key);
@@ -138,8 +138,8 @@ public final class KVFile {
      * created instance with key-value data from given object using
      * its declared fields.
      *
-     * @param data
-     * @return
+     * @param data object to convert to kv file
+     * @return kv file
      * @throws Exception
      */
     public static KVFile from(Object data) throws Exception {
@@ -158,8 +158,8 @@ public final class KVFile {
      * Converts an instance of KVFile to instance of the data
      * structure and populates its fields with appropriate values.
      *
-     * @param type
-     * @return
+     * @param type data structure type
+     * @return instance of type
      * @throws Exception
      */
     public <T> T to(Class<T> type) throws Exception {
@@ -173,10 +173,6 @@ public final class KVFile {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("KVFile [entries=");
-        builder.append(entries.toString());
-        builder.append("]");
-        return builder.toString();
+        return "KVFile [entries=" + entries.toString() + "]";
     }
 }

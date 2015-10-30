@@ -30,7 +30,7 @@ import com.almasb.fxgl.util.ApplicationMode;
 /**
  * Data structure for variables that are
  * initialised before the application (game) starts.
- *
+ * <p>
  * Modifying any data after the start of the game has no effect.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -41,7 +41,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * Set title of the game. This will be shown as the
      * window header if the game isn't fullscreen.
      *
-     * @param title
+     * @param title app title
      * @defaultValue "Untitled FXGL Game Application"
      */
     public void setTitle(String title) {
@@ -52,10 +52,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * Set target width. If the screen width is smaller,
      * the game will automatically scale down the image
      * while maintaining the aspect ratio.
-     *
+     * <p>
      * All the game logic must use target width and height.
      *
-     * @param width
+     * @param width target width
      * @defaultValue 800
      */
     public void setWidth(int width) {
@@ -63,13 +63,13 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
-     * Set target height. If the height width is smaller,
+     * Set target height. If the screen height is smaller,
      * the game will automatically scale down the image
      * while maintaining the aspect ratio.
-     *
+     * <p>
      * All the game logic must use target width and height.
      *
-     * @param height
+     * @param height target height
      * @defaultValue 600
      */
     public void setHeight(int height) {
@@ -79,7 +79,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Set version of the game.
      *
-     * @param version
+     * @param version app version
      * @defaultValue 0.0
      */
     public void setVersion(String version) {
@@ -90,7 +90,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * If set to true, the intro video/animation will
      * be played before the start of the game
      *
-     * @param b
+     * @param b intro flag
      * @defaultValue true
      */
     public void setIntroEnabled(boolean b) {
@@ -100,7 +100,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Setting to true enables main and game menu.
      *
-     * @param b
+     * @param b menu flag
      * @defaultValue true
      */
     public void setMenuEnabled(boolean b) {
@@ -110,12 +110,13 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Set file name of the icon to be used
      * as the application icon.
-     *
+     * <p>
      * The file must be placed under /assets/ui/icons/ .
      * The name must be given in the form relative to that
      * path. E.g. "icon.png"
      *
-     * @param iconFileName
+     * @param iconFileName icon file name
+     * @defaultValue fxgl_icon.png
      */
     public void setIconFileName(String iconFileName) {
         this.iconFileName = iconFileName;
@@ -124,7 +125,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Setting to true will start the game in fullscreen mode.
      *
-     * @param b
+     * @param b fullscreen flag
      * @defaultValue false
      */
     public void setFullScreen(boolean b) {
@@ -135,7 +136,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * Setting to true will show render and performance FPS
      * in the bottom left corner.
      *
-     * @param b
+     * @param b show fps flag
      * @defaultValue true
      */
     public void setShowFPS(boolean b) {
@@ -145,7 +146,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Sets application run mode. See {@link ApplicationMode} for more info.
      *
-     * @param mode
+     * @param mode app mode
      * @defaultValue {@link ApplicationMode#DEVELOPER}
      */
     public void setApplicationMode(ApplicationMode mode) {
@@ -156,7 +157,8 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * Sets the name of the default font. The font file
      * must be located in assets/ui/fonts/
      *
-     * @param name
+     * @param name default font name to use
+     * @defaultValue Copperplate_Gothic_Light_Regular.ttf
      */
     public void setDefaultFontName(String name) {
         this.defaultFontName = name;

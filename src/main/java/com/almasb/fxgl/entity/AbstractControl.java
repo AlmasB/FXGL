@@ -34,7 +34,6 @@ package com.almasb.fxgl.entity;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
  */
 public abstract class AbstractControl implements Control {
 
@@ -44,7 +43,7 @@ public abstract class AbstractControl implements Control {
      * Set entity for this control instance. This is called
      * by Entity during control attachment to entity
      *
-     * @param entity
+     * @param entity the entity being controlled
      */
     /* package-private */ void setEntity(Entity entity) {
         this.entity = entity;
@@ -56,7 +55,7 @@ public abstract class AbstractControl implements Control {
      * entity. Useful for setting properties required / used
      * by control
      *
-     * @param entity
+     * @param entity the entity being controlled
      */
     protected abstract void initEntity(Entity entity);
 }

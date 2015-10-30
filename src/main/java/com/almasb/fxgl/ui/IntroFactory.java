@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,45 +25,15 @@
  */
 package com.almasb.fxgl.ui;
 
-import javafx.scene.Parent;
+import com.almasb.fxgl.settings.SceneSettings;
 
-/**
- * Intro animation / video played before game starts
- * if intro is enabled in settings
- *
- * Call {@link #finishIntro()} when your intro completed
- * so that the game can proceed to the next state
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- */
-public abstract class Intro extends Parent {
+public abstract class IntroFactory {
 
     /**
-     * Called when intro finished.
-     */
-    private Runnable onFinished;
-
-    /**
-     * Do NOT call. This is set by FXGL.
+     * Called to construct intro scene.
      *
-     * @param onFinished
+     * @param settings scene settings
+     * @return intro scene
      */
-    public final void setOnFinished(Runnable onFinished) {
-        this.onFinished = onFinished;
-    }
-
-    /**
-     * Closes intro and initializes the next game state, whether it's a menu or game.
-     *
-     * Note: call this when your intro completes, otherwise
-     * the game won't proceed to next state.
-     */
-    public final void finishIntro() {
-        onFinished.run();
-    }
-
-    /**
-     * Starts the intro animation / video
-     */
-    public abstract void startIntro();
+    public abstract IntroScene newIntro(SceneSettings settings);
 }

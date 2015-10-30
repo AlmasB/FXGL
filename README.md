@@ -1,6 +1,7 @@
 ## FXGL
 Simple and easy to use JavaFX 8 game library<br/>
 [![Release](https://img.shields.io/github/release/AlmasB/FXGL.svg?label=maven)](https://jitpack.io/#AlmasB/FXGL)
+[![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Use Case
 FXGL is perfect for small to medium sized games and for beginner / intermediate programmers in JavaFX.
@@ -32,7 +33,7 @@ Depending on what IDE or build tool you are using choose appropriate setup steps
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.1.6-beta</version>
+    <version>0.1.7</version>
 </dependency>
 ```
 
@@ -44,7 +45,7 @@ repositories {
 }
 
 dependencies {
-        compile 'com.github.AlmasB:FXGL:0.1.6-beta'
+    compile 'com.github.AlmasB:FXGL:0.1.7'
 }
 ```
 
@@ -62,6 +63,11 @@ in your IDE. That's it, you're all set! See below setup for some IDEs
 2. Choose Project Name -> Finish
 3. Right-click on the created project -> Build Path -> Configure Build Path -> 
     Libraries Tab -> Add External JAR -> Navigate and Select downloaded FXGL jar
+    
+## Setup (IntelliJ IDEA, tested with 14.1)
+1. Create Project
+2. File -> Project Structure
+3. Libraries -> Add Java -> Navigate and Select downloaded FXGL jar
     
 ## Directory Structure for FXGL Applications
 This matches the Eclipse/NetBeans structure but should work with other IDEs.
@@ -99,7 +105,7 @@ Most of the code follows "some" design principles and practices, but overall I w
 and as it is now it doesn't have much production value.
 
 ## Changelog
-FXGL 0.1.6 (latest) supports:
+FXGL 0.1.7 (latest) supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
 * JBox2D Physics Engine Integration (v.2.2.1.1, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
@@ -108,6 +114,7 @@ FXGL 0.1.6 (latest) supports:
 * Basic Audio System
 * Basic Particle System with Canvas Rendering
 * Multi-Layer Rendering
+* Dynamic Texture Manipulation (Texture Processing + Sprite Sheet Animations)
 * Entity Component/Control System
 * Time Management System
 * Global and Scoped Event System

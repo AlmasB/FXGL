@@ -56,12 +56,11 @@ import javafx.stage.Window;
  * Default FXGL dialog box. Represented by a rectangle with a black
  * background and white stroke. The box opens as a separate stage
  * on top of the game application but
- * with the same window onwer as the FXGL game application. In terms
+ * with the same window owner as the FXGL game application. In terms
  * of input events the dialog box has its own scene and has no
  * connection to the game.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public final class FXGLDialogBox extends Stage {
 
@@ -70,7 +69,7 @@ public final class FXGLDialogBox extends Stage {
     private StackPane root = new StackPane();
     private Scene scene = new Scene(root);
 
-    /*package-private*/ FXGLDialogBox(Window owner) {
+    FXGLDialogBox(Window owner) {
         initStyle(StageStyle.TRANSPARENT);
         initModality(Modality.WINDOW_MODAL);
         initOwner(owner);
@@ -81,10 +80,10 @@ public final class FXGLDialogBox extends Stage {
 
     /**
      * Shows a simple message box with OK button.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
-     * @param message
+     * @param message message to show
      */
     public void showMessageBox(String message) {
         if (isShowing())
@@ -93,9 +92,7 @@ public final class FXGLDialogBox extends Stage {
         Text text = createMessage(message);
 
         FXGLButton btnOK = new FXGLButton("OK");
-        btnOK.setOnAction(e -> {
-            close();
-        });
+        btnOK.setOnAction(e -> close());
 
         VBox vbox = new VBox(50, text, btnOK);
         vbox.setAlignment(Pos.CENTER);
@@ -107,10 +104,10 @@ public final class FXGLDialogBox extends Stage {
 
     /**
      * Shows an error box with OK and LOG buttons.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
-     * @param error
+     * @param error error to show
      */
     public void showErrorBox(Throwable error) {
         if (isShowing())
@@ -119,9 +116,7 @@ public final class FXGLDialogBox extends Stage {
         Text text = createMessage("Error: " + (error.getMessage() == null ? "NPE" : error.getMessage()));
 
         FXGLButton btnOK = new FXGLButton("OK");
-        btnOK.setOnAction(e -> {
-            close();
-        });
+        btnOK.setOnAction(e -> close());
 
         FXGLButton btnLog = new FXGLButton("LOG");
         btnLog.setOnAction(e -> {
@@ -135,8 +130,7 @@ public final class FXGLDialogBox extends Stage {
             try {
                 Files.write(Paths.get("LastException.log"), Arrays.asList(sw.toString().split("\n")));
                 showMessageBox("Log has been saved as LastException.log");
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 showMessageBox("Failed to save log file");
             }
         });
@@ -154,14 +148,14 @@ public final class FXGLDialogBox extends Stage {
 
     /**
      * Shows confirmation message box with YES and NO buttons.
-     *
+     * <p>
      * The callback function will be invoked with boolean answer
      * as parameter.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
-     * @param message
-     * @param resultCallback
+     * @param message message to show
+     * @param resultCallback result function to call back
      */
     public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
         if (isShowing())
@@ -196,14 +190,14 @@ public final class FXGLDialogBox extends Stage {
      * Shows input box with input field and OK button.
      * The button will stay disabled until there is at least
      * 1 character in the input field.
-     *
+     * <p>
      * The callback function will be invoked with input field text
      * as parameter.
-     *
+     * <p>
      * Opening more than 1 dialog box is not allowed.
      *
-     * @param message
-     * @param resultCallback
+     * @param message message to show
+     * @param resultCallback result function to call back
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
         if (isShowing())
@@ -235,7 +229,7 @@ public final class FXGLDialogBox extends Stage {
      * Creates an appropriate size rectangle box around the node
      * to serve as background.
      *
-     * @param n
+     * @param n content node
      */
     private void setContent(Node n) {
         Point2D size = (Point2D) n.getUserData();

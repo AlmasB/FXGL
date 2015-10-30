@@ -27,6 +27,7 @@ package com.almasb.fxgl.ui;
 
 import java.util.Random;
 
+import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.KeyFrame;
@@ -57,16 +58,21 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLIntro extends Intro {
+public final class FXGLIntroScene extends IntroScene {
+
+    //private static final Logger log = FXGLLogger.getLogger("FXGLIntroScene");
+
     private double w, h;
 
     private ParallelTransition animation;
 
     private Random random = new Random();
 
-    public FXGLIntro(double w, double h) {
-        this.w = w;
-        this.h = h;
+    public FXGLIntroScene(SceneSettings settings) {
+        super(settings);
+
+        w = settings.getTargetWidth();
+        h = settings.getTargetHeight();
 
         Text f = makeLetter("F");
         Text x = makeLetter("X");
@@ -86,7 +92,7 @@ public final class FXGLIntro extends Intro {
         Text poweredText = makePoweredBy();
         Text version = makeVersion();
 
-        getChildren().addAll(new Rectangle(w, h), fxglText, poweredText, version);
+        getRoot().getChildren().addAll(new Rectangle(w, h), fxglText, poweredText, version);
 
         double originX = w / 2 - f.getLayoutBounds().getWidth() * 4 / 2;
         double dx = f.getLayoutBounds().getWidth();
@@ -100,11 +106,11 @@ public final class FXGLIntro extends Intro {
         tt2.setToY(h / 2);
 
         TranslateTransition tt3 = new TranslateTransition(Duration.seconds(1), g);
-        tt3.setToX(originX + dx*2);
+        tt3.setToX(originX + dx * 2);
         tt3.setToY(h / 2);
 
         TranslateTransition tt4 = new TranslateTransition(Duration.seconds(1), l);
-        tt4.setToX(originX + dx*3.3);
+        tt4.setToX(originX + dx * 3.3);
         tt4.setToY(h / 2);
 
         animation = new ParallelTransition(tt, tt2, tt3, tt4);
@@ -143,7 +149,7 @@ public final class FXGLIntro extends Intro {
                     c.setTranslateX(-5);
                     c.setTranslateY(h / 2 + 10);
 
-                    getChildren().add(c);
+                    getRoot().getChildren().add(c);
 
                     PathTransition pt = new PathTransition(Duration.seconds(1 + t), getPath(f, l), c);
                     if (i == 49)

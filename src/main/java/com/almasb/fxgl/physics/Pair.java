@@ -28,19 +28,17 @@ package com.almasb.fxgl.physics;
 /**
  * For internal use
  *
+ * @param <T>
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @version 1.0
- *
- * @param <T>
  */
-/*package-private*/ class Pair<T> {
+class Pair<T> {
 
     private T a, b;
 
     public Pair(T a, T b) {
         if (a == null || b == null)
-            throw new IllegalArgumentException("Objects must not be null: "
-                    + a == null ? "a" : "b");
+            throw new IllegalArgumentException("Objects must not be null:");
         this.a = a;
         this.b = b;
     }

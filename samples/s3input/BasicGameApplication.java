@@ -59,8 +59,10 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initInput() {
+        // 1. get input manager
         InputManager input = getInputManager();
 
+        // 2. add key/mouse bound actions
         input.addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
@@ -74,6 +76,20 @@ public class BasicGameApplication extends GameApplication {
                 player.translate(5, 0);
             }
         }, KeyCode.D);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                player.translate(0, -5);
+            }
+        }, KeyCode.W);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                player.translate(0, 5);
+            }
+        }, KeyCode.S);
     }
 
     @Override
@@ -85,9 +101,9 @@ public class BasicGameApplication extends GameApplication {
         player.setPosition(100, 100);
 
         Rectangle graphics = new Rectangle(40, 40);
-        player.setGraphics(graphics);
+        player.setSceneView(graphics);
 
-        getSceneManager().addEntities(player);
+        getGameWorld().addEntity(player);
     }
 
     @Override
@@ -97,7 +113,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    public void onUpdate() {}
 
     public static void main(String[] args) {
         launch(args);

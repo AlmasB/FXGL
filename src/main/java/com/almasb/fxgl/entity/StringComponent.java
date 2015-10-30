@@ -30,7 +30,7 @@ import javafx.beans.property.StringProperty;
 
 /**
  * Represents a String value based component.
- *
+ * <p>
  * <pre>
  * Example:
  *
@@ -48,7 +48,6 @@ import javafx.beans.property.StringProperty;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public abstract class StringComponent implements Component {
     private StringProperty property;
@@ -64,14 +63,13 @@ public abstract class StringComponent implements Component {
      * Constructs a string value component with given
      * initial value.
      *
-     * @param initialValue
+     * @param initialValue the initial value
      */
     public StringComponent(String initialValue) {
         property = new SimpleStringProperty(initialValue);
     }
 
     /**
-     *
      * @return value property
      */
     public final StringProperty valueProperty() {
@@ -79,7 +77,6 @@ public abstract class StringComponent implements Component {
     }
 
     /**
-     *
      * @return value held by this component
      */
     public final String getValue() {
@@ -89,7 +86,7 @@ public abstract class StringComponent implements Component {
     /**
      * Set value to this component.
      *
-     * @param value
+     * @param value new value
      */
     public final void setValue(String value) {
         property.set(value);

@@ -25,63 +25,68 @@
  */
 package com.almasb.fxgl.search;
 
+import com.almasb.fxgl.util.FXGLLogger;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * A* search logic
+ * A* search logic. API INCOMPLETE
  *
- * @author AlmasB (almaslvl@gmail.com)
- * @version 1.0
+ * TODO: optimise for FXGL
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class AStarLogic {
 
+    private static final Logger log = FXGLLogger.getLogger("FXGL.AStarLogic");
+
     /**
      * Since the equality check is based on references
-     * start and target must be elements of the array
+     * start and target must be elements of the array.
      *
-     * @param grid
-     * @param start
-     * @param target
-     * @param busyNodes
-     * @return
+     * @param grid      the grid of nodes
+     * @param start     starting node
+     * @param target    target node
+     * @param busyNodes busy "unwalkable" nodes
+     * @return          path as list of nodes from start to target or empty list if no path found
      */
     public List<AStarNode> getPath(AStarNode[][] grid, AStarNode start, AStarNode target, AStarNode... busyNodes) {
         if (target.getNodeValue() == 1) // the target is an unwalkable node
-            return new ArrayList<AStarNode>();  // return empty path
+            return new ArrayList<>();  // return empty path
 
-        List<AStarNode> open = new ArrayList<AStarNode>();
-        List<AStarNode> closed = new ArrayList<AStarNode>();
-        List<AStarNode> path = new ArrayList<AStarNode>();
+        List<AStarNode> open = new ArrayList<>();
+        List<AStarNode> closed = new ArrayList<>();
+        List<AStarNode> path = new ArrayList<>();
 
         AStarNode current = start;
 
         boolean found = false;
 
         while (!found && !closed.contains(target)) {
-            AStarNode[] temp = getNeighbors(current, grid, busyNodes);
+            AStarNode[] neighbors = getNeighbors(current, grid, busyNodes);
 
-            for (int i = 0; i < temp.length; i++) {
-                if (temp[i] == target) {
+            for (AStarNode neighbor : neighbors) {
+                if (neighbor == target) {
                     target.setParent(current);
                     found = true;
                     closed.add(target);
                     break;
                 }
 
-                if (!closed.contains(temp[i])) {
-                    if (open.contains(temp[i])) {
+                if (!closed.contains(neighbor)) {
+                    if (open.contains(neighbor)) {
                         int newG = current.getGCost() + 10;
 
-                        if (newG < temp[i].getGCost()) {
-                            temp[i].setParent(current);
-                            temp[i].setGCost(newG);
+                        if (newG < neighbor.getGCost()) {
+                            neighbor.setParent(current);
+                            neighbor.setGCost(newG);
                         }
-                    }
-                    else {
-                        temp[i].setParent(current);
-                        temp[i].setGCost(current.getGCost() + 10);
-                        open.add(temp[i]);
+                    } else {
+                        neighbor.setParent(current);
+                        neighbor.setGCost(current.getGCost() + 10);
+                        open.add(neighbor);
                     }
                 }
             }
@@ -91,7 +96,7 @@ public final class AStarLogic {
                 open.remove(current);
                 current = getSmallest(open);
                 if (current == null)
-                    return new ArrayList<AStarNode>();
+                    return new ArrayList<>();
             }
         }
 
@@ -114,7 +119,7 @@ public final class AStarLogic {
 
     public AStarNode getSmallest(List<AStarNode> open) {
         if (open.size() == 0) {
-            System.out.println("No path found. Returning null");
+            log.warning("No path found");
             return null;
         }
 

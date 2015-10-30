@@ -34,7 +34,7 @@ import java.util.Arrays;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-/*package-private*/ final class FPSCounter {
+final class FPSCounter {
 
     private static final int MAX_SAMPLES = 100;
 
@@ -50,8 +50,8 @@ import java.util.Arrays;
      * Calculates average FPS and buffers given value
      * for future corrections to the FPS value
      *
-     * @param timeTookLastFrame
-     * @return
+     * @param timeTookLastFrame how long it took to compute last frame
+     * @return average FPS
      */
     public float count(float timeTookLastFrame) {
         sum -= values[index];

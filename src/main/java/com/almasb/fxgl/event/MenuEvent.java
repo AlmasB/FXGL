@@ -31,30 +31,35 @@ import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
 
+/**
+ * An event type that occurs within menus.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class MenuEvent extends Event {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Common supertype for all menu event types.
+     * Common super-type for all menu event types.
      */
     public static final EventType<MenuEvent> ANY =
-            new EventType<MenuEvent>(Event.ANY, "MENU");
+            new EventType<>(Event.ANY, "MENU");
 
     public static final EventType<MenuEvent> RESUME =
-            new EventType<MenuEvent>(MenuEvent.ANY, "RESUME");
+            new EventType<>(MenuEvent.ANY, "RESUME");
 
     public static final EventType<MenuEvent> NEW_GAME =
-            new EventType<MenuEvent>(MenuEvent.ANY, "NEW_GAME");
+            new EventType<>(MenuEvent.ANY, "NEW_GAME");
 
     public static final EventType<MenuEvent> SAVE =
-            new EventType<MenuEvent>(MenuEvent.ANY, "SAVE");
+            new EventType<>(MenuEvent.ANY, "SAVE");
 
     public static final EventType<MenuEvent> LOAD =
-            new EventType<MenuEvent>(MenuEvent.ANY, "LOAD");
+            new EventType<>(MenuEvent.ANY, "LOAD");
 
     public static final EventType<MenuEvent> EXIT =
-            new EventType<MenuEvent>(MenuEvent.ANY, "EXIT");
+            new EventType<>(MenuEvent.ANY, "EXIT");
 
     public MenuEvent(EventType<? extends Event> eventType) {
         this(null, null, eventType, null);
