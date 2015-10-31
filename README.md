@@ -1,5 +1,5 @@
 ## FXGL
-Simple and easy to use JavaFX 8 game library<br/>
+Simple and easy to use (hopefully!) JavaFX 8 game library<br/>
 [![Release](https://img.shields.io/github/release/AlmasB/FXGL.svg?label=maven)](https://jitpack.io/#AlmasB/FXGL)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
@@ -70,7 +70,8 @@ in your IDE. That's it, you're all set! See below setup for some IDEs
 3. Libraries -> Add Java -> Navigate and Select downloaded FXGL jar
     
 ## Directory Structure for FXGL Applications
-This matches the Eclipse/NetBeans structure but should work with other IDEs.
+This matches a typical IDE directory structure. For Maven users source root is "src/main/java" and assets
+should be in "src/main/resources".
 This allows easy packaging and deployment, as all assets packaged into jar will continue loading with
 exactly the same code.
 
@@ -143,9 +144,6 @@ the next release.
 <img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_RPG.png" />
 <img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL24_FXWars2.jpg" />
 Sprites can be found on http://opengameart.org/
-            
-## License
-MIT, so you can do anything you want with the code.
 
 ## Contact
 almaslvl@gmail.com, https://plus.google.com/+AlmasB0/about<br/>
