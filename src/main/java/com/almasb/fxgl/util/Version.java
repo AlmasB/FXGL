@@ -25,10 +25,11 @@
  */
 package com.almasb.fxgl.util;
 
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 /**
- * Holds FXGL version in x.y.z format, where x - major, y - minor, z - patch versions
+ * Holds version info about various frameworks used in FXGL.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -36,16 +37,14 @@ public final class Version {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.Version");
 
-    public static int getMajor() {
-        return 0;
-    }
+    private static final String FXGL_VERSION;
+    private static final String JAVAFX_VERSION;
 
-    public static int getMinor() {
-        return 1;
-    }
+    static {
+        ResourceBundle resources = ResourceBundle.getBundle("com.almasb.fxgl.util.version");
 
-    public static int getPatch() {
-        return 7;
+        FXGL_VERSION = resources.getString("fxgl.version");
+        JAVAFX_VERSION = resources.getString("javafx.version");
     }
 
     public static void print() {
@@ -57,14 +56,14 @@ public final class Version {
      * @return compile time version of FXGL
      */
     public static String getAsString() {
-        return getMajor() + "." + getMinor() + "." + getPatch();
+        return FXGL_VERSION;
     }
 
     /**
      * @return compile time version of JavaFX
      */
     public static String getJavaFXAsString() {
-        return "8.0.60";
+        return JAVAFX_VERSION;
     }
 
     /**
