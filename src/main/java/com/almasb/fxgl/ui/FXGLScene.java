@@ -52,11 +52,11 @@ public abstract class FXGLScene {
         root.getStylesheets().add(settings.getCSS());
     }
 
-    public Pane getRoot() {
+    public final Pane getRoot() {
         return root;
     }
 
-    public double getWidth() {
+    public final double getWidth() {
         return settings.getTargetWidth();
     }
 
@@ -68,17 +68,17 @@ public abstract class FXGLScene {
         return settings.getScaleRatio();
     }
 
-    public <T extends Event> void addEventHandler(EventType<T> eventType,
+    public final <T extends Event> void addEventHandler(EventType<T> eventType,
                                                   EventHandler<? super T> eventHandler) {
         eventHandlers.addEventHandler(eventType, eventHandler);
     }
 
-    public <T extends Event> void removeEventHandler(EventType<T> eventType,
+    public final <T extends Event> void removeEventHandler(EventType<T> eventType,
                                                      EventHandler<? super T> eventHandler) {
         eventHandlers.removeEventHandler(eventType, eventHandler);
     }
 
-    public void fireEvent(Event event) {
+    public final void fireEvent(Event event) {
         eventHandlers.fireEvent(event);
     }
 
@@ -90,7 +90,7 @@ public abstract class FXGLScene {
      * @param imageName name of image file
      * @param hotspot hotspot location
      */
-    public void setCursor(String imageName, Point2D hotspot) {
+    public final void setCursor(String imageName, Point2D hotspot) {
         root.setCursor(new ImageCursor(AssetManager.INSTANCE.loadCursorImage(imageName),
                 hotspot.getX(), hotspot.getY()));
     }
