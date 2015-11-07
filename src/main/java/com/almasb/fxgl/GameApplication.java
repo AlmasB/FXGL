@@ -47,6 +47,7 @@ import com.almasb.fxgl.ui.IntroFactory;
 import com.almasb.fxgl.ui.IntroScene;
 import com.almasb.fxgl.ui.MenuFactory;
 import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.ui.menu.GTAVMainMenu;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -244,7 +245,7 @@ public abstract class GameApplication extends Application {
         return new MenuFactory() {
             @Override
             public FXGLMenu newMainMenu(GameApplication app, SceneSettings settings) {
-                return new FXGLMainMenu(app, settings);
+                return new GTAVMainMenu(app, settings);
             }
 
             @Override

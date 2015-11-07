@@ -25,7 +25,10 @@
  */
 package com.almasb.fxgl.ui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
@@ -43,6 +46,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -76,9 +80,13 @@ public abstract class FXGLMenu extends FXGLScene {
     protected GameApplication app;
     private double menuX, menuY;
 
+    private List<String> credits = new ArrayList<>();
+
     public FXGLMenu(GameApplication app, SceneSettings settings) {
         super(settings);
         this.app = app;
+
+        populateCredits();
 
         MenuBox menu = createMenuBody();
         menuX = 50;
@@ -101,6 +109,14 @@ public abstract class FXGLMenu extends FXGLScene {
         version.setTranslateY(app.getHeight() - 2);
 
         getRoot().getChildren().addAll(bg, title, version, menu, menuContent);
+    }
+
+    private void populateCredits() {
+        addCredit("Powered by FXGL " + Version.getAsString());
+        addCredit("Graphics Framework: JavaFX " + Version.getJavaFXAsString());
+        addCredit("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
+        addCredit("FXGL Author: Almas Baimagambetov (AlmasB)");
+        addCredit("https://github.com/AlmasB/FXGL");
     }
 
     protected abstract MenuBox createMenuBody();
@@ -142,7 +158,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
     private int controlsRow = 0;
 
-    private MenuContent createContentControls() {
+    protected MenuContent createContentControls() {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(50);
@@ -205,7 +221,7 @@ public abstract class FXGLMenu extends FXGLScene {
         GridPane.setHalignment(triggerName, HPos.LEFT);
     }
 
-    private MenuContent createContentAudio() {
+    protected MenuContent createContentAudio() {
         Slider sliderMusic = new Slider(0, 1, 1);
         app.getAudioManager().globalMusicVolumeProperty().bindBidirectional(sliderMusic.valueProperty());
 
@@ -242,14 +258,20 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuBox(200, itemCredits);
     }
 
-    private MenuContent createContentCredits() {
-        Text textHead = UIFactory.newText("FXGL (JavaFX 2D Game Library) " + Version.getAsString());
-        Text textJFX = UIFactory.newText("Graphics and Application Framework: JavaFX " + Version.getJavaFXAsString());
-        Text textJBOX = UIFactory.newText("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
-        Text textAuthor = UIFactory.newText("Author: Almas Baimagambetov (AlmasB)");
-        Text textDev = UIFactory.newText("Source code available: https://github.com/AlmasB/FXGL");
+    /**
+     * Add a single of credit text.
+     *
+     * @param text the text to append to credits list
+     */
+    protected final void addCredit(String text) {
+        credits.add(text);
+    }
 
-        return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
+    protected final MenuContent createContentCredits() {
+        return new MenuContent(credits.stream()
+                .map(UIFactory::newText)
+                .collect(Collectors.toList())
+                .toArray(new Text[0]));
     }
 
     private void switchMenuTo(MenuBox menu) {
@@ -393,5 +415,76 @@ public abstract class FXGLMenu extends FXGLScene {
             sep.setStroke(Color.DARKGREY);
             return sep;
         }
+    }
+
+    protected void setContent(Node content) {
+
+    }
+
+    protected final Button createActionButton(String name, Runnable action) {
+        Button btn = UIFactory.newButton(name);
+        btn.setOnAction(e -> action.run());
+        return btn;
+    }
+
+    protected final Button createContentButton(String name, MenuContent content) {
+        Button btn = UIFactory.newButton(name);
+        btn.setUserData(content);
+        btn.setOnAction(e -> setContent((Node)btn.getUserData()));
+        return btn;
+    }
+
+    /**
+     * Fires {@link MenuEvent#NEW_GAME} event.
+     * Can only be fired from main menu.
+     * Starts new game.
+     */
+    protected final void fireNewGame() {
+        fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
+    }
+
+    /**
+     * Fires {@link MenuEvent#LOAD} event.
+     * Lads the game state from last modified save file.
+     */
+    protected final void fireContinue() {
+        fireEvent(new MenuEvent(MenuEvent.LOAD));
+    }
+
+    /**
+     * Fires {@link MenuEvent#LOAD} event.
+     * Loads the game state from previously saved file.
+     *
+     * @param fileName  name of the saved file
+     */
+    protected final void fireLoad(String fileName) {
+        fireEvent(new MenuEvent(MenuEvent.LOAD, fileName));
+    }
+
+    /**
+     * Fires {@link MenuEvent#SAVE} event.
+     * Can only be fired from game menu. Saves current state of the game with given file name.
+     *
+     * @param fileName  name of the save file
+     */
+    protected final void fireSave(String fileName) {
+        fireEvent(new MenuEvent(MenuEvent.SAVE, fileName));
+    }
+
+    /**
+     * Fires {@link MenuEvent#RESUME} event.
+     * Can only be fired from game menu. Will close the menu and unpause the game.
+     */
+    protected final void fireResume() {
+        fireEvent(new MenuEvent(MenuEvent.RESUME));
+    }
+
+    /**
+     * Fire {@link MenuEvent#EXIT} event.
+     * If fired from game menu, app will clean up and enter main menu.
+     * If fired from main menu, app will close.
+     */
+    protected final void fireExit() {
+        fireEvent(new MenuEvent(MenuEvent.EXIT));
     }
 }
