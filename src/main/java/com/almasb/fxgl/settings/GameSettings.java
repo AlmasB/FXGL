@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.settings;
 
+import com.almasb.fxgl.ui.menu.MenuStyle;
 import com.almasb.fxgl.util.ApplicationMode;
 
 /**
@@ -162,6 +163,14 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setDefaultFontName(String name) {
         this.defaultFontName = name;
+    }
+
+    public void setCSS(String name) {
+        this.css = name;
+    }
+
+    public void setMenuStyle(MenuStyle style) {
+        this.menuStyle = style;
     }
 
     public ReadOnlyGameSettings toReadOnly() {

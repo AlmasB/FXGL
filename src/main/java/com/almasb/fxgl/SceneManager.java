@@ -204,7 +204,12 @@ public final class SceneManager {
             log.finer("New size:    " + newW + "x" + newH + "@" + newScale);
         }
 
-        String css = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
+        // if CSS not set, use menu CSS
+        String css = app.getSettings().getCSS();
+        if (!css.isEmpty())
+            css = AssetManager.INSTANCE.loadCSS(css);
+        else
+            css = AssetManager.INSTANCE.loadCSS(app.getSettings().getMenuStyle().getCSS());
 
         return new SceneSettings(width, height, newW, newH, css);
     }

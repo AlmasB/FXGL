@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.settings;
 
+import com.almasb.fxgl.ui.menu.MenuStyle;
 import com.almasb.fxgl.util.ApplicationMode;
 
 /**
@@ -45,6 +46,8 @@ public class ReadOnlyGameSettings {
     protected boolean showFPS = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected String defaultFontName = "Copperplate_Gothic_Light_Regular.ttf";
+    protected String css = "";
+    protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
 
     /**
      * Constructs game settings with default parameters
@@ -70,6 +73,8 @@ public class ReadOnlyGameSettings {
         this.showFPS = copy.showFPS;
         this.appMode = copy.appMode;
         this.defaultFontName = copy.defaultFontName;
+        this.css = copy.css;
+        this.menuStyle = copy.menuStyle;
     }
 
     public final String getTitle() {
@@ -114,5 +119,13 @@ public class ReadOnlyGameSettings {
 
     public final String getDefaultFontName() {
         return defaultFontName;
+    }
+
+    public final String getCSS() {
+        return css;
+    }
+
+    public final MenuStyle getMenuStyle() {
+        return menuStyle;
     }
 }

@@ -49,7 +49,10 @@ public abstract class FXGLScene {
         root.setBackground(null);
         root.setPrefSize(settings.getScaledWidth(), settings.getScaledHeight());
         root.getTransforms().setAll(new Scale(settings.getScaleRatio(), settings.getScaleRatio()));
-        root.getStylesheets().add(settings.getCSS());
+
+        String css = settings.getCSS();
+        if (!css.isEmpty())
+            root.getStylesheets().add(css);
     }
 
     public final Pane getRoot() {

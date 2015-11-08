@@ -242,17 +242,7 @@ public abstract class GameApplication extends Application {
      * @return menu factory for creating main and game menus
      */
     protected MenuFactory initMenuFactory() {
-        return new MenuFactory() {
-            @Override
-            public FXGLMenu newMainMenu(GameApplication app, SceneSettings settings) {
-                return new GTAVMainMenu(app, settings);
-            }
-
-            @Override
-            public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
-                return new FXGLGameMenu(app, settings);
-            }
-        };
+        return getSettings().getMenuStyle().getFactory();
     }
 
     /**
