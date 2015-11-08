@@ -121,7 +121,11 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected abstract MenuBox createMenuBody();
 
-    protected MenuContent createContentLoad() {
+    /**
+     *
+     * @return menu content containing list of save files and load/delete buttons
+     */
+    protected final MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
         SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
@@ -133,11 +137,10 @@ public abstract class FXGLMenu extends FXGLScene {
         MenuItem btnLoad = new MenuItem("LOAD");
         btnLoad.setOnAction(e -> {
             String fileName = list.getSelectionModel().getSelectedItem();
-
             if (fileName == null)
                 return;
 
-            btnLoad.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.LOAD, fileName));
+            fireLoad(fileName);
         });
         MenuItem btnDelete = new MenuItem("DELETE");
         btnDelete.setOnAction(e -> {
@@ -145,7 +148,8 @@ public abstract class FXGLMenu extends FXGLScene {
             if (fileName == null)
                 return;
 
-            UIFactory.getDialogBox().showMessageBox(SaveLoadManager.INSTANCE.delete(fileName) ? "File was deleted" : "File couldn't be deleted");
+            UIFactory.getDialogBox().showMessageBox(SaveLoadManager.INSTANCE.delete(fileName)
+                    ? "File was deleted" : "File couldn't be deleted");
 
             list.getItems().remove(fileName);
         });
@@ -155,8 +159,6 @@ public abstract class FXGLMenu extends FXGLScene {
 
         return new MenuContent(list, hbox);
     }
-
-    private int controlsRow = 0;
 
     protected MenuContent createContentControls() {
         GridPane grid = new GridPane();
@@ -185,6 +187,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
         return new MenuContent(hbox);
     }
+
+    private int controlsRow = 0;
 
     private void addNewInputBinding(InputBinding binding, GridPane grid) {
         Text actionName = UIFactory.newText(binding.getAction().getName());
@@ -221,7 +225,11 @@ public abstract class FXGLMenu extends FXGLScene {
         GridPane.setHalignment(triggerName, HPos.LEFT);
     }
 
-    protected MenuContent createContentAudio() {
+    /**
+     *
+     * @return menu content containing music and sound volume sliders
+     */
+    protected final MenuContent createContentAudio() {
         Slider sliderMusic = new Slider(0, 1, 1);
         app.getAudioManager().globalMusicVolumeProperty().bindBidirectional(sliderMusic.valueProperty());
 
@@ -259,7 +267,7 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Add a single of credit text.
+     * Add a single line of credit text.
      *
      * @param text the text to append to credits list
      */
@@ -421,12 +429,26 @@ public abstract class FXGLMenu extends FXGLScene {
 
     }
 
+    /**
+     * Creates a new button with given name that performs given action on click/press.
+     *
+     * @param name  button name
+     * @param action button action
+     * @return new button
+     */
     protected final Button createActionButton(String name, Runnable action) {
         Button btn = UIFactory.newButton(name);
         btn.setOnAction(e -> action.run());
         return btn;
     }
 
+    /**
+     * Creates a new button with given name that sets given content on click/press.
+     *
+     * @param name  button name
+     * @param content button content
+     * @return new button
+     */
     protected final Button createContentButton(String name, MenuContent content) {
         Button btn = UIFactory.newButton(name);
         btn.setUserData(content);

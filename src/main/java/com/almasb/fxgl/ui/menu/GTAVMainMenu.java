@@ -28,17 +28,17 @@ package com.almasb.fxgl.ui.menu;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.settings.GameDifficulty;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Version;
 import javafx.animation.Animation;
 import javafx.animation.FillTransition;
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -46,6 +46,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.util.Arrays;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -133,11 +135,18 @@ public final class GTAVMainMenu extends FXGLMenu {
     }
 
     private VBox makeOptionsMenu() {
+        Spinner<GameDifficulty> difficultySpinner =
+                new Spinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
+        difficultySpinner.increment();
+        app.getGameWorld().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
+
+        Button btnGameplay = createContentButton("GAMEPLAY", new MenuContent(new HBox(25,
+                UIFactory.newText("DIFFICULTY:"), difficultySpinner)));
         Button btnControls = createContentButton("CONTROLS", createContentControls());
         Button btnVideo = createContentButton("VIDEO", new MenuContent(new Text("TODO")));
         Button btnAudio = createContentButton("AUDIO", createContentAudio());
 
-        return new VBox(10, btnControls, btnVideo, btnAudio);
+        return new VBox(10, btnGameplay, btnControls, btnVideo, btnAudio);
     }
 
     private VBox makeExtraMenu() {

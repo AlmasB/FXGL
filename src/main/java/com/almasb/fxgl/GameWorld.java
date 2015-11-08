@@ -38,9 +38,12 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.settings.GameDifficulty;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -81,6 +84,16 @@ public final class GameWorld {
      */
     public void removeWorldStateListener(WorldStateListener listener) {
         worldStateListeners.remove(listener);
+    }
+
+    private ObjectProperty<GameDifficulty> gameDifficulty = new SimpleObjectProperty<>(GameDifficulty.MEDIUM);
+
+    public GameDifficulty getGameDifficulty() {
+        return gameDifficultyProperty().get();
+    }
+
+    public ObjectProperty<GameDifficulty> gameDifficultyProperty() {
+        return gameDifficulty;
     }
 
     /**
