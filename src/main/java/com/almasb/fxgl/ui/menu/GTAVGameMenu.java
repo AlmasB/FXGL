@@ -117,12 +117,14 @@ public final class GTAVGameMenu extends FXGLMenu {
     }
 
     private VBox makeMainMenu() {
-        Button btnContinue = createActionButton("CONTINUE", this::fireContinue);
-        Button btnNew = createActionButton("NEW GAME", this::fireNewGame);
+        Button btnResume = createActionButton("RESUME", this::fireResume);
+        Button btnSave = createActionButton("SAVE GAME", () -> {
+            UIFactory.getDialogBox().showInputBox("Enter save file name", this::fireSave);
+        });
         Button btnLoad = createContentButton("LOAD GAME", createContentLoad());
         Button btnExit = createActionButton("EXIT", this::fireExit);
 
-        return new VBox(10, btnContinue, btnNew, btnLoad, btnExit);
+        return new VBox(10, btnResume, btnSave, btnLoad, btnExit);
     }
 
     private VBox makeOptionsMenu() {

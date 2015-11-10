@@ -98,9 +98,6 @@ public abstract class FXGLMenu extends FXGLScene {
         menuContent.setTranslateY(menu.getTranslateY());
         menuContent.setVisible(false);
 
-        Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
-        bg.setFill(Color.rgb(10, 1, 1));
-
         Title title = new Title(app.getSettings().getTitle());
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
         title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
@@ -108,7 +105,7 @@ public abstract class FXGLMenu extends FXGLScene {
         Text version = UIFactory.newText("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
 
-        getRoot().getChildren().addAll(bg, title, version, menu, menuContent);
+        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuContent);
     }
 
     private void populateCredits() {
@@ -117,6 +114,12 @@ public abstract class FXGLMenu extends FXGLScene {
         addCredit("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
         addCredit("FXGL Author: Almas Baimagambetov (AlmasB)");
         addCredit("https://github.com/AlmasB/FXGL");
+    }
+
+    protected Node createBackground() {
+        Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
+        bg.setFill(Color.rgb(10, 1, 1));
+        return bg;
     }
 
     protected abstract MenuBox createMenuBody();
@@ -160,10 +163,15 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(list, hbox);
     }
 
-    protected MenuContent createContentControls() {
+    /**
+     *
+     * @return menu content containing input mappings (action -> key/mouse)
+     */
+    protected final MenuContent createContentControls() {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(50);
+        grid.setUserData(0);
 
         // add listener for new ones
         app.getInputManager().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
@@ -188,12 +196,10 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
-    private int controlsRow = 0;
-
     private void addNewInputBinding(InputBinding binding, GridPane grid) {
         Text actionName = UIFactory.newText(binding.getAction().getName());
 
-        MenuItem triggerName = new MenuItem("");
+        Button triggerName = UIFactory.newButton("");
         triggerName.textProperty().bind(binding.triggerNameProperty());
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
@@ -219,7 +225,9 @@ public abstract class FXGLMenu extends FXGLScene {
             stage.show();
         });
 
+        int controlsRow = (int) grid.getUserData();
         grid.addRow(controlsRow++, actionName, triggerName);
+        grid.setUserData(controlsRow);
 
         GridPane.setHalignment(actionName, HPos.RIGHT);
         GridPane.setHalignment(triggerName, HPos.LEFT);
@@ -275,6 +283,10 @@ public abstract class FXGLMenu extends FXGLScene {
         credits.add(text);
     }
 
+    /**
+     *
+     * @return menu content containing a list of credits
+     */
     protected final MenuContent createContentCredits() {
         return new MenuContent(credits.stream()
                 .map(UIFactory::newText)

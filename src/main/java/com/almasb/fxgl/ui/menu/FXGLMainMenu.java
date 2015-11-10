@@ -23,12 +23,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.ui.UIFactory;
 
 /**
  * This is the default FXGL menu used if the users

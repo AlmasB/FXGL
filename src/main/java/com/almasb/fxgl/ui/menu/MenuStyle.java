@@ -27,8 +27,6 @@ package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.settings.SceneSettings;
-import com.almasb.fxgl.ui.FXGLGameMenu;
-import com.almasb.fxgl.ui.FXGLMainMenu;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.MenuFactory;
 
@@ -58,7 +56,19 @@ public enum MenuStyle {
         public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
             return new GTAVGameMenu(app, settings);
         }
-    }, "fxgl_gta5.css");
+    }, "fxgl_gta5.css"),
+
+    CCTR(new MenuFactory() {
+        @Override
+        public FXGLMenu newMainMenu(GameApplication app, SceneSettings settings) {
+            return new CCTRMainMenu(app, settings);
+        }
+
+        @Override
+        public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
+            return new CCTRGameMenu(app, settings);
+        }
+    }, "fxgl_cctr.css");
 
     private MenuFactory factory;
     private String css;
