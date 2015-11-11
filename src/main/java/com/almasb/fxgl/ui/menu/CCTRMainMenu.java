@@ -118,15 +118,23 @@ public final class CCTRMainMenu extends FXGLMenu {
                 btnContinue, btnNew, btnLoad, btnOptions, btnExtra, btnCheats, btnExit);
     }
 
-    @Override
-    protected MenuBox createMenuBody() {
-        return new MenuBox(200);
-    }
-
     private Node makeBackground() {
         Texture bg = app.getAssetManager().loadTexture("bg_cctr.jpg");
         bg.setFitWidth(app.getWidth());
         bg.setFitHeight(app.getHeight());
         return bg;
+    }
+
+    /**
+     * Creates a new button with given name that performs given action on click/press.
+     *
+     * @param name  button name
+     * @param action button action
+     * @return new button
+     */
+    protected final Button createActionButton(String name, Runnable action) {
+        Button btn = UIFactory.newButton(name);
+        btn.setOnAction(e -> action.run());
+        return btn;
     }
 }

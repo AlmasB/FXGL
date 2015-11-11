@@ -36,7 +36,7 @@ import com.almasb.fxgl.ui.UIFactory;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLGameMenu extends FXGLMenu {
+public final class FXGLGameMenu extends FXGLCommonMenu {
 
     public FXGLGameMenu(GameApplication app, SceneSettings settings) {
         super(app, settings);

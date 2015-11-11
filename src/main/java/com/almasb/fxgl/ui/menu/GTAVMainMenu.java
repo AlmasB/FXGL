@@ -76,11 +76,6 @@ public final class GTAVMainMenu extends FXGLMenu {
         getRoot().getChildren().setAll(makeBackground(), vbox);
     }
 
-    @Override
-    protected MenuBox createMenuBody() {
-        return new MenuBox(200);
-    }
-
     private Node makeBackground() {
         Texture bg = app.getAssetManager().loadTexture("gta5.jpg");
         bg.setFitWidth(app.getWidth());
@@ -155,8 +150,34 @@ public final class GTAVMainMenu extends FXGLMenu {
         return new VBox(10, btnCredits);
     }
 
-    @Override
     protected void setContent(Node content) {
         contentBox.getChildren().set(1, content);
+    }
+
+    /**
+     * Creates a new button with given name that performs given action on click/press.
+     *
+     * @param name  button name
+     * @param action button action
+     * @return new button
+     */
+    protected final Button createActionButton(String name, Runnable action) {
+        Button btn = UIFactory.newButton(name);
+        btn.setOnAction(e -> action.run());
+        return btn;
+    }
+
+    /**
+     * Creates a new button with given name that sets given content on click/press.
+     *
+     * @param name  button name
+     * @param content button content
+     * @return new button
+     */
+    protected final Button createContentButton(String name, MenuContent content) {
+        Button btn = UIFactory.newButton(name);
+        btn.setUserData(content);
+        btn.setOnAction(e -> setContent((Node)btn.getUserData()));
+        return btn;
     }
 }

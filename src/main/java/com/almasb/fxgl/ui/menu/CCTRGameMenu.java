@@ -37,8 +37,4 @@ public final class CCTRGameMenu extends FXGLMenu {
         super(app, settings);
     }
 
-    @Override
-    protected MenuBox createMenuBody() {
-        return new MenuBox(200);
-    }
 }

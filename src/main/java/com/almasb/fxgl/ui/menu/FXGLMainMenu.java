@@ -38,7 +38,7 @@ import com.almasb.fxgl.ui.UIFactory;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLMainMenu extends FXGLMenu {
+public final class FXGLMainMenu extends FXGLCommonMenu {
 
     public FXGLMainMenu(GameApplication app, SceneSettings settings) {
         super(app, settings);
@@ -47,7 +47,7 @@ public final class FXGLMainMenu extends FXGLMenu {
     @Override
     protected MenuBox createMenuBody() {
         MenuItem itemContinue = new MenuItem("CONTINUE");
-        itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadLastModifiedFile().isPresent());
+        itemContinue.setDisable(!SaveLoadManager.INSTANCE.loadLastModifiedFile().isPresent());
         itemContinue.setOnAction(e -> {
             itemContinue.fireEvent(new MenuEvent(MenuEvent.LOAD));
         });
