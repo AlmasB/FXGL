@@ -312,6 +312,19 @@ public class Entity {
         setRotation(getRotation() + byAngle);
     }
 
+    /**
+     * Set absolute rotation of the entity view to angle
+     * between vector and positive X axis.
+     * This is useful for projectiles (bullets, arrows, etc)
+     * which rotate depending on their current velocity.
+     *
+     * @param vector the rotation vector / velocity vector
+     */
+    public final void rotateToVector(Point2D vector) {
+        double angle = Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
+        setRotation(angle);
+    }
+
     private BooleanProperty xFlipped = new SimpleBooleanProperty(false);
     private double xFlipLine = 0;
 

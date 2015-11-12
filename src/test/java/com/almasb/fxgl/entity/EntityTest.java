@@ -177,6 +177,23 @@ public class EntityTest {
         assertEquals(50, testEntity.getHeight(), 0.1);
     }
 
+    @Test
+    public void rotateToVector() {
+        assertEquals(0, testEntity.getRotation(), 0.1);
+
+        testEntity.rotateToVector(new Point2D(1, 1));
+        assertEquals(45, testEntity.getRotation(), 0.1);
+
+        testEntity.rotateToVector(new Point2D(0, 1));
+        assertEquals(90, testEntity.getRotation(), 0.1);
+
+        testEntity.rotateToVector(new Point2D(-1, 0));
+        assertEquals(180, testEntity.getRotation(), 0.1);
+
+        testEntity.rotateToVector(new Point2D(-1, -1));
+        assertEquals(-135, testEntity.getRotation(), 0.1);
+    }
+
     private class TestControl extends AbstractControl {
 
         @Override
