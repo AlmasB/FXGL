@@ -45,8 +45,11 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.FXGLLogger;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
@@ -216,6 +219,27 @@ public enum AssetManager {
     }
 
     /**
+     * Loads an FXML (.fxml) file from /assets/ui/.
+     * Either returns a valid parsed UI or throws an exception in case of errors.
+     *
+     * @param name FXML file name
+     * @param controller the controller object
+     * @return a JavaFX UI parsed from .fxml
+     * @throws IllegalArgumentException if asset not found or loading/parsing error
+     */
+    public Parent loadFXML(String name, UIController controller) {
+        try (InputStream is = getStream(UI_DIR + name)) {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setController(controller);
+            Parent ui = loader.load(is);
+            controller.init();
+            return ui;
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
      * Returns external form of of URL to CSS file (from {@value #CSS_DIR} ready to be applied to UI elements.
      * Can be applied by calling object.getStyleSheets().add().
      * Either returns ready CSS or throws exception in case of errors.
@@ -276,42 +300,6 @@ public enum AssetManager {
             throw loadFailed(name, e);
         }
     }
-
-//    public Parent loadUI(String name) throws Exception {
-//        try {
-//            URL url = getClass().getResource(UI_DIR + name);
-//            if (url == null) {
-//                log.warning("Failed to load UI: " + name + " Check it exists in assets/ui/");
-//                throw new IOException("Failed to load UI: " + name);
-//            }
-//
-//            return FXMLLoader.load(url);
-//        }
-//        catch (Exception e) {
-//            log.warning("Failed to load UI: " + name + " Check file for syntax errors");
-//            throw new IOException("Failed to load UI: " + name);
-//        }
-//    }
-//
-//    public Parent loadUI(String name, Object controller) throws Exception {
-//        try {
-//            URL url = getClass().getResource(UI_DIR + name);
-//            if (url == null) {
-//                log.warning("Failed to load UI: " + name + " Check it exists in assets/ui/");
-//                throw new IOException("Failed to load UI: " + name);
-//            }
-//
-//            FXMLLoader loader = new FXMLLoader(url);
-//            loader.setController(controller);
-//
-//            return loader.load();
-//        }
-//        catch (Exception e) {
-//            log.warning("Failed to load UI: " + name + " Check file for syntax errors");
-//            log.warning("Error message: " + e.getMessage());
-//            throw new IOException("Failed to load UI: " + name);
-//        }
-//    }
 
     @SuppressWarnings("unchecked")
     private <T> T loadDataInternal(String name) throws Exception {
