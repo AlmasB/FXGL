@@ -113,14 +113,27 @@ public class CircleShape extends Shape {
     return centerx * centerx + centery * centery <= m_radius * m_radius;
   }
 
+  @Override
+  public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
+    final Rot xfq = xf.q;
+    float centerx = xfq.c * m_p.x - xfq.s * m_p.y + xf.p.x;
+    float centery = xfq.s * m_p.x + xfq.c * m_p.y + xf.p.y;
+    float dx = p.x - centerx;
+    float dy = p.y - centery;
+    float d1 = MathUtils.sqrt(dx * dx + dy * dy);
+    normalOut.x = dx * 1 / d1;
+    normalOut.y = dy * 1 / d1;
+    return d1 - m_radius;
+  }
+
   // Collision Detection in Interactive 3D Environments by Gino van den Bergen
   // From Section 3.1.2
   // x = s + a * r
   // norm(x) = radius
-
   @Override
   public final boolean raycast(RayCastOutput output, RayCastInput input, Transform transform,
       int childIndex) {
+
     final Vec2 inputp1 = input.p1;
     final Vec2 inputp2 = input.p2;
     final Rot tq = transform.q;

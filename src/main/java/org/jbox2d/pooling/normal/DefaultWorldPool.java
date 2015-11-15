@@ -73,36 +73,43 @@ public class DefaultWorldPool implements IWorldPool {
   private final MutableStack<Contact> pcstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new PolygonContact(world); }
-    };
+      protected Contact[] newArray(int size) { return new PolygonContact[size]; }
+  };
 
   private final MutableStack<Contact> ccstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new CircleContact(world); }
+      protected Contact[] newArray(int size) { return new CircleContact[size]; }
     };
 
   private final MutableStack<Contact> cpstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new PolygonAndCircleContact(world); }
+      protected Contact[] newArray(int size) { return new PolygonAndCircleContact[size]; }
     };
 
   private final MutableStack<Contact> ecstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new EdgeAndCircleContact(world); }
+      protected Contact[] newArray(int size) { return new EdgeAndCircleContact[size]; }
     };
 
   private final MutableStack<Contact> epstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new EdgeAndPolygonContact(world); }
+      protected Contact[] newArray(int size) { return new EdgeAndPolygonContact[size]; }
     };
 
   private final MutableStack<Contact> chcstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new ChainAndCircleContact(world); }
+      protected Contact[] newArray(int size) { return new ChainAndCircleContact[size]; }
     };
 
   private final MutableStack<Contact> chpstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new ChainAndPolygonContact(world); }
+      protected Contact[] newArray(int size) { return new ChainAndPolygonContact[size]; }
     };
 
   private final Collision collision;

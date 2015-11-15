@@ -425,85 +425,11 @@ public class Collision {
     }
   }
 
-  /**
-   * Find the separation between poly1 and poly2 for a given edge normal on poly1.
-   * 
-   * @param poly1
-   * @param xf1
-   * @param edge1
-   * @param poly2
-   * @param xf2
-   */
-  public final float edgeSeparation(final PolygonShape poly1, final Transform xf1, final int edge1,
-      final PolygonShape poly2, final Transform xf2) {
-
-    final int count1 = poly1.m_count;
-    final Vec2[] vertices1 = poly1.m_vertices;
-    final Vec2[] normals1 = poly1.m_normals;
-
-    final int count2 = poly2.m_count;
-    final Vec2[] vertices2 = poly2.m_vertices;
-
-    assert (0 <= edge1 && edge1 < count1);
-    // Convert normal from poly1's frame into poly2's frame.
-    // before inline:
-    // // Vec2 normal1World = Mul(xf1.R, normals1[edge1]);
-    // Rot.mulToOutUnsafe(xf1.q, normals1[edge1], normal1World);
-    // // Vec2 normal1 = MulT(xf2.R, normal1World);
-    // Rot.mulTransUnsafe(xf2.q, normal1World, normal1);
-    // final float normal1x = normal1.x;
-    // final float normal1y = normal1.y;
-    // final float normal1Worldx = normal1World.x;
-    // final float normal1Worldy = normal1World.y;
-    // after inline:
-    final Rot xf1q = xf1.q;
-    final Rot xf2q = xf2.q;
-    Rot q = xf1q;
-    Vec2 v = normals1[edge1];
-    final float normal1Worldx = q.c * v.x - q.s * v.y;
-    final float normal1Worldy = q.s * v.x + q.c * v.y;
-    Rot q1 = xf2q;
-    final float normal1x = q1.c * normal1Worldx + q1.s * normal1Worldy;
-    final float normal1y = -q1.s * normal1Worldx + q1.c * normal1Worldy;
-    // end inline
-
-    // Find support vertex on poly2 for -normal.
-    int index = 0;
-    float minDot = Float.MAX_VALUE;
-
-    for (int i = 0; i < count2; ++i) {
-      final Vec2 a = vertices2[i];
-      final float dot = a.x * normal1x + a.y * normal1y;
-      if (dot < minDot) {
-        minDot = dot;
-        index = i;
-      }
-    }
-
-    // Vec2 v1 = Mul(xf1, vertices1[edge1]);
-    // Vec2 v2 = Mul(xf2, vertices2[index]);
-    // before inline:
-    // Transform.mulToOut(xf1, vertices1[edge1], v1);
-    // Transform.mulToOut(xf2, vertices2[index], v2);
-    //
-    // float separation = Vec2.dot(v2.subLocal(v1), normal1World);
-    // return separation;
-
-    // after inline:
-    Vec2 v3 = vertices1[edge1];
-    final float v1x = (xf1q.c * v3.x - xf1q.s * v3.y) + xf1.p.x;
-    final float v1y = (xf1q.s * v3.x + xf1q.c * v3.y) + xf1.p.y;
-    Vec2 v4 = vertices2[index];
-    final float v2x = (xf2q.c * v4.x - xf2q.s * v4.y) + xf2.p.x - v1x;
-    final float v2y = (xf2q.s * v4.x + xf2q.c * v4.y) + xf2.p.y - v1y;
-
-    float separation = v2x * normal1Worldx + v2y * normal1Worldy;
-    return separation;
-    // end inline
-  }
-
   // djm pooling, and from above
   private final Vec2 temp = new Vec2();
+  private final Transform xf = new Transform();
+  private final Vec2 n = new Vec2();
+  private final Vec2 v1 = new Vec2();
 
   /**
    * Find the max separation between poly1 and poly2 using edge normals from poly1.
@@ -518,93 +444,40 @@ public class Collision {
   public final void findMaxSeparation(EdgeResults results, final PolygonShape poly1,
       final Transform xf1, final PolygonShape poly2, final Transform xf2) {
     int count1 = poly1.m_count;
-    final Vec2[] normals1 = poly1.m_normals;
+    int count2 = poly2.m_count;
+    Vec2[] n1s = poly1.m_normals;
+    Vec2[] v1s = poly1.m_vertices;
+    Vec2[] v2s = poly2.m_vertices;
+    
+    Transform.mulTransToOutUnsafe(xf2, xf1, xf);
+    final Rot xfq = xf.q;
 
-    final Vec2 poly1centroid = poly1.m_centroid;
-    final Vec2 poly2centroid = poly2.m_centroid;
-    final Rot xf2q = xf2.q;
-    final Rot xf1q = xf1.q;
-    // Vector pointing from the centroid of poly1 to the centroid of poly2.
-    // before inline:
-    // Transform.mulToOutUnsafe(xf2, poly2centroid, d);
-    // Transform.mulToOutUnsafe(xf1, poly1centroid, temp);
-    // d.subLocal(temp);
-    //
-    // Rot.mulTransUnsafe(xf1q, d, dLocal1);
-    // after inline:
-    float dx = (xf2q.c * poly2centroid.x - xf2q.s * poly2centroid.y) + xf2.p.x;
-    float dy = (xf2q.s * poly2centroid.x + xf2q.c * poly2centroid.y) + xf2.p.y;
-    dx -= (xf1q.c * poly1centroid.x - xf1q.s * poly1centroid.y) + xf1.p.x;
-    dy -= (xf1q.s * poly1centroid.x + xf1q.c * poly1centroid.y) + xf1.p.y;
-
-    final float dLocal1x = xf1q.c * dx + xf1q.s * dy;
-    final float dLocal1y = -xf1q.s * dx + xf1q.c * dy;
-    // end inline
-
-    // Find edge normal on poly1 that has the largest projection onto d.
-    int edge = 0;
-    float dot;
-    float maxDot = -Float.MAX_VALUE;
+    int bestIndex = 0;
+    float maxSeparation = -Float.MAX_VALUE;
     for (int i = 0; i < count1; i++) {
-      final Vec2 normal = normals1[i];
-      dot = normal.x * dLocal1x + normal.y * dLocal1y;
-      if (dot > maxDot) {
-        maxDot = dot;
-        edge = i;
+      // Get poly1 normal in frame2.
+      Rot.mulToOutUnsafe(xfq, n1s[i], n);
+      Transform.mulToOutUnsafe(xf, v1s[i], v1);
+
+      // Find deepest point for normal i.
+      float si = Float.MAX_VALUE;
+      for (int j = 0; j < count2; ++j) {
+        Vec2 v2sj = v2s[j];
+        float sij = n.x * (v2sj.x - v1.x) + n.y * (v2sj.y - v1.y);
+        if (sij < si) {
+          si = sij;
+        }
+      }
+      
+      if (si > maxSeparation) {
+        maxSeparation = si;
+        bestIndex = i;
       }
     }
 
-    // Get the separation for the edge normal.
-    float s = edgeSeparation(poly1, xf1, edge, poly2, xf2);
-
-    // Check the separation for the previous edge normal.
-    int prevEdge = edge - 1 >= 0 ? edge - 1 : count1 - 1;
-    float sPrev = edgeSeparation(poly1, xf1, prevEdge, poly2, xf2);
-
-    // Check the separation for the next edge normal.
-    int nextEdge = edge + 1 < count1 ? edge + 1 : 0;
-    float sNext = edgeSeparation(poly1, xf1, nextEdge, poly2, xf2);
-
-    // Find the best edge and the search direction.
-    int bestEdge;
-    float bestSeparation;
-    int increment;
-    if (sPrev > s && sPrev > sNext) {
-      increment = -1;
-      bestEdge = prevEdge;
-      bestSeparation = sPrev;
-    } else if (sNext > s) {
-      increment = 1;
-      bestEdge = nextEdge;
-      bestSeparation = sNext;
-    } else {
-      results.edgeIndex = edge;
-      results.separation = s;
-      return;
-    }
-
-    // Perform a local search for the best edge normal.
-    for (;;) {
-      if (increment == -1) {
-        edge = bestEdge - 1 >= 0 ? bestEdge - 1 : count1 - 1;
-      } else {
-        edge = bestEdge + 1 < count1 ? bestEdge + 1 : 0;
-      }
-
-      s = edgeSeparation(poly1, xf1, edge, poly2, xf2);
-
-      if (s > bestSeparation) {
-        bestEdge = edge;
-        bestSeparation = s;
-      } else {
-        break;
-      }
-    }
-
-    results.edgeIndex = bestEdge;
-    results.separation = bestSeparation;
+    results.edgeIndex = bestIndex;
+    results.separation = maxSeparation;
   }
-
 
   public final void findIncidentEdge(final ClipVertex[] c, final PolygonShape poly1,
       final Transform xf1, int edge1, final PolygonShape poly2, final Transform xf2) {
@@ -717,15 +590,14 @@ public class Collision {
       return;
     }
 
-    final PolygonShape poly1; // reference polygon
-    final PolygonShape poly2; // incident polygon
+    final PolygonShape poly1;  // reference polygon
+    final PolygonShape poly2;  // incident polygon
     Transform xf1, xf2;
-    int edge1; // reference edge
+    int edge1;                 // reference edge
     boolean flip;
-    final float k_relativeTol = 0.98f;
-    final float k_absoluteTol = 0.001f;
+    final float k_tol = 0.1f * Settings.linearSlop;
 
-    if (results2.separation > k_relativeTol * results1.separation + k_absoluteTol) {
+    if (results2.separation > results1.separation + k_tol) {
       poly1 = polyB;
       poly2 = polyA;
       xf1 = xfB;
@@ -845,7 +717,6 @@ public class Collision {
   private final ContactID cf = new ContactID();
   private final Vec2 e1 = new Vec2();
   private final Vec2 P = new Vec2();
-  private final Vec2 n = new Vec2();
 
   // Compute contact points for edge versus circle.
   // This accounts for edge connectivity.
@@ -1373,7 +1244,7 @@ public class Collision {
 
       final ClipVertex ie0 = ie[0];
       final ClipVertex ie1 = ie[1];
-      
+
       if (primaryAxis.type == EPAxis.Type.EDGE_A) {
         manifold.type = Manifold.ManifoldType.FACE_A;
 
@@ -1523,7 +1394,7 @@ public class Collision {
       axis.type = EPAxis.Type.UNKNOWN;
       axis.index = -1;
       axis.separation = -Float.MAX_VALUE;
-      
+
       perp.x = -m_normal.y;
       perp.y = m_normal.x;
 

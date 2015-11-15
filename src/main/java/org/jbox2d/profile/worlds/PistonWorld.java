@@ -1,30 +1,5 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
-package org.jbox2d.profile;
+package org.jbox2d.profile.worlds;
 
-import org.jbox2d.collision.broadphase.BroadPhaseStrategy;
-import org.jbox2d.collision.broadphase.DynamicTree;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.MathUtils;
@@ -38,40 +13,21 @@ import org.jbox2d.dynamics.joints.PrismaticJoint;
 import org.jbox2d.dynamics.joints.PrismaticJointDef;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
-import org.jbox2d.pooling.normal.DefaultWorldPool;
 
-/**
- * Benchmark - piston example (constantly bumping a bunch of circles and boxes). Should be a decent
- * mix of circle and polygon collisions/contacts, though very little joint work.
- * 
- * NOTE: some iterations cause objects to fall through the piston
- * 
- */
-public class PistonBenchmark extends SettingsPerformanceTest {
-  public static int iters = 5;
-  public static int frames = 800;
-  public static float timeStep = 1f / 60;
-  public static int velIters = 8;
-  public static int posIters = 3;
+public class PistonWorld implements PerformanceTestWorld {
+  public float timeStep = 1f / 60;
+  public int velIters = 8;
+  public int posIters = 3;
 
   public RevoluteJoint m_joint1;
   public PrismaticJoint m_joint2;
   public World world;
 
-  public PistonBenchmark() {
-    super(iters);
-  }
-
-  public static void main(String[] args) {
-    PistonBenchmark benchmark = new PistonBenchmark();
-    benchmark.go();
-  }
+  public PistonWorld() {}
 
   @Override
-  public void runBenchmarkWorld() {
-    BroadPhaseStrategy strategy = new DynamicTree();
-
-    world = new World(new Vec2(0.0f, -10.0f), new DefaultWorldPool(100, 10), strategy);
+  public void setupWorld(World world) {
+    this.world = world;
     Body ground = null;
     {
       BodyDef bd = new BodyDef();
@@ -259,14 +215,10 @@ public class PistonBenchmark extends SettingsPerformanceTest {
         }
       }
     }
-
-    for (int i = 0; i < frames; i++) {
-      world.step(timeStep, posIters, velIters);
-    }
   }
 
   @Override
-  public int getFrames(int testNum) {
-    return frames;
+  public void step() {
+    world.step(timeStep, posIters, velIters);
   }
 }

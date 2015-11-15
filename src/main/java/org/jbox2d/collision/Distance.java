@@ -42,6 +42,7 @@ import org.jbox2d.common.Transform;
  * @author Daniel Murphy
  */
 public class Distance {
+  public static final int MAX_ITERS = 20;
 
   public static int GJK_CALLS = 0;
   public static int GJK_ITERS = 0;
@@ -642,7 +643,7 @@ public class Distance {
 
     // Main iteration loop
     int iter = 0;
-    while (iter < GJK_MAX_ITERS) {
+    while (iter < MAX_ITERS) {
 
       // Copy simplex so we can identify duplicates.
       saveCount = simplex.m_count;

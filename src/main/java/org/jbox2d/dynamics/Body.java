@@ -59,6 +59,10 @@ public class Body {
    * The body origin transform.
    */
   public final Transform m_xf = new Transform();
+  /**
+   * The previous transform for particle simulation
+   */
+  public final Transform m_xf0 = new Transform();
 
   /**
    * The swept motion for CCD
@@ -304,7 +308,8 @@ public class Body {
 
   /**
    * Set the position of the body's origin and rotation. This breaks any contacts and wakes the
-   * other bodies. Manipulating a body's transform may cause non-physical behavior.
+   * other bodies. Manipulating a body's transform may cause non-physical behavior. Note: contacts
+   * are updated on the next call to World.step().
    * 
    * @param position the world position of the body's local origin.
    * @param angle the world rotation in radians.
@@ -329,8 +334,6 @@ public class Body {
     for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
       f.synchronize(broadPhase, m_xf, m_xf);
     }
-
-    m_world.m_contactManager.findNewContacts();
   }
 
   /**
@@ -511,26 +514,25 @@ public class Body {
   /**
    * Apply an impulse at a point. This immediately modifies the velocity. It also modifies the
    * angular velocity if the point of application is not at the center of mass. This wakes up the
-   * body.
+   * body if 'wake' is set to true. If the body is sleeping and 'wake' is false, then there is no
+   * effect.
    * 
    * @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
    * @param point the world position of the point of application.
+   * @param wake also wake up the body
    */
-  public final void applyLinearImpulse(Vec2 impulse, Vec2 point) {
+  public final void applyLinearImpulse(Vec2 impulse, Vec2 point, boolean wake) {
     if (m_type != BodyType.DYNAMIC) {
       return;
     }
 
-    if (isAwake() == false) {
-      setAwake(true);
+    if (!isAwake()) {
+      if (wake) {
+        setAwake(true);
+      } else {
+        return;
+      }
     }
-
-    // Vec2 temp = tltemp.get();
-    // temp.set(impulse).mulLocal(m_invMass);
-    // m_linearVelocity.addLocal(temp);
-    //
-    // temp.set(point).subLocal(m_sweep.c);
-    // m_angularVelocity += m_invI * Vec2.cross(temp, impulse);
 
     m_linearVelocity.x += impulse.x * m_invMass;
     m_linearVelocity.y += impulse.y * m_invMass;
@@ -816,9 +818,10 @@ public class Body {
   }
 
   public final void getLinearVelocityFromWorldPointToOut(Vec2 worldPoint, Vec2 out) {
-    out.set(worldPoint).subLocal(m_sweep.c);
-    Vec2.crossToOut(m_angularVelocity, out, out);
-    out.addLocal(m_linearVelocity);
+    final float tempX = worldPoint.x - m_sweep.c.x;
+    final float tempY = worldPoint.y - m_sweep.c.y;
+    out.x = -m_angularVelocity * tempY + m_linearVelocity.x;
+    out.y = m_angularVelocity * tempX + m_linearVelocity.y;
   }
 
   /**
@@ -975,7 +978,7 @@ public class Body {
   /**
    * Get the sleeping state of this body.
    * 
-   * @return true if the body is sleeping.
+   * @return true if the body is awake.
    */
   public boolean isAwake() {
     return (m_flags & e_awakeFlag) == e_awakeFlag;

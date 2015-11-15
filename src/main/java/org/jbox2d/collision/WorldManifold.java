@@ -45,9 +45,15 @@ public class WorldManifold {
    */
   public final Vec2[] points;
 
+  /**
+   * A negative value indicates overlap, in meters.
+   */
+  public final float[] separations;
+
   public WorldManifold() {
     normal = new Vec2();
     points = new Vec2[Settings.maxManifoldPoints];
+    separations = new float[Settings.maxManifoldPoints];
     for (int i = 0; i < Settings.maxManifoldPoints; i++) {
       points[i] = new Vec2();
     }
@@ -64,36 +70,19 @@ public class WorldManifold {
 
     switch (manifold.type) {
       case CIRCLES: {
-        // final Vec2 pointA = pool3;
-        // final Vec2 pointB = pool4;
-        //
-        // normal.set(1, 0);
-        // Transform.mulToOut(xfA, manifold.localPoint, pointA);
-        // Transform.mulToOut(xfB, manifold.points[0].localPoint, pointB);
-        //
-        // if (MathUtils.distanceSquared(pointA, pointB) > Settings.EPSILON * Settings.EPSILON) {
-        // normal.set(pointB).subLocal(pointA);
-        // normal.normalize();
-        // }
-        //
-        // cA.set(normal).mulLocal(radiusA).addLocal(pointA);
-        // cB.set(normal).mulLocal(radiusB).subLocal(pointB).negateLocal();
-        // points[0].set(cA).addLocal(cB).mulLocal(0.5f);
         final Vec2 pointA = pool3;
         final Vec2 pointB = pool4;
 
         normal.x = 1;
         normal.y = 0;
-        // pointA.x = xfA.p.x + xfA.q.ex.x * manifold.localPoint.x + xfA.q.ey.x *
-        // manifold.localPoint.y;
-        // pointA.y = xfA.p.y + xfA.q.ex.y * manifold.localPoint.x + xfA.q.ey.y *
-        // manifold.localPoint.y;
-        // pointB.x = xfB.p.x + xfB.q.ex.x * manifold.points[0].localPoint.x + xfB.q.ey.x *
-        // manifold.points[0].localPoint.y;
-        // pointB.y = xfB.p.y + xfB.q.ex.y * manifold.points[0].localPoint.x + xfB.q.ey.y *
-        // manifold.points[0].localPoint.y;
-        Transform.mulToOut(xfA, manifold.localPoint, pointA);
-        Transform.mulToOut(xfB, manifold.points[0].localPoint, pointB);
+        Vec2 v = manifold.localPoint;
+        // Transform.mulToOutUnsafe(xfA, manifold.localPoint, pointA);
+        // Transform.mulToOutUnsafe(xfB, manifold.points[0].localPoint, pointB);
+        pointA.x = (xfA.q.c * v.x - xfA.q.s * v.y) + xfA.p.x;
+        pointA.y = (xfA.q.s * v.x + xfA.q.c * v.y) + xfA.p.y;
+        Vec2 mp0p = manifold.points[0].localPoint;
+        pointB.x = (xfB.q.c * mp0p.x - xfB.q.s * mp0p.y) + xfB.p.x;
+        pointB.y = (xfB.q.s * mp0p.x + xfB.q.c * mp0p.y) + xfB.p.y;
 
         if (MathUtils.distanceSquared(pointA, pointB) > Settings.EPSILON * Settings.EPSILON) {
           normal.x = pointB.x - pointA.x;
@@ -109,6 +98,7 @@ public class WorldManifold {
 
         points[0].x = (cAx + cBx) * .5f;
         points[0].y = (cAy + cBy) * .5f;
+        separations[0] = (cBx - cAx) * normal.x + (cBy - cAy) * normal.y;
       }
         break;
       case FACE_A: {
@@ -146,6 +136,7 @@ public class WorldManifold {
 
           points[i].x = (cAx + cBx) * .5f;
           points[i].y = (cAy + cBy) * .5f;
+          separations[i] = (cBx - cAx) * normal.x + (cBy - cAy) * normal.y;
         }
       }
         break;
@@ -198,6 +189,7 @@ public class WorldManifold {
 
           points[i].x = (cAx + cBx) * .5f;
           points[i].y = (cAy + cBy) * .5f;
+          separations[i] = (cAx - cBx) * normal.x + (cAy - cBy) * normal.y;
         }
         // Ensure normal points from A to B.
         normal.x = -normal.x;

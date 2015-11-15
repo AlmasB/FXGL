@@ -27,7 +27,7 @@ public class RopeJointDef extends JointDef {
   public float maxLength;
 
   public RopeJointDef() {
-    type = JointType.ROPE;
+    super(JointType.ROPE);
     localAnchorA.set(-1.0f, 0.0f);
     localAnchorB.set(1.0f, 0.0f);
   }

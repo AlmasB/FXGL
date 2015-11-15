@@ -163,7 +163,6 @@ public class TimeOfImpact {
 
       // If the shapes are overlapped, we give up on continuous collision.
       if (distanceOutput.distance <= 0f) {
-        // System.out.println("failure, overlapped");
         // Failure!
         output.state = TOIOutputState.OVERLAPPED;
         output.t = 0f;
@@ -171,7 +170,6 @@ public class TimeOfImpact {
       }
 
       if (distanceOutput.distance < target + tolerance) {
-        // System.out.println("touching, victory");
         // Victory!
         output.state = TOIOutputState.TOUCHING;
         output.t = t1;
@@ -195,7 +193,6 @@ public class TimeOfImpact {
         // Is the final configuration separated?
         if (s2 > target + tolerance) {
           // Victory!
-          // System.out.println("separated");
           output.state = TOIOutputState.SEPARATED;
           output.t = tMax;
           done = true;
@@ -204,7 +201,6 @@ public class TimeOfImpact {
 
         // Has the separation reached tolerance?
         if (s2 > target - tolerance) {
-          // System.out.println("advancing");
           // Advance the sweeps
           t1 = t2;
           break;
@@ -217,7 +213,6 @@ public class TimeOfImpact {
         // System.out.printf("s1: %f, target: %f, tolerance: %f\n", s1, target,
         // tolerance);
         if (s1 < target - tolerance) {
-          // System.out.println("failed?");
           output.state = TOIOutputState.FAILED;
           output.t = t1;
           done = true;
@@ -226,7 +221,6 @@ public class TimeOfImpact {
 
         // Check for touching
         if (s1 <= target + tolerance) {
-          // System.out.println("touching?");
           // Victory! t1 should hold the TOI (could be 0.0).
           output.state = TOIOutputState.TOUCHING;
           output.t = t1;
@@ -510,7 +504,6 @@ class SeparationFunction {
         return separation;
       }
       case FACE_A: {
-        // System.out.printf("We're faceA\n");
         Rot.mulToOutUnsafe(xfa.q, m_axis, normal);
         Transform.mulToOutUnsafe(xfa, m_localPoint, pointA);
 
@@ -523,7 +516,6 @@ class SeparationFunction {
         return separation;
       }
       case FACE_B: {
-        // System.out.printf("We're faceB\n");
         Rot.mulToOutUnsafe(xfb.q, m_axis, normal);
         Transform.mulToOutUnsafe(xfb, m_localPoint, pointB);
 

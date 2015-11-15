@@ -31,8 +31,8 @@ import org.jbox2d.dynamics.Body;
  */
 public class JointDef {
 
-	public JointDef(){
-		type = JointType.UNKNOWN;
+	public JointDef(JointType type){
+		this.type = type;
 		userData = null;
 		bodyA = null;
 		bodyB = null;

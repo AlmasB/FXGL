@@ -43,16 +43,16 @@ public class Vec3 implements Serializable {
     z = argZ;
   }
 
-  public Vec3(Vec3 argCopy) {
-    x = argCopy.x;
-    y = argCopy.y;
-    z = argCopy.z;
+  public Vec3(Vec3 copy) {
+    x = copy.x;
+    y = copy.y;
+    z = copy.z;
   }
 
-  public Vec3 set(Vec3 argVec) {
-    x = argVec.x;
-    y = argVec.y;
-    z = argVec.z;
+  public Vec3 set(Vec3 vec) {
+    x = vec.x;
+    y = vec.y;
+    z = vec.z;
     return this;
   }
 

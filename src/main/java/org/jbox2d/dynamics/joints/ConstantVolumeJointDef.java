@@ -39,7 +39,7 @@ public class ConstantVolumeJointDef extends JointDef {
   ArrayList<DistanceJoint> joints;
 
   public ConstantVolumeJointDef() {
-    type = JointType.CONSTANT_VOLUME;
+    super(JointType.CONSTANT_VOLUME);
     bodies = new ArrayList<Body>();
     joints = null;
     collideConnected = false;

@@ -35,9 +35,9 @@ import org.jbox2d.common.Vec2;
 
 /**
  * A chain shape is a free form sequence of line segments. The chain has two-sided collision, so you
- * can use inside and outside collision. Therefore, you may use any winding order. Since there may
- * be many vertices, they are allocated using Alloc. Connectivity information is used to create
- * smooth collisions. WARNING The chain will not collide properly if there are self-intersections.
+ * can use inside and outside collision. Therefore, you may use any winding order. Connectivity
+ * information is used to create smooth collisions. WARNING: The chain will not collide properly if
+ * there are self-intersections.
  * 
  * @author Daniel
  */
@@ -68,7 +68,7 @@ public class ChainShape extends Shape {
   public void getChildEdge(EdgeShape edge, int index) {
     assert (0 <= index && index < m_count - 1);
     edge.m_radius = m_radius;
-    
+
     final Vec2 v0 = m_vertices[index + 0];
     final Vec2 v1 = m_vertices[index + 1];
     edge.m_vertex1.x = v0.x;
@@ -97,6 +97,13 @@ public class ChainShape extends Shape {
       edge.m_vertex3.y = m_nextVertex.y;
       edge.m_hasVertex3 = m_hasNextVertex;
     }
+  }
+
+  @Override
+  public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
+    final EdgeShape edge = pool0;
+    getChildEdge(edge, childIndex);
+    return edge.computeDistanceToOut(xf, p, 0, normalOut);
   }
 
   @Override
@@ -130,7 +137,7 @@ public class ChainShape extends Shape {
     assert (childIndex < m_count);
     final Vec2 lower = aabb.lowerBound;
     final Vec2 upper = aabb.upperBound;
-    
+
     int i1 = childIndex;
     int i2 = childIndex + 1;
     if (i2 == m_count) {
@@ -223,6 +230,9 @@ public class ChainShape extends Shape {
     }
     m_hasPrevVertex = false;
     m_hasNextVertex = false;
+
+    m_prevVertex.setZero();
+    m_nextVertex.setZero();
   }
 
   /**
