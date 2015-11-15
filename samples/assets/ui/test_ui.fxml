@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<?import javafx.scene.control.Label?>
+<Pane prefWidth="1280" prefHeight="720"
+      xmlns="http://javafx.com/javafx/8.0.60"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    <Label fx:id="labelCount" translateX="1000" translateY="200" text="COUNT" />
+
+</Pane>

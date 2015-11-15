@@ -194,10 +194,12 @@ public final class SceneManager {
                 ? Screen.getPrimary().getBounds()
                 : Screen.getPrimary().getVisualBounds();
 
+        int[] heights = {360, 480, 720, 1080};
+
         double ratio = width / height;
-        for (int w = 200; w <= bounds.getWidth(); w += 200) {
-            if (w / ratio <= bounds.getHeight()) {
-                sceneDimensions.add(new SceneSettings.SceneDimension(w, w / ratio));
+        for (int h : heights) {
+            if (h <= bounds.getHeight() && h * ratio <= bounds.getWidth()) {
+                sceneDimensions.add(new SceneSettings.SceneDimension(h*ratio, h));
             } else {
                 break;
             }
@@ -370,6 +372,9 @@ public final class SceneManager {
             currentScene.fireEvent(copy);
         });
         stage.setScene(scene);
+        if (app.getSettings().isFullScreen()) {
+            stage.setFullScreen(true);
+        }
     }
 
     public void setSceneDimension(SceneSettings.SceneDimension dimension) {
