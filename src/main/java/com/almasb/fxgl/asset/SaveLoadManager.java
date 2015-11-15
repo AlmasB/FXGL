@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.asset;
 
+import com.almasb.fxgl.settings.UserProfile;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -40,6 +42,8 @@ public enum SaveLoadManager {
     INSTANCE;
 
     private static final String SAVE_DIR = "saves/";
+
+    // TODO: user profile as a different directory
 
     /**
      * Save serializable data onto a disk file system under "saves/"
@@ -143,6 +147,26 @@ public enum SaveLoadManager {
             return Optional.of(load(fileName));
         } catch (Exception e) {
             return Optional.empty();
+        }
+    }
+
+    public void saveProfile(UserProfile profile) {
+        try {
+            save(profile, "user.profile");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save profile data: " + e.getMessage());
+        }
+    }
+
+    public Optional<UserProfile> loadProfile() {
+        boolean profileExists = Files.exists(Paths.get("./" + SAVE_DIR + "user.profile"));
+        if (!profileExists)
+            return Optional.empty();
+
+        try {
+            return Optional.of(load("user.profile"));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load profile data: " + e.getMessage());
         }
     }
 }

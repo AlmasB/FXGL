@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 
 import com.almasb.fxgl.GameScene;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
@@ -48,7 +50,7 @@ import javafx.scene.input.MouseEvent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class InputManager implements WorldStateListener {
+public final class InputManager implements WorldStateListener, UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
 
@@ -274,6 +276,39 @@ public final class InputManager implements WorldStateListener {
      */
     public Mouse getMouse() {
         return mouse;
+    }
+
+    @Override
+    public void save(UserProfile profile) {
+        UserProfile.Bundle bundle = new UserProfile.Bundle("input");
+        for (InputBinding binding : getBindings()) {
+            bundle.put(binding.getAction().getName(), binding.triggerNameProperty().get());
+        }
+
+        profile.putBundle(bundle);
+    }
+
+    @Override
+    public void load(UserProfile profile) {
+        UserProfile.Bundle bundle = profile.getBundle("input");
+
+        for (InputBinding binding : getBindings()) {
+            String triggerName = bundle.get(binding.getAction().getName());
+
+            binding.removeTriggers();
+            try {
+                KeyCode key = KeyCode.getKeyCode(triggerName);
+                binding.setTrigger(key);
+            } catch (Exception ignored) {
+                try {
+                    MouseButton btn = MouseButton.valueOf(triggerName);
+                    binding.setTrigger(btn);
+                } catch (Exception e) {
+                    log.warning("Undefined trigger name: " + triggerName);
+                    throw new IllegalArgumentException("Corrupt or incompatible user profile: " + e.getMessage());
+                }
+            }
+        }
     }
 
     /**

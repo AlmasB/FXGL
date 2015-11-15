@@ -34,7 +34,7 @@ import javafx.scene.input.MouseButton;
 
 /**
  * Represents an input binding of a single action and
- * all keys / mouse buttons to which the action is bound.
+ * a trigger (key or mouse button) to which the action is bound.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

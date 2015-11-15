@@ -26,6 +26,8 @@
 package com.almasb.fxgl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,9 +37,7 @@ import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsManager;
-import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.settings.*;
 import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.FXGLIntroScene;
 import com.almasb.fxgl.ui.IntroFactory;
@@ -334,6 +334,8 @@ public abstract class GameApplication extends Application {
 
         audioManager = new AudioManager();
         qteManager = new QTEManager();
+
+        profileSavables.add(inputManager);
     }
 
     /**
@@ -411,6 +413,9 @@ public abstract class GameApplication extends Application {
         initInput();
         initWorld();
         initStage(stage);
+
+        // TODO: check order
+        SaveLoadManager.INSTANCE.loadProfile().ifPresent(this::loadFromProfile);
 
         stage.show();
 
@@ -510,6 +515,18 @@ public abstract class GameApplication extends Application {
         FXGLLogger.close();
         Platform.exit();
         System.exit(0);
+    }
+
+    private List<UserProfileSavable> profileSavables = new ArrayList<>();
+
+    public final UserProfile createProfile() {
+        UserProfile profile = new UserProfile();
+        profileSavables.forEach(s -> s.save(profile));
+        return profile;
+    }
+
+    public final void loadFromProfile(UserProfile profile) {
+        profileSavables.forEach(l -> l.load(profile));
     }
 
     /**

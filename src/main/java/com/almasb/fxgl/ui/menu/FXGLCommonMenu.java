@@ -36,6 +36,7 @@ import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -100,7 +101,21 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem itemAudio = new MenuItem("AUDIO");
         itemAudio.setMenuContent(createContentAudio());
 
-        return new MenuBox(200, itemControls, itemVideo, itemAudio);
+        MenuItem btnSave = new MenuItem("SAVE CHANGES");
+        btnSave.setOnAction(e -> {
+            UIFactory.getDialogBox().showConfirmationBox("Are you sure?", yes -> {
+                if (yes) SaveLoadManager.INSTANCE.saveProfile(app.createProfile());
+            });
+        });
+
+        MenuItem btnRestore = new MenuItem("RESTORE");
+        btnRestore.setOnAction(e -> {
+            UIFactory.getDialogBox().showConfirmationBox("Are you sure?", yes -> {
+                //if (yes) SaveLoadManager.INSTANCE.saveProfile(app.createProfile());
+            });
+        });
+
+        return new MenuBox(200, itemControls, itemVideo, itemAudio, btnSave, btnRestore);
     }
 
     protected MenuBox createExtraMenu() {
