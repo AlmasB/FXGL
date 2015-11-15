@@ -39,12 +39,14 @@ public final class Version {
 
     private static final String FXGL_VERSION;
     private static final String JAVAFX_VERSION;
+    private static final String JBOX_VERSION;
 
     static {
         ResourceBundle resources = ResourceBundle.getBundle("com.almasb.fxgl.util.version");
 
         FXGL_VERSION = resources.getString("fxgl.version");
         JAVAFX_VERSION = resources.getString("javafx.version");
+        JBOX_VERSION = resources.getString("jbox.version");
     }
 
     public static void print() {
@@ -70,6 +72,6 @@ public final class Version {
      * @return compile time version of JBox2D
      */
     public static String getJBox2DAsString() {
-        return "2.2.1.1";
+        return JBOX_VERSION;
     }
 }
