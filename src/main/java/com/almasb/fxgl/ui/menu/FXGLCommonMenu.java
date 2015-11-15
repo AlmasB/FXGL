@@ -101,7 +101,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem itemAudio = new MenuItem("AUDIO");
         itemAudio.setMenuContent(createContentAudio());
 
-        MenuItem btnSave = new MenuItem("SAVE CHANGES");
+        MenuItem btnSave = new MenuItem("SAVE DATA");
         btnSave.setOnAction(e -> {
             UIFactory.getDialogBox().showConfirmationBox("Are you sure?", yes -> {
                 if (yes) SaveLoadManager.INSTANCE.saveProfile(app.createProfile());
@@ -111,7 +111,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem btnRestore = new MenuItem("RESTORE");
         btnRestore.setOnAction(e -> {
             UIFactory.getDialogBox().showConfirmationBox("Are you sure?", yes -> {
-                //if (yes) SaveLoadManager.INSTANCE.saveProfile(app.createProfile());
+                if (yes) app.loadFromDefaultProfile();
             });
         });
 

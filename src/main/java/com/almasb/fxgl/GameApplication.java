@@ -335,7 +335,10 @@ public abstract class GameApplication extends Application {
         audioManager = new AudioManager();
         qteManager = new QTEManager();
 
+        // profile data listeners
         profileSavables.add(inputManager);
+        profileSavables.add(audioManager);
+        profileSavables.add(sceneManager);
     }
 
     /**
@@ -415,6 +418,7 @@ public abstract class GameApplication extends Application {
         initStage(stage);
 
         // TODO: check order
+        defaultProfile = createProfile();
         SaveLoadManager.INSTANCE.loadProfile().ifPresent(this::loadFromProfile);
 
         stage.show();
@@ -519,6 +523,8 @@ public abstract class GameApplication extends Application {
 
     private List<UserProfileSavable> profileSavables = new ArrayList<>();
 
+    private UserProfile defaultProfile;
+
     public final UserProfile createProfile() {
         UserProfile profile = new UserProfile();
         profileSavables.forEach(s -> s.save(profile));
@@ -527,6 +533,10 @@ public abstract class GameApplication extends Application {
 
     public final void loadFromProfile(UserProfile profile) {
         profileSavables.forEach(l -> l.load(profile));
+    }
+
+    public final void loadFromDefaultProfile() {
+        loadFromProfile(defaultProfile);
     }
 
     /**

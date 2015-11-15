@@ -42,6 +42,8 @@ import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.FXGLDialogBox;
 import com.almasb.fxgl.ui.FXGLScene;
 import com.almasb.fxgl.ui.IntroScene;
@@ -72,7 +74,7 @@ import javafx.stage.Stage;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class SceneManager {
+public final class SceneManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
@@ -519,5 +521,20 @@ public final class SceneManager {
         }
 
         return false;
+    }
+
+    @Override
+    public void save(UserProfile profile) {
+        UserProfile.Bundle bundle = new UserProfile.Bundle("scene");
+        bundle.put("sizeW", sceneSettings.getTargetWidth());
+        bundle.put("sizeH", sceneSettings.getTargetHeight());
+
+        profile.putBundle(bundle);
+    }
+
+    @Override
+    public void load(UserProfile profile) {
+        UserProfile.Bundle bundle = profile.getBundle("scene");
+        setNewResolution(bundle.get("sizeW"), bundle.get("sizeH"));
     }
 }
