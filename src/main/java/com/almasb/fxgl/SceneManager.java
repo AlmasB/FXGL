@@ -31,6 +31,8 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -52,13 +54,17 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventType;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 /**
  * Manages interactions between FXGL scenes and allows
@@ -117,7 +123,7 @@ public final class SceneManager {
     private GameApplication app;
 
     /**
-     * Underlying JavaFX scene. We only 1 scene to avoid
+     * Underlying JavaFX scene. We only use 1 scene to avoid
      * problems in fullscreen mode. Switching between scenes
      * in FS mode will otherwise temporarily toggle FS.
      */
@@ -134,7 +140,7 @@ public final class SceneManager {
      * @param app   instance of game application
      * @param scene main scene
      */
-    /* package-private */ SceneManager(GameApplication app, Scene scene) {
+    SceneManager(GameApplication app, Scene scene) {
         this.app = app;
         this.scene = scene;
 
@@ -169,49 +175,42 @@ public final class SceneManager {
         menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
     }
 
+    private List<SceneSettings.SceneDimension> sceneDimensions = new ArrayList<>();
+
+    public List<SceneSettings.SceneDimension> getSceneDimensions() {
+        return new ArrayList<>(sceneDimensions);
+    }
+
     /**
-     * TODO: update javadoc
+     * Computes scene settings based on target size and screen bounds.
+     * Attaches CSS to settings to be used by all FXGL scenes.
      *
      * @param width  target (app) width
      * @param height target (app) height
      * @return scene settings with computed values
      */
     private SceneSettings computeSceneSettings(double width, double height) {
-        // TODO: make these into params
         Rectangle2D bounds = app.getSettings().isFullScreen()
                 ? Screen.getPrimary().getBounds()
                 : Screen.getPrimary().getVisualBounds();
 
-        double newW = width;
-        double newH = height;
-        double newScale = 1.0;
-
-        if (width > bounds.getWidth() || height > bounds.getHeight()) {
-            log.finer("App size > screen size");
-
-            double ratio = width / height;
-
-            for (int newWidth = (int) bounds.getWidth(); newWidth > 0; newWidth--) {
-                if (newWidth / ratio <= bounds.getHeight()) {
-                    newW = newWidth;
-                    newH = newWidth / ratio;
-                    newScale = newWidth / width;
-                    break;
-                }
+        double ratio = width / height;
+        for (int w = 200; w <= bounds.getWidth(); w += 200) {
+            if (w / ratio <= bounds.getHeight()) {
+                sceneDimensions.add(new SceneSettings.SceneDimension(w, w / ratio));
+            } else {
+                break;
             }
-
-            log.finer("Target size: " + width + "x" + height + "@" + 1.0);
-            log.finer("New size:    " + newW + "x" + newH + "@" + newScale);
         }
 
         // if CSS not set, use menu CSS
         String css = app.getSettings().getCSS();
-        if (!css.isEmpty())
-            css = AssetManager.INSTANCE.loadCSS(css);
-        else
-            css = AssetManager.INSTANCE.loadCSS(app.getSettings().getMenuStyle().getCSS());
+        css = !css.isEmpty() ? css : app.getSettings().getMenuStyle().getCSS();
 
-        return new SceneSettings(width, height, newW, newH, css);
+        String loadedCSS = AssetManager.INSTANCE.loadCSS(css);
+        log.finer("Using CSS: " + css);
+
+        return new SceneSettings(width, height, bounds, loadedCSS);
     }
 
     private boolean canSwitchGameMenu = true;
@@ -356,6 +355,30 @@ public final class SceneManager {
         menuOpen.set(scene == mainMenuScene || scene == gameMenuScene);
 
         this.scene.setRoot(scene.getRoot());
+    }
+
+    private void setNewResolution(double w, double h) {
+        sceneSettings.setNewTargetSize(w, h);
+
+        Parent root = scene.getRoot();
+        scene.setRoot(new Pane());
+        Stage stage = (Stage) scene.getWindow();
+
+        scene = new Scene(root);
+        scene.addEventFilter(EventType.ROOT, event -> {
+            Event copy = event.copyFor(null, null);
+            currentScene.fireEvent(copy);
+        });
+        stage.setScene(scene);
+    }
+
+    public void setSceneDimension(SceneSettings.SceneDimension dimension) {
+        if (sceneDimensions.contains(dimension)) {
+            log.finer("Setting scene dimension: " + dimension);
+            setNewResolution(dimension.getWidth(), dimension.getHeight());
+        } else {
+            log.warning(dimension + " is not supported!");
+        }
     }
 
     private ReadOnlyBooleanWrapper menuOpen;

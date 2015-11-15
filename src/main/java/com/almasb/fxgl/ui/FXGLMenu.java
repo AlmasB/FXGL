@@ -41,17 +41,15 @@ import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -206,6 +204,19 @@ public abstract class FXGLMenu extends FXGLScene {
 
         GridPane.setHalignment(actionName, HPos.RIGHT);
         GridPane.setHalignment(triggerName, HPos.LEFT);
+    }
+
+    protected final MenuContent createContentVideo() {
+        Spinner<SceneSettings.SceneDimension> spinner =
+                new Spinner<>(FXCollections.observableArrayList(app.getSceneManager().getSceneDimensions()));
+
+        Button btnApply = UIFactory.newButton("Apply");
+        btnApply.setOnAction(e -> {
+            SceneSettings.SceneDimension dimension = spinner.getValue();
+            app.getSceneManager().setSceneDimension(dimension);
+        });
+
+        return new MenuContent(new HBox(50, UIFactory.newText("Resolution"), spinner), btnApply);
     }
 
     /**

@@ -44,11 +44,16 @@ public abstract class FXGLScene {
 
     public FXGLScene(SceneSettings settings) {
         this.settings = settings;
-
         root = new Pane();
         root.setBackground(null);
-        root.setPrefSize(settings.getScaledWidth(), settings.getScaledHeight());
-        root.getTransforms().setAll(new Scale(settings.getScaleRatio(), settings.getScaleRatio()));
+
+        root.prefWidthProperty().bind(settings.scaledWidthProperty());
+        root.prefHeightProperty().bind(settings.scaledHeightProperty());
+
+        Scale scale = new Scale();
+        scale.xProperty().bind(settings.scaleRatioProperty());
+        scale.yProperty().bind(settings.scaleRatioProperty());
+        root.getTransforms().setAll(scale);
 
         String css = settings.getCSS();
         if (!css.isEmpty())
@@ -81,6 +86,11 @@ public abstract class FXGLScene {
         eventHandlers.removeEventHandler(eventType, eventHandler);
     }
 
+    /**
+     * Fire JavaFX event on this FXGL scene.
+     *
+     * @param event the JavaFX event
+     */
     public final void fireEvent(Event event) {
         eventHandlers.fireEvent(event);
     }

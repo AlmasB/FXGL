@@ -96,6 +96,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         itemControls.setMenuContent(createContentControls());
 
         MenuItem itemVideo = new MenuItem("VIDEO");
+        itemVideo.setMenuContent(createContentVideo());
         MenuItem itemAudio = new MenuItem("AUDIO");
         itemAudio.setMenuContent(createContentAudio());
 
