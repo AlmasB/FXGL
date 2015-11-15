@@ -23,3 +23,7 @@ dependency-reduced-pom.xml
 *.log
 /logs
 *.lck
+
+# FXGL #
+/saves
+/profiles
