@@ -152,7 +152,7 @@ public class FXWarsApp extends GameApplication {
     protected void initPhysics() {
         PhysicsManager physics = getPhysicsManager();
 
-        physics.addCollisionHandler(new CollisionHandler(Type.BULLET, Type.WANDERER) {
+        CollisionHandler bulletEnemy = new CollisionHandler(Type.BULLET, Type.WANDERER) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
                 spawnExplosion(b.getCenter());
@@ -161,38 +161,24 @@ public class FXWarsApp extends GameApplication {
                 b.removeFromWorld();
                 addScoreKill();
             }
-        });
+        };
 
-        physics.addCollisionHandler(new CollisionHandler(Type.BULLET, Type.SEEKER) {
-            @Override
-            protected void onCollisionBegin(Entity a, Entity b) {
-                spawnExplosion(b.getCenter());
+        physics.addCollisionHandler(bulletEnemy);
+        physics.addCollisionHandler(bulletEnemy.copyFor(Type.BULLET, Type.SEEKER));
 
-                a.removeFromWorld();
-                b.removeFromWorld();
-                addScoreKill();
-            }
-        });
-
-        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.WANDERER) {
+        CollisionHandler playerEnemy = new CollisionHandler(Type.PLAYER, Type.WANDERER) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
                 a.setPosition(getRandomPoint());
                 b.removeFromWorld();
                 deductScoreDeath();
             }
-        });
+        };
 
-        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.SEEKER) {
-            @Override
-            protected void onCollisionBegin(Entity a, Entity b) {
-                a.setPosition(getRandomPoint());
-                b.removeFromWorld();
-                deductScoreDeath();
-            }
-        });
+        physics.addCollisionHandler(playerEnemy);
+        physics.addCollisionHandler(playerEnemy.copyFor(Type.PLAYER, Type.SEEKER));
 
-        physics.addCollisionHandler(new CollisionHandler(Type.SHOCKWAVE, Type.SEEKER) {
+        CollisionHandler shockEnemy = new CollisionHandler(Type.SHOCKWAVE, Type.SEEKER) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
                 b.translate(b.getPosition().
@@ -200,17 +186,10 @@ public class FXWarsApp extends GameApplication {
                         normalize()
                         .multiply(100));
             }
-        });
+        };
 
-        physics.addCollisionHandler(new CollisionHandler(Type.SHOCKWAVE, Type.WANDERER) {
-            @Override
-            protected void onCollisionBegin(Entity a, Entity b) {
-                b.translate(b.getPosition().
-                        subtract(player.getPosition()).
-                        normalize()
-                        .multiply(100));
-            }
-        });
+        physics.addCollisionHandler(shockEnemy);
+        physics.addCollisionHandler(shockEnemy.copyFor(Type.SHOCKWAVE, Type.WANDERER));
     }
 
     private IntegerProperty score = new SimpleIntegerProperty(0);
