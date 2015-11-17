@@ -25,11 +25,7 @@
  */
 package com.almasb.fxgl.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.GameWorld;
@@ -38,6 +34,8 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -381,7 +379,11 @@ public class Entity {
     /**
      * Contains all hit boxes (collision bounding boxes) for this entity.
      */
-    private List<HitBox> hitBoxes = new ArrayList<>();
+    private ObservableList<HitBox> hitBoxes = FXCollections.observableArrayList();
+
+    public final ObservableList<HitBox> hitBoxesProperty() {
+        return FXCollections.unmodifiableObservableList(hitBoxes);
+    }
 
     /**
      * Add a hit (collision) bounding box.
@@ -390,6 +392,10 @@ public class Entity {
      */
     public final void addHitBox(HitBox hitBox) {
         hitBoxes.add(hitBox);
+    }
+
+    public final void removeHitBox(String name) {
+        hitBoxes.removeIf(h -> h.getName().equals(name));
     }
 
     private boolean generateHitBoxesFromView = true;
