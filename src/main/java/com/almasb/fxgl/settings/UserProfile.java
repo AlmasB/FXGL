@@ -38,15 +38,37 @@ public class UserProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // TODO: exceptions
+    /**
+     * K - bundle name, V - bundle
+     */
     private Map<String, Bundle> bundles = new HashMap<>();
 
+    /**
+     * Stores a bundle in the user profile. Bundles with same
+     * name are not allowed.
+     *
+     * @param bundle the bundle to store
+     */
     public final void putBundle(Bundle bundle) {
+        if (bundles.containsKey(bundle.name)) {
+            throw new IllegalArgumentException("Bundle \"" + bundle.name + "\" already exists!");
+        }
+
         bundles.put(bundle.name, bundle);
     }
 
+    /**
+     *
+     * @param name bundle name
+     * @return bundle with given name
+     */
     public final Bundle getBundle(String name) {
-        return bundles.get(name);
+        Bundle bundle = bundles.get(name);
+        if (bundle == null) {
+            throw new IllegalArgumentException("Bundle \"" + name + "\" doesn't exist!");
+        }
+
+        return bundle;
     }
 
     public static final class Bundle implements Serializable {
@@ -60,11 +82,11 @@ public class UserProfile implements Serializable {
 
         private Map<String, Object> data = new HashMap<>();
 
-        public final void put(String key, Object value) {
+        public void put(String key, Serializable value) {
             data.put(name + "." + key, value);
         }
 
-        public final <T> T get(String key) {
+        public <T> T get(String key) {
             return (T)data.get(name + "." + key);
         }
     }
