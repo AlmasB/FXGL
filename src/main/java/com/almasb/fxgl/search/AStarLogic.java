@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * A* search logic. API INCOMPLETE
- *
- * TODO: optimise for FXGL
+ * A* search logic.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
