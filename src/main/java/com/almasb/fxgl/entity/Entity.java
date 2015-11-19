@@ -154,12 +154,17 @@ public class Entity {
      * @param view graphics
      */
     public final void setSceneView(Node view) {
+        setSceneView(view, RenderLayer.TOP);
+    }
+
+    public final void setSceneView(Node view, RenderLayer layer) {
         if (this.sceneView != null)
             throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");
         if (isActive())
             throw new IllegalStateException("Entity already part of the world");
 
         this.sceneView = new EntityView(this, view);
+        this.sceneView.setRenderLayer(layer);
     }
 
     private DoubleProperty x = new SimpleDoubleProperty();
