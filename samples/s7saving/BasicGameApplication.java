@@ -64,7 +64,7 @@ public class BasicGameApplication extends GameApplication {
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
+        settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
@@ -114,27 +114,28 @@ public class BasicGameApplication extends GameApplication {
     }
 
     // 3. override and specify how to deserialize
+    // this will be called on "load" game
     @Override
     public void loadState(Serializable loadData) {
         String data = (String) loadData;
         String[] values = data.split(",");
 
-        playerPosition = new Point2D(Double.parseDouble(values[0]), Double.parseDouble(values[1]));
-        enemyPosition = new Point2D(Double.parseDouble(values[2]), Double.parseDouble(values[3]));
+        initGame(new Point2D(Double.parseDouble(values[0]), Double.parseDouble(values[1])),
+                new Point2D(Double.parseDouble(values[2]), Double.parseDouble(values[3])));
     }
 
     @Override
     protected void initAssets() throws Exception {}
 
+    // while this will be called on "new" game
     @Override
     protected void initGame() {
-        // TODO: fix bug, if loaded once then exited and started new game
-        // app thinks it loaded saved game
+        initGame(new Point2D(100, 100), new Point2D(200, 100));
+    }
 
-        if (playerPosition == null)
-            playerPosition = new Point2D(100, 100);
-        if (enemyPosition == null)
-            enemyPosition = new Point2D(200, 100);
+    private void initGame(Point2D playerPos, Point2D enemyPos) {
+        playerPosition = playerPos;
+        enemyPosition = enemyPos;
 
         player = new Entity(Type.PLAYER);
         player.setPosition(playerPosition);

@@ -450,13 +450,20 @@ public abstract class GameApplication extends Application {
 
     /**
      * Initialize user application.
+     *
+     * @param data the data to load from, null if new game
      */
-    private void initApp() {
+    private void initApp(Serializable data) {
         log.finer("Initializing app");
 
         try {
             initAssets();
-            initGame();
+
+            if (data == null)
+                initGame();
+            else
+                loadState(data);
+
             initPhysics();
             initUI();
 
@@ -473,12 +480,23 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * (Re-)initializes the user application, resets the managers
-     * and starts the game.
+     * (Re-)initializes the user application as new and starts the game.
      */
     final void startNewGame() {
         log.finer("Starting new game");
-        initApp();
+        initApp(null);
+        timer.start();
+    }
+
+    /**
+     * (Re-)initializes the user application from the given data file and starts the game.
+     *
+     * @param data save data to load from
+     */
+    final void startLoadedGame(Serializable data) {
+        log.finer("Starting loaded game");
+        reset();
+        initApp(data);
         timer.start();
     }
 

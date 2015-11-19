@@ -293,9 +293,7 @@ public final class SceneManager implements UserProfileSavable {
         if (!saveFileName.isEmpty()) {
             try {
                 Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
-                app.reset();
-                app.loadState(data);
-                app.startNewGame();
+                app.startLoadedGame(data);
                 setScene(gameScene);
             } catch (Exception e) {
                 log.warning("Failed to load save data: " + e.getMessage());
@@ -303,9 +301,7 @@ public final class SceneManager implements UserProfileSavable {
             }
         } else {
             SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
-                app.reset();
-                app.loadState((Serializable) data);
-                app.startNewGame();
+                app.startLoadedGame((Serializable)data);
                 setScene(gameScene);
             });
         }
