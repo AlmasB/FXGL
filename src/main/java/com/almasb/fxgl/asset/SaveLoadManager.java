@@ -42,8 +42,7 @@ public enum SaveLoadManager {
     INSTANCE;
 
     private static final String SAVE_DIR = "saves/";
-
-    // TODO: user profile as a different directory
+    private static final String PROFILE_DIR = "profiles/";
 
     /**
      * Save serializable data onto a disk file system under "saves/"
@@ -57,12 +56,15 @@ public enum SaveLoadManager {
      */
     public void save(Serializable data, String fileName) throws Exception {
         Path saveFile = Paths.get("./" + SAVE_DIR + fileName);
+        save(data, saveFile);
+    }
 
-        if (!Files.exists(saveFile.getParent())) {
-            Files.createDirectories(saveFile.getParent());
+    private void save(Serializable data, Path file) throws Exception {
+        if (!Files.exists(file.getParent())) {
+            Files.createDirectories(file.getParent());
         }
 
-        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(saveFile))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file))) {
             oos.writeObject(data);
         }
     }
@@ -78,8 +80,12 @@ public enum SaveLoadManager {
      */
     @SuppressWarnings("unchecked")
     public <T> T load(String fileName) throws Exception {
-        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get("./" + SAVE_DIR + fileName)))) {
-            return (T) ois.readObject();
+        return (T) load(Paths.get("./" + SAVE_DIR + fileName));
+    }
+
+    private Object load(Path file) throws Exception {
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file))) {
+            return ois.readObject();
         }
     }
 
@@ -152,19 +158,19 @@ public enum SaveLoadManager {
 
     public void saveProfile(UserProfile profile) {
         try {
-            save(profile, "user.profile");
+            save(profile, Paths.get("./" + PROFILE_DIR + "user.profile"));
         } catch (Exception e) {
             throw new RuntimeException("Failed to save profile data: " + e.getMessage());
         }
     }
 
     public Optional<UserProfile> loadProfile() {
-        boolean profileExists = Files.exists(Paths.get("./" + SAVE_DIR + "user.profile"));
+        boolean profileExists = Files.exists(Paths.get("./" + PROFILE_DIR + "user.profile"));
         if (!profileExists)
             return Optional.empty();
 
         try {
-            return Optional.of(load("user.profile"));
+            return Optional.of((UserProfile)load(Paths.get("./" + PROFILE_DIR + "user.profile")));
         } catch (Exception e) {
             throw new RuntimeException("Failed to load profile data: " + e.getMessage());
         }

@@ -156,25 +156,26 @@ public final class SceneManager implements UserProfileSavable {
             currentScene.fireEvent(copy);
         });
 
-        // TODO: work on order of init
+        isMenuEnabled = app.getSettings().isMenuEnabled();
+        menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
+
         sceneSettings = computeSceneSettings(app.getWidth(), app.getHeight());
         gameScene = new GameScene(sceneSettings);
+        initDialogBox();
+    }
 
-        // TODO: why do we do it here?
+    private void initDialogBox() {
         dialogBox = UIFactory.getDialogBox();
         dialogBox.setOnShown(e -> {
-            if (!menuOpenProperty().get())
+            if (!isMenuOpen())
                 app.pause();
 
             app.getInputManager().clearAllInput();
         });
         dialogBox.setOnHidden(e -> {
-            if (!menuOpenProperty().get())
+            if (!isMenuOpen())
                 app.resume();
         });
-
-        isMenuEnabled = app.getSettings().isMenuEnabled();
-        menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
     }
 
     private List<SceneSettings.SceneDimension> sceneDimensions = new ArrayList<>();

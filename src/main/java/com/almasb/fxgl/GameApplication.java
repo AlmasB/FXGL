@@ -417,7 +417,6 @@ public abstract class GameApplication extends Application {
         initWorld();
         initStage(stage);
 
-        // TODO: check order
         defaultProfile = createProfile();
         SaveLoadManager.INSTANCE.loadProfile().ifPresent(this::loadFromProfile);
 
