@@ -26,7 +26,9 @@
 package com.almasb.fxgl.event;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
+import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.input.KeyCode;
@@ -39,10 +41,13 @@ import javafx.scene.input.MouseButton;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class InputBinding {
+    private static final Logger log = FXGLLogger.getLogger("FXGL.InputBinding");
+
     private final UserAction action;
 
     private Optional<KeyCode> key = Optional.empty();
     private Optional<MouseButton> btn = Optional.empty();
+    private InputModifier modifier = InputModifier.NONE;
 
     private ReadOnlyStringWrapper triggerName = new ReadOnlyStringWrapper();
 
@@ -53,14 +58,46 @@ public final class InputBinding {
         return triggerName.getReadOnlyProperty();
     }
 
-    InputBinding(UserAction action, KeyCode key) {
+    InputBinding(UserAction action, KeyCode key, InputModifier modifier) {
         this.action = action;
+        this.modifier = modifier;
         setTrigger(key);
     }
 
-    InputBinding(UserAction action, MouseButton btn) {
+    InputBinding(UserAction action, MouseButton btn, InputModifier modifier) {
         this.action = action;
+        this.modifier = modifier;
         setTrigger(btn);
+    }
+
+    InputModifier getModifier() {
+        return modifier;
+    }
+
+    boolean isTriggered(InputManager.Trigger trigger) {
+        boolean triggered;
+        if (trigger.key == null) {
+            triggered = isTriggered(trigger.btn);
+        } else {
+            triggered = isTriggered(trigger.key);
+        }
+
+        if (!triggered)
+            return false;
+
+        switch (modifier) {
+            case CTRL:
+                return trigger.ctrl;
+            case SHIFT:
+                return trigger.shift;
+            case ALT:
+                return trigger.alt;
+            case NONE:
+                return !(trigger.ctrl || trigger.shift || trigger.alt);
+            default:
+                log.warning("Unknown input modifier: " + modifier);
+                return true;
+        }
     }
 
     /**

@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.event;
 
+import java.security.Key;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -39,10 +40,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 
 /**
  * Provides access to mouse state and allows binding of actions
@@ -95,11 +93,11 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
             }
         });
 
-        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event.getCode())));
-        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event.getCode())));
+        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event)));
+        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event)));
 
-        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event.getButton())));
-        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event.getButton())));
+        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event)));
+        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event)));
 
         gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
         gameScene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
@@ -115,16 +113,11 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
     private void handlePressed(Trigger trigger) {
         bindings.stream()
                 .filter(binding -> {
-                    if (trigger.key == null) {
-                        return binding.isTriggered(trigger.btn);
-                    } else {
-                        return binding.isTriggered(trigger.key);
-                    }
+                    return binding.isTriggered(trigger);
                 })
-                .findAny()
                 .map(InputBinding::getAction)
                 .filter(action -> !currentActions.contains(action))
-                .ifPresent(currentActions::add);
+                .forEach(currentActions::add);
     }
 
     /**
@@ -138,12 +131,21 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
                     if (trigger.key == null) {
                         return binding.isTriggered(trigger.btn);
                     } else {
+                        KeyCode key = trigger.key;
+                        switch (key) {
+                            case CONTROL:
+                                return binding.getModifier() == InputModifier.CTRL;
+                            case SHIFT:
+                                return binding.getModifier() == InputModifier.SHIFT;
+                            case ALT:
+                                return binding.getModifier() == InputModifier.ALT;
+                        }
+
                         return binding.isTriggered(trigger.key);
                     }
                 })
-                .findAny()
                 .map(InputBinding::getAction)
-                .ifPresent(currentActions::remove);
+                .forEach(currentActions::remove);
     }
 
     private boolean processActions = true;
@@ -178,13 +180,18 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
      * @throws IllegalArgumentException if action with same name exists
      */
     public void addAction(UserAction action, MouseButton btn) {
+        addAction(action, btn, InputModifier.NONE);
+    }
+
+    public void addAction(UserAction action, MouseButton btn, InputModifier modifier) {
         if (findBindingByAction(action).isPresent()) {
             throw new IllegalArgumentException("Action with name \"" + action.getName()
-                + "\" already exists");
+                    + "\" already exists");
         }
 
-        bindings.add(new InputBinding(action, btn));
-        log.finer("Registered new action: " + action + " to " + btn);
+        bindings.add(new InputBinding(action, btn, modifier));
+        log.finer("Registered new action: " + action + " to "
+                + (modifier == InputModifier.NONE ? "" : modifier + "+") + btn);
     }
 
     /**
@@ -195,13 +202,18 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
      * @throws IllegalArgumentException if action with same name exists
      */
     public void addAction(UserAction action, KeyCode key) {
+        addAction(action, key, InputModifier.NONE);
+    }
+
+    public void addAction(UserAction action, KeyCode key, InputModifier modifier) {
         if (findBindingByAction(action).isPresent()) {
             throw new IllegalArgumentException("Action with name \"" + action.getName()
                     + "\" already exists");
         }
 
-        bindings.add(new InputBinding(action, key));
-        log.finer("Registered new action: " + action + " to " + key);
+        bindings.add(new InputBinding(action, key, modifier));
+        log.finer("Registered new action: " + action + " to "
+                + (modifier == InputModifier.NONE ? "" : modifier + "+") + key);
     }
 
     /**
@@ -433,16 +445,28 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
     /**
      * Convenience wrapper for input types.
      */
-    private static class Trigger {
-        private KeyCode key;
-        private MouseButton btn;
+    static class Trigger {
+        KeyCode key;
+        MouseButton btn;
 
-        public Trigger(KeyCode key) {
-            this.key = key;
-        }
+        boolean ctrl, shift, alt;
 
-        public Trigger(MouseButton btn) {
-            this.btn = btn;
+        public Trigger(InputEvent event) {
+            if (event instanceof KeyEvent) {
+                KeyEvent e = (KeyEvent) event;
+                key = e.getCode();
+                ctrl = e.isControlDown();
+                shift = e.isShiftDown();
+                alt = e.isAltDown();
+            } else if (event instanceof MouseEvent) {
+                MouseEvent e = (MouseEvent) event;
+                btn = e.getButton();
+                ctrl = e.isControlDown();
+                shift = e.isShiftDown();
+                alt = e.isAltDown();
+            } else {
+                throw new IllegalArgumentException("Unknown event type: " + event);
+            }
         }
     }
 
