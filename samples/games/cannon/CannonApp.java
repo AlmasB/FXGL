@@ -32,7 +32,9 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
+import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsEntity;
+import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.UIFactory;
@@ -61,8 +63,10 @@ public class CannonApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
         settings.setShowFPS(false);
+        settings.setTitle("Cannon App");
+        settings.setVersion("0.2");
     }
 
     @Override
@@ -114,11 +118,7 @@ public class CannonApp extends GameApplication {
     private void initCannon() {
         cannon = new Entity(Type.CANNON);
         cannon.setPosition(50, getHeight() - 30);
-
-        Rectangle graphics = new Rectangle(70, 30);
-        graphics.setFill(Color.BROWN);
-
-        cannon.setSceneView(graphics);
+        cannon.setSceneView(new Rectangle(70, 30, Color.BROWN));
         cannon.addControl(new LiftControl());
 
         getGameWorld().addEntity(cannon);
@@ -133,17 +133,21 @@ public class CannonApp extends GameApplication {
         basketRight.setPosition(700, getHeight() - 300);
         basketRight.setSceneView(new Rectangle(100, 300, Color.RED));
 
-        getGameWorld().addEntities(basketLeft, basketRight);
+        PhysicsEntity bottomLine = new PhysicsEntity(Type.BASKET);
+        bottomLine.setPosition(500, getHeight());
+        bottomLine.setSceneView(new Rectangle(200, 5, Color.TRANSPARENT));
+        bottomLine.setCollidable(true);
+
+        getGameWorld().addEntities(basketLeft, basketRight, bottomLine);
     }
 
     private void shoot() {
         PhysicsEntity bullet = new PhysicsEntity(Type.BULLET);
-        bullet.setPosition(cannon.getPosition());
+        bullet.setPosition(cannon.getPosition().add(70, 0));
         bullet.setSceneView(new Rectangle(25, 25, Color.BLUE));
         bullet.setBodyType(BodyType.DYNAMIC);
         bullet.setOnPhysicsInitialized(() -> {
-            Point2D mousePosition = new Point2D(getInputManager().getMouse().getGameX(),
-                    getInputManager().getMouse().getGameY());
+            Point2D mousePosition = getInputManager().getMouse().getGameXY();
 
             bullet.setLinearVelocity(mousePosition.subtract(bullet.getPosition()).normalize().multiply(10));
         });
@@ -152,13 +156,22 @@ public class CannonApp extends GameApplication {
         fd.density = 0.05f;
 
         bullet.setFixtureDef(fd);
+        bullet.setCollidable(true);
+        bullet.setExpireTime(Duration.seconds(4));
 
         getGameWorld().addEntity(bullet);
     }
 
     @Override
     protected void initPhysics() {
-
+        PhysicsManager physics = getPhysicsManager();
+        physics.addCollisionHandler(new CollisionHandler(Type.BULLET, Type.BASKET) {
+            @Override
+            protected void onCollisionBegin(Entity bullet, Entity basket) {
+                bullet.removeFromWorld();
+                score.set(score.get() + 1000);
+            }
+        });
     }
 
     private IntegerProperty score = new SimpleIntegerProperty(0);
@@ -175,9 +188,7 @@ public class CannonApp extends GameApplication {
 
     @Override
     protected void onUpdate() {
-        int size = getGameWorld().getEntitiesInRange(new Rectangle2D(500, getHeight() - 300, 200, 300), Type.BULLET)
-                .size();
-        score.set(size * 1000);
+
     }
 
     private class LiftControl implements Control {
