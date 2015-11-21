@@ -275,12 +275,9 @@ public final class SceneManager implements UserProfileSavable {
         gameMenuScene.addEventHandler(MenuEvent.SAVE, event -> {
             String saveFileName = event.getData().map(name -> (String) name).orElse("");
             if (!saveFileName.isEmpty()) {
-                try {
-                    SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName);
-                } catch (Exception e) {
-                    log.warning("Failed to save game data: " + e.getMessage());
-                    //showMessageBox("Failed to save game data: " + e.getMessage());
-                }
+                boolean ok = SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName).isOK();
+                if (!ok)
+                    showMessageBox("Failed to save");
             }
         });
         gameMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
@@ -291,14 +288,10 @@ public final class SceneManager implements UserProfileSavable {
         String saveFileName = event.getData().map(name -> (String) name)
                 .orElse("");
         if (!saveFileName.isEmpty()) {
-            try {
-                Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
-                app.startLoadedGame(data);
+            SaveLoadManager.INSTANCE.load(saveFileName).ifPresent(data -> {
+                app.startLoadedGame((Serializable)data);
                 setScene(gameScene);
-            } catch (Exception e) {
-                log.warning("Failed to load save data: " + e.getMessage());
-                //showMessageBox("Failed to load save data: " + e.getMessage());
-            }
+            });
         } else {
             SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
                 app.startLoadedGame((Serializable)data);
