@@ -103,6 +103,7 @@ public final class FXGLLogger {
 
         log = getLogger("FXGLLogger");
         log.info("Logger initialized with level: " + logLevel);
+        logSystemInfo();
     }
 
     /**
@@ -164,6 +165,20 @@ public final class FXGLLogger {
             System.out.println("No file logger. Was FXGLLogger.init() called?");
 
         return logger;
+    }
+
+    private static void logSystemInfo() {
+        Runtime rt = Runtime.getRuntime();
+
+        double MB = 1024 * 1024;
+
+        log.finer("CPU cores: " + rt.availableProcessors());
+        log.finer(String.format("Free Memory: %.0fMB", rt.freeMemory() / MB));
+        log.finer(String.format("Max Memory: %.0fMB", rt.maxMemory() / MB));
+        log.finer(String.format("Total Memory: %.0fMB", rt.totalMemory() / MB));
+
+        log.finer("System Properties:");
+        System.getProperties().forEach((k, v) -> log.finer(k + "=" + v));
     }
 }
 
