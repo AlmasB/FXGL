@@ -183,6 +183,14 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
         addAction(action, btn, InputModifier.NONE);
     }
 
+    /**
+     * Bind given action to a mouse button with special modifier key.
+     *
+     * @param action the action to bind
+     * @param btn the mouse button
+     * @param modifier the key modifier
+     * @throws IllegalArgumentException if action with same name exists
+     */
     public void addAction(UserAction action, MouseButton btn, InputModifier modifier) {
         if (findBindingByAction(action).isPresent()) {
             throw new IllegalArgumentException("Action with name \"" + action.getName()
@@ -205,6 +213,14 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
         addAction(action, key, InputModifier.NONE);
     }
 
+    /**
+     * Bind given action to a keyboard key with special modifier key.
+     *
+     * @param action the action to bind
+     * @param key the key
+     * @param modifier the key modifier
+     * @throws IllegalArgumentException if action with same name exists
+     */
     public void addAction(UserAction action, KeyCode key, InputModifier modifier) {
         if (findBindingByAction(action).isPresent()) {
             throw new IllegalArgumentException("Action with name \"" + action.getName()
@@ -337,7 +353,7 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
          * @return mouse x in game coordinate system
          */
         public double getGameX() {
-            return gameScene.screenToGame(new Point2D(screenX, screenY)).getX();
+            return getGameXY().getX();
         }
 
         /**
@@ -345,7 +361,15 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
          * @return mouse y in game coordinate system
          */
         public double getGameY() {
-            return gameScene.screenToGame(new Point2D(screenX, screenY)).getY();
+            return getGameXY().getY();
+        }
+
+        /**
+         *
+         * @return cursor point in game coordinate system
+         */
+        public Point2D getGameXY() {
+            return gameScene.screenToGame(getScreenXY());
         }
 
         /**
@@ -368,6 +392,14 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
          */
         public double getScreenY() {
             return screenY;
+        }
+
+        /**
+         *
+         * @return cursor point in screen coordinate system
+         */
+        public Point2D getScreenXY() {
+            return new Point2D(screenX, screenY);
         }
 
         /**
@@ -451,7 +483,7 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
 
         boolean ctrl, shift, alt;
 
-        public Trigger(InputEvent event) {
+        Trigger(InputEvent event) {
             if (event instanceof KeyEvent) {
                 KeyEvent e = (KeyEvent) event;
                 key = e.getCode();
