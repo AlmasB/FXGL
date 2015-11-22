@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * User profile can store various preference settings
+ * like resolution, volume, etc.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class UserProfile implements Serializable {
@@ -42,6 +45,31 @@ public class UserProfile implements Serializable {
      * K - bundle name, V - bundle
      */
     private Map<String, Bundle> bundles = new HashMap<>();
+
+    private String appTitle;
+    private String appVersion;
+
+    /**
+     * Constructs an empty user profile with given app title and version.
+     * The title and version can later be used to check for compatibility.
+     *
+     * @param appTitle app title
+     * @param appVersion app version
+     */
+    public UserProfile(String appTitle, String appVersion) {
+        this.appTitle = appTitle;
+        this.appVersion = appVersion;
+    }
+
+    /**
+     *
+     * @param appTitle app title
+     * @param appVersion app version
+     * @return true iff title and version are compatible with the app
+     */
+    public final boolean isCompatible(String appTitle, String appVersion) {
+        return this.appTitle.equals(appTitle) && this.appVersion.equals(appVersion);
+    }
 
     /**
      * Stores a bundle in the user profile. Bundles with same
@@ -71,6 +99,10 @@ public class UserProfile implements Serializable {
         return bundle;
     }
 
+    /**
+     * Bundle is used to store values mapped with certain keys.
+     * Bundle name must be unique as it identifies the bundle data within profile.
+     */
     public static final class Bundle implements Serializable {
         private static final long serialVersionUID = 1L;
 

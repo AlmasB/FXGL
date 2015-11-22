@@ -543,12 +543,15 @@ public abstract class GameApplication extends Application {
     private UserProfile defaultProfile;
 
     public final UserProfile createProfile() {
-        UserProfile profile = new UserProfile();
+        UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
         profileSavables.forEach(s -> s.save(profile));
         return profile;
     }
 
     public final void loadFromProfile(UserProfile profile) {
+        if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
+            return;
+
         profileSavables.forEach(l -> l.load(profile));
     }
 
