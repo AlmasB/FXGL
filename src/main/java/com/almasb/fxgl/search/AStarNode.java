@@ -37,6 +37,13 @@ public class AStarNode {
     private int gCost, hCost;
     private NodeState state;
 
+    /**
+     * Constructs A* node with x, y values and state.
+     *
+     * @param x x value
+     * @param y y value
+     * @param state initial state
+     */
     public AStarNode(int x, int y, NodeState state) {
         this.x = x;
         this.y = y;

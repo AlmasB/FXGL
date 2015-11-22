@@ -167,6 +167,9 @@ public final class FXGLLogger {
         return logger;
     }
 
+    /**
+     * Logs various details about runtime environment into a file.
+     */
     private static void logSystemInfo() {
         Runtime rt = Runtime.getRuntime();
 

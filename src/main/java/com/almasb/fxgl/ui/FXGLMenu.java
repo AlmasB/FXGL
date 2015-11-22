@@ -206,6 +206,10 @@ public abstract class FXGLMenu extends FXGLScene {
         GridPane.setHalignment(triggerName, HPos.LEFT);
     }
 
+    /**
+     *
+     * @return menu content with video settings
+     */
     protected final MenuContent createContentVideo() {
         Spinner<SceneSettings.SceneDimension> spinner =
                 new Spinner<>(FXCollections.observableArrayList(app.getSceneManager().getSceneDimensions()));
@@ -291,6 +295,11 @@ public abstract class FXGLMenu extends FXGLScene {
         }
     }
 
+    /**
+     * Adds a UI node.
+     *
+     * @param node the node to add
+     */
     protected final void addUINode(Node node) {
         getRoot().getChildren().add(node);
     }

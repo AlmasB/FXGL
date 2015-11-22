@@ -36,18 +36,18 @@ class Pair<T> {
 
     private T a, b;
 
-    public Pair(T a, T b) {
+    Pair(T a, T b) {
         if (a == null || b == null)
             throw new IllegalArgumentException("Objects must not be null:");
         this.a = a;
         this.b = b;
     }
 
-    public T getA() {
+    T getA() {
         return a;
     }
 
-    public T getB() {
+    T getB() {
         return b;
     }
 

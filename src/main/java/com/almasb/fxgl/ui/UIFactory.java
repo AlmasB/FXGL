@@ -76,6 +76,10 @@ public final class UIFactory {
 
     private static FXGLDialogBox dialogBox;
 
+    /**
+     *
+     * @return a singleton instance of FXGL dialog box
+     */
     public static FXGLDialogBox getDialogBox() {
         if (dialogBox == null) {
             dialogBox = new FXGLDialogBox(mainStage);

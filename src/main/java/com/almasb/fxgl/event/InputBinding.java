@@ -74,6 +74,13 @@ public final class InputBinding {
         return modifier;
     }
 
+    /**
+     * Checks if current state of the given trigger "triggers"
+     * this input binding. The check uses key/button + modifier key.
+     *
+     * @param trigger the trigger
+     * @return true iff triggered
+     */
     boolean isTriggered(InputManager.Trigger trigger) {
         boolean triggered;
         if (trigger.key == null) {

@@ -29,6 +29,8 @@ package com.almasb.fxgl.search;
 import java.util.List;
 
 /**
+ * A grid containing A* nodes.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class AStarGrid {
@@ -37,7 +39,7 @@ public class AStarGrid {
     private AStarNode[][] grid;
 
     /**
-     * Contstructs A* grid with A* nodes with given width and height.
+     * Constructs A* grid with A* nodes with given width and height.
      * All nodes are initially {@link NodeState#WALKABLE}
      *
      * @param width grid width
@@ -53,14 +55,38 @@ public class AStarGrid {
         }
     }
 
+    /**
+     * Set state of the node at x, y.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param state the state
+     */
     public void setNodeState(int x, int y, NodeState state) {
         getNode(x, y).setState(state);
     }
 
+    /**
+     * Returns state of the node at a, y.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return  the state
+     */
     public NodeState getNodeState(int x, int y) {
         return getNode(x, y).getState();
     }
 
+    /**
+     * Returns a list of A* nodes from start to target.
+     * Return an empty list if the path doesn't exist.
+     *
+     * @param startX start node x
+     * @param startY start node y
+     * @param targetX target node x
+     * @param targetY target node y
+     * @return the path
+     */
     public List<AStarNode> getPath(int startX, int startY, int targetX, int targetY) {
         return logic.getPath(grid, getNode(startX, startY), getNode(targetX, targetY));
     }

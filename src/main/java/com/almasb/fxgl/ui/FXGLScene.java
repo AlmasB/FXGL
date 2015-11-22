@@ -37,6 +37,9 @@ import javafx.scene.ImageCursor;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 
+/**
+ * Base class for all FXGL scenes.
+ */
 public abstract class FXGLScene {
     private Pane root;
     private Group eventHandlers = new Group();
@@ -60,14 +63,26 @@ public abstract class FXGLScene {
             root.getStylesheets().add(css);
     }
 
+    /**
+     *
+     * @return root node of the scene
+     */
     public final Pane getRoot() {
         return root;
     }
 
+    /**
+     *
+     * @return target width
+     */
     public final double getWidth() {
         return settings.getTargetWidth();
     }
 
+    /**
+     *
+     * @return target height
+     */
     public final double getHeight() {
         return settings.getTargetHeight();
     }

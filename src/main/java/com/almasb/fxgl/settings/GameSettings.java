@@ -165,14 +165,28 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.defaultFontName = name;
     }
 
+    /**
+     * Set globally applied CSS. The CSS will be loaded from "/assets/ui/css/"
+     *
+     * @param name CSS file name
+     */
     public void setCSS(String name) {
         this.css = name;
     }
 
+    /**
+     * Set the menu style to use.
+     *
+     * @param style menu style
+     */
     public void setMenuStyle(MenuStyle style) {
         this.menuStyle = style;
     }
 
+    /**
+     *
+     * @return a read only copy of settings
+     */
     public ReadOnlyGameSettings toReadOnly() {
         return new ReadOnlyGameSettings(this);
     }

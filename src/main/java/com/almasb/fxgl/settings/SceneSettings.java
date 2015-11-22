@@ -72,6 +72,10 @@ public final class SceneSettings {
         computeScaledSize();
     }
 
+    /**
+     * Computes scaled size of the output based on screen and target
+     * resolutions.
+     */
     private void computeScaledSize() {
         double newW = getTargetWidth();
         double newH = getTargetHeight();

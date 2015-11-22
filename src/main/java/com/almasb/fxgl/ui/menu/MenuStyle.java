@@ -31,6 +31,8 @@ import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.MenuFactory;
 
 /**
+ * FXGL built-in menu styles. NOT COMPLETED YET.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public enum MenuStyle {

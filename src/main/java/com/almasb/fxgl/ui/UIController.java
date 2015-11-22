@@ -26,6 +26,8 @@
 package com.almasb.fxgl.ui;
 
 /**
+ * Marks a class that it's able to act as a JavaFX controller.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface UIController {
