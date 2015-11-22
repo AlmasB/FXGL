@@ -125,7 +125,7 @@ public final class InputBinding {
     void setTrigger(KeyCode k) {
         this.btn = Optional.empty();
         this.key = Optional.of(k);
-        triggerName.set(k.getName());
+        triggerName.set((modifier == InputModifier.NONE ? "" : modifier + "+") + k.getName());
     }
 
     /**
@@ -137,7 +137,7 @@ public final class InputBinding {
     void setTrigger(MouseButton b) {
         this.key = Optional.empty();
         this.btn = Optional.of(b);
-        triggerName.set(b.toString());
+        triggerName.set((modifier == InputModifier.NONE ? "" : modifier + "+") + b.toString());
     }
 
     /**

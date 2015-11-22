@@ -197,9 +197,10 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
                     + "\" already exists");
         }
 
-        bindings.add(new InputBinding(action, btn, modifier));
-        log.finer("Registered new action: " + action + " to "
-                + (modifier == InputModifier.NONE ? "" : modifier + "+") + btn);
+        InputBinding binding = new InputBinding(action, btn, modifier);
+
+        bindings.add(binding);
+        log.finer("Registered new binding: " + binding);
     }
 
     /**
@@ -227,9 +228,10 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
                     + "\" already exists");
         }
 
-        bindings.add(new InputBinding(action, key, modifier));
-        log.finer("Registered new action: " + action + " to "
-                + (modifier == InputModifier.NONE ? "" : modifier + "+") + key);
+        InputBinding binding = new InputBinding(action, key, modifier);
+
+        bindings.add(binding);
+        log.finer("Registered new binding: " + binding);
     }
 
     /**
@@ -322,6 +324,10 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
 
         for (InputBinding binding : getBindings()) {
             String triggerName = bundle.get(binding.getAction().getName());
+            int plusIndex = triggerName.indexOf("+");
+            if (plusIndex != -1) {
+                triggerName = triggerName.substring(plusIndex + 1);
+            }
 
             binding.removeTriggers();
             try {

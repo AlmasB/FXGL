@@ -27,8 +27,28 @@
 package com.almasb.fxgl.event;
 
 /**
+ * A key modifier applied to an input event.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public enum InputModifier {
-    CTRL, SHIFT, ALT, NONE
+    /**
+     * Ctrl key
+     */
+    CTRL,
+
+    /**
+     * Shift key
+     */
+    SHIFT,
+
+    /**
+     * Alt key
+     */
+    ALT,
+
+    /**
+     * No modifier key
+     */
+    NONE
 }

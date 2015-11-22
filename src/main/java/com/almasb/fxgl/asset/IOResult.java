@@ -27,6 +27,8 @@
 package com.almasb.fxgl.asset;
 
 /**
+ * Represents result of an IO based operation.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class IOResult {
@@ -42,18 +44,34 @@ public final class IOResult {
         this.errorMessage = errorMessage;
     }
 
+    /**
+     * @return true iff the IO operation succeeded
+     */
     public boolean isOK() {
         return ok;
     }
 
+    /**
+     * Returns error message associated with the operation.
+     * Returns empty string if operation succeeded.
+     *
+     * @return error message
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * @return successful IO result
+     */
     public static IOResult success() {
         return SUCCESS;
     }
 
+    /**
+     * @param message error message
+     * @return failed IO result
+     */
     public static IOResult failure(String message) {
         return new IOResult(false, message);
     }
