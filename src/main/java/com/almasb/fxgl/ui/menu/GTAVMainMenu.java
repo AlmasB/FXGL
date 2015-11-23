@@ -77,10 +77,7 @@ public final class GTAVMainMenu extends FXGLMenu {
     }
 
     private Node makeBackground() {
-        Texture bg = app.getAssetManager().loadTexture("gta5.jpg");
-        bg.setFitWidth(app.getWidth());
-        bg.setFitHeight(app.getHeight());
-        return bg;
+        return new Rectangle(app.getWidth(), app.getHeight(), Color.BROWN);
     }
 
     private Text makeTitle() {

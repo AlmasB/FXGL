@@ -38,6 +38,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 /**
@@ -68,10 +70,7 @@ public final class GTAVGameMenu extends FXGLMenu {
     }
 
     private Node makeBackground() {
-        Texture bg = app.getAssetManager().loadTexture("gta5.jpg");
-        bg.setFitWidth(app.getWidth());
-        bg.setFitHeight(app.getHeight());
-        return bg;
+        return new Rectangle(app.getWidth(), app.getHeight(), Color.BROWN);
     }
 
     private Text makeTitle() {
