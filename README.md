@@ -9,7 +9,7 @@ It is primarily aimed at people who wish to learn and practise game development.
 It also takes care of the common boilerplate code, so it can be used for fast prototyping.
 For larger projects the library may not be as suitable, whereas advanced programmers will probably want to work
 with JavaFX directly.
-If you have a use case (feature) that FXGL doesn't cover, drop me an email stating the use case and what you have already tried.
+If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
 
 ## Prerequisites
 Oracle JDK 1.8.0_40+
@@ -18,10 +18,10 @@ Oracle JDK 1.8.0_40+
 ```bash
 mvn package
 ```
-This will generate FXGL-0.1.7.jar, sources and javadoc.
+This will generate FXGL-0.1.8.jar, sources and javadoc.
 
 ## Setup
-Depending on what IDE or build tool you are using choose appropriate setup steps.
+Choose setup steps based on your IDE/build tool.
 
 ## Setup (Maven)
 ```maven
@@ -33,7 +33,7 @@ Depending on what IDE or build tool you are using choose appropriate setup steps
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
 </dependency>
 ```
 
@@ -45,26 +45,26 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.1.7'
+    compile 'com.github.AlmasB:FXGL:0.1.8'
 }
 ```
 
 ## Setup (General)
-Download FXGL-0.1.7.jar from <a href="https://github.com/AlmasB/FXGL/releases">Releases</a> (or the one built yourself) and add it to the build path
-in your IDE. That's it, you're all set! See below setup for some IDEs
+Download FXGL-0.1.8.jar from <a href="https://github.com/AlmasB/FXGL/releases">Releases</a> (or the one built yourself)
+and add it to the build path in your IDE. That's it, you're all set!
 
 ## Setup (NetBeans, tested with 8.0.2)
 1. File -> New Project -> Java -> Java Application -> Next
 2. Choose Project Name (optional: create main class) -> Finish
 3. In the Projects view, right-click Libraries -> Add Jar/Folder -> Navigate and Select downloaded FXGL jar
 
-## Setup (Eclipse, tested with 4.5)
+## Setup (Eclipse, tested with 4.5.1)
 1. File -> New Java Project
 2. Choose Project Name -> Finish
 3. Right-click on the created project -> Build Path -> Configure Build Path -> 
     Libraries Tab -> Add External JAR -> Navigate and Select downloaded FXGL jar
     
-## Setup (IntelliJ IDEA, tested with 14.1)
+## Setup (IntelliJ IDEA, tested with 15)
 1. Create Project
 2. File -> Project Structure
 3. Libraries -> Add Java -> Navigate and Select downloaded FXGL jar
@@ -93,10 +93,7 @@ Video Tutorials Playlist - <a href="https://www.youtube.com/watch?v=mPE8p8p_YjQ&
 The videos will walk you through the basics.
 
 ## Notes
-FXGL is in early stages of development. Hence, the API and functionality are likely to change from version to version.
-So I wouldn't recommend building a full scale application if you want to be able to use latest versions of FXGL.
-The plan is to make the API robust, stable and intuitive by v 0.5.
-If certain parts of documentation are ambiguous or incorrect/missing please let me know.
+If certain parts of documentation are ambiguous/incorrect/missing please let me know or raise an issue.
 Any testing, feedback and bug reports are welcome <br/>
 
 3D features and port to mobile will be considered in the future. <br/>
@@ -105,10 +102,10 @@ This is only a hobby / side project (for the time being anyway), so the developm
 Most of the code follows "some" design principles and practices, but overall I wouldn't consider the code to be high quality
 and as it is now it doesn't have much production value.
 
-## Changelog
-FXGL 0.1.7 (latest) supports:
+## Latest Release Features
+FXGL 0.1.8 supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
-* JBox2D Physics Engine Integration (v.2.2.1.1, https://github.com/jbox2d/jbox2d)
+* JBox2D Physics Engine Integration (v.2.3.0, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
 * Basic Logging
 * Basic Performance Monitor
@@ -127,9 +124,11 @@ FXGL 0.1.7 (latest) supports:
 * AI Pathfinding (A star search)
 * Quick Time Events (QTE) (<b>API INCOMPLETE</b>)
 * Intro Video / Animation (also supports custom intro)
-* Main Menu + Game Menu (also supports custom Main Menu and Game Menu)
+* Few Built-in Styles of Main Menu + Game Menu (also supports custom Main Menu and Game Menu)
 * Custom Modifiable UI elements (Dialogs, Bars, Buttons, etc)
+* Custom Global CSS to use with existing menus / UI elements
 * Saving / Loading System
+* User Profiles (Save/Load/Restore Game Settings)
 * Other minor game dev features
 
 ## Next Release Features
@@ -137,6 +136,8 @@ The issue tracker contains information about possible features to be added in
 the next release.
             
 ## Few Simple Projects So Far<br/>
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_menu2.jpg" />
+<img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_cannon.jpg" />
 <img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Menu.jpg" />
 <img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Pacman.png" />
 <img src="http://almasb.github.io/LearnJavaGameDev/tutorials/images/fxgl/FXGL_Physics.jpg" />
@@ -146,5 +147,5 @@ the next release.
 Sprites can be found on http://opengameart.org/
 
 ## Contact
-almaslvl@gmail.com, https://plus.google.com/+AlmasB0/about<br/>
-Make sure to put "FXGL" as the email subject for faster response.
+Email: almaslvl@gmail.com<br/>
+<a href="https://plus.google.com/+AlmasB0/about">Google+</a>
