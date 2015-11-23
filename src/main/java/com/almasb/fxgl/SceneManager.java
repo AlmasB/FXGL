@@ -180,6 +180,10 @@ public final class SceneManager implements UserProfileSavable {
 
     private List<SceneSettings.SceneDimension> sceneDimensions = new ArrayList<>();
 
+    /**
+     *
+     * @return a list of supported scene dimensions with 360, 480, 720 and 1080 heights
+     */
     public List<SceneSettings.SceneDimension> getSceneDimensions() {
         return new ArrayList<>(sceneDimensions);
     }
