@@ -25,6 +25,8 @@
  */
 package sandbox;
 
+import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.event.InputModifier;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Parent;
@@ -65,11 +67,11 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1920);
-        settings.setHeight(1080);
+        settings.setWidth(1280);
+        settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
-        settings.setFullScreen(true);
+        settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
@@ -88,7 +90,7 @@ public class BasicGameApplication extends GameApplication {
                 //enemy.rotateBy(-5);
                 player.translate(-1, 0);
             }
-        }, KeyCode.A);
+        }, KeyCode.A, InputModifier.CTRL);
 
         input.addAction(new UserAction("Move Right") {
             @Override
@@ -96,7 +98,7 @@ public class BasicGameApplication extends GameApplication {
                 //enemy.rotateBy(5);
                 player.translate(1, 0);
             }
-        }, KeyCode.D);
+        }, KeyCode.D, InputModifier.SHIFT);
 
         input.addAction(new UserAction("Move Up") {
             @Override
@@ -176,7 +178,7 @@ public class BasicGameApplication extends GameApplication {
 
                 b.setOnPhysicsInitialized(() -> b.setAngularVelocity(5));
             }
-        }, MouseButton.PRIMARY);
+        }, MouseButton.PRIMARY, InputModifier.ALT);
 
         input.addAction(new UserAction("Spawn2") {
             @Override
@@ -205,6 +207,8 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initGame() {
+        EntityView.turnOnDebugBBox(Color.RED);
+
         player = new Entity(Type.PLAYER);
         Circle graphics = new Circle(40);
         player.setSceneView(graphics);
@@ -217,11 +221,20 @@ public class BasicGameApplication extends GameApplication {
         enemy = new Entity(Type.ENEMY);
         Rectangle enemyGraphics = new Rectangle(200, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(enemyGraphics);
+        enemy.setSceneView(enemyGraphics, new RenderLayer() {
+            @Override
+            public String name() {
+                return "ENEMY";
+            }
+
+            @Override
+            public int index() {
+                return 1000;
+            }
+        });
 
         //enemy.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 200, 40)));
         enemy.setPosition(200, 100);
-
 
 
         // we need to set collidable to true
