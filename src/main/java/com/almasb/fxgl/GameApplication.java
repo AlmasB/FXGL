@@ -540,14 +540,27 @@ public abstract class GameApplication extends Application {
 
     private List<UserProfileSavable> profileSavables = new ArrayList<>();
 
+    /**
+     * Stores the default profile data. This is used to restore default settings.
+     */
     private UserProfile defaultProfile;
 
+    /**
+     * Create a user profile with current settings.
+     *
+     * @return user profile
+     */
     public final UserProfile createProfile() {
         UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
         profileSavables.forEach(s -> s.save(profile));
         return profile;
     }
 
+    /**
+     * Load from given user profile
+     *
+     * @param profile the profile
+     */
     public final void loadFromProfile(UserProfile profile) {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
             return;
@@ -555,6 +568,9 @@ public abstract class GameApplication extends Application {
         profileSavables.forEach(l -> l.load(profile));
     }
 
+    /**
+     * Load from default user profile. Restores default settings.
+     */
     public final void loadFromDefaultProfile() {
         loadFromProfile(defaultProfile);
     }

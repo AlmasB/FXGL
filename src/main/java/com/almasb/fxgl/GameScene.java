@@ -45,6 +45,17 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 
+/**
+ * Represents the scene that shows game objects on the screen during "play" mode.
+ * Contains 3 layers. From bottom to top:
+ * <ol>
+ *     <li>Entities and their render layers</li>
+ *     <li>Particles</li>
+ *     <li>UI Overlay</li>
+ * </ol>
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class GameScene extends FXGLScene implements WorldStateListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
