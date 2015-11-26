@@ -87,4 +87,12 @@ public final class UIFactory {
 
         return dialogBox;
     }
+
+    public static double widthOf(String text, double fontSize) {
+        return newText(text, fontSize).getLayoutBounds().getWidth();
+    }
+
+    public static double heightOf(String text, double fontSize) {
+        return newText(text, fontSize).getLayoutBounds().getHeight();
+    }
 }

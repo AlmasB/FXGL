@@ -44,11 +44,7 @@ import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
-import com.almasb.fxgl.ui.FXGLDialogBox;
-import com.almasb.fxgl.ui.FXGLScene;
-import com.almasb.fxgl.ui.IntroScene;
-import com.almasb.fxgl.ui.MenuFactory;
-import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -65,6 +61,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 

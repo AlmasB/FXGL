@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,42 +23,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
- /*
-  * FXGLButton
-  */
-.fxgl_button {
-    -fx-padding: 5 22 5 22;
-    -fx-border-width: 0;
 
-    -fx-background-color: black;
-    -fx-text-fill: #a9a9a9;
-}
+package com.almasb.fxgl.gameplay;
 
-.fxgl_button:hover {
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, rgba(179, 122, 54, 0.6) 0%, rgba(0, 92, 31, 0.8) 100%);
-    -fx-text-fill: white;
-}
-
-.fxgl_button:pressed, .fxgl_button:default:hover:pressed {
-    -fx-background-color: rgba(255, 215, 25, 0.8);
-    -fx-text-fill: white;
-}
-
-.fxgl_button:focused {
-    -fx-text-fill: white;
-}
-
-.fxgl_button:disabled, .fxgl_button:default:disabled {
-    -fx-opacity: 0.4;
-    -fx-text-fill: #a9a9a9;
-}
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 
 /**
- * ListView
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
- 
-.list-cell { 
-    -fx-background: black;
-    -fx-font-size: 18px;
+public class Achievement {
+    private String name;
+    public BooleanBinding condition;
+
+    public Achievement(String name, BooleanBinding condition) {
+        this.name = name;
+        this.condition = condition;
+
+        if (condition.get()) {
+            throw new IllegalArgumentException("Condition must not be true");
+        }
+    }
+
+
+    public String getName() {
+        return name;
+    }
 }

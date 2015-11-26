@@ -234,6 +234,29 @@ public class Texture extends ImageView {
         return new Texture(image);
     }
 
+    public final Texture toGrayscale() {
+        int w = (int)getImage().getWidth();
+        int h = (int)getImage().getHeight();
+
+        PixelReader reader = getImage().getPixelReader();
+        WritableImage image = new WritableImage(w, h);
+        PixelWriter writer = image.getPixelWriter();
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                writer.setColor(x, y, reader.getColor(x, y).grayscale());
+            }
+        }
+
+        return new Texture(image);
+    }
+
+    public final void set(Texture other) {
+        setFitWidth(other.getFitWidth());
+        setFitHeight(other.getFitHeight());
+        setImage(other.getImage());
+    }
+
     @Override
     public String toString() {
         return "Texture [fitWidth=" + getFitWidth() + ", fitHeight=" + getFitHeight() + "]";

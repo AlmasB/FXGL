@@ -39,11 +39,7 @@ import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.*;
 import com.almasb.fxgl.time.TimerManager;
-import com.almasb.fxgl.ui.FXGLIntroScene;
-import com.almasb.fxgl.ui.IntroFactory;
-import com.almasb.fxgl.ui.IntroScene;
-import com.almasb.fxgl.ui.MenuFactory;
-import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -191,6 +187,7 @@ public abstract class GameApplication extends Application {
     private TimerManager timerManager;
     private QTEManager qteManager;
     private SaveLoadManager saveLoadManager;
+    private NotificationManager notificationManager;
 
     /**
      * Initialize game settings.
@@ -329,6 +326,7 @@ public abstract class GameApplication extends Application {
         stage.setScene(scene);
         sceneManager = new SceneManager(this, scene);
         inputManager = new InputManager(getSceneManager().getGameScene());
+        notificationManager = new NotificationManager(getSceneManager().getGameScene().getRoot());
 
         physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty());
 
@@ -702,6 +700,14 @@ public abstract class GameApplication extends Application {
      */
     public final QTEManager getQTEManager() {
         return qteManager;
+    }
+
+    /**
+     *
+     * @return notification manager
+     */
+    public NotificationManager getNotificationManager() {
+        return notificationManager;
     }
 
     /**
