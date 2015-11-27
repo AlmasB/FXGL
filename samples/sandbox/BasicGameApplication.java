@@ -27,6 +27,7 @@ package sandbox;
 
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.InputModifier;
+import com.almasb.fxgl.gameplay.Achievement;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Parent;
@@ -64,6 +65,8 @@ public class BasicGameApplication extends GameApplication {
     private PhysicsEntity box;
 
     private Text debug, debug2;
+    IntegerProperty i = new SimpleIntegerProperty(2000);
+
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -78,6 +81,13 @@ public class BasicGameApplication extends GameApplication {
         //settings.setMenuStyle(MenuStyle.CCTR);
         //settings.setCSS("fxgl_gta5.css");
         settings.setApplicationMode(ApplicationMode.DEBUG);
+    }
+
+    @Override
+    protected void initAchievements() {
+        Achievement a = new Achievement("Score Master", "Score 20000 Points");
+
+        getAchievementManager().registerAchievement(a);
     }
 
     @Override
@@ -102,9 +112,10 @@ public class BasicGameApplication extends GameApplication {
 
         input.addAction(new UserAction("Move Up") {
             @Override
-            protected void onAction() {
+            protected void onActionBegin() {
                 //enemy.setRotation(0);
-                player.translate(0, -1);
+                //player.translate(0, -1);
+                i.set(i.get() + 10000);
             }
         }, KeyCode.W);
 
@@ -142,7 +153,9 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Rotate Down") {
             @Override
             protected void onActionBegin() {
-                //getSceneManager().setNewResolution(1066, 600);
+                getNotificationManager().pushNotification("You got an achievement!");
+                getNotificationManager().pushNotification("You have won the game!");
+                getNotificationManager().pushNotification("Just a test of the notification system!");
             }
         }, KeyCode.DOWN);
 
@@ -207,6 +220,9 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initGame() {
+        getAchievementManager().getAchievementByName("Score Master")
+                .achievedProperty().bind(i.greaterThanOrEqualTo(20000));
+
         EntityView.turnOnDebugBBox(Color.RED);
 
         player = new Entity(Type.PLAYER);
@@ -253,6 +269,20 @@ public class BasicGameApplication extends GameApplication {
         getGameWorld().addEntity(box);
 
         getGameScene().addGameView(new PlayerView());
+
+        addStuff();
+    }
+
+    private void addStuff() {
+//        Entity e = new Entity(Type.BOX);
+//        e.setPosition(400, 400);
+//        e.setSceneView(getAssetManager().loadTexture("brick.png"));
+//
+//        Entity e2 = new Entity(Type.BOX);
+//        e2.setPosition(300, 400);
+//        e2.setSceneView(getAssetManager().loadTexture("brick.png").toGrayscale());
+//
+//        getGameWorld().addEntities(e, e2);
     }
 
     private class PlayerView extends EntityView {
@@ -300,6 +330,7 @@ public class BasicGameApplication extends GameApplication {
         debug2.setTranslateY(50);
 
         Parent ui = getAssetManager().loadFXML("test_ui.fxml", new FXGLController(this));
+
 
         getGameScene().addUINodes(debug, debug2, ui);
     }
