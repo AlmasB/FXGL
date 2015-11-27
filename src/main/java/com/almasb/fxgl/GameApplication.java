@@ -36,6 +36,7 @@ import com.almasb.fxgl.asset.AudioManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
+import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.*;
 import com.almasb.fxgl.time.TimerManager;
@@ -188,6 +189,7 @@ public abstract class GameApplication extends Application {
     private QTEManager qteManager;
     private SaveLoadManager saveLoadManager;
     private NotificationManager notificationManager;
+    private AchievementManager achievementManager;
 
     /**
      * Initialize game settings.
@@ -327,6 +329,7 @@ public abstract class GameApplication extends Application {
         sceneManager = new SceneManager(this, scene);
         inputManager = new InputManager(getSceneManager().getGameScene());
         notificationManager = new NotificationManager(getSceneManager().getGameScene().getRoot());
+        achievementManager = new AchievementManager(notificationManager);
 
         physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty());
 
@@ -337,6 +340,7 @@ public abstract class GameApplication extends Application {
         profileSavables.add(inputManager);
         profileSavables.add(audioManager);
         profileSavables.add(sceneManager);
+        profileSavables.add(achievementManager);
     }
 
     /**
@@ -706,8 +710,16 @@ public abstract class GameApplication extends Application {
      *
      * @return notification manager
      */
-    public NotificationManager getNotificationManager() {
+    public final NotificationManager getNotificationManager() {
         return notificationManager;
+    }
+
+    /**
+     *
+     * @return achievement manager
+     */
+    public final AchievementManager getAchievementManager() {
+        return achievementManager;
     }
 
     /**

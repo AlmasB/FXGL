@@ -28,28 +28,78 @@ package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
+import com.almasb.fxgl.ui.NotificationManager;
+import com.almasb.fxgl.util.FXGLLogger;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.logging.Logger;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class AchievementManager implements UserProfileSavable {
 
-    private List<Achievement> achievements = new ArrayList<>();
+    private static final Logger log = FXGLLogger.getLogger("FXGL.AchievementManager");
+
+    private NotificationManager notificationManager;
+
+    private ObservableList<Achievement> achievements = FXCollections.observableArrayList();
+
+    private ChangeListener<Boolean> notifier = (observable, oldValue, newValue) -> {
+        if (newValue) {
+            notificationManager.pushNotification("You got an achievement! ");
+        }
+    };
+
+    public AchievementManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
+    }
 
     public void registerAchievement(Achievement a) {
+        long count = achievements.stream()
+                .map(Achievement::getName)
+                .filter(n -> n.equals(a.getName()))
+                .count();
+
+        if (count > 0)
+            throw new IllegalArgumentException("Achievement with name \"" + a.getName()
+                + "\" exists");
+
+
+        a.setOnAchieved(() -> {
+            notificationManager.pushNotification("You got an achievement! "
+                + a.getName());
+        });
         achievements.add(a);
+        log.finer("Registered new achievement \"" + a.getName() + "\"");
+    }
+
+    public ObservableList<Achievement> getAchievements() {
+        return FXCollections.unmodifiableObservableList(achievements);
     }
 
     @Override
     public void save(UserProfile profile) {
+        UserProfile.Bundle bundle = new UserProfile.Bundle("achievement");
 
+        achievements.forEach(a -> bundle.put(a.getName(), a.isAchieved()));
+
+        profile.putBundle(bundle);
     }
 
     @Override
     public void load(UserProfile profile) {
+        UserProfile.Bundle bundle = profile.getBundle("achievement");
 
+        achievements.forEach(a -> {
+            boolean achieved = bundle.get(a.getName());
+            if (achieved)
+                a.setAchieved();
+        });
     }
 }

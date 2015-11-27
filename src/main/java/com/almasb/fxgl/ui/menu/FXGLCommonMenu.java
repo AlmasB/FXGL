@@ -28,15 +28,19 @@ package com.almasb.fxgl.ui.menu;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.animation.FadeTransition;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -122,7 +126,26 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem itemCredits = new MenuItem("CREDITS");
         itemCredits.setMenuContent(createContentCredits());
 
-        return new MenuBox(200, itemCredits);
+        MenuItem itemAchievements = new MenuItem("ACHIEVEMENTS");
+        MenuContent content = new MenuContent();
+
+        app.getAchievementManager().getAchievements()
+                .addListener((ListChangeListener<? super Achievement>) c -> {
+            while (c.next()) {
+                for (Achievement a : c.getAddedSubList()) {
+                    CheckBox checkBox = new CheckBox();
+                    checkBox.setDisable(true);
+                    checkBox.selectedProperty().bind(a.conditionProperty());
+                    HBox box = new HBox(50, UIFactory.newText(a.getName()), checkBox);
+
+                    content.getChildren().add(box);
+                }
+            }
+        });
+
+        itemAchievements.setMenuContent(content);
+
+        return new MenuBox(200, itemCredits, itemAchievements);
     }
 
     private void switchMenuTo(MenuBox menu) {

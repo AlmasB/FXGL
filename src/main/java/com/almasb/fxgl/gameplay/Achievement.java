@@ -32,9 +32,10 @@ import javafx.beans.property.BooleanProperty;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Achievement {
+public final class Achievement {
     private String name;
-    public BooleanBinding condition;
+    private BooleanBinding condition;
+    private boolean achieved = false;
 
     public Achievement(String name, BooleanBinding condition) {
         this.name = name;
@@ -45,6 +46,27 @@ public class Achievement {
         }
     }
 
+    public BooleanBinding conditionProperty() {
+        return condition;
+    }
+
+    void setOnAchieved(Runnable onAchieved) {
+        condition.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                setAchieved();
+                onAchieved.run();
+            }
+        });
+    }
+
+    void setAchieved() {
+        achieved = true;
+        // TODO: set condition to true somehow
+    }
+
+    public boolean isAchieved() {
+        return achieved;
+    }
 
     public String getName() {
         return name;
