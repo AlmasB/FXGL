@@ -129,6 +129,8 @@ FXGL 0.1.8 supports:
 * Custom Global CSS to use with existing menus / UI elements
 * Saving / Loading System
 * User Profiles (Save/Load/Restore Game Settings)
+* Achievement System
+* In-game Notification System
 * Other minor game dev features
 
 ## Next Release Features
