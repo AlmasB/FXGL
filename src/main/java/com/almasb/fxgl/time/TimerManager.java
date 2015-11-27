@@ -48,7 +48,8 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class TimerManager implements WorldStateListener {
+public enum TimerManager implements WorldStateListener {
+    INSTANCE;
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.TimerManager");
 

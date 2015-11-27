@@ -336,7 +336,7 @@ public abstract class GameApplication extends Application {
         assetManager = AssetManager.INSTANCE;
         saveLoadManager = SaveLoadManager.INSTANCE;
 
-        timerManager = new TimerManager();
+        timerManager = TimerManager.INSTANCE;
 
         Scene scene = new Scene(new Pane());
         stage.setScene(scene);

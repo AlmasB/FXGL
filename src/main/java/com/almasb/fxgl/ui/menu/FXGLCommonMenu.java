@@ -127,41 +127,8 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem itemCredits = new MenuItem("CREDITS");
         itemCredits.setMenuContent(createContentCredits());
 
-        MenuItem itemAchievements = new MenuItem("ACHIEVEMENTS");
-        MenuContent content = new MenuContent();
-
-        for (Achievement a : app.getAchievementManager().getAchievements()) {
-            CheckBox checkBox = new CheckBox();
-            checkBox.setDisable(true);
-            checkBox.selectedProperty().bind(a.achievedProperty());
-
-            Text text = UIFactory.newText(a.getName());
-            Tooltip.install(text, new Tooltip(a.getDescription()));
-
-            HBox box = new HBox(50, text, checkBox);
-
-            content.getChildren().add(box);
-        }
-
-//        app.getAchievementManager().getAchievements()
-//                .addListener((ListChangeListener<? super Achievement>) c -> {
-//            while (c.next()) {
-//                for (Achievement a : c.getAddedSubList()) {
-//                    CheckBox checkBox = new CheckBox();
-//                    checkBox.setDisable(true);
-//                    checkBox.selectedProperty().bind(a.achievedProperty());
-//
-//                    Text text = UIFactory.newText(a.getName());
-//                    Tooltip.install(text, new Tooltip(a.getDescription()));
-//
-//                    HBox box = new HBox(50, text, checkBox);
-//
-//                    content.getChildren().add(box);
-//                }
-//            }
-//        });
-
-        itemAchievements.setMenuContent(content);
+        MenuItem itemAchievements = new MenuItem("TROPHIES");
+        itemAchievements.setMenuContent(createContentAchievements());
 
         return new MenuBox(200, itemCredits, itemAchievements);
     }

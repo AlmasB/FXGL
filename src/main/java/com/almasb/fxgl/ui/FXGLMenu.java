@@ -35,6 +35,7 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.InputBinding;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
@@ -266,6 +267,29 @@ public abstract class FXGLMenu extends FXGLScene {
                 .map(UIFactory::newText)
                 .collect(Collectors.toList())
                 .toArray(new Text[0]));
+    }
+
+    /**
+     *
+     * @return menu content containing a list of achievements
+     */
+    protected final MenuContent createContentAchievements() {
+        MenuContent content = new MenuContent();
+
+        for (Achievement a : app.getAchievementManager().getAchievements()) {
+            CheckBox checkBox = new CheckBox();
+            checkBox.setDisable(true);
+            checkBox.selectedProperty().bind(a.achievedProperty());
+
+            Text text = UIFactory.newText(a.getName());
+            Tooltip.install(text, new Tooltip(a.getDescription()));
+
+            HBox box = new HBox(50, text, checkBox);
+
+            content.getChildren().add(box);
+        }
+
+        return content;
     }
 
     /**

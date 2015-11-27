@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.ui;
 
+import com.almasb.fxgl.time.TimerManager;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
@@ -61,12 +62,7 @@ final class Notification extends Button {
                 (int)(bgColor.getGreen()*255),
                 (int)(bgColor.getBlue()*255)));
 
-        TranslateTransition delay = new TranslateTransition(Duration.seconds(3), this);
-        delay.setByX(1);
-        delay.setByY(0);
-
-        in.setOnFinished(e -> delay.play());
-        delay.setOnFinished(e -> out.play());
+        in.setOnFinished(e -> TimerManager.INSTANCE.runOnceAfter(this::hide, Duration.seconds(3)));
     }
 
     void show() {
