@@ -28,15 +28,12 @@ package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
-import com.almasb.fxgl.ui.NotificationManager;
 import com.almasb.fxgl.util.FXGLLogger;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 import java.util.logging.Logger;
 
 /**
@@ -46,18 +43,19 @@ public final class AchievementManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AchievementManager");
 
-    private NotificationManager notificationManager;
+    private List<AchievementListener> listeners = new ArrayList<>();
+
+    public void addAchievementListener(AchievementListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeAchievementListener(AchievementListener listener) {
+        listeners.remove(listener);
+    }
 
     private ObservableList<Achievement> achievements = FXCollections.observableArrayList();
 
-    private ChangeListener<Boolean> notifier = (observable, oldValue, newValue) -> {
-        if (newValue) {
-            notificationManager.pushNotification("You got an achievement! ");
-        }
-    };
-
-    public AchievementManager(NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
+    public AchievementManager() {
     }
 
     public void registerAchievement(Achievement a) {
@@ -72,8 +70,7 @@ public final class AchievementManager implements UserProfileSavable {
 
 
         a.setOnAchieved(() -> {
-            notificationManager.pushNotification("You got an achievement! "
-                + a.getName());
+            listeners.forEach(l -> l.onAchievementUnlocked(a));
         });
         achievements.add(a);
         log.finer("Registered new achievement \"" + a.getName() + "\"");

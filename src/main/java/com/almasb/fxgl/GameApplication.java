@@ -329,7 +329,7 @@ public abstract class GameApplication extends Application {
         sceneManager = new SceneManager(this, scene);
         inputManager = new InputManager(getSceneManager().getGameScene());
         notificationManager = new NotificationManager(getSceneManager().getGameScene().getRoot());
-        achievementManager = new AchievementManager(notificationManager);
+        achievementManager = new AchievementManager();
 
         physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty());
 
@@ -341,6 +341,10 @@ public abstract class GameApplication extends Application {
         profileSavables.add(audioManager);
         profileSavables.add(sceneManager);
         profileSavables.add(achievementManager);
+
+        notificationManager.addNotificationListener(audioManager);
+
+        achievementManager.addAchievementListener(notificationManager);
     }
 
     /**

@@ -26,18 +26,33 @@
 
 package com.almasb.fxgl.ui;
 
+import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.gameplay.AchievementListener;
+import com.almasb.fxgl.util.NotificationListener;
 import javafx.animation.ScaleTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class NotificationManager {
+public final class NotificationManager implements AchievementListener {
+
+    private List<NotificationListener> listeners = new ArrayList<>();
+
+    public void addNotificationListener(NotificationListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeNotificationListener(NotificationListener listener) {
+        listeners.remove(listener);
+    }
 
     private Queue<Notification> queue = new ArrayDeque<>();
 
@@ -118,6 +133,7 @@ public final class NotificationManager {
         showing = true;
         parent.getChildren().add(notification);
         notification.show();
+        listeners.forEach(l -> l.onNotificationReceived(notification.getText()));
     }
 
     private Notification createNotification(String text) {
@@ -166,5 +182,10 @@ public final class NotificationManager {
         out.setOnFinished(e -> popNotification(notification));
 
         return notification;
+    }
+
+    @Override
+    public void onAchievementUnlocked(Achievement achievement) {
+        pushNotification("You got an achievement! " + achievement.getName());
     }
 }
