@@ -234,6 +234,10 @@ public class Texture extends ImageView {
         return new Texture(image);
     }
 
+    /**
+     *
+     * @return grayscale version of the texture
+     */
     public final Texture toGrayscale() {
         int w = (int)getImage().getWidth();
         int h = (int)getImage().getHeight();

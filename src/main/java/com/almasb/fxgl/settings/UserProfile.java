@@ -25,11 +25,14 @@
  */
 package com.almasb.fxgl.settings;
 
+import com.almasb.fxgl.util.FXGLLogger;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * User profile can store various preference settings
@@ -38,6 +41,8 @@ import java.util.Map;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class UserProfile implements Serializable {
+
+    private static final Logger log = FXGLLogger.getLogger("FXGL.UserProfile");
 
     private static final long serialVersionUID = 1L;
 
@@ -120,6 +125,14 @@ public class UserProfile implements Serializable {
 
         public <T> T get(String key) {
             return (T)data.get(name + "." + key);
+        }
+
+        /**
+         * Logs contents of the bundle using FXGL log system.
+         */
+        public void log() {
+            log.finer("Logging bundle: " + name);
+            data.forEach((k,v) -> log.finer(k + "=" + v));
         }
     }
 }

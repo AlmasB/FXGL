@@ -199,6 +199,20 @@ public abstract class GameApplication extends Application {
     protected abstract void initSettings(GameSettings settings);
 
     /**
+     * Override to register your achievements.
+     *
+     * <pre>
+     * Example:
+     *
+     * AchievementManager am = getAchievementManager();
+     * am.registerAchievement(new Achievement("Score Master", "Score 20000 points"));
+     * </pre>
+     */
+    protected void initAchievements() {
+
+    }
+
+    /**
      * Initiliaze input, i.e.
      * bind key presses / key typed, bind mouse.
      * <p>
@@ -417,6 +431,7 @@ public abstract class GameApplication extends Application {
         log.info("Application Mode: " + settings.getApplicationMode());
 
         initManagers(stage);
+        initAchievements();
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         initInput();

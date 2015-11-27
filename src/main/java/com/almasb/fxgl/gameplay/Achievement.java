@@ -26,49 +26,96 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+
+import java.util.logging.Logger;
 
 /**
+ * A game achievement.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class Achievement {
+    private static final Logger log = FXGLLogger.getLogger("FXGL.Achievement");
+
     private String name;
-    private BooleanBinding condition;
-    private boolean achieved = false;
+    private String description;
 
-    public Achievement(String name, BooleanBinding condition) {
-        this.name = name;
-        this.condition = condition;
+    private Runnable onAchieved;
 
-        if (condition.get()) {
-            throw new IllegalArgumentException("Condition must not be true");
+    private BooleanProperty achieved = new SimpleBooleanProperty(false);
+    private ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
+        if (newValue) {
+            setAchieved();
+            if (onAchieved != null)
+                onAchieved.run();
+            else
+                log.warning("onAchieved was not set. Unmanaged achievement!");
         }
-    }
+    };
 
-    public BooleanBinding conditionProperty() {
-        return condition;
+    /**
+     * Constructs a new achievement with given name and description.
+     *
+     * @param name the name
+     * @param description the description on how to unlock achievement
+     */
+    public Achievement(String name, String description) {
+        this.name = name;
+        this.description = description;
+        achieved.addListener(listener);
     }
 
     void setOnAchieved(Runnable onAchieved) {
-        condition.addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                setAchieved();
-                onAchieved.run();
-            }
-        });
+        this.onAchieved = onAchieved;
     }
 
     void setAchieved() {
-        achieved = true;
-        // TODO: set condition to true somehow
+        achieved.removeListener(listener);
+        achieved.unbind();
+        achieved.set(true);
     }
 
+    /**
+     *
+     * @return true iff the achievement has been unlocked
+     */
     public boolean isAchieved() {
+        return achievedProperty().get();
+    }
+
+    /**
+     *
+     * @return achieved boolean property
+     */
+    public BooleanProperty achievedProperty() {
         return achieved;
     }
 
+    /**
+     *
+     * @return achievement name
+     */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns description. This usually contains info on how
+     * to unlock the achievement.
+     *
+     * @return achievement description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return name + ":achieved(" + isAchieved() + ")";
     }
 }

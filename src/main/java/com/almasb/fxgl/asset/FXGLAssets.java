@@ -27,6 +27,8 @@
 package com.almasb.fxgl.asset;
 
 /**
+ * Stores internal assets, i.e. provided by FXGL.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGLAssets {

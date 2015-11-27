@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
+ * Responsible for registering and updating achievements.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class AchievementManager implements UserProfileSavable {
@@ -55,9 +57,13 @@ public final class AchievementManager implements UserProfileSavable {
 
     private ObservableList<Achievement> achievements = FXCollections.observableArrayList();
 
-    public AchievementManager() {
-    }
-
+    /**
+     * Registers achievement in the system.
+     * Note: this method can only be called from initAchievements() to function
+     * properly.
+     *
+     * @param a the achievement
+     */
     public void registerAchievement(Achievement a) {
         long count = achievements.stream()
                 .map(Achievement::getName)
@@ -76,22 +82,47 @@ public final class AchievementManager implements UserProfileSavable {
         log.finer("Registered new achievement \"" + a.getName() + "\"");
     }
 
+    /**
+     *
+     * @param name achievement name
+     * @return registered achievement
+     * @throws IllegalArgumentException if achievement is not registered
+     */
+    public Achievement getAchievementByName(String name) {
+        for (Achievement a : achievements)
+            if (a.getName().equals(name))
+                return a;
+
+        throw new IllegalArgumentException("Achievement with name \"" + name
+            + "\" is not registered!");
+    }
+
+    /**
+     *
+     * @return unmodifiable list of achievements
+     */
     public ObservableList<Achievement> getAchievements() {
         return FXCollections.unmodifiableObservableList(achievements);
     }
 
     @Override
     public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
         UserProfile.Bundle bundle = new UserProfile.Bundle("achievement");
 
         achievements.forEach(a -> bundle.put(a.getName(), a.isAchieved()));
+        bundle.log();
 
         profile.putBundle(bundle);
     }
 
     @Override
     public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+
         UserProfile.Bundle bundle = profile.getBundle("achievement");
+        bundle.log();
 
         achievements.forEach(a -> {
             boolean achieved = bundle.get(a.getName());

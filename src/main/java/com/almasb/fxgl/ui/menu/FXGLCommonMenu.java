@@ -40,6 +40,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -129,19 +130,36 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem itemAchievements = new MenuItem("ACHIEVEMENTS");
         MenuContent content = new MenuContent();
 
-        app.getAchievementManager().getAchievements()
-                .addListener((ListChangeListener<? super Achievement>) c -> {
-            while (c.next()) {
-                for (Achievement a : c.getAddedSubList()) {
-                    CheckBox checkBox = new CheckBox();
-                    checkBox.setDisable(true);
-                    checkBox.selectedProperty().bind(a.conditionProperty());
-                    HBox box = new HBox(50, UIFactory.newText(a.getName()), checkBox);
+        for (Achievement a : app.getAchievementManager().getAchievements()) {
+            CheckBox checkBox = new CheckBox();
+            checkBox.setDisable(true);
+            checkBox.selectedProperty().bind(a.achievedProperty());
 
-                    content.getChildren().add(box);
-                }
-            }
-        });
+            Text text = UIFactory.newText(a.getName());
+            Tooltip.install(text, new Tooltip(a.getDescription()));
+
+            HBox box = new HBox(50, text, checkBox);
+
+            content.getChildren().add(box);
+        }
+
+//        app.getAchievementManager().getAchievements()
+//                .addListener((ListChangeListener<? super Achievement>) c -> {
+//            while (c.next()) {
+//                for (Achievement a : c.getAddedSubList()) {
+//                    CheckBox checkBox = new CheckBox();
+//                    checkBox.setDisable(true);
+//                    checkBox.selectedProperty().bind(a.achievedProperty());
+//
+//                    Text text = UIFactory.newText(a.getName());
+//                    Tooltip.install(text, new Tooltip(a.getDescription()));
+//
+//                    HBox box = new HBox(50, text, checkBox);
+//
+//                    content.getChildren().add(box);
+//                }
+//            }
+//        });
 
         itemAchievements.setMenuContent(content);
 
