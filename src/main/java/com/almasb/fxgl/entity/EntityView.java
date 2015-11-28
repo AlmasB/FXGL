@@ -25,11 +25,15 @@
  */
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 
 import java.util.logging.Logger;
@@ -43,6 +47,14 @@ public class EntityView extends Parent {
 
     protected static final Logger log = FXGLLogger.getLogger("FXGL.EntityView");
 
+    private static boolean showBBox = false;
+    private static Color showBBoxColor = Color.BLACK;
+
+    public static final void turnOnDebugBBox(Color color) {
+        showBBox = true;
+        showBBoxColor = color;
+    }
+
     private Entity entity;
 
     /**
@@ -55,14 +67,20 @@ public class EntityView extends Parent {
         this.entity = entity;
         addNode(graphics);
 
-        // TODO: add as debug
-        // fix bounds computation as scaling isnt taken into account
-//        Rectangle bg = new Rectangle(graphics.getLayoutBounds().getWidth(),
-//                graphics.getLayoutBounds().getHeight());
-//        bg.setFill(null);
-//        bg.setStroke(Color.BLACK);
-//
-//        addNode(bg);
+        if (showBBox) {
+            Rectangle debugBBox = new Rectangle(entity.getWidth(), entity.getHeight());
+            debugBBox.setFill(null);
+            debugBBox.setStroke(showBBoxColor);
+
+            addNode(debugBBox);
+
+            entity.hitBoxesProperty().addListener((ListChangeListener<? super HitBox>) c -> {
+                while (c.next()) {
+                    debugBBox.setWidth(entity.getWidth());
+                    debugBBox.setHeight(entity.getHeight());
+                }
+            });
+        }
 
         initAsSceneView();
 
@@ -70,12 +88,6 @@ public class EntityView extends Parent {
             if (!isActive)
                 removeFromScene();
         }));
-
-//        graphics.layoutBoundsProperty().addListener((obs, old, newBounds) -> {
-//            System.out.println(newBounds);
-//            bg.setWidth(newBounds.getWidth());
-//            bg.setHeight(newBounds.getHeight());
-//        });
     }
 
     /**

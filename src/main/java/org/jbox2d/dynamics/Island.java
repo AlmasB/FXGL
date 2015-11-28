@@ -27,6 +27,7 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Settings;
+import org.jbox2d.common.Sweep;
 import org.jbox2d.common.Timer;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -245,14 +246,15 @@ public class Island {
     // Integrate velocities and apply damping. Initialize the body state.
     for (int i = 0; i < m_bodyCount; ++i) {
       final Body b = m_bodies[i];
-      final Vec2 c = b.m_sweep.c;
-      float a = b.m_sweep.a;
+      final Sweep bm_sweep = b.m_sweep;
+      final Vec2 c = bm_sweep.c;
+      float a = bm_sweep.a;
       final Vec2 v = b.m_linearVelocity;
       float w = b.m_angularVelocity;
 
       // Store positions for continuous collision.
-      b.m_sweep.c0.set(b.m_sweep.c);
-      b.m_sweep.a0 = b.m_sweep.a;
+      bm_sweep.c0.set(bm_sweep.c);
+      bm_sweep.a0 = bm_sweep.a;
 
       if (b.m_type == BodyType.DYNAMIC) {
         // Integrate velocities.
@@ -267,12 +269,11 @@ public class Island {
         // Time step: v(t + dt) = v0 * exp(-c * (t + dt)) = v0 * exp(-c * t) * exp(-c * dt) = v *
         // exp(-c * dt)
         // v2 = exp(-c * dt) * v1
-        // Taylor expansion:
-        // v2 = (1.0f - c * dt) * v1
-        float a1 = MathUtils.clamp(1.0f - h * b.m_linearDamping, 0.0f, 1.0f);
-        v.x *= a1;
-        v.y *= a1;
-        w *= MathUtils.clamp(1.0f - h * b.m_angularDamping, 0.0f, 1.0f);
+        // Pade approximation:
+        // v2 = v1 * 1 / (1 + c * dt)
+        v.x *= 1.0f / (1.0f + h * b.m_linearDamping);
+        v.y *= 1.0f / (1.0f + h * b.m_linearDamping);
+        w *= 1.0f / (1.0f + h * b.m_angularDamping);
       }
 
       m_positions[i].c.x = c.x;
@@ -310,7 +311,7 @@ public class Island {
       m_joints[i].initVelocityConstraints(solverData);
     }
 
-    profile.solveInit = timer.getMilliseconds();
+    profile.solveInit.accum(timer.getMilliseconds());
 
     // Solve velocity constraints
     timer.reset();
@@ -325,7 +326,7 @@ public class Island {
 
     // Store impulses for warm starting
     contactSolver.storeImpulses();
-    profile.solveVelocity = timer.getMilliseconds();
+    profile.solveVelocity.accum(timer.getMilliseconds());
 
     // Integrate positions
     for (int i = 0; i < m_bodyCount; ++i) {
@@ -391,7 +392,7 @@ public class Island {
       body.synchronizeTransform();
     }
 
-    profile.solvePosition = timer.getMilliseconds();
+    profile.solvePosition.accum(timer.getMilliseconds());
 
     report(contactSolver.m_velocityConstraints);
 
@@ -523,8 +524,9 @@ public class Island {
       float translationx = v.x * h;
       float translationy = v.y * h;
       if (translationx * translationx + translationy * translationy > Settings.maxTranslationSquared) {
-        float ratio = Settings.maxTranslation
-            / MathUtils.sqrt(translationx * translationx + translationy * translationy);
+        float ratio =
+            Settings.maxTranslation
+                / MathUtils.sqrt(translationx * translationx + translationy * translationy);
         v.mulLocal(ratio);
       }
 

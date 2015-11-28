@@ -4,16 +4,17 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
     <description>Simple JavaFX Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/0.1.7</url>
+    <url>https://jitpack.io/#AlmasB/FXGL/0.1.8</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.version>1.8</source.version>
+        <jbox.version>2.3.0</jbox.version>
 
         <!-- plugins -->
         <maven.compiler.version>3.3</maven.compiler.version>

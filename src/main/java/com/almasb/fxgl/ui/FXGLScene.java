@@ -37,6 +37,9 @@ import javafx.scene.ImageCursor;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 
+/**
+ * Base class for all FXGL scenes.
+ */
 public abstract class FXGLScene {
     private Pane root;
     private Group eventHandlers = new Group();
@@ -44,22 +47,42 @@ public abstract class FXGLScene {
 
     public FXGLScene(SceneSettings settings) {
         this.settings = settings;
-
         root = new Pane();
         root.setBackground(null);
-        root.setPrefSize(settings.getScaledWidth(), settings.getScaledHeight());
-        root.getTransforms().setAll(new Scale(settings.getScaleRatio(), settings.getScaleRatio()));
-        root.getStylesheets().add(settings.getCSS());
+
+        root.prefWidthProperty().bind(settings.scaledWidthProperty());
+        root.prefHeightProperty().bind(settings.scaledHeightProperty());
+
+        Scale scale = new Scale();
+        scale.xProperty().bind(settings.scaleRatioProperty());
+        scale.yProperty().bind(settings.scaleRatioProperty());
+        root.getTransforms().setAll(scale);
+
+        String css = settings.getCSS();
+        if (!css.isEmpty())
+            root.getStylesheets().add(css);
     }
 
-    public Pane getRoot() {
+    /**
+     *
+     * @return root node of the scene
+     */
+    public final Pane getRoot() {
         return root;
     }
 
-    public double getWidth() {
+    /**
+     *
+     * @return target width
+     */
+    public final double getWidth() {
         return settings.getTargetWidth();
     }
 
+    /**
+     *
+     * @return target height
+     */
     public final double getHeight() {
         return settings.getTargetHeight();
     }
@@ -68,17 +91,22 @@ public abstract class FXGLScene {
         return settings.getScaleRatio();
     }
 
-    public <T extends Event> void addEventHandler(EventType<T> eventType,
+    public final <T extends Event> void addEventHandler(EventType<T> eventType,
                                                   EventHandler<? super T> eventHandler) {
         eventHandlers.addEventHandler(eventType, eventHandler);
     }
 
-    public <T extends Event> void removeEventHandler(EventType<T> eventType,
+    public final <T extends Event> void removeEventHandler(EventType<T> eventType,
                                                      EventHandler<? super T> eventHandler) {
         eventHandlers.removeEventHandler(eventType, eventHandler);
     }
 
-    public void fireEvent(Event event) {
+    /**
+     * Fire JavaFX event on this FXGL scene.
+     *
+     * @param event the JavaFX event
+     */
+    public final void fireEvent(Event event) {
         eventHandlers.fireEvent(event);
     }
 
@@ -90,7 +118,7 @@ public abstract class FXGLScene {
      * @param imageName name of image file
      * @param hotspot hotspot location
      */
-    public void setCursor(String imageName, Point2D hotspot) {
+    public final void setCursor(String imageName, Point2D hotspot) {
         root.setCursor(new ImageCursor(AssetManager.INSTANCE.loadCursorImage(imageName),
                 hotspot.getX(), hotspot.getY()));
     }

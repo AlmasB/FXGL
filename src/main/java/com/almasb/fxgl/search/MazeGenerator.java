@@ -64,7 +64,7 @@ public final class MazeGenerator {
 
         for (int i = 0; i < y; ++i) {
             for (int j = 0; j < x; ++j) {
-                MazeCell cell = new MazeCell(j, i, Math.abs(x - 1 - j) + Math.abs(y - 1 - i));
+                MazeCell cell = new MazeCell(j, i /*Math.abs(x - 1 - j) + Math.abs(y - 1 - i)*/);
                 if ((maze[j][i] & 1) == 0) cell.topWall = true;
                 if ((maze[j][i] & 8) == 0) cell.leftWall = true;
 
@@ -82,7 +82,6 @@ public final class MazeGenerator {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -107,7 +106,6 @@ public final class MazeGenerator {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -213,8 +211,8 @@ public final class MazeGenerator {
     }
 
     public static class MazeCell extends AStarNode {
-        public MazeCell(int x, int y, int hCost) {
-            super(x, y, hCost, 0);
+        public MazeCell(int x, int y) {
+            super(x, y, NodeState.WALKABLE);
         }
 
         public boolean topWall = false, leftWall = false;

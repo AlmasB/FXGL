@@ -35,62 +35,62 @@ public class AStarNode {
     private AStarNode parent;
     private int x, y;
     private int gCost, hCost;
-    private int nodeValue;
+    private NodeState state;
 
-    public AStarNode(int x, int y, int hCost, int value) {
+    /**
+     * Constructs A* node with x, y values and state.
+     *
+     * @param x x value
+     * @param y y value
+     * @param state initial state
+     */
+    public AStarNode(int x, int y, NodeState state) {
         this.x = x;
         this.y = y;
-        this.hCost = hCost;
-        this.nodeValue = value;
+        this.state = state;
     }
 
-    public void setParent(AStarNode parent) {
+    public final void setParent(AStarNode parent) {
         this.parent = parent;
     }
 
-    public AStarNode getParent() {
+    public final AStarNode getParent() {
         return parent;
     }
 
-    public void setHCost(int hCost) {
+    public final void setHCost(int hCost) {
         this.hCost = hCost;
     }
 
-    public int getHCost() {
+    public final int getHCost() {
         return hCost;
     }
 
-    void setGCost(int gCost) {
+    final void setGCost(int gCost) {
         this.gCost = gCost;
     }
 
-    public int getGCost() {
+    public final int getGCost() {
         return gCost;
     }
 
-    public int getX() {
+    public final int getX() {
         return x;
     }
 
-    public int getY() {
+    public final int getY() {
         return y;
     }
 
-    public void setNodeValue(int nodeValue) {
-        this.nodeValue = nodeValue;
+    public final void setState(NodeState state) {
+        this.state = state;
     }
 
-    public int getNodeValue() {
-        return nodeValue;
+    public final NodeState getState() {
+        return state;
     }
 
-    public int getFCost() {
+    public final int getFCost() {
         return gCost + hCost;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + x + "," + y + ")" + " G:" + gCost + " H:" + hCost + "\n"
-                + " NodeValue:" + nodeValue + " Parent:" + (parent == null ? "null" : "(" + parent.x + "," + parent.y + ")");
     }
 }

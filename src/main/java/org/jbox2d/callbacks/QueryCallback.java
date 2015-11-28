@@ -27,11 +27,11 @@
 package org.jbox2d.callbacks;
 
 import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.World;
 
-// update to rev 100
 /**
  * Callback class for AABB queries.
- * See World.query
+ * See {@link World#queryAABB(QueryCallback, org.jbox2d.collision.AABB)}.
  * @author Daniel Murphy
  */
 public interface QueryCallback {

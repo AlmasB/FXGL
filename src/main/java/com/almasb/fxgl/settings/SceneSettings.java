@@ -25,46 +25,149 @@
  */
 package com.almasb.fxgl.settings;
 
+import com.almasb.fxgl.util.FXGLLogger;
+import javafx.beans.NamedArg;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Bounds;
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
+
+import java.util.logging.Logger;
+
 public final class SceneSettings {
-    private final double targetWidth;
-    private final double targetHeight;
-    private final double scaledWidth;
-    private final double scaledHeight;
-    private final double scaleRatio;
+    /**
+     * The logger
+     */
+    private static final Logger log = FXGLLogger.getLogger("FXGL.SceneSettings");
+
+    private final DoubleProperty targetWidth;
+    private final DoubleProperty targetHeight;
+    private final DoubleProperty scaledWidth;
+    private final DoubleProperty scaledHeight;
+    private final DoubleProperty scaleRatio;
     private final String css;
 
+    private double appW, appH;
+
+    /**
+     * Screen bounds
+     */
+    private Rectangle2D bounds;
+
     public SceneSettings(double width, double height,
-                         double scaledWidth, double scaledHeight,
+                         Rectangle2D bounds,
                          String css) {
-        this.targetWidth = width;
-        this.targetHeight = height;
-        this.scaledWidth = scaledWidth;
-        this.scaledHeight = scaledHeight;
-        this.scaleRatio = scaledWidth / width;
+        appW = width;
+        appH = height;
+        this.targetWidth = new SimpleDoubleProperty(width);
+        this.targetHeight = new SimpleDoubleProperty(height);
         this.css = css;
+        this.bounds = bounds;
+        this.scaledWidth = new SimpleDoubleProperty();
+        this.scaledHeight = new SimpleDoubleProperty();
+        this.scaleRatio = new SimpleDoubleProperty();
+
+        computeScaledSize();
     }
 
-    public final double getTargetWidth() {
+    /**
+     * Computes scaled size of the output based on screen and target
+     * resolutions.
+     */
+    private void computeScaledSize() {
+        double newW = getTargetWidth();
+        double newH = getTargetHeight();
+
+        if (newW > bounds.getWidth() || newH > bounds.getHeight()) {
+            log.finer("App size > screen size");
+
+            double ratio = newW / newH;
+
+            for (int newWidth = (int) bounds.getWidth(); newWidth > 0; newWidth--) {
+                if (newWidth / ratio <= bounds.getHeight()) {
+                    newW = newWidth;
+                    newH = newWidth / ratio;
+                    break;
+                }
+            }
+        }
+
+        scaledWidth.set(newW);
+        scaledHeight.set(newH);
+        scaleRatio.set(newW / appW);
+
+        log.finer("Target size: " + getTargetWidth() + "x" + getTargetHeight() + "@" + 1.0);
+        log.finer("New size:    " + newW  + "x" + newH   + "@" + getScaleRatio());
+    }
+
+    public void setNewTargetSize(double w, double h) {
+        targetWidth.set(w);
+        targetHeight.set(h);
+        computeScaledSize();
+    }
+
+    public DoubleProperty targetWidthProperty() {
         return targetWidth;
     }
 
-    public final double getTargetHeight() {
+    public DoubleProperty targetHeightProperty() {
         return targetHeight;
     }
 
-    public final double getScaledWidth() {
+    public DoubleProperty scaledWidthProperty() {
         return scaledWidth;
     }
 
-    public final double getScaledHeight() {
+    public DoubleProperty scaledHeightProperty() {
         return scaledHeight;
     }
 
-    public final double getScaleRatio() {
+    public DoubleProperty scaleRatioProperty() {
         return scaleRatio;
+    }
+
+    public final double getTargetWidth() {
+        return targetWidth.get();
+    }
+
+    public final double getTargetHeight() {
+        return targetHeight.get();
+    }
+
+    public final double getScaledWidth() {
+        return scaledWidth.get();
+    }
+
+    public final double getScaledHeight() {
+        return scaledHeight.get();
+    }
+
+    public final double getScaleRatio() {
+        return scaleRatio.get();
     }
 
     public final String getCSS() {
         return css;
+    }
+
+    public static final class SceneDimension extends Dimension2D {
+
+        /**
+         * Constructs a <code>SceneDimension</code> with the specified width and
+         * height.
+         *
+         * @param width  the width
+         * @param height the height
+         */
+        public SceneDimension(@NamedArg("width") double width, @NamedArg("height") double height) {
+            super(width, height);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%.0fx%.0f", getWidth(), getHeight());
+        }
     }
 }

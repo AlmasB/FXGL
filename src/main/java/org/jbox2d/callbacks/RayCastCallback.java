@@ -28,11 +28,11 @@ package org.jbox2d.callbacks;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.World;
 
-// updated to rev 100;
 /**
  * Callback class for ray casts.
- * See World.rayCast
+ * See {@link World#raycast(RayCastCallback, Vec2, Vec2)}
  * @author Daniel Murphy
  */
 public interface RayCastCallback {
@@ -49,11 +49,7 @@ public interface RayCastCallback {
 	 * @param normal the normal vector at the point of intersection
 	 * @return -1 to filter, 0 to terminate, fraction to clip the ray for
 	 * closest hit, 1 to continue
-	 * @param fixture
-	 * @param point
-	 * @param normal
 	 * @param fraction
-	 * @return
 	 */
 	public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction);
 }

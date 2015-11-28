@@ -31,7 +31,7 @@ final class CollisionPair extends Pair<Entity> {
 
     private CollisionHandler handler;
 
-    public CollisionPair(Entity a, Entity b, CollisionHandler handler) {
+    CollisionPair(Entity a, Entity b, CollisionHandler handler) {
         // we check the order here so that we won't have to do that every time
         // when triggering collision between A and B
         // this ensures that client gets back entities in the same order
@@ -40,7 +40,7 @@ final class CollisionPair extends Pair<Entity> {
         this.handler = handler;
     }
 
-    public CollisionHandler getHandler() {
+    CollisionHandler getHandler() {
         return handler;
     }
 }

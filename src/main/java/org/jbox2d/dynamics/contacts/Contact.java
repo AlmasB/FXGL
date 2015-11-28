@@ -49,7 +49,7 @@ public abstract class Contact {
   // Used when crawling contact graph when forming islands.
   public static final int ISLAND_FLAG = 0x0001;
   // Set when the shapes are touching.
-  public static final int TOUCHING_FLAG = 0x0002; // NO_UCD
+  public static final int TOUCHING_FLAG = 0x0002;
   // This contact can be disabled (by user)
   public static final int ENABLED_FLAG = 0x0004;
   // This contact needs filtering because a fixture filter was changed.
@@ -98,7 +98,7 @@ public abstract class Contact {
 
   /** initialization for pooling */
   public void init(Fixture fA, int indexA, Fixture fB, int indexB) {
-    m_flags = 0;
+    m_flags = ENABLED_FLAG;
 
     m_fixtureA = fA;
     m_fixtureB = fB;

@@ -38,7 +38,7 @@ import com.almasb.fxgl.search.MazeGenerator.MazeCell;
 public final class MazeSolver {
 
     public List<MazeCell> getPath(MazeCell[][] grid, MazeCell start, MazeCell target) {
-        if (target.getNodeValue() == 1) // the target is an unwalkable node
+        if (target.getState() == NodeState.NOT_WALKABLE) // the target is an unwalkable node
             return new ArrayList<>();  // return empty path
 
         List<MazeCell> open = new ArrayList<>();

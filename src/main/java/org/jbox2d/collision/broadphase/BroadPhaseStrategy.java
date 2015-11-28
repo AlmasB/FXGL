@@ -32,7 +32,7 @@ public interface BroadPhaseStrategy {
    * @return true if the proxy was re-inserted.
    */
   boolean moveProxy(int proxyId, AABB aabb, Vec2 displacement);
-
+  
   Object getUserData(int proxyId);
 
   AABB getFatAABB(int proxyId);
@@ -84,8 +84,5 @@ public interface BroadPhaseStrategy {
    */
   float getAreaRatio();
 
-  int getInsertionCount();
-
   void drawTree(DebugDraw draw);
-
 }

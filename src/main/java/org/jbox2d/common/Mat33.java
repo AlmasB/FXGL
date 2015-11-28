@@ -44,6 +44,13 @@ public class Mat33 implements Serializable {
     ez = new Vec3();
   }
 
+  public Mat33(float exx, float exy, float exz, float eyx, float eyy, float eyz, float ezx,
+      float ezy, float ezz) {
+    ex = new Vec3(exx, exy, exz);
+    ey = new Vec3(eyx, eyy, eyz);
+    ez = new Vec3(ezx, ezy, ezz);
+  }
+
   public Mat33(Vec3 argCol1, Vec3 argCol2, Vec3 argCol3) {
     ex = argCol1.clone();
     ey = argCol2.clone();
@@ -54,6 +61,46 @@ public class Mat33 implements Serializable {
     ex.setZero();
     ey.setZero();
     ez.setZero();
+  }
+
+  public void set(float exx, float exy, float exz, float eyx, float eyy, float eyz, float ezx,
+      float ezy, float ezz) {
+    ex.x = exx;
+    ex.y = exy;
+    ex.z = exz;
+    ey.x = eyx;
+    ey.y = eyy;
+    ey.z = eyz;
+    ez.x = eyx;
+    ez.y = eyy;
+    ez.z = eyz;
+  }
+
+  public void set(Mat33 mat) {
+    Vec3 vec = mat.ex;
+    ex.x = vec.x;
+    ex.y = vec.y;
+    ex.z = vec.z;
+    Vec3 vec1 = mat.ey;
+    ey.x = vec1.x;
+    ey.y = vec1.y;
+    ey.z = vec1.z;
+    Vec3 vec2 = mat.ez;
+    ez.x = vec2.x;
+    ez.y = vec2.y;
+    ez.z = vec2.z;
+  }
+
+  public void setIdentity() {
+    ex.x = (float) 1;
+    ex.y = (float) 0;
+    ex.z = (float) 0;
+    ey.x = (float) 0;
+    ey.y = (float) 1;
+    ey.z = (float) 0;
+    ez.x = (float) 0;
+    ez.y = (float) 0;
+    ez.z = (float) 1;
   }
 
   // / Multiply a matrix times a vector.
@@ -205,6 +252,12 @@ public class Mat33 implements Serializable {
     M.ez.x = M.ex.z;
     M.ez.y = M.ey.z;
     M.ez.z = det * (a11 * a22 - a12 * a12);
+  }
+
+
+  public final static void setScaleTransform(float scale, Mat33 out) {
+    out.ex.x = scale;
+    out.ey.y = scale;
   }
 
   @Override

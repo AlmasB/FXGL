@@ -196,11 +196,11 @@ public class Vec2 implements Serializable {
     out.y = MathUtils.abs(a.y);
   }
 
-  public final static float dot(Vec2 a, Vec2 b) {
+  public final static float dot(final Vec2 a, final Vec2 b) {
     return a.x * b.x + a.y * b.y;
   }
 
-  public final static float cross(Vec2 a, Vec2 b) {
+  public final static float cross(final Vec2 a, final Vec2 b) {
     return a.x * b.y - a.y * b.x;
   }
 

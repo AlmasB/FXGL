@@ -26,6 +26,8 @@
 package com.almasb.fxgl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,19 +36,11 @@ import com.almasb.fxgl.asset.AudioManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
+import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.physics.PhysicsManager;
-import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.settings.*;
 import com.almasb.fxgl.time.TimerManager;
-import com.almasb.fxgl.ui.FXGLGameMenu;
-import com.almasb.fxgl.ui.FXGLIntroScene;
-import com.almasb.fxgl.ui.FXGLMainMenu;
-import com.almasb.fxgl.ui.FXGLMenu;
-import com.almasb.fxgl.ui.IntroFactory;
-import com.almasb.fxgl.ui.IntroScene;
-import com.almasb.fxgl.ui.MenuFactory;
-import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -194,6 +188,8 @@ public abstract class GameApplication extends Application {
     private TimerManager timerManager;
     private QTEManager qteManager;
     private SaveLoadManager saveLoadManager;
+    private NotificationManager notificationManager;
+    private AchievementManager achievementManager;
 
     /**
      * Initialize game settings.
@@ -201,6 +197,20 @@ public abstract class GameApplication extends Application {
      * @param settings game settings
      */
     protected abstract void initSettings(GameSettings settings);
+
+    /**
+     * Override to register your achievements.
+     *
+     * <pre>
+     * Example:
+     *
+     * AchievementManager am = getAchievementManager();
+     * am.registerAchievement(new Achievement("Score Master", "Score 20000 points"));
+     * </pre>
+     */
+    protected void initAchievements() {
+
+    }
 
     /**
      * Initiliaze input, i.e.
@@ -241,17 +251,7 @@ public abstract class GameApplication extends Application {
      * @return menu factory for creating main and game menus
      */
     protected MenuFactory initMenuFactory() {
-        return new MenuFactory() {
-            @Override
-            public FXGLMenu newMainMenu(GameApplication app, SceneSettings settings) {
-                return new FXGLMainMenu(app, settings);
-            }
-
-            @Override
-            public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
-                return new FXGLGameMenu(app, settings);
-            }
-        };
+        return getSettings().getMenuStyle().getFactory();
     }
 
     /**
@@ -336,17 +336,29 @@ public abstract class GameApplication extends Application {
         assetManager = AssetManager.INSTANCE;
         saveLoadManager = SaveLoadManager.INSTANCE;
 
-        timerManager = new TimerManager();
+        timerManager = TimerManager.INSTANCE;
 
         Scene scene = new Scene(new Pane());
         stage.setScene(scene);
         sceneManager = new SceneManager(this, scene);
         inputManager = new InputManager(getSceneManager().getGameScene());
+        notificationManager = new NotificationManager(getSceneManager().getGameScene().getRoot());
+        achievementManager = new AchievementManager();
 
         physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty());
 
         audioManager = new AudioManager();
         qteManager = new QTEManager();
+
+        // profile data listeners
+        profileSavables.add(inputManager);
+        profileSavables.add(audioManager);
+        profileSavables.add(sceneManager);
+        profileSavables.add(achievementManager);
+
+        notificationManager.addNotificationListener(audioManager);
+
+        achievementManager.addAchievementListener(notificationManager);
     }
 
     /**
@@ -419,11 +431,15 @@ public abstract class GameApplication extends Application {
         log.info("Application Mode: " + settings.getApplicationMode());
 
         initManagers(stage);
+        initAchievements();
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         initInput();
         initWorld();
         initStage(stage);
+
+        defaultProfile = createProfile();
+        SaveLoadManager.INSTANCE.loadProfile().ifPresent(this::loadFromProfile);
 
         stage.show();
 
@@ -455,13 +471,20 @@ public abstract class GameApplication extends Application {
 
     /**
      * Initialize user application.
+     *
+     * @param data the data to load from, null if new game
      */
-    private void initApp() {
+    private void initApp(Serializable data) {
         log.finer("Initializing app");
 
         try {
             initAssets();
-            initGame();
+
+            if (data == null)
+                initGame();
+            else
+                loadState(data);
+
             initPhysics();
             initUI();
 
@@ -478,12 +501,23 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * (Re-)initializes the user application, resets the managers
-     * and starts the game.
+     * (Re-)initializes the user application as new and starts the game.
      */
     final void startNewGame() {
         log.finer("Starting new game");
-        initApp();
+        initApp(null);
+        timer.start();
+    }
+
+    /**
+     * (Re-)initializes the user application from the given data file and starts the game.
+     *
+     * @param data save data to load from
+     */
+    final void startLoadedGame(Serializable data) {
+        log.finer("Starting loaded game");
+        reset();
+        initApp(data);
         timer.start();
     }
 
@@ -523,6 +557,43 @@ public abstract class GameApplication extends Application {
         FXGLLogger.close();
         Platform.exit();
         System.exit(0);
+    }
+
+    private List<UserProfileSavable> profileSavables = new ArrayList<>();
+
+    /**
+     * Stores the default profile data. This is used to restore default settings.
+     */
+    private UserProfile defaultProfile;
+
+    /**
+     * Create a user profile with current settings.
+     *
+     * @return user profile
+     */
+    public final UserProfile createProfile() {
+        UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
+        profileSavables.forEach(s -> s.save(profile));
+        return profile;
+    }
+
+    /**
+     * Load from given user profile
+     *
+     * @param profile the profile
+     */
+    public final void loadFromProfile(UserProfile profile) {
+        if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
+            return;
+
+        profileSavables.forEach(l -> l.load(profile));
+    }
+
+    /**
+     * Load from default user profile. Restores default settings.
+     */
+    public final void loadFromDefaultProfile() {
+        loadFromProfile(defaultProfile);
     }
 
     /**
@@ -652,6 +723,22 @@ public abstract class GameApplication extends Application {
      */
     public final QTEManager getQTEManager() {
         return qteManager;
+    }
+
+    /**
+     *
+     * @return notification manager
+     */
+    public final NotificationManager getNotificationManager() {
+        return notificationManager;
+    }
+
+    /**
+     *
+     * @return achievement manager
+     */
+    public final AchievementManager getAchievementManager() {
+        return achievementManager;
     }
 
     /**

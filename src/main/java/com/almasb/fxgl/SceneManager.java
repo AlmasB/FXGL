@@ -31,6 +31,8 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -40,11 +42,9 @@ import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
-import com.almasb.fxgl.ui.FXGLDialogBox;
-import com.almasb.fxgl.ui.FXGLScene;
-import com.almasb.fxgl.ui.IntroScene;
-import com.almasb.fxgl.ui.MenuFactory;
-import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.settings.UserProfileSavable;
+import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -52,13 +52,18 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventType;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 /**
  * Manages interactions between FXGL scenes and allows
@@ -66,7 +71,7 @@ import javafx.stage.Screen;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class SceneManager {
+public final class SceneManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
 
@@ -117,7 +122,7 @@ public final class SceneManager {
     private GameApplication app;
 
     /**
-     * Underlying JavaFX scene. We only 1 scene to avoid
+     * Underlying JavaFX scene. We only use 1 scene to avoid
      * problems in fullscreen mode. Switching between scenes
      * in FS mode will otherwise temporarily toggle FS.
      */
@@ -134,7 +139,7 @@ public final class SceneManager {
      * @param app   instance of game application
      * @param scene main scene
      */
-    /* package-private */ SceneManager(GameApplication app, Scene scene) {
+    SceneManager(GameApplication app, Scene scene) {
         this.app = app;
         this.scene = scene;
 
@@ -148,65 +153,70 @@ public final class SceneManager {
             currentScene.fireEvent(copy);
         });
 
-        // TODO: work on order of init
+        isMenuEnabled = app.getSettings().isMenuEnabled();
+        menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
+
         sceneSettings = computeSceneSettings(app.getWidth(), app.getHeight());
         gameScene = new GameScene(sceneSettings);
+        initDialogBox();
+    }
 
-        // TODO: why do we do it here?
+    private void initDialogBox() {
         dialogBox = UIFactory.getDialogBox();
         dialogBox.setOnShown(e -> {
-            if (!menuOpenProperty().get())
+            if (!isMenuOpen())
                 app.pause();
 
             app.getInputManager().clearAllInput();
         });
         dialogBox.setOnHidden(e -> {
-            if (!menuOpenProperty().get())
+            if (!isMenuOpen())
                 app.resume();
         });
+    }
 
-        isMenuEnabled = app.getSettings().isMenuEnabled();
-        menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
+    private List<SceneSettings.SceneDimension> sceneDimensions = new ArrayList<>();
+
+    /**
+     *
+     * @return a list of supported scene dimensions with 360, 480, 720 and 1080 heights
+     */
+    public List<SceneSettings.SceneDimension> getSceneDimensions() {
+        return new ArrayList<>(sceneDimensions);
     }
 
     /**
-     * TODO: update javadoc
+     * Computes scene settings based on target size and screen bounds.
+     * Attaches CSS to settings to be used by all FXGL scenes.
      *
      * @param width  target (app) width
      * @param height target (app) height
      * @return scene settings with computed values
      */
     private SceneSettings computeSceneSettings(double width, double height) {
-        // TODO: make these into params
         Rectangle2D bounds = app.getSettings().isFullScreen()
                 ? Screen.getPrimary().getBounds()
                 : Screen.getPrimary().getVisualBounds();
 
-        double newW = width;
-        double newH = height;
-        double newScale = 1.0;
+        int[] heights = {360, 480, 720, 1080};
 
-        if (width > bounds.getWidth() || height > bounds.getHeight()) {
-            log.finer("App size > screen size");
-
-            double ratio = width / height;
-
-            for (int newWidth = (int) bounds.getWidth(); newWidth > 0; newWidth--) {
-                if (newWidth / ratio <= bounds.getHeight()) {
-                    newW = newWidth;
-                    newH = newWidth / ratio;
-                    newScale = newWidth / width;
-                    break;
-                }
+        double ratio = width / height;
+        for (int h : heights) {
+            if (h <= bounds.getHeight() && h * ratio <= bounds.getWidth()) {
+                sceneDimensions.add(new SceneSettings.SceneDimension(h*ratio, h));
+            } else {
+                break;
             }
-
-            log.finer("Target size: " + width + "x" + height + "@" + 1.0);
-            log.finer("New size:    " + newW + "x" + newH + "@" + newScale);
         }
 
-        String css = AssetManager.INSTANCE.loadCSS("fxgl_dark.css");
+        // if CSS not set, use menu CSS
+        String css = app.getSettings().getCSS();
+        css = !css.isEmpty() ? css : app.getSettings().getMenuStyle().getCSS();
 
-        return new SceneSettings(width, height, newW, newH, css);
+        String loadedCSS = AssetManager.INSTANCE.loadCSS(css);
+        log.finer("Using CSS: " + css);
+
+        return new SceneSettings(width, height, bounds, loadedCSS);
     }
 
     private boolean canSwitchGameMenu = true;
@@ -266,12 +276,9 @@ public final class SceneManager {
         gameMenuScene.addEventHandler(MenuEvent.SAVE, event -> {
             String saveFileName = event.getData().map(name -> (String) name).orElse("");
             if (!saveFileName.isEmpty()) {
-                try {
-                    SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName);
-                } catch (Exception e) {
-                    log.warning("Failed to save game data: " + e.getMessage());
-                    //showMessageBox("Failed to save game data: " + e.getMessage());
-                }
+                boolean ok = SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName).isOK();
+                if (!ok)
+                    showMessageBox("Failed to save");
             }
         });
         gameMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
@@ -282,21 +289,13 @@ public final class SceneManager {
         String saveFileName = event.getData().map(name -> (String) name)
                 .orElse("");
         if (!saveFileName.isEmpty()) {
-            try {
-                Serializable data = SaveLoadManager.INSTANCE.load(saveFileName);
-                app.reset();
-                app.loadState(data);
-                app.startNewGame();
+            SaveLoadManager.INSTANCE.load(saveFileName).ifPresent(data -> {
+                app.startLoadedGame((Serializable)data);
                 setScene(gameScene);
-            } catch (Exception e) {
-                log.warning("Failed to load save data: " + e.getMessage());
-                //showMessageBox("Failed to load save data: " + e.getMessage());
-            }
+            });
         } else {
             SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
-                app.reset();
-                app.loadState((Serializable) data);
-                app.startNewGame();
+                app.startLoadedGame((Serializable)data);
                 setScene(gameScene);
             });
         }
@@ -310,7 +309,7 @@ public final class SceneManager {
     /**
      * Called right before the main stage is shown.
      */
-    /* package-private */ void onStageShow() {
+    void onStageShow() {
         if (isMenuEnabled)
             configureMenu();
 
@@ -351,6 +350,39 @@ public final class SceneManager {
         menuOpen.set(scene == mainMenuScene || scene == gameMenuScene);
 
         this.scene.setRoot(scene.getRoot());
+    }
+
+    private void setNewResolution(double w, double h) {
+        sceneSettings.setNewTargetSize(w, h);
+
+        Parent root = scene.getRoot();
+        scene.setRoot(new Pane());
+        Stage stage = (Stage) scene.getWindow();
+
+        scene = new Scene(root);
+        scene.addEventFilter(EventType.ROOT, event -> {
+            Event copy = event.copyFor(null, null);
+            currentScene.fireEvent(copy);
+        });
+        stage.setScene(scene);
+        if (app.getSettings().isFullScreen()) {
+            stage.setFullScreen(true);
+        }
+    }
+
+    /**
+     * Set new scene dimension. This will change the video output
+     * resolution and adapt all subsystems.
+     *
+     * @param dimension scene dimension
+     */
+    public void setSceneDimension(SceneSettings.SceneDimension dimension) {
+        if (sceneDimensions.contains(dimension)) {
+            log.finer("Setting scene dimension: " + dimension);
+            setNewResolution(dimension.getWidth(), dimension.getHeight());
+        } else {
+            log.warning(dimension + " is not supported!");
+        }
     }
 
     private ReadOnlyBooleanWrapper menuOpen;
@@ -486,5 +518,27 @@ public final class SceneManager {
         }
 
         return false;
+    }
+
+    @Override
+    public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
+        UserProfile.Bundle bundle = new UserProfile.Bundle("scene");
+        bundle.put("sizeW", sceneSettings.getTargetWidth());
+        bundle.put("sizeH", sceneSettings.getTargetHeight());
+
+        bundle.log();
+        profile.putBundle(bundle);
+    }
+
+    @Override
+    public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+
+        UserProfile.Bundle bundle = profile.getBundle("scene");
+        bundle.log();
+
+        setNewResolution(bundle.get("sizeW"), bundle.get("sizeH"));
     }
 }

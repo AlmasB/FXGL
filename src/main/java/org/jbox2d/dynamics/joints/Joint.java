@@ -63,6 +63,8 @@ public abstract class Joint {
         return new ConstantVolumeJoint(world, (ConstantVolumeJointDef) def);
       case ROPE:
         return new RopeJoint(world.getPool(), (RopeJointDef) def);
+      case MOTOR:
+        return new MotorJoint(world.getPool(), (MotorJointDef) def);
       case UNKNOWN:
       default:
         return null;
@@ -198,9 +200,10 @@ public abstract class Joint {
     m_userData = data;
   }
 
-  // / Get collide connected.
-  // / Note: modifying the collide connect flag won't work correctly because
-  // / the flag is only checked when fixture AABBs begin to overlap.
+  /**
+   * Get collide connected. Note: modifying the collide connect flag won't work correctly because
+   * the flag is only checked when fixture AABBs begin to overlap.
+   */
   public final boolean getCollideConnected() {
     return m_collideConnected;
   }
@@ -214,15 +217,14 @@ public abstract class Joint {
     return m_bodyA.isActive() && m_bodyB.isActive();
   }
 
+  /** Internal */
   public abstract void initVelocityConstraints(SolverData data);
 
+  /** Internal */
   public abstract void solveVelocityConstraints(SolverData data);
 
   /**
-   * This returns true if the position errors are within tolerance.
-   * 
-   * @param baumgarte
-   * @return
+   * This returns true if the position errors are within tolerance. Internal.
    */
   public abstract boolean solvePositionConstraints(SolverData data);
 

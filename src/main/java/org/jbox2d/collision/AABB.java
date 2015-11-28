@@ -181,8 +181,8 @@ public class AABB {
      */
     // djm: faster putting all of them together, as if one is false we leave the logic
     // early
-    return lowerBound.x > aabb.lowerBound.x && lowerBound.y > aabb.lowerBound.y
-        && aabb.upperBound.x > upperBound.x && aabb.upperBound.y > upperBound.y;
+    return lowerBound.x <= aabb.lowerBound.x && lowerBound.y <= aabb.lowerBound.y
+        && aabb.upperBound.x <= upperBound.x && aabb.upperBound.y <= upperBound.y;
   }
 
   /**

@@ -25,24 +25,28 @@
  */
 package sandbox;
 
+import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.event.InputModifier;
+import com.almasb.fxgl.gameplay.Achievement;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.ApplicationMode;
 
-import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -61,10 +65,12 @@ public class BasicGameApplication extends GameApplication {
     private PhysicsEntity box;
 
     private Text debug, debug2;
+    IntegerProperty i = new SimpleIntegerProperty(2000);
+
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
+        settings.setWidth(1280);
         settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
@@ -72,7 +78,16 @@ public class BasicGameApplication extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
+        //settings.setMenuStyle(MenuStyle.CCTR);
+        //settings.setCSS("fxgl_gta5.css");
         settings.setApplicationMode(ApplicationMode.DEBUG);
+    }
+
+    @Override
+    protected void initAchievements() {
+        Achievement a = new Achievement("Score Master", "Score 20000 Points");
+
+        getAchievementManager().registerAchievement(a);
     }
 
     @Override
@@ -85,7 +100,7 @@ public class BasicGameApplication extends GameApplication {
                 //enemy.rotateBy(-5);
                 player.translate(-1, 0);
             }
-        }, KeyCode.A);
+        }, KeyCode.A, InputModifier.CTRL);
 
         input.addAction(new UserAction("Move Right") {
             @Override
@@ -93,13 +108,14 @@ public class BasicGameApplication extends GameApplication {
                 //enemy.rotateBy(5);
                 player.translate(1, 0);
             }
-        }, KeyCode.D);
+        }, KeyCode.D, InputModifier.SHIFT);
 
         input.addAction(new UserAction("Move Up") {
             @Override
-            protected void onAction() {
+            protected void onActionBegin() {
                 //enemy.setRotation(0);
-                player.translate(0, -1);
+                //player.translate(0, -1);
+                i.set(i.get() + 10000);
             }
         }, KeyCode.W);
 
@@ -129,17 +145,17 @@ public class BasicGameApplication extends GameApplication {
 
         input.addAction(new UserAction("Rotate Up") {
             @Override
-            protected void onAction() {
-                enemy.setRotation(0);
-                //player.translate(0, -1);
+            protected void onActionBegin() {
+                //getSceneManager().setNewResolution(1920, 1080);
             }
         }, KeyCode.UP);
 
         input.addAction(new UserAction("Rotate Down") {
             @Override
-            protected void onAction() {
-                enemy.setRotation(90);
-                //player.translate(0, 1);
+            protected void onActionBegin() {
+                getNotificationManager().pushNotification("You got an achievement!");
+                getNotificationManager().pushNotification("You have won the game!");
+                getNotificationManager().pushNotification("Just a test of the notification system!");
             }
         }, KeyCode.DOWN);
 
@@ -175,14 +191,40 @@ public class BasicGameApplication extends GameApplication {
 
                 b.setOnPhysicsInitialized(() -> b.setAngularVelocity(5));
             }
-        }, MouseButton.PRIMARY);
+        }, MouseButton.PRIMARY, InputModifier.ALT);
+
+        input.addAction(new UserAction("Spawn2") {
+            @Override
+            protected void onActionBegin() {
+                Entity e = new Entity(Type.BOX);
+                e.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
+
+
+                Pane pane = new Pane();
+                pane.getChildren().addAll(new Rectangle(100, 5), new Circle(5, Color.BLUE));
+
+                e.setSceneView(pane);
+
+                e.rotateToVector(e.getPosition().subtract(0, 0));
+
+                getGameWorld().addEntity(e);
+                countProperty.set(countProperty.get() + 1);
+            }
+        }, MouseButton.SECONDARY);
     }
+
+    public IntegerProperty countProperty = new SimpleIntegerProperty(0);
 
     @Override
     protected void initAssets() throws Exception {}
 
     @Override
     protected void initGame() {
+        getAchievementManager().getAchievementByName("Score Master")
+                .achievedProperty().bind(i.greaterThanOrEqualTo(20000));
+
+        EntityView.turnOnDebugBBox(Color.RED);
+
         player = new Entity(Type.PLAYER);
         Circle graphics = new Circle(40);
         player.setSceneView(graphics);
@@ -195,11 +237,20 @@ public class BasicGameApplication extends GameApplication {
         enemy = new Entity(Type.ENEMY);
         Rectangle enemyGraphics = new Rectangle(200, 40);
         enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(enemyGraphics);
+        enemy.setSceneView(enemyGraphics, new RenderLayer() {
+            @Override
+            public String name() {
+                return "ENEMY";
+            }
+
+            @Override
+            public int index() {
+                return 1000;
+            }
+        });
 
         //enemy.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 200, 40)));
         enemy.setPosition(200, 100);
-
 
 
         // we need to set collidable to true
@@ -218,6 +269,20 @@ public class BasicGameApplication extends GameApplication {
         getGameWorld().addEntity(box);
 
         getGameScene().addGameView(new PlayerView());
+
+        addStuff();
+    }
+
+    private void addStuff() {
+//        Entity e = new Entity(Type.BOX);
+//        e.setPosition(400, 400);
+//        e.setSceneView(getAssetManager().loadTexture("brick.png"));
+//
+//        Entity e2 = new Entity(Type.BOX);
+//        e2.setPosition(300, 400);
+//        e2.setSceneView(getAssetManager().loadTexture("brick.png").toGrayscale());
+//
+//        getGameWorld().addEntities(e, e2);
     }
 
     private class PlayerView extends EntityView {
@@ -264,8 +329,10 @@ public class BasicGameApplication extends GameApplication {
         debug2 = new Text();
         debug2.setTranslateY(50);
 
+        Parent ui = getAssetManager().loadFXML("test_ui.fxml", new FXGLController(this));
 
-        getGameScene().addUINodes(debug, debug2);
+
+        getGameScene().addUINodes(debug, debug2, ui);
     }
 
     @Override

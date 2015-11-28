@@ -23,36 +23,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.ui.UIFactory;
 
 /**
- * This is the default FXGL menu used if the users
- * don't provide their own
+ * This is the default FXGL game menu
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLMainMenu extends FXGLMenu {
+public final class FXGLGameMenu extends FXGLCommonMenu {
 
-    public FXGLMainMenu(GameApplication app, SceneSettings settings) {
+    public FXGLGameMenu(GameApplication app, SceneSettings settings) {
         super(app, settings);
     }
 
     @Override
     protected MenuBox createMenuBody() {
-        MenuItem itemContinue = new MenuItem("CONTINUE");
-        itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadLastModifiedFile().isPresent());
-        itemContinue.setOnAction(e -> {
-            itemContinue.fireEvent(new MenuEvent(MenuEvent.LOAD));
-        });
+        MenuItem itemResume = new MenuItem("RESUME");
+        itemResume.setOnAction(e -> itemResume.fireEvent(new MenuEvent(MenuEvent.RESUME)));
 
-        MenuItem itemNewGame = new MenuItem("NEW GAME");
-        itemNewGame.setOnAction(e -> {
-            itemNewGame.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.NEW_GAME));
+        MenuItem itemSave = new MenuItem("SAVE");
+        itemSave.setOnAction(e -> {
+            UIFactory.getDialogBox().showInputBox("Enter save file name", name -> {
+                itemSave.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.SAVE, name));
+            });
         });
 
         MenuItem itemLoad = new MenuItem("LOAD");
@@ -64,15 +63,15 @@ public final class FXGLMainMenu extends FXGLMenu {
         MenuItem itemExtra = new MenuItem("EXTRA");
         itemExtra.setChild(createExtraMenu());
 
-        MenuItem itemExit = new MenuItem("EXIT");
+        MenuItem itemExit = new MenuItem("MAIN MENU");
         itemExit.setOnAction(e -> {
-            UIFactory.getDialogBox().showConfirmationBox("Exit the game?", yes -> {
+            UIFactory.getDialogBox().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
                 if (yes)
-                    itemExit.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.EXIT));
+                    itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
             });
         });
 
-        MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad, itemOptions, itemExtra, itemExit);
+        MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
         menu.setTranslateX(50);
         menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
         return menu;

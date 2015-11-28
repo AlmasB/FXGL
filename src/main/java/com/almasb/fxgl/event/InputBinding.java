@@ -26,7 +26,9 @@
 package com.almasb.fxgl.event;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
+import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.input.KeyCode;
@@ -34,15 +36,18 @@ import javafx.scene.input.MouseButton;
 
 /**
  * Represents an input binding of a single action and
- * all keys / mouse buttons to which the action is bound.
+ * a trigger (key or mouse button) to which the action is bound.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class InputBinding {
+    private static final Logger log = FXGLLogger.getLogger("FXGL.InputBinding");
+
     private final UserAction action;
 
     private Optional<KeyCode> key = Optional.empty();
     private Optional<MouseButton> btn = Optional.empty();
+    private InputModifier modifier = InputModifier.NONE;
 
     private ReadOnlyStringWrapper triggerName = new ReadOnlyStringWrapper();
 
@@ -53,14 +58,53 @@ public final class InputBinding {
         return triggerName.getReadOnlyProperty();
     }
 
-    InputBinding(UserAction action, KeyCode key) {
+    InputBinding(UserAction action, KeyCode key, InputModifier modifier) {
         this.action = action;
+        this.modifier = modifier;
         setTrigger(key);
     }
 
-    InputBinding(UserAction action, MouseButton btn) {
+    InputBinding(UserAction action, MouseButton btn, InputModifier modifier) {
         this.action = action;
+        this.modifier = modifier;
         setTrigger(btn);
+    }
+
+    InputModifier getModifier() {
+        return modifier;
+    }
+
+    /**
+     * Checks if current state of the given trigger "triggers"
+     * this input binding. The check uses key/button + modifier key.
+     *
+     * @param trigger the trigger
+     * @return true iff triggered
+     */
+    boolean isTriggered(InputManager.Trigger trigger) {
+        boolean triggered;
+        if (trigger.key == null) {
+            triggered = isTriggered(trigger.btn);
+        } else {
+            triggered = isTriggered(trigger.key);
+        }
+
+        if (!triggered)
+            return false;
+
+        switch (modifier) {
+            case CTRL:
+                return trigger.ctrl;
+            case SHIFT:
+                return trigger.shift;
+            case ALT:
+                return trigger.alt;
+            case NONE:
+                return !(trigger.ctrl || trigger.shift || trigger.alt);
+            default:
+                log.warning("Unknown input modifier: " + modifier);
+                return true;
+        }
     }
 
     /**
@@ -88,7 +132,7 @@ public final class InputBinding {
     void setTrigger(KeyCode k) {
         this.btn = Optional.empty();
         this.key = Optional.of(k);
-        triggerName.set(k.getName());
+        triggerName.set((modifier == InputModifier.NONE ? "" : modifier + "+") + k.getName());
     }
 
     /**
@@ -100,7 +144,7 @@ public final class InputBinding {
     void setTrigger(MouseButton b) {
         this.key = Optional.empty();
         this.btn = Optional.of(b);
-        triggerName.set(b.toString());
+        triggerName.set((modifier == InputModifier.NONE ? "" : modifier + "+") + b.toString());
     }
 
     /**

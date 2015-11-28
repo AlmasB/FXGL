@@ -78,6 +78,11 @@ public final class PhysicsEntity extends Entity {
         }
     }
 
+    /**
+     * Set a callback to run when this entity has been added to physics world.
+     *
+     * @param code the code to run
+     */
     public void setOnPhysicsInitialized(Runnable code) {
         onInitPhysics = code;
     }
@@ -146,8 +151,7 @@ public final class PhysicsEntity extends Entity {
      */
     public void setBodyLinearVelocity(Vec2 vector) {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first." +
-                    "Note: entity is only added in the next tick");
+            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
 
         body.setLinearVelocity(vector);
     }
@@ -157,8 +161,7 @@ public final class PhysicsEntity extends Entity {
      */
     public Point2D getLinearVelocity() {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first" +
-                    "Note: entity is only added in the next tick");
+            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
 
         return PhysicsManager.toVector(body.getLinearVelocity().mul(1 / 60f));
     }
@@ -170,8 +173,7 @@ public final class PhysicsEntity extends Entity {
      */
     public void setAngularVelocity(double velocity) {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity has not been added to the world yet! Call addEntities(entity) first" +
-                    "Note: entity is only added in the next tick");
+            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
 
         body.setAngularVelocity((float) -velocity);
     }

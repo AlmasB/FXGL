@@ -31,7 +31,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.NotificationListener;
 import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.beans.property.DoubleProperty;
@@ -43,7 +46,8 @@ import javafx.beans.property.SimpleDoubleProperty;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AudioManager implements WorldStateListener {
+public final class AudioManager implements WorldStateListener, UserProfileSavable,
+        NotificationListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AudioManager");
 
@@ -239,4 +243,31 @@ public final class AudioManager implements WorldStateListener {
 
     @Override
     public void onWorldReset() {}
+
+    @Override
+    public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
+        UserProfile.Bundle bundle = new UserProfile.Bundle("audio");
+        bundle.put("musicVolume", getGlobalMusicVolume());
+        bundle.put("soundVolume", getGlobalSoundVolume());
+
+        bundle.log();
+        profile.putBundle(bundle);
+    }
+
+    @Override
+    public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+        UserProfile.Bundle bundle = profile.getBundle("audio");
+        bundle.log();
+
+        setGlobalMusicVolume(bundle.get("musicVolume"));
+        setGlobalSoundVolume(bundle.get("soundVolume"));
+    }
+
+    @Override
+    public void onNotificationReceived(String text) {
+        playSound(FXGLAssets.SOUND_NOTIFICATION);
+    }
 }

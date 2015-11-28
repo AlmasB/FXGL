@@ -37,10 +37,14 @@ import java.util.stream.Collectors;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.settings.GameDifficulty;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -81,6 +85,24 @@ public final class GameWorld {
      */
     public void removeWorldStateListener(WorldStateListener listener) {
         worldStateListeners.remove(listener);
+    }
+
+    private ObjectProperty<GameDifficulty> gameDifficulty = new SimpleObjectProperty<>(GameDifficulty.MEDIUM);
+
+    /**
+     *
+     * @return game difficulty
+     */
+    public GameDifficulty getGameDifficulty() {
+        return gameDifficultyProperty().get();
+    }
+
+    /**
+     *
+     * @return game difficulty property
+     */
+    public ObjectProperty<GameDifficulty> gameDifficultyProperty() {
+        return gameDifficulty;
     }
 
     /**
@@ -265,22 +287,23 @@ public final class GameWorld {
                 .collect(Collectors.toList());
     }
 
-//    /**
-//     * Returns a list of entities whose type matches given arguments and
-//     * which have the given render layer index
-//     *
-//     * If no arguments were given, a list of all entities satisfying the
-//     * requirement (i.e. render layer) is returned.
-//     *
-//     * @param layer render layer
-//     * @param types entity types
-//     * @return  list of entities in the layer
-//     */
-//    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
-//        return getEntities(types).stream()
-//                .filter(e -> e.getRenderLayer().index() == layer.index())
-//                .collect(Collectors.toList());
-//    }
+    /**
+     * Returns a list of entities whose type matches given arguments and
+     * which have the given render layer index
+     *
+     * If no arguments were given, a list of all entities satisfying the
+     * requirement (i.e. render layer) is returned.
+     *
+     * @param layer render layer
+     * @param types entity types
+     * @return  list of entities in the layer
+     */
+    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
+        return getEntities(types).stream()
+                .filter(e -> e.getSceneView().isPresent())
+                .filter(e -> e.getSceneView().get().getRenderLayer().index() == layer.index())
+                .collect(Collectors.toList());
+    }
 
     /**
      * Returns the closest entity to the given entity with given type.

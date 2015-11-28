@@ -25,6 +25,9 @@
  */
 package com.almasb.fxgl.asset;
 
+import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.util.FXGLLogger;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -33,13 +36,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum SaveLoadManager {
     INSTANCE;
 
+    private static final Logger log = FXGLLogger.getLogger("FXGL.SaveLoadManager");
+
     private static final String SAVE_DIR = "saves/";
+    private static final String PROFILE_DIR = "profiles/";
 
     /**
      * Save serializable data onto a disk file system under "saves/"
@@ -49,17 +56,43 @@ public enum SaveLoadManager {
      *
      * @param data data to save
      * @param fileName to save as
-     * @throws Exception
+     * @return io result
      */
-    public void save(Serializable data, String fileName) throws Exception {
-        Path saveFile = Paths.get("./" + SAVE_DIR + fileName);
+    public IOResult save(Serializable data, String fileName) {
+        return saveImpl(data, Paths.get("./" + SAVE_DIR + fileName));
+    }
 
-        if (!Files.exists(saveFile.getParent())) {
-            Files.createDirectories(saveFile.getParent());
-        }
+    /**
+     * Saves user profile to "profiles/".
+     *
+     * @param profile the profile to save
+     * @return io result
+     */
+    public IOResult saveProfile(UserProfile profile) {
+        return saveImpl(profile, Paths.get("./" + PROFILE_DIR + "user.profile"));
+    }
 
-        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(saveFile))) {
-            oos.writeObject(data);
+    /**
+     * Saves data to file, creating required directories.
+     *
+     * @param data data object to save
+     * @param file to save as
+     * @return io result
+     */
+    private IOResult saveImpl(Serializable data, Path file) {
+        try {
+            if (!Files.exists(file.getParent())) {
+                Files.createDirectories(file.getParent());
+            }
+
+            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file))) {
+                oos.writeObject(data);
+            }
+
+            return IOResult.success();
+        } catch (Exception e) {
+            log.warning("Save Failed: " + e.getMessage());
+            return IOResult.failure(e.getMessage());
         }
     }
 
@@ -70,12 +103,37 @@ public enum SaveLoadManager {
      *
      * @param fileName file name to load from
      * @return instance of deserialized data structure
-     * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public <T> T load(String fileName) throws Exception {
-        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get("./" + SAVE_DIR + fileName)))) {
-            return (T) ois.readObject();
+    public <T> Optional<T> load(String fileName) {
+        return loadImpl(Paths.get("./" + SAVE_DIR + fileName)).map(o -> (T)o);
+    }
+
+    /**
+     *
+     * @return user profile loaded from "profiles/"
+     */
+    public Optional<UserProfile> loadProfile() {
+        boolean profileExists = Files.exists(Paths.get("./" + PROFILE_DIR + "user.profile"));
+        if (!profileExists)
+            return Optional.empty();
+
+        return loadImpl(Paths.get("./" + PROFILE_DIR + "user.profile"))
+                .map(o -> (UserProfile)o);
+    }
+
+    /**
+     * Loads data from file into an object.
+     *
+     * @param file file to load from
+     * @return the data object
+     */
+    private Optional<Object> loadImpl(Path file) {
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file))) {
+            return Optional.of(ois.readObject());
+        } catch (Exception e) {
+            log.warning("Load Failed: " + e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -140,7 +198,7 @@ public enum SaveLoadManager {
             }).findFirst().orElseThrow(Exception::new);
 
             String fileName = saveDir.relativize(file).toString().replace("\\", "/");
-            return Optional.of(load(fileName));
+            return load(fileName);
         } catch (Exception e) {
             return Optional.empty();
         }

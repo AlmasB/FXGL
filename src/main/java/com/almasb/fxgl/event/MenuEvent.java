@@ -65,6 +65,10 @@ public final class MenuEvent extends Event {
         this(null, null, eventType, null);
     }
 
+    public MenuEvent(EventType<? extends Event> eventType, Object data) {
+        this(null, null, eventType, data);
+    }
+
     public MenuEvent(Object source, EventTarget target, EventType<? extends Event> eventType) {
         this(source, target, eventType, null);
     }

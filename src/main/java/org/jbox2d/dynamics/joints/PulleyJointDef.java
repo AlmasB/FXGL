@@ -74,7 +74,7 @@ public class PulleyJointDef extends JointDef {
   public float ratio;
 
   public PulleyJointDef() {
-    type = JointType.PULLEY;
+    super(JointType.PULLEY);
     groundAnchorA = new Vec2(-1.0f, 1.0f);
     groundAnchorB = new Vec2(1.0f, 1.0f);
     localAnchorA = new Vec2(-1.0f, 0.0f);

@@ -25,6 +25,13 @@
  */
 package com.almasb.fxgl.physics;
 
+/**
+ * Data structure for holding info about collision result.
+ * {@link CollisionResult#hasCollided()} will return true
+ * if a collision has occurred, false otherwise.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class CollisionResult {
 
     /**

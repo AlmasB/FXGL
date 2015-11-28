@@ -28,13 +28,12 @@ package com.almasb.fxgl.search;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * A* search logic. API INCOMPLETE
- *
- * TODO: optimise for FXGL
+ * A* search logic.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -53,8 +52,14 @@ public final class AStarLogic {
      * @return          path as list of nodes from start to target or empty list if no path found
      */
     public List<AStarNode> getPath(AStarNode[][] grid, AStarNode start, AStarNode target, AStarNode... busyNodes) {
-        if (target.getNodeValue() == 1) // the target is an unwalkable node
-            return new ArrayList<>();  // return empty path
+        if (target.getState() == NodeState.NOT_WALKABLE)
+            return new ArrayList<>();
+
+        for (int y = 0; y < grid[0].length; y++) {
+            for (int x = 0; x < grid.length; x++) {
+                grid[x][y].setHCost(Math.abs(target.getX() - x) + Math.abs(target.getY() - y));
+            }
+        }
 
         List<AStarNode> open = new ArrayList<>();
         List<AStarNode> closed = new ArrayList<>();
@@ -109,16 +114,12 @@ public final class AStarLogic {
             path.add(tmp);
         }
 
-        closed.clear();
-
-        for (int i = path.size() - 1; i >= 0; i--)
-            closed.add(path.get(i));
-
-        return closed;
+        Collections.reverse(path);
+        return path;
     }
 
-    public AStarNode getSmallest(List<AStarNode> open) {
-        if (open.size() == 0) {
+    private AStarNode getSmallest(List<AStarNode> open) {
+        if (open.isEmpty()) {
             log.warning("No path found");
             return null;
         }
@@ -132,7 +133,7 @@ public final class AStarLogic {
         return min;
     }
 
-    public AStarNode[] getNeighbors(AStarNode n, AStarNode[][] grid, AStarNode... busyNodes) {
+    private AStarNode[] getNeighbors(AStarNode n, AStarNode[][] grid, AStarNode... busyNodes) {
         int x = n.getX();
         int y = n.getY();
         int x1 = x - 1;
@@ -140,10 +141,10 @@ public final class AStarLogic {
         int y1 = y - 1;
         int y2 = y + 1;
 
-        boolean b1 = x1 >= 0 && grid[x1][y].getNodeValue() != 1 && !contains(x1, y, busyNodes);
-        boolean b2 = x2 < grid.length && grid[x2][y].getNodeValue() != 1 && !contains(x2, y, busyNodes);
-        boolean b3 = y1 >= 0 && grid[x][y1].getNodeValue() != 1 && !contains(x, y1, busyNodes);
-        boolean b4 = y2 < grid[0].length && grid[x][y2].getNodeValue() != 1 && !contains(x, y2, busyNodes);
+        boolean b1 = x1 >= 0 && grid[x1][y].getState() == NodeState.WALKABLE && !contains(x1, y, busyNodes);
+        boolean b2 = x2 < grid.length && grid[x2][y].getState() == NodeState.WALKABLE && !contains(x2, y, busyNodes);
+        boolean b3 = y1 >= 0 && grid[x][y1].getState() == NodeState.WALKABLE && !contains(x, y1, busyNodes);
+        boolean b4 = y2 < grid[0].length && grid[x][y2].getState() == NodeState.WALKABLE && !contains(x, y2, busyNodes);
 
         int count = 0;
         if (b1)

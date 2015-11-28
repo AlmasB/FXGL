@@ -88,4 +88,39 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      */
     protected void onCollisionEnd(Entity a, Entity b) {
     }
+
+    /**
+     * Returns a copy of the collision handler with different entity types.
+     * This allows convenient use of the same handler code for
+     * multiple entity types.
+     *
+     * @param a entity type A
+     * @param b entity type B
+     * @return copy of collision handler
+     */
+    public final CollisionHandler copyFor(EntityType a, EntityType b) {
+        CollisionHandler copy = this;
+
+        return new CollisionHandler(a, b) {
+            @Override
+            protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
+                copy.onHitBoxTrigger(a, b, boxA, boxB);
+            }
+
+            @Override
+            protected void onCollisionBegin(Entity a, Entity b) {
+                copy.onCollisionBegin(a, b);
+            }
+
+            @Override
+            protected void onCollision(Entity a, Entity b) {
+                copy.onCollision(a, b);
+            }
+
+            @Override
+            protected void onCollisionEnd(Entity a, Entity b) {
+                copy.onCollisionEnd(a, b);
+            }
+        };
+    }
 }
