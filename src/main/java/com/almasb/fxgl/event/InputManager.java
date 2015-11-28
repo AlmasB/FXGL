@@ -310,17 +310,23 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
 
     @Override
     public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
         UserProfile.Bundle bundle = new UserProfile.Bundle("input");
         for (InputBinding binding : getBindings()) {
             bundle.put(binding.getAction().getName(), binding.triggerNameProperty().get());
         }
 
+        bundle.log();
         profile.putBundle(bundle);
     }
 
     @Override
     public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+
         UserProfile.Bundle bundle = profile.getBundle("input");
+        bundle.log();
 
         for (InputBinding binding : getBindings()) {
             String triggerName = bundle.get(binding.getAction().getName());

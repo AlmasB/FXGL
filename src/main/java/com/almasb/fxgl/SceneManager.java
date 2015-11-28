@@ -309,7 +309,7 @@ public final class SceneManager implements UserProfileSavable {
     /**
      * Called right before the main stage is shown.
      */
-    /* package-private */ void onStageShow() {
+    void onStageShow() {
         if (isMenuEnabled)
             configureMenu();
 
@@ -370,6 +370,12 @@ public final class SceneManager implements UserProfileSavable {
         }
     }
 
+    /**
+     * Set new scene dimension. This will change the video output
+     * resolution and adapt all subsystems.
+     *
+     * @param dimension scene dimension
+     */
     public void setSceneDimension(SceneSettings.SceneDimension dimension) {
         if (sceneDimensions.contains(dimension)) {
             log.finer("Setting scene dimension: " + dimension);
@@ -516,16 +522,23 @@ public final class SceneManager implements UserProfileSavable {
 
     @Override
     public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
         UserProfile.Bundle bundle = new UserProfile.Bundle("scene");
         bundle.put("sizeW", sceneSettings.getTargetWidth());
         bundle.put("sizeH", sceneSettings.getTargetHeight());
 
+        bundle.log();
         profile.putBundle(bundle);
     }
 
     @Override
     public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+
         UserProfile.Bundle bundle = profile.getBundle("scene");
+        bundle.log();
+
         setNewResolution(bundle.get("sizeW"), bundle.get("sizeH"));
     }
 }

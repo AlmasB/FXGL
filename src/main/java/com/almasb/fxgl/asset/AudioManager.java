@@ -246,16 +246,21 @@ public final class AudioManager implements WorldStateListener, UserProfileSavabl
 
     @Override
     public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
         UserProfile.Bundle bundle = new UserProfile.Bundle("audio");
         bundle.put("musicVolume", getGlobalMusicVolume());
         bundle.put("soundVolume", getGlobalSoundVolume());
 
+        bundle.log();
         profile.putBundle(bundle);
     }
 
     @Override
     public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
         UserProfile.Bundle bundle = profile.getBundle("audio");
+        bundle.log();
 
         setGlobalMusicVolume(bundle.get("musicVolume"));
         setGlobalSoundVolume(bundle.get("soundVolume"));
