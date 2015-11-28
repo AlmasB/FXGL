@@ -1,6 +1,6 @@
 ## FXGL
 Simple and easy to use (hopefully!) JavaFX 8 game library<br/>
-[![Release](https://img.shields.io/github/release/AlmasB/FXGL.svg?label=maven)](https://jitpack.io/#AlmasB/FXGL)
+[![Release](https://img.shields.io/badge/maven-0.1.8-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
 
