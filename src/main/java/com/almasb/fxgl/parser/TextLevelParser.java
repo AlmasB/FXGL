@@ -31,7 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
 
@@ -82,8 +84,8 @@ public final class TextLevelParser {
      * @throws Exception if file cannot be loaded
      */
     public Level parse(String levelFileName) throws Exception {
-        AssetManager assetManager = AssetManager.INSTANCE;
-        List<String> lines = assetManager.loadText(levelFileName);
+        AssetLoader assetLoader = GameApplication.getService(ServiceType.ASSET_LOADER);
+        List<String> lines = assetLoader.loadText(levelFileName);
 
         Level level = new Level();
         level.height = lines.size();

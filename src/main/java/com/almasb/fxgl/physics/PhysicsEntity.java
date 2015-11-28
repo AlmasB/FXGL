@@ -126,7 +126,8 @@ public final class PhysicsEntity extends Entity {
      * @param vector x and y in pixels
      */
     public void setLinearVelocity(Point2D vector) {
-        setBodyLinearVelocity(PhysicsManager.toVector(vector).mulLocal(60));
+        // TODO:
+        //setBodyLinearVelocity(PhysicsWorld.toVector(vector).mulLocal(60));
     }
 
     /**
@@ -163,7 +164,8 @@ public final class PhysicsEntity extends Entity {
         if (body == null)
             throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
 
-        return PhysicsManager.toVector(body.getLinearVelocity().mul(1 / 60f));
+        // TODO:
+        return Point2D.ZERO; //PhysicsManager.toVector(body.getLinearVelocity().mul(1 / 60f));
     }
 
     /**

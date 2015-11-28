@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.asset;
 
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+
 /**
  * Stores internal assets, i.e. provided by FXGL.
  *
@@ -36,6 +39,6 @@ public final class FXGLAssets {
     public static final Sound SOUND_NOTIFICATION;
 
     static {
-        SOUND_NOTIFICATION = AssetManager.INSTANCE.loadSound("system/notification.wav");
+        SOUND_NOTIFICATION = GameApplication.getService(ServiceType.ASSET_LOADER).loadSound("system/notification.wav");
     }
 }

@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,42 +23,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.control;
 
-import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Entity;
+package com.almasb.fxgl.time;
+
+import com.google.inject.Inject;
+import javafx.util.Duration;
 
 /**
- * API NOT READY FOR USE
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class CircularMovementControl extends AbstractControl {
+public final class FXGLLocalTimer implements LocalTimer {
 
-    private double radius;
-    private double speed;
-    private double t = 0.0;
-    private double x, y;
+    private MasterTimer masterTimer;
+    private long time = 0;
 
-    public CircularMovementControl(double speed, double radius) {
-        this.radius = radius;
-        this.speed = speed;
+    @Inject
+    private FXGLLocalTimer(MasterTimer masterTimer) {
+        this.masterTimer = masterTimer;
     }
 
+    /**
+     * Captures current time.
+     */
     @Override
-    protected void initEntity(Entity entity) {
-//        x = entity.getTranslateX();
-//        y = entity.getTranslateY();
+    public void capture() {
+        time = masterTimer.getNow();
     }
 
+    /**
+     * Returns true if difference between captured time
+     * and now is greater or equal to given duration.
+     *
+     * @param duration time duration to check
+     * @return true if elapsed, false otherwise
+     */
     @Override
-    public void onUpdate(Entity entity) {
-//        x = entity.getTranslateX() - Math.cos(t) * radius;
-//        y = entity.getTranslateY() - Math.sin(t) * radius;
-//
-//        t += TimerManager.tpfSeconds() * speed;
-//
-//        entity.setTranslateX(x + Math.cos(t) * radius);
-//        entity.setTranslateY(y + Math.sin(t) * radius);
+    public boolean elapsed(Duration duration) {
+        return masterTimer.getNow() - time >= FXGLMasterTimer.toNanos(duration);
     }
 }

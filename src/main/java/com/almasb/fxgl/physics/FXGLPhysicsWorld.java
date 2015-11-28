@@ -62,7 +62,7 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class PhysicsManager implements WorldStateListener {
+public final class FXGLPhysicsWorld implements PhysicsWorld {
 
     private static final float TIME_STEP = 1 / 60.0f;
 
@@ -78,7 +78,7 @@ public final class PhysicsManager implements WorldStateListener {
 
     private double appHeight;
 
-    public PhysicsManager(double appHeight, ReadOnlyLongProperty tick) {
+    public FXGLPhysicsWorld(double appHeight, ReadOnlyLongProperty tick) {
         this.appHeight = appHeight;
         this.tick.bind(tick);
 
@@ -199,39 +199,54 @@ public final class PhysicsManager implements WorldStateListener {
         toRemove.forEach(collisions::remove);
     }
 
-    /**
-     * Registers a collision handler
-     * The order in which the types are passed to this method
-     * decides the order of objects being passed into the collision handler
-     * <p>
-     * <pre>
-     * Example:
-     * physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
-     *      public void onCollisionBegin(Entity a, Entity b) {
-     *          // called when entities start touching
-     *      }
-     *      public void onCollision(Entity a, Entity b) {
-     *          // called when entities are touching
-     *      }
-     *      public void onCollisionEnd(Entity a, Entity b) {
-     *          // called when entities are separated and no longer touching
-     *      }
-     * });
-     *
-     * </pre>
-     *
-     * @param handler collision handler
-     */
+    @Override
     public void addCollisionHandler(CollisionHandler handler) {
         collisionHandlers.add(handler);
     }
 
-    /**
-     * Set gravity for the physics world.
-     *
-     * @param x vector x
-     * @param y vector y
-     */
+    @Override
+    public void removeCollisionHandler(CollisionHandler handler) {
+        collisionHandlers.remove(handler);
+    }
+
+    @Override
+    public void addEntity(Entity entity) {
+        entities.add(entity);
+        if (entity instanceof PhysicsEntity) {
+            PhysicsEntity pEntity = (PhysicsEntity) entity;
+            createBody(pEntity);
+            pEntity.onInitPhysics();
+        }
+    }
+
+    @Override
+    public void removeEntity(Entity entity) {
+        entities.remove(entity);
+        if (entity instanceof PhysicsEntity)
+            destroyBody((PhysicsEntity) entity);
+    }
+
+    @Override
+    public void update() {
+        physicsWorld.step(TIME_STEP, 8, 3);
+
+        processCollisions();
+
+        for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
+            Entity e = (Entity) body.getUserData();
+            e.setX(
+                    Math.round(toPixels(
+                            body.getPosition().x
+                                    - toMeters(e.getWidth() / 2))));
+            e.setY(
+                    Math.round(toPixels(
+                            toMeters(appHeight) - body.getPosition().y
+                                    - toMeters(e.getHeight() / 2))));
+            e.setRotation(-Math.toDegrees(body.getAngle()));
+        }
+    }
+
+    @Override
     public void setGravity(double x, double y) {
         physicsWorld.setGravity(new Vec2().addLocal((float) x, -(float) y));
     }
@@ -270,13 +285,7 @@ public final class PhysicsManager implements WorldStateListener {
 
     private EdgeCallback raycastCallback = new EdgeCallback();
 
-    /**
-     * Performs raycast from start to end
-     *
-     * @param start world point in pixels
-     * @param end   world point in pixels
-     * @return result of raycast
-     */
+    @Override
     public RaycastResult raycast(Point2D start, Point2D end) {
         raycastCallback.reset();
         physicsWorld.raycast(raycastCallback, toPoint(start), toPoint(end));
@@ -293,62 +302,12 @@ public final class PhysicsManager implements WorldStateListener {
         return new RaycastResult(Optional.ofNullable(entity), Optional.ofNullable(point));
     }
 
-    /**
-     * Converts pixels to meters
-     *
-     * @param pixels value in pixels
-     * @return value in meters
-     */
-    public static float toMeters(double pixels) {
-        return (float) pixels * 0.05f;
-    }
-
-    /**
-     * Converts meters to pixels
-     *
-     * @param meters value in meters
-     * @return value in pixels
-     */
-    public static float toPixels(double meters) {
-        return (float) meters * 20f;
-    }
-
-    /**
-     * Converts a vector of type Point2D to vector of type Vec2
-     *
-     * @param v vector in pixels
-     * @return vector in meters
-     */
-    public static Vec2 toVector(Point2D v) {
-        return new Vec2(toMeters(v.getX()), toMeters(-v.getY()));
-    }
-
-    /**
-     * Converts a vector of type Vec2 to vector of type Point2D
-     *
-     * @param v vector in meters
-     * @return vector in pixels
-     */
-    public static Point2D toVector(Vec2 v) {
-        return new Point2D(toPixels(v.x), toPixels(-v.y));
-    }
-
-    /**
-     * Converts a point of type Point2D to point of type Vec2
-     *
-     * @param p point in pixels
-     * @return point in meters
-     */
+    @Override
     public Vec2 toPoint(Point2D p) {
         return new Vec2(toMeters(p.getX()), toMeters(appHeight - p.getY()));
     }
 
-    /**
-     * Converts a point of type Vec2 to point of type Point2D
-     *
-     * @param p point in meters
-     * @return point in pixels
-     */
+    @Override
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }
@@ -380,46 +339,5 @@ public final class PhysicsManager implements WorldStateListener {
             point = null;
             bestFraction = 1.0f;
         }
-    }
-
-    @Override
-    public void onEntityAdded(Entity entity) {
-        entities.add(entity);
-        if (entity instanceof PhysicsEntity) {
-            PhysicsEntity pEntity = (PhysicsEntity) entity;
-            createBody(pEntity);
-            pEntity.onInitPhysics();
-        }
-    }
-
-    @Override
-    public void onEntityRemoved(Entity entity) {
-        entities.remove(entity);
-        if (entity instanceof PhysicsEntity)
-            destroyBody((PhysicsEntity) entity);
-    }
-
-    @Override
-    public void onWorldUpdate() {
-        physicsWorld.step(TIME_STEP, 8, 3);
-
-        processCollisions();
-
-        for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
-            Entity e = (Entity) body.getUserData();
-            e.setX(
-                    Math.round(toPixels(
-                            body.getPosition().x
-                                    - toMeters(e.getWidth() / 2))));
-            e.setY(
-                    Math.round(toPixels(
-                            toMeters(appHeight) - body.getPosition().y
-                                    - toMeters(e.getHeight() / 2))));
-            e.setRotation(-Math.toDegrees(body.getAngle()));
-        }
-    }
-
-    @Override
-    public void onWorldReset() {
     }
 }

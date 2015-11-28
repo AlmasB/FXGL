@@ -27,7 +27,6 @@ package com.almasb.fxgl.control;
 
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.TimerManager;
 
 /**
  * API NOT READY FOR USE

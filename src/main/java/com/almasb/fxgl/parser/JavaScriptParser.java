@@ -30,7 +30,9 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.asset.AssetLoader;
 
 /**
  * Allows to parse valid javascript source files.
@@ -44,9 +46,9 @@ public final class JavaScriptParser {
 
     public JavaScriptParser(String scriptFileName) throws Exception {
         engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("HOME_DIR", getClass().getResource("/assets/scripts/"));
-        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("ASSET_MANAGER", AssetManager.INSTANCE);
+        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("ASSET_MANAGER", GameApplication.getService(ServiceType.ASSET_LOADER));
 
-        engine.eval(AssetManager.INSTANCE.loadScript(scriptFileName));
+        engine.eval(GameApplication.getService(ServiceType.ASSET_LOADER).loadScript(scriptFileName));
         invocableEngine = (Invocable) engine;
     }
 

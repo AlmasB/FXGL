@@ -30,15 +30,11 @@ import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 /**
@@ -119,7 +115,7 @@ public final class CCTRMainMenu extends FXGLMenu {
     }
 
     private Node makeBackground() {
-        Texture bg = app.getAssetManager().loadTexture("bg_cctr.jpg");
+        Texture bg = app.getAssetLoader().loadTexture("bg_cctr.jpg");
         bg.setFitWidth(app.getWidth());
         bg.setFitHeight(app.getHeight());
         return bg;

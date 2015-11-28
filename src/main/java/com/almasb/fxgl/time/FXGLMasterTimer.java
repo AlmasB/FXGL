@@ -34,6 +34,9 @@ import com.almasb.fxgl.time.TimerAction.TimerType;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
@@ -48,10 +51,12 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum TimerManager implements WorldStateListener {
-    INSTANCE;
+@Singleton
+public class FXGLMasterTimer implements MasterTimer, WorldStateListener {
+    @Inject
+    private FXGLMasterTimer() {}
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.TimerManager");
+    private static final Logger log = FXGLLogger.getLogger("FXGLTimer");
 
     /**
      * Time per frame in seconds.
@@ -92,6 +97,46 @@ public enum TimerManager implements WorldStateListener {
     }
 
     /**
+     * The main loop timer
+     */
+    private AnimationTimer timer = new AnimationTimer() {
+        @Override
+        public void handle(long internalTime) {
+            processUpdate(internalTime);
+        }
+    };
+
+    /**
+     * This is the internal FXGL update tick,
+     * executed 60 times a second ~ every 0.166 (6) seconds.
+     *
+     * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
+     */
+    private void processUpdate(long internalTime) {
+        // this will set up current tick and current time
+        // for the rest of the game modules to use
+        tickStart(internalTime);
+
+        //gameWorld.update();
+        //onUpdate();
+
+        // this is only end for our processing tick for basic profiling
+        // the actual JavaFX tick ends when our new tick begins. So
+        // JavaFX event callbacks will properly fire within the same "our" tick.
+        tickEnd();
+    }
+
+    @Override
+    public void start() {
+        timer.start();
+    }
+
+    @Override
+    public void stop() {
+        timer.stop();
+    }
+
+    /**
      * List for all timer based actions
      */
     private List<TimerAction> timerActions = new CopyOnWriteArrayList<>();
@@ -105,6 +150,7 @@ public enum TimerManager implements WorldStateListener {
      *
      * @return tick
      */
+    @Override
     public ReadOnlyLongProperty tickProperty() {
         return tick.getReadOnlyProperty();
     }
@@ -118,6 +164,7 @@ public enum TimerManager implements WorldStateListener {
      *
      * @return current tick
      */
+    @Override
     public long getTick() {
         return tick.get();
     }
@@ -125,6 +172,7 @@ public enum TimerManager implements WorldStateListener {
     /**
      * Resets current tick to 0.
      */
+    @Override
     public void resetTicks() {
         log.finer("Resetting ticks to 0");
 
@@ -143,6 +191,7 @@ public enum TimerManager implements WorldStateListener {
      *
      * @return current time in nanoseconds
      */
+    @Override
     public long getNow() {
         return now;
     }
@@ -166,6 +215,7 @@ public enum TimerManager implements WorldStateListener {
     /**
      * @return average render FPS
      */
+    @Override
     public int getFPS() {
         return fps.get();
     }
@@ -173,6 +223,7 @@ public enum TimerManager implements WorldStateListener {
     /**
      * @return average render FPS property
      */
+    @Override
     public IntegerProperty fpsProperty() {
         return fps;
     }
@@ -185,6 +236,7 @@ public enum TimerManager implements WorldStateListener {
     /**
      * @return Average performance FPS
      */
+    @Override
     public int getPerformanceFPS() {
         return performanceFPS.get();
     }
@@ -192,6 +244,7 @@ public enum TimerManager implements WorldStateListener {
     /**
      * @return Average performance FPS property
      */
+    @Override
     public IntegerProperty performanceFPSProperty() {
         return performanceFPS;
     }
@@ -205,6 +258,7 @@ public enum TimerManager implements WorldStateListener {
      *
      * @param internalTime internal JavaFX time
      */
+    @Override
     public void tickStart(long internalTime) {
         tick.set(tick.get() + 1);
         now = (getTick() - 1) * tpfNanos();
@@ -216,6 +270,7 @@ public enum TimerManager implements WorldStateListener {
     /**
      * Called at the end of a game update tick.
      */
+    @Override
     public void tickEnd() {
         performanceFPS.set(Math.round(fpsPerformanceCounter.count(secondsToNanos(1) / (System.nanoTime() - startNanos))));
         fps.set(Math.round(fpsCounter.count(secondsToNanos(1) / realFPS)));
@@ -230,6 +285,7 @@ public enum TimerManager implements WorldStateListener {
      * @param action   the action
      * @param interval time
      */
+    @Override
     public void runAtInterval(Runnable action, Duration interval) {
         timerActions.add(new TimerAction(getNow(), interval, action, TimerType.INDEFINITE));
     }
@@ -248,6 +304,7 @@ public enum TimerManager implements WorldStateListener {
      * @param interval       interval between executions
      * @param whileCondition condition
      */
+    @Override
     public void runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition) {
         if (!whileCondition.get()) {
             return;
@@ -269,6 +326,7 @@ public enum TimerManager implements WorldStateListener {
      * @param action action to execute
      * @param delay  delay after which to execute
      */
+    @Override
     public void runOnceAfter(Runnable action, Duration delay) {
         timerActions.add(new TimerAction(getNow(), delay, action, TimerType.ONCE));
     }
@@ -276,18 +334,10 @@ public enum TimerManager implements WorldStateListener {
     /**
      * Clears all registered timer based actions.
      */
+    @Override
     public void clearActions() {
         log.finer("Clearing all scheduled actions");
         timerActions.clear();
-    }
-
-    /**
-     * Constructs a new Timer object.
-     *
-     * @return new timer
-     */
-    public Timer newTimer() {
-        return new Timer(this);
     }
 
     @Override

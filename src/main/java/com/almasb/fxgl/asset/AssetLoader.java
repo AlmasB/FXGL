@@ -48,6 +48,8 @@ import java.util.zip.ZipInputStream;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.FXGLLogger;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
@@ -56,7 +58,7 @@ import javafx.scene.media.Media;
 import javafx.scene.text.Font;
 
 /**
- * AssetManager handles all resource (asset) loading operations.
+ * Handles all resource (asset) loading operations.
  * <p>
  * "assets" directory must be located in source folder ("src" by default).
  * <p>
@@ -77,8 +79,9 @@ import javafx.scene.text.Font;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum AssetManager {
-    INSTANCE;
+public class AssetLoader {
+    @Inject
+    protected AssetLoader() {}
 
     private static final String ASSETS_DIR = "/assets/";
     private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";
@@ -95,7 +98,7 @@ public enum AssetManager {
     private static final String ICON_DIR = UI_DIR + "icons/";
     private static final String CURSORS_DIR = UI_DIR + "cursors/";
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.AssetManager");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
 
     /**
      * Loads texture with given name from {@value #TEXTURES_DIR}.
@@ -437,7 +440,7 @@ public enum AssetManager {
      */
     private static List<String> loadFileNamesJar(String folderName) {
         List<String> fileNames = new ArrayList<>();
-        CodeSource src = AssetManager.class.getProtectionDomain().getCodeSource();
+        CodeSource src = AssetLoader.class.getProtectionDomain().getCodeSource();
         if (src != null) {
             URL jar = src.getLocation();
             try (InputStream is = jar.openStream();

@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,41 +23,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.time;
 
-import javafx.util.Duration;
+package com.almasb.fxgl.asset;
 
 /**
- * A simple timer that uses TimerManager to synchronize
- * time with the game world tick.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Timer {
-
-    private TimerManager manager;
-
-    Timer(TimerManager manager) {
-        this.manager = manager;
-    }
-
-    private long time = 0;
-
-    /**
-     * Captures current time.
-     */
-    public void capture() {
-        time = manager.getNow();
-    }
-
-    /**
-     * Returns true if difference between captured time
-     * and now is greater or equal to given duration.
-     *
-     * @param duration time duration to check
-     * @return true if elapsed, false otherwise
-     */
-    public boolean elapsed(Duration duration) {
-        return manager.getNow() - time >= TimerManager.toNanos(duration);
+public class FXGLAudioPlayer implements AudioPlayer {
+    @Override
+    public void doSomething() {
+        System.out.println("Did something!");
     }
 }

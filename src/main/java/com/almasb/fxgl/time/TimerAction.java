@@ -57,7 +57,7 @@ public final class TimerAction {
      */
     public TimerAction(long now, Duration interval, Runnable action, TimerType type) {
         this.time = now;
-        this.interval = TimerManager.secondsToNanos(interval.toSeconds());
+        this.interval = FXGLMasterTimer.secondsToNanos(interval.toSeconds());
         this.action = action;
         this.type = type;
     }

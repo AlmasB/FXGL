@@ -24,6 +24,7 @@
 
         <!-- dependencies -->
         <junit.version>4.12</junit.version>
+        <guice.version>4.0</guice.version>
     </properties>
 
     <dependencies>
@@ -31,6 +32,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
         </dependency>
     </dependencies>
 

@@ -26,20 +26,23 @@
 package com.almasb.fxgl;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.AudioManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.physics.FXGLPhysicsWorld;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.*;
-import com.almasb.fxgl.time.TimerManager;
+import com.almasb.fxgl.time.FXGLMasterTimer;
+import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
@@ -47,6 +50,9 @@ import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import com.almasb.fxgl.util.Version;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -82,18 +88,6 @@ import javafx.stage.Stage;
  */
 public abstract class GameApplication extends Application {
 
-    private static GameApplication instance;
-
-    /**
-     * @return singleton instance of the current game application
-     * @deprecated applications should not rely on global access.
-     * This method will be removed in future versions.
-     */
-    @Deprecated
-    public static final GameApplication getInstance() {
-        return instance;
-    }
-
     static {
         FXGLLogger.init(Level.CONFIG);
         Version.print();
@@ -111,7 +105,6 @@ public abstract class GameApplication extends Application {
         // make sure first thing we do is get back the reference from JavaFX
         // so that anything can now use getInstance()
         log.finer("clinit()");
-        instance = this;
         setDefaultUncaughtExceptionHandler(new FXGLUncaughtExceptionHandler());
         setDefaultCheckedExceptionHandler(new FXGLCheckedExceptionHandler());
     }
@@ -165,17 +158,8 @@ public abstract class GameApplication extends Application {
      */
     private ReadOnlyGameSettings settings;
 
-    /**
-     * The main loop timer
-     */
-    private AnimationTimer timer = new AnimationTimer() {
-        @Override
-        public void handle(long internalTime) {
-            processUpdate(internalTime);
-        }
-    };
-
     private GameWorld gameWorld = new GameWorld();
+    private PhysicsWorld physicsWorld;
 
     /*
      * Various game state managers.
@@ -183,9 +167,6 @@ public abstract class GameApplication extends Application {
     private SceneManager sceneManager;
     private AudioManager audioManager;
     private InputManager inputManager;
-    private AssetManager assetManager;
-    private PhysicsManager physicsManager;
-    private TimerManager timerManager;
     private QTEManager qteManager;
     private SaveLoadManager saveLoadManager;
     private NotificationManager notificationManager;
@@ -333,10 +314,7 @@ public abstract class GameApplication extends Application {
      * Ensure managers are of legal state and ready.
      */
     private void initManagers(Stage stage) {
-        assetManager = AssetManager.INSTANCE;
         saveLoadManager = SaveLoadManager.INSTANCE;
-
-        timerManager = TimerManager.INSTANCE;
 
         Scene scene = new Scene(new Pane());
         stage.setScene(scene);
@@ -345,7 +323,7 @@ public abstract class GameApplication extends Application {
         notificationManager = new NotificationManager(getSceneManager().getGameScene().getRoot());
         achievementManager = new AchievementManager();
 
-        physicsManager = new PhysicsManager(settings.getHeight(), timerManager.tickProperty());
+        physicsWorld = new FXGLPhysicsWorld(settings.getHeight(), getService(ServiceType.MASTER_TIMER).tickProperty());
 
         audioManager = new AudioManager();
         qteManager = new QTEManager();
@@ -361,13 +339,31 @@ public abstract class GameApplication extends Application {
         achievementManager.addAchievementListener(notificationManager);
     }
 
+    private static Injector injector;
+
+    private void initServices() {
+        injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                for (Field field : ServiceType.class.getDeclaredFields()) {
+                    try {
+                        ServiceType type = (ServiceType) field.get(null);
+                        bind(type.service()).to(type.serviceProvider());
+                    } catch (IllegalAccessException e) {
+                        throw new IllegalArgumentException("Failed to configure services: " + e.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * Registers world state listeners.
      */
     private void initWorld() {
         gameWorld.addWorldStateListener(inputManager);
-        gameWorld.addWorldStateListener(timerManager);
-        gameWorld.addWorldStateListener(physicsManager);
+        //gameWorld.addWorldStateListener(timerManager);
+        //gameWorld.addWorldStateListener(physicsManager);
         gameWorld.addWorldStateListener(getGameScene());
         gameWorld.addWorldStateListener(audioManager);
     }
@@ -388,7 +384,7 @@ public abstract class GameApplication extends Application {
                     exit();
             });
         });
-        stage.getIcons().add(AssetManager.INSTANCE.loadAppIcon(settings.getIconFileName()));
+        stage.getIcons().add(getService(ServiceType.ASSET_LOADER).loadAppIcon(settings.getIconFileName()));
 
         if (settings.isFullScreen()) {
             stage.setFullScreenExitHint("");
@@ -425,12 +421,15 @@ public abstract class GameApplication extends Application {
                 break;
         }
 
-        UIFactory.init(stage, AssetManager.INSTANCE.loadFont(settings.getDefaultFontName()));
+        initServices();
+
+        UIFactory.init(stage, getService(ServiceType.ASSET_LOADER).loadFont(settings.getDefaultFontName()));
         FXGLLogger.init(logLevel);
 
         log.info("Application Mode: " + settings.getApplicationMode());
 
         initManagers(stage);
+
         initAchievements();
         // we call this early to process user input bindings
         // so we can correctly display them in menus
@@ -448,26 +447,26 @@ public abstract class GameApplication extends Application {
         log.finer("Scene size: " + stage.getScene().getWidth() + "x" + stage.getScene().getHeight());
         log.finer("Stage size: " + stage.getWidth() + "x" + stage.getHeight());
     }
-
-    /**
-     * This is the internal FXGL update tick,
-     * executed 60 times a second ~ every 0.166 (6) seconds.
-     *
-     * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
-     */
-    private void processUpdate(long internalTime) {
-        // this will set up current tick and current time
-        // for the rest of the game modules to use
-        timerManager.tickStart(internalTime);
-
-        gameWorld.update();
-        onUpdate();
-
-        // this is only end for our processing tick for basic profiling
-        // the actual JavaFX tick ends when our new tick begins. So
-        // JavaFX event callbacks will properly fire within the same "our" tick.
-        timerManager.tickEnd();
-    }
+//
+//    /**
+//     * This is the internal FXGL update tick,
+//     * executed 60 times a second ~ every 0.166 (6) seconds.
+//     *
+//     * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
+//     */
+//    private void processUpdate(long internalTime) {
+//        // this will set up current tick and current time
+//        // for the rest of the game modules to use
+//        timerManager.tickStart(internalTime);
+//
+//        gameWorld.update();
+//        onUpdate();
+//
+//        // this is only end for our processing tick for basic profiling
+//        // the actual JavaFX tick ends when our new tick begins. So
+//        // JavaFX event callbacks will properly fire within the same "our" tick.
+//        timerManager.tickEnd();
+//    }
 
     /**
      * Initialize user application.
@@ -506,7 +505,7 @@ public abstract class GameApplication extends Application {
     final void startNewGame() {
         log.finer("Starting new game");
         initApp(null);
-        timer.start();
+        getService(ServiceType.MASTER_TIMER).start();
     }
 
     /**
@@ -518,7 +517,7 @@ public abstract class GameApplication extends Application {
         log.finer("Starting loaded game");
         reset();
         initApp(data);
-        timer.start();
+        getService(ServiceType.MASTER_TIMER).start();
     }
 
     /**
@@ -526,7 +525,7 @@ public abstract class GameApplication extends Application {
      */
     final void pause() {
         log.finer("Pausing main loop");
-        timer.stop();
+        getService(ServiceType.MASTER_TIMER).stop();
         getInputManager().clearAllInput();
     }
 
@@ -536,7 +535,7 @@ public abstract class GameApplication extends Application {
     final void resume() {
         log.finer("Resuming main loop");
         getInputManager().clearAllInput();
-        timer.start();
+        getService(ServiceType.MASTER_TIMER).start();
     }
 
     /**
@@ -672,8 +671,8 @@ public abstract class GameApplication extends Application {
     /**
      * @return timer manager
      */
-    public final TimerManager getTimerManager() {
-        return timerManager;
+    public final MasterTimer getTimerManager() {
+        return getService(ServiceType.MASTER_TIMER);
     }
 
     /**
@@ -693,8 +692,8 @@ public abstract class GameApplication extends Application {
     /**
      * @return physics manager
      */
-    public final PhysicsManager getPhysicsManager() {
-        return physicsManager;
+    public final PhysicsWorld getPhysicsManager() {
+        return physicsWorld;
     }
 
     /**
@@ -707,8 +706,8 @@ public abstract class GameApplication extends Application {
     /**
      * @return asset manager
      */
-    public final AssetManager getAssetManager() {
-        return assetManager;
+    public final AssetLoader getAssetLoader() {
+        return getService(ServiceType.ASSET_LOADER);
     }
 
     /**
@@ -746,5 +745,9 @@ public abstract class GameApplication extends Application {
      */
     public final ReadOnlyGameSettings getSettings() {
         return settings;
+    }
+
+    public static <T> T getService(ServiceType<T> type) {
+        return injector.getInstance(type.service());
     }
 }

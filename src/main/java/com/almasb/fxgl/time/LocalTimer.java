@@ -23,42 +23,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.control;
+package com.almasb.fxgl.time;
 
-import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Entity;
+import javafx.util.Duration;
 
 /**
- * API NOT READY FOR USE
+ * A simple timer.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class CircularMovementControl extends AbstractControl {
+public interface LocalTimer {
 
-    private double radius;
-    private double speed;
-    private double t = 0.0;
-    private double x, y;
+    /**
+     * Captures current time.
+     */
+    void capture();
 
-    public CircularMovementControl(double speed, double radius) {
-        this.radius = radius;
-        this.speed = speed;
-    }
-
-    @Override
-    protected void initEntity(Entity entity) {
-//        x = entity.getTranslateX();
-//        y = entity.getTranslateY();
-    }
-
-    @Override
-    public void onUpdate(Entity entity) {
-//        x = entity.getTranslateX() - Math.cos(t) * radius;
-//        y = entity.getTranslateY() - Math.sin(t) * radius;
-//
-//        t += TimerManager.tpfSeconds() * speed;
-//
-//        entity.setTranslateX(x + Math.cos(t) * radius);
-//        entity.setTranslateY(y + Math.sin(t) * radius);
-    }
+    /**
+     * Returns true if difference between captured time
+     * and now is greater or equal to given duration.
+     *
+     * @param duration time duration to check
+     * @return true if elapsed, false otherwise
+     */
+    boolean elapsed(Duration duration);
 }

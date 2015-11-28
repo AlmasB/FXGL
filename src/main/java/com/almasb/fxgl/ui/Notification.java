@@ -26,9 +26,10 @@
 
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.time.TimerManager;
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.time.FXGLMasterTimer;
 import javafx.animation.Transition;
-import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -62,7 +63,8 @@ final class Notification extends Button {
                 (int)(bgColor.getGreen()*255),
                 (int)(bgColor.getBlue()*255)));
 
-        in.setOnFinished(e -> TimerManager.INSTANCE.runOnceAfter(this::hide, Duration.seconds(3)));
+        in.setOnFinished(e -> GameApplication.getService(ServiceType.MASTER_TIMER)
+                .runOnceAfter(this::hide, Duration.seconds(3)));
     }
 
     void show() {

@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
@@ -52,7 +52,6 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventType;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -61,7 +60,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -213,7 +211,7 @@ public final class SceneManager implements UserProfileSavable {
         String css = app.getSettings().getCSS();
         css = !css.isEmpty() ? css : app.getSettings().getMenuStyle().getCSS();
 
-        String loadedCSS = AssetManager.INSTANCE.loadCSS(css);
+        String loadedCSS = GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(css);
         log.finer("Using CSS: " + css);
 
         return new SceneSettings(width, height, bounds, loadedCSS);
