@@ -26,33 +26,22 @@
 
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.gameplay.Achievement;
-import com.almasb.fxgl.gameplay.AchievementListener;
-import com.almasb.fxgl.util.NotificationListener;
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.event.AchievementEvent;
+import com.almasb.fxgl.event.NotificationEvent;
 import javafx.animation.ScaleTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class NotificationManager implements AchievementListener {
-
-    private List<NotificationListener> listeners = new ArrayList<>();
-
-    public void addNotificationListener(NotificationListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeNotificationListener(NotificationListener listener) {
-        listeners.remove(listener);
-    }
+public final class NotificationManager {
 
     private Queue<Notification> queue = new ArrayDeque<>();
 
@@ -96,6 +85,10 @@ public final class NotificationManager implements AchievementListener {
 
     public NotificationManager(Pane parent) {
         this.parent = parent;
+
+        GameApplication.getService(ServiceType.EVENT_BUS).addEventHandler(AchievementEvent.ANY, event -> {
+            pushNotification("You got an achievement! " + event.getAchievement().getName());
+        });
     }
 
     private void popNotification(Notification notification) {
@@ -133,7 +126,9 @@ public final class NotificationManager implements AchievementListener {
         showing = true;
         parent.getChildren().add(notification);
         notification.show();
-        listeners.forEach(l -> l.onNotificationReceived(notification.getText()));
+
+        GameApplication.getService(ServiceType.EVENT_BUS)
+                .fireEvent(new NotificationEvent(notification.getText()));
     }
 
     private Notification createNotification(String text) {
@@ -182,10 +177,5 @@ public final class NotificationManager implements AchievementListener {
         out.setOnFinished(e -> popNotification(notification));
 
         return notification;
-    }
-
-    @Override
-    public void onAchievementUnlocked(Achievement achievement) {
-        pushNotification("You got an achievement! " + achievement.getName());
     }
 }

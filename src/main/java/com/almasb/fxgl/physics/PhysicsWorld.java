@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.GameApplication;
@@ -38,6 +39,10 @@ import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.Events;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
+import com.almasb.fxgl.util.FXGLLogger;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
@@ -68,7 +73,10 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 public final class PhysicsWorld {
+
+    private static final Logger log = FXGLLogger.getLogger("FXGL.PhysicsWorld");
 
     private static final float TIME_STEP = 1 / 60.0f;
 
@@ -84,9 +92,10 @@ public final class PhysicsWorld {
 
     private double appHeight;
 
-    public PhysicsWorld(double appHeight, ReadOnlyLongProperty tick) {
+    @Inject
+    public PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
-        this.tick.bind(tick);
+        this.tick.bind(GameApplication.getService(ServiceType.MASTER_TIMER).tickProperty());
 
         physicsWorld.setContactListener(new ContactListener() {
             @Override
@@ -142,6 +151,8 @@ public final class PhysicsWorld {
             removeEntity(event.getEntity());
         });
         bus.addEventHandler(UpdateEvent.ANY, event -> update());
+
+        log.finer("Physics world initialized");
     }
 
     /**

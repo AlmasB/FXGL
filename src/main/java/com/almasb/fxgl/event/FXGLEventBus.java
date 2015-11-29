@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.event;
 
+import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.event.Event;
@@ -33,13 +34,20 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Group;
 
+import java.util.logging.Logger;
+
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
 public final class FXGLEventBus implements EventBus {
+
+    private static final Logger log = FXGLLogger.getLogger("FXGL.EventBus");
+
     @Inject
-    private FXGLEventBus() {}
+    private FXGLEventBus() {
+        log.finer("Service [EventBus] initialized");
+    }
 
     private Group eventHandlers = new Group();
 

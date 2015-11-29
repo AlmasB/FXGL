@@ -101,7 +101,7 @@ public final class FXGLLogger {
         consoleHandler.setLevel(logLevel);
         consoleHandler.setFormatter(formatter);
 
-        log = getLogger("FXGLLogger");
+        log = getLogger("FXGL.Logger");
         log.info("Logger initialized with level: " + logLevel);
         logSystemInfo();
     }

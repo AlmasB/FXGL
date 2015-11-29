@@ -26,9 +26,122 @@
 
 package com.almasb.fxgl.asset;
 
+import javafx.beans.property.DoubleProperty;
+
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface AudioPlayer {
-    void doSomething();
+
+    /**
+     * @return global music volume property
+     */
+    DoubleProperty globalMusicVolumeProperty();
+
+    /**
+     * @return global music volume
+     */
+    default double getGlobalMusicVolume() {
+        return globalMusicVolumeProperty().get();
+    }
+
+    /**
+     * Set global music volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%
+     *
+     * @param volume music volume
+     */
+    default void setGlobalMusicVolume(double volume) {
+        globalMusicVolumeProperty().set(volume);
+    }
+
+    /**
+     * @return global sound volume property
+     */
+    DoubleProperty globalSoundVolumeProperty();
+
+    /**
+     * @return global sound volume
+     */
+    default double getGlobalSoundVolume() {
+        return globalSoundVolumeProperty().get();
+    }
+
+    /**
+     * Set global sound volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%
+     *
+     * @param volume sound volume
+     */
+    default void setGlobalSoundVolume(double volume) {
+        globalSoundVolumeProperty().set(volume);
+    }
+
+    /**
+     * Plays given sound based on its properties.
+     *
+     * @param sound sound to play
+     */
+    void playSound(Sound sound);
+
+    /**
+     * Stops playing given sound.
+     *
+     * @param sound sound to stop
+     */
+    void stopSound(Sound sound);
+
+    /**
+     * Stops playing all sounds.
+     */
+    void stopAllSounds();
+
+    /**
+     * Plays given music based on its properties.
+     *
+     * @param music music to play
+     */
+    void playMusic(Music music);
+
+    /**
+     * Pauses given music if it was previously started with {@link #playSound(Sound)}.
+     * It can then be restarted by {@link #resumeMusic(Music)}.
+     *
+     * @param music music to pause
+     */
+    void pauseMusic(Music music);
+
+    /**
+     * Resumes previously paused {@link #pauseMusic(Music)} music.
+     *
+     * @param music music to resume
+     */
+    void resumeMusic(Music music);
+
+    /**
+     * Stops currently playing music. It cannot be restarted
+     * using {@link #resumeMusic(Music)}. The music object needs
+     * to be started again by {@link #playMusic(Music)}.
+     *
+     * @param music music to stop
+     */
+    void stopMusic(Music music);
+
+    /**
+     * Pauses all currently playing music. These can be
+     * resumed using {@link #resumeAllMusic()}.
+     */
+    void pauseAllMusic();
+
+    /**
+     * Resumes all currently paused music.
+     */
+    void resumeAllMusic();
+
+    /**
+     * Stops all currently playing music. The music cannot be restarted
+     * by calling {@link #resumeAllMusic()}. Each music object will need
+     * to be started by {@link #playMusic(Music)}.
+     */
+    void stopAllMusic();
 }

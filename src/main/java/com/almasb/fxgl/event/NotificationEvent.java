@@ -24,11 +24,28 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.event;
+
+import javafx.beans.NamedArg;
+import javafx.event.Event;
+import javafx.event.EventType;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface AchievementListener {
-    void onAchievementUnlocked(Achievement achievement);
+public final class NotificationEvent extends Event {
+
+    public static final EventType<NotificationEvent> ANY =
+            new EventType<>(Event.ANY, "NOTIFICATION_EVENT");
+
+    private String text;
+
+    public String getText() {
+        return text;
+    }
+
+    public NotificationEvent(String text) {
+        super(ANY);
+        this.text = text;
+    }
 }

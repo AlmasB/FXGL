@@ -26,6 +26,7 @@
 package com.almasb.fxgl.input;
 
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.GameApplication;
@@ -39,6 +40,8 @@ import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -52,6 +55,7 @@ import javafx.scene.input.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 public final class InputManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
@@ -81,6 +85,7 @@ public final class InputManager implements UserProfileSavable {
 
     private GameScene gameScene;
 
+    @Inject
     public InputManager(GameScene gameScene) {
         this.gameScene = gameScene;
 
@@ -119,6 +124,8 @@ public final class InputManager implements UserProfileSavable {
         eventBus.addEventHandler(FXGLEvent.PAUSE, reset);
         eventBus.addEventHandler(FXGLEvent.RESUME, reset);
         eventBus.addEventHandler(FXGLEvent.RESET, reset);
+
+        log.finer("Service [Input] initialized");
     }
 
     /**

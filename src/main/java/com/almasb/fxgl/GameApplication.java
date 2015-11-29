@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.asset.AudioManager;
+import com.almasb.fxgl.asset.AudioPlayer;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
@@ -51,10 +51,8 @@ import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import com.almasb.fxgl.util.Version;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
+import com.google.inject.*;
+import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
@@ -159,14 +157,17 @@ public abstract class GameApplication extends Application {
      */
     private ReadOnlyGameSettings settings;
 
-    private PhysicsWorld physicsWorld;
 
     /*
      * Various game state managers.
      */
+    @Inject
     private SceneManager sceneManager;
-    private AudioManager audioManager;
+    @Inject
     private InputManager inputManager;
+    @Inject
+    private AudioPlayer audioPlayer;
+
     private QTEManager qteManager;
     private SaveLoadManager saveLoadManager;
     private NotificationManager notificationManager;
@@ -304,37 +305,27 @@ public abstract class GameApplication extends Application {
     /**
      * Ensure managers are of legal state and ready.
      */
-    private void initManagers(Stage stage) {
+    private void initManagers() {
         saveLoadManager = SaveLoadManager.INSTANCE;
+        //qteManager = new QTEManager();
 
-        Scene scene = new Scene(new Pane());
-        stage.setScene(scene);
-        sceneManager = new SceneManager(this, scene);
-        inputManager = new InputManager(getSceneManager().getGameScene());
         notificationManager = new NotificationManager(getSceneManager().getGameScene().getRoot());
         achievementManager = new AchievementManager();
 
-        physicsWorld = new PhysicsWorld(settings.getHeight(), getService(ServiceType.MASTER_TIMER).tickProperty());
-
-        audioManager = new AudioManager();
-        qteManager = new QTEManager();
-
         // profile data listeners
-        profileSavables.add(inputManager);
-        profileSavables.add(audioManager);
-        profileSavables.add(sceneManager);
-        profileSavables.add(achievementManager);
-
-        notificationManager.addNotificationListener(audioManager);
-
-        achievementManager.addAchievementListener(notificationManager);
+        //profileSavables.add(inputManager);
+        //profileSavables.add(audioManager);
+        //profileSavables.add(sceneManager);
+        //profileSavables.add(achievementManager);
     }
 
     private static Injector injector;
 
     @SuppressWarnings("unchecked")
-    private void initServices(Stage stage) {
+    private void configureServices(Stage stage) {
         injector = Guice.createInjector(new AbstractModule() {
+            private Scene scene = new Scene(new Pane());
+
             @Override
             protected void configure() {
                 for (Field field : ServiceType.class.getDeclaredFields()) {
@@ -347,6 +338,29 @@ public abstract class GameApplication extends Application {
                 }
 
                 requestStaticInjection(UIFactory.class);
+
+                bind(Double.class)
+                        .annotatedWith(Names.named("appWidth"))
+                        .toInstance(getWidth());
+
+                bind(Double.class)
+                        .annotatedWith(Names.named("appHeight"))
+                        .toInstance(getHeight());
+            }
+
+            @Provides
+            GameScene gameScene() {
+                return getSceneManager().getGameScene();
+            }
+
+            @Provides
+            GameApplication application() {
+                return GameApplication.this;
+            }
+
+            @Provides
+            Scene primaryScene() {
+                return scene;
             }
 
             @Provides
@@ -354,6 +368,10 @@ public abstract class GameApplication extends Application {
                 return stage;
             }
         });
+
+        log.finer("Services configuration complete");
+
+        injector.injectMembers(this);
     }
 
     /**
@@ -362,6 +380,7 @@ public abstract class GameApplication extends Application {
      * @param stage the stage
      */
     private void initStage(Stage stage) {
+        stage.setScene(injector.getInstance(Scene.class));
         stage.setTitle(settings.getTitle() + " " + settings.getVersion());
         stage.setResizable(false);
         stage.setOnCloseRequest(e -> {
@@ -409,23 +428,22 @@ public abstract class GameApplication extends Application {
                 break;
         }
 
-        initServices(stage);
+        FXGLLogger.init(logLevel);
+
+        configureServices(stage);
 
         UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(settings.getDefaultFontName()));
-        FXGLLogger.init(logLevel);
 
         log.info("Application Mode: " + settings.getApplicationMode());
 
-        initManagers(stage);
+        initManagers();
 
         initAchievements();
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         initInput();
 
-        getEventBus().addEventHandler(UpdateEvent.ANY, event -> {
-            onUpdate();
-        });
+        getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate());
 
         initStage(stage);
 
@@ -568,13 +586,20 @@ public abstract class GameApplication extends Application {
         loadFromProfile(defaultProfile);
     }
 
+    @Inject
+    private GameWorld gameWorld;
+
     /**
      *
      * @return game world
      */
     public final GameWorld getGameWorld() {
-        return injector.getInstance(GameWorld.class);
+        return gameWorld;
     }
+
+
+    @Inject
+    private PhysicsWorld physicsWorld;
 
     public final PhysicsWorld getPhysicsWorld() {
         return physicsWorld;
@@ -666,15 +691,15 @@ public abstract class GameApplication extends Application {
     /**
      * @return audio manager
      */
-    public final AudioManager getAudioManager() {
-        return audioManager;
+    public final AudioPlayer getAudioManager() {
+        return audioPlayer;
     }
 
     /**
      * @return physics manager
      */
     public final PhysicsWorld getPhysicsManager() {
-        return physicsWorld;
+        return getPhysicsWorld();
     }
 
     /**

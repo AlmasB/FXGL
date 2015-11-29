@@ -47,6 +47,9 @@ import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.FXGLLogger;
 
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.embed.swing.SwingFXUtils;
@@ -69,6 +72,7 @@ import javafx.stage.Stage;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 public final class SceneManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SceneManager");
@@ -137,6 +141,7 @@ public final class SceneManager implements UserProfileSavable {
      * @param app   instance of game application
      * @param scene main scene
      */
+    @Inject
     SceneManager(GameApplication app, Scene scene) {
         this.app = app;
         this.scene = scene;
@@ -157,6 +162,8 @@ public final class SceneManager implements UserProfileSavable {
         sceneSettings = computeSceneSettings(app.getWidth(), app.getHeight());
         gameScene = new GameScene(sceneSettings);
         initDialogBox();
+
+        log.finer("Service [SceneManager] initialized");
     }
 
     private void initDialogBox() {

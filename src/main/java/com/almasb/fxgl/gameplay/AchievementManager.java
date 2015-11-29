@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.event.AchievementEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -44,16 +47,6 @@ import java.util.logging.Logger;
 public final class AchievementManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AchievementManager");
-
-    private List<AchievementListener> listeners = new ArrayList<>();
-
-    public void addAchievementListener(AchievementListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeAchievementListener(AchievementListener listener) {
-        listeners.remove(listener);
-    }
 
     private ObservableList<Achievement> achievements = FXCollections.observableArrayList();
 
@@ -76,7 +69,8 @@ public final class AchievementManager implements UserProfileSavable {
 
 
         a.setOnAchieved(() -> {
-            listeners.forEach(l -> l.onAchievementUnlocked(a));
+            GameApplication.getService(ServiceType.EVENT_BUS)
+                    .fireEvent(new AchievementEvent(a));
         });
         achievements.add(a);
         log.finer("Registered new achievement \"" + a.getName() + "\"");

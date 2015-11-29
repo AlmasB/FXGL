@@ -58,7 +58,7 @@ import javafx.util.Duration;
 @Singleton
 public class FXGLMasterTimer implements MasterTimer {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGLMasterTimer");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.MasterTimer");
 
     private EventBus eventBus;
 
@@ -80,7 +80,7 @@ public class FXGLMasterTimer implements MasterTimer {
         eventBus.addEventHandler(FXGLEvent.RESUME, event -> start());
         eventBus.addEventHandler(FXGLEvent.PAUSE, event -> stop());
 
-        log.finer("Master timer initialized");
+        log.finer("Service [MasterTimer] initialized");
     }
 
     /**
