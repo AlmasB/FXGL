@@ -38,13 +38,14 @@ import javafx.event.EventType;
  */
 public final class MenuEvent extends Event {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * Common super-type for all menu event types.
      */
     public static final EventType<MenuEvent> ANY =
-            new EventType<>(Event.ANY, "MENU");
+            new EventType<>(Event.ANY, "MENU_EVENT");
+
+    public static final EventType<MenuEvent> PAUSE =
+            new EventType<>(MenuEvent.ANY, "PAUSE");
 
     public static final EventType<MenuEvent> RESUME =
             new EventType<>(MenuEvent.ANY, "RESUME");
@@ -60,6 +61,9 @@ public final class MenuEvent extends Event {
 
     public static final EventType<MenuEvent> EXIT =
             new EventType<>(MenuEvent.ANY, "EXIT");
+
+    public static final EventType<MenuEvent> EXIT_TO_MAIN_MENU =
+            new EventType<>(MenuEvent.ANY, "EXIT_TO_MAIN_MENU");
 
     public MenuEvent(EventType<? extends Event> eventType) {
         this(null, null, eventType, null);
@@ -84,9 +88,8 @@ public final class MenuEvent extends Event {
         return data;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public EventType<MenuEvent> getEventType() {
-        return (EventType<MenuEvent>) super.getEventType();
+    public String toString() {
+        return "MenuEvent[type=" + getEventType().toString() + "]";
     }
 }

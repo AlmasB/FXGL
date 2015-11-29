@@ -3,7 +3,7 @@ package manual;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.input.InputManager;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.UIFactory;
@@ -36,7 +36,7 @@ public class SceneScaleTest extends GameApplication {
 
     @Override
     protected void initInput() {
-        InputManager input = getInputManager();
+        Input input = getInput();
 
         input.addAction(new UserAction("Move Left") {
             @Override

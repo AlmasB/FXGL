@@ -28,10 +28,10 @@ package com.almasb.fxgl;
 
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.AudioPlayer;
-import com.almasb.fxgl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.asset.FXGLAudioPlayer;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEventBus;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
@@ -64,7 +64,7 @@ public interface ServiceType<T> {
 
         @Override
         public Class<? extends AssetLoader> serviceProvider() {
-            return FXGLAssetLoader.class;
+            return AssetLoader.class;
         }
     };
 
@@ -101,6 +101,30 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends EventBus> serviceProvider() {
             return FXGLEventBus.class;
+        }
+    };
+
+    ServiceType<Input> INPUT = new ServiceType<Input>() {
+        @Override
+        public Class<Input> service() {
+            return Input.class;
+        }
+
+        @Override
+        public Class<? extends Input> serviceProvider() {
+            return Input.class;
+        }
+    };
+
+    ServiceType<SceneManager> DISPLAY = new ServiceType<SceneManager>() {
+        @Override
+        public Class<SceneManager> service() {
+            return SceneManager.class;
+        }
+
+        @Override
+        public Class<? extends SceneManager> serviceProvider() {
+            return SceneManager.class;
         }
     };
 }

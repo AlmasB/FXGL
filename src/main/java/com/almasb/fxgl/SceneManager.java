@@ -38,8 +38,9 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.settings.UserProfile;
@@ -48,7 +49,6 @@ import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import com.google.inject.Inject;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -109,11 +109,6 @@ public final class SceneManager implements UserProfileSavable {
     private boolean isMenuEnabled;
 
     /**
-     * The key that triggers opening/closing game menu
-     */
-    private KeyCode menuKey = KeyCode.ESCAPE;
-
-    /**
      * The dialog box used to communicate with the user.
      */
     private FXGLDialogBox dialogBox;
@@ -135,6 +130,8 @@ public final class SceneManager implements UserProfileSavable {
      */
     private SceneSettings sceneSettings;
 
+    private EventBus eventBus;
+
     /**
      * Constructs scene manager.
      *
@@ -145,6 +142,7 @@ public final class SceneManager implements UserProfileSavable {
     SceneManager(GameApplication app, Scene scene) {
         this.app = app;
         this.scene = scene;
+        eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
 
         /*
          * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
@@ -154,6 +152,9 @@ public final class SceneManager implements UserProfileSavable {
         scene.addEventFilter(EventType.ROOT, event -> {
             Event copy = event.copyFor(null, null);
             currentScene.fireEvent(copy);
+            if (currentScene == gameScene) {
+                eventBus.fireEvent(copy);
+            }
         });
 
         isMenuEnabled = app.getSettings().isMenuEnabled();
@@ -163,7 +164,7 @@ public final class SceneManager implements UserProfileSavable {
         gameScene = new GameScene(sceneSettings);
         initDialogBox();
 
-        log.finer("Service [SceneManager] initialized");
+        log.finer("Service [Display] initialized");
     }
 
     private void initDialogBox() {
@@ -172,7 +173,7 @@ public final class SceneManager implements UserProfileSavable {
             if (!isMenuOpen())
                 app.pause();
 
-            app.getInputManager().clearAllInput();
+            app.getInput().clearAllInput();
         });
         dialogBox.setOnHidden(e -> {
             if (!isMenuOpen())
@@ -246,95 +247,10 @@ public final class SceneManager implements UserProfileSavable {
         mainMenuScene = menuFactory.newMainMenu(app, sceneSettings);
         gameMenuScene = menuFactory.newGameMenu(app, sceneSettings);
 
-        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (isMenuEnabled && event.getCode() == menuKey
-                    && canSwitchGameMenu) {
-                openGameMenu();
-                canSwitchGameMenu = false;
-            }
-        });
-        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == menuKey)
-                canSwitchGameMenu = true;
-        });
-
-        gameMenuScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == menuKey && canSwitchGameMenu) {
-                closeGameMenu();
-                canSwitchGameMenu = false;
-            }
-        });
-        gameMenuScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == menuKey)
-                canSwitchGameMenu = true;
-        });
-
-        mainMenuScene.addEventHandler(MenuEvent.NEW_GAME, event -> {
-            app.startNewGame();
-            setScene(gameScene);
-        });
-        mainMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
-
-        mainMenuScene.addEventHandler(MenuEvent.EXIT, event -> app.exit());
-
-        gameMenuScene.addEventHandler(MenuEvent.RESUME, event -> this.closeGameMenu());
-        gameMenuScene.addEventHandler(MenuEvent.SAVE, event -> {
-            String saveFileName = event.getData().map(name -> (String) name).orElse("");
-            if (!saveFileName.isEmpty()) {
-                boolean ok = SaveLoadManager.INSTANCE.save(app.saveState(), saveFileName).isOK();
-                if (!ok)
-                    showMessageBox("Failed to save");
-            }
-        });
-        gameMenuScene.addEventHandler(MenuEvent.LOAD, this::handleMenuEventLoad);
-        gameMenuScene.addEventHandler(MenuEvent.EXIT, event -> this.exitToMainMenu());
-    }
-
-    private void handleMenuEventLoad(MenuEvent event) {
-        String saveFileName = event.getData().map(name -> (String) name)
-                .orElse("");
-        if (!saveFileName.isEmpty()) {
-            SaveLoadManager.INSTANCE.load(saveFileName).ifPresent(data -> {
-                app.startLoadedGame((Serializable)data);
-                setScene(gameScene);
-            });
-        } else {
-            SaveLoadManager.INSTANCE.loadLastModifiedFile().ifPresent(data -> {
-                app.startLoadedGame((Serializable)data);
-                setScene(gameScene);
-            });
-        }
-    }
-
-    private void configureIntro() {
-        introScene = app.initIntroFactory().newIntro(sceneSettings);
-        introScene.setOnFinished(this::showGame);
-    }
-
-    /**
-     * Called right before the main stage is shown.
-     */
-    void onStageShow() {
-        if (isMenuEnabled)
-            configureMenu();
-
-        if (app.getSettings().isIntroEnabled()) {
-            configureIntro();
-
-            setScene(introScene);
-            introScene.startIntro();
-        } else {
-            showGame();
-        }
-    }
-
-    private void showGame() {
-        if (isMenuEnabled) {
-            setScene(mainMenuScene);
-        } else {
-            app.startNewGame();
-            setScene(gameScene);
-        }
+        eventBus.addEventHandler(MenuEvent.PAUSE, event -> setScene(gameMenuScene));
+        eventBus.addEventHandler(MenuEvent.RESUME, event -> setScene(gameScene));
+        eventBus.addEventHandler(FXGLEvent.INIT_APP_COMPLETE, event -> setScene(gameScene));
+        eventBus.addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> setScene(mainMenuScene));
     }
 
     /**
@@ -407,41 +323,6 @@ public final class SceneManager implements UserProfileSavable {
     }
 
     /**
-     * Set the key which will open/close game menu.
-     *
-     * @param key the key
-     * @defaultValue KeyCode.ESCAPE
-     */
-    public void setMenuKey(KeyCode key) {
-        menuKey = key;
-    }
-
-    /**
-     * Pauses the game and opens in-game menu.
-     */
-    private void openGameMenu() {
-        app.pause();
-        setScene(gameMenuScene);
-    }
-
-    /**
-     * Closes the game menu and resumes the game.
-     */
-    private void closeGameMenu() {
-        setScene(gameScene);
-        app.resume();
-    }
-
-    /**
-     * Resets and exits the current game and opens main menu.
-     */
-    private void exitToMainMenu() {
-        app.pause();
-        app.reset();
-        setScene(mainMenuScene);
-    }
-
-    /**
      * Shows given dialog and blocks execution of the game until the dialog is
      * dismissed. The provided callback will be called with the dialog result as
      * parameter when the dialog closes.
@@ -455,7 +336,7 @@ public final class SceneManager implements UserProfileSavable {
         if (!paused)
             app.pause();
 
-        app.getInputManager().clearAllInput();
+        app.getInput().clearAllInput();
 
         dialog.initOwner(scene.getWindow());
         dialog.setOnCloseRequest(e -> {

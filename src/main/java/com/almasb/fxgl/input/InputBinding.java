@@ -81,7 +81,7 @@ public final class InputBinding {
      * @param trigger the trigger
      * @return true iff triggered
      */
-    boolean isTriggered(InputManager.Trigger trigger) {
+    boolean isTriggered(Input.Trigger trigger) {
         boolean triggered;
         if (trigger.key == null) {
             triggered = isTriggered(trigger.btn);

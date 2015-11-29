@@ -48,14 +48,10 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
     protected MenuBox createMenuBody() {
         MenuItem itemContinue = new MenuItem("CONTINUE");
         itemContinue.setDisable(!SaveLoadManager.INSTANCE.loadLastModifiedFile().isPresent());
-        itemContinue.setOnAction(e -> {
-            itemContinue.fireEvent(new MenuEvent(MenuEvent.LOAD));
-        });
+        itemContinue.setOnAction(e -> fireContinue());
 
         MenuItem itemNewGame = new MenuItem("NEW GAME");
-        itemNewGame.setOnAction(e -> {
-            itemNewGame.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.NEW_GAME));
-        });
+        itemNewGame.setOnAction(e -> fireNewGame());
 
         MenuItem itemLoad = new MenuItem("LOAD");
         itemLoad.setMenuContent(createContentLoad());
@@ -70,7 +66,7 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
         itemExit.setOnAction(e -> {
             UIFactory.getDialogBox().showConfirmationBox("Exit the game?", yes -> {
                 if (yes)
-                    itemExit.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.EXIT));
+                    fireExit();
             });
         });
 

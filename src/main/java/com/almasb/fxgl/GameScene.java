@@ -46,6 +46,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.input.KeyEvent;
 
 /**
  * Represents the scene that shows game objects on the screen during "play" mode.
@@ -58,7 +59,7 @@ import javafx.scene.effect.BlendMode;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class GameScene extends FXGLScene implements WorldStateListener {
+public final class GameScene extends FXGLScene {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
@@ -305,7 +306,6 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         uiRoot.setMouseTransparent(b);
     }
 
-    @Override
     public void onEntityAdded(Entity entity) {
         //log.finer("Attaching " + entity + " to the scene");
         entity.getSceneView().ifPresent(view -> {
@@ -317,7 +317,6 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         }
     }
 
-    @Override
     public void onEntityRemoved(Entity entity) {
 //        entity.getSceneView().ifPresent(view ->
 //                getRenderLayer(view.getRenderLayer()).getChildren().remove(view));
@@ -325,7 +324,6 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         particles.remove(entity);
     }
 
-    @Override
     public void onWorldUpdate() {
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
@@ -334,7 +332,6 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         particles.forEach(p -> p.renderParticles(particlesGC, getViewportOrigin()));
     }
 
-    @Override
     public void onWorldReset() {
         log.finer("Resetting game scene");
 

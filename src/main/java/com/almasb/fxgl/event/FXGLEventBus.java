@@ -33,6 +33,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 
 import java.util.logging.Logger;
 
@@ -63,6 +64,9 @@ public final class FXGLEventBus implements EventBus {
 
     @Override
     public void fireEvent(Event event) {
+        if (event.getEventType() != UpdateEvent.ANY && event.getEventType() != MouseEvent.MOUSE_MOVED)
+            log.finer("Firing event: " + event.toString());
+
         eventHandlers.fireEvent(event);
     }
 }

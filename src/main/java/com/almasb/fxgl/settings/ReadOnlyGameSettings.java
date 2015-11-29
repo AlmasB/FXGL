@@ -27,6 +27,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.ui.menu.MenuStyle;
 import com.almasb.fxgl.util.ApplicationMode;
+import javafx.scene.input.KeyCode;
 
 /**
  * A copy of GameSettings with public getters only.
@@ -48,6 +49,7 @@ public class ReadOnlyGameSettings {
     protected String defaultFontName = "Copperplate_Gothic_Light_Regular.ttf";
     protected String css = "";
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
+    protected KeyCode menuKey = KeyCode.ESCAPE;
 
     /**
      * Constructs game settings with default parameters
@@ -75,6 +77,7 @@ public class ReadOnlyGameSettings {
         this.defaultFontName = copy.defaultFontName;
         this.css = copy.css;
         this.menuStyle = copy.menuStyle;
+        this.menuKey = copy.menuKey;
     }
 
     public final String getTitle() {
@@ -127,5 +130,9 @@ public class ReadOnlyGameSettings {
 
     public final MenuStyle getMenuStyle() {
         return menuStyle;
+    }
+
+    public KeyCode getMenuKey() {
+        return menuKey;
     }
 }

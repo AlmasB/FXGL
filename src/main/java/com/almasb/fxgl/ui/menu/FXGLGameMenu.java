@@ -45,13 +45,11 @@ public final class FXGLGameMenu extends FXGLCommonMenu {
     @Override
     protected MenuBox createMenuBody() {
         MenuItem itemResume = new MenuItem("RESUME");
-        itemResume.setOnAction(e -> itemResume.fireEvent(new MenuEvent(MenuEvent.RESUME)));
+        itemResume.setOnAction(e -> fireResume());
 
         MenuItem itemSave = new MenuItem("SAVE");
         itemSave.setOnAction(e -> {
-            UIFactory.getDialogBox().showInputBox("Enter save file name", name -> {
-                itemSave.fireEvent(new MenuEvent(e.getSource(), e.getTarget(), MenuEvent.SAVE, name));
-            });
+            UIFactory.getDialogBox().showInputBox("Enter save file name", this::fireSave);
         });
 
         MenuItem itemLoad = new MenuItem("LOAD");
@@ -67,7 +65,7 @@ public final class FXGLGameMenu extends FXGLCommonMenu {
         itemExit.setOnAction(e -> {
             UIFactory.getDialogBox().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
                 if (yes)
-                    itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
+                    fireExitToMainMenu();
             });
         });
 

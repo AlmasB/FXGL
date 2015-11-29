@@ -43,12 +43,14 @@ import com.almasb.fxgl.util.Version;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -74,7 +76,7 @@ public abstract class FXGLMenu extends FXGLScene {
     /**
      * The logger
      */
-    protected static final Logger log = FXGLLogger.getLogger("FXGLMenu");
+    protected static final Logger log = FXGLLogger.getLogger("FXGL.Menu");
 
     protected final GameApplication app;
 
@@ -145,7 +147,7 @@ public abstract class FXGLMenu extends FXGLScene {
         grid.setUserData(0);
 
         // add listener for new ones
-        app.getInputManager().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
+        app.getInput().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(binding -> addNewInputBinding(binding, grid));
@@ -154,7 +156,7 @@ public abstract class FXGLMenu extends FXGLScene {
         });
 
         // register current ones
-        app.getInputManager().getBindings().forEach(binding -> addNewInputBinding(binding, grid));
+        app.getInput().getBindings().forEach(binding -> addNewInputBinding(binding, grid));
 
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -184,11 +186,11 @@ public abstract class FXGLMenu extends FXGLScene {
 
             Scene scene = new Scene(new StackPane(rect, text));
             scene.setOnKeyPressed(e -> {
-                app.getInputManager().rebind(binding.getAction(), e.getCode());
+                app.getInput().rebind(binding.getAction(), e.getCode());
                 stage.close();
             });
             scene.setOnMouseClicked(e -> {
-                app.getInputManager().rebind(binding.getAction(), e.getButton());
+                app.getInput().rebind(binding.getAction(), e.getButton());
                 stage.close();
             });
 
@@ -325,13 +327,17 @@ public abstract class FXGLMenu extends FXGLScene {
         getRoot().getChildren().add(node);
     }
 
+    private void fireEvent2(Event event) {
+        app.getEventBus().fireEvent(event);
+    }
+
     /**
      * Fires {@link MenuEvent#NEW_GAME} event.
      * Can only be fired from main menu.
      * Starts new game.
      */
     protected final void fireNewGame() {
-        fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
+        fireEvent2(new MenuEvent(MenuEvent.NEW_GAME));
     }
 
     /**
@@ -339,7 +345,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * Lads the game state from last modified save file.
      */
     protected final void fireContinue() {
-        fireEvent(new MenuEvent(MenuEvent.LOAD));
+        fireEvent2(new MenuEvent(MenuEvent.LOAD));
     }
 
     /**
@@ -349,7 +355,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param fileName  name of the saved file
      */
     protected final void fireLoad(String fileName) {
-        fireEvent(new MenuEvent(MenuEvent.LOAD, fileName));
+        fireEvent2(new MenuEvent(MenuEvent.LOAD, fileName));
     }
 
     /**
@@ -359,7 +365,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param fileName  name of the save file
      */
     protected final void fireSave(String fileName) {
-        fireEvent(new MenuEvent(MenuEvent.SAVE, fileName));
+        fireEvent2(new MenuEvent(MenuEvent.SAVE, fileName));
     }
 
     /**
@@ -367,7 +373,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * Can only be fired from game menu. Will close the menu and unpause the game.
      */
     protected final void fireResume() {
-        fireEvent(new MenuEvent(MenuEvent.RESUME));
+        fireEvent2(new MenuEvent(MenuEvent.RESUME));
     }
 
     /**
@@ -376,6 +382,10 @@ public abstract class FXGLMenu extends FXGLScene {
      * If fired from main menu, app will close.
      */
     protected final void fireExit() {
-        fireEvent(new MenuEvent(MenuEvent.EXIT));
+        fireEvent2(new MenuEvent(MenuEvent.EXIT));
+    }
+
+    protected final void fireExitToMainMenu() {
+        fireEvent2(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
     }
 }

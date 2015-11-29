@@ -25,21 +25,14 @@
  */
 package com.almasb.fxgl.input;
 
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.GameScene;
 import com.almasb.fxgl.ServiceType;
 import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.Events;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.collections.FXCollections;
@@ -49,6 +42,9 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.*;
 
+import java.util.Optional;
+import java.util.logging.Logger;
+
 /**
  * Provides access to mouse state and allows binding of actions
  * to key and mouse events
@@ -56,7 +52,7 @@ import javafx.scene.input.*;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class InputManager implements UserProfileSavable {
+public final class Input implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
 
@@ -83,12 +79,8 @@ public final class InputManager implements UserProfileSavable {
      */
     private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
 
-    private GameScene gameScene;
-
     @Inject
-    public InputManager(GameScene gameScene) {
-        this.gameScene = gameScene;
-
+    public Input() {
         currentActions.addListener((ListChangeListener.Change<? extends UserAction> c) -> {
             while (c.next()) {
                 if (!processActions)
@@ -102,17 +94,6 @@ public final class InputManager implements UserProfileSavable {
             }
         });
 
-        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event)));
-        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event)));
-
-        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event)));
-        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event)));
-
-        gameScene.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
-        gameScene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
-        gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
-        gameScene.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
-
         EventBus eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
             if (processActions) {
@@ -124,6 +105,17 @@ public final class InputManager implements UserProfileSavable {
         eventBus.addEventHandler(FXGLEvent.PAUSE, reset);
         eventBus.addEventHandler(FXGLEvent.RESUME, reset);
         eventBus.addEventHandler(FXGLEvent.RESET, reset);
+
+        eventBus.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event)));
+        eventBus.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event)));
+
+        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event)));
+        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event)));
+
+        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
+        eventBus.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
+        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
+        eventBus.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
 
         log.finer("Service [Input] initialized");
     }
@@ -404,7 +396,8 @@ public final class InputManager implements UserProfileSavable {
          * @return cursor point in game coordinate system
          */
         public Point2D getGameXY() {
-            return gameScene.screenToGame(getScreenXY());
+            //return gameScene.screenToGame(getScreenXY());
+            return getScreenXY();
         }
 
         /**

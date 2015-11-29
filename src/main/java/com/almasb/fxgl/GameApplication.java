@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +38,8 @@ import com.almasb.fxgl.asset.AudioPlayer;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
-import com.almasb.fxgl.input.InputManager;
+import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.donotuse.QTEManager;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
@@ -58,6 +60,7 @@ import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -164,7 +167,7 @@ public abstract class GameApplication extends Application {
     @Inject
     private SceneManager sceneManager;
     @Inject
-    private InputManager inputManager;
+    private Input input;
     @Inject
     private AudioPlayer audioPlayer;
 
@@ -331,7 +334,10 @@ public abstract class GameApplication extends Application {
                 for (Field field : ServiceType.class.getDeclaredFields()) {
                     try {
                         ServiceType type = (ServiceType) field.get(null);
-                        bind(type.service()).to(type.serviceProvider());
+                        if (type.service().equals(type.serviceProvider()))
+                            bind(type.serviceProvider());
+                        else
+                            bind(type.service()).to(type.serviceProvider());
                     } catch (IllegalAccessException e) {
                         throw new IllegalArgumentException("Failed to configure services: " + e.getMessage());
                     }
@@ -374,6 +380,75 @@ public abstract class GameApplication extends Application {
         injector.injectMembers(this);
     }
 
+    private boolean canSwitchGameMenu = true;
+
+    private void initEventHandlers() {
+        getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate());
+        getEventBus().addEventHandler(MenuEvent.NEW_GAME, event -> startNewGame());
+        getEventBus().addEventHandler(MenuEvent.EXIT, event -> exit());
+        getEventBus().addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> {
+            pause();
+            reset();
+        });
+
+        getEventBus().addEventHandler(MenuEvent.PAUSE, event -> pause());
+        getEventBus().addEventHandler(MenuEvent.RESUME, event -> resume());
+
+        getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
+            String saveFileName = event.getData().map(name -> (String) name).orElse("");
+            if (!saveFileName.isEmpty()) {
+                boolean ok = getSaveLoadManager().save(saveState(), saveFileName).isOK();
+                if (!ok)
+                    getSceneManager().showMessageBox("Failed to save");
+            }
+        });
+
+        getEventBus().addEventHandler(MenuEvent.LOAD, event -> {
+            String saveFileName = event.getData().map(name -> (String) name)
+                    .orElse("");
+
+            Optional<Serializable> saveFile = saveFileName.isEmpty()
+                    ? getSaveLoadManager().loadLastModifiedFile()
+                    : getSaveLoadManager().load(saveFileName);
+
+            saveFile.ifPresent(this::startLoadedGame);
+        });
+
+        getEventBus().addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (getSettings().isMenuEnabled()
+                    && event.getCode() == getSettings().getMenuKey()
+                    && event.getTarget() == getGameScene()
+                    && canSwitchGameMenu) {
+                getEventBus().fireEvent(new MenuEvent(MenuEvent.PAUSE));
+                canSwitchGameMenu = false;
+            }
+        });
+
+        getEventBus().addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == getSettings().getMenuKey()
+                    && event.getSource() == getGameScene())
+                canSwitchGameMenu = true;
+        });
+
+        getEventBus().addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == getSettings().getMenuKey()
+                    && event.getTarget() != getGameScene()
+                    && canSwitchGameMenu) {
+
+                System.out.println(event.getTarget().toString() + " " + getGameScene().toString());
+
+                getEventBus().fireEvent(new MenuEvent(MenuEvent.RESUME));
+                canSwitchGameMenu = false;
+            }
+        });
+
+        getEventBus().addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == getSettings().getMenuKey()
+                    && event.getSource() != getGameScene())
+                canSwitchGameMenu = true;
+        });
+    }
+
     /**
      * Configure main stage based on user settings.
      *
@@ -403,8 +478,38 @@ public abstract class GameApplication extends Application {
             stage.setFullScreen(true);
         }
 
-        stage.setOnShowing(e -> getSceneManager().onStageShow());
         stage.sizeToScene();
+    }
+
+    private void configureIntro() {
+        introScene = app.initIntroFactory().newIntro(sceneSettings);
+        introScene.setOnFinished(this::showGame);
+    }
+
+    /**
+     * Called right before the main stage is shown.
+     */
+    void onStageShow() {
+        if (isMenuEnabled)
+            configureMenu();
+
+        if (app.getSettings().isIntroEnabled()) {
+            configureIntro();
+
+            setScene(introScene);
+            introScene.startIntro();
+        } else {
+            showGame();
+        }
+    }
+
+    private void showGame() {
+        if (isMenuEnabled) {
+            setScene(mainMenuScene);
+        } else {
+            app.startNewGame();
+            setScene(gameScene);
+        }
     }
 
     @Override
@@ -443,13 +548,14 @@ public abstract class GameApplication extends Application {
         // so we can correctly display them in menus
         initInput();
 
-        getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate());
+        initEventHandlers();
 
         initStage(stage);
 
         defaultProfile = createProfile();
         SaveLoadManager.INSTANCE.loadProfile().ifPresent(this::loadFromProfile);
 
+        onStageShow();
         stage.show();
 
         log.finer("Showing stage");
@@ -656,8 +762,11 @@ public abstract class GameApplication extends Application {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
     }
 
+    @Inject
+    private EventBus eventBus;
+
     public final EventBus getEventBus() {
-        return getService(ServiceType.EVENT_BUS);
+        return eventBus;
     }
 
     /**
@@ -705,8 +814,8 @@ public abstract class GameApplication extends Application {
     /**
      * @return input manager
      */
-    public final InputManager getInputManager() {
-        return inputManager;
+    public final Input getInput() {
+        return input;
     }
 
     /**

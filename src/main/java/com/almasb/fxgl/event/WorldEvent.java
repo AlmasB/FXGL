@@ -63,4 +63,9 @@ public class WorldEvent extends Event {
     public static WorldEvent entityRemoved(Entity e) {
         return new WorldEvent(ENTITY_REMOVED, e);
     }
+
+    @Override
+    public String toString() {
+        return "WorldEvent[type=" + getEventType().toString() + "]";
+    }
 }

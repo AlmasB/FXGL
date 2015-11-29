@@ -79,9 +79,8 @@ import javafx.scene.text.Font;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 public class AssetLoader {
-    @Inject
-    protected AssetLoader() {}
 
     private static final String ASSETS_DIR = "/assets/";
     private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";
@@ -99,6 +98,11 @@ public class AssetLoader {
     private static final String CURSORS_DIR = UI_DIR + "cursors/";
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
+
+    @Inject
+    private AssetLoader() {
+        log.finer("Service [AssetLoader] initialized");
+    }
 
     /**
      * Loads texture with given name from {@value #TEXTURES_DIR}.

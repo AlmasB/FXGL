@@ -78,4 +78,9 @@ public class FXGLEvent extends Event {
     public static FXGLEvent exit() {
         return new FXGLEvent(EXIT);
     }
+
+    @Override
+    public String toString() {
+        return "FXGLEvent[type=" + getEventType().toString() + "]";
+    }
 }
