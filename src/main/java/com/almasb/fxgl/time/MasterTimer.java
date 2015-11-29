@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.time;
 
+import com.almasb.fxgl.util.UpdateTickListener;
 import javafx.beans.property.*;
 import javafx.util.Duration;
 

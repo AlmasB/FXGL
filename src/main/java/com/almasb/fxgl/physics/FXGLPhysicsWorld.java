@@ -32,6 +32,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.Events;
+import com.almasb.fxgl.event.UpdateEvent;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
@@ -127,6 +132,15 @@ public final class FXGLPhysicsWorld implements PhysicsWorld {
             public void postSolve(Contact contact, ContactImpulse impulse) {
             }
         });
+
+        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
+        bus.addEventHandler(Events.EntityEvent.ADDED_TO_WORLD, event -> {
+            addEntity(event.getEntity());
+        });
+        bus.addEventHandler(Events.EntityEvent.REMOVED_FROM_WORLD, event -> {
+            removeEntity(event.getEntity());
+        });
+        bus.addEventHandler(UpdateEvent.ANY, event -> update());
     }
 
     /**

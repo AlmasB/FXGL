@@ -25,13 +25,18 @@
  */
 package com.almasb.fxgl.time;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.Events;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.time.TimerAction.TimerType;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.util.UpdateTickListener;
 import com.almasb.fxgl.util.WorldStateListener;
 
 import com.google.inject.Inject;
@@ -42,6 +47,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 /**
@@ -52,11 +58,28 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public class FXGLMasterTimer implements MasterTimer, WorldStateListener {
-    @Inject
-    private FXGLMasterTimer() {}
+public class FXGLMasterTimer implements MasterTimer {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGLTimer");
+    private static final Logger log = FXGLLogger.getLogger("FXGLMasterTimer");
+
+    private EventBus eventBus;
+
+    @Inject
+    private FXGLMasterTimer(EventBus eventBus) {
+        this.eventBus = eventBus;
+        eventBus.addEventHandler(Events.EntityEvent.ADDED_TO_WORLD, event -> {
+            Entity entity = event.getEntity();
+            Duration expire = entity.getExpireTime();
+            if (expire != Duration.ZERO)
+                runOnceAfter(entity::removeFromWorld, expire);
+        });
+        eventBus.addEventHandler(Events.SystemEvent.RESET, event -> {
+            resetTicks();
+            clearActions();
+        });
+
+        log.finer("Initialization complete");
+    }
 
     /**
      * Time per frame in seconds.
@@ -117,8 +140,11 @@ public class FXGLMasterTimer implements MasterTimer, WorldStateListener {
         // for the rest of the game modules to use
         tickStart(internalTime);
 
-        //gameWorld.update();
-        //onUpdate();
+        timerActions.forEach(action -> action.update(now));
+        timerActions.removeIf(TimerAction::isExpired);
+
+        // this is the master update event
+        eventBus.fireEvent(Events.UPDATE_EVENT);
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
@@ -338,28 +364,5 @@ public class FXGLMasterTimer implements MasterTimer, WorldStateListener {
     public void clearActions() {
         log.finer("Clearing all scheduled actions");
         timerActions.clear();
-    }
-
-    @Override
-    public void onEntityAdded(Entity entity) {
-        Duration expire = entity.getExpireTime();
-        if (expire != Duration.ZERO)
-            runOnceAfter(entity::removeFromWorld, expire);
-    }
-
-    @Override
-    public void onEntityRemoved(Entity entity) {
-    }
-
-    @Override
-    public void onWorldUpdate() {
-        timerActions.forEach(action -> action.update(now));
-        timerActions.removeIf(TimerAction::isExpired);
-    }
-
-    @Override
-    public void onWorldReset() {
-        resetTicks();
-        clearActions();
     }
 }

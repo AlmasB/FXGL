@@ -34,9 +34,12 @@ import java.util.logging.Logger;
 
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.AudioManager;
+import com.almasb.fxgl.asset.FontFactory;
 import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.event.Events;
 import com.almasb.fxgl.event.InputManager;
 import com.almasb.fxgl.event.QTEManager;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.physics.FXGLPhysicsWorld;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -53,6 +56,7 @@ import com.almasb.fxgl.util.Version;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -60,6 +64,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -158,7 +163,7 @@ public abstract class GameApplication extends Application {
      */
     private ReadOnlyGameSettings settings;
 
-    private GameWorld gameWorld = new GameWorld();
+    private GameWorld gameWorld;
     private PhysicsWorld physicsWorld;
 
     /*
@@ -341,7 +346,7 @@ public abstract class GameApplication extends Application {
 
     private static Injector injector;
 
-    private void initServices() {
+    private void initServices(Stage stage) {
         injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
@@ -353,6 +358,13 @@ public abstract class GameApplication extends Application {
                         throw new IllegalArgumentException("Failed to configure services: " + e.getMessage());
                     }
                 }
+
+                requestStaticInjection(UIFactory.class);
+            }
+
+            @Provides
+            Stage primaryStage() {
+                return stage;
             }
         });
     }
@@ -361,11 +373,20 @@ public abstract class GameApplication extends Application {
      * Registers world state listeners.
      */
     private void initWorld() {
-        gameWorld.addWorldStateListener(inputManager);
+        gameWorld = injector.getInstance(GameWorld.class);
+
+
+        getService(ServiceType.EVENT_BUS).addEventHandler(UpdateEvent.ANY, event -> {
+            gameWorld.update();
+            onUpdate();
+        });
+
+
+        //gameWorld.addWorldStateListener(inputManager);
         //gameWorld.addWorldStateListener(timerManager);
         //gameWorld.addWorldStateListener(physicsManager);
-        gameWorld.addWorldStateListener(getGameScene());
-        gameWorld.addWorldStateListener(audioManager);
+        //gameWorld.addWorldStateListener(getGameScene());
+        //gameWorld.addWorldStateListener(audioManager);
     }
 
     /**
@@ -421,9 +442,9 @@ public abstract class GameApplication extends Application {
                 break;
         }
 
-        initServices();
+        initServices(stage);
 
-        UIFactory.init(stage, getService(ServiceType.ASSET_LOADER).loadFont(settings.getDefaultFontName()));
+        UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(settings.getDefaultFontName()));
         FXGLLogger.init(logLevel);
 
         log.info("Application Mode: " + settings.getApplicationMode());
@@ -447,26 +468,6 @@ public abstract class GameApplication extends Application {
         log.finer("Scene size: " + stage.getScene().getWidth() + "x" + stage.getScene().getHeight());
         log.finer("Stage size: " + stage.getWidth() + "x" + stage.getHeight());
     }
-//
-//    /**
-//     * This is the internal FXGL update tick,
-//     * executed 60 times a second ~ every 0.166 (6) seconds.
-//     *
-//     * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
-//     */
-//    private void processUpdate(long internalTime) {
-//        // this will set up current tick and current time
-//        // for the rest of the game modules to use
-//        timerManager.tickStart(internalTime);
-//
-//        gameWorld.update();
-//        onUpdate();
-//
-//        // this is only end for our processing tick for basic profiling
-//        // the actual JavaFX tick ends when our new tick begins. So
-//        // JavaFX event callbacks will properly fire within the same "our" tick.
-//        timerManager.tickEnd();
-//    }
 
     /**
      * Initialize user application.
@@ -542,7 +543,8 @@ public abstract class GameApplication extends Application {
      * Reset the application and game world.
      */
     final void reset() {
-        gameWorld.reset();
+        // TODO: limit scope of where events can be called from
+        getService(ServiceType.EVENT_BUS).fireEvent(new Events.SystemEvent(Events.SystemEvent.RESET));
     }
 
     /**

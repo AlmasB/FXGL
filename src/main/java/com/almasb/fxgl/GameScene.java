@@ -33,11 +33,15 @@ import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.Events;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLScene;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
+import com.google.inject.Inject;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -84,12 +88,30 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
      */
     private Group uiRoot = new Group();
 
+    private EventBus eventBus;
+
     public GameScene(SceneSettings settings) {
         super(settings);
 
         getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas();
+
+        eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
+        eventBus.addEventHandler(Events.EntityEvent.ADDED_TO_WORLD, event -> {
+            Entity entity = event.getEntity();
+            onEntityAdded(entity);
+        });
+        eventBus.addEventHandler(Events.EntityEvent.REMOVED_FROM_WORLD, event -> {
+            Entity entity = event.getEntity();
+            onEntityRemoved(entity);
+        });
+        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
+            onWorldUpdate();
+        });
+        eventBus.addEventHandler(Events.SystemEvent.RESET, event -> {
+            onWorldReset();
+        });
     }
 
     private void initParticlesCanvas() {

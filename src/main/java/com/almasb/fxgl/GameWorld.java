@@ -38,11 +38,16 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.Events;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameDifficulty;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.WorldStateListener;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.BoundingBox;
@@ -57,35 +62,13 @@ import javafx.geometry.Rectangle2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 public final class GameWorld {
 
     /**
      * The logger
      */
     protected static final Logger log = FXGLLogger.getLogger("FXGL.GameWorld");
-
-    /**
-     * Registered listeners.
-     */
-    private List<WorldStateListener> worldStateListeners = new CopyOnWriteArrayList<>();
-
-    /**
-     * Register a world state listener.
-     *
-     * @param listener the listener to add
-     */
-    public void addWorldStateListener(WorldStateListener listener) {
-        worldStateListeners.add(listener);
-    }
-
-    /**
-     * Remove registered world state listener.
-     *
-     * @param listener the listener to remove
-     */
-    public void removeWorldStateListener(WorldStateListener listener) {
-        worldStateListeners.remove(listener);
-    }
 
     private ObjectProperty<GameDifficulty> gameDifficulty = new SimpleObjectProperty<>(GameDifficulty.MEDIUM);
 
@@ -105,10 +88,20 @@ public final class GameWorld {
         return gameDifficulty;
     }
 
+    private EventBus eventBus;
+
     /**
      * Hidden ctor.
      */
-    GameWorld() {
+    @Inject
+    private GameWorld(EventBus eventBus) {
+        this.eventBus = eventBus;
+        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
+            update();
+        });
+        eventBus.addEventHandler(Events.SystemEvent.RESET, event -> {
+            reset();
+        });
     }
 
     /**
@@ -174,7 +167,7 @@ public final class GameWorld {
         entities.addAll(addQueue);
         addQueue.forEach(e -> {
             e.init(this);
-            worldStateListeners.forEach(l -> l.onEntityAdded(e));
+            eventBus.fireEvent(new Events.EntityEvent(Events.EntityEvent.ADDED_TO_WORLD, e));
         });
         addQueue.clear();
     }
@@ -182,7 +175,7 @@ public final class GameWorld {
     private void removeAndCleanPendingEntities() {
         entities.removeAll(removeQueue);
         removeQueue.forEach(e -> {
-            worldStateListeners.forEach(l -> l.onEntityRemoved(e));
+            eventBus.fireEvent(new Events.EntityEvent(Events.EntityEvent.REMOVED_FROM_WORLD, e));
             e.clean();
         });
         removeQueue.clear();
@@ -207,8 +200,6 @@ public final class GameWorld {
 
         entities.forEach(Entity::clean);
         entities.clear();
-
-        worldStateListeners.forEach(WorldStateListener::onWorldReset);
     }
 
     /**
@@ -227,7 +218,6 @@ public final class GameWorld {
         registerAndInitPendingEntities();
         removeAndCleanPendingEntities();
 
-        worldStateListeners.forEach(WorldStateListener::onWorldUpdate);
         entities.forEach(Entity::update);
     }
 

@@ -30,6 +30,8 @@ import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.AudioPlayer;
 import com.almasb.fxgl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.asset.FXGLAudioPlayer;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
@@ -87,6 +89,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends MasterTimer> serviceProvider() {
             return FXGLMasterTimer.class;
+        }
+    };
+
+    ServiceType<EventBus> EVENT_BUS = new ServiceType<EventBus>() {
+        @Override
+        public Class<EventBus> service() {
+            return EventBus.class;
+        }
+
+        @Override
+        public Class<? extends EventBus> serviceProvider() {
+            return FXGLEventBus.class;
         }
     };
 }

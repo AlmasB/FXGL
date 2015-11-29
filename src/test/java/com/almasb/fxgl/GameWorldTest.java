@@ -53,7 +53,7 @@ public class GameWorldTest {
 
     @Before
     public void setUp() {
-        gameWorld = new GameWorld();
+        //gameWorld = new GameWorld();
     }
 
     @Test

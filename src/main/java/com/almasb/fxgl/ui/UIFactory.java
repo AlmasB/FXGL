@@ -27,6 +27,7 @@ package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.asset.FontFactory;
 
+import com.google.inject.Inject;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -36,18 +37,17 @@ import javafx.stage.Stage;
 /**
  * A collection of static methods that return UI controls to unify
  * the look across FXGL.
- * <p>
- * API NOT COMPLETE. DO NOT USE.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class UIFactory {
 
     private static FontFactory defaultFontFactory;
+
+    @Inject
     private static Stage mainStage;
 
-    public static void init(Stage stage, FontFactory fontFactory) {
-        mainStage = stage;
+    public static void init(FontFactory fontFactory) {
         defaultFontFactory = fontFactory;
     }
 

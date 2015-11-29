@@ -29,7 +29,9 @@ import java.security.Key;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameScene;
+import com.almasb.fxgl.ServiceType;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
@@ -103,6 +105,10 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
         gameScene.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
         gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
         gameScene.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
+
+        GameApplication.getService(ServiceType.EVENT_BUS).addEventHandler(UpdateEvent.ANY, event -> {
+            onWorldUpdate();
+        });
     }
 
     /**
