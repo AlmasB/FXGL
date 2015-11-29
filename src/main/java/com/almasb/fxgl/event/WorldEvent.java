@@ -26,29 +26,41 @@
 
 package com.almasb.fxgl.event;
 
+import com.almasb.fxgl.entity.Entity;
+import javafx.beans.NamedArg;
+import javafx.event.Event;
+import javafx.event.EventType;
+
 /**
- * A key modifier applied to an input event.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum InputModifier {
-    /**
-     * Ctrl key
-     */
-    CTRL,
+public class WorldEvent extends Event {
 
-    /**
-     * Shift key
-     */
-    SHIFT,
+    public static final EventType<WorldEvent> ANY =
+            new EventType<>(Event.ANY, "WORLD_EVENT");
 
-    /**
-     * Alt key
-     */
-    ALT,
+    public static final EventType<WorldEvent> ENTITY_ADDED =
+            new EventType<>(ANY, "ENTITY_ADDED");
 
-    /**
-     * No modifier key
-     */
-    NONE
+    public static final EventType<WorldEvent> ENTITY_REMOVED =
+            new EventType<>(ANY, "ENTITY_REMOVED");
+
+    private Entity entity;
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public WorldEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Entity entity) {
+        super(eventType);
+        this.entity = entity;
+    }
+
+    public static WorldEvent entityAdded(Entity e) {
+        return new WorldEvent(ENTITY_ADDED, e);
+    }
+
+    public static WorldEvent entityRemoved(Entity e) {
+        return new WorldEvent(ENTITY_REMOVED, e);
+    }
 }

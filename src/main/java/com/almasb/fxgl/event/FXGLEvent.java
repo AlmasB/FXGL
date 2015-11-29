@@ -26,18 +26,56 @@
 
 package com.almasb.fxgl.event;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.gameplay.Achievement;
 import javafx.beans.NamedArg;
 import javafx.event.Event;
 import javafx.event.EventType;
-import javafx.scene.input.KeyEvent;
 
 /**
+ * This is an FXGL system event.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Events {
+public class FXGLEvent extends Event {
 
-    public static final UpdateEvent UPDATE_EVENT = new UpdateEvent();
+    public static final EventType<FXGLEvent> ANY =
+            new EventType<>(Event.ANY, "FXGL_EVENT");
 
+    public static final EventType<FXGLEvent> INIT_APP_COMPLETE =
+            new EventType<>(ANY, "INIT_APP_COMPLETE");
+
+    public static final EventType<FXGLEvent> PAUSE =
+            new EventType<>(ANY, "PAUSE");
+
+    public static final EventType<FXGLEvent> RESUME =
+            new EventType<>(ANY, "RESUME");
+
+    public static final EventType<FXGLEvent> RESET =
+            new EventType<>(ANY, "RESET");
+
+    public static final EventType<FXGLEvent> EXIT =
+            new EventType<>(ANY, "EXIT");
+
+    public FXGLEvent(@NamedArg("eventType") EventType<? extends Event> eventType) {
+        super(eventType);
+    }
+
+    public static FXGLEvent initAppComplete() {
+        return new FXGLEvent(INIT_APP_COMPLETE);
+    }
+
+    public static FXGLEvent pause() {
+        return new FXGLEvent(PAUSE);
+    }
+
+    public static FXGLEvent resume() {
+        return new FXGLEvent(RESUME);
+    }
+
+    public static FXGLEvent reset() {
+        return new FXGLEvent(RESET);
+    }
+
+    public static FXGLEvent exit() {
+        return new FXGLEvent(EXIT);
+    }
 }

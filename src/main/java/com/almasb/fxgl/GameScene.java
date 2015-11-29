@@ -33,9 +33,7 @@ import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.Events;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLScene;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -98,18 +96,18 @@ public final class GameScene extends FXGLScene implements WorldStateListener {
         initParticlesCanvas();
 
         eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
-        eventBus.addEventHandler(Events.EntityEvent.ADDED_TO_WORLD, event -> {
+        eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
             Entity entity = event.getEntity();
             onEntityAdded(entity);
         });
-        eventBus.addEventHandler(Events.EntityEvent.REMOVED_FROM_WORLD, event -> {
+        eventBus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
             Entity entity = event.getEntity();
             onEntityRemoved(entity);
         });
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
             onWorldUpdate();
         });
-        eventBus.addEventHandler(Events.SystemEvent.RESET, event -> {
+        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
             onWorldReset();
         });
     }

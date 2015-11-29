@@ -26,18 +26,26 @@
 
 package com.almasb.fxgl.event;
 
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.gameplay.Achievement;
-import javafx.beans.NamedArg;
 import javafx.event.Event;
 import javafx.event.EventType;
-import javafx.scene.input.KeyEvent;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Events {
+public final class AchievementEvent extends Event {
 
-    public static final UpdateEvent UPDATE_EVENT = new UpdateEvent();
+    public static final EventType<AchievementEvent> ANY =
+            new EventType<>(Event.ANY, "ACHIEVEMENT_EVENT");
 
+    private Achievement achievement;
+
+    public AchievementEvent(Achievement achievement) {
+        super(ANY);
+        this.achievement = achievement;
+    }
+
+    public Achievement getAchievement() {
+        return achievement;
+    }
 }

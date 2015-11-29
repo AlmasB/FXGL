@@ -24,20 +24,31 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
-
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.gameplay.Achievement;
-import javafx.beans.NamedArg;
-import javafx.event.Event;
-import javafx.event.EventType;
-import javafx.scene.input.KeyEvent;
+package com.almasb.fxgl.input;
 
 /**
+ * A key modifier applied to an input event.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Events {
+public enum InputModifier {
+    /**
+     * Ctrl key
+     */
+    CTRL,
 
-    public static final UpdateEvent UPDATE_EVENT = new UpdateEvent();
+    /**
+     * Shift key
+     */
+    SHIFT,
 
+    /**
+     * Alt key
+     */
+    ALT,
+
+    /**
+     * No modifier key
+     */
+    NONE
 }

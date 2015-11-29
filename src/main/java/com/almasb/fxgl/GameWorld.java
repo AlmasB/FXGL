@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -41,10 +40,10 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.Events;
 import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.settings.GameDifficulty;
+import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.WorldStateListener;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -57,8 +56,6 @@ import javafx.geometry.Rectangle2D;
 /**
  * Represents pure logical state of game.
  * Manages all entities and their state.
- * {@link com.almasb.fxgl.util.WorldStateListener} objects can be registered to listen
- * for various state changes.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -90,18 +87,17 @@ public final class GameWorld {
 
     private EventBus eventBus;
 
-    /**
-     * Hidden ctor.
-     */
     @Inject
     private GameWorld(EventBus eventBus) {
         this.eventBus = eventBus;
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
             update();
         });
-        eventBus.addEventHandler(Events.SystemEvent.RESET, event -> {
+        eventBus.addEventHandler(com.almasb.fxgl.event.FXGLEvent.RESET, event -> {
             reset();
         });
+
+        log.finer("Game world initialized");
     }
 
     /**
@@ -167,7 +163,7 @@ public final class GameWorld {
         entities.addAll(addQueue);
         addQueue.forEach(e -> {
             e.init(this);
-            eventBus.fireEvent(new Events.EntityEvent(Events.EntityEvent.ADDED_TO_WORLD, e));
+            eventBus.fireEvent(WorldEvent.entityAdded(e));
         });
         addQueue.clear();
     }
@@ -175,7 +171,7 @@ public final class GameWorld {
     private void removeAndCleanPendingEntities() {
         entities.removeAll(removeQueue);
         removeQueue.forEach(e -> {
-            eventBus.fireEvent(new Events.EntityEvent(Events.EntityEvent.REMOVED_FROM_WORLD, e));
+            eventBus.fireEvent(WorldEvent.entityRemoved(e));
             e.clean();
         });
         removeQueue.clear();
@@ -189,7 +185,6 @@ public final class GameWorld {
      * <li>Registers waiting "add" entities</li>
      * <li>Removes waiting "remove" entities</li>
      * <li>Cleans and removes all entities</li>
-     * <li>Fires {@link WorldStateListener#onWorldReset()}</li>
      * </ol>
      */
     void reset() {

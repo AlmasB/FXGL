@@ -34,17 +34,15 @@ import java.util.logging.Logger;
 
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.AudioManager;
-import com.almasb.fxgl.asset.FontFactory;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.event.Events;
-import com.almasb.fxgl.event.InputManager;
-import com.almasb.fxgl.event.QTEManager;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.input.InputManager;
+import com.almasb.fxgl.donotuse.QTEManager;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.physics.FXGLPhysicsWorld;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.*;
-import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.ui.*;
 import com.almasb.fxgl.util.ExceptionHandler;
@@ -57,14 +55,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -163,7 +159,6 @@ public abstract class GameApplication extends Application {
      */
     private ReadOnlyGameSettings settings;
 
-    private GameWorld gameWorld;
     private PhysicsWorld physicsWorld;
 
     /*
@@ -307,15 +302,6 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Default implementation does nothing.
-     * <p>
-     * Override to add your own cleanup. This will be called
-     * prior to application exit.
-     */
-    protected void onExit() {
-    }
-
-    /**
      * Ensure managers are of legal state and ready.
      */
     private void initManagers(Stage stage) {
@@ -328,7 +314,7 @@ public abstract class GameApplication extends Application {
         notificationManager = new NotificationManager(getSceneManager().getGameScene().getRoot());
         achievementManager = new AchievementManager();
 
-        physicsWorld = new FXGLPhysicsWorld(settings.getHeight(), getService(ServiceType.MASTER_TIMER).tickProperty());
+        physicsWorld = new PhysicsWorld(settings.getHeight(), getService(ServiceType.MASTER_TIMER).tickProperty());
 
         audioManager = new AudioManager();
         qteManager = new QTEManager();
@@ -346,6 +332,7 @@ public abstract class GameApplication extends Application {
 
     private static Injector injector;
 
+    @SuppressWarnings("unchecked")
     private void initServices(Stage stage) {
         injector = Guice.createInjector(new AbstractModule() {
             @Override
@@ -370,26 +357,6 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Registers world state listeners.
-     */
-    private void initWorld() {
-        gameWorld = injector.getInstance(GameWorld.class);
-
-
-        getService(ServiceType.EVENT_BUS).addEventHandler(UpdateEvent.ANY, event -> {
-            gameWorld.update();
-            onUpdate();
-        });
-
-
-        //gameWorld.addWorldStateListener(inputManager);
-        //gameWorld.addWorldStateListener(timerManager);
-        //gameWorld.addWorldStateListener(physicsManager);
-        //gameWorld.addWorldStateListener(getGameScene());
-        //gameWorld.addWorldStateListener(audioManager);
-    }
-
-    /**
      * Configure main stage based on user settings.
      *
      * @param stage the stage
@@ -405,7 +372,7 @@ public abstract class GameApplication extends Application {
                     exit();
             });
         });
-        stage.getIcons().add(getService(ServiceType.ASSET_LOADER).loadAppIcon(settings.getIconFileName()));
+        stage.getIcons().add(getAssetLoader().loadAppIcon(settings.getIconFileName()));
 
         if (settings.isFullScreen()) {
             stage.setFullScreenExitHint("");
@@ -455,7 +422,11 @@ public abstract class GameApplication extends Application {
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         initInput();
-        initWorld();
+
+        getEventBus().addEventHandler(UpdateEvent.ANY, event -> {
+            onUpdate();
+        });
+
         initStage(stage);
 
         defaultProfile = createProfile();
@@ -495,6 +466,9 @@ public abstract class GameApplication extends Application {
                         .concat(getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
                 getGameScene().addUINode(fpsText);
             }
+
+            getEventBus().fireEvent(FXGLEvent.initAppComplete());
+
         } catch (Exception e) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
         }
@@ -506,7 +480,6 @@ public abstract class GameApplication extends Application {
     final void startNewGame() {
         log.finer("Starting new game");
         initApp(null);
-        getService(ServiceType.MASTER_TIMER).start();
     }
 
     /**
@@ -518,7 +491,6 @@ public abstract class GameApplication extends Application {
         log.finer("Starting loaded game");
         reset();
         initApp(data);
-        getService(ServiceType.MASTER_TIMER).start();
     }
 
     /**
@@ -526,8 +498,7 @@ public abstract class GameApplication extends Application {
      */
     final void pause() {
         log.finer("Pausing main loop");
-        getService(ServiceType.MASTER_TIMER).stop();
-        getInputManager().clearAllInput();
+        getEventBus().fireEvent(FXGLEvent.pause());
     }
 
     /**
@@ -535,16 +506,15 @@ public abstract class GameApplication extends Application {
      */
     final void resume() {
         log.finer("Resuming main loop");
-        getInputManager().clearAllInput();
-        getService(ServiceType.MASTER_TIMER).start();
+        getEventBus().fireEvent(FXGLEvent.resume());
     }
 
     /**
-     * Reset the application and game world.
+     * Reset the application.
      */
     final void reset() {
-        // TODO: limit scope of where events can be called from
-        getService(ServiceType.EVENT_BUS).fireEvent(new Events.SystemEvent(Events.SystemEvent.RESET));
+        log.finer("Resetting FXGL application");
+        getEventBus().fireEvent(FXGLEvent.reset());
     }
 
     /**
@@ -554,7 +524,8 @@ public abstract class GameApplication extends Application {
      */
     final void exit() {
         log.finer("Exiting Normally");
-        onExit();
+        getEventBus().fireEvent(FXGLEvent.exit());
+
         FXGLLogger.close();
         Platform.exit();
         System.exit(0);
@@ -602,7 +573,11 @@ public abstract class GameApplication extends Application {
      * @return game world
      */
     public final GameWorld getGameWorld() {
-        return gameWorld;
+        return injector.getInstance(GameWorld.class);
+    }
+
+    public final PhysicsWorld getPhysicsWorld() {
+        return physicsWorld;
     }
 
     /**
@@ -654,6 +629,10 @@ public abstract class GameApplication extends Application {
      */
     public final Rectangle2D getScreenBounds() {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
+    }
+
+    public final EventBus getEventBus() {
+        return getService(ServiceType.EVENT_BUS);
     }
 
     /**

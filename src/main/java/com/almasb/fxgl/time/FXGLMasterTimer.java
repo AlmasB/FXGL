@@ -31,9 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.Events;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.time.TimerAction.TimerType;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.UpdateTickListener;
@@ -67,18 +65,22 @@ public class FXGLMasterTimer implements MasterTimer {
     @Inject
     private FXGLMasterTimer(EventBus eventBus) {
         this.eventBus = eventBus;
-        eventBus.addEventHandler(Events.EntityEvent.ADDED_TO_WORLD, event -> {
+        eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
             Entity entity = event.getEntity();
             Duration expire = entity.getExpireTime();
             if (expire != Duration.ZERO)
                 runOnceAfter(entity::removeFromWorld, expire);
         });
-        eventBus.addEventHandler(Events.SystemEvent.RESET, event -> {
+        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
             resetTicks();
             clearActions();
         });
 
-        log.finer("Initialization complete");
+        eventBus.addEventHandler(FXGLEvent.INIT_APP_COMPLETE, event -> start());
+        eventBus.addEventHandler(FXGLEvent.RESUME, event -> start());
+        eventBus.addEventHandler(FXGLEvent.PAUSE, event -> stop());
+
+        log.finer("Master timer initialized");
     }
 
     /**

@@ -26,15 +26,10 @@
 package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.event.MenuEvent;
-import com.almasb.fxgl.settings.GameDifficulty;
+import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.Version;
-import javafx.animation.Animation;
-import javafx.animation.FillTransition;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -45,9 +40,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
-
-import java.util.Arrays;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

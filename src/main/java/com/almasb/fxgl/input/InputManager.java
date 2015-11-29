@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,24 +23,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.input;
 
-import java.security.Key;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameScene;
 import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.Events;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.*;
 
@@ -50,7 +52,7 @@ import javafx.scene.input.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class InputManager implements WorldStateListener, UserProfileSavable {
+public final class InputManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
 
@@ -106,9 +108,17 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
         gameScene.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
         gameScene.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
 
-        GameApplication.getService(ServiceType.EVENT_BUS).addEventHandler(UpdateEvent.ANY, event -> {
-            onWorldUpdate();
+        EventBus eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
+        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
+            if (processActions) {
+                currentActions.forEach(UserAction::onAction);
+            }
         });
+
+        EventHandler<FXGLEvent> reset = event -> clearAllInput();
+        eventBus.addEventHandler(FXGLEvent.PAUSE, reset);
+        eventBus.addEventHandler(FXGLEvent.RESUME, reset);
+        eventBus.addEventHandler(FXGLEvent.RESET, reset);
     }
 
     /**
@@ -518,25 +528,5 @@ public final class InputManager implements WorldStateListener, UserProfileSavabl
                 throw new IllegalArgumentException("Unknown event type: " + event);
             }
         }
-    }
-
-    @Override
-    public void onEntityAdded(Entity entity) {
-    }
-
-    @Override
-    public void onEntityRemoved(Entity entity) {
-    }
-
-    @Override
-    public void onWorldUpdate() {
-        if (processActions) {
-            currentActions.forEach(UserAction::onAction);
-        }
-    }
-
-    @Override
-    public void onWorldReset() {
-        clearAllInput();
     }
 }

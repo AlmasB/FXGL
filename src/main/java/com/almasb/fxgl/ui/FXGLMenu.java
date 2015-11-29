@@ -33,18 +33,16 @@ import java.util.stream.Collectors;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.event.InputBinding;
+import com.almasb.fxgl.input.InputBinding;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 
-import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -62,7 +60,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 
 /**
  * This is a base class for main/game menus. It provides several
