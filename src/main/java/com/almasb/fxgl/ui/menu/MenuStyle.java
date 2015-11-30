@@ -26,7 +26,6 @@
 package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.MenuFactory;
 
@@ -38,37 +37,37 @@ import com.almasb.fxgl.ui.MenuFactory;
 public enum MenuStyle {
     FXGL_DEFAULT(new MenuFactory() {
         @Override
-        public FXGLMenu newMainMenu(GameApplication app, SceneSettings settings) {
-            return new FXGLMainMenu(app, settings);
+        public FXGLMenu newMainMenu(GameApplication app) {
+            return new FXGLMainMenu(app);
         }
 
         @Override
-        public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
-            return new FXGLGameMenu(app, settings);
+        public FXGLMenu newGameMenu(GameApplication app) {
+            return new FXGLGameMenu(app);
         }
     }, "fxgl_dark.css"),
 
     GTA5(new MenuFactory() {
         @Override
-        public FXGLMenu newMainMenu(GameApplication app, SceneSettings settings) {
-            return new GTAVMainMenu(app, settings);
+        public FXGLMenu newMainMenu(GameApplication app) {
+            return new GTAVMainMenu(app);
         }
 
         @Override
-        public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
-            return new GTAVGameMenu(app, settings);
+        public FXGLMenu newGameMenu(GameApplication app) {
+            return new GTAVGameMenu(app);
         }
     }, "fxgl_gta5.css"),
 
     CCTR(new MenuFactory() {
         @Override
-        public FXGLMenu newMainMenu(GameApplication app, SceneSettings settings) {
-            return new CCTRMainMenu(app, settings);
+        public FXGLMenu newMainMenu(GameApplication app) {
+            return new CCTRMainMenu(app);
         }
 
         @Override
-        public FXGLMenu newGameMenu(GameApplication app, SceneSettings settings) {
-            return new CCTRGameMenu(app, settings);
+        public FXGLMenu newGameMenu(GameApplication app) {
+            return new CCTRGameMenu(app);
         }
     }, "fxgl_cctr.css");
 

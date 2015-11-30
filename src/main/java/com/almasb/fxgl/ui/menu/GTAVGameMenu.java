@@ -27,7 +27,6 @@ package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.geometry.Pos;
@@ -49,8 +48,8 @@ public final class GTAVGameMenu extends FXGLMenu {
 
     private HBox contentBox = new HBox(10);
 
-    public GTAVGameMenu(GameApplication app, SceneSettings settings) {
-        super(app, settings);
+    public GTAVGameMenu(GameApplication app) {
+        super(app);
 
         addCredit("Just a test: Foo Bar");
 

@@ -23,14 +23,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
 
-public abstract class IntroFactory {
+package com.almasb.fxgl.settings;
+
+import javafx.beans.NamedArg;
+import javafx.geometry.Dimension2D;
+
+/**
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+public final class SceneDimension extends Dimension2D {
 
     /**
-     * Called to construct intro scene.
+     * Constructs a <code>SceneDimension</code> with the specified width and
+     * height.
      *
-     * @return intro scene
+     * @param width  the width
+     * @param height the height
      */
-    public abstract IntroScene newIntro();
+    public SceneDimension(@NamedArg("width") double width, @NamedArg("height") double height) {
+        super(width, height);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%.0fx%.0f", getWidth(), getHeight());
+    }
 }

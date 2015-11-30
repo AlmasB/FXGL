@@ -23,14 +23,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
 
-public abstract class IntroFactory {
+package com.almasb.fxgl;
 
-    /**
-     * Called to construct intro scene.
-     *
-     * @return intro scene
-     */
-    public abstract IntroScene newIntro();
+/**
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+public enum GameState {
+    INTRO,
+    MAIN_MENU,
+    GAME_MENU,
+    PLAYING
 }

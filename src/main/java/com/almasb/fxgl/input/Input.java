@@ -29,6 +29,7 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.ServiceType;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.event.FXGLInputEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
@@ -106,16 +107,36 @@ public final class Input implements UserProfileSavable {
         eventBus.addEventHandler(FXGLEvent.RESUME, reset);
         eventBus.addEventHandler(FXGLEvent.RESET, reset);
 
-        eventBus.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event)));
-        eventBus.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event)));
+        //eventBus.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event)));
+        //eventBus.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event)));
 
-        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event)));
-        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event)));
+//        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event)));
+//        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event)));
+//
+//        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
+//        eventBus.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
+//        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
+//        eventBus.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
 
-        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
-        eventBus.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
-        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
-        eventBus.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
+        eventBus.addEventHandler(FXGLInputEvent.ANY, event -> {
+            if (event.getEvent() instanceof MouseEvent) {
+                MouseEvent mouseEvent = (MouseEvent) event.getEvent();
+                if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
+                    handlePressed(new Trigger(mouseEvent));
+                } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_RELEASED) {
+                    handleReleased(new Trigger(mouseEvent));
+                }
+
+                mouse.update(mouseEvent);
+            } else {
+                KeyEvent keyEvent = (KeyEvent) event.getEvent();
+                if (keyEvent.getEventType() == KeyEvent.KEY_PRESSED) {
+                    handlePressed(new Trigger(keyEvent));
+                } else if (keyEvent.getEventType() == KeyEvent.KEY_RELEASED) {
+                    handleReleased(new Trigger(keyEvent));
+                }
+            }
+        });
 
         log.finer("Service [Input] initialized");
     }

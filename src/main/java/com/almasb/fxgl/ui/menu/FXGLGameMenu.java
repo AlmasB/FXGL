@@ -26,9 +26,6 @@
 package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.event.MenuEvent;
-import com.almasb.fxgl.settings.SceneSettings;
-import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 
 /**
@@ -38,8 +35,8 @@ import com.almasb.fxgl.ui.UIFactory;
  */
 public final class FXGLGameMenu extends FXGLCommonMenu {
 
-    public FXGLGameMenu(GameApplication app, SceneSettings settings) {
-        super(app, settings);
+    public FXGLGameMenu(GameApplication app) {
+        super(app);
     }
 
     @Override

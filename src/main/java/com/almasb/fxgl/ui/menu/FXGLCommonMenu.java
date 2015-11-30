@@ -29,7 +29,6 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
-import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
@@ -61,8 +60,8 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
     private double menuX, menuY;
 
-    public FXGLCommonMenu(GameApplication app, SceneSettings settings) {
-        super(app, settings);
+    public FXGLCommonMenu(GameApplication app) {
+        super(app);
 
 
         MenuBox menu = createMenuBody();

@@ -34,12 +34,11 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.*;
-import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLScene;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.WorldStateListener;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -47,6 +46,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 
 /**
  * Represents the scene that shows game objects on the screen during "play" mode.
@@ -59,6 +59,7 @@ import javafx.scene.input.KeyEvent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 public final class GameScene extends FXGLScene {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
@@ -89,9 +90,8 @@ public final class GameScene extends FXGLScene {
 
     private EventBus eventBus;
 
-    public GameScene(SceneSettings settings) {
-        super(settings);
-
+    @Inject
+    private GameScene() {
         getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas();
@@ -110,6 +110,13 @@ public final class GameScene extends FXGLScene {
         });
         eventBus.addEventHandler(FXGLEvent.RESET, event -> {
             onWorldReset();
+        });
+
+        addEventHandler(MouseEvent.ANY, event -> {
+            eventBus.fireEvent(new FXGLInputEvent(event));
+        });
+        addEventHandler(KeyEvent.ANY, event -> {
+            eventBus.fireEvent(new FXGLInputEvent(event));
         });
     }
 
@@ -215,7 +222,9 @@ public final class GameScene extends FXGLScene {
      * @return point in game coordinates
      */
     public Point2D screenToGame(Point2D screenPoint) {
-        return screenPoint.multiply(1.0 / getScaleRatio()).add(getViewportOrigin());
+        return screenPoint
+                .multiply(1.0 / GameApplication.getService(ServiceType.DISPLAY).getScaleRatio())
+                .add(getViewportOrigin());
     }
 
     /**

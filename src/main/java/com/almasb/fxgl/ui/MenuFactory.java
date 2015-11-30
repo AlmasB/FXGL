@@ -26,7 +26,6 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.settings.SceneSettings;
 
 /**
  * Menu creation methods can be overriden to use
@@ -43,7 +42,7 @@ public abstract class MenuFactory {
      * @param settings scene settings
      * @return main menu
      */
-    public abstract FXGLMenu newMainMenu(GameApplication app, SceneSettings settings);
+    public abstract FXGLMenu newMainMenu(GameApplication app);
 
     /**
      * Called to construct game menu.
@@ -52,5 +51,5 @@ public abstract class MenuFactory {
      * @param settings scene settings
      * @return game menu
      */
-    public abstract FXGLMenu newGameMenu(GameApplication app, SceneSettings settings);
+    public abstract FXGLMenu newGameMenu(GameApplication app);
 }

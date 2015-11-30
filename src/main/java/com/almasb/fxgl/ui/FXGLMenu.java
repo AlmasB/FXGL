@@ -36,7 +36,7 @@ import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.input.InputBinding;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
-import com.almasb.fxgl.settings.SceneSettings;
+import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 
@@ -50,7 +50,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -82,8 +81,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
     private List<String> credits = new ArrayList<>();
 
-    public FXGLMenu(GameApplication app, SceneSettings settings) {
-        super(settings);
+    public FXGLMenu(GameApplication app) {
         this.app = app;
 
         populateCredits();
@@ -211,13 +209,13 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content with video settings
      */
     protected final MenuContent createContentVideo() {
-        Spinner<SceneSettings.SceneDimension> spinner =
-                new Spinner<>(FXCollections.observableArrayList(app.getSceneManager().getSceneDimensions()));
+        Spinner<SceneDimension> spinner =
+                new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
 
         Button btnApply = UIFactory.newButton("Apply");
         btnApply.setOnAction(e -> {
-            SceneSettings.SceneDimension dimension = spinner.getValue();
-            app.getSceneManager().setSceneDimension(dimension);
+            SceneDimension dimension = spinner.getValue();
+            app.getDisplay().setSceneDimension(dimension);
         });
 
         return new MenuContent(new HBox(50, UIFactory.newText("Resolution"), spinner), btnApply);

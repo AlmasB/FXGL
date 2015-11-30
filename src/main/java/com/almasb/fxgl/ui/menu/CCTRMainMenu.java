@@ -27,7 +27,6 @@ package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.scene.Node;
@@ -44,8 +43,8 @@ public final class CCTRMainMenu extends FXGLMenu {
     BlendMode mode = BlendMode.ADD;
     int i = 0;
 
-    public CCTRMainMenu(GameApplication app, SceneSettings settings) {
-        super(app, settings);
+    public CCTRMainMenu(GameApplication app) {
+        super(app);
 
         int start = 100;
 

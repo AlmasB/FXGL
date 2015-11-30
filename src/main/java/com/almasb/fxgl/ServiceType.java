@@ -116,15 +116,15 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<SceneManager> DISPLAY = new ServiceType<SceneManager>() {
+    ServiceType<Display> DISPLAY = new ServiceType<Display>() {
         @Override
-        public Class<SceneManager> service() {
-            return SceneManager.class;
+        public Class<Display> service() {
+            return Display.class;
         }
 
         @Override
-        public Class<? extends SceneManager> serviceProvider() {
-            return SceneManager.class;
+        public Class<? extends Display> serviceProvider() {
+            return Display.class;
         }
     };
 }

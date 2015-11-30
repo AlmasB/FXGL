@@ -26,15 +26,14 @@
 package com.almasb.fxgl.ui.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.ui.FXGLMenu;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class CCTRGameMenu extends FXGLMenu {
-    public CCTRGameMenu(GameApplication app, SceneSettings settings) {
-        super(app, settings);
+    public CCTRGameMenu(GameApplication app) {
+        super(app);
     }
 
 }

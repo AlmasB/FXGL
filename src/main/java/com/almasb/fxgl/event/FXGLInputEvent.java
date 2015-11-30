@@ -23,14 +23,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
 
-public abstract class IntroFactory {
+package com.almasb.fxgl.event;
 
-    /**
-     * Called to construct intro scene.
-     *
-     * @return intro scene
-     */
-    public abstract IntroScene newIntro();
+import javafx.event.Event;
+import javafx.event.EventType;
+import javafx.scene.input.InputEvent;
+
+/**
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+public final class FXGLInputEvent extends Event {
+
+    public static final EventType<FXGLInputEvent> ANY =
+            new EventType<>(Event.ANY, "FXGL_MOUSE_EVENT");
+
+    private InputEvent event;
+
+    public InputEvent getEvent() {
+        return event;
+    }
+
+    public FXGLInputEvent(InputEvent event) {
+        super(ANY);
+        this.event = event;
+    }
+
+    @Override
+    public String toString() {
+        return "FXGLInputEvent[type=" + getEventType().toString() + "]";
+    }
 }

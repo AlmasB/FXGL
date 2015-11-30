@@ -27,7 +27,6 @@ package com.almasb.fxgl.ui;
 
 import java.util.Random;
 
-import com.almasb.fxgl.settings.SceneSettings;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.KeyFrame;
@@ -68,11 +67,10 @@ public final class FXGLIntroScene extends IntroScene {
 
     private Random random = new Random();
 
-    public FXGLIntroScene(SceneSettings settings) {
-        super(settings);
-
-        w = settings.getTargetWidth();
-        h = settings.getTargetHeight();
+    public FXGLIntroScene() {
+        // TODO: check
+        w = getWidth();
+        h = getHeight();
 
         Text f = makeLetter("F");
         Text x = makeLetter("X");

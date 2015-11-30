@@ -25,8 +25,6 @@
  */
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.settings.SceneSettings;
-
 /**
  * Intro animation / video played before game starts
  * if intro is enabled in settings
@@ -37,10 +35,6 @@ import com.almasb.fxgl.settings.SceneSettings;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class IntroScene extends FXGLScene {
-
-    public IntroScene(SceneSettings settings) {
-        super(settings);
-    }
 
     /**
      * Called when intro finished.
