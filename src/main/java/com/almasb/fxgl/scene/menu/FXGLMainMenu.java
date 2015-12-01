@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui.menu;
+package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
@@ -44,7 +44,7 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
     @Override
     protected MenuBox createMenuBody() {
         MenuItem itemContinue = new MenuItem("CONTINUE");
-        itemContinue.setDisable(!SaveLoadManager.INSTANCE.loadLastModifiedFile().isPresent());
+        itemContinue.setDisable(!app.getSaveLoadManager().loadLastModifiedFile().isPresent());
         itemContinue.setOnAction(e -> fireContinue());
 
         MenuItem itemNewGame = new MenuItem("NEW GAME");
@@ -61,7 +61,7 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
 
         MenuItem itemExit = new MenuItem("EXIT");
         itemExit.setOnAction(e -> {
-            UIFactory.getDialogBox().showConfirmationBox("Exit the game?", yes -> {
+            app.getDisplay().showConfirmationBox("Exit the game?", yes -> {
                 if (yes)
                     fireExit();
             });

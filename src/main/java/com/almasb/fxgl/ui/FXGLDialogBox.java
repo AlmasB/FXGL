@@ -71,13 +71,15 @@ public final class FXGLDialogBox extends Stage {
     private StackPane root = new StackPane();
     private Scene scene = new Scene(root);
 
-    FXGLDialogBox(Window owner) {
+    public FXGLDialogBox(Window owner) {
         initStyle(StageStyle.TRANSPARENT);
         initModality(Modality.WINDOW_MODAL);
         initOwner(owner);
         setScene(scene);
 
-        root.getStylesheets().add(GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS("fxgl_dark.css"));
+        root.getStylesheets().add(GameApplication
+                .getService(ServiceType.ASSET_LOADER)
+                .loadCSS("fxgl_dark.css"));
     }
 
     /**

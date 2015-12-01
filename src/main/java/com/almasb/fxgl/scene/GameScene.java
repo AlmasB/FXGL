@@ -23,18 +23,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+
+package com.almasb.fxgl.scene;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.*;
-import com.almasb.fxgl.ui.FXGLScene;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import com.google.inject.Inject;

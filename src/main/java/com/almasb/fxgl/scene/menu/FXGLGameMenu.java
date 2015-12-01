@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui.menu;
+package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.ui.UIFactory;
@@ -46,7 +46,7 @@ public final class FXGLGameMenu extends FXGLCommonMenu {
 
         MenuItem itemSave = new MenuItem("SAVE");
         itemSave.setOnAction(e -> {
-            UIFactory.getDialogBox().showInputBox("Enter save file name", this::fireSave);
+            app.getDisplay().showInputBox("Enter save file name", this::fireSave);
         });
 
         MenuItem itemLoad = new MenuItem("LOAD");
@@ -60,7 +60,7 @@ public final class FXGLGameMenu extends FXGLCommonMenu {
 
         MenuItem itemExit = new MenuItem("MAIN MENU");
         itemExit.setOnAction(e -> {
-            UIFactory.getDialogBox().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
+            app.getDisplay().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
                 if (yes)
                     fireExitToMainMenu();
             });

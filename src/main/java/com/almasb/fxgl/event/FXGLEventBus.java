@@ -64,7 +64,7 @@ public final class FXGLEventBus implements EventBus {
 
     @Override
     public void fireEvent(Event event) {
-        if (event.getEventType() != UpdateEvent.ANY && event.getEventType() != MouseEvent.MOUSE_MOVED)
+        if (event.getEventType() != UpdateEvent.ANY && event.getEventType() != FXGLInputEvent.ANY)
             log.finer("Firing event: " + event.toString());
 
         eventHandlers.fireEvent(event);

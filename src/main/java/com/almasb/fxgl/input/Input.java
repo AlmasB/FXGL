@@ -40,7 +40,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.input.*;
 
 import java.util.Optional;
@@ -55,12 +54,22 @@ import java.util.logging.Logger;
 @Singleton
 public final class Input implements UserProfileSavable {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.InputManager");
+    private static final Logger log = FXGLLogger.getLogger("FXGL.Input");
 
     /**
      * Holds mouse state information
      */
     private Mouse mouse = new Mouse();
+
+    /**
+     * Returns mouse object that contains constantly updated
+     * data about mouse state.
+     *
+     * @return mouse object
+     */
+    public Mouse getMouse() {
+        return mouse;
+    }
 
     /**
      * Contains a list of user actions and keys/mouse buttons which trigger those
@@ -106,17 +115,6 @@ public final class Input implements UserProfileSavable {
         eventBus.addEventHandler(FXGLEvent.PAUSE, reset);
         eventBus.addEventHandler(FXGLEvent.RESUME, reset);
         eventBus.addEventHandler(FXGLEvent.RESET, reset);
-
-        //eventBus.addEventHandler(KeyEvent.KEY_PRESSED, event -> handlePressed(new Trigger(event)));
-        //eventBus.addEventHandler(KeyEvent.KEY_RELEASED, event -> handleReleased(new Trigger(event)));
-
-//        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> handlePressed(new Trigger(event)));
-//        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> handleReleased(new Trigger(event)));
-//
-//        eventBus.addEventHandler(MouseEvent.MOUSE_PRESSED, mouse::update);
-//        eventBus.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouse::update);
-//        eventBus.addEventHandler(MouseEvent.MOUSE_RELEASED, mouse::update);
-//        eventBus.addEventHandler(MouseEvent.MOUSE_MOVED, mouse::update);
 
         eventBus.addEventHandler(FXGLInputEvent.ANY, event -> {
             if (event.getEvent() instanceof MouseEvent) {
@@ -334,16 +332,6 @@ public final class Input implements UserProfileSavable {
         return true;
     }
 
-    /**
-     * Returns mouse object that contains constantly updated
-     * data about mouse state.
-     *
-     * @return mouse object
-     */
-    public Mouse getMouse() {
-        return mouse;
-    }
-
     @Override
     public void save(UserProfile profile) {
         log.finer("Saving data to profile");
@@ -384,142 +372,6 @@ public final class Input implements UserProfileSavable {
                     throw new IllegalArgumentException("Corrupt or incompatible user profile: " + e.getMessage());
                 }
             }
-        }
-    }
-
-    /**
-     * Holds mouse state information
-     *
-     * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
-     */
-    public final class Mouse {
-        private Mouse() {
-        }
-
-        /**
-         *
-         * @return mouse x in game coordinate system
-         */
-        public double getGameX() {
-            return getGameXY().getX();
-        }
-
-        /**
-         *
-         * @return mouse y in game coordinate system
-         */
-        public double getGameY() {
-            return getGameXY().getY();
-        }
-
-        /**
-         *
-         * @return cursor point in game coordinate system
-         */
-        public Point2D getGameXY() {
-            //return gameScene.screenToGame(getScreenXY());
-            return getScreenXY();
-        }
-
-        /**
-         * Hold the value of gameX and y coordinate of the mouse cursor
-         * in the current frame (tick) within the screen coordinate system
-         */
-        private double screenX, screenY;
-
-        /**
-         *
-         * @return mouse x in screen coordinate system
-         */
-        public double getScreenX() {
-            return screenX;
-        }
-
-        /**
-         *
-         * @return mouse y in screen coordinate system
-         */
-        public double getScreenY() {
-            return screenY;
-        }
-
-        /**
-         *
-         * @return cursor point in screen coordinate system
-         */
-        public Point2D getScreenXY() {
-            return new Point2D(screenX, screenY);
-        }
-
-        /**
-         * Hold the state of left and right
-         * mouse buttons in the current frame (tick)
-         */
-        private boolean leftPressed, rightPressed;
-
-        /**
-         *
-         * @return true iff left mouse button is pressed
-         */
-        public boolean isLeftPressed() {
-            return leftPressed;
-        }
-
-        /**
-         *
-         * @return true iff right mouse button is pressed
-         */
-        public boolean isRightPressed() {
-            return rightPressed;
-        }
-
-        /**
-         * The last internal event
-         */
-        private MouseEvent event;
-
-        /**
-         * Update state of mouse with data from JavaFX mouse event.
-         */
-        private void update(MouseEvent event) {
-            this.event = event;
-            this.screenX = event.getSceneX();
-            this.screenY = event.getSceneY();
-
-            if (leftPressed) {
-                if (event.getButton() == MouseButton.PRIMARY && isReleased(event)) {
-                    leftPressed = false;
-                }
-            } else {
-                leftPressed = event.getButton() == MouseButton.PRIMARY && isPressed(event);
-            }
-
-            if (rightPressed) {
-                if (event.getButton() == MouseButton.SECONDARY && isReleased(event)) {
-                    rightPressed = false;
-                }
-            } else {
-                rightPressed = event.getButton() == MouseButton.SECONDARY && isPressed(event);
-            }
-        }
-
-        private boolean isPressed(MouseEvent event) {
-            return event.getEventType() == MouseEvent.MOUSE_PRESSED
-                    || event.getEventType() == MouseEvent.MOUSE_DRAGGED;
-        }
-
-        private boolean isReleased(MouseEvent event) {
-            return event.getEventType() == MouseEvent.MOUSE_RELEASED
-                    || event.getEventType() == MouseEvent.MOUSE_MOVED;
-        }
-
-        /**
-         * It's unlikely that you'll need this.
-         *
-         * @return last JavaFX mouse event
-         */
-        public MouseEvent getEvent() {
-            return event;
         }
     }
 

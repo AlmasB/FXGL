@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,21 +23,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.util;
+package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.ui.UIFactory;
 
 /**
- * Default FXGL exception handler for checked exceptions.
+ * Menu creation methods can be overriden to use
+ * custom main/game menus.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class FXGLCheckedExceptionHandler implements ExceptionHandler {
+public abstract class MenuFactory {
 
-    @Override
-    public void handle(Throwable e) {
-        GameApplication.getService(ServiceType.DISPLAY).showErrorBox(e);
-    }
+    /**
+     * Called to construct main menu.
+     *
+     * @param app game application
+     * @param settings scene settings
+     * @return main menu
+     */
+    public abstract FXGLMenu newMainMenu(GameApplication app);
+
+    /**
+     * Called to construct game menu.
+     *
+     * @param app game application
+     * @param settings scene settings
+     * @return game menu
+     */
+    public abstract FXGLMenu newGameMenu(GameApplication app);
 }

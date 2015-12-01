@@ -23,11 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui.menu;
+package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -112,7 +111,7 @@ public final class GTAVGameMenu extends FXGLMenu {
     private VBox makeMainMenu() {
         Button btnResume = createActionButton("RESUME", this::fireResume);
         Button btnSave = createActionButton("SAVE GAME", () -> {
-            UIFactory.getDialogBox().showInputBox("Enter save file name", this::fireSave);
+            app.getDisplay().showInputBox("Enter save file name", this::fireSave);
         });
         Button btnLoad = createContentButton("LOAD GAME", createContentLoad());
         Button btnExit = createActionButton("EXIT", this::fireExit);

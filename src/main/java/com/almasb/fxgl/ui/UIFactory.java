@@ -41,11 +41,9 @@ import javafx.stage.Stage;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class UIFactory {
+    private UIFactory() {}
 
     private static FontFactory defaultFontFactory;
-
-    @Inject
-    private static Stage mainStage;
 
     public static void init(FontFactory fontFactory) {
         defaultFontFactory = fontFactory;
@@ -72,20 +70,6 @@ public final class UIFactory {
 
     public static Button newButton(String text) {
         return new FXGLButton(text);
-    }
-
-    private static FXGLDialogBox dialogBox;
-
-    /**
-     *
-     * @return a singleton instance of FXGL dialog box
-     */
-    public static FXGLDialogBox getDialogBox() {
-        if (dialogBox == null) {
-            dialogBox = new FXGLDialogBox(mainStage);
-        }
-
-        return dialogBox;
     }
 
     public static double widthOf(String text, double fontSize) {

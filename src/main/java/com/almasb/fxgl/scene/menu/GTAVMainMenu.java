@@ -23,11 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui.menu;
+package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.gameplay.GameDifficulty;
-import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;

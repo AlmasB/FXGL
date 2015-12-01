@@ -36,14 +36,12 @@ import java.util.logging.Logger;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.AudioPlayer;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.FXGLEvent;
-import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.donotuse.QTEManager;
-import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.*;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.ui.*;
@@ -57,13 +55,13 @@ import com.google.inject.*;
 import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -163,21 +161,138 @@ public abstract class GameApplication extends Application {
      */
     private ReadOnlyGameSettings settings;
 
-    private GameState state;
+    private ObjectProperty<GameState> state = new SimpleObjectProperty<>();
 
-    public GameState getState() {
-        return state;
+    public final GameState getState() {
+        return state.get();
+    }
+
+    private void setState(GameState gameState) {
+        log.finer("State: " + getState() + " -> " + gameState);
+        state.set(gameState);
+        switch (gameState) {
+            case INTRO:
+                getDisplay().setScene(introScene);
+                break;
+            case MAIN_MENU:
+                getDisplay().setScene(mainMenuScene);
+                break;
+            case GAME_MENU:
+                getDisplay().setScene(gameMenuScene);
+                break;
+            case PLAYING:
+                getDisplay().setScene(gameScene);
+                break;
+        }
+    }
+
+    @Inject
+    private EventBus eventBus;
+
+    public final EventBus getEventBus() {
+        return eventBus;
     }
 
     @Inject
     private Display display;
+
+    /**
+     * @return display service
+     */
+    public final Display getDisplay() {
+        return display;
+    }
+
     @Inject
     private Input input;
+
+    /**
+     * @return input service
+     */
+    public final Input getInput() {
+        return input;
+    }
+
     @Inject
     private AudioPlayer audioPlayer;
 
-    private QTEManager qteManager;
+    /**
+     * @return audio manager
+     */
+    public final AudioPlayer getAudioPlayer() {
+        return audioPlayer;
+    }
+
+    @Inject
+    private AssetLoader assetLoader;
+
+    /**
+     * @return asset manager
+     */
+    public final AssetLoader getAssetLoader() {
+        return assetLoader;
+    }
+
+    @Inject
     private SaveLoadManager saveLoadManager;
+
+    /**
+     * @return save load manager
+     */
+    public final SaveLoadManager getSaveLoadManager() {
+        return saveLoadManager;
+    }
+
+    @Inject
+    private GameWorld gameWorld;
+
+    /**
+     * @return game world
+     */
+    public final GameWorld getGameWorld() {
+        return gameWorld;
+    }
+
+    @Inject
+    private PhysicsWorld physicsWorld;
+
+    /**
+     * @return physics world
+     */
+    public final PhysicsWorld getPhysicsWorld() {
+        return physicsWorld;
+    }
+
+    /**
+     * Game scene, this is where all in-game objects are shown.
+     */
+    @Inject
+    private GameScene gameScene;
+
+    /**
+     * @return game scene
+     */
+    public final GameScene getGameScene() {
+        return gameScene;
+    }
+
+    /**
+     * Intro scene, this is shown when the application started,
+     * before menus and game.
+     */
+    private IntroScene introScene;
+
+    /**
+     * Main menu, this is the menu shown at the start of game
+     */
+    private FXGLScene mainMenuScene;
+
+    /**
+     * In-game menu, this is shown when menu key pressed during the game
+     */
+    private FXGLScene gameMenuScene;
+
+    private QTEManager qteManager;
     private NotificationManager notificationManager;
     private AchievementManager achievementManager;
 
@@ -211,7 +326,7 @@ public abstract class GameApplication extends Application {
      * <pre>
      * Example:
      *
-     * InputManager input = getInputManager();
+     * Input input = getInput();
      * input.addAction(new UserAction("Move Left") {
      *      protected void onAction() {
      *          player.translate(-5, 0);
@@ -293,28 +408,9 @@ public abstract class GameApplication extends Application {
     protected abstract void onUpdate();
 
     /**
-     * Default implementation does nothing.
-     * <p>
-     * This method is called during the transition from playing state
-     * to menu state.
-     */
-    protected void onMenuOpen() {
-    }
-
-    /**
-     * Default implementation does nothing.
-     * <p>
-     * This method is called during the transition from menu state
-     * to playing state.
-     */
-    protected void onMenuClose() {
-    }
-
-    /**
      * Ensure managers are of legal state and ready.
      */
     private void initManagers() {
-        saveLoadManager = SaveLoadManager.INSTANCE;
         //qteManager = new QTEManager();
 
         notificationManager = new NotificationManager(getGameScene().getRoot());
@@ -325,9 +421,6 @@ public abstract class GameApplication extends Application {
         //profileSavables.add(audioManager);
         //profileSavables.add(sceneManager);
         //profileSavables.add(achievementManager);
-
-        isMenuEnabled = getSettings().isMenuEnabled();
-        menuOpen = new ReadOnlyBooleanWrapper(isMenuEnabled);
 
         getDisplay().registerScene(gameScene);
     }
@@ -341,6 +434,16 @@ public abstract class GameApplication extends Application {
 
             @Override
             protected void configure() {
+                bind(Double.class)
+                        .annotatedWith(Names.named("appWidth"))
+                        .toInstance(getWidth());
+
+                bind(Double.class)
+                        .annotatedWith(Names.named("appHeight"))
+                        .toInstance(getHeight());
+
+                bind(ReadOnlyGameSettings.class).toInstance(getSettings());
+
                 for (Field field : ServiceType.class.getDeclaredFields()) {
                     try {
                         ServiceType type = (ServiceType) field.get(null);
@@ -352,18 +455,6 @@ public abstract class GameApplication extends Application {
                         throw new IllegalArgumentException("Failed to configure services: " + e.getMessage());
                     }
                 }
-
-                requestStaticInjection(UIFactory.class);
-
-                bind(Double.class)
-                        .annotatedWith(Names.named("appWidth"))
-                        .toInstance(getWidth());
-
-                bind(Double.class)
-                        .annotatedWith(Names.named("appHeight"))
-                        .toInstance(getHeight());
-
-                bind(ReadOnlyGameSettings.class).toInstance(getSettings());
             }
 
             @Provides
@@ -405,8 +496,8 @@ public abstract class GameApplication extends Application {
             String saveFileName = event.getData().map(name -> (String) name).orElse("");
             if (!saveFileName.isEmpty()) {
                 boolean ok = getSaveLoadManager().save(saveState(), saveFileName).isOK();
-//                if (!ok)
-//                    getDisplay().showMessageBox("Failed to save");
+                if (!ok)
+                    getDisplay().showMessageBox("Failed to save");
             }
         });
 
@@ -419,6 +510,16 @@ public abstract class GameApplication extends Application {
                     : getSaveLoadManager().load(saveFileName);
 
             saveFile.ifPresent(this::startLoadedGame);
+        });
+
+        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
+        getEventBus().addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {
+            if (!isMenuOpen())
+                pause();
+        });
+        getEventBus().addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
+            if (!isMenuOpen())
+                resume();
         });
 
         gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
@@ -439,101 +540,11 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Configure main stage based on user settings.
-     *
-     * @param stage the stage
-     */
-    private void initStage(Stage stage) {
-        stage.setScene(injector.getInstance(Scene.class));
-        stage.setTitle(settings.getTitle() + " " + settings.getVersion());
-        stage.setResizable(false);
-        stage.setOnCloseRequest(e -> {
-            e.consume();
-
-            UIFactory.getDialogBox().showConfirmationBox("Exit the game?", yes -> {
-                if (yes)
-                    exit();
-            });
-        });
-        stage.getIcons().add(getAssetLoader().loadAppIcon(settings.getIconFileName()));
-
-        if (settings.isFullScreen()) {
-            stage.setFullScreenExitHint("");
-            // we don't want the user to be able to exit full screen manually
-            // but only through settings menu
-            // so we set key combination to something obscure which isn't likely
-            // to be pressed
-            stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
-            stage.setFullScreen(true);
-        }
-
-        stage.sizeToScene();
-    }
-
-    /**
-     * Game scene, this is where all in-game objects are shown.
-     */
-    @Inject
-    private GameScene gameScene;
-
-    /**
-     * @return game scene
-     */
-    public GameScene getGameScene() {
-        return gameScene;
-    }
-
-    /**
-     * Intro scene, this is shown when the application started,
-     * before menus and game.
-     */
-    private IntroScene introScene;
-
-    /**
-     * Main menu, this is the menu shown at the start of game
-     */
-    private FXGLScene mainMenuScene;
-
-    /**
-     * In-game menu, this is shown when menu key pressed during the game
-     */
-    private FXGLScene gameMenuScene;
-
-    /**
-     * Reference to current shown scene.
-     */
-    private FXGLScene currentScene;
-
-    /**
-     * Is menu enabled in settings
-     */
-    private boolean isMenuEnabled;
-
-    private ReadOnlyBooleanWrapper menuOpen;
-
-    /**
-     * @return property tracking if any menu is open
-     */
-    public ReadOnlyBooleanProperty menuOpenProperty() {
-        return menuOpen.getReadOnlyProperty();
-    }
-
-    /**
      * @return true if any menu is open
      */
     public boolean isMenuOpen() {
-        return menuOpen.get();
-    }
-
-    /**
-     * Changes current scene to given scene.
-     *
-     * @param scene the scene to set as active
-     */
-    private void setScene(FXGLScene scene) {
-        getDisplay().setScene(scene);
-
-        menuOpen.set(scene == mainMenuScene || scene == gameMenuScene);
+        return getState() == GameState.GAME_MENU
+                || getState() == GameState.MAIN_MENU;
     }
 
     /**
@@ -541,16 +552,6 @@ public abstract class GameApplication extends Application {
      * Registers event handlers to menus.
      */
     private void configureMenu() {
-        menuOpenProperty().addListener((obs, wasOpen, isOpen) -> {
-            if (isOpen) {
-                log.finer("Playing State -> Menu State");
-                onMenuOpen();
-            } else {
-                log.finer("Menu State -> Playing State");
-                onMenuClose();
-            }
-        });
-
         MenuFactory menuFactory = initMenuFactory();
 
         mainMenuScene = menuFactory.newMainMenu(this);
@@ -574,10 +575,9 @@ public abstract class GameApplication extends Application {
                 canSwitchGameMenu = true;
         });
 
-        eventBus.addEventHandler(MenuEvent.PAUSE, event -> setScene(gameMenuScene));
-        eventBus.addEventHandler(MenuEvent.RESUME, event -> setScene(gameScene));
-        eventBus.addEventHandler(FXGLEvent.INIT_APP_COMPLETE, event -> setScene(gameScene));
-        eventBus.addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> setScene(mainMenuScene));
+        eventBus.addEventHandler(MenuEvent.PAUSE, event -> setState(GameState.GAME_MENU));
+        eventBus.addEventHandler(MenuEvent.RESUME, event -> setState(GameState.PLAYING));
+        eventBus.addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> setState(GameState.MAIN_MENU));
     }
 
     private void configureIntro() {
@@ -590,13 +590,13 @@ public abstract class GameApplication extends Application {
      * Called right before the main stage is shown.
      */
     void onStageShow() {
-        if (isMenuEnabled)
+        if (getSettings().isMenuEnabled())
             configureMenu();
 
         if (getSettings().isIntroEnabled()) {
             configureIntro();
 
-            setScene(introScene);
+            setState(GameState.INTRO);
             introScene.startIntro();
         } else {
             showGame();
@@ -604,11 +604,10 @@ public abstract class GameApplication extends Application {
     }
 
     private void showGame() {
-        if (isMenuEnabled) {
-            setScene(mainMenuScene);
+        if (getSettings().isMenuEnabled()) {
+            setState(GameState.MAIN_MENU);
         } else {
             startNewGame();
-            setScene(gameScene);
         }
     }
 
@@ -650,10 +649,8 @@ public abstract class GameApplication extends Application {
 
         initEventHandlers();
 
-        initStage(stage);
-
         defaultProfile = createProfile();
-        SaveLoadManager.INSTANCE.loadProfile().ifPresent(this::loadFromProfile);
+        getSaveLoadManager().loadProfile().ifPresent(this::loadFromProfile);
 
         onStageShow();
         stage.show();
@@ -692,6 +689,8 @@ public abstract class GameApplication extends Application {
             }
 
             getEventBus().fireEvent(FXGLEvent.initAppComplete());
+
+            setState(GameState.PLAYING);
 
         } catch (Exception e) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
@@ -792,25 +791,6 @@ public abstract class GameApplication extends Application {
         loadFromProfile(defaultProfile);
     }
 
-    @Inject
-    private GameWorld gameWorld;
-
-    /**
-     *
-     * @return game world
-     */
-    public final GameWorld getGameWorld() {
-        return gameWorld;
-    }
-
-
-    @Inject
-    private PhysicsWorld physicsWorld;
-
-    public final PhysicsWorld getPhysicsWorld() {
-        return physicsWorld;
-    }
-
     /**
      * Returns target width of the application. This is the
      * width that was set using GameSettings.
@@ -854,13 +834,6 @@ public abstract class GameApplication extends Application {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
     }
 
-    @Inject
-    private EventBus eventBus;
-
-    public final EventBus getEventBus() {
-        return eventBus;
-    }
-
     /**
      * @return current tick
      */
@@ -880,48 +853,6 @@ public abstract class GameApplication extends Application {
      */
     public final MasterTimer getTimerManager() {
         return getService(ServiceType.MASTER_TIMER);
-    }
-
-    /**
-     * @return scene manager
-     */
-    public final Display getDisplay() {
-        return display;
-    }
-
-    /**
-     * @return audio manager
-     */
-    public final AudioPlayer getAudioManager() {
-        return audioPlayer;
-    }
-
-    /**
-     * @return physics manager
-     */
-    public final PhysicsWorld getPhysicsManager() {
-        return getPhysicsWorld();
-    }
-
-    /**
-     * @return input manager
-     */
-    public final Input getInput() {
-        return input;
-    }
-
-    /**
-     * @return asset manager
-     */
-    public final AssetLoader getAssetLoader() {
-        return getService(ServiceType.ASSET_LOADER);
-    }
-
-    /**
-     * @return save load manager
-     */
-    public final SaveLoadManager getSaveLoadManager() {
-        return saveLoadManager;
     }
 
     /**

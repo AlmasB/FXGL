@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,33 +23,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.GameApplication;
+package com.almasb.fxgl.event;
+
+import javafx.beans.NamedArg;
+import javafx.event.Event;
+import javafx.event.EventType;
 
 /**
- * Menu creation methods can be overriden to use
- * custom main/game menus.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class MenuFactory {
+public class DisplayEvent extends Event {
 
     /**
-     * Called to construct main menu.
-     *
-     * @param app game application
-     * @param settings scene settings
-     * @return main menu
+     * Common super-type for all menu event types.
      */
-    public abstract FXGLMenu newMainMenu(GameApplication app);
+    public static final EventType<DisplayEvent> ANY =
+            new EventType<>(Event.ANY, "DISPLAY_EVENT");
 
-    /**
-     * Called to construct game menu.
-     *
-     * @param app game application
-     * @param settings scene settings
-     * @return game menu
-     */
-    public abstract FXGLMenu newGameMenu(GameApplication app);
+    public static final EventType<DisplayEvent> CLOSE_REQUEST =
+            new EventType<>(ANY, "CLOSE_REQUEST");
+
+    public static final EventType<DisplayEvent> DIALOG_OPENED =
+            new EventType<>(ANY, "DIALOG_OPENED");
+
+    public static final EventType<DisplayEvent> DIALOG_CLOSED =
+            new EventType<>(ANY, "DIALOG_CLOSED");
+
+    public DisplayEvent(@NamedArg("eventType") EventType<? extends Event> eventType) {
+        super(eventType);
+    }
+
+    @Override
+    public String toString() {
+        return "DisplayEvent[type=" + getEventType().toString() + "]";
+    }
 }

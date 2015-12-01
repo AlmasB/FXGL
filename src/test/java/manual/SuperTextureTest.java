@@ -171,7 +171,7 @@ public class SuperTextureTest extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        PhysicsWorld physics = getPhysicsManager();
+        PhysicsWorld physics = getPhysicsWorld();
         physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
             @Override
             protected void onHitBoxTrigger(Entity player, Entity enemy, HitBox playerBox, HitBox enemyBox) {

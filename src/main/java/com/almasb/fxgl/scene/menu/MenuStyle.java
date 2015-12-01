@@ -23,11 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui.menu;
+package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ui.FXGLMenu;
-import com.almasb.fxgl.ui.MenuFactory;
+import com.almasb.fxgl.scene.FXGLMenu;
+import com.almasb.fxgl.scene.MenuFactory;
 
 /**
  * FXGL built-in menu styles. NOT COMPLETED YET.

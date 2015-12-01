@@ -23,13 +23,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
 
+package com.almasb.fxgl.scene;
+
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.SceneDimension;
-import com.almasb.fxgl.ui.FXGLScene;
+import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.settings.UserProfileSavable;
+import com.almasb.fxgl.ui.FXGLDialogBox;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -41,7 +47,9 @@ import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
@@ -55,6 +63,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 /**
@@ -63,7 +72,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class Display /*implements UserProfileSavable*/ {
+public final class Display implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.Display");
 
@@ -87,7 +96,6 @@ public final class Display /*implements UserProfileSavable*/ {
 
     private String css = "";
 
-
     private ReadOnlyGameSettings settings;
 
     @Inject
@@ -105,6 +113,9 @@ public final class Display /*implements UserProfileSavable*/ {
         scaledHeight = new SimpleDoubleProperty();
         scaleRatio = new SimpleDoubleProperty();
 
+        initStage();
+        initDialogBox();
+
         /*
          * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
          * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
@@ -120,6 +131,37 @@ public final class Display /*implements UserProfileSavable*/ {
         computeScaledSize();
 
         log.finer("Service [Display] initialized");
+    }
+
+    /**
+     * Configure main stage based on user settings.
+     */
+    private void initStage() {
+        stage.setScene(scene);
+        stage.setTitle(settings.getTitle() + " " + settings.getVersion());
+        stage.setResizable(false);
+        stage.setOnCloseRequest(e -> {
+            e.consume();
+
+            showConfirmationBox("Exit the game?", yes -> {
+                if (yes)
+                    eventBus.fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
+            });
+        });
+        stage.getIcons().add(GameApplication.getService(ServiceType.ASSET_LOADER)
+                .loadAppIcon(settings.getIconFileName()));
+
+        if (settings.isFullScreen()) {
+            stage.setFullScreenExitHint("");
+            // we don't want the user to be able to exit full screen manually
+            // but only through settings menu
+            // so we set key combination to something obscure which isn't likely
+            // to be pressed
+            stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
+            stage.setFullScreen(true);
+        }
+
+        stage.sizeToScene();
     }
 
     public void registerScene(FXGLScene scene) {
@@ -194,7 +236,6 @@ public final class Display /*implements UserProfileSavable*/ {
      *
      * @param width  target (app) width
      * @param height target (app) height
-     * @return scene settings with computed values
      */
     public void computeSceneSettings(double width, double height) {
         Rectangle2D bounds = getBounds();
@@ -218,7 +259,6 @@ public final class Display /*implements UserProfileSavable*/ {
         log.finer("Using CSS: " + css);
 
         this.css = loadedCSS;
-        //return new SceneSettings(width, height, bounds, loadedCSS);
     }
 
     public final double getTargetWidth() {
@@ -311,145 +351,94 @@ public final class Display /*implements UserProfileSavable*/ {
         }
     }
 
+    private FXGLDialogBox dialogBox;
 
+    private void initDialogBox() {
+        dialogBox = new FXGLDialogBox(stage);
+        dialogBox.setOnShown(e -> {
+            eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
+        });
+        dialogBox.setOnHidden(e -> {
+            eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_CLOSED));
+        });
+    }
 
+    /**
+     * Shows given dialog and blocks execution of the game until the dialog is
+     * dismissed. The provided callback will be called with the dialog result as
+     * parameter when the dialog closes.
+     *
+     * @param dialog         JavaFX dialog
+     * @param resultCallback the function to be called
+     */
+    public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
+        eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
 
+        dialog.initOwner(stage);
+        dialog.setOnCloseRequest(e -> {
+            eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_CLOSED));
 
+            resultCallback.accept(dialog.getResult());
+        });
+        dialog.show();
+    }
 
+    /**
+     * Shows a blocking (stops game execution) message box with OK button. On
+     * button press, the message box will be dismissed.
+     *
+     * @param message the message to show
+     */
+    public void showMessageBox(String message) {
+        dialogBox.showMessageBox(message);
+    }
 
-//
-//
-//
-//
-//    private FXGLDialogBox dialogBox;
-//
-//    /**
-//     * Settings for all scenes to apply.
-//     */
-//    private SceneSettings sceneSettings;
-//
-//    private GameApplication app;
-//
-//    private EventBus eventBus;
-//
-//    /**
-//     * Constructs scene manager.
-//     *
-//     * @param app   instance of game application
-//     * @param scene main scene
-//     */
-//    Display(GameApplication app, Scene scene) {
-//        this.app = app;
-//        this.scene = scene;
-//        eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
-//
+    /**
+     * Shows a blocking message box with YES and NO buttons. The callback is
+     * invoked with the user answer as parameter.
+     *
+     * @param message        message to show
+     * @param resultCallback the function to be called
+     */
+    public void showConfirmationBox(String message,
+                                    Consumer<Boolean> resultCallback) {
+        dialogBox.showConfirmationBox(message, resultCallback);
+    }
 
-//
+    /**
+     * Shows a blocking message box with OK button and input field. The callback
+     * is invoked with the field text as parameter.
+     *
+     * @param message        message to show
+     * @param resultCallback the function to be called
+     */
+    public void showInputBox(String message, Consumer<String> resultCallback) {
+        dialogBox.showInputBox(message, resultCallback);
+    }
 
-//
-//        initDialogBox();
-//
-//
-//    }
-//
-//    private void initDialogBox() {
-//        dialogBox = UIFactory.getDialogBox();
-//        dialogBox.setOnShown(e -> {
-//            if (!isMenuOpen())
-//                app.pause();
-//
-//            app.getInput().clearAllInput();
-//        });
-//        dialogBox.setOnHidden(e -> {
-//            if (!isMenuOpen())
-//                app.resume();
-//        });
-//    }
-//
+    public void showErrorBox(Throwable error) {
+        dialogBox.showErrorBox(error);
+    }
 
-//
+    @Override
+    public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
 
-//
-//    /**
-//     * Shows given dialog and blocks execution of the game until the dialog is
-//     * dismissed. The provided callback will be called with the dialog result as
-//     * parameter when the dialog closes.
-//     *
-//     * @param dialog         JavaFX dialog
-//     * @param resultCallback the function to be called
-//     */
-//    public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
-//        boolean paused = menuOpenProperty().get();
-//
-//        if (!paused)
-//            app.pause();
-//
-//        app.getInput().clearAllInput();
-//
-//        dialog.initOwner(scene.getWindow());
-//        dialog.setOnCloseRequest(e -> {
-//            if (!paused)
-//                app.resume();
-//
-//            resultCallback.accept(dialog.getResult());
-//        });
-//        dialog.show();
-//    }
-//
-//    /**
-//     * Shows a blocking (stops game execution) message box with OK button. On
-//     * button press, the message box will be dismissed.
-//     *
-//     * @param message the message to show
-//     */
-//    public void showMessageBox(String message) {
-//        dialogBox.showMessageBox(message);
-//    }
-//
-//    /**
-//     * Shows a blocking message box with YES and NO buttons. The callback is
-//     * invoked with the user answer as parameter.
-//     *
-//     * @param message        message to show
-//     * @param resultCallback the function to be called
-//     */
-//    public void showConfirmationBox(String message,
-//                                    Consumer<Boolean> resultCallback) {
-//        dialogBox.showConfirmationBox(message, resultCallback);
-//    }
-//
-//    /**
-//     * Shows a blocking message box with OK button and input field. The callback
-//     * is invoked with the field text as parameter.
-//     *
-//     * @param message        message to show
-//     * @param resultCallback the function to be called
-//     */
-//    public void showInputBox(String message, Consumer<String> resultCallback) {
-//        dialogBox.showInputBox(message, resultCallback);
-//    }
-//
+        UserProfile.Bundle bundle = new UserProfile.Bundle("scene");
+        bundle.put("sizeW", getTargetWidth());
+        bundle.put("sizeH", getTargetHeight());
 
-//
-//    @Override
-//    public void save(UserProfile profile) {
-//        log.finer("Saving data to profile");
-//
-//        UserProfile.Bundle bundle = new UserProfile.Bundle("scene");
-//        bundle.put("sizeW", sceneSettings.getTargetWidth());
-//        bundle.put("sizeH", sceneSettings.getTargetHeight());
-//
-//        bundle.log();
-//        profile.putBundle(bundle);
-//    }
-//
-//    @Override
-//    public void load(UserProfile profile) {
-//        log.finer("Loading data from profile");
-//
-//        UserProfile.Bundle bundle = profile.getBundle("scene");
-//        bundle.log();
-//
-//        setNewResolution(bundle.get("sizeW"), bundle.get("sizeH"));
-//    }
+        bundle.log();
+        profile.putBundle(bundle);
+    }
+
+    @Override
+    public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+
+        UserProfile.Bundle bundle = profile.getBundle("scene");
+        bundle.log();
+
+        setNewResolution(bundle.get("sizeW"), bundle.get("sizeH"));
+    }
 }

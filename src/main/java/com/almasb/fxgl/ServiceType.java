@@ -32,6 +32,7 @@ import com.almasb.fxgl.asset.FXGLAudioPlayer;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;

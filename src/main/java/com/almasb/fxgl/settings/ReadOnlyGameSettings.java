@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.settings;
 
-import com.almasb.fxgl.ui.menu.MenuStyle;
+import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.ApplicationMode;
 import javafx.scene.input.KeyCode;
 

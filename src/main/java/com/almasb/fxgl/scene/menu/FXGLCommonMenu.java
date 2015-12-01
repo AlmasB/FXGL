@@ -23,24 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui.menu;
+package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.event.MenuEvent;
-import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.ui.FXGLButton;
-import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.animation.FadeTransition;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -107,14 +100,14 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
         MenuItem btnSave = new MenuItem("SAVE DATA");
         btnSave.setOnAction(e -> {
-            UIFactory.getDialogBox().showConfirmationBox("Are you sure?", yes -> {
-                if (yes) SaveLoadManager.INSTANCE.saveProfile(app.createProfile());
+            app.getDisplay().showConfirmationBox("Are you sure?", yes -> {
+                if (yes) app.getSaveLoadManager().saveProfile(app.createProfile());
             });
         });
 
         MenuItem btnRestore = new MenuItem("RESTORE");
         btnRestore.setOnAction(e -> {
-            UIFactory.getDialogBox().showConfirmationBox("Are you sure?", yes -> {
+            app.getDisplay().showConfirmationBox("Are you sure?", yes -> {
                 if (yes) app.loadFromDefaultProfile();
             });
         });

@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.scene;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,11 +32,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.input.InputBinding;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.settings.SceneDimension;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 
@@ -101,7 +101,7 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
-        SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+        app.getSaveLoadManager().loadFileNames().ifPresent(names -> list.getItems().setAll(names));
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         if (list.getItems().size() > 0) {
@@ -122,7 +122,7 @@ public abstract class FXGLMenu extends FXGLScene {
             if (fileName == null)
                 return;
 
-            UIFactory.getDialogBox().showMessageBox(SaveLoadManager.INSTANCE.delete(fileName)
+            app.getDisplay().showMessageBox(app.getSaveLoadManager().delete(fileName)
                     ? "File was deleted" : "File couldn't be deleted");
 
             list.getItems().remove(fileName);
@@ -227,16 +227,16 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final MenuContent createContentAudio() {
         Slider sliderMusic = new Slider(0, 1, 1);
-        sliderMusic.valueProperty().bindBidirectional(app.getAudioManager().globalMusicVolumeProperty());
-        //app.getAudioManager().globalMusicVolumeProperty().bindBidirectional(sliderMusic.valueProperty());
+        sliderMusic.valueProperty().bindBidirectional(app.getAudioPlayer().globalMusicVolumeProperty());
+        //app.getAudioPlayer().globalMusicVolumeProperty().bindBidirectional(sliderMusic.valueProperty());
 
         Text textMusic = UIFactory.newText("Music Volume: ");
         Text percentMusic = UIFactory.newText("");
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"));
 
         Slider sliderSound = new Slider(0, 1, 1);
-        sliderSound.valueProperty().bindBidirectional(app.getAudioManager().globalSoundVolumeProperty());
-        //app.getAudioManager().globalSoundVolumeProperty().bindBidirectional(sliderSound.valueProperty());
+        sliderSound.valueProperty().bindBidirectional(app.getAudioPlayer().globalSoundVolumeProperty());
+        //app.getAudioPlayer().globalSoundVolumeProperty().bindBidirectional(sliderSound.valueProperty());
 
         Text textSound = UIFactory.newText("Sound Volume: ");
         Text percentSound = UIFactory.newText("");
