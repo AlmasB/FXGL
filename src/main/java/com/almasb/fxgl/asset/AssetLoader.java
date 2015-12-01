@@ -45,6 +45,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.almasb.fxgl.audio.Music;
+import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.FXGLLogger;
 

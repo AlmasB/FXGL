@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,63 +23,63 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.component;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
- * Represents a boolean value based component.
+ * Represents a String value based component.
  * <p>
  * <pre>
  * Example:
  *
- * public class GravityComponent extends BooleanComponent {
- *      public GravityComponent(boolean initialValue) {
+ * public class NameComponent extends StringComponent {
+ *      public NameComponent(String initialValue) {
  *          super(initialValue);
  *      }
  * }
  *
  * Entity player = ...
- * player.addComponent(new GravityComponent(true));
+ * player.addComponent(new NameComponent("PlayerName"));
  *
- * boolean money = player.getComponent(GravityComponent.class).getValue();
+ * String name = player.getComponent(NameComponent.class).getValue();
  *
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class BooleanComponent implements Component {
-    private BooleanProperty property;
+public abstract class StringComponent implements Component {
+    private StringProperty property;
 
     /**
      * No-arg ctor, initializes the value to empty string.
      */
-    public BooleanComponent() {
-        this(false);
+    public StringComponent() {
+        this("");
     }
 
     /**
-     * Constructs a boolean value component with given
+     * Constructs a string value component with given
      * initial value.
      *
-     * @param initialValue initial value
+     * @param initialValue the initial value
      */
-    public BooleanComponent(boolean initialValue) {
-        property = new SimpleBooleanProperty(initialValue);
+    public StringComponent(String initialValue) {
+        property = new SimpleStringProperty(initialValue);
     }
 
     /**
      * @return value property
      */
-    public final BooleanProperty valueProperty() {
+    public final StringProperty valueProperty() {
         return property;
     }
 
     /**
      * @return value held by this component
      */
-    public final boolean getValue() {
+    public final String getValue() {
         return property.get();
     }
 
@@ -88,7 +88,7 @@ public abstract class BooleanComponent implements Component {
      *
      * @param value new value
      */
-    public final void setValue(boolean value) {
+    public final void setValue(String value) {
         property.set(value);
     }
 }

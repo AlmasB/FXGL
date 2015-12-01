@@ -29,6 +29,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.GameWorld;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.control.AbstractControl;
+import com.almasb.fxgl.entity.control.Control;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -796,7 +799,7 @@ public class Entity {
     protected void onClean() {
     }
 
-    private Map<String, FXGLEventHandler> eventHandlers = new HashMap<>();
+    private Map<String, EntityEventHandler> eventHandlers = new HashMap<>();
 
     /**
      * Register an event handler for FXGLEventType. The handler will be notified
@@ -805,8 +808,8 @@ public class Entity {
      * @param type event type
      * @param eventHandler event handler
      */
-    public final void addFXGLEventHandler(FXGLEventType type,
-                                          FXGLEventHandler eventHandler) {
+    public final void addEntityEventHandler(EntityEventType type,
+                                            EntityEventHandler eventHandler) {
         eventHandlers.put(type.getUniqueType(), eventHandler);
     }
 
@@ -816,8 +819,8 @@ public class Entity {
      * @param type event type
      * @param eventHandler event handler
      */
-    public final void removeFXGLEventHandler(FXGLEventType type,
-                                             FXGLEventHandler eventHandler) {
+    public final void removeEntityEventHandler(EntityEventType type,
+                                               EntityEventHandler eventHandler) {
         eventHandlers.remove(type, eventHandler);
     }
 
@@ -830,7 +833,7 @@ public class Entity {
      *
      * @param event FXGL event
      */
-    public final void fireFXGLEvent(FXGLEvent event) {
+    public final void fireEntityEvent(EntityEvent event) {
         if (event.getSource() == null)
             event.setSource(this);
 

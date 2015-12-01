@@ -26,24 +26,17 @@
 package com.almasb.fxgl.entity;
 
 /**
- * Used to ensure type safety for property names (keys)
- * Example:
- * <pre>
- *     private enum Property implements FXGLEventType {
- *         HEALTH, ATTACK_DAMAGE, ARMOR_TYPE
- *     }
- * </pre>
+ * Handler for FXGL events fired on entities
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface PropertyKey {
+@FunctionalInterface
+public interface EntityEventHandler {
 
     /**
-     * Returns unique string representation of key.
+     * Called when an event of registered type occurred
      *
-     * @return unique key
+     * @param event the FXGL event
      */
-    default String getUniqueKey() {
-        return getClass().getCanonicalName() + "." + toString();
-    }
+    void handle(EntityEvent event);
 }

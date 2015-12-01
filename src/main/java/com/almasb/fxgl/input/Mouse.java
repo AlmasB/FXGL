@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.input;
 
-
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;

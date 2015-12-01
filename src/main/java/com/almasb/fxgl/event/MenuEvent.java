@@ -32,7 +32,7 @@ import javafx.event.EventTarget;
 import javafx.event.EventType;
 
 /**
- * An event type that occurs within menus.
+ * An event related to menus. This event can only occur if menu is enabled.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -44,6 +44,10 @@ public final class MenuEvent extends Event {
     public static final EventType<MenuEvent> ANY =
             new EventType<>(Event.ANY, "MENU_EVENT");
 
+    /**
+     * This event occurs when the user hit menu key in the game
+     * to open game menu.
+     */
     public static final EventType<MenuEvent> PAUSE =
             new EventType<>(MenuEvent.ANY, "PAUSE");
 

@@ -24,12 +24,10 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.audio;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.NotificationEvent;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.asset.FXGLAssets;
+import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -65,6 +63,14 @@ public final class FXGLAudioPlayer implements AudioPlayer, UserProfileSavable {
             playSound(FXGLAssets.SOUND_NOTIFICATION);
         });
 
+        eventBus.addEventHandler(SaveEvent.ANY, event -> {
+            save(event.getProfile());
+        });
+
+        eventBus.addEventHandler(LoadEvent.ANY, event -> {
+            load(event.getProfile());
+        });
+
         log.finer("Service [AudioPlayer] initialized");
     }
 
@@ -88,25 +94,6 @@ public final class FXGLAudioPlayer implements AudioPlayer, UserProfileSavable {
         return globalMusicVolume;
     }
 
-    /**
-     * @return global music volume
-     */
-    @Override
-    public double getGlobalMusicVolume() {
-        return globalMusicVolumeProperty().get();
-    }
-
-    /**
-     * Set global music volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%
-     *
-     * @param volume music volume
-     */
-    @Override
-    public void setGlobalMusicVolume(double volume) {
-        globalMusicVolumeProperty().set(volume);
-    }
-
     private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(1.0);
 
     /**
@@ -115,25 +102,6 @@ public final class FXGLAudioPlayer implements AudioPlayer, UserProfileSavable {
     @Override
     public DoubleProperty globalSoundVolumeProperty() {
         return globalSoundVolume;
-    }
-
-    /**
-     * @return global sound volume
-     */
-    @Override
-    public double getGlobalSoundVolume() {
-        return globalSoundVolumeProperty().get();
-    }
-
-    /**
-     * Set global sound volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%
-     *
-     * @param volume sound volume
-     */
-    @Override
-    public void setGlobalSoundVolume(double volume) {
-        globalSoundVolumeProperty().set(volume);
     }
 
     /**

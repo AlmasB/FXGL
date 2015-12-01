@@ -27,6 +27,7 @@ package com.almasb.fxgl.scene;
 
 import java.util.Random;
 
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Version;
 
@@ -68,10 +69,10 @@ public final class FXGLIntroScene extends IntroScene {
 
     private Random random = new Random();
 
-    public FXGLIntroScene() {
-        // TODO: check
-        w = getWidth();
-        h = getHeight();
+    public FXGLIntroScene(ReadOnlyGameSettings settings) {
+        super(settings);
+        w = settings.getWidth();
+        h = settings.getHeight();
 
         Text f = makeLetter("F");
         Text x = makeLetter("X");

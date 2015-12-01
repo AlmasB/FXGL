@@ -26,27 +26,28 @@
 package com.almasb.fxgl.entity;
 
 /**
- * Represents a single component (property) of an entity,
- * e.g. HP, Mana, Weapon, Name, Money.
+ * A type of event. For extra safety use enums.
  * <p>
- * <pre>
  * Example:
- *
- * public class MoneyComponent extends IntegerComponent {
- *      public MoneyComponent(int initialValue) {
- *          super(initialValue);
- *      }
- * }
- *
- * Entity player = ...
- * player.addComponent(new MoneyComponent(5000));
- *
- * int money = player.getComponent(MoneyComponent.class).getValue();
- *
+ * <pre>
+ *     private enum Event implements FXGLEventType {
+ *         ENEMY_SPAWN, ENEMY_DEATH, DOOR_OPEN, DOOR_CLOSE, BOSS_SPAWN
+ *     }
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface Component {
+public interface EntityEventType {
 
+    /**
+     * Returns unique string literal representation of
+     * the event type. Unique means that <b>NO</b> two event types
+     * when called <code> event1.getUniqueType().equals(event2.getUniqueType())</code>
+     * return true.
+     *
+     * @return unique type as String
+     */
+    default String getUniqueType() {
+        return getClass().getCanonicalName() + "." + toString();
+    }
 }

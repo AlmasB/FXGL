@@ -27,10 +27,7 @@ package com.almasb.fxgl.input;
 
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.FXGLEvent;
-import com.almasb.fxgl.event.FXGLInputEvent;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -134,6 +131,14 @@ public final class Input implements UserProfileSavable {
                     handleReleased(new Trigger(keyEvent));
                 }
             }
+        });
+
+        eventBus.addEventHandler(SaveEvent.ANY, event -> {
+            save(event.getProfile());
+        });
+
+        eventBus.addEventHandler(LoadEvent.ANY, event -> {
+            load(event.getProfile());
         });
 
         log.finer("Service [Input] initialized");

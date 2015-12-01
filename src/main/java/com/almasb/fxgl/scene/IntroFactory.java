@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+
 public abstract class IntroFactory {
 
     /**
@@ -33,5 +35,5 @@ public abstract class IntroFactory {
      *
      * @return intro scene
      */
-    public abstract IntroScene newIntro();
+    public abstract IntroScene newIntro(ReadOnlyGameSettings settings);
 }

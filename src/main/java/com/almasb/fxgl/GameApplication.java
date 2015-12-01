@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.asset.AudioPlayer;
+import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.input.Input;
@@ -56,8 +56,6 @@ import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -344,8 +342,8 @@ public abstract class GameApplication extends Application {
     protected IntroFactory initIntroFactory() {
         return new IntroFactory() {
             @Override
-            public IntroScene newIntro() {
-                return new FXGLIntroScene();
+            public IntroScene newIntro(ReadOnlyGameSettings settings) {
+                return new FXGLIntroScene(settings);
             }
         };
     }
@@ -416,12 +414,6 @@ public abstract class GameApplication extends Application {
         notificationManager = new NotificationManager(getGameScene().getRoot());
         achievementManager = new AchievementManager();
 
-        // profile data listeners
-        //profileSavables.add(inputManager);
-        //profileSavables.add(audioManager);
-        //profileSavables.add(sceneManager);
-        //profileSavables.add(achievementManager);
-
         getDisplay().registerScene(gameScene);
     }
 
@@ -478,19 +470,84 @@ public abstract class GameApplication extends Application {
         injector.injectMembers(this);
     }
 
-    private boolean canSwitchGameMenu = true;
-
     private void initEventHandlers() {
         getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate());
+
+        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
+        getEventBus().addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {
+            if (!isMenuOpen())
+                pause();
+        });
+        getEventBus().addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
+            if (!isMenuOpen())
+                resume();
+        });
+    }
+
+    /**
+     * @return true if any menu is open
+     */
+    public boolean isMenuOpen() {
+        return getState() == GameState.GAME_MENU
+                || getState() == GameState.MAIN_MENU;
+    }
+
+    private boolean canSwitchGameMenu = true;
+
+    /**
+     * Creates Main and Game menu scenes.
+     * Registers menu event handlers.
+     */
+    private void configureMenu() {
+        MenuFactory menuFactory = initMenuFactory();
+
+        mainMenuScene = menuFactory.newMainMenu(this);
+        gameMenuScene = menuFactory.newGameMenu(this);
+
+        getDisplay().registerScene(mainMenuScene);
+        getDisplay().registerScene(gameMenuScene);
+
+        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == getSettings().getMenuKey()
+                    && canSwitchGameMenu) {
+                getEventBus().fireEvent(new MenuEvent(MenuEvent.PAUSE));
+                canSwitchGameMenu = false;
+            }
+        });
+
+        gameMenuScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == getSettings().getMenuKey()
+                    && canSwitchGameMenu) {
+                getEventBus().fireEvent(new MenuEvent(MenuEvent.RESUME));
+                canSwitchGameMenu = false;
+            }
+        });
+
+        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == getSettings().getMenuKey())
+                canSwitchGameMenu = true;
+        });
+        gameMenuScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == getSettings().getMenuKey())
+                canSwitchGameMenu = true;
+        });
+
         getEventBus().addEventHandler(MenuEvent.NEW_GAME, event -> startNewGame());
         getEventBus().addEventHandler(MenuEvent.EXIT, event -> exit());
         getEventBus().addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> {
             pause();
             reset();
+            setState(GameState.MAIN_MENU);
         });
 
-        getEventBus().addEventHandler(MenuEvent.PAUSE, event -> pause());
-        getEventBus().addEventHandler(MenuEvent.RESUME, event -> resume());
+        getEventBus().addEventHandler(MenuEvent.PAUSE, event -> {
+            pause();
+            setState(GameState.GAME_MENU);
+        });
+        getEventBus().addEventHandler(MenuEvent.RESUME, event -> {
+            resume();
+            setState(GameState.PLAYING);
+        });
 
         getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
             String saveFileName = event.getData().map(name -> (String) name).orElse("");
@@ -511,77 +568,10 @@ public abstract class GameApplication extends Application {
 
             saveFile.ifPresent(this::startLoadedGame);
         });
-
-        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
-        getEventBus().addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {
-            if (!isMenuOpen())
-                pause();
-        });
-        getEventBus().addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
-            if (!isMenuOpen())
-                resume();
-        });
-
-        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (getSettings().isMenuEnabled()
-                    && event.getCode() == getSettings().getMenuKey()
-                    && getDisplay().getCurrentScene() == getGameScene()
-                    && canSwitchGameMenu) {
-                getEventBus().fireEvent(new MenuEvent(MenuEvent.PAUSE));
-                canSwitchGameMenu = false;
-            }
-        });
-
-        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == getSettings().getMenuKey()
-                    && getDisplay().getCurrentScene() == getGameScene())
-                canSwitchGameMenu = true;
-        });
-    }
-
-    /**
-     * @return true if any menu is open
-     */
-    public boolean isMenuOpen() {
-        return getState() == GameState.GAME_MENU
-                || getState() == GameState.MAIN_MENU;
-    }
-
-    /**
-     * Creates Main and Game menu scenes.
-     * Registers event handlers to menus.
-     */
-    private void configureMenu() {
-        MenuFactory menuFactory = initMenuFactory();
-
-        mainMenuScene = menuFactory.newMainMenu(this);
-        gameMenuScene = menuFactory.newGameMenu(this);
-
-        getDisplay().registerScene(mainMenuScene);
-        getDisplay().registerScene(gameMenuScene);
-
-        gameMenuScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == getSettings().getMenuKey()
-                    && getDisplay().getCurrentScene() != getGameScene()
-                    && canSwitchGameMenu) {
-                getEventBus().fireEvent(new MenuEvent(MenuEvent.RESUME));
-                canSwitchGameMenu = false;
-            }
-        });
-
-        gameMenuScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == getSettings().getMenuKey()
-                    && getDisplay().getCurrentScene() != getGameScene())
-                canSwitchGameMenu = true;
-        });
-
-        eventBus.addEventHandler(MenuEvent.PAUSE, event -> setState(GameState.GAME_MENU));
-        eventBus.addEventHandler(MenuEvent.RESUME, event -> setState(GameState.PLAYING));
-        eventBus.addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> setState(GameState.MAIN_MENU));
     }
 
     private void configureIntro() {
-        introScene = initIntroFactory().newIntro();
+        introScene = initIntroFactory().newIntro(getSettings());
         introScene.setOnFinished(this::showGame);
         getDisplay().registerScene(introScene);
     }
@@ -590,13 +580,10 @@ public abstract class GameApplication extends Application {
      * Called right before the main stage is shown.
      */
     void onStageShow() {
-        if (getSettings().isMenuEnabled())
-            configureMenu();
-
         if (getSettings().isIntroEnabled()) {
             configureIntro();
-
             setState(GameState.INTRO);
+
             introScene.startIntro();
         } else {
             showGame();
@@ -605,6 +592,7 @@ public abstract class GameApplication extends Application {
 
     private void showGame() {
         if (getSettings().isMenuEnabled()) {
+            configureMenu();
             setState(GameState.MAIN_MENU);
         } else {
             startNewGame();
@@ -754,8 +742,6 @@ public abstract class GameApplication extends Application {
         System.exit(0);
     }
 
-    private List<UserProfileSavable> profileSavables = new ArrayList<>();
-
     /**
      * Stores the default profile data. This is used to restore default settings.
      */
@@ -768,7 +754,9 @@ public abstract class GameApplication extends Application {
      */
     public final UserProfile createProfile() {
         UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
-        profileSavables.forEach(s -> s.save(profile));
+
+        getEventBus().fireEvent(new SaveEvent(profile));
+
         return profile;
     }
 
@@ -781,7 +769,7 @@ public abstract class GameApplication extends Application {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
             return;
 
-        profileSavables.forEach(l -> l.load(profile));
+        // LOAD EVENT
     }
 
     /**

@@ -30,6 +30,8 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.ServiceType;
 import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.LoadEvent;
+import com.almasb.fxgl.event.SaveEvent;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.settings.UserProfile;
@@ -98,7 +100,6 @@ public final class Display implements UserProfileSavable {
 
     private ReadOnlyGameSettings settings;
 
-    @Inject
     private EventBus eventBus;
 
     @Inject
@@ -129,6 +130,15 @@ public final class Display implements UserProfileSavable {
 
         computeSceneSettings(settings.getWidth(), settings.getHeight());
         computeScaledSize();
+
+        eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
+        eventBus.addEventHandler(SaveEvent.ANY, event -> {
+            save(event.getProfile());
+        });
+
+        eventBus.addEventHandler(LoadEvent.ANY, event -> {
+            load(event.getProfile());
+        });
 
         log.finer("Service [Display] initialized");
     }

@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,63 +23,63 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.component;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 /**
- * Represents a String value based component.
+ * Represents a double value based component.
  * <p>
  * <pre>
  * Example:
  *
- * public class NameComponent extends StringComponent {
- *      public NameComponent(String initialValue) {
+ * public class AttackSpeedComponent extends DoubleComponent {
+ *      public AttackSpeedComponent(double initialValue) {
  *          super(initialValue);
  *      }
  * }
  *
  * Entity player = ...
- * player.addComponent(new NameComponent("PlayerName"));
+ * player.addComponent(new AttackSpeedComponent(1.75));
  *
- * String name = player.getComponent(NameComponent.class).getValue();
+ * double attackSpeed = player.getComponent(AttackSpeedComponent.class).getValue();
  *
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class StringComponent implements Component {
-    private StringProperty property;
+public abstract class DoubleComponent implements Component {
+    private DoubleProperty property;
 
     /**
-     * No-arg ctor, initializes the value to empty string.
+     * No-arg ctor, initializes the value to 0.
      */
-    public StringComponent() {
-        this("");
+    public DoubleComponent() {
+        this(0);
     }
 
     /**
-     * Constructs a string value component with given
+     * Constructs a double value component with given
      * initial value.
      *
-     * @param initialValue the initial value
+     * @param initialValue initial value
      */
-    public StringComponent(String initialValue) {
-        property = new SimpleStringProperty(initialValue);
+    public DoubleComponent(double initialValue) {
+        property = new SimpleDoubleProperty(initialValue);
     }
 
     /**
      * @return value property
      */
-    public final StringProperty valueProperty() {
+    public final DoubleProperty valueProperty() {
         return property;
     }
 
     /**
      * @return value held by this component
      */
-    public final String getValue() {
+    public final double getValue() {
         return property.get();
     }
 
@@ -88,7 +88,7 @@ public abstract class StringComponent implements Component {
      *
      * @param value new value
      */
-    public final void setValue(String value) {
+    public final void setValue(double value) {
         property.set(value);
     }
 }

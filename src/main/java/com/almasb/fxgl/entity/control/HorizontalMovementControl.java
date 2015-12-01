@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,31 +23,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.control;
+
+import com.almasb.fxgl.entity.Entity;
 
 /**
- * A type of event. For extra safety use enums.
- * <p>
- * Example:
- * <pre>
- *     private enum Event implements FXGLEventType {
- *         ENEMY_SPAWN, ENEMY_DEATH, DOOR_OPEN, DOOR_CLOSE, BOSS_SPAWN
- *     }
- * </pre>
+ * API NOT READY FOR USE
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface FXGLEventType {
+public final class HorizontalMovementControl extends AbstractControl {
 
-    /**
-     * Returns unique string literal representation of
-     * the event type. Unique means that <b>NO</b> two event types
-     * when called <code> event1.getUniqueType().equals(event2.getUniqueType())</code>
-     * return true.
-     *
-     * @return unique type as String
-     */
-    default String getUniqueType() {
-        return getClass().getCanonicalName() + "." + toString();
+    @SuppressWarnings("unused")
+    private double radius;
+    private double speed;
+    @SuppressWarnings("unused")
+    private double t = 0.0;
+    @SuppressWarnings("unused")
+    private double x, y;
+
+    public HorizontalMovementControl(double speed, double radius) {
+        this.radius = radius;
+        this.speed = speed;
+    }
+
+    @Override
+    protected void initEntity(Entity entity) {
+//        x = entity.getTranslateX();
+//        y = entity.getTranslateY();
+    }
+
+    @Override
+    public void onUpdate(Entity entity) {
+        //entity.setTranslateX(entity.getTranslateX() + TimerManager.tpfSeconds() * speed);
     }
 }

@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,7 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.control;
+
+import com.almasb.fxgl.entity.Entity;
 
 /**
  * Provides basic functionality of a control. The difference in usage between
@@ -33,7 +35,6 @@ package com.almasb.fxgl.entity;
  * then use AbstractControl
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 public abstract class AbstractControl implements Control {
 
@@ -45,7 +46,7 @@ public abstract class AbstractControl implements Control {
      *
      * @param entity the entity being controlled
      */
-    /* package-private */ void setEntity(Entity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
         initEntity(entity);
     }

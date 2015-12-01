@@ -27,8 +27,8 @@
 package com.almasb.fxgl;
 
 import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.asset.AudioPlayer;
-import com.almasb.fxgl.asset.FXGLAudioPlayer;
+import com.almasb.fxgl.audio.AudioPlayer;
+import com.almasb.fxgl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.input.Input;

@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,20 +23,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.control;
+
+import com.almasb.fxgl.entity.Entity;
 
 /**
- * A common interface for specifying behavior for an entity / entities.
+ * API NOT READY FOR USE
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@FunctionalInterface
-public interface Control {
+public final class CircularMovementControl extends AbstractControl {
 
-    /**
-     * Called as part of the main loop, a single update tick
-     *
-     * @param entity the entity to which this control was added
-     */
-    void onUpdate(Entity entity);
+    private double radius;
+    private double speed;
+    private double t = 0.0;
+    private double x, y;
+
+    public CircularMovementControl(double speed, double radius) {
+        this.radius = radius;
+        this.speed = speed;
+    }
+
+    @Override
+    protected void initEntity(Entity entity) {
+//        x = entity.getTranslateX();
+//        y = entity.getTranslateY();
+    }
+
+    @Override
+    public void onUpdate(Entity entity) {
+//        x = entity.getTranslateX() - Math.cos(t) * radius;
+//        y = entity.getTranslateY() - Math.sin(t) * radius;
+//
+//        t += TimerManager.tpfSeconds() * speed;
+//
+//        entity.setTranslateX(x + Math.cos(t) * radius);
+//        entity.setTranslateY(y + Math.sin(t) * radius);
+    }
 }

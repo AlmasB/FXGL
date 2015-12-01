@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,64 +23,63 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.component;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
- * Represents a Object value based component.
+ * Represents an int value based component.
  * <p>
  * <pre>
  * Example:
  *
- * public class WeaponComponent extends ObjectComponent<Weapon> {
- *      public WeaponComponent(Weapon initialValue) {
+ * public class MoneyComponent extends IntegerComponent {
+ *      public MoneyComponent(int initialValue) {
  *          super(initialValue);
  *      }
  * }
  *
  * Entity player = ...
- * Weapon weapon = ...
- * player.addComponent(new WeaponComponent(weapon));
+ * player.addComponent(new MoneyComponent(5000));
  *
- * Weapon w = player.getComponent(WeaponComponent.class).getValue();
+ * int money = player.getComponent(MoneyComponent.class).getValue();
  *
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class ObjectComponent<T> implements Component {
-    private ObjectProperty<T> property;
+public abstract class IntegerComponent implements Component {
+    private IntegerProperty property;
 
     /**
-     * No-arg ctor, initializes the value to null.
+     * No-arg ctor, initializes the value to 0.
      */
-    public ObjectComponent() {
-        this(null);
+    public IntegerComponent() {
+        this(0);
     }
 
     /**
-     * Constructs an object value component with given
+     * Constructs an int value component with given
      * initial value.
      *
      * @param initialValue the initial value
      */
-    public ObjectComponent(T initialValue) {
-        property = new SimpleObjectProperty<>(initialValue);
+    public IntegerComponent(int initialValue) {
+        property = new SimpleIntegerProperty(initialValue);
     }
 
     /**
      * @return value property
      */
-    public final ObjectProperty<T> valueProperty() {
+    public final IntegerProperty valueProperty() {
         return property;
     }
 
     /**
      * @return value held by this component
      */
-    public final T getValue() {
+    public final int getValue() {
         return property.get();
     }
 
@@ -89,7 +88,7 @@ public abstract class ObjectComponent<T> implements Component {
      *
      * @param value new value
      */
-    public final void setValue(T value) {
+    public final void setValue(int value) {
         property.set(value);
     }
 }

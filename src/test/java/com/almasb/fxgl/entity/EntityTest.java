@@ -29,24 +29,15 @@ import static org.junit.Assert.*;
 
 import java.util.Optional;
 
+import com.almasb.fxgl.entity.control.AbstractControl;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.BoundingBox;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.TestGameApplication;
-import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.DoubleComponent;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.component.DoubleComponent;
 
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Point2D;
 
 public class EntityTest {

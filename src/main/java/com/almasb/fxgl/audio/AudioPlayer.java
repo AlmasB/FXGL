@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.audio;
 
 import javafx.beans.property.DoubleProperty;
 

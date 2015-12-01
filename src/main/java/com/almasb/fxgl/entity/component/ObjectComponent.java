@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,63 +23,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.component;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
- * Represents a double value based component.
+ * Represents a Object value based component.
  * <p>
  * <pre>
  * Example:
  *
- * public class AttackSpeedComponent extends DoubleComponent {
- *      public AttackSpeedComponent(double initialValue) {
+ * public class WeaponComponent extends ObjectComponent<Weapon> {
+ *      public WeaponComponent(Weapon initialValue) {
  *          super(initialValue);
  *      }
  * }
  *
  * Entity player = ...
- * player.addComponent(new AttackSpeedComponent(1.75));
+ * Weapon weapon = ...
+ * player.addComponent(new WeaponComponent(weapon));
  *
- * double attackSpeed = player.getComponent(AttackSpeedComponent.class).getValue();
+ * Weapon w = player.getComponent(WeaponComponent.class).getValue();
  *
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class DoubleComponent implements Component {
-    private DoubleProperty property;
+public abstract class ObjectComponent<T> implements Component {
+    private ObjectProperty<T> property;
 
     /**
-     * No-arg ctor, initializes the value to 0.
+     * No-arg ctor, initializes the value to null.
      */
-    public DoubleComponent() {
-        this(0);
+    public ObjectComponent() {
+        this(null);
     }
 
     /**
-     * Constructs a double value component with given
+     * Constructs an object value component with given
      * initial value.
      *
-     * @param initialValue initial value
+     * @param initialValue the initial value
      */
-    public DoubleComponent(double initialValue) {
-        property = new SimpleDoubleProperty(initialValue);
+    public ObjectComponent(T initialValue) {
+        property = new SimpleObjectProperty<>(initialValue);
     }
 
     /**
      * @return value property
      */
-    public final DoubleProperty valueProperty() {
+    public final ObjectProperty<T> valueProperty() {
         return property;
     }
 
     /**
      * @return value held by this component
      */
-    public final double getValue() {
+    public final T getValue() {
         return property.get();
     }
 
@@ -88,7 +89,7 @@ public abstract class DoubleComponent implements Component {
      *
      * @param value new value
      */
-    public final void setValue(double value) {
+    public final void setValue(T value) {
         property.set(value);
     }
 }

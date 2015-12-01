@@ -33,9 +33,9 @@ package com.almasb.fxgl.entity;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLEvent {
+public final class EntityEvent {
 
-    private FXGLEventType type;
+    private EntityEventType type;
     private Entity source, target;
 
     /**
@@ -43,7 +43,7 @@ public final class FXGLEvent {
      *
      * @param type event type
      */
-    public FXGLEvent(FXGLEventType type) {
+    public EntityEvent(EntityEventType type) {
         this(type, null);
     }
 
@@ -53,7 +53,7 @@ public final class FXGLEvent {
      * @param type event type
      * @param source event source
      */
-    public FXGLEvent(FXGLEventType type, Entity source) {
+    public EntityEvent(EntityEventType type, Entity source) {
         this.type = type;
         this.source = source;
     }
@@ -61,7 +61,7 @@ public final class FXGLEvent {
     /**
      * @return event type
      */
-    public FXGLEventType getType() {
+    public EntityEventType getType() {
         return type;
     }
 
@@ -78,7 +78,7 @@ public final class FXGLEvent {
 
     /**
      * @return the entity on which the event was fired by
-     * calling {@link Entity#fireFXGLEvent(FXGLEvent)}
+     * calling {@link Entity#fireEntityEvent(EntityEvent)}
      */
     public Entity getTarget() {
         return target;

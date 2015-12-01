@@ -24,22 +24,34 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.event;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.settings.UserProfile;
+import javafx.beans.NamedArg;
+import javafx.event.Event;
+import javafx.event.EventType;
 
 /**
- * Stores internal assets, i.e. provided by FXGL.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLAssets {
+public class SaveEvent extends Event {
 
-    public static final Sound SOUND_NOTIFICATION;
+    public static final EventType<SaveEvent> ANY =
+            new EventType<>(Event.ANY, "SAVE_EVENT");
 
-    static {
-        SOUND_NOTIFICATION = GameApplication.getService(ServiceType.ASSET_LOADER).loadSound("system/notification.wav");
+    private UserProfile profile;
+
+    public UserProfile getProfile() {
+        return profile;
+    }
+
+    public SaveEvent(UserProfile profile) {
+        super(ANY);
+        this.profile = profile;
+    }
+
+    @Override
+    public String toString() {
+        return "SaveEvent";
     }
 }

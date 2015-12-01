@@ -35,10 +35,9 @@ import java.util.stream.Collectors;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.entity.EntityEvent;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.Events;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.physics.HitBox;
@@ -334,7 +333,7 @@ public final class GameWorld {
      * @param event the event
      * @param types entity types
      */
-    public void fireFXGLEvent(FXGLEvent event, EntityType... types) {
-        getEntities(types).forEach(e -> e.fireFXGLEvent(event));
+    public void fireFXGLEvent(EntityEvent event, EntityType... types) {
+        getEntities(types).forEach(e -> e.fireEntityEvent(event));
     }
 }

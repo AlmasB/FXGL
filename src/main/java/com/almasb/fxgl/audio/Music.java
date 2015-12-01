@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,22 +23,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.audio;
 
-import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /**
- * Represents a short sound in .wav file.
+ * Represents a long-term audio in mp3 file. Use for
+ * background (looping) music or recorded dialogues.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Sound {
+public final class Music {
 
-    final AudioClip clip;
-    // boolean isStopped = false;
+    final MediaPlayer mediaPlayer;
+    boolean isStopped = false;
 
-    Sound(AudioClip clip) {
-        this.clip = clip;
+    public Music(Media media) {
+        mediaPlayer = new MediaPlayer(media);
     }
 
     /**
@@ -47,88 +49,64 @@ public final class Sound {
      * being full left, <code>0.0</code> center, and <code>1.0</code> full right.
      * The default value is <code>0.0</code>.
      *
-     * @param balance sound balance
+     * @param balance the music balance
      */
     public void setBalance(double balance) {
-        clip.setBalance(balance);
+        mediaPlayer.setBalance(balance);
     }
 
     /**
      * @return balance of the audio output
      */
     public double getBalance() {
-        return clip.getBalance();
+        return mediaPlayer.getBalance();
     }
 
     /**
-     * The relative "center" of the clip. A pan value of 0.0 plays
-     * the clip normally where a -1.0 pan shifts the clip entirely to the left
-     * channel and 1.0 shifts entirely to the right channel. Unlike balance this
-     * setting mixes both channels so neither channel loses data. Setting
-     * pan on a mono clip has the same effect as setting balance, but with a
-     * much higher cost in CPU overhead so this is not recommended for mono
-     * clips.
+     * The rate at which the media should be played. For example, a rate of
+     * <code>1.0</code> plays the media at its normal (encoded) playback rate,
+     * <code>2.0</code> plays back at twice the normal rate, etc. The currently
+     * supported range of rates is <code>[0.0,&nbsp;8.0]</code>. The default
+     * value is <code>1.0</code>.
      *
-     * @param pan sound pan
-     */
-    public void setPan(double pan) {
-        clip.setPan(pan);
-    }
-
-    /**
-     * @return sound pan value
-     */
-    public double getPan() {
-        return clip.getPan();
-    }
-
-    /**
-     * The relative rate at which the clip is played. Valid range is 0.125
-     * (1/8 speed) to 8.0 (8x speed); values outside this range are clamped
-     * internally. Normal playback for a clip is 1.0; any other rate will affect
-     * pitch and duration accordingly.
-     *
-     * @param rate sound rate
+     * @param rate music rate
      */
     public void setRate(double rate) {
-        clip.setRate(rate);
+        mediaPlayer.setRate(rate);
     }
 
     /**
-     * @return sound rate
+     * @return music rate
      */
     public double getRate() {
-        return clip.getRate();
+        return mediaPlayer.getRate();
     }
 
     /**
-     * The number of times the sound is to be played
-     * in the range [1..Integer.MAX_VALUE]
+     * Set number of times the music will be played. Setting
+     * to {@link Integer#MAX_VALUE} effectively loops the music.
+     * Useful for background music.
      *
      * @param count number of times to play
      */
     public void setCycleCount(int count) {
-        clip.setCycleCount(count);
+        mediaPlayer.setCycleCount(count);
     }
 
     /**
-     * @return number of times sound to be played
+     * @return number of times the music to be played
      */
     public int getCycleCount() {
-        return clip.getCycleCount();
+        return mediaPlayer.getCycleCount();
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Sound [sourceURL=");
-        builder.append(clip.getSource());
-        builder.append(", balance=");
+        builder.append("Music [balance=");
         builder.append(getBalance());
         builder.append(", volume=");
-        builder.append(clip.getVolume());
-        builder.append(", pan=");
-        builder.append(getPan());
+        builder.append(mediaPlayer.getVolume());
         builder.append(", rate=");
         builder.append(getRate());
         builder.append(", cycleCount=");

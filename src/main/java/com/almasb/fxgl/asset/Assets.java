@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.almasb.fxgl.audio.Music;
+import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.util.FXGLLogger;
 
 /**

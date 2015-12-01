@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+
 /**
  * Intro animation / video played before game starts
  * if intro is enabled in settings
@@ -35,6 +37,12 @@ package com.almasb.fxgl.scene;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class IntroScene extends FXGLScene {
+
+    protected final ReadOnlyGameSettings settings;
+
+    public IntroScene(ReadOnlyGameSettings settings) {
+        this.settings = settings;
+    }
 
     /**
      * Called when intro finished.
@@ -56,7 +64,7 @@ public abstract class IntroScene extends FXGLScene {
      * Note: call this when your intro completes, otherwise
      * the game won't proceed to next state.
      */
-    public final void finishIntro() {
+    protected final void finishIntro() {
         onFinished.run();
     }
 

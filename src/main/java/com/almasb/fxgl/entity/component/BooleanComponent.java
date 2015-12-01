@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,63 +23,63 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.component;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
- * Represents an int value based component.
+ * Represents a boolean value based component.
  * <p>
  * <pre>
  * Example:
  *
- * public class MoneyComponent extends IntegerComponent {
- *      public MoneyComponent(int initialValue) {
+ * public class GravityComponent extends BooleanComponent {
+ *      public GravityComponent(boolean initialValue) {
  *          super(initialValue);
  *      }
  * }
  *
  * Entity player = ...
- * player.addComponent(new MoneyComponent(5000));
+ * player.addComponent(new GravityComponent(true));
  *
- * int money = player.getComponent(MoneyComponent.class).getValue();
+ * boolean money = player.getComponent(GravityComponent.class).getValue();
  *
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class IntegerComponent implements Component {
-    private IntegerProperty property;
+public abstract class BooleanComponent implements Component {
+    private BooleanProperty property;
 
     /**
-     * No-arg ctor, initializes the value to 0.
+     * No-arg ctor, initializes the value to empty string.
      */
-    public IntegerComponent() {
-        this(0);
+    public BooleanComponent() {
+        this(false);
     }
 
     /**
-     * Constructs an int value component with given
+     * Constructs a boolean value component with given
      * initial value.
      *
-     * @param initialValue the initial value
+     * @param initialValue initial value
      */
-    public IntegerComponent(int initialValue) {
-        property = new SimpleIntegerProperty(initialValue);
+    public BooleanComponent(boolean initialValue) {
+        property = new SimpleBooleanProperty(initialValue);
     }
 
     /**
      * @return value property
      */
-    public final IntegerProperty valueProperty() {
+    public final BooleanProperty valueProperty() {
         return property;
     }
 
     /**
      * @return value held by this component
      */
-    public final int getValue() {
+    public final boolean getValue() {
         return property.get();
     }
 
@@ -88,7 +88,7 @@ public abstract class IntegerComponent implements Component {
      *
      * @param value new value
      */
-    public final void setValue(int value) {
+    public final void setValue(boolean value) {
         property.set(value);
     }
 }
