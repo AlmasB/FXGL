@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl;
 
+import com.almasb.fxgl.app.Executor;
+import com.almasb.fxgl.app.FXGLExecutor;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.audio.FXGLAudioPlayer;
@@ -126,6 +128,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Display> serviceProvider() {
             return Display.class;
+        }
+    };
+
+    ServiceType<Executor> EXECUTOR = new ServiceType<Executor>() {
+        @Override
+        public Class<Executor> service() {
+            return Executor.class;
+        }
+
+        @Override
+        public Class<? extends Executor> serviceProvider() {
+            return FXGLExecutor.class;
         }
     };
 }
