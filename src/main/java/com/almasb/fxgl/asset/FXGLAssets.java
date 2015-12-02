@@ -38,8 +38,16 @@ import com.almasb.fxgl.audio.Sound;
 public final class FXGLAssets {
 
     public static final Sound SOUND_NOTIFICATION;
+    public static final Sound SOUND_MENU_SELECT;
+    public static final Sound SOUND_MENU_BACK;
+    public static final Sound SOUND_MENU_PRESS;
 
     static {
-        SOUND_NOTIFICATION = GameApplication.getService(ServiceType.ASSET_LOADER).loadSound("system/notification.wav");
+        AssetLoader loader = GameApplication.getService(ServiceType.ASSET_LOADER);
+
+        SOUND_NOTIFICATION = loader.loadSound("system/notification.wav");
+        SOUND_MENU_SELECT = loader.loadSound("menu/select.wav");
+        SOUND_MENU_BACK = loader.loadSound("menu/back.wav");
+        SOUND_MENU_PRESS = loader.loadSound("menu/press.wav");
     }
 }

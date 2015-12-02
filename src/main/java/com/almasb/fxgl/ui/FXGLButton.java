@@ -25,6 +25,9 @@
  */
 package com.almasb.fxgl.ui;
 
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.asset.FXGLAssets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -44,8 +47,18 @@ public class FXGLButton extends Button {
         setAlignment(Pos.CENTER);
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
+                GameApplication.getService(ServiceType.AUDIO_PLAYER)
+                        .playSound(FXGLAssets.SOUND_MENU_PRESS);
                 fire();
             }
+        });
+        setOnMouseEntered(e -> {
+            GameApplication.getService(ServiceType.AUDIO_PLAYER)
+                    .playSound(FXGLAssets.SOUND_MENU_SELECT);
+        });
+        setOnMouseClicked(e -> {
+            GameApplication.getService(ServiceType.AUDIO_PLAYER)
+                    .playSound(FXGLAssets.SOUND_MENU_PRESS);
         });
     }
 

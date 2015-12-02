@@ -26,7 +26,6 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
