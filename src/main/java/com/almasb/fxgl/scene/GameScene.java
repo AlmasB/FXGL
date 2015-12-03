@@ -37,6 +37,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import com.google.inject.Inject;
@@ -93,10 +94,10 @@ public final class GameScene extends FXGLScene {
     private EventBus eventBus;
 
     @Inject
-    private GameScene() {
+    private GameScene(ReadOnlyGameSettings settings) {
         getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
-        initParticlesCanvas();
+        initParticlesCanvas(settings.getWidth(), settings.getHeight());
 
         eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
         eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
@@ -122,9 +123,9 @@ public final class GameScene extends FXGLScene {
         });
     }
 
-    private void initParticlesCanvas() {
-        particlesCanvas.setWidth(getWidth());
-        particlesCanvas.setHeight(getHeight());
+    private void initParticlesCanvas(double w, double h) {
+        particlesCanvas.setWidth(w);
+        particlesCanvas.setHeight(h);
         particlesCanvas.setMouseTransparent(true);
     }
 
@@ -324,6 +325,7 @@ public final class GameScene extends FXGLScene {
         });
 
         if (entity instanceof ParticleEntity) {
+            log.finer("Adding particle entity");
             particles.add((ParticleEntity) entity);
         }
     }

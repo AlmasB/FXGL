@@ -26,29 +26,32 @@
 package games.fxwars;
 
 import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.effect.ExplosionEmitter;
 import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.control.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.event.InputManager;
-import com.almasb.fxgl.event.UserAction;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.time.Timer;
-import com.almasb.fxgl.time.TimerManager;
+import com.almasb.fxgl.time.LocalTimer;
+import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.util.ApplicationMode;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -74,14 +77,14 @@ public class FXWarsApp extends GameApplication {
         settings.setVersion("0.1dev");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
     protected void initInput() {
-        InputManager input = getInputManager();
+        Input input = getInput();
 
         input.addAction(new UserAction("Move Left") {
             @Override
@@ -116,7 +119,7 @@ public class FXWarsApp extends GameApplication {
         }, KeyCode.S);
 
         input.addAction(new UserAction("Shoot") {
-            private Timer timer = getTimerManager().newTimer();
+            private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
 
             @Override
             protected void onAction() {
@@ -135,9 +138,20 @@ public class FXWarsApp extends GameApplication {
         }, KeyCode.F);
     }
 
+    private Texture textureExplosion;
+
     @Override
     protected void initAssets() throws Exception {
+        textureExplosion = getAssetLoader().loadTexture("explosion.png");
+        int h = 1536 / 6;
+        Texture textureCombined = textureExplosion.subTexture(new Rectangle2D(0, 0, 2048, h));
 
+        for (int i = 1; i < 6; i++) {
+            textureCombined = textureCombined
+                    .superTexture(textureExplosion.subTexture(new Rectangle2D(0, h*i, 2048, h)), HorizontalDirection.RIGHT);
+        }
+
+        textureExplosion = textureCombined;
     }
 
     @Override
@@ -150,7 +164,7 @@ public class FXWarsApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        PhysicsManager physics = getPhysicsManager();
+        PhysicsWorld physics = getPhysicsWorld();
 
         CollisionHandler bulletEnemy = new CollisionHandler(Type.BULLET, Type.WANDERER) {
             @Override
@@ -272,12 +286,14 @@ public class FXWarsApp extends GameApplication {
     }
 
     private void spawnExplosion(Point2D point) {
-        ParticleEntity explosion = new ParticleEntity(Type.EXPLOSION);
-        explosion.setPosition(point);
-        explosion.setExpireTime(Duration.seconds(0.5));
+        Entity explosion = new Entity(Type.EXPLOSION);
+        explosion.setPosition(point.subtract(40, 40));
 
-        ExplosionEmitter emitter = new ExplosionEmitter();
-        explosion.setEmitter(emitter);
+        Texture animation = textureExplosion.toStaticAnimatedTexture(48, Duration.seconds(2));
+        animation.setFitWidth(80);
+        animation.setFitHeight(80);
+        explosion.setSceneView(animation);
+        explosion.setExpireTime(Duration.seconds(2));
 
         getGameWorld().addEntity(explosion);
     }
@@ -297,8 +313,8 @@ public class FXWarsApp extends GameApplication {
     }
 
     private Point2D getVectorToCursor(Point2D point) {
-        double x = getInputManager().getMouse().getGameX();
-        double y = getInputManager().getMouse().getGameY();
+        double x = getInput().getMouse().getGameX();
+        double y = getInput().getMouse().getGameY();
 
         return new Point2D(x, y).subtract(point);
     }
@@ -339,14 +355,14 @@ public class FXWarsApp extends GameApplication {
     }
 
     private class WandererControl implements Control {
-        private Timer timer = getTimerManager().newTimer();
+        private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
         private Point2D velocity = Point2D.ZERO;
 
         @Override
         public void onUpdate(Entity entity) {
             if (timer.elapsed(Duration.seconds(4))) {
                 velocity = getRandomPoint().subtract(entity.getPosition())
-                        .multiply(TimerManager.tpfSeconds() / 4);
+                        .multiply(FXGLMasterTimer.tpfSeconds() / 4);
                 timer.capture();
             }
 
@@ -355,7 +371,7 @@ public class FXWarsApp extends GameApplication {
     }
 
     private class SeekerControl implements Control {
-        private Timer timer = getTimerManager().newTimer();
+        private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
         private Point2D velocity = Point2D.ZERO;
 
         @Override
