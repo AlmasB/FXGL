@@ -32,6 +32,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.*;
 
 /**
@@ -40,6 +42,8 @@ import java.util.logging.*;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGLLogger {
+
+    private static Map<Long, String> threadNames = new HashMap<>();
 
     private static Handler consoleHandler, fileHandler;
 
@@ -71,10 +75,10 @@ public final class FXGLLogger {
                 sb.append(String.format("[%7s]", record.getLevel().toString()));
                 sb.append(" ");
 
-                sb.append(String.format("[%s]", record.getLoggerName()));
+                sb.append(String.format("[%20s]", record.getLoggerName()));
                 sb.append(" ");
 
-                sb.append(String.format("[%13s]", "Thread id: " + record.getThreadID()));
+                sb.append(String.format("[%15s]", getThreadName(record.getThreadID())));
                 sb.append(" ");
 
                 sb.append(record.getMessage());
@@ -150,6 +154,8 @@ public final class FXGLLogger {
      * @return logger object
      */
     public static Logger getLogger(String name) {
+        name = name.length() > 20 ? name.substring(0, 20) : name;
+
         Logger logger = Logger.getLogger(name);
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
@@ -182,6 +188,23 @@ public final class FXGLLogger {
 
         log.finer("System Properties:");
         System.getProperties().forEach((k, v) -> log.finer(k + "=" + v));
+    }
+
+    private static void pollThreadNames() {
+        Thread[] threads = new Thread[Thread.activeCount()];
+        Thread.enumerate(threads);
+
+        for (Thread t : threads) {
+            threadNames.put(t.getId(), t.getName());
+        }
+    }
+
+    private static String getThreadName(int id) {
+        String name = threadNames.getOrDefault((long)id, "");
+        if (name.isEmpty())
+            pollThreadNames();
+
+        return threadNames.getOrDefault((long)id, "Unknown");
     }
 }
 

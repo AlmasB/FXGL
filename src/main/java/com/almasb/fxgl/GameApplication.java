@@ -25,44 +25,31 @@
  */
 package com.almasb.fxgl;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.audio.AudioPlayer;
-import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.event.*;
-import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.app.FXGLApplication;
 import com.almasb.fxgl.donotuse.QTEManager;
+import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
-import com.almasb.fxgl.settings.*;
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.time.MasterTimer;
-import com.almasb.fxgl.ui.*;
+import com.almasb.fxgl.ui.NotificationManager;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
-import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
-import com.almasb.fxgl.util.Version;
-
-import com.google.inject.*;
-import com.google.inject.name.Names;
-import javafx.application.Application;
+import com.google.inject.Inject;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -87,49 +74,11 @@ import javafx.stage.Stage;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class GameApplication extends Application {
+public abstract class GameApplication extends FXGLApplication {
 
-    static {
-        FXGLLogger.init(Level.CONFIG);
-        Version.print();
-    }
-
-    /*
-     * Order of execution.
-     *
-     * 1. the following initializer block (clinit)
-     * 2. instance fields
-     * 3. ctor()
-     * 4. init()
-     * 5. start()
-     */ {
-        // make sure first thing we do is get back the reference from JavaFX
-        // so that anything can now use getInstance()
-        log.finer("clinit()");
+    {
+        log.finer("Game_clinit()");
         setDefaultUncaughtExceptionHandler(new FXGLUncaughtExceptionHandler());
-        setDefaultCheckedExceptionHandler(new FXGLCheckedExceptionHandler());
-    }
-
-    private static ExceptionHandler defaultCheckedExceptionHandler;
-
-    /**
-     * @return handler for checked exceptions
-     */
-    public static ExceptionHandler getDefaultCheckedExceptionHandler() {
-        return defaultCheckedExceptionHandler;
-    }
-
-    /**
-     * Set handler for checked exceptions
-     *
-     * @param handler exception handler
-     */
-    public static final void setDefaultCheckedExceptionHandler(ExceptionHandler handler) {
-        defaultCheckedExceptionHandler = error -> {
-            log.warning("Checked Exception:");
-            log.warning(FXGLLogger.errorTraceAsString(error));
-            handler.handle(error);
-        };
     }
 
     /**
@@ -147,17 +96,6 @@ public abstract class GameApplication extends Application {
             exit();
         });
     }
-
-    /**
-     * The logger
-     */
-    protected static final Logger log = FXGLLogger.getLogger("FXGL.GameApplication");
-
-    /**
-     * Settings for this game instance. This is an internal copy
-     * of the settings so that they will not be modified during game lifetime.
-     */
-    private ReadOnlyGameSettings settings;
 
     private ObjectProperty<GameState> state = new SimpleObjectProperty<>();
 
@@ -182,63 +120,6 @@ public abstract class GameApplication extends Application {
                 getDisplay().setScene(gameScene);
                 break;
         }
-    }
-
-    @Inject
-    private EventBus eventBus;
-
-    public final EventBus getEventBus() {
-        return eventBus;
-    }
-
-    @Inject
-    private Display display;
-
-    /**
-     * @return display service
-     */
-    public final Display getDisplay() {
-        return display;
-    }
-
-    @Inject
-    private Input input;
-
-    /**
-     * @return input service
-     */
-    public final Input getInput() {
-        return input;
-    }
-
-    @Inject
-    private AudioPlayer audioPlayer;
-
-    /**
-     * @return audio manager
-     */
-    public final AudioPlayer getAudioPlayer() {
-        return audioPlayer;
-    }
-
-    @Inject
-    private AssetLoader assetLoader;
-
-    /**
-     * @return asset manager
-     */
-    public final AssetLoader getAssetLoader() {
-        return assetLoader;
-    }
-
-    @Inject
-    private SaveLoadManager saveLoadManager;
-
-    /**
-     * @return save load manager
-     */
-    public final SaveLoadManager getSaveLoadManager() {
-        return saveLoadManager;
     }
 
     @Inject
@@ -293,13 +174,6 @@ public abstract class GameApplication extends Application {
     private QTEManager qteManager;
     private NotificationManager notificationManager;
     private AchievementManager achievementManager;
-
-    /**
-     * Initialize game settings.
-     *
-     * @param settings game settings
-     */
-    protected abstract void initSettings(GameSettings settings);
 
     /**
      * Override to register your achievements.
@@ -404,71 +278,6 @@ public abstract class GameApplication extends Application {
      * Main loop update phase, most of game logic.
      */
     protected abstract void onUpdate();
-
-    /**
-     * Ensure managers are of legal state and ready.
-     */
-    private void initManagers() {
-        //qteManager = new QTEManager();
-
-        notificationManager = new NotificationManager(getGameScene().getRoot());
-        achievementManager = new AchievementManager();
-
-        getDisplay().registerScene(gameScene);
-    }
-
-    private static Injector injector;
-
-    @SuppressWarnings("unchecked")
-    private void configureServices(Stage stage) {
-        injector = Guice.createInjector(new AbstractModule() {
-            private Scene scene = new Scene(new Pane());
-
-            @Override
-            protected void configure() {
-                bind(Double.class)
-                        .annotatedWith(Names.named("appWidth"))
-                        .toInstance(getWidth());
-
-                bind(Double.class)
-                        .annotatedWith(Names.named("appHeight"))
-                        .toInstance(getHeight());
-
-                bind(ReadOnlyGameSettings.class).toInstance(getSettings());
-
-                for (Field field : ServiceType.class.getDeclaredFields()) {
-                    try {
-                        ServiceType type = (ServiceType) field.get(null);
-                        if (type.service().equals(type.serviceProvider()))
-                            bind(type.serviceProvider());
-                        else
-                            bind(type.service()).to(type.serviceProvider());
-                    } catch (IllegalAccessException e) {
-                        throw new IllegalArgumentException("Failed to configure services: " + e.getMessage());
-                    }
-                }
-            }
-
-            @Provides
-            GameApplication application() {
-                return GameApplication.this;
-            }
-
-            @Provides
-            Scene primaryScene() {
-                return scene;
-            }
-
-            @Provides
-            Stage primaryStage() {
-                return stage;
-            }
-        });
-
-        log.finer("Services configuration complete");
-
-        injector.injectMembers(this);
-    }
 
     private void initEventHandlers() {
         getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate());
@@ -601,34 +410,17 @@ public abstract class GameApplication extends Application {
 
     @Override
     public final void start(Stage stage) throws Exception {
-        log.finer("start()");
+        super.start(stage);
+        log.finer("Game_start()");
 
-        GameSettings localSettings = new GameSettings();
-        initSettings(localSettings);
-        settings = localSettings.toReadOnly();
+        UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(getSettings().getDefaultFontName()));
 
-        Level logLevel = Level.ALL;
-        switch (settings.getApplicationMode()) {
-            case DEVELOPER:
-                logLevel = Level.CONFIG;
-                break;
-            case RELEASE:
-                logLevel = Level.SEVERE;
-                break;
-            case DEBUG: // fallthru
-            default:
-                break;
-        }
+        //qteManager = new QTEManager();
 
-        FXGLLogger.init(logLevel);
+        notificationManager = new NotificationManager(getGameScene().getRoot());
+        achievementManager = new AchievementManager();
 
-        configureServices(stage);
-
-        UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(settings.getDefaultFontName()));
-
-        log.info("Application Mode: " + settings.getApplicationMode());
-
-        initManagers();
+        getDisplay().registerScene(gameScene);
 
         initAchievements();
         // we call this early to process user input bindings
@@ -769,7 +561,7 @@ public abstract class GameApplication extends Application {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
             return;
 
-        // LOAD EVENT
+        getEventBus().fireEvent(new LoadEvent(profile));
     }
 
     /**
@@ -840,7 +632,7 @@ public abstract class GameApplication extends Application {
      * @return timer manager
      */
     public final MasterTimer getTimerManager() {
-        return getService(ServiceType.MASTER_TIMER);
+        return getMasterTimer();
     }
 
     /**
@@ -864,16 +656,5 @@ public abstract class GameApplication extends Application {
      */
     public final AchievementManager getAchievementManager() {
         return achievementManager;
-    }
-
-    /**
-     * @return read only copy of game settings
-     */
-    public final ReadOnlyGameSettings getSettings() {
-        return settings;
-    }
-
-    public static <T> T getService(ServiceType<T> type) {
-        return injector.getInstance(type.service());
     }
 }
