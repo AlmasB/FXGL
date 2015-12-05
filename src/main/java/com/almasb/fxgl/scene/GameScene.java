@@ -121,6 +121,9 @@ public final class GameScene extends FXGLScene {
         addEventHandler(KeyEvent.ANY, event -> {
             eventBus.fireEvent(new FXGLInputEvent(event));
         });
+
+        gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
+        gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
     }
 
     private void initParticlesCanvas(double w, double h) {
@@ -218,6 +221,12 @@ public final class GameScene extends FXGLScene {
         return group;
     }
 
+    private Viewport viewport = new Viewport();
+
+    public Viewport getViewport() {
+        return viewport;
+    }
+
     /**
      * Converts a point on screen to a point within game scene.
      *
@@ -227,84 +236,7 @@ public final class GameScene extends FXGLScene {
     public Point2D screenToGame(Point2D screenPoint) {
         return screenPoint
                 .multiply(1.0 / GameApplication.getService(ServiceType.DISPLAY).getScaleRatio())
-                .add(getViewportOrigin());
-    }
-
-    /**
-     * Sets viewport origin. Use it for camera movement.
-     * <p>
-     * Do NOT use if the viewport was bound.
-     *
-     * @param x x coordinate
-     * @param y y coordinate
-     */
-    public void setViewportOrigin(int x, int y) {
-        gameRoot.setLayoutX(-x);
-        gameRoot.setLayoutY(-y);
-    }
-
-    /**
-     * Note: viewport origin, like anything in a scene, has top-left origin point.
-     *
-     * @return viewport origin
-     */
-    public Point2D getViewportOrigin() {
-        return new Point2D(-gameRoot.getLayoutX(), -gameRoot.getLayoutY());
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX and distY represent bound distance between entity and viewport origin
-     * <p>
-     * <pre>
-     * Example:
-     *
-     * bindViewportOrigin(player, (int) (getWidth() / 2), (int) (getHeight() / 2));
-     *
-     * the code above centers the camera on player
-     * For most platformers / side scrollers use:
-     *
-     * bindViewportOriginX(player, (int) (getWidth() / 2));
-     *
-     * </pre>
-     *
-     * @param entity the entity to follow
-     * @param distX distance in X between origin and entity
-     * @param distY distance in Y between origin and entity
-     */
-    public void bindViewportOrigin(Entity entity, int distX, int distY) {
-        gameRoot.layoutXProperty().bind(entity.xProperty().negate().add(distX));
-        gameRoot.layoutYProperty().bind(entity.yProperty().negate().add(distY));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distX represent bound distance in X axis between entity and viewport origin.
-     *
-     * @param entity entity to follow
-     * @param distX distance in X between origin and entity
-     */
-    public void bindViewportOriginX(Entity entity, int distX) {
-        gameRoot.layoutXProperty().bind(entity.xProperty().negate().add(distX));
-    }
-
-    /**
-     * Binds the viewport origin so that it follows the given entity
-     * distY represent bound distance in Y axis between entity and viewport origin.
-     *
-     * @param entity entity to follow
-     * @param distY distance in Y between origin and entity
-     */
-    public void bindViewportOriginY(Entity entity, int distY) {
-        gameRoot.layoutYProperty().bind(entity.yProperty().negate().add(distY));
-    }
-
-    /**
-     * Releases viewport from being bound to an entity.
-     */
-    public void unbindViewportOrigin() {
-        gameRoot.layoutXProperty().unbind();
-        gameRoot.layoutYProperty().unbind();
+                .add(viewport.getOrigin());
     }
 
     /**
@@ -319,7 +251,6 @@ public final class GameScene extends FXGLScene {
     }
 
     public void onEntityAdded(Entity entity) {
-        //log.finer("Attaching " + entity + " to the scene");
         entity.getSceneView().ifPresent(view -> {
             getRenderLayer(view.getRenderLayer()).getChildren().add(view);
         });
@@ -331,9 +262,6 @@ public final class GameScene extends FXGLScene {
     }
 
     public void onEntityRemoved(Entity entity) {
-//        entity.getSceneView().ifPresent(view ->
-//                getRenderLayer(view.getRenderLayer()).getChildren().remove(view));
-
         particles.remove(entity);
     }
 
@@ -342,13 +270,13 @@ public final class GameScene extends FXGLScene {
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
-        particles.forEach(p -> p.renderParticles(particlesGC, getViewportOrigin()));
+        particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
     public void onWorldReset() {
         log.finer("Resetting game scene");
 
-        unbindViewportOrigin();
+        getViewport().unbind();
         particles.clear();
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
