@@ -28,7 +28,7 @@ package com.almasb.fxgl.entity;
 import java.util.*;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.GameWorld;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.control.AbstractControl;
 import com.almasb.fxgl.entity.control.Control;
@@ -476,7 +476,7 @@ public class Entity {
      * direction of the entity + the area of entity itself. This can be used to
      * find the range of an exploding bomb, or area around the player with
      * interactive entities. This can be used together with
-     * {@link com.almasb.fxgl.GameWorld#getEntitiesInRange(Rectangle2D, EntityType...)}
+     * {@link GameWorld#getEntitiesInRange(Rectangle2D, EntityType...)}
      * .
      *
      * @param width radius width

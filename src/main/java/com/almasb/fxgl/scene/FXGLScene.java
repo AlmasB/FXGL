@@ -25,19 +25,14 @@
  */
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.*;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.Scale;
 
 /**
  * Base class for all FXGL scenes.

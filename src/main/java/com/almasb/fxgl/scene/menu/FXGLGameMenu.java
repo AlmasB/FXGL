@@ -25,8 +25,7 @@
  */
 package com.almasb.fxgl.scene.menu;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.app.GameApplication;
 
 /**
  * This is the default FXGL game menu

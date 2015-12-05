@@ -1,13 +1,12 @@
 package manual;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;

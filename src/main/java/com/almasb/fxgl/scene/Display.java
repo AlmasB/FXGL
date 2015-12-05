@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.LoadEvent;
@@ -37,7 +37,6 @@ import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.FXGLDialogBox;
-import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

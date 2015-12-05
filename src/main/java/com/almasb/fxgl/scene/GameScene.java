@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;

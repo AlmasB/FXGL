@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.scene.menu;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;

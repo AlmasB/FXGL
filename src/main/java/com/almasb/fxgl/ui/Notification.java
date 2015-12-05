@@ -26,9 +26,8 @@
 
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.time.FXGLMasterTimer;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import javafx.animation.Transition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

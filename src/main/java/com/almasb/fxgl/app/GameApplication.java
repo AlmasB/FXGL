@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,9 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.FXGLApplication;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.donotuse.QTEManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.AchievementManager;
@@ -33,7 +33,6 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.ui.NotificationManager;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
@@ -43,6 +42,7 @@ import com.google.inject.Inject;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
@@ -97,18 +97,21 @@ public abstract class GameApplication extends FXGLApplication {
         });
     }
 
-    private ObjectProperty<GameState> state = new SimpleObjectProperty<>();
+    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>();
 
-    public final GameState getState() {
+    public final ApplicationState getState() {
         return state.get();
     }
 
-    private void setState(GameState gameState) {
-        log.finer("State: " + getState() + " -> " + gameState);
-        state.set(gameState);
-        switch (gameState) {
+    private void setState(ApplicationState appState) {
+        log.finer("State: " + getState() + " -> " + appState);
+        state.set(appState);
+        switch (appState) {
             case INTRO:
                 getDisplay().setScene(introScene);
+                break;
+            case LOADING:
+                getDisplay().setScene(loadingScene);
                 break;
             case MAIN_MENU:
                 getDisplay().setScene(mainMenuScene);
@@ -160,6 +163,9 @@ public abstract class GameApplication extends FXGLApplication {
      * before menus and game.
      */
     private IntroScene introScene;
+
+    @Inject
+    private LoadingScene loadingScene;
 
     /**
      * Main menu, this is the menu shown at the start of game
@@ -297,8 +303,8 @@ public abstract class GameApplication extends FXGLApplication {
      * @return true if any menu is open
      */
     public boolean isMenuOpen() {
-        return getState() == GameState.GAME_MENU
-                || getState() == GameState.MAIN_MENU;
+        return getState() == ApplicationState.GAME_MENU
+                || getState() == ApplicationState.MAIN_MENU;
     }
 
     private boolean canSwitchGameMenu = true;
@@ -346,16 +352,16 @@ public abstract class GameApplication extends FXGLApplication {
         getEventBus().addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> {
             pause();
             reset();
-            setState(GameState.MAIN_MENU);
+            setState(ApplicationState.MAIN_MENU);
         });
 
         getEventBus().addEventHandler(MenuEvent.PAUSE, event -> {
             pause();
-            setState(GameState.GAME_MENU);
+            setState(ApplicationState.GAME_MENU);
         });
         getEventBus().addEventHandler(MenuEvent.RESUME, event -> {
             resume();
-            setState(GameState.PLAYING);
+            setState(ApplicationState.PLAYING);
         });
 
         getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
@@ -391,7 +397,7 @@ public abstract class GameApplication extends FXGLApplication {
     void onStageShow() {
         if (getSettings().isIntroEnabled()) {
             configureIntro();
-            setState(GameState.INTRO);
+            setState(ApplicationState.INTRO);
 
             introScene.startIntro();
         } else {
@@ -402,7 +408,7 @@ public abstract class GameApplication extends FXGLApplication {
     private void showGame() {
         if (getSettings().isMenuEnabled()) {
             configureMenu();
-            setState(GameState.MAIN_MENU);
+            setState(ApplicationState.MAIN_MENU);
         } else {
             startNewGame();
         }
@@ -447,30 +453,51 @@ public abstract class GameApplication extends FXGLApplication {
      * @param data the data to load from, null if new game
      */
     private void initApp(Serializable data) {
-        log.finer("Initializing app");
+        log.finer("Initializing App");
 
         try {
-            initAssets();
+            setState(ApplicationState.LOADING);
 
-            if (data == null)
-                initGame();
-            else
-                loadState(data);
+            Thread thread = new Thread(new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    log.finer("Initializing Assets");
+                    initAssets();
 
-            initPhysics();
-            initUI();
+                    log.finer("Initializing Game");
+                    if (data == null)
+                        initGame();
+                    else
+                        loadState(data);
 
-            if (getSettings().isFPSShown()) {
-                Text fpsText = UIFactory.newText("", 24);
-                fpsText.setTranslateY(getSettings().getHeight() - 40);
-                fpsText.textProperty().bind(getTimerManager().fpsProperty().asString("FPS: [%d]\n")
-                        .concat(getTimerManager().performanceFPSProperty().asString("Performance: [%d]")));
-                getGameScene().addUINode(fpsText);
-            }
+                    log.finer("Initializing Physics");
+                    initPhysics();
 
-            getEventBus().fireEvent(FXGLEvent.initAppComplete());
+                    log.finer("Initializing UI");
+                    initUI();
 
-            setState(GameState.PLAYING);
+                    if (getSettings().isFPSShown()) {
+                        Text fpsText = UIFactory.newText("", 24);
+                        fpsText.setTranslateY(getSettings().getHeight() - 40);
+                        fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
+                                .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
+                        getGameScene().addUINode(fpsText);
+                    }
+
+                    log.finer("Initialization Complete");
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    getEventBus().fireEvent(FXGLEvent.initAppComplete());
+
+                    setState(ApplicationState.PLAYING);
+                }
+            }, "FXGL Init Thread");
+
+            log.finer("Starting FXGL Init Thread");
+            thread.start();
 
         } catch (Exception e) {
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
@@ -618,21 +645,14 @@ public abstract class GameApplication extends FXGLApplication {
      * @return current tick
      */
     public final long getTick() {
-        return getTimerManager().getTick();
+        return getMasterTimer().getTick();
     }
 
     /**
      * @return current time since start of game in nanoseconds
      */
     public final long getNow() {
-        return getTimerManager().getNow();
-    }
-
-    /**
-     * @return timer manager
-     */
-    public final MasterTimer getTimerManager() {
-        return getMasterTimer();
+        return getMasterTimer().getNow();
     }
 
     /**

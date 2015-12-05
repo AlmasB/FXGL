@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.ServiceType;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.audio.AudioPlayer;

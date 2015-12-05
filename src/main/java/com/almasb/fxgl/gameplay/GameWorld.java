@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+
+package com.almasb.fxgl.gameplay;
 
 import java.util.ArrayList;
 import java.util.Arrays;

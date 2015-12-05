@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl;
+
+package com.almasb.fxgl.gameplay;
 
 import static org.junit.Assert.*;
 
@@ -34,11 +35,10 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.almasb.fxgl.GameWorld;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Rectangle;

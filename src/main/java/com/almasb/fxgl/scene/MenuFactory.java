@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 
 /**
  * Menu creation methods can be overriden to use

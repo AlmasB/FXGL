@@ -25,8 +25,8 @@
  */
 package com.almasb.fxgl.input;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;

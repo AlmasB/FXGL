@@ -30,9 +30,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 
 /**
  * Allows to parse valid javascript source files.

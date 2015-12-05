@@ -24,14 +24,30 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl;
+package com.almasb.fxgl.scene;
+
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import com.google.inject.Inject;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum GameState {
-    INTRO,
-    MAIN_MENU,
-    GAME_MENU,
-    PLAYING
+public final class LoadingScene extends FXGLScene {
+
+    @Inject
+    private LoadingScene(ReadOnlyGameSettings settings) {
+        Rectangle bg = new Rectangle(settings.getWidth(), settings.getHeight(), Color.rgb(0, 0, 10));
+
+        ProgressIndicator progress = new ProgressIndicator();
+
+        progress.setPrefSize(200, 200);
+        progress.setTranslateX(settings.getWidth() / 2 - 100);
+        progress.setTranslateY(settings.getHeight() / 2 - 100);
+
+        getRoot().getChildren().addAll(bg, progress);
+    }
+
 }

@@ -26,7 +26,7 @@
 
 package manual;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
@@ -38,7 +38,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.VerticalDirection;

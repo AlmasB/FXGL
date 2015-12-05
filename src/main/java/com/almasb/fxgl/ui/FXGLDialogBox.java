@@ -33,9 +33,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
-import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import javafx.geometry.Point2D;

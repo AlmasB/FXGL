@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.InputBinding;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;

@@ -33,10 +33,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.Events;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -56,10 +55,8 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.util.WorldStateListener;
 
 import javafx.beans.property.LongProperty;
-import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Point2D;
 
