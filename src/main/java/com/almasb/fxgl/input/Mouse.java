@@ -31,7 +31,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 /**
- * Holds mouse state information
+ * Holds mouse state information.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -39,8 +39,9 @@ public final class Mouse {
     Mouse() {
     }
 
+    private Point2D gameXY = Point2D.ZERO;
+
     /**
-     *
      * @return mouse x in game coordinate system
      */
     public double getGameX() {
@@ -48,7 +49,6 @@ public final class Mouse {
     }
 
     /**
-     *
      * @return mouse y in game coordinate system
      */
     public double getGameY() {
@@ -56,12 +56,19 @@ public final class Mouse {
     }
 
     /**
-     *
      * @return cursor point in game coordinate system
      */
     public Point2D getGameXY() {
-        //return gameScene.screenToGame(getScreenXY());
-        return getScreenXY();
+        return gameXY;
+    }
+
+    /**
+     * Set game XY.
+     *
+     * @param gameXY cursor point in game coordinate system
+     */
+    void setGameXY(Point2D gameXY) {
+        this.gameXY = gameXY;
     }
 
     /**
@@ -72,7 +79,7 @@ public final class Mouse {
 
     /**
      *
-     * @return mouse x in screen coordinate system
+     * @return mouse x in screen (app) coordinate system
      */
     public double getScreenX() {
         return screenX;
@@ -80,7 +87,7 @@ public final class Mouse {
 
     /**
      *
-     * @return mouse y in screen coordinate system
+     * @return mouse y in screen (app) coordinate system
      */
     public double getScreenY() {
         return screenY;
@@ -88,7 +95,7 @@ public final class Mouse {
 
     /**
      *
-     * @return cursor point in screen coordinate system
+     * @return cursor point in screen (app) coordinate system
      */
     public Point2D getScreenXY() {
         return new Point2D(screenX, screenY);
@@ -96,7 +103,7 @@ public final class Mouse {
 
     /**
      * Hold the state of left and right
-     * mouse buttons in the current frame (tick)
+     * mouse buttons in the current frame (tick).
      */
     boolean leftPressed, rightPressed;
 
@@ -115,11 +122,6 @@ public final class Mouse {
     public boolean isRightPressed() {
         return rightPressed;
     }
-
-    /**
-     * The last internal event
-     */
-    private MouseEvent event;
 
     /**
      * Update state of mouse with data from JavaFX mouse event.
@@ -155,6 +157,11 @@ public final class Mouse {
         return event.getEventType() == MouseEvent.MOUSE_RELEASED
                 || event.getEventType() == MouseEvent.MOUSE_MOVED;
     }
+
+    /**
+     * The last internal event
+     */
+    private MouseEvent event;
 
     /**
      * It's unlikely that you'll need this.

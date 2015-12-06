@@ -87,7 +87,7 @@ public final class Input implements UserProfileSavable {
     private ObservableList<UserAction> currentActions = FXCollections.observableArrayList();
 
     @Inject
-    public Input() {
+    private Input() {
         currentActions.addListener((ListChangeListener.Change<? extends UserAction> c) -> {
             while (c.next()) {
                 if (!processActions)
@@ -123,6 +123,7 @@ public final class Input implements UserProfileSavable {
                 }
 
                 mouse.update(mouseEvent);
+                mouse.setGameXY(event.getGameXY());
             } else {
                 KeyEvent keyEvent = (KeyEvent) event.getEvent();
                 if (keyEvent.getEventType() == KeyEvent.KEY_PRESSED) {

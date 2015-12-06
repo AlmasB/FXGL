@@ -28,6 +28,7 @@ package com.almasb.fxgl.event;
 
 import javafx.event.Event;
 import javafx.event.EventType;
+import javafx.geometry.Point2D;
 import javafx.scene.input.InputEvent;
 
 /**
@@ -42,6 +43,16 @@ public final class FXGLInputEvent extends Event {
 
     public InputEvent getEvent() {
         return event;
+    }
+
+    private Point2D gameXY;
+
+    public Point2D getGameXY() {
+        return gameXY;
+    }
+
+    public void setGameXY(Point2D gameXY) {
+        this.gameXY = gameXY;
     }
 
     public FXGLInputEvent(InputEvent event) {

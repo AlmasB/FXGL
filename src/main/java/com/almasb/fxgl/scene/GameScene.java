@@ -116,7 +116,9 @@ public final class GameScene extends FXGLScene {
         });
 
         addEventHandler(MouseEvent.ANY, event -> {
-            eventBus.fireEvent(new FXGLInputEvent(event));
+            FXGLInputEvent e = new FXGLInputEvent(event);
+            e.setGameXY(screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
+            eventBus.fireEvent(e);
         });
         addEventHandler(KeyEvent.ANY, event -> {
             eventBus.fireEvent(new FXGLInputEvent(event));
