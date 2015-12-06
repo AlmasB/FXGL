@@ -25,16 +25,17 @@
  */
 package com.almasb.fxgl.util;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.*;
+import java.util.logging.Formatter;
+import java.util.stream.Collectors;
 
 /**
  * Provides logging configuration of java.util.logging.Logger for the FXGL library.
@@ -42,6 +43,8 @@ import java.util.logging.*;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGLLogger {
+
+    private static final int MAX_LOGS = 10;
 
     private static Map<Long, String> threadNames = new HashMap<>();
 
@@ -92,6 +95,23 @@ public final class FXGLLogger {
             Path logDir = Paths.get("logs/");
             if (!Files.exists(logDir)) {
                 Files.createDirectory(logDir);
+            }
+
+            List<Path> logs = Files.walk(logDir, 1)
+                    .filter(Files::isRegularFile)
+                    .sorted((file1, file2) -> {
+                        try {
+                            return Files.getLastModifiedTime(file1).compareTo(Files.getLastModifiedTime(file2));
+                        } catch (IOException ignore) {
+                            return -1;
+                        }
+                    }).collect(Collectors.toList());
+
+            int logSize = logs.size();
+            if (logSize >= MAX_LOGS) {
+                for (int i = 0; i < logSize + 1 - MAX_LOGS; i++) {
+                    Files.delete(logs.get(i));
+                }
             }
 
             fileHandler = new FileHandler("logs/FXGL-" + LocalDateTime.now()
