@@ -39,6 +39,20 @@
             <artifactId>guice</artifactId>
             <version>${guice.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.0.0.m4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.7</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

@@ -97,7 +97,7 @@ public abstract class GameApplication extends FXGLApplication {
         });
     }
 
-    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>();
+    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
 
     public final ApplicationState getState() {
         return state.get();
@@ -121,6 +121,9 @@ public abstract class GameApplication extends FXGLApplication {
                 break;
             case PLAYING:
                 getDisplay().setScene(gameScene);
+                break;
+            default:
+                log.warning("Attempted to set illegal state: " + appState);
                 break;
         }
     }

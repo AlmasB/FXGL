@@ -27,7 +27,6 @@
 package manual;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
@@ -58,8 +57,6 @@ public class SuperTextureTest extends GameApplication {
     }
 
     private Entity player, enemy;
-
-    private Assets assets;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -123,8 +120,7 @@ public class SuperTextureTest extends GameApplication {
 
     @Override
     protected void initAssets() throws Exception {
-        assets = getAssetLoader().cache();
-        assets.logCached();
+        getAssetLoader().cache();
     }
 
     @Override
@@ -132,8 +128,8 @@ public class SuperTextureTest extends GameApplication {
         player = new Entity(Type.PLAYER);
         player.setPosition(100, 100);
 
-        Texture brick = assets.getTexture("brick.png");
-        Texture brick2 = assets.getTexture("brick2.png");
+        Texture brick = getAssetLoader().loadTexture("brick.png");
+        Texture brick2 = getAssetLoader().loadTexture("brick2.png");
 
         // 32x32
         // 64x64, 32x32

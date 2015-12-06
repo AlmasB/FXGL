@@ -30,6 +30,7 @@ package com.almasb.fxgl.app;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public enum ApplicationState {
+    STARTUP,
     INTRO,
     LOADING,
     MAIN_MENU,

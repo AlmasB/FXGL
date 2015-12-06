@@ -45,8 +45,11 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.FXGLLogger;
 
@@ -58,6 +61,10 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.text.Font;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.CacheManagerBuilder;
+import org.ehcache.config.CacheConfigurationBuilder;
 
 /**
  * Handles all resource (asset) loading operations.
@@ -101,9 +108,31 @@ public class AssetLoader {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
 
+    private final CacheManager cacheManager;
+    private Cache<String, Object> cachedAssets;
+
     @Inject
     private AssetLoader() {
+        cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);
+
+        cachedAssets = cacheManager.createCache("cachedAssets",
+                CacheConfigurationBuilder.newCacheConfigurationBuilder()
+                        .buildConfig(String.class, Object.class));
+
+        GameApplication.getService(ServiceType.EVENT_BUS)
+                .addEventHandler(FXGLEvent.EXIT, e -> close());
+
         log.finer("Service [AssetLoader] initialized");
+    }
+
+    private void close() {
+        log.finer("Closing assets cache");
+        cacheManager.close();
+    }
+
+    public void clearCache() {
+        log.finer("Clearing assets cache");
+        cachedAssets.clear();
     }
 
     /**
@@ -125,8 +154,15 @@ public class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Texture loadTexture(String name) {
+        Object asset = getAssetFromCache(TEXTURES_DIR + name);
+        if (asset != null) {
+            return Texture.class.cast(asset).copy();
+        }
+
         try (InputStream is = getStream(TEXTURES_DIR + name)) {
-            return new Texture(new Image(is));
+            Texture texture = new Texture(new Image(is));
+            cachedAssets.put(TEXTURES_DIR + name, texture);
+            return texture;
         } catch (Exception e) {
             throw loadFailed(name, e);
         }
@@ -144,8 +180,15 @@ public class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Sound loadSound(String name) {
+        Object asset = getAssetFromCache(SOUNDS_DIR + name);
+        if (asset != null) {
+            return Sound.class.cast(asset);
+        }
+
         try {
-            return new Sound(new AudioClip(getURL(SOUNDS_DIR + name).toExternalForm()));
+            Sound sound = new Sound(new AudioClip(getURL(SOUNDS_DIR + name).toExternalForm()));
+            cachedAssets.put(SOUNDS_DIR + name, sound);
+            return sound;
         } catch (Exception e) {
             throw loadFailed(name, e);
         }
@@ -163,8 +206,15 @@ public class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public Music loadMusic(String name) {
+        Object asset = getAssetFromCache(MUSIC_DIR + name);
+        if (asset != null) {
+            return Music.class.cast(asset);
+        }
+
         try {
-            return new Music(new Media(getURL(MUSIC_DIR + name).toExternalForm()));
+            Music music = new Music(new Media(getURL(MUSIC_DIR + name).toExternalForm()));
+            cachedAssets.put(MUSIC_DIR + name, music);
+            return music;
         } catch (Exception e) {
             throw loadFailed(name, e);
         }
@@ -181,7 +231,14 @@ public class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public List<String> loadText(String name) {
-        return readAllLines(TEXT_DIR + name);
+        Object asset = getAssetFromCache(TEXT_DIR + name);
+        if (asset != null) {
+            return (List<String>)asset;
+        }
+
+        List<String> text = readAllLines(TEXT_DIR + name);
+        cachedAssets.put(TEXT_DIR + name, text);
+        return text;
     }
 
     /**
@@ -284,11 +341,18 @@ public class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     public FontFactory loadFont(String name) {
+        Object asset = getAssetFromCache(FONTS_DIR + name);
+        if (asset != null) {
+            return FontFactory.class.cast(asset);
+        }
+
         try (InputStream is = getStream(FONTS_DIR + name)) {
             Font font = Font.loadFont(is, 12);
             if (font == null)
                 font = Font.font(12);
-            return new FontFactory(font);
+            FontFactory fontFactory = new FontFactory(font);
+            cachedAssets.put(FONTS_DIR + name, fontFactory);
+            return fontFactory;
         } catch (Exception e) {
             throw loadFailed(name, e);
         }
@@ -311,9 +375,11 @@ public class AssetLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T loadDataInternal(String name) throws Exception {
+    private <T> T loadDataInternal(String name) {
         try (ObjectInputStream ois = new ObjectInputStream(getStream(BINARY_DIR + name))) {
             return (T) ois.readObject();
+        } catch (Exception e) {
+            throw loadFailed(name, e);
         }
     }
 
@@ -324,6 +390,8 @@ public class AssetLoader {
      * @return URL to resource
      */
     private URL getURL(String name) {
+        log.finer("Loading from disk: " + name);
+
         URL url = getClass().getResource(name);
         if (url == null) {
             throw new IllegalArgumentException("Asset \"" + name + "\" was not found!");
@@ -348,6 +416,16 @@ public class AssetLoader {
             return is;
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e.getMessage());
+        }
+    }
+
+    private Object getAssetFromCache(String name) {
+        Object asset = cachedAssets.get(name);
+        if (asset != null) {
+            log.finer("Loading from cache: " + name);
+            return asset;
+        } else {
+            return null;
         }
     }
 
@@ -378,32 +456,15 @@ public class AssetLoader {
      * Pre-loads all textures / audio / music from
      * their respective folders
      *
-     * @return assets object holding cached resources
      * @throws Exception
      */
-    public Assets cache() throws Exception {
-        List<String> textures = loadFileNames(TEXTURES_DIR);
-        List<String> sounds = loadFileNames(SOUNDS_DIR);
-        List<String> music = loadFileNames(MUSIC_DIR);
-        List<String> text = loadFileNames(TEXT_DIR);
-        List<String> fonts = loadFileNames(FONTS_DIR);
-        List<String> data = loadFileNames(BINARY_DIR);
-
-        Assets assets = new Assets();
-        for (String name : textures)
-            assets.putTexture(name, loadTexture(name));
-        for (String name : sounds)
-            assets.putSound(name, loadSound(name));
-        for (String name : music)
-            assets.putMusic(name, loadMusic(name));
-        for (String name : text)
-            assets.putText(name, loadText(name));
-        for (String name : data)
-            assets.putData(name, loadDataInternal(name));
-        for (String name : fonts)
-            assets.putFontFactory(name, loadFont(name));
-
-        return assets;
+    public void cache() throws Exception {
+        loadFileNames(TEXTURES_DIR).forEach(this::loadTexture);
+        loadFileNames(SOUNDS_DIR).forEach(this::loadSound);
+        loadFileNames(MUSIC_DIR).forEach(this::loadMusic);
+        loadFileNames(TEXT_DIR).forEach(this::loadText);
+        loadFileNames(FONTS_DIR).forEach(this::loadFont);
+        loadFileNames(BINARY_DIR).forEach(this::loadDataInternal);
     }
 
     /**
@@ -479,6 +540,7 @@ public class AssetLoader {
      * @return instance of IAE to be thrown
      */
     private IllegalArgumentException loadFailed(String assetName, Throwable error) {
+        log.finer("Loading failed for asset: " + assetName + ". Cause: " + error.getMessage());
         return new IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.getMessage());
     }
 }
