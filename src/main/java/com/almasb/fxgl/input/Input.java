@@ -237,6 +237,9 @@ public final class Input implements UserProfileSavable {
                     + "\" already exists");
         }
 
+        if (isButtonBound(btn))
+            throw new IllegalArgumentException("Button \"" + btn + "\" is already bound");
+
         InputBinding binding = new InputBinding(action, btn, modifier);
 
         bindings.add(binding);
@@ -267,6 +270,9 @@ public final class Input implements UserProfileSavable {
             throw new IllegalArgumentException("Action with name \"" + action.getName()
                     + "\" already exists");
         }
+
+        if (isKeyBound(key))
+            throw new IllegalArgumentException("Key \"" + key + "\" is already bound");
 
         InputBinding binding = new InputBinding(action, key, modifier);
 

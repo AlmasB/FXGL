@@ -23,9 +23,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.util;
+
+package com.almasb.fxgl.donotuse;
 
 /**
+ * API INCOMPLETE
+ *
  * Represents the entire FXGL infrastructure.
  * Can be used to pass internal properties / data around.
  * Especially useful for passing data between managers.
