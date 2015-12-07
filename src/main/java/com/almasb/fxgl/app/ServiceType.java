@@ -39,10 +39,21 @@ import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
 
 /**
+ * Marks a service type.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface ServiceType<T> {
+
+    /**
+     * @return service interface/class
+     */
     Class<T> service();
+
+    /**
+     *
+     * @return service implementation/provider
+     */
     Class<? extends T> serviceProvider();
 
     ServiceType<AudioPlayer> AUDIO_PLAYER = new ServiceType<AudioPlayer>() {

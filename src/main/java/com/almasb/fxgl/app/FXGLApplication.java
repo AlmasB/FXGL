@@ -51,6 +51,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * General FXGL application that configures services for all parts to use.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class FXGLApplication extends Application {
@@ -88,8 +90,20 @@ public abstract class FXGLApplication extends Application {
         };
     }
 
+    /**
+     * Dependency injector.
+     */
     private static Injector injector;
 
+    /**
+     * Obtain an instance of a service.
+     * It may be expensive to use this in a loop.
+     * Store a reference to the instance instead.
+     *
+     * @param type service type
+     * @param <T> type
+     * @return service
+     */
     public static final <T> T getService(ServiceType<T> type) {
         return injector.getInstance(type.service());
     }

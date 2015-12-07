@@ -27,13 +27,38 @@
 package com.almasb.fxgl.app;
 
 /**
+ * Valid application states.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public enum ApplicationState {
+    /**
+     * The app starts with this state.
+     */
     STARTUP,
+
+    /**
+     * This state is present when intro is being shown.
+     */
     INTRO,
+
+    /**
+     * This state is active whenever a game/level is loading.
+     */
     LOADING,
+
+    /**
+     * This state is active when user is in main menu.
+     */
     MAIN_MENU,
+
+    /**
+     * This state is active when user is in game menu.
+     */
     GAME_MENU,
+
+    /**
+     * This state is active when user is playing.
+     */
     PLAYING
 }

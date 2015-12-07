@@ -62,7 +62,7 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {

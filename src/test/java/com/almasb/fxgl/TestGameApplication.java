@@ -46,7 +46,7 @@ public class TestGameApplication extends GameApplication {
     protected void initInput() {}
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {}

@@ -455,16 +455,18 @@ public class AssetLoader {
     /**
      * Pre-loads all textures / audio / music from
      * their respective folders
-     *
-     * @throws Exception
      */
-    public void cache() throws Exception {
-        loadFileNames(TEXTURES_DIR).forEach(this::loadTexture);
-        loadFileNames(SOUNDS_DIR).forEach(this::loadSound);
-        loadFileNames(MUSIC_DIR).forEach(this::loadMusic);
-        loadFileNames(TEXT_DIR).forEach(this::loadText);
-        loadFileNames(FONTS_DIR).forEach(this::loadFont);
-        loadFileNames(BINARY_DIR).forEach(this::loadDataInternal);
+    public void cache() {
+        try {
+            loadFileNames(TEXTURES_DIR).forEach(this::loadTexture);
+            loadFileNames(SOUNDS_DIR).forEach(this::loadSound);
+            loadFileNames(MUSIC_DIR).forEach(this::loadMusic);
+            loadFileNames(TEXT_DIR).forEach(this::loadText);
+            loadFileNames(FONTS_DIR).forEach(this::loadFont);
+            loadFileNames(BINARY_DIR).forEach(this::loadDataInternal);
+        } catch (Exception e) {
+            throw loadFailed("Caching Failed", e);
+        }
     }
 
     /**

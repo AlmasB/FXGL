@@ -27,27 +27,43 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import com.almasb.fxgl.ui.UIFactory;
 import com.google.inject.Inject;
+import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class LoadingScene extends FXGLScene {
 
+    private ProgressIndicator progress;
+    private Text text;
+
     @Inject
     private LoadingScene(ReadOnlyGameSettings settings) {
         Rectangle bg = new Rectangle(settings.getWidth(), settings.getHeight(), Color.rgb(0, 0, 10));
 
-        ProgressIndicator progress = new ProgressIndicator();
-
+        progress = new ProgressIndicator();
         progress.setPrefSize(200, 200);
         progress.setTranslateX(settings.getWidth() / 2 - 100);
         progress.setTranslateY(settings.getHeight() / 2 - 100);
 
-        getRoot().getChildren().addAll(bg, progress);
+        text = new Text();
+        text.setFill(Color.WHITE);
+        text.setFont(Font.font(24));
+        text.setTranslateX(settings.getWidth() / 2 - 100);
+        text.setTranslateY(settings.getHeight() * 4 / 5);
+
+        getRoot().getChildren().addAll(bg, progress, text);
     }
 
+    public void bind(Task<?> task) {
+        progress.progressProperty().bind(task.progressProperty());
+        text.textProperty().bind(task.messageProperty());
+    }
 }

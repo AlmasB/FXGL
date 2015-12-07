@@ -119,7 +119,7 @@ public class SuperTextureTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() throws Exception {
+    protected void initAssets() {
         getAssetLoader().cache();
     }
 

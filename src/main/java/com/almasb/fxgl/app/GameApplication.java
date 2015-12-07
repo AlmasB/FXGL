@@ -58,10 +58,11 @@ import java.util.Optional;
  * <ol>
  * <li>Instance fields of YOUR subclass of GameApplication</li>
  * <li>initSettings()</li>
- * <li>All FXGL managers (after this you can safely call get*Manager()</li>
+ * <li>Services configuration (after this you can safely call getService())</li>
+ * <li>initAchievements()</li>
  * <li>initInput()</li>
- * <li>initMenuFactory() (if enabled)</li>
  * <li>initIntroVideo() (if enabled)</li>
+ * <li>initMenuFactory() (if enabled)</li>
  * <li>initAssets()</li>
  * <li>initGame()</li>
  * <li>initPhysics()</li>
@@ -82,7 +83,7 @@ public abstract class GameApplication extends FXGLApplication {
     }
 
     /**
-     * Set handler for runtime uncaught exceptions
+     * Set handler for runtime uncaught exceptions.
      *
      * @param handler exception handler
      */
@@ -99,6 +100,9 @@ public abstract class GameApplication extends FXGLApplication {
 
     private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
 
+    /**
+     * @return current application state
+     */
     public final ApplicationState getState() {
         return state.get();
     }
@@ -242,10 +246,8 @@ public abstract class GameApplication extends FXGLApplication {
 
     /**
      * Initialize game assets, such as Texture, Sound, Music, etc.
-     *
-     * @throws Exception
      */
-    protected abstract void initAssets() throws Exception;
+    protected abstract void initAssets();
 
     /**
      * Called when MenuEvent.SAVE occurs.
@@ -397,7 +399,7 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Called right before the main stage is shown.
      */
-    void onStageShow() {
+    private void onStageShow() {
         if (getSettings().isIntroEnabled()) {
             configureIntro();
             setState(ApplicationState.INTRO);
@@ -429,6 +431,7 @@ public abstract class GameApplication extends FXGLApplication {
         notificationManager = new NotificationManager(getGameScene().getRoot());
         achievementManager = new AchievementManager();
 
+        getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);
 
         initAchievements();
@@ -457,60 +460,72 @@ public abstract class GameApplication extends FXGLApplication {
      */
     private void initApp(Serializable data) {
         log.finer("Initializing App");
+        setState(ApplicationState.LOADING);
 
-        try {
-            setState(ApplicationState.LOADING);
+        Task<?> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                update("Initializing Assets", 0);
+                initAssets();
 
-            Thread thread = new Thread(new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    log.finer("Initializing Assets");
-                    initAssets();
+                update("Initializing Game", 1);
+                if (data == null)
+                    initGame();
+                else
+                    loadState(data);
 
-                    log.finer("Initializing Game");
-                    if (data == null)
-                        initGame();
-                    else
-                        loadState(data);
+                update("Initializing Physics", 2);
+                initPhysics();
 
-                    log.finer("Initializing Physics");
-                    initPhysics();
+                update("Initializing UI", 3);
+                initUI();
 
-                    log.finer("Initializing UI");
-                    initUI();
-
-                    if (getSettings().isFPSShown()) {
-                        Text fpsText = UIFactory.newText("", 24);
-                        fpsText.setTranslateY(getSettings().getHeight() - 40);
-                        fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
-                                .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
-                        getGameScene().addUINode(fpsText);
-                    }
-
-                    log.finer("Initialization Complete");
-                    return null;
+                if (getSettings().isFPSShown()) {
+                    Text fpsText = UIFactory.newText("", 24);
+                    fpsText.setTranslateY(getSettings().getHeight() - 40);
+                    fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
+                            .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
+                    getGameScene().addUINode(fpsText);
                 }
 
-                @Override
-                protected void succeeded() {
-                    getEventBus().fireEvent(FXGLEvent.initAppComplete());
+                update("Initialization Complete", 4);
+                return null;
+            }
 
-                    setState(ApplicationState.PLAYING);
-                }
-            }, "FXGL Init Thread");
+            private void update(String message, int step) {
+                log.finer(message);
+                updateMessage(message);
+                updateProgress(step, 4);
+            }
 
-            log.finer("Starting FXGL Init Thread");
-            thread.start();
+            @Override
+            protected void succeeded() {
+                getEventBus().fireEvent(FXGLEvent.initAppComplete());
 
-        } catch (Exception e) {
-            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-        }
+                setState(ApplicationState.PLAYING);
+            }
+
+            @Override
+            protected void failed() {
+                Throwable error = getException();
+                error = error == null ? new RuntimeException("Initialization failed") : error;
+
+                Thread.getDefaultUncaughtExceptionHandler()
+                        .uncaughtException(Thread.currentThread(), error);
+            }
+        };
+
+        loadingScene.bind(task);
+
+        log.finer("Starting FXGL Init Thread");
+        Thread thread = new Thread(task, "FXGL Init Thread");
+        thread.start();
     }
 
     /**
      * (Re-)initializes the user application as new and starts the game.
      */
-    final void startNewGame() {
+    private void startNewGame() {
         log.finer("Starting new game");
         initApp(null);
     }
@@ -520,7 +535,7 @@ public abstract class GameApplication extends FXGLApplication {
      *
      * @param data save data to load from
      */
-    final void startLoadedGame(Serializable data) {
+    private void startLoadedGame(Serializable data) {
         log.finer("Starting loaded game");
         reset();
         initApp(data);
@@ -529,7 +544,7 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Pauses the main loop execution.
      */
-    final void pause() {
+    private void pause() {
         log.finer("Pausing main loop");
         getEventBus().fireEvent(FXGLEvent.pause());
     }
@@ -537,7 +552,7 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Resumes the main loop execution.
      */
-    final void resume() {
+    private void resume() {
         log.finer("Resuming main loop");
         getEventBus().fireEvent(FXGLEvent.resume());
     }
@@ -545,17 +560,15 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Reset the application.
      */
-    final void reset() {
+    private void reset() {
         log.finer("Resetting FXGL application");
         getEventBus().fireEvent(FXGLEvent.reset());
     }
 
     /**
-     * Exits the application.
-     * <p>
-     * This method will be automatically called when main window is closed.
+     * Exit the application.
      */
-    final void exit() {
+    private void exit() {
         log.finer("Exiting Normally");
         getEventBus().fireEvent(FXGLEvent.exit());
 
