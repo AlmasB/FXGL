@@ -453,72 +453,84 @@ public abstract class GameApplication extends FXGLApplication {
         log.finer("Stage size: " + stage.getWidth() + "x" + stage.getHeight());
     }
 
+    private class InitAppTask extends Task<Void> {
+        private Serializable data;
+
+        private InitAppTask() {
+            this.data = null;
+        }
+
+        /**
+         *
+         * @param data the data to load from, null if new game
+         */
+        private InitAppTask(Serializable data) {
+            this.data = data;
+        }
+
+        @Override
+        protected Void call() throws Exception {
+            update("Initializing Assets", 0);
+            initAssets();
+
+            update("Initializing Game", 1);
+            if (data == null)
+                initGame();
+            else
+                loadState(data);
+
+            update("Initializing Physics", 2);
+            initPhysics();
+
+            update("Initializing UI", 3);
+            initUI();
+
+            if (getSettings().isFPSShown()) {
+                Text fpsText = UIFactory.newText("", 24);
+                fpsText.setTranslateY(getSettings().getHeight() - 40);
+                fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
+                        .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
+                getGameScene().addUINode(fpsText);
+            }
+
+            update("Initialization Complete", 4);
+            return null;
+        }
+
+        private void update(String message, int step) {
+            log.finer(message);
+            updateMessage(message);
+            updateProgress(step, 4);
+        }
+
+        @Override
+        protected void succeeded() {
+            getEventBus().fireEvent(FXGLEvent.initAppComplete());
+
+            setState(ApplicationState.PLAYING);
+        }
+
+        @Override
+        protected void failed() {
+            Throwable error = getException();
+            error = error == null ? new RuntimeException("Initialization failed") : error;
+
+            Thread.getDefaultUncaughtExceptionHandler()
+                    .uncaughtException(Thread.currentThread(), error);
+        }
+    }
+
     /**
      * Initialize user application.
-     *
-     * @param data the data to load from, null if new game
      */
-    private void initApp(Serializable data) {
+    private void initApp(Task<?> initTask) {
         log.finer("Initializing App");
         setState(ApplicationState.LOADING);
 
-        Task<?> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                update("Initializing Assets", 0);
-                initAssets();
-
-                update("Initializing Game", 1);
-                if (data == null)
-                    initGame();
-                else
-                    loadState(data);
-
-                update("Initializing Physics", 2);
-                initPhysics();
-
-                update("Initializing UI", 3);
-                initUI();
-
-                if (getSettings().isFPSShown()) {
-                    Text fpsText = UIFactory.newText("", 24);
-                    fpsText.setTranslateY(getSettings().getHeight() - 40);
-                    fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
-                            .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
-                    getGameScene().addUINode(fpsText);
-                }
-
-                update("Initialization Complete", 4);
-                return null;
-            }
-
-            private void update(String message, int step) {
-                log.finer(message);
-                updateMessage(message);
-                updateProgress(step, 4);
-            }
-
-            @Override
-            protected void succeeded() {
-                getEventBus().fireEvent(FXGLEvent.initAppComplete());
-
-                setState(ApplicationState.PLAYING);
-            }
-
-            @Override
-            protected void failed() {
-                Throwable error = getException();
-                error = error == null ? new RuntimeException("Initialization failed") : error;
-
-                Thread.getDefaultUncaughtExceptionHandler()
-                        .uncaughtException(Thread.currentThread(), error);
-            }
-        };
-
-        loadingScene.bind(task);
+        loadingScene.bind(initTask);
 
         log.finer("Starting FXGL Init Thread");
-        Thread thread = new Thread(task, "FXGL Init Thread");
+        Thread thread = new Thread(initTask, "FXGL Init Thread");
         thread.start();
     }
 
@@ -527,7 +539,7 @@ public abstract class GameApplication extends FXGLApplication {
      */
     private void startNewGame() {
         log.finer("Starting new game");
-        initApp(null);
+        initApp(new InitAppTask());
     }
 
     /**
@@ -538,7 +550,7 @@ public abstract class GameApplication extends FXGLApplication {
     private void startLoadedGame(Serializable data) {
         log.finer("Starting loaded game");
         reset();
-        initApp(data);
+        initApp(new InitAppTask(data));
     }
 
     /**
