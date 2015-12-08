@@ -25,11 +25,27 @@
  */
 package com.almasb.fxgl.asset;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.audio.Music;
+import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.ui.UIController;
+import com.almasb.fxgl.util.FXGLLogger;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.text.Font;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.CacheManagerBuilder;
+import org.ehcache.config.CacheConfigurationBuilder;
+
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -45,33 +61,12 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.audio.Music;
-import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.event.FXGLEvent;
-import com.almasb.fxgl.ui.UIController;
-import com.almasb.fxgl.util.FXGLLogger;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.image.Image;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.text.Font;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
-import org.ehcache.CacheManagerBuilder;
-import org.ehcache.config.CacheConfigurationBuilder;
-
 /**
  * Handles all resource (asset) loading operations.
  * <p>
  * "assets" directory must be located in source folder ("src" by default).
  * <p>
- * AssetManager will look for resources (assets) under these specified directories
+ * Resources (assets) will be searched for in these specified directories:
  * <ul>
  * <li>Texture - /assets/textures/</li>
  * <li>Sound - /assets/sounds/</li>
@@ -109,7 +104,7 @@ public class AssetLoader {
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
 
     private final CacheManager cacheManager;
-    private Cache<String, Object> cachedAssets;
+    private final Cache<String, Object> cachedAssets;
 
     @Inject
     private AssetLoader() {
@@ -125,20 +120,9 @@ public class AssetLoader {
         log.finer("Service [AssetLoader] initialized");
     }
 
-    private void close() {
-        log.finer("Closing assets cache");
-        cacheManager.close();
-    }
-
-    public void clearCache() {
-        log.finer("Clearing assets cache");
-        cachedAssets.clear();
-    }
-
     /**
      * Loads texture with given name from {@value #TEXTURES_DIR}.
      * Either returns a valid texture or throws an exception in case of errors.
-     * <p>
      * <p>
      * Supported image formats are:
      * <ul>
@@ -198,7 +182,7 @@ public class AssetLoader {
      * Loads sound with given name from {@value #MUSIC_DIR}.
      * Either returns a valid sound or throws an exception in case of errors.
      * <p>
-     * Supported sound format:
+     * Supported music format:
      * <li>MP3</li>
      *
      * @param name music name without the {@value #MUSIC_DIR}, e.g. "background_music.mp3"
@@ -419,6 +403,12 @@ public class AssetLoader {
         }
     }
 
+    /**
+     * Load an asset from cache.
+     *
+     * @param name asset name
+     * @return asset object or null if not found
+     */
     private Object getAssetFromCache(String name) {
         Object asset = cachedAssets.get(name);
         if (asset != null) {
@@ -453,8 +443,8 @@ public class AssetLoader {
     }
 
     /**
-     * Pre-loads all textures / audio / music from
-     * their respective folders
+     * Pre-loads all textures / sounds / music / text / fonts and binary data
+     * from their respective folders.
      */
     public void cache() {
         try {
@@ -470,8 +460,23 @@ public class AssetLoader {
     }
 
     /**
+     * Release all cached assets.
+     */
+    public void clearCache() {
+        log.finer("Clearing assets cache");
+        cachedAssets.clear();
+    }
+
+    /**
+     * Close cache manager as specified by EHCache.
+     */
+    private void close() {
+        log.finer("Closing assets cache");
+        cacheManager.close();
+    }
+
+    /**
      * Loads file names from a directory.
-     * <p>
      * Note: directory name must be in the format "/assets/...".
      * Returned file names are relativized to the given directory name.
      *
@@ -500,9 +505,8 @@ public class AssetLoader {
     }
 
     /**
-     * Loads file names from a directory when running within a jar
-     * <p>
-     * If it contains other folders they'll be searched too
+     * Loads file names from a directory when running within a jar.
+     * If it contains other folders they'll be searched too.
      *
      * @param folderName folder files of which need to be retrieved
      * @return list of filenames

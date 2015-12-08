@@ -25,22 +25,14 @@
  */
 package com.almasb.fxgl.net;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import com.almasb.fxgl.util.FXGLLogger;
+
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-
-import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * MultiServer for multiple concurrent network connections (clients)

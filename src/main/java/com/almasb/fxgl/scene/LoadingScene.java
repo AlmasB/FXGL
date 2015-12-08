@@ -27,7 +27,6 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-import com.almasb.fxgl.ui.UIFactory;
 import com.google.inject.Inject;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;

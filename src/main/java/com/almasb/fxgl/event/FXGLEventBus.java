@@ -33,7 +33,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Group;
-import javafx.scene.input.MouseEvent;
 
 import java.util.logging.Logger;
 

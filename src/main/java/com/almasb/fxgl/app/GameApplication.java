@@ -25,10 +25,10 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.donotuse.QTEManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.AchievementManager;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;

@@ -26,13 +26,10 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.asset.FontFactory;
-
-import com.google.inject.Inject;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 /**
  * A collection of static methods that return UI controls to unify

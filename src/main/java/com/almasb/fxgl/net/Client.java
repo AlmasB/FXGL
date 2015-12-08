@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.net;
 
+import com.almasb.fxgl.util.FXGLLogger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,8 +38,6 @@ import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
-import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Client side of the network connection.

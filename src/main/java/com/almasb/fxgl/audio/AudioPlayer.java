@@ -29,6 +29,9 @@ package com.almasb.fxgl.audio;
 import javafx.beans.property.DoubleProperty;
 
 /**
+ * General audio player service that supports playback of sound and music objects.
+ * It can also control volume of both.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface AudioPlayer {

@@ -25,28 +25,22 @@
  */
 package com.almasb.fxgl.time;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
-
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.Events;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.time.TimerAction.TimerType;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.UpdateTickListener;
-import com.almasb.fxgl.util.WorldStateListener;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyLongProperty;
-import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.layout.Pane;
+import javafx.beans.property.*;
 import javafx.util.Duration;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 /**
  * Contains convenience methods and manages timer based actions.

@@ -25,13 +25,12 @@
  */
 package com.almasb.fxgl.effect;
 
-import java.util.function.Supplier;
-
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.util.Duration;
+
+import java.util.function.Supplier;
 
 /**
  * Predefined emitter that creates fire effect.

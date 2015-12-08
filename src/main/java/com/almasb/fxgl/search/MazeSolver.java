@@ -25,10 +25,10 @@
  */
 package com.almasb.fxgl.search;
 
+import com.almasb.fxgl.search.MazeGenerator.MazeCell;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.almasb.fxgl.search.MazeGenerator.MazeCell;
 
 /**
  * API INCOMPLETE

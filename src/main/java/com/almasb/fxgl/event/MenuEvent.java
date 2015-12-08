@@ -25,11 +25,11 @@
  */
 package com.almasb.fxgl.event;
 
-import java.util.Optional;
-
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
+
+import java.util.Optional;
 
 /**
  * An event related to menus. This event can only occur if menu is enabled.

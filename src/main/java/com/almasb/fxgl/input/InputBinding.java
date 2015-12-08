@@ -25,14 +25,14 @@
  */
 package com.almasb.fxgl.input;
 
-import java.util.Optional;
-import java.util.logging.Logger;
-
 import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+
+import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * Represents an input binding of a single action and

@@ -25,9 +25,9 @@
  */
 package com.almasb.fxgl.physics;
 
-import java.util.Optional;
-
 import javafx.geometry.Point2D;
+
+import java.util.Optional;
 
 /**
  * Result of a raycast. Contains optional entity and point

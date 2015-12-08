@@ -25,9 +25,6 @@
  */
 package com.almasb.fxgl.donotuse;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -35,6 +32,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
  * Represents a QTE GUI element.

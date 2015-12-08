@@ -26,25 +26,14 @@
 
 package com.almasb.fxgl.gameplay;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.EntityEvent;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.util.FXGLLogger;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
@@ -52,6 +41,14 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Represents pure logical state of game.
@@ -324,17 +321,5 @@ public final class GameWorld {
                 .stream()
                 .filter(e -> e.getPosition().equals(position))
                 .findAny();
-    }
-
-    /**
-     * Fires an FXGL event on all entities whose type
-     * matches given arguments. If types were not given,
-     * fires an FXGL event on all entities registered in the scene graph.
-     *
-     * @param event the event
-     * @param types entity types
-     */
-    public void fireFXGLEvent(EntityEvent event, EntityType... types) {
-        getEntities(types).forEach(e -> e.fireEntityEvent(event));
     }
 }

@@ -26,10 +26,6 @@
 
 package com.almasb.fxgl.scene;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleEntity;
@@ -39,7 +35,6 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.FXGLLogger;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.geometry.Point2D;
@@ -50,6 +45,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Represents the scene that shows game objects on the screen during "play" mode.

@@ -25,17 +25,11 @@
  */
 package com.almasb.fxgl.physics;
 
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
-
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-
 import javafx.geometry.Point2D;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.*;
 
 /**
  * An entity being managed by PhysicsManager and hence

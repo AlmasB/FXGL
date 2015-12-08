@@ -25,17 +25,13 @@
  */
 package com.almasb.fxgl.entity;
 
-import java.util.*;
-import java.util.logging.Logger;
-
-import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.control.AbstractControl;
 import com.almasb.fxgl.entity.control.Control;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
-
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,6 +41,11 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.util.Duration;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * A generic FXGL game object. Any game object "should" be of type Entity.
@@ -787,7 +788,6 @@ public class Entity {
         alive.set(false);
         active.set(false);
         onClean();
-        eventHandlers.clear();
         controls.clear();
         components.clear();
         //view.removeChildren();
@@ -797,49 +797,6 @@ public class Entity {
      * Can be overridden to provide subclass implementation.
      */
     protected void onClean() {
-    }
-
-    private Map<String, EntityEventHandler> eventHandlers = new HashMap<>();
-
-    /**
-     * Register an event handler for FXGLEventType. The handler will be notified
-     * when an event of the type occurs on this entity.
-     *
-     * @param type event type
-     * @param eventHandler event handler
-     */
-    public final void addEntityEventHandler(EntityEventType type,
-                                            EntityEventHandler eventHandler) {
-        eventHandlers.put(type.getUniqueType(), eventHandler);
-    }
-
-    /**
-     * Removes an event handler for FXGLEventType.
-     *
-     * @param type event type
-     * @param eventHandler event handler
-     */
-    public final void removeEntityEventHandler(EntityEventType type,
-                                               EntityEventHandler eventHandler) {
-        eventHandlers.remove(type, eventHandler);
-    }
-
-    /**
-     * Fire (trigger) an FXGL event on this entity This entity becomes the
-     * target of the FXGL event.
-     * <p>
-     * If the FXGL event doesn't have a source, this entity will also become the
-     * source of the event.
-     *
-     * @param event FXGL event
-     */
-    public final void fireEntityEvent(EntityEvent event) {
-        if (event.getSource() == null)
-            event.setSource(this);
-
-        event.setTarget(this);
-        eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {
-        }).handle(event);
     }
 
     @Override

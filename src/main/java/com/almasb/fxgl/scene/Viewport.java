@@ -27,7 +27,6 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.entity.Entity;
-import javafx.animation.Animation;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;

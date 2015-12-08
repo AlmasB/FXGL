@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.net;
 
+import com.almasb.fxgl.util.FXGLLogger;
+
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
@@ -32,8 +34,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Represents a communication between two machines over network.

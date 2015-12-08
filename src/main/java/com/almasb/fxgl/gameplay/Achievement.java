@@ -27,7 +27,6 @@
 package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.util.FXGLLogger;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;

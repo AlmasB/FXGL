@@ -28,11 +28,7 @@ package com.almasb.fxgl.asset;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VerticalDirection;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
+import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 

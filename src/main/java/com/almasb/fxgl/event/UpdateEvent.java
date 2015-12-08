@@ -26,10 +26,7 @@
 package com.almasb.fxgl.event;
 
 import javafx.event.Event;
-import javafx.event.EventTarget;
 import javafx.event.EventType;
-
-import java.util.Optional;
 
 /**
  *

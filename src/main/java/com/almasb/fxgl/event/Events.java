@@ -26,13 +26,6 @@
 
 package com.almasb.fxgl.event;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.gameplay.Achievement;
-import javafx.beans.NamedArg;
-import javafx.event.Event;
-import javafx.event.EventType;
-import javafx.scene.input.KeyEvent;
-
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
