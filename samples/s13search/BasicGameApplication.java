@@ -25,15 +25,14 @@
  */
 package s13search;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.search.AStarGrid;
-import com.almasb.fxgl.search.AStarLogic;
 import com.almasb.fxgl.search.AStarNode;
 import com.almasb.fxgl.search.NodeState;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -71,7 +70,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initInput() {}
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     // 1. Define A* grid
     private AStarGrid grid;

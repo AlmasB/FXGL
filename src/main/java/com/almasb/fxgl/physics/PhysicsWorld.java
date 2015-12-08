@@ -268,7 +268,7 @@ public final class PhysicsWorld {
             destroyBody((PhysicsEntity) entity);
     }
 
-    public void update() {
+    private void update() {
         physicsWorld.step(TIME_STEP, 8, 3);
 
         processCollisions();

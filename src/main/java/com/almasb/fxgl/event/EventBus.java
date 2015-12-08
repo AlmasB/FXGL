@@ -31,14 +31,38 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 
 /**
+ * An event dispatcher that can be used for subscribing to events and posting the events.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface EventBus {
+    /**
+     * Register event handler for event type.
+     *
+     * @param eventType type
+     * @param eventHandler handler
+     * @param <T> event
+     */
     <T extends Event> void addEventHandler(EventType<T> eventType,
                                                         EventHandler<? super T> eventHandler);
 
+    /**
+     * Remove event handler for event type.
+     *
+     * @param eventType type
+     * @param eventHandler handler
+     * @param <T> event
+     */
     <T extends Event> void removeEventHandler(EventType<T> eventType,
                                                            EventHandler<? super T> eventHandler);
 
+    /**
+     * Post (fire) given event. All listening parties will be notified.
+     * <p>
+     *     This must be called on JavaFX Application Thread.
+     * </p>
+     *
+     * @param event the event
+     */
     void fireEvent(Event event);
 }

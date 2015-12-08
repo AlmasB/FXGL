@@ -25,11 +25,9 @@
  */
 package games.fxwars;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.ServiceType;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.effect.ExplosionEmitter;
-import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.control.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
@@ -40,7 +38,7 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.HorizontalDirection;
@@ -141,7 +139,7 @@ public class FXWarsApp extends GameApplication {
     private Texture textureExplosion;
 
     @Override
-    protected void initAssets() throws Exception {
+    protected void initAssets() {
         textureExplosion = getAssetLoader().loadTexture("explosion.png");
         int h = 1536 / 6;
         Texture textureCombined = textureExplosion.subTexture(new Rectangle2D(0, 0, 2048, h));
@@ -158,8 +156,8 @@ public class FXWarsApp extends GameApplication {
     protected void initGame() {
         initPlayer();
 
-        getTimerManager().runAtInterval(this::spawnWanderer, Duration.seconds(2));
-        getTimerManager().runAtInterval(this::spawnSeeker, Duration.seconds(5));
+        getMasterTimer().runAtInterval(this::spawnWanderer, Duration.seconds(2));
+        getMasterTimer().runAtInterval(this::spawnSeeker, Duration.seconds(5));
     }
 
     @Override

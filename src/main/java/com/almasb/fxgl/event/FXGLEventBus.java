@@ -37,6 +37,8 @@ import javafx.scene.Group;
 import java.util.logging.Logger;
 
 /**
+ * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton

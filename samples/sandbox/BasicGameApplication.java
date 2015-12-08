@@ -25,27 +25,42 @@
  */
 package sandbox;
 
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.app.Executor;
+import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.event.InputModifier;
+import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.scene.IntroFactory;
+import com.almasb.fxgl.scene.IntroScene;
+import com.almasb.fxgl.scene.Viewport;
+import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.event.InputManager;
-import com.almasb.fxgl.event.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsEntity;
-import com.almasb.fxgl.physics.PhysicsManager;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -71,14 +86,14 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
-        settings.setHeight(600);
+        settings.setHeight(720);
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
+        settings.setIntroEnabled(true);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        //settings.setMenuStyle(MenuStyle.CCTR);
+        //settings.setMenuStyle(MenuStyle.GTA5);
         //settings.setCSS("fxgl_gta5.css");
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }
@@ -91,8 +106,47 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
+    protected IntroFactory initIntroFactory() {
+        return new IntroFactory() {
+            @Override
+            public IntroScene newIntro(ReadOnlyGameSettings settings) {
+                return new IntroScene(settings) {
+                    MediaPlayer mediaPlayer;
+                    Sound sound;
+
+                    {
+                        Media media = new Media(getClass().getResource("/assets/video/testvideo.mp4").toExternalForm());
+                        mediaPlayer = new MediaPlayer(media);
+                        MediaView view = new MediaView(mediaPlayer);
+                        view.setFitWidth(1280);
+                        view.setFitHeight(720);
+
+                        getRoot().getChildren().add(view);
+
+                        mediaPlayer.setOnEndOfMedia(this::finishIntro);
+
+                        sound = getAssetLoader().loadSound("intro.wav");
+                    }
+
+                    @Override
+                    public void startIntro() {
+
+                        mediaPlayer.setRate(1.5);
+                        mediaPlayer.play();
+                        sound.setRate(0.5);
+
+                        getAudioPlayer().playSound(sound);
+                    }
+                };
+            }
+        };
+    }
+
+    Executor executor;
+
+    @Override
     protected void initInput() {
-        InputManager input = getInputManager();
+        Input input = getInput();
 
         input.addAction(new UserAction("Move Left") {
             @Override
@@ -100,22 +154,22 @@ public class BasicGameApplication extends GameApplication {
                 //enemy.rotateBy(-5);
                 player.translate(-1, 0);
             }
-        }, KeyCode.A, InputModifier.CTRL);
+        }, KeyCode.A);
 
         input.addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
                 //enemy.rotateBy(5);
-                player.translate(1, 0);
+                player.translate(10, 0);
             }
-        }, KeyCode.D, InputModifier.SHIFT);
+        }, KeyCode.D);
 
         input.addAction(new UserAction("Move Up") {
             @Override
             protected void onActionBegin() {
                 //enemy.setRotation(0);
-                //player.translate(0, -1);
-                i.set(i.get() + 10000);
+                player.translate(0, -1);
+                //i.set(i.get() + 10000);
             }
         }, KeyCode.W);
 
@@ -146,6 +200,11 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Rotate Up") {
             @Override
             protected void onActionBegin() {
+                getAudioPlayer().playSound(getAssetLoader().loadSound("intro.wav"));
+
+                //executor.submit(() -> doWork());
+                //doWork();
+
                 //getSceneManager().setNewResolution(1920, 1080);
             }
         }, KeyCode.UP);
@@ -153,6 +212,8 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Rotate Down") {
             @Override
             protected void onActionBegin() {
+                getAssetLoader().clearCache();
+
                 getNotificationManager().pushNotification("You got an achievement!");
                 getNotificationManager().pushNotification("You have won the game!");
                 getNotificationManager().pushNotification("Just a test of the notification system!");
@@ -167,13 +228,15 @@ public class BasicGameApplication extends GameApplication {
                 r.setFill(Color.BLUE);
                 b.setSceneView(r);
                 b.setBodyType(BodyType.DYNAMIC);
-                b.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
+                b.setPosition(input.getMouse().getGameXY());
                 //b.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40)));
 
                 FixtureDef fd = new FixtureDef();
-                fd.density = 0.05f;
+                fd.setDensity(0.05f);
+                fd.setRestitution(1.0f);
 
                 b.setFixtureDef(fd);
+                b.setExpireTime(Duration.seconds(10));
 
                 getGameWorld().addEntity(b);
 
@@ -189,7 +252,8 @@ public class BasicGameApplication extends GameApplication {
 //                    }
 //                });
 
-                b.setOnPhysicsInitialized(() -> b.setAngularVelocity(5));
+                //b.setOnPhysicsInitialized(() -> b.setAngularVelocity(5));
+
             }
         }, MouseButton.PRIMARY, InputModifier.ALT);
 
@@ -211,12 +275,50 @@ public class BasicGameApplication extends GameApplication {
                 countProperty.set(countProperty.get() + 1);
             }
         }, MouseButton.SECONDARY);
+
+        input.addAction(new UserAction("Cinematic") {
+            @Override
+            protected void onActionBegin() {
+                Viewport viewport = getGameScene().getViewport();
+
+                Point2D[] points = {
+                        new Point2D(1500, 200)
+//                        new Point2D(800, -200),
+//                        new Point2D(230, 0),
+//                        Point2D.ZERO
+                };
+
+                Timeline timeline = new Timeline();
+
+                for (Point2D p : points) {
+                    KeyValue kv = new KeyValue(viewport.xProperty(), p.getX());
+                    KeyValue kv2 = new KeyValue(viewport.yProperty(), p.getY());
+
+                    KeyFrame frame = new KeyFrame(Duration.seconds(3), kv, kv2);
+                    timeline.getKeyFrames().add(frame);
+                }
+
+                timeline.play();
+            }
+        }, KeyCode.K);
     }
 
     public IntegerProperty countProperty = new SimpleIntegerProperty(0);
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {
+        //getAssetLoader().cache();
+    }
+
+    private void doWork() {
+        try {
+            log.finer("Started work");
+            Thread.sleep(1000);
+            log.finer("Finished work");
+        } catch (InterruptedException e) {
+            throw new IllegalArgumentException("gg");
+        }
+    }
 
     @Override
     protected void initGame() {
@@ -225,14 +327,16 @@ public class BasicGameApplication extends GameApplication {
 
         EntityView.turnOnDebugBBox(Color.RED);
 
+        executor = getService(ServiceType.EXECUTOR);
+
+
+
         player = new Entity(Type.PLAYER);
-        Circle graphics = new Circle(40);
-        player.setSceneView(graphics);
+        //Circle graphics = new Circle(40);
+        player.setSceneView(getAssetLoader().loadTexture("brick.png"));
 
         //player.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 80, 80)));
         player.setPosition(100, 100);
-
-
 
         enemy = new Entity(Type.ENEMY);
         Rectangle enemyGraphics = new Rectangle(200, 40);
@@ -250,7 +354,7 @@ public class BasicGameApplication extends GameApplication {
         });
 
         //enemy.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 200, 40)));
-        enemy.setPosition(200, 100);
+        enemy.setPosition(2000, 100);
 
 
         // we need to set collidable to true
@@ -302,20 +406,20 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        PhysicsManager physics = getPhysicsManager();
-        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
-            // the order of entities determined by
-            // the order of their types passed into constructor
-            @Override
-            protected void onCollisionBegin(Entity player, Entity enemy) {
-                debug2.setText("collision");
-            }
-
-            @Override
-            protected void onCollisionEnd(Entity player, Entity enemy) {
-                debug2.setText("");
-            }
-        });
+//        PhysicsWorld physics = getPhysicsWorld();
+//        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
+//            // the order of entities determined by
+//            // the order of their types passed into constructor
+//            @Override
+//            protected void onCollisionBegin(Entity player, Entity enemy) {
+//                debug2.setText("collision");
+//            }
+//
+//            @Override
+//            protected void onCollisionEnd(Entity player, Entity enemy) {
+//                debug2.setText("");
+//            }
+//        });
     }
 
     @Override
@@ -329,7 +433,7 @@ public class BasicGameApplication extends GameApplication {
         debug2 = new Text();
         debug2.setTranslateY(50);
 
-        Parent ui = getAssetManager().loadFXML("test_ui.fxml", new FXGLController(this));
+        Parent ui = getAssetLoader().loadFXML("test_ui.fxml", new FXGLController(this));
 
 
         getGameScene().addUINodes(debug, debug2, ui);

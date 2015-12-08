@@ -42,9 +42,6 @@ public interface MasterTimer {
         return tickProperty().get();
     }
 
-    void start();
-    void stop();
-
     void resetTicks();
 
     ReadOnlyLongProperty tickProperty();

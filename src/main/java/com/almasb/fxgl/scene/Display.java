@@ -68,7 +68,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 /**
- *
+ * Display service. Provides access to dialogs and display settings.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -173,6 +173,11 @@ public final class Display implements UserProfileSavable {
         stage.sizeToScene();
     }
 
+    /**
+     * Register an FXGL scene to be managed by display settings.
+     *
+     * @param scene the scene
+     */
     public void registerScene(FXGLScene scene) {
         scenes.add(scene);
         Pane root = scene.getRoot();
@@ -189,15 +194,27 @@ public final class Display implements UserProfileSavable {
             root.getStylesheets().add(css);
     }
 
+    /**
+     * Set current FXGL scene. The scene will be immediately displayed.
+     *
+     * @param scene the scene
+     */
     public void setScene(FXGLScene scene) {
         currentScene = scene;
         this.scene.setRoot(scene.getRoot());
     }
 
+    /**
+     * @return current FXGL scene
+     */
     public FXGLScene getCurrentScene() {
         return currentScene;
     }
 
+    /**
+     *
+     * @return display bounds
+     */
     public Rectangle2D getBounds() {
         return settings.isFullScreen()
                 ? Screen.getPrimary().getBounds()
@@ -321,14 +338,10 @@ public final class Display implements UserProfileSavable {
         log.finer("New size:    " + newW  + "x" + newH   + "@" + getScaleRatio());
     }
 
-    public void setNewTargetSize(double w, double h) {
+    private void setNewResolution(double w, double h) {
         targetWidth.set(w);
         targetHeight.set(h);
         computeScaledSize();
-    }
-
-    private void setNewResolution(double w, double h) {
-        setNewTargetSize(w, h);
 
         Parent root = scene.getRoot();
         // clear root of previous JavaFX scene

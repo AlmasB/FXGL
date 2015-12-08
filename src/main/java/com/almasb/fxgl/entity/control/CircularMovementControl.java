@@ -26,9 +26,10 @@
 package com.almasb.fxgl.entity.control;
 
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.time.FXGLMasterTimer;
 
 /**
- * API NOT READY FOR USE
+ * Control that moves entity in a circle.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -37,7 +38,6 @@ public final class CircularMovementControl extends AbstractControl {
     private double radius;
     private double speed;
     private double t = 0.0;
-    private double x, y;
 
     public CircularMovementControl(double speed, double radius) {
         this.radius = radius;
@@ -46,18 +46,16 @@ public final class CircularMovementControl extends AbstractControl {
 
     @Override
     protected void initEntity(Entity entity) {
-//        x = entity.getTranslateX();
-//        y = entity.getTranslateY();
     }
 
     @Override
     public void onUpdate(Entity entity) {
-//        x = entity.getTranslateX() - Math.cos(t) * radius;
-//        y = entity.getTranslateY() - Math.sin(t) * radius;
-//
-//        t += TimerManager.tpfSeconds() * speed;
-//
-//        entity.setTranslateX(x + Math.cos(t) * radius);
-//        entity.setTranslateY(y + Math.sin(t) * radius);
+        double x = entity.getX() - Math.cos(t) * radius;
+        double y = entity.getY() - Math.sin(t) * radius;
+
+        t += FXGLMasterTimer.tpfSeconds() * speed;
+
+        entity.setX(x + Math.cos(t) * radius);
+        entity.setY(y + Math.sin(t) * radius);
     }
 }

@@ -29,7 +29,7 @@ package com.almasb.fxgl.input;
  * Represents a user action which is typically triggered when a key
  * or a mouse event has occurred. User actions have names so that they
  * are easily identifiable. An action can be bound to a key or mouse event
- * using InputManager.
+ * using Input.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

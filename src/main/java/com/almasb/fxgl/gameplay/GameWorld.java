@@ -30,6 +30,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.physics.HitBox;
@@ -90,7 +91,7 @@ public final class GameWorld {
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
             update();
         });
-        eventBus.addEventHandler(com.almasb.fxgl.event.FXGLEvent.RESET, event -> {
+        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
             reset();
         });
 

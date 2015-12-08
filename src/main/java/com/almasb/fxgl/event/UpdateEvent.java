@@ -29,27 +29,18 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- *
+ * This is a game update tick event.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class UpdateEvent extends Event {
-
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Common super-type for all update event types.
-     */
     public static final EventType<UpdateEvent> ANY =
-            new EventType<>(Event.ANY, "UPDATE");
+            new EventType<>(Event.ANY, "UPDATE_EVENT");
+
+    //private long now;
+    //private long tick;
 
     public UpdateEvent() {
-        super(null, null, ANY);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public EventType<UpdateEvent> getEventType() {
-        return (EventType<UpdateEvent>) super.getEventType();
+        super(ANY);
     }
 }

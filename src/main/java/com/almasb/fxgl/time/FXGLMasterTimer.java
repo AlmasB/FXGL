@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public class FXGLMasterTimer implements MasterTimer {
+public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.MasterTimer");
 
@@ -116,22 +116,13 @@ public class FXGLMasterTimer implements MasterTimer {
     }
 
     /**
-     * The main loop timer
-     */
-    private AnimationTimer timer = new AnimationTimer() {
-        @Override
-        public void handle(long internalTime) {
-            processUpdate(internalTime);
-        }
-    };
-
-    /**
      * This is the internal FXGL update tick,
      * executed 60 times a second ~ every 0.166 (6) seconds.
      *
      * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
      */
-    private void processUpdate(long internalTime) {
+    @Override
+    public void handle(long internalTime) {
         // this will set up current tick and current time
         // for the rest of the game modules to use
         tickStart(internalTime);
@@ -146,16 +137,6 @@ public class FXGLMasterTimer implements MasterTimer {
         // the actual JavaFX tick ends when our new tick begins. So
         // JavaFX event callbacks will properly fire within the same "our" tick.
         tickEnd();
-    }
-
-    @Override
-    public void start() {
-        timer.start();
-    }
-
-    @Override
-    public void stop() {
-        timer.stop();
     }
 
     /**

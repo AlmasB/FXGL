@@ -26,28 +26,27 @@
 
 package games.cannon;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.entity.control.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.event.InputManager;
-import com.almasb.fxgl.event.UserAction;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsEntity;
-import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.time.Timer;
+import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
@@ -71,7 +70,7 @@ public class CannonApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        InputManager input = getInputManager();
+        Input input = getInput();
 
         input.addAction(new UserAction("Shoot") {
             @Override
@@ -82,7 +81,7 @@ public class CannonApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() throws Exception {
+    protected void initAssets() {
 
     }
 
@@ -147,7 +146,7 @@ public class CannonApp extends GameApplication {
         bullet.setSceneView(new Rectangle(25, 25, Color.BLUE));
         bullet.setBodyType(BodyType.DYNAMIC);
         bullet.setOnPhysicsInitialized(() -> {
-            Point2D mousePosition = getInputManager().getMouse().getGameXY();
+            Point2D mousePosition = getInput().getMouse().getGameXY();
 
             bullet.setLinearVelocity(mousePosition.subtract(bullet.getPosition()).normalize().multiply(10));
         });
@@ -164,7 +163,7 @@ public class CannonApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        PhysicsManager physics = getPhysicsManager();
+        PhysicsWorld physics = getPhysicsWorld();
         physics.addCollisionHandler(new CollisionHandler(Type.BULLET, Type.BASKET) {
             @Override
             protected void onCollisionBegin(Entity bullet, Entity basket) {
@@ -193,7 +192,7 @@ public class CannonApp extends GameApplication {
 
     private class LiftControl implements Control {
 
-        private Timer timer = getTimerManager().newTimer();
+        private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
         private boolean goingUp = true;
 
         @Override

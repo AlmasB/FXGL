@@ -1,6 +1,5 @@
 package sandbox;
 
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.ui.UIController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

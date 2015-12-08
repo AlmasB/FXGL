@@ -161,6 +161,13 @@ public class Entity {
         setSceneView(view, RenderLayer.TOP);
     }
 
+    /**
+     * Sets the primary view (graphics) for this entity. The view will be used to visualize this entity
+     * in the scene. The view will be rendered in the given layer group.
+     *
+     * @param view graphics
+     * @param layer render layer
+     */
     public final void setSceneView(Node view, RenderLayer layer) {
         if (this.sceneView != null)
             throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");
@@ -390,6 +397,9 @@ public class Entity {
      */
     private ObservableList<HitBox> hitBoxes = FXCollections.observableArrayList();
 
+    /**
+     * @return unmodifiable list of hit boxes
+     */
     public final ObservableList<HitBox> hitBoxesProperty() {
         return FXCollections.unmodifiableObservableList(hitBoxes);
     }
@@ -403,6 +413,11 @@ public class Entity {
         hitBoxes.add(hitBox);
     }
 
+    /**
+     * Removes a hit box with given name from the list of hit boxes for this entity.
+     *
+     * @param name hit box name
+     */
     public final void removeHitBox(String name) {
         hitBoxes.removeIf(h -> h.getName().equals(name));
     }
@@ -766,7 +781,7 @@ public class Entity {
     }
 
     /**
-     * Do NOT call manually. It is called automatically by FXGL GameApplication
+     * Do NOT call manually. It is called automatically by the world.
      */
     public final void update() {
         if (controlsEnabled)
@@ -781,8 +796,8 @@ public class Entity {
     }
 
     /**
-     * Do NOT call manually. It is called automatically by FXGL GameApplication
-     * when entity has been removed
+     * Do NOT call manually. It is called automatically by the world
+     * when entity has been removed.
      */
     public final void clean() {
         alive.set(false);
@@ -790,7 +805,6 @@ public class Entity {
         onClean();
         controls.clear();
         components.clear();
-        //view.removeChildren();
     }
 
     /**

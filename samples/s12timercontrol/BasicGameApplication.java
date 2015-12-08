@@ -25,13 +25,14 @@
  */
 package s12timercontrol;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.entity.control.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.time.Timer;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.time.LocalTimer;
+import com.almasb.fxgl.app.ApplicationMode;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -54,9 +55,9 @@ public class BasicGameApplication extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.2");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
+        settings.setIntroEnabled(true);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
@@ -66,7 +67,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initInput() {}
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {
@@ -89,7 +90,7 @@ public class BasicGameApplication extends GameApplication {
 
     private class LiftControl implements Control {
 
-        private Timer timer = getTimerManager().newTimer();
+        private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
         private boolean goingUp = false;
 
         @Override
