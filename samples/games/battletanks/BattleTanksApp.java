@@ -28,6 +28,7 @@ package games.battletanks;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.component.IntegerComponent;
@@ -37,6 +38,9 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import com.almasb.fxgl.search.AStarGrid;
+import com.almasb.fxgl.search.AStarNode;
+import com.almasb.fxgl.search.NodeState;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.geometry.Point2D;
@@ -46,6 +50,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -66,10 +71,13 @@ import java.util.Random;
 public class BattleTanksApp extends GameApplication {
 
     private static final int ATTACK_RANGE = 200;
+    private static final int TANK_MOVE_SPEED = 40;
+    private static final int TANK_SIZE = 40;
+    private static final int TANK_HP = 5;
+    private static final int BULLET_MOVE_SPEED = 10;
 
     private enum Type implements EntityType {
-        ENEMY_TANK, INFANTRY, AIR, BULLET,
-        PLAYER_TANK
+        ENEMY_TANK, PLAYER_TANK, BULLET
     }
 
     @Override
@@ -104,21 +112,23 @@ public class BattleTanksApp extends GameApplication {
     protected void initAssets() {}
 
     private Random random;
+    private AStarGrid grid;
 
     @Override
     protected void initGame() {
         getAudioPlayer().setGlobalSoundVolume(0);
 
         random = new Random();
+        grid = new AStarGrid((int)getWidth() / TANK_MOVE_SPEED, (int)getHeight() / TANK_MOVE_SPEED);
 
         Entity bg = Entity.noType();
         bg.setSceneView(new Rectangle(getWidth(), getHeight(), Color.rgb(0, 0, 10)));
         getGameWorld().addEntity(bg);
 
-        for (int i = 0; i < 5; i++) {
-            spawnEnemyTank();
+        getMasterTimer().runAtInterval(() -> {
             spawnPlayerTank();
-        }
+            spawnEnemyTank();
+        }, Duration.seconds(3));
     }
 
     @Override
@@ -128,7 +138,7 @@ public class BattleTanksApp extends GameApplication {
         CollisionHandler handler = new CollisionHandler(Type.BULLET, Type.ENEMY_TANK) {
             @Override
             protected void onCollisionBegin(Entity bullet, Entity tank) {
-                if (bullet.getComponent(OwnerComponent.class).get().getValue() == tank)
+                if (bullet.getComponent(OwnerComponent.class).get().getValue().isType(tank.getEntityType()))
                     return;
 
                 bullet.removeFromWorld();
@@ -151,40 +161,84 @@ public class BattleTanksApp extends GameApplication {
     @Override
     protected void onUpdate() {}
 
+    private void updateGrid(Entity self) {
+        grid.setStateForAllNodes(NodeState.WALKABLE);
+
+        getGameWorld().getEntities(Type.PLAYER_TANK, Type.ENEMY_TANK).forEach(e -> {
+            if (e == self)
+                return;
+
+            int sx = toGrid(e.getX());
+            int sy = toGrid(e.getY());
+
+            for (int y = sy; y < sy + TANK_SIZE / TANK_MOVE_SPEED; y++) {
+                for (int x = sx; x < sx + TANK_SIZE / TANK_MOVE_SPEED; x++) {
+                    if (grid.isWithin(x, y))
+                        grid.setNodeState(x, y, NodeState.NOT_WALKABLE);
+                }
+            }
+        });
+    }
+
+    private boolean isBusy(int x, int y) {
+        return getGameWorld().getEntities(Type.ENEMY_TANK, Type.PLAYER_TANK)
+                .stream()
+                .filter(e -> toGrid(e.getX()) == x && toGrid(e.getY()) == y)
+                .findAny()
+                .isPresent();
+    }
+
     private void spawnPlayerTank() {
-        double x = random.nextDouble() * (getWidth() - 64);
-        double y = getHeight() - 64;
+        int count = 0;
+        int x, y = grid.getHeight() - 1;
+        do {
+            x = random.nextInt(grid.getWidth());
+
+            if (count == 10)
+                break;
+            count++;
+        } while (isBusy(x, y));
+
         spawnTank(Type.PLAYER_TANK, "tank_player.png", x, y);
     }
 
     private void spawnEnemyTank() {
-        double x = random.nextDouble() * (getWidth() - 64);
-        double y = 0;
+        int count = 0;
+        int x, y = 0;
+        do {
+            x = random.nextInt(grid.getWidth());
+
+            if (count == 10)
+                break;
+            count++;
+        } while (isBusy(x, y));
+
         spawnTank(Type.ENEMY_TANK, "tank_enemy.png", x, y);
     }
 
-    private void spawnTank(EntityType type, String texture, double x, double y) {
+    private void spawnTank(EntityType type, String textureName, int x, int y) {
         Entity tank = new Entity(type);
-        tank.setPosition(x, y);
-        tank.addComponent(new HPComponent(5));
+        tank.setPosition(x * TANK_SIZE, y * TANK_SIZE);
+        tank.addComponent(new HPComponent(TANK_HP));
         tank.setCollidable(true);
         tank.addControl(new TankControl());
 
         Pane pane = new Pane();
-        pane.getChildren().add(getAssetLoader().loadTexture(texture));
 
-        Rectangle health = new Rectangle(64, 5, Color.GREEN);
-        health.setTranslateY(64);
+        Texture texture = getAssetLoader().loadTexture(textureName);
+        texture.setFitWidth(TANK_SIZE);
+        texture.setFitHeight(TANK_SIZE);
+        pane.getChildren().add(texture);
+
+        Rectangle health = new Rectangle(TANK_SIZE, 5, Color.YELLOW);
+        health.setTranslateY(TANK_SIZE);
         health.widthProperty().bind(
-                tank.getComponent(HPComponent.class).get().valueProperty().multiply(12));
+                tank.getComponent(HPComponent.class).get().valueProperty().multiply(TANK_SIZE / TANK_HP));
         pane.getChildren().add(health);
 
         tank.setSceneView(pane);
 
         getGameWorld().addEntity(tank);
-    }
-
-    private class TargetComponent extends ObjectComponent<Entity> {
     }
 
     private class HPComponent extends IntegerComponent {
@@ -225,10 +279,10 @@ public class BattleTanksApp extends GameApplication {
                 if (target.distance(entity) <= ATTACK_RANGE) {
                     Entity bullet = new Entity(Type.BULLET);
                     bullet.setCollidable(true);
-                    bullet.setPosition(entity.getCenter());
+                    bullet.setPosition(entity.getCenter().subtract(8, 8));
                     bullet.setSceneView(getAssetLoader().loadTexture("tank_bullet.png"));
                     bullet.addControl(new BulletControl(target.getCenter()
-                            .subtract(entity.getCenter()).normalize().multiply(10)));
+                            .subtract(entity.getCenter()).normalize().multiply(BULLET_MOVE_SPEED)));
 
                     bullet.addComponent(new OwnerComponent(entity));
 
@@ -247,16 +301,27 @@ public class BattleTanksApp extends GameApplication {
         }
     }
 
-    private class MoveControl extends AbstractControl {
+    private int toGame(double value) {
+        return (int)value * TANK_MOVE_SPEED;
+    }
 
-        private Point2D moveTarget;
+    private int toGrid(double value) {
+        return (int)value / TANK_MOVE_SPEED;
+    }
+
+    private class RandomMoveControl extends AbstractControl {
+
+        private int targetX, targetY, toX, toY;
         private Point2D velocity = Point2D.ZERO;
 
         private boolean active = true;
 
         @Override
         protected void initEntity(Entity entity) {
-            moveTarget = entity.getPosition();
+            targetX = toGrid(entity.getX());
+            targetY = toGrid(entity.getY());
+            toX = targetX;
+            toY = targetY;
         }
 
         @Override
@@ -264,25 +329,47 @@ public class BattleTanksApp extends GameApplication {
             if (!active)
                 return;
 
-            if (entity.getPosition().distance(moveTarget) < 10) {
-                moveTarget = getRandomPoint();
-                velocity = moveTarget.subtract(entity.getPosition())
-                        .normalize().multiply(5);
+            if (Math.abs(entity.getX() - toGame(toX)) >= 5
+                    || Math.abs(entity.getY() - toGame(toY)) >= 5) {
+                entity.translate(velocity);
+                return;
             }
 
-            entity.rotateToVector(velocity);
-            entity.translate(velocity);
+            if (Math.abs(entity.getX() - toGame(targetX)) < 5
+                    && Math.abs(entity.getY() - toGame(targetY)) < 5) {
+
+                Point2D randomPoint = getRandomPoint();
+                targetX = (int)randomPoint.getX();
+                targetY = (int)randomPoint.getY();
+            }
+
+            updateGrid(entity);
+            List<AStarNode> path = grid.getPath(toGrid(entity.getX()), toGrid(entity.getY()),
+                    targetX, targetY);
+
+            if (!path.isEmpty()) {
+                toX = path.get(0).getX();
+                toY = path.get(0).getY();
+
+                velocity = new Point2D(toX - toGrid(entity.getX()), toY - toGrid(entity.getY()))
+                    .multiply(5);
+
+                //log.info(entity.getPosition().toString() + " " + new Point2D(toX, toY).toString());
+                //log.info(velocity.toString());
+
+                entity.rotateToVector(velocity);
+            }
         }
 
         private Point2D getRandomPoint() {
-            return new Point2D(random.nextDouble() * (getWidth() - 64),
-                    random.nextDouble() * (getHeight() - 64));
+            return new Point2D(random.nextInt(grid.getWidth()),
+                    random.nextInt(grid.getHeight()));
         }
     }
 
     private class TankControl extends AbstractControl {
         private AttackControl attackControl;
-        private MoveControl moveControl;
+        private RandomMoveControl moveControl;
         private EntityType opponentType;
 
         private boolean moving = true;
@@ -290,7 +377,7 @@ public class BattleTanksApp extends GameApplication {
         @Override
         protected void initEntity(Entity entity) {
             attackControl = new AttackControl();
-            moveControl = new MoveControl();
+            moveControl = new RandomMoveControl();
 
             attackControl.active = false;
 
@@ -319,10 +406,11 @@ public class BattleTanksApp extends GameApplication {
 
             target.ifPresent(t -> {
                 if (t.distance(entity) < ATTACK_RANGE) {
+                    attackControl.setTarget(t);
+
                     if (!moving)
                         return;
 
-                    attackControl.setTarget(t);
                     attackControl.active = true;
                     moveControl.active = false;
                     moving = false;

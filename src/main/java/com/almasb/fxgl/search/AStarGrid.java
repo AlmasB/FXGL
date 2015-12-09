@@ -51,7 +51,33 @@ public class AStarGrid {
             for (int x = 0; x < grid.length; x++) {
                 grid[x][y] = new AStarNode(x, y, NodeState.WALKABLE);
             }
+        }
+    }
 
+    public int getWidth() {
+        return grid.length;
+    }
+
+    public int getHeight() {
+        return grid[0].length;
+    }
+
+    /**
+     *
+     * @param x x coord
+     * @param y y coord
+     * @return true iff the point is within the grid
+     */
+    public boolean isWithin(int x, int y) {
+        return x >= 0 && x < getWidth()
+                && y >= 0 && y < getHeight();
+    }
+
+    public void setStateForAllNodes(NodeState state) {
+        for (int y = 0; y < getHeight(); y++) {
+            for (int x = 0; x < getWidth(); x++) {
+                getNode(x, y).setState(state);
+            }
         }
     }
 
