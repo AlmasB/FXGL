@@ -331,6 +331,8 @@ public class Entity {
      * between vector and positive X axis.
      * This is useful for projectiles (bullets, arrows, etc)
      * which rotate depending on their current velocity.
+     * Note, this assumes that at 0 angle rotation the scene view is
+     * facing right.
      *
      * @param vector the rotation vector / velocity vector
      */
