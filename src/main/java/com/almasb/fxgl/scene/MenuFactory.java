@@ -39,7 +39,6 @@ public abstract class MenuFactory {
      * Called to construct main menu.
      *
      * @param app game application
-     * @param settings scene settings
      * @return main menu
      */
     public abstract FXGLMenu newMainMenu(GameApplication app);
@@ -48,7 +47,6 @@ public abstract class MenuFactory {
      * Called to construct game menu.
      *
      * @param app game application
-     * @param settings scene settings
      * @return game menu
      */
     public abstract FXGLMenu newGameMenu(GameApplication app);

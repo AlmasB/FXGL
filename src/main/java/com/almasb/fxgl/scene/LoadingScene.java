@@ -36,6 +36,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
+ * Loading scene to be used during loading tasks.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class LoadingScene extends FXGLScene {
@@ -61,6 +63,11 @@ public final class LoadingScene extends FXGLScene {
         getRoot().getChildren().addAll(bg, progress, text);
     }
 
+    /**
+     * Bind to progress and text messages of given background loading task.
+     *
+     * @param task the loading task
+     */
     public void bind(Task<?> task) {
         progress.progressProperty().bind(task.progressProperty());
         text.textProperty().bind(task.messageProperty());

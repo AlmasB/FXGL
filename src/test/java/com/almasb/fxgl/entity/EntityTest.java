@@ -185,6 +185,17 @@ public class EntityTest {
         assertEquals(-135, testEntity.getRotation(), 0.1);
     }
 
+    @Test
+    public void isWithin() {
+        testEntity.addHitBox(new HitBox("TEST", new BoundingBox(0, 0, 40, 40)));
+        testEntity.setPosition(50, 50);
+
+        assertTrue(testEntity.isWithin(0, 0, 90, 90));
+        assertTrue(testEntity.isWithin(60, 40, 70, 55));
+        assertFalse(testEntity.isWithin(0, 0, 40, 40));
+        assertFalse(testEntity.isWithin(30, 0, 49, 80));
+    }
+
     private class TestControl extends AbstractControl {
 
         @Override

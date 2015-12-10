@@ -32,6 +32,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 
 /**
+ * Game scene viewport.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class Viewport {
@@ -39,30 +41,60 @@ public final class Viewport {
     private DoubleProperty x = new SimpleDoubleProperty();
     private DoubleProperty y = new SimpleDoubleProperty();
 
+    /**
+     *
+     * @return origin x
+     */
     public double getX() {
         return x.get();
     }
 
+    /**
+     *
+     * @return origin x property
+     */
     public DoubleProperty xProperty() {
         return x;
     }
 
+    /**
+     * Set origin x. Note, bound viewport cannot be set.
+     *
+     * @param x x coordinate
+     */
     public void setX(double x) {
         this.x.set(x);
     }
 
+    /**
+     *
+     * @return origin y
+     */
     public double getY() {
         return y.get();
     }
 
+    /**
+     *
+     * @return origin y property
+     */
     public DoubleProperty yProperty() {
         return y;
     }
 
+    /**
+     * Set origin y. Note, bound viewport cannot be set.
+     *
+     * @param y y property
+     */
     public void setY(double y) {
         this.y.set(y);
     }
 
+    /**
+     *
+     * @return viewport origin (x, y)
+     */
     public Point2D getOrigin() {
         return new Point2D(getX(), getY());
     }
@@ -88,6 +120,9 @@ public final class Viewport {
         yProperty().bind(entity.yProperty().negate().add(distY));
     }
 
+    /**
+     * Unbind viewport.
+     */
     public void unbind() {
         xProperty().unbind();
         yProperty().unbind();

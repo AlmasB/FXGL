@@ -224,6 +224,9 @@ public final class GameScene extends FXGLScene {
 
     private Viewport viewport = new Viewport();
 
+    /**
+     * @return viewport
+     */
     public Viewport getViewport() {
         return viewport;
     }

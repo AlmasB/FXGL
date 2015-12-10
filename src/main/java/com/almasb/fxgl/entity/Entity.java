@@ -472,6 +472,31 @@ public class Entity {
     }
 
     /**
+     *
+     * @param minX min x
+     * @param minY min y
+     * @param maxX max x
+     * @param maxY max y
+     * @return true iff entity is partially or entirely within given bounds
+     */
+    public final boolean isWithin(double minX, double minY, double maxX, double maxY) {
+        return !isOutside(minX, minY, maxX, maxY);
+    }
+
+    /**
+     *
+     * @param minX min x
+     * @param minY min y
+     * @param maxX max x
+     * @param maxY max y
+     * @return true iff entity is completely outside given bounds
+     */
+    public final boolean isOutside(double minX, double minY, double maxX, double maxY) {
+        return getX() + getWidth() < minX || getX() > maxX
+                || getY() + getHeight() < minY || getY() > maxY;
+    }
+
+    /**
      * Returns distance from center of this entity to center of the given
      * entity.
      *

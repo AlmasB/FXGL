@@ -354,9 +354,6 @@ public class BattleTanksApp extends GameApplication {
                 velocity = new Point2D(toX - toGrid(entity.getX()), toY - toGrid(entity.getY()))
                     .multiply(5);
 
-                //log.info(entity.getPosition().toString() + " " + new Point2D(toX, toY).toString());
-                //log.info(velocity.toString());
-
                 entity.rotateToVector(velocity);
             }
         }
@@ -449,8 +446,7 @@ public class BattleTanksApp extends GameApplication {
         public void onUpdate(Entity entity) {
             entity.translate(velocity);
 
-            if (entity.getX() < 0 || entity.getX() > getWidth()
-                    || entity.getY() < 0 || entity.getY() > getHeight())
+            if (entity.isOutside(0, 0, getWidth(), getHeight()))
                 entity.removeFromWorld();
         }
     }
