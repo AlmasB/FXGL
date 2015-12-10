@@ -27,8 +27,12 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.entity.Entity;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
 
 /**
@@ -37,6 +41,13 @@ import javafx.geometry.Point2D;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class Viewport {
+
+    private double width, height;
+
+    public Viewport(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
 
     private DoubleProperty x = new SimpleDoubleProperty();
     private DoubleProperty y = new SimpleDoubleProperty();
@@ -106,18 +117,25 @@ public final class Viewport {
      * bindToEntity(player, getWidth() / 2, getHeight() / 2);
      * </pre>
      * the code above centers the camera on player.<br/>
-     * For most platformers / side scrollers use:
-     * <pre>
-     * bindToEntity(player, getWidth() / 2);
-     * </pre>
      *
      * @param entity the entity to follow
      * @param distX distance in X between origin and entity
      * @param distY distance in Y between origin and entity
      */
     public void bindToEntity(Entity entity, double distX, double distY) {
-        xProperty().bind(entity.xProperty().negate().add(distX));
-        yProperty().bind(entity.yProperty().negate().add(distY));
+        // origin X Y with no bounds
+        NumberBinding bx = entity.xProperty().add(-distX);
+        NumberBinding by = entity.yProperty().add(-distY);
+
+        // origin X Y with bounds applied
+        NumberBinding boundX = Bindings.when(bx.lessThan(minX)).then(minX).otherwise(entity.xProperty().add(-distX));
+        NumberBinding boundY = Bindings.when(by.lessThan(minY)).then(minY).otherwise(entity.yProperty().add(-distY));
+
+        boundX = Bindings.when(bx.greaterThan(maxX.subtract(width))).then(maxX.subtract(width)).otherwise(boundX);
+        boundY = Bindings.when(by.greaterThan(maxY.subtract(height))).then(maxY.subtract(height)).otherwise(boundY);
+
+        x.bind(boundX);
+        y.bind(boundY);
     }
 
     /**
@@ -126,5 +144,17 @@ public final class Viewport {
     public void unbind() {
         xProperty().unbind();
         yProperty().unbind();
+    }
+
+    private IntegerProperty minX = new SimpleIntegerProperty(Integer.MIN_VALUE);
+    private IntegerProperty minY = new SimpleIntegerProperty(Integer.MIN_VALUE);
+    private IntegerProperty maxX = new SimpleIntegerProperty(Integer.MAX_VALUE);
+    private IntegerProperty maxY = new SimpleIntegerProperty(Integer.MAX_VALUE);
+
+    public void setBounds(int minX, int minY, int maxX, int maxY) {
+        this.minX.set(minX);
+        this.minY.set(minY);
+        this.maxX.set(maxX);
+        this.maxY.set(maxY);
     }
 }
