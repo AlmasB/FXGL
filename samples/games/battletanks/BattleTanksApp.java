@@ -34,6 +34,7 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.component.IntegerComponent;
 import com.almasb.fxgl.entity.component.ObjectComponent;
 import com.almasb.fxgl.entity.control.AbstractControl;
+import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -159,7 +160,12 @@ public class BattleTanksApp extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate() {
+        getGameWorld().getEntities(Type.BULLET)
+                .stream()
+                .filter(e -> e.isOutside(0, 0, getWidth(), getHeight()))
+                .forEach(Entity::removeFromWorld);
+    }
 
     private void updateGrid(Entity self) {
         grid.setStateForAllNodes(NodeState.WALKABLE);
@@ -281,14 +287,15 @@ public class BattleTanksApp extends GameApplication {
                     bullet.setCollidable(true);
                     bullet.setPosition(entity.getCenter().subtract(8, 8));
                     bullet.setSceneView(getAssetLoader().loadTexture("tank_bullet.png"));
-                    bullet.addControl(new BulletControl(target.getCenter()
-                            .subtract(entity.getCenter()).normalize().multiply(BULLET_MOVE_SPEED)));
+                    bullet.addControl(new ProjectileControl(target.getCenter().subtract(entity.getCenter()),
+                            BULLET_MOVE_SPEED));
 
                     bullet.addComponent(new OwnerComponent(entity));
 
                     getGameWorld().addEntity(bullet);
 
-                    entity.rotateToVector(bullet.getControl(BulletControl.class).get().velocity);
+                    entity.rotateToVector(bullet.getControl(ProjectileControl.class).get().getDirection());
+
                     return true;
                 }
             }
@@ -429,27 +436,27 @@ public class BattleTanksApp extends GameApplication {
         }
     }
 
-    private class BulletControl extends AbstractControl {
-
-        private Point2D velocity;
-
-        public BulletControl(Point2D velocity) {
-            this.velocity = velocity;
-        }
-
-        @Override
-        protected void initEntity(Entity entity) {
-            entity.rotateToVector(velocity);
-        }
-
-        @Override
-        public void onUpdate(Entity entity) {
-            entity.translate(velocity);
-
-            if (entity.isOutside(0, 0, getWidth(), getHeight()))
-                entity.removeFromWorld();
-        }
-    }
+//    private class BulletControl extends AbstractControl {
+//
+//        private Point2D velocity;
+//
+//        public BulletControl(Point2D velocity) {
+//            this.velocity = velocity;
+//        }
+//
+//        @Override
+//        protected void initEntity(Entity entity) {
+//            entity.rotateToVector(velocity);
+//        }
+//
+//        @Override
+//        public void onUpdate(Entity entity) {
+//            entity.translate(velocity);
+//
+//            if (entity.isOutside(0, 0, getWidth(), getHeight()))
+//                entity.removeFromWorld();
+//        }
+//    }
 
     public static void main(String[] args) {
         launch(args);
