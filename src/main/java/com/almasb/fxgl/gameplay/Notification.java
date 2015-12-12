@@ -24,53 +24,26 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ui;
-
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import javafx.animation.Transition;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.util.Duration;
+package com.almasb.fxgl.gameplay;
 
 /**
+ * Represents a notification message.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-final class Notification extends Button {
+public final class Notification {
+    private String message;
 
-    private Transition in, out;
-
-    Notification(String text, Color bgColor, Transition in, Transition out) {
-        super(text);
-        this.in = in;
-        this.out = out;
-
-        getStyleClass().setAll("fxgl_button");
-        setAlignment(Pos.CENTER);
-        setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ENTER) {
-                fire();
-            }
-        });
-        setOnAction(e -> hide());
-        setFont(UIFactory.newFont(12));
-        setStyle("-fx-background-color: "
-                + String.format("rgb(%d,%d,%d);",
-                (int)(bgColor.getRed()*255),
-                (int)(bgColor.getGreen()*255),
-                (int)(bgColor.getBlue()*255)));
-
-        in.setOnFinished(e -> GameApplication.getService(ServiceType.MASTER_TIMER)
-                .runOnceAfter(this::hide, Duration.seconds(3)));
+    public String getMessage() {
+        return message;
     }
 
-    void show() {
-        in.play();
+    public Notification(String message) {
+        this.message = message;
     }
 
-    void hide() {
-        out.play();
+    @Override
+    public String toString() {
+        return "Notification: " + message;
     }
 }

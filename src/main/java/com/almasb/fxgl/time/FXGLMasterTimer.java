@@ -159,24 +159,9 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
     }
 
     /**
-     * Returns current tick (frame). When the game has just started,
-     * the first cycle in the loop will have tick == 1,
-     * second cycle - 2 and so on.
-     * <p>
-     * The update to this number happens when a new update cycle starts.
-     *
-     * @return current tick
-     */
-    @Override
-    public long getTick() {
-        return tick.get();
-    }
-
-    /**
      * Resets current tick to 0.
      */
-    @Override
-    public void resetTicks() {
+    private void resetTicks() {
         log.finer("Resetting ticks to 0");
 
         tick.set(0);
@@ -216,14 +201,6 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
     private IntegerProperty fps = new SimpleIntegerProperty();
 
     /**
-     * @return average render FPS
-     */
-    @Override
-    public int getFPS() {
-        return fps.get();
-    }
-
-    /**
      * @return average render FPS property
      */
     @Override
@@ -235,14 +212,6 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
      * Average performance FPS
      */
     private IntegerProperty performanceFPS = new SimpleIntegerProperty();
-
-    /**
-     * @return Average performance FPS
-     */
-    @Override
-    public int getPerformanceFPS() {
-        return performanceFPS.get();
-    }
 
     /**
      * @return Average performance FPS property
@@ -261,8 +230,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
      *
      * @param internalTime internal JavaFX time
      */
-    @Override
-    public void tickStart(long internalTime) {
+    private void tickStart(long internalTime) {
         tick.set(tick.get() + 1);
         now = (getTick() - 1) * tpfNanos();
         startNanos = System.nanoTime();
@@ -273,8 +241,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
     /**
      * Called at the end of a game update tick.
      */
-    @Override
-    public void tickEnd() {
+    private void tickEnd() {
         performanceFPS.set(Math.round(fpsPerformanceCounter.count(secondsToNanos(1) / (System.nanoTime() - startNanos))));
         fps.set(Math.round(fpsCounter.count(secondsToNanos(1) / realFPS)));
     }

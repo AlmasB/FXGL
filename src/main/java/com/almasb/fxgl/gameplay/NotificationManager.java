@@ -24,12 +24,14 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.AchievementEvent;
 import com.almasb.fxgl.event.NotificationEvent;
+import com.almasb.fxgl.ui.Position;
+import com.almasb.fxgl.ui.UIFactory;
 import javafx.animation.ScaleTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -39,11 +41,13 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 /**
+ * Allows to easily push notifications.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class NotificationManager {
 
-    private Queue<Notification> queue = new ArrayDeque<>();
+    private Queue<NotificationView> queue = new ArrayDeque<>();
 
     private Position position = Position.TOP;
 
@@ -91,8 +95,8 @@ public final class NotificationManager {
         });
     }
 
-    private void popNotification(Notification notification) {
-        boolean removed = parent.getChildren().remove(notification);
+    private void popNotification(NotificationView notificationView) {
+        boolean removed = parent.getChildren().remove(notificationView);
         if (!removed) {
             return;
         }
@@ -114,24 +118,24 @@ public final class NotificationManager {
      * @param text the text to show
      */
     public void pushNotification(String text) {
-        Notification notification = createNotification(text);
+        NotificationView notificationView = createNotificationView(text);
 
         if (showing)
-            queue.add(notification);
+            queue.add(notificationView);
         else
-            showNotification(notification);
+            showNotification(notificationView);
     }
 
-    private void showNotification(Notification notification) {
+    private void showNotification(NotificationView notificationView) {
         showing = true;
-        parent.getChildren().add(notification);
-        notification.show();
+        parent.getChildren().add(notificationView);
+        notificationView.show();
 
         GameApplication.getService(ServiceType.EVENT_BUS)
-                .fireEvent(new NotificationEvent(notification.getText()));
+                .fireEvent(new NotificationEvent(notificationView.getNotification()));
     }
 
-    private Notification createNotification(String text) {
+    private NotificationView createNotificationView(String text) {
         ScaleTransition in = new ScaleTransition(Duration.seconds(0.3));
         in.setFromX(0);
         in.setFromY(0);
@@ -144,9 +148,9 @@ public final class NotificationManager {
         out.setToX(0);
         out.setToY(0);
 
-        Notification notification = new Notification(text, backgroundColor, in, out);
-        notification.setScaleX(0);
-        notification.setScaleY(0);
+        NotificationView notificationView = new NotificationView(new Notification(text), backgroundColor, in, out);
+        notificationView.setScaleX(0);
+        notificationView.setScaleY(0);
 
         double x = 0, y = 0;
 
@@ -169,13 +173,13 @@ public final class NotificationManager {
                 break;
         }
 
-        notification.setTranslateX(x);
-        notification.setTranslateY(y);
+        notificationView.setTranslateX(x);
+        notificationView.setTranslateY(y);
 
-        in.setNode(notification);
-        out.setNode(notification);
-        out.setOnFinished(e -> popNotification(notification));
+        in.setNode(notificationView);
+        out.setNode(notificationView);
+        out.setOnFinished(e -> popNotification(notificationView));
 
-        return notification;
+        return notificationView;
     }
 }

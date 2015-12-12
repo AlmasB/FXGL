@@ -32,18 +32,39 @@ import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.util.Duration;
 
 /**
+ * Represents master timer, all local timers are synchronized with this.
+ * Allows to set up interval based tasks.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface MasterTimer {
 
+    /**
+     * Current time for this tick in nanoseconds. Also time elapsed
+     * from the start of game. This time does not change while the game is paused.
+     * This time does not change while within the same tick.
+     *
+     * @return current time in nanoseconds
+     */
     long getNow();
 
+    /**
+     * Returns current tick (frame). When the game has just started,
+     * the first cycle in the loop will have tick == 1,
+     * second cycle - 2 and so on.
+     * <p>
+     * The update to this number happens when a new update cycle starts.
+     *
+     * @return current tick
+     */
     default long getTick() {
         return tickProperty().get();
     }
 
-    void resetTicks();
-
+    /**
+     *
+     * @return current tick property
+     */
     ReadOnlyLongProperty tickProperty();
 
     /**
@@ -69,19 +90,6 @@ public interface MasterTimer {
      * @return Average performance FPS property
      */
     IntegerProperty performanceFPSProperty();
-
-    /**
-     * Called at the start of a game update tick.
-     * This is where tick becomes tick + 1.
-     *
-     * @param internalTime internal JavaFX time
-     */
-    void tickStart(long internalTime);
-
-    /**
-     * Called at the end of a game update tick.
-     */
-    void tickEnd();
 
     /**
      * The Runnable action will be scheduled to run at given interval.

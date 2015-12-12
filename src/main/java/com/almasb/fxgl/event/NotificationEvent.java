@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.event;
 
+import com.almasb.fxgl.gameplay.Notification;
 import javafx.event.Event;
 import javafx.event.EventType;
 
@@ -37,14 +38,14 @@ public final class NotificationEvent extends Event {
     public static final EventType<NotificationEvent> ANY =
             new EventType<>(Event.ANY, "NOTIFICATION_EVENT");
 
-    private String text;
+    private Notification notification;
 
-    public String getText() {
-        return text;
+    public Notification getNotification() {
+        return notification;
     }
 
-    public NotificationEvent(String text) {
+    public NotificationEvent(Notification notification) {
         super(ANY);
-        this.text = text;
+        this.notification = notification;
     }
 }
