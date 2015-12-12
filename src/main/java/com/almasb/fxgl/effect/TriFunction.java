@@ -26,35 +26,12 @@
 
 package com.almasb.fxgl.effect;
 
-import javafx.geometry.Point2D;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.paint.Color;
-import javafx.util.Duration;
-
 /**
+ * Represents a function that accepts three arguments and produces a result.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class ImplosionEmitter extends ParticleEmitter {
-
-    public ImplosionEmitter() {
-        setNumParticles(100);
-        setEmissionRate(0.0166);
-        setSize(5, 20);
-        setColorFunction(() -> Color.rgb((int) rand(200, 255), 30, 20));
-    }
-
-    @Override
-    protected Particle emit(int i, double x, double y) {
-        Point2D vector = new Point2D(Math.cos(i), Math.sin(i));
-        Point2D newPos = new Point2D(x, y).add(vector.multiply(25));
-
-        return new Particle(newPos,
-                newPos.subtract(new Point2D(x, y)).multiply(-0.05),
-                Point2D.ZERO,
-                getRandomSize(),
-                new Point2D(rand() * -0.1, rand() * -0.1),
-                Duration.seconds(0.5),
-                getColorFunction().get(),
-                i < getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_DODGE);
-    }
+@FunctionalInterface
+public interface TriFunction<T, U, V, R> {
+    R apply(T t, U u, V v);
 }
