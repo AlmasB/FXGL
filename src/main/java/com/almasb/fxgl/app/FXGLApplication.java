@@ -30,6 +30,7 @@ import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
@@ -279,5 +280,12 @@ public abstract class FXGLApplication extends Application {
      */
     public final MasterTimer getMasterTimer() {
         return masterTimer;
+    }
+
+    @Inject
+    private NotificationService notificationService;
+
+    public final NotificationService getNotificationService() {
+        return notificationService;
     }
 }

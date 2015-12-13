@@ -24,40 +24,49 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.gameplay;
 
-import com.almasb.fxgl.gameplay.Achievement;
-import javafx.event.Event;
-import javafx.event.EventType;
+import com.almasb.fxgl.ui.Position;
+import javafx.scene.paint.Color;
 
 /**
- * Occurs on achievement unlocked.
+ * Notification service allows to push notifications.
+ * This is a globally available service with globally visible notifications.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AchievementEvent extends Event {
+public interface NotificationService {
 
-    public static final EventType<AchievementEvent> ANY =
-            new EventType<>(Event.ANY, "ACHIEVEMENT_EVENT");
-
-    private Achievement achievement;
-
-    public AchievementEvent(Achievement achievement) {
-        super(ANY);
-        this.achievement = achievement;
-    }
+    /**
+     * Push a notification with given message.
+     *
+     * @param message the message
+     */
+    void pushNotification(String message);
 
     /**
      *
-     * @return achievement associated with the event
+     * @return notification position
      */
-    public Achievement getAchievement() {
-        return achievement;
-    }
+    Position getPosition();
 
-    @Override
-    public String toString() {
-        return "AchievementEvent[name=" + achievement.getName()
-                + ",description= " + achievement.getDescription() + "]";
-    }
+    /**
+     * Set position of future notifications.
+     *
+     * @param position where to show notification
+     */
+    void setPosition(Position position);
+
+    /**
+     *
+     * @return current background color for notifications
+     */
+    Color getBackgroundColor();
+
+    /**
+     * Set background color of notifications.
+     *
+     * @param backgroundColor the color
+     */
+    void setBackgroundColor(Color backgroundColor);
 }

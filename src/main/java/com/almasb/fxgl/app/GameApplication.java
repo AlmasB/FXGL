@@ -33,7 +33,6 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.gameplay.NotificationManager;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -184,8 +183,6 @@ public abstract class GameApplication extends FXGLApplication {
      */
     private FXGLScene gameMenuScene;
 
-    private QTEManager qteManager;
-    private NotificationManager notificationManager;
     private AchievementManager achievementManager;
 
     /**
@@ -426,9 +423,6 @@ public abstract class GameApplication extends FXGLApplication {
 
         UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(getSettings().getDefaultFontName()));
 
-        //qteManager = new QTEManager();
-
-        notificationManager = new NotificationManager(getGameScene().getRoot());
         achievementManager = new AchievementManager();
 
         getDisplay().registerScene(loadingScene);
@@ -681,21 +675,6 @@ public abstract class GameApplication extends FXGLApplication {
      */
     public final long getNow() {
         return getMasterTimer().getNow();
-    }
-
-    /**
-     * @return QTE manager
-     */
-    public final QTEManager getQTEManager() {
-        return qteManager;
-    }
-
-    /**
-     *
-     * @return notification manager
-     */
-    public final NotificationManager getNotificationManager() {
-        return notificationManager;
     }
 
     /**

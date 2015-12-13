@@ -31,6 +31,8 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
+ * This event occurs when a notification has been shown to user.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class NotificationEvent extends Event {
@@ -40,6 +42,10 @@ public final class NotificationEvent extends Event {
 
     private Notification notification;
 
+    /**
+     *
+     * @return notification associated with the event
+     */
     public Notification getNotification() {
         return notification;
     }
@@ -47,5 +53,10 @@ public final class NotificationEvent extends Event {
     public NotificationEvent(Notification notification) {
         super(ANY);
         this.notification = notification;
+    }
+
+    @Override
+    public String toString() {
+        return "NotificationEvent[message=" + notification.getMessage() + "]";
     }
 }

@@ -31,6 +31,8 @@ import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEventBus;
+import com.almasb.fxgl.gameplay.FXGLNotificationService;
+import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.time.FXGLLocalTimer;
@@ -149,6 +151,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Executor> serviceProvider() {
             return FXGLExecutor.class;
+        }
+    };
+
+    ServiceType<NotificationService> NOTIFICATION_SERVICE = new ServiceType<NotificationService>() {
+        @Override
+        public Class<NotificationService> service() {
+            return NotificationService.class;
+        }
+
+        @Override
+        public Class<? extends NotificationService> serviceProvider() {
+            return FXGLNotificationService.class;
         }
     };
 }

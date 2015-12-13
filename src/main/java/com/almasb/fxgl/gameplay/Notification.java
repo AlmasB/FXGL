@@ -38,7 +38,7 @@ public final class Notification {
         return message;
     }
 
-    public Notification(String message) {
+    Notification(String message) {
         this.message = message;
     }
 

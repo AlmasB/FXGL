@@ -30,8 +30,12 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.AchievementEvent;
 import com.almasb.fxgl.event.NotificationEvent;
+import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.ui.Position;
 import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.util.FXGLLogger;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javafx.animation.ScaleTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -39,13 +43,20 @@ import javafx.util.Duration;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.logging.Logger;
 
 /**
  * Allows to easily push notifications.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class NotificationManager {
+@Singleton
+public final class FXGLNotificationService implements NotificationService {
+
+    /**
+     * The logger
+     */
+    private static final Logger log = FXGLLogger.getLogger("FXGL.NotificationService");
 
     private Queue<NotificationView> queue = new ArrayDeque<>();
 
@@ -55,6 +66,7 @@ public final class NotificationManager {
      *
      * @return notification position
      */
+    @Override
     public Position getPosition() {
         return position;
     }
@@ -64,12 +76,14 @@ public final class NotificationManager {
      *
      * @param position where to show notification
      */
+    @Override
     public void setPosition(Position position) {
         this.position = position;
     }
 
     private Color backgroundColor = Color.BLACK;
 
+    @Override
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -79,6 +93,7 @@ public final class NotificationManager {
      *
      * @param backgroundColor the color
      */
+    @Override
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
@@ -87,12 +102,15 @@ public final class NotificationManager {
 
     private Pane parent;
 
-    public NotificationManager(Pane parent) {
-        this.parent = parent;
+    @Inject
+    private FXGLNotificationService(GameScene gameScene) {
+        this.parent = gameScene.getRoot();
 
         GameApplication.getService(ServiceType.EVENT_BUS).addEventHandler(AchievementEvent.ANY, event -> {
             pushNotification("You got an achievement! " + event.getAchievement().getName());
         });
+
+        log.finer("Service [NotificationService] initialized");
     }
 
     private void popNotification(NotificationView notificationView) {
@@ -117,6 +135,7 @@ public final class NotificationManager {
      *
      * @param text the text to show
      */
+    @Override
     public void pushNotification(String text) {
         NotificationView notificationView = createNotificationView(text);
 
