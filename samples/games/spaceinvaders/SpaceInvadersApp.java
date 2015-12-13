@@ -31,15 +31,26 @@ import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.control.CircularMovementControl;
+import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.ui.UIFactory;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -47,13 +58,14 @@ import javafx.scene.input.KeyCode;
 public class SpaceInvadersApp extends GameApplication {
 
     public enum Type implements EntityType {
-        PLAYER, ENEMY, PLAYER_BULLET, ENEMY_BULLET
+        PLAYER, ENEMY, PLAYER_BULLET, ENEMY_BULLET,
+        LEVEL_INFO
     }
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Space Invaders");
-        settings.setVersion("0.1dev");
+        settings.setVersion("0.2dev");
         settings.setWidth(600);
         settings.setHeight(800);
         settings.setIntroEnabled(false);
@@ -75,14 +87,16 @@ public class SpaceInvadersApp extends GameApplication {
         input.addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                player.translate(-5, 0);
+                if (player.getX() >= 5)
+                    player.translate(-5, 0);
             }
         }, KeyCode.A);
 
         input.addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                player.translate(5, 0);
+                if (player.getX() <= getWidth() - player.getWidth() - 5)
+                    player.translate(5, 0);
             }
         }, KeyCode.D);
 
@@ -95,27 +109,59 @@ public class SpaceInvadersApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-
-    }
+    protected void initAssets() {}
 
     private Entity player;
     private IntegerProperty enemiesDestroyed;
+    private IntegerProperty score;
+    private IntegerProperty level;
 
     @Override
     protected void initGame() {
+        getAudioPlayer().setGlobalSoundVolume(0);
+
         enemiesDestroyed = new SimpleIntegerProperty(0);
+        score = new SimpleIntegerProperty();
+        level = new SimpleIntegerProperty();
 
         getAchievementManager().getAchievementByName("Hitman")
                 .achievedProperty().bind(enemiesDestroyed.greaterThanOrEqualTo(5));
 
+        spawnPlayer();
+        nextLevel();
+    }
+
+    private void initLevel() {
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 8; x++) {
-                spawnEnemy(x * (40 + 20), y * (40 + 20));
+                spawnEnemy(x * (40 + 20), 100 + y * (40 + 20));
             }
         }
+    }
 
-        spawnPlayer();
+    private void nextLevel() {
+        level.set(level.get() + 1);
+
+        PhysicsEntity levelInfo = new PhysicsEntity(Type.LEVEL_INFO);
+        levelInfo.setPosition(getWidth() / 2 - UIFactory.widthOf("Level " + level.get(), 44) / 2, 0);
+        levelInfo.setSceneView(UIFactory.newText("Level " + level.get(), Color.BLACK, 44));
+        levelInfo.setBodyType(BodyType.DYNAMIC);
+        levelInfo.setOnPhysicsInitialized(() -> levelInfo.setLinearVelocity(0, 5));
+        levelInfo.setExpireTime(Duration.seconds(3));
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.setDensity(0.05f);
+        fixtureDef.setRestitution(0.3f);
+        levelInfo.setFixtureDef(fixtureDef);
+
+        PhysicsEntity ground = new PhysicsEntity(Type.LEVEL_INFO);
+        ground.setPosition(0, getHeight() / 2);
+        ground.setSceneView(new Rectangle(getWidth(), 100, Color.TRANSPARENT));
+        ground.setExpireTime(Duration.seconds(3));
+
+        getGameWorld().addEntities(levelInfo, ground);
+
+        getMasterTimer().runOnceAfter(this::initLevel, Duration.seconds(3));
     }
 
     @Override
@@ -136,18 +182,30 @@ public class SpaceInvadersApp extends GameApplication {
                 bullet.removeFromWorld();
                 enemy.removeFromWorld();
                 enemiesDestroyed.set(enemiesDestroyed.get() + 1);
+                score.set(score.get() + 200);
+
+                if (enemiesDestroyed.get() == 40)
+                    nextLevel();
             }
         });
     }
 
     @Override
     protected void initUI() {
+        Text scoreText = UIFactory.newText("", Color.BLACK, 18);
+        scoreText.textProperty().bind(score.asString("Score:[%d]"));
+        scoreText.setTranslateX(50);
+        scoreText.setTranslateY(25);
 
+        getGameScene().addUINode(scoreText);
     }
 
     @Override
     protected void onUpdate() {
-
+        getGameWorld().getEntities(Type.PLAYER_BULLET, Type.ENEMY_BULLET)
+                .stream()
+                .filter(b -> b.isOutside(0, 0, getWidth(), getHeight()))
+                .forEach(Entity::removeFromWorld);
     }
 
     private void spawnEnemy(double x, double y) {
@@ -183,10 +241,10 @@ public class SpaceInvadersApp extends GameApplication {
 
     private void shoot() {
         Entity bullet = new Entity(Type.PLAYER_BULLET);
-        bullet.setPosition(player.getCenter().add(0, player.getHeight() / 2));
+        bullet.setPosition(player.getCenter().subtract(8, player.getHeight() / 2));
         bullet.setCollidable(true);
         bullet.setSceneView(getAssetLoader().loadTexture("tank_bullet.png"));
-        bullet.addControl(new BulletControl());
+        bullet.addControl(new ProjectileControl(new Point2D(0, -1), 10));
 
         getGameWorld().addEntity(bullet);
     }

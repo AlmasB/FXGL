@@ -30,7 +30,9 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.control.AbstractControl;
+import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxgl.time.LocalTimer;
+import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
 /**
@@ -48,6 +50,9 @@ public class EnemyControl extends AbstractControl {
         hTimer = GameApplication.getService(ServiceType.LOCAL_TIMER);
         vTimer = GameApplication.getService(ServiceType.LOCAL_TIMER);
         attackTimer = GameApplication.getService(ServiceType.LOCAL_TIMER);
+        hTimer.capture();
+        vTimer.capture();
+        attackTimer.capture();
     }
 
     @Override
@@ -57,7 +62,7 @@ public class EnemyControl extends AbstractControl {
             hTimer.capture();
         }
 
-        if (vTimer.elapsed(Duration.seconds(4))) {
+        if (vTimer.elapsed(Duration.seconds(6))) {
             entity.translate(0, 20);
             vTimer.capture();
         }
@@ -74,10 +79,10 @@ public class EnemyControl extends AbstractControl {
 
     private void shoot() {
         Entity bullet = new Entity(SpaceInvadersApp.Type.ENEMY_BULLET);
-        bullet.setPosition(entity.getCenter().add(0, entity.getHeight() / 2));
+        bullet.setPosition(entity.getCenter().add(-8, entity.getHeight() / 2));
         bullet.setCollidable(true);
         bullet.setSceneView(GameApplication.getService(ServiceType.ASSET_LOADER).loadTexture("tank_bullet.png"));
-        bullet.addControl(new BulletControl());
+        bullet.addControl(new ProjectileControl(new Point2D(0, 1), 10));
 
         entity.getWorld().addEntity(bullet);
     }
