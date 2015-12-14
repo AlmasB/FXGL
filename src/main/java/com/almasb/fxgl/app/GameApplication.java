@@ -25,7 +25,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.donotuse.QTEManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.GameWorld;
@@ -220,6 +219,15 @@ public abstract class GameApplication extends FXGLApplication {
      * </pre>
      */
     protected abstract void initInput();
+
+    /**
+     * This is called after core services are initialized
+     * but before any game init. Called only once
+     * per application lifetime.
+     */
+    protected void preInit() {
+
+    }
 
     /**
      * Override to use your custom intro video.
@@ -425,6 +433,20 @@ public abstract class GameApplication extends FXGLApplication {
         }
     }
 
+    private void initFXGL() {
+        initAchievements();
+        // we call this early to process user input bindings
+        // so we can correctly display them in menus
+        initInput();
+
+        initEventHandlers();
+
+        defaultProfile = createProfile();
+        getSaveLoadManager().loadProfile().ifPresent(this::loadFromProfile);
+
+        preInit();
+    }
+
     @Override
     public final void start(Stage stage) throws Exception {
         super.start(stage);
@@ -437,15 +459,7 @@ public abstract class GameApplication extends FXGLApplication {
         getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);
 
-        initAchievements();
-        // we call this early to process user input bindings
-        // so we can correctly display them in menus
-        initInput();
-
-        initEventHandlers();
-
-        defaultProfile = createProfile();
-        getSaveLoadManager().loadProfile().ifPresent(this::loadFromProfile);
+        initFXGL();
 
         onStageShow();
         stage.show();
