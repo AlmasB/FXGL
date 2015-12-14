@@ -125,6 +125,9 @@ public abstract class GameApplication extends FXGLApplication {
             case PLAYING:
                 getDisplay().setScene(gameScene);
                 break;
+            case PAUSED:
+                // no need to do anything
+                break;
             default:
                 log.warning("Attempted to set illegal state: " + appState);
                 break;
@@ -309,6 +312,13 @@ public abstract class GameApplication extends FXGLApplication {
                 || getState() == ApplicationState.MAIN_MENU;
     }
 
+    /**
+     * @return true if game is paused or menu is open
+     */
+    public boolean isPaused() {
+        return isMenuOpen() || getState() == ApplicationState.PAUSED;
+    }
+
     private boolean canSwitchGameMenu = true;
 
     /**
@@ -363,7 +373,6 @@ public abstract class GameApplication extends FXGLApplication {
         });
         getEventBus().addEventHandler(MenuEvent.RESUME, event -> {
             resume();
-            setState(ApplicationState.PLAYING);
         });
 
         getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
@@ -500,8 +509,7 @@ public abstract class GameApplication extends FXGLApplication {
         @Override
         protected void succeeded() {
             getEventBus().fireEvent(FXGLEvent.initAppComplete());
-
-            setState(ApplicationState.PLAYING);
+            resume();
         }
 
         @Override
@@ -519,6 +527,8 @@ public abstract class GameApplication extends FXGLApplication {
      */
     private void initApp(Task<?> initTask) {
         log.finer("Initializing App");
+        pause();
+        reset();
         setState(ApplicationState.LOADING);
 
         loadingScene.bind(initTask);
@@ -531,7 +541,7 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * (Re-)initializes the user application as new and starts the game.
      */
-    private void startNewGame() {
+    protected void startNewGame() {
         log.finer("Starting new game");
         initApp(new InitAppTask());
     }
@@ -541,26 +551,29 @@ public abstract class GameApplication extends FXGLApplication {
      *
      * @param data save data to load from
      */
-    private void startLoadedGame(Serializable data) {
+    protected void startLoadedGame(Serializable data) {
         log.finer("Starting loaded game");
-        reset();
         initApp(new InitAppTask(data));
     }
 
     /**
      * Pauses the main loop execution.
      */
-    private void pause() {
+    protected void pause() {
         log.finer("Pausing main loop");
         getEventBus().fireEvent(FXGLEvent.pause());
+
+        setState(ApplicationState.PAUSED);
     }
 
     /**
      * Resumes the main loop execution.
      */
-    private void resume() {
+    protected void resume() {
         log.finer("Resuming main loop");
         getEventBus().fireEvent(FXGLEvent.resume());
+
+        setState(ApplicationState.PLAYING);
     }
 
     /**
@@ -574,7 +587,7 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Exit the application.
      */
-    private void exit() {
+    protected void exit() {
         log.finer("Exiting Normally");
         getEventBus().fireEvent(FXGLEvent.exit());
 

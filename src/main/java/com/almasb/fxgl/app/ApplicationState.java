@@ -58,6 +58,11 @@ public enum ApplicationState {
     GAME_MENU,
 
     /**
+     * Active when game is paused but menus are not enabled.
+     */
+    PAUSED,
+
+    /**
      * This state is active when user is playing.
      */
     PLAYING

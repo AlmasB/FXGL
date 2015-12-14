@@ -285,6 +285,9 @@ public abstract class FXGLApplication extends Application {
     @Inject
     private NotificationService notificationService;
 
+    /**
+     * @return notification service
+     */
     public final NotificationService getNotificationService() {
         return notificationService;
     }

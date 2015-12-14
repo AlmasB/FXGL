@@ -70,9 +70,16 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
             clearActions();
         });
 
-        eventBus.addEventHandler(FXGLEvent.INIT_APP_COMPLETE, event -> start());
-        eventBus.addEventHandler(FXGLEvent.RESUME, event -> start());
-        eventBus.addEventHandler(FXGLEvent.PAUSE, event -> stop());
+        eventBus.addEventHandler(FXGLEvent.RESUME, event -> {
+            log.finer("Starting master timer");
+            start();
+        });
+        eventBus.addEventHandler(FXGLEvent.PAUSE, event -> {
+            log.finer("Stopping master timer");
+            stop();
+        });
+
+
 
         log.finer("Service [MasterTimer] initialized");
     }
@@ -165,6 +172,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
         log.finer("Resetting ticks to 0");
 
         tick.set(0);
+        now = 0;
     }
 
     /**
