@@ -4,12 +4,12 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.1.9-SNAPSHOT</version>
+    <version>0.1.9</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
     <description>Simple JavaFX Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/0.1.8</url>
+    <url>https://jitpack.io/#AlmasB/FXGL/0.1.9</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,6 +25,8 @@
         <!-- dependencies -->
         <junit.version>4.12</junit.version>
         <guice.version>4.0</guice.version>
+        <ehcache.version>3.0.0.m4</ehcache.version>
+        <slf4j.version>1.7.7</slf4j.version>
     </properties>
 
     <dependencies>
@@ -43,13 +45,13 @@
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>3.0.0.m4</version>
+            <version>${ehcache.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
-            <version>1.7.7</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
 

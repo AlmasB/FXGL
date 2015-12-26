@@ -14,7 +14,7 @@ JavaFX 8 Game Library<br/>
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.1.8</version>
+    <version>0.1.9</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.1.8'
+    compile 'com.github.AlmasB:FXGL:0.1.9'
 }
 ```
 
