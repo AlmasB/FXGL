@@ -176,7 +176,7 @@ public class SpaceInvadersApp extends GameApplication {
                 enemiesDestroyed.set(enemiesDestroyed.get() + 1);
                 score.set(score.get() + 200);
 
-                if (enemiesDestroyed.get() == 40)
+                if (enemiesDestroyed.get() % 40 == 0)
                     nextLevel();
             }
         });
