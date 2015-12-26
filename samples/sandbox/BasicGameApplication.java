@@ -40,6 +40,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.concurrent.Task;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -198,9 +199,20 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Rotate Up") {
             @Override
             protected void onActionBegin() {
-                getAudioPlayer().playSound(getAssetLoader().loadSound("intro.wav"));
+                //getAudioPlayer().playSound(getAssetLoader().loadSound("intro.wav"));
 
-                //executor.submit(() -> doWork());
+                executor.submit(new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        doWork();
+                        return null;
+                    }
+
+                    @Override
+                    protected void succeeded() {
+                        log.finer("Finished!");
+                    }
+                });
                 //doWork();
 
                 //getSceneManager().setNewResolution(1920, 1080);
@@ -304,9 +316,7 @@ public class BasicGameApplication extends GameApplication {
     public IntegerProperty countProperty = new SimpleIntegerProperty(0);
 
     @Override
-    protected void initAssets() {
-        //getAssetLoader().cache();
-    }
+    protected void initAssets() {}
 
     private void doWork() {
         try {
@@ -326,7 +336,6 @@ public class BasicGameApplication extends GameApplication {
         EntityView.turnOnDebugBBox(Color.RED);
 
         executor = getService(ServiceType.EXECUTOR);
-
 
 
         player = new Entity(Type.PLAYER);
@@ -371,24 +380,9 @@ public class BasicGameApplication extends GameApplication {
         getGameWorld().addEntity(box);
 
         getGameScene().addGameView(new PlayerView());
-
-        addStuff();
-    }
-
-    private void addStuff() {
-//        Entity e = new Entity(Type.BOX);
-//        e.setPosition(400, 400);
-//        e.setSceneView(getAssetManager().loadTexture("brick.png"));
-//
-//        Entity e2 = new Entity(Type.BOX);
-//        e2.setPosition(300, 400);
-//        e2.setSceneView(getAssetManager().loadTexture("brick.png").toGrayscale());
-//
-//        getGameWorld().addEntities(e, e2);
     }
 
     private class PlayerView extends EntityView {
-
         public PlayerView() {
             super(player);
 
@@ -399,25 +393,10 @@ public class BasicGameApplication extends GameApplication {
             setTranslateX(300);
             setTranslateY(300);
         }
-
     }
 
     @Override
     protected void initPhysics() {
-//        PhysicsWorld physics = getPhysicsWorld();
-//        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
-//            // the order of entities determined by
-//            // the order of their types passed into constructor
-//            @Override
-//            protected void onCollisionBegin(Entity player, Entity enemy) {
-//                debug2.setText("collision");
-//            }
-//
-//            @Override
-//            protected void onCollisionEnd(Entity player, Entity enemy) {
-//                debug2.setText("");
-//            }
-//        });
     }
 
     @Override
@@ -431,16 +410,11 @@ public class BasicGameApplication extends GameApplication {
         debug2 = new Text();
         debug2.setTranslateY(50);
 
-        Parent ui = getAssetLoader().loadFXML("test_ui.fxml", new FXGLController(this));
-
-
-        getGameScene().addUINodes(debug, debug2, ui);
+        getGameScene().addUINodes(debug, debug2);
     }
 
     @Override
-    protected void onUpdate() {
-        //debug.setText(enemy.getView().getBoundsInParent().toString() + " " + enemy.getX());
-    }
+    protected void onUpdate() {}
 
     public static void main(String[] args) {
         launch(args);

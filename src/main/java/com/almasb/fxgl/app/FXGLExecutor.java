@@ -26,35 +26,40 @@
 
 package com.almasb.fxgl.app;
 
-import javafx.concurrent.Service;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.util.FXGLLogger;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javafx.concurrent.Task;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
+
 /**
+ * Uses cached thread pool to run tasks in the background.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 public class FXGLExecutor implements Executor {
-    private Service<Void> service;
-    private Runnable task;
 
-    public FXGLExecutor() {
-        service = new Service<Void>() {
-            @Override
-            protected Task<Void> createTask() {
-                return new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        if (task != null)
-                            task.run();
-                        return null;
-                    }
-                };
-            }
-        };
+    private static final Logger log = FXGLLogger.getLogger("FXGL.Executor");
+
+    private ExecutorService service = Executors.newCachedThreadPool();
+
+    @Inject
+    private FXGLExecutor(EventBus eventBus) {
+        eventBus.addEventHandler(FXGLEvent.EXIT, event -> {
+            service.shutdownNow();
+        });
+
+        log.finer("Service [Executor] initialized");
     }
 
     @Override
-    public void submit(Runnable task) {
-        this.task = task;
-        service.restart();
+    public void submit(Task<?> task) {
+        service.submit(task);
     }
 }

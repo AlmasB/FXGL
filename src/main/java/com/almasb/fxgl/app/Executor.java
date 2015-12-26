@@ -26,9 +26,19 @@
 
 package com.almasb.fxgl.app;
 
+import javafx.concurrent.Task;
+
 /**
+ * Defines background thread pool executor service.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface Executor {
-    void submit(Runnable code);
+
+    /**
+     * Submit a task to be executed in the background.
+     *
+     * @param task the task to execute
+     */
+    void submit(Task<?> task);
 }
