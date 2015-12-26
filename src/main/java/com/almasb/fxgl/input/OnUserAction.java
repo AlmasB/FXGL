@@ -33,6 +33,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a method that it should be called when user triggers an action.
+ * Note: the method must be in the class extending {@link com.almasb.fxgl.app.GameApplication}
+ * and its signature must be <code>public void anyName()</code>.
  *
  * @see s3input2.BasicGameApplication sample for usage guide
  */

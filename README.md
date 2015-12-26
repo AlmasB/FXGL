@@ -60,6 +60,7 @@ FXGL 0.1.9 supports:
 * Entity Component/Control System
 * Time Management System
 * Global and Scoped Event System
+* Multithreading
 * Input Bindings (Keys + Mouse)
 * Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf" custom binary formats)
 * Automated Collision Handling (also unified, physics collisions are hooked into FXGL)
