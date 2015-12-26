@@ -24,42 +24,21 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.concurrent;
 
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.FXGLEvent;
-import com.almasb.fxgl.util.FXGLLogger;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import javafx.concurrent.Task;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Logger;
-
 /**
- * Uses cached thread pool to run tasks in the background.
+ * Defines background thread pool executor service.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
-public class FXGLExecutor implements Executor {
+public interface Executor {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.Executor");
-
-    private ExecutorService service = Executors.newCachedThreadPool();
-
-    @Inject
-    private FXGLExecutor(EventBus eventBus) {
-        eventBus.addEventHandler(FXGLEvent.EXIT, event -> {
-            service.shutdownNow();
-        });
-
-        log.finer("Service [Executor] initialized");
-    }
-
-    @Override
-    public void submit(Task<?> task) {
-        service.submit(task);
-    }
+    /**
+     * Submit a task to be executed in the background.
+     *
+     * @param task the task to execute
+     */
+    void submit(Task<?> task);
 }

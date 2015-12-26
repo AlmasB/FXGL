@@ -26,7 +26,7 @@
 package sandbox;
 
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.app.Executor;
+import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.input.InputModifier;
@@ -42,7 +42,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Task;
 import javafx.geometry.Point2D;
-import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
