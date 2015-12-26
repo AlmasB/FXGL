@@ -255,7 +255,7 @@ public final class GameScene extends FXGLScene {
         uiRoot.setMouseTransparent(b);
     }
 
-    public void onEntityAdded(Entity entity) {
+    private void onEntityAdded(Entity entity) {
         entity.getSceneView().ifPresent(view -> {
             getRenderLayer(view.getRenderLayer()).getChildren().add(view);
         });
@@ -266,11 +266,11 @@ public final class GameScene extends FXGLScene {
         }
     }
 
-    public void onEntityRemoved(Entity entity) {
+    private void onEntityRemoved(Entity entity) {
         particles.remove(entity);
     }
 
-    public void onWorldUpdate() {
+    private void onWorldUpdate() {
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
@@ -278,7 +278,7 @@ public final class GameScene extends FXGLScene {
         particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
-    public void onWorldReset() {
+    private void onWorldReset() {
         log.finer("Resetting game scene");
 
         getViewport().unbind();

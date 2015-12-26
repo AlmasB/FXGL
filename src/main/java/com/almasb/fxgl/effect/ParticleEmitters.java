@@ -34,6 +34,8 @@ import javafx.util.Duration;
 import java.util.Random;
 
 /**
+ * Holds configuration of predefined particle emitters.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class ParticleEmitters {
@@ -60,6 +62,9 @@ public final class ParticleEmitters {
         return rand() * (max - min) + min;
     }
 
+    /**
+     * @return new emitter with fire configuration
+     */
     public static ParticleEmitter newFireEmitter() {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(15);
@@ -75,6 +80,9 @@ public final class ParticleEmitters {
         return emitter;
     }
 
+    /**
+     * @return new emitter with explosion configuration
+     */
     public static ParticleEmitter newExplosionEmitter() {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(100);
@@ -90,6 +98,9 @@ public final class ParticleEmitters {
         return emitter;
     }
 
+    /**
+     * @return new emitter with implosion configuration
+     */
     public static ParticleEmitter newImplosionEmitter() {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(100);
@@ -113,6 +124,9 @@ public final class ParticleEmitters {
         return emitter;
     }
 
+    /**
+     * @return new emitter with sparks configuration
+     */
     public static ParticleEmitter newSparkEmitter() {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(30);
@@ -127,34 +141,21 @@ public final class ParticleEmitters {
         return emitter;
     }
 
-//    public SmokeEmitter() {
-//        setNumParticles(5);
-//        setEmissionRate(1);
-//        setSize(9, 10);
-//        setColorFunction(() -> Color.rgb(230, 230, 230));
-//        setGravityFunction(() -> new Point2D(0, rand() * -0.03));
-//    }
-//
-//    @Override
-//    protected Particle emit(int i, double x, double y) {
-//        //Point2D spawn = new Point2D(i * (rand() - 0.5), (rand() - 1));
-//        Particle p = new Particle(new Point2D(x, y).add(rand(-1, 1), 0),
-//                new Point2D((rand() * 0.1), rand() * -0.02 - 2.4),
-//                getGravityFunction().get(),
-//                getRandomSize(),
-//                new Point2D(-0.01, -0.05),
-//                Duration.seconds(rand(6, 10)),
-//                getColorFunction().get(),
-//                BlendMode.ADD);
-//
-//        p.setControl(particle -> {
-//            particle.setVelX(particle.getVelX() * 0.8);
-//            particle.setVelY(particle.getVelY() * 0.8);
-//
-//            if (particle.getLife() < rand() - 0.2) {
-//                particle.setBlendMode(BlendMode.SRC_ATOP);
-//            }
-//        });
-//        return p;
-//    }
+    /**
+     * @return new emitter with smoke configuration
+     */
+    public static ParticleEmitter newSmokeEmitter() {
+        ParticleEmitter emitter = new ParticleEmitter();
+        emitter.setNumParticles(5);
+        emitter.setEmissionRate(1);
+        emitter.setSize(9, 10);
+        emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y).add(rand(-1, 1), 0));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D((rand() * 0.1), 0));
+        emitter.setGravityFunction(() -> new Point2D(0, rand() * -0.03));
+        emitter.setExpireFunction((i, x, y) -> Duration.seconds(rand(1, 3)));
+        emitter.setColorFunction(() -> Color.rgb(230, 230, 230));
+        emitter.setScaleFunction((i, x, y) -> new Point2D(-0.01, -0.05));
+
+        return emitter;
+    }
 }

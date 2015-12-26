@@ -30,6 +30,8 @@ import com.google.inject.Inject;
 import javafx.util.Duration;
 
 /**
+ * Simple timer to capture current time and check if certain time has passed.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGLLocalTimer implements LocalTimer {

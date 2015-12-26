@@ -132,7 +132,7 @@ public class ReadOnlyGameSettings {
         return menuStyle;
     }
 
-    public KeyCode getMenuKey() {
+    public final KeyCode getMenuKey() {
         return menuKey;
     }
 }

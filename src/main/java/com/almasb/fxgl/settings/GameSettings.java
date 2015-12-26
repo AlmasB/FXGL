@@ -184,6 +184,11 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.menuStyle = style;
     }
 
+    /**
+     * Set the key that will trigger in-game menu.
+     *
+     * @param menuKey menu key
+     */
     public void setMenuKey(KeyCode menuKey) {
         this.menuKey = menuKey;
     }

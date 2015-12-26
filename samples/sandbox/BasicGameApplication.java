@@ -28,6 +28,9 @@ package sandbox;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.effect.ParticleEmitter;
+import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.gameplay.Achievement;
@@ -68,6 +71,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 public class BasicGameApplication extends GameApplication {
 
     private enum Type implements EntityType {
@@ -88,8 +95,8 @@ public class BasicGameApplication extends GameApplication {
         settings.setTitle("Basic FXGL Application");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
-        settings.setMenuEnabled(true);
+        settings.setIntroEnabled(false);
+        settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         //settings.setMenuStyle(MenuStyle.GTA5);
         //settings.setCSS("fxgl_gta5.css");
@@ -198,23 +205,26 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Rotate Up") {
             @Override
             protected void onActionBegin() {
-                //getAudioPlayer().playSound(getAssetLoader().loadSound("intro.wav"));
 
-                executor.submit(new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        doWork();
-                        return null;
-                    }
+                ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
+                ParticleEntity entity = new ParticleEntity(Type.BOX);
+                entity.setPosition(300, 550);
+                entity.setEmitter(emitter);
 
-                    @Override
-                    protected void succeeded() {
-                        log.finer("Finished!");
-                    }
-                });
-                //doWork();
+                getGameWorld().addEntity(entity);
 
-                //getSceneManager().setNewResolution(1920, 1080);
+//                executor.submit(new Task<Void>() {
+//                    @Override
+//                    protected Void call() throws Exception {
+//                        doWork();
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    protected void succeeded() {
+//                        log.finer("Finished!");
+//                    }
+//                });
             }
         }, KeyCode.UP);
 

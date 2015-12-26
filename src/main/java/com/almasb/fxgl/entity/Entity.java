@@ -599,6 +599,18 @@ public class Entity {
     }
 
     /**
+     * Returns control of given type. Unlike {@link #getControl(Class)} there is no
+     * check for control existence and return is not wrapped with Optional.
+     * Use this only if are certain the entity has this type of control.
+     *
+     * @param type control type
+     * @return control
+     */
+    public final <T extends Control> T getControlUnsafe(Class<T> type) {
+        return type.cast(controls.get(type));
+    }
+
+    /**
      * Adds behavior to entity.
      * Only 1 control per type is allowed.
      * Anonymous controls are not allowed.
@@ -659,13 +671,26 @@ public class Entity {
 
     /**
      * Returns component of given type if registered. The type must be exactly
-     * the same as the type of the instance registered.
+     * the same as the type of the instance registered. If component not found, {@link Optional#empty()}
+     * is returned.
      *
      * @param type component type
      * @return component
      */
     public final <T extends Component> Optional<T> getComponent(Class<T> type) {
         return Optional.ofNullable(type.cast(components.get(type)));
+    }
+
+    /**
+     * Returns component of given type. Unlike {@link #getComponent(Class)} there is no
+     * checking if the component exists and so bare object is returned, i.e. can be null.
+     * Use this only if you are certain that entity has this type of component.
+     *
+     * @param type component type
+     * @return component
+     */
+    public final <T extends Component> T getComponentUnsafe(Class<T> type) {
+        return type.cast(components.get(type));
     }
 
     /**

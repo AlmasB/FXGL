@@ -31,12 +31,14 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
+ * Event related to display.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class DisplayEvent extends Event {
 
     /**
-     * Common super-type for all menu event types.
+     * Common super-type for all display event types.
      */
     public static final EventType<DisplayEvent> ANY =
             new EventType<>(Event.ANY, "DISPLAY_EVENT");

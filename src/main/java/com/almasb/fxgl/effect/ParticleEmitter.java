@@ -141,30 +141,56 @@ public class ParticleEmitter {
 
     private TriFunction<Integer, Double, Double, Point2D> velocityFunction = (i, x, y) -> Point2D.ZERO;
 
+    /**
+     * Set initial velocity function. Particles when spawned will use the function
+     * to obtain initial velocity.
+     *
+     * @param velocityFunction the velocity function
+     */
     public final void setVelocityFunction(TriFunction<Integer, Double, Double, Point2D> velocityFunction) {
         this.velocityFunction = velocityFunction;
     }
 
     private TriFunction<Integer, Double, Double, Point2D> spawnPointFunction = (i, x, y) -> Point2D.ZERO;
 
+    /**
+     * Particles will use the function to obtain spawn points.
+     *
+     * @param spawnPointFunction supplier of spawn points
+     */
     public final void setSpawnPointFunction(TriFunction<Integer, Double, Double, Point2D> spawnPointFunction) {
         this.spawnPointFunction = spawnPointFunction;
     }
 
     private TriFunction<Integer, Double, Double, Point2D> scaleFunction = (i, x, y) -> Point2D.ZERO;
 
+    /**
+     * Scale function defines how the size of particles change over time.
+     *
+     * @param scaleFunction scaling function
+     */
     public final void setScaleFunction(TriFunction<Integer, Double, Double, Point2D> scaleFunction) {
         this.scaleFunction = scaleFunction;
     }
 
     private TriFunction<Integer, Double, Double, Duration> expireFunction = (i, x, y) -> Duration.seconds(1);
 
+    /**
+     * Expire function is used to obtain expire time for particles.
+     *
+     * @param expireFunction function to supply expire time
+     */
     public final void setExpireFunction(TriFunction<Integer, Double, Double, Duration> expireFunction) {
         this.expireFunction = expireFunction;
     }
 
     private TriFunction<Integer, Double, Double, BlendMode> blendFunction = (i, x, y) -> BlendMode.ADD;
 
+    /**
+     * Blend function is used to obtain blend mode for particles.
+     *
+     * @param blendFunction blend supplier function
+     */
     public final void setBlendFunction(TriFunction<Integer, Double, Double, BlendMode> blendFunction) {
         this.blendFunction = blendFunction;
     }

@@ -32,12 +32,14 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.InputEvent;
 
 /**
+ * Wrapper for JavaFX input events.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGLInputEvent extends Event {
 
     public static final EventType<FXGLInputEvent> ANY =
-            new EventType<>(Event.ANY, "FXGL_MOUSE_EVENT");
+            new EventType<>(Event.ANY, "FXGL_INPUT_EVENT");
 
     private InputEvent event;
 

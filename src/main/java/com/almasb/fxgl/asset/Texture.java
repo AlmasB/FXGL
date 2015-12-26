@@ -251,6 +251,11 @@ public class Texture extends ImageView {
         return new Texture(image);
     }
 
+    /**
+     * Set texture data by copying it from other texture.
+     *
+     * @param other the texture to copy from
+     */
     public final void set(Texture other) {
         setFitWidth(other.getFitWidth());
         setFitHeight(other.getFitHeight());

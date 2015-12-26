@@ -84,7 +84,7 @@ public final class PhysicsWorld {
     private double appHeight;
 
     @Inject
-    public PhysicsWorld(@Named("appHeight") double appHeight) {
+    private PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
         this.tick.bind(GameApplication.getService(ServiceType.MASTER_TIMER).tickProperty());
 
@@ -253,7 +253,7 @@ public final class PhysicsWorld {
         collisionHandlers.remove(handler);
     }
 
-    public void addEntity(Entity entity) {
+    private void addEntity(Entity entity) {
         entities.add(entity);
         if (entity instanceof PhysicsEntity) {
             PhysicsEntity pEntity = (PhysicsEntity) entity;
@@ -262,7 +262,7 @@ public final class PhysicsWorld {
         }
     }
 
-    public void removeEntity(Entity entity) {
+    private void removeEntity(Entity entity) {
         entities.remove(entity);
         if (entity instanceof PhysicsEntity)
             destroyBody((PhysicsEntity) entity);
@@ -325,6 +325,13 @@ public final class PhysicsWorld {
 
     private EdgeCallback raycastCallback = new EdgeCallback();
 
+    /**
+     * Performs a ray cast from start point to end point.
+     *
+     * @param start start point
+     * @param end end point
+     * @return ray cast result
+     */
     public RaycastResult raycast(Point2D start, Point2D end) {
         raycastCallback.reset();
         physicsWorld.raycast(raycastCallback, toPoint(start), toPoint(end));

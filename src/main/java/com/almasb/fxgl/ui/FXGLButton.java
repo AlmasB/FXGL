@@ -34,6 +34,8 @@ import javafx.scene.input.KeyCode;
 
 /**
  * JavaFX Button styled with FXGL CSS.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class FXGLButton extends Button {
     public FXGLButton() {

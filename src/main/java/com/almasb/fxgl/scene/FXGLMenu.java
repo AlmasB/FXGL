@@ -227,7 +227,6 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentAudio() {
         Slider sliderMusic = new Slider(0, 1, 1);
         sliderMusic.valueProperty().bindBidirectional(app.getAudioPlayer().globalMusicVolumeProperty());
-        //app.getAudioPlayer().globalMusicVolumeProperty().bindBidirectional(sliderMusic.valueProperty());
 
         Text textMusic = UIFactory.newText("Music Volume: ");
         Text percentMusic = UIFactory.newText("");
@@ -235,7 +234,6 @@ public abstract class FXGLMenu extends FXGLScene {
 
         Slider sliderSound = new Slider(0, 1, 1);
         sliderSound.valueProperty().bindBidirectional(app.getAudioPlayer().globalSoundVolumeProperty());
-        //app.getAudioPlayer().globalSoundVolumeProperty().bindBidirectional(sliderSound.valueProperty());
 
         Text textSound = UIFactory.newText("Sound Volume: ");
         Text percentSound = UIFactory.newText("");

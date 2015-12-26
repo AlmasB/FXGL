@@ -38,6 +38,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
+ * Represents visual aspect of a notification.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 final class NotificationView extends Button {
@@ -79,6 +81,9 @@ final class NotificationView extends Button {
         out.play();
     }
 
+    /**
+     * @return notification of which this is the view
+     */
     public Notification getNotification() {
         return notification;
     }

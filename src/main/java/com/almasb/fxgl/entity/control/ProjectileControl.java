@@ -44,23 +44,40 @@ public class ProjectileControl extends AbstractControl {
         this.speed = speed;
     }
 
+    /**
+     * @return velocity
+     */
     public Point2D getVelocity() {
         return velocity;
     }
 
+    /**
+     * @return direction vector (normalized)
+     */
     public Point2D getDirection() {
         return velocity.normalize();
     }
 
+    /**
+     * Set direction in which projectile is moving.
+     *
+     * @param direction the vector
+     */
     public void setDirection(Point2D direction) {
         this.velocity = direction.normalize().multiply(speed);
         entity.rotateToVector(velocity);
     }
 
+    /**
+     * @return current speed
+     */
     public double getSpeed() {
         return speed;
     }
 
+    /**
+     * @param speed the speed value
+     */
     public void setSpeed(double speed) {
         this.speed = speed;
         this.velocity = velocity.normalize().multiply(speed);

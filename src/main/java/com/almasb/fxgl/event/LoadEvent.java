@@ -31,6 +31,8 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
+ * Event related to any type of loading.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class LoadEvent extends Event {

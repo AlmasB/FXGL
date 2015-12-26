@@ -97,9 +97,9 @@ public class RechargeableComponent extends DoubleComponent {
 
     /**
      * Restore component by given percentage. The percentage is calculated from
-     * max value.
+     * current value.
      *
-     * @param value percentage of max value
+     * @param value percentage of current value
      */
     public void restorePercentageCurrent(double value) {
         restore(value / 100 * getValue());
@@ -107,7 +107,7 @@ public class RechargeableComponent extends DoubleComponent {
 
     /**
      * Restore by given percentage. The percentage is calculated from
-     * max health.
+     * max value.
      *
      * @param value percentage of max value
      */

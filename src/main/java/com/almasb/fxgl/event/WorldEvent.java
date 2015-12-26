@@ -32,6 +32,8 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
+ * Represents an event that occurred in the game world.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class WorldEvent extends Event {

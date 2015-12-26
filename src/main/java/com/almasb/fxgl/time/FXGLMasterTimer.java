@@ -79,8 +79,6 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
             stop();
         });
 
-
-
         log.finer("Service [MasterTimer] initialized");
     }
 

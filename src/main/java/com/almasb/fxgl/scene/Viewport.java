@@ -151,6 +151,15 @@ public final class Viewport {
     private IntegerProperty maxX = new SimpleIntegerProperty(Integer.MAX_VALUE);
     private IntegerProperty maxY = new SimpleIntegerProperty(Integer.MAX_VALUE);
 
+    /**
+     * Set bounds to viewport so that the viewport will not move outside the bounds
+     * when following an entity.
+     *
+     * @param minX min x
+     * @param minY min y
+     * @param maxX max x
+     * @param maxY max y
+     */
     public void setBounds(int minX, int minY, int maxX, int maxY) {
         this.minX.set(minX);
         this.minY.set(minY);

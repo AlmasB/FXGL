@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
+ * FXGL provider of audio service.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton

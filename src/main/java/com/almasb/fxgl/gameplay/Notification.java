@@ -34,6 +34,9 @@ package com.almasb.fxgl.gameplay;
 public final class Notification {
     private String message;
 
+    /**
+     * @return message associated with this notification
+     */
     public String getMessage() {
         return message;
     }

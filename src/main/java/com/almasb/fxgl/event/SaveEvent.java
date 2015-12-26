@@ -31,6 +31,8 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
+ * Occurs during save.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class SaveEvent extends Event {
