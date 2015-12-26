@@ -39,6 +39,9 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.*;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -198,6 +201,92 @@ public final class Input implements UserProfileSavable {
      */
     public void setProcessActions(boolean b) {
         processActions = b;
+    }
+
+    private Map<String, InputMapping> inputMappings = new HashMap<>();
+
+    /**
+     * Add input mapping. The actual implementation needs to be specified by
+     * {@link OnUserAction} annotation.
+     *
+     * @param inputMapping the mapping
+     */
+    public void addInputMapping(InputMapping inputMapping) {
+        inputMappings.put(inputMapping.getActionName(), inputMapping);
+    }
+
+    private InputMapping getInputMappingByName(String actionName) {
+        return inputMappings.get(actionName);
+    }
+
+    /**
+     * Given an object scans its methods for {@link OnUserAction} annotation
+     * and creates UserActions from its data.
+     *
+     * @param instance the class instance to scan
+     */
+    public void scanForUserActions(Object instance) {
+        Map<String, Map<ActionType, Method> > map = new HashMap<>();
+
+        for (Method method : instance.getClass().getDeclaredMethods()) {
+            OnUserAction action = method.getDeclaredAnnotation(OnUserAction.class);
+            if (action != null) {
+                Map<ActionType, Method> mapping = map.getOrDefault(action.name(), new HashMap<>());
+                if (mapping.isEmpty()) {
+                    map.put(action.name(), mapping);
+                }
+                mapping.put(action.type(), method);
+            }
+        }
+
+        map.forEach((name, mapping) -> {
+            Method onAction = mapping.get(ActionType.ON_ACTION);
+            Method onActionBegin = mapping.get(ActionType.ON_ACTION_BEGIN);
+            Method onActionEnd = mapping.get(ActionType.ON_ACTION_END);
+
+            UserAction action = new UserAction(name) {
+                @Override
+                protected void onActionBegin() {
+                    if (onActionBegin != null) {
+                        try {
+                            onActionBegin.invoke(instance);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+
+                @Override
+                protected void onAction() {
+                    if (onAction != null) {
+                        try {
+                            onAction.invoke(instance);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+
+                @Override
+                protected void onActionEnd() {
+                    if (onActionEnd != null) {
+                        try {
+                            onActionEnd.invoke(instance);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            };
+
+
+            InputMapping inputMapping = getInputMappingByName(name);
+            if (inputMapping.isKeyTrigger()) {
+                addAction(action, inputMapping.getKeyTrigger(), inputMapping.getModifier());
+            } else if (inputMapping.isButtonTrigger()) {
+                addAction(action, inputMapping.getButtonTrigger(), inputMapping.getModifier());
+            }
+        });
     }
 
     /**

@@ -28,6 +28,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.GameWorld;
+import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -42,12 +43,15 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
-import java.util.Optional;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -438,6 +442,8 @@ public abstract class GameApplication extends FXGLApplication {
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         initInput();
+        // scan for annotated methods and register them too
+        getInput().scanForUserActions(this);
 
         initEventHandlers();
 
