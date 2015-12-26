@@ -36,6 +36,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 /**
@@ -116,10 +117,11 @@ public final class CCTRMainMenu extends FXGLMenu {
     }
 
     private Node makeBackground() {
-        Texture bg = app.getAssetLoader().loadTexture("bg_cctr.jpg");
-        bg.setFitWidth(app.getWidth());
-        bg.setFitHeight(app.getHeight());
-        return bg;
+//        Texture bg = app.getAssetLoader().loadTexture("bg_cctr.jpg");
+//        bg.setFitWidth(app.getWidth());
+//        bg.setFitHeight(app.getHeight());
+//        return bg;
+        return new Rectangle(app.getWidth(), app.getHeight(), Color.BLUEVIOLET);
     }
 
     /**
