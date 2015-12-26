@@ -5,10 +5,10 @@
 
 
 <?import javafx.scene.control.Label?>
-<Pane prefWidth="1280" prefHeight="720"
+<Pane prefWidth="800" prefHeight="600"
       xmlns="http://javafx.com/javafx/8.0.60"
       xmlns:fx="http://javafx.com/fxml/1">
 
-    <Label fx:id="labelCount" translateX="1000" translateY="200" text="COUNT" />
+    <Label fx:id="labelCount" translateX="400" translateY="100" />
 
 </Pane>
