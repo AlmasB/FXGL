@@ -26,16 +26,15 @@
 
 package games.spaceinvaders;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.entity.control.ProjectileControl;
+import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.gameplay.Achievement;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -71,6 +70,7 @@ public class SpaceInvadersApp extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(false);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -84,28 +84,9 @@ public class SpaceInvadersApp extends GameApplication {
     protected void initInput() {
         Input input = getInput();
 
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                if (player.getX() >= 5)
-                    player.translate(-5, 0);
-            }
-        }, KeyCode.A);
-
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                if (player.getX() <= getWidth() - player.getWidth() - 5)
-                    player.translate(5, 0);
-            }
-        }, KeyCode.D);
-
-        input.addAction(new UserAction("Shoot") {
-            @Override
-            protected void onActionBegin() {
-                shoot();
-            }
-        }, KeyCode.F);
+        input.addInputMapping(new InputMapping("Move Left", KeyCode.A));
+        input.addInputMapping(new InputMapping("Move Right", KeyCode.D));
+        input.addInputMapping(new InputMapping("Shoot", KeyCode.F));
     }
 
     @Override
@@ -115,6 +96,7 @@ public class SpaceInvadersApp extends GameApplication {
     private IntegerProperty enemiesDestroyed;
     private IntegerProperty score;
     private IntegerProperty level;
+    private IntegerProperty lives;
 
     @Override
     protected void initGame() {
@@ -123,6 +105,7 @@ public class SpaceInvadersApp extends GameApplication {
         enemiesDestroyed = new SimpleIntegerProperty(0);
         score = new SimpleIntegerProperty();
         level = new SimpleIntegerProperty();
+        lives = new SimpleIntegerProperty(3);
 
         getAchievementManager().getAchievementByName("Hitman")
                 .achievedProperty().bind(enemiesDestroyed.greaterThanOrEqualTo(5));
@@ -172,7 +155,16 @@ public class SpaceInvadersApp extends GameApplication {
             @Override
             protected void onCollisionBegin(Entity bullet, Entity player) {
                 bullet.removeFromWorld();
-                log.info("Player got hit");
+                lives.set(lives.get() - 1);
+                if (lives.get() == 0) {
+                    getDisplay().showConfirmationBox("Game Over. Continue?", yes -> {
+                        if (yes) {
+                            startNewGame();
+                        } else {
+                            getEventBus().fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
+                        }
+                    });
+                }
             }
         });
 
@@ -196,6 +188,23 @@ public class SpaceInvadersApp extends GameApplication {
         scoreText.textProperty().bind(score.asString("Score:[%d]"));
         scoreText.setTranslateX(50);
         scoreText.setTranslateY(25);
+
+        for (int i = 0; i < lives.get(); i++) {
+            final int index = i;
+            Texture t = getAssetLoader().loadTexture("life.png");
+            t.setFitWidth(16);
+            t.setFitHeight(16);
+            t.setTranslateX(getWidth() * 3 / 4 + i * 32);
+            t.setTranslateY(10);
+
+            lives.addListener((observable, oldValue, newValue) -> {
+                if (newValue.intValue() == index) {
+                    getGameScene().removeUINode(t);
+                }
+            });
+
+            getGameScene().addUINode(t);
+        }
 
         getGameScene().addUINode(scoreText);
     }
@@ -239,7 +248,30 @@ public class SpaceInvadersApp extends GameApplication {
         getGameWorld().addEntity(player);
     }
 
-    private void shoot() {
+    @OnUserAction(name = "Move Left", type = ActionType.ON_ACTION)
+    public void moveLeft() {
+        if (player.getX() >= 5)
+            player.translate(-5, 0);
+    }
+
+    @OnUserAction(name = "Move Right", type = ActionType.ON_ACTION_BEGIN)
+    public void moveRightStart() {
+        log.finer("Starting move right");
+    }
+
+    @OnUserAction(name = "Move Right", type = ActionType.ON_ACTION)
+    public void moveRight() {
+        if (player.getX() <= getWidth() - player.getWidth() - 5)
+            player.translate(5, 0);
+    }
+
+    @OnUserAction(name = "Move Right", type = ActionType.ON_ACTION_END)
+    public void moveRightStop() {
+        log.finer("Stopping move right");
+    }
+
+    @OnUserAction(name = "Shoot", type = ActionType.ON_ACTION_BEGIN)
+    public void shoot() {
         Entity bullet = new Entity(Type.PLAYER_BULLET);
         bullet.setPosition(player.getCenter().subtract(8, player.getHeight() / 2));
         bullet.setCollidable(true);

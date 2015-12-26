@@ -34,12 +34,10 @@ import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.scene.IntroFactory;
 import com.almasb.fxgl.scene.IntroScene;
 import com.almasb.fxgl.scene.Viewport;
-import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
@@ -214,9 +212,9 @@ public class BasicGameApplication extends GameApplication {
             protected void onActionBegin() {
                 getAssetLoader().clearCache();
 
-                getNotificationManager().pushNotification("You got an achievement!");
-                getNotificationManager().pushNotification("You have won the game!");
-                getNotificationManager().pushNotification("Just a test of the notification system!");
+                getNotificationService().pushNotification("You got an achievement!");
+                getNotificationService().pushNotification("You have won the game!");
+                getNotificationService().pushNotification("Just a test of the notification system!");
             }
         }, KeyCode.DOWN);
 
