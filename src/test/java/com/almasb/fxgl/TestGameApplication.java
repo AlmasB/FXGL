@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
@@ -46,7 +46,7 @@ public class TestGameApplication extends GameApplication {
     protected void initInput() {}
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {}

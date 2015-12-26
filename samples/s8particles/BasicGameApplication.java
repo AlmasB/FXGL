@@ -25,25 +25,16 @@
  */
 package s8particles;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.effect.ExplosionEmitter;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.effect.ParticleEmitter;
+import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.event.InputManager;
-import com.almasb.fxgl.event.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.util.ApplicationMode;
-
-import javafx.scene.input.KeyCode;
+import com.almasb.fxgl.app.ApplicationMode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class BasicGameApplication extends GameApplication {
@@ -67,7 +58,7 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initInput() {
-        InputManager input = getInputManager();
+        Input input = getInput();
 
         input.addAction(new UserAction("Spawn Explosion") {
             @Override
@@ -77,7 +68,7 @@ public class BasicGameApplication extends GameApplication {
                 explosion.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
 
                 // 2. create and configure emitter
-                ExplosionEmitter emitter = new ExplosionEmitter();
+                ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
                 explosion.setEmitter(emitter);
 
                 // 3. set expiry time to 0.5 seconds
@@ -91,7 +82,7 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {}

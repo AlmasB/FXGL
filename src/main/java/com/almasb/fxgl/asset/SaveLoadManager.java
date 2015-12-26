@@ -27,6 +27,8 @@ package com.almasb.fxgl.asset;
 
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.util.FXGLLogger;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,13 +42,18 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum SaveLoadManager {
-    INSTANCE;
+@Singleton
+public final class SaveLoadManager {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SaveLoadManager");
 
     private static final String SAVE_DIR = "saves/";
     private static final String PROFILE_DIR = "profiles/";
+
+    @Inject
+    private SaveLoadManager() {
+        log.finer("Service [SaveLoadManager] initialized");
+    }
 
     /**
      * Save serializable data onto a disk file system under "saves/"

@@ -25,17 +25,9 @@
  */
 package com.almasb.fxgl.ui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
-
-import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.util.FXGLLogger;
-
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -51,6 +43,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  * Default FXGL dialog box. Represented by a rectangle with a black
@@ -69,13 +69,15 @@ public final class FXGLDialogBox extends Stage {
     private StackPane root = new StackPane();
     private Scene scene = new Scene(root);
 
-    FXGLDialogBox(Window owner) {
+    public FXGLDialogBox(Window owner) {
         initStyle(StageStyle.TRANSPARENT);
         initModality(Modality.WINDOW_MODAL);
         initOwner(owner);
         setScene(scene);
 
-        root.getStylesheets().add(AssetManager.INSTANCE.loadCSS("fxgl_dark.css"));
+        root.getStylesheets().add(GameApplication
+                .getService(ServiceType.ASSET_LOADER)
+                .loadCSS("fxgl_dark.css"));
     }
 
     /**

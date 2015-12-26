@@ -25,12 +25,17 @@
  */
 package com.almasb.fxgl.ui;
 
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.asset.FXGLAssets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 
 /**
  * JavaFX Button styled with FXGL CSS.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class FXGLButton extends Button {
     public FXGLButton() {
@@ -44,8 +49,18 @@ public class FXGLButton extends Button {
         setAlignment(Pos.CENTER);
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
+                GameApplication.getService(ServiceType.AUDIO_PLAYER)
+                        .playSound(FXGLAssets.SOUND_MENU_PRESS);
                 fire();
             }
+        });
+        setOnMouseEntered(e -> {
+            GameApplication.getService(ServiceType.AUDIO_PLAYER)
+                    .playSound(FXGLAssets.SOUND_MENU_SELECT);
+        });
+        setOnMouseClicked(e -> {
+            GameApplication.getService(ServiceType.AUDIO_PLAYER)
+                    .playSound(FXGLAssets.SOUND_MENU_PRESS);
         });
     }
 

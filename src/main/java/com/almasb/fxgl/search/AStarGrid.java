@@ -29,7 +29,7 @@ package com.almasb.fxgl.search;
 import java.util.List;
 
 /**
- * A grid containing A* nodes.
+ * A* grid containing A* nodes.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -51,7 +51,46 @@ public class AStarGrid {
             for (int x = 0; x < grid.length; x++) {
                 grid[x][y] = new AStarNode(x, y, NodeState.WALKABLE);
             }
+        }
+    }
 
+    /**
+     *
+     * @return grid width
+     */
+    public int getWidth() {
+        return grid.length;
+    }
+
+    /**
+     *
+     * @return grid height
+     */
+    public int getHeight() {
+        return grid[0].length;
+    }
+
+    /**
+     *
+     * @param x x coord
+     * @param y y coord
+     * @return true iff the point is within the grid
+     */
+    public boolean isWithin(int x, int y) {
+        return x >= 0 && x < getWidth()
+                && y >= 0 && y < getHeight();
+    }
+
+    /**
+     * Convenience method to set state of all nodes to given state.
+     *
+     * @param state node state
+     */
+    public void setStateForAllNodes(NodeState state) {
+        for (int y = 0; y < getHeight(); y++) {
+            for (int x = 0; x < getWidth(); x++) {
+                getNode(x, y).setState(state);
+            }
         }
     }
 

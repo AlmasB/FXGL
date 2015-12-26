@@ -25,36 +25,23 @@
  */
 package games.walker;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.AnimationChannel;
-import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.DynamicAnimatedTexture;
 import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.effect.ExplosionEmitter;
-import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.event.InputManager;
-import com.almasb.fxgl.event.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.time.Timer;
-import com.almasb.fxgl.time.TimerManager;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.HorizontalDirection;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VerticalDirection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
@@ -115,7 +102,7 @@ public class WalkerApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        InputManager input = getInputManager();
+        Input input = getInput();
 
         input.addAction(new UserAction("Move Left") {
             @Override
@@ -219,11 +206,9 @@ public class WalkerApp extends GameApplication {
         }, MouseButton.SECONDARY);
     }
 
-    private Assets assets;
-
     @Override
-    protected void initAssets() throws Exception {
-        assets = getAssetManager().cache();
+    protected void initAssets() {
+        getAssetLoader().cache();
     }
 
     @Override
@@ -234,7 +219,6 @@ public class WalkerApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        PhysicsManager physics = getPhysicsManager();
 
     }
 
@@ -275,29 +259,29 @@ public class WalkerApp extends GameApplication {
             spriteJump, spriteThrow, spriteFull;
 
     private DynamicAnimatedTexture buildSpriteSheet() {
-        spriteAttack = assets.getTexture("Attack__000.png");
+        spriteAttack = getAssetLoader().loadTexture("Attack__000.png");
         for (int i = 1; i <= 9; i++) {
-            spriteAttack = spriteAttack.superTexture(assets.getTexture("Attack__00" + i + ".png"), HorizontalDirection.RIGHT);
+            spriteAttack = spriteAttack.superTexture(getAssetLoader().loadTexture("Attack__00" + i + ".png"), HorizontalDirection.RIGHT);
         }
 
-        spriteRun = assets.getTexture("Run__000.png");
+        spriteRun = getAssetLoader().loadTexture("Run__000.png");
         for (int i = 1; i <= 9; i++) {
-            spriteRun = spriteRun.superTexture(assets.getTexture("Run__00" + i + ".png"), HorizontalDirection.RIGHT);
+            spriteRun = spriteRun.superTexture(getAssetLoader().loadTexture("Run__00" + i + ".png"), HorizontalDirection.RIGHT);
         }
 
-        spriteIdle = assets.getTexture("Idle__000.png");
+        spriteIdle = getAssetLoader().loadTexture("Idle__000.png");
         for (int i = 1; i <= 9; i++) {
-            spriteIdle = spriteIdle.superTexture(assets.getTexture("Idle__00" + i + ".png"), HorizontalDirection.RIGHT);
+            spriteIdle = spriteIdle.superTexture(getAssetLoader().loadTexture("Idle__00" + i + ".png"), HorizontalDirection.RIGHT);
         }
 
-        spriteJump = assets.getTexture("Jump__000.png");
+        spriteJump = getAssetLoader().loadTexture("Jump__000.png");
         for (int i = 1; i <= 9; i++) {
-            spriteJump = spriteJump.superTexture(assets.getTexture("Jump__00" + i + ".png"), HorizontalDirection.RIGHT);
+            spriteJump = spriteJump.superTexture(getAssetLoader().loadTexture("Jump__00" + i + ".png"), HorizontalDirection.RIGHT);
         }
 
-        spriteThrow = assets.getTexture("Throw__000.png");
+        spriteThrow = getAssetLoader().loadTexture("Throw__000.png");
         for (int i = 1; i <= 9; i++) {
-            spriteThrow = spriteThrow.superTexture(assets.getTexture("Throw__00" + i + ".png"), HorizontalDirection.RIGHT);
+            spriteThrow = spriteThrow.superTexture(getAssetLoader().loadTexture("Throw__00" + i + ".png"), HorizontalDirection.RIGHT);
         }
 
         spriteFull = spriteIdle

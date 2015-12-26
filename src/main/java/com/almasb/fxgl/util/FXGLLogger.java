@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.util;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +33,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.*;
+import java.util.stream.Collectors;
 
 /**
  * Provides logging configuration of java.util.logging.Logger for the FXGL library.
@@ -40,6 +45,10 @@ import java.util.logging.*;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGLLogger {
+
+    private static final int MAX_LOGS = 10;
+
+    private static Map<Long, String> threadNames = new HashMap<>();
 
     private static Handler consoleHandler, fileHandler;
 
@@ -71,10 +80,10 @@ public final class FXGLLogger {
                 sb.append(String.format("[%7s]", record.getLevel().toString()));
                 sb.append(" ");
 
-                sb.append(String.format("[%s]", record.getLoggerName()));
+                sb.append(String.format("[%20s]", record.getLoggerName()));
                 sb.append(" ");
 
-                sb.append(String.format("[%13s]", "Thread id: " + record.getThreadID()));
+                sb.append(String.format("[%15s]", getThreadName(record.getThreadID())));
                 sb.append(" ");
 
                 sb.append(record.getMessage());
@@ -90,6 +99,23 @@ public final class FXGLLogger {
                 Files.createDirectory(logDir);
             }
 
+            List<Path> logs = Files.walk(logDir, 1)
+                    .filter(Files::isRegularFile)
+                    .sorted((file1, file2) -> {
+                        try {
+                            return Files.getLastModifiedTime(file1).compareTo(Files.getLastModifiedTime(file2));
+                        } catch (IOException ignore) {
+                            return -1;
+                        }
+                    }).collect(Collectors.toList());
+
+            int logSize = logs.size();
+            if (logSize >= MAX_LOGS) {
+                for (int i = 0; i < logSize + 1 - MAX_LOGS; i++) {
+                    Files.delete(logs.get(i));
+                }
+            }
+
             fileHandler = new FileHandler("logs/FXGL-" + LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("dd MMM yyyy HH-mm-ss-SSS")) + ".log",
                     1024 * 1024, 1);
@@ -101,7 +127,7 @@ public final class FXGLLogger {
         consoleHandler.setLevel(logLevel);
         consoleHandler.setFormatter(formatter);
 
-        log = getLogger("FXGLLogger");
+        log = getLogger("FXGL.Logger");
         log.info("Logger initialized with level: " + logLevel);
         logSystemInfo();
     }
@@ -150,6 +176,8 @@ public final class FXGLLogger {
      * @return logger object
      */
     public static Logger getLogger(String name) {
+        name = name.length() > 20 ? name.substring(0, 20) : name;
+
         Logger logger = Logger.getLogger(name);
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
@@ -182,6 +210,23 @@ public final class FXGLLogger {
 
         log.finer("System Properties:");
         System.getProperties().forEach((k, v) -> log.finer(k + "=" + v));
+    }
+
+    private static void pollThreadNames() {
+        Thread[] threads = new Thread[Thread.activeCount()];
+        Thread.enumerate(threads);
+
+        for (Thread t : threads) {
+            threadNames.put(t.getId(), t.getName());
+        }
+    }
+
+    private static String getThreadName(int id) {
+        String name = threadNames.getOrDefault((long)id, "");
+        if (name.isEmpty())
+            pollThreadNames();
+
+        return threadNames.getOrDefault((long)id, "Unknown");
     }
 }
 

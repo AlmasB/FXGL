@@ -26,14 +26,18 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.event.AchievementEvent;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.event.LoadEvent;
+import com.almasb.fxgl.event.SaveEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -45,17 +49,18 @@ public final class AchievementManager implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AchievementManager");
 
-    private List<AchievementListener> listeners = new ArrayList<>();
-
-    public void addAchievementListener(AchievementListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeAchievementListener(AchievementListener listener) {
-        listeners.remove(listener);
-    }
-
     private ObservableList<Achievement> achievements = FXCollections.observableArrayList();
+
+    public AchievementManager() {
+        EventBus eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
+        eventBus.addEventHandler(SaveEvent.ANY, event -> {
+            save(event.getProfile());
+        });
+
+        eventBus.addEventHandler(LoadEvent.ANY, event -> {
+            load(event.getProfile());
+        });
+    }
 
     /**
      * Registers achievement in the system.
@@ -76,7 +81,8 @@ public final class AchievementManager implements UserProfileSavable {
 
 
         a.setOnAchieved(() -> {
-            listeners.forEach(l -> l.onAchievementUnlocked(a));
+            GameApplication.getService(ServiceType.EVENT_BUS)
+                    .fireEvent(new AchievementEvent(a));
         });
         achievements.add(a);
         log.finer("Registered new achievement \"" + a.getName() + "\"");

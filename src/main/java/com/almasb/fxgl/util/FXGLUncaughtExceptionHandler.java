@@ -25,17 +25,13 @@
  */
 package com.almasb.fxgl.util;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Default FXGL exception handler for runtime uncaught exceptions

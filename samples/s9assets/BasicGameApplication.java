@@ -25,13 +25,12 @@
  */
 package s9assets;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.util.ApplicationMode;
-import javafx.scene.shape.Rectangle;
+import com.almasb.fxgl.app.ApplicationMode;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -67,9 +66,9 @@ public class BasicGameApplication extends GameApplication {
     private Texture brickTexture;
 
     @Override
-    protected void initAssets() throws Exception {
+    protected void initAssets() {
         // 2. load texture
-        brickTexture = getAssetManager().loadTexture("brick.png");
+        brickTexture = getAssetLoader().loadTexture("brick.png");
     }
 
     @Override

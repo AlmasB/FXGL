@@ -25,17 +25,11 @@
  */
 package com.almasb.fxgl.physics;
 
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
-
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-
 import javafx.geometry.Point2D;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.*;
 
 /**
  * An entity being managed by PhysicsManager and hence
@@ -126,7 +120,7 @@ public final class PhysicsEntity extends Entity {
      * @param vector x and y in pixels
      */
     public void setLinearVelocity(Point2D vector) {
-        setBodyLinearVelocity(PhysicsManager.toVector(vector).mulLocal(60));
+        setBodyLinearVelocity(PhysicsWorld.toVector(vector).mulLocal(60));
     }
 
     /**
@@ -163,7 +157,7 @@ public final class PhysicsEntity extends Entity {
         if (body == null)
             throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
 
-        return PhysicsManager.toVector(body.getLinearVelocity().mul(1 / 60f));
+        return PhysicsWorld.toVector(body.getLinearVelocity().mul(1 / 60f));
     }
 
     /**

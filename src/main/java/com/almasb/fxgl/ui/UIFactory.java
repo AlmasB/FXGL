@@ -26,28 +26,23 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.asset.FontFactory;
-
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 /**
  * A collection of static methods that return UI controls to unify
  * the look across FXGL.
- * <p>
- * API NOT COMPLETE. DO NOT USE.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class UIFactory {
+    private UIFactory() {}
 
     private static FontFactory defaultFontFactory;
-    private static Stage mainStage;
 
-    public static void init(Stage stage, FontFactory fontFactory) {
-        mainStage = stage;
+    public static void init(FontFactory fontFactory) {
         defaultFontFactory = fontFactory;
     }
 
@@ -72,20 +67,6 @@ public final class UIFactory {
 
     public static Button newButton(String text) {
         return new FXGLButton(text);
-    }
-
-    private static FXGLDialogBox dialogBox;
-
-    /**
-     *
-     * @return a singleton instance of FXGL dialog box
-     */
-    public static FXGLDialogBox getDialogBox() {
-        if (dialogBox == null) {
-            dialogBox = new FXGLDialogBox(mainStage);
-        }
-
-        return dialogBox;
     }
 
     public static double widthOf(String text, double fontSize) {

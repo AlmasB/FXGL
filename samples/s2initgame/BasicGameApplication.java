@@ -25,11 +25,11 @@
  */
 package s2initgame;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 
 import javafx.scene.shape.Rectangle;
 
@@ -67,7 +67,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initInput() {}
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {

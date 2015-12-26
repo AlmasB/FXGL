@@ -1,0 +1,150 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.almasb.fxgl.audio;
+
+import javafx.beans.property.DoubleProperty;
+
+/**
+ * General audio player service that supports playback of sound and music objects.
+ * It can also control volume of both.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+public interface AudioPlayer {
+
+    /**
+     * @return global music volume property
+     */
+    DoubleProperty globalMusicVolumeProperty();
+
+    /**
+     * @return global music volume
+     */
+    default double getGlobalMusicVolume() {
+        return globalMusicVolumeProperty().get();
+    }
+
+    /**
+     * Set global music volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%
+     *
+     * @param volume music volume
+     */
+    default void setGlobalMusicVolume(double volume) {
+        globalMusicVolumeProperty().set(volume);
+    }
+
+    /**
+     * @return global sound volume property
+     */
+    DoubleProperty globalSoundVolumeProperty();
+
+    /**
+     * @return global sound volume
+     */
+    default double getGlobalSoundVolume() {
+        return globalSoundVolumeProperty().get();
+    }
+
+    /**
+     * Set global sound volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%
+     *
+     * @param volume sound volume
+     */
+    default void setGlobalSoundVolume(double volume) {
+        globalSoundVolumeProperty().set(volume);
+    }
+
+    /**
+     * Plays given sound based on its properties.
+     *
+     * @param sound sound to play
+     */
+    void playSound(Sound sound);
+
+    /**
+     * Stops playing given sound.
+     *
+     * @param sound sound to stop
+     */
+    void stopSound(Sound sound);
+
+    /**
+     * Stops playing all sounds.
+     */
+    void stopAllSounds();
+
+    /**
+     * Plays given music based on its properties.
+     *
+     * @param music music to play
+     */
+    void playMusic(Music music);
+
+    /**
+     * Pauses given music if it was previously started with {@link #playSound(Sound)}.
+     * It can then be restarted by {@link #resumeMusic(Music)}.
+     *
+     * @param music music to pause
+     */
+    void pauseMusic(Music music);
+
+    /**
+     * Resumes previously paused {@link #pauseMusic(Music)} music.
+     *
+     * @param music music to resume
+     */
+    void resumeMusic(Music music);
+
+    /**
+     * Stops currently playing music. It cannot be restarted
+     * using {@link #resumeMusic(Music)}. The music object needs
+     * to be started again by {@link #playMusic(Music)}.
+     *
+     * @param music music to stop
+     */
+    void stopMusic(Music music);
+
+    /**
+     * Pauses all currently playing music. These can be
+     * resumed using {@link #resumeAllMusic()}.
+     */
+    void pauseAllMusic();
+
+    /**
+     * Resumes all currently paused music.
+     */
+    void resumeAllMusic();
+
+    /**
+     * Stops all currently playing music. The music cannot be restarted
+     * by calling {@link #resumeAllMusic()}. Each music object will need
+     * to be started by {@link #playMusic(Music)}.
+     */
+    void stopAllMusic();
+}

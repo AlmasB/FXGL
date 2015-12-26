@@ -25,14 +25,13 @@
  */
 package com.almasb.fxgl.entity;
 
-import java.util.*;
-import java.util.logging.Logger;
-
-import com.almasb.fxgl.GameWorld;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.control.AbstractControl;
+import com.almasb.fxgl.entity.control.Control;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
-
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,6 +41,11 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.util.Duration;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * A generic FXGL game object. Any game object "should" be of type Entity.
@@ -157,6 +161,13 @@ public class Entity {
         setSceneView(view, RenderLayer.TOP);
     }
 
+    /**
+     * Sets the primary view (graphics) for this entity. The view will be used to visualize this entity
+     * in the scene. The view will be rendered in the given layer group.
+     *
+     * @param view graphics
+     * @param layer render layer
+     */
     public final void setSceneView(Node view, RenderLayer layer) {
         if (this.sceneView != null)
             throw new IllegalStateException("Entity already has a scene view. Only 1 scene view is allowed");
@@ -320,6 +331,8 @@ public class Entity {
      * between vector and positive X axis.
      * This is useful for projectiles (bullets, arrows, etc)
      * which rotate depending on their current velocity.
+     * Note, this assumes that at 0 angle rotation the scene view is
+     * facing right.
      *
      * @param vector the rotation vector / velocity vector
      */
@@ -386,6 +399,9 @@ public class Entity {
      */
     private ObservableList<HitBox> hitBoxes = FXCollections.observableArrayList();
 
+    /**
+     * @return unmodifiable list of hit boxes
+     */
     public final ObservableList<HitBox> hitBoxesProperty() {
         return FXCollections.unmodifiableObservableList(hitBoxes);
     }
@@ -399,6 +415,11 @@ public class Entity {
         hitBoxes.add(hitBox);
     }
 
+    /**
+     * Removes a hit box with given name from the list of hit boxes for this entity.
+     *
+     * @param name hit box name
+     */
     public final void removeHitBox(String name) {
         hitBoxes.removeIf(h -> h.getName().equals(name));
     }
@@ -451,6 +472,31 @@ public class Entity {
     }
 
     /**
+     *
+     * @param minX min x
+     * @param minY min y
+     * @param maxX max x
+     * @param maxY max y
+     * @return true iff entity is partially or entirely within given bounds
+     */
+    public final boolean isWithin(double minX, double minY, double maxX, double maxY) {
+        return !isOutside(minX, minY, maxX, maxY);
+    }
+
+    /**
+     *
+     * @param minX min x
+     * @param minY min y
+     * @param maxX max x
+     * @param maxY max y
+     * @return true iff entity is completely outside given bounds
+     */
+    public final boolean isOutside(double minX, double minY, double maxX, double maxY) {
+        return getX() + getWidth() < minX || getX() > maxX
+                || getY() + getHeight() < minY || getY() > maxY;
+    }
+
+    /**
      * Returns distance from center of this entity to center of the given
      * entity.
      *
@@ -473,7 +519,7 @@ public class Entity {
      * direction of the entity + the area of entity itself. This can be used to
      * find the range of an exploding bomb, or area around the player with
      * interactive entities. This can be used together with
-     * {@link com.almasb.fxgl.GameWorld#getEntitiesInRange(Rectangle2D, EntityType...)}
+     * {@link GameWorld#getEntitiesInRange(Rectangle2D, EntityType...)}
      * .
      *
      * @param width radius width
@@ -553,6 +599,18 @@ public class Entity {
     }
 
     /**
+     * Returns control of given type. Unlike {@link #getControl(Class)} there is no
+     * check for control existence and return is not wrapped with Optional.
+     * Use this only if are certain the entity has this type of control.
+     *
+     * @param type control type
+     * @return control
+     */
+    public final <T extends Control> T getControlUnsafe(Class<T> type) {
+        return type.cast(controls.get(type));
+    }
+
+    /**
      * Adds behavior to entity.
      * Only 1 control per type is allowed.
      * Anonymous controls are not allowed.
@@ -613,13 +671,26 @@ public class Entity {
 
     /**
      * Returns component of given type if registered. The type must be exactly
-     * the same as the type of the instance registered.
+     * the same as the type of the instance registered. If component not found, {@link Optional#empty()}
+     * is returned.
      *
      * @param type component type
      * @return component
      */
     public final <T extends Component> Optional<T> getComponent(Class<T> type) {
         return Optional.ofNullable(type.cast(components.get(type)));
+    }
+
+    /**
+     * Returns component of given type. Unlike {@link #getComponent(Class)} there is no
+     * checking if the component exists and so bare object is returned, i.e. can be null.
+     * Use this only if you are certain that entity has this type of component.
+     *
+     * @param type component type
+     * @return component
+     */
+    public final <T extends Component> T getComponentUnsafe(Class<T> type) {
+        return type.cast(components.get(type));
     }
 
     /**
@@ -762,7 +833,7 @@ public class Entity {
     }
 
     /**
-     * Do NOT call manually. It is called automatically by FXGL GameApplication
+     * Do NOT call manually. It is called automatically by the world.
      */
     public final void update() {
         if (controlsEnabled)
@@ -777,66 +848,21 @@ public class Entity {
     }
 
     /**
-     * Do NOT call manually. It is called automatically by FXGL GameApplication
-     * when entity has been removed
+     * Do NOT call manually. It is called automatically by the world
+     * when entity has been removed.
      */
     public final void clean() {
         alive.set(false);
         active.set(false);
         onClean();
-        eventHandlers.clear();
         controls.clear();
         components.clear();
-        //view.removeChildren();
     }
 
     /**
      * Can be overridden to provide subclass implementation.
      */
     protected void onClean() {
-    }
-
-    private Map<String, FXGLEventHandler> eventHandlers = new HashMap<>();
-
-    /**
-     * Register an event handler for FXGLEventType. The handler will be notified
-     * when an event of the type occurs on this entity.
-     *
-     * @param type event type
-     * @param eventHandler event handler
-     */
-    public final void addFXGLEventHandler(FXGLEventType type,
-                                          FXGLEventHandler eventHandler) {
-        eventHandlers.put(type.getUniqueType(), eventHandler);
-    }
-
-    /**
-     * Removes an event handler for FXGLEventType.
-     *
-     * @param type event type
-     * @param eventHandler event handler
-     */
-    public final void removeFXGLEventHandler(FXGLEventType type,
-                                             FXGLEventHandler eventHandler) {
-        eventHandlers.remove(type, eventHandler);
-    }
-
-    /**
-     * Fire (trigger) an FXGL event on this entity This entity becomes the
-     * target of the FXGL event.
-     * <p>
-     * If the FXGL event doesn't have a source, this entity will also become the
-     * source of the event.
-     *
-     * @param event FXGL event
-     */
-    public final void fireFXGLEvent(FXGLEvent event) {
-        if (event.getSource() == null)
-            event.setSource(this);
-
-        event.setTarget(this);
-        eventHandlers.getOrDefault(event.getType().getUniqueType(), e -> {
-        }).handle(event);
     }
 
     @Override

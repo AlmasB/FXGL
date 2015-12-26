@@ -25,13 +25,13 @@
  */
 package s3input;
 
-import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.event.InputManager;
-import com.almasb.fxgl.event.UserAction;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
@@ -60,7 +60,7 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void initInput() {
         // 1. get input manager
-        InputManager input = getInputManager();
+        Input input = getInput();
 
         // 2. add key/mouse bound actions
         input.addAction(new UserAction("Move Left") {
@@ -93,7 +93,7 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initAssets() throws Exception {}
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {

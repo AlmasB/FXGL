@@ -25,6 +25,9 @@
  */
 package com.almasb.fxgl.asset;
 
+import com.almasb.fxgl.util.FXGLLogger;
+import javafx.util.Pair;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,10 +35,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import com.almasb.fxgl.util.FXGLLogger;
-
-import javafx.util.Pair;
 
 /**
  * Represents a simple key value file, similar to {@link java.util.Properties}.

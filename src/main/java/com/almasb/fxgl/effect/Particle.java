@@ -25,15 +25,14 @@
  */
 package com.almasb.fxgl.effect;
 
-import java.util.function.Consumer;
-
-import com.almasb.fxgl.time.TimerManager;
-
+import com.almasb.fxgl.time.FXGLMasterTimer;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
+
+import java.util.function.Consumer;
 
 /**
  * Simple particle represented by a circle.
@@ -119,7 +118,7 @@ public class Particle {
         this.gravity = gravity;
         this.color = color;
         this.blendMode = blendMode;
-        this.decay = TimerManager.tpfSeconds() / expireTime.toSeconds();
+        this.decay = FXGLMasterTimer.tpfSeconds() / expireTime.toSeconds();
     }
 
     /**

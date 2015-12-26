@@ -28,11 +28,7 @@ package com.almasb.fxgl.asset;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VerticalDirection;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
+import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
@@ -255,6 +251,11 @@ public class Texture extends ImageView {
         return new Texture(image);
     }
 
+    /**
+     * Set texture data by copying it from other texture.
+     *
+     * @param other the texture to copy from
+     */
     public final void set(Texture other) {
         setFitWidth(other.getFitWidth());
         setFitHeight(other.getFitHeight());

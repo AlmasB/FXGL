@@ -29,24 +29,15 @@ import static org.junit.Assert.*;
 
 import java.util.Optional;
 
+import com.almasb.fxgl.entity.control.AbstractControl;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.BoundingBox;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.TestGameApplication;
-import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Component;
-import com.almasb.fxgl.entity.DoubleComponent;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.component.DoubleComponent;
 
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Point2D;
 
 public class EntityTest {
@@ -192,6 +183,17 @@ public class EntityTest {
 
         testEntity.rotateToVector(new Point2D(-1, -1));
         assertEquals(-135, testEntity.getRotation(), 0.1);
+    }
+
+    @Test
+    public void isWithin() {
+        testEntity.addHitBox(new HitBox("TEST", new BoundingBox(0, 0, 40, 40)));
+        testEntity.setPosition(50, 50);
+
+        assertTrue(testEntity.isWithin(0, 0, 90, 90));
+        assertTrue(testEntity.isWithin(60, 40, 70, 55));
+        assertFalse(testEntity.isWithin(0, 0, 40, 40));
+        assertFalse(testEntity.isWithin(30, 0, 49, 80));
     }
 
     private class TestControl extends AbstractControl {

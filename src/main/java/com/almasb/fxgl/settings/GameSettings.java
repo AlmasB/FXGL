@@ -25,8 +25,9 @@
  */
 package com.almasb.fxgl.settings;
 
-import com.almasb.fxgl.ui.menu.MenuStyle;
-import com.almasb.fxgl.util.ApplicationMode;
+import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.scene.menu.MenuStyle;
+import javafx.scene.input.KeyCode;
 
 /**
  * Data structure for variables that are
@@ -181,6 +182,15 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setMenuStyle(MenuStyle style) {
         this.menuStyle = style;
+    }
+
+    /**
+     * Set the key that will trigger in-game menu.
+     *
+     * @param menuKey menu key
+     */
+    public void setMenuKey(KeyCode menuKey) {
+        this.menuKey = menuKey;
     }
 
     /**

@@ -25,18 +25,14 @@
  */
 package com.almasb.fxgl.net;
 
+import com.almasb.fxgl.util.FXGLLogger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.logging.Logger;
-
-import com.almasb.fxgl.util.FXGLLogger;
 
 /**
  * Server side of the network connection.

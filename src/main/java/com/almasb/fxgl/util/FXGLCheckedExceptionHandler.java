@@ -25,7 +25,8 @@
  */
 package com.almasb.fxgl.util;
 
-import com.almasb.fxgl.ui.UIFactory;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 
 /**
  * Default FXGL exception handler for checked exceptions.
@@ -36,6 +37,6 @@ public class FXGLCheckedExceptionHandler implements ExceptionHandler {
 
     @Override
     public void handle(Throwable e) {
-        UIFactory.getDialogBox().showErrorBox(e);
+        GameApplication.getService(ServiceType.DISPLAY).showErrorBox(e);
     }
 }
