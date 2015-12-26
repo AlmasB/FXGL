@@ -189,8 +189,6 @@ public abstract class GameApplication extends FXGLApplication {
      */
     private FXGLScene gameMenuScene;
 
-    private AchievementManager achievementManager;
-
     /**
      * Override to register your achievements.
      *
@@ -460,8 +458,6 @@ public abstract class GameApplication extends FXGLApplication {
 
         UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(getSettings().getDefaultFontName()));
 
-        achievementManager = new AchievementManager();
-
         getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);
 
@@ -708,13 +704,5 @@ public abstract class GameApplication extends FXGLApplication {
      */
     public final long getNow() {
         return getMasterTimer().getNow();
-    }
-
-    /**
-     *
-     * @return achievement manager
-     */
-    public final AchievementManager getAchievementManager() {
-        return achievementManager;
     }
 }

@@ -30,6 +30,7 @@ import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.scene.Display;
@@ -153,6 +154,8 @@ public abstract class FXGLApplication extends Application {
         log.finer("Services configuration complete");
 
         injector.injectMembers(this);
+
+        achievementManager = new AchievementManager();
     }
 
     @Override
@@ -290,5 +293,15 @@ public abstract class FXGLApplication extends Application {
      */
     public final NotificationService getNotificationService() {
         return notificationService;
+    }
+
+    private AchievementManager achievementManager;
+
+    /**
+     *
+     * @return achievement manager
+     */
+    public final AchievementManager getAchievementManager() {
+        return achievementManager;
     }
 }
