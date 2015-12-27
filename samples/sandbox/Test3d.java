@@ -29,10 +29,6 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.settings.GameSettings;
-import com.sun.javafx.geom.Quat4f;
-import com.sun.javafx.robot.FXRobot;
-import com.sun.javafx.robot.FXRobotFactory;
-import com.sun.javafx.robot.impl.BaseFXRobot;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Point3D;
@@ -41,7 +37,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
@@ -188,8 +183,6 @@ public class Test3d extends GameApplication {
         return new Group(subScene);
     }
 
-    FXRobot robot;
-
     private void placeCube(Point3D point) {
         Random random = new Random();
         Cube cube = new Cube(1, Color.rgb(random.nextInt(150) + 100, random.nextInt(150) + 100, random.nextInt(250)));
@@ -200,7 +193,6 @@ public class Test3d extends GameApplication {
     }
 
     private static class Cube extends Box {
-
         public Cube(double size, Color color) {
             super(size, size, size);
             setMaterial(new PhongMaterial(color));
