@@ -104,13 +104,6 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initAchievements() {
-        Achievement a = new Achievement("Score Master", "Score 20000 Points");
-
-        getAchievementManager().registerAchievement(a);
-    }
-
-    @Override
     protected IntroFactory initIntroFactory() {
         return new IntroFactory() {
             @Override
@@ -202,43 +195,6 @@ public class BasicGameApplication extends GameApplication {
             }
         }, KeyCode.RIGHT);
 
-        input.addAction(new UserAction("Rotate Up") {
-            @Override
-            protected void onActionBegin() {
-
-                ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
-                ParticleEntity entity = new ParticleEntity(Type.BOX);
-                entity.setPosition(300, 550);
-                entity.setEmitter(emitter);
-
-                getGameWorld().addEntity(entity);
-
-//                executor.submit(new Task<Void>() {
-//                    @Override
-//                    protected Void call() throws Exception {
-//                        doWork();
-//                        return null;
-//                    }
-//
-//                    @Override
-//                    protected void succeeded() {
-//                        log.finer("Finished!");
-//                    }
-//                });
-            }
-        }, KeyCode.UP);
-
-        input.addAction(new UserAction("Rotate Down") {
-            @Override
-            protected void onActionBegin() {
-                getAssetLoader().clearCache();
-
-                getNotificationService().pushNotification("You got an achievement!");
-                getNotificationService().pushNotification("You have won the game!");
-                getNotificationService().pushNotification("Just a test of the notification system!");
-            }
-        }, KeyCode.DOWN);
-
         input.addAction(new UserAction("Spawn") {
             @Override
             protected void onActionBegin() {
@@ -327,81 +283,9 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void initAssets() {}
 
-    private void doWork() {
-        try {
-            log.finer("Started work");
-            Thread.sleep(1000);
-            log.finer("Finished work");
-        } catch (InterruptedException e) {
-            throw new IllegalArgumentException("gg");
-        }
-    }
-
     @Override
     protected void initGame() {
-        getAchievementManager().getAchievementByName("Score Master")
-                .achievedProperty().bind(i.greaterThanOrEqualTo(20000));
-
         EntityView.turnOnDebugBBox(Color.RED);
-
-        executor = getService(ServiceType.EXECUTOR);
-
-
-        player = new Entity(Type.PLAYER);
-        //Circle graphics = new Circle(40);
-        player.setSceneView(getAssetLoader().loadTexture("brick.png"));
-
-        //player.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 80, 80)));
-        player.setPosition(100, 100);
-
-        enemy = new Entity(Type.ENEMY);
-        Rectangle enemyGraphics = new Rectangle(200, 40);
-        enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(enemyGraphics, new RenderLayer() {
-            @Override
-            public String name() {
-                return "ENEMY";
-            }
-
-            @Override
-            public int index() {
-                return 1000;
-            }
-        });
-
-        //enemy.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 200, 40)));
-        enemy.setPosition(2000, 100);
-
-
-        // we need to set collidable to true
-        // so that collision system can 'see' them
-        player.setCollidable(true);
-        enemy.setCollidable(true);
-
-        getGameWorld().addEntities(player, enemy);
-
-        box = new PhysicsEntity(Type.ENEMY);
-        box.setSceneView(new Rectangle(500, 100));
-        box.setPosition(0, 500);
-        //box.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 500, 100)));
-
-
-        getGameWorld().addEntity(box);
-
-        getGameScene().addGameView(new PlayerView());
-    }
-
-    private class PlayerView extends EntityView {
-        public PlayerView() {
-            super(player);
-
-            Text text = new Text();
-            text.textProperty().bind(player.xProperty().asString().concat(player.yProperty().asString()));
-
-            addNode(text);
-            setTranslateX(300);
-            setTranslateY(300);
-        }
     }
 
     @Override
