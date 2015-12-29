@@ -41,7 +41,7 @@ If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefu
 ## Basic Usage / Examples
 The samples/ folder will be constantly updated to include demonstrations of various features.
 Video Tutorials Playlist - <a href="https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp">YouTube Link</a> <br/>
-The videos will walk you through the basics.
+The videos will walk you through the basics. For advanced examples please see <a href="https://github.com/AlmasB/FXGLGames">FXGL Games Repository</a>.
 
 ## Extra Info
 For more information check out the project <a href="https://github.com/AlmasB/FXGL/wiki">Wiki</a>
