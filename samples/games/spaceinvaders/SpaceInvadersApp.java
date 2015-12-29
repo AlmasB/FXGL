@@ -40,10 +40,13 @@ import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.UIFactory;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -56,6 +59,8 @@ import org.jbox2d.dynamics.FixtureDef;
  */
 public class SpaceInvadersApp extends GameApplication {
 
+    private static final String SAVE_DATA_NAME = "hiscore.dat";
+
     public enum Type implements EntityType {
         PLAYER, ENEMY, PLAYER_BULLET, ENEMY_BULLET,
         LEVEL_INFO
@@ -63,21 +68,22 @@ public class SpaceInvadersApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setTitle("Space Invaders");
-        settings.setVersion("0.2dev");
+        settings.setTitle("FXGL Space Invaders");
+        settings.setVersion("0.3dev");
         settings.setWidth(600);
         settings.setHeight(800);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(false);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
     protected void initAchievements() {
-        Achievement a = new Achievement("Hitman", "Destroy 5 enemies");
-
-        getAchievementManager().registerAchievement(a);
+        getAchievementManager().registerAchievement(
+                new Achievement("Hitman", "Destroy 5 enemies"));
+        getAchievementManager().registerAchievement(
+                new Achievement("Master Scorer", "Score 10000+ points"));
     }
 
     @Override
@@ -98,9 +104,22 @@ public class SpaceInvadersApp extends GameApplication {
     private IntegerProperty level;
     private IntegerProperty lives;
 
+    private int highScore;
+    private String highScoreName;
+
     @Override
     protected void initGame() {
+        SaveData data = getSaveLoadManager().<SaveData>load(SAVE_DATA_NAME)
+                .orElse(new SaveData("CPU", 0));
+
+        highScoreName = data.getName();
+        highScore = data.getHighScore();
+
         getAudioPlayer().setGlobalSoundVolume(0);
+
+        initBackground();
+
+        getNotificationService().setBackgroundColor(Color.DARKBLUE);
 
         enemiesDestroyed = new SimpleIntegerProperty(0);
         score = new SimpleIntegerProperty();
@@ -109,9 +128,22 @@ public class SpaceInvadersApp extends GameApplication {
 
         getAchievementManager().getAchievementByName("Hitman")
                 .achievedProperty().bind(enemiesDestroyed.greaterThanOrEqualTo(5));
+        getAchievementManager().getAchievementByName("Master Scorer")
+                .achievedProperty().bind(score.greaterThanOrEqualTo(10000));
 
         spawnPlayer();
         nextLevel();
+    }
+
+    private void initBackground() {
+        Entity bg = Entity.noType();
+        Texture bgTexture = getAssetLoader().loadTexture("spaceinvaders/background.png");
+        bgTexture.setFitWidth(getWidth());
+        bgTexture.setFitHeight(getHeight());
+
+        bg.setSceneView(bgTexture);
+
+        getGameWorld().addEntity(bg);
     }
 
     private void initLevel() {
@@ -120,14 +152,17 @@ public class SpaceInvadersApp extends GameApplication {
                 spawnEnemy(x * (40 + 20), 100 + y * (40 + 20));
             }
         }
+
+        getInput().setProcessActions(true);
     }
 
     private void nextLevel() {
+        getInput().setProcessActions(false);
         level.set(level.get() + 1);
 
         PhysicsEntity levelInfo = new PhysicsEntity(Type.LEVEL_INFO);
         levelInfo.setPosition(getWidth() / 2 - UIFactory.widthOf("Level " + level.get(), 44) / 2, 0);
-        levelInfo.setSceneView(UIFactory.newText("Level " + level.get(), Color.BLACK, 44));
+        levelInfo.setSceneView(UIFactory.newText("Level " + level.get(), Color.AQUAMARINE, 44));
         levelInfo.setBodyType(BodyType.DYNAMIC);
         levelInfo.setOnPhysicsInitialized(() -> levelInfo.setLinearVelocity(0, 5));
         levelInfo.setExpireTime(Duration.seconds(3));
@@ -161,7 +196,14 @@ public class SpaceInvadersApp extends GameApplication {
                         if (yes) {
                             startNewGame();
                         } else {
-                            getEventBus().fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
+                            if (score.get() > highScore) {
+                                getDisplay().showInputBox("Enter your name", input -> {
+                                    getSaveLoadManager().save(new SaveData(input, score.get()), SAVE_DATA_NAME);
+                                    getEventBus().fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
+                                });
+                            } else {
+                                getEventBus().fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
+                            }
                         }
                     });
                 }
@@ -184,29 +226,50 @@ public class SpaceInvadersApp extends GameApplication {
 
     @Override
     protected void initUI() {
-        Text scoreText = UIFactory.newText("", Color.BLACK, 18);
-        scoreText.textProperty().bind(score.asString("Score:[%d]"));
-        scoreText.setTranslateX(50);
-        scoreText.setTranslateY(25);
+        Text textScore = UIFactory.newText("", Color.AQUAMARINE, 18);
+        textScore.textProperty().bind(score.asString("Score:[%d]"));
+
+        Text textHighScore = UIFactory.newText("", Color.AQUAMARINE, 18);
+        textHighScore.setText("HiScore:[" + highScore + "](" + highScoreName + ")");
 
         for (int i = 0; i < lives.get(); i++) {
             final int index = i;
-            Texture t = getAssetLoader().loadTexture("life.png");
+            Texture t = getAssetLoader().loadTexture("spaceinvaders/life.png");
             t.setFitWidth(16);
             t.setFitHeight(16);
-            t.setTranslateX(getWidth() * 3 / 4 + i * 32);
+            t.setTranslateX(getWidth() * 4 / 5 + i * 32);
             t.setTranslateY(10);
 
             lives.addListener((observable, oldValue, newValue) -> {
                 if (newValue.intValue() == index) {
-                    getGameScene().removeUINode(t);
+
+                    t.setFitWidth(64);
+                    t.setFitHeight(64);
+
+                    TranslateTransition tt = new TranslateTransition(Duration.seconds(0.66), t);
+                    tt.setToX(getWidth() / 2 - t.getFitWidth() / 2);
+                    tt.setToY(getHeight() / 2 - t.getFitHeight() / 2);
+                    tt.setOnFinished(e -> {
+                        ScaleTransition st = new ScaleTransition(Duration.seconds(0.66), t);
+                        st.setToX(0);
+                        st.setToY(0);
+                        st.setOnFinished(e2 -> {
+                            getGameScene().removeUINode(t);
+                        });
+                        st.play();
+                    });
+                    tt.play();
                 }
             });
 
             getGameScene().addUINode(t);
         }
 
-        getGameScene().addUINode(scoreText);
+        HBox textBox = new HBox(20, textScore, textHighScore);
+        textBox.setTranslateX(25);
+        textBox.setTranslateY(10);
+
+        getGameScene().addUINodes(textBox);
     }
 
     @Override

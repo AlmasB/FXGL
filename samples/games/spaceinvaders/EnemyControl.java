@@ -42,6 +42,7 @@ public class EnemyControl extends AbstractControl {
     private LocalTimer hTimer;
     private LocalTimer vTimer;
     private LocalTimer attackTimer;
+    private Duration nextAttack = Duration.seconds(2);
 
     private boolean movingRight = true;
 
@@ -67,10 +68,11 @@ public class EnemyControl extends AbstractControl {
             vTimer.capture();
         }
 
-        if (attackTimer.elapsed(Duration.seconds(2))) {
+        if (attackTimer.elapsed(nextAttack)) {
             if (Math.random() < 0.3) {
                 shoot();
             }
+            nextAttack = Duration.seconds(5 * Math.random());
             attackTimer.capture();
         }
 

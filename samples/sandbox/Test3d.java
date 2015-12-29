@@ -27,19 +27,27 @@
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.*;
+import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 import java.util.Random;
 
@@ -50,11 +58,20 @@ import static java.lang.Math.*;
  */
 public class Test3d extends GameApplication {
 
+    private enum Type implements EntityType {
+        PLAYER, ENEMY, BOX, CRATE
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
         settings.setIntroEnabled(false);
+//        settings.setWidth(1920);
+//        settings.setHeight(1080);
+//        settings.setFullScreen(true);
     }
+
+    private PhysicsEntity e1, e2;
 
     @Override
     protected void initInput() {
@@ -69,6 +86,14 @@ public class Test3d extends GameApplication {
         input.addInputMapping(new InputMapping("Rotate Down", KeyCode.DOWN));
         input.addInputMapping(new InputMapping("Debug", KeyCode.K));
 
+        input.addAction(new UserAction("Spawn") {
+            @Override
+            protected void onActionBegin() {
+
+
+            }
+        }, MouseButton.PRIMARY, InputModifier.ALT);
+
         mouse = input.getMouse();
     }
 
@@ -80,6 +105,35 @@ public class Test3d extends GameApplication {
     @Override
     protected void initGame() {
         getAudioPlayer().setGlobalSoundVolume(0);
+
+        e1 = spawn(300, 100);
+        e2 = spawn(330, 0);
+
+
+        PhysicsEntity ground = new PhysicsEntity(Type.CRATE);
+        ground.setPosition(0, 500);
+        ground.addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 800, 100)));
+        //ground.setSceneView(new Rectangle(800, 100));
+
+        getGameWorld().addEntity(ground);
+    }
+
+    private PhysicsEntity spawn(double xx, double yy) {
+        PhysicsEntity entity = new PhysicsEntity(Type.CRATE);
+
+        entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
+
+        entity.setBodyType(BodyType.DYNAMIC);
+        entity.setPosition(xx, yy);
+
+        FixtureDef fd = new FixtureDef();
+        fd.setDensity(0.05f);
+        fd.setRestitution(0.3f);
+
+        entity.setFixtureDef(fd);
+
+        getGameWorld().addEntity(entity);
+        return entity;
     }
 
     @Override
@@ -140,7 +194,21 @@ public class Test3d extends GameApplication {
         Cube c3 = new Cube(1, Color.RED);
         c3.setTranslateZ(5);
         c3.setRotationAxis(Rotate.Y_AXIS);
-        c3.setRotate(45);
+        //c3.setRotate(45);
+
+        Cube flyingCube = new Cube(2, Color.SILVER);
+        flyingCube.setTranslateX(-10);
+        flyingCube.setTranslateY(-3);
+        flyingCube.setTranslateZ(5);
+
+        TranslateTransition fly = new TranslateTransition(Duration.seconds(5), flyingCube);
+        fly.setToX(10);
+        fly.setToY(-7);
+        fly.setToZ(-2);
+        fly.setAutoReverse(true);
+        fly.setCycleCount(Animation.INDEFINITE);
+        fly.play();
+
 
         camera = new PerspectiveCamera(true);
         translate = new Translate(0, 0, -10);
@@ -166,15 +234,19 @@ public class Test3d extends GameApplication {
         placeCube(new Point3D(-10, 0, 0));
         placeCube(new Point3D(0, 0, -20));
 
-        for (int z = -5; z < 0; z++) {
-            for (int x = -2; x < 2; x++) {
-                placeCube(new Point3D(x*2, 2, z*2));
-            }
-        }
+        Cube ground = new Cube(10, Color.BROWN);
+        ground.setTranslateY(6);
+        ground.setTranslateZ(-5);
 
-        worldRoot.getChildren().addAll(c, c2, c3, globalLight, light);
+//        for (int z = -5; z < 0; z++) {
+//            for (int x = -2; x < 2; x++) {
+//                placeCube(new Point3D(x*2, 6, z*2));
+//            }
+//        }
 
-        SubScene subScene = new SubScene(worldRoot, 800, 600, true, SceneAntialiasing.BALANCED);
+        worldRoot.getChildren().addAll(c, c2, c3, ground, flyingCube, globalLight, light);
+
+        SubScene subScene = new SubScene(worldRoot, getWidth(), getHeight(), true, SceneAntialiasing.BALANCED);
         subScene.setCamera(camera);
         subScene.setFill(Color.ALICEBLUE);
 
