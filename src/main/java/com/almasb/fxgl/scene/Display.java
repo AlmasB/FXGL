@@ -164,11 +164,8 @@ public final class Display implements UserProfileSavable {
 
         if (settings.isFullScreen()) {
             stage.setFullScreenExitHint("");
-            // we don't want the user to be able to exit full screen manually
-            // but only through settings menu
-            // so we set key combination to something obscure which isn't likely
-            // to be pressed
-            stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
+            // don't let the user to exit FS mode manually
+            stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             stage.setFullScreen(true);
         }
 
