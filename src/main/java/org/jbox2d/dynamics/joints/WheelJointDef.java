@@ -1,15 +1,15 @@
-/*******************************************************************************
+/**
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -20,7 +20,9 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ * <p>
+ * Created at 7:27:31 AM Jan 21, 2011
+ */
 /**
  * Created at 7:27:31 AM Jan 21, 2011
  */
@@ -35,64 +37,64 @@ import org.jbox2d.dynamics.Body;
  * can violate the constraint slightly. The joint translation is zero when the local anchor points
  * coincide in world space. Using local anchors and a local axis helps when saving and loading a
  * game.
- * 
+ *
  * @author Daniel Murphy
  */
 public class WheelJointDef extends JointDef {
 
-  /**
-   * The local anchor point relative to body1's origin.
-   */
-  public final Vec2 localAnchorA = new Vec2();
+    /**
+     * The local anchor point relative to body1's origin.
+     */
+    public final Vec2 localAnchorA = new Vec2();
 
-  /**
-   * The local anchor point relative to body2's origin.
-   */
-  public final Vec2 localAnchorB = new Vec2();
+    /**
+     * The local anchor point relative to body2's origin.
+     */
+    public final Vec2 localAnchorB = new Vec2();
 
-  /**
-   * The local translation axis in body1.
-   */
-  public final Vec2 localAxisA = new Vec2();
+    /**
+     * The local translation axis in body1.
+     */
+    public final Vec2 localAxisA = new Vec2();
 
-  /**
-   * Enable/disable the joint motor.
-   */
-  public boolean enableMotor;
+    /**
+     * Enable/disable the joint motor.
+     */
+    public boolean enableMotor;
 
-  /**
-   * The maximum motor torque, usually in N-m.
-   */
-  public float maxMotorTorque;
+    /**
+     * The maximum motor torque, usually in N-m.
+     */
+    public float maxMotorTorque;
 
-  /**
-   * The desired motor speed in radians per second.
-   */
-  public float motorSpeed;
+    /**
+     * The desired motor speed in radians per second.
+     */
+    public float motorSpeed;
 
-  /**
-   * Suspension frequency, zero indicates no suspension
-   */
-  public float frequencyHz;
+    /**
+     * Suspension frequency, zero indicates no suspension
+     */
+    public float frequencyHz;
 
-  /**
-   * Suspension damping ratio, one indicates critical damping
-   */
-  public float dampingRatio;
+    /**
+     * Suspension damping ratio, one indicates critical damping
+     */
+    public float dampingRatio;
 
-  public WheelJointDef() {
-    super(JointType.WHEEL);
-    localAxisA.set(1, 0);
-    enableMotor = false;
-    maxMotorTorque = 0f;
-    motorSpeed = 0f;
-  }
+    public WheelJointDef() {
+        super(JointType.WHEEL);
+        localAxisA.set(1, 0);
+        enableMotor = false;
+        maxMotorTorque = 0f;
+        motorSpeed = 0f;
+    }
 
-  public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
-    bodyA = b1;
-    bodyB = b2;
-    b1.getLocalPointToOut(anchor, localAnchorA);
-    b2.getLocalPointToOut(anchor, localAnchorB);
-    bodyA.getLocalVectorToOut(axis, localAxisA);
-  }
+    public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
+        bodyA = b1;
+        bodyB = b2;
+        b1.getLocalPointToOut(anchor, localAnchorA);
+        b2.getLocalPointToOut(anchor, localAnchorB);
+        bodyA.getLocalVectorToOut(axis, localAxisA);
+    }
 }

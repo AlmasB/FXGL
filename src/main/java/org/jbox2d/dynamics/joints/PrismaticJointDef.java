@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -32,89 +32,89 @@ import org.jbox2d.dynamics.Body;
  * can violate the constraint slightly. The joint translation is zero when the local anchor points
  * coincide in world space. Using local anchors and a local axis helps when saving and loading a
  * game.
- * 
+ *
  * @warning at least one body should by dynamic with a non-fixed rotation.
  * @author Daniel
- * 
+ *
  */
 public class PrismaticJointDef extends JointDef {
 
 
-  /**
-   * The local anchor point relative to body1's origin.
-   */
-  public final Vec2 localAnchorA;
+    /**
+     * The local anchor point relative to body1's origin.
+     */
+    public final Vec2 localAnchorA;
 
-  /**
-   * The local anchor point relative to body2's origin.
-   */
-  public final Vec2 localAnchorB;
+    /**
+     * The local anchor point relative to body2's origin.
+     */
+    public final Vec2 localAnchorB;
 
-  /**
-   * The local translation axis in body1.
-   */
-  public final Vec2 localAxisA;
+    /**
+     * The local translation axis in body1.
+     */
+    public final Vec2 localAxisA;
 
-  /**
-   * The constrained angle between the bodies: body2_angle - body1_angle.
-   */
-  public float referenceAngle;
+    /**
+     * The constrained angle between the bodies: body2_angle - body1_angle.
+     */
+    public float referenceAngle;
 
-  /**
-   * Enable/disable the joint limit.
-   */
-  public boolean enableLimit;
+    /**
+     * Enable/disable the joint limit.
+     */
+    public boolean enableLimit;
 
-  /**
-   * The lower translation limit, usually in meters.
-   */
-  public float lowerTranslation;
+    /**
+     * The lower translation limit, usually in meters.
+     */
+    public float lowerTranslation;
 
-  /**
-   * The upper translation limit, usually in meters.
-   */
-  public float upperTranslation;
+    /**
+     * The upper translation limit, usually in meters.
+     */
+    public float upperTranslation;
 
-  /**
-   * Enable/disable the joint motor.
-   */
-  public boolean enableMotor;
+    /**
+     * Enable/disable the joint motor.
+     */
+    public boolean enableMotor;
 
-  /**
-   * The maximum motor torque, usually in N-m.
-   */
-  public float maxMotorForce;
+    /**
+     * The maximum motor torque, usually in N-m.
+     */
+    public float maxMotorForce;
 
-  /**
-   * The desired motor speed in radians per second.
-   */
-  public float motorSpeed;
+    /**
+     * The desired motor speed in radians per second.
+     */
+    public float motorSpeed;
 
-  public PrismaticJointDef() {
-    super(JointType.PRISMATIC);
-    localAnchorA = new Vec2();
-    localAnchorB = new Vec2();
-    localAxisA = new Vec2(1.0f, 0.0f);
-    referenceAngle = 0.0f;
-    enableLimit = false;
-    lowerTranslation = 0.0f;
-    upperTranslation = 0.0f;
-    enableMotor = false;
-    maxMotorForce = 0.0f;
-    motorSpeed = 0.0f;
-  }
+    public PrismaticJointDef() {
+        super(JointType.PRISMATIC);
+        localAnchorA = new Vec2();
+        localAnchorB = new Vec2();
+        localAxisA = new Vec2(1.0f, 0.0f);
+        referenceAngle = 0.0f;
+        enableLimit = false;
+        lowerTranslation = 0.0f;
+        upperTranslation = 0.0f;
+        enableMotor = false;
+        maxMotorForce = 0.0f;
+        motorSpeed = 0.0f;
+    }
 
 
-  /**
-   * Initialize the bodies, anchors, axis, and reference angle using the world anchor and world
-   * axis.
-   */
-  public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
-    bodyA = b1;
-    bodyB = b2;
-    bodyA.getLocalPointToOut(anchor, localAnchorA);
-    bodyB.getLocalPointToOut(anchor, localAnchorB);
-    bodyA.getLocalVectorToOut(axis, localAxisA);
-    referenceAngle = bodyB.getAngle() - bodyA.getAngle();
-  }
+    /**
+     * Initialize the bodies, anchors, axis, and reference angle using the world anchor and world
+     * axis.
+     */
+    public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
+        bodyA = b1;
+        bodyB = b2;
+        bodyA.getLocalPointToOut(anchor, localAnchorA);
+        bodyB.getLocalPointToOut(anchor, localAnchorB);
+        bodyA.getLocalVectorToOut(axis, localAxisA);
+        referenceAngle = bodyB.getAngle() - bodyA.getAngle();
+    }
 }

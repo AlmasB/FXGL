@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,17 +29,17 @@ package org.jbox2d.common;
  */
 class PlatformMathUtils {
 
-  private static final float SHIFT23 = 1 << 23;
-  private static final float INV_SHIFT23 = 1.0f / SHIFT23;
+    private static final float SHIFT23 = 1 << 23;
+    private static final float INV_SHIFT23 = 1.0f / SHIFT23;
 
-  public static final float fastPow(float a, float b) {
-    float x = Float.floatToRawIntBits(a);
-    x *= INV_SHIFT23;
-    x -= 127;
-    float y = x - (x >= 0 ? (int) x : (int) x - 1);
-    b *= x + (y - y * y) * 0.346607f;
-    y = b - (b >= 0 ? (int) b : (int) b - 1);
-    y = (y - y * y) * 0.33971f;
-    return Float.intBitsToFloat((int) ((b + 127 - y) * SHIFT23));
-  }
+    public static final float fastPow(float a, float b) {
+        float x = Float.floatToRawIntBits(a);
+        x *= INV_SHIFT23;
+        x -= 127;
+        float y = x - (x >= 0 ? (int) x : (int) x - 1);
+        b *= x + (y - y * y) * 0.346607f;
+        y = b - (b >= 0 ? (int) b : (int) b - 1);
+        y = (y - y * y) * 0.33971f;
+        return Float.intBitsToFloat((int) ((b + 127 - y) * SHIFT23));
+    }
 }

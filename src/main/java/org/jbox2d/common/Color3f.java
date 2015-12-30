@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -47,42 +47,44 @@
 package org.jbox2d.common;
 
 // updated to rev 100
+
 /**
  * Similar to javax.vecmath.Color3f holder
  * @author ewjordan
  *
  */
 public class Color3f {
-	
-	public static final Color3f WHITE = new Color3f(1, 1, 1);
-	public static final Color3f BLACK = new Color3f(0, 0, 0);
-	public static final Color3f BLUE = new Color3f(0, 0, 1);
-	public static final Color3f GREEN = new Color3f(0, 1, 0);
-	public static final Color3f RED = new Color3f(1, 0, 0);
-	
-	public float x;
-	public float y;
-	public float z;
 
-	
-	public Color3f(){
-		x = y = z = 0;
-	}
-	public Color3f(float r, float g, float b) {
-		x = r;
-		y = g;
-		z = b;
-	}
-	
-	public void set(float r, float g, float b){
-		x = r;
-		y = g;
-		z = b;
-	}
-	
-	public void set(Color3f argColor){
-		x = argColor.x;
-		y = argColor.y;
-		z = argColor.z;
-	}
+    public static final Color3f WHITE = new Color3f(1, 1, 1);
+    public static final Color3f BLACK = new Color3f(0, 0, 0);
+    public static final Color3f BLUE = new Color3f(0, 0, 1);
+    public static final Color3f GREEN = new Color3f(0, 1, 0);
+    public static final Color3f RED = new Color3f(1, 0, 0);
+
+    public float x;
+    public float y;
+    public float z;
+
+
+    public Color3f() {
+        x = y = z = 0;
+    }
+
+    public Color3f(float r, float g, float b) {
+        x = r;
+        y = g;
+        z = b;
+    }
+
+    public void set(float r, float g, float b) {
+        x = r;
+        y = g;
+        z = b;
+    }
+
+    public void set(Color3f argColor) {
+        x = argColor.x;
+        y = argColor.y;
+        z = argColor.z;
+    }
 }

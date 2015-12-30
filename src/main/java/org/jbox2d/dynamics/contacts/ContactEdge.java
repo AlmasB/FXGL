@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,28 +29,28 @@ import org.jbox2d.dynamics.Body;
  * A contact edge is used to connect bodies and contacts together in a contact graph where each body
  * is a node and each contact is an edge. A contact edge belongs to a doubly linked list maintained
  * in each attached body. Each contact has two contact nodes, one for each attached body.
- * 
+ *
  * @author daniel
  */
 public class ContactEdge {
 
-  /**
-   * provides quick access to the other body attached.
-   */
-  public Body other = null;
+    /**
+     * provides quick access to the other body attached.
+     */
+    public Body other = null;
 
-  /**
-   * the contact
-   */
-  public Contact contact = null;
+    /**
+     * the contact
+     */
+    public Contact contact = null;
 
-  /**
-   * the previous contact edge in the body's contact list
-   */
-  public ContactEdge prev = null;
+    /**
+     * the previous contact edge in the body's contact list
+     */
+    public ContactEdge prev = null;
 
-  /**
-   * the next contact edge in the body's contact list
-   */
-  public ContactEdge next = null;
+    /**
+     * the next contact edge in the body's contact list
+     */
+    public ContactEdge next = null;
 }

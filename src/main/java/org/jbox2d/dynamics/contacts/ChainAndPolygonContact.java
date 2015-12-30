@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -34,24 +34,24 @@ import org.jbox2d.pooling.IWorldPool;
 
 public class ChainAndPolygonContact extends Contact {
 
-  public ChainAndPolygonContact(IWorldPool argPool) {
-    super(argPool);
-  }
+    public ChainAndPolygonContact(IWorldPool argPool) {
+        super(argPool);
+    }
 
-  @Override
-  public void init(Fixture fA, int indexA, Fixture fB, int indexB) {
-    super.init(fA, indexA, fB, indexB);
-    assert (m_fixtureA.getType() == ShapeType.CHAIN);
-    assert (m_fixtureB.getType() == ShapeType.POLYGON);
-  }
+    @Override
+    public void init(Fixture fA, int indexA, Fixture fB, int indexB) {
+        super.init(fA, indexA, fB, indexB);
+        assert (m_fixtureA.getType() == ShapeType.CHAIN);
+        assert (m_fixtureB.getType() == ShapeType.POLYGON);
+    }
 
-  private final EdgeShape edge = new EdgeShape();
+    private final EdgeShape edge = new EdgeShape();
 
-  @Override
-  public void evaluate(Manifold manifold, Transform xfA, Transform xfB) {
-    ChainShape chain = (ChainShape) m_fixtureA.getShape();
-    chain.getChildEdge(edge, m_indexA);
-    pool.getCollision().collideEdgeAndPolygon(manifold, edge, xfA,
-        (PolygonShape) m_fixtureB.getShape(), xfB);
-  }
+    @Override
+    public void evaluate(Manifold manifold, Transform xfA, Transform xfB) {
+        ChainShape chain = (ChainShape) m_fixtureA.getShape();
+        chain.getChildEdge(edge, m_indexA);
+        pool.getCollision().collideEdgeAndPolygon(manifold, edge, xfA,
+                (PolygonShape) m_fixtureB.getShape(), xfB);
+    }
 }
