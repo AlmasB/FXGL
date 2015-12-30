@@ -44,6 +44,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -101,6 +102,16 @@ public final class Display implements UserProfileSavable {
 
     private EventBus eventBus;
 
+    /*
+     * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
+     * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
+     * So we copy the occurred event and reroute to whichever FXGL scene is current.
+     */
+    private EventHandler<Event> fxToFXGLFilter = event -> {
+        Event copy = event.copyFor(null, null);
+        currentScene.fireEvent(copy);
+    };
+
     @Inject
     private Display(Stage stage, Scene scene, ReadOnlyGameSettings settings) {
         this.stage = stage;
@@ -116,16 +127,7 @@ public final class Display implements UserProfileSavable {
         initStage();
         initDialogBox();
 
-        /*
-         * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
-         * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
-         * So we copy the occurred event and reroute to whichever FXGL scene is current.
-         */
-        scene.addEventFilter(EventType.ROOT, event -> {
-            Event copy = event.copyFor(null, null);
-            currentScene.fireEvent(copy);
-            //eventBus.fireEvent(copy);
-        });
+        scene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
 
         computeSceneSettings(settings.getWidth(), settings.getHeight());
         computeScaledSize();
@@ -212,6 +214,9 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
+     * Returns available (visual) bounds of the physical display.
+     * If the game is running fullscreen then this returns maximum bounds
+     * of the physical display.
      *
      * @return display bounds
      */
@@ -263,7 +268,7 @@ public final class Display implements UserProfileSavable {
      * @param width  target (app) width
      * @param height target (app) height
      */
-    public void computeSceneSettings(double width, double height) {
+    private void computeSceneSettings(double width, double height) {
         Rectangle2D bounds = getBounds();
 
         int[] heights = {360, 480, 720, 1080};
@@ -338,20 +343,27 @@ public final class Display implements UserProfileSavable {
         log.finer("New size:    " + newW  + "x" + newH   + "@" + getScaleRatio());
     }
 
+    /**
+     * Performs actual change of output resolution.
+     * It will create a new underlying JavaFX scene.
+     *
+     * @param w new width
+     * @param h new height
+     */
     private void setNewResolution(double w, double h) {
         targetWidth.set(w);
         targetHeight.set(h);
         computeScaledSize();
 
         Parent root = scene.getRoot();
+        // clear listener
+        scene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
         // clear root of previous JavaFX scene
         scene.setRoot(new Pane());
 
+        // create and init new JavaFX scene
         scene = new Scene(root);
-        scene.addEventFilter(EventType.ROOT, event -> {
-            Event copy = event.copyFor(null, null);
-            currentScene.fireEvent(copy);
-        });
+        scene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
         stage.setScene(scene);
         if (settings.isFullScreen()) {
             stage.setFullScreen(true);
@@ -438,6 +450,11 @@ public final class Display implements UserProfileSavable {
         dialogBox.showInputBox(message, resultCallback);
     }
 
+    /**
+     * Shows a blocking dialog with the error.
+     *
+     * @param error the error to show
+     */
     public void showErrorBox(Throwable error) {
         dialogBox.showErrorBox(error);
     }
