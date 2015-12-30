@@ -472,6 +472,14 @@ public class Entity {
     }
 
     /**
+     * @param bounds a rectangular box that represents bounds
+     * @return true iff entity is partially or entirely within given bounds
+     */
+    public final boolean isWithin(Rectangle2D bounds) {
+        return isWithin(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
+    }
+
+    /**
      *
      * @param minX min x
      * @param minY min y
