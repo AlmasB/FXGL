@@ -34,6 +34,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 
 /**
  * Game scene viewport.
@@ -42,11 +43,38 @@ import javafx.geometry.Point2D;
  */
 public final class Viewport {
 
-    private double width, height;
+    private final double width, height;
 
+    /**
+     * Constructs a viewport with given width and height.
+     *
+     * @param width viewport width
+     * @param height viewport height
+     */
     public Viewport(double width, double height) {
         this.width = width;
         this.height = height;
+    }
+
+    /**
+     * @return viewport width
+     */
+    public double getWidth() {
+        return width;
+    }
+
+    /**
+     * @return viewport height
+     */
+    public double getHeight() {
+        return height;
+    }
+
+    /**
+     * @return current visible viewport area
+     */
+    public Rectangle2D getVisibleArea() {
+        return new Rectangle2D(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 
     private DoubleProperty x = new SimpleDoubleProperty();
@@ -116,7 +144,7 @@ public final class Viewport {
      * <pre>
      * bindToEntity(player, getWidth() / 2, getHeight() / 2);
      * </pre>
-     * the code above centers the camera on player.<br/>
+     * the code above centers the camera on player.
      *
      * @param entity the entity to follow
      * @param distX distance in X between origin and entity
