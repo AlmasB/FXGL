@@ -484,6 +484,14 @@ public class Entity {
     }
 
     /**
+     * @param bounds a rectangular box that represents bounds
+     * @return true iff entity is completely outside given bounds
+     */
+    public final boolean isOutside(Rectangle2D bounds) {
+        return isOutside(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
+    }
+
+    /**
      *
      * @param minX min x
      * @param minY min y
