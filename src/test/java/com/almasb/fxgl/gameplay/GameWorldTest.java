@@ -26,23 +26,6 @@
 
 package com.almasb.fxgl.gameplay;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.shape.Rectangle;
-
 public class GameWorldTest {
 
 //    private enum Type implements EntityType {

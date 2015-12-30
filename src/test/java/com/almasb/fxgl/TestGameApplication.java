@@ -32,7 +32,6 @@ import com.almasb.fxgl.settings.GameSettings;
  * A test game app used to mock the user app.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class TestGameApplication extends GameApplication {
 
@@ -43,20 +42,26 @@ public class TestGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
+    protected void initInput() {
+    }
 
     @Override
-    protected void initAssets() {}
+    protected void initAssets() {
+    }
 
     @Override
-    protected void initGame() {}
+    protected void initGame() {
+    }
 
     @Override
-    protected void initPhysics() {}
+    protected void initPhysics() {
+    }
 
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+    }
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate() {
+    }
 }

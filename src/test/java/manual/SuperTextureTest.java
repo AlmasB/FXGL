@@ -26,6 +26,7 @@
 
 package manual;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
@@ -37,7 +38,6 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.app.ApplicationMode;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.VerticalDirection;
@@ -134,7 +134,7 @@ public class SuperTextureTest extends GameApplication {
         // 32x32
         // 64x64, 32x32
         player.setSceneView(brick.superTexture(brick2, HorizontalDirection.RIGHT)
-                                .superTexture(brick2, VerticalDirection.UP));
+                .superTexture(brick2, VerticalDirection.UP));
 
         enemy = new Entity(Type.ENEMY);
         enemy.setPosition(200, 100);

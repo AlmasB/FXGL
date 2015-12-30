@@ -1,13 +1,12 @@
 package manual;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.app.ApplicationMode;
-
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Rectangle;
@@ -62,7 +61,8 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
+    protected void initAssets() {
+    }
 
     @Override
     protected void initGame() {
@@ -74,7 +74,8 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void initPhysics() {}
+    protected void initPhysics() {
+    }
 
     @Override
     protected void initUI() {
@@ -82,7 +83,8 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate() {
+    }
 
     private Entity createEntity(double x, double y) {
         Entity e = new Entity(Type.TEST);

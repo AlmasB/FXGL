@@ -25,20 +25,18 @@
  */
 package com.almasb.fxgl.entity;
 
-import static org.junit.Assert.*;
-
-import java.util.Optional;
-
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.component.DoubleComponent;
 import com.almasb.fxgl.entity.control.AbstractControl;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Point2D;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.component.DoubleComponent;
+import java.util.Optional;
 
-import javafx.geometry.Point2D;
+import static org.junit.Assert.*;
 
 public class EntityTest {
 
@@ -127,8 +125,10 @@ public class EntityTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void componentsAnonymous() {
-        testEntity.addComponent(new Component() {});
-        testEntity.addComponent(new DoubleComponent() {});
+        testEntity.addComponent(new Component() {
+        });
+        testEntity.addComponent(new DoubleComponent() {
+        });
     }
 
     @Test(expected = IllegalArgumentException.class)
