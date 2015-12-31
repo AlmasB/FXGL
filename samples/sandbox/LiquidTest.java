@@ -27,6 +27,8 @@ package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.Input;
@@ -42,6 +44,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -60,7 +63,7 @@ public class LiquidTest extends GameApplication {
     // TODO: easy way of creating screen bounds given rectangle2d?
 
     private enum Type implements EntityType {
-        BOUNDS, CANVAS
+        BOUNDS, CANVAS, WATER
     }
 
     @Override
@@ -132,6 +135,22 @@ public class LiquidTest extends GameApplication {
 
         getGameWorld().addEntities(ground);
         //getGameWorld().addEntity(canvasEntity);
+
+
+
+        PhysicsWorld.PhysicsParticleEntity water = getPhysicsWorld().createLiquid(50, 10, 75, 150, Color.BLUE.brighter(), Type.WATER);
+
+        PhysicsWorld.PhysicsParticleEntity water2 = getPhysicsWorld().createLiquid(200, 10, 35, 35, Color.DARKRED.brighter(), Type.WATER);
+
+
+        //water.setExpireTime(Duration.seconds(10));
+
+//        ParticleEntity water = new ParticleEntity(Type.WATER);
+//        water.setEmitter(ParticleEmitters.newSparkEmitter());
+//        water.setPosition(100, 100);
+
+        getGameWorld().addEntities(water);
+        getGameWorld().addEntities(water2);
     }
 
     private Canvas canvas;
@@ -203,8 +222,7 @@ public class LiquidTest extends GameApplication {
 //    }
 
     public void initTest() {
-        getPhysicsWorld().testAdd();
-        getPhysicsWorld().createLiquid(50, 10, 100, 50, Color.BLUE.brighter());
+
 
 //        World world = getPhysicsWorld().getWorld();
 //

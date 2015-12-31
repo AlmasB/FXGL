@@ -78,7 +78,7 @@ public final class PhysicsWorld {
     private World physicsWorld = new World(new Vec2(0, -10));
 
     private ParticleSystem particleSystem = physicsWorld.getParticleSystem();
-    private PhysicsParticleEntity physicsParticles = new PhysicsParticleEntity();
+    //private PhysicsParticleEntity physicsParticles = new PhysicsParticleEntity();
 
     private List<Entity> entities = new ArrayList<>();
 
@@ -158,15 +158,8 @@ public final class PhysicsWorld {
     public void testAdd() {
         // TODO: do we allow to mock things like that?
         // TODO: add same for clean
-        GameApplication.getService(ServiceType.EVENT_BUS)
-                .fireEvent(WorldEvent.entityAdded(physicsParticles));
-    }
-
-    // TODO: allow users to set these
-    private void initParticles() {
-        physicsWorld.setParticleGravityScale(0.4f);
-        physicsWorld.setParticleDensity(1.2f);
-        physicsWorld.setParticleRadius(toMeters(1));
+//        GameApplication.getService(ServiceType.EVENT_BUS)
+//                .fireEvent(WorldEvent.entityAdded(physicsParticles));
     }
 
     /**
@@ -240,26 +233,26 @@ public final class PhysicsWorld {
     }
 
     private void updateParticles() {
-        List<PhysicsParticle> localParticles = new ArrayList<>();
+//        List<PhysicsParticle> localParticles = new ArrayList<>();
+//
+//        int count = particleSystem.getParticleCount();
+//        if (count != 0) {
+//            float radius = particleSystem.getParticleRadius();
+//            Vec2[] positionBuffer = particleSystem.getParticlePositionBuffer();
+//            Object[] colors = particleSystem.getParticleUserDataBuffer();
+//
+//            for (int i = 0; i < count; i++) {
+//                Vec2 v = positionBuffer[i];
+//
+//                double x = Math.round(toPixels(v.x - radius));
+//                double y = Math.round(toPixels(toMeters(appHeight) - v.y - radius));
+//
+//                Color color = (Color) colors[i];
+//                localParticles.add(new PhysicsParticle(new Point2D(x, y), toPixels(radius), color));
+//            }
+//        }
 
-        int count = particleSystem.getParticleCount();
-        if (count != 0) {
-            float radius = particleSystem.getParticleRadius();
-            Vec2[] positionBuffer = particleSystem.getParticlePositionBuffer();
-            Object[] colors = particleSystem.getParticleUserDataBuffer();
-
-            for (int i = 0; i < count; i++) {
-                Vec2 v = positionBuffer[i];
-
-                double x = Math.round(toPixels(v.x - radius));
-                double y = Math.round(toPixels(toMeters(appHeight) - v.y - radius));
-
-                Color color = (Color) colors[i];
-                localParticles.add(new PhysicsParticle(new Point2D(x, y), toPixels(radius), color));
-            }
-        }
-
-        physicsParticles.setAll(localParticles);
+        //physicsParticles.setAll(localParticles);
     }
 
     /**
@@ -321,6 +314,9 @@ public final class PhysicsWorld {
 
         for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
             Entity e = (Entity) body.getUserData();
+
+            // we round positions so that it's easy for the rest of the world to work with
+            // snapped to pixel values
             e.setX(
                     Math.round(toPixels(
                             body.getPosition().x
@@ -403,7 +399,7 @@ public final class PhysicsWorld {
      * @return value in meters
      */
     public static float toMeters(double pixels) {
-        return (float) pixels * 0.05f;
+        return (float) (pixels * 0.05f);    // * 0.02
     }
 
     /**
@@ -413,7 +409,7 @@ public final class PhysicsWorld {
      * @return value in pixels
      */
     public static float toPixels(double meters) {
-        return (float) meters * 20f;
+        return (float) (meters * 20f);  // * 50
     }
 
     /**
@@ -449,8 +445,15 @@ public final class PhysicsWorld {
         return physicsWorld;
     }
 
+    // TODO: allow users to set these
+    private void initParticles() {
+        physicsWorld.setParticleGravityScale(0.4f);
+        physicsWorld.setParticleDensity(1.2f);
+        physicsWorld.setParticleRadius(toMeters(1));
+    }
+
     // we return reference so that it can be cleaned up by physics world
-    public ParticleGroup createLiquid(double x, double y, double width, double height, Color color) {
+    public PhysicsParticleEntity createLiquid(double x, double y, double width, double height, Color color, EntityType type) {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
 
@@ -460,10 +463,13 @@ public final class PhysicsWorld {
         // TODO: allow users to choose type of particle
         //pd.flags = ParticleType.b2_tensileParticle | ParticleType.b2_viscousParticle;
         pd.flags = ParticleType.b2_waterParticle;
-        pd.userData = color;
+        //pd.flags = ParticleType.b2_powderParticle | ParticleType.b2_viscousParticle;
+
         pd.shape = shape;
         ParticleGroup particleGroup = physicsWorld.createParticleGroup(pd);
-        return particleGroup;
+        particleGroup.setUserData(color);
+
+        return new PhysicsParticleEntity(type, particleGroup);
     }
 
     private static class EdgeCallback implements RayCastCallback {
@@ -495,19 +501,46 @@ public final class PhysicsWorld {
         }
     }
 
-    private class PhysicsParticleEntity extends ParticleEntity {
-        public PhysicsParticleEntity() {
-            super(new EntityType() {
-                @Override
-                public String getUniqueType() {
-                    return "__PHYSICS_PARTICLE_ENTITY__";
-                }
-            });
+    public class PhysicsParticleEntity extends ParticleEntity {
+        private ParticleGroup group;
+        private double radiusMeters, radiusPixels;
+        private Color color;
+
+        private PhysicsParticleEntity(EntityType type, ParticleGroup group) {
+            super(type);
+
+            this.group = group;
+            this.color = (Color) group.getUserData();
+
+            radiusMeters = particleSystem.getParticleRadius();
+            radiusPixels = toPixels(radiusMeters);
         }
-        
-        void setAll(List<PhysicsParticle> physicsParticles) {
+
+        @Override
+        protected void onUpdate() {
             this.particles.clear();
-            this.particles.addAll(physicsParticles);
+
+            Vec2[] centers = particleSystem.getParticlePositionBuffer();
+
+            for (int i = group.getBufferIndex(); i < group.getBufferIndex() + group.getParticleCount(); i++) {
+                Vec2 center = centers[i];
+
+                double x = toPixels(center.x - radiusMeters);
+                double y = toPixels(toMeters(appHeight) - center.y - radiusMeters);
+
+                this.particles.add(new PhysicsParticle(new Point2D(x, y), radiusPixels, color));
+            }
         }
+
+        @Override
+        protected void onClean() {
+            physicsWorld.destroyParticlesInGroup(group);
+            this.particles.clear();
+        }
+
+        //        void setAll(List<PhysicsParticle> physicsParticles) {
+//            this.particles.clear();
+//            this.particles.addAll(physicsParticles);
+//        }
     }
 }
