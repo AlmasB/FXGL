@@ -78,7 +78,6 @@ public final class PhysicsWorld {
     private World physicsWorld = new World(new Vec2(0, -10));
 
     private ParticleSystem particleSystem = physicsWorld.getParticleSystem();
-    //private PhysicsParticleEntity physicsParticles = new PhysicsParticleEntity();
 
     private List<Entity> entities = new ArrayList<>();
 
@@ -155,13 +154,6 @@ public final class PhysicsWorld {
         log.finer("Physics world initialized");
     }
 
-    public void testAdd() {
-        // TODO: do we allow to mock things like that?
-        // TODO: add same for clean
-//        GameApplication.getService(ServiceType.EVENT_BUS)
-//                .fireEvent(WorldEvent.entityAdded(physicsParticles));
-    }
-
     /**
      * Perform collision detection for all entities that have
      * setCollidable(true) and if at least one entity is not PhysicsEntity.
@@ -230,29 +222,6 @@ public final class PhysicsWorld {
         });
 
         toRemove.forEach(collisions::remove);
-    }
-
-    private void updateParticles() {
-//        List<PhysicsParticle> localParticles = new ArrayList<>();
-//
-//        int count = particleSystem.getParticleCount();
-//        if (count != 0) {
-//            float radius = particleSystem.getParticleRadius();
-//            Vec2[] positionBuffer = particleSystem.getParticlePositionBuffer();
-//            Object[] colors = particleSystem.getParticleUserDataBuffer();
-//
-//            for (int i = 0; i < count; i++) {
-//                Vec2 v = positionBuffer[i];
-//
-//                double x = Math.round(toPixels(v.x - radius));
-//                double y = Math.round(toPixels(toMeters(appHeight) - v.y - radius));
-//
-//                Color color = (Color) colors[i];
-//                localParticles.add(new PhysicsParticle(new Point2D(x, y), toPixels(radius), color));
-//            }
-//        }
-
-        //physicsParticles.setAll(localParticles);
     }
 
     /**
@@ -327,8 +296,6 @@ public final class PhysicsWorld {
                                     - toMeters(e.getHeight() / 2))));
             e.setRotation(-Math.toDegrees(body.getAngle()));
         }
-
-        updateParticles();
     }
 
     public void setGravity(double x, double y) {
@@ -452,17 +419,34 @@ public final class PhysicsWorld {
         physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
-    // we return reference so that it can be cleaned up by physics world
-    public PhysicsParticleEntity createLiquid(double x, double y, double width, double height, Color color, EntityType type,
-                                              PhysicsParticleData data) {
+    /**
+     * Constructs new physics particles based on given definition
+     * and wraps it into an entity. The returned entity can only be used
+     * to attach to game world and to remove from game world.
+     * The geometric properties are completely managed by the physics world.
+     *
+     * <p>
+     *     Parameter <b>data</b> defines what physics properties the particles will have.
+     * </p>
+     *
+     * @param x top left position
+     * @param y top left position
+     * @param width particle group width
+     * @param height particle group height
+     * @param color particle group color
+     * @param type entity type
+     * @param data particle group data
+     * @return new physics particle entity
+     */
+    public PhysicsParticleEntity newPhysicsParticleEntity(double x, double y, double width, double height, Color color, EntityType type,
+                                                          PhysicsParticleData data) {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
 
         ParticleGroupDef pd = new ParticleGroupDef();
         pd.position.set(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
-
-        pd.flags = data.getFlags();
         pd.shape = shape;
+        pd.flags = data.getFlags();
 
         ParticleGroup particleGroup = physicsWorld.createParticleGroup(pd);
         particleGroup.setUserData(color);
@@ -499,6 +483,11 @@ public final class PhysicsWorld {
         }
     }
 
+    /**
+     * The difference between physics and normal particle entity is that
+     * the former is managed (controlled) by the physics world, the latter
+     * by the particle emitters.
+     */
     public class PhysicsParticleEntity extends ParticleEntity {
         private ParticleGroup group;
         private double radiusMeters, radiusPixels;
@@ -535,10 +524,5 @@ public final class PhysicsWorld {
             physicsWorld.destroyParticlesInGroup(group);
             this.particles.clear();
         }
-
-        //        void setAll(List<PhysicsParticle> physicsParticles) {
-//            this.particles.clear();
-//            this.particles.addAll(physicsParticles);
-//        }
     }
 }
