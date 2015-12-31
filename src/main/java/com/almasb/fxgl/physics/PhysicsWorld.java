@@ -27,7 +27,9 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
@@ -38,6 +40,7 @@ import com.google.inject.name.Named;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
@@ -49,6 +52,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
+import org.jbox2d.particle.*;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -72,6 +76,9 @@ public final class PhysicsWorld {
     private static final float TIME_STEP = 1 / 60.0f;
 
     private World physicsWorld = new World(new Vec2(0, -10));
+
+    private ParticleSystem particleSystem = physicsWorld.getParticleSystem();
+    private PhysicsParticleEntity physicsParticles = new PhysicsParticleEntity();
 
     private List<Entity> entities = new ArrayList<>();
 
@@ -134,6 +141,8 @@ public final class PhysicsWorld {
             }
         });
 
+        initParticles();
+
         EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
         bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
             addEntity(event.getEntity());
@@ -144,6 +153,20 @@ public final class PhysicsWorld {
         bus.addEventHandler(UpdateEvent.ANY, event -> update());
 
         log.finer("Physics world initialized");
+    }
+
+    public void testAdd() {
+        // TODO: do we allow to mock things like that?
+        // TODO: add same for clean
+        GameApplication.getService(ServiceType.EVENT_BUS)
+                .fireEvent(WorldEvent.entityAdded(physicsParticles));
+    }
+
+    // TODO: allow users to set these
+    private void initParticles() {
+        physicsWorld.setParticleGravityScale(0.4f);
+        physicsWorld.setParticleDensity(1.2f);
+        physicsWorld.setParticleRadius(toMeters(1));
     }
 
     /**
@@ -216,6 +239,29 @@ public final class PhysicsWorld {
         toRemove.forEach(collisions::remove);
     }
 
+    private void updateParticles() {
+        List<PhysicsParticle> localParticles = new ArrayList<>();
+
+        int count = particleSystem.getParticleCount();
+        if (count != 0) {
+            float radius = particleSystem.getParticleRadius();
+            Vec2[] positionBuffer = particleSystem.getParticlePositionBuffer();
+            Object[] colors = particleSystem.getParticleUserDataBuffer();
+
+            for (int i = 0; i < count; i++) {
+                Vec2 v = positionBuffer[i];
+
+                double x = Math.round(toPixels(v.x - radius));
+                double y = Math.round(toPixels(toMeters(appHeight) - v.y - radius));
+
+                Color color = (Color) colors[i];
+                localParticles.add(new PhysicsParticle(new Point2D(x, y), toPixels(radius), color));
+            }
+        }
+
+        physicsParticles.setAll(localParticles);
+    }
+
     /**
      * Registers a collision handler.
      * The order in which the types are passed to this method
@@ -285,6 +331,8 @@ public final class PhysicsWorld {
                                     - toMeters(e.getHeight() / 2))));
             e.setRotation(-Math.toDegrees(body.getAngle()));
         }
+
+        updateParticles();
     }
 
     public void setGravity(double x, double y) {
@@ -396,6 +444,28 @@ public final class PhysicsWorld {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }
 
+    // TODO: remove when done
+    public World getWorld() {
+        return physicsWorld;
+    }
+
+    // we return reference so that it can be cleaned up by physics world
+    public ParticleGroup createLiquid(double x, double y, double width, double height, Color color) {
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+
+        ParticleGroupDef pd = new ParticleGroupDef();
+        pd.position.set(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
+
+        // TODO: allow users to choose type of particle
+        //pd.flags = ParticleType.b2_tensileParticle | ParticleType.b2_viscousParticle;
+        pd.flags = ParticleType.b2_waterParticle;
+        pd.userData = color;
+        pd.shape = shape;
+        ParticleGroup particleGroup = physicsWorld.createParticleGroup(pd);
+        return particleGroup;
+    }
+
     private static class EdgeCallback implements RayCastCallback {
         Fixture fixture;
         Vec2 point;
@@ -422,6 +492,22 @@ public final class PhysicsWorld {
             fixture = null;
             point = null;
             bestFraction = 1.0f;
+        }
+    }
+
+    private class PhysicsParticleEntity extends ParticleEntity {
+        public PhysicsParticleEntity() {
+            super(new EntityType() {
+                @Override
+                public String getUniqueType() {
+                    return "__PHYSICS_PARTICLE_ENTITY__";
+                }
+            });
+        }
+        
+        void setAll(List<PhysicsParticle> physicsParticles) {
+            this.particles.clear();
+            this.particles.addAll(physicsParticles);
         }
     }
 }

@@ -103,8 +103,11 @@ public class World {
 
     private Profile m_profile;
 
-    private ParticleSystem m_particleSystem;
+    private final ParticleSystem particleSystem;
 
+    public ParticleSystem getParticleSystem() {
+        return particleSystem;
+    }
 
     private ContactRegister[][] contactStacks =
             new ContactRegister[ShapeType.values().length][ShapeType.values().length];
@@ -157,7 +160,7 @@ public class World {
         m_contactManager = new ContactManager(this, broadPhase);
         m_profile = new Profile();
 
-        m_particleSystem = new ParticleSystem(this);
+        particleSystem = new ParticleSystem(this);
 
         initializeRegisters();
     }
@@ -602,7 +605,7 @@ public class World {
         // Integrate velocities, solve velocity constraints, and integrate positions.
         if (m_stepComplete && step.dt > 0.0f) {
             tempTimer.reset();
-            m_particleSystem.solve(step); // Particle Simulation
+            particleSystem.solve(step); // Particle Simulation
             m_profile.solveParticleSystem.record(tempTimer.getMilliseconds());
             tempTimer.reset();
             solve(step);
@@ -684,7 +687,7 @@ public class World {
                     }
                 }
             }
-            drawParticleSystem(m_particleSystem);
+            drawParticleSystem(particleSystem);
         }
 
         if ((flags & DebugDraw.e_jointBit) != 0) {
@@ -769,7 +772,7 @@ public class World {
         wqwrapper.broadPhase = m_contactManager.m_broadPhase;
         wqwrapper.callback = callback;
         m_contactManager.m_broadPhase.query(wqwrapper, aabb);
-        m_particleSystem.queryAABB(particleCallback, aabb);
+        particleSystem.queryAABB(particleCallback, aabb);
     }
 
     /**
@@ -779,7 +782,7 @@ public class World {
      * @param aabb the query box.
      */
     public void queryAABB(ParticleQueryCallback particleCallback, AABB aabb) {
-        m_particleSystem.queryAABB(particleCallback, aabb);
+        particleSystem.queryAABB(particleCallback, aabb);
     }
 
     private final WorldRayCastWrapper wrcwrapper = new WorldRayCastWrapper();
@@ -821,7 +824,7 @@ public class World {
         input.p1.set(point1);
         input.p2.set(point2);
         m_contactManager.m_broadPhase.raycast(wrcwrapper, input);
-        m_particleSystem.raycast(particleCallback, point1, point2);
+        particleSystem.raycast(particleCallback, point1, point2);
     }
 
     /**
@@ -833,7 +836,7 @@ public class World {
      * @param point2 the ray ending point
      */
     public void raycast(ParticleRaycastCallback particleCallback, Vec2 point1, Vec2 point2) {
-        m_particleSystem.raycast(particleCallback, point1, point2);
+        particleSystem.raycast(particleCallback, point1, point2);
     }
 
     /**
@@ -1649,7 +1652,7 @@ public class World {
         if (isLocked()) {
             return 0;
         }
-        int p = m_particleSystem.createParticle(def);
+        int p = particleSystem.createParticle(def);
         return p;
     }
 
@@ -1669,7 +1672,7 @@ public class World {
      * @param Whether to call the destruction listener just before the particle is destroyed.
      */
     public void destroyParticle(int index, boolean callDestructionListener) {
-        m_particleSystem.destroyParticle(index, callDestructionListener);
+        particleSystem.destroyParticle(index, callDestructionListener);
     }
 
     /**
@@ -1702,7 +1705,7 @@ public class World {
         if (isLocked()) {
             return 0;
         }
-        return m_particleSystem.destroyParticlesInShape(shape, xf, callDestructionListener);
+        return particleSystem.destroyParticlesInShape(shape, xf, callDestructionListener);
     }
 
     /**
@@ -1716,7 +1719,7 @@ public class World {
         if (isLocked()) {
             return null;
         }
-        ParticleGroup g = m_particleSystem.createParticleGroup(def);
+        ParticleGroup g = particleSystem.createParticleGroup(def);
         return g;
     }
 
@@ -1732,7 +1735,7 @@ public class World {
         if (isLocked()) {
             return;
         }
-        m_particleSystem.joinParticleGroups(groupA, groupB);
+        particleSystem.joinParticleGroups(groupA, groupB);
     }
 
     /**
@@ -1747,7 +1750,7 @@ public class World {
         if (isLocked()) {
             return;
         }
-        m_particleSystem.destroyParticlesInGroup(group, callDestructionListener);
+        particleSystem.destroyParticlesInGroup(group, callDestructionListener);
     }
 
     /**
@@ -1768,7 +1771,7 @@ public class World {
      * @return the head of the world particle group list.
      */
     public ParticleGroup[] getParticleGroupList() {
-        return m_particleSystem.getParticleGroupList();
+        return particleSystem.getParticleGroupList();
     }
 
     /**
@@ -1777,7 +1780,7 @@ public class World {
      * @return
      */
     public int getParticleGroupCount() {
-        return m_particleSystem.getParticleGroupCount();
+        return particleSystem.getParticleGroupCount();
     }
 
     /**
@@ -1786,7 +1789,7 @@ public class World {
      * @return
      */
     public int getParticleCount() {
-        return m_particleSystem.getParticleCount();
+        return particleSystem.getParticleCount();
     }
 
     /**
@@ -1795,7 +1798,7 @@ public class World {
      * @return
      */
     public int getParticleMaxCount() {
-        return m_particleSystem.getParticleMaxCount();
+        return particleSystem.getParticleMaxCount();
     }
 
     /**
@@ -1804,7 +1807,7 @@ public class World {
      * @param count
      */
     public void setParticleMaxCount(int count) {
-        m_particleSystem.setParticleMaxCount(count);
+        particleSystem.setParticleMaxCount(count);
     }
 
     /**
@@ -1813,7 +1816,7 @@ public class World {
      * @param density
      */
     public void setParticleDensity(float density) {
-        m_particleSystem.setParticleDensity(density);
+        particleSystem.setParticleDensity(density);
     }
 
     /**
@@ -1822,7 +1825,7 @@ public class World {
      * @return
      */
     public float getParticleDensity() {
-        return m_particleSystem.getParticleDensity();
+        return particleSystem.getParticleDensity();
     }
 
     /**
@@ -1832,7 +1835,7 @@ public class World {
      * @param gravityScale
      */
     public void setParticleGravityScale(float gravityScale) {
-        m_particleSystem.setParticleGravityScale(gravityScale);
+        particleSystem.setParticleGravityScale(gravityScale);
 
     }
 
@@ -1842,7 +1845,7 @@ public class World {
      * @return
      */
     public float getParticleGravityScale() {
-        return m_particleSystem.getParticleGravityScale();
+        return particleSystem.getParticleGravityScale();
     }
 
     /**
@@ -1853,7 +1856,7 @@ public class World {
      * @param damping
      */
     public void setParticleDamping(float damping) {
-        m_particleSystem.setParticleDamping(damping);
+        particleSystem.setParticleDamping(damping);
     }
 
     /**
@@ -1862,7 +1865,7 @@ public class World {
      * @return
      */
     public float getParticleDamping() {
-        return m_particleSystem.getParticleDamping();
+        return particleSystem.getParticleDamping();
     }
 
     /**
@@ -1872,7 +1875,7 @@ public class World {
      * @param radius
      */
     public void setParticleRadius(float radius) {
-        m_particleSystem.setParticleRadius(radius);
+        particleSystem.setParticleRadius(radius);
     }
 
     /**
@@ -1881,7 +1884,7 @@ public class World {
      * @return
      */
     public float getParticleRadius() {
-        return m_particleSystem.getParticleRadius();
+        return particleSystem.getParticleRadius();
     }
 
     /**
@@ -1890,27 +1893,27 @@ public class World {
      * @return
      */
     public int[] getParticleFlagsBuffer() {
-        return m_particleSystem.getParticleFlagsBuffer();
+        return particleSystem.getParticleFlagsBuffer();
     }
 
     public Vec2[] getParticlePositionBuffer() {
-        return m_particleSystem.getParticlePositionBuffer();
+        return particleSystem.getParticlePositionBuffer();
     }
 
     public Vec2[] getParticleVelocityBuffer() {
-        return m_particleSystem.getParticleVelocityBuffer();
+        return particleSystem.getParticleVelocityBuffer();
     }
 
     public ParticleColor[] getParticleColorBuffer() {
-        return m_particleSystem.getParticleColorBuffer();
+        return particleSystem.getParticleColorBuffer();
     }
 
     public ParticleGroup[] getParticleGroupBuffer() {
-        return m_particleSystem.getParticleGroupBuffer();
+        return particleSystem.getParticleGroupBuffer();
     }
 
     public Object[] getParticleUserDataBuffer() {
-        return m_particleSystem.getParticleUserDataBuffer();
+        return particleSystem.getParticleUserDataBuffer();
     }
 
     /**
@@ -1920,26 +1923,26 @@ public class World {
      * @param size is the number of values in the block.
      */
     public void setParticleFlagsBuffer(int[] buffer, int capacity) {
-        m_particleSystem.setParticleFlagsBuffer(buffer, capacity);
+        particleSystem.setParticleFlagsBuffer(buffer, capacity);
     }
 
     public void setParticlePositionBuffer(Vec2[] buffer, int capacity) {
-        m_particleSystem.setParticlePositionBuffer(buffer, capacity);
+        particleSystem.setParticlePositionBuffer(buffer, capacity);
 
     }
 
     public void setParticleVelocityBuffer(Vec2[] buffer, int capacity) {
-        m_particleSystem.setParticleVelocityBuffer(buffer, capacity);
+        particleSystem.setParticleVelocityBuffer(buffer, capacity);
 
     }
 
     public void setParticleColorBuffer(ParticleColor[] buffer, int capacity) {
-        m_particleSystem.setParticleColorBuffer(buffer, capacity);
+        particleSystem.setParticleColorBuffer(buffer, capacity);
 
     }
 
     public void setParticleUserDataBuffer(Object[] buffer, int capacity) {
-        m_particleSystem.setParticleUserDataBuffer(buffer, capacity);
+        particleSystem.setParticleUserDataBuffer(buffer, capacity);
     }
 
     /**
@@ -1948,11 +1951,11 @@ public class World {
      * @return
      */
     public ParticleContact[] getParticleContacts() {
-        return m_particleSystem.m_contactBuffer;
+        return particleSystem.m_contactBuffer;
     }
 
     public int getParticleContactCount() {
-        return m_particleSystem.m_contactCount;
+        return particleSystem.m_contactCount;
     }
 
     /**
@@ -1961,11 +1964,11 @@ public class World {
      * @return
      */
     public ParticleBodyContact[] getParticleBodyContacts() {
-        return m_particleSystem.m_bodyContactBuffer;
+        return particleSystem.m_bodyContactBuffer;
     }
 
     public int getParticleBodyContactCount() {
-        return m_particleSystem.m_bodyContactCount;
+        return particleSystem.m_bodyContactCount;
     }
 
     /**
@@ -1974,7 +1977,7 @@ public class World {
      * @return
      */
     public float computeParticleCollisionEnergy() {
-        return m_particleSystem.computeParticleCollisionEnergy();
+        return particleSystem.computeParticleCollisionEnergy();
     }
 }
 

@@ -66,7 +66,7 @@ public class Test3d extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setMenuEnabled(true);
         settings.setIntroEnabled(false);
-//        settings.setWidth(1920);
+//        settings.setWidth(1920);.
 //        settings.setHeight(1080);
 //        settings.setFullScreen(true);
     }

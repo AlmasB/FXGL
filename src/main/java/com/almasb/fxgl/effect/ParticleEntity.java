@@ -43,12 +43,12 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class ParticleEntity extends Entity {
+public class ParticleEntity extends Entity {
 
     /**
      * Particles attached to entity
      */
-    private List<Particle> particles = new ArrayList<>();
+    protected List<Particle> particles = new ArrayList<>();
 
     /**
      * Particle emitter used to create new particles

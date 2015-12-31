@@ -163,7 +163,7 @@ public class Particle {
         g.setGlobalAlpha(life);
         g.setGlobalBlendMode(blendMode);
         g.setFill(color);
-        g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radiusX, radiusY);
+        g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radiusX * 2, radiusY * 2);
     }
 
     public double getVelX() {

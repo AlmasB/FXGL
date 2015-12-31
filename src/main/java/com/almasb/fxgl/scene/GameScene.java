@@ -126,6 +126,8 @@ public final class GameScene extends FXGLScene {
         viewport = new Viewport(settings.getWidth(), settings.getHeight());
         gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
+
+        log.finer("Game scene initialized");
     }
 
     private void initParticlesCanvas(double w, double h) {
