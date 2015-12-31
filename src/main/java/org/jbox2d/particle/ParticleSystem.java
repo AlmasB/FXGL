@@ -215,7 +215,7 @@ public class ParticleSystem {
             return Settings.invalidParticleIndex;
         }
         int index = m_count++;
-        m_flagsBuffer.data[index] = def.flags;
+        m_flagsBuffer.data[index] = def.getTypeFlags();
         m_positionBuffer.data[index].set(def.position);
 //    assertNotSamePosition();
         m_velocityBuffer.data[index].set(def.velocity);
@@ -227,10 +227,9 @@ public class ParticleSystem {
             m_colorBuffer.data = requestParticleBuffer(m_colorBuffer.dataClass, m_colorBuffer.data);
             m_colorBuffer.data[index].set(def.color);
         }
-        if (m_userDataBuffer.data != null || def.userData != null) {
-            m_userDataBuffer.data =
-                    requestParticleBuffer(m_userDataBuffer.dataClass, m_userDataBuffer.data);
-            m_userDataBuffer.data[index] = def.userData;
+        if (m_userDataBuffer.data != null || def.getUserData() != null) {
+            m_userDataBuffer.data = requestParticleBuffer(m_userDataBuffer.dataClass, m_userDataBuffer.data);
+            m_userDataBuffer.data[index] = def.getUserData();
         }
         if (m_proxyCount >= m_proxyCapacity) {
             int oldCapacity = m_proxyCapacity;
@@ -284,9 +283,9 @@ public class ParticleSystem {
         int firstIndex = m_count;
         if (groupDef.shape != null) {
             final ParticleDef particleDef = tempParticleDef;
-            particleDef.flags = groupDef.flags;
+            particleDef.setTypeFlags(groupDef.flags);
             particleDef.color = groupDef.color;
-            particleDef.userData = groupDef.userData;
+            particleDef.setUserData(groupDef.userData);
             Shape shape = groupDef.shape;
             transform.set(groupDef.position, groupDef.angle);
             AABB aabb = temp;
