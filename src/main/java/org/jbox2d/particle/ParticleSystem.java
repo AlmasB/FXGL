@@ -281,13 +281,13 @@ public class ParticleSystem {
         Transform transform = tempTransform2;
         transform.setIdentity();
         int firstIndex = m_count;
-        if (groupDef.shape != null) {
+        if (groupDef.getShape() != null) {
             final ParticleDef particleDef = tempParticleDef;
-            particleDef.setTypeFlags(groupDef.flags);
+            particleDef.setTypeFlags(groupDef.getTypeFlags());
             particleDef.color = groupDef.color;
             particleDef.setUserData(groupDef.userData);
-            Shape shape = groupDef.shape;
-            transform.set(groupDef.position, groupDef.angle);
+            Shape shape = groupDef.getShape();
+            transform.set(groupDef.getPosition(), groupDef.angle);
             AABB aabb = temp;
             int childCount = shape.getChildCount();
             for (int childIndex = 0; childIndex < childCount; childIndex++) {
@@ -312,7 +312,7 @@ public class ParticleSystem {
                         Transform.mulToOut(transform, p, p);
                         particleDef.position.x = p.x;
                         particleDef.position.y = p.y;
-                        p.subLocal(groupDef.position);
+                        p.subLocal(groupDef.getPosition());
                         Vec2.crossToOutUnsafe(groupDef.angularVelocity, p, particleDef.velocity);
                         particleDef.velocity.addLocal(groupDef.linearVelocity);
                         createParticle(particleDef);
@@ -343,7 +343,7 @@ public class ParticleSystem {
         }
 
         updateContacts(true);
-        if ((groupDef.flags & k_pairFlags) != 0) {
+        if ((groupDef.getTypeFlags() & k_pairFlags) != 0) {
             for (int k = 0; k < m_contactCount; k++) {
                 ParticleContact contact = m_contactBuffer[k];
                 int a = contact.indexA;
@@ -372,7 +372,7 @@ public class ParticleSystem {
                 }
             }
         }
-        if ((groupDef.flags & k_triadFlags) != 0) {
+        if ((groupDef.getTypeFlags() & k_triadFlags) != 0) {
             VoronoiDiagram diagram = new VoronoiDiagram(lastIndex - firstIndex);
             for (int i = firstIndex; i < lastIndex; i++) {
                 diagram.addGenerator(m_positionBuffer.data[i], i);

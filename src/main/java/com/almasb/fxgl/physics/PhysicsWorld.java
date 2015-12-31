@@ -419,6 +419,8 @@ public final class PhysicsWorld {
         physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
+    // TODO: replace data with ParticleGroupDef once its fields are properly encapsulated
+    // to be more consistent across the library
     /**
      * Constructs new physics particles based on given definition
      * and wraps it into an entity. The returned entity can only be used
@@ -444,14 +446,13 @@ public final class PhysicsWorld {
         shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
 
         ParticleGroupDef pd = new ParticleGroupDef();
-        pd.position.set(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
-        pd.shape = shape;
-        pd.flags = data.getFlags();
+        pd.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
+        pd.setShape(shape);
+        pd.setTypeFlags(data.getFlags());
 
         ParticleGroup particleGroup = physicsWorld.createParticleGroup(pd);
-        particleGroup.setUserData(color);
 
-        return new PhysicsParticleEntity(type, particleGroup);
+        return new PhysicsParticleEntity(type, particleGroup, color);
     }
 
     private static class EdgeCallback implements RayCastCallback {
@@ -493,11 +494,11 @@ public final class PhysicsWorld {
         private double radiusMeters, radiusPixels;
         private Color color;
 
-        private PhysicsParticleEntity(EntityType type, ParticleGroup group) {
+        private PhysicsParticleEntity(EntityType type, ParticleGroup group, Color color) {
             super(type);
 
             this.group = group;
-            this.color = (Color) group.getUserData();
+            this.color = color;
 
             radiusMeters = particleSystem.getParticleRadius();
             radiusPixels = toPixels(radiusMeters);
