@@ -34,6 +34,7 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsEntity;
+import com.almasb.fxgl.physics.PhysicsParticleData;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -138,9 +139,11 @@ public class LiquidTest extends GameApplication {
 
 
 
-        PhysicsWorld.PhysicsParticleEntity water = getPhysicsWorld().createLiquid(50, 10, 75, 150, Color.BLUE.brighter(), Type.WATER);
+        PhysicsWorld.PhysicsParticleEntity water = getPhysicsWorld().createLiquid(50, 10, 75, 150, Color.BLUE.brighter(), Type.WATER,
+                new PhysicsParticleData().setElastic());
 
-        PhysicsWorld.PhysicsParticleEntity water2 = getPhysicsWorld().createLiquid(200, 10, 35, 35, Color.DARKRED.brighter(), Type.WATER);
+        PhysicsWorld.PhysicsParticleEntity water2 = getPhysicsWorld().createLiquid(200, 10, 35, 35, Color.DARKRED.brighter(), Type.WATER,
+                new PhysicsParticleData().setWall());
 
 
         //water.setExpireTime(Duration.seconds(10));

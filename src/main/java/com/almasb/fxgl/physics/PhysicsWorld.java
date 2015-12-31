@@ -449,23 +449,21 @@ public final class PhysicsWorld {
     private void initParticles() {
         physicsWorld.setParticleGravityScale(0.4f);
         physicsWorld.setParticleDensity(1.2f);
-        physicsWorld.setParticleRadius(toMeters(1));
+        physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
     // we return reference so that it can be cleaned up by physics world
-    public PhysicsParticleEntity createLiquid(double x, double y, double width, double height, Color color, EntityType type) {
+    public PhysicsParticleEntity createLiquid(double x, double y, double width, double height, Color color, EntityType type,
+                                              PhysicsParticleData data) {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
 
         ParticleGroupDef pd = new ParticleGroupDef();
         pd.position.set(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
 
-        // TODO: allow users to choose type of particle
-        //pd.flags = ParticleType.b2_tensileParticle | ParticleType.b2_viscousParticle;
-        pd.flags = ParticleType.b2_waterParticle;
-        //pd.flags = ParticleType.b2_powderParticle | ParticleType.b2_viscousParticle;
-
+        pd.flags = data.getFlags();
         pd.shape = shape;
+
         ParticleGroup particleGroup = physicsWorld.createParticleGroup(pd);
         particleGroup.setUserData(color);
 
