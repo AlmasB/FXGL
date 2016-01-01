@@ -152,17 +152,32 @@ public class EntityView extends Parent {
         getChildren().remove(node);
     }
 
+    private boolean removedFromScene = false;
+
     /**
      * Removes this view from scene and clears its children nodes.
      */
     public final void removeFromScene() {
+        if (removedFromScene)
+            return;
+
         getChildren().clear();
 
         try {
-            ((Group)getParent()).getChildren().remove(this);
+            // we were created by user and he set scene view manually
+            if (getParent() instanceof EntityView) {
+                ((EntityView) getParent()).removeFromScene();
+            }
+            // we were created automatically by Entity
+            else if (getParent() instanceof Group) {
+                ((Group)getParent()).getChildren().remove(this);
+            } else {
+                throw new IllegalStateException("View parent is of unknown type: " + getParent().getClass());
+            }
+
+            removedFromScene = true;
         } catch (Exception e) {
-            log.warning("View wasn't removed from scene because parent is not of type Group: "
-                    + e.getMessage());
+            log.warning("View wasn't removed from scene: " + e.getMessage());
         }
     }
 

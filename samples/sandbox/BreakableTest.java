@@ -96,8 +96,13 @@ public class BreakableTest extends GameApplication {
 
         entity = new BreakablePhysicsEntity(Type.BREAKABLE);
         entity.setPosition(100, 50);
-        entity.setBodyType(BodyType.DYNAMIC);
+        //entity.setBodyType(BodyType.DYNAMIC);
 
+        BodyDef bd = new BodyDef();
+        //bd.setAngle((float)Math.toRadians(90));
+        bd.setType(BodyType.DYNAMIC);
+
+        entity.setBodyDef(bd);
         entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
         entity.addHitBox(new HitBox("BODY2", new BoundingBox(40, 0, 40, 40)));
 
@@ -133,7 +138,7 @@ public class BreakableTest extends GameApplication {
         right.setSceneView(new Rectangle(100, getHeight()));
 
         PhysicsEntity ground = new PhysicsEntity(Type.BOUNDS);
-        ground.setSceneView(new Rectangle(200, 50));
+        ground.setSceneView(new Rectangle(50, 50));
         ground.setPosition(50, 300);
 
         getGameWorld().addEntities(top, bot, left, right, ground);

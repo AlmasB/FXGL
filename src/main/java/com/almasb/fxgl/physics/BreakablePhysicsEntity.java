@@ -26,9 +26,12 @@
 
 package com.almasb.fxgl.physics;
 
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.EntityType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
@@ -67,15 +70,18 @@ public class BreakablePhysicsEntity extends PhysicsEntity {
             PolygonShape shape = (PolygonShape) f.getShape();
 
             FixtureDef fd = new FixtureDef();
-            fd.shape = shape;
+
+
+            // TODO: hardcoded values
+            PolygonShape rectShape = new PolygonShape();
+            rectShape.setAsBox(PhysicsWorld.toMeters(40 / 2), PhysicsWorld.toMeters(40 / 2));
+
+            fd.shape = rectShape;
             fd.density = 1.0f;
 
             BodyDef bf = new BodyDef();
             bf.type = BodyType.DYNAMIC;
-
-            // TODO: this is wrong because we use single fixture bodies
-            // when each fixture is created it is given its own center data
-            bf.position = body.getPosition();
+            bf.position = body.getPosition().add(getCenter(shape.getVertices(), shape.getVertexCount()));
             bf.angle = body.getAngle();
 
             PhysicsEntity entity = new PhysicsEntity(getEntityType());
@@ -103,7 +109,7 @@ public class BreakablePhysicsEntity extends PhysicsEntity {
         });
 
 
-
+        removeFromWorld();
 
         //        // Create two bodies from one.
 //        Body body1 = m_piece1.getBody();
@@ -140,5 +146,32 @@ public class BreakablePhysicsEntity extends PhysicsEntity {
 
 
         return new ArrayList<>();
+    }
+
+    private Vec2 getCenter(Vec2[] vertices, int count) {
+        float minX = Float.MAX_VALUE;
+        float maxX = -Float.MAX_VALUE;
+        float minY =  Float.MAX_VALUE;
+        float maxY = -Float.MAX_VALUE;
+
+        for (int i = 0; i < count; i++) {
+            if (vertices[i].x < minX) {
+                minX = vertices[i].x;
+            }
+
+            if (vertices[i].x > maxX) {
+                maxX = vertices[i].x;
+            }
+
+            if (vertices[i].y < minY) {
+                minY = vertices[i].y;
+            }
+
+            if (vertices[i].y > maxY) {
+                maxY = vertices[i].y;
+            }
+        }
+
+        return new Vec2((minX + maxX) / 2, (minY + maxY) / 2);
     }
 }

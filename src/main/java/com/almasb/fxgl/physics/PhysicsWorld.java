@@ -316,6 +316,8 @@ public final class PhysicsWorld {
             PolygonShape rectShape = new PolygonShape();
             rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2));
             e.fixtureDef.shape = rectShape;
+
+            log.info("single :" + Arrays.toString(rectShape.getVertices()));
         }
 
         // if position is 0, 0 then probably not set, so set ourselves
@@ -335,6 +337,8 @@ public final class PhysicsWorld {
     }
 
     private void createExtraFixtures(BreakablePhysicsEntity e) {
+        int i = 0;
+
         for (HitBox box : e.hitBoxesProperty()) {
             Bounds bounds = box.translate(0, 0);
 
@@ -345,12 +349,19 @@ public final class PhysicsWorld {
 
             FixtureDef fd = new FixtureDef();
             PolygonShape rectShape = new PolygonShape();
-            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2));
+            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2), new Vec2(toMeters(i == 0 ? -w/2 : w/2), 0), 0);
+
             fd.shape = rectShape;
             fd.density = 1.0f;
 
             Fixture fixture = e.body.createFixture(fd);
             e.fixtures.add(fixture);
+
+
+            log.info(Arrays.toString(rectShape.getVertices()));
+            i++;
+            //log.info(bounds.toString());
+            //log.info(toPoint(new Point2D(x + w / 2, y + h / 2)).toString());
         }
     }
 
