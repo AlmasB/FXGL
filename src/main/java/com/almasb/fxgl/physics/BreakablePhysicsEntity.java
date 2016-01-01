@@ -26,14 +26,10 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.EntityType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
@@ -41,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * API INCOMPLETE
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class BreakablePhysicsEntity extends PhysicsEntity {

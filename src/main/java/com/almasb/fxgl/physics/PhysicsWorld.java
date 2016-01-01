@@ -316,8 +316,6 @@ public final class PhysicsWorld {
             PolygonShape rectShape = new PolygonShape();
             rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2));
             e.fixtureDef.shape = rectShape;
-
-            log.info("single :" + Arrays.toString(rectShape.getVertices()));
         }
 
         // if position is 0, 0 then probably not set, so set ourselves
@@ -327,6 +325,7 @@ public final class PhysicsWorld {
 
         e.body = physicsWorld.createBody(e.bodyDef);
 
+        // TODO: we could reuse this for normal physics entities with more than 1 hit box
         if (e instanceof BreakablePhysicsEntity) {
             createExtraFixtures((BreakablePhysicsEntity) e);
         } else {
@@ -337,31 +336,28 @@ public final class PhysicsWorld {
     }
 
     private void createExtraFixtures(BreakablePhysicsEntity e) {
-        int i = 0;
+        Point2D entityCenter = e.getCenter();
 
         for (HitBox box : e.hitBoxesProperty()) {
-            Bounds bounds = box.translate(0, 0);
+            Bounds bounds = box.translate(e.getX(), e.getY());
 
-            double x = bounds.getMinX();
-            double y = bounds.getMinY();
+            // take world center bounds and subtract from entity center (all in pixels) to get local center
+            Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
+            Point2D boundsLocalCenter = boundsCenter.subtract(entityCenter);
+
             double w = bounds.getWidth();
             double h = bounds.getHeight();
 
             FixtureDef fd = new FixtureDef();
             PolygonShape rectShape = new PolygonShape();
-            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2), new Vec2(toMeters(i == 0 ? -w/2 : w/2), 0), 0);
+            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
+                    new Vec2(toMeters(boundsLocalCenter.getX()), toMeters(boundsLocalCenter.getY())), 0);
 
             fd.shape = rectShape;
             fd.density = 1.0f;
 
             Fixture fixture = e.body.createFixture(fd);
             e.fixtures.add(fixture);
-
-
-            log.info(Arrays.toString(rectShape.getVertices()));
-            i++;
-            //log.info(bounds.toString());
-            //log.info(toPoint(new Point2D(x + w / 2, y + h / 2)).toString());
         }
     }
 
