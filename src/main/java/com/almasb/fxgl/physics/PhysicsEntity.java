@@ -45,7 +45,7 @@ import org.jbox2d.dynamics.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class PhysicsEntity extends Entity {
+public class PhysicsEntity extends Entity {
 
     FixtureDef fixtureDef = new FixtureDef();
     BodyDef bodyDef = new BodyDef();
@@ -170,6 +170,13 @@ public final class PhysicsEntity extends Entity {
             throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
 
         body.setAngularVelocity((float) -velocity);
+    }
+
+    public void setBodyAngularVelocity(float velocity) {
+        if (body == null)
+            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
+
+        body.setAngularVelocity(velocity);
     }
 
     /**

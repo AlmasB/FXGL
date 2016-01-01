@@ -39,6 +39,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.jbox2d.callbacks.ContactImpulse;
@@ -47,10 +48,7 @@ import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.particle.*;
 
@@ -313,16 +311,47 @@ public final class PhysicsWorld {
                 w = e.getWidth(),
                 h = e.getHeight();
 
+        // if shape wasn't specified construct new based on bounding box
         if (e.fixtureDef.shape == null) {
             PolygonShape rectShape = new PolygonShape();
             rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2));
             e.fixtureDef.shape = rectShape;
         }
 
-        e.bodyDef.position.set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
+        // if position is 0, 0 then probably not set, so set ourselves
+        if (e.bodyDef.getPosition().x == 0 && e.bodyDef.getPosition().y == 0) {
+            e.bodyDef.position.set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
+        }
+
         e.body = physicsWorld.createBody(e.bodyDef);
-        e.fixture = e.body.createFixture(e.fixtureDef);
+
+        if (e instanceof BreakablePhysicsEntity) {
+            createExtraFixtures((BreakablePhysicsEntity) e);
+        } else {
+            e.fixture = e.body.createFixture(e.fixtureDef);
+        }
+
         e.body.setUserData(e);
+    }
+
+    private void createExtraFixtures(BreakablePhysicsEntity e) {
+        for (HitBox box : e.hitBoxesProperty()) {
+            Bounds bounds = box.translate(0, 0);
+
+            double x = bounds.getMinX();
+            double y = bounds.getMinY();
+            double w = bounds.getWidth();
+            double h = bounds.getHeight();
+
+            FixtureDef fd = new FixtureDef();
+            PolygonShape rectShape = new PolygonShape();
+            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2));
+            fd.shape = rectShape;
+            fd.density = 1.0f;
+
+            Fixture fixture = e.body.createFixture(fd);
+            e.fixtures.add(fixture);
+        }
     }
 
     /**
