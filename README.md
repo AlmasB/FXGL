@@ -49,7 +49,7 @@ For more information check out the project <a href="https://github.com/AlmasB/FX
 ## Latest Release Features
 FXGL 0.1.9 supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
-* JBox2D Physics Engine Integration (v.2.3.0, https://github.com/jbox2d/jbox2d)
+* JBox2D Physics Engine Integration (fork based on v.2.3.0, https://github.com/jbox2d/jbox2d)
 * Basic Game Loop
 * Basic Logging
 * Basic Performance Monitor
