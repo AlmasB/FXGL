@@ -102,6 +102,22 @@ public final class Mouse {
     }
 
     /**
+     * @param gamePosition point in game world
+     * @return vector from given point to mouse cursor point
+     */
+    public Point2D getVectorToCursor(Point2D gamePosition) {
+        return getGameXY().subtract(gamePosition);
+    }
+
+    /**
+     * @param gamePosition point in game world
+     * @return vector from mouse cursor point to given point
+     */
+    public Point2D getVectorFromCursor(Point2D gamePosition) {
+        return getVectorToCursor(gamePosition).multiply(-1);
+    }
+
+    /**
      * Hold the state of left and right
      * mouse buttons in the current frame (tick).
      */
