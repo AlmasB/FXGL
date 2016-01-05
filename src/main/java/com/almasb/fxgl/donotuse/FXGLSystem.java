@@ -65,14 +65,47 @@ public enum FXGLSystem {
         return Integer.parseInt(getProperty(key));
     }
 
-    private String getProperty(String key) {
+    public String getProperty(String key) {
         String value = System.getProperty(key);
         if (value == null)
             throw new IllegalArgumentException("Key \"" + key + "\" not found!");
         return value;
     }
 
-    private void setProperty(String key, Object value) {
+    public void setProperty(String key, Object value) {
         System.setProperty("FXGL." + key, String.valueOf(value));
+    }
+
+    /**
+     * The following asset keys are currently defined by FXGL:
+     * <ul>
+     *     <li>sound.notification</li>
+     *     <li>sound.menu.back</li>
+     *     <li>sound.menu.select</li>
+     *     <li>sound.menu.press</li>
+     * </ul>
+     *
+     *
+     * @param assetKey asset key
+     * @param assetLocation relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
+     */
+    public void setSystemAssetLocation(String assetKey, String assetLocation) {
+        setProperty(assetKey, assetLocation);
+    }
+
+    /**
+     * The following asset keys are currently defined by FXGL:
+     * <ul>
+     *     <li>sound.notification</li>
+     *     <li>sound.menu.back</li>
+     *     <li>sound.menu.select</li>
+     *     <li>sound.menu.press</li>
+     * </ul>
+     *
+     * @param assetKey asset key
+     * @return relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
+     */
+    public String getSystemAssetLocation(String assetKey) {
+        return getProperty(assetKey);
     }
 }

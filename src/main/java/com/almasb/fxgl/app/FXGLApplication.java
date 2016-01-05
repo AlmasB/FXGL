@@ -29,6 +29,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.audio.AudioPlayer;
+import com.almasb.fxgl.donotuse.FXGLSystem;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
@@ -49,6 +50,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.lang.reflect.Field;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -167,6 +169,8 @@ public abstract class FXGLApplication extends Application {
     public void start(Stage stage) throws Exception {
         log.finer("FXGL_start()");
 
+        initSystemProperties();
+
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
@@ -193,6 +197,14 @@ public abstract class FXGLApplication extends Application {
     @Override
     public final void stop() throws Exception {
         log.finer("FXGL_stop()");
+    }
+
+    /**
+     * Load FXGL system properties.
+     */
+    private void initSystemProperties() {
+        ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
+        props.keySet().forEach(key -> FXGLSystem.INSTANCE.setProperty(key, props.getObject(key)));
     }
 
     /**
