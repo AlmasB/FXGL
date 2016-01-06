@@ -149,15 +149,45 @@ public final class Input implements UserProfileSavable {
     }
 
     /**
+     * Currently held keys.
+     */
+    private Map<KeyCode, Boolean> keys = new HashMap<>();
+
+    /**
+     * @param key the key to check
+     * @return true iff key is currently held
+     */
+    public boolean isHeld(KeyCode key) {
+        return keys.getOrDefault(key, false);
+    }
+
+    /**
+     * Currently held buttons.
+     */
+    private Map<MouseButton, Boolean> buttons = new HashMap<>();
+
+    /**
+     * @param button the button to check
+     * @return true iff button is currently held
+     */
+    public boolean isHeld(MouseButton button) {
+        return buttons.getOrDefault(button, false);
+    }
+
+    /**
      * Handle pressed event for given trigger.
      *
      * @param trigger the trigger
      */
     private void handlePressed(Trigger trigger) {
+        if (trigger.key != null) {
+            keys.put(trigger.key, true);
+        } else {
+            buttons.put(trigger.btn, true);
+        }
+
         bindings.stream()
-                .filter(binding -> {
-                    return binding.isTriggered(trigger);
-                })
+                .filter(binding -> binding.isTriggered(trigger))
                 .map(InputBinding::getAction)
                 .filter(action -> !currentActions.contains(action))
                 .forEach(currentActions::add);
@@ -169,6 +199,12 @@ public final class Input implements UserProfileSavable {
      * @param trigger the trigger
      */
     private void handleReleased(Trigger trigger) {
+        if (trigger.key != null) {
+            keys.put(trigger.key, false);
+        } else {
+            buttons.put(trigger.btn, false);
+        }
+
         bindings.stream()
                 .filter(binding -> {
                     if (trigger.key == null) {
@@ -297,6 +333,9 @@ public final class Input implements UserProfileSavable {
         log.finer("Clearing active input actions");
 
         currentActions.clear();
+        keys.clear();
+        buttons.clear();
+
         mouse.leftPressed = false;
         mouse.rightPressed = false;
     }
