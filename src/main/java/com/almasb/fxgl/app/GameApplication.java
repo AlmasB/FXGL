@@ -39,13 +39,19 @@ import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -435,6 +441,41 @@ public abstract class GameApplication extends FXGLApplication {
         }
     }
 
+    private void showProfileDialog() {
+        List<String> profileNames = getSaveLoadManager().loadProfileNames().orElse(Collections.emptyList());
+        ChoiceBox<String> profilesBox = new ChoiceBox<>(FXCollections.observableArrayList(profileNames));
+
+        if (!profileNames.isEmpty())
+            profilesBox.getSelectionModel().selectFirst();
+
+        Button btnNew = UIFactory.newButton("NEW");
+        Button btnSelect = UIFactory.newButton("SELECT");
+        btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull());
+
+        btnNew.setOnAction(e -> {
+            getDisplay().showInputBox("New Profile", input -> input.matches("^[\\pL\\pN]+$"), name -> {
+                profileName = name;
+            });
+        });
+
+        btnSelect.setOnAction(e -> {
+            profileName = profilesBox.getValue();
+            BooleanProperty ok = new SimpleBooleanProperty(false);
+
+            getSaveLoadManager().loadProfile(profileName).ifPresent(profile -> {
+                ok.set(loadFromProfile(profile));
+            });
+
+            if (!ok.get()) {
+                getDisplay().getDialogBox()
+                        .showErrorBox("Profile is corrupted: " + profileName,
+                                this::showProfileDialog);
+            }
+        });
+
+        getDisplay().showBox("Create new profile or select existing", profilesBox, btnNew, btnSelect);
+    }
+
     private void initFXGL() {
         initAchievements();
         // we call this early to process user input bindings
@@ -446,7 +487,6 @@ public abstract class GameApplication extends FXGLApplication {
         initEventHandlers();
 
         defaultProfile = createProfile();
-        getSaveLoadManager().loadProfile().ifPresent(this::loadFromProfile);
 
         preInit();
     }
@@ -465,6 +505,9 @@ public abstract class GameApplication extends FXGLApplication {
 
         onStageShow();
         stage.show();
+
+        if (getSettings().isMenuEnabled())
+            showProfileDialog();
 
         log.finer("Showing stage");
         log.finer("Root size: " + stage.getScene().getRoot().getLayoutBounds().getWidth() + "x" + stage.getScene().getRoot().getLayoutBounds().getHeight());
@@ -605,6 +648,7 @@ public abstract class GameApplication extends FXGLApplication {
      */
     protected void exit() {
         log.finer("Exiting Normally");
+        getSaveLoadManager().saveProfile(createProfile(), profileName);
         getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGLLogger.close();
@@ -616,6 +660,11 @@ public abstract class GameApplication extends FXGLApplication {
      * Stores the default profile data. This is used to restore default settings.
      */
     private UserProfile defaultProfile;
+
+    /**
+     * Stores current selected profile name for this game.
+     */
+    private String profileName;
 
     /**
      * Create a user profile with current settings.
@@ -635,11 +684,12 @@ public abstract class GameApplication extends FXGLApplication {
      *
      * @param profile the profile
      */
-    public final void loadFromProfile(UserProfile profile) {
+    public final boolean loadFromProfile(UserProfile profile) {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
-            return;
+            return false;
 
         getEventBus().fireEvent(new LoadEvent(profile));
+        return true;
     }
 
     /**

@@ -47,8 +47,10 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
@@ -385,6 +387,10 @@ public final class Display implements UserProfileSavable {
 
     private FXGLDialogBox dialogBox;
 
+    public FXGLDialogBox getDialogBox() {
+        return dialogBox;
+    }
+
     private void initDialogBox() {
         dialogBox = new FXGLDialogBox(stage);
         dialogBox.setOnShown(e -> {
@@ -416,7 +422,7 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
-     * Shows a blocking (stops game execution) message box with OK button. On
+     * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
      * button press, the message box will be dismissed.
      *
      * @param message the message to show
@@ -438,7 +444,7 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
-     * Shows a blocking message box with OK button and input field. The callback
+     * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
      * is invoked with the field text as parameter.
      *
      * @param message        message to show
@@ -449,7 +455,7 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
-     * Shows a blocking message box with OK button and input field. The callback
+     * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
      * is invoked with the field text as parameter.
      *
      * @param message        message to show
@@ -461,12 +467,16 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
-     * Shows a blocking dialog with the error.
+     * Shows a blocking (stops game execution, method returns normally) dialog with the error.
      *
      * @param error the error to show
      */
     public void showErrorBox(Throwable error) {
         dialogBox.showErrorBox(error);
+    }
+
+    public void showBox(String message, Node content, Button... buttons) {
+        dialogBox.showBox(message, content, buttons);
     }
 
     @Override

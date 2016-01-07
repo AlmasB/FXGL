@@ -30,10 +30,14 @@ import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -91,13 +95,29 @@ public final class FXGLDialogBox extends Stage {
      * @param message message to show
      */
     public void showMessageBox(String message) {
+        showMessageBox(message, () -> {});
+    }
+
+    /**
+     * Shows a simple message box with OK button.
+     * Calls back the given runnable on close.
+     * <p>
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param message message to show
+     * @param callback function to call when closed
+     */
+    public void showMessageBox(String message, Runnable callback) {
         if (isShowing())
             log.warning("1 Dialog is already showing!");
 
         Text text = createMessage(message);
 
         FXGLButton btnOK = new FXGLButton("OK");
-        btnOK.setOnAction(e -> close());
+        btnOK.setOnAction(e -> {
+            close();
+            callback.run();
+        });
 
         VBox vbox = new VBox(50, text, btnOK);
         vbox.setAlignment(Pos.CENTER);
@@ -112,16 +132,54 @@ public final class FXGLDialogBox extends Stage {
      * <p>
      * Opening more than 1 dialog box is not allowed.
      *
+     * @param errorMessage error message to show
+     */
+    public void showErrorBox(String errorMessage) {
+        showErrorBox(new RuntimeException(errorMessage));
+    }
+
+    /**
+     * Shows an error box with OK and LOG buttons.
+     * <p>
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param errorMessage error message to show
+     * @param callback function to call back when closed
+     */
+    public void showErrorBox(String errorMessage, Runnable callback) {
+        showErrorBox(new RuntimeException(errorMessage), callback);
+    }
+
+    /**
+     * Shows an error box with OK and LOG buttons.
+     * <p>
+     * Opening more than 1 dialog box is not allowed.
+     *
      * @param error error to show
      */
     public void showErrorBox(Throwable error) {
+        showErrorBox(error, () -> {});
+    }
+
+    /**
+     * Shows an error box with OK and LOG buttons.
+     * <p>
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param error error to show
+     * @param callback function to call when closed
+     */
+    public void showErrorBox(Throwable error, Runnable callback) {
         if (isShowing())
             log.warning("1 Dialog is already showing!");
 
         Text text = createMessage("Error: " + (error.getMessage() == null ? "NPE" : error.getMessage()));
 
         FXGLButton btnOK = new FXGLButton("OK");
-        btnOK.setOnAction(e -> close());
+        btnOK.setOnAction(e -> {
+            close();
+            callback.run();
+        });
 
         FXGLButton btnLog = new FXGLButton("LOG");
         btnLog.setOnAction(e -> {
@@ -138,6 +196,8 @@ public final class FXGLDialogBox extends Stage {
             } catch (Exception ex) {
                 showMessageBox("Failed to save log file");
             }
+
+            callback.run();
         });
 
         HBox hbox = new HBox(btnOK, btnLog);
@@ -246,6 +306,33 @@ public final class FXGLDialogBox extends Stage {
         VBox vbox = new VBox(50, text, field, btnOK);
         vbox.setAlignment(Pos.CENTER);
         vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 200), text.getLayoutBounds().getHeight() * 3 + 50 * 2));
+
+        setContent(vbox);
+        show();
+    }
+
+    public void showBox(String message, Node content, Button... buttons) {
+        if (isShowing())
+            log.warning("1 Dialog is already showing!");
+
+        for (Button btn : buttons) {
+            EventHandler<ActionEvent> handler = btn.getOnAction();
+
+            btn.setOnAction(e -> {
+                close();
+                handler.handle(e);
+            });
+        }
+
+        Text text = createMessage(message);
+
+        HBox hbox = new HBox(buttons);
+        hbox.setAlignment(Pos.CENTER);
+
+        VBox vbox = new VBox(50, text, content, hbox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 200),
+                text.getLayoutBounds().getHeight() * 3 + 50 * 2 + content.getLayoutBounds().getHeight()));
 
         setContent(vbox);
         show();

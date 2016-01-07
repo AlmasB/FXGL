@@ -100,7 +100,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem btnSave = new MenuItem("SAVE DATA");
         btnSave.setOnAction(e -> {
             app.getDisplay().showConfirmationBox("Are you sure?", yes -> {
-                if (yes) app.getSaveLoadManager().saveProfile(app.createProfile());
+                //if (yes) app.getSaveLoadManager().saveProfile(app.createProfile());
             });
         });
 

@@ -66,6 +66,7 @@ public final class SaveLoadManager {
      * @return io result
      */
     public IOResult save(Serializable data, String fileName) {
+        log.finer("Saving data: " + fileName);
         return saveImpl(data, Paths.get("./" + SAVE_DIR + fileName));
     }
 
@@ -75,8 +76,9 @@ public final class SaveLoadManager {
      * @param profile the profile to save
      * @return io result
      */
-    public IOResult saveProfile(UserProfile profile) {
-        return saveImpl(profile, Paths.get("./" + PROFILE_DIR + "user.profile"));
+    public IOResult saveProfile(UserProfile profile, String profileName) {
+        log.finer("Saving profile: " + profileName);
+        return saveImpl(profile, Paths.get("./" + PROFILE_DIR + profileName + "/" + "user.profile"));
     }
 
     /**
@@ -120,13 +122,13 @@ public final class SaveLoadManager {
      *
      * @return user profile loaded from "profiles/"
      */
-    public Optional<UserProfile> loadProfile() {
-        boolean profileExists = Files.exists(Paths.get("./" + PROFILE_DIR + "user.profile"));
-        if (!profileExists)
+    public Optional<UserProfile> loadProfile(String profileName) {
+        Path profileFile = Paths.get("./" + PROFILE_DIR + profileName + "/" + "user.profile");
+
+        if (!Files.exists(profileFile))
             return Optional.empty();
 
-        return loadImpl(Paths.get("./" + PROFILE_DIR + "user.profile"))
-                .map(o -> (UserProfile)o);
+        return loadImpl(profileFile).map(o -> (UserProfile)o);
     }
 
     /**
@@ -164,8 +166,8 @@ public final class SaveLoadManager {
      *
      * @return Optional containing list of file names
      */
-    public Optional<List<String>> loadFileNames() {
-        Path saveDir = Paths.get("./" + SAVE_DIR);
+    private Optional<List<String>> loadFileNames(String dir) {
+        Path saveDir = Paths.get(dir);
 
         if (!Files.exists(saveDir)) {
             return Optional.empty();
@@ -178,6 +180,27 @@ public final class SaveLoadManager {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public Optional<List<String>> loadProfileNames() {
+        Path profileDir = Paths.get("./" + PROFILE_DIR);
+
+        if (!Files.exists(profileDir)) {
+            return Optional.empty();
+        }
+
+        try (Stream<Path> files = Files.walk(profileDir, 1)) {
+            return Optional.of(files.filter(Files::isDirectory)
+                    .map(file -> profileDir.relativize(file).toString().replace("\\", "/"))
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList()));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<List<String>> loadSaveFileNames(String profileName) {
+        return loadFileNames("./" + SAVE_DIR);
     }
 
     /**
