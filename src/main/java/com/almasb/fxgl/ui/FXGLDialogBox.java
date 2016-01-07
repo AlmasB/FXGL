@@ -28,6 +28,8 @@ package com.almasb.fxgl.ui;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.util.FXGLLogger;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -50,6 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -202,6 +205,23 @@ public final class FXGLDialogBox extends Stage {
      * @param resultCallback result function to call back
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
+        showInputBox(message, input -> true, resultCallback);
+    }
+
+    /**
+     * Shows input box with input field and OK button.
+     * The button will stay disabled until the input passes given filter.
+     * <p>
+     * The callback function will be invoked with input field text
+     * as parameter.
+     * <p>
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param message message to show
+     * @param filter the filter to validate input
+     * @param resultCallback result function to call back
+     */
+    public void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback) {
         if (isShowing())
             log.warning("1 Dialog is already showing!");
 
@@ -212,7 +232,12 @@ public final class FXGLDialogBox extends Stage {
         field.setFont(UIFactory.newFont(18));
 
         FXGLButton btnOK = new FXGLButton("OK");
-        btnOK.disableProperty().bind(field.textProperty().isEmpty());
+
+        field.textProperty().addListener((observable, oldValue, newInput) -> {
+            btnOK.setDisable(newInput.isEmpty() || !filter.test(newInput));
+        });
+
+        btnOK.setDisable(true);
         btnOK.setOnAction(e -> {
             close();
             resultCallback.accept(field.getText());

@@ -66,6 +66,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -445,6 +446,18 @@ public final class Display implements UserProfileSavable {
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
         dialogBox.showInputBox(message, resultCallback);
+    }
+
+    /**
+     * Shows a blocking message box with OK button and input field. The callback
+     * is invoked with the field text as parameter.
+     *
+     * @param message        message to show
+     * @param filter  filter to validate input
+     * @param resultCallback the function to be called
+     */
+    public void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback) {
+        dialogBox.showInputBox(message, filter, resultCallback);
     }
 
     /**
