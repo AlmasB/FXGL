@@ -47,8 +47,8 @@ public final class SaveLoadManager {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SaveLoadManager");
 
-    private static final String SAVE_DIR = "saves/";
     private static final String PROFILE_DIR = "profiles/";
+    private static final String SAVE_DIR = PROFILE_DIR + "saves/";
 
     @Inject
     private SaveLoadManager() {
@@ -56,10 +56,10 @@ public final class SaveLoadManager {
     }
 
     /**
-     * Save serializable data onto a disk file system under "saves/"
-     * which is created if necessary in the directory where the game is run from
+     * Save serializable data onto a disk file system under "{@value #SAVE_DIR}"
+     * which is created if necessary in the directory where the game is run from.
      * <p>
-     * All extra directories will also be created if necessary
+     * All extra directories will also be created if necessary.
      *
      * @param data data to save
      * @param fileName to save as
@@ -105,7 +105,7 @@ public final class SaveLoadManager {
 
     /**
      * Load serializable data from external
-     * file on disk file system from "saves/" directory which is
+     * file on disk file system from "{@value #SAVE_DIR}" directory which is
      * in the directory where the game is run from
      *
      * @param fileName file name to load from
@@ -157,10 +157,10 @@ public final class SaveLoadManager {
     }
 
     /**
-     * Loads file names of existing saves from "saves/".
+     * Loads file names of existing saves from "{@value #SAVE_DIR}".
      * <p>
-     * Returns {@link Optional#empty()} if "saves/" directory
-     * doesn't exist or an exception occurred
+     * Returns {@link Optional#empty()} if "{@value #SAVE_DIR}" directory
+     * doesn't exist or an exception occurred.
      *
      * @return Optional containing list of file names
      */
@@ -181,10 +181,10 @@ public final class SaveLoadManager {
     }
 
     /**
-     * Loads last modified save file from "saves/"
+     * Loads last modified save file from "{@value #SAVE_DIR}".
      * <p>
-     * Returns {@link Optional#empty()} if "saves/" directory
-     * doesn't exist, an exception occurred or there are no save files
+     * Returns {@link Optional#empty()} if "{@value #SAVE_DIR}" directory
+     * doesn't exist, an exception occurred or there are no save files.
      *
      * @return last modified save file
      */
