@@ -648,7 +648,11 @@ public abstract class GameApplication extends FXGLApplication {
      */
     protected void exit() {
         log.finer("Exiting Normally");
-        getSaveLoadManager().saveProfile(createProfile(), profileName);
+
+        // if it is null then we are running without menus
+        if (profileName != null)
+            getSaveLoadManager().saveProfile(createProfile(), profileName);
+
         getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGLLogger.close();
