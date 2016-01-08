@@ -63,11 +63,17 @@ public final class MenuEvent extends Event {
     public static final EventType<MenuEvent> LOAD =
             new EventType<>(MenuEvent.ANY, "LOAD");
 
+    public static final EventType<MenuEvent> DELETE =
+            new EventType<>(MenuEvent.ANY, "DELETE");
+
     public static final EventType<MenuEvent> EXIT =
             new EventType<>(MenuEvent.ANY, "EXIT");
 
     public static final EventType<MenuEvent> EXIT_TO_MAIN_MENU =
             new EventType<>(MenuEvent.ANY, "EXIT_TO_MAIN_MENU");
+
+    public static final EventType<MenuEvent> PROFILE_SELECTED =
+            new EventType<>(MenuEvent.ANY, "PROFILE_SELECTED");
 
     public MenuEvent(EventType<? extends Event> eventType) {
         this(null, null, eventType, null);

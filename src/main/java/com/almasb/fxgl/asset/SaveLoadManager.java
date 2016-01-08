@@ -27,8 +27,6 @@ package com.almasb.fxgl.asset;
 
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,17 +40,26 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Singleton
 public final class SaveLoadManager {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.SaveLoadManager");
 
-    private static final String PROFILE_DIR = "profiles/";
-    private static final String SAVE_DIR = PROFILE_DIR + "saves/";
+    private static final String PROFILE_FILE_NAME = "user.profile";
+    private static final String PROFILES_DIR = "profiles/";
+    private static final String SAVE_DIR = "saves/";
 
-    @Inject
-    private SaveLoadManager() {
-        log.finer("Service [SaveLoadManager] initialized");
+    private final String profileName;
+
+    public SaveLoadManager(String profileName) {
+        this.profileName = profileName;
+    }
+
+    private String profileDir() {
+        return "./" + PROFILES_DIR + profileName + "/";
+    }
+
+    private String saveDir() {
+        return profileDir() + SAVE_DIR;
     }
 
     /**
@@ -67,7 +74,7 @@ public final class SaveLoadManager {
      */
     public IOResult save(Serializable data, String fileName) {
         log.finer("Saving data: " + fileName);
-        return saveImpl(data, Paths.get("./" + SAVE_DIR + fileName));
+        return saveImpl(data, Paths.get(saveDir() + fileName));
     }
 
     /**
@@ -76,9 +83,9 @@ public final class SaveLoadManager {
      * @param profile the profile to save
      * @return io result
      */
-    public IOResult saveProfile(UserProfile profile, String profileName) {
+    public IOResult saveProfile(UserProfile profile) {
         log.finer("Saving profile: " + profileName);
-        return saveImpl(profile, Paths.get("./" + PROFILE_DIR + profileName + "/" + "user.profile"));
+        return saveImpl(profile, Paths.get(profileDir() + PROFILE_FILE_NAME));
     }
 
     /**
@@ -115,15 +122,15 @@ public final class SaveLoadManager {
      */
     @SuppressWarnings("unchecked")
     public <T> Optional<T> load(String fileName) {
-        return loadImpl(Paths.get("./" + SAVE_DIR + fileName)).map(o -> (T)o);
+        return loadImpl(Paths.get(saveDir() + fileName)).map(o -> (T)o);
     }
 
     /**
      *
      * @return user profile loaded from "profiles/"
      */
-    public Optional<UserProfile> loadProfile(String profileName) {
-        Path profileFile = Paths.get("./" + PROFILE_DIR + profileName + "/" + "user.profile");
+    public Optional<UserProfile> loadProfile() {
+        Path profileFile = Paths.get(profileDir() + PROFILE_FILE_NAME);
 
         if (!Files.exists(profileFile))
             return Optional.empty();
@@ -152,7 +159,7 @@ public final class SaveLoadManager {
      */
     public boolean delete(String fileName) {
         try {
-            return Files.deleteIfExists(Paths.get("./" + SAVE_DIR + fileName));
+            return Files.deleteIfExists(Paths.get(saveDir() + fileName));
         } catch (Exception e) {
             return false;
         }
@@ -182,16 +189,16 @@ public final class SaveLoadManager {
         }
     }
 
-    public Optional<List<String>> loadProfileNames() {
-        Path profileDir = Paths.get("./" + PROFILE_DIR);
+    public static Optional<List<String>> loadProfileNames() {
+        Path profilesDir = Paths.get("./" + PROFILES_DIR);
 
-        if (!Files.exists(profileDir)) {
+        if (!Files.exists(profilesDir)) {
             return Optional.empty();
         }
 
-        try (Stream<Path> files = Files.walk(profileDir, 1)) {
+        try (Stream<Path> files = Files.walk(profilesDir, 1)) {
             return Optional.of(files.filter(Files::isDirectory)
-                    .map(file -> profileDir.relativize(file).toString().replace("\\", "/"))
+                    .map(file -> profilesDir.relativize(file).toString().replace("\\", "/"))
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toList()));
         } catch (Exception e) {
@@ -199,8 +206,8 @@ public final class SaveLoadManager {
         }
     }
 
-    public Optional<List<String>> loadSaveFileNames(String profileName) {
-        return loadFileNames("./" + SAVE_DIR);
+    public Optional<List<String>> loadSaveFileNames() {
+        return loadFileNames(saveDir());
     }
 
     /**
@@ -211,8 +218,8 @@ public final class SaveLoadManager {
      *
      * @return last modified save file
      */
-    public <T> Optional<T> loadLastModifiedFile() {
-        Path saveDir = Paths.get("./" + SAVE_DIR);
+    public <T> Optional<T> loadLastModifiedSaveFile() {
+        Path saveDir = Paths.get(saveDir());
 
         if (!Files.exists(saveDir)) {
             return Optional.empty();

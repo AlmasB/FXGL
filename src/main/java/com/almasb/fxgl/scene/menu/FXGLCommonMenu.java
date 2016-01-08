@@ -26,6 +26,7 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.UIFactory;
@@ -40,6 +41,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.util.function.Supplier;
 
 /**
  * This is the default FXGL menu used if the users
@@ -74,6 +77,18 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         version.setTranslateY(app.getHeight() - 2);
 
         getRoot().getChildren().addAll(createBackground(), title, version, menu, menuContent);
+
+        app.getEventBus().addEventHandler(MenuEvent.PROFILE_SELECTED, event -> {
+            String profileName = event.getData()
+                    .map(o -> (String)o)
+                    .orElseThrow(() -> new IllegalArgumentException(event + " has no data"));
+
+            Text text = UIFactory.newText("Profile: " + profileName);
+            text.setTranslateX(app.getWidth() - text.getLayoutBounds().getWidth());
+            text.setTranslateY(app.getHeight() - 2);
+
+            getRoot().getChildren().add(text);
+        });
     }
 
     protected abstract MenuBox createMenuBody();
@@ -90,36 +105,29 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
     protected MenuBox createOptionsMenu() {
         MenuItem itemControls = new MenuItem("CONTROLS");
-        itemControls.setMenuContent(createContentControls());
+        itemControls.setMenuContent(this::createContentControls);
 
         MenuItem itemVideo = new MenuItem("VIDEO");
-        itemVideo.setMenuContent(createContentVideo());
+        itemVideo.setMenuContent(this::createContentVideo);
         MenuItem itemAudio = new MenuItem("AUDIO");
-        itemAudio.setMenuContent(createContentAudio());
-
-        MenuItem btnSave = new MenuItem("SAVE DATA");
-        btnSave.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Are you sure?", yes -> {
-                //if (yes) app.getSaveLoadManager().saveProfile(app.createProfile());
-            });
-        });
+        itemAudio.setMenuContent(this::createContentAudio);
 
         MenuItem btnRestore = new MenuItem("RESTORE");
         btnRestore.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Are you sure?", yes -> {
+            app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
                 if (yes) app.loadFromDefaultProfile();
             });
         });
 
-        return new MenuBox(200, itemControls, itemVideo, itemAudio, btnSave, btnRestore);
+        return new MenuBox(200, itemControls, itemVideo, itemAudio, btnRestore);
     }
 
     protected MenuBox createExtraMenu() {
         MenuItem itemCredits = new MenuItem("CREDITS");
-        itemCredits.setMenuContent(createContentCredits());
+        itemCredits.setMenuContent(this::createContentCredits);
 
         MenuItem itemAchievements = new MenuItem("TROPHIES");
-        itemAchievements.setMenuContent(createContentAchievements());
+        itemAchievements.setMenuContent(this::createContentAchievements);
 
         return new MenuBox(200, itemCredits, itemAchievements);
     }
@@ -197,6 +205,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
     protected class MenuItem extends FXGLButton {
         private MenuBox parent;
+        private MenuContent content;
 
         public MenuItem(String name) {
             super(name);
@@ -206,9 +215,13 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
             parent = menu;
         }
 
-        public void setMenuContent(MenuContent content) {
+        public void setMenuContent(Supplier<MenuContent> contentSupplier) {
             this.addEventHandler(ActionEvent.ACTION, event -> {
-                switchMenuContentTo(content);
+//                if (content == null) {
+//                    content = contentSupplier.get();
+//                }
+
+                switchMenuContentTo(contentSupplier.get());
             });
         }
 

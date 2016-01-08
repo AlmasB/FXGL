@@ -203,6 +203,7 @@ public abstract class FXGLApplication extends Application {
      * Load FXGL system properties.
      */
     private void initSystemProperties() {
+        log.finer("Initializing system properties");
         ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
         props.keySet().forEach(key -> FXGLSystem.INSTANCE.setProperty(key, props.getObject(key)));
     }
@@ -277,15 +278,15 @@ public abstract class FXGLApplication extends Application {
         return assetLoader;
     }
 
-    @Inject
-    private SaveLoadManager saveLoadManager;
-
-    /**
-     * @return save load manager
-     */
-    public final SaveLoadManager getSaveLoadManager() {
-        return saveLoadManager;
-    }
+//    @Inject
+//    private SaveLoadManager saveLoadManager;
+//
+//    /**
+//     * @return save load manager
+//     */
+//    public final SaveLoadManager getSaveLoadManager() {
+//        return saveLoadManager;
+//    }
 
     @Inject
     private MasterTimer masterTimer;

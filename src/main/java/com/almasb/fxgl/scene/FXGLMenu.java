@@ -100,7 +100,7 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
-        //app.getSaveLoadManager().loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+        app.getSaveLoadManager().loadSaveFileNames().ifPresent(names -> list.getItems().setAll(names));
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         if (list.getItems().size() > 0) {
@@ -121,9 +121,7 @@ public abstract class FXGLMenu extends FXGLScene {
             if (fileName == null)
                 return;
 
-            app.getDisplay().showMessageBox(app.getSaveLoadManager().delete(fileName)
-                    ? "File was deleted" : "File couldn't be deleted");
-
+            fireDelete(fileName);
             list.getItems().remove(fileName);
         });
 
@@ -322,6 +320,7 @@ public abstract class FXGLMenu extends FXGLScene {
         getRoot().getChildren().add(node);
     }
 
+    // TODO: refactor names
     private void fireEvent2(Event event) {
         app.getEventBus().fireEvent(event);
     }
@@ -361,6 +360,10 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final void fireSave(String fileName) {
         fireEvent2(new MenuEvent(MenuEvent.SAVE, fileName));
+    }
+
+    protected final void fireDelete(String fileName) {
+        fireEvent2(new MenuEvent(MenuEvent.DELETE, fileName));
     }
 
     /**

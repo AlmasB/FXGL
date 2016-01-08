@@ -26,6 +26,7 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.event.MenuEvent;
 
 /**
  * This is the default FXGL menu used if the users
@@ -42,14 +43,13 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
     @Override
     protected MenuBox createMenuBody() {
         MenuItem itemContinue = new MenuItem("CONTINUE");
-        itemContinue.setDisable(!app.getSaveLoadManager().loadLastModifiedFile().isPresent());
         itemContinue.setOnAction(e -> fireContinue());
 
         MenuItem itemNewGame = new MenuItem("NEW GAME");
         itemNewGame.setOnAction(e -> fireNewGame());
 
         MenuItem itemLoad = new MenuItem("LOAD");
-        itemLoad.setMenuContent(createContentLoad());
+        itemLoad.setMenuContent(this::createContentLoad);
 
         MenuItem itemOptions = new MenuItem("OPTIONS");
         itemOptions.setChild(createOptionsMenu());
@@ -63,6 +63,10 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
                 if (yes)
                     fireExit();
             });
+        });
+
+        app.getEventBus().addEventHandler(MenuEvent.PROFILE_SELECTED, event -> {
+            itemContinue.setDisable(!app.getSaveLoadManager().loadLastModifiedSaveFile().isPresent());
         });
 
         MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad, itemOptions, itemExtra, itemExit);

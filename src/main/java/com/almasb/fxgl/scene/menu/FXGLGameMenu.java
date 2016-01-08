@@ -49,7 +49,7 @@ public final class FXGLGameMenu extends FXGLCommonMenu {
         });
 
         MenuItem itemLoad = new MenuItem("LOAD");
-        itemLoad.setMenuContent(createContentLoad());
+        itemLoad.setMenuContent(this::createContentLoad);
 
         MenuItem itemOptions = new MenuItem("OPTIONS");
         itemOptions.setChild(createOptionsMenu());

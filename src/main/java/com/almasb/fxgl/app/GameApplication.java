@@ -25,10 +25,9 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.*;
-import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -47,16 +46,11 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -394,7 +388,7 @@ public abstract class GameApplication extends FXGLApplication {
         getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
             String saveFileName = event.getData().map(name -> (String) name).orElse("");
             if (!saveFileName.isEmpty()) {
-                boolean ok = getSaveLoadManager().save(saveState(), saveFileName).isOK();
+                boolean ok = saveLoadManager.save(saveState(), saveFileName).isOK();
                 if (!ok)
                     getDisplay().showMessageBox("Failed to save");
             }
@@ -405,10 +399,17 @@ public abstract class GameApplication extends FXGLApplication {
                     .orElse("");
 
             Optional<Serializable> saveFile = saveFileName.isEmpty()
-                    ? getSaveLoadManager().loadLastModifiedFile()
-                    : getSaveLoadManager().load(saveFileName);
+                    ? saveLoadManager.loadLastModifiedSaveFile()
+                    : saveLoadManager.load(saveFileName);
 
+            // TODO: check all cases
             saveFile.ifPresent(this::startLoadedGame);
+        });
+
+        getEventBus().addEventHandler(MenuEvent.DELETE, event -> {
+            event.getData()
+                    .map(name -> (String) name)
+                    .ifPresent(fileName -> saveLoadManager.delete(fileName));
         });
     }
 
@@ -442,7 +443,7 @@ public abstract class GameApplication extends FXGLApplication {
     }
 
     private void showProfileDialog() {
-        List<String> profileNames = getSaveLoadManager().loadProfileNames().orElse(Collections.emptyList());
+        List<String> profileNames = SaveLoadManager.loadProfileNames().orElse(Collections.emptyList());
         ChoiceBox<String> profilesBox = new ChoiceBox<>(FXCollections.observableArrayList(profileNames));
 
         if (!profileNames.isEmpty())
@@ -455,14 +456,18 @@ public abstract class GameApplication extends FXGLApplication {
         btnNew.setOnAction(e -> {
             getDisplay().showInputBox("New Profile", input -> input.matches("^[\\pL\\pN]+$"), name -> {
                 profileName = name;
+                saveLoadManager = new SaveLoadManager(profileName);
+                getEventBus().fireEvent(new MenuEvent(MenuEvent.PROFILE_SELECTED, profileName));
             });
         });
 
         btnSelect.setOnAction(e -> {
             profileName = profilesBox.getValue();
+            saveLoadManager = new SaveLoadManager(profileName);
+
             BooleanProperty ok = new SimpleBooleanProperty(false);
 
-            getSaveLoadManager().loadProfile(profileName).ifPresent(profile -> {
+            saveLoadManager.loadProfile().ifPresent(profile -> {
                 ok.set(loadFromProfile(profile));
             });
 
@@ -470,6 +475,8 @@ public abstract class GameApplication extends FXGLApplication {
                 getDisplay().getDialogBox()
                         .showErrorBox("Profile is corrupted: " + profileName,
                                 this::showProfileDialog);
+            } else {
+                getEventBus().fireEvent(new MenuEvent(MenuEvent.PROFILE_SELECTED, profileName));
             }
         });
 
@@ -651,7 +658,7 @@ public abstract class GameApplication extends FXGLApplication {
 
         // if it is null then we are running without menus
         if (profileName != null)
-            getSaveLoadManager().saveProfile(createProfile(), profileName);
+            saveLoadManager.saveProfile(createProfile());
 
         getEventBus().fireEvent(FXGLEvent.exit());
 
@@ -701,6 +708,13 @@ public abstract class GameApplication extends FXGLApplication {
      */
     public final void loadFromDefaultProfile() {
         loadFromProfile(defaultProfile);
+    }
+
+    // TODO: careful, may not be set
+    private SaveLoadManager saveLoadManager;
+
+    public SaveLoadManager getSaveLoadManager() {
+        return saveLoadManager;
     }
 
     /**
