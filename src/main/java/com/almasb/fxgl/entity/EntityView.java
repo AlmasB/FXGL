@@ -28,6 +28,7 @@ package com.almasb.fxgl.entity;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -126,6 +127,17 @@ public class EntityView extends Parent {
                 getTransforms().clear();
             }
         }));
+    }
+
+    /**
+     * Returns nodes attached to this view.
+     * Modifying the list directly is discouraged as certain events
+     * may not be properly registered.
+     *
+     * @return list of children
+     */
+    public final ObservableList<Node> getNodes() {
+        return getChildren();
     }
 
     /**
