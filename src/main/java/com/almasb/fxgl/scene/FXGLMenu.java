@@ -276,7 +276,8 @@ public abstract class FXGLMenu extends FXGLScene {
             Text text = UIFactory.newText(a.getName());
             Tooltip.install(text, new Tooltip(a.getDescription()));
 
-            HBox box = new HBox(50, text, checkBox);
+            HBox box = new HBox(25, text, checkBox);
+            box.setAlignment(Pos.CENTER_RIGHT);
 
             content.getChildren().add(box);
         }
