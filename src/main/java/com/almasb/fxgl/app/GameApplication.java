@@ -63,17 +63,19 @@ import java.util.*;
  * <li>Services configuration (after this you can safely call getService())</li>
  * <li>initAchievements()</li>
  * <li>initInput()</li>
+ * <li>preInit()</li>
  * <li>initIntroVideo() (if enabled)</li>
  * <li>initMenuFactory() (if enabled)</li>
+ * <p>The following phases are NOT executed on UI thread</p>
  * <li>initAssets()</li>
- * <li>initGame()</li>
+ * <li>initGame() OR loadState()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
- * <li>Start of main game loop execution</li>
+ * <li>Start of main game loop execution on UI thread</li>
  * </ol>
  * <p>
  * Unless explicitly stated, methods are not thread-safe and must be
- * executed on JavaFX Application Thread.
+ * executed on JavaFX Application (UI) Thread.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -502,8 +504,6 @@ public abstract class GameApplication extends FXGLApplication {
     public final void start(Stage stage) throws Exception {
         super.start(stage);
         log.finer("Game_start()");
-
-        //UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(getSettings().getDefaultFontName()));
 
         getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);

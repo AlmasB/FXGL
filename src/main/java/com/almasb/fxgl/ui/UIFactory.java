@@ -41,12 +41,6 @@ import javafx.scene.text.Text;
 public final class UIFactory {
     private UIFactory() {}
 
-    //private static FontFactory defaultFontFactory = FXGLAssets.UI_FONT;
-
-//    public static void init(FontFactory fontFactory) {
-//        defaultFontFactory = fontFactory;
-//    }
-
     public static Font newFont(double size) {
         return FXGLAssets.UI_FONT.newFont(size);
     }
