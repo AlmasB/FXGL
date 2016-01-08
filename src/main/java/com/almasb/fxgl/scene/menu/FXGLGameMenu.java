@@ -44,9 +44,7 @@ public final class FXGLGameMenu extends FXGLCommonMenu {
         itemResume.setOnAction(e -> fireResume());
 
         MenuItem itemSave = new MenuItem("SAVE");
-        itemSave.setOnAction(e -> {
-            app.getDisplay().showInputBox("Enter save file name", this::fireSave);
-        });
+        itemSave.setOnAction(e -> fireSave());
 
         MenuItem itemLoad = new MenuItem("LOAD");
         itemLoad.setMenuContent(this::createContentLoad);

@@ -74,7 +74,7 @@ public final class SaveLoadManager {
      */
     public IOResult save(Serializable data, String fileName) {
         log.finer("Saving data: " + fileName);
-        return saveImpl(data, Paths.get(saveDir() + fileName));
+        return saveImpl(data, saveDir() + fileName);
     }
 
     /**
@@ -85,18 +85,20 @@ public final class SaveLoadManager {
      */
     public IOResult saveProfile(UserProfile profile) {
         log.finer("Saving profile: " + profileName);
-        return saveImpl(profile, Paths.get(profileDir() + PROFILE_FILE_NAME));
+        return saveImpl(profile, profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
      * Saves data to file, creating required directories.
      *
      * @param data data object to save
-     * @param file to save as
+     * @param fileName to save as
      * @return io result
      */
-    private IOResult saveImpl(Serializable data, Path file) {
+    private IOResult saveImpl(Serializable data, String fileName) {
         try {
+            Path file = Paths.get(fileName);
+
             if (!Files.exists(file.getParent())) {
                 Files.createDirectories(file.getParent());
             }

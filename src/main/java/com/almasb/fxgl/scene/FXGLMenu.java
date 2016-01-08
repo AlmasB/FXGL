@@ -355,11 +355,9 @@ public abstract class FXGLMenu extends FXGLScene {
     /**
      * Fires {@link MenuEvent#SAVE} event.
      * Can only be fired from game menu. Saves current state of the game with given file name.
-     *
-     * @param fileName  name of the save file
      */
-    protected final void fireSave(String fileName) {
-        fireEvent2(new MenuEvent(MenuEvent.SAVE, fileName));
+    protected final void fireSave() {
+        fireEvent2(new MenuEvent(MenuEvent.SAVE));
     }
 
     protected final void fireDelete(String fileName) {

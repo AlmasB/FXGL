@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.asset.IOResult;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
@@ -388,12 +389,12 @@ public abstract class GameApplication extends FXGLApplication {
         });
 
         getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
-            String saveFileName = event.getData().map(name -> (String) name).orElse("");
-            if (!saveFileName.isEmpty()) {
-                boolean ok = saveLoadManager.save(saveState(), saveFileName).isOK();
-                if (!ok)
-                    getDisplay().showMessageBox("Failed to save");
-            }
+            getDisplay().showInputBox("Enter save file name", input -> input.matches("^[\\pL\\pN]+$"), saveFileName -> {
+                IOResult io = saveLoadManager.save(saveState(), saveFileName);
+
+                if (!io.isOK())
+                    getDisplay().showMessageBox("Failed to save:\n" + io.getErrorMessage());
+            });
         });
 
         getEventBus().addEventHandler(MenuEvent.LOAD, event -> {
