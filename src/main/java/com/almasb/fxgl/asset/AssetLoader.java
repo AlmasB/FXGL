@@ -313,12 +313,12 @@ public class AssetLoader {
      * Either returns ready CSS or throws exception in case of errors.
      *
      * @param name CSS file name without the {@value #CSS_DIR}, e.g. "ui_button.css"
-     * @return css URL external form
+     * @return css
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public String loadCSS(String name) {
+    public CSS loadCSS(String name) {
         try {
-            return getURL(CSS_DIR + name).toExternalForm();
+            return new CSS(getURL(CSS_DIR + name).toExternalForm());
         } catch (Exception e) {
             throw loadFailed(name, e);
         }

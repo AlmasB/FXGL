@@ -49,7 +49,7 @@ public final class FXGLAssets {
     /**
      * This is the name of the css file, NOT loaded css.
      */
-    public static final String UI_CSS;
+    public static final CSS UI_CSS;
     public static final String UI_ICON_NAME;
     public static final Image UI_ICON;
 
@@ -66,7 +66,7 @@ public final class FXGLAssets {
         SOUND_MENU_PRESS = loader.loadSound(getName("sound.menu.press"));
 
         UI_FONT = loader.loadFont(getName("ui.font"));
-        UI_CSS = getName("ui.css");
+        UI_CSS = loader.loadCSS(getName("ui.css"));
         UI_ICON_NAME = getName("ui.icon.name");
         UI_ICON = loader.loadAppIcon(UI_ICON_NAME);
     }

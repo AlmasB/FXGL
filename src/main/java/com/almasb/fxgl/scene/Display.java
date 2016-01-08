@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.asset.CSS;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.event.EventBus;
@@ -82,7 +83,7 @@ public final class Display implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.Display");
 
-    private Stage stage;
+    private final Stage stage;
 
     /**
      * Underlying JavaFX scene. We only use 1 scene to avoid
@@ -92,7 +93,7 @@ public final class Display implements UserProfileSavable {
     private Scene scene;
     private FXGLScene currentScene;
 
-    private List<FXGLScene> scenes = new ArrayList<>();
+    private final List<FXGLScene> scenes = new ArrayList<>();
 
     private final DoubleProperty targetWidth;
     private final DoubleProperty targetHeight;
@@ -100,18 +101,18 @@ public final class Display implements UserProfileSavable {
     private final DoubleProperty scaledHeight;
     private final DoubleProperty scaleRatio;
 
-    private String css = "";
+    private final CSS css;
 
-    private ReadOnlyGameSettings settings;
+    private final ReadOnlyGameSettings settings;
 
-    private EventBus eventBus;
+    private final EventBus eventBus;
 
     /*
      * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
      * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
      * So we copy the occurred event and reroute to whichever FXGL scene is current.
      */
-    private EventHandler<Event> fxToFXGLFilter = event -> {
+    private final EventHandler<Event> fxToFXGLFilter = event -> {
         Event copy = event.copyFor(null, null);
         currentScene.fireEvent(copy);
     };
@@ -127,6 +128,11 @@ public final class Display implements UserProfileSavable {
         scaledWidth = new SimpleDoubleProperty();
         scaledHeight = new SimpleDoubleProperty();
         scaleRatio = new SimpleDoubleProperty();
+
+        // if default css then use menu css, else use specified
+        css = FXGLAssets.UI_CSS.isDefault()
+                ? GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(settings.getMenuStyle().getCSSFileName())
+                : FXGLAssets.UI_CSS;
 
         initStage();
         initDialogBox();
@@ -146,6 +152,7 @@ public final class Display implements UserProfileSavable {
         });
 
         log.finer("Service [Display] initialized");
+        log.finer("Using CSS: " + css);
     }
 
     /**
@@ -192,8 +199,7 @@ public final class Display implements UserProfileSavable {
         scale.yProperty().bind(scaleRatio);
         root.getTransforms().setAll(scale);
 
-        if (!css.isEmpty())
-            root.getStylesheets().add(css);
+        root.getStylesheets().add(css.getExternalForm());
     }
 
     /**
@@ -263,7 +269,6 @@ public final class Display implements UserProfileSavable {
 
     /**
      * Computes scene settings based on target size and screen bounds.
-     * Attaches CSS to settings to be used by all FXGL scenes.
      *
      * @param width  target (app) width
      * @param height target (app) height
@@ -281,15 +286,6 @@ public final class Display implements UserProfileSavable {
                 break;
             }
         }
-
-        // if CSS not set, use menu CSS
-        String css = FXGLAssets.UI_CSS;
-        css = !css.isEmpty() ? css : settings.getMenuStyle().getCSS();
-
-        String loadedCSS = GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(css);
-        log.finer("Using CSS: " + css);
-
-        this.css = loadedCSS;
     }
 
     public final double getTargetWidth() {
@@ -392,7 +388,7 @@ public final class Display implements UserProfileSavable {
     }
 
     private void initDialogBox() {
-        dialogBox = new FXGLDialogBox(stage);
+        dialogBox = new FXGLDialogBox(stage, css);
         dialogBox.setOnShown(e -> {
             eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
         });
