@@ -120,9 +120,9 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * @param iconFileName icon file name
      * @defaultValue fxgl_icon.png
      */
-    public void setIconFileName(String iconFileName) {
-        this.iconFileName = iconFileName;
-    }
+//    public void setIconFileName(String iconFileName) {
+//        this.iconFileName = iconFileName;
+//    }
 
     /**
      * Setting to true will start the game in fullscreen mode.
@@ -162,18 +162,18 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * @param name default font name to use
      * @defaultValue Copperplate_Gothic_Light_Regular.ttf
      */
-    public void setDefaultFontName(String name) {
-        this.defaultFontName = name;
-    }
+//    public void setDefaultFontName(String name) {
+//        this.defaultFontName = name;
+//    }
 
     /**
      * Set globally applied CSS. The CSS will be loaded from "/assets/ui/css/"
      *
      * @param name CSS file name
      */
-    public void setCSS(String name) {
-        this.css = name;
-    }
+//    public void setCSS(String name) {
+//        this.css = name;
+//    }
 
     /**
      * Set the menu style to use.

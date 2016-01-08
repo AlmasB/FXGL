@@ -55,6 +55,8 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -94,6 +96,7 @@ public class AssetLoader {
     private static final String KV_DIR = ASSETS_DIR + "kv/";
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
     private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
+    private static final String PROPERTIES_DIR = ASSETS_DIR + "properties/";
 
     private static final String UI_DIR = ASSETS_DIR + "ui/";
     private static final String CSS_DIR = UI_DIR + "css/";
@@ -250,6 +253,21 @@ public class AssetLoader {
         readAllLines(SCRIPTS_DIR + name)
                 .forEach(line -> builder.append(line).append('\n'));
         return builder.toString();
+    }
+
+    /**
+     * Loads resource bundle with given name from "properties/".
+     *
+     * @param name must be under "properties/", e.g. system.properties, game.properties
+     * @return resource bundle
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public ResourceBundle loadResourceBundle(String name) {
+        try (InputStream is = getStream(PROPERTIES_DIR + name)) {
+            return new PropertyResourceBundle(is);
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
     }
 
     /**

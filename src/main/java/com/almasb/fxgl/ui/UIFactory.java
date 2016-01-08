@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.ui;
 
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.asset.FontFactory;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
@@ -40,14 +41,14 @@ import javafx.scene.text.Text;
 public final class UIFactory {
     private UIFactory() {}
 
-    private static FontFactory defaultFontFactory;
+    //private static FontFactory defaultFontFactory = FXGLAssets.UI_FONT;
 
-    public static void init(FontFactory fontFactory) {
-        defaultFontFactory = fontFactory;
-    }
+//    public static void init(FontFactory fontFactory) {
+//        defaultFontFactory = fontFactory;
+//    }
 
     public static Font newFont(double size) {
-        return defaultFontFactory.newFont(size);
+        return FXGLAssets.UI_FONT.newFont(size);
     }
 
     public static Text newText(String message) {

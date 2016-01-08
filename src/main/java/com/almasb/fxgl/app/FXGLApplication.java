@@ -27,9 +27,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.audio.AudioPlayer;
-import com.almasb.fxgl.donotuse.FXGLSystem;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
@@ -49,7 +47,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -170,6 +171,7 @@ public abstract class FXGLApplication extends Application {
         log.finer("FXGL_start()");
 
         initSystemProperties();
+        initUserProperties();
 
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
@@ -204,8 +206,36 @@ public abstract class FXGLApplication extends Application {
      */
     private void initSystemProperties() {
         log.finer("Initializing system properties");
+
         ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
-        props.keySet().forEach(key -> FXGLSystem.INSTANCE.setProperty(key, props.getObject(key)));
+        props.keySet().forEach(key -> {
+            Object value = props.getObject(key);
+            FXGL.setProperty(key, value);
+
+            log.finer(key + " = " + value);
+        });
+    }
+
+    /**
+     * Load user defined properties to override FXGL system properties.
+     */
+    private void initUserProperties() {
+        log.finer("Initializing user properties");
+
+        // services are not ready yet, so load manually
+        try (InputStream is = getClass().getResource("/assets/properties/system.properties").openStream()) {
+            ResourceBundle props = new PropertyResourceBundle(is);
+            props.keySet().forEach(key -> {
+                Object value = props.getObject(key);
+                FXGL.setProperty(key, value);
+
+                log.finer(key + " = " + value);
+            });
+        } catch (NullPointerException npe) {
+            log.info("User properties not found. Using system");
+        } catch (IOException e) {
+            log.warning("Loading user properties failed: " + e.getMessage());
+        }
     }
 
     /**

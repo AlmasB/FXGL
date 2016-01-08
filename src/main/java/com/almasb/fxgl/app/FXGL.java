@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.donotuse;
+package com.almasb.fxgl.app;
 
 /**
  * API INCOMPLETE
@@ -42,8 +42,7 @@ package com.almasb.fxgl.donotuse;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum FXGLSystem {
-    INSTANCE;
+public final class FXGL {
 
     /**
      * Set an int property.
@@ -51,7 +50,7 @@ public enum FXGLSystem {
      * @param key property key
      * @param value property value
      */
-    public void setInt(String key, int value) {
+    public static void setInt(String key, int value) {
         setProperty(key, value);
     }
 
@@ -61,51 +60,51 @@ public enum FXGLSystem {
      * @param key property key
      * @return int value
      */
-    public int getInt(String key) {
+    public static int getInt(String key) {
         return Integer.parseInt(getProperty(key));
     }
 
-    public String getProperty(String key) {
-        String value = System.getProperty(key);
+    public static String getProperty(String key) {
+        String value = System.getProperty("FXGL." + key);
         if (value == null)
             throw new IllegalArgumentException("Key \"" + key + "\" not found!");
         return value;
     }
 
-    public void setProperty(String key, Object value) {
+    public static void setProperty(String key, Object value) {
         System.setProperty("FXGL." + key, String.valueOf(value));
     }
 
-    /**
-     * The following asset keys are currently defined by FXGL:
-     * <ul>
-     *     <li>sound.notification</li>
-     *     <li>sound.menu.back</li>
-     *     <li>sound.menu.select</li>
-     *     <li>sound.menu.press</li>
-     * </ul>
-     *
-     *
-     * @param assetKey asset key
-     * @param assetLocation relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
-     */
-    public void setSystemAssetLocation(String assetKey, String assetLocation) {
-        setProperty(assetKey, assetLocation);
-    }
-
-    /**
-     * The following asset keys are currently defined by FXGL:
-     * <ul>
-     *     <li>sound.notification</li>
-     *     <li>sound.menu.back</li>
-     *     <li>sound.menu.select</li>
-     *     <li>sound.menu.press</li>
-     * </ul>
-     *
-     * @param assetKey asset key
-     * @return relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
-     */
-    public String getSystemAssetLocation(String assetKey) {
-        return getProperty(assetKey);
-    }
+//    /**
+//     * The following asset keys are currently defined by FXGL:
+//     * <ul>
+//     *     <li>sound.notification</li>
+//     *     <li>sound.menu.back</li>
+//     *     <li>sound.menu.select</li>
+//     *     <li>sound.menu.press</li>
+//     * </ul>
+//     *
+//     *
+//     * @param assetKey asset key
+//     * @param assetLocation relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
+//     */
+//    public void setSystemAssetLocation(String assetKey, String assetLocation) {
+//        setProperty(assetKey, assetLocation);
+//    }
+//
+//    /**
+//     * The following asset keys are currently defined by FXGL:
+//     * <ul>
+//     *     <li>sound.notification</li>
+//     *     <li>sound.menu.back</li>
+//     *     <li>sound.menu.select</li>
+//     *     <li>sound.menu.press</li>
+//     * </ul>
+//     *
+//     * @param assetKey asset key
+//     * @return relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
+//     */
+//    public String getSystemAssetLocation(String assetKey) {
+//        return getProperty(assetKey);
+//    }
 }

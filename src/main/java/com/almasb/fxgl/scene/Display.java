@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.LoadEvent;
@@ -162,8 +163,7 @@ public final class Display implements UserProfileSavable {
                     eventBus.fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
             });
         });
-        stage.getIcons().add(GameApplication.getService(ServiceType.ASSET_LOADER)
-                .loadAppIcon(settings.getIconFileName()));
+        stage.getIcons().add(FXGLAssets.UI_ICON);
 
         if (settings.isFullScreen()) {
             stage.setFullScreenExitHint("");
@@ -283,7 +283,7 @@ public final class Display implements UserProfileSavable {
         }
 
         // if CSS not set, use menu CSS
-        String css = settings.getCSS();
+        String css = FXGLAssets.UI_CSS;
         css = !css.isEmpty() ? css : settings.getMenuStyle().getCSS();
 
         String loadedCSS = GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(css);

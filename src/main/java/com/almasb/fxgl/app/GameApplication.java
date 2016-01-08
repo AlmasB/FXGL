@@ -503,7 +503,7 @@ public abstract class GameApplication extends FXGLApplication {
         super.start(stage);
         log.finer("Game_start()");
 
-        UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(getSettings().getDefaultFontName()));
+        //UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(getSettings().getDefaultFontName()));
 
         getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);

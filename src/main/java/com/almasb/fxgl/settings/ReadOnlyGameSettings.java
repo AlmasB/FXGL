@@ -43,11 +43,11 @@ public class ReadOnlyGameSettings {
     protected boolean fullScreen = false;
     protected boolean introEnabled = true;
     protected boolean menuEnabled = true;
-    protected String iconFileName = "fxgl_icon.png";
+    //protected String iconFileName = "fxgl_icon.png";
     protected boolean showFPS = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
-    protected String defaultFontName = "Copperplate_Gothic_Light_Regular.ttf";
-    protected String css = "";
+    //protected String defaultFontName = "Copperplate_Gothic_Light_Regular.ttf";
+    //protected String css = "";
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
     protected KeyCode menuKey = KeyCode.ESCAPE;
 
@@ -71,11 +71,11 @@ public class ReadOnlyGameSettings {
         this.fullScreen = copy.fullScreen;
         this.introEnabled = copy.introEnabled;
         this.menuEnabled = copy.menuEnabled;
-        this.iconFileName = copy.iconFileName;
+        //this.iconFileName = copy.iconFileName;
         this.showFPS = copy.showFPS;
         this.appMode = copy.appMode;
-        this.defaultFontName = copy.defaultFontName;
-        this.css = copy.css;
+        //this.defaultFontName = copy.defaultFontName;
+        //this.css = copy.css;
         this.menuStyle = copy.menuStyle;
         this.menuKey = copy.menuKey;
     }
@@ -108,9 +108,9 @@ public class ReadOnlyGameSettings {
         return menuEnabled;
     }
 
-    public final String getIconFileName() {
-        return iconFileName;
-    }
+//    public final String getIconFileName() {
+//        return iconFileName;
+//    }
 
     public final boolean isFPSShown() {
         return showFPS;
@@ -120,13 +120,13 @@ public class ReadOnlyGameSettings {
         return appMode;
     }
 
-    public final String getDefaultFontName() {
-        return defaultFontName;
-    }
+//    public final String getDefaultFontName() {
+//        return defaultFontName;
+//    }
 
-    public final String getCSS() {
-        return css;
-    }
+//    public final String getCSS() {
+//        return css;
+//    }
 
     public final MenuStyle getMenuStyle() {
         return menuStyle;

@@ -29,6 +29,8 @@ package com.almasb.fxgl.asset;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.app.FXGL;
+import javafx.scene.image.Image;
 
 /**
  * Stores internal assets, i.e. provided by FXGL.
@@ -42,12 +44,30 @@ public final class FXGLAssets {
     public static final Sound SOUND_MENU_BACK;
     public static final Sound SOUND_MENU_PRESS;
 
+    public static final FontFactory UI_FONT;
+
+    /**
+     * This is the name of the css file, NOT loaded css.
+     */
+    public static final String UI_CSS;
+    public static final String UI_ICON_NAME;
+    public static final Image UI_ICON;
+
+    private static String getName(String assetKey) {
+        return FXGL.getProperty(assetKey);
+    }
+
     static {
         AssetLoader loader = GameApplication.getService(ServiceType.ASSET_LOADER);
 
-        SOUND_NOTIFICATION = loader.loadSound("system/notification.wav");
-        SOUND_MENU_SELECT = loader.loadSound("menu/select.wav");
-        SOUND_MENU_BACK = loader.loadSound("menu/back.wav");
-        SOUND_MENU_PRESS = loader.loadSound("menu/press.wav");
+        SOUND_NOTIFICATION = loader.loadSound(getName("sound.notification"));
+        SOUND_MENU_SELECT = loader.loadSound(getName("sound.menu.select"));
+        SOUND_MENU_BACK = loader.loadSound(getName("sound.menu.back"));
+        SOUND_MENU_PRESS = loader.loadSound(getName("sound.menu.press"));
+
+        UI_FONT = loader.loadFont(getName("ui.font"));
+        UI_CSS = getName("ui.css");
+        UI_ICON_NAME = getName("ui.icon.name");
+        UI_ICON = loader.loadAppIcon(UI_ICON_NAME);
     }
 }
