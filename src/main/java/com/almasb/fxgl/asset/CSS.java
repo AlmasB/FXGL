@@ -27,11 +27,18 @@
 package com.almasb.fxgl.asset;
 
 /**
+ * Represents a CSS file.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class CSS {
     private final String externalForm;
 
+    /**
+     * Constructs a CSS with given URL external form.
+     *
+     * @param externalForm URL.externalForm()
+     */
     public CSS(String externalForm) {
         this.externalForm = externalForm;
     }
@@ -43,6 +50,9 @@ public final class CSS {
         return externalForm;
     }
 
+    /**
+     * @return true iff this CSS file represents the default FXGL CSS
+     */
     public boolean isDefault() {
         return externalForm.endsWith("fxgl.css");
     }

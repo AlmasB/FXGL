@@ -34,6 +34,7 @@ import javafx.scene.image.Image;
 
 /**
  * Stores internal assets, i.e. provided by FXGL.
+ * These can be overrided by "system.properties" file under "assets/properties".
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

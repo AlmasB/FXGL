@@ -308,16 +308,6 @@ public abstract class FXGLApplication extends Application {
         return assetLoader;
     }
 
-//    @Inject
-//    private SaveLoadManager saveLoadManager;
-//
-//    /**
-//     * @return save load manager
-//     */
-//    public final SaveLoadManager getSaveLoadManager() {
-//        return saveLoadManager;
-//    }
-
     @Inject
     private MasterTimer masterTimer;
 
