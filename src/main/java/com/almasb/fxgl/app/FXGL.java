@@ -27,32 +27,14 @@
 package com.almasb.fxgl.app;
 
 /**
- * API INCOMPLETE
- *
  * Represents the entire FXGL infrastructure.
- * Can be used to pass internal properties / data around.
- * Especially useful for passing data between managers.
- * Must not be abused too much and must not be used for other types
- * of communications.
- *
- * The following property keys are currently defined by FXGL:
- * <ul>
- * </ul>
- *
+ * Can be used to pass internal properties (key-value pair) around.
+ * Can be used for communication between non-related parts.
+ * Not to be abused.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGL {
-
-    /**
-     * Set an int property.
-     *
-     * @param key property key
-     * @param value property value
-     */
-    public static void setInt(String key, int value) {
-        setProperty(key, value);
-    }
 
     /**
      * Get value of an int property.
@@ -64,6 +46,30 @@ public final class FXGL {
         return Integer.parseInt(getProperty(key));
     }
 
+    /**
+     * Get value of a double property.
+     *
+     * @param key property key
+     * @return double value
+     */
+    public static double getDouble(String key) {
+        return Double.parseDouble(getProperty(key));
+    }
+
+    /**
+     * Get value of a boolean property.
+     *
+     * @param key property key
+     * @return boolean value
+     */
+    public static boolean getBoolean(String key) {
+        return Boolean.parseBoolean(getProperty(key));
+    }
+
+    /**
+     * @param key property key
+     * @return property value
+     */
     public static String getProperty(String key) {
         String value = System.getProperty("FXGL." + key);
         if (value == null)
@@ -71,40 +77,13 @@ public final class FXGL {
         return value;
     }
 
+    /**
+     * Set an int, double, boolean or String property.
+     *
+     * @param key property key
+     * @param value property value
+     */
     public static void setProperty(String key, Object value) {
         System.setProperty("FXGL." + key, String.valueOf(value));
     }
-
-//    /**
-//     * The following asset keys are currently defined by FXGL:
-//     * <ul>
-//     *     <li>sound.notification</li>
-//     *     <li>sound.menu.back</li>
-//     *     <li>sound.menu.select</li>
-//     *     <li>sound.menu.press</li>
-//     * </ul>
-//     *
-//     *
-//     * @param assetKey asset key
-//     * @param assetLocation relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
-//     */
-//    public void setSystemAssetLocation(String assetKey, String assetLocation) {
-//        setProperty(assetKey, assetLocation);
-//    }
-//
-//    /**
-//     * The following asset keys are currently defined by FXGL:
-//     * <ul>
-//     *     <li>sound.notification</li>
-//     *     <li>sound.menu.back</li>
-//     *     <li>sound.menu.select</li>
-//     *     <li>sound.menu.press</li>
-//     * </ul>
-//     *
-//     * @param assetKey asset key
-//     * @return relative asset location (as specified by {@link com.almasb.fxgl.asset.AssetLoader})
-//     */
-//    public String getSystemAssetLocation(String assetKey) {
-//        return getProperty(assetKey);
-//    }
 }
