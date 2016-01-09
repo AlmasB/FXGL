@@ -288,4 +288,16 @@ public final class GameScene extends FXGLScene {
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
     }
+
+    /**
+     * Returns graphics context of the game scene.
+     * The render layer is over all entities.
+     * Use this only if performance is required.
+     * The drawing on this context can be done in {@link GameApplication#onUpdate()}.
+     *
+     * @return graphics context
+     */
+    public GraphicsContext getGraphicsContext() {
+        return particlesGC;
+    }
 }
