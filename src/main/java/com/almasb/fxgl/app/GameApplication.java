@@ -33,6 +33,7 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -52,6 +53,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -80,7 +82,7 @@ import java.util.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class GameApplication extends FXGLApplication {
+public abstract class GameApplication extends FXGLApplication implements UserProfileSavable {
 
     {
         log.finer("Game_clinit()");
@@ -686,6 +688,7 @@ public abstract class GameApplication extends FXGLApplication {
     public final UserProfile createProfile() {
         UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
 
+        save(profile);
         getEventBus().fireEvent(new SaveEvent(profile));
 
         return profile;
@@ -700,6 +703,7 @@ public abstract class GameApplication extends FXGLApplication {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
             return false;
 
+        load(profile);
         getEventBus().fireEvent(new LoadEvent(LoadEvent.LOAD_PROFILE, profile));
         return true;
     }
@@ -773,5 +777,28 @@ public abstract class GameApplication extends FXGLApplication {
      */
     public final long getNow() {
         return getMasterTimer().getNow();
+    }
+
+    private long playtime = 0;
+    private long startTime = System.nanoTime();
+
+    @Override
+    public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
+        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
+        bundle.put("playtime", System.nanoTime() - startTime + playtime);
+
+        bundle.log();
+        profile.putBundle(bundle);
+    }
+
+    @Override
+    public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+        UserProfile.Bundle bundle = profile.getBundle("game");
+        bundle.log();
+
+        playtime = bundle.get("playtime");
     }
 }
