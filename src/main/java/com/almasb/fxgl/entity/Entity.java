@@ -598,6 +598,22 @@ public class Entity {
     }
 
     /**
+     * @return the right side x of this entity
+     * @implNote computation is based on hit boxes
+     */
+    public final double getRightX() {
+        return getX() + getWidth();
+    }
+
+    /**
+     * @return the bottom side y of this entity
+     * @implNote computation is based on hit boxes
+     */
+    public final double getBottomY() {
+        return getY() + getHeight();
+    }
+
+    /**
      * Maps control type to control object.
      * Ensuring that only 1 object is registered per type.
      */
