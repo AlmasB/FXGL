@@ -115,7 +115,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         MenuItem btnRestore = new MenuItem("RESTORE");
         btnRestore.setOnAction(e -> {
             app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
-                if (yes) app.loadFromDefaultProfile();
+                if (yes) app.restoreDefaultSettings();
             });
         });
 

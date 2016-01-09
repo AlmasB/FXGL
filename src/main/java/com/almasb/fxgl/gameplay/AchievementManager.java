@@ -57,7 +57,7 @@ public final class AchievementManager implements UserProfileSavable {
             save(event.getProfile());
         });
 
-        eventBus.addEventHandler(LoadEvent.ANY, event -> {
+        eventBus.addEventHandler(LoadEvent.LOAD_PROFILE, event -> {
             load(event.getProfile());
         });
     }

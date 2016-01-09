@@ -692,7 +692,7 @@ public abstract class GameApplication extends FXGLApplication {
     }
 
     /**
-     * Load from given user profile
+     * Load from given user profile.
      *
      * @param profile the profile
      */
@@ -700,15 +700,15 @@ public abstract class GameApplication extends FXGLApplication {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
             return false;
 
-        getEventBus().fireEvent(new LoadEvent(profile));
+        getEventBus().fireEvent(new LoadEvent(LoadEvent.LOAD_PROFILE, profile));
         return true;
     }
 
     /**
-     * Load from default user profile. Restores default settings.
+     * Restores default settings, e.g. audio, video, controls.
      */
-    public final void loadFromDefaultProfile() {
-        loadFromProfile(defaultProfile);
+    public final void restoreDefaultSettings() {
+        getEventBus().fireEvent(new LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile));
     }
 
     // TODO: careful, may not be set
