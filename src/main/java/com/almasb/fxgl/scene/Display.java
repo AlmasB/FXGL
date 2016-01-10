@@ -208,7 +208,12 @@ public final class Display implements UserProfileSavable {
      * @param scene the scene
      */
     public void setScene(FXGLScene scene) {
+        if (currentScene != null) {
+            currentScene.activeProperty().set(false);
+        }
         currentScene = scene;
+        scene.activeProperty().set(true);
+
         this.scene.setRoot(scene.getRoot());
     }
 

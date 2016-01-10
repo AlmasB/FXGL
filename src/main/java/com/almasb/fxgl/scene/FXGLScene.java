@@ -27,6 +27,8 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -101,5 +103,11 @@ public abstract class FXGLScene {
     public final void setCursor(String imageName, Point2D hotspot) {
         root.setCursor(new ImageCursor(GameApplication.getService(ServiceType.ASSET_LOADER).loadCursorImage(imageName),
                 hotspot.getX(), hotspot.getY()));
+    }
+
+    private BooleanProperty active = new SimpleBooleanProperty(false);
+
+    protected BooleanProperty activeProperty() {
+        return active;
     }
 }

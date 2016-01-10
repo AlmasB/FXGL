@@ -64,10 +64,10 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
         // just a placeholder
-        MenuBox menuContent = new MenuBox((int) app.getWidth() - 300 - 50);
-        menuContent.setTranslateX(300);
-        menuContent.setTranslateY(menu.getTranslateY());
-        menuContent.setVisible(false);
+        MenuBox menuBox = new MenuBox((int) app.getWidth() - 300 - 50);
+        menuBox.setTranslateX(300);
+        menuBox.setTranslateY(menu.getTranslateY());
+        menuBox.setVisible(false);
 
         Title title = new Title(app.getSettings().getTitle());
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
@@ -76,7 +76,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         Text version = UIFactory.newText("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
 
-        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuContent);
+        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox);
 
         app.getEventBus().addEventHandler(MenuEvent.PROFILE_SELECTED, event -> {
             String profileName = event.getData()
@@ -88,6 +88,15 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
             text.setTranslateY(app.getHeight() - 2);
 
             getRoot().getChildren().add(text);
+        });
+
+        activeProperty().addListener((observable, wasActive, isActive) -> {
+            if (!isActive) {
+                // the scene is no longer active so reset everything
+                // so that next time scene is active everything is loaded properly
+                switchMenuTo(menu);
+                switchMenuContentTo(new MenuContent());
+            }
         });
     }
 
@@ -217,10 +226,6 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
         public void setMenuContent(Supplier<MenuContent> contentSupplier) {
             this.addEventHandler(ActionEvent.ACTION, event -> {
-//                if (content == null) {
-//                    content = contentSupplier.get();
-//                }
-
                 switchMenuContentTo(contentSupplier.get());
             });
         }
