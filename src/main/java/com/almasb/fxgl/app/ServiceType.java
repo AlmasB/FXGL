@@ -167,4 +167,16 @@ public interface ServiceType<T> {
             return FXGLNotificationService.class;
         }
     };
+
+    ServiceType<Game> GAME = new ServiceType<Game>() {
+        @Override
+        public Class<Game> service() {
+            return Game.class;
+        }
+
+        @Override
+        public Class<? extends Game> serviceProvider() {
+            return Game.class;
+        }
+    };
 }
