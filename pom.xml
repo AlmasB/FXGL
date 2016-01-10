@@ -27,6 +27,8 @@
         <guice.version>4.0</guice.version>
         <ehcache.version>3.0.0.m4</ehcache.version>
         <slf4j.version>1.7.7</slf4j.version>
+        <jfxtras.version>8.0-r4</jfxtras.version>
+        <commons-math.version>3.5</commons-math.version>
     </properties>
 
     <dependencies>
@@ -48,6 +50,12 @@
             <version>${slf4j.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-window</artifactId>
+            <version>${jfxtras.version}</version>
+        </dependency>
+
         <!-- test scope dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -59,7 +67,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.5</version>
+            <version>${commons-math.version}</version>
             <scope>test</scope>
         </dependency>
 
