@@ -113,7 +113,7 @@ public class BasicGameApplication extends GameApplication {
 
         // 2. bind achievedProperty() to the condition
         getAchievementManager().getAchievementByName("World Traveller")
-                .achievedProperty().bind(player.xProperty().greaterThan(600));
+                .bind(player.xProperty().greaterThan(600));
     }
 
     @Override
