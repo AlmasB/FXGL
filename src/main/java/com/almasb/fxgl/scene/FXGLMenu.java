@@ -237,8 +237,13 @@ public abstract class FXGLMenu extends FXGLScene {
         Text percentSound = UIFactory.newText("");
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"));
 
-        return new MenuContent(new HBox(textMusic, sliderMusic, percentMusic),
-                new HBox(textSound, sliderSound, percentSound));
+        HBox hboxMusic = new HBox(15, textMusic, sliderMusic, percentMusic);
+        HBox hboxSound = new HBox(15, textSound, sliderSound, percentSound);
+        
+        hboxMusic.setAlignment(Pos.CENTER_RIGHT);
+        hboxSound.setAlignment(Pos.CENTER_RIGHT);
+
+        return new MenuContent(hboxMusic, hboxSound);
     }
 
     /**
