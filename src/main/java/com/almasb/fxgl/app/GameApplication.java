@@ -449,7 +449,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     private void showProfileDialog() {
         List<String> profileNames = SaveLoadManager.loadProfileNames().orElse(Collections.emptyList());
-        ChoiceBox<String> profilesBox = new ChoiceBox<>(FXCollections.observableArrayList(profileNames));
+        ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList(profileNames));
 
         if (!profileNames.isEmpty())
             profilesBox.getSelectionModel().selectFirst();
