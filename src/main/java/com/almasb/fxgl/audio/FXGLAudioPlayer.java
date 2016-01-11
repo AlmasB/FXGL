@@ -86,7 +86,7 @@ public final class FXGLAudioPlayer implements AudioPlayer, UserProfileSavable {
      */
     private List<Music> activeMusic = new ArrayList<>();
 
-    private DoubleProperty globalMusicVolume = new SimpleDoubleProperty(1.0);
+    private DoubleProperty globalMusicVolume = new SimpleDoubleProperty(0.5);
 
     /**
      * @return global music volume property
@@ -96,7 +96,7 @@ public final class FXGLAudioPlayer implements AudioPlayer, UserProfileSavable {
         return globalMusicVolume;
     }
 
-    private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(1.0);
+    private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(0.5);
 
     /**
      * @return global sound volume property

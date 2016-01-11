@@ -239,7 +239,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         HBox hboxMusic = new HBox(15, textMusic, sliderMusic, percentMusic);
         HBox hboxSound = new HBox(15, textSound, sliderSound, percentSound);
-        
+
         hboxMusic.setAlignment(Pos.CENTER_RIGHT);
         hboxSound.setAlignment(Pos.CENTER_RIGHT);
 
