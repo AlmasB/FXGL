@@ -72,7 +72,7 @@ public final class SaveLoadManager {
      * @param fileName to save as
      * @return io result
      */
-    public IOResult save(Serializable data, String fileName) {
+    public IOResult<?> save(Serializable data, String fileName) {
         log.finer("Saving data: " + fileName);
         return saveImpl(data, saveDir() + fileName);
     }
@@ -83,7 +83,7 @@ public final class SaveLoadManager {
      * @param profile the profile to save
      * @return io result
      */
-    public IOResult saveProfile(UserProfile profile) {
+    public IOResult<?> saveProfile(UserProfile profile) {
         log.finer("Saving profile: " + profileName);
         return saveImpl(profile, profileDir() + PROFILE_FILE_NAME);
     }
@@ -95,7 +95,7 @@ public final class SaveLoadManager {
      * @param fileName to save as
      * @return io result
      */
-    private IOResult saveImpl(Serializable data, String fileName) {
+    private IOResult<?> saveImpl(Serializable data, String fileName) {
         try {
             Path file = Paths.get(fileName);
 
@@ -117,41 +117,39 @@ public final class SaveLoadManager {
     /**
      * Load serializable data from external
      * file on disk file system from "{@value #SAVE_DIR}" directory which is
-     * in the directory where the game is run from
+     * in the directory where the game is run from.
      *
      * @param fileName file name to load from
      * @return instance of deserialized data structure
      */
     @SuppressWarnings("unchecked")
-    public <T> Optional<T> load(String fileName) {
-        return loadImpl(Paths.get(saveDir() + fileName)).map(o -> (T)o);
+    public <T> IOResult<T> load(String fileName) {
+        log.finer("Loading data: " + fileName);
+        return loadImpl(saveDir() + fileName);
     }
 
     /**
      *
      * @return user profile loaded from "profiles/"
      */
-    public Optional<UserProfile> loadProfile() {
-        Path profileFile = Paths.get(profileDir() + PROFILE_FILE_NAME);
-
-        if (!Files.exists(profileFile))
-            return Optional.empty();
-
-        return loadImpl(profileFile).map(o -> (UserProfile)o);
+    public IOResult<UserProfile> loadProfile() {
+        log.finer("Loading profile: " + profileName);
+        return loadImpl(profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
      * Loads data from file into an object.
      *
-     * @param file file to load from
-     * @return the data object
+     * @param fileName file to load from
+     * @return IO result with the data object
      */
-    private Optional<Object> loadImpl(Path file) {
-        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file))) {
-            return Optional.of(ois.readObject());
+    @SuppressWarnings("unchecked")
+    private <T> IOResult<T> loadImpl(String fileName) {
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
+            return IOResult.success((T)ois.readObject());
         } catch (Exception e) {
             log.warning("Load Failed: " + e.getMessage());
-            return Optional.empty();
+            return IOResult.failure(e.getMessage());
         }
     }
 
@@ -168,6 +166,30 @@ public final class SaveLoadManager {
     }
 
     /**
+     * Load all profile names.
+     *
+     * @return list of profile names or {@link Optional#empty()} if no profiles or error
+     */
+    public static Optional<List<String>> loadProfileNames() {
+        try {
+            Path profilesDir = Paths.get("./" + PROFILES_DIR);
+
+            if (!Files.exists(profilesDir)) {
+                return Optional.empty();
+            }
+
+            try (Stream<Path> files = Files.walk(profilesDir, 1)) {
+                return Optional.of(files.filter(Files::isDirectory)
+                        .map(file -> profilesDir.relativize(file).toString().replace("\\", "/"))
+                        .filter(s -> !s.isEmpty())
+                        .collect(Collectors.toList()));
+            }
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Loads file names of existing saves from "{@value #SAVE_DIR}".
      * <p>
      * Returns {@link Optional#empty()} if "{@value #SAVE_DIR}" directory
@@ -175,41 +197,22 @@ public final class SaveLoadManager {
      *
      * @return Optional containing list of file names
      */
-    private Optional<List<String>> loadFileNames(String dir) {
-        Path saveDir = Paths.get(dir);
-
-        if (!Files.exists(saveDir)) {
-            return Optional.empty();
-        }
-
-        try (Stream<Path> files = Files.walk(saveDir)) {
-            return Optional.of(files.filter(Files::isRegularFile)
-                    .map(file -> saveDir.relativize(file).toString().replace("\\", "/"))
-                    .collect(Collectors.toList()));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    public static Optional<List<String>> loadProfileNames() {
-        Path profilesDir = Paths.get("./" + PROFILES_DIR);
-
-        if (!Files.exists(profilesDir)) {
-            return Optional.empty();
-        }
-
-        try (Stream<Path> files = Files.walk(profilesDir, 1)) {
-            return Optional.of(files.filter(Files::isDirectory)
-                    .map(file -> profilesDir.relativize(file).toString().replace("\\", "/"))
-                    .filter(s -> !s.isEmpty())
-                    .collect(Collectors.toList()));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
     public Optional<List<String>> loadSaveFileNames() {
-        return loadFileNames(saveDir());
+        try {
+            Path saveDir = Paths.get(saveDir());
+
+            if (!Files.exists(saveDir)) {
+                return Optional.empty();
+            }
+
+            try (Stream<Path> files = Files.walk(saveDir)) {
+                return Optional.of(files.filter(Files::isRegularFile)
+                        .map(file -> saveDir.relativize(file).toString().replace("\\", "/"))
+                        .collect(Collectors.toList()));
+            }
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -221,23 +224,27 @@ public final class SaveLoadManager {
      * @return last modified save file
      */
     public <T> Optional<T> loadLastModifiedSaveFile() {
-        Path saveDir = Paths.get(saveDir());
+        try {
+            Path saveDir = Paths.get(saveDir());
 
-        if (!Files.exists(saveDir)) {
-            return Optional.empty();
-        }
+            if (!Files.exists(saveDir)) {
+                return Optional.empty();
+            }
 
-        try (Stream<Path> files = Files.walk(saveDir)) {
-            Path file = files.filter(Files::isRegularFile).sorted((file1, file2) -> {
-                try {
-                    return Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1));
-                } catch (Exception e) {
-                    return -1;
-                }
-            }).findFirst().orElseThrow(Exception::new);
+            try (Stream<Path> files = Files.walk(saveDir)) {
+                Path file = files.filter(Files::isRegularFile).sorted((file1, file2) -> {
+                    try {
+                        return Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1));
+                    } catch (Exception e) {
+                        return -1;
+                    }
+                }).findFirst().orElseThrow(Exception::new);
 
-            String fileName = saveDir.relativize(file).toString().replace("\\", "/");
-            return load(fileName);
+                String fileName = saveDir.relativize(file).toString().replace("\\", "/");
+                IOResult<T> result = load(fileName);
+
+                return Optional.ofNullable(result.getData());
+            }
         } catch (Exception e) {
             return Optional.empty();
         }

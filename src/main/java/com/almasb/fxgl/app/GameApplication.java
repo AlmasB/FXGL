@@ -405,7 +405,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             Optional<Serializable> saveFile = saveFileName.isEmpty()
                     ? saveLoadManager.loadLastModifiedSaveFile()
-                    : saveLoadManager.load(saveFileName);
+                    : Optional.ofNullable((Serializable) saveLoadManager.load(saveFileName).getData());
 
             // TODO: check all cases
             saveFile.ifPresent(this::startLoadedGame);
@@ -472,9 +472,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             BooleanProperty ok = new SimpleBooleanProperty(false);
 
-            saveLoadManager.loadProfile().ifPresent(profile -> {
-                ok.set(loadFromProfile(profile));
-            });
+            IOResult<UserProfile> result = saveLoadManager.loadProfile();
+            if (result.hasData()) {
+                ok.set(loadFromProfile(result.getData()));
+            }
 
             if (!ok.get()) {
                 getDisplay().getDialogBox()
