@@ -323,6 +323,7 @@ public final class PhysicsWorld {
             e.bodyDef.position.set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
         }
 
+        e.bodyDef.setAngle((float) -Math.toRadians(e.getRotation()));
         e.body = physicsWorld.createBody(e.bodyDef);
 
         // TODO: we could reuse this for normal physics entities with more than 1 hit box
