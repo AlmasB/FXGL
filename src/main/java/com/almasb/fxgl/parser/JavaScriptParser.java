@@ -43,6 +43,13 @@ public final class JavaScriptParser {
     private ScriptEngine engine = manager.getEngineByName("nashorn");
     private Invocable invocableEngine;
 
+    /**
+     * Constructs new javascript parser for given .js file.
+     * The file will be loaded with {@link com.almasb.fxgl.asset.AssetLoader#loadScript(String)}
+     *
+     * @param scriptFileName name of script file under "/assets/scripts/"
+     * @throws Exception if syntax error
+     */
     public JavaScriptParser(String scriptFileName) throws Exception {
         engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("HOME_DIR", getClass().getResource("/assets/scripts/"));
         engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("ASSET_MANAGER", GameApplication.getService(ServiceType.ASSET_LOADER));

@@ -107,6 +107,8 @@ public final class PhysicsWorld {
 
                     if (!collisions.containsKey(pair)) {
                         collisions.put(pair, tick.get());
+                        pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(),
+                                (HitBox)contact.getFixtureA().getUserData(), (HitBox)contact.getFixtureB().getUserData());
                     }
                 }
             }
@@ -311,13 +313,6 @@ public final class PhysicsWorld {
                 w = e.getWidth(),
                 h = e.getHeight();
 
-        // if shape wasn't specified construct new based on bounding box
-        if (e.fixtureDef.shape == null) {
-            PolygonShape rectShape = new PolygonShape();
-            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2));
-            e.fixtureDef.shape = rectShape;
-        }
-
         // if position is 0, 0 then probably not set, so set ourselves
         if (e.bodyDef.getPosition().x == 0 && e.bodyDef.getPosition().y == 0) {
             e.bodyDef.position.set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
@@ -326,17 +321,12 @@ public final class PhysicsWorld {
         e.bodyDef.setAngle((float) -Math.toRadians(e.getRotation()));
         e.body = physicsWorld.createBody(e.bodyDef);
 
-        // TODO: we could reuse this for normal physics entities with more than 1 hit box
-        if (e instanceof BreakablePhysicsEntity) {
-            createExtraFixtures((BreakablePhysicsEntity) e);
-        } else {
-            e.fixture = e.body.createFixture(e.fixtureDef);
-        }
+        createFixtures(e);
 
         e.body.setUserData(e);
     }
 
-    private void createExtraFixtures(BreakablePhysicsEntity e) {
+    private void createFixtures(PhysicsEntity e) {
         Point2D entityCenter = e.getCenter();
 
         for (HitBox box : e.hitBoxesProperty()) {
@@ -349,16 +339,17 @@ public final class PhysicsWorld {
             double w = bounds.getWidth();
             double h = bounds.getHeight();
 
-            FixtureDef fd = new FixtureDef();
+            FixtureDef fd = e.fixtureDef;
             PolygonShape rectShape = new PolygonShape();
             rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
                     new Vec2(toMeters(boundsLocalCenter.getX()), toMeters(boundsLocalCenter.getY())), 0);
 
-            fd.shape = rectShape;
-            fd.density = 1.0f;
+            // we use definitions from user, but override shape
+            fd.setShape(rectShape);
 
             Fixture fixture = e.body.createFixture(fd);
-            e.fixtures.add(fixture);
+            fixture.setUserData(box);
+            //e.fixtures.add(fixture);
         }
     }
 

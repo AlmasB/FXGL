@@ -476,6 +476,13 @@ public final class Display implements UserProfileSavable {
         dialogBox.showErrorBox(error);
     }
 
+    /**
+     * Shows a blocking (stops game execution, method returns normally) generic dialog.
+     *
+     * @param message the message
+     * @param content the content
+     * @param buttons buttons present
+     */
     public void showBox(String message, Node content, Button... buttons) {
         dialogBox.showBox(message, content, buttons);
     }

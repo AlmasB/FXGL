@@ -366,6 +366,11 @@ public abstract class FXGLMenu extends FXGLScene {
         fireEvent2(new MenuEvent(MenuEvent.SAVE));
     }
 
+    /**
+     * Fires {@link MenuEvent#DELETE} event.
+     *
+     * @param fileName name of the save file
+     */
     protected final void fireDelete(String fileName) {
         fireEvent2(new MenuEvent(MenuEvent.DELETE, fileName));
     }
@@ -380,13 +385,16 @@ public abstract class FXGLMenu extends FXGLScene {
 
     /**
      * Fire {@link MenuEvent#EXIT} event.
-     * If fired from game menu, app will clean up and enter main menu.
-     * If fired from main menu, app will close.
+     * App will clean up the world/the scene and exit.
      */
     protected final void fireExit() {
         fireEvent2(new MenuEvent(MenuEvent.EXIT));
     }
 
+    /**
+     * Fire {@link MenuEvent#EXIT_TO_MAIN_MENU} event.
+     * App will clean up the world/the scene and enter main menu.
+     */
     protected final void fireExitToMainMenu() {
         fireEvent2(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
     }
