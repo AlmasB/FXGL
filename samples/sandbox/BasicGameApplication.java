@@ -34,6 +34,8 @@ import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.scene.IntroFactory;
 import com.almasb.fxgl.scene.IntroScene;
 import com.almasb.fxgl.scene.Viewport;
@@ -44,8 +46,11 @@ import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Task;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -140,8 +145,6 @@ public class BasicGameApplication extends GameApplication {
         };
     }
 
-    Executor executor;
-
     @Override
     protected void initInput() {
         Input input = getInput();
@@ -150,7 +153,7 @@ public class BasicGameApplication extends GameApplication {
             @Override
             protected void onAction() {
                 //enemy.rotateBy(-5);
-                player.translate(-1, 0);
+                player.translate(-5, 0);
             }
         }, KeyCode.A);
 
@@ -158,15 +161,15 @@ public class BasicGameApplication extends GameApplication {
             @Override
             protected void onAction() {
                 //enemy.rotateBy(5);
-                player.translate(10, 0);
+                player.translate(5, 0);
             }
         }, KeyCode.D);
 
         input.addAction(new UserAction("Move Up") {
             @Override
-            protected void onActionBegin() {
+            protected void onAction() {
                 //enemy.setRotation(0);
-                player.translate(0, -1);
+                player.translate(0, -5);
                 //i.set(i.get() + 10000);
             }
         }, KeyCode.W);
@@ -175,7 +178,7 @@ public class BasicGameApplication extends GameApplication {
             @Override
             protected void onAction() {
                 //enemy.setRotation(90);
-                player.translate(0, 1);
+                player.translate(0, 5);
             }
         }, KeyCode.S);
 
@@ -199,19 +202,25 @@ public class BasicGameApplication extends GameApplication {
             @Override
             protected void onActionBegin() {
                 PhysicsEntity b = new PhysicsEntity(Type.CRATE);
-                Rectangle r = new Rectangle(40, 40);
-                r.setFill(Color.BLUE);
-                b.setSceneView(r);
+
+                b.setRotation(90);
+
+                b.setSceneView(new HBox(new Rectangle(40, 40, Color.BLUE), new Rectangle(40, 40, Color.RED)));
                 b.setBodyType(BodyType.DYNAMIC);
                 b.setPosition(input.getMouse().getGameXY());
-                //b.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40)));
+
+                b.setGenerateHitBoxesFromView(false);
+
+                b.addHitBox(new HitBox("LEFT", new BoundingBox(0, 0, 40, 40)));
+                b.addHitBox(new HitBox("RIGHT", new BoundingBox(40, 0, 40, 40)));
 
                 FixtureDef fd = new FixtureDef();
                 fd.setDensity(0.05f);
-                fd.setRestitution(1.0f);
+                fd.setRestitution(0.6f);
 
+                b.setCollidable(true);
                 b.setFixtureDef(fd);
-                b.setExpireTime(Duration.seconds(10));
+                //b.setExpireTime(Duration.seconds(10));
 
                 getGameWorld().addEntity(b);
 
@@ -285,11 +294,52 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initGame() {
-        EntityView.turnOnDebugBBox(Color.RED);
+        getAudioPlayer().setGlobalSoundVolume(0);
+
+
+        PhysicsEntity ground = new PhysicsEntity(Type.BOX);
+        ground.setPosition(-50, 500);
+        ground.setSceneView(new Rectangle(1200, 100));
+        ground.setCollidable(true);
+
+        getGameWorld().addEntity(ground);
+
+        //EntityView.turnOnDebugBBox(Color.RED);
+
+        //getInput().setRegisterInput(false);
+
+        player = new Entity(Type.PLAYER);
+        player.setPosition(250, 250);
+        player.setSceneView(new Rectangle(40, 40));
+
+        getGameWorld().addEntity(player);
+
+        getMasterTimer().runOnceAfter(() -> {
+            //getDisplay().showInputBox("Test message", input -> input.matches("^[\\pL\\pN]+$"), log::info);
+
+
+
+            //getInput().mockButtonPress(MouseButton.PRIMARY, 50, 50, InputModifier.ALT);
+        }, Duration.seconds(2));
+
+//        getMasterTimer().runOnceAfter(() -> {
+//            getInput().mockButtonRelease(MouseButton.PRIMARY, InputModifier.ALT);
+//        }, Duration.seconds(3));
     }
 
     @Override
     protected void initPhysics() {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(Type.CRATE, Type.BOX) {
+            @Override
+            protected void onHitBoxTrigger(Entity crate, Entity ground, HitBox boxA, HitBox boxB) {
+                log.info(boxA.getName() + " hit " + boxB.getName());
+            }
+
+            @Override
+            protected void onCollisionBegin(Entity a, Entity b) {
+                log.info("Touch");
+            }
+        });
     }
 
     @Override

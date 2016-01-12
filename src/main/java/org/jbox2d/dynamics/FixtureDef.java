@@ -36,12 +36,12 @@ public class FixtureDef {
      * The shape, this must be set. The shape will be cloned, so you can create the shape on the
      * stack.
      */
-    public Shape shape = null;
+    private Shape shape = null;
 
     /**
      * Use this to store application specific fixture data.
      */
-    public Object userData;
+    private Object userData = null;
 
     /**
      * The friction coefficient, usually in the range [0,1].
@@ -69,8 +69,6 @@ public class FixtureDef {
     public Filter filter;
 
     public FixtureDef() {
-        shape = null;
-        userData = null;
         friction = 0.2f;
         restitution = 0f;
         density = 0f;

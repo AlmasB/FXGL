@@ -84,7 +84,7 @@ public class PistonWorld implements PerformanceTestWorld {
             bd = new BodyDef();
             bd.type = BodyType.STATIC;
             FixtureDef sides = new FixtureDef();
-            sides.shape = shape;
+            sides.setShape(shape);
             sides.density = 0;
             sides.friction = 0;
             sides.restitution = .8f;
@@ -112,7 +112,7 @@ public class PistonWorld implements PerformanceTestWorld {
             for (int i = 0; i < numPieces; i++) {
                 cd = new CircleShape();
                 cd.m_radius = .5f;
-                fd.shape = cd;
+                fd.setShape(cd);
                 fd.density = 25;
                 fd.friction = .1f;
                 fd.restitution = .9f;
@@ -184,7 +184,7 @@ public class PistonWorld implements PerformanceTestWorld {
                 bd.position.set(0.0f, 17.0f);
                 Body body = world.createBody(bd);
                 FixtureDef piston = new FixtureDef();
-                piston.shape = shape;
+                piston.setShape(shape);
                 piston.density = 2;
                 piston.filter.categoryBits = 1;
                 piston.filter.maskBits = 2;
@@ -216,7 +216,7 @@ public class PistonWorld implements PerformanceTestWorld {
 
                     bd.bullet = false;
                     body = world.createBody(bd);
-                    fixture.shape = sd;
+                    fixture.setShape(sd);
                     fixture.density = .1f;
                     fixture.filter.categoryBits = 2;
                     fixture.filter.maskBits = 1 | 4 | 2;
@@ -228,7 +228,7 @@ public class PistonWorld implements PerformanceTestWorld {
                 for (int i = 0; i < 100; ++i) {
                     bd.position.set(1.0f, 23.0f + i);
                     bd.bullet = false;
-                    fixture.shape = cd;
+                    fixture.setShape(cd);
                     fixture.density = 2f;
                     fixture.filter.categoryBits = 2;
                     fixture.filter.maskBits = 1 | 4 | 2;
@@ -252,7 +252,7 @@ public class PistonWorld implements PerformanceTestWorld {
                     bd.type = BodyType.DYNAMIC;
                     bd.fixedRotation = true;
                     bd.bullet = false;
-                    fixture.shape = shape;
+                    fixture.setShape(shape);
                     fixture.density = 1f;
                     fixture.filter.categoryBits = 2;
                     fixture.filter.maskBits = 1 | 4 | 2;

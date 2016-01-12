@@ -315,7 +315,7 @@ public class Fixture {
     // the destructor cannot access the allocator (no destructor arguments allowed by C++).
 
     public void create(Body body, FixtureDef def) {
-        m_userData = def.userData;
+        m_userData = def.getUserData();
         m_friction = def.friction;
         m_restitution = def.restitution;
 
@@ -327,7 +327,7 @@ public class Fixture {
 
         m_isSensor = def.isSensor;
 
-        m_shape = def.shape.clone();
+        m_shape = def.getShape().clone();
 
         // Reserve proxy space
         int childCount = m_shape.getChildCount();

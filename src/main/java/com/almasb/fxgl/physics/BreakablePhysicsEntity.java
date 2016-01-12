@@ -74,8 +74,8 @@ public class BreakablePhysicsEntity extends PhysicsEntity {
             PolygonShape rectShape = new PolygonShape();
             rectShape.setAsBox(PhysicsWorld.toMeters(40 / 2), PhysicsWorld.toMeters(40 / 2));
 
-            fd.shape = rectShape;
-            fd.density = 1.0f;
+            fd.setShape(rectShape);
+            fd.setDensity(1);
 
             BodyDef bf = new BodyDef();
             bf.type = BodyType.DYNAMIC;

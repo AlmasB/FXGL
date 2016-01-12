@@ -222,8 +222,8 @@ public class Body {
      * @warning This function is locked during callbacks.
      */
     public final Fixture createFixture(Shape shape, float density) {
-        fixDef.shape = shape;
-        fixDef.density = density;
+        fixDef.setShape(shape);
+        fixDef.setDensity(density);
 
         return createFixture(fixDef);
     }
