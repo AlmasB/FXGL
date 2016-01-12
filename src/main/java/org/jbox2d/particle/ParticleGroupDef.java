@@ -74,10 +74,18 @@ public class ParticleGroupDef {
         this.typeFlags = typeFlags;
     }
 
+    private int groupFlags = 0;
+
     /**
-     * The group-construction flags.
+     * @return the group-construction flags
      */
-    public int groupFlags = 0;
+    public int getGroupFlags() {
+        return groupFlags;
+    }
+
+    public void setGroupFlags(int groupFlags) {
+        this.groupFlags = groupFlags;
+    }
 
     private final Vec2 position = new Vec2();
 
@@ -99,32 +107,74 @@ public class ParticleGroupDef {
         position.set(x, y);
     }
 
+    private float angle = 0;
+
+    /**
+     * @return The world angle of the group in radians. Rotates the shape by an angle equal to the value of
+     * angle
+     */
+    public float getAngle() {
+        return angle;
+    }
+
     /**
      * The world angle of the group in radians. Rotates the shape by an angle equal to the value of
      * angle.
+     *
+     * @param angle in radians
      */
-    public float angle = 0;
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
 
     /**
      * The linear velocity of the group's origin in world co-ordinates.
      */
-    public final Vec2 linearVelocity = new Vec2();
+    private final Vec2 linearVelocity = new Vec2();
+
+    public Vec2 getLinearVelocity() {
+        return linearVelocity;
+    }
 
     /**
      * The angular velocity of the group.
      */
     public float angularVelocity = 0;
 
+    public float getAngularVelocity() {
+        return angularVelocity;
+    }
+
+    public void setAngularVelocity(float angularVelocity) {
+        this.angularVelocity = angularVelocity;
+    }
+
     /**
      * The color of all particles in the group.
      */
-    public ParticleColor color = null;
+    private ParticleColor color = null;
+
+    public ParticleColor getColor() {
+        return color;
+    }
+
+    public void setColor(ParticleColor color) {
+        this.color = color;
+    }
 
     /**
      * The strength of cohesion among the particles in a group with flag b2_elasticParticle or
      * b2_springParticle.
      */
-    public float strength = 1;
+    private float strength = 1;
+
+    public float getStrength() {
+        return strength;
+    }
+
+    public void setStrength(float strength) {
+        this.strength = strength;
+    }
 
     private Shape shape = null;
 
@@ -145,10 +195,22 @@ public class ParticleGroupDef {
     /**
      * If true, destroy the group automatically after its last particle has been destroyed.
      */
-    public boolean destroyAutomatically = true;
+    private boolean destroyAutomatically = true;
+
+    public boolean isDestroyAutomatically() {
+        return destroyAutomatically;
+    }
+
+    public void setDestroyAutomatically(boolean destroyAutomatically) {
+        this.destroyAutomatically = destroyAutomatically;
+    }
 
     /**
      * Use this to store application-specific group data.
      */
-    public Object userData = null;
+    private Object userData = null;
+
+    public Object getUserData() {
+        return userData;
+    }
 }

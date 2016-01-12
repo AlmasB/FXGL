@@ -284,10 +284,10 @@ public class ParticleSystem {
         if (groupDef.getShape() != null) {
             final ParticleDef particleDef = tempParticleDef;
             particleDef.setTypeFlags(groupDef.getTypeFlags());
-            particleDef.color = groupDef.color;
-            particleDef.setUserData(groupDef.userData);
+            particleDef.color = groupDef.getColor();
+            particleDef.setUserData(groupDef.getUserData());
             Shape shape = groupDef.getShape();
-            transform.set(groupDef.getPosition(), groupDef.angle);
+            transform.set(groupDef.getPosition(), groupDef.getAngle());
             AABB aabb = temp;
             int childCount = shape.getChildCount();
             for (int childIndex = 0; childIndex < childCount; childIndex++) {
@@ -313,8 +313,8 @@ public class ParticleSystem {
                         particleDef.position.x = p.x;
                         particleDef.position.y = p.y;
                         p.subLocal(groupDef.getPosition());
-                        Vec2.crossToOutUnsafe(groupDef.angularVelocity, p, particleDef.velocity);
-                        particleDef.velocity.addLocal(groupDef.linearVelocity);
+                        Vec2.crossToOutUnsafe(groupDef.getAngularVelocity(), p, particleDef.velocity);
+                        particleDef.velocity.addLocal(groupDef.getLinearVelocity());
                         createParticle(particleDef);
                     }
                 }
@@ -326,11 +326,11 @@ public class ParticleSystem {
         group.m_system = this;
         group.m_firstIndex = firstIndex;
         group.m_lastIndex = lastIndex;
-        group.m_groupFlags = groupDef.groupFlags;
-        group.m_strength = groupDef.strength;
-        group.m_userData = groupDef.userData;
+        group.m_groupFlags = groupDef.getGroupFlags();
+        group.m_strength = groupDef.getStrength();
+        group.m_userData = groupDef.getUserData();
         group.m_transform.set(transform);
-        group.m_destroyAutomatically = groupDef.destroyAutomatically;
+        group.m_destroyAutomatically = groupDef.isDestroyAutomatically();
         group.m_prev = null;
         group.m_next = m_groupList;
         if (m_groupList != null) {
@@ -366,7 +366,7 @@ public class ParticleSystem {
                     pair.indexA = a;
                     pair.indexB = b;
                     pair.flags = contact.flags;
-                    pair.strength = groupDef.strength;
+                    pair.strength = groupDef.getStrength();
                     pair.distance = MathUtils.distance(m_positionBuffer.data[a], m_positionBuffer.data[b]);
                     m_pairCount++;
                 }
@@ -383,7 +383,7 @@ public class ParticleSystem {
             createParticleGroupCallback.firstIndex = firstIndex;
             diagram.getNodes(createParticleGroupCallback);
         }
-        if ((groupDef.groupFlags & ParticleGroupType.b2_solidParticleGroup) != 0) {
+        if ((groupDef.getGroupFlags() & ParticleGroupType.b2_solidParticleGroup) != 0) {
             computeDepthForGroup(group);
         }
 
@@ -1880,7 +1880,7 @@ public class ParticleSystem {
                 triad.flags =
                         system.m_flagsBuffer.data[a] | system.m_flagsBuffer.data[b]
                                 | system.m_flagsBuffer.data[c];
-                triad.strength = def.strength;
+                triad.strength = def.getStrength();
                 final float midPointx = (float) 1 / 3 * (pa.x + pb.x + pc.x);
                 final float midPointy = (float) 1 / 3 * (pa.y + pb.y + pc.y);
                 triad.pa.x = pa.x - midPointx;
