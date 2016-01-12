@@ -80,8 +80,8 @@ public class BasicGameApplication extends GameApplication {
 
                 // 3. set various physics properties
                 FixtureDef fd = new FixtureDef();
-                fd.density = 0.5f;
-                fd.restitution = 0.3f;
+                fd.setDensity(0.5f);
+                fd.setRestitution(0.3f);
                 box.setFixtureDef(fd);
 
                 Rectangle rect = new Rectangle(40, 40);

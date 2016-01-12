@@ -85,11 +85,11 @@ public class PistonWorld implements PerformanceTestWorld {
             bd.type = BodyType.STATIC;
             FixtureDef sides = new FixtureDef();
             sides.setShape(shape);
-            sides.density = 0;
-            sides.friction = 0;
-            sides.restitution = .8f;
-            sides.filter.categoryBits = 4;
-            sides.filter.maskBits = 2;
+            sides.setDensity(0);
+            sides.setFriction(0);
+            sides.setRestitution(0.8f);
+            sides.getFilter().categoryBits = 4;
+            sides.getFilter().maskBits = 2;
 
             bd.position.set(-10.01f, 50.0f);
             Body bod = world.createBody(bd);
@@ -113,9 +113,9 @@ public class PistonWorld implements PerformanceTestWorld {
                 cd = new CircleShape();
                 cd.m_radius = .5f;
                 fd.setShape(cd);
-                fd.density = 25;
-                fd.friction = .1f;
-                fd.restitution = .9f;
+                fd.setDensity(25);
+                fd.setFriction(0.1f);
+                fd.setRestitution(0.9f);
                 float xPos = radius * (float) Math.cos(2f * Math.PI * (i / (float) (numPieces)));
                 float yPos = radius * (float) Math.sin(2f * Math.PI * (i / (float) (numPieces)));
                 cd.m_p.set(xPos, yPos);
@@ -185,9 +185,9 @@ public class PistonWorld implements PerformanceTestWorld {
                 Body body = world.createBody(bd);
                 FixtureDef piston = new FixtureDef();
                 piston.setShape(shape);
-                piston.density = 2;
-                piston.filter.categoryBits = 1;
-                piston.filter.maskBits = 2;
+                piston.setDensity(2);
+                piston.getFilter().categoryBits = 1;
+                piston.getFilter().maskBits = 2;
                 body.createFixture(piston);
 
                 RevoluteJointDef rjd = new RevoluteJointDef();
@@ -217,9 +217,9 @@ public class PistonWorld implements PerformanceTestWorld {
                     bd.bullet = false;
                     body = world.createBody(bd);
                     fixture.setShape(sd);
-                    fixture.density = .1f;
-                    fixture.filter.categoryBits = 2;
-                    fixture.filter.maskBits = 1 | 4 | 2;
+                    fixture.setDensity(0.1f);
+                    fixture.getFilter().categoryBits = 2;
+                    fixture.getFilter().maskBits = 1 | 4 | 2;
                     body.createFixture(fixture);
                 }
 
@@ -229,9 +229,9 @@ public class PistonWorld implements PerformanceTestWorld {
                     bd.position.set(1.0f, 23.0f + i);
                     bd.bullet = false;
                     fixture.setShape(cd);
-                    fixture.density = 2f;
-                    fixture.filter.categoryBits = 2;
-                    fixture.filter.maskBits = 1 | 4 | 2;
+                    fixture.setDensity(2);
+                    fixture.getFilter().categoryBits = 2;
+                    fixture.getFilter().maskBits = 1 | 4 | 2;
                     body = world.createBody(bd);
                     body.createFixture(fixture);
                 }
@@ -253,9 +253,9 @@ public class PistonWorld implements PerformanceTestWorld {
                     bd.fixedRotation = true;
                     bd.bullet = false;
                     fixture.setShape(shape);
-                    fixture.density = 1f;
-                    fixture.filter.categoryBits = 2;
-                    fixture.filter.maskBits = 1 | 4 | 2;
+                    fixture.setDensity(1);
+                    fixture.getFilter().categoryBits = 2;
+                    fixture.getFilter().maskBits = 1 | 4 | 2;
                     body = world.createBody(bd);
                     body.createFixture(fixture);
                 }

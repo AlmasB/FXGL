@@ -46,35 +46,27 @@ public class FixtureDef {
     /**
      * The friction coefficient, usually in the range [0,1].
      */
-    public float friction;
+    private float friction = 0.2f;
 
     /**
      * The restitution (elasticity) usually in the range [0,1].
      */
-    public float restitution;
+    private float restitution = 0;
 
     /**
      * The density, usually in kg/m^2
      */
-    public float density;
+    private float density = 0;
 
     /**
      * A sensor shape collects contact information but never generates a collision response.
      */
-    public boolean isSensor;
+    private boolean isSensor = false;
 
     /**
      * Contact filtering data;
      */
-    public Filter filter;
-
-    public FixtureDef() {
-        friction = 0.2f;
-        restitution = 0f;
-        density = 0f;
-        filter = new Filter();
-        isSensor = false;
-    }
+    private Filter filter = new Filter();
 
     /**
      * The shape, this must be set. The shape will be cloned, so you can create the shape on the

@@ -316,16 +316,16 @@ public class Fixture {
 
     public void create(Body body, FixtureDef def) {
         m_userData = def.getUserData();
-        m_friction = def.friction;
-        m_restitution = def.restitution;
+        m_friction = def.getFriction();
+        m_restitution = def.getRestitution();
 
         m_body = body;
         m_next = null;
 
 
-        m_filter.set(def.filter);
+        m_filter.set(def.getFilter());
 
-        m_isSensor = def.isSensor;
+        m_isSensor = def.isSensor();
 
         m_shape = def.getShape().clone();
 
@@ -355,7 +355,7 @@ public class Fixture {
         }
         m_proxyCount = 0;
 
-        m_density = def.density;
+        m_density = def.getDensity();
     }
 
     public void destroy() {
