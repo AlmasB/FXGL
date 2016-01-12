@@ -315,7 +315,7 @@ public final class PhysicsWorld {
 
         // if position is 0, 0 then probably not set, so set ourselves
         if (e.bodyDef.getPosition().x == 0 && e.bodyDef.getPosition().y == 0) {
-            e.bodyDef.position.set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
+            e.bodyDef.getPosition().set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
         }
 
         e.bodyDef.setAngle((float) -Math.toRadians(e.getRotation()));

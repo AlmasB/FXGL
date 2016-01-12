@@ -96,40 +96,40 @@ public class Body {
 
 
     public Body(final BodyDef bd, World world) {
-        assert (bd.position.isValid());
-        assert (bd.linearVelocity.isValid());
-        assert (bd.gravityScale >= 0.0f);
-        assert (bd.angularDamping >= 0.0f);
-        assert (bd.linearDamping >= 0.0f);
+        assert (bd.getPosition().isValid());
+        assert (bd.getLinearVelocity().isValid());
+        assert (bd.getGravityScale() >= 0.0f);
+        assert (bd.getAngularDamping() >= 0.0f);
+        assert (bd.getLinearDamping() >= 0.0f);
 
         m_flags = 0;
 
-        if (bd.bullet) {
+        if (bd.isBullet()) {
             m_flags |= e_bulletFlag;
         }
-        if (bd.fixedRotation) {
+        if (bd.isFixedRotation()) {
             m_flags |= e_fixedRotationFlag;
         }
-        if (bd.allowSleep) {
+        if (bd.isAllowSleep()) {
             m_flags |= e_autoSleepFlag;
         }
-        if (bd.awake) {
+        if (bd.isAwake()) {
             m_flags |= e_awakeFlag;
         }
-        if (bd.active) {
+        if (bd.isActive()) {
             m_flags |= e_activeFlag;
         }
 
         m_world = world;
 
-        m_xf.p.set(bd.position);
-        m_xf.q.set(bd.angle);
+        m_xf.p.set(bd.getPosition());
+        m_xf.q.set(bd.getAngle());
 
         m_sweep.localCenter.setZero();
         m_sweep.c0.set(m_xf.p);
         m_sweep.c.set(m_xf.p);
-        m_sweep.a0 = bd.angle;
-        m_sweep.a = bd.angle;
+        m_sweep.a0 = bd.getAngle();
+        m_sweep.a = bd.getAngle();
         m_sweep.alpha0 = 0.0f;
 
         m_jointList = null;
@@ -137,19 +137,19 @@ public class Body {
         m_prev = null;
         m_next = null;
 
-        m_linearVelocity.set(bd.linearVelocity);
-        m_angularVelocity = bd.angularVelocity;
+        m_linearVelocity.set(bd.getLinearVelocity());
+        m_angularVelocity = bd.getAngularVelocity();
 
-        m_linearDamping = bd.linearDamping;
-        m_angularDamping = bd.angularDamping;
-        m_gravityScale = bd.gravityScale;
+        m_linearDamping = bd.getLinearDamping();
+        m_angularDamping = bd.getAngularDamping();
+        m_gravityScale = bd.getGravityScale();
 
         m_force.setZero();
         m_torque = 0.0f;
 
         m_sleepTime = 0.0f;
 
-        m_type = bd.type;
+        m_type = bd.getType();
 
         if (m_type == BodyType.DYNAMIC) {
             m_mass = 1f;
@@ -162,7 +162,7 @@ public class Body {
         m_I = 0.0f;
         m_invI = 0.0f;
 
-        m_userData = bd.userData;
+        m_userData = bd.getUserData();
 
         m_fixtureList = null;
         m_fixtureCount = 0;

@@ -82,7 +82,7 @@ public class PistonWorld implements PerformanceTestWorld {
             PolygonShape shape = new PolygonShape();
             shape.setAsBox(5.0f, 100.0f);
             bd = new BodyDef();
-            bd.type = BodyType.STATIC;
+            bd.setType(BodyType.STATIC);
             FixtureDef sides = new FixtureDef();
             sides.setShape(shape);
             sides.setDensity(0);
@@ -91,10 +91,10 @@ public class PistonWorld implements PerformanceTestWorld {
             sides.getFilter().categoryBits = 4;
             sides.getFilter().maskBits = 2;
 
-            bd.position.set(-10.01f, 50.0f);
+            bd.getPosition().set(-10.01f, 50.0f);
             Body bod = world.createBody(bd);
             bod.createFixture(sides);
-            bd.position.set(10.01f, 50.0f);
+            bd.getPosition().set(10.01f, 50.0f);
             bod = world.createBody(bd);
             bod.createFixture(sides);
         }
@@ -104,10 +104,10 @@ public class PistonWorld implements PerformanceTestWorld {
             CircleShape cd;
             FixtureDef fd = new FixtureDef();
             BodyDef bd = new BodyDef();
-            bd.type = BodyType.DYNAMIC;
+            bd.setType(BodyType.DYNAMIC);
             int numPieces = 5;
             float radius = 4f;
-            bd.position = new Vec2(0.0f, 25.0f);
+            bd.setPosition(new Vec2(0.0f, 25.0f));
             Body body = world.createBody(bd);
             for (int i = 0; i < numPieces; i++) {
                 cd = new CircleShape();
@@ -140,8 +140,8 @@ public class PistonWorld implements PerformanceTestWorld {
                 shape.setAsBox(0.5f, 2.0f);
 
                 BodyDef bd = new BodyDef();
-                bd.type = BodyType.DYNAMIC;
-                bd.position.set(0.0f, 7.0f);
+                bd.setType(BodyType.DYNAMIC);
+                bd.getPosition().set(0.0f, 7.0f);
                 Body body = world.createBody(bd);
                 body.createFixture(shape, 2.0f);
 
@@ -161,8 +161,8 @@ public class PistonWorld implements PerformanceTestWorld {
                 shape.setAsBox(0.5f, 4.0f);
 
                 BodyDef bd = new BodyDef();
-                bd.type = BodyType.DYNAMIC;
-                bd.position.set(0.0f, 13.0f);
+                bd.setType(BodyType.DYNAMIC);
+                bd.getPosition().set(0.0f, 13.0f);
                 Body body = world.createBody(bd);
                 body.createFixture(shape, 2.0f);
 
@@ -180,8 +180,8 @@ public class PistonWorld implements PerformanceTestWorld {
                 shape.setAsBox(7f, 2f);
 
                 BodyDef bd = new BodyDef();
-                bd.type = BodyType.DYNAMIC;
-                bd.position.set(0.0f, 17.0f);
+                bd.setType(BodyType.DYNAMIC);
+                bd.getPosition().set(0.0f, 17.0f);
                 Body body = world.createBody(bd);
                 FixtureDef piston = new FixtureDef();
                 piston.setShape(shape);
@@ -207,14 +207,14 @@ public class PistonWorld implements PerformanceTestWorld {
             {
                 PolygonShape sd = new PolygonShape();
                 BodyDef bd = new BodyDef();
-                bd.type = BodyType.DYNAMIC;
+                bd.setType(BodyType.DYNAMIC);
                 FixtureDef fixture = new FixtureDef();
                 Body body;
                 for (int i = 0; i < 100; ++i) {
                     sd.setAsBox(0.4f, 0.3f);
-                    bd.position.set(-1.0f, 23.0f + i);
+                    bd.getPosition().set(-1.0f, 23.0f + i);
 
-                    bd.bullet = false;
+                    bd.setBullet(false);
                     body = world.createBody(bd);
                     fixture.setShape(sd);
                     fixture.setDensity(0.1f);
@@ -226,8 +226,8 @@ public class PistonWorld implements PerformanceTestWorld {
                 CircleShape cd = new CircleShape();
                 cd.m_radius = 0.36f;
                 for (int i = 0; i < 100; ++i) {
-                    bd.position.set(1.0f, 23.0f + i);
-                    bd.bullet = false;
+                    bd.getPosition().set(1.0f, 23.0f + i);
+                    bd.setBullet(false);
                     fixture.setShape(cd);
                     fixture.setDensity(2);
                     fixture.getFilter().categoryBits = 2;
@@ -248,10 +248,10 @@ public class PistonWorld implements PerformanceTestWorld {
                 shape.set(vertices, 6);
 
                 for (int i = 0; i < 100; ++i) {
-                    bd.position.set(0f, 23.0f + i);
-                    bd.type = BodyType.DYNAMIC;
-                    bd.fixedRotation = true;
-                    bd.bullet = false;
+                    bd.getPosition().set(0f, 23.0f + i);
+                    bd.setType(BodyType.DYNAMIC);
+                    bd.setFixedRotation(true);
+                    bd.setBullet(false);
                     fixture.setShape(shape);
                     fixture.setDensity(1);
                     fixture.getFilter().categoryBits = 2;

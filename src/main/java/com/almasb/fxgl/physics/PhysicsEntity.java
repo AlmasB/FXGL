@@ -108,7 +108,7 @@ public class PhysicsEntity extends Entity {
      * @param type body type
      */
     public void setBodyType(BodyType type) {
-        bodyDef.type = type;
+        bodyDef.setType(type);
     }
 
     /**

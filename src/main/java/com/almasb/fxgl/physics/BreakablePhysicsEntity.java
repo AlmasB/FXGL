@@ -78,9 +78,9 @@ public class BreakablePhysicsEntity extends PhysicsEntity {
             fd.setDensity(1);
 
             BodyDef bf = new BodyDef();
-            bf.type = BodyType.DYNAMIC;
-            bf.position = body.getPosition().add(getCenter(shape.getVertices(), shape.getVertexCount()));
-            bf.angle = body.getAngle();
+            bf.setType(BodyType.DYNAMIC);
+            bf.setPosition(body.getPosition().add(getCenter(shape.getVertices(), shape.getVertexCount())));
+            bf.setAngle(body.getAngle());
 
             PhysicsEntity entity = new PhysicsEntity(getEntityType());
             entity.setFixtureDef(fd);
