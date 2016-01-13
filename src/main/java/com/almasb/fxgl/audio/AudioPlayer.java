@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.audio;
 
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import javafx.beans.property.DoubleProperty;
 
 /**
@@ -78,6 +80,24 @@ public interface AudioPlayer {
      */
     default void setGlobalSoundVolume(double volume) {
         globalSoundVolumeProperty().set(volume);
+    }
+
+    /**
+     * Convenience method to play the sound given its filename.
+     *
+     * @param assetName name of the sound file
+     */
+    default void playSound(String assetName) {
+        playSound(GameApplication.getService(ServiceType.ASSET_LOADER).loadSound(assetName));
+    }
+
+    /**
+     * Convenience method to play the music given its filename.
+     *
+     * @param assetName name of the music file
+     */
+    default void playMusic(String assetName) {
+        playMusic(GameApplication.getService(ServiceType.ASSET_LOADER).loadMusic(assetName));
     }
 
     /**

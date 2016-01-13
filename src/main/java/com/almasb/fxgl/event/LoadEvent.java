@@ -59,6 +59,6 @@ public final class LoadEvent extends Event {
 
     @Override
     public String toString() {
-        return "LoadEvent";
+        return "LoadEvent[type=" + getEventType() + "]";
     }
 }

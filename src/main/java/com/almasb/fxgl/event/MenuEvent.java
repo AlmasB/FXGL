@@ -76,30 +76,25 @@ public final class MenuEvent extends Event {
             new EventType<>(MenuEvent.ANY, "PROFILE_SELECTED");
 
     public MenuEvent(EventType<? extends Event> eventType) {
-        this(null, null, eventType, null);
+        this(eventType, null);
     }
 
     public MenuEvent(EventType<? extends Event> eventType, Object data) {
-        this(null, null, eventType, data);
-    }
-
-    public MenuEvent(Object source, EventTarget target, EventType<? extends Event> eventType) {
-        this(source, target, eventType, null);
-    }
-
-    public MenuEvent(Object source, EventTarget target, EventType<? extends Event> eventType, Object data) {
-        super(source, target, eventType);
+        super(eventType);
         this.data = Optional.ofNullable(data);
     }
 
     private final Optional<Object> data;
 
+    /**
+     * @return data associated with the event or empty Optional if no data is present
+     */
     public Optional<Object> getData() {
         return data;
     }
 
     @Override
     public String toString() {
-        return "MenuEvent[type=" + getEventType().toString() + "]";
+        return "MenuEvent[type=" + getEventType() + "]";
     }
 }
