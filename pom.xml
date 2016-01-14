@@ -23,6 +23,8 @@
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
 
         <!-- dependencies -->
+        <fxeventbus.version>1.0</fxeventbus.version>
+
         <junit.version>4.12</junit.version>
         <guice.version>4.0</guice.version>
         <ehcache.version>3.0.0.m4</ehcache.version>
@@ -30,6 +32,13 @@
         <jfxtras.version>8.0-r4</jfxtras.version>
         <commons-math.version>3.5</commons-math.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -54,6 +63,12 @@
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-window</artifactId>
             <version>${jfxtras.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>FXEventBus</artifactId>
+            <version>${fxeventbus.version}</version>
         </dependency>
 
         <!-- test scope dependencies -->

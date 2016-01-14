@@ -40,6 +40,8 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.input.*;
 
+import com.almasb.fxeventbus.EventBus;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;

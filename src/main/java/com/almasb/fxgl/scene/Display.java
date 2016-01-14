@@ -31,7 +31,7 @@ import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.asset.CSS;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.DisplayEvent;
-import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.event.LoadEvent;
 import com.almasb.fxgl.event.SaveEvent;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;

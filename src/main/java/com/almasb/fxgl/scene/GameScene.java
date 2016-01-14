@@ -46,6 +46,8 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
+import com.almasb.fxeventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;

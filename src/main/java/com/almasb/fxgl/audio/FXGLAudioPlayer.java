@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.audio;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.settings.UserProfile;

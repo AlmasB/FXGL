@@ -26,15 +26,18 @@
 
 package com.almasb.fxgl.event;
 
+import com.almasb.fxeventbus.FXEventBus;
+import com.almasb.fxeventbus.Subscriber;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.scene.Group;
 
 import java.util.logging.Logger;
+
+import com.almasb.fxeventbus.EventBus;
 
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
@@ -51,16 +54,16 @@ public final class FXGLEventBus implements EventBus {
         log.finer("Service [EventBus] initialized");
     }
 
-    private Group eventHandlers = new Group();
+    private EventBus bus = new FXEventBus();
 
     @Override
-    public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<? super T> eventHandler) {
-        eventHandlers.addEventHandler(eventType, eventHandler);
+    public <T extends Event> Subscriber addEventHandler(EventType<T> eventType, EventHandler<? super T> eventHandler) {
+        return bus.addEventHandler(eventType, eventHandler);
     }
 
     @Override
     public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<? super T> eventHandler) {
-        eventHandlers.removeEventHandler(eventType, eventHandler);
+        bus.removeEventHandler(eventType, eventHandler);
     }
 
     @Override
@@ -68,6 +71,6 @@ public final class FXGLEventBus implements EventBus {
         if (event.getEventType() != UpdateEvent.ANY && event.getEventType() != FXGLInputEvent.ANY)
             log.finer("Firing event: " + event.toString());
 
-        eventHandlers.fireEvent(event);
+        bus.fireEvent(event);
     }
 }
