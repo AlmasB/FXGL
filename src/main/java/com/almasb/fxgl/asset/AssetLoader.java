@@ -40,10 +40,6 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.text.Font;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
-import org.ehcache.CacheManagerBuilder;
-import org.ehcache.config.CacheConfigurationBuilder;
 
 import java.io.*;
 import java.net.URL;
@@ -106,20 +102,10 @@ public class AssetLoader {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
 
-    private final CacheManager cacheManager;
-    private final Cache<String, Object> cachedAssets;
+    private final AssetsCache cachedAssets = new AssetsCache();
 
     @Inject
     private AssetLoader() {
-        cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);
-
-        cachedAssets = cacheManager.createCache("cachedAssets",
-                CacheConfigurationBuilder.newCacheConfigurationBuilder()
-                        .buildConfig(String.class, Object.class));
-
-        GameApplication.getService(ServiceType.EVENT_BUS)
-                .addEventHandler(FXGLEvent.EXIT, e -> close());
-
         log.finer("Service [AssetLoader] initialized");
     }
 
@@ -483,14 +469,6 @@ public class AssetLoader {
     public void clearCache() {
         log.finer("Clearing assets cache");
         cachedAssets.clear();
-    }
-
-    /**
-     * Close cache manager as specified by EHCache.
-     */
-    private void close() {
-        log.finer("Closing assets cache");
-        cacheManager.close();
     }
 
     /**

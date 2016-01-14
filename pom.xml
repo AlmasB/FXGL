@@ -27,8 +27,6 @@
 
         <junit.version>4.12</junit.version>
         <guice.version>4.0</guice.version>
-        <ehcache.version>3.0.0.m4</ehcache.version>
-        <slf4j.version>1.7.7</slf4j.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
         <commons-math.version>3.5</commons-math.version>
     </properties>
@@ -45,18 +43,6 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>${guice.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
