@@ -33,8 +33,6 @@ package com.almasb.fxgl.asset;
  */
 public final class IOResult<T> {
 
-    //private static final IOResult<?> SUCCESS = new IOResult<>(true, "");
-
     private final boolean ok;
     private final String errorMessage;
     private final T data;
@@ -68,10 +66,16 @@ public final class IOResult<T> {
         return errorMessage;
     }
 
+    /**
+     * @return true iff result has data associated with it
+     */
     public boolean hasData() {
         return data != null;
     }
 
+    /**
+     * @return IO result data
+     */
     public T getData() {
         return data;
     }
