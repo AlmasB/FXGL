@@ -28,6 +28,7 @@ package com.almasb.fxgl.physics;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.effect.Particle;
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
@@ -41,7 +42,10 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
@@ -89,6 +93,12 @@ public final class PhysicsWorld {
 
     private double appHeight;
 
+    /**
+     * Note: certain modifications to the jbox2d world directly may not be
+     * recognized by FXGL.
+     *
+     * @return raw jbox2d physics world
+     */
     public World getJBox2DWorld() {
         return physicsWorld;
     }
@@ -310,6 +320,12 @@ public final class PhysicsWorld {
         }
     }
 
+    /**
+     * Set global world gravity.
+     *
+     * @param x x component
+     * @param y y component
+     */
     public void setGravity(double x, double y) {
         physicsWorld.setGravity(new Vec2().addLocal((float) x, -(float) y));
     }
@@ -439,10 +455,22 @@ public final class PhysicsWorld {
         return new Point2D(toPixels(v.x), toPixels(-v.y));
     }
 
+    /**
+     * Converts a point in pixel space to a point in physics space.
+     *
+     * @param p point in pixel space
+     * @return point in physics space
+     */
     public Vec2 toPoint(Point2D p) {
         return new Vec2(toMeters(p.getX()), toMeters(appHeight - p.getY()));
     }
 
+    /**
+     * Converts a point in physics space to a point in pixel space.
+     *
+     * @param p point in physics space
+     * @return point in pixel space
+     */
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }
@@ -513,7 +541,7 @@ public final class PhysicsWorld {
      * the former is managed (controlled) by the physics world, the latter
      * by the particle emitters.
      */
-    public class PhysicsParticleEntity extends ParticleEntity {
+    public final class PhysicsParticleEntity extends ParticleEntity {
         private ParticleGroup group;
         private double radiusMeters, radiusPixels;
         private Color color;
@@ -548,6 +576,14 @@ public final class PhysicsWorld {
         protected void onClean() {
             physicsWorld.destroyParticlesInGroup(group);
             this.particles.clear();
+        }
+    }
+
+    private class PhysicsParticle extends Particle {
+        PhysicsParticle(Point2D position, double radius, Paint color) {
+            super(position, Point2D.ZERO, Point2D.ZERO, radius, Point2D.ZERO,
+                    Duration.seconds(10), color, BlendMode.SRC_OVER);
+
         }
     }
 }
