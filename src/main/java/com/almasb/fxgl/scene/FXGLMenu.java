@@ -26,6 +26,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.input.InputBinding;
@@ -341,21 +342,21 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Fires {@link MenuEvent#LOAD} event.
+     * Fires {@link MenuEvent#CONTINUE} event.
      * Lads the game state from last modified save file.
      */
     protected final void fireContinue() {
-        fireEvent2(new MenuEvent(MenuEvent.LOAD));
+        fireEvent2(new MenuEvent(MenuEvent.CONTINUE));
     }
 
     /**
-     * Fires {@link MenuEvent#LOAD} event.
+     * Fires {@link MenuDataEvent#LOAD} event.
      * Loads the game state from previously saved file.
      *
      * @param fileName  name of the saved file
      */
     protected final void fireLoad(String fileName) {
-        fireEvent2(new MenuEvent(MenuEvent.LOAD, fileName));
+        fireEvent2(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
     }
 
     /**
@@ -367,12 +368,12 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Fires {@link MenuEvent#DELETE} event.
+     * Fires {@link MenuDataEvent#DELETE} event.
      *
      * @param fileName name of the save file
      */
     protected final void fireDelete(String fileName) {
-        fireEvent2(new MenuEvent(MenuEvent.DELETE, fileName));
+        fireEvent2(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
     }
 
     /**

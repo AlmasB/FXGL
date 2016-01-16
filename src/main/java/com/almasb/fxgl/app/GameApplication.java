@@ -56,7 +56,6 @@ import javafx.stage.Stage;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -401,22 +400,35 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             });
         });
 
-        getEventBus().addEventHandler(MenuEvent.LOAD, event -> {
-            String saveFileName = event.getData().map(name -> (String) name)
-                    .orElse("");
+        getEventBus().addEventHandler(MenuDataEvent.LOAD, event -> {
+            String saveFileName = event.getData();
 
-            Optional<Serializable> saveFile = saveFileName.isEmpty()
-                    ? saveLoadManager.loadLastModifiedSaveFile()
-                    : Optional.ofNullable((Serializable) saveLoadManager.load(saveFileName).getData());
+            IOResult<Serializable> io = saveLoadManager.load(saveFileName);
 
-            // TODO: check all cases
-            saveFile.ifPresent(this::startLoadedGame);
+            if (io.hasData()) {
+                startLoadedGame(io.getData());
+            } else {
+                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
+            }
         });
 
-        getEventBus().addEventHandler(MenuEvent.DELETE, event -> {
-            event.getData()
-                    .map(name -> (String) name)
-                    .ifPresent(fileName -> saveLoadManager.delete(fileName));
+        getEventBus().addEventHandler(MenuEvent.CONTINUE, event -> {
+            IOResult<Serializable> io = saveLoadManager.loadLastModifiedSaveFile();
+
+            if (io.hasData()) {
+                startLoadedGame(io.getData());
+            } else {
+                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
+            }
+        });
+
+        getEventBus().addEventHandler(MenuDataEvent.DELETE, event -> {
+            String fileName = event.getData();
+
+            boolean ok = saveLoadManager.delete(fileName);
+            if (!ok) {
+                getDisplay().showMessageBox("Failed to delete: " + fileName);
+            }
         });
     }
 
@@ -464,7 +476,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getDisplay().showInputBox("New Profile", input -> input.matches("^[\\pL\\pN]+$"), name -> {
                 profileName = name;
                 saveLoadManager = new SaveLoadManager(profileName);
-                getEventBus().fireEvent(new MenuEvent(MenuEvent.PROFILE_SELECTED, profileName));
+                getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
             });
         });
 
@@ -484,7 +496,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                         .showErrorBox("Profile is corrupted: " + profileName,
                                 this::showProfileDialog);
             } else {
-                getEventBus().fireEvent(new MenuEvent(MenuEvent.PROFILE_SELECTED, profileName));
+                getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
             }
         });
 

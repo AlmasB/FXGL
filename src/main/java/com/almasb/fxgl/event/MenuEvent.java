@@ -28,14 +28,12 @@ package com.almasb.fxgl.event;
 import javafx.event.Event;
 import javafx.event.EventType;
 
-import java.util.Optional;
-
 /**
  * An event related to menus. This event can only occur if menu is enabled.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class MenuEvent extends Event {
+public class MenuEvent extends Event {
 
     /**
      * Common super-type for all menu event types.
@@ -48,48 +46,28 @@ public final class MenuEvent extends Event {
      * to open game menu.
      */
     public static final EventType<MenuEvent> PAUSE =
-            new EventType<>(MenuEvent.ANY, "PAUSE");
+            new EventType<>(ANY, "PAUSE");
 
     public static final EventType<MenuEvent> RESUME =
-            new EventType<>(MenuEvent.ANY, "RESUME");
+            new EventType<>(ANY, "RESUME");
 
     public static final EventType<MenuEvent> NEW_GAME =
-            new EventType<>(MenuEvent.ANY, "NEW_GAME");
+            new EventType<>(ANY, "NEW_GAME");
 
     public static final EventType<MenuEvent> SAVE =
-            new EventType<>(MenuEvent.ANY, "SAVE");
+            new EventType<>(ANY, "SAVE");
 
-    public static final EventType<MenuEvent> LOAD =
-            new EventType<>(MenuEvent.ANY, "LOAD");
-
-    public static final EventType<MenuEvent> DELETE =
-            new EventType<>(MenuEvent.ANY, "DELETE");
+    public static final EventType<MenuEvent> CONTINUE =
+            new EventType<>(ANY, "CONTINUE");
 
     public static final EventType<MenuEvent> EXIT =
-            new EventType<>(MenuEvent.ANY, "EXIT");
+            new EventType<>(ANY, "EXIT");
 
     public static final EventType<MenuEvent> EXIT_TO_MAIN_MENU =
-            new EventType<>(MenuEvent.ANY, "EXIT_TO_MAIN_MENU");
-
-    public static final EventType<MenuEvent> PROFILE_SELECTED =
-            new EventType<>(MenuEvent.ANY, "PROFILE_SELECTED");
+            new EventType<>(ANY, "EXIT_TO_MAIN_MENU");
 
     public MenuEvent(EventType<? extends Event> eventType) {
-        this(eventType, null);
-    }
-
-    public MenuEvent(EventType<? extends Event> eventType, Object data) {
         super(eventType);
-        this.data = Optional.ofNullable(data);
-    }
-
-    private final Optional<Object> data;
-
-    /**
-     * @return data associated with the event or empty Optional if no data is present
-     */
-    public Optional<Object> getData() {
-        return data;
     }
 
     @Override

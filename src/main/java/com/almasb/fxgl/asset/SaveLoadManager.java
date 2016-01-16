@@ -223,12 +223,12 @@ public final class SaveLoadManager {
      *
      * @return last modified save file
      */
-    public <T> Optional<T> loadLastModifiedSaveFile() {
+    public <T> IOResult<T> loadLastModifiedSaveFile() {
         try {
             Path saveDir = Paths.get(saveDir());
 
             if (!Files.exists(saveDir)) {
-                return Optional.empty();
+                return IOResult.failure("File not found: " + saveDir);
             }
 
             try (Stream<Path> files = Files.walk(saveDir)) {
@@ -241,12 +241,12 @@ public final class SaveLoadManager {
                 }).findFirst().orElseThrow(Exception::new);
 
                 String fileName = saveDir.relativize(file).toString().replace("\\", "/");
-                IOResult<T> result = load(fileName);
 
-                return Optional.ofNullable(result.getData());
+                return load(fileName);
             }
         } catch (Exception e) {
-            return Optional.empty();
+            log.warning("Load last save failed: " + e.getMessage());
+            return IOResult.failure(e.getMessage());
         }
     }
 }

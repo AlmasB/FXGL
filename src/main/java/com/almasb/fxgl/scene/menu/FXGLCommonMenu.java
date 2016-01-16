@@ -26,7 +26,7 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.UIFactory;
@@ -58,7 +58,6 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
     public FXGLCommonMenu(GameApplication app) {
         super(app);
 
-
         MenuBox menu = createMenuBody();
         menuX = 50;
         menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
@@ -78,10 +77,8 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
         getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox);
 
-        app.getEventBus().addEventHandler(MenuEvent.PROFILE_SELECTED, event -> {
-            String profileName = event.getData()
-                    .map(o -> (String)o)
-                    .orElseThrow(() -> new IllegalArgumentException(event + " has no data"));
+        app.getEventBus().addEventHandler(MenuDataEvent.PROFILE_SELECTED, event -> {
+            String profileName = event.getData();
 
             Text text = UIFactory.newText("Profile: " + profileName);
             text.setTranslateX(app.getWidth() - text.getLayoutBounds().getWidth());
