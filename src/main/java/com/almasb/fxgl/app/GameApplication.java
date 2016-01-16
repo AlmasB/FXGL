@@ -456,6 +456,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         if (getSettings().isMenuEnabled()) {
             configureMenu();
             setState(ApplicationState.MAIN_MENU);
+
+            // we haven't shown the dialog yet so show now
+            if (getSettings().isIntroEnabled())
+                showProfileDialog();
         } else {
             startNewGame();
         }
@@ -531,7 +535,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         onStageShow();
         stage.show();
 
-        if (getSettings().isMenuEnabled())
+        if (getSettings().isMenuEnabled() && !getSettings().isIntroEnabled())
             showProfileDialog();
 
         log.finer("Showing stage");
@@ -730,10 +734,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         getEventBus().fireEvent(new LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile));
     }
 
-    // TODO: careful, may not be set
     private SaveLoadManager saveLoadManager;
 
     public SaveLoadManager getSaveLoadManager() {
+        if (!getSettings().isMenuEnabled()) {
+            throw new IllegalStateException("Access to SaveLoadManager without menu enabled is not allowed");
+        }
+
         return saveLoadManager;
     }
 
