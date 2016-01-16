@@ -1967,18 +1967,12 @@ public class ParticleSystem {
         ParticleGroup groupB;
     }
 
-    ;
-
     static class DestroyParticlesInShapeCallback implements ParticleQueryCallback {
         ParticleSystem system;
         Shape shape;
         Transform xf;
         boolean callDestructionListener;
         int destroyed;
-
-        public DestroyParticlesInShapeCallback() {
-            // TODO Auto-generated constructor stub
-        }
 
         public void init(ParticleSystem system, Shape shape, Transform xf,
                          boolean callDestructionListener) {
