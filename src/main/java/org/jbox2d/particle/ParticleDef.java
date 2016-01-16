@@ -57,7 +57,7 @@ public class ParticleDef {
      * chained by logical sums, for example: pd.typeFlags = ParticleType.b2_elasticParticle |
      * ParticleType.b2_viscousParticle.
      */
-    private int typeFlags = ParticleType.b2_waterParticle;  // 0
+    private int typeFlags = ParticleTypeInternal.b2_waterParticle;  // 0
 
     public int getTypeFlags() {
         return typeFlags;

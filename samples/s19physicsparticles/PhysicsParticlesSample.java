@@ -41,6 +41,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.jbox2d.dynamics.*;
+import org.jbox2d.particle.ParticleGroupDef;
+import org.jbox2d.particle.ParticleType;
+
+import java.util.EnumSet;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -77,16 +81,22 @@ public class PhysicsParticlesSample extends GameApplication {
     protected void initGame() {
         initScreenBounds();
 
-        // 1. ask physics world to create particle entity
-        PhysicsWorld.PhysicsParticleEntity cloth = getPhysicsWorld().newPhysicsParticleEntity(50, 10, 75, 150, Color.DARKGREEN.brighter(), Type.CLOTH,
-                // 2. define how particles should behave
-                new PhysicsParticleData().setElastic());
+        // 1. define how particles should behave
+        ParticleGroupDef groupDef = new ParticleGroupDef();
+        groupDef.setTypes(EnumSet.of(ParticleType.ELASTIC));
 
-        PhysicsWorld.PhysicsParticleEntity water = getPhysicsWorld().newPhysicsParticleEntity(200, 10, 70, 70, Color.BLUE.brighter(), Type.WATER,
-                new PhysicsParticleData().setWater());
+        // 2. ask physics world to create particle entity
+        PhysicsWorld.PhysicsParticleEntity cloth = getPhysicsWorld().newPhysicsParticleEntity(50, 10, 75, 150, Color.DARKGREEN.brighter(), Type.CLOTH,
+                groupDef);
+
+        groupDef = new ParticleGroupDef();
+        groupDef.setTypes(EnumSet.of(ParticleType.VISCOUS, ParticleType.TENSILE));
+
+        PhysicsWorld.PhysicsParticleEntity liquid = getPhysicsWorld().newPhysicsParticleEntity(200, 10, 70, 70, Color.BLUE.brighter(), Type.WATER,
+                groupDef);
 
         // 3. add to game world
-        getGameWorld().addEntities(cloth, water);
+        getGameWorld().addEntities(cloth, liquid);
     }
 
     private void initScreenBounds() {

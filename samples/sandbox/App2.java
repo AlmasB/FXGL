@@ -28,28 +28,16 @@ package sandbox;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.control.OffscreenCleanControl;
+import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.ui.InGameWindow;
-import com.almasb.fxgl.ui.UIFactory;
-import javafx.animation.ScaleTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
-import jfxtras.scene.control.window.CloseIcon;
-import jfxtras.scene.control.window.MinimizeIcon;
-import jfxtras.scene.control.window.Window;
-import jfxtras.scene.control.window.WindowIcon;
+import javafx.scene.shape.Rectangle;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -69,7 +57,7 @@ public class App2 extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -85,10 +73,23 @@ public class App2 extends GameApplication {
 
     @Override
     protected void initGame() {
-        e = Entity.noType();
-        e.addControl(new SomeControl());
+//        for (int i = 0; i < 10; i++) {
+//            for (int j = 0; j < 10; j++) {
+//                Entity g = Entity.noType();
+//                g.setPosition(101 * j, 171 * i);
+//                g.setSceneView(getAssetLoader().loadTexture("Grass Block.png"));
+//
+//                getGameWorld().addEntity(g);
+//            }
+//        }
 
-        getGameWorld().addEntity(e);
+
+//        Entity cat = Entity.noType();
+//        cat.setPosition(100, 100);
+//        cat.setSceneView(getAssetLoader().loadTexture("cat.png").toStaticAnimatedTexture(6, Duration.seconds(0.6)));
+//
+//        getGameWorld().addEntity(cat);
+
     }
 
     @Override
@@ -103,79 +104,14 @@ public class App2 extends GameApplication {
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void openWindow() {
 
+        e = Entity.noType();
+        e.setPosition(300, 300);
+        e.setSceneView(new Rectangle(10, 1));
+        e.addControl(new OffscreenCleanControl());
+        e.addControl(new ProjectileControl(new Point2D(0, -1), 10));
 
+        getGameWorld().addEntity(e);
 
-        Window w = new Window("Character Info");
-        //w.setMovable(false);
-        //w.setResizableWindow(false);
-
-
-        w.getLeftIcons().add(new CloseIcon(w));
-
-        // .. or to the right
-        w.getRightIcons().add(new MinimizeIcon(w));
-
-//        // you can also add custom icons
-//        WindowIcon customIcon = new WindowIcon();
-//        customIcon.setOnAction(new EventHandler<ActionEvent>() {
-//
-//            @Override
-//            public void handle(ActionEvent t) {
-//                // we add a nice scale transition
-//                // (it doesn't do anything useful but it is cool!)
-//                ScaleTransition st = new ScaleTransition(Duration.seconds(2), w);
-//                st.setFromX(w.getScaleX());
-//                st.setFromY(w.getScaleY());
-//                st.setToX(0.1);
-//                st.setToY(0.1);
-//                st.setAutoReverse(true);
-//                st.setCycleCount(2);
-//                st.play();
-//            }
-//        });
-//
-//        // finally, we add our custom icon
-//        w.getRightIcons().add(customIcon);
-
-        // note: we actually could style the icon via css
-        //       see the javafx documentation on how to do that
-
-        // set the window position to 10,10 (coordinates inside canvas)
-        w.setTranslateX(10);
-        w.setTranslateY(10);
-
-        // define the initial window size
-        w.setPrefSize(300, 200);
-
-
-
-
-
-
-
-
-
-//        Text text = UIFactory.newText("Are you sure?", 24);
-//
-//        Button btnYes = UIFactory.newButton("YES");
-//        Button btnNo = UIFactory.newButton("NO");
-//
-//        HBox hbox = new HBox(20, btnYes, btnNo);
-//        hbox.setAlignment(Pos.CENTER);
-//
-//        VBox vbox = new VBox(10, text, hbox);
-//        vbox.setAlignment(Pos.CENTER);
-//
-//        window.setContentPane(vbox);
-//
-        InGameWindow w2 = new InGameWindow("Skills");
-        w2.setPrefSize(300, 200);
-        w2.setTranslateX(400);
-        w2.setBackgroundColor(Color.BLACK);
-
-        getGameScene().addUINodes(w, w2);
-
-        e.getControlUnsafe(SomeControl.class).doIt();
     }
 
     public static void main(String[] args) {

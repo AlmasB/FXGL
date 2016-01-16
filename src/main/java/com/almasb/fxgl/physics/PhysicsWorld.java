@@ -27,6 +27,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.effect.Particle;
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
@@ -86,6 +87,10 @@ public final class PhysicsWorld {
     private LongProperty tick = new SimpleLongProperty(0);
 
     private double appHeight;
+
+    public World getJBox2DWorld() {
+        return physicsWorld;
+    }
 
     @Inject
     private PhysicsWorld(@Named("appHeight") double appHeight) {
@@ -152,6 +157,12 @@ public final class PhysicsWorld {
         bus.addEventHandler(UpdateEvent.ANY, event -> update());
 
         log.finer("Physics world initialized");
+    }
+
+    private void initParticles() {
+        physicsWorld.setParticleGravityScale(0.4f);
+        physicsWorld.setParticleDensity(1.2f);
+        physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
     /**
@@ -435,20 +446,6 @@ public final class PhysicsWorld {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }
 
-    // TODO: remove when done
-    public World getWorld() {
-        return physicsWorld;
-    }
-
-    // TODO: allow users to set these
-    private void initParticles() {
-        physicsWorld.setParticleGravityScale(0.4f);
-        physicsWorld.setParticleDensity(1.2f);
-        physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
-    }
-
-    // TODO: replace data with ParticleGroupDef once its fields are properly encapsulated
-    // to be more consistent across the library
     /**
      * Constructs new physics particles based on given definition
      * and wraps it into an entity. The returned entity can only be used
@@ -465,20 +462,18 @@ public final class PhysicsWorld {
      * @param height particle group height
      * @param color particle group color
      * @param type entity type
-     * @param data particle group data
+     * @param def particle group data
      * @return new physics particle entity
      */
     public PhysicsParticleEntity newPhysicsParticleEntity(double x, double y, double width, double height, Color color, EntityType type,
-                                                          PhysicsParticleData data) {
+                                                          ParticleGroupDef def) {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
 
-        ParticleGroupDef pd = new ParticleGroupDef();
-        pd.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
-        pd.setShape(shape);
-        pd.setTypeFlags(data.getFlags());
+        def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
+        def.setShape(shape);
 
-        ParticleGroup particleGroup = physicsWorld.createParticleGroup(pd);
+        ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);
 
         return new PhysicsParticleEntity(type, particleGroup, color);
     }

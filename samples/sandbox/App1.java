@@ -188,6 +188,15 @@ public class App1 extends GameApplication {
         lighting.setSpecularConstant(1.0);
         lighting.setSurfaceScale(5.0);
         group.setEffect(lighting);
+
+        getAssetLoader().loadTexture("cat.png");
+        getAssetLoader().loadTexture("Idle__000.png");
+        getAssetLoader().loadTexture("Idle__001.png");
+        getAssetLoader().loadTexture("Idle__002.png");
+        getAssetLoader().loadTexture("Idle__003.png");
+
+        getAssetLoader().loadTexture("brick.png");
+        getAssetLoader().loadTexture("brick.png");
     }
 
     @Override

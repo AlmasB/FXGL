@@ -52,26 +52,32 @@ package org.jbox2d.particle;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
+import java.util.Set;
+
 /**
  * A particle group definition holds all the data needed to construct a particle group. You can
  * safely re-use these definitions.
  */
 public class ParticleGroupDef {
 
-    private int typeFlags = ParticleType.b2_waterParticle;   // 0
+    private int typeFlags = ParticleTypeInternal.b2_waterParticle;   // 0
 
     /**
-     * @return the particle-behavior flags from {@link ParticleType}
+     * @return the particle-behavior flags from {@link ParticleTypeInternal}
      */
     public int getTypeFlags() {
         return typeFlags;
     }
 
     /**
-     * @param typeFlags the particle-behavior flags from {@link ParticleType}
+     * Set particle types. E.g. EnumSet.of(ParticleType...).
+     *
+     * @param types particle types
      */
-    public void setTypeFlags(int typeFlags) {
-        this.typeFlags = typeFlags;
+    public void setTypes(Set<ParticleType> types) {
+        for (ParticleType type : types) {
+            typeFlags |= type.bit;
+        }
     }
 
     private int groupFlags = 0;

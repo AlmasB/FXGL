@@ -1,46 +1,46 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package org.jbox2d.particle;
 
 /**
- * The particle type. Can be combined with | operator. Zero means liquid.
- *
- * @author dmurph
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ParticleType {
-    public static final int b2_waterParticle = 0;
-    /**
-     * removed after next step
-     */
-    public static final int b2_zombieParticle = 1 << 1;
-    /**
-     * zero velocity
-     */
-    public static final int b2_wallParticle = 1 << 2;
-    /**
-     * with restitution from stretching
-     */
-    public static final int b2_springParticle = 1 << 3;
-    /**
-     * with restitution from deformation
-     */
-    public static final int b2_elasticParticle = 1 << 4;
-    /**
-     * with viscosity
-     */
-    public static final int b2_viscousParticle = 1 << 5;
-    /**
-     * without isotropic pressure
-     */
-    public static final int b2_powderParticle = 1 << 6;
-    /**
-     * with surface tension
-     */
-    public static final int b2_tensileParticle = 1 << 7;
-    /**
-     * mixing color between contacting particles
-     */
-    public static final int b2_colorMixingParticle = 1 << 8;
-    /**
-     * call b2DestructionListener on destruction
-     */
-    public static final int b2_destructionListener = 1 << 9;
+public enum ParticleType {
+    WATER(ParticleTypeInternal.b2_waterParticle),
+    WALL(ParticleTypeInternal.b2_wallParticle),
+    SPRING(ParticleTypeInternal.b2_springParticle),
+    ELASTIC(ParticleTypeInternal.b2_elasticParticle),
+    VISCOUS(ParticleTypeInternal.b2_viscousParticle),
+    POWDER(ParticleTypeInternal.b2_powderParticle),
+    TENSILE(ParticleTypeInternal.b2_tensileParticle);
+
+    final int bit;
+
+    ParticleType(int bit) {
+        this.bit = bit;
+    }
 }
