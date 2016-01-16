@@ -25,13 +25,13 @@
  */
 package s10realphysics;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.app.ApplicationMode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

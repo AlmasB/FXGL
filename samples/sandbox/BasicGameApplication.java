@@ -25,60 +25,44 @@
  */
 package sandbox;
 
-import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.concurrent.Executor;
+import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.effect.ParticleEmitter;
-import com.almasb.fxgl.effect.ParticleEmitters;
-import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputModifier;
-import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.scene.IntroFactory;
 import com.almasb.fxgl.scene.IntroScene;
 import com.almasb.fxgl.scene.Viewport;
+import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.concurrent.Task;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.util.Duration;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
-
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.PhysicsEntity;
-import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.app.ApplicationMode;
-
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import javafx.util.Duration;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 public class BasicGameApplication extends GameApplication {
 

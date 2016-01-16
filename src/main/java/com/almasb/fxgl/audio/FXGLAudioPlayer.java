@@ -28,7 +28,10 @@ package com.almasb.fxgl.audio;
 
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.event.LoadEvent;
+import com.almasb.fxgl.event.NotificationEvent;
+import com.almasb.fxgl.event.SaveEvent;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;

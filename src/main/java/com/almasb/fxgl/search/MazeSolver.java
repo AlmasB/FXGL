@@ -26,9 +26,6 @@
 package com.almasb.fxgl.search;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * API INCOMPLETE
  *

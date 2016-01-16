@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.event;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxeventbus.FXEventBus;
 import com.almasb.fxeventbus.Subscriber;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -36,8 +37,6 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 
 import java.util.logging.Logger;
-
-import com.almasb.fxeventbus.EventBus;
 
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.

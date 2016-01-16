@@ -25,6 +25,7 @@
  */
 package sandbox;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.AnimationChannel;
 import com.almasb.fxgl.asset.DynamicAnimatedTexture;
@@ -34,7 +35,6 @@ import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.app.ApplicationMode;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.HorizontalDirection;

@@ -26,10 +26,10 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;

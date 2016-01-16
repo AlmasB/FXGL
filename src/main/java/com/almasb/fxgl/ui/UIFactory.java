@@ -26,7 +26,6 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.asset.FontFactory;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;

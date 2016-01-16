@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
-import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;

@@ -26,13 +26,17 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.event.FXGLInputEvent;
+import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
@@ -45,8 +49,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-
-import com.almasb.fxeventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;

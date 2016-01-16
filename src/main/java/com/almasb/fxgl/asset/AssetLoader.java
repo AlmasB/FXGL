@@ -25,11 +25,8 @@
  */
 package com.almasb.fxgl.asset;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;

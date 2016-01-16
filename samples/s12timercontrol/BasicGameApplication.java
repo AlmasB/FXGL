@@ -25,14 +25,14 @@
  */
 package s12timercontrol;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.entity.control.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.control.Control;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.LocalTimer;
-import com.almasb.fxgl.app.ApplicationMode;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 

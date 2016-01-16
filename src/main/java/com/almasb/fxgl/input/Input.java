@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.input;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.*;
@@ -39,8 +40,6 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.input.*;
-
-import com.almasb.fxeventbus.EventBus;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

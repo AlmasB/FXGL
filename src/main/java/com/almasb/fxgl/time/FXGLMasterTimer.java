@@ -25,8 +25,8 @@
  */
 package com.almasb.fxgl.time;
 
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.event.Events;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.WorldEvent;

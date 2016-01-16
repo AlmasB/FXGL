@@ -36,9 +36,6 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.InGameWindow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import jfxtras.scene.control.window.CloseIcon;
-import jfxtras.scene.control.window.MinimizeIcon;
-import jfxtras.scene.control.window.Window;
 
 /**
  * This is an example of a basic FXGL game application.
