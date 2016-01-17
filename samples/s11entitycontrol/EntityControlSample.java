@@ -23,20 +23,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s10realphysics;
+package s11entitycontrol;
 
+import com.almasb.ents.AbstractControl;
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.PhysicsEntity;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.MouseButton;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -44,17 +43,19 @@ import org.jbox2d.dynamics.FixtureDef;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class BasicGameApplication extends GameApplication {
+public class EntityControlSample extends GameApplication {
 
-    private enum Type implements EntityType {
-        GROUND, BOX
+    private enum Type {
+        PLAYER
     }
+
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("EntityControlSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -64,46 +65,22 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initInput() {
-        Input input = getInput();
-
-        input.addAction(new UserAction("Spawn Box") {
-            @Override
-            protected void onActionBegin() {
-                // 1. create physics entity
-                PhysicsEntity box = new PhysicsEntity(Type.GROUND);
-                box.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
-
-                // 2. set body type to dynamic for moving entities
-                // not controlled by user
-                box.setBodyType(BodyType.DYNAMIC);
-
-                // 3. set various physics properties
-                FixtureDef fd = new FixtureDef();
-                fd.setDensity(0.5f);
-                fd.setRestitution(0.3f);
-                box.setFixtureDef(fd);
-
-                Rectangle rect = new Rectangle(40, 40);
-                rect.setFill(Color.BLUE);
-                box.setSceneView(rect);
-
-                getGameWorld().addEntity(box);
-            }
-        }, MouseButton.PRIMARY);
-    }
+    protected void initInput() {}
 
     @Override
     protected void initAssets() {}
 
     @Override
     protected void initGame() {
-        // 4. by default a physics entity is statis
-        PhysicsEntity ground = new PhysicsEntity(Type.GROUND);
-        ground.setPosition(0, 500);
-        ground.setSceneView(new Rectangle(800, 100));
+        player = new Entity();
+        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new PositionComponent(100, 100));
+        player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
-        getGameWorld().addEntity(ground);
+        // 3. add a new instance of control to entity
+        player.addControl(new VibratingControl());
+
+        getGameWorld().addEntity(player);
     }
 
     @Override
@@ -114,6 +91,18 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void onUpdate() {}
+
+    // 1. create class that implements Control
+    private class VibratingControl extends AbstractControl {
+
+        @Override
+        public void onUpdate(Entity entity, double tpf) {
+            // 2. specify behavior of the entity enforced by this control
+            Point2D vel = new Point2D(Math.random() - 0.5, Math.random() - 0.5);
+
+            entity.getComponentUnsafe(PositionComponent.class).translate(vel.multiply(60 * tpf));
+        }
+    }
 
     public static void main(String[] args) {
         launch(args);

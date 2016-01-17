@@ -23,46 +23,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s13search;
+package s17multithreading;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.search.AStarGrid;
-import com.almasb.fxgl.search.AStarNode;
-import com.almasb.fxgl.search.NodeState;
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
-import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
+import javafx.concurrent.Task;
 import javafx.scene.shape.Rectangle;
 
-import java.util.List;
-
 /**
- * This is an example of a basic FXGL game application
- * that uses A* search to find a path between 2 nodes in a grid.
+ * This is an example of a basic FXGL game application.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class BasicGameApplication extends GameApplication {
-
-    private enum Type implements EntityType {
-        TILE
-    }
+public class ThreadingSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("ThreadingSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(false);
+        settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -72,46 +62,38 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void initAssets() {}
 
-    // 1. Define A* grid
-    private AStarGrid grid;
+    // 1. isolate code that represents some heavy work
+    // ensure it doesn't modify world or the scene graph
+    private void doHeavyWork() throws Exception {
+        Thread.sleep(2000);
+    }
 
     @Override
     protected void initGame() {
-        // 2. init grid 20x15
-        grid = new AStarGrid(20, 15);
 
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 20; j++) {
-                final int x = j;
-                final int y = i;
+        // 2. get executor service
+        // 3. create a new task that performs heavy work
 
-                Entity tile = new Entity(Type.TILE);
-                tile.setPosition(j*40, i*40);
-
-                Rectangle graphics = new Rectangle(38, 38);
-                graphics.setFill(Color.WHITE);
-                graphics.setStroke(Color.BLACK);
-
-                // add on click listener
-                graphics.setOnMouseClicked(e -> {
-                    // if left click do search, else place a red obstacle
-                    if (e.getButton() == MouseButton.PRIMARY) {
-                        List<AStarNode> nodes = grid.getPath(0, 0, x, y);
-                        nodes.forEach(n -> {
-                            getGameWorld().getEntityAt(new Point2D(n.getX() * 40, n.getY() * 40))
-                                    .ifPresent(Entity::removeFromWorld);
-                        });
-                    } else {
-                        grid.setNodeState(x, y, NodeState.NOT_WALKABLE);
-                        graphics.setFill(Color.RED);
-                    }
-                });
-
-                tile.setSceneView(graphics);
-
-                getGameWorld().addEntity(tile);
+        getService(ServiceType.EXECUTOR).submit(new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                log.info("Heavy work started!");
+                doHeavyWork();
+                return null;
             }
-        }
+
+            @Override
+            protected void succeeded() {
+                // 4. it is OK to modify world/scene graph here
+                log.info("Heavy work complete!");
+
+                Entity entity = new Entity();
+                entity.addComponent(new PositionComponent(300, 300));
+                entity.addComponent(new MainViewComponent(new Rectangle(40, 40)));
+
+                getGameWorld().addEntity(entity);
+            }
+        });
     }
 
     @Override

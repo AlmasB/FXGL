@@ -23,45 +23,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s6menu;
+package s7saving;
 
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
+import common.PlayerControl;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class BasicGameApplication extends GameApplication {
+import java.io.Serializable;
 
-    private enum Type implements EntityType {
+public class SaveSample extends GameApplication {
+
+    private enum Type {
         PLAYER, ENEMY
     }
 
     private Entity player, enemy;
+    private PlayerControl playerControl;
 
-    private Text uiText;
+    // 1. the data to save/load
+    private Point2D playerPosition, enemyPosition;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("SaveSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
-
-        // 1. set intro enabled to true
-        settings.setIntroEnabled(true);
-
-        // 2. set menu enabled to true
+        settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
@@ -74,82 +80,96 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                player.translate(-5, 0);
+                playerControl.left();
             }
         }, KeyCode.A);
 
         input.addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                player.translate(5, 0);
+                playerControl.right();
             }
         }, KeyCode.D);
 
         input.addAction(new UserAction("Move Up") {
             @Override
             protected void onAction() {
-                player.translate(0, -5);
+                playerControl.up();
             }
         }, KeyCode.W);
 
         input.addAction(new UserAction("Move Down") {
             @Override
             protected void onAction() {
-                player.translate(0, 5);
+                playerControl.down();
             }
         }, KeyCode.S);
+    }
+
+    // 2. override and specify how to serialize
+    @Override
+    public Serializable saveState() {
+        PositionComponent playerComponent = Entities.getPosition(player);
+        PositionComponent enemyComponent = Entities.getPosition(enemy);
+
+
+        String data = "";
+        data += playerComponent.getX() + "," + playerComponent.getY();
+        data += ",";
+        data += enemyComponent.getX() + "," + enemyComponent.getY();
+        return data;
+    }
+
+    // 3. override and specify how to deserialize
+    // this will be called on "load" game
+    @Override
+    public void loadState(Serializable loadData) {
+        String data = (String) loadData;
+        String[] values = data.split(",");
+
+        initGame(new Point2D(Double.parseDouble(values[0]), Double.parseDouble(values[1])),
+                new Point2D(Double.parseDouble(values[2]), Double.parseDouble(values[3])));
     }
 
     @Override
     protected void initAssets() {}
 
+    // while this will be called on "new" game
     @Override
     protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
+        initGame(new Point2D(100, 100), new Point2D(200, 100));
+    }
 
-        Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(graphics);
+    private void initGame(Point2D playerPos, Point2D enemyPos) {
+        playerPosition = playerPos;
+        enemyPosition = enemyPos;
 
-        enemy = new Entity(Type.ENEMY);
-        enemy.setPosition(200, 100);
+        player = new Entity();
+        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new PositionComponent(playerPosition));
+        player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
-        Rectangle enemyGraphics = new Rectangle(40, 40);
-        enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(enemyGraphics);
+        playerControl = new PlayerControl();
+        player.addControl(playerControl);
 
-        // we need to set collidable to true
+        enemy = new Entity();
+        enemy.addComponent(new TypeComponent<>(Type.ENEMY));
+        enemy.addComponent(new PositionComponent(enemyPosition));
+        enemy.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.RED)));
+
+        // 1. we need to set collidable to true
         // so that collision system can 'see' them
-        player.setCollidable(true);
-        enemy.setCollidable(true);
+        player.addComponent(new CollidableComponent(true));
+        enemy.addComponent(new CollidableComponent(true));
 
         getGameWorld().addEntities(player, enemy);
     }
 
     @Override
-    protected void initPhysics() {
-        PhysicsWorld physics = getPhysicsWorld();
-        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
-            // the order of entities determined by
-            // the order of their types passed into constructor
-            @Override
-            protected void onCollisionBegin(Entity player, Entity enemy) {
-                player.translate(-10, 0);
-                enemy.translate(10, 0);
-            }
-        });
-    }
+    protected void initPhysics() {}
 
     @Override
-    protected void initUI() {
-        uiText = new Text();
-        uiText.setFont(Font.font(18));
-        uiText.setTranslateX(600);
-        uiText.setTranslateY(100);
-        uiText.textProperty().bind(player.xProperty().asString());
-
-        getGameScene().addUINodes(uiText);
-    }
+    protected void initUI() {}
 
     @Override
     protected void onUpdate() {}

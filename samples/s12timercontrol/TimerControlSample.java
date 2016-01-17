@@ -23,16 +23,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s11entitycontrol;
+package s12timercontrol;
 
+import com.almasb.ents.AbstractControl;
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.control.Control;
+import com.almasb.fxgl.app.ServiceType;
+
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
+import com.almasb.fxgl.time.LocalTimer;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -40,9 +46,9 @@ import javafx.scene.shape.Rectangle;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class BasicGameApplication extends GameApplication {
+public class TimerControlSample extends GameApplication {
 
-    private enum Type implements EntityType {
+    private enum Type {
         PLAYER
     }
 
@@ -52,10 +58,10 @@ public class BasicGameApplication extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
-        settings.setVersion("0.1developer");
+        settings.setTitle("TimerControlSample");
+        settings.setVersion("0.2");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
+        settings.setIntroEnabled(true);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
@@ -69,12 +75,12 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(300, 300);
-        player.setSceneView(new Rectangle(40, 40));
+        player = new Entity();
+        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new PositionComponent(100, 100));
+        player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
-        // 3. add a new instance of control to entity
-        player.addControl(new VibratingControl());
+        player.addControl(new LiftControl());
 
         getGameWorld().addEntity(player);
     }
@@ -88,14 +94,19 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void onUpdate() {}
 
-    // 1. create class that implements Control
-    private class VibratingControl implements Control {
+    private class LiftControl extends AbstractControl {
+
+        private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
+        private boolean goingUp = false;
 
         @Override
-        public void onUpdate(Entity entity) {
-            // 2. specify behavior of the entity enforced by this control
-            Point2D vel = new Point2D(Math.random() - 0.5, Math.random() - 0.5);
-            entity.translate(vel);
+        public void onUpdate(Entity entity, double tpf) {
+            if (timer.elapsed(Duration.seconds(2))) {
+                goingUp = !goingUp;
+                timer.capture();
+            }
+
+            //entity.translate(0, goingUp ? -1 : 1);
         }
     }
 

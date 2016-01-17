@@ -23,31 +23,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s8particles;
+package s5ui;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.effect.ParticleEmitter;
-import com.almasb.fxgl.effect.ParticleEmitters;
-import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.MouseButton;
-import javafx.util.Duration;
+import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
-public class BasicGameApplication extends GameApplication {
+public class UISample extends GameApplication {
 
-    private enum Type implements EntityType {
-        EXPLOSION
-    }
+    // 1. declare JavaFX or FXGL UI object
+    private Text uiText;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("UISample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -57,29 +57,7 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initInput() {
-        Input input = getInput();
-
-        input.addAction(new UserAction("Spawn Explosion") {
-            @Override
-            protected void onActionBegin() {
-                // 1. create particle entity
-                ParticleEntity explosion = new ParticleEntity(Type.EXPLOSION);
-                explosion.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
-
-                // 2. create and configure emitter
-                ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
-                explosion.setEmitter(emitter);
-
-                // 3. set expiry time to 0.5 seconds
-                // After 0.5 secs the entity will be removed from world
-                explosion.setExpireTime(Duration.seconds(0.5));
-
-                // 4. add entity to game world
-                getGameWorld().addEntities(explosion);
-            }
-        }, MouseButton.PRIMARY);
-    }
+    protected void initInput() {}
 
     @Override
     protected void initAssets() {}
@@ -91,7 +69,21 @@ public class BasicGameApplication extends GameApplication {
     protected void initPhysics() {}
 
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+        // 2. initialize the object
+        uiText = new Text();
+        uiText.setFont(Font.font(18));
+
+        // 3. position the object
+        uiText.setTranslateX(600);
+        uiText.setTranslateY(100);
+
+        // 4. bind text property to some data of interest
+        uiText.textProperty().bind(getMasterTimer().tickProperty().asString("Tick: [%d]"));
+
+        // 5. add UI object to scene
+        getGameScene().addUINode(uiText);
+    }
 
     @Override
     protected void onUpdate() {}

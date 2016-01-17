@@ -23,18 +23,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s12timercontrol;
+package s10realphysics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.control.Control;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.time.LocalTimer;
+import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -42,41 +42,66 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class BasicGameApplication extends GameApplication {
+public class RealPhysicsSample extends GameApplication {
 
-    private enum Type implements EntityType {
-        PLAYER
+    private enum Type {
+        GROUND, BOX
     }
-
-    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
-        settings.setVersion("0.2");
+        settings.setTitle("RealPhysicsSample");
+        settings.setVersion("0.1developer");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
+        settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
-    protected void initInput() {}
+    protected void initInput() {
+        Input input = getInput();
+
+        input.addAction(new UserAction("Spawn Box") {
+            @Override
+            protected void onActionBegin() {
+//                // 1. create physics entity
+//                PhysicsEntity box = new PhysicsEntity(Type.GROUND);
+//                box.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
+//
+//                // 2. set body type to dynamic for moving entities
+//                // not controlled by user
+//                box.setBodyType(BodyType.DYNAMIC);
+//
+//                // 3. set various physics properties
+//                FixtureDef fd = new FixtureDef();
+//                fd.setDensity(0.5f);
+//                fd.setRestitution(0.3f);
+//                box.setFixtureDef(fd);
+//
+//                Rectangle rect = new Rectangle(40, 40);
+//                rect.setFill(Color.BLUE);
+//                box.setSceneView(rect);
+//
+//                getGameWorld().addEntity(box);
+            }
+        }, MouseButton.PRIMARY);
+    }
 
     @Override
     protected void initAssets() {}
 
     @Override
     protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(300, 300);
-        player.setSceneView(new Rectangle(40, 40));
-        player.addControl(new LiftControl());
-
-        getGameWorld().addEntity(player);
+//        // 4. by default a physics entity is statis
+//        PhysicsEntity ground = new PhysicsEntity(Type.GROUND);
+//        ground.setPosition(0, 500);
+//        ground.setSceneView(new Rectangle(800, 100));
+//
+//        getGameWorld().addEntity(ground);
     }
 
     @Override
@@ -87,22 +112,6 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void onUpdate() {}
-
-    private class LiftControl implements Control {
-
-        private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
-        private boolean goingUp = false;
-
-        @Override
-        public void onUpdate(Entity entity) {
-            if (timer.elapsed(Duration.seconds(2))) {
-                goingUp = !goingUp;
-                timer.capture();
-            }
-
-            entity.translate(0, goingUp ? -1 : 1);
-        }
-    }
 
     public static void main(String[] args) {
         launch(args);

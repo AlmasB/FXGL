@@ -23,29 +23,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s17multithreading;
+package s3input2;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.input.ActionType;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.InputMapping;
+import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.concurrent.Task;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Rectangle;
 
-/**
- * This is an example of a basic FXGL game application.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
- */
-public class BasicGameApplication extends GameApplication {
+public class InputSample2 extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("InputSample2");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -55,44 +53,19 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
+    protected void initInput() {
+        // 1. get input service
+        Input input = getInput();
+
+        // 2. add input mappings (action name -> trigger name)
+        input.addInputMapping(new InputMapping("Print Line", KeyCode.P));
+    }
 
     @Override
     protected void initAssets() {}
 
-    // 1. isolate code that represents some heavy work
-    // ensure it doesn't modify world or the scene graph
-    private void doHeavyWork() throws Exception {
-        Thread.sleep(2000);
-    }
-
     @Override
-    protected void initGame() {
-
-        // 2. get executor service
-        // 3. create a new task that performs heavy work
-
-        getService(ServiceType.EXECUTOR).submit(new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                log.info("Heavy work started!");
-                doHeavyWork();
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                // 4. it is OK to modify world/scene graph here
-                log.info("Heavy work complete!");
-
-                Entity rect = Entity.noType();
-                rect.setPosition(400, 300);
-                rect.setSceneView(new Rectangle(40, 40));
-
-                getGameWorld().addEntity(rect);
-            }
-        });
-    }
+    protected void initGame() {}
 
     @Override
     protected void initPhysics() {}
@@ -101,7 +74,24 @@ public class BasicGameApplication extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    public void onUpdate() {}
+
+    // 3. specify which method to call on each action
+
+    @OnUserAction(name = "Print Line", type = ActionType.ON_ACTION_BEGIN)
+    public void printLineBegin() {
+        System.out.println("Action Begin");
+    }
+
+    @OnUserAction(name = "Print Line", type = ActionType.ON_ACTION)
+    public void printLine() {
+        System.out.println("On Action");
+    }
+
+    @OnUserAction(name = "Print Line", type = ActionType.ON_ACTION_END)
+    public void printLineEnd() {
+        System.out.println("Action End");
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -23,13 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s9assets;
+package s1basicapp;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
@@ -38,19 +35,13 @@ import com.almasb.fxgl.settings.GameSettings;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class BasicGameApplication extends GameApplication {
-
-    private enum Type implements EntityType {
-        PLAYER
-    }
-
-    private Entity player;
+public class BasicAppSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("BasicAppSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -62,25 +53,11 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void initInput() {}
 
-    // 1. create Texture object
-    private Texture brickTexture;
+    @Override
+    protected void initAssets() {}
 
     @Override
-    protected void initAssets() {
-        // 2. load texture
-        brickTexture = getAssetLoader().loadTexture("brick.png");
-    }
-
-    @Override
-    protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
-
-        // 3. set texture as scene view for entity
-        player.setSceneView(brickTexture);
-
-        getGameWorld().addEntity(player);
-    }
+    protected void initGame() {}
 
     @Override
     protected void initPhysics() {}

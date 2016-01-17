@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,32 +23,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s14achievements;
+package s8particles;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.effect.ParticleEmitter;
+import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.input.MouseButton;
+import javafx.util.Duration;
 
-public class BasicGameApplication extends GameApplication {
+public class ParticlesSample extends GameApplication {
 
-    private enum Type implements EntityType {
-        PLAYER
+    private enum Type {
+        EXPLOSION
     }
-
-    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("ParticlesSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -57,64 +55,36 @@ public class BasicGameApplication extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    // 1. Override initAchievements()..
-    // create and register achievement
-    @Override
-    protected void initAchievements() {
-        Achievement a = new Achievement("World Traveller", "Get to the other side of the screen.");
-        getAchievementManager().registerAchievement(a);
-    }
-
     @Override
     protected void initInput() {
         Input input = getInput();
 
-        input.addAction(new UserAction("Move Left") {
+        input.addAction(new UserAction("Spawn Explosion") {
             @Override
-            protected void onAction() {
-                player.translate(-5, 0);
+            protected void onActionBegin() {
+//                // 1. create particle entity
+//                ParticleEntity explosion = new ParticleEntity(Type.EXPLOSION);
+//                explosion.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
+//
+//                // 2. create and configure emitter
+//                ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
+//                explosion.setEmitter(emitter);
+//
+//                // 3. set expiry time to 0.5 seconds
+//                // After 0.5 secs the entity will be removed from world
+//                explosion.setExpireTime(Duration.seconds(0.5));
+//
+//                // 4. add entity to game world
+//                getGameWorld().addEntities(explosion);
             }
-        }, KeyCode.A);
-
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                player.translate(5, 0);
-            }
-        }, KeyCode.D);
-
-        input.addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                player.translate(0, -5);
-            }
-        }, KeyCode.W);
-
-        input.addAction(new UserAction("Move Down") {
-            @Override
-            protected void onAction() {
-                player.translate(0, 5);
-            }
-        }, KeyCode.S);
+        }, MouseButton.PRIMARY);
     }
 
     @Override
     protected void initAssets() {}
 
     @Override
-    protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
-
-        Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(graphics);
-
-        getGameWorld().addEntity(player);
-
-        // 2. bind achievedProperty() to the condition
-        getAchievementManager().getAchievementByName("World Traveller")
-                .bind(player.xProperty().greaterThan(600));
-    }
+    protected void initGame() {}
 
     @Override
     protected void initPhysics() {}
@@ -123,7 +93,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initUI() {}
 
     @Override
-    public void onUpdate() {}
+    protected void onUpdate() {}
 
     public static void main(String[] args) {
         launch(args);

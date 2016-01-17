@@ -28,8 +28,6 @@ package s19physicsparticles;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.physics.PhysicsEntity;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
@@ -47,7 +45,7 @@ import java.util.EnumSet;
  */
 public class PhysicsParticlesSample extends GameApplication {
 
-    private enum Type implements EntityType {
+    private enum Type {
         BOUNDS, CLOTH, WATER
     }
 
@@ -55,7 +53,7 @@ public class PhysicsParticlesSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Physics Particles Test");
+        settings.setTitle("PhysicsParticlesSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -72,48 +70,48 @@ public class PhysicsParticlesSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        initScreenBounds();
-
-        // 1. define how particles should behave
-        ParticleGroupDef groupDef = new ParticleGroupDef();
-        groupDef.setTypes(EnumSet.of(ParticleType.ELASTIC));
-
-        // 2. ask physics world to create particle entity
-        PhysicsWorld.PhysicsParticleEntity cloth = getPhysicsWorld().newPhysicsParticleEntity(50, 10, 75, 150, Color.DARKGREEN.brighter(), Type.CLOTH,
-                groupDef);
-
-        groupDef = new ParticleGroupDef();
-        groupDef.setTypes(EnumSet.of(ParticleType.VISCOUS, ParticleType.TENSILE));
-
-        PhysicsWorld.PhysicsParticleEntity liquid = getPhysicsWorld().newPhysicsParticleEntity(200, 10, 70, 70, Color.BLUE.brighter(), Type.WATER,
-                groupDef);
-
-        // 3. add to game world
-        getGameWorld().addEntities(cloth, liquid);
+//        initScreenBounds();
+//
+//        // 1. define how particles should behave
+//        ParticleGroupDef groupDef = new ParticleGroupDef();
+//        groupDef.setTypes(EnumSet.of(ParticleType.ELASTIC));
+//
+//        // 2. ask physics world to create particle entity
+//        PhysicsWorld.PhysicsParticleEntity cloth = getPhysicsWorld().newPhysicsParticleEntity(50, 10, 75, 150, Color.DARKGREEN.brighter(), Type.CLOTH,
+//                groupDef);
+//
+//        groupDef = new ParticleGroupDef();
+//        groupDef.setTypes(EnumSet.of(ParticleType.VISCOUS, ParticleType.TENSILE));
+//
+//        PhysicsWorld.PhysicsParticleEntity liquid = getPhysicsWorld().newPhysicsParticleEntity(200, 10, 70, 70, Color.BLUE.brighter(), Type.WATER,
+//                groupDef);
+//
+//        // 3. add to game world
+//        getGameWorld().addEntities(cloth, liquid);
     }
 
     private void initScreenBounds() {
-        PhysicsEntity top = new PhysicsEntity(Type.BOUNDS);
-        top.setPosition(0, 0 - 100);
-        top.setSceneView(new Rectangle(getWidth(), 100));
-
-        PhysicsEntity bot = new PhysicsEntity(Type.BOUNDS);
-        bot.setPosition(0, getHeight() - 100);
-        bot.setSceneView(new Rectangle(getWidth(), 100));
-
-        PhysicsEntity left = new PhysicsEntity(Type.BOUNDS);
-        left.setPosition(0 - 100 + 10, 0);
-        left.setSceneView(new Rectangle(100, getHeight()));
-
-        PhysicsEntity right = new PhysicsEntity(Type.BOUNDS);
-        right.setPosition(getWidth(), 0);
-        right.setSceneView(new Rectangle(100, getHeight()));
-
-        PhysicsEntity ground = new PhysicsEntity(Type.BOUNDS);
-        ground.setSceneView(new Rectangle(200, 50));
-        ground.setPosition(50, 300);
-
-        getGameWorld().addEntities(top, bot, left, right, ground);
+//        PhysicsEntity top = new PhysicsEntity(Type.BOUNDS);
+//        top.setPosition(0, 0 - 100);
+//        top.setSceneView(new Rectangle(getWidth(), 100));
+//
+//        PhysicsEntity bot = new PhysicsEntity(Type.BOUNDS);
+//        bot.setPosition(0, getHeight() - 100);
+//        bot.setSceneView(new Rectangle(getWidth(), 100));
+//
+//        PhysicsEntity left = new PhysicsEntity(Type.BOUNDS);
+//        left.setPosition(0 - 100 + 10, 0);
+//        left.setSceneView(new Rectangle(100, getHeight()));
+//
+//        PhysicsEntity right = new PhysicsEntity(Type.BOUNDS);
+//        right.setPosition(getWidth(), 0);
+//        right.setSceneView(new Rectangle(100, getHeight()));
+//
+//        PhysicsEntity ground = new PhysicsEntity(Type.BOUNDS);
+//        ground.setSceneView(new Rectangle(200, 50));
+//        ground.setPosition(50, 300);
+//
+//        getGameWorld().addEntities(top, bot, left, right, ground);
     }
 
     @Override

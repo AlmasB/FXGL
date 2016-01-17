@@ -25,34 +25,20 @@
  */
 package s3input;
 
-import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-
-import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import common.PlayerControl;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Rectangle;
 
 public class InputSample extends GameApplication {
-
-    private enum Type {
-        PLAYER
-    }
-
-    private PlayerControl playerControl;
-    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("InputSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -67,66 +53,30 @@ public class InputSample extends GameApplication {
         Input input = getInput();
 
         // 2. add key/mouse bound actions
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                playerControl.left();
-            }
-        }, KeyCode.A);
-
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                playerControl.right();
-            }
-        }, KeyCode.D);
-
-        input.addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                playerControl.up();
-            }
-        }, KeyCode.W);
-
-        input.addAction(new UserAction("Move Down") {
+        // when app is running press P to see output to console
+        input.addAction(new UserAction("Print Line") {
             @Override
             protected void onActionBegin() {
-                getGameWorld().getEntitiesByType(Type.PLAYER)
-                        .forEach(System.out::println);
+                System.out.println("Action Begin");
             }
 
             @Override
             protected void onAction() {
-                playerControl.down();
+                System.out.println("On Action");
             }
-        }, KeyCode.S);
+
+            @Override
+            protected void onActionEnd() {
+                System.out.println("Action End");
+            }
+        }, KeyCode.P);
     }
 
     @Override
     protected void initAssets() {}
 
     @Override
-    protected void initGame() {
-        // 2. create entity
-        player = new Entity();
-
-        player.addComponent(new TypeComponent<>(Type.PLAYER));
-
-        // set entity position to x = 100, y = 100
-        player.addComponent(new PositionComponent(100, 100));
-
-        // 3. create graphics for entity
-        Rectangle graphics = new Rectangle(40, 40);
-
-        // set graphics to entity
-        player.addComponent(new MainViewComponent(graphics));
-
-        playerControl = new PlayerControl();
-        player.addControl(playerControl);
-
-        // 4. add entity to game world
-        getGameWorld().addEntity(player);
-    }
+    protected void initGame() {}
 
     @Override
     protected void initPhysics() {}

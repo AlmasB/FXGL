@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,41 +23,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s4physics;
+package s14achievements;
 
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
+import common.PlayerControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class BasicGameApplication extends GameApplication {
+public class AchievementsSample extends GameApplication {
 
-    private enum Type implements EntityType {
-        PLAYER, ENEMY
+    private enum Type {
+        PLAYER
     }
 
-    private Entity player, enemy;
+    private Entity player;
+    private PlayerControl playerControl;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("AchievementsSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
+    }
+
+    // 1. Override initAchievements()..
+    // create and register achievement
+    @Override
+    protected void initAchievements() {
+        Achievement a = new Achievement("World Traveller", "Get to the other side of the screen.");
+        getAchievementManager().registerAchievement(a);
     }
 
     @Override
@@ -67,28 +77,28 @@ public class BasicGameApplication extends GameApplication {
         input.addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                player.translate(-5, 0);
+                playerControl.left();
             }
         }, KeyCode.A);
 
         input.addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                player.translate(5, 0);
+                playerControl.right();
             }
         }, KeyCode.D);
 
         input.addAction(new UserAction("Move Up") {
             @Override
             protected void onAction() {
-                player.translate(0, -5);
+                playerControl.up();
             }
         }, KeyCode.W);
 
         input.addAction(new UserAction("Move Down") {
             @Override
             protected void onAction() {
-                player.translate(0, 5);
+                playerControl.down();
             }
         }, KeyCode.S);
     }
@@ -98,54 +108,29 @@ public class BasicGameApplication extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
+        player = new Entity();
+        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new PositionComponent(100, 100));
+        player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
-        Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(graphics);
+        playerControl = new PlayerControl();
+        player.addControl(playerControl);
 
-        enemy = new Entity(Type.ENEMY);
-        enemy.setPosition(200, 100);
+        getGameWorld().addEntity(player);
 
-        Rectangle enemyGraphics = new Rectangle(40, 40);
-        enemyGraphics.setFill(Color.RED);
-        enemy.setSceneView(enemyGraphics);
-
-        // 1. we need to set collidable to true
-        // so that collision system can 'see' them
-        player.setCollidable(true);
-        enemy.setCollidable(true);
-
-        getGameWorld().addEntities(player, enemy);
+        // 2. bind achievedProperty() to the condition
+        getAchievementManager().getAchievementByName("World Traveller")
+                .bind(player.getComponentUnsafe(PositionComponent.class).xProperty().greaterThan(600));
     }
 
     @Override
-    protected void initPhysics() {
-        // 2. get physics manager and register a collision handler
-        // between Type.PLAYER and Type.ENEMY
-
-        PhysicsWorld physics = getPhysicsWorld();
-        physics.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.ENEMY) {
-            @Override
-            protected void onHitBoxTrigger(Entity player, Entity enemy, HitBox playerBox, HitBox enemyBox) {
-                System.out.println(playerBox.getName() + " X " + enemyBox.getName());
-            }
-
-            // the order of entities is determined by
-            // the order of their types passed into constructor
-            @Override
-            protected void onCollisionBegin(Entity player, Entity enemy) {
-                player.translate(-10, 0);
-                enemy.translate(10, 0);
-            }
-        });
-    }
+    protected void initPhysics() {}
 
     @Override
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    public void onUpdate() {}
 
     public static void main(String[] args) {
         launch(args);

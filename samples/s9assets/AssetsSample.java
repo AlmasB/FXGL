@@ -23,11 +23,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s1basicapp;
+package s9assets;
 
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.asset.Texture;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -35,13 +42,19 @@ import com.almasb.fxgl.settings.GameSettings;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class BasicGameApplication extends GameApplication {
+public class AssetsSample extends GameApplication {
+
+    private enum Type {
+        PLAYER
+    }
+
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("AssetsSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -53,11 +66,26 @@ public class BasicGameApplication extends GameApplication {
     @Override
     protected void initInput() {}
 
-    @Override
-    protected void initAssets() {}
+    // 1. create Texture object
+    private Texture brickTexture;
 
     @Override
-    protected void initGame() {}
+    protected void initAssets() {
+        // 2. load texture
+        brickTexture = getAssetLoader().loadTexture("brick.png");
+    }
+
+    @Override
+    protected void initGame() {
+        player = new Entity();
+        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new PositionComponent(100, 100));
+
+        // 3. add texture as main view
+        player.addComponent(new MainViewComponent(brickTexture));
+
+        getGameWorld().addEntity(player);
+    }
 
     @Override
     protected void initPhysics() {}

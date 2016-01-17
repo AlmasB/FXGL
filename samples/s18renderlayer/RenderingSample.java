@@ -23,21 +23,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s3input2;
+package s18renderlayer;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.input.ActionType;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.input.OnUserAction;
+
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class BasicGameApplication extends GameApplication {
+/**
+ * This is an example of a basic FXGL game application.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
+public class RenderingSample extends GameApplication {
 
     private enum Type {
         PLAYER
@@ -49,7 +52,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("RenderingSample");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -59,30 +62,43 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initInput() {
-        // 1. get input service
-        Input input = getInput();
-
-        // 2. add input mappings (action name -> trigger name)
-        input.addInputMapping(new InputMapping("Move Left", KeyCode.A));
-        input.addInputMapping(new InputMapping("Move Right", KeyCode.D));
-        input.addInputMapping(new InputMapping("Move Up", KeyCode.W));
-        input.addInputMapping(new InputMapping("Move Down", KeyCode.S));
-        input.addInputMapping(new InputMapping("Shoot", MouseButton.PRIMARY));
-    }
+    protected void initInput() {}
 
     @Override
     protected void initAssets() {}
 
     @Override
     protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
-
-        Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(graphics);
-
-        getGameWorld().addEntity(player);
+//        player = new Entity(Type.PLAYER);
+//        player.setPosition(100, 100);
+//
+//        Rectangle graphics = new Rectangle(40, 40);
+//        player.setSceneView(graphics);
+//
+//        getGameWorld().addEntity(player);
+//
+//        Entity box = Entity.noType();
+//        box.setPosition(80, 80);
+//
+//        // 1. when adding a scene view also attach a render layer
+//        // either predefined or created dynamically like below
+//        box.setSceneView(new Rectangle(40, 40, Color.RED), new RenderLayer() {
+//            @Override
+//            public String name() {
+//                // 2. specify the unique name for that layer
+//                return "LAYER_BELOW_PLAYER";
+//            }
+//
+//            @Override
+//            public int index() {
+//                // 3. specify layer index, higher values will drawn above lower values
+//                return 1000;
+//            }
+//        });
+//
+//        // we have added box after player but because of the render layer we specified
+//        // the box will be drawn below the player
+//        getGameWorld().addEntity(box);
     }
 
     @Override
@@ -92,44 +108,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initUI() {}
 
     @Override
-    public void onUpdate() {}
-
-    // 3. specify which method to call on each action
-
-    @OnUserAction(name = "Move Left", type = ActionType.ON_ACTION)
-    public void moveLeft() {
-        player.translate(-5, 0);
-    }
-
-    @OnUserAction(name = "Move Right", type = ActionType.ON_ACTION)
-    public void moveRight() {
-        player.translate(5, 0);
-    }
-
-    @OnUserAction(name = "Move Right", type = ActionType.ON_ACTION_BEGIN)
-    public void moveRightStart() {
-        log.info("start right");
-    }
-
-    @OnUserAction(name = "Move Right", type = ActionType.ON_ACTION_END)
-    public void moveRightStop() {
-        log.info("stop right");
-    }
-
-    @OnUserAction(name = "Move Up", type = ActionType.ON_ACTION)
-    public void moveUp() {
-        player.translate(0, -5);
-    }
-
-    @OnUserAction(name = "Move Down", type = ActionType.ON_ACTION)
-    public void moveDown() {
-        player.translate(0, 5);
-    }
-
-    @OnUserAction(name = "Shoot", type = ActionType.ON_ACTION_BEGIN)
-    public void shoot() {
-        log.info("Shooting");
-    }
+    protected void onUpdate() {}
 
     public static void main(String[] args) {
         launch(args);
