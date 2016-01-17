@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,26 +23,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.physics;
 
+package com.almasb.fxgl.entity.control;
+
+import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
 
-final class CollisionPair extends Pair<Entity> {
+/**
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+public class ExpireCleanControl extends AbstractControl {
+    @Override
+    public void onUpdate(Entity entity, double tpf) {
 
-    private CollisionHandler handler;
-
-    CollisionPair(Entity a, Entity b, CollisionHandler handler) {
-        // we check the order here so that we won't have to do that every time
-        // when triggering collision between A and B
-        // this ensures that client gets back entities in the same order
-        // he registered the handler with
-        super(a.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getA()) ? a : b,
-                b.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getB()) ? b : a);
-        this.handler = handler;
-    }
-
-    CollisionHandler getHandler() {
-        return handler;
     }
 }

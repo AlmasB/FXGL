@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,30 +23,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.component.Required;
+import com.almasb.fxgl.entity.component.BoundingBoxComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.RotationComponent;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import javafx.geometry.Point2D;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
 /**
- * An entity being managed by PhysicsManager and hence
- * is being affected by physics space and its forces
- * <p>
- * {@link #translate(Point2D)} and {@link #setX(double)}
- * methods will NOT work. Use {@link #setLinearVelocity(Point2D)} to
- * move the object.
- * <p>
- * BodyType.KINEMATIC will retain its velocity at all times unless manually changed
- * BodyType.DYNAMIC will lose its velocity over time based on external forces
- * BodyType.STATIC doesn't move even if you set its velocity to non-zero
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class PhysicsEntity extends Entity {
-
+@Required(PositionComponent.class)
+@Required(RotationComponent.class)
+@Required(BoundingBoxComponent.class)
+public class PhysicsComponent extends AbstractComponent {
     FixtureDef fixtureDef = new FixtureDef();
     BodyDef bodyDef = new BodyDef();
 
@@ -54,15 +50,6 @@ public class PhysicsEntity extends Entity {
     Fixture fixture;
 
     private boolean raycastIgnored = false;
-
-    /**
-     * Constructs a PhysicsEntity with given type
-     *
-     * @param type entity type
-     */
-    public PhysicsEntity(EntityType type) {
-        super(type);
-    }
 
     Runnable onInitPhysics;
 

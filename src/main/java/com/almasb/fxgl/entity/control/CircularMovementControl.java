@@ -25,19 +25,24 @@
  */
 package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.FXGLMasterTimer;
+import com.almasb.ents.AbstractControl;
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.Required;
+import com.almasb.fxgl.entity.component.PositionComponent;
 
 /**
  * Control that moves entity in a circle.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Required(PositionComponent.class)
 public final class CircularMovementControl extends AbstractControl {
 
     private double radius;
     private double speed;
     private double t = 0.0;
+
+    private PositionComponent position;
 
     public CircularMovementControl(double speed, double radius) {
         this.radius = radius;
@@ -45,17 +50,18 @@ public final class CircularMovementControl extends AbstractControl {
     }
 
     @Override
-    protected void initEntity(Entity entity) {
+    public void onAdded(Entity entity) {
+        position = entity.getComponentUnsafe(PositionComponent.class);
     }
 
     @Override
-    public void onUpdate(Entity entity) {
-        double x = entity.getX() - Math.cos(t) * radius;
-        double y = entity.getY() - Math.sin(t) * radius;
+    public void onUpdate(Entity entity, double tpf) {
+        double x = position.getX() - Math.cos(t) * radius;
+        double y = position.getY() - Math.sin(t) * radius;
 
-        t += FXGLMasterTimer.tpfSeconds() * speed;
+        t += tpf * speed;
 
-        entity.setX(x + Math.cos(t) * radius);
-        entity.setY(y + Math.sin(t) * radius);
+        position.setX(x + Math.cos(t) * radius);
+        position.setY(y + Math.sin(t) * radius);
     }
 }

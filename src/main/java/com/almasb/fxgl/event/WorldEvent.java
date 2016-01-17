@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.event;
 
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.ents.Entity;
 import javafx.beans.NamedArg;
 import javafx.event.Event;
 import javafx.event.EventType;

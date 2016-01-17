@@ -25,9 +25,9 @@
  */
 package sandbox;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxgl.input.ActionType;
@@ -104,13 +104,13 @@ public class App2 extends GameApplication {
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void openWindow() {
 
-        e = Entity.noType();
-        e.setPosition(300, 300);
-        e.setSceneView(new Rectangle(10, 1));
-        e.addControl(new OffscreenCleanControl());
-        e.addControl(new ProjectileControl(new Point2D(0, -1), 10));
-
-        getGameWorld().addEntity(e);
+//        e = Entity.noType();
+//        e.setPosition(300, 300);
+//        e.setSceneView(new Rectangle(10, 1));
+//        e.addControl(new OffscreenCleanControl());
+//        e.addControl(new ProjectileControl(new Point2D(0, -1), 10));
+//
+//        getGameWorld().addEntity(e);
 
     }
 

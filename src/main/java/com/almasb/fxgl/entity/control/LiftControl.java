@@ -26,10 +26,12 @@
 
 package com.almasb.fxgl.entity.control;
 
+import com.almasb.ents.AbstractControl;
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.Required;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.FXGLMasterTimer;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.util.Duration;
 
@@ -38,6 +40,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Required(PositionComponent.class)
 public class LiftControl extends AbstractControl {
 
     private LocalTimer timer;
@@ -45,6 +48,8 @@ public class LiftControl extends AbstractControl {
     private double distance;
     private boolean goingUp;
     private double speed;
+
+    private PositionComponent position;
 
     /**
      * Constructs lift control (moving vertically).
@@ -60,18 +65,19 @@ public class LiftControl extends AbstractControl {
     }
 
     @Override
-    protected void initEntity(Entity entity) {
+    public void onAdded(Entity entity) {
+        position = entity.getComponentUnsafe(PositionComponent.class);
         timer = GameApplication.getService(ServiceType.LOCAL_TIMER);
-        speed = FXGLMasterTimer.tpfSeconds() * distance / duration.toSeconds();
+        speed = distance / duration.toSeconds();
     }
 
     @Override
-    public void onUpdate(Entity entity) {
+    public void onUpdate(Entity entity, double tpf) {
         if (timer.elapsed(duration)) {
             goingUp = !goingUp;
             timer.capture();
         }
 
-        entity.translate(0, goingUp ? -speed : speed);
+        position.translateY(goingUp ? -speed * tpf : speed * tpf);
     }
 }

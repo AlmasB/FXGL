@@ -26,10 +26,14 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.ents.Component;
+import com.almasb.ents.Entity;
+import com.almasb.ents.EntityWorld;
+import com.almasb.ents.EntityWorldListener;
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxeventbus.EventBus;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
@@ -58,7 +62,7 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld {
+public final class GameWorld extends EntityWorld {
 
     /**
      * The logger
@@ -89,238 +93,124 @@ public final class GameWorld {
     private GameWorld(EventBus eventBus) {
         this.eventBus = eventBus;
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
-            update();
+            update(event.tpf());
         });
         eventBus.addEventHandler(FXGLEvent.RESET, event -> {
+            log.finer("Resetting game world");
             reset();
+        });
+
+        addWorldListener(new EntityWorldListener() {
+            @Override
+            public void onAdded(Entity entity) {
+                eventBus.fireEvent(WorldEvent.entityAdded(entity));
+            }
+
+            @Override
+            public void onRemoved(Entity entity) {
+                eventBus.fireEvent(WorldEvent.entityRemoved(entity));
+            }
         });
 
         log.finer("Game world initialized");
     }
 
-    /**
-     * List of entities currently in the world.
-     */
-    private List<Entity> entities = new ArrayList<>();
-
-    /**
-     * List of entities waiting to be added to game world.
-     */
-    private List<Entity> addQueue = new ArrayList<>();
-
-    /**
-     * List of entities waiting to be removed from game world.
-     */
-    private List<Entity> removeQueue = new ArrayList<>();
-
-    /**
-     * Places an entity in the queue to be added to the world.
-     * The entity will be added to the world in the tick.
-     *
-     * @param entityToAdd the entity to add to world
-     */
-    public void addEntity(Entity entityToAdd) {
-        addQueue.add(entityToAdd);
-    }
-
-    /**
-     * Places entities in the queue to be added to the world.
-     * The entities will be added to the world in the tick.
-     *
-     * @param entitiesToAdd the entities to add to world
-     */
-    public void addEntities(Entity... entitiesToAdd) {
-        for (Entity e : entitiesToAdd) {
-            addEntity(e);
-        }
-    }
-
-    /**
-     * Places an entity in the queue to be removed from the world.
-     * The entity will be removed in the next tick.
-     *
-     * @param entityToRemove the entity to remove from world
-     */
-    public void removeEntity(Entity entityToRemove) {
-        removeQueue.add(entityToRemove);
-    }
-
-    /**
-     * Places entities in the queue to be removed from the world.
-     * The entities will be removed in the next tick.
-     *
-     * @param entitiesToRemove the entity to remove from world
-     */
-    public void removeEntities(Entity... entitiesToRemove) {
-        for (Entity e : entitiesToRemove) {
-            removeEntity(e);
-        }
-    }
-
-    private void registerAndInitPendingEntities() {
-        entities.addAll(addQueue);
-        addQueue.forEach(e -> {
-            e.init(this);
-            eventBus.fireEvent(WorldEvent.entityAdded(e));
-        });
-        addQueue.clear();
-    }
-
-    private void removeAndCleanPendingEntities() {
-        entities.removeAll(removeQueue);
-        removeQueue.forEach(e -> {
-            eventBus.fireEvent(WorldEvent.entityRemoved(e));
-            e.clean();
-        });
-        removeQueue.clear();
-    }
-
-    /**
-     * Resets the world to its initial state.
-     * Does NOT clear state listeners.
-     * <p>
-     * <ol>
-     * <li>Registers waiting "add" entities</li>
-     * <li>Removes waiting "remove" entities</li>
-     * <li>Cleans and removes all entities</li>
-     * </ol>
-     */
-    void reset() {
-        log.finer("Resetting game world");
-
-        registerAndInitPendingEntities();
-        removeAndCleanPendingEntities();
-
-        entities.forEach(Entity::clean);
-        entities.clear();
-    }
-
-    /**
-     * Performs a single world update tick.
-     * <p>
-     * <ol>
-     * <li>Registers waiting "add" entities</li>
-     * <li>Removes waiting "remove" entities</li>
-     * <li>Notifies state listeners of update event.</li>
-     * <li>Updates all entities</li>
-     * </ol>
-     */
-    void update() {
-        //log.finer("Game world update");
-
-        registerAndInitPendingEntities();
-        removeAndCleanPendingEntities();
-
-        entities.forEach(Entity::update);
-    }
-
-    /**
-     * Returns a list of entities whose type matches given
-     * arguments. If no arguments were given, returns list
-     * of ALL entities currently registered in the scene graph.
-     *
-     * @param types entity types to select
-     * @return list of entities with types
-     */
-    public List<Entity> getEntities(EntityType... types) {
-        if (types.length == 0)
-            return new ArrayList<>(entities);
-
-        List<String> list = Arrays.asList(types).stream()
-                .map(EntityType::getUniqueType)
-                .collect(Collectors.toList());
-
-        return entities.stream()
-                .filter(entity -> list.contains(entity.getTypeAsString()))
+    public List<Entity> getEntitiesByType(Enum<?> type) {
+        return getEntitiesByComponent(TypeComponent.class).stream()
+                .filter(e -> Entities.getType(e).getValue().equals(type))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Returns a list of entities which are filtered by
-     * given predicate.
-     *
-     * @param predicate filter
-     * @return list of entities that satisfy given predicate
-     */
-    public List<Entity> getEntitiesFiltered(Predicate<Entity> predicate) {
-        return entities.stream()
-                .filter(predicate)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which are partially or entirely
-     * in the specified rectangular selection.
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement is returned.
-     *
-     * @param selection Rectangle2D that describes the selection box
-     * @param types entity types
-     * @return  list of entities in the range
-     */
-    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
-        Entity boundsEntity = Entity.noType();
-        boundsEntity.addHitBox(new HitBox("__RANGE__",
-                new BoundingBox(selection.getMinX(), selection.getMinY(), selection.getWidth(), selection.getHeight())));
-
-        return getEntities(types).stream()
-                .filter(entity -> entity.isCollidingWith(boundsEntity))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a list of entities whose type matches given arguments and
-     * which have the given render layer index
-     *
-     * If no arguments were given, a list of all entities satisfying the
-     * requirement (i.e. render layer) is returned.
-     *
-     * @param layer render layer
-     * @param types entity types
-     * @return  list of entities in the layer
-     */
-    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e.getSceneView().isPresent())
-                .filter(e -> e.getSceneView().get().getRenderLayer().index() == layer.index())
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the closest entity to the given entity with given type.
-     * If no types were specified, the closest entity is returned. The given
+     * Returns the closest entity to the given entity with given
+     * filter. The given
      * entity itself is never returned.
      * <p>
      * If there no entities satisfying the requirement, {@link Optional#empty()}
      * is returned.
      *
      * @param entity selected entity
-     * @param types  entity types
+     * @param filter requirements
      * @return closest entity to selected entity with type
      */
-    public Optional<Entity> getClosestEntity(Entity entity, EntityType... types) {
-        return getEntities(types).stream()
-                .filter(e -> e != entity)
-                .sorted((e1, e2) -> (int) e1.distance(entity) - (int) e2.distance(entity))
+    public Optional<Entity> getClosestEntity(Entity entity, Predicate<Entity> filter) {
+        return getEntitiesByComponent(PositionComponent.class).stream()
+                .filter(e -> filter.test(e) && e != entity)
+                .sorted((e1, e2) -> (int) (Entities.getPosition(e1).distance(Entities.getPosition(entity))
+                        - Entities.getPosition(e2).distance(Entities.getPosition(entity))))
                 .findFirst();
     }
 
-    /**
-     * Returns an entity at given position. The position x and y
-     * must equal to entity's position x and y.
-     * <p>
-     * Returns {@link Optional#empty()} if no entity was found at
-     * given position.
-     *
-     * @param position point in the world
-     * @return entity at point
-     */
-    public Optional<Entity> getEntityAt(Point2D position) {
-        return getEntities()
-                .stream()
-                .filter(e -> e.getPosition().equals(position))
-                .findAny();
-    }
+//
+//    /**
+//     * Returns a list of entities which are filtered by
+//     * given predicate.
+//     *
+//     * @param predicate filter
+//     * @return list of entities that satisfy given predicate
+//     */
+//    public List<Entity> getEntitiesFiltered(Predicate<Entity> predicate) {
+//        return entities.stream()
+//                .filter(predicate)
+//                .collect(Collectors.toList());
+//    }
+//
+//    /**
+//     * Returns a list of entities whose type matches given arguments and
+//     * which are partially or entirely
+//     * in the specified rectangular selection.
+//     *
+//     * If no arguments were given, a list of all entities satisfying the
+//     * requirement is returned.
+//     *
+//     * @param selection Rectangle2D that describes the selection box
+//     * @param types entity types
+//     * @return  list of entities in the range
+//     */
+//    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
+//        Entity boundsEntity = Entity.noType();
+//        boundsEntity.addHitBox(new HitBox("__RANGE__",
+//                new BoundingBox(selection.getMinX(), selection.getMinY(), selection.getWidth(), selection.getHeight())));
+//
+//        return getEntities(types).stream()
+//                .filter(entity -> entity.isCollidingWith(boundsEntity))
+//                .collect(Collectors.toList());
+//    }
+//
+//    /**
+//     * Returns a list of entities whose type matches given arguments and
+//     * which have the given render layer index
+//     *
+//     * If no arguments were given, a list of all entities satisfying the
+//     * requirement (i.e. render layer) is returned.
+//     *
+//     * @param layer render layer
+//     * @param types entity types
+//     * @return  list of entities in the layer
+//     */
+//    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
+//        return getEntities(types).stream()
+//                .filter(e -> e.getSceneView().isPresent())
+//                .filter(e -> e.getSceneView().get().getRenderLayer().index() == layer.index())
+//                .collect(Collectors.toList());
+//    }
+//
+
+//
+//    /**
+//     * Returns an entity at given position. The position x and y
+//     * must equal to entity's position x and y.
+//     * <p>
+//     * Returns {@link Optional#empty()} if no entity was found at
+//     * given position.
+//     *
+//     * @param position point in the world
+//     * @return entity at point
+//     */
+//    public Optional<Entity> getEntityAt(Point2D position) {
+//        return getEntities()
+//                .stream()
+//                .filter(e -> e.getPosition().equals(position))
+//                .findAny();
+//    }
 }

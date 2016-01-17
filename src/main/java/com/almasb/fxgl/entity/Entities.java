@@ -24,16 +24,44 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity.component;
+package com.almasb.fxgl.entity;
+
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.TypeComponent;
+import com.almasb.fxgl.entity.component.BoundingBoxComponent;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.RotationComponent;
+import com.almasb.fxgl.physics.PhysicsComponent;
 
 /**
- * Can be used to store user specific data to add as component
- * to an entity.
+ * Helper class with static convenience methods.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class UserDataComponent extends ObjectComponent<Object> {
-    public UserDataComponent(Object data) {
-        super(data);
+public class Entities {
+
+    public static PositionComponent getPosition(Entity e) {
+        return e.getComponentUnsafe(PositionComponent.class);
+    }
+
+    public static RotationComponent getRotation(Entity e) {
+        return e.getComponentUnsafe(RotationComponent.class);
+    }
+
+    public static BoundingBoxComponent getBBox(Entity e) {
+        return e.getComponentUnsafe(BoundingBoxComponent.class);
+    }
+
+    public static PhysicsComponent getPhysics(Entity e) {
+        return e.getComponentUnsafe(PhysicsComponent.class);
+    }
+
+    public static MainViewComponent getMainView(Entity e) {
+        return e.getComponentUnsafe(MainViewComponent.class);
+    }
+
+    public static TypeComponent getType(Entity e) {
+        return e.getComponentUnsafe(TypeComponent.class);
     }
 }

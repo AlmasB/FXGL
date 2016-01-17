@@ -26,7 +26,8 @@
 
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.ents.Entity;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
@@ -151,13 +152,16 @@ public final class Viewport {
      * @param distY distance in Y between origin and entity
      */
     public void bindToEntity(Entity entity, double distX, double distY) {
+        PositionComponent position = entity.getComponent(PositionComponent.class)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot bind to entity without PositionComponent"));
+
         // origin X Y with no bounds
-        NumberBinding bx = entity.xProperty().add(-distX);
-        NumberBinding by = entity.yProperty().add(-distY);
+        NumberBinding bx = position.xProperty().add(-distX);
+        NumberBinding by = position.yProperty().add(-distY);
 
         // origin X Y with bounds applied
-        NumberBinding boundX = Bindings.when(bx.lessThan(minX)).then(minX).otherwise(entity.xProperty().add(-distX));
-        NumberBinding boundY = Bindings.when(by.lessThan(minY)).then(minY).otherwise(entity.yProperty().add(-distY));
+        NumberBinding boundX = Bindings.when(bx.lessThan(minX)).then(minX).otherwise(position.xProperty().add(-distX));
+        NumberBinding boundY = Bindings.when(by.lessThan(minY)).then(minY).otherwise(position.yProperty().add(-distY));
 
         boundX = Bindings.when(bx.greaterThan(maxX.subtract(width))).then(maxX.subtract(width)).otherwise(boundX);
         boundY = Bindings.when(by.greaterThan(maxY.subtract(height))).then(maxY.subtract(height)).otherwise(boundY);

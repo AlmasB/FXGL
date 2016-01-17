@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.entity;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 import javafx.collections.ListChangeListener;
@@ -64,23 +65,23 @@ public class EntityView extends Parent {
      * @param entity   the entity creating the view
      * @param graphics the view for that entity
      */
-    EntityView(Entity entity, Node graphics) {
+    public EntityView(Entity entity, Node graphics) {
         this.entity = entity;
         addNode(graphics);
 
         if (showBBox) {
-            Rectangle debugBBox = new Rectangle(entity.getWidth(), entity.getHeight());
-            debugBBox.setFill(null);
-            debugBBox.setStroke(showBBoxColor);
+//            Rectangle debugBBox = new Rectangle(entity.getWidth(), entity.getHeight());
+//            debugBBox.setFill(null);
+//            debugBBox.setStroke(showBBoxColor);
+//
+//            addNode(debugBBox);
 
-            addNode(debugBBox);
-
-            entity.hitBoxesProperty().addListener((ListChangeListener<? super HitBox>) c -> {
-                while (c.next()) {
-                    debugBBox.setWidth(entity.getWidth());
-                    debugBBox.setHeight(entity.getHeight());
-                }
-            });
+//            entity.hitBoxesProperty().addListener((ListChangeListener<? super HitBox>) c -> {
+//                while (c.next()) {
+//                    debugBBox.setWidth(entity.getWidth());
+//                    debugBBox.setHeight(entity.getHeight());
+//                }
+//            });
         }
 
         initAsSceneView();
@@ -116,17 +117,17 @@ public class EntityView extends Parent {
      * Binds X Y and rotation of the view to entity's properties.
      */
     private void initAsSceneView() {
-        this.translateXProperty().bind(entity.xProperty());
-        this.translateYProperty().bind(entity.yProperty());
-        this.rotateProperty().bind(entity.rotationProperty());
+//        this.translateXProperty().bind(entity.xProperty());
+//        this.translateYProperty().bind(entity.yProperty());
+//        this.rotateProperty().bind(entity.rotationProperty());
 
-        entity.xFlippedProperty().addListener(((obs, oldValue, isFlipped) -> {
-            if (isFlipped) {
-                getTransforms().setAll(new Scale(-1, 1, entity.getXFlipLine(), 0));
-            } else {
-                getTransforms().clear();
-            }
-        }));
+//        entity.xFlippedProperty().addListener(((obs, oldValue, isFlipped) -> {
+//            if (isFlipped) {
+//                getTransforms().setAll(new Scale(-1, 1, entity.getXFlipLine(), 0));
+//            } else {
+//                getTransforms().clear();
+//            }
+//        }));
     }
 
     /**
@@ -211,8 +212,7 @@ public class EntityView extends Parent {
      */
     public final void setRenderLayer(RenderLayer layer) {
         if (entity.isActive())
-            throw new IllegalStateException(
-                    "Can't set render layer to active view.");
+            throw new IllegalStateException("Can't set render layer to active view.");
 
         this.renderLayer = layer;
     }

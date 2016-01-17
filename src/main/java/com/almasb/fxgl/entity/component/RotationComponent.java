@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,40 +23,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.entity.Entity;
+package com.almasb.fxgl.entity.component;
+
+import com.almasb.ents.component.DoubleComponent;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Point2D;
 
 /**
- * Provides basic functionality of a control. The difference in usage between
- * AbstractControl and Control is that Control can be used if the control
- * doesn't require instance fields, i.e. static and state-less. If
- * instance level fields are needed and constant access to Entity is required
- * then use AbstractControl
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class AbstractControl implements Control {
+public class RotationComponent extends DoubleComponent {
 
-    protected Entity entity;
-
-    /**
-     * Set entity for this control instance. This is called
-     * by Entity during control attachment to entity
-     *
-     * @param entity the entity being controlled
-     */
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-        initEntity(entity);
+    public RotationComponent(double angle) {
+        super(angle);
     }
 
     /**
-     * This is called during control attachment to
-     * entity. Useful for setting properties required / used
-     * by control
+     * Rotate entity view by given angle.
+     * Note: this doesn't affect hit boxes. For more accurate
+     * collisions use {@link com.almasb.fxgl.physics.PhysicsEntity}.
      *
-     * @param entity the entity being controlled
+     * @param byAngle rotation angle in degrees
      */
-    protected abstract void initEntity(Entity entity);
+    public final void rotateBy(double byAngle) {
+        setValue(getValue() + byAngle);
+    }
+
+    /**
+     * Set absolute rotation of the entity view to angle
+     * between vector and positive X axis.
+     * This is useful for projectiles (bullets, arrows, etc)
+     * which rotate depending on their current velocity.
+     * Note, this assumes that at 0 angle rotation the scene view is
+     * facing right.
+     *
+     * @param vector the rotation vector / velocity vector
+     */
+    public final void rotateToVector(Point2D vector) {
+        double angle = Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
+        setValue(angle);
+    }
 }

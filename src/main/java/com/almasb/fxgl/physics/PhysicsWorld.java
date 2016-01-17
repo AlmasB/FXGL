@@ -25,13 +25,15 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.Particle;
 import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.ents.Entity;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -77,7 +79,7 @@ public final class PhysicsWorld {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.PhysicsWorld");
 
-    private static final float TIME_STEP = 1 / 60.0f;
+    //private static final float TIME_STEP = 1 / 60.0f;
 
     private World physicsWorld = new World(new Vec2(0, -10));
 
@@ -103,6 +105,21 @@ public final class PhysicsWorld {
         return physicsWorld;
     }
 
+    private boolean isCollidable(Entity e) {
+        return e.getComponent(CollidableComponent.class)
+                .map(CollidableComponent::getValue)
+                .orElse(false);
+    }
+
+    private boolean areCollidable(Entity e1, Entity e2) {
+        return isCollidable(e1) && isCollidable(e2);
+    }
+
+    private int getHandlerIndex(Entity e1, Entity e2) {
+        return collisionHandlers.indexOf(new Pair<>(e1.getComponentUnsafe(TypeComponent.class).getValue(),
+                e2.getComponentUnsafe(TypeComponent.class).getValue()));
+    }
+
     @Inject
     private PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
@@ -111,13 +128,13 @@ public final class PhysicsWorld {
         physicsWorld.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-                PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
-                PhysicsEntity e2 = (PhysicsEntity) contact.getFixtureB().getBody().getUserData();
+                Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
+                Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-                if (!e1.isCollidable() || !e2.isCollidable())
+                if (!areCollidable(e1, e2))
                     return;
 
-                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                int index = getHandlerIndex(e1, e2);
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
@@ -131,13 +148,13 @@ public final class PhysicsWorld {
 
             @Override
             public void endContact(Contact contact) {
-                PhysicsEntity e1 = (PhysicsEntity) contact.getFixtureA().getBody().getUserData();
-                PhysicsEntity e2 = (PhysicsEntity) contact.getFixtureB().getBody().getUserData();
+                Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
+                Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-                if (!e1.isCollidable() || !e2.isCollidable())
+                if (!areCollidable(e1, e2))
                     return;
 
-                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                int index = getHandlerIndex(e1, e2);
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
@@ -158,14 +175,14 @@ public final class PhysicsWorld {
 
         initParticles();
 
-        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
-        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            addEntity(event.getEntity());
-        });
-        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            removeEntity(event.getEntity());
-        });
-        bus.addEventHandler(UpdateEvent.ANY, event -> update());
+//        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
+//        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
+//            addEntity(event.getEntity());
+//        });
+//        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
+//            removeEntity(event.getEntity());
+//        });
+//        bus.addEventHandler(UpdateEvent.ANY, event -> update());
 
         log.finer("Physics world initialized");
     }
@@ -184,7 +201,7 @@ public final class PhysicsWorld {
      */
     private void processCollisions() {
         List<Entity> collidables = entities.stream()
-                .filter(Entity::isCollidable)
+                .filter(this::isCollidable)
                 .collect(Collectors.toList());
 
         for (int i = 0; i < collidables.size(); i++) {
@@ -193,23 +210,24 @@ public final class PhysicsWorld {
             for (int j = i + 1; j < collidables.size(); j++) {
                 Entity e2 = collidables.get(j);
 
-                if (e1 instanceof PhysicsEntity && e2 instanceof PhysicsEntity) {
-                    PhysicsEntity p1 = (PhysicsEntity) e1;
-                    PhysicsEntity p2 = (PhysicsEntity) e2;
-                    boolean skip = true;
-                    if ((p1.body.getType() == BodyType.KINEMATIC && p2.body.getType() == BodyType.STATIC)
-                            || (p2.body.getType() == BodyType.KINEMATIC && p1.body.getType() == BodyType.STATIC)) {
-                        skip = false;
-                    }
-                    if (skip)
-                        continue;
-                }
+//                if (e1 instanceof PhysicsEntity && e2 instanceof PhysicsEntity) {
+//                    PhysicsEntity p1 = (PhysicsEntity) e1;
+//                    PhysicsEntity p2 = (PhysicsEntity) e2;
+//                    boolean skip = true;
+//                    if ((p1.body.getType() == BodyType.KINEMATIC && p2.body.getType() == BodyType.STATIC)
+//                            || (p2.body.getType() == BodyType.KINEMATIC && p1.body.getType() == BodyType.STATIC)) {
+//                        skip = false;
+//                    }
+//                    if (skip)
+//                        continue;
+//                }
 
-                int index = collisionHandlers.indexOf(new Pair<>(e1.getEntityType(), e2.getEntityType()));
+                int index = getHandlerIndex(e1, e2);
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 
-                    CollisionResult result = e1.checkCollision(e2);
+                    CollisionResult result = e1.getComponentUnsafe(BoundingBoxComponent.class)
+                            .checkCollision(e2.getComponentUnsafe(BoundingBoxComponent.class));
 
                     if (result.hasCollided()) {
                         if (!collisions.containsKey(pair)) {
@@ -228,7 +246,7 @@ public final class PhysicsWorld {
         List<CollisionPair> toRemove = new ArrayList<>();
         collisions.forEach((pair, cachedTick) -> {
             if (!pair.getA().isActive() || !pair.getB().isActive()
-                    || !pair.getA().isCollidable() || !pair.getB().isCollidable()) {
+                    || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
                 toRemove.add(pair);
                 return;
             }
@@ -285,38 +303,47 @@ public final class PhysicsWorld {
 
     private void addEntity(Entity entity) {
         entities.add(entity);
-        if (entity instanceof PhysicsEntity) {
-            PhysicsEntity pEntity = (PhysicsEntity) entity;
-            createBody(pEntity);
-            pEntity.onInitPhysics();
-        }
+
+//        if (entity.getComponent(PhysicsComponent.class).isPresent()) {
+//
+//        }
+
+//        if (entity instanceof PhysicsEntity) {
+//            PhysicsEntity pEntity = (PhysicsEntity) entity;
+//            createBody(pEntity);
+//            pEntity.onInitPhysics();
+//        }
     }
 
     private void removeEntity(Entity entity) {
         entities.remove(entity);
-        if (entity instanceof PhysicsEntity)
-            destroyBody((PhysicsEntity) entity);
+//        if (entity instanceof PhysicsEntity)
+//            destroyBody((PhysicsEntity) entity);
     }
 
-    private void update() {
-        physicsWorld.step(TIME_STEP, 8, 3);
+    private void update(double tpf) {
+        physicsWorld.step((float)tpf, 8, 3);
 
         processCollisions();
 
         for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
             Entity e = (Entity) body.getUserData();
 
+            PositionComponent position = e.getComponentUnsafe(PositionComponent.class);
+            RotationComponent rotation = e.getComponentUnsafe(RotationComponent.class);
+            BoundingBoxComponent bbox = e.getComponentUnsafe(BoundingBoxComponent.class);
+
             // we round positions so that it's easy for the rest of the world to work with
             // snapped to pixel values
-            e.setX(
+            position.setX(
                     Math.round(toPixels(
                             body.getPosition().x
-                                    - toMeters(e.getWidth() / 2))));
-            e.setY(
+                                    - toMeters(bbox.getWidth() / 2))));
+            position.setY(
                     Math.round(toPixels(
                             toMeters(appHeight) - body.getPosition().y
-                                    - toMeters(e.getHeight() / 2))));
-            e.setRotation(-Math.toDegrees(body.getAngle()));
+                                    - toMeters(bbox.getHeight() / 2))));
+            rotation.setValue(-Math.toDegrees(body.getAngle()));
         }
     }
 
@@ -335,47 +362,56 @@ public final class PhysicsWorld {
      *
      * @param e physics entity
      */
-    private void createBody(PhysicsEntity e) {
-        double x = e.getX(),
-                y = e.getY(),
-                w = e.getWidth(),
-                h = e.getHeight();
+    private void createBody(Entity e) {
+        PositionComponent position = Entities.getPosition(e);
+        BoundingBoxComponent bbox = Entities.getBBox(e);
+        PhysicsComponent physics = Entities.getPhysics(e);
+
+        double x = position.getX(),
+                y = position.getY(),
+                w = bbox.getWidth(),
+                h = bbox.getHeight();
 
         // if position is 0, 0 then probably not set, so set ourselves
-        if (e.bodyDef.getPosition().x == 0 && e.bodyDef.getPosition().y == 0) {
-            e.bodyDef.getPosition().set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
+        if (physics.bodyDef.getPosition().x == 0 && physics.bodyDef.getPosition().y == 0) {
+            physics.bodyDef.getPosition().set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
         }
 
-        e.bodyDef.setAngle((float) -Math.toRadians(e.getRotation()));
-        e.body = physicsWorld.createBody(e.bodyDef);
+        physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
+        physics.body = physicsWorld.createBody(physics.bodyDef);
 
         createFixtures(e);
 
-        e.body.setUserData(e);
+        physics.body.setUserData(e);
     }
 
-    private void createFixtures(PhysicsEntity e) {
-        Point2D entityCenter = e.getCenter();
+    private void createFixtures(Entity e) {
+        BoundingBoxComponent bbox = Entities.getBBox(e);
+        PhysicsComponent physics = Entities.getPhysics(e);
 
-        for (HitBox box : e.hitBoxesProperty()) {
-            Bounds bounds = box.translate(e.getX(), e.getY());
+        Point2D entityCenter = bbox.getCenterWorld();
+
+        for (HitBox box : bbox.hitBoxesProperty()) {
+            Bounds bounds = box.translate(0, 0);
 
             // take world center bounds and subtract from entity center (all in pixels) to get local center
-            Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
-            Point2D boundsLocalCenter = boundsCenter.subtract(entityCenter);
+            //Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
+            //Point2D boundsLocalCenter = boundsCenter.subtract(entityCenter);
+
+            Point2D boundsCenterLocal = bbox.getCenterLocal();
 
             double w = bounds.getWidth();
             double h = bounds.getHeight();
 
-            FixtureDef fd = e.fixtureDef;
+            FixtureDef fd = physics.fixtureDef;
             PolygonShape rectShape = new PolygonShape();
             rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
-                    new Vec2(toMeters(boundsLocalCenter.getX()), toMeters(boundsLocalCenter.getY())), 0);
+                    new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
 
             // we use definitions from user, but override shape
             fd.setShape(rectShape);
 
-            Fixture fixture = e.body.createFixture(fd);
+            Fixture fixture = physics.body.createFixture(fd);
             fixture.setUserData(box);
             //e.fixtures.add(fixture);
         }
@@ -386,11 +422,11 @@ public final class PhysicsWorld {
      *
      * @param e physics entity
      */
-    private void destroyBody(PhysicsEntity e) {
-        physicsWorld.destroyBody(e.body);
+    private void destroyBody(Entity e) {
+        physicsWorld.destroyBody(Entities.getPhysics(e).body);
     }
 
-    private EdgeCallback raycastCallback = new EdgeCallback();
+    //private EdgeCallback raycastCallback = new EdgeCallback();
 
     /**
      * Performs a ray cast from start point to end point.
@@ -399,21 +435,21 @@ public final class PhysicsWorld {
      * @param end end point
      * @return ray cast result
      */
-    public RaycastResult raycast(Point2D start, Point2D end) {
-        raycastCallback.reset();
-        physicsWorld.raycast(raycastCallback, toPoint(start), toPoint(end));
-
-        PhysicsEntity entity = null;
-        Point2D point = null;
-
-        if (raycastCallback.fixture != null)
-            entity = (PhysicsEntity) raycastCallback.fixture.getBody().getUserData();
-
-        if (raycastCallback.point != null)
-            point = toPoint(raycastCallback.point);
-
-        return new RaycastResult(Optional.ofNullable(entity), Optional.ofNullable(point));
-    }
+//    public RaycastResult raycast(Point2D start, Point2D end) {
+//        raycastCallback.reset();
+//        physicsWorld.raycast(raycastCallback, toPoint(start), toPoint(end));
+//
+//        PhysicsEntity entity = null;
+//        Point2D point = null;
+//
+//        if (raycastCallback.fixture != null)
+//            entity = (PhysicsEntity) raycastCallback.fixture.getBody().getUserData();
+//
+//        if (raycastCallback.point != null)
+//            point = toPoint(raycastCallback.point);
+//
+//        return new RaycastResult(Optional.ofNullable(entity), Optional.ofNullable(point));
+//    }
 
     /**
      * Converts pixels to meters
@@ -494,96 +530,96 @@ public final class PhysicsWorld {
      * @param def particle group data
      * @return new physics particle entity
      */
-    public PhysicsParticleEntity newPhysicsParticleEntity(double x, double y, double width, double height, Color color, EntityType type,
-                                                          ParticleGroupDef def) {
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+//    public PhysicsParticleEntity newPhysicsParticleEntity(double x, double y, double width, double height, Color color,
+//                                                          ParticleGroupDef def) {
+//        PolygonShape shape = new PolygonShape();
+//        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+//
+//        def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
+//        def.setShape(shape);
+//
+//        ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);
+//
+//        return new PhysicsParticleEntity(particleGroup, color);
+//    }
 
-        def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
-        def.setShape(shape);
-
-        ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);
-
-        return new PhysicsParticleEntity(type, particleGroup, color);
-    }
-
-    private static class EdgeCallback implements RayCastCallback {
-        Fixture fixture;
-        Vec2 point;
-        //Vec2 normal;
-        float bestFraction = 1.0f;
-
-        @Override
-        public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
-            PhysicsEntity e = (PhysicsEntity) fixture.getBody().getUserData();
-            if (e.isRaycastIgnored())
-                return 1;
-
-            if (fraction < bestFraction) {
-                this.fixture = fixture;
-                this.point = point.clone();
-                //this.normal = normal.clone();
-                bestFraction = fraction;
-            }
-
-            return bestFraction;
-        }
-
-        void reset() {
-            fixture = null;
-            point = null;
-            bestFraction = 1.0f;
-        }
-    }
+//    private static class EdgeCallback implements RayCastCallback {
+//        Fixture fixture;
+//        Vec2 point;
+//        //Vec2 normal;
+//        float bestFraction = 1.0f;
+//
+//        @Override
+//        public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
+//            PhysicsEntity e = (PhysicsEntity) fixture.getBody().getUserData();
+//            if (e.isRaycastIgnored())
+//                return 1;
+//
+//            if (fraction < bestFraction) {
+//                this.fixture = fixture;
+//                this.point = point.clone();
+//                //this.normal = normal.clone();
+//                bestFraction = fraction;
+//            }
+//
+//            return bestFraction;
+//        }
+//
+//        void reset() {
+//            fixture = null;
+//            point = null;
+//            bestFraction = 1.0f;
+//        }
+//    }
 
     /**
      * The difference between physics and normal particle entity is that
      * the former is managed (controlled) by the physics world, the latter
      * by the particle emitters.
      */
-    public final class PhysicsParticleEntity extends ParticleEntity {
-        private ParticleGroup group;
-        private double radiusMeters, radiusPixels;
-        private Color color;
-
-        private PhysicsParticleEntity(EntityType type, ParticleGroup group, Color color) {
-            super(type);
-
-            this.group = group;
-            this.color = color;
-
-            radiusMeters = particleSystem.getParticleRadius();
-            radiusPixels = toPixels(radiusMeters);
-        }
-
-        @Override
-        protected void onUpdate() {
-            this.particles.clear();
-
-            Vec2[] centers = particleSystem.getParticlePositionBuffer();
-
-            for (int i = group.getBufferIndex(); i < group.getBufferIndex() + group.getParticleCount(); i++) {
-                Vec2 center = centers[i];
-
-                double x = toPixels(center.x - radiusMeters);
-                double y = toPixels(toMeters(appHeight) - center.y - radiusMeters);
-
-                this.particles.add(new PhysicsParticle(new Point2D(x, y), radiusPixels, color));
-            }
-        }
-
-        @Override
-        protected void onClean() {
-            physicsWorld.destroyParticlesInGroup(group);
-            this.particles.clear();
-        }
-    }
-
-    private class PhysicsParticle extends Particle {
-        PhysicsParticle(Point2D position, double radius, Paint color) {
-            super(position, Point2D.ZERO, Point2D.ZERO, radius, Point2D.ZERO,
-                    Duration.seconds(10), color, BlendMode.SRC_OVER);
-
-        }
-    }
+//    public final class PhysicsParticleEntity extends ParticleEntity {
+//        private ParticleGroup group;
+//        private double radiusMeters, radiusPixels;
+//        private Color color;
+//
+//        private PhysicsParticleEntity(ParticleGroup group, Color color) {
+//            super(type);
+//
+//            this.group = group;
+//            this.color = color;
+//
+//            radiusMeters = particleSystem.getParticleRadius();
+//            radiusPixels = toPixels(radiusMeters);
+//        }
+//
+//        @Override
+//        protected void onUpdate() {
+//            this.particles.clear();
+//
+//            Vec2[] centers = particleSystem.getParticlePositionBuffer();
+//
+//            for (int i = group.getBufferIndex(); i < group.getBufferIndex() + group.getParticleCount(); i++) {
+//                Vec2 center = centers[i];
+//
+//                double x = toPixels(center.x - radiusMeters);
+//                double y = toPixels(toMeters(appHeight) - center.y - radiusMeters);
+//
+//                this.particles.add(new PhysicsParticle(new Point2D(x, y), radiusPixels, color));
+//            }
+//        }
+//
+//        @Override
+//        protected void onClean() {
+//            physicsWorld.destroyParticlesInGroup(group);
+//            this.particles.clear();
+//        }
+//    }
+//
+//    private class PhysicsParticle extends Particle {
+//        PhysicsParticle(Point2D position, double radius, Paint color) {
+//            super(position, Point2D.ZERO, Point2D.ZERO, radius, Point2D.ZERO,
+//                    Duration.seconds(10), color, BlendMode.SRC_OVER);
+//
+//        }
+//    }
 }

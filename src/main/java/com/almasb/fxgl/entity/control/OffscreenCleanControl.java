@@ -26,9 +26,13 @@
 
 package com.almasb.fxgl.entity.control;
 
+import com.almasb.ents.AbstractControl;
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.Required;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.scene.Viewport;
 
 /**
@@ -36,9 +40,11 @@ import com.almasb.fxgl.scene.Viewport;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class OffscreenCleanControl implements Control {
+@Required(BoundingBoxComponent.class)
+public class OffscreenCleanControl extends AbstractControl {
 
     private Viewport viewport;
+    private BoundingBoxComponent bbox;
 
     public OffscreenCleanControl() {
         viewport = GameApplication.getService(ServiceType.GAME)
@@ -47,8 +53,13 @@ public class OffscreenCleanControl implements Control {
     }
 
     @Override
-    public void onUpdate(Entity entity) {
-        if (entity.isOutside(viewport.getVisibleArea())) {
+    public void onAdded(Entity entity) {
+        bbox = Entities.getBBox(entity);
+    }
+
+    @Override
+    public void onUpdate(Entity entity, double v) {
+        if (bbox.isOutside(viewport.getVisibleArea())) {
             entity.removeFromWorld();
         }
     }

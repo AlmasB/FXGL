@@ -57,6 +57,12 @@
             <version>${fxeventbus.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>Ents</artifactId>
+            <version>5a1150ea8b</version>
+        </dependency>
+
         <!-- test scope dependencies -->
         <dependency>
             <groupId>junit</groupId>

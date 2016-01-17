@@ -25,8 +25,7 @@
  */
 package com.almasb.fxgl.effect;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.ents.Entity;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -45,61 +44,61 @@ import java.util.List;
  */
 public class ParticleEntity extends Entity {
 
-    /**
-     * Particles attached to entity
-     */
-    protected List<Particle> particles = new ArrayList<>();
-
-    /**
-     * Particle emitter used to create new particles
-     */
-    private ParticleEmitter emitter;
-
-    /**
-     * Constructs new particle entity with given type.
-     *
-     * @param type entity type
-     */
-    public ParticleEntity(EntityType type) {
-        super(type);
-    }
-
-    /**
-     * Set particle emitter to this entity.
-     * The emitter determines the particle behavior
-     *
-     * @param emitter the emitter
-     */
-    public void setEmitter(ParticleEmitter emitter) {
-        this.emitter = emitter;
-    }
-
-    @Override
-    protected void onUpdate() {
-        if (emitter == null)
-            return;
-
-        particles.addAll(emitter.emit(getX(), getY()));
-
-        for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
-            Particle p = it.next();
-            if (p.update())
-                it.remove();
-        }
-    }
-
-    @Override
-    protected void onClean() {
-        particles.clear();
-    }
-
-    /**
-     * Do NOT call manually.
-     *
-     * @param g graphics context
-     * @param viewportOrigin viewport origin
-     */
-    public void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
-        particles.forEach(p -> p.render(g, viewportOrigin));
-    }
+//    /**
+//     * Particles attached to entity
+//     */
+//    protected List<Particle> particles = new ArrayList<>();
+//
+//    /**
+//     * Particle emitter used to create new particles
+//     */
+//    private ParticleEmitter emitter;
+//
+//    /**
+//     * Constructs new particle entity with given type.
+//     *
+//     * @param type entity type
+//     */
+//    public ParticleEntity(EntityType type) {
+//        super(type);
+//    }
+//
+//    /**
+//     * Set particle emitter to this entity.
+//     * The emitter determines the particle behavior
+//     *
+//     * @param emitter the emitter
+//     */
+//    public void setEmitter(ParticleEmitter emitter) {
+//        this.emitter = emitter;
+//    }
+//
+//    @Override
+//    protected void onUpdate() {
+//        if (emitter == null)
+//            return;
+//
+//        particles.addAll(emitter.emit(getX(), getY()));
+//
+//        for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
+//            Particle p = it.next();
+//            if (p.update())
+//                it.remove();
+//        }
+//    }
+//
+//    @Override
+//    protected void onClean() {
+//        particles.clear();
+//    }
+//
+//    /**
+//     * Do NOT call manually.
+//     *
+//     * @param g graphics context
+//     * @param viewportOrigin viewport origin
+//     */
+//    public void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
+//        particles.forEach(p -> p.render(g, viewportOrigin));
+//    }
 }

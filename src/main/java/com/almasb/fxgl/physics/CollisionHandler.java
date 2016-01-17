@@ -25,8 +25,7 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.ents.Entity;
 
 /**
  * Handler for a collision that occurred between two entities.
@@ -35,7 +34,7 @@ import com.almasb.fxgl.entity.EntityType;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class CollisionHandler extends Pair<EntityType> {
+public abstract class CollisionHandler<T> extends Pair<T> {
 
     /**
      * The order of types determines the order of entities in callbacks.
@@ -43,7 +42,7 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param a entity type of the first entity
      * @param b entity type of the second entity
      */
-    public CollisionHandler(EntityType a, EntityType b) {
+    public CollisionHandler(T a, T b) {
         super(a, b);
     }
 
@@ -98,10 +97,10 @@ public abstract class CollisionHandler extends Pair<EntityType> {
      * @param b entity type B
      * @return copy of collision handler
      */
-    public final CollisionHandler copyFor(EntityType a, EntityType b) {
+    public final CollisionHandler copyFor(T a, T b) {
         CollisionHandler copy = this;
 
-        return new CollisionHandler(a, b) {
+        return new CollisionHandler<T>(a, b) {
             @Override
             protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
                 copy.onHitBoxTrigger(a, b, boxA, boxB);

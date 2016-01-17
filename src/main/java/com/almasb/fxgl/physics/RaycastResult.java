@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.ents.Entity;
 import javafx.geometry.Point2D;
 
 import java.util.Optional;
@@ -39,10 +40,10 @@ import java.util.Optional;
  */
 public final class RaycastResult {
 
-    private Optional<PhysicsEntity> entity;
+    private Optional<Entity> entity;
     private Optional<Point2D> point;
 
-    RaycastResult(Optional<PhysicsEntity> entity, Optional<Point2D> point) {
+    RaycastResult(Optional<Entity> entity, Optional<Point2D> point) {
         this.entity = entity;
         this.point = point;
     }
@@ -51,7 +52,7 @@ public final class RaycastResult {
      * @return the first physics entity that collided with the ray
      * whose raycastIgnored flag is false
      */
-    public Optional<PhysicsEntity> getEntity() {
+    public Optional<Entity> getEntity() {
         return entity;
     }
 

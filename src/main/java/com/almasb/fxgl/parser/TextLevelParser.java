@@ -25,10 +25,10 @@
  */
 package com.almasb.fxgl.parser;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import java.util.ArrayList;

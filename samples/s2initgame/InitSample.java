@@ -23,24 +23,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s3input;
+package s2initgame;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
-public class BasicGameApplication extends GameApplication {
+/**
+ * This is an example of a basic FXGL game application.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ */
+public class InitSample extends GameApplication {
 
-    private enum Type implements EntityType {
+    // 1. define types of entities in the game using Enum
+    private enum Type {
         PLAYER
     }
 
+    // make the field instance level
+    // but do NOT init here for properly functioning save-load system
     private Entity player;
 
     @Override
@@ -57,51 +64,26 @@ public class BasicGameApplication extends GameApplication {
     }
 
     @Override
-    protected void initInput() {
-        // 1. get input manager
-        Input input = getInput();
-
-        // 2. add key/mouse bound actions
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                player.translate(-5, 0);
-            }
-        }, KeyCode.A);
-
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                player.translate(5, 0);
-            }
-        }, KeyCode.D);
-
-        input.addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                player.translate(0, -5);
-            }
-        }, KeyCode.W);
-
-        input.addAction(new UserAction("Move Down") {
-            @Override
-            protected void onAction() {
-                player.translate(0, 5);
-            }
-        }, KeyCode.S);
-    }
+    protected void initInput() {}
 
     @Override
     protected void initAssets() {}
 
     @Override
     protected void initGame() {
-        player = new Entity(Type.PLAYER);
-        player.setPosition(100, 100);
+        // 2. create entity and add necessary components
+        player = new Entity();
 
+        // set entity position to x = 100, y = 100
+        player.addComponent(new PositionComponent(100, 100));
+
+        // 3. create graphics for entity
         Rectangle graphics = new Rectangle(40, 40);
-        player.setSceneView(graphics);
 
+        // set graphics to entity
+        player.addComponent(new MainViewComponent(graphics));
+
+        // 4. add entity to game world
         getGameWorld().addEntity(player);
     }
 
@@ -112,7 +94,7 @@ public class BasicGameApplication extends GameApplication {
     protected void initUI() {}
 
     @Override
-    public void onUpdate() {}
+    protected void onUpdate() {}
 
     public static void main(String[] args) {
         launch(args);

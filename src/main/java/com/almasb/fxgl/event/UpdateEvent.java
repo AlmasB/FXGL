@@ -40,7 +40,17 @@ public final class UpdateEvent extends Event {
     //private long now;
     //private long tick;
 
-    public UpdateEvent() {
+    private final double tpf;
+
+    /**
+     * @return time per frame
+     */
+    public double tpf() {
+        return tpf;
+    }
+
+    public UpdateEvent(double tpf) {
         super(ANY);
+        this.tpf = tpf;
     }
 }

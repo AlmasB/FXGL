@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,22 +23,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.entity.Entity;
+package common;
+
+import com.almasb.ents.AbstractControl;
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.Required;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.PositionComponent;
 
 /**
- * A common interface for specifying behavior for an entity / entities.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@FunctionalInterface
-public interface Control {
+@Required(PositionComponent.class)
+public class PlayerControl extends AbstractControl {
 
-    /**
-     * Called as part of the main loop, a single update tick
-     *
-     * @param entity the entity to which this control was added
-     */
-    void onUpdate(Entity entity);
+    private PositionComponent position;
+
+    @Override
+    public void onAdded(Entity entity) {
+        position = Entities.getPosition(entity);
+    }
+
+    private double speed = 0;
+
+    @Override
+    public void onUpdate(Entity entity, double tpf) {
+        speed = tpf * 60;
+    }
+
+    public void up() {
+        position.translateY(-5 * speed);
+    }
+
+    public void down() {
+        position.translateY(5 * speed);
+    }
+
+    public void left() {
+        position.translateX(-5 * speed);
+    }
+
+    public void right() {
+        position.translateX(5 * speed);
+    }
 }

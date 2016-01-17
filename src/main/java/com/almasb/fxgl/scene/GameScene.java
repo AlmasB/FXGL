@@ -26,17 +26,20 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.ObjectComponent;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.FXGLInputEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
+import com.almasb.fxgl.gameplay.GameWorldListener;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
@@ -66,7 +69,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameScene extends FXGLScene {
+public final class GameScene extends FXGLScene implements GameWorldListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
@@ -85,7 +88,7 @@ public final class GameScene extends FXGLScene {
      */
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
-    private List<ParticleEntity> particles = new ArrayList<>();
+    //private List<ParticleEntity> particles = new ArrayList<>();
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -105,17 +108,11 @@ public final class GameScene extends FXGLScene {
         eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
         eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
             Entity entity = event.getEntity();
-            onEntityAdded(entity);
+            onAdded(entity);
         });
         eventBus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
             Entity entity = event.getEntity();
-            onEntityRemoved(entity);
-        });
-        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
-            onWorldUpdate();
-        });
-        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
-            onWorldReset();
+            onRemoved(entity);
         });
 
         addEventHandler(MouseEvent.ANY, event -> {
@@ -261,38 +258,6 @@ public final class GameScene extends FXGLScene {
         uiRoot.setMouseTransparent(b);
     }
 
-    private void onEntityAdded(Entity entity) {
-        entity.getSceneView().ifPresent(view -> {
-            getRenderLayer(view.getRenderLayer()).getChildren().add(view);
-        });
-
-        if (entity instanceof ParticleEntity) {
-            log.finer("Adding particle entity");
-            particles.add((ParticleEntity) entity);
-        }
-    }
-
-    private void onEntityRemoved(Entity entity) {
-        particles.remove(entity);
-    }
-
-    private void onWorldUpdate() {
-        particlesGC.setGlobalAlpha(1);
-        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
-        particlesGC.clearRect(0, 0, getWidth(), getHeight());
-
-        particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
-    }
-
-    private void onWorldReset() {
-        log.finer("Resetting game scene");
-
-        getViewport().unbind();
-        particles.clear();
-        gameRoot.getChildren().clear();
-        uiRoot.getChildren().clear();
-    }
-
     /**
      * Returns graphics context of the game scene.
      * The render layer is over all entities.
@@ -303,5 +268,46 @@ public final class GameScene extends FXGLScene {
      */
     public GraphicsContext getGraphicsContext() {
         return particlesGC;
+    }
+
+    @Override
+    public void onUpdate(double tpf) {
+        particlesGC.setGlobalAlpha(1);
+        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
+        particlesGC.clearRect(0, 0, getWidth(), getHeight());
+
+        //particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
+    }
+
+    @Override
+    public void onReset() {
+        log.finer("Resetting game scene");
+
+        getViewport().unbind();
+        //particles.clear();
+        gameRoot.getChildren().clear();
+        uiRoot.getChildren().clear();
+    }
+
+    @Override
+    public void onAdded(Entity entity) {
+        entity.getComponent(MainViewComponent.class)
+                .map(ObjectComponent::getValue)
+                .ifPresent(view -> getRenderLayer(view.getRenderLayer()).getChildren().add(view));
+
+
+//        entity.getSceneView().ifPresent(view -> {
+//            getRenderLayer(view.getRenderLayer()).getChildren().add(view);
+//        });
+//
+//        if (entity instanceof ParticleEntity) {
+//            log.finer("Adding particle entity");
+//            particles.add((ParticleEntity) entity);
+//        }
+    }
+
+    @Override
+    public void onRemoved(Entity entity) {
+        //particles.remove(entity);
     }
 }
