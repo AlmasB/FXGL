@@ -25,10 +25,15 @@
  */
 package s10realphysics;
 
+import com.almasb.ents.Entity;
+import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -43,10 +48,6 @@ import org.jbox2d.dynamics.FixtureDef;
  *
  */
 public class RealPhysicsSample extends GameApplication {
-
-    private enum Type {
-        GROUND, BOX
-    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -68,25 +69,26 @@ public class RealPhysicsSample extends GameApplication {
         input.addAction(new UserAction("Spawn Box") {
             @Override
             protected void onActionBegin() {
-//                // 1. create physics entity
-//                PhysicsEntity box = new PhysicsEntity(Type.GROUND);
-//                box.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
-//
-//                // 2. set body type to dynamic for moving entities
-//                // not controlled by user
-//                box.setBodyType(BodyType.DYNAMIC);
-//
-//                // 3. set various physics properties
-//                FixtureDef fd = new FixtureDef();
-//                fd.setDensity(0.5f);
-//                fd.setRestitution(0.3f);
-//                box.setFixtureDef(fd);
-//
-//                Rectangle rect = new Rectangle(40, 40);
-//                rect.setFill(Color.BLUE);
-//                box.setSceneView(rect);
-//
-//                getGameWorld().addEntity(box);
+                // 1. create physics entity
+                Entity box = new Entity();
+                box.addComponent(new PositionComponent(input.getMouse().getGameXY()));
+                box.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+
+                PhysicsComponent physics = new PhysicsComponent();
+
+                // 2. set body type to dynamic for moving entities
+                // not controlled by user
+                physics.setBodyType(BodyType.DYNAMIC);
+
+                // 3. set various physics properties
+                FixtureDef fd = new FixtureDef();
+                fd.setDensity(0.5f);
+                fd.setRestitution(0.3f);
+                physics.setFixtureDef(fd);
+
+                box.addComponent(physics);
+
+                getGameWorld().addEntity(box);
             }
         }, MouseButton.PRIMARY);
     }
@@ -96,12 +98,13 @@ public class RealPhysicsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-//        // 4. by default a physics entity is statis
-//        PhysicsEntity ground = new PhysicsEntity(Type.GROUND);
-//        ground.setPosition(0, 500);
-//        ground.setSceneView(new Rectangle(800, 100));
-//
-//        getGameWorld().addEntity(ground);
+        // 4. by default a physics entity is statis
+        Entity ground = new Entity();
+        ground.addComponent(new PositionComponent(0, 500));
+        ground.addComponent(new MainViewComponent(new Rectangle(800, 100)));
+        ground.addComponent(new PhysicsComponent());
+
+        getGameWorld().addEntity(ground);
     }
 
     @Override

@@ -213,7 +213,7 @@
 ////                b.addControl(new Control() {
 ////
 ////                    @Override
-////                    public void onUpdate(Entity entity) {
+////                    public void onWorldUpdate(Entity entity) {
 ////                        System.out.println(entity.getRotation());
 ////                    }
 ////                });
@@ -339,7 +339,7 @@
 //    }
 //
 //    @Override
-//    protected void onUpdate() {}
+//    protected void onWorldUpdate() {}
 //
 //    public static void main(String[] args) {
 //        launch(args);

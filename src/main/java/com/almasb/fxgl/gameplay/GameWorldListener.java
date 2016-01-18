@@ -32,6 +32,6 @@ import com.almasb.ents.EntityWorldListener;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface GameWorldListener extends EntityWorldListener {
-    void onUpdate(double tpf);
-    void onReset();
+    void onWorldUpdate(double tpf);
+    void onWorldReset();
 }

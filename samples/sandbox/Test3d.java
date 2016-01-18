@@ -148,7 +148,7 @@
 //    private Mouse mouse;
 //
 //    @Override
-//    protected void onUpdate() {
+//    protected void onWorldUpdate() {
 //        if (mouse.isRightPressed()) {
 //            double dx = mouse.getScreenX() - x;
 //            if (dx > 2) {

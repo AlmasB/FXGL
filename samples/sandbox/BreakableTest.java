@@ -145,7 +145,7 @@
 //    protected void initUI() {}
 //
 //    @Override
-//    protected void onUpdate() {}
+//    protected void onWorldUpdate() {}
 //
 //    @OnUserAction(name = "Break", type = ActionType.ON_ACTION_BEGIN)
 //    public void breakE() {

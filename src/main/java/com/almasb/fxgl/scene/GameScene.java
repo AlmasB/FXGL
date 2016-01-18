@@ -31,7 +31,7 @@ import com.almasb.ents.component.ObjectComponent;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.effect.ParticleEntity;
+import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.MainViewComponent;
@@ -88,7 +88,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
      */
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
-    //private List<ParticleEntity> particles = new ArrayList<>();
+    private List<ParticleControl> particles = new ArrayList<>();
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -113,6 +113,14 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
         eventBus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
             Entity entity = event.getEntity();
             onRemoved(entity);
+        });
+
+        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
+            onWorldUpdate(event.tpf());
+        });
+
+        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
+            onWorldReset();
         });
 
         addEventHandler(MouseEvent.ANY, event -> {
@@ -271,20 +279,20 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
     }
 
     @Override
-    public void onUpdate(double tpf) {
+    public void onWorldUpdate(double tpf) {
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
-        //particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
+        particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
     @Override
-    public void onReset() {
+    public void onWorldReset() {
         log.finer("Resetting game scene");
 
         getViewport().unbind();
-        //particles.clear();
+        particles.clear();
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
     }
@@ -295,19 +303,13 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
                 .map(ObjectComponent::getValue)
                 .ifPresent(view -> getRenderLayer(view.getRenderLayer()).getChildren().add(view));
 
-
-//        entity.getSceneView().ifPresent(view -> {
-//            getRenderLayer(view.getRenderLayer()).getChildren().add(view);
-//        });
-//
-//        if (entity instanceof ParticleEntity) {
-//            log.finer("Adding particle entity");
-//            particles.add((ParticleEntity) entity);
-//        }
+        entity.getControl(ParticleControl.class)
+                .ifPresent(particles::add);
     }
 
     @Override
     public void onRemoved(Entity entity) {
-        //particles.remove(entity);
+        entity.getControl(ParticleControl.class)
+                .ifPresent(particles::remove);
     }
 }

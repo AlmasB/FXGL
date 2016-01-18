@@ -42,7 +42,7 @@
 //    }
 //
 //    @Override
-//    public void onUpdate(Entity entity) {
+//    public void onWorldUpdate(Entity entity) {
 //
 //    }
 //

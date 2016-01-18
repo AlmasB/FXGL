@@ -25,11 +25,14 @@
  */
 package s8particles;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
-import com.almasb.fxgl.effect.ParticleEntity;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -37,10 +40,6 @@ import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 public class ParticlesSample extends GameApplication {
-
-    private enum Type {
-        EXPLOSION
-    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -62,20 +61,19 @@ public class ParticlesSample extends GameApplication {
         input.addAction(new UserAction("Spawn Explosion") {
             @Override
             protected void onActionBegin() {
-//                // 1. create particle entity
-//                ParticleEntity explosion = new ParticleEntity(Type.EXPLOSION);
-//                explosion.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
-//
-//                // 2. create and configure emitter
-//                ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
-//                explosion.setEmitter(emitter);
-//
-//                // 3. set expiry time to 0.5 seconds
-//                // After 0.5 secs the entity will be removed from world
-//                explosion.setExpireTime(Duration.seconds(0.5));
-//
-//                // 4. add entity to game world
-//                getGameWorld().addEntities(explosion);
+                // 1. create particle entity
+                Entity explosion = new Entity();
+                explosion.addComponent(new PositionComponent(input.getMouse().getGameXY()));
+
+                // 2. create and configure emitter
+                ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
+                ParticleControl control = new ParticleControl(emitter);
+
+                explosion.addControl(control);
+                explosion.addControl(new ExpireCleanControl(Duration.seconds(3)));
+
+                // 4. add entity to game world
+                getGameWorld().addEntities(explosion);
             }
         }, MouseButton.PRIMARY);
     }

@@ -133,7 +133,7 @@ public class Particle {
     /**
      * @return true if particle died
      */
-    boolean update() {
+    boolean update(double tpf) {
         x += velX;
         y += velY;
 

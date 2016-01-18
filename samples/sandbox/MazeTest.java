@@ -186,7 +186,7 @@
 //    }
 //
 //    @Override
-//    protected void onUpdate() {
+//    protected void onWorldUpdate() {
 //        getGameScene().getGraphicsContext().strokeLine(0, 0, getWidth(), getHeight());
 //    }
 //}

@@ -108,7 +108,7 @@
 //        }
 //
 //        @Override
-//        public void onUpdate(Entity entity) {
+//        public void onWorldUpdate(Entity entity) {
 //            entity.setX(entity.getX() - Math.random() * 13);
 //
 //            if (entity.isOutside(0, 0, getWidth(), getHeight())) {
@@ -182,7 +182,7 @@
 //    }
 //
 //    @Override
-//    protected void onUpdate() {}
+//    protected void onWorldUpdate() {}
 //
 //    private void spawnSparks(double x, double y) {
 //        ParticleEntity smoke = new ParticleEntity(Type.PARTICLES);

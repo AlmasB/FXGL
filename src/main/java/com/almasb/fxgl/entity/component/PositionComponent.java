@@ -44,6 +44,10 @@ public class PositionComponent extends AbstractComponent {
         this.y = new SimpleDoubleProperty(y);
     }
 
+    public PositionComponent(Point2D position) {
+        this(position.getX(), position.getY());
+    }
+
     public PositionComponent() {
         this(0, 0);
     }

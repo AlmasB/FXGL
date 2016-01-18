@@ -29,8 +29,6 @@ import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.effect.Particle;
-import com.almasb.fxgl.effect.ParticleEntity;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.*;
@@ -79,7 +77,7 @@ public final class PhysicsWorld {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.PhysicsWorld");
 
-    //private static final float TIME_STEP = 1 / 60.0f;
+    private static final float TIME_STEP = 1 / 60.0f;
 
     private World physicsWorld = new World(new Vec2(0, -10));
 
@@ -175,14 +173,14 @@ public final class PhysicsWorld {
 
         initParticles();
 
-//        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
-//        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-//            addEntity(event.getEntity());
-//        });
-//        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-//            removeEntity(event.getEntity());
-//        });
-//        bus.addEventHandler(UpdateEvent.ANY, event -> update());
+        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
+        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
+            addEntity(event.getEntity());
+        });
+        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
+            removeEntity(event.getEntity());
+        });
+        bus.addEventHandler(UpdateEvent.ANY, event -> update(event.tpf()));
 
         log.finer("Physics world initialized");
     }
@@ -304,25 +302,21 @@ public final class PhysicsWorld {
     private void addEntity(Entity entity) {
         entities.add(entity);
 
-//        if (entity.getComponent(PhysicsComponent.class).isPresent()) {
-//
-//        }
-
-//        if (entity instanceof PhysicsEntity) {
-//            PhysicsEntity pEntity = (PhysicsEntity) entity;
-//            createBody(pEntity);
-//            pEntity.onInitPhysics();
-//        }
+        if (entity.hasComponent(PhysicsComponent.class)) {
+            createBody(entity);
+        }
     }
 
     private void removeEntity(Entity entity) {
         entities.remove(entity);
-//        if (entity instanceof PhysicsEntity)
-//            destroyBody((PhysicsEntity) entity);
+
+        if (entity.hasComponent(PhysicsComponent.class)) {
+            destroyBody(entity);
+        }
     }
 
     private void update(double tpf) {
-        physicsWorld.step((float)tpf, 8, 3);
+        physicsWorld.step(TIME_STEP, 8, 3);
 
         processCollisions();
 
@@ -383,22 +377,22 @@ public final class PhysicsWorld {
         createFixtures(e);
 
         physics.body.setUserData(e);
+        physics.onInitPhysics();
     }
 
     private void createFixtures(Entity e) {
         BoundingBoxComponent bbox = Entities.getBBox(e);
         PhysicsComponent physics = Entities.getPhysics(e);
+        PositionComponent position = Entities.getPosition(e);
 
         Point2D entityCenter = bbox.getCenterWorld();
 
         for (HitBox box : bbox.hitBoxesProperty()) {
-            Bounds bounds = box.translate(0, 0);
+            Bounds bounds = box.translate(position.getX(), position.getY());
 
             // take world center bounds and subtract from entity center (all in pixels) to get local center
-            //Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
-            //Point2D boundsLocalCenter = boundsCenter.subtract(entityCenter);
-
-            Point2D boundsCenterLocal = bbox.getCenterLocal();
+            Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
+            Point2D boundsCenterLocal = boundsCenter.subtract(entityCenter);
 
             double w = bounds.getWidth();
             double h = bounds.getHeight();
@@ -413,7 +407,6 @@ public final class PhysicsWorld {
 
             Fixture fixture = physics.body.createFixture(fd);
             fixture.setUserData(box);
-            //e.fixtures.add(fixture);
         }
     }
 
@@ -593,7 +586,7 @@ public final class PhysicsWorld {
 //        }
 //
 //        @Override
-//        protected void onUpdate() {
+//        protected void onWorldUpdate() {
 //            this.particles.clear();
 //
 //            Vec2[] centers = particleSystem.getParticlePositionBuffer();

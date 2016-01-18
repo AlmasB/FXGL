@@ -105,7 +105,7 @@
 //    }
 //
 //    @Override
-//    public void onUpdate() {
+//    public void onWorldUpdate() {
 //        debug.setText("Player is inside viewport: "
 //                + player.isWithin(getGameScene().getViewport().getVisibleArea()));
 //    }

@@ -24,37 +24,64 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity.control;
+package com.almasb.fxgl.effect;
 
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import javafx.util.Duration;
+import com.almasb.ents.component.Required;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ExpireCleanControl extends AbstractControl {
+@Required(PositionComponent.class)
+public class ParticleControl extends AbstractControl {
 
-    private Duration expire;
+    private ParticleEmitter emitter;
 
-    public ExpireCleanControl(Duration expire) {
-        this.expire = expire;
+    private List<Particle> particles = new ArrayList<>();
+
+    private PositionComponent position;
+
+    public ParticleControl(ParticleEmitter emitter) {
+        this.emitter = emitter;
     }
 
     @Override
     public void onAdded(Entity entity) {
-        entity.activeProperty().addListener((observable, oldValue, isActive) -> {
-            if (isActive) {
-                GameApplication.getService(ServiceType.MASTER_TIMER)
-                        .runOnceAfter(entity::removeFromWorld, expire);
-            }
-        });
+        position = Entities.getPosition(entity);
     }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
+        particles.addAll(emitter.emit(position.getX(), position.getY()));
 
+        for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
+            Particle p = it.next();
+            if (p.update(tpf))
+                it.remove();
+        }
+    }
+
+    @Override
+    public void onRemoved(Entity entity) {
+        particles.clear();
+    }
+
+    /**
+     * Do NOT call manually.
+     *
+     * @param g graphics context
+     * @param viewportOrigin viewport origin
+     */
+    public void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
+        particles.forEach(p -> p.render(g, viewportOrigin));
     }
 }

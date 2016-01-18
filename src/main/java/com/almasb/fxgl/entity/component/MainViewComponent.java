@@ -81,6 +81,8 @@ public class MainViewComponent extends ObjectComponent<EntityView> {
                 0, 0, view.getLayoutBounds().getWidth(), view.getLayoutBounds().getHeight()
             )));
 
+            System.out.println(bbox.getWidth() + " " + bbox.getHeight());
+
             entity.addComponent(bbox);
         }
     }

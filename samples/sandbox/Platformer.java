@@ -108,7 +108,7 @@
 //    }
 //
 //    @Override
-//    protected void onUpdate() {
+//    protected void onWorldUpdate() {
 //        //player.setLinearVelocity(0, player.getLinearVelocity().getY());
 //    }
 //
@@ -190,7 +190,7 @@
 //        }
 //
 //        @Override
-//        public void onUpdate(Entity entity) {
+//        public void onWorldUpdate(Entity entity) {
 //            entity.translate(10, 0);
 //        }
 //    }

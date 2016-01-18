@@ -49,6 +49,8 @@ public class BoundingBoxComponent extends AbstractComponent {
         width.set(computeWidth());
         height.set(computeHeight());
 
+        System.out.println(getWidth() + " " + getHeight());
+
         hitBoxes.addListener((ListChangeListener<? super HitBox>) c -> {
             width.set(computeWidth());
             height.set(computeHeight());
