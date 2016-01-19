@@ -114,7 +114,7 @@
 //
 //    private void initPlatform(double x, double y, double w, double h) {
 //        PhysicsEntity platform = new PhysicsEntity(Type.PLATFORM);
-//        platform.setPosition(x, y);
+//        platform.setValue(x, y);
 //        platform.setSceneView(new Rectangle(w, h, Color.GRAY));
 //        platform.setCollidable(true);
 //
@@ -123,7 +123,7 @@
 //
 //    private void initPlayer() {
 //        player = new PhysicsEntity(Type.PLAYER);
-//        player.setPosition(40, 40);
+//        player.setValue(40, 40);
 //        player.setSceneView(new Rectangle(40, 60, Color.BLUE));
 //        player.setBodyType(BodyType.DYNAMIC);
 //        player.setCollidable(true);
@@ -162,7 +162,7 @@
 //
 //    private void shoot() {
 //        ParticleEntity fire = new ParticleEntity(Type.PLAYER);
-//        fire.setPosition(player.getCenter());
+//        fire.setValue(player.getCenter());
 //        ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
 //        emitter.setEmissionRate(1);
 //        emitter.setSize(1, 9);

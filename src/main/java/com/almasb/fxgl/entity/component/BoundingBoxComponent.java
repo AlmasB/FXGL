@@ -27,7 +27,6 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.ents.AbstractComponent;
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -48,8 +47,6 @@ public class BoundingBoxComponent extends AbstractComponent {
         hitBoxes.addAll(boxes);
         width.set(computeWidth());
         height.set(computeHeight());
-
-        System.out.println(getWidth() + " " + getHeight());
 
         hitBoxes.addListener((ListChangeListener<? super HitBox>) c -> {
             width.set(computeWidth());
@@ -153,7 +150,7 @@ public class BoundingBoxComponent extends AbstractComponent {
      */
     public Point2D getCenterWorld() {
         Point2D position = getEntity().getComponent(PositionComponent.class)
-                .map(PositionComponent::getPosition)
+                .map(PositionComponent::getValue)
                 .orElse(Point2D.ZERO);
 
         return getCenterLocal().add(position);

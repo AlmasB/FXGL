@@ -28,36 +28,48 @@ package com.almasb.fxgl.entity;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.entity.component.*;
-import com.almasb.fxgl.physics.PhysicsComponent;
+import javafx.scene.text.Text;
 
 /**
- * Helper class with static convenience methods.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Entities {
+public class GameEntity extends Entity {
+    private TypeComponent type;
+    private PositionComponent position;
+    private RotationComponent rotation;
+    private BoundingBoxComponent bbox;
+    private MainViewComponent view;
 
-    public static PositionComponent getPosition(Entity e) {
-        return e.getComponentUnsafe(PositionComponent.class);
+    public GameEntity() {
+        type = new TypeComponent();
+        position = new PositionComponent();
+        rotation = new RotationComponent();
+        bbox = new BoundingBoxComponent();
+        view = new MainViewComponent();
+
+        addComponent(position);
+        addComponent(rotation);
+        addComponent(bbox);
+        addComponent(view);
     }
 
-    public static RotationComponent getRotation(Entity e) {
-        return e.getComponentUnsafe(RotationComponent.class);
+    public TypeComponent getTypeComponent() {
+        return type;
     }
 
-    public static BoundingBoxComponent getBBox(Entity e) {
-        return e.getComponentUnsafe(BoundingBoxComponent.class);
+    public PositionComponent getPositionComponent() {
+        return position;
     }
 
-    public static PhysicsComponent getPhysics(Entity e) {
-        return e.getComponentUnsafe(PhysicsComponent.class);
+    public RotationComponent getRotationComponent() {
+        return rotation;
     }
 
-    public static MainViewComponent getMainView(Entity e) {
-        return e.getComponentUnsafe(MainViewComponent.class);
+    public BoundingBoxComponent getBoundingBoxComponent() {
+        return bbox;
     }
 
-    public static TypeComponent getType(Entity e) {
-        return e.getComponentUnsafe(TypeComponent.class);
+    public MainViewComponent getMainViewComponent() {
+        return view;
     }
 }

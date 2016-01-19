@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s18renderlayer;
+package s2initgame2;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -40,19 +36,22 @@ import javafx.scene.shape.Rectangle;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class RenderingSample extends GameApplication {
+public class InitSample2 extends GameApplication {
 
+    // 1. define types of entities in the game using Enum
     private enum Type {
         PLAYER
     }
 
-    private Entity player;
+    // make the field instance level
+    // but do NOT init here for properly functioning save-load system
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("RenderingSample");
+        settings.setTitle("InitSample2");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -69,36 +68,23 @@ public class RenderingSample extends GameApplication {
 
     @Override
     protected void initGame() {
-//        player = new Entity(Type.PLAYER);
-//        player.setValue(100, 100);
+        player = new GameEntity();
+        player.getPositionComponent().setValue(100, 100);
+
+//        // 2. create entity and add necessary components
+//        player = new Entity();
 //
+//        // set entity position to x = 100, y = 100
+//        player.addComponent(new PositionComponent(100, 100));
+//
+//        // 3. create graphics for entity
 //        Rectangle graphics = new Rectangle(40, 40);
-//        player.setSceneView(graphics);
 //
+//        // set graphics to entity
+//        player.addComponent(new MainViewComponent(graphics));
+//
+//        // 4. add entity to game world
 //        getGameWorld().addEntity(player);
-//
-//        Entity box = Entity.noType();
-//        box.setValue(80, 80);
-//
-//        // 1. when adding a scene view also attach a render layer
-//        // either predefined or created dynamically like below
-//        box.setSceneView(new Rectangle(40, 40, Color.RED), new RenderLayer() {
-//            @Override
-//            public String name() {
-//                // 2. specify the unique name for that layer
-//                return "LAYER_BELOW_PLAYER";
-//            }
-//
-//            @Override
-//            public int index() {
-//                // 3. specify layer index, higher values will drawn above lower values
-//                return 1000;
-//            }
-//        });
-//
-//        // we have added box after player but because of the render layer we specified
-//        // the box will be drawn below the player
-//        getGameWorld().addEntity(box);
     }
 
     @Override

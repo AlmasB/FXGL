@@ -107,24 +107,24 @@
 //        score = new SimpleIntegerProperty(133);
 //
 //        Entity bg = Entity.noType();
-//        bg.setPosition(0, getHeight() - 40);
+//        bg.setValue(0, getHeight() - 40);
 //        bg.setSceneView(new Rectangle(1200, 40, Color.BLACK));
 //
 //        Entity block = Entity.noType();
-//        block.setPosition(0, getHeight() - 80);
+//        block.setValue(0, getHeight() - 80);
 //        block.setSceneView(new Rectangle(40, 40, Color.RED));
 //
 //        Entity block2 = Entity.noType();
-//        block2.setPosition(1160, getHeight() - 80);
+//        block2.setValue(1160, getHeight() - 80);
 //        block2.setSceneView(new Rectangle(40, 40, Color.RED));
 //
 //        Entity block3 = Entity.noType();
-//        block3.setPosition(getWidth() - 80, getHeight());
+//        block3.setValue(getWidth() - 80, getHeight());
 //        block3.setSceneView(new Rectangle(40, 40, Color.YELLOW));
 //        block3.addControl(new LiftControl(Duration.seconds(2), 80, true));
 //
 //        player = Entity.noType();
-//        player.setPosition(40, getHeight() - 80);
+//        player.setValue(40, getHeight() - 80);
 //        player.setSceneView(new Rectangle(40, 40, Color.BLUE));
 //
 //        getGameWorld().addEntities(bg, block, block2, block3, player);
@@ -139,7 +139,7 @@
 //
 //                if (cell.hasLeftWall()) {
 //                    Entity e = Entity.noType();
-//                    e.setPosition(x*40, y*40);
+//                    e.setValue(x*40, y*40);
 //                    e.setSceneView(new Line(0, 0, 0, 40));
 //
 //                    getGameWorld().addEntity(e);
@@ -147,7 +147,7 @@
 //
 //                if (cell.hasTopWall()) {
 //                    Entity e = Entity.noType();
-//                    e.setPosition(x*40, y*40);
+//                    e.setValue(x*40, y*40);
 //                    e.setSceneView(new Line(0, 0, 40, 0));
 //
 //                    getGameWorld().addEntity(e);
@@ -156,13 +156,13 @@
 //        }
 //
 //        Entity e = Entity.noType();
-//        e.setPosition(10*40, 0*40);
+//        e.setValue(10*40, 0*40);
 //        e.setSceneView(new Line(0, 0, 0, 40*10));
 //
 //        getGameWorld().addEntity(e);
 //
 //        Entity e2 = Entity.noType();
-//        e2.setPosition(0*40, 10*40);
+//        e2.setValue(0*40, 10*40);
 //        e2.setSceneView(new Line(0, 0, 40*10, 0));
 //
 //        getGameWorld().addEntity(e2);

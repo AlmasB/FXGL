@@ -26,11 +26,11 @@
 package s14achievements;
 
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -109,9 +109,9 @@ public class AchievementsSample extends GameApplication {
     @Override
     protected void initGame() {
         player = new Entity();
-        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new TypeComponent(Type.PLAYER));
         player.addComponent(new PositionComponent(100, 100));
-        player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);

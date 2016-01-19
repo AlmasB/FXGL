@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.github.AlmasB</groupId>
             <artifactId>Ents</artifactId>
-            <version>5a1150ea8b</version>
+            <version>3f9a4ab213</version>
         </dependency>
 
         <!-- test scope dependencies -->

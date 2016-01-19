@@ -90,7 +90,7 @@ public class SceneScaleTest extends GameApplication {
     private Entity createEntity(double x, double y) {
         Entity e = new Entity();
         e.addComponent(new PositionComponent(x, y));
-        e.addComponent(new MainViewComponent(new Rectangle(40, 40)));
+        //e.addComponent(new MainViewComponent(new Rectangle(40, 40)));
 
         getGameWorld().addEntity(e);
         return e;

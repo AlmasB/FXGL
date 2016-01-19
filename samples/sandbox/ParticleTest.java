@@ -79,7 +79,7 @@
 //            @Override
 //            protected void onActionBegin() {
 //                ParticleEntity smoke = new ParticleEntity(Type.PARTICLES);
-//                smoke.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
+//                smoke.setValue(input.getMouse().getGameX(), input.getMouse().getGameY());
 //
 //                ParticleEmitter emitter = ParticleEmitters.newSmokeEmitter();
 //                emitter.setVelocityFunction((i, x, y) -> new Point2D(-5, 0));
@@ -132,7 +132,7 @@
 ////        for (int y = 0; y < 30; y++) {
 ////            for (int x = 0; x < 20; x++) {
 ////                PhysicsEntity rect = new PhysicsEntity(Type.PARTICLES);
-////                rect.setPosition(x * 4 + 100, y * 2 + 100);
+////                rect.setValue(x * 4 + 100, y * 2 + 100);
 ////                rect.setSceneView(new Rectangle(4, 2, Color.RED));
 ////                rect.setBodyType(BodyType.DYNAMIC);
 ////
@@ -145,14 +145,14 @@
 //        Text text = UIFactory.newText("F", 72);
 //
 //        Entity e = new Entity(Type.LETTER);
-//        e.setPosition(400, 300);
+//        e.setValue(400, 300);
 //        e.setSceneView(text);
 //        e.setCollidable(true);
 //
 //        getGameWorld().addEntity(e);
 //
 //        player = new Entity(Type.BOX);
-//        player.setPosition(170, 100);
+//        player.setValue(170, 100);
 //        player.setCollidable(true);
 //
 //        Rectangle graphics = new Rectangle(200, 200, Color.rgb(10, 10, 10));
@@ -169,7 +169,7 @@
 //            @Override
 //            protected void onCollisionBegin(Entity box, Entity letter) {
 //                for (int i = 0; i < 7; i++) {
-//                    Point2D p = letter.getPosition().subtract(0, 50).add(Math.random()*50, Math.random()*50);
+//                    Point2D p = letter.getValue().subtract(0, 50).add(Math.random()*50, Math.random()*50);
 //
 //                    spawnSparks(p.getX(), p.getY());
 //                }
@@ -186,7 +186,7 @@
 //
 //    private void spawnSparks(double x, double y) {
 //        ParticleEntity smoke = new ParticleEntity(Type.PARTICLES);
-//        smoke.setPosition(x, y);
+//        smoke.setValue(x, y);
 //
 //        ParticleEmitter emitter = ParticleEmitters.newSmokeEmitter();
 //        emitter.setVelocityFunction((i, dx, dy) -> new Point2D(-Math.random(), Math.random() - 0.5));

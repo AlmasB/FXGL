@@ -81,7 +81,7 @@ public class InitSample extends GameApplication {
         Rectangle graphics = new Rectangle(40, 40);
 
         // set graphics to entity
-        player.addComponent(new MainViewComponent(graphics));
+        //player.addComponent(new MainViewComponent(graphics));
 
         // 4. add entity to game world
         getGameWorld().addEntity(player);

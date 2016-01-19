@@ -95,7 +95,7 @@
 //            @Override
 //            protected void onActionBegin() {
 ////                ParticleEntity test = new ParticleEntity(Type.ENEMY);
-////                test.setPosition(player.getPosition());
+////                test.setValue(player.getValue());
 ////                ParticleEmitter emitter = new FireEmitter();
 ////                //emitter.setColorFunction(() -> Color.RED);
 ////                test.setEmitter(emitter);
@@ -125,7 +125,7 @@
 //    @Override
 //    protected void initGame() {
 //        player = new Entity(Type.PLAYER);
-//        player.setPosition(100, 100);
+//        player.setValue(100, 100);
 //
 //        Texture brick = getAssetLoader().loadTexture("brick.png");
 //        Texture brick2 = getAssetLoader().loadTexture("brick2.png");
@@ -136,7 +136,7 @@
 //                .superTexture(brick2, VerticalDirection.UP));
 //
 //        enemy = new Entity(Type.ENEMY);
-//        enemy.setPosition(200, 100);
+//        enemy.setValue(200, 100);
 //
 //        Rectangle enemyGraphics = new Rectangle(40, 40);
 //        enemyGraphics.setFill(Color.RED);

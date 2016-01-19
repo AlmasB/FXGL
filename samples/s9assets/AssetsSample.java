@@ -26,12 +26,12 @@
 package s9assets;
 
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -78,11 +78,11 @@ public class AssetsSample extends GameApplication {
     @Override
     protected void initGame() {
         player = new Entity();
-        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new TypeComponent(Type.PLAYER));
         player.addComponent(new PositionComponent(100, 100));
 
         // 3. add texture as main view
-        player.addComponent(new MainViewComponent(brickTexture));
+        //player.addComponent(new MainViewComponent(brickTexture));
 
         getGameWorld().addEntity(player);
     }

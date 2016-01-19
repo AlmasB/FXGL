@@ -89,7 +89,7 @@ public class ThreadingSample extends GameApplication {
 
                 Entity entity = new Entity();
                 entity.addComponent(new PositionComponent(300, 300));
-                entity.addComponent(new MainViewComponent(new Rectangle(40, 40)));
+                //entity.addComponent(new MainViewComponent(new Rectangle(40, 40)));
 
                 getGameWorld().addEntity(entity);
             }

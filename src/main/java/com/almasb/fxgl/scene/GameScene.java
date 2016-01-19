@@ -108,11 +108,11 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
         eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
         eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
             Entity entity = event.getEntity();
-            onAdded(entity);
+            onEntityAdded(entity);
         });
         eventBus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
             Entity entity = event.getEntity();
-            onRemoved(entity);
+            onEntityRemoved(entity);
         });
 
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
@@ -298,18 +298,31 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
     }
 
     @Override
-    public void onAdded(Entity entity) {
+    public void onEntityAdded(Entity entity) {
         entity.getComponent(MainViewComponent.class)
-                .map(ObjectComponent::getValue)
+                .map(MainViewComponent::getGraphics)
                 .ifPresent(view -> getRenderLayer(view.getRenderLayer()).getChildren().add(view));
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::add);
+
+        entity.getComponent(MainViewComponent.class)
+                .ifPresent(viewComponent -> {
+                    viewComponent.graphicsProperty().addListener((o, oldView, newView) -> {
+                        Group group = getRenderLayer(oldView.getRenderLayer());
+                        int index = group.getChildren().indexOf(oldView);
+                        group.getChildren().set(index, newView);
+                    });
+                });
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onEntityRemoved(Entity entity) {
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::remove);
+
+        entity.getComponent(MainViewComponent.class)
+                .map(MainViewComponent::getGraphics)
+                .ifPresent(view -> getRenderLayer(view.getRenderLayer()).getChildren().remove(view));
     }
 }

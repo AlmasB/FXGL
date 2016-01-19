@@ -244,7 +244,7 @@
 //
 //    private void initPlayer() {
 //        player = new Entity(Type.PLAYER);
-//        player.setPosition(0, getHeight() / 3);
+//        player.setValue(0, getHeight() / 3);
 //        player.setCollidable(true);
 //
 //        playerSprite = buildSpriteSheet();

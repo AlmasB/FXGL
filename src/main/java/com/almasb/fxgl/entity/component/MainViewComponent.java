@@ -26,64 +26,143 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.ents.AbstractComponent;
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.ObjectComponent;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.physics.HitBox;
-import javafx.geometry.BoundingBox;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-
-import java.util.Optional;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-//@Required(RotationComponent.class)
-public class MainViewComponent extends ObjectComponent<EntityView> {
+@Required(RotationComponent.class)
+public class MainViewComponent extends AbstractComponent {
 
-    private RenderLayer layer;
-    private Node graphics;
+    private static boolean showBBox = false;
+    private static Color showBBoxColor = Color.BLACK;
 
-    public MainViewComponent(Node view) {
+    public static final void turnOnDebugBBox(Color color) {
+        showBBox = true;
+        showBBoxColor = color;
+    }
+
+    private ObjectProperty<RenderLayer> renderLayer;
+    private ObjectProperty<EntityView> graphics;
+
+    public MainViewComponent() {
+        this(new EntityView());
+    }
+
+    public MainViewComponent(EntityView view) {
         this(view, RenderLayer.TOP);
     }
 
-    public MainViewComponent(Node view, RenderLayer layer) {
-        super();
-        this.graphics = view;
-        this.layer = layer;
+    public MainViewComponent(EntityView view, RenderLayer renderLayer) {
+        this.graphics = new SimpleObjectProperty<>(view);
+        this.renderLayer = new SimpleObjectProperty<>(renderLayer);
+    }
+
+    public RenderLayer getRenderLayer() {
+        return renderLayer.get();
+    }
+
+    public ObjectProperty<RenderLayer> renderLayerProperty() {
+        return renderLayer;
+    }
+
+    public void setRenderLayer(RenderLayer renderLayer) {
+        this.renderLayer.set(renderLayer);
+    }
+
+    public EntityView getGraphics() {
+        return graphics.get();
+    }
+
+    public ObjectProperty<EntityView> graphicsProperty() {
+        return graphics;
+    }
+
+    public void setGraphics(EntityView graphics) {
+        this.graphics.set(graphics);
     }
 
     @Override
     public void onAdded(Entity entity) {
-        EntityView view = new EntityView(entity, graphics);
+        getGraphics().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
+        getGraphics().translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
+        getGraphics().rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
 
-        view.setRenderLayer(layer);
-        view.translateXProperty().bind(entity.getComponentUnsafe(PositionComponent.class).xProperty());
-        view.translateYProperty().bind(entity.getComponentUnsafe(PositionComponent.class).yProperty());
+        if (showBBox) {
+            BoundingBoxComponent bbox = Entities.getBBox(entity);
 
-        Optional<RotationComponent> rotationComponent = entity.getComponent(RotationComponent.class);
-        if (rotationComponent.isPresent()) {
-            view.rotateProperty().bind(rotationComponent.get().valueProperty());
-        } else {
-            RotationComponent rotation = new RotationComponent(0);
-            entity.addComponent(rotation);
-            view.rotateProperty().bind(rotation.valueProperty());
+            Rectangle debugBBox = new Rectangle();
+            debugBBox.setStroke(showBBoxColor);
+            debugBBox.setFill(null);
+            debugBBox.widthProperty().bind(bbox.widthProperty());
+            debugBBox.heightProperty().bind(bbox.heightProperty());
+
+            getGraphics().addNode(debugBBox);
         }
 
-        setValue(view);
+        graphics.addListener((observable, oldGraphics, newGraphics) -> {
+            oldGraphics.translateXProperty().unbind();
+            oldGraphics.translateYProperty().unbind();
+            oldGraphics.rotateProperty().unbind();
 
-        if (!entity.getComponent(BoundingBoxComponent.class).isPresent()) {
-            BoundingBoxComponent bbox = new BoundingBoxComponent(new HitBox("__VIEW__", new BoundingBox(
-                0, 0, view.getLayoutBounds().getWidth(), view.getLayoutBounds().getHeight()
-            )));
+            newGraphics.translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
+            newGraphics.translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
+            newGraphics.rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
 
-            System.out.println(bbox.getWidth() + " " + bbox.getHeight());
+            if (showBBox) {
+                BoundingBoxComponent bbox = Entities.getBBox(entity);
 
-            entity.addComponent(bbox);
-        }
+                Rectangle debugBBox = new Rectangle();
+                debugBBox.setStroke(showBBoxColor);
+                debugBBox.setFill(null);
+                debugBBox.widthProperty().bind(bbox.widthProperty());
+                debugBBox.heightProperty().bind(bbox.heightProperty());
+
+                newGraphics.addNode(debugBBox);
+            }
+        });
+
+
+
+//        EntityView view = new EntityView(entity, graphics);
+//
+//        view.setRenderLayer(renderLayer);
+//        view.translateXProperty().bind(entity.getComponentUnsafe(PositionComponent.class).xProperty());
+//        view.translateYProperty().bind(entity.getComponentUnsafe(PositionComponent.class).yProperty());
+//
+//        Optional<RotationComponent> rotationComponent = entity.getComponent(RotationComponent.class);
+//        if (rotationComponent.isPresent()) {
+//            view.rotateProperty().bind(rotationComponent.get().valueProperty());
+//        } else {
+//            RotationComponent rotation = new RotationComponent(0);
+//            entity.addComponent(rotation);
+//            view.rotateProperty().bind(rotation.valueProperty());
+//        }
+//
+//        setValue(view);
+//
+//        if (!entity.getComponent(BoundingBoxComponent.class).isPresent()) {
+//            BoundingBoxComponent bbox = new BoundingBoxComponent(new HitBox("__VIEW__", new BoundingBox(
+//                0, 0, view.getLayoutBounds().getWidth(), view.getLayoutBounds().getHeight()
+//            )));
+//
+//            entity.addComponent(bbox);
+//        }
+    }
+
+    @Override
+    public void onRemoved(Entity entity) {
+
     }
 }

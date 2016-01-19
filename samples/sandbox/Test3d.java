@@ -110,7 +110,7 @@
 //
 //
 //        PhysicsEntity ground = new PhysicsEntity(Type.CRATE);
-//        ground.setPosition(0, 500);
+//        ground.setValue(0, 500);
 //        ground.addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 800, 100)));
 //        //ground.setSceneView(new Rectangle(800, 100));
 //
@@ -123,7 +123,7 @@
 //        entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
 //
 //        entity.setBodyType(BodyType.DYNAMIC);
-//        entity.setPosition(xx, yy);
+//        entity.setValue(xx, yy);
 //
 //        FixtureDef fd = new FixtureDef();
 //        fd.setDensity(0.05f);

@@ -25,7 +25,6 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
@@ -528,7 +527,7 @@ public final class PhysicsWorld {
 //        PolygonShape shape = new PolygonShape();
 //        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
 //
-//        def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
+//        def.setValue(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
 //        def.setShape(shape);
 //
 //        ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);

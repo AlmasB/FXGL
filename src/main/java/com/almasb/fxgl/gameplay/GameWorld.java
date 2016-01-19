@@ -30,10 +30,10 @@ import com.almasb.ents.Component;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorld;
 import com.almasb.ents.EntityWorldListener;
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
@@ -102,12 +102,12 @@ public final class GameWorld extends EntityWorld {
 
         addWorldListener(new EntityWorldListener() {
             @Override
-            public void onAdded(Entity entity) {
+            public void onEntityAdded(Entity entity) {
                 eventBus.fireEvent(WorldEvent.entityAdded(entity));
             }
 
             @Override
-            public void onRemoved(Entity entity) {
+            public void onEntityRemoved(Entity entity) {
                 eventBus.fireEvent(WorldEvent.entityRemoved(entity));
             }
         });
@@ -210,7 +210,7 @@ public final class GameWorld extends EntityWorld {
 //    public Optional<Entity> getEntityAt(Point2D position) {
 //        return getEntities()
 //                .stream()
-//                .filter(e -> e.getPosition().equals(position))
+//                .filter(e -> e.getValue().equals(position))
 //                .findAny();
 //    }
 }

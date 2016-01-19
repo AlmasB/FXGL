@@ -85,7 +85,7 @@ public class SearchSample extends GameApplication {
 //                final int y = i;
 //
 //                Entity tile = new Entity(Type.TILE);
-//                tile.setPosition(j*40, i*40);
+//                tile.setValue(j*40, i*40);
 //
 //                Rectangle graphics = new Rectangle(38, 38);
 //                graphics.setFill(Color.WHITE);

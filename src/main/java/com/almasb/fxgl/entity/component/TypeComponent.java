@@ -24,40 +24,49 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.entity.component;
 
-import com.almasb.ents.Entity;
-import com.almasb.fxgl.entity.component.*;
-import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.component.ObjectComponent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
- * Helper class with static convenience methods.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Entities {
+public class TypeComponent extends ObjectComponent<Object> {
 
-    public static PositionComponent getPosition(Entity e) {
-        return e.getComponentUnsafe(PositionComponent.class);
+    //private ReadOnlyObjectWrapper<T> type;
+
+    public TypeComponent() {
+        this(new Object());
     }
 
-    public static RotationComponent getRotation(Entity e) {
-        return e.getComponentUnsafe(RotationComponent.class);
+    public TypeComponent(Object type) {
+        super(type);
     }
 
-    public static BoundingBoxComponent getBBox(Entity e) {
-        return e.getComponentUnsafe(BoundingBoxComponent.class);
-    }
-
-    public static PhysicsComponent getPhysics(Entity e) {
-        return e.getComponentUnsafe(PhysicsComponent.class);
-    }
-
-    public static MainViewComponent getMainView(Entity e) {
-        return e.getComponentUnsafe(MainViewComponent.class);
-    }
-
-    public static TypeComponent getType(Entity e) {
-        return e.getComponentUnsafe(TypeComponent.class);
-    }
+//    public TypeComponent(T type) {
+//        if (type == null)
+//            throw new IllegalArgumentException("Type cannot be null");
+//
+//        this.type = new ReadOnlyObjectWrapper<>(type);
+//    }
+//
+//    public T getType() {
+//        return type.get();
+//    }
+//
+//    public ReadOnlyObjectProperty<T> typeProperty() {
+//        return type.getReadOnlyProperty();
+//    }
+//
+//    public void setType(T type) {
+//        if (type == null)
+//            throw new IllegalArgumentException("Type cannot be null");
+//
+//        this.type.set(type);
+//    }
 }

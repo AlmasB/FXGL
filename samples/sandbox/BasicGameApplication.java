@@ -189,7 +189,7 @@
 //
 //                b.setSceneView(new HBox(new Rectangle(40, 40, Color.BLUE), new Rectangle(40, 40, Color.RED)));
 //                b.setBodyType(BodyType.DYNAMIC);
-//                b.setPosition(input.getMouse().getGameXY());
+//                b.setValue(input.getMouse().getGameXY());
 //
 //                b.setGenerateHitBoxesFromView(false);
 //
@@ -227,7 +227,7 @@
 //            @Override
 //            protected void onActionBegin() {
 //                Entity e = new Entity(Type.BOX);
-//                e.setPosition(input.getMouse().getGameX(), input.getMouse().getGameY());
+//                e.setValue(input.getMouse().getGameX(), input.getMouse().getGameY());
 //
 //
 //                Pane pane = new Pane();
@@ -235,7 +235,7 @@
 //
 //                e.setSceneView(pane);
 //
-//                e.rotateToVector(e.getPosition().subtract(0, 0));
+//                e.rotateToVector(e.getValue().subtract(0, 0));
 //
 //                getGameWorld().addEntity(e);
 //                countProperty.set(countProperty.get() + 1);
@@ -280,7 +280,7 @@
 //
 //
 //        PhysicsEntity ground = new PhysicsEntity(Type.BOX);
-//        ground.setPosition(-50, 500);
+//        ground.setValue(-50, 500);
 //        ground.setSceneView(new Rectangle(1200, 100));
 //        ground.setCollidable(true);
 //
@@ -291,7 +291,7 @@
 //        //getInput().setRegisterInput(false);
 //
 //        player = new Entity(Type.PLAYER);
-//        player.setPosition(250, 250);
+//        player.setValue(250, 250);
 //        player.setSceneView(new Rectangle(40, 40));
 //
 //        getGameWorld().addEntity(player);

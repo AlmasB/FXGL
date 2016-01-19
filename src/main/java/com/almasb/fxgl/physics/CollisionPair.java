@@ -26,7 +26,7 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
+import com.almasb.fxgl.entity.component.TypeComponent;
 
 final class CollisionPair extends Pair<Entity> {
 

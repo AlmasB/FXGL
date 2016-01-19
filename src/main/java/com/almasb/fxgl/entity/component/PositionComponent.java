@@ -76,17 +76,17 @@ public class PositionComponent extends AbstractComponent {
         this.y.set(y);
     }
 
-    public Point2D getPosition() {
+    public Point2D getValue() {
         return new Point2D(getX(), getY());
     }
 
-    public void setPosition(double x, double y) {
+    public void setValue(double x, double y) {
         setX(x);
         setY(y);
     }
 
-    public void setPosition(Point2D position) {
-        setPosition(position.getX(), position.getY());
+    public void setValue(Point2D position) {
+        setValue(position.getX(), position.getY());
     }
 
     public void translateX(double x) {
@@ -107,6 +107,6 @@ public class PositionComponent extends AbstractComponent {
     }
 
     public double distance(PositionComponent other) {
-        return getPosition().distance(other.getPosition());
+        return getValue().distance(other.getValue());
     }
 }

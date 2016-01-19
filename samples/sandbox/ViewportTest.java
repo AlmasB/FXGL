@@ -82,7 +82,7 @@
 //    @Override
 //    protected void initGame() {
 //        player = new Entity(Type.PLAYER);
-//        player.setPosition(100, 100);
+//        player.setValue(100, 100);
 //
 //        Rectangle graphics = new Rectangle(40, 40);
 //        player.setSceneView(graphics);

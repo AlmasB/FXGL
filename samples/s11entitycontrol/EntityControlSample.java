@@ -27,11 +27,11 @@ package s11entitycontrol;
 
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -73,9 +73,9 @@ public class EntityControlSample extends GameApplication {
     @Override
     protected void initGame() {
         player = new Entity();
-        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new TypeComponent(Type.PLAYER));
         player.addComponent(new PositionComponent(100, 100));
-        player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
         // 3. add a new instance of control to entity
         player.addControl(new VibratingControl());

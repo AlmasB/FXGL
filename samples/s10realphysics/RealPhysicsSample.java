@@ -26,7 +26,6 @@
 package s10realphysics;
 
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.component.MainViewComponent;
@@ -72,7 +71,7 @@ public class RealPhysicsSample extends GameApplication {
                 // 1. create physics entity
                 Entity box = new Entity();
                 box.addComponent(new PositionComponent(input.getMouse().getGameXY()));
-                box.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+                //box.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
                 PhysicsComponent physics = new PhysicsComponent();
 
@@ -101,7 +100,7 @@ public class RealPhysicsSample extends GameApplication {
         // 4. by default a physics entity is statis
         Entity ground = new Entity();
         ground.addComponent(new PositionComponent(0, 500));
-        ground.addComponent(new MainViewComponent(new Rectangle(800, 100)));
+        //ground.addComponent(new MainViewComponent(new Rectangle(800, 100)));
         ground.addComponent(new PhysicsComponent());
 
         getGameWorld().addEntity(ground);

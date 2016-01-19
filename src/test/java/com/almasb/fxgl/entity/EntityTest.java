@@ -47,7 +47,7 @@ public class EntityTest {
 //        assertFalse(testEntity.isActive());
 //        assertFalse(testEntity.isCollidable());
 //
-//        assertEquals(Point2D.ZERO, testEntity.getPosition());
+//        assertEquals(Point2D.ZERO, testEntity.getValue());
 //
 //        assertEquals(Type.TEST_ENTITY, testEntity.getEntityType());
 //        assertEquals(Type.TEST_ENTITY.getUniqueType(), testEntity.getTypeAsString());
@@ -56,7 +56,7 @@ public class EntityTest {
 //        testEntity.translate(15, 20);
 //        assertEquals(15, testEntity.getX(), 0.1);
 //        assertEquals(20, testEntity.getY(), 0.1);
-//        assertEquals(new Point2D(15, 20), testEntity.getPosition());
+//        assertEquals(new Point2D(15, 20), testEntity.getValue());
 //
 //        testEntity.setX(50);
 //        assertEquals(50, testEntity.getX(), 0.1);
@@ -178,7 +178,7 @@ public class EntityTest {
 //    @Test
 //    public void isWithin() {
 //        testEntity.addHitBox(new HitBox("TEST", new BoundingBox(0, 0, 40, 40)));
-//        testEntity.setPosition(50, 50);
+//        testEntity.setValue(50, 50);
 //
 //        assertTrue(testEntity.isWithin(0, 0, 90, 90));
 //        assertTrue(testEntity.isWithin(60, 40, 70, 55));

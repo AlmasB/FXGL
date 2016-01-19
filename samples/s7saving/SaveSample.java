@@ -26,13 +26,13 @@
 package s7saving;
 
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.TypeComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -145,17 +145,17 @@ public class SaveSample extends GameApplication {
         enemyPosition = enemyPos;
 
         player = new Entity();
-        player.addComponent(new TypeComponent<>(Type.PLAYER));
+        player.addComponent(new TypeComponent(Type.PLAYER));
         player.addComponent(new PositionComponent(playerPosition));
-        player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
 
         enemy = new Entity();
-        enemy.addComponent(new TypeComponent<>(Type.ENEMY));
+        enemy.addComponent(new TypeComponent(Type.ENEMY));
         enemy.addComponent(new PositionComponent(enemyPosition));
-        enemy.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.RED)));
+        //enemy.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.RED)));
 
         // 1. we need to set collidable to true
         // so that collision system can 'see' them

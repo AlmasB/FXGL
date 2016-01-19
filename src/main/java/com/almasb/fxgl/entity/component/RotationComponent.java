@@ -36,6 +36,10 @@ import javafx.geometry.Point2D;
  */
 public class RotationComponent extends DoubleComponent {
 
+    public RotationComponent() {
+        this(0);
+    }
+
     public RotationComponent(double angle) {
         super(angle);
     }

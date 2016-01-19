@@ -76,7 +76,7 @@ public class App2 extends GameApplication {
 //        for (int i = 0; i < 10; i++) {
 //            for (int j = 0; j < 10; j++) {
 //                Entity g = Entity.noType();
-//                g.setPosition(101 * j, 171 * i);
+//                g.setValue(101 * j, 171 * i);
 //                g.setSceneView(getAssetLoader().loadTexture("Grass Block.png"));
 //
 //                getGameWorld().addEntity(g);
@@ -85,7 +85,7 @@ public class App2 extends GameApplication {
 
 
 //        Entity cat = Entity.noType();
-//        cat.setPosition(100, 100);
+//        cat.setValue(100, 100);
 //        cat.setSceneView(getAssetLoader().loadTexture("cat.png").toStaticAnimatedTexture(6, Duration.seconds(0.6)));
 //
 //        getGameWorld().addEntity(cat);
@@ -105,7 +105,7 @@ public class App2 extends GameApplication {
     public void openWindow() {
 
 //        e = Entity.noType();
-//        e.setPosition(300, 300);
+//        e.setValue(300, 300);
 //        e.setSceneView(new Rectangle(10, 1));
 //        e.addControl(new OffscreenCleanControl());
 //        e.addControl(new ProjectileControl(new Point2D(0, -1), 10));

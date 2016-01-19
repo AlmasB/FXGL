@@ -79,7 +79,7 @@ public class BreakablePhysicsEntity extends Entity {
 //
 //            BodyDef bf = new BodyDef();
 //            bf.setType(BodyType.DYNAMIC);
-//            bf.setPosition(body.getPosition().add(getCenter(shape.getVertices(), shape.getVertexCount())));
+//            bf.setValue(body.getValue().add(getCenter(shape.getVertices(), shape.getVertexCount())));
 //            bf.setAngle(body.getAngle());
 //
 //            PhysicsEntity entity = new PhysicsEntity(getEntityType());
@@ -118,7 +118,7 @@ public class BreakablePhysicsEntity extends Entity {
 ////
 ////        BodyDef bd = new BodyDef();
 ////        bd.type = BodyType.DYNAMIC;
-////        bd.position = body1.getPosition();
+////        bd.position = body1.getValue();
 ////        bd.angle = body1.getAngle();
 ////
 ////        Body body2 = getWorld().createBody(bd);

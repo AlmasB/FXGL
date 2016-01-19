@@ -145,7 +145,7 @@ public class App1 extends GameApplication {
 //        addLight(light2);
 //
 //        Entity entity = new Entity();
-//        entity.setPosition(100, 100);
+//        entity.setValue(100, 100);
 //        entity.setSceneView(getAssetLoader().loadTexture("brick.png"));
 ////        entity.getSceneView().ifPresent(view -> {
 ////            Lighting lighting = new Lighting();
@@ -157,7 +157,7 @@ public class App1 extends GameApplication {
 ////        });
 //
 //        Entity entity2 = Entity.noType();
-//        entity2.setPosition(400, 100);
+//        entity2.setValue(400, 100);
 //        entity2.setSceneView(new Rectangle(40, 40, Color.BLUE));
 //        entity2.getSceneView().ifPresent(view -> {
 //            //view.setEffect(lighting);
@@ -165,7 +165,7 @@ public class App1 extends GameApplication {
 //        entity2.addControl(new CircularMovementControl(1, 50));
 //
 //        Entity entity3 = Entity.noType();
-//        entity3.setPosition(300, 200);
+//        entity3.setValue(300, 200);
 //        entity3.setSceneView(getAssetLoader().loadTexture("brick.png"));
 //        entity3.getSceneView().ifPresent(view -> {
 //            //view.setEffect(lighting);
