@@ -26,8 +26,9 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.ents.Component;
+import com.almasb.ents.ComponentListener;
 import com.almasb.ents.Entity;
-import com.almasb.ents.component.ObjectComponent;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
@@ -44,6 +45,7 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -69,7 +71,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameScene extends FXGLScene implements GameWorldListener {
+public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
@@ -189,7 +191,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
      * @param view view to add
      */
     public void addGameView(EntityView view) {
-        getRenderLayer(view.getRenderLayer()).getChildren().add(view);
+        getRenderGroup(view.getRenderLayer()).getChildren().add(view);
     }
 
     /**
@@ -198,40 +200,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
      * @param view view to remove
      */
     public void removeGameView(EntityView view) {
-        view.removeFromScene();
-    }
-
-    /**
-     * Returns render group for entity based on entity's
-     * render layer. If no such group exists, a new group
-     * will be created for that layer and placed
-     * in the scene graph according to its layer index.
-     *
-     * @param layer render layer
-     * @return render group
-     */
-    private Group getRenderLayer(RenderLayer layer) {
-        Integer renderLayer = layer.index();
-        Group group = gameRoot.getChildren()
-                .stream()
-                .filter(n -> (int) n.getUserData() == renderLayer)
-                .findAny()
-                .map(n -> (Group) n)
-                .orElse(new Group());
-
-
-        if (group.getUserData() == null) {
-            log.finer("Creating render group for layer: " + layer.asString());
-            group.setUserData(renderLayer);
-            gameRoot.getChildren().add(group);
-        }
-
-        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        tmpGroups.sort((g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
-
-        gameRoot.getChildren().setAll(tmpGroups);
-
-        return group;
+        getRenderGroup(view.getRenderLayer()).getChildren().remove(view);
     }
 
     private Viewport viewport;
@@ -278,6 +247,39 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
         return particlesGC;
     }
 
+    /**
+     * Returns render group for entity based on entity's
+     * render layer. If no such group exists, a new group
+     * will be created for that layer and placed
+     * in the scene graph according to its layer index.
+     *
+     * @param layer render layer
+     * @return render group
+     */
+    private Group getRenderGroup(RenderLayer layer) {
+        Integer renderLayer = layer.index();
+        Group group = gameRoot.getChildren()
+                .stream()
+                .filter(n -> (int) n.getUserData() == renderLayer)
+                .findAny()
+                .map(n -> (Group) n)
+                .orElse(new Group());
+
+
+        if (group.getUserData() == null) {
+            log.finer("Creating render group for layer: " + layer.asString());
+            group.setUserData(renderLayer);
+            gameRoot.getChildren().add(group);
+        }
+
+        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
+        tmpGroups.sort((g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
+
+        gameRoot.getChildren().setAll(tmpGroups);
+
+        return group;
+    }
+
     @Override
     public void onWorldUpdate(double tpf) {
         particlesGC.setGlobalAlpha(1);
@@ -299,30 +301,79 @@ public final class GameScene extends FXGLScene implements GameWorldListener {
 
     @Override
     public void onEntityAdded(Entity entity) {
-        entity.getComponent(MainViewComponent.class)
-                .map(MainViewComponent::getGraphics)
-                .ifPresent(view -> getRenderLayer(view.getRenderLayer()).getChildren().add(view));
-
-        entity.getControl(ParticleControl.class)
-                .ifPresent(particles::add);
+        log.finer("Entity added to scene");
 
         entity.getComponent(MainViewComponent.class)
                 .ifPresent(viewComponent -> {
-                    viewComponent.graphicsProperty().addListener((o, oldView, newView) -> {
-                        Group group = getRenderLayer(oldView.getRenderLayer());
-                        int index = group.getChildren().indexOf(oldView);
-                        group.getChildren().set(index, newView);
-                    });
+                    onComponentAdded(viewComponent);
                 });
+
+        entity.addComponentListener(this);
+
+        entity.getControl(ParticleControl.class)
+                .ifPresent(particles::add);
     }
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entity.getControl(ParticleControl.class)
-                .ifPresent(particles::remove);
+        log.finer("Entity removed from scene");
 
         entity.getComponent(MainViewComponent.class)
-                .map(MainViewComponent::getGraphics)
-                .ifPresent(view -> getRenderLayer(view.getRenderLayer()).getChildren().remove(view));
+                .ifPresent(viewComponent -> {
+                    onComponentRemoved(viewComponent);
+                });
+
+        entity.removeComponentListener(this);
+
+        entity.getControl(ParticleControl.class)
+                .ifPresent(particles::remove);
+    }
+
+    private ChangeListener<EntityView> viewChangeListener = (o, oldView, newView) -> {
+        Group renderGroup = getRenderGroup(oldView.getRenderLayer());
+        int index = renderGroup.getChildren().indexOf(oldView);
+
+        if (index != -1) {
+            renderGroup.getChildren().set(index, newView);
+        } else {
+            log.warning("Old view was not in the scene graph. Adding new view");
+            addGameView(newView);
+        }
+    };
+
+//    private ChangeListener<RenderLayer> renderLayerChangeListener = (o, oldLayer, newLayer) -> {
+//
+//    };
+
+    @Override
+    public void onComponentAdded(Component component) {
+        if (component instanceof MainViewComponent) {
+            log.finer("Added MainViewComponent");
+
+            MainViewComponent viewComponent = (MainViewComponent) component;
+
+            EntityView view = viewComponent.getGraphics();
+            addGameView(view);
+
+            viewComponent.graphicsProperty().addListener(viewChangeListener);
+            viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
+                getRenderGroup(oldLayer).getChildren().remove(view);
+                getRenderGroup(newLayer).getChildren().add(view);
+            });
+        }
+    }
+
+    @Override
+    public void onComponentRemoved(Component component) {
+        if (component instanceof MainViewComponent) {
+            log.finer("Removed MainViewComponent");
+
+            MainViewComponent viewComponent = (MainViewComponent) component;
+
+            EntityView view = viewComponent.getGraphics();
+            removeGameView(view);
+
+            viewComponent.graphicsProperty().removeListener(viewChangeListener);
+        }
     }
 }

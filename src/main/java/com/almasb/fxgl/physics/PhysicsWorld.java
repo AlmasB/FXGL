@@ -113,6 +113,9 @@ public final class PhysicsWorld {
     }
 
     private int getHandlerIndex(Entity e1, Entity e2) {
+        //System.out.println(collisionHandlers.get(0).getA() + " " + collisionHandlers.get(0).getB());
+        //System.out.println("NExt: " + e1.getComponentUnsafe(TypeComponent.class).getValue() + " " + e2.getComponentUnsafe(TypeComponent.class).getValue());
+
         return collisionHandlers.indexOf(new Pair<>(e1.getComponentUnsafe(TypeComponent.class).getValue(),
                 e2.getComponentUnsafe(TypeComponent.class).getValue()));
     }
@@ -220,6 +223,7 @@ public final class PhysicsWorld {
 //                }
 
                 int index = getHandlerIndex(e1, e2);
+                //System.out.println(index);
                 if (index != -1) {
                     CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
 

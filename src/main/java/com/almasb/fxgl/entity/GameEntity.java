@@ -47,6 +47,7 @@ public class GameEntity extends Entity {
         bbox = new BoundingBoxComponent();
         view = new MainViewComponent();
 
+        addComponent(type);
         addComponent(position);
         addComponent(rotation);
         addComponent(bbox);

@@ -34,8 +34,8 @@ import javafx.geometry.Bounds;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class HitBox {
-    private Bounds bounds;
-    private String name;
+    private final Bounds bounds;
+    private final String name;
 
     /**
      * Creates a hit box with given name and bounds.
@@ -86,6 +86,18 @@ public final class HitBox {
     public Bounds translateXFlipped(double x, double y, double entityWidth) {
         return new BoundingBox(x + entityWidth - bounds.getMinX() - bounds.getWidth(), y + bounds.getMinY(),
                 bounds.getWidth(), bounds.getHeight());
+    }
+
+    public Bounds getBounds() {
+        return bounds;
+    }
+
+    public double getMinX() {
+        return bounds.getMinX();
+    }
+
+    public double getMinY() {
+        return bounds.getMinY();
     }
 
     /**

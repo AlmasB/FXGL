@@ -31,6 +31,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
@@ -41,6 +42,7 @@ import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -69,7 +71,7 @@ public class InitSampleX extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -84,14 +86,14 @@ public class InitSampleX extends GameApplication {
 
     @Override
     protected void initGame() {
-        EntityView.turnOnDebugBBox(Color.RED);
+        //EntityView.turnOnDebugBBox(Color.RED);
         MainViewComponent.turnOnDebugBBox(Color.RED);
 
         player = new GameEntity();
-        player.getPositionComponent().setValue(100, 100);
-        player.getBoundingBoxComponent().addHitBox(new HitBox("ARM", new BoundingBox(0, 0, 40, 40)));
+        //player.getPositionComponent().setValue(100, 100);
+        //player.getBoundingBoxComponent().addHitBox(new HitBox("ARM", new BoundingBox(0, 0, 40, 40)));
 
-
+        //player.addControl(new ExpireCleanControl(Duration.seconds(3)));
 
         getGameWorld().addEntity(player);
 
@@ -122,10 +124,18 @@ public class InitSampleX extends GameApplication {
 
     @OnUserAction(name = "O", type = ActionType.ON_ACTION_BEGIN)
     public void o() {
-        player.getBoundingBoxComponent()
-                .addHitBox(new HitBox("HEAD", new BoundingBox(20, 20, 40, 50)));
+        if (player.hasComponent(MainViewComponent.class)) {
+            player.removeComponent(MainViewComponent.class);
+        } else {
+            player.addComponent(new MainViewComponent(new EntityView(new Rectangle(Math.random()*40 + 20, 40) )));
+        }
 
-        player.getMainViewComponent().setGraphics(new EntityView(player, new Rectangle(40, 40)));
+//        player.getBoundingBoxComponent()
+//                .addHitBox(new HitBox("HEAD", new BoundingBox(20, 20, 40, 50)));
+//
+//        player.getMainViewComponent().setGraphics(new EntityView(player, new Rectangle(Math.random()*40 + 20, 40)));
+//
+//        player.getPositionComponent().setValue(300, 500);
     }
 
     public static void main(String[] args) {

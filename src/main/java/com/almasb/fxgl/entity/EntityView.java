@@ -29,6 +29,8 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -49,14 +51,6 @@ import java.util.logging.Logger;
 public class EntityView extends Parent {
 
     protected static final Logger log = FXGLLogger.getLogger("FXGL.EntityView");
-
-    private static boolean showBBox = false;
-    private static Color showBBoxColor = Color.BLACK;
-
-    public static final void turnOnDebugBBox(Color color) {
-        showBBox = true;
-        showBBoxColor = color;
-    }
 
     private Entity entity;
 
@@ -95,6 +89,10 @@ public class EntityView extends Parent {
 //                getTransforms().clear();
 //            }
 //        }));
+
+    public EntityView(Node graphics) {
+        addNode(graphics);
+    }
 
     /**
      * Constructs new view for given entity
@@ -185,7 +183,7 @@ public class EntityView extends Parent {
         }
     }
 
-    private RenderLayer renderLayer = RenderLayer.TOP;
+    private ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.TOP);
 
     /**
      * Set render layer for this entity. Render layer determines how an entity
@@ -198,20 +196,18 @@ public class EntityView extends Parent {
      * the entity is already registered in the scene graph, this method will
      * throw IllegalStateException.
      *
-     * @param layer the render layer
+     * @param renderLayer the render layer
      * @throws IllegalStateException
      */
-    public final void setRenderLayer(RenderLayer layer) {
-        if (entity.isActive())
-            throw new IllegalStateException("Can't set render layer to active view.");
-
-        this.renderLayer = layer;
+    public void setRenderLayer(RenderLayer renderLayer) {
+        this.renderLayer.set(renderLayer);
     }
 
-    /**
-     * @return render layer for entity
-     */
-    public final RenderLayer getRenderLayer() {
+    public RenderLayer getRenderLayer() {
+        return renderLayer.get();
+    }
+
+    public ObjectProperty<RenderLayer> renderLayerProperty() {
         return renderLayer;
     }
 }

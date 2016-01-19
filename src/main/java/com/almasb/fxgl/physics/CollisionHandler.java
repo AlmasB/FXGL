@@ -34,7 +34,7 @@ import com.almasb.ents.Entity;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class CollisionHandler<T> extends Pair<T> {
+public abstract class CollisionHandler extends Pair<Object> {
 
     /**
      * The order of types determines the order of entities in callbacks.
@@ -42,7 +42,7 @@ public abstract class CollisionHandler<T> extends Pair<T> {
      * @param a entity type of the first entity
      * @param b entity type of the second entity
      */
-    public CollisionHandler(T a, T b) {
+    public CollisionHandler(Object a, Object b) {
         super(a, b);
     }
 
@@ -97,10 +97,10 @@ public abstract class CollisionHandler<T> extends Pair<T> {
      * @param b entity type B
      * @return copy of collision handler
      */
-    public final CollisionHandler copyFor(T a, T b) {
+    public final CollisionHandler copyFor(Object a, Object b) {
         CollisionHandler copy = this;
 
-        return new CollisionHandler<T>(a, b) {
+        return new CollisionHandler(a, b) {
             @Override
             protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
                 copy.onHitBoxTrigger(a, b, boxA, boxB);

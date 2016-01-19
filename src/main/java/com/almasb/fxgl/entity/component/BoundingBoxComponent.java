@@ -45,10 +45,14 @@ public class BoundingBoxComponent extends AbstractComponent {
 
     public BoundingBoxComponent(HitBox... boxes) {
         hitBoxes.addAll(boxes);
+        minXLocal.set(computeMinXLocal());
+        minYLocal.set(computeMinYLocal());
         width.set(computeWidth());
         height.set(computeHeight());
 
         hitBoxes.addListener((ListChangeListener<? super HitBox>) c -> {
+            minXLocal.set(computeMinXLocal());
+            minYLocal.set(computeMinYLocal());
             width.set(computeWidth());
             height.set(computeHeight());
         });
@@ -132,6 +136,39 @@ public class BoundingBoxComponent extends AbstractComponent {
         return hitBoxes.stream()
                 .mapToDouble(HitBox::getMaxY)
                 .max()
+                .orElse(0);
+    }
+
+    private ReadOnlyDoubleWrapper minXLocal = new ReadOnlyDoubleWrapper();
+    private ReadOnlyDoubleWrapper minYLocal = new ReadOnlyDoubleWrapper();
+
+    public ReadOnlyDoubleProperty minXLocalProperty() {
+        return minXLocal.getReadOnlyProperty();
+    }
+
+    public double getMinXLocal() {
+        return minXLocal.get();
+    }
+
+    public ReadOnlyDoubleProperty minYLocalProperty() {
+        return minYLocal.getReadOnlyProperty();
+    }
+
+    public double getMinYLocal() {
+        return minYLocal.get();
+    }
+
+    private double computeMinXLocal() {
+        return hitBoxes.stream()
+                .mapToDouble(HitBox::getMinX)
+                .min()
+                .orElse(0);
+    }
+
+    private double computeMinYLocal() {
+        return hitBoxes.stream()
+                .mapToDouble(HitBox::getMinY)
+                .min()
                 .orElse(0);
     }
 

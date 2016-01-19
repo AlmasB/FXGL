@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,11 +23,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s4physics;
+package sandbox;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -43,26 +46,26 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class PhysicsSample extends GameApplication {
+public class PhysicsSampleX extends GameApplication {
 
     private enum Type {
         PLAYER, ENEMY
     }
 
-    private Entity player, enemy;
+    private GameEntity player, enemy;
     private PlayerControl playerControl;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("PhysicsSample");
+        settings.setTitle("PhysicsSampleX");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -96,6 +99,24 @@ public class PhysicsSample extends GameApplication {
                 playerControl.down();
             }
         }, KeyCode.S);
+
+        input.addAction(new UserAction("Move E") {
+            @Override
+            protected void onActionBegin() {
+                //enemy.getTypeComponent().setValue(Type.ENEMY);
+                enemy.getMainViewComponent().setRenderLayer(new RenderLayer() {
+                    @Override
+                    public String name() {
+                        return "DD";
+                    }
+
+                    @Override
+                    public int index() {
+                        return 0;
+                    }
+                });
+            }
+        }, KeyCode.F);
     }
 
     @Override
@@ -103,18 +124,21 @@ public class PhysicsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity();
-        player.addComponent(new TypeComponent(Type.PLAYER));
-        player.addComponent(new PositionComponent(100, 100));
-        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        MainViewComponent.turnOnDebugBBox(Color.RED);
+
+        player = new GameEntity();
+        player.getPositionComponent().setValue(100, 100);
+        player.getTypeComponent().setValue(Type.PLAYER);
+        player.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.BLUE)), true);
+
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
 
-        enemy = new Entity();
-        enemy.addComponent(new TypeComponent(Type.ENEMY));
-        enemy.addComponent(new PositionComponent(200, 100));
-        //enemy.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.RED)));
+        enemy = new GameEntity();
+        enemy.getPositionComponent().setValue(200, 100);
+        //enemy.getTypeComponent().setValue(Type.ENEMY);
+        enemy.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.YELLOW)), true);
 
         // 1. we need to set collidable to true
         // so that collision system can 'see' them
