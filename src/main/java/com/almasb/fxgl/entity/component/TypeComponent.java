@@ -26,19 +26,12 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.ents.AbstractComponent;
 import com.almasb.ents.component.ObjectComponent;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class TypeComponent extends ObjectComponent<Object> {
-
-    //private ReadOnlyObjectWrapper<T> type;
 
     public TypeComponent() {
         this(new Object());
@@ -47,26 +40,4 @@ public class TypeComponent extends ObjectComponent<Object> {
     public TypeComponent(Object type) {
         super(type);
     }
-
-//    public TypeComponent(T type) {
-//        if (type == null)
-//            throw new IllegalArgumentException("Type cannot be null");
-//
-//        this.type = new ReadOnlyObjectWrapper<>(type);
-//    }
-//
-//    public T getType() {
-//        return type.get();
-//    }
-//
-//    public ReadOnlyObjectProperty<T> typeProperty() {
-//        return type.getReadOnlyProperty();
-//    }
-//
-//    public void setType(T type) {
-//        if (type == null)
-//            throw new IllegalArgumentException("Type cannot be null");
-//
-//        this.type.set(type);
-//    }
 }

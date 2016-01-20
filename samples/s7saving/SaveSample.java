@@ -25,26 +25,20 @@
  */
 package s7saving;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import java.io.Serializable;
 
@@ -54,7 +48,7 @@ public class SaveSample extends GameApplication {
         PLAYER, ENEMY
     }
 
-    private Entity player, enemy;
+    private GameEntity player, enemy;
     private PlayerControl playerControl;
 
     // 1. the data to save/load
@@ -144,23 +138,16 @@ public class SaveSample extends GameApplication {
         playerPosition = playerPos;
         enemyPosition = enemyPos;
 
-        player = new Entity();
-        player.addComponent(new TypeComponent(Type.PLAYER));
-        player.addComponent(new PositionComponent(playerPosition));
-        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        player = new GameEntity();
+        player.getPositionComponent().setValue(playerPosition);
+        player.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.BLUE)));
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
 
-        enemy = new Entity();
-        enemy.addComponent(new TypeComponent(Type.ENEMY));
-        enemy.addComponent(new PositionComponent(enemyPosition));
-        //enemy.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.RED)));
-
-        // 1. we need to set collidable to true
-        // so that collision system can 'see' them
-        player.addComponent(new CollidableComponent(true));
-        enemy.addComponent(new CollidableComponent(true));
+        enemy = new GameEntity();
+        enemy.getPositionComponent().setValue(enemyPosition);
+        enemy.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.RED)));
 
         getGameWorld().addEntities(player, enemy);
     }

@@ -28,14 +28,7 @@ package s19physicsparticles;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import org.jbox2d.particle.ParticleGroupDef;
-import org.jbox2d.particle.ParticleType;
-
-import java.util.EnumSet;
 
 /**
  * This is an example of a basic FXGL game application.

@@ -27,17 +27,8 @@ package s13search;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-
 import com.almasb.fxgl.search.AStarGrid;
-import com.almasb.fxgl.search.AStarNode;
-import com.almasb.fxgl.search.NodeState;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
-import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
-import java.util.List;
 
 /**
  * This is an example of a basic FXGL game application

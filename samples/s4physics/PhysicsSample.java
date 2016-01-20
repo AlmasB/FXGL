@@ -28,10 +28,9 @@ package s4physics;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -39,6 +38,7 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
+import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -49,7 +49,7 @@ public class PhysicsSample extends GameApplication {
         PLAYER, ENEMY
     }
 
-    private Entity player, enemy;
+    private GameEntity player, enemy;
     private PlayerControl playerControl;
 
     @Override
@@ -103,18 +103,20 @@ public class PhysicsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity();
-        player.addComponent(new TypeComponent(Type.PLAYER));
-        player.addComponent(new PositionComponent(100, 100));
-        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        player = new GameEntity();
+        player.getTypeComponent().setValue(Type.PLAYER);
+        player.getPositionComponent().setValue(100, 100);
+        player.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
+        player.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.BLUE)));
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
 
-        enemy = new Entity();
-        enemy.addComponent(new TypeComponent(Type.ENEMY));
-        enemy.addComponent(new PositionComponent(200, 100));
-        //enemy.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.RED)));
+        enemy = new GameEntity();
+        enemy.getTypeComponent().setValue(Type.ENEMY);
+        enemy.getPositionComponent().setValue(200, 100);
+        enemy.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
+        enemy.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.RED)));
 
         // 1. we need to set collidable to true
         // so that collision system can 'see' them

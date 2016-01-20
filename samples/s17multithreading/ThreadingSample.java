@@ -29,11 +29,9 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.concurrent.Task;
-import javafx.scene.shape.Rectangle;
 
 /**
  * This is an example of a basic FXGL game application.

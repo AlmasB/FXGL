@@ -31,18 +31,14 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.BoundingBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 /**
  * This is an example of a basic FXGL game application.

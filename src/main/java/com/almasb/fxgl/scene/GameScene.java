@@ -201,6 +201,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      */
     public void removeGameView(EntityView view) {
         getRenderGroup(view.getRenderLayer()).getChildren().remove(view);
+        view.removeFromScene();
     }
 
     private Viewport viewport;

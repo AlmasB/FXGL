@@ -25,21 +25,14 @@
  */
 package com.almasb.fxgl.entity;
 
-import com.almasb.ents.Entity;
-import com.almasb.fxgl.entity.component.BoundingBoxComponent;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
 
 import java.util.logging.Logger;
 
@@ -52,71 +45,10 @@ public class EntityView extends Parent {
 
     protected static final Logger log = FXGLLogger.getLogger("FXGL.EntityView");
 
-    private Entity entity;
-
-    /**
-     * Scene view ctor
-     *
-     * @param entity   the entity creating the view
-     * @param graphics the view for that entity
-     */
-    public EntityView(Entity entity, Node graphics) {
-        this.entity = entity;
-        addNode(graphics);
-
-//        if (showBBox) {
-//            BoundingBoxComponent bbox = Entities.getBBox(entity);
-//
-//            Rectangle debugBBox = new Rectangle();
-//            debugBBox.setStroke(showBBoxColor);
-//            debugBBox.setFill(null);
-//            debugBBox.widthProperty().bind(bbox.widthProperty());
-//            debugBBox.heightProperty().bind(bbox.heightProperty());
-//
-//            addNode(debugBBox);
-//        }
-
-        entity.activeProperty().addListener(((obs, old, isActive) -> {
-            if (!isActive)
-                removeFromScene();
-        }));
-    }
-
-    //        entity.xFlippedProperty().addListener(((obs, oldValue, isFlipped) -> {
-//            if (isFlipped) {
-//                getTransforms().setAll(new Scale(-1, 1, entity.getXFlipLine(), 0));
-//            } else {
-//                getTransforms().clear();
-//            }
-//        }));
+    public EntityView() {}
 
     public EntityView(Node graphics) {
         addNode(graphics);
-    }
-
-    /**
-     * Constructs new view for given entity
-     *
-     * @param entity the entity
-     */
-    public EntityView(Entity entity) {
-        this.entity = entity;
-
-        entity.activeProperty().addListener(((obs, old, isActive) -> {
-            if (!isActive)
-                removeFromScene();
-        }));
-    }
-
-    public EntityView() {
-
-    }
-
-    /**
-     * @return source entity of this view
-     */
-    public final Entity getEntity() {
-        return entity;
     }
 
     /**

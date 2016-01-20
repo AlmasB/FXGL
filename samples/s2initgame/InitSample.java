@@ -28,8 +28,11 @@ package s2initgame;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.RotationComponent;
+import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
@@ -74,16 +77,22 @@ public class InitSample extends GameApplication {
         // 2. create entity and add necessary components
         player = new Entity();
 
+        // give it a type
+        player.addComponent(new TypeComponent(Type.PLAYER));
+
         // set entity position to x = 100, y = 100
         player.addComponent(new PositionComponent(100, 100));
 
-        // 3. create graphics for entity
+        // set rotation before adding a view
+        player.addComponent(new RotationComponent());
+
+        // create graphics for entity
         Rectangle graphics = new Rectangle(40, 40);
 
         // set graphics to entity
-        //player.addComponent(new MainViewComponent(graphics));
+        player.addComponent(new MainViewComponent(new EntityView(graphics)));
 
-        // 4. add entity to game world
+        // 3. add entity to game world
         getGameWorld().addEntity(player);
     }
 

@@ -28,16 +28,12 @@ package sandbox;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.control.OffscreenCleanControl;
-import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Rectangle;
 
 /**
  * This is an example of a basic FXGL game application.

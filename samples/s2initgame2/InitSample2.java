@@ -27,8 +27,10 @@ package s2initgame2;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.shape.Rectangle;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -68,23 +70,13 @@ public class InitSample2 extends GameApplication {
 
     @Override
     protected void initGame() {
+        // using game entity might be easier
         player = new GameEntity();
+        player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(100, 100);
+        player.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40)));
 
-//        // 2. create entity and add necessary components
-//        player = new Entity();
-//
-//        // set entity position to x = 100, y = 100
-//        player.addComponent(new PositionComponent(100, 100));
-//
-//        // 3. create graphics for entity
-//        Rectangle graphics = new Rectangle(40, 40);
-//
-//        // set graphics to entity
-//        player.addComponent(new MainViewComponent(graphics));
-//
-//        // 4. add entity to game world
-//        getGameWorld().addEntity(player);
+        getGameWorld().addEntity(player);
     }
 
     @Override
