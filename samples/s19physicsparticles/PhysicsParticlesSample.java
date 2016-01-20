@@ -26,9 +26,21 @@
 
 package s19physicsparticles;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.component.*;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import org.jbox2d.particle.ParticleGroupDef;
+import org.jbox2d.particle.ParticleType;
+
+import java.util.EnumSet;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -63,24 +75,22 @@ public class PhysicsParticlesSample extends GameApplication {
 
     @Override
     protected void initGame() {
-//        initScreenBounds();
-//
-//        // 1. define how particles should behave
-//        ParticleGroupDef groupDef = new ParticleGroupDef();
-//        groupDef.setTypes(EnumSet.of(ParticleType.ELASTIC));
-//
-//        // 2. ask physics world to create particle entity
-//        PhysicsWorld.PhysicsParticleEntity cloth = getPhysicsWorld().newPhysicsParticleEntity(50, 10, 75, 150, Color.DARKGREEN.brighter(), Type.CLOTH,
-//                groupDef);
-//
-//        groupDef = new ParticleGroupDef();
-//        groupDef.setTypes(EnumSet.of(ParticleType.VISCOUS, ParticleType.TENSILE));
-//
-//        PhysicsWorld.PhysicsParticleEntity liquid = getPhysicsWorld().newPhysicsParticleEntity(200, 10, 70, 70, Color.BLUE.brighter(), Type.WATER,
-//                groupDef);
-//
-//        // 3. add to game world
-//        getGameWorld().addEntities(cloth, liquid);
+        initScreenBounds();
+
+        // 1. define how particles should behave
+        ParticleGroupDef groupDef = new ParticleGroupDef();
+        groupDef.setTypes(EnumSet.of(ParticleType.ELASTIC));
+
+        // 2. ask physics world to create particle entity
+        Entity cloth = getPhysicsWorld().newPhysicsParticleEntity(150, 10, 75, 150, Color.DARKGREEN.brighter(), groupDef);
+
+        groupDef = new ParticleGroupDef();
+        groupDef.setTypes(EnumSet.of(ParticleType.VISCOUS, ParticleType.TENSILE));
+
+        Entity liquid = getPhysicsWorld().newPhysicsParticleEntity(300, 10, 70, 70, Color.BLUE.brighter(), groupDef);
+
+        // 3. add to game world
+        getGameWorld().addEntities(cloth, liquid);
     }
 
     private void initScreenBounds() {
@@ -105,6 +115,16 @@ public class PhysicsParticlesSample extends GameApplication {
 //        ground.setValue(50, 300);
 //
 //        getGameWorld().addEntities(top, bot, left, right, ground);
+
+        GameEntity ground = new GameEntity();
+        ground.getPositionComponent().setValue(100, 500);
+        ground.getMainViewComponent().setGraphics(new EntityView(new Rectangle(800, 100)), true);
+        ground.addComponent(new CollidableComponent(true));
+
+        // 4. by default a physics component is static
+        ground.addComponent(new PhysicsComponent());
+
+        getGameWorld().addEntity(ground);
     }
 
     @Override

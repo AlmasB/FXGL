@@ -38,4 +38,8 @@ public class CollidableComponent extends BooleanComponent {
     public CollidableComponent(boolean collidable) {
         super(collidable);
     }
+
+    public CollidableComponent() {
+        this(false);
+    }
 }

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,18 +23,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s10realphysics;
+package sandbox;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -48,13 +50,17 @@ import org.jbox2d.dynamics.FixtureDef;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class RealPhysicsSample extends GameApplication {
+public class RealPhysicsSampleX extends GameApplication {
+
+    private enum Type {
+        BOX, GROUND
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("RealPhysicsSample");
+        settings.setTitle("RealPhysicsSampleX");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -89,6 +95,8 @@ public class RealPhysicsSample extends GameApplication {
                 physics.setFixtureDef(fd);
 
                 entity.addComponent(physics);
+                entity.addComponent(new CollidableComponent(true));
+                entity.getTypeComponent().setValue(Type.BOX);
 
                 getGameWorld().addEntity(entity);
             }
@@ -103,6 +111,8 @@ public class RealPhysicsSample extends GameApplication {
         GameEntity ground = new GameEntity();
         ground.getPositionComponent().setValue(0, 500);
         ground.getMainViewComponent().setGraphics(new EntityView(new Rectangle(800, 100)), true);
+        ground.addComponent(new CollidableComponent(true));
+        ground.getTypeComponent().setValue(Type.GROUND);
 
         // 4. by default a physics component is static
         ground.addComponent(new PhysicsComponent());
@@ -111,7 +121,33 @@ public class RealPhysicsSample extends GameApplication {
     }
 
     @Override
-    protected void initPhysics() {}
+    protected void initPhysics() {
+        PhysicsWorld physics = getPhysicsWorld();
+
+        physics.addCollisionHandler(new CollisionHandler(Type.GROUND, Type.BOX) {
+            @Override
+            protected void onHitBoxTrigger(Entity player, Entity enemy, HitBox playerBox, HitBox enemyBox) {
+                System.out.println(playerBox.getName() + " X " + enemyBox.getName());
+            }
+
+            // the order of entities is determined by
+            // the order of their types passed into constructor
+            @Override
+            protected void onCollisionBegin(Entity player, Entity enemy) {
+                System.out.println("On Collision Begin");
+            }
+
+            @Override
+            protected void onCollision(Entity player, Entity enemy) {
+                System.out.println("On Collision");
+            }
+
+            @Override
+            protected void onCollisionEnd(Entity player, Entity enemy) {
+                System.out.println("On Collision End");
+            }
+        });
+    }
 
     @Override
     protected void initUI() {}

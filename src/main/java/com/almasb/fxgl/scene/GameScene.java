@@ -41,6 +41,7 @@ import com.almasb.fxgl.event.FXGLInputEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.gameplay.GameWorldListener;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
@@ -313,6 +314,8 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::add);
+        entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
+                .ifPresent(particles::add);
     }
 
     @Override
@@ -327,6 +330,8 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         entity.removeComponentListener(this);
 
         entity.getControl(ParticleControl.class)
+                .ifPresent(particles::remove);
+        entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
                 .ifPresent(particles::remove);
     }
 

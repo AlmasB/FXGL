@@ -46,13 +46,16 @@ public class ParticleControl extends AbstractControl {
 
     private ParticleEmitter emitter;
 
-    private List<Particle> particles = new ArrayList<>();
+    protected List<Particle> particles = new ArrayList<>();
 
     private PositionComponent position;
 
     public ParticleControl(ParticleEmitter emitter) {
         this.emitter = emitter;
     }
+
+    // TODO: refactor physics particles as emitters?
+    public ParticleControl() {}
 
     @Override
     public void onAdded(Entity entity) {
@@ -61,6 +64,9 @@ public class ParticleControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
+        if (emitter == null)
+            return;
+
         particles.addAll(emitter.emit(position.getX(), position.getY()));
 
         for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
