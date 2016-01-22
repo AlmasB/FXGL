@@ -57,12 +57,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
     @Inject
     private FXGLMasterTimer(EventBus eventBus) {
         this.eventBus = eventBus;
-//        eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-//            Entity entity = event.getEntity();
-//            Duration expire = entity.getExpireTime();
-//            if (expire != Duration.ZERO)
-//                runOnceAfter(entity::removeFromWorld, expire);
-//        });
+
         eventBus.addEventHandler(FXGLEvent.RESET, event -> {
             resetTicks();
             clearActions();
@@ -236,13 +231,15 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
      */
     private void tickStart(long internalTime) {
         tick.set(tick.get() + 1);
-        now = (getTick() - 1) * tpfNanos();
+
         startNanos = System.nanoTime();
         realTPF = internalTime - previousInternalTime;
 
         if (realTPF > tpfNanos()) {
             realTPF = tpfNanos();
         }
+
+        now += realTPF;
 
         previousInternalTime = internalTime;
     }

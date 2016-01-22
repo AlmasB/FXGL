@@ -30,10 +30,15 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.RotationComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.LocalTimer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
@@ -57,7 +62,7 @@ public class TimerControlSample extends GameApplication {
         settings.setTitle("TimerControlSample");
         settings.setVersion("0.2");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
+        settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
@@ -74,7 +79,8 @@ public class TimerControlSample extends GameApplication {
         player = new Entity();
         player.addComponent(new TypeComponent(Type.PLAYER));
         player.addComponent(new PositionComponent(100, 100));
-        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        player.addComponent(new RotationComponent(0));
+        player.addComponent(new MainViewComponent(new EntityView(new Rectangle(40, 40, Color.BLUE))));
 
         player.addControl(new LiftControl());
 
@@ -102,7 +108,7 @@ public class TimerControlSample extends GameApplication {
                 timer.capture();
             }
 
-            //entity.translate(0, goingUp ? -1 : 1);
+            entity.getComponentUnsafe(PositionComponent.class).translate(0, goingUp ? -1 * tpf * 60 : 1 * tpf * 60);
         }
     }
 

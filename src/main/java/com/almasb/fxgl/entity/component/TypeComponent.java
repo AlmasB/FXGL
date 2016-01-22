@@ -29,15 +29,40 @@ package com.almasb.fxgl.entity.component;
 import com.almasb.ents.component.ObjectComponent;
 
 /**
+ * Represents an entity type.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class TypeComponent extends ObjectComponent<Object> {
 
+    /**
+     * Constructs a component with no type.
+     */
     public TypeComponent() {
         this(new Object());
     }
 
+    /**
+     * Constructs a component with given type.
+     * Note: although the type could be any object, it is recommended
+     * that an enum is used to represent types.
+     *
+     * @param type entity type
+     */
     public TypeComponent(Object type) {
         super(type);
+    }
+
+    /**
+     * <pre>
+     *     Example:
+     *     entity.getTypeComponent().isType(Type.PLAYER);
+     * </pre>
+     *
+     * @param type entity type
+     * @return true iff this type component is of given type
+     */
+    public boolean isType(Object type) {
+        return getValue().equals(type);
     }
 }

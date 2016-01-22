@@ -45,8 +45,16 @@ public class EntityView extends Parent {
 
     protected static final Logger log = FXGLLogger.getLogger("FXGL.EntityView");
 
+    /**
+     * Constructs a view with no content.
+     */
     public EntityView() {}
 
+    /**
+     * Constructs a view with given graphics content.
+     *
+     * @param graphics the view content
+     */
     public EntityView(Node graphics) {
         addNode(graphics);
     }
@@ -140,6 +148,9 @@ public class EntityView extends Parent {
         this.renderLayer.set(renderLayer);
     }
 
+    /**
+     * @return render layer
+     */
     public RenderLayer getRenderLayer() {
         return renderLayer.get();
     }
