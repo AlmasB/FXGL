@@ -31,6 +31,9 @@ import com.almasb.fxgl.entity.component.*;
 import javafx.scene.text.Text;
 
 /**
+ * Entity that guarantees to have Type, Position, Rotation, BoundingBox and View
+ * components.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class GameEntity extends Entity {
@@ -54,22 +57,37 @@ public class GameEntity extends Entity {
         addComponent(view);
     }
 
+    /**
+     * @return type
+     */
     public TypeComponent getTypeComponent() {
         return type;
     }
 
+    /**
+     * @return position
+     */
     public PositionComponent getPositionComponent() {
         return position;
     }
 
+    /**
+     * @return rotation
+     */
     public RotationComponent getRotationComponent() {
         return rotation;
     }
 
+    /**
+     * @return bounding box
+     */
     public BoundingBoxComponent getBoundingBoxComponent() {
         return bbox;
     }
 
+    /**
+     * @return view
+     */
     public MainViewComponent getMainViewComponent() {
         return view;
     }

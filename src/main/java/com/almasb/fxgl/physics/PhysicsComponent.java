@@ -37,6 +37,8 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
 /**
+ * Adds physics properties to an entity.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)

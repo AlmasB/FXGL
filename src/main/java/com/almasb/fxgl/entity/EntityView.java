@@ -98,6 +98,11 @@ public class EntityView extends Parent {
         getChildren().clear();
 
         try {
+            if (getParent() == null) {
+                removedFromScene = true;
+                return;
+            }
+
             // we were created by user and he set scene view manually
             if (getParent() instanceof EntityView) {
                 ((EntityView) getParent()).removeFromScene();
