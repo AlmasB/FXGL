@@ -205,6 +205,10 @@ public class BoundingBoxComponent extends AbstractComponent {
         return minX + getWidth();
     }
 
+    public double getMaxYWorld() {
+        return getMinY() + getWidth();
+    }
+
     private double getMinX() {
         return getEntity().getComponent(PositionComponent.class)
                 .map(PositionComponent::getX)
@@ -295,6 +299,23 @@ public class BoundingBoxComponent extends AbstractComponent {
     public final boolean isOutside(double minX, double minY, double maxX, double maxY) {
         return getMinX() + getWidth() < minX || getMinX() > maxX
                 || getMinY() + getHeight() < minY || getMinY() > maxY;
+    }
+
+    /**
+     * Forms a rectangle around the entity by extending min and max bounds
+     * with width in X and with height in Y directions.
+     *
+     * @param width width to extend by in each direction
+     * @param height height to extend by in each direction
+     * @return rectangular area
+     */
+    public final Rectangle2D range(double width, double height) {
+        double minX = getMinX() - width;
+        double minY = getMinY() - height;
+        double maxX = getMaxXWorld() + width;
+        double maxY = getMaxYWorld() + height;
+
+        return new Rectangle2D(minX, minY, maxX - minX, maxY - minY);
     }
 
     //
