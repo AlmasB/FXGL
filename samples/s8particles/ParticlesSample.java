@@ -39,6 +39,10 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
+/**
+ * Example of using particles.
+ * When left mouse button is clicked, an explosion will spawn at cursor position.
+ */
 public class ParticlesSample extends GameApplication {
 
     @Override
@@ -61,15 +65,18 @@ public class ParticlesSample extends GameApplication {
         input.addAction(new UserAction("Spawn Explosion") {
             @Override
             protected void onActionBegin() {
-                // 1. create particle entity
+                // 1. create entity
                 Entity explosion = new Entity();
                 explosion.addComponent(new PositionComponent(input.getMouse().getGameXY()));
 
-                // 2. create and configure emitter
+                // 2. create and configure emitter + control
                 ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
                 ParticleControl control = new ParticleControl(emitter);
 
+                // 3. add control to entity
                 explosion.addControl(control);
+
+                // we also want the entity to destroy itself after 3 seconds
                 explosion.addControl(new ExpireCleanControl(Duration.seconds(3)));
 
                 // 4. add entity to game world

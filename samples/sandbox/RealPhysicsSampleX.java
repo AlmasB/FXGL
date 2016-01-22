@@ -82,7 +82,7 @@ public class RealPhysicsSampleX extends GameApplication {
 
                 // 2. pass in "true" to allow graphics generate hit boxes based on view
                 // this is a convenience method if rectangular bbox is sufficient
-                entity.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.BLUE)), true);
+                entity.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)), true);
 
                 PhysicsComponent physics = new PhysicsComponent();
 
@@ -110,7 +110,7 @@ public class RealPhysicsSampleX extends GameApplication {
     protected void initGame() {
         GameEntity ground = new GameEntity();
         ground.getPositionComponent().setValue(0, 500);
-        ground.getMainViewComponent().setGraphics(new EntityView(new Rectangle(800, 100)), true);
+        ground.getMainViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
         ground.addComponent(new CollidableComponent(true));
         ground.getTypeComponent().setValue(Type.GROUND);
 

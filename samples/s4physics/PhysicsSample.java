@@ -107,7 +107,7 @@ public class PhysicsSample extends GameApplication {
         player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(100, 100);
         player.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
-        player.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.BLUE)));
+        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)));
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
@@ -116,7 +116,7 @@ public class PhysicsSample extends GameApplication {
         enemy.getTypeComponent().setValue(Type.ENEMY);
         enemy.getPositionComponent().setValue(200, 100);
         enemy.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
-        enemy.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.RED)));
+        enemy.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)));
 
         // 1. we need to set collidable to true
         // so that collision system can 'see' them

@@ -140,14 +140,14 @@ public class SaveSample extends GameApplication {
 
         player = new GameEntity();
         player.getPositionComponent().setValue(playerPosition);
-        player.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.BLUE)));
+        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)));
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
 
         enemy = new GameEntity();
         enemy.getPositionComponent().setValue(enemyPosition);
-        enemy.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.RED)));
+        enemy.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)));
 
         getGameWorld().addEntities(player, enemy);
     }

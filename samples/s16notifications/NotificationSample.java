@@ -34,12 +34,11 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to use notifications.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
-public class BasicGameApplication extends GameApplication {
+public class NotificationSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {

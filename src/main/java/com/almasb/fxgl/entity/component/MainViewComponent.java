@@ -56,18 +56,18 @@ public class MainViewComponent extends AbstractComponent {
     }
 
     private ObjectProperty<RenderLayer> renderLayer;
-    private ObjectProperty<EntityView> graphics;
+    private ObjectProperty<EntityView> view;
 
     public MainViewComponent() {
         this(new EntityView());
     }
 
-    public MainViewComponent(EntityView view) {
-        this(view, RenderLayer.TOP);
+    public MainViewComponent(Node graphics) {
+        this(new EntityView(graphics), RenderLayer.TOP);
     }
 
-    public MainViewComponent(EntityView view, RenderLayer renderLayer) {
-        this.graphics = new SimpleObjectProperty<>(view);
+    public MainViewComponent(Node graphics, RenderLayer renderLayer) {
+        this.view = new SimpleObjectProperty<>(new EntityView(graphics));
         this.renderLayer = new SimpleObjectProperty<>(renderLayer);
     }
 
@@ -81,27 +81,37 @@ public class MainViewComponent extends AbstractComponent {
 
     public void setRenderLayer(RenderLayer renderLayer) {
         this.renderLayer.set(renderLayer);
-        getGraphics().setRenderLayer(renderLayer);
+        getView().setRenderLayer(renderLayer);
     }
 
-    public EntityView getGraphics() {
-        return graphics.get();
+    public EntityView getView() {
+        return view.get();
     }
 
-    public ObjectProperty<EntityView> graphicsProperty() {
-        return graphics;
+    public ObjectProperty<EntityView> viewProperty() {
+        return view;
     }
 
-    public void setGraphics(EntityView graphics) {
-        setGraphics(graphics, false);
+    /**
+     * Convenience method to set JavaFX node directly.
+     * This is equivalent to <pre>setView(new EntityView(graphics));</pre>
+     *
+     * @param graphics JavaFX node
+     */
+    public void setGraphics(Node graphics) {
+        setView(new EntityView(graphics));
     }
 
-    public void setGraphics(EntityView graphics, boolean generateBoundingBox) {
-        this.graphics.set(graphics);
+    public void setView(EntityView view) {
+        setView(view, false);
+    }
+
+    public void setView(EntityView view, boolean generateBoundingBox) {
+        this.view.set(view);
 
         if (generateBoundingBox) {
             Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", new BoundingBox(
-                    0, 0, getGraphics().getLayoutBounds().getWidth(), getGraphics().getLayoutBounds().getHeight()
+                    0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
             )));
         }
     }
@@ -110,21 +120,21 @@ public class MainViewComponent extends AbstractComponent {
     public void onAdded(Entity entity) {
         if (!entity.getComponent(BoundingBoxComponent.class).isPresent()) {
             BoundingBoxComponent bbox = new BoundingBoxComponent(new HitBox("__VIEW__", new BoundingBox(
-                0, 0, getGraphics().getLayoutBounds().getWidth(), getGraphics().getLayoutBounds().getHeight()
+                0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
             )));
 
             entity.addComponent(bbox);
         }
 
-        getGraphics().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
-        getGraphics().translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
-        getGraphics().rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
+        getView().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
+        getView().translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
+        getView().rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
 
         if (showBBox) {
             initDebugBBox();
         }
 
-        graphics.addListener((observable, oldGraphics, newGraphics) -> {
+        view.addListener((observable, oldGraphics, newGraphics) -> {
             oldGraphics.translateXProperty().unbind();
             oldGraphics.translateYProperty().unbind();
             oldGraphics.rotateProperty().unbind();
@@ -156,6 +166,6 @@ public class MainViewComponent extends AbstractComponent {
         debugBBox.widthProperty().bind(bbox.widthProperty());
         debugBBox.heightProperty().bind(bbox.heightProperty());
 
-        getGraphics().addNode(debugBBox);
+        getView().addNode(debugBBox);
     }
 }

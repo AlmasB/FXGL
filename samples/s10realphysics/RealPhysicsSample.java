@@ -25,13 +25,11 @@
  */
 package s10realphysics;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -39,14 +37,14 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Sample that shows basic usage of the JBox2D physics engine.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class RealPhysicsSample extends GameApplication {
 
@@ -76,7 +74,7 @@ public class RealPhysicsSample extends GameApplication {
 
                 // 2. pass in "true" to allow graphics generate hit boxes based on view
                 // this is a convenience method if rectangular bbox is sufficient
-                entity.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40, Color.BLUE)), true);
+                entity.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)), true);
 
                 PhysicsComponent physics = new PhysicsComponent();
 
@@ -102,7 +100,7 @@ public class RealPhysicsSample extends GameApplication {
     protected void initGame() {
         GameEntity ground = new GameEntity();
         ground.getPositionComponent().setValue(0, 500);
-        ground.getMainViewComponent().setGraphics(new EntityView(new Rectangle(800, 100)), true);
+        ground.getMainViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
 
         // 4. by default a physics component is static
         ground.addComponent(new PhysicsComponent());

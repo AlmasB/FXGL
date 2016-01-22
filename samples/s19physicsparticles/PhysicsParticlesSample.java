@@ -33,7 +33,6 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -43,16 +42,11 @@ import org.jbox2d.particle.ParticleType;
 import java.util.EnumSet;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to use physics particles.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class PhysicsParticlesSample extends GameApplication {
-
-    private enum Type {
-        BOUNDS, CLOTH, WATER
-    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -75,13 +69,13 @@ public class PhysicsParticlesSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        initScreenBounds();
+        initGround();
 
         // 1. define how particles should behave
         ParticleGroupDef groupDef = new ParticleGroupDef();
         groupDef.setTypes(EnumSet.of(ParticleType.ELASTIC));
 
-        // 2. ask physics world to create particle entity
+        // 2. ask physics world to create entity
         Entity cloth = getPhysicsWorld().newPhysicsParticleEntity(150, 10, 75, 150, Color.DARKGREEN.brighter(), groupDef);
 
         groupDef = new ParticleGroupDef();
@@ -93,32 +87,10 @@ public class PhysicsParticlesSample extends GameApplication {
         getGameWorld().addEntities(cloth, liquid);
     }
 
-    private void initScreenBounds() {
-//        PhysicsEntity top = new PhysicsEntity(Type.BOUNDS);
-//        top.setValue(0, 0 - 100);
-//        top.setSceneView(new Rectangle(getWidth(), 100));
-//
-//        PhysicsEntity bot = new PhysicsEntity(Type.BOUNDS);
-//        bot.setValue(0, getHeight() - 100);
-//        bot.setSceneView(new Rectangle(getWidth(), 100));
-//
-//        PhysicsEntity left = new PhysicsEntity(Type.BOUNDS);
-//        left.setValue(0 - 100 + 10, 0);
-//        left.setSceneView(new Rectangle(100, getHeight()));
-//
-//        PhysicsEntity right = new PhysicsEntity(Type.BOUNDS);
-//        right.setValue(getWidth(), 0);
-//        right.setSceneView(new Rectangle(100, getHeight()));
-//
-//        PhysicsEntity ground = new PhysicsEntity(Type.BOUNDS);
-//        ground.setSceneView(new Rectangle(200, 50));
-//        ground.setValue(50, 300);
-//
-//        getGameWorld().addEntities(top, bot, left, right, ground);
-
+    private void initGround() {
         GameEntity ground = new GameEntity();
         ground.getPositionComponent().setValue(100, 500);
-        ground.getMainViewComponent().setGraphics(new EntityView(new Rectangle(800, 100)), true);
+        ground.getMainViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
         ground.addComponent(new CollidableComponent(true));
 
         // 4. by default a physics component is static

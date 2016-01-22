@@ -33,12 +33,11 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Parent;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to use FXML UI within FXGL.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
-public class BasicGameApplication extends GameApplication {
+public class FXMLSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {

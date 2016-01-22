@@ -129,7 +129,7 @@ public class InitSampleX extends GameApplication {
 //        player.getBoundingBoxComponent()
 //                .addHitBox(new HitBox("HEAD", new BoundingBox(20, 20, 40, 50)));
 //
-//        player.getMainViewComponent().setGraphics(new EntityView(player, new Rectangle(Math.random()*40 + 20, 40)));
+//        player.getMainViewComponent().setView(new EntityView(player, new Rectangle(Math.random()*40 + 20, 40)));
 //
 //        player.getPositionComponent().setValue(300, 500);
     }

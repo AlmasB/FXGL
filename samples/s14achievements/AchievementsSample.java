@@ -28,6 +28,8 @@ package s14achievements;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Achievement;
@@ -36,14 +38,14 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 
+/**
+ * Shows how to register and unlock achievements.
+ */
 public class AchievementsSample extends GameApplication {
 
-    private enum Type {
-        PLAYER
-    }
-
-    private Entity player;
+    private GameEntity player;
     private PlayerControl playerControl;
 
     @Override
@@ -59,7 +61,7 @@ public class AchievementsSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    // 1. Override initAchievements()..
+    // 1. Override initAchievements()
     // create and register achievement
     @Override
     protected void initAchievements() {
@@ -105,10 +107,9 @@ public class AchievementsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity();
-        player.addComponent(new TypeComponent(Type.PLAYER));
-        player.addComponent(new PositionComponent(100, 100));
-        //player.addComponent(new MainViewComponent(new Rectangle(40, 40, Color.BLUE)));
+        player = new GameEntity();
+        player.getPositionComponent().setValue(100, 100);
+        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40)));
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);

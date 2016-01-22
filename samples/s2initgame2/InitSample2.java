@@ -74,7 +74,7 @@ public class InitSample2 extends GameApplication {
         player = new GameEntity();
         player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(100, 100);
-        player.getMainViewComponent().setGraphics(new EntityView(new Rectangle(40, 40)));
+        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40)));
 
         getGameWorld().addEntity(player);
     }

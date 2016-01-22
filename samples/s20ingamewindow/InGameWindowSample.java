@@ -38,10 +38,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to use in-game windows.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class InGameWindowSample extends GameApplication {
 

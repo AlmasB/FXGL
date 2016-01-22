@@ -29,15 +29,17 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.RotationComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.concurrent.Task;
+import javafx.scene.shape.Rectangle;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to use multiple threads.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class ThreadingSample extends GameApplication {
 
@@ -68,7 +70,6 @@ public class ThreadingSample extends GameApplication {
 
     @Override
     protected void initGame() {
-
         // 2. get executor service
         // 3. create a new task that performs heavy work
 
@@ -87,7 +88,8 @@ public class ThreadingSample extends GameApplication {
 
                 Entity entity = new Entity();
                 entity.addComponent(new PositionComponent(300, 300));
-                //entity.addComponent(new MainViewComponent(new Rectangle(40, 40)));
+                entity.addComponent(new RotationComponent(0));
+                entity.addComponent(new MainViewComponent(new Rectangle(40, 40)));
 
                 getGameWorld().addEntity(entity);
             }

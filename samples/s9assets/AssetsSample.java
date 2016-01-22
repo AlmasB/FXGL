@@ -25,27 +25,21 @@
  */
 package s9assets;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.TypeComponent;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Example of loading assets.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class AssetsSample extends GameApplication {
 
-    private enum Type {
-        PLAYER
-    }
-
-    private Entity player;
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -63,7 +57,7 @@ public class AssetsSample extends GameApplication {
     @Override
     protected void initInput() {}
 
-    // 1. create Texture object
+    // 1. define Texture object
     private Texture brickTexture;
 
     @Override
@@ -74,12 +68,11 @@ public class AssetsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity();
-        player.addComponent(new TypeComponent(Type.PLAYER));
-        player.addComponent(new PositionComponent(100, 100));
+        player = new GameEntity();
+        player.getPositionComponent().setValue(400, 300);
 
         // 3. add texture as main view
-        //player.addComponent(new MainViewComponent(brickTexture));
+        player.getMainViewComponent().setView(new EntityView(brickTexture));
 
         getGameWorld().addEntity(player);
     }

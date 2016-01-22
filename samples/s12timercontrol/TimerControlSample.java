@@ -42,10 +42,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
- * This is an example of a basic FXGL game application.
+ * This samples shows how to create timer based controls for entities.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class TimerControlSample extends GameApplication {
 

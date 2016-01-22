@@ -32,6 +32,9 @@ import com.almasb.ents.EntityWorld;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.component.BoundingBoxComponent;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.FXGLEvent;
@@ -115,6 +118,12 @@ public final class GameWorld extends EntityWorld {
         log.finer("Game world initialized");
     }
 
+    /**
+     * This query only works on entities with TypeComponent.
+     *
+     * @param type entity type
+     * @return entities
+     */
     public List<Entity> getEntitiesByType(Enum<?> type) {
         return getEntitiesByComponent(TypeComponent.class).stream()
                 .filter(e -> Entities.getType(e).getValue().equals(type))
@@ -141,76 +150,70 @@ public final class GameWorld extends EntityWorld {
                 .findFirst();
     }
 
-//
-//    /**
-//     * Returns a list of entities which are filtered by
-//     * given predicate.
-//     *
-//     * @param predicate filter
-//     * @return list of entities that satisfy given predicate
-//     */
-//    public List<Entity> getEntitiesFiltered(Predicate<Entity> predicate) {
-//        return entities.stream()
-//                .filter(predicate)
-//                .collect(Collectors.toList());
-//    }
-//
-//    /**
-//     * Returns a list of entities whose type matches given arguments and
-//     * which are partially or entirely
-//     * in the specified rectangular selection.
-//     *
-//     * If no arguments were given, a list of all entities satisfying the
-//     * requirement is returned.
-//     *
-//     * @param selection Rectangle2D that describes the selection box
-//     * @param types entity types
-//     * @return  list of entities in the range
-//     */
-//    public List<Entity> getEntitiesInRange(Rectangle2D selection, EntityType... types) {
-//        Entity boundsEntity = Entity.noType();
-//        boundsEntity.addHitBox(new HitBox("__RANGE__",
-//                new BoundingBox(selection.getMinX(), selection.getMinY(), selection.getWidth(), selection.getHeight())));
-//
-//        return getEntities(types).stream()
-//                .filter(entity -> entity.isCollidingWith(boundsEntity))
-//                .collect(Collectors.toList());
-//    }
-//
-//    /**
-//     * Returns a list of entities whose type matches given arguments and
-//     * which have the given render layer index
-//     *
-//     * If no arguments were given, a list of all entities satisfying the
-//     * requirement (i.e. render layer) is returned.
-//     *
-//     * @param layer render layer
-//     * @param types entity types
-//     * @return  list of entities in the layer
-//     */
-//    public List<Entity> getEntitiesByLayer(RenderLayer layer, EntityType... types) {
-//        return getEntities(types).stream()
-//                .filter(e -> e.getSceneView().isPresent())
-//                .filter(e -> e.getSceneView().get().getRenderLayer().index() == layer.index())
-//                .collect(Collectors.toList());
-//    }
-//
+    /**
+     * Returns a list of entities which are filtered by
+     * given predicate.
+     *
+     * @param predicate filter
+     * @return list of entities that satisfy given predicate
+     */
+    public List<Entity> getEntitiesFiltered(Predicate<Entity> predicate) {
+        return entities.stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
+    }
 
-//
-//    /**
-//     * Returns an entity at given position. The position x and y
-//     * must equal to entity's position x and y.
-//     * <p>
-//     * Returns {@link Optional#empty()} if no entity was found at
-//     * given position.
-//     *
-//     * @param position point in the world
-//     * @return entity at point
-//     */
-//    public Optional<Entity> getEntityAt(Point2D position) {
-//        return getEntities()
-//                .stream()
-//                .filter(e -> e.getValue().equals(position))
-//                .findAny();
-//    }
+    /**
+     * Returns a list of entities
+     * which are partially or entirely
+     * in the specified rectangular selection.
+     * This query only works on entities with BoundingBoxComponent.
+     *
+     * @param selection Rectangle2D that describes the selection box
+     * @return  list of entities in the range
+     */
+    public List<Entity> getEntitiesInRange(Rectangle2D selection) {
+        return getEntitiesByComponent(BoundingBoxComponent.class).stream()
+                .filter(e -> {
+                    BoundingBoxComponent bbox = Entities.getBBox(e);
+                    return bbox.isWithin(selection);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of entities which have the given render layer index.
+     * This query only works on entities with MainViewComponent.
+     *
+     * @param layer render layer
+     * @return list of entities in the layer
+     */
+    public List<Entity> getEntitiesByLayer(RenderLayer layer) {
+        return getEntitiesByComponent(MainViewComponent.class).stream()
+                .filter(e -> {
+                    MainViewComponent view = Entities.getMainView(e);
+                    return view.getRenderLayer().index() == layer.index();
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns an entity at given position. The position x and y
+     * must equal to entity's position x and y.
+     * <p>
+     * Returns {@link Optional#empty()} if no entity was found at
+     * given position.
+     * This query only works on entities with PositionComponent.
+     *
+     * @param position point in the world
+     * @return entity at point
+     */
+    public Optional<Entity> getEntityAt(Point2D position) {
+        return getEntitiesByComponent(PositionComponent.class).stream()
+                .filter(e -> {
+                    PositionComponent positionComponent = Entities.getPosition(e);
+                    return positionComponent.getValue().equals(position);
+                })
+                .findAny();
+    }
 }
