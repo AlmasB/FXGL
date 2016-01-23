@@ -54,8 +54,7 @@ public class ParticleControl extends AbstractControl {
         this.emitter = emitter;
     }
 
-    // TODO: refactor physics particles as emitters?
-    public ParticleControl() {}
+    protected ParticleControl() {}
 
     @Override
     public void onAdded(Entity entity) {
