@@ -37,10 +37,9 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to init a basic game object and attach to world.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class InitSample extends GameApplication {
 

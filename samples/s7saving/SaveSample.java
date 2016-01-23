@@ -42,6 +42,9 @@ import javafx.scene.shape.Rectangle;
 
 import java.io.Serializable;
 
+/**
+ * Shows how to save and load game state.
+ */
 public class SaveSample extends GameApplication {
 
     private enum Type {

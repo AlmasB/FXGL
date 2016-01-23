@@ -29,6 +29,9 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 
+/**
+ * Shows how to enable intro/menus.
+ */
 public class MenuSample extends GameApplication {
 
     @Override

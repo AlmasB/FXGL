@@ -43,6 +43,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Shows how to use collision handlers and define hitboxes for entities.
+ */
 public class PhysicsSample extends GameApplication {
 
     private enum Type {

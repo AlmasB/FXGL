@@ -31,6 +31,9 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * Shows how to use JavaFX UI within FXGL.
+ */
 public class UISample extends GameApplication {
 
     // 1. declare JavaFX or FXGL UI object

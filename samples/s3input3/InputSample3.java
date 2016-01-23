@@ -32,6 +32,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * Shows how to use input service and bind actions to triggers.
+ */
 public class InputSample3 extends GameApplication {
 
     @Override
