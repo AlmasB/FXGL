@@ -26,6 +26,7 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.ents.Entity;
@@ -77,6 +78,9 @@ import java.util.stream.Collectors;
 public final class PhysicsWorld {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.PhysicsWorld");
+
+    private static final double PIXELS_PER_METER = FXGL.getDouble("physics.ppm");
+    private static final double METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
 
     private World physicsWorld = new World(new Vec2(0, -10));
 
@@ -458,7 +462,7 @@ public final class PhysicsWorld {
      * @return value in meters
      */
     public static float toMeters(double pixels) {
-        return (float) (pixels * 0.05f);    // * 0.02
+        return (float) (pixels * METERS_PER_PIXELS);
     }
 
     /**
@@ -468,7 +472,7 @@ public final class PhysicsWorld {
      * @return value in pixels
      */
     public static float toPixels(double meters) {
-        return (float) (meters * 20f);  // * 50
+        return (float) (meters * PIXELS_PER_METER);
     }
 
     /**
