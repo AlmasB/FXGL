@@ -26,9 +26,7 @@
 
 package com.almasb.fxgl.scene;
 
-import com.almasb.ents.Component;
-import com.almasb.ents.ComponentListener;
-import com.almasb.ents.Entity;
+import com.almasb.ents.*;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
@@ -72,7 +70,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener {
+public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener, ControlListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
@@ -311,6 +309,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
                 });
 
         entity.addComponentListener(this);
+        entity.addControlListener(this);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::add);
@@ -328,6 +327,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
                 });
 
         entity.removeComponentListener(this);
+        entity.removeControlListener(this);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::remove);
@@ -380,6 +380,21 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
             removeGameView(view);
 
             viewComponent.viewProperty().removeListener(viewChangeListener);
+        }
+    }
+
+    @Override
+    public void onControlAdded(Control control) {
+        if (control instanceof PhysicsWorld.PhysicsParticleControl) {
+            PhysicsWorld.PhysicsParticleControl particleControl = (PhysicsWorld.PhysicsParticleControl) control;
+            particles.add(particleControl);
+        }
+    }
+
+    @Override
+    public void onControlRemoved(Control control) {
+        if (control instanceof PhysicsWorld.PhysicsParticleControl) {
+            particles.remove(control);
         }
     }
 }

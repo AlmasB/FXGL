@@ -78,8 +78,6 @@ public final class PhysicsWorld {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.PhysicsWorld");
 
-    private static final float TIME_STEP = 1 / 60.0f;
-
     private World physicsWorld = new World(new Vec2(0, -10));
 
     private ParticleSystem particleSystem = physicsWorld.getParticleSystem();
@@ -310,6 +308,8 @@ public final class PhysicsWorld {
 
         if (entity.hasComponent(PhysicsComponent.class)) {
             createBody(entity);
+        } else if (entity.hasComponent(PhysicsParticleComponent.class)) {
+            createPhysicsParticles(entity);
         }
     }
 
@@ -322,7 +322,7 @@ public final class PhysicsWorld {
     }
 
     private void update(double tpf) {
-        physicsWorld.step(TIME_STEP, 8, 3);
+        physicsWorld.step((float) tpf, 8, 3);
 
         processCollisions();
 
@@ -414,6 +414,25 @@ public final class PhysicsWorld {
             Fixture fixture = physics.body.createFixture(fd);
             fixture.setUserData(box);
         }
+    }
+
+    private void createPhysicsParticles(Entity e) {
+        double x = Entities.getPosition(e).getX();
+        double y = Entities.getPosition(e).getY();
+        double width = Entities.getBBox(e).getWidth();
+        double height = Entities.getBBox(e).getHeight();
+
+        ParticleGroupDef def = e.getComponentUnsafe(PhysicsParticleComponent.class).getDefinition();
+        def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+        def.setShape(shape);
+
+        ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);
+
+        Color color = e.getComponentUnsafe(PhysicsParticleComponent.class).getColor();
+        e.addControl(new PhysicsParticleControl(particleGroup, color));
     }
 
     /**
@@ -510,39 +529,6 @@ public final class PhysicsWorld {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
     }
 
-    /**
-     * Constructs new physics particles based on given definition
-     * and wraps it into an entity. The returned entity can only be used
-     * to attach to game world and to remove from game world.
-     * The geometric properties are completely managed by the physics world.
-     *
-     * <p>
-     *     Parameter <b>data</b> defines what physics properties the particles will have.
-     * </p>
-     *
-     * @param x top left position
-     * @param y top left position
-     * @param width particle group width
-     * @param height particle group height
-     * @param color particle group color
-     * @param def particle group data
-     * @return new physics particle entity
-     */
-    public Entity newPhysicsParticleEntity(double x, double y, double width, double height, Color color,
-                                                          ParticleGroupDef def) {
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
-
-        def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
-        def.setShape(shape);
-
-        ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);
-
-        Entity entity = new Entity();
-        entity.addControl(new PhysicsParticleControl(particleGroup, color));
-        return entity;
-    }
-
     private static class EdgeCallback implements RayCastCallback {
         Fixture fixture;
         Vec2 point;
@@ -583,8 +569,6 @@ public final class PhysicsWorld {
         private Color color;
 
         private PhysicsParticleControl(ParticleGroup group, Color color) {
-            super();
-
             this.group = group;
             this.color = color;
 
