@@ -24,81 +24,46 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package shooter;
 
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
-import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.input.ActionType;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.input.OnUserAction;
-import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
+import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.control.OffscreenCleanControl;
+import com.almasb.fxgl.entity.control.ProjectileControl;
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class FXShooterApp extends GameApplication {
-
-    GameEntity weapon;
-
+public class PlayerControl extends AbstractControl {
     @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setTitle("FXShooterApp");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-    }
-
-    @Override
-    protected void initInput() {
-        Input input = getInput();
-
-        input.addInputMapping(new InputMapping("Shoot", KeyCode.F));
-    }
-
-    @Override
-    protected void initAssets() {
+    public void onUpdate(Entity entity, double tpf) {
 
     }
 
-    @Override
-    protected void initGame() {
-        weapon = new GameEntity();
+    public void shoot(Point2D direction) {
+        GameEntity bullet = new GameEntity();
+        bullet.getTypeComponent().setValue(FXShooterApp.EntityType.BULLET);
+        bullet.getPositionComponent().setValue(getEntity().getComponentUnsafe(PositionComponent.class).getValue().add(20, 20));
+        bullet.getMainViewComponent().setView(new EntityView(new Rectangle(10, 2, Color.BLACK)), true);
 
-        weapon.addControl(new WeaponControl());
-    }
+        bullet.addComponent(new CollidableComponent(true));
+        bullet.addControl(new OffscreenCleanControl());
+        bullet.addControl(new ProjectileControl(direction, 10));
 
-    @Override
-    protected void initPhysics() {
+        BulletComponent bulletData = new BulletComponent();
+        bulletData.setDamage(1);
+        bulletData.setHp(1);
+        bulletData.setSpeed(10);
 
-    }
+        bullet.addComponent(bulletData);
 
-    @Override
-    protected void initUI() {
-
-    }
-
-    @Override
-    protected void onUpdate() {
-
-    }
-
-    @OnUserAction(name = "Shoot", type = ActionType.ON_ACTION)
-    public void shoot() {
-        weapon.getControlUnsafe(WeaponControl.class).shoot();
-    }
-
-    public class WeaponControl extends AbstractControl {
-
-        public void shoot() {
-
-        }
-
-        @Override
-        public void onUpdate(Entity entity, double tpf) {
-
-        }
+        getEntity().getWorld().addEntity(bullet);
     }
 }
