@@ -325,26 +325,6 @@ public final class PhysicsWorld {
         physicsWorld.step((float) tpf, 8, 3);
 
         processCollisions();
-
-        for (Body body = physicsWorld.getBodyList(); body != null; body = body.getNext()) {
-            Entity e = (Entity) body.getUserData();
-
-            PositionComponent position = e.getComponentUnsafe(PositionComponent.class);
-            RotationComponent rotation = e.getComponentUnsafe(RotationComponent.class);
-            BoundingBoxComponent bbox = e.getComponentUnsafe(BoundingBoxComponent.class);
-
-            // we round positions so that it's easy for the rest of the world to work with
-            // snapped to pixel values
-            position.setX(
-                    Math.round(toPixels(
-                            body.getPosition().x
-                                    - toMeters(bbox.getWidth() / 2))));
-            position.setY(
-                    Math.round(toPixels(
-                            toMeters(appHeight) - body.getPosition().y
-                                    - toMeters(bbox.getHeight() / 2))));
-            rotation.setValue(-Math.toDegrees(body.getAngle()));
-        }
     }
 
     /**
@@ -384,6 +364,8 @@ public final class PhysicsWorld {
 
         physics.body.setUserData(e);
         physics.onInitPhysics();
+
+        e.addControl(new PhysicsControl(appHeight));
     }
 
     private void createFixtures(Entity e) {

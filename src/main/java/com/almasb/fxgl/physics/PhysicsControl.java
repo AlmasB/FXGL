@@ -24,20 +24,57 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity.control;
+package com.almasb.fxgl.physics;
 
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.BoundingBoxComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.RotationComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import org.jbox2d.dynamics.Body;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PhysicsComponent.class)
 public class PhysicsControl extends AbstractControl {
+
+    private Body body;
+
+    private PositionComponent position;
+    private RotationComponent rotation;
+    private BoundingBoxComponent bbox;
+
+    private double appHeight;
+
+    public PhysicsControl(double appHeight) {
+        this.appHeight = appHeight;
+    }
+
+    @Override
+    public void onAdded(Entity entity) {
+        position = Entities.getPosition(entity);
+        rotation = Entities.getRotation(entity);
+        bbox = Entities.getBBox(entity);
+
+        body = entity.getComponentUnsafe(PhysicsComponent.class).body;
+    }
+
     @Override
     public void onUpdate(Entity entity, double tpf) {
+        // we round positions so that it's easy for the rest of the world to work with
+        // snapped to pixel values
+        position.setX(
+                Math.round(PhysicsWorld.toPixels(
+                        body.getPosition().x - PhysicsWorld.toMeters(bbox.getWidth() / 2))));
+        position.setY(
+                Math.round(PhysicsWorld.toPixels(
+                        PhysicsWorld.toMeters(appHeight) - body.getPosition().y
+                                - PhysicsWorld.toMeters(bbox.getHeight() / 2))));
 
+        rotation.setValue(-Math.toDegrees(body.getAngle()));
     }
 }
