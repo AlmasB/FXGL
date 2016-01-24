@@ -50,7 +50,7 @@ public class PhysicsControl extends AbstractControl {
 
     private double appHeight;
 
-    public PhysicsControl(double appHeight) {
+    PhysicsControl(double appHeight) {
         this.appHeight = appHeight;
     }
 
