@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *  * Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -26,88 +26,88 @@ package org.jbox2d.common;
 /**
  * This is the viewport transform used from drawing. Use yFlip if you are drawing from the top-left
  * corner.
- * 
+ *
  * @author Daniel
  */
 public interface IViewportTransform {
 
-  /**
-   * @return if the transform flips the y axis
-   */
-  boolean isYFlip();
+    /**
+     * @return if the transform flips the y axis
+     */
+    boolean isYFlip();
 
-  /**
-   * @param yFlip if we flip the y axis when transforming
-   */
-  void setYFlip(boolean yFlip);
+    /**
+     * @param yFlip if we flip the y axis when transforming
+     */
+    void setYFlip(boolean yFlip);
 
-  /**
-   * This is the half-width and half-height. This should be the actual half-width and half-height,
-   * not anything transformed or scaled. Not a copy.
-   */
-  Vec2 getExtents();
+    /**
+     * This is the half-width and half-height. This should be the actual half-width and half-height,
+     * not anything transformed or scaled. Not a copy.
+     */
+    Vec2 getExtents();
 
-  /**
-   * This sets the half-width and half-height. This should be the actual half-width and half-height,
-   * not anything transformed or scaled.
-   */
-  void setExtents(Vec2 extents);
+    /**
+     * This sets the half-width and half-height. This should be the actual half-width and half-height,
+     * not anything transformed or scaled.
+     */
+    void setExtents(Vec2 extents);
 
-  /**
-   * This sets the half-width and half-height of the viewport. This should be the actual half-width
-   * and half-height, not anything transformed or scaled.
-   */
-  void setExtents(float halfWidth, float halfHeight);
+    /**
+     * This sets the half-width and half-height of the viewport. This should be the actual half-width
+     * and half-height, not anything transformed or scaled.
+     */
+    void setExtents(float halfWidth, float halfHeight);
 
-  /**
-   * center of the viewport. Not a copy.
-   */
-  Vec2 getCenter();
+    /**
+     * center of the viewport. Not a copy.
+     */
+    Vec2 getCenter();
 
-  /**
-   * sets the center of the viewport.
-   */
-  void setCenter(Vec2 pos);
+    /**
+     * sets the center of the viewport.
+     */
+    void setCenter(Vec2 pos);
 
-  /**
-   * sets the center of the viewport.
-   */
-  void setCenter(float x, float y);
+    /**
+     * sets the center of the viewport.
+     */
+    void setCenter(float x, float y);
 
-  /**
-   * Sets the transform's center to the given x and y coordinates, and using the given scale.
-   */
-  void setCamera(float x, float y, float scale);
+    /**
+     * Sets the transform's center to the given x and y coordinates, and using the given scale.
+     */
+    void setCamera(float x, float y, float scale);
 
-  /**
-   * Transforms the given directional vector by the viewport transform (not positional)
-   */
-  void getWorldVectorToScreen(Vec2 world, Vec2 screen);
-
-
-  /**
-   * Transforms the given directional screen vector back to the world direction.
-   */
-  void getScreenVectorToWorld(Vec2 screen, Vec2 world);
-  
-  Mat22 getMat22Representation();
+    /**
+     * Transforms the given directional vector by the viewport transform (not positional)
+     */
+    void getWorldVectorToScreen(Vec2 world, Vec2 screen);
 
 
-  /**
-   * takes the world coordinate (world) puts the corresponding screen coordinate in screen. It
-   * should be safe to give the same object as both parameters.
-   */
-  void getWorldToScreen(Vec2 world, Vec2 screen);
+    /**
+     * Transforms the given directional screen vector back to the world direction.
+     */
+    void getScreenVectorToWorld(Vec2 screen, Vec2 world);
+
+    Mat22 getMat22Representation();
 
 
-  /**
-   * takes the screen coordinates (screen) and puts the corresponding world coordinates in world. It
-   * should be safe to give the same object as both parameters.
-   */
-  void getScreenToWorld(Vec2 screen, Vec2 world);
+    /**
+     * takes the world coordinate (world) puts the corresponding screen coordinate in screen. It
+     * should be safe to give the same object as both parameters.
+     */
+    void getWorldToScreen(Vec2 world, Vec2 screen);
 
-  /**
-   * Multiplies the viewport transform by the given Mat22
-   */
-  void mulByTransform(Mat22 transform);
+
+    /**
+     * takes the screen coordinates (screen) and puts the corresponding world coordinates in world. It
+     * should be safe to give the same object as both parameters.
+     */
+    void getScreenToWorld(Vec2 screen, Vec2 world);
+
+    /**
+     * Multiplies the viewport transform by the given Mat22
+     */
+    void mulByTransform(Mat22 transform);
 }

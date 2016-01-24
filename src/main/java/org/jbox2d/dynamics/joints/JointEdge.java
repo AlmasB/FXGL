@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -34,24 +34,24 @@ import org.jbox2d.dynamics.Body;
  * @author Daniel
  */
 public class JointEdge {
-	
-	/**
-	 * Provides quick access to the other body attached
-	 */
-	public Body other = null;
-	
-	/**
-	 * the joint
-	 */
-	public Joint joint = null;
-	
-	/**
-	 * the previous joint edge in the body's joint list
-	 */
-	public JointEdge prev = null;
-	
-	/**
-	 * the next joint edge in the body's joint list
-	 */
-	public JointEdge next = null;
+
+    /**
+     * Provides quick access to the other body attached
+     */
+    public Body other = null;
+
+    /**
+     * the joint
+     */
+    public Joint joint = null;
+
+    /**
+     * the previous joint edge in the body's joint list
+     */
+    public JointEdge prev = null;
+
+    /**
+     * the next joint edge in the body's joint list
+     */
+    public JointEdge next = null;
 }

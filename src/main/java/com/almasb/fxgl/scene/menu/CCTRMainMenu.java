@@ -26,7 +26,6 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.scene.Node;

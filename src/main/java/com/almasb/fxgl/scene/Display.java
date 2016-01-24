@@ -26,10 +26,12 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.asset.CSS;
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.DisplayEvent;
-import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.LoadEvent;
 import com.almasb.fxgl.event.SaveEvent;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -44,10 +46,13 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
@@ -65,6 +70,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -77,7 +83,7 @@ public final class Display implements UserProfileSavable {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.Display");
 
-    private Stage stage;
+    private final Stage stage;
 
     /**
      * Underlying JavaFX scene. We only use 1 scene to avoid
@@ -87,7 +93,7 @@ public final class Display implements UserProfileSavable {
     private Scene scene;
     private FXGLScene currentScene;
 
-    private List<FXGLScene> scenes = new ArrayList<>();
+    private final List<FXGLScene> scenes = new ArrayList<>();
 
     private final DoubleProperty targetWidth;
     private final DoubleProperty targetHeight;
@@ -95,11 +101,21 @@ public final class Display implements UserProfileSavable {
     private final DoubleProperty scaledHeight;
     private final DoubleProperty scaleRatio;
 
-    private String css = "";
+    private final CSS css;
 
-    private ReadOnlyGameSettings settings;
+    private final ReadOnlyGameSettings settings;
 
-    private EventBus eventBus;
+    private final EventBus eventBus;
+
+    /*
+     * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
+     * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
+     * So we copy the occurred event and reroute to whichever FXGL scene is current.
+     */
+    private final EventHandler<Event> fxToFXGLFilter = event -> {
+        Event copy = event.copyFor(null, null);
+        currentScene.fireEvent(copy);
+    };
 
     @Inject
     private Display(Stage stage, Scene scene, ReadOnlyGameSettings settings) {
@@ -113,19 +129,15 @@ public final class Display implements UserProfileSavable {
         scaledHeight = new SimpleDoubleProperty();
         scaleRatio = new SimpleDoubleProperty();
 
+        // if default css then use menu css, else use specified
+        css = FXGLAssets.UI_CSS.isDefault()
+                ? GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(settings.getMenuStyle().getCSSFileName())
+                : FXGLAssets.UI_CSS;
+
         initStage();
         initDialogBox();
 
-        /*
-         * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
-         * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
-         * So we copy the occurred event and reroute to whichever FXGL scene is current.
-         */
-        scene.addEventFilter(EventType.ROOT, event -> {
-            Event copy = event.copyFor(null, null);
-            currentScene.fireEvent(copy);
-            //eventBus.fireEvent(copy);
-        });
+        scene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
 
         computeSceneSettings(settings.getWidth(), settings.getHeight());
         computeScaledSize();
@@ -140,6 +152,7 @@ public final class Display implements UserProfileSavable {
         });
 
         log.finer("Service [Display] initialized");
+        log.finer("Using CSS: " + css);
     }
 
     /**
@@ -157,16 +170,12 @@ public final class Display implements UserProfileSavable {
                     eventBus.fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
             });
         });
-        stage.getIcons().add(GameApplication.getService(ServiceType.ASSET_LOADER)
-                .loadAppIcon(settings.getIconFileName()));
+        stage.getIcons().add(FXGLAssets.UI_ICON);
 
         if (settings.isFullScreen()) {
             stage.setFullScreenExitHint("");
-            // we don't want the user to be able to exit full screen manually
-            // but only through settings menu
-            // so we set key combination to something obscure which isn't likely
-            // to be pressed
-            stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Shortcut+>"));
+            // don't let the user to exit FS mode manually
+            stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
             stage.setFullScreen(true);
         }
 
@@ -190,8 +199,7 @@ public final class Display implements UserProfileSavable {
         scale.yProperty().bind(scaleRatio);
         root.getTransforms().setAll(scale);
 
-        if (!css.isEmpty())
-            root.getStylesheets().add(css);
+        root.getStylesheets().add(css.getExternalForm());
     }
 
     /**
@@ -200,7 +208,12 @@ public final class Display implements UserProfileSavable {
      * @param scene the scene
      */
     public void setScene(FXGLScene scene) {
+        if (currentScene != null) {
+            currentScene.activeProperty().set(false);
+        }
         currentScene = scene;
+        scene.activeProperty().set(true);
+
         this.scene.setRoot(scene.getRoot());
     }
 
@@ -212,6 +225,9 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
+     * Returns available (visual) bounds of the physical display.
+     * If the game is running fullscreen then this returns maximum bounds
+     * of the physical display.
      *
      * @return display bounds
      */
@@ -258,12 +274,11 @@ public final class Display implements UserProfileSavable {
 
     /**
      * Computes scene settings based on target size and screen bounds.
-     * Attaches CSS to settings to be used by all FXGL scenes.
      *
      * @param width  target (app) width
      * @param height target (app) height
      */
-    public void computeSceneSettings(double width, double height) {
+    private void computeSceneSettings(double width, double height) {
         Rectangle2D bounds = getBounds();
 
         int[] heights = {360, 480, 720, 1080};
@@ -276,15 +291,6 @@ public final class Display implements UserProfileSavable {
                 break;
             }
         }
-
-        // if CSS not set, use menu CSS
-        String css = settings.getCSS();
-        css = !css.isEmpty() ? css : settings.getMenuStyle().getCSS();
-
-        String loadedCSS = GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(css);
-        log.finer("Using CSS: " + css);
-
-        this.css = loadedCSS;
     }
 
     public final double getTargetWidth() {
@@ -338,20 +344,27 @@ public final class Display implements UserProfileSavable {
         log.finer("New size:    " + newW  + "x" + newH   + "@" + getScaleRatio());
     }
 
+    /**
+     * Performs actual change of output resolution.
+     * It will create a new underlying JavaFX scene.
+     *
+     * @param w new width
+     * @param h new height
+     */
     private void setNewResolution(double w, double h) {
         targetWidth.set(w);
         targetHeight.set(h);
         computeScaledSize();
 
         Parent root = scene.getRoot();
+        // clear listener
+        scene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
         // clear root of previous JavaFX scene
         scene.setRoot(new Pane());
 
+        // create and init new JavaFX scene
         scene = new Scene(root);
-        scene.addEventFilter(EventType.ROOT, event -> {
-            Event copy = event.copyFor(null, null);
-            currentScene.fireEvent(copy);
-        });
+        scene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
         stage.setScene(scene);
         if (settings.isFullScreen()) {
             stage.setFullScreen(true);
@@ -375,8 +388,12 @@ public final class Display implements UserProfileSavable {
 
     private FXGLDialogBox dialogBox;
 
+    public FXGLDialogBox getDialogBox() {
+        return dialogBox;
+    }
+
     private void initDialogBox() {
-        dialogBox = new FXGLDialogBox(stage);
+        dialogBox = new FXGLDialogBox(stage, css);
         dialogBox.setOnShown(e -> {
             eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
         });
@@ -406,7 +423,7 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
-     * Shows a blocking (stops game execution) message box with OK button. On
+     * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
      * button press, the message box will be dismissed.
      *
      * @param message the message to show
@@ -428,7 +445,7 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
-     * Shows a blocking message box with OK button and input field. The callback
+     * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
      * is invoked with the field text as parameter.
      *
      * @param message        message to show
@@ -438,8 +455,36 @@ public final class Display implements UserProfileSavable {
         dialogBox.showInputBox(message, resultCallback);
     }
 
+    /**
+     * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
+     * is invoked with the field text as parameter.
+     *
+     * @param message        message to show
+     * @param filter  filter to validate input
+     * @param resultCallback the function to be called
+     */
+    public void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback) {
+        dialogBox.showInputBox(message, filter, resultCallback);
+    }
+
+    /**
+     * Shows a blocking (stops game execution, method returns normally) dialog with the error.
+     *
+     * @param error the error to show
+     */
     public void showErrorBox(Throwable error) {
         dialogBox.showErrorBox(error);
+    }
+
+    /**
+     * Shows a blocking (stops game execution, method returns normally) generic dialog.
+     *
+     * @param message the message
+     * @param content the content
+     * @param buttons buttons present
+     */
+    public void showBox(String message, Node content, Button... buttons) {
+        dialogBox.showBox(message, content, buttons);
     }
 
     @Override

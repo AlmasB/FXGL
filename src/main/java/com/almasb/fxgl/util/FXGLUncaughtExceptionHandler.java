@@ -41,9 +41,17 @@ import java.io.StringWriter;
 public final class FXGLUncaughtExceptionHandler implements ExceptionHandler {
 
     //private static final Logger log = FXGLLogger.getLogger("FXGLExceptionHandler");
+    private boolean handledOnce = false;
 
     @Override
     public void handle(Throwable e) {
+        if (handledOnce) {
+            // just ignore to avoid spamming dialogs
+            return;
+        }
+
+        handledOnce = true;
+
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Uncaught Exception");
 

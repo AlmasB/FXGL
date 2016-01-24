@@ -27,6 +27,8 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -48,7 +50,6 @@ public abstract class FXGLScene {
     }
 
     /**
-     *
      * @return root node of the scene
      */
     public final Pane getRoot() {
@@ -56,7 +57,6 @@ public abstract class FXGLScene {
     }
 
     /**
-     *
      * @return width
      */
     public final double getWidth() {
@@ -64,7 +64,6 @@ public abstract class FXGLScene {
     }
 
     /**
-     *
      * @return height
      */
     public final double getHeight() {
@@ -101,5 +100,16 @@ public abstract class FXGLScene {
     public final void setCursor(String imageName, Point2D hotspot) {
         root.setCursor(new ImageCursor(GameApplication.getService(ServiceType.ASSET_LOADER).loadCursorImage(imageName),
                 hotspot.getX(), hotspot.getY()));
+    }
+
+    private BooleanProperty active = new SimpleBooleanProperty(false);
+
+    /**
+     * If a scene is active it is being shown by the display.
+     *
+     * @return active property
+     */
+    protected BooleanProperty activeProperty() {
+        return active;
     }
 }

@@ -4,7 +4,7 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.1.9</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
@@ -23,19 +23,23 @@
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
 
         <!-- dependencies -->
+        <fxeventbus.version>1.0</fxeventbus.version>
+        <ents.version>1.0</ents.version>
+
         <junit.version>4.12</junit.version>
         <guice.version>4.0</guice.version>
-        <ehcache.version>3.0.0.m4</ehcache.version>
-        <slf4j.version>1.7.7</slf4j.version>
+        <jfxtras.version>8.0-r4</jfxtras.version>
+        <commons-math.version>3.5</commons-math.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-        </dependency>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
+    <dependencies>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -43,17 +47,37 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
+            <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-window</artifactId>
+            <version>${jfxtras.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>FXEventBus</artifactId>
+            <version>${fxeventbus.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>Ents</artifactId>
+            <version>${ents.version}</version>
+        </dependency>
+
+        <!-- test scope dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>${commons-math.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

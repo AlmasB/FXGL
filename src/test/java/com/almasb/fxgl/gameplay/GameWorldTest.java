@@ -26,23 +26,6 @@
 
 package com.almasb.fxgl.gameplay;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
-
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.shape.Rectangle;
-
 public class GameWorldTest {
 
 //    private enum Type implements EntityType {
@@ -86,7 +69,7 @@ public class GameWorldTest {
 //    @Test
 //    public void getEntityAt() {
 //        Entity entity = new Entity(Type.TEST_ENTITY);
-//        entity.setPosition(100, 100);
+//        entity.setValue(100, 100);
 //
 //        gameWorld.addEntities(entity);
 //        assertEquals(0, gameWorld.getEntities().size());
@@ -102,7 +85,7 @@ public class GameWorldTest {
 //    @Test
 //    public void getEntitiesFiltered() {
 //        Entity entity = new Entity(Type.TEST_ENTITY);
-//        entity.setPosition(100, 100);
+//        entity.setValue(100, 100);
 //        entity.setSceneView(new Rectangle(40, 40));
 //
 //        gameWorld.addEntities(entity);
@@ -111,7 +94,7 @@ public class GameWorldTest {
 //        gameWorld.update();
 //        assertEquals(1, gameWorld.getEntities().size());
 //
-//        List<Entity> list = gameWorld.getEntitiesFiltered(e -> e.getPosition().equals(new Point2D(100, 100)));
+//        List<Entity> list = gameWorld.getEntitiesFiltered(e -> e.getValue().equals(new Point2D(100, 100)));
 //        assertEquals(1, list.size());
 //        assertEquals(entity, list.get(0));
 //    }
@@ -119,15 +102,15 @@ public class GameWorldTest {
 //    @Test
 //    public void getEntitiesInRange() {
 //        Entity entity = new Entity(Type.TEST_ENTITY);
-//        entity.setPosition(100, 100);
+//        entity.setValue(100, 100);
 //        entity.setSceneView(new Rectangle(40, 40));
 //
 //        Entity entity2 = new Entity(Type.TEST_ENTITY);
-//        entity2.setPosition(200, 100);
+//        entity2.setValue(200, 100);
 //        entity2.setSceneView(new Rectangle(40, 40));
 //
 //        Entity entity3 = new Entity(Type.TEST_ENTITY);
-//        entity3.setPosition(300, 100);
+//        entity3.setValue(300, 100);
 //        entity3.setSceneView(new Rectangle(40, 40));
 //
 //        gameWorld.addEntities(entity, entity2, entity3);

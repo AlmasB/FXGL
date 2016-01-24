@@ -25,8 +25,10 @@
  */
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.asset.FontFactory;
+import com.almasb.fxgl.asset.FXGLAssets;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -40,14 +42,8 @@ import javafx.scene.text.Text;
 public final class UIFactory {
     private UIFactory() {}
 
-    private static FontFactory defaultFontFactory;
-
-    public static void init(FontFactory fontFactory) {
-        defaultFontFactory = fontFactory;
-    }
-
     public static Font newFont(double size) {
-        return defaultFontFactory.newFont(size);
+        return FXGLAssets.UI_FONT.newFont(size);
     }
 
     public static Text newText(String message) {
@@ -67,6 +63,14 @@ public final class UIFactory {
 
     public static Button newButton(String text) {
         return new FXGLButton(text);
+    }
+
+    public static <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items) {
+        return new FXGLChoiceBox<>(items);
+    }
+
+    public static <T> ChoiceBox<T> newChoiceBox() {
+        return new FXGLChoiceBox<>();
     }
 
     public static double widthOf(String text, double fontSize) {

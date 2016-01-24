@@ -25,11 +25,9 @@
  */
 package com.almasb.fxgl.time;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.Events;
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
-import com.almasb.fxgl.event.WorldEvent;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.time.TimerAction.TimerType;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
@@ -59,12 +57,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
     @Inject
     private FXGLMasterTimer(EventBus eventBus) {
         this.eventBus = eventBus;
-        eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            Entity entity = event.getEntity();
-            Duration expire = entity.getExpireTime();
-            if (expire != Duration.ZERO)
-                runOnceAfter(entity::removeFromWorld, expire);
-        });
+
         eventBus.addEventHandler(FXGLEvent.RESET, event -> {
             resetTicks();
             clearActions();
@@ -136,7 +129,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
         timerActions.removeIf(TimerAction::isExpired);
 
         // this is the master update event
-        eventBus.fireEvent(Events.UPDATE_EVENT);
+        eventBus.fireEvent(new UpdateEvent(realTPF / 1000000000.0));
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
@@ -199,7 +192,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
     /**
      * Used as delta from internal JavaFX timestamp to calculate render FPS
      */
-    private long fpsTime = 0;
+    private long previousInternalTime = 0;
 
     /**
      * Average render FPS
@@ -228,7 +221,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
     }
 
     private long startNanos = -1;
-    private long realFPS = -1;
+    private long realTPF = -1;
 
     /**
      * Called at the start of a game update tick.
@@ -238,10 +231,17 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
      */
     private void tickStart(long internalTime) {
         tick.set(tick.get() + 1);
-        now = (getTick() - 1) * tpfNanos();
+
         startNanos = System.nanoTime();
-        realFPS = internalTime - fpsTime;
-        fpsTime = internalTime;
+        realTPF = internalTime - previousInternalTime;
+
+        if (realTPF > tpfNanos()) {
+            realTPF = tpfNanos();
+        }
+
+        now += realTPF;
+
+        previousInternalTime = internalTime;
     }
 
     /**
@@ -249,7 +249,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
      */
     private void tickEnd() {
         performanceFPS.set(Math.round(fpsPerformanceCounter.count(secondsToNanos(1) / (System.nanoTime() - startNanos))));
-        fps.set(Math.round(fpsCounter.count(secondsToNanos(1) / realFPS)));
+        fps.set(Math.round(fpsCounter.count(secondsToNanos(1) / realTPF)));
     }
 
     /**

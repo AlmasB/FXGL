@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.input;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.*;
@@ -37,6 +38,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.input.*;
 
 import java.lang.reflect.Method;
@@ -117,6 +119,9 @@ public final class Input implements UserProfileSavable {
         eventBus.addEventHandler(FXGLEvent.RESET, reset);
 
         eventBus.addEventHandler(FXGLInputEvent.ANY, event -> {
+            if (!registerInput)
+                return;
+
             if (event.getEvent() instanceof MouseEvent) {
                 MouseEvent mouseEvent = (MouseEvent) event.getEvent();
                 if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
@@ -149,15 +154,45 @@ public final class Input implements UserProfileSavable {
     }
 
     /**
+     * Currently held keys.
+     */
+    private Map<KeyCode, Boolean> keys = new HashMap<>();
+
+    /**
+     * @param key the key to check
+     * @return true iff key is currently held
+     */
+    public boolean isHeld(KeyCode key) {
+        return keys.getOrDefault(key, false);
+    }
+
+    /**
+     * Currently held buttons.
+     */
+    private Map<MouseButton, Boolean> buttons = new HashMap<>();
+
+    /**
+     * @param button the button to check
+     * @return true iff button is currently held
+     */
+    public boolean isHeld(MouseButton button) {
+        return buttons.getOrDefault(button, false);
+    }
+
+    /**
      * Handle pressed event for given trigger.
      *
      * @param trigger the trigger
      */
     private void handlePressed(Trigger trigger) {
+        if (trigger.key != null) {
+            keys.put(trigger.key, true);
+        } else {
+            buttons.put(trigger.btn, true);
+        }
+
         bindings.stream()
-                .filter(binding -> {
-                    return binding.isTriggered(trigger);
-                })
+                .filter(binding -> binding.isTriggered(trigger))
                 .map(InputBinding::getAction)
                 .filter(action -> !currentActions.contains(action))
                 .forEach(currentActions::add);
@@ -169,6 +204,12 @@ public final class Input implements UserProfileSavable {
      * @param trigger the trigger
      */
     private void handleReleased(Trigger trigger) {
+        if (trigger.key != null) {
+            keys.put(trigger.key, false);
+        } else {
+            buttons.put(trigger.btn, false);
+        }
+
         bindings.stream()
                 .filter(binding -> {
                     if (trigger.key == null) {
@@ -191,6 +232,71 @@ public final class Input implements UserProfileSavable {
                 .forEach(currentActions::remove);
     }
 
+    private KeyEvent makeKeyEvent(KeyCode key, EventType<KeyEvent> eventType, InputModifier modifier) {
+        return new KeyEvent(eventType, "", key.toString(), key,
+                modifier == InputModifier.SHIFT,
+                modifier == InputModifier.CTRL,
+                modifier == InputModifier.ALT, false);
+    }
+
+    /**
+     * Mocks key press event. The behavior is equivalent to
+     * user pressing and holding the key.
+     *
+     * @param key the key
+     * @param modifier key modifier
+     */
+    public void mockKeyPress(KeyCode key, InputModifier modifier) {
+        log.finer("Mocking key press: " + key + " + " + modifier);
+        handlePressed(new Trigger(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier)));
+    }
+
+    /**
+     * Mocks key release event. The behavior is equivalent to
+     * user releasing the key.
+     *
+     * @param key the key
+     * @param modifier key modifier
+     */
+    public void mockKeyRelease(KeyCode key, InputModifier modifier) {
+        log.finer("Mocking key release: " + key + " + " + modifier);
+        handleReleased(new Trigger(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier)));
+    }
+
+    private MouseEvent makeMouseEvent(MouseButton btn, EventType<MouseEvent> eventType,
+                                      double gameX, double gameY, InputModifier modifier) {
+        return new MouseEvent(eventType, gameX, gameY,
+                gameX, gameY, btn, 0,
+                modifier == InputModifier.SHIFT,
+                modifier == InputModifier.CTRL,
+                modifier == InputModifier.ALT,
+                false, false, false, false, false, false, false, null);
+    }
+
+    /**
+     * Mocks mouse button press event. The behavior is equivalent to
+     * user pressing and holding the button.
+     *
+     * @param btn mouse button
+     * @param modifier mouse button modifier
+     */
+    public void mockButtonPress(MouseButton btn, double gameX, double gameY, InputModifier modifier) {
+        log.finer("Mocking button press: " + btn + " + " + modifier);
+        handlePressed(new Trigger(makeMouseEvent(btn, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier)));
+    }
+
+    /**
+     * Mocks mouse button release event. The behavior is equivalent to
+     * user releasing the button.
+     *
+     * @param btn mouse button
+     * @param modifier mouse button modifier
+     */
+    public void mockButtonRelease(MouseButton btn, InputModifier modifier) {
+        log.finer("Mocking button release: " + btn + " + " + modifier);
+        handleReleased(new Trigger(makeMouseEvent(btn, MouseEvent.MOUSE_RELEASED, 0, 0, modifier)));
+    }
+
     private boolean processActions = true;
 
     /**
@@ -201,6 +307,17 @@ public final class Input implements UserProfileSavable {
      */
     public void setProcessActions(boolean b) {
         processActions = b;
+    }
+
+    private boolean registerInput = true;
+
+    /**
+     * Set to false to disable registering any form of input.
+     *
+     * @param b register input flag
+     */
+    public void setRegisterInput(boolean b) {
+        registerInput = b;
     }
 
     private Map<String, InputMapping> inputMappings = new HashMap<>();
@@ -297,6 +414,9 @@ public final class Input implements UserProfileSavable {
         log.finer("Clearing active input actions");
 
         currentActions.clear();
+        keys.clear();
+        buttons.clear();
+
         mouse.leftPressed = false;
         mouse.rightPressed = false;
     }

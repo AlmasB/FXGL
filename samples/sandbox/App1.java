@@ -27,18 +27,12 @@ package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.Group;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -132,62 +126,71 @@ public class App1 extends GameApplication {
     @Override
     protected void initGame() {
 
-        light = new Light.Point();
-        light.setColor(Color.WHITE);
-        light.setX(100);
-        light.setY(100);
-        light.setZ(50);
-
-
-        Light.Point light2 = new Light.Point();
-        light2.setColor(Color.WHITE);
-        light2.setZ(50);
-        addLight(light2);
-
-        Entity entity = Entity.noType();
-        entity.setPosition(100, 100);
-        entity.setSceneView(getAssetLoader().loadTexture("brick.png"));
-//        entity.getSceneView().ifPresent(view -> {
-//            Lighting lighting = new Lighting();
-//            lighting.setLight(light2);
-//            lighting.setSpecularConstant(1.0);
-//            lighting.setSurfaceScale(5.0);
+//        light = new Light.Point();
+//        light.setColor(Color.WHITE);
+//        light.setX(100);
+//        light.setY(100);
+//        light.setZ(50);
 //
-//            view.setEffect(lighting);
+//
+//        Light.Point light2 = new Light.Point();
+//        light2.setColor(Color.WHITE);
+//        light2.setZ(50);
+//        addLight(light2);
+//
+//        Entity entity = new Entity();
+//        entity.setValue(100, 100);
+//        entity.setSceneView(getAssetLoader().loadTexture("brick.png"));
+////        entity.getSceneView().ifPresent(view -> {
+////            Lighting lighting = new Lighting();
+////            lighting.setLight(light2);
+////            lighting.setSpecularConstant(1.0);
+////            lighting.setSurfaceScale(5.0);
+////
+////            view.setEffect(lighting);
+////        });
+//
+//        Entity entity2 = Entity.noType();
+//        entity2.setValue(400, 100);
+//        entity2.setSceneView(new Rectangle(40, 40, Color.BLUE));
+//        entity2.getSceneView().ifPresent(view -> {
+//            //view.setEffect(lighting);
 //        });
-
-        Entity entity2 = Entity.noType();
-        entity2.setPosition(400, 100);
-        entity2.setSceneView(new Rectangle(40, 40, Color.BLUE));
-        entity2.getSceneView().ifPresent(view -> {
-            //view.setEffect(lighting);
-        });
-        entity2.addControl(new CircularMovementControl(1, 50));
-
-        Entity entity3 = Entity.noType();
-        entity3.setPosition(300, 200);
-        entity3.setSceneView(getAssetLoader().loadTexture("brick.png"));
-        entity3.getSceneView().ifPresent(view -> {
-            //view.setEffect(lighting);
-        });
-
-        getGameWorld().addEntities(entity2);
-
-        Group group = new Group();
-
-        EntityView view = new EntityView(entity);
-        view.addNode(getAssetLoader().loadTexture("brick.png"));
-
-        EntityView view2 = new EntityView(entity3);
-        view2.addNode(getAssetLoader().loadTexture("brick.png"));
-
-        group.getChildren().addAll(view, view2);
-
-        Lighting lighting = new Lighting();
-        lighting.setLight(light);
-        lighting.setSpecularConstant(1.0);
-        lighting.setSurfaceScale(5.0);
-        group.setEffect(lighting);
+//        entity2.addControl(new CircularMovementControl(1, 50));
+//
+//        Entity entity3 = Entity.noType();
+//        entity3.setValue(300, 200);
+//        entity3.setSceneView(getAssetLoader().loadTexture("brick.png"));
+//        entity3.getSceneView().ifPresent(view -> {
+//            //view.setEffect(lighting);
+//        });
+//
+//        getGameWorld().addEntities(entity2);
+//
+//        Group group = new Group();
+//
+//        EntityView view = new EntityView(entity);
+//        view.addNode(getAssetLoader().loadTexture("brick.png"));
+//
+//        EntityView view2 = new EntityView(entity3);
+//        view2.addNode(getAssetLoader().loadTexture("brick.png"));
+//
+//        group.getChildren().addAll(view, view2);
+//
+//        Lighting lighting = new Lighting();
+//        lighting.setLight(light);
+//        lighting.setSpecularConstant(1.0);
+//        lighting.setSurfaceScale(5.0);
+//        group.setEffect(lighting);
+//
+//        getAssetLoader().loadTexture("cat.png");
+//        getAssetLoader().loadTexture("Idle__000.png");
+//        getAssetLoader().loadTexture("Idle__001.png");
+//        getAssetLoader().loadTexture("Idle__002.png");
+//        getAssetLoader().loadTexture("Idle__003.png");
+//
+//        getAssetLoader().loadTexture("brick.png");
+//        getAssetLoader().loadTexture("brick.png");
     }
 
     @Override

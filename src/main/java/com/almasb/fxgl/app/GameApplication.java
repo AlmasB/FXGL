@@ -25,33 +25,37 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.asset.IOResult;
+import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.*;
-import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -63,21 +67,23 @@ import java.util.*;
  * <li>Services configuration (after this you can safely call getService())</li>
  * <li>initAchievements()</li>
  * <li>initInput()</li>
+ * <li>preInit()</li>
  * <li>initIntroVideo() (if enabled)</li>
  * <li>initMenuFactory() (if enabled)</li>
+ * <p>The following phases are NOT executed on UI thread</p>
  * <li>initAssets()</li>
- * <li>initGame()</li>
+ * <li>initGame() OR loadState()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
- * <li>Start of main game loop execution</li>
+ * <li>Start of main game loop execution on UI thread</li>
  * </ol>
  * <p>
  * Unless explicitly stated, methods are not thread-safe and must be
- * executed on JavaFX Application Thread.
+ * executed on JavaFX Application (UI) Thread.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class GameApplication extends FXGLApplication {
+public abstract class GameApplication extends FXGLApplication implements UserProfileSavable {
 
     {
         log.finer("Game_clinit()");
@@ -386,23 +392,43 @@ public abstract class GameApplication extends FXGLApplication {
         });
 
         getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
-            String saveFileName = event.getData().map(name -> (String) name).orElse("");
-            if (!saveFileName.isEmpty()) {
-                boolean ok = getSaveLoadManager().save(saveState(), saveFileName).isOK();
-                if (!ok)
-                    getDisplay().showMessageBox("Failed to save");
+            getDisplay().showInputBox("Enter save file name", input -> input.matches("^[\\pL\\pN]+$"), saveFileName -> {
+                IOResult io = saveLoadManager.save(saveState(), saveFileName);
+
+                if (!io.isOK())
+                    getDisplay().showMessageBox("Failed to save:\n" + io.getErrorMessage());
+            });
+        });
+
+        getEventBus().addEventHandler(MenuDataEvent.LOAD, event -> {
+            String saveFileName = event.getData();
+
+            IOResult<Serializable> io = saveLoadManager.load(saveFileName);
+
+            if (io.hasData()) {
+                startLoadedGame(io.getData());
+            } else {
+                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
             }
         });
 
-        getEventBus().addEventHandler(MenuEvent.LOAD, event -> {
-            String saveFileName = event.getData().map(name -> (String) name)
-                    .orElse("");
+        getEventBus().addEventHandler(MenuEvent.CONTINUE, event -> {
+            IOResult<Serializable> io = saveLoadManager.loadLastModifiedSaveFile();
 
-            Optional<Serializable> saveFile = saveFileName.isEmpty()
-                    ? getSaveLoadManager().loadLastModifiedFile()
-                    : getSaveLoadManager().load(saveFileName);
+            if (io.hasData()) {
+                startLoadedGame(io.getData());
+            } else {
+                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
+            }
+        });
 
-            saveFile.ifPresent(this::startLoadedGame);
+        getEventBus().addEventHandler(MenuDataEvent.DELETE, event -> {
+            String fileName = event.getData();
+
+            boolean ok = saveLoadManager.delete(fileName);
+            if (!ok) {
+                getDisplay().showMessageBox("Failed to delete: " + fileName);
+            }
         });
     }
 
@@ -430,9 +456,55 @@ public abstract class GameApplication extends FXGLApplication {
         if (getSettings().isMenuEnabled()) {
             configureMenu();
             setState(ApplicationState.MAIN_MENU);
+
+            // we haven't shown the dialog yet so show now
+            if (getSettings().isIntroEnabled())
+                showProfileDialog();
         } else {
             startNewGame();
         }
+    }
+
+    private void showProfileDialog() {
+        List<String> profileNames = SaveLoadManager.loadProfileNames().orElse(Collections.emptyList());
+        ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList(profileNames));
+
+        if (!profileNames.isEmpty())
+            profilesBox.getSelectionModel().selectFirst();
+
+        Button btnNew = UIFactory.newButton("NEW");
+        Button btnSelect = UIFactory.newButton("SELECT");
+        btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull());
+
+        btnNew.setOnAction(e -> {
+            getDisplay().showInputBox("New Profile", input -> input.matches("^[\\pL\\pN]+$"), name -> {
+                profileName = name;
+                saveLoadManager = new SaveLoadManager(profileName);
+                getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
+            });
+        });
+
+        btnSelect.setOnAction(e -> {
+            profileName = profilesBox.getValue();
+            saveLoadManager = new SaveLoadManager(profileName);
+
+            BooleanProperty ok = new SimpleBooleanProperty(false);
+
+            IOResult<UserProfile> result = saveLoadManager.loadProfile();
+            if (result.hasData()) {
+                ok.set(loadFromProfile(result.getData()));
+            }
+
+            if (!ok.get()) {
+                getDisplay().getDialogBox()
+                        .showErrorBox("Profile is corrupted: " + profileName,
+                                this::showProfileDialog);
+            } else {
+                getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
+            }
+        });
+
+        getDisplay().showBox("Create new profile or select existing", profilesBox, btnNew, btnSelect);
     }
 
     private void initFXGL() {
@@ -446,7 +518,6 @@ public abstract class GameApplication extends FXGLApplication {
         initEventHandlers();
 
         defaultProfile = createProfile();
-        getSaveLoadManager().loadProfile().ifPresent(this::loadFromProfile);
 
         preInit();
     }
@@ -456,8 +527,6 @@ public abstract class GameApplication extends FXGLApplication {
         super.start(stage);
         log.finer("Game_start()");
 
-        UIFactory.init(getService(ServiceType.ASSET_LOADER).loadFont(getSettings().getDefaultFontName()));
-
         getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);
 
@@ -465,6 +534,9 @@ public abstract class GameApplication extends FXGLApplication {
 
         onStageShow();
         stage.show();
+
+        if (getSettings().isMenuEnabled() && !getSettings().isIntroEnabled())
+            showProfileDialog();
 
         log.finer("Showing stage");
         log.finer("Root size: " + stage.getScene().getRoot().getLayoutBounds().getWidth() + "x" + stage.getScene().getRoot().getLayoutBounds().getHeight());
@@ -605,6 +677,11 @@ public abstract class GameApplication extends FXGLApplication {
      */
     protected void exit() {
         log.finer("Exiting Normally");
+
+        // if it is null then we are running without menus
+        if (profileName != null)
+            saveLoadManager.saveProfile(createProfile());
+
         getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGLLogger.close();
@@ -618,6 +695,11 @@ public abstract class GameApplication extends FXGLApplication {
     private UserProfile defaultProfile;
 
     /**
+     * Stores current selected profile name for this game.
+     */
+    private String profileName;
+
+    /**
      * Create a user profile with current settings.
      *
      * @return user profile
@@ -625,28 +707,41 @@ public abstract class GameApplication extends FXGLApplication {
     public final UserProfile createProfile() {
         UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
 
+        save(profile);
         getEventBus().fireEvent(new SaveEvent(profile));
 
         return profile;
     }
 
     /**
-     * Load from given user profile
+     * Load from given user profile.
      *
      * @param profile the profile
      */
-    public final void loadFromProfile(UserProfile profile) {
+    public final boolean loadFromProfile(UserProfile profile) {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
-            return;
+            return false;
 
-        getEventBus().fireEvent(new LoadEvent(profile));
+        load(profile);
+        getEventBus().fireEvent(new LoadEvent(LoadEvent.LOAD_PROFILE, profile));
+        return true;
     }
 
     /**
-     * Load from default user profile. Restores default settings.
+     * Restores default settings, e.g. audio, video, controls.
      */
-    public final void loadFromDefaultProfile() {
-        loadFromProfile(defaultProfile);
+    public final void restoreDefaultSettings() {
+        getEventBus().fireEvent(new LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile));
+    }
+
+    private SaveLoadManager saveLoadManager;
+
+    public SaveLoadManager getSaveLoadManager() {
+        if (!getSettings().isMenuEnabled()) {
+            throw new IllegalStateException("Access to SaveLoadManager without menu enabled is not allowed");
+        }
+
+        return saveLoadManager;
     }
 
     /**
@@ -704,5 +799,28 @@ public abstract class GameApplication extends FXGLApplication {
      */
     public final long getNow() {
         return getMasterTimer().getNow();
+    }
+
+    private long playtime = 0;
+    private long startTime = System.nanoTime();
+
+    @Override
+    public void save(UserProfile profile) {
+        log.finer("Saving data to profile");
+
+        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
+        bundle.put("playtime", System.nanoTime() - startTime + playtime);
+
+        bundle.log();
+        profile.putBundle(bundle);
+    }
+
+    @Override
+    public void load(UserProfile profile) {
+        log.finer("Loading data from profile");
+        UserProfile.Bundle bundle = profile.getBundle("game");
+        bundle.log();
+
+        playtime = bundle.get("playtime");
     }
 }

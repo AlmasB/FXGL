@@ -27,8 +27,9 @@
 package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.util.FXGLLogger;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ChangeListener;
 
 import java.util.logging.Logger;
@@ -46,7 +47,7 @@ public final class Achievement {
 
     private Runnable onAchieved;
 
-    private BooleanProperty achieved = new SimpleBooleanProperty(false);
+    private ReadOnlyBooleanWrapper achieved = new ReadOnlyBooleanWrapper(false);
     private ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
         if (newValue) {
             setAchieved();
@@ -80,7 +81,6 @@ public final class Achievement {
     }
 
     /**
-     *
      * @return true iff the achievement has been unlocked
      */
     public boolean isAchieved() {
@@ -88,11 +88,21 @@ public final class Achievement {
     }
 
     /**
-     *
-     * @return achieved boolean property
+     * @return achieved boolean property (read-only)
      */
-    public BooleanProperty achievedProperty() {
-        return achieved;
+    public ReadOnlyBooleanProperty achievedProperty() {
+        return achieved.getReadOnlyProperty();
+    }
+
+    /**
+     * Binds achievement to given binding (condition).
+     * No-op if achievement is already unlocked.
+     *
+     * @param binding condition on which achievement is unlocked
+     */
+    public void bind(BooleanBinding binding) {
+        if (!isAchieved())
+            achieved.bind(binding);
     }
 
     /**

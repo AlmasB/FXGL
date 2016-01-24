@@ -39,30 +39,62 @@ public final class InputMapping {
     private Object trigger;
     private InputModifier modifier;
 
+    /**
+     * Constructs an input mapping of given action name to a key with modifier.
+     *
+     * @param actionName action name
+     * @param key the key to bind to
+     * @param modifier the modifier
+     */
     public InputMapping(String actionName, KeyCode key, InputModifier modifier) {
         this.actionName = actionName;
         trigger = key;
         this.modifier = modifier;
     }
 
+    /**
+     * Constructs an input mapping of given action name to a key with no modifier.
+     *
+     * @param actionName action name
+     * @param key the key to bind to
+     */
     public InputMapping(String actionName, KeyCode key) {
         this(actionName, key, InputModifier.NONE);
     }
 
+    /**
+     * Constructs an input mapping of given action name to a button with modifier.
+     *
+     * @param actionName action name
+     * @param btn mouse button
+     * @param modifier modifier
+     */
     public InputMapping(String actionName, MouseButton btn, InputModifier modifier) {
         this.actionName = actionName;
         trigger = btn;
         this.modifier = modifier;
     }
 
+    /**
+     * Constructs an input mapping of given action name to a mouse button with no modifier.
+     *
+     * @param actionName action name
+     * @param btn mouse button
+     */
     public InputMapping(String actionName, MouseButton btn) {
         this(actionName, btn, InputModifier.NONE);
     }
 
+    /**
+     * @return true iff mapping is to KeyCode
+     */
     boolean isKeyTrigger() {
         return trigger instanceof KeyCode;
     }
 
+    /**
+     * @return true iff mapping is to MouseButton
+     */
     boolean isButtonTrigger() {
         return trigger instanceof MouseButton;
     }

@@ -25,18 +25,18 @@
  */
 package com.almasb.fxgl.entity;
 
-import org.junit.Test;
-
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.junit.Test;
 
 public class JFXTest {
 
     @Test
     public void createParent() {
-        Parent parent = new Parent() {};
+        Parent parent = new Parent() {
+        };
 
         Circle circle = new Circle(5);
         Rectangle rect = new Rectangle(40, 40);

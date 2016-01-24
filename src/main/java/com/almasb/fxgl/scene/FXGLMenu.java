@@ -26,6 +26,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.input.InputBinding;
@@ -100,7 +101,7 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
-        app.getSaveLoadManager().loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+        app.getSaveLoadManager().loadSaveFileNames().ifPresent(names -> list.getItems().setAll(names));
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         if (list.getItems().size() > 0) {
@@ -121,9 +122,7 @@ public abstract class FXGLMenu extends FXGLScene {
             if (fileName == null)
                 return;
 
-            app.getDisplay().showMessageBox(app.getSaveLoadManager().delete(fileName)
-                    ? "File was deleted" : "File couldn't be deleted");
-
+            fireDelete(fileName);
             list.getItems().remove(fileName);
         });
 
@@ -239,8 +238,13 @@ public abstract class FXGLMenu extends FXGLScene {
         Text percentSound = UIFactory.newText("");
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"));
 
-        return new MenuContent(new HBox(textMusic, sliderMusic, percentMusic),
-                new HBox(textSound, sliderSound, percentSound));
+        HBox hboxMusic = new HBox(15, textMusic, sliderMusic, percentMusic);
+        HBox hboxSound = new HBox(15, textSound, sliderSound, percentSound);
+
+        hboxMusic.setAlignment(Pos.CENTER_RIGHT);
+        hboxSound.setAlignment(Pos.CENTER_RIGHT);
+
+        return new MenuContent(hboxMusic, hboxSound);
     }
 
     /**
@@ -278,7 +282,8 @@ public abstract class FXGLMenu extends FXGLScene {
             Text text = UIFactory.newText(a.getName());
             Tooltip.install(text, new Tooltip(a.getDescription()));
 
-            HBox box = new HBox(50, text, checkBox);
+            HBox box = new HBox(25, text, checkBox);
+            box.setAlignment(Pos.CENTER_RIGHT);
 
             content.getChildren().add(box);
         }
@@ -322,7 +327,7 @@ public abstract class FXGLMenu extends FXGLScene {
         getRoot().getChildren().add(node);
     }
 
-    private void fireEvent2(Event event) {
+    private void fireMenuEvent(Event event) {
         app.getEventBus().fireEvent(event);
     }
 
@@ -332,35 +337,42 @@ public abstract class FXGLMenu extends FXGLScene {
      * Starts new game.
      */
     protected final void fireNewGame() {
-        fireEvent2(new MenuEvent(MenuEvent.NEW_GAME));
+        fireMenuEvent(new MenuEvent(MenuEvent.NEW_GAME));
     }
 
     /**
-     * Fires {@link MenuEvent#LOAD} event.
+     * Fires {@link MenuEvent#CONTINUE} event.
      * Lads the game state from last modified save file.
      */
     protected final void fireContinue() {
-        fireEvent2(new MenuEvent(MenuEvent.LOAD));
+        fireMenuEvent(new MenuEvent(MenuEvent.CONTINUE));
     }
 
     /**
-     * Fires {@link MenuEvent#LOAD} event.
+     * Fires {@link MenuDataEvent#LOAD} event.
      * Loads the game state from previously saved file.
      *
      * @param fileName  name of the saved file
      */
     protected final void fireLoad(String fileName) {
-        fireEvent2(new MenuEvent(MenuEvent.LOAD, fileName));
+        fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
     }
 
     /**
      * Fires {@link MenuEvent#SAVE} event.
      * Can only be fired from game menu. Saves current state of the game with given file name.
-     *
-     * @param fileName  name of the save file
      */
-    protected final void fireSave(String fileName) {
-        fireEvent2(new MenuEvent(MenuEvent.SAVE, fileName));
+    protected final void fireSave() {
+        fireMenuEvent(new MenuEvent(MenuEvent.SAVE));
+    }
+
+    /**
+     * Fires {@link MenuDataEvent#DELETE} event.
+     *
+     * @param fileName name of the save file
+     */
+    protected final void fireDelete(String fileName) {
+        fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
     }
 
     /**
@@ -368,19 +380,22 @@ public abstract class FXGLMenu extends FXGLScene {
      * Can only be fired from game menu. Will close the menu and unpause the game.
      */
     protected final void fireResume() {
-        fireEvent2(new MenuEvent(MenuEvent.RESUME));
+        fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
     }
 
     /**
      * Fire {@link MenuEvent#EXIT} event.
-     * If fired from game menu, app will clean up and enter main menu.
-     * If fired from main menu, app will close.
+     * App will clean up the world/the scene and exit.
      */
     protected final void fireExit() {
-        fireEvent2(new MenuEvent(MenuEvent.EXIT));
+        fireMenuEvent(new MenuEvent(MenuEvent.EXIT));
     }
 
+    /**
+     * Fire {@link MenuEvent#EXIT_TO_MAIN_MENU} event.
+     * App will clean up the world/the scene and enter main menu.
+     */
     protected final void fireExitToMainMenu() {
-        fireEvent2(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
+        fireMenuEvent(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
     }
 }

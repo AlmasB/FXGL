@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -24,39 +24,40 @@
 package org.jbox2d.dynamics;
 
 // updated to rev 100
+
 /**
  * This holds contact filtering data.
- * 
+ *
  * @author daniel
  */
 public class Filter {
-	/**
-	 * The collision category bits. Normally you would just set one bit.
-	 */
-	public int categoryBits;
-	
-	/**
-	 * The collision mask bits. This states the categories that this
-	 * shape would accept for collision.
-	 */
-	public int maskBits;
-	
-	/**
-	 * Collision groups allow a certain group of objects to never collide (negative)
-	 * or always collide (positive). Zero means no collision group. Non-zero group
-	 * filtering always wins against the mask bits.
-	 */
-	public int groupIndex;
-	
-	public Filter() {
-	  categoryBits = 0x0001;
-      maskBits = 0xFFFF;
-      groupIndex = 0;
+    /**
+     * The collision category bits. Normally you would just set one bit.
+     */
+    public int categoryBits;
+
+    /**
+     * The collision mask bits. This states the categories that this
+     * shape would accept for collision.
+     */
+    public int maskBits;
+
+    /**
+     * Collision groups allow a certain group of objects to never collide (negative)
+     * or always collide (positive). Zero means no collision group. Non-zero group
+     * filtering always wins against the mask bits.
+     */
+    public int groupIndex;
+
+    public Filter() {
+        categoryBits = 0x0001;
+        maskBits = 0xFFFF;
+        groupIndex = 0;
     }
-	
-	public void set(Filter argOther) {
-		categoryBits = argOther.categoryBits;
-		maskBits = argOther.maskBits;
-		groupIndex = argOther.groupIndex;
-	}
+
+    public void set(Filter argOther) {
+        categoryBits = argOther.categoryBits;
+        maskBits = argOther.maskBits;
+        groupIndex = argOther.groupIndex;
+    }
 }

@@ -31,17 +31,22 @@ package com.almasb.fxgl.asset;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class IOResult {
+public final class IOResult<T> {
 
-    private static final IOResult SUCCESS = new IOResult(true, "");
-
-    private boolean ok;
-    private String errorMessage;
-    //private Object data;
+    private final boolean ok;
+    private final String errorMessage;
+    private final T data;
 
     private IOResult(boolean ok, String errorMessage) {
         this.ok = ok;
         this.errorMessage = errorMessage;
+        data = null;
+    }
+
+    private IOResult(T data) {
+        this.ok = true;
+        this.errorMessage = "";
+        this.data = data;
     }
 
     /**
@@ -62,17 +67,39 @@ public final class IOResult {
     }
 
     /**
+     * @return true iff result has data associated with it
+     */
+    public boolean hasData() {
+        return data != null;
+    }
+
+    /**
+     * @return IO result data
+     */
+    public T getData() {
+        return data;
+    }
+
+    /**
      * @return successful IO result
      */
-    public static IOResult success() {
-        return SUCCESS;
+    public static <T> IOResult<T> success() {
+        return new IOResult<>(true, "");
+    }
+
+    /**
+     * @param data IO data
+     * @return successful IO result
+     */
+    public static <T> IOResult<T> success(T data) {
+        return new IOResult<>(data);
     }
 
     /**
      * @param message error message
      * @return failed IO result
      */
-    public static IOResult failure(String message) {
-        return new IOResult(false, message);
+    public static <T> IOResult<T> failure(String message) {
+        return new IOResult<>(false, message);
     }
 }

@@ -26,6 +26,7 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.UIFactory;
@@ -41,6 +42,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.util.function.Supplier;
+
 /**
  * This is the default FXGL menu used if the users
  * don't provide their own. This class provides
@@ -55,16 +58,15 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
     public FXGLCommonMenu(GameApplication app) {
         super(app);
 
-
         MenuBox menu = createMenuBody();
         menuX = 50;
         menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
         // just a placeholder
-        MenuBox menuContent = new MenuBox((int) app.getWidth() - 300 - 50);
-        menuContent.setTranslateX(300);
-        menuContent.setTranslateY(menu.getTranslateY());
-        menuContent.setVisible(false);
+        MenuBox menuBox = new MenuBox((int) app.getWidth() - 300 - 50);
+        menuBox.setTranslateX(300);
+        menuBox.setTranslateY(menu.getTranslateY());
+        menuBox.setVisible(false);
 
         Title title = new Title(app.getSettings().getTitle());
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
@@ -73,7 +75,26 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         Text version = UIFactory.newText("v" + app.getSettings().getVersion());
         version.setTranslateY(app.getHeight() - 2);
 
-        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuContent);
+        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox);
+
+        app.getEventBus().addEventHandler(MenuDataEvent.PROFILE_SELECTED, event -> {
+            String profileName = event.getData();
+
+            Text text = UIFactory.newText("Profile: " + profileName);
+            text.setTranslateX(app.getWidth() - text.getLayoutBounds().getWidth());
+            text.setTranslateY(app.getHeight() - 2);
+
+            getRoot().getChildren().add(text);
+        });
+
+        activeProperty().addListener((observable, wasActive, isActive) -> {
+            if (!isActive) {
+                // the scene is no longer active so reset everything
+                // so that next time scene is active everything is loaded properly
+                switchMenuTo(menu);
+                switchMenuContentTo(new MenuContent());
+            }
+        });
     }
 
     protected abstract MenuBox createMenuBody();
@@ -90,36 +111,29 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
     protected MenuBox createOptionsMenu() {
         MenuItem itemControls = new MenuItem("CONTROLS");
-        itemControls.setMenuContent(createContentControls());
+        itemControls.setMenuContent(this::createContentControls);
 
         MenuItem itemVideo = new MenuItem("VIDEO");
-        itemVideo.setMenuContent(createContentVideo());
+        itemVideo.setMenuContent(this::createContentVideo);
         MenuItem itemAudio = new MenuItem("AUDIO");
-        itemAudio.setMenuContent(createContentAudio());
-
-        MenuItem btnSave = new MenuItem("SAVE DATA");
-        btnSave.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Are you sure?", yes -> {
-                if (yes) app.getSaveLoadManager().saveProfile(app.createProfile());
-            });
-        });
+        itemAudio.setMenuContent(this::createContentAudio);
 
         MenuItem btnRestore = new MenuItem("RESTORE");
         btnRestore.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Are you sure?", yes -> {
-                if (yes) app.loadFromDefaultProfile();
+            app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
+                if (yes) app.restoreDefaultSettings();
             });
         });
 
-        return new MenuBox(200, itemControls, itemVideo, itemAudio, btnSave, btnRestore);
+        return new MenuBox(200, itemControls, itemVideo, itemAudio, btnRestore);
     }
 
     protected MenuBox createExtraMenu() {
         MenuItem itemCredits = new MenuItem("CREDITS");
-        itemCredits.setMenuContent(createContentCredits());
+        itemCredits.setMenuContent(this::createContentCredits);
 
         MenuItem itemAchievements = new MenuItem("TROPHIES");
-        itemAchievements.setMenuContent(createContentAchievements());
+        itemAchievements.setMenuContent(this::createContentAchievements);
 
         return new MenuBox(200, itemCredits, itemAchievements);
     }
@@ -197,6 +211,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
     protected class MenuItem extends FXGLButton {
         private MenuBox parent;
+        private MenuContent content;
 
         public MenuItem(String name) {
             super(name);
@@ -206,9 +221,9 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
             parent = menu;
         }
 
-        public void setMenuContent(MenuContent content) {
+        public void setMenuContent(Supplier<MenuContent> contentSupplier) {
             this.addEventHandler(ActionEvent.ACTION, event -> {
-                switchMenuContentTo(content);
+                switchMenuContentTo(contentSupplier.get());
             });
         }
 

@@ -25,11 +25,8 @@
  */
 package com.almasb.fxgl.asset;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
@@ -40,10 +37,6 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.text.Font;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
-import org.ehcache.CacheManagerBuilder;
-import org.ehcache.config.CacheConfigurationBuilder;
 
 import java.io.*;
 import java.net.URL;
@@ -55,6 +48,8 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -94,6 +89,7 @@ public class AssetLoader {
     private static final String KV_DIR = ASSETS_DIR + "kv/";
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
     private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
+    private static final String PROPERTIES_DIR = ASSETS_DIR + "properties/";
 
     private static final String UI_DIR = ASSETS_DIR + "ui/";
     private static final String CSS_DIR = UI_DIR + "css/";
@@ -103,20 +99,10 @@ public class AssetLoader {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
 
-    private final CacheManager cacheManager;
-    private final Cache<String, Object> cachedAssets;
+    private final AssetsCache cachedAssets = new AssetsCache();
 
     @Inject
     private AssetLoader() {
-        cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);
-
-        cachedAssets = cacheManager.createCache("cachedAssets",
-                CacheConfigurationBuilder.newCacheConfigurationBuilder()
-                        .buildConfig(String.class, Object.class));
-
-        GameApplication.getService(ServiceType.EVENT_BUS)
-                .addEventHandler(FXGLEvent.EXIT, e -> close());
-
         log.finer("Service [AssetLoader] initialized");
     }
 
@@ -253,6 +239,21 @@ public class AssetLoader {
     }
 
     /**
+     * Loads resource bundle with given name from "properties/".
+     *
+     * @param name must be under "properties/", e.g. system.properties, game.properties
+     * @return resource bundle
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public ResourceBundle loadResourceBundle(String name) {
+        try (InputStream is = getStream(PROPERTIES_DIR + name)) {
+            return new PropertyResourceBundle(is);
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
      * Loads cursor image with given name from {@value #CURSORS_DIR}.
      * Either returns a valid image or throws exception in case of errors.
      *
@@ -295,12 +296,12 @@ public class AssetLoader {
      * Either returns ready CSS or throws exception in case of errors.
      *
      * @param name CSS file name without the {@value #CSS_DIR}, e.g. "ui_button.css"
-     * @return css URL external form
+     * @return css
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public String loadCSS(String name) {
+    public CSS loadCSS(String name) {
         try {
-            return getURL(CSS_DIR + name).toExternalForm();
+            return new CSS(getURL(CSS_DIR + name).toExternalForm());
         } catch (Exception e) {
             throw loadFailed(name, e);
         }
@@ -465,14 +466,6 @@ public class AssetLoader {
     public void clearCache() {
         log.finer("Clearing assets cache");
         cachedAssets.clear();
-    }
-
-    /**
-     * Close cache manager as specified by EHCache.
-     */
-    private void close() {
-        log.finer("Closing assets cache");
-        cacheManager.close();
     }
 
     /**

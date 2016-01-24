@@ -74,7 +74,7 @@ public enum MenuStyle {
     private MenuFactory factory;
     private String css;
 
-    public String getCSS() {
+    public String getCSSFileName() {
         return css;
     }
 

@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,11 +27,7 @@ import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Collision;
 import org.jbox2d.collision.Distance;
 import org.jbox2d.collision.TimeOfImpact;
-import org.jbox2d.common.Mat22;
-import org.jbox2d.common.Mat33;
-import org.jbox2d.common.Rot;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.common.Vec3;
+import org.jbox2d.common.*;
 import org.jbox2d.dynamics.contacts.Contact;
 
 /**
@@ -41,61 +37,61 @@ import org.jbox2d.dynamics.contacts.Contact;
  */
 public interface IWorldPool {
 
-	public IDynamicStack<Contact> getPolyContactStack();
+    public IDynamicStack<Contact> getPolyContactStack();
 
-	public IDynamicStack<Contact> getCircleContactStack();
+    public IDynamicStack<Contact> getCircleContactStack();
 
-	public IDynamicStack<Contact> getPolyCircleContactStack();
-	
+    public IDynamicStack<Contact> getPolyCircleContactStack();
+
     public IDynamicStack<Contact> getEdgeCircleContactStack();
-    
+
     public IDynamicStack<Contact> getEdgePolyContactStack();
 
     public IDynamicStack<Contact> getChainCircleContactStack();
-    
+
     public IDynamicStack<Contact> getChainPolyContactStack();
-    
-	public Vec2 popVec2();
 
-	public Vec2[] popVec2(int num);
+    public Vec2 popVec2();
 
-	public void pushVec2(int num);
+    public Vec2[] popVec2(int num);
 
-	public Vec3 popVec3();
+    public void pushVec2(int num);
 
-	public Vec3[] popVec3(int num);
+    public Vec3 popVec3();
 
-	public void pushVec3(int num);
+    public Vec3[] popVec3(int num);
 
-	public Mat22 popMat22();
+    public void pushVec3(int num);
 
-	public Mat22[] popMat22(int num);
+    public Mat22 popMat22();
 
-	public void pushMat22(int num);
-	
-	public Mat33 popMat33();
-	
-	public void pushMat33(int num);
+    public Mat22[] popMat22(int num);
 
-	public AABB popAABB();
+    public void pushMat22(int num);
 
-	public AABB[] popAABB(int num);
+    public Mat33 popMat33();
 
-	public void pushAABB(int num);
-	
-	public Rot popRot();
+    public void pushMat33(int num);
 
-	public void pushRot(int num);
-	
-	public Collision getCollision();
+    public AABB popAABB();
 
-	public TimeOfImpact getTimeOfImpact();
+    public AABB[] popAABB(int num);
 
-	public Distance getDistance();
+    public void pushAABB(int num);
 
-	public float[] getFloatArray(int argLength);
+    public Rot popRot();
 
-	public int[] getIntArray(int argLength);
+    public void pushRot(int num);
 
-	public Vec2[] getVec2Array(int argLength);
+    public Collision getCollision();
+
+    public TimeOfImpact getTimeOfImpact();
+
+    public Distance getDistance();
+
+    public float[] getFloatArray(int argLength);
+
+    public int[] getIntArray(int argLength);
+
+    public Vec2[] getVec2Array(int argLength);
 }

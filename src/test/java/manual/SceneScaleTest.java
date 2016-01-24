@@ -1,20 +1,20 @@
 package manual;
 
+import com.almasb.ents.Entity;
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityType;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.app.ApplicationMode;
-
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Rectangle;
 
 public class SceneScaleTest extends GameApplication {
 
-    private enum Type implements EntityType {
+    private enum Type {
         TEST
     }
 
@@ -24,7 +24,7 @@ public class SceneScaleTest extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(2560);
         settings.setHeight(1440);
-        settings.setTitle("Basic FXGL Application");
+        settings.setTitle("SceneScaleTest");
         settings.setVersion("0.1developer");
         settings.setFullScreen(true);
         settings.setIntroEnabled(true);
@@ -37,32 +37,33 @@ public class SceneScaleTest extends GameApplication {
     protected void initInput() {
         Input input = getInput();
 
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onActionBegin() {
-                player.translate(-40, 0);
-            }
-        }, KeyCode.A);
-
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onActionBegin() {
-                player.translate(40, 0);
-            }
-        }, KeyCode.D);
-
-        input.addAction(new UserAction("XY Test") {
-            @Override
-            protected void onActionBegin() {
-                getDisplay().showMessageBox(input.getMouse().getGameX() + "," + input.getMouse().getGameY());
-//                log.info(input.getMouse().x + " " + input.getMouse().y);
-//                log.info(input.getMouse().screenX + " " + input.getMouse().screenY);
-            }
-        }, MouseButton.PRIMARY);
+//        input.addAction(new UserAction("Move Left") {
+//            @Override
+//            protected void onActionBegin() {
+//                player.translate(-40, 0);
+//            }
+//        }, KeyCode.A);
+//
+//        input.addAction(new UserAction("Move Right") {
+//            @Override
+//            protected void onActionBegin() {
+//                player.translate(40, 0);
+//            }
+//        }, KeyCode.D);
+//
+//        input.addAction(new UserAction("XY Test") {
+//            @Override
+//            protected void onActionBegin() {
+//                getDisplay().showMessageBox(input.getMouse().getGameX() + "," + input.getMouse().getGameY());
+////                log.info(input.getMouse().x + " " + input.getMouse().y);
+////                log.info(input.getMouse().screenX + " " + input.getMouse().screenY);
+//            }
+//        }, MouseButton.PRIMARY);
     }
 
     @Override
-    protected void initAssets() {}
+    protected void initAssets() {
+    }
 
     @Override
     protected void initGame() {
@@ -74,7 +75,8 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void initPhysics() {}
+    protected void initPhysics() {
+    }
 
     @Override
     protected void initUI() {
@@ -82,12 +84,13 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate() {
+    }
 
     private Entity createEntity(double x, double y) {
-        Entity e = new Entity(Type.TEST);
-        e.setPosition(x, y);
-        e.setSceneView(new Rectangle(40, 40));
+        Entity e = new Entity();
+        e.addComponent(new PositionComponent(x, y));
+        //e.addComponent(new MainViewComponent(new Rectangle(40, 40)));
 
         getGameWorld().addEntity(e);
         return e;

@@ -110,21 +110,6 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
-     * Set file name of the icon to be used
-     * as the application icon.
-     * <p>
-     * The file must be placed under /assets/ui/icons/ .
-     * The name must be given in the form relative to that
-     * path. E.g. "icon.png"
-     *
-     * @param iconFileName icon file name
-     * @defaultValue fxgl_icon.png
-     */
-    public void setIconFileName(String iconFileName) {
-        this.iconFileName = iconFileName;
-    }
-
-    /**
      * Setting to true will start the game in fullscreen mode.
      *
      * @param b fullscreen flag
@@ -153,26 +138,6 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setApplicationMode(ApplicationMode mode) {
         this.appMode = mode;
-    }
-
-    /**
-     * Sets the name of the default font. The font file
-     * must be located in assets/ui/fonts/
-     *
-     * @param name default font name to use
-     * @defaultValue Copperplate_Gothic_Light_Regular.ttf
-     */
-    public void setDefaultFontName(String name) {
-        this.defaultFontName = name;
-    }
-
-    /**
-     * Set globally applied CSS. The CSS will be loaded from "/assets/ui/css/"
-     *
-     * @param name CSS file name
-     */
-    public void setCSS(String name) {
-        this.css = name;
     }
 
     /**

@@ -25,10 +25,10 @@
  */
 package com.almasb.fxgl.parser;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.util.FXGLLogger;
 
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public final class TextLevelParser {
 
         /**
          * Called when registered character was found during parsing.
-         * If your block is 40 units, then entity.setPosition(x*40, y*40);
+         * If your block is 40 units, then entity.setValue(x*40, y*40);
          *
          * @param x column position of character
          * @param y row position of character

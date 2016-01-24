@@ -40,19 +40,25 @@ public final class LoadEvent extends Event {
     public static final EventType<LoadEvent> ANY =
             new EventType<>(Event.ANY, "LOAD_EVENT");
 
+    public static final EventType<LoadEvent> LOAD_PROFILE =
+            new EventType<>(ANY, "LOAD_PROFILE");
+
+    public static final EventType<LoadEvent> RESTORE_SETTINGS =
+            new EventType<>(ANY, "RESTORE_SETTINGS");
+
     private UserProfile profile;
 
     public UserProfile getProfile() {
         return profile;
     }
 
-    public LoadEvent(UserProfile profile) {
-        super(ANY);
+    public LoadEvent(EventType<LoadEvent> eventType, UserProfile profile) {
+        super(eventType);
         this.profile = profile;
     }
 
     @Override
     public String toString() {
-        return "LoadEvent";
+        return "LoadEvent[type=" + getEventType() + "]";
     }
 }

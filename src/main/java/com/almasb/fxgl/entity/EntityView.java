@@ -25,16 +25,14 @@
  */
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
 
 import java.util.logging.Logger;
 
@@ -47,85 +45,29 @@ public class EntityView extends Parent {
 
     protected static final Logger log = FXGLLogger.getLogger("FXGL.EntityView");
 
-    private static boolean showBBox = false;
-    private static Color showBBoxColor = Color.BLACK;
-
-    public static final void turnOnDebugBBox(Color color) {
-        showBBox = true;
-        showBBoxColor = color;
-    }
-
-    private Entity entity;
+    /**
+     * Constructs a view with no content.
+     */
+    public EntityView() {}
 
     /**
-     * Scene view ctor
+     * Constructs a view with given graphics content.
      *
-     * @param entity   the entity creating the view
-     * @param graphics the view for that entity
+     * @param graphics the view content
      */
-    EntityView(Entity entity, Node graphics) {
-        this.entity = entity;
+    public EntityView(Node graphics) {
         addNode(graphics);
-
-        if (showBBox) {
-            Rectangle debugBBox = new Rectangle(entity.getWidth(), entity.getHeight());
-            debugBBox.setFill(null);
-            debugBBox.setStroke(showBBoxColor);
-
-            addNode(debugBBox);
-
-            entity.hitBoxesProperty().addListener((ListChangeListener<? super HitBox>) c -> {
-                while (c.next()) {
-                    debugBBox.setWidth(entity.getWidth());
-                    debugBBox.setHeight(entity.getHeight());
-                }
-            });
-        }
-
-        initAsSceneView();
-
-        entity.activeProperty().addListener(((obs, old, isActive) -> {
-            if (!isActive)
-                removeFromScene();
-        }));
     }
 
     /**
-     * Constructs new view for given entity
+     * Returns nodes attached to this view.
+     * Modifying the list directly is discouraged as certain events
+     * may not be properly registered.
      *
-     * @param entity the entity
+     * @return list of children
      */
-    public EntityView(Entity entity) {
-        this.entity = entity;
-
-        entity.activeProperty().addListener(((obs, old, isActive) -> {
-            if (!isActive)
-                removeFromScene();
-        }));
-    }
-
-    /**
-     * @return source entity of this view
-     */
-    public final Entity getEntity() {
-        return entity;
-    }
-
-    /**
-     * Binds X Y and rotation of the view to entity's properties.
-     */
-    private void initAsSceneView() {
-        this.translateXProperty().bind(entity.xProperty());
-        this.translateYProperty().bind(entity.yProperty());
-        this.rotateProperty().bind(entity.rotationProperty());
-
-        entity.xFlippedProperty().addListener(((obs, oldValue, isFlipped) -> {
-            if (isFlipped) {
-                getTransforms().setAll(new Scale(-1, 1, entity.getXFlipLine(), 0));
-            } else {
-                getTransforms().clear();
-            }
-        }));
+    public final ObservableList<Node> getNodes() {
+        return getChildren();
     }
 
     /**
@@ -152,21 +94,41 @@ public class EntityView extends Parent {
         getChildren().remove(node);
     }
 
+    private boolean removedFromScene = false;
+
     /**
      * Removes this view from scene and clears its children nodes.
      */
     public final void removeFromScene() {
+        if (removedFromScene)
+            return;
+
         getChildren().clear();
 
         try {
-            ((Group)getParent()).getChildren().remove(this);
+            if (getParent() == null) {
+                removedFromScene = true;
+                return;
+            }
+
+            // we were created by user and he set scene view manually
+            if (getParent() instanceof EntityView) {
+                ((EntityView) getParent()).removeFromScene();
+            }
+            // we were created automatically by Entity
+            else if (getParent() instanceof Group) {
+                ((Group)getParent()).getChildren().remove(this);
+            } else {
+                throw new IllegalStateException("View parent is of unknown type: " + getParent().getClass());
+            }
+
+            removedFromScene = true;
         } catch (Exception e) {
-            log.warning("View wasn't removed from scene because parent is not of type Group: "
-                    + e.getMessage());
+            log.warning("View wasn't removed from scene: " + e.getMessage());
         }
     }
 
-    private RenderLayer renderLayer = RenderLayer.TOP;
+    private ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.TOP);
 
     /**
      * Set render layer for this entity. Render layer determines how an entity
@@ -179,21 +141,21 @@ public class EntityView extends Parent {
      * the entity is already registered in the scene graph, this method will
      * throw IllegalStateException.
      *
-     * @param layer the render layer
+     * @param renderLayer the render layer
      * @throws IllegalStateException
      */
-    public final void setRenderLayer(RenderLayer layer) {
-        if (entity.isActive())
-            throw new IllegalStateException(
-                    "Can't set render layer to active view.");
-
-        this.renderLayer = layer;
+    public void setRenderLayer(RenderLayer renderLayer) {
+        this.renderLayer.set(renderLayer);
     }
 
     /**
-     * @return render layer for entity
+     * @return render layer
      */
-    public final RenderLayer getRenderLayer() {
+    public RenderLayer getRenderLayer() {
+        return renderLayer.get();
+    }
+
+    public ObjectProperty<RenderLayer> renderLayerProperty() {
         return renderLayer;
     }
 }

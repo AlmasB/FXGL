@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -50,67 +50,67 @@ import org.jbox2d.common.Vec2;
  */
 public class Manifold {
 
-  public static enum ManifoldType {
-    CIRCLES, FACE_A, FACE_B
-  }
-
-  /** The points of contact. */
-  public final ManifoldPoint[] points;
-
-  /** not use for Type::e_points */
-  public final Vec2 localNormal;
-
-  /** usage depends on manifold type */
-  public final Vec2 localPoint;
-
-  public ManifoldType type;
-
-  /** The number of manifold points. */
-  public int pointCount;
-
-  /**
-   * creates a manifold with 0 points, with it's points array full of instantiated ManifoldPoints.
-   */
-  public Manifold() {
-    points = new ManifoldPoint[Settings.maxManifoldPoints];
-    for (int i = 0; i < Settings.maxManifoldPoints; i++) {
-      points[i] = new ManifoldPoint();
-    }
-    localNormal = new Vec2();
-    localPoint = new Vec2();
-    pointCount = 0;
-  }
-
-  /**
-   * Creates this manifold as a copy of the other
-   * 
-   * @param other
-   */
-  public Manifold(Manifold other) {
-    points = new ManifoldPoint[Settings.maxManifoldPoints];
-    localNormal = other.localNormal.clone();
-    localPoint = other.localPoint.clone();
-    pointCount = other.pointCount;
-    type = other.type;
-    // djm: this is correct now
-    for (int i = 0; i < Settings.maxManifoldPoints; i++) {
-      points[i] = new ManifoldPoint(other.points[i]);
-    }
-  }
-
-  /**
-   * copies this manifold from the given one
-   * 
-   * @param cp manifold to copy from
-   */
-  public void set(Manifold cp) {
-    for (int i = 0; i < cp.pointCount; i++) {
-      points[i].set(cp.points[i]);
+    public static enum ManifoldType {
+        CIRCLES, FACE_A, FACE_B
     }
 
-    type = cp.type;
-    localNormal.set(cp.localNormal);
-    localPoint.set(cp.localPoint);
-    pointCount = cp.pointCount;
-  }
+    /** The points of contact. */
+    public final ManifoldPoint[] points;
+
+    /** not use for Type::e_points */
+    public final Vec2 localNormal;
+
+    /** usage depends on manifold type */
+    public final Vec2 localPoint;
+
+    public ManifoldType type;
+
+    /** The number of manifold points. */
+    public int pointCount;
+
+    /**
+     * creates a manifold with 0 points, with it's points array full of instantiated ManifoldPoints.
+     */
+    public Manifold() {
+        points = new ManifoldPoint[Settings.maxManifoldPoints];
+        for (int i = 0; i < Settings.maxManifoldPoints; i++) {
+            points[i] = new ManifoldPoint();
+        }
+        localNormal = new Vec2();
+        localPoint = new Vec2();
+        pointCount = 0;
+    }
+
+    /**
+     * Creates this manifold as a copy of the other
+     *
+     * @param other
+     */
+    public Manifold(Manifold other) {
+        points = new ManifoldPoint[Settings.maxManifoldPoints];
+        localNormal = other.localNormal.clone();
+        localPoint = other.localPoint.clone();
+        pointCount = other.pointCount;
+        type = other.type;
+        // djm: this is correct now
+        for (int i = 0; i < Settings.maxManifoldPoints; i++) {
+            points[i] = new ManifoldPoint(other.points[i]);
+        }
+    }
+
+    /**
+     * copies this manifold from the given one
+     *
+     * @param cp manifold to copy from
+     */
+    public void set(Manifold cp) {
+        for (int i = 0; i < cp.pointCount; i++) {
+            points[i].set(cp.points[i]);
+        }
+
+        type = cp.type;
+        localNormal.set(cp.localNormal);
+        localPoint.set(cp.localPoint);
+        pointCount = cp.pointCount;
+    }
 }

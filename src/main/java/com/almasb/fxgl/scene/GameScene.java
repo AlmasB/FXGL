@@ -26,17 +26,25 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.ents.*;
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.effect.ParticleEntity;
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.event.FXGLInputEvent;
+import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.event.WorldEvent;
+import com.almasb.fxgl.gameplay.GameWorldListener;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -62,7 +70,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameScene extends FXGLScene {
+public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener, ControlListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
@@ -81,7 +89,7 @@ public final class GameScene extends FXGLScene {
      */
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
-    private List<ParticleEntity> particles = new ArrayList<>();
+    private List<ParticleControl> particles = new ArrayList<>();
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -107,9 +115,11 @@ public final class GameScene extends FXGLScene {
             Entity entity = event.getEntity();
             onEntityRemoved(entity);
         });
+
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
-            onWorldUpdate();
+            onWorldUpdate(event.tpf());
         });
+
         eventBus.addEventHandler(FXGLEvent.RESET, event -> {
             onWorldReset();
         });
@@ -126,6 +136,8 @@ public final class GameScene extends FXGLScene {
         viewport = new Viewport(settings.getWidth(), settings.getHeight());
         gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
+
+        log.finer("Game scene initialized");
     }
 
     private void initParticlesCanvas(double w, double h) {
@@ -178,7 +190,7 @@ public final class GameScene extends FXGLScene {
      * @param view view to add
      */
     public void addGameView(EntityView view) {
-        getRenderLayer(view.getRenderLayer()).getChildren().add(view);
+        getRenderGroup(view.getRenderLayer()).getChildren().add(view);
     }
 
     /**
@@ -187,40 +199,8 @@ public final class GameScene extends FXGLScene {
      * @param view view to remove
      */
     public void removeGameView(EntityView view) {
+        getRenderGroup(view.getRenderLayer()).getChildren().remove(view);
         view.removeFromScene();
-    }
-
-    /**
-     * Returns render group for entity based on entity's
-     * render layer. If no such group exists, a new group
-     * will be created for that layer and placed
-     * in the scene graph according to its layer index.
-     *
-     * @param layer render layer
-     * @return render group
-     */
-    private Group getRenderLayer(RenderLayer layer) {
-        Integer renderLayer = layer.index();
-        Group group = gameRoot.getChildren()
-                .stream()
-                .filter(n -> (int) n.getUserData() == renderLayer)
-                .findAny()
-                .map(n -> (Group) n)
-                .orElse(new Group());
-
-
-        if (group.getUserData() == null) {
-            log.finer("Creating render group for layer: " + layer.asString());
-            group.setUserData(renderLayer);
-            gameRoot.getChildren().add(group);
-        }
-
-        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        tmpGroups.sort((g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
-
-        gameRoot.getChildren().setAll(tmpGroups);
-
-        return group;
     }
 
     private Viewport viewport;
@@ -255,22 +235,53 @@ public final class GameScene extends FXGLScene {
         uiRoot.setMouseTransparent(b);
     }
 
-    private void onEntityAdded(Entity entity) {
-        entity.getSceneView().ifPresent(view -> {
-            getRenderLayer(view.getRenderLayer()).getChildren().add(view);
-        });
+    /**
+     * Returns graphics context of the game scene.
+     * The render layer is over all entities.
+     * Use this only if performance is required.
+     * The drawing on this context can be done in {@link GameApplication#onUpdate()}.
+     *
+     * @return graphics context
+     */
+    public GraphicsContext getGraphicsContext() {
+        return particlesGC;
+    }
 
-        if (entity instanceof ParticleEntity) {
-            log.finer("Adding particle entity");
-            particles.add((ParticleEntity) entity);
+    /**
+     * Returns render group for entity based on entity's
+     * render layer. If no such group exists, a new group
+     * will be created for that layer and placed
+     * in the scene graph according to its layer index.
+     *
+     * @param layer render layer
+     * @return render group
+     */
+    private Group getRenderGroup(RenderLayer layer) {
+        Integer renderLayer = layer.index();
+        Group group = gameRoot.getChildren()
+                .stream()
+                .filter(n -> (int) n.getUserData() == renderLayer)
+                .findAny()
+                .map(n -> (Group) n)
+                .orElse(new Group());
+
+
+        if (group.getUserData() == null) {
+            log.finer("Creating render group for layer: " + layer.asString());
+            group.setUserData(renderLayer);
+            gameRoot.getChildren().add(group);
         }
+
+        List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
+        tmpGroups.sort((g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
+
+        gameRoot.getChildren().setAll(tmpGroups);
+
+        return group;
     }
 
-    private void onEntityRemoved(Entity entity) {
-        particles.remove(entity);
-    }
-
-    private void onWorldUpdate() {
+    @Override
+    public void onWorldUpdate(double tpf) {
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
@@ -278,12 +289,112 @@ public final class GameScene extends FXGLScene {
         particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
-    private void onWorldReset() {
+    @Override
+    public void onWorldReset() {
         log.finer("Resetting game scene");
 
         getViewport().unbind();
         particles.clear();
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
+    }
+
+    @Override
+    public void onEntityAdded(Entity entity) {
+        log.finer("Entity added to scene");
+
+        entity.getComponent(MainViewComponent.class)
+                .ifPresent(viewComponent -> {
+                    onComponentAdded(viewComponent);
+                });
+
+        entity.addComponentListener(this);
+        entity.addControlListener(this);
+
+        entity.getControl(ParticleControl.class)
+                .ifPresent(particles::add);
+        entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
+                .ifPresent(particles::add);
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+        log.finer("Entity removed from scene");
+
+        entity.getComponent(MainViewComponent.class)
+                .ifPresent(viewComponent -> {
+                    onComponentRemoved(viewComponent);
+                });
+
+        entity.removeComponentListener(this);
+        entity.removeControlListener(this);
+
+        entity.getControl(ParticleControl.class)
+                .ifPresent(particles::remove);
+        entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
+                .ifPresent(particles::remove);
+    }
+
+    private ChangeListener<EntityView> viewChangeListener = (o, oldView, newView) -> {
+        Group renderGroup = getRenderGroup(oldView.getRenderLayer());
+        int index = renderGroup.getChildren().indexOf(oldView);
+
+        if (index != -1) {
+            renderGroup.getChildren().set(index, newView);
+        } else {
+            log.warning("Old view was not in the scene graph. Adding new view");
+            addGameView(newView);
+        }
+    };
+
+//    private ChangeListener<RenderLayer> renderLayerChangeListener = (o, oldLayer, newLayer) -> {
+//
+//    };
+
+    @Override
+    public void onComponentAdded(Component component) {
+        if (component instanceof MainViewComponent) {
+            log.finer("Added MainViewComponent");
+
+            MainViewComponent viewComponent = (MainViewComponent) component;
+
+            EntityView view = viewComponent.getView();
+            addGameView(view);
+
+            viewComponent.viewProperty().addListener(viewChangeListener);
+            viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
+                getRenderGroup(oldLayer).getChildren().remove(view);
+                getRenderGroup(newLayer).getChildren().add(view);
+            });
+        }
+    }
+
+    @Override
+    public void onComponentRemoved(Component component) {
+        if (component instanceof MainViewComponent) {
+            log.finer("Removed MainViewComponent");
+
+            MainViewComponent viewComponent = (MainViewComponent) component;
+
+            EntityView view = viewComponent.getView();
+            removeGameView(view);
+
+            viewComponent.viewProperty().removeListener(viewChangeListener);
+        }
+    }
+
+    @Override
+    public void onControlAdded(Control control) {
+        if (control instanceof PhysicsWorld.PhysicsParticleControl) {
+            PhysicsWorld.PhysicsParticleControl particleControl = (PhysicsWorld.PhysicsParticleControl) control;
+            particles.add(particleControl);
+        }
+    }
+
+    @Override
+    public void onControlRemoved(Control control) {
+        if (control instanceof PhysicsWorld.PhysicsParticleControl) {
+            particles.remove(control);
+        }
     }
 }

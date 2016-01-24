@@ -26,8 +26,12 @@
 
 package com.almasb.fxgl.audio;
 
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.event.LoadEvent;
+import com.almasb.fxgl.event.NotificationEvent;
+import com.almasb.fxgl.event.SaveEvent;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
@@ -86,7 +90,7 @@ public final class FXGLAudioPlayer implements AudioPlayer, UserProfileSavable {
      */
     private List<Music> activeMusic = new ArrayList<>();
 
-    private DoubleProperty globalMusicVolume = new SimpleDoubleProperty(1.0);
+    private DoubleProperty globalMusicVolume = new SimpleDoubleProperty(0.5);
 
     /**
      * @return global music volume property
@@ -96,7 +100,7 @@ public final class FXGLAudioPlayer implements AudioPlayer, UserProfileSavable {
         return globalMusicVolume;
     }
 
-    private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(1.0);
+    private DoubleProperty globalSoundVolume = new SimpleDoubleProperty(0.5);
 
     /**
      * @return global sound volume property

@@ -25,7 +25,8 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.entity.Entity;
+import com.almasb.ents.Entity;
+import com.almasb.fxgl.entity.component.TypeComponent;
 
 final class CollisionPair extends Pair<Entity> {
 
@@ -36,7 +37,8 @@ final class CollisionPair extends Pair<Entity> {
         // when triggering collision between A and B
         // this ensures that client gets back entities in the same order
         // he registered the handler with
-        super(a.isType(handler.getA()) ? a : b, b.isType(handler.getB()) ? b : a);
+        super(a.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getA()) ? a : b,
+                b.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getB()) ? b : a);
         this.handler = handler;
     }
 

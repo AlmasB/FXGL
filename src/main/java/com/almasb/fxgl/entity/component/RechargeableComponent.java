@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.ents.component.DoubleComponent;
+
 /**
  * Any rechargeable component, such as HP, SP, ammo, etc.
  *

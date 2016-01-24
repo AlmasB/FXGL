@@ -57,8 +57,36 @@
 /**
  * ListView
  */
- 
 .list-cell { 
     -fx-background: black;
     -fx-font-size: 18px;
+}
+
+/**
+ * FXGLChoiceBox
+ */
+.fxgl-choice-box  {
+    -fx-background-color: black, rgba(250, 250, 250, 0.98);
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-padding: 0 2 0 2;
+
+    -fx-font-size: 18px;
+}
+
+.fxgl-choice-box:hover {
+    -fx-background-color: black, black, black, white;
+}
+
+.fxgl-choice-box:focused {
+    -fx-background-color: black, black, black, white;
+    -fx-background-insets: -1.4, 0, 1, 2;
+    -fx-background-radius: 1, 1, 1, 1;
+}
+
+.fxgl-choice-box:focused:hover {
+    -fx-background-color: black, black, black, white;
+}
+
+.fxgl-choice-box:disabled {
+    -fx-opacity: 0.4;
 }

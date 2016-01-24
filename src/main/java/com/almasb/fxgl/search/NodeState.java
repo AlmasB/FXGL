@@ -26,10 +26,10 @@
 package com.almasb.fxgl.search;
 
 /**
- * Node state
+ * Node state.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum  NodeState {
+public enum NodeState {
     WALKABLE, NOT_WALKABLE
 }
