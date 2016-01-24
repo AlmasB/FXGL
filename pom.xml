@@ -24,6 +24,7 @@
 
         <!-- dependencies -->
         <fxeventbus.version>1.0</fxeventbus.version>
+        <ents.version>1.0</ents.version>
 
         <junit.version>4.12</junit.version>
         <guice.version>4.0</guice.version>
@@ -60,7 +61,7 @@
         <dependency>
             <groupId>com.github.AlmasB</groupId>
             <artifactId>Ents</artifactId>
-            <version>3f9a4ab213</version>
+            <version>${ents.version}</version>
         </dependency>
 
         <!-- test scope dependencies -->
