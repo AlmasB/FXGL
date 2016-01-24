@@ -27,14 +27,6 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.ents.Entity;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * API INCOMPLETE

@@ -26,7 +26,8 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.ents.component.*;
+import com.almasb.ents.component.BooleanComponent;
+import com.almasb.ents.component.Required;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

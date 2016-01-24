@@ -27,8 +27,6 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.ents.component.DoubleComponent;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 
 /**

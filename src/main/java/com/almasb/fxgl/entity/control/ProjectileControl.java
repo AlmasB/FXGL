@@ -32,7 +32,6 @@ import com.almasb.ents.component.Required;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
-
 import javafx.geometry.Point2D;
 
 /**

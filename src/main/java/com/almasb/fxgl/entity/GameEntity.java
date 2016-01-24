@@ -28,7 +28,6 @@ package com.almasb.fxgl.entity;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.entity.component.*;
-import javafx.scene.text.Text;
 
 /**
  * Entity that guarantees to have Type, Position, Rotation, BoundingBox and View

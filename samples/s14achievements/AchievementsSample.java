@@ -25,13 +25,11 @@
  */
 package s14achievements;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;

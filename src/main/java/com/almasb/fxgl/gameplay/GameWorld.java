@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.gameplay;
 
-import com.almasb.ents.Component;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorld;
 import com.almasb.ents.EntityWorldListener;
@@ -40,18 +39,14 @@ import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;

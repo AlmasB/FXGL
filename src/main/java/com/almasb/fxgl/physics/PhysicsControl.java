@@ -33,7 +33,6 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import org.jbox2d.dynamics.Body;
 
 /**
