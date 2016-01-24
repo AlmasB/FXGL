@@ -25,24 +25,22 @@
  */
 package s18renderlayer;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to use render layers.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class RenderingSample extends GameApplication {
 
-    private enum Type {
-        PLAYER
-    }
-
-    private Entity player;
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -65,36 +63,37 @@ public class RenderingSample extends GameApplication {
 
     @Override
     protected void initGame() {
-//        player = new Entity(Type.PLAYER);
-//        player.setValue(100, 100);
-//
-//        Rectangle graphics = new Rectangle(40, 40);
-//        player.setSceneView(graphics);
-//
-//        getGameWorld().addEntity(player);
-//
-//        Entity box = Entity.noType();
-//        box.setValue(80, 80);
-//
-//        // 1. when adding a scene view also attach a render layer
-//        // either predefined or created dynamically like below
-//        box.setSceneView(new Rectangle(40, 40, Color.RED), new RenderLayer() {
-//            @Override
-//            public String name() {
-//                // 2. specify the unique name for that layer
-//                return "LAYER_BELOW_PLAYER";
-//            }
-//
-//            @Override
-//            public int index() {
-//                // 3. specify layer index, higher values will drawn above lower values
-//                return 1000;
-//            }
-//        });
-//
-//        // we have added box after player but because of the render layer we specified
-//        // the box will be drawn below the player
-//        getGameWorld().addEntity(box);
+        player = new GameEntity();
+        player.getPositionComponent().setValue(100, 100);
+
+        Rectangle graphics = new Rectangle(40, 40);
+        player.getMainViewComponent().setGraphics(graphics);
+
+        getGameWorld().addEntity(player);
+
+        GameEntity box = new GameEntity();
+        box.getPositionComponent().setValue(80, 80);
+
+        // 1. when adding a scene view also attach a render layer
+        // either predefined or created dynamically like below
+        box.getMainViewComponent().setGraphics(new Rectangle(40, 40, Color.RED));
+        box.getMainViewComponent().setRenderLayer(new RenderLayer() {
+            @Override
+            public String name() {
+                // 2. specify the unique name for that layer
+                return "LAYER_BELOW_PLAYER";
+            }
+
+            @Override
+            public int index() {
+                // 3. specify layer index, higher values will drawn above lower values
+                return 1000;
+            }
+        });
+
+        // we have added box after player but because of the render layer we specified
+        // the red box will be drawn below the player
+        getGameWorld().addEntity(box);
     }
 
     @Override
