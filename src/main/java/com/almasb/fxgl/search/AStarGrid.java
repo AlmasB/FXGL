@@ -74,7 +74,7 @@ public class AStarGrid {
      *
      * @param x x coord
      * @param y y coord
-     * @return true iff the point is within the grid
+     * @return true if the point is within the grid
      */
     public boolean isWithin(int x, int y) {
         return x >= 0 && x < getWidth()
