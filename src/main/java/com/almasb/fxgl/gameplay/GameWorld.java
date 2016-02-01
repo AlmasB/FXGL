@@ -115,13 +115,25 @@ public final class GameWorld extends EntityWorld {
 
     /**
      * This query only works on entities with TypeComponent.
+     * If called with no arguments, all entities are returned.
      *
-     * @param type entity type
+     * @param types entity types
      * @return entities
      */
-    public List<Entity> getEntitiesByType(Enum<?> type) {
+    public List<Entity> getEntitiesByType(Enum<?>... types) {
+        if (types.length == 0)
+            return getEntities();
+
         return getEntitiesByComponent(TypeComponent.class).stream()
-                .filter(e -> Entities.getType(e).getValue().equals(type))
+                .filter(e -> {
+                    for (Enum<?> type : types) {
+                        if (Entities.getType(e).isType(type)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
                 .collect(Collectors.toList());
     }
 
