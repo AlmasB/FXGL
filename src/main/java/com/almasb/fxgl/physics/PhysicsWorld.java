@@ -55,7 +55,9 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
@@ -396,12 +398,23 @@ public final class PhysicsWorld {
             double h = bounds.getHeight();
 
             FixtureDef fd = physics.fixtureDef;
-            PolygonShape rectShape = new PolygonShape();
-            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
-                    new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
+
+            Shape shape;
+
+            if (box.getShape() == BoundingShape.BOX) {
+                PolygonShape rectShape = new PolygonShape();
+                rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
+                        new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
+                shape = rectShape;
+            } else {    // if (box.getShape() == BoundingShape.CIRCLE)
+                CircleShape circleShape = new CircleShape();
+                circleShape.setRadius(toMeters(w / 2));
+                circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY()));
+                shape = circleShape;
+            }
 
             // we use definitions from user, but override shape
-            fd.setShape(rectShape);
+            fd.setShape(shape);
 
             Fixture fixture = physics.body.createFixture(fd);
             fixture.setUserData(box);

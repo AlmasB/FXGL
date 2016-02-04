@@ -37,6 +37,8 @@ public final class HitBox {
     private final Bounds bounds;
     private final String name;
 
+    private final BoundingShape shape;
+
     /**
      * Creates a hit box with given name and bounds.
      * The bounds are calculated from the local entity origin
@@ -57,8 +59,13 @@ public final class HitBox {
      * @param bounds hit box bounds
      */
     public HitBox(String name, BoundingBox bounds) {
+        this(name, bounds, BoundingShape.BOX);
+    }
+
+    public HitBox(String name, BoundingBox bounds, BoundingShape shape) {
         this.name = name;
         this.bounds = bounds;
+        this.shape = shape;
     }
 
     /**
@@ -90,6 +97,10 @@ public final class HitBox {
 
     public Bounds getBounds() {
         return bounds;
+    }
+
+    public BoundingShape getShape() {
+        return shape;
     }
 
     public double getMinX() {
