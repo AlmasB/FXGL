@@ -29,6 +29,8 @@ package com.almasb.fxgl.entity.component;
 import com.almasb.ents.AbstractComponent;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
@@ -114,6 +116,17 @@ public class MainViewComponent extends AbstractComponent {
                     0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
             )));
         }
+    }
+
+    public void setTexture(String textureName) {
+        setTexture(textureName, false);
+    }
+
+    public void setTexture(String textureName, boolean generateBoundingBox) {
+        EntityView view = new EntityView(GameApplication.getService(ServiceType.ASSET_LOADER)
+                .loadTexture(textureName));
+
+        setView(view, generateBoundingBox);
     }
 
     @Override
