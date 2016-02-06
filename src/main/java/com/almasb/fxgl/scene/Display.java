@@ -387,6 +387,7 @@ public final class Display implements UserProfileSavable {
     }
 
     private FXGLDialogBox dialogBox;
+    private DialogPane newDialog;
 
     public FXGLDialogBox getDialogBox() {
         return dialogBox;
@@ -400,6 +401,8 @@ public final class Display implements UserProfileSavable {
         dialogBox.setOnHidden(e -> {
             eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_CLOSED));
         });
+
+        newDialog = new DialogPane(this);
     }
 
     /**
@@ -429,7 +432,7 @@ public final class Display implements UserProfileSavable {
      * @param message the message to show
      */
     public void showMessageBox(String message) {
-        dialogBox.showMessageBox(message);
+        newDialog.showMessageBox(message);
     }
 
     /**
@@ -441,7 +444,8 @@ public final class Display implements UserProfileSavable {
      */
     public void showConfirmationBox(String message,
                                     Consumer<Boolean> resultCallback) {
-        dialogBox.showConfirmationBox(message, resultCallback);
+        //dialogBox.showConfirmationBox(message, resultCallback);
+        newDialog.showConfirmationBox(message, resultCallback);
     }
 
     /**
@@ -452,7 +456,7 @@ public final class Display implements UserProfileSavable {
      * @param resultCallback the function to be called
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
-        dialogBox.showInputBox(message, resultCallback);
+        newDialog.showInputBox(message, resultCallback);
     }
 
     /**
@@ -464,7 +468,7 @@ public final class Display implements UserProfileSavable {
      * @param resultCallback the function to be called
      */
     public void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback) {
-        dialogBox.showInputBox(message, filter, resultCallback);
+        newDialog.showInputBox(message, filter, resultCallback);
     }
 
     /**
@@ -473,7 +477,7 @@ public final class Display implements UserProfileSavable {
      * @param error the error to show
      */
     public void showErrorBox(Throwable error) {
-        dialogBox.showErrorBox(error);
+        newDialog.showErrorBox(error);
     }
 
     /**
@@ -484,7 +488,7 @@ public final class Display implements UserProfileSavable {
      * @param buttons buttons present
      */
     public void showBox(String message, Node content, Button... buttons) {
-        dialogBox.showBox(message, content, buttons);
+        newDialog.showBox(message, content, buttons);
     }
 
     @Override
