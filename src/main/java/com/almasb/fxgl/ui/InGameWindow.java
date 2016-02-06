@@ -30,7 +30,11 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.scene.GameScene;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -40,6 +44,7 @@ import jfxtras.scene.control.window.MinimizeIcon;
 import jfxtras.scene.control.window.Window;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents an in-game window as part of game UI.
@@ -58,6 +63,8 @@ import java.util.ArrayList;
 public class InGameWindow extends Window {
 
     private static final int SNAP_SIZE = 10;
+
+    private static final CopyOnWriteArrayList<InGameWindow> windows = new CopyOnWriteArrayList<>();
 
     /**
      * Constructs an in-game window with minimize and close icons.
@@ -91,15 +98,13 @@ public class InGameWindow extends Window {
         }
 
         initXYListeners();
+
+        windows.add(this);
     }
 
     private void initXYListeners() {
         double appW = FXGL.getDouble("settings.width");
         double appH = FXGL.getDouble("settings.height");
-
-        ObservableList<Node> uiNodes = GameApplication.getService(ServiceType.GAME)
-                .getGameScene()
-                .getUINodes();
 
         layoutXProperty().addListener((observable, oldValue, newValue) -> {
             int newX = newValue.intValue();
@@ -107,11 +112,20 @@ public class InGameWindow extends Window {
             int newMaxX = newX + width;
 
             if (snapToWindows) {
-                for (Node node : new ArrayList<>(uiNodes)) {
-                    int nodeMaxX = (int) (node.getLayoutX() + node.getLayoutBounds().getWidth());
+                for (InGameWindow window : windows) {
+                    if (window == this)
+                        continue;
+
+                    int nodeMinX = (int) window.getLayoutX();
+                    int nodeMaxX = (int) (window.getLayoutX() + window.getWidth());
 
                     if (between(newX, nodeMaxX - SNAP_SIZE, nodeMaxX + SNAP_SIZE)) {
                         relocateX(nodeMaxX);
+                        break;
+                    }
+
+                    if (between(newMaxX, nodeMinX - SNAP_SIZE, nodeMinX + SNAP_SIZE)) {
+                        relocateX(nodeMinX - width);
                         break;
                     }
                 }
@@ -136,7 +150,28 @@ public class InGameWindow extends Window {
 
         layoutYProperty().addListener((observable, oldValue, newValue) -> {
             int newY = newValue.intValue();
-            int newMaxY = newY + (int)getHeight();
+            int height = (int) getHeight();
+            int newMaxY = newY + height;
+
+            if (snapToWindows) {
+                for (InGameWindow window : windows) {
+                    if (window == this)
+                        continue;
+
+                    int nodeMinY = (int) window.getLayoutY();
+                    int nodeMaxY = (int) (window.getLayoutY() + window.getHeight());
+
+                    if (between(newY, nodeMaxY - SNAP_SIZE, nodeMaxY + SNAP_SIZE)) {
+                        relocateY(nodeMaxY);
+                        break;
+                    }
+
+                    if (between(newMaxY, nodeMinY - SNAP_SIZE, nodeMinY + SNAP_SIZE)) {
+                        relocateY(nodeMinY - height);
+                        break;
+                    }
+                }
+            }
 
             if (snapToScreen) {
                 if (newY > 0 && newY <= SNAP_SIZE) {
@@ -216,6 +251,26 @@ public class InGameWindow extends Window {
     private static boolean between(double value, double min, double max) {
         return value > min && value < max;
     }
+
+    @Override
+    public void close() {
+        super.close();
+        windows.remove(this);
+    }
+
+    //    private static class WindowLayout {
+//        final int id;
+//        DoubleProperty layoutX, layoutY;
+//        ReadOnlyObjectProperty<Bounds> layoutBounds;
+//
+//        public WindowLayout(int id, DoubleProperty layoutX, DoubleProperty layoutY,
+//                            ReadOnlyObjectProperty<Bounds> layoutBounds) {
+//            this.id = id;
+//            this.layoutX = layoutX;
+//            this.layoutY = layoutY;
+//            this.layoutBounds = layoutBounds;
+//        }
+//    }
 
     public enum WindowDecor {
         NONE,
