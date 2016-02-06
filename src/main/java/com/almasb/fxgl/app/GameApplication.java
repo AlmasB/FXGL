@@ -311,10 +311,20 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
         getEventBus().addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {
+            if (getState() == ApplicationState.INTRO ||
+                    getState() == ApplicationState.LOADING)
+                return;
+
             if (!isMenuOpen())
                 pause();
+
+            getInput().clearAllInput();
         });
         getEventBus().addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
+            if (getState() == ApplicationState.INTRO ||
+                    getState() == ApplicationState.LOADING)
+                return;
+
             if (!isMenuOpen())
                 resume();
         });
@@ -496,8 +506,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             }
 
             if (!ok.get()) {
-                getDisplay().getDialogBox()
-                        .showErrorBox("Profile is corrupted: " + profileName,
+                getDisplay().showErrorBox("Profile is corrupted: " + profileName,
                                 this::showProfileDialog);
             } else {
                 getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));

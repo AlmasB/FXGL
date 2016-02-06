@@ -27,22 +27,15 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.scene.Display;
-import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.ui.FXGLButton;
-import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -55,7 +48,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -70,8 +63,18 @@ class DialogPane extends Pane {
     private Window window = new Window();
     private Display display;
 
+    private Runnable onShown = null, onClosed = null;
+
     DialogPane(Display display) {
         this.display = display;
+
+        display.currentSceneProperty().addListener((o, oldScene, newScene) -> {
+            // if we somehow changed scene while the dialog is showing
+            if (isShowing()) {
+                oldScene.getRoot().getChildren().remove(this);
+                newScene.getRoot().getChildren().add(this);
+            }
+        });
 
         double width = FXGL.getDouble("settings.width");
         double height = FXGL.getDouble("settings.height");
@@ -114,11 +117,6 @@ class DialogPane extends Pane {
      * @param callback function to call when closed
      */
     void showMessageBox(String message, Runnable callback) {
-        if (isShowing()) {
-            log.warning("Dialog is already showing! Aborting");
-            return;
-        }
-
         Text text = createMessage(message);
 
         FXGLButton btnOK = new FXGLButton("OK");
@@ -130,9 +128,8 @@ class DialogPane extends Pane {
         VBox vbox = new VBox(50, text, btnOK);
         vbox.setAlignment(Pos.CENTER);
         vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 200), text.getLayoutBounds().getHeight() * 2 + 50));
-        setContent(vbox);
 
-        window.setTitle("Message");
+        setContent("Message", vbox);
         show();
     }
 
@@ -179,11 +176,6 @@ class DialogPane extends Pane {
      * @param callback function to call when closed
      */
     void showErrorBox(Throwable error, Runnable callback) {
-        if (isShowing()) {
-            log.warning("Dialog is already showing! Aborting");
-            return;
-        }
-
         Text text = createMessage(error.getMessage() == null ? "NPE" : error.getMessage());
 
         FXGLButton btnOK = new FXGLButton("OK");
@@ -217,9 +209,8 @@ class DialogPane extends Pane {
         VBox vbox = new VBox(50, text, hbox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 400), text.getLayoutBounds().getHeight() * 2 + 50));
-        setContent(vbox);
 
-        window.setTitle("Error");
+        setContent("Error", vbox);
         show();
     }
 
@@ -235,11 +226,6 @@ class DialogPane extends Pane {
      * @param resultCallback result function to call back
      */
     void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
-        if (isShowing()) {
-            log.warning("Dialog is already showing! Aborting");
-            return;
-        }
-
         Text text = createMessage(message);
 
         FXGLButton btnYes = new FXGLButton("YES");
@@ -260,9 +246,8 @@ class DialogPane extends Pane {
         VBox vbox = new VBox(50, text, hbox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 400), text.getLayoutBounds().getHeight() * 2 + 50));
-        setContent(vbox);
 
-        window.setTitle("Confirmation");
+        setContent("Confirmation", vbox);
         show();
     }
 
@@ -297,11 +282,6 @@ class DialogPane extends Pane {
      * @param resultCallback result function to call back
      */
     void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback) {
-        if (isShowing()) {
-            log.warning("Dialog is already showing! Aborting");
-            return;
-        }
-
         Text text = createMessage(message);
 
         TextField field = new TextField();
@@ -323,18 +303,12 @@ class DialogPane extends Pane {
         VBox vbox = new VBox(50, text, field, btnOK);
         vbox.setAlignment(Pos.CENTER);
         vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 200), text.getLayoutBounds().getHeight() * 3 + 50 * 2));
-        setContent(vbox);
 
-        window.setTitle("Input");
+        setContent("Input", vbox);
         show();
     }
 
     void showBox(String message, Node content, Button... buttons) {
-        if (isShowing()) {
-            log.warning("Dialog is already showing! Aborting");
-            return;
-        }
-
         for (Button btn : buttons) {
             EventHandler<ActionEvent> handler = btn.getOnAction();
 
@@ -353,9 +327,8 @@ class DialogPane extends Pane {
         vbox.setAlignment(Pos.CENTER);
         vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 200),
                 text.getLayoutBounds().getHeight() * 3 + 50 * 2 + content.getLayoutBounds().getHeight()));
-        setContent(vbox);
 
-        window.setTitle("Dialog");
+        setContent("Dialog", vbox);
         show();
     }
 
@@ -370,7 +343,12 @@ class DialogPane extends Pane {
      *
      * @param n content node
      */
-    private void setContent(Node n) {
+    private void setContent(String title, Node n) {
+        if (isShowing()) {
+            // dialog was requested while being shown so remember state
+            states.push(new DialogData(window.getTitle(), window.getContentPane()));
+        }
+
         Point2D size = (Point2D) n.getUserData();
 
         Rectangle box = new Rectangle(size.getX() + 200, size.getY() + 100);
@@ -379,16 +357,49 @@ class DialogPane extends Pane {
         StackPane root = new StackPane();
         root.getChildren().setAll(box, n);
 
+        window.setTitle(title);
         window.setContentPane(root);
     }
 
+    void setOnClosed(Runnable onClosed) {
+        this.onClosed = onClosed;
+    }
+
+    void setOnShown(Runnable onShown) {
+        this.onShown = onShown;
+    }
+
+    private Deque<DialogData> states = new ArrayDeque<>();
+
     void show() {
-        GameApplication.getService(ServiceType.INPUT).setRegisterInput(false);
-        display.getCurrentScene().getRoot().getChildren().add(this);
+        if (!isShowing()) {
+            display.getCurrentScene().getRoot().getChildren().add(this);
+
+            if (onShown != null)
+                onShown.run();
+        }
     }
 
     void close() {
-        display.getCurrentScene().getRoot().getChildren().remove(this);
-        GameApplication.getService(ServiceType.INPUT).setRegisterInput(true);
+        if (states.isEmpty()) {
+            display.getCurrentScene().getRoot().getChildren().remove(this);
+
+            if (onClosed != null)
+                onClosed.run();
+        } else {
+            DialogData data = states.pop();
+            window.setTitle(data.title);
+            window.setContentPane(data.contentPane);
+        }
+    }
+
+    private static class DialogData {
+        String title;
+        Pane contentPane;
+
+        DialogData(String title, Pane contentPane) {
+            this.title = title;
+            this.contentPane = contentPane;
+        }
     }
 }

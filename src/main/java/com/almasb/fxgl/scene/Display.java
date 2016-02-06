@@ -38,12 +38,10 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
-import com.almasb.fxgl.ui.FXGLDialogBox;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -90,8 +88,8 @@ public final class Display implements UserProfileSavable {
      * problems in fullscreen mode. Switching between scenes
      * in FS mode will otherwise temporarily toggle FS.
      */
-    private Scene scene;
-    private FXGLScene currentScene;
+    private Scene fxScene;
+    private ReadOnlyObjectWrapper<FXGLScene> currentScene = new ReadOnlyObjectWrapper<>();
 
     private final List<FXGLScene> scenes = new ArrayList<>();
 
@@ -114,13 +112,13 @@ public final class Display implements UserProfileSavable {
      */
     private final EventHandler<Event> fxToFXGLFilter = event -> {
         Event copy = event.copyFor(null, null);
-        currentScene.fireEvent(copy);
+        getCurrentScene().fireEvent(copy);
     };
 
     @Inject
-    private Display(Stage stage, Scene scene, ReadOnlyGameSettings settings) {
+    private Display(Stage stage, Scene fxScene, ReadOnlyGameSettings settings) {
         this.stage = stage;
-        this.scene = scene;
+        this.fxScene = fxScene;
         this.settings = settings;
 
         targetWidth = new SimpleDoubleProperty(settings.getWidth());
@@ -137,7 +135,7 @@ public final class Display implements UserProfileSavable {
         initStage();
         initDialogBox();
 
-        scene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
+        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
 
         computeSceneSettings(settings.getWidth(), settings.getHeight());
         computeScaledSize();
@@ -159,7 +157,7 @@ public final class Display implements UserProfileSavable {
      * Configure main stage based on user settings.
      */
     private void initStage() {
-        stage.setScene(scene);
+        stage.setScene(fxScene);
         stage.setTitle(settings.getTitle() + " " + settings.getVersion());
         stage.setResizable(false);
         stage.setOnCloseRequest(e -> {
@@ -208,20 +206,24 @@ public final class Display implements UserProfileSavable {
      * @param scene the scene
      */
     public void setScene(FXGLScene scene) {
-        if (currentScene != null) {
-            currentScene.activeProperty().set(false);
+        if (getCurrentScene() != null) {
+            getCurrentScene().activeProperty().set(false);
         }
-        currentScene = scene;
+        currentScene.set(scene);
         scene.activeProperty().set(true);
 
-        this.scene.setRoot(scene.getRoot());
+        fxScene.setRoot(scene.getRoot());
+    }
+
+    public ReadOnlyObjectProperty<FXGLScene> currentSceneProperty() {
+        return currentScene.getReadOnlyProperty();
     }
 
     /**
      * @return current FXGL scene
      */
     public FXGLScene getCurrentScene() {
-        return currentScene;
+        return currentScene.get();
     }
 
     /**
@@ -243,7 +245,7 @@ public final class Display implements UserProfileSavable {
      * @return true if the screenshot was saved successfully, false otherwise
      */
     public boolean saveScreenshot() {
-        Image fxImage = scene.snapshot(null);
+        Image fxImage = fxScene.snapshot(null);
         BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
         String fileName = "./" + settings.getTitle()
@@ -356,16 +358,16 @@ public final class Display implements UserProfileSavable {
         targetHeight.set(h);
         computeScaledSize();
 
-        Parent root = scene.getRoot();
+        Parent root = fxScene.getRoot();
         // clear listener
-        scene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
+        fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
         // clear root of previous JavaFX scene
-        scene.setRoot(new Pane());
+        fxScene.setRoot(new Pane());
 
         // create and init new JavaFX scene
-        scene = new Scene(root);
-        scene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
-        stage.setScene(scene);
+        fxScene = new Scene(root);
+        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
+        stage.setScene(fxScene);
         if (settings.isFullScreen()) {
             stage.setFullScreen(true);
         }
@@ -386,23 +388,18 @@ public final class Display implements UserProfileSavable {
         }
     }
 
-    private FXGLDialogBox dialogBox;
     private DialogPane newDialog;
 
-    public FXGLDialogBox getDialogBox() {
-        return dialogBox;
-    }
-
     private void initDialogBox() {
-        dialogBox = new FXGLDialogBox(stage, css);
-        dialogBox.setOnShown(e -> {
+        newDialog = new DialogPane(this);
+        newDialog.setOnShown(() -> {
+            fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
             eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
         });
-        dialogBox.setOnHidden(e -> {
+        newDialog.setOnClosed(() -> {
             eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_CLOSED));
+            fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
         });
-
-        newDialog = new DialogPane(this);
     }
 
     /**
@@ -442,9 +439,7 @@ public final class Display implements UserProfileSavable {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    public void showConfirmationBox(String message,
-                                    Consumer<Boolean> resultCallback) {
-        //dialogBox.showConfirmationBox(message, resultCallback);
+    public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
         newDialog.showConfirmationBox(message, resultCallback);
     }
 
@@ -478,6 +473,10 @@ public final class Display implements UserProfileSavable {
      */
     public void showErrorBox(Throwable error) {
         newDialog.showErrorBox(error);
+    }
+
+    public void showErrorBox(String errorMessage, Runnable callback) {
+        newDialog.showErrorBox(errorMessage, callback);
     }
 
     /**
