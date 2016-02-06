@@ -252,6 +252,16 @@ public final class Input implements UserProfileSavable {
     }
 
     /**
+     * Mocks key press event. The behavior is equivalent to
+     * user pressing and holding the key.
+     *
+     * @param key the key
+     */
+    public void mockKeyPress(KeyCode key) {
+        mockKeyPress(key, InputModifier.NONE);
+    }
+
+    /**
      * Mocks key release event. The behavior is equivalent to
      * user releasing the key.
      *
@@ -261,6 +271,16 @@ public final class Input implements UserProfileSavable {
     public void mockKeyRelease(KeyCode key, InputModifier modifier) {
         log.finer("Mocking key release: " + key + " + " + modifier);
         handleReleased(new Trigger(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier)));
+    }
+
+    /**
+     * Mocks key release event. The behavior is equivalent to
+     * user releasing the key.
+     *
+     * @param key the key
+     */
+    public void mockKeyRelease(KeyCode key) {
+        mockKeyRelease(key, InputModifier.NONE);
     }
 
     private MouseEvent makeMouseEvent(MouseButton btn, EventType<MouseEvent> eventType,
@@ -275,7 +295,7 @@ public final class Input implements UserProfileSavable {
 
     /**
      * Mocks mouse button press event. The behavior is equivalent to
-     * user pressing and holding the button.
+     * user pressing and holding the button at given X Y.
      *
      * @param btn mouse button
      * @param modifier mouse button modifier
@@ -283,6 +303,18 @@ public final class Input implements UserProfileSavable {
     public void mockButtonPress(MouseButton btn, double gameX, double gameY, InputModifier modifier) {
         log.finer("Mocking button press: " + btn + " + " + modifier);
         handlePressed(new Trigger(makeMouseEvent(btn, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier)));
+    }
+
+    /**
+     * Mocks mouse button press event. The behavior is equivalent to
+     * user pressing and holding the button at given X Y.
+     *
+     * @param btn mouse button
+     * @param gameX x location of cursor
+     * @param gameY y location of cursor
+     */
+    public void mockButtonPress(MouseButton btn, double gameX, double gameY) {
+        mockButtonPress(btn, gameX, gameY, InputModifier.NONE);
     }
 
     /**
@@ -295,6 +327,16 @@ public final class Input implements UserProfileSavable {
     public void mockButtonRelease(MouseButton btn, InputModifier modifier) {
         log.finer("Mocking button release: " + btn + " + " + modifier);
         handleReleased(new Trigger(makeMouseEvent(btn, MouseEvent.MOUSE_RELEASED, 0, 0, modifier)));
+    }
+
+    /**
+     * Mocks mouse button release event. The behavior is equivalent to
+     * user releasing the button.
+     *
+     * @param btn mouse button
+     */
+    public void mockButtonRelease(MouseButton btn) {
+        mockButtonRelease(btn, InputModifier.NONE);
     }
 
     private boolean processActions = true;
