@@ -45,6 +45,8 @@ import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -55,6 +57,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -144,6 +147,13 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         particlesCanvas.setWidth(w);
         particlesCanvas.setHeight(h);
         particlesCanvas.setMouseTransparent(true);
+    }
+
+    /**
+     * @return unmodifiable list of UI nodes
+     */
+    public ObservableList<Node> getUINodes() {
+        return uiRoot.getChildrenUnmodifiable();
     }
 
     /**
