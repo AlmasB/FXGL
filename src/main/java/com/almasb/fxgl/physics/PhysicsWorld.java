@@ -430,8 +430,26 @@ public final class PhysicsWorld {
         ParticleGroupDef def = e.getComponentUnsafe(PhysicsParticleComponent.class).getDefinition();
         def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
 
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+        Shape shape = null;
+
+        BoundingBoxComponent bbox = Entities.getBBox(e);
+        if (!bbox.hitBoxesProperty().isEmpty()) {
+            if (bbox.hitBoxesProperty().get(0).getShape() == BoundingShape.BOX) {
+                PolygonShape rectShape = new PolygonShape();
+                rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+                shape = rectShape;
+            } else {    // if (box.getShape() == BoundingShape.CIRCLE)
+                CircleShape circleShape = new CircleShape();
+                circleShape.setRadius(toMeters(width / 2));
+                shape = circleShape;
+            }
+        }
+
+        if (shape == null) {
+            PolygonShape rectShape = new PolygonShape();
+            rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+            shape = rectShape;
+        }
         def.setShape(shape);
 
         ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);
