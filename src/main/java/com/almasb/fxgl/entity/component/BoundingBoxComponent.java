@@ -287,8 +287,8 @@ public class BoundingBoxComponent extends AbstractComponent {
      * @return true iff entity is completely outside given bounds
      */
     public final boolean isOutside(double minX, double minY, double maxX, double maxY) {
-        return getPositionX() + getWidth() < minX || getPositionX() > maxX
-                || getPositionY() + getHeight() < minY || getPositionY() > maxY;
+        return getPositionX() + getMinXLocal() + getWidth() < minX || getPositionX() + getMinXLocal() > maxX
+                || getPositionY() + getMinYLocal() + getHeight() < minY || getPositionY() + getMinYLocal() > maxY;
     }
 
     /**

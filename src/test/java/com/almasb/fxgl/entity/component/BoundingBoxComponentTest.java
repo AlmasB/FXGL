@@ -216,21 +216,22 @@ public class BoundingBoxComponentTest {
 
     @Test
     public void testIsWithin() throws Exception {
+        bbox.addHitBox(new HitBox("ARM", new BoundingBox(50, 50, 40, 60)));
 
-    }
+        assertTrue(bbox.isWithin(50, 50, 60, 60));
+        assertTrue(bbox.isWithin(55, 55, 60, 60));
+        assertTrue(bbox.isWithin(0, 0, 50, 60));
+        assertTrue(!bbox.isWithin(100, 50, 140, 60));
+        assertTrue(!bbox.isWithin(50, 120, 90, 60));
 
-    @Test
-    public void testIsWithin1() throws Exception {
-
+        assertTrue(bbox.isWithin(0, 0, 51, 51));
+        assertTrue(bbox.isWithin(0, 0, 50, 50));
+        assertTrue(!bbox.isWithin(0, 0, 49, 49));
+        assertTrue(!bbox.isWithin(91, 0, 49, 49));
     }
 
     @Test
     public void testIsOutside() throws Exception {
-
-    }
-
-    @Test
-    public void testIsOutside1() throws Exception {
 
     }
 
