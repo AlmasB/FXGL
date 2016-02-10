@@ -180,6 +180,11 @@
                                     <placement>a</placement>
                                     <head>Implementation Note:</head>
                                 </tag>
+                                <tag>
+                                    <name>warning</name>
+                                    <placement>a</placement>
+                                    <head>Warning:</head>
+                                </tag>
                             </tags>
                         </configuration>
                     </execution>
