@@ -39,6 +39,9 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 /**
+ * Component that adds bounding box information to an entity.
+ * The bounding box itself comprises a collection of hit boxes.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class BoundingBoxComponent extends AbstractComponent {
@@ -145,10 +148,6 @@ public class BoundingBoxComponent extends AbstractComponent {
         return minXLocal.get();
     }
 
-    public double getMinXWorld() {
-        return getPositionX() + getMinXLocal();
-    }
-
     public ReadOnlyDoubleProperty minYLocalProperty() {
         return minYLocal.getReadOnlyProperty();
     }
@@ -158,6 +157,10 @@ public class BoundingBoxComponent extends AbstractComponent {
      */
     public double getMinYLocal() {
         return minYLocal.get();
+    }
+
+    public double getMinXWorld() {
+        return getPositionX() + getMinXLocal();
     }
 
     public double getMinYWorld() {
@@ -186,11 +189,7 @@ public class BoundingBoxComponent extends AbstractComponent {
      * @return center point in world coordinates
      */
     public Point2D getCenterWorld() {
-        Point2D position = getEntity().getComponent(PositionComponent.class)
-                .map(PositionComponent::getValue)
-                .orElse(Point2D.ZERO);
-
-        return getCenterLocal().add(position).add(getMinXLocal(), getMinYLocal());
+        return getCenterLocal().add(getMinXWorld(), getMinYWorld());
     }
 
     private double computeMinXLocal() {

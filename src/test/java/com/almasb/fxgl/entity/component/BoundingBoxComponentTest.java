@@ -133,6 +133,24 @@ public class BoundingBoxComponentTest {
     }
 
     @Test
+    public void testGetMinXWorld() throws Exception {
+        bbox.addHitBox(new HitBox("ARM", new BoundingBox(20, 0, 40, 40)));
+        assertEquals(20, bbox.getMinXWorld(), 0);
+
+        position.translateX(100);
+        assertEquals(120, bbox.getMinXWorld(), 0);
+    }
+
+    @Test
+    public void testGetMinYWorld() throws Exception {
+        bbox.addHitBox(new HitBox("ARM", new BoundingBox(0, 20, 40, 40)));
+        assertEquals(20, bbox.getMinYWorld(), 0);
+
+        position.translateY(100);
+        assertEquals(120, bbox.getMinYWorld(), 0);
+    }
+
+    @Test
     public void testGetMaxXWorld() throws Exception {
         bbox.addHitBox(new HitBox("ARM", new BoundingBox(0, 0, 40, 40)));
         assertEquals(40, bbox.getMaxXWorld(), 0);
