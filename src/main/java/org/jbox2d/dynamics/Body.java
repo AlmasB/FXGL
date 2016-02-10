@@ -225,7 +225,7 @@ public class Body {
         fixture.m_body = this;
 
         // Adjust mass properties if needed.
-        if (fixture.m_density > 0.0f) {
+        if (fixture.getDensity() > 0.0f) {
             resetMassData();
         }
 
@@ -703,7 +703,7 @@ public class Body {
         final Vec2 temp = world.getPool().popVec2();
         final MassData massData = pmd;
         for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
-            if (f.m_density == 0.0f) {
+            if (f.getDensity() == 0.0f) {
                 continue;
             }
             f.getMassData(massData);
