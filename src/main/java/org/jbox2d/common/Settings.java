@@ -1,4 +1,30 @@
-/*******************************************************************************
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * <p>
@@ -20,7 +46,8 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ */
+
 package org.jbox2d.common;
 
 /**
@@ -29,10 +56,14 @@ package org.jbox2d.common;
  */
 public class Settings {
 
-    /** A "close to zero" float epsilon value for use */
+    /**
+     * A "close to zero" float epsilon value for use.
+     **/
     public static final float EPSILON = 1.1920928955078125E-7f;
 
-    /** Pi. */
+    /**
+     * Pi.
+     */
     public static final float PI = (float) Math.PI;
 
     // JBox2D specific settings
@@ -44,11 +75,11 @@ public class Settings {
     public static boolean FAST_POW = true;
     public static int CONTACT_STACK_INIT_SIZE = 10;
     public static boolean SINCOS_LUT_ENABLED = true;
+
     /**
      * smaller the precision, the larger the table. If a small table is used (eg, precision is .006 or
      * greater), make sure you set the table to lerp it's results. Accuracy chart is in the MathUtils
-     * source. Or, run the tests yourself in {@link SinCosTest}.</br> </br> Good lerp precision
-     * values:
+     * source. Good lerp precision values:
      * <ul>
      * <li>.0092</li>
      * <li>.008201</li>
@@ -70,13 +101,13 @@ public class Settings {
      */
     public static final float SINCOS_LUT_PRECISION = .00011f;
     public static final int SINCOS_LUT_LENGTH = (int) Math.ceil(Math.PI * 2 / SINCOS_LUT_PRECISION);
+
     /**
      * Use if the table's precision is large (eg .006 or greater). Although it is more expensive, it
      * greatly increases accuracy. Look in the MathUtils source for some test results on the accuracy
-     * and speed of lerp vs non lerp. Or, run the tests yourself in {@link SinCosTest}.
+     * and speed of lerp vs non lerp.
      */
     public static boolean SINCOS_LUT_LERP = false;
-
 
     // Collision
 
@@ -121,7 +152,9 @@ public class Settings {
      */
     public static float polygonRadius = (2.0f * linearSlop);
 
-    /** Maximum number of sub-steps per contact in continuous physics simulation. */
+    /**
+     * Maximum number of sub-steps per contact in continuous physics simulation.
+     **/
     public static int maxSubSteps = 8;
 
     // Dynamics
@@ -169,7 +202,6 @@ public class Settings {
      */
     public static float baumgarte = 0.2f;
     public static float toiBaugarte = 0.75f;
-
 
     // Sleep
 
@@ -221,24 +253,23 @@ public class Settings {
      */
     public static final int minParticleBufferCapacity = 256;
 
-
     /**
-     * Friction mixing law. Feel free to customize this. TODO djm: add customization
+     * Friction mixing law. Feel free to customize this.
      *
-     * @param friction1
-     * @param friction2
-     * @return
+     * @param friction1 friction1
+     * @param friction2 friction2
+     * @return mixed friction
      */
     public static float mixFriction(float friction1, float friction2) {
         return MathUtils.sqrt(friction1 * friction2);
     }
 
     /**
-     * Restitution mixing law. Feel free to customize this. TODO djm: add customization
+     * Restitution mixing law. Feel free to customize this.
      *
-     * @param restitution1
-     * @param restitution2
-     * @return
+     * @param restitution1 restitution1
+     * @param restitution2 restitution2
+     * @return mixed restitution
      */
     public static float mixRestitution(float restitution1, float restitution2) {
         return restitution1 > restitution2 ? restitution1 : restitution2;

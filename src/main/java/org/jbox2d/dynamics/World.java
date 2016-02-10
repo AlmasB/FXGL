@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.jbox2d.dynamics;
 
+import javafx.scene.paint.Color;
 import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.RayCastInput;
@@ -370,7 +371,7 @@ public class World {
         }
         body.m_contactList = null;
 
-        Fixture f = body.m_fixtureList;
+        Fixture f = body.getFixtureList();
         while (f != null) {
             Fixture f0 = f;
             f = f.m_next;
@@ -647,7 +648,6 @@ public class World {
         }
     }
 
-    private final Color3f color = new Color3f();
     private final Transform xf = new Transform();
     private final Vec2 cA = new Vec2();
     private final Vec2 cB = new Vec2();
@@ -661,6 +661,7 @@ public class World {
             return;
         }
 
+        Color color = Color.color(0, 0, 0);
 
         int flags = m_debugDraw.getFlags();
         boolean wireframe = (flags & DebugDraw.e_wireframeDrawingBit) != 0;
@@ -670,19 +671,19 @@ public class World {
                 xf.set(b.getTransform());
                 for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
                     if (b.isActive() == false) {
-                        color.set(0.5f, 0.5f, 0.3f);
+                        color = Color.color(0.5f, 0.5f, 0.3f);
                         drawShape(f, xf, color, wireframe);
                     } else if (b.getType() == BodyType.STATIC) {
-                        color.set(0.5f, 0.9f, 0.3f);
+                        color = Color.color(0.5f, 0.9f, 0.3f);
                         drawShape(f, xf, color, wireframe);
                     } else if (b.getType() == BodyType.KINEMATIC) {
-                        color.set(0.5f, 0.5f, 0.9f);
+                        color = Color.color(0.5f, 0.5f, 0.9f);
                         drawShape(f, xf, color, wireframe);
                     } else if (b.isAwake() == false) {
-                        color.set(0.5f, 0.5f, 0.5f);
+                        color = Color.color(0.5f, 0.5f, 0.5f);
                         drawShape(f, xf, color, wireframe);
                     } else {
-                        color.set(0.9f, 0.7f, 0.7f);
+                        color = Color.color(0.9f, 0.7f, 0.7f);
                         drawShape(f, xf, color, wireframe);
                     }
                 }
@@ -697,7 +698,7 @@ public class World {
         }
 
         if ((flags & DebugDraw.e_pairBit) != 0) {
-            color.set(0.3f, 0.9f, 0.9f);
+            color = Color.color(0.3f, 0.9f, 0.9f);
             for (Contact c = m_contactManager.m_contactList; c != null; c = c.getNext()) {
                 Fixture fixtureA = c.getFixtureA();
                 Fixture fixtureB = c.getFixtureB();
@@ -708,7 +709,7 @@ public class World {
         }
 
         if ((flags & DebugDraw.e_aabbBit) != 0) {
-            color.set(0.9f, 0.3f, 0.9f);
+            color = Color.color(0.9f, 0.3f, 0.9f);
 
             for (Body b = m_bodyList; b != null; b = b.getNext()) {
                 if (b.isActive() == false) {
@@ -1258,8 +1259,8 @@ public class World {
                     Body bA = fA.getBody();
                     Body bB = fB.getBody();
 
-                    BodyType typeA = bA.m_type;
-                    BodyType typeB = bB.m_type;
+                    BodyType typeA = bA.getType();
+                    BodyType typeB = bB.getType();
                     assert (typeA == BodyType.DYNAMIC || typeB == BodyType.DYNAMIC);
 
                     boolean activeA = bA.isAwake() && typeA != BodyType.STATIC;
@@ -1376,7 +1377,7 @@ public class World {
             tempBodies[1] = bB;
             for (int i = 0; i < 2; ++i) {
                 Body body = tempBodies[i];
-                if (body.m_type == BodyType.DYNAMIC) {
+                if (body.getType() == BodyType.DYNAMIC) {
                     for (ContactEdge ce = body.m_contactList; ce != null; ce = ce.next) {
                         if (island.m_bodyCount == island.m_bodyCapacity) {
                             break;
@@ -1395,7 +1396,7 @@ public class World {
 
                         // Only add static, kinematic, or bullet bodies.
                         Body other = ce.other;
-                        if (other.m_type == BodyType.DYNAMIC && body.isBullet() == false
+                        if (other.getType() == BodyType.DYNAMIC && body.isBullet() == false
                                 && other.isBullet() == false) {
                             continue;
                         }
@@ -1442,7 +1443,7 @@ public class World {
                         // Add the other body to the island.
                         other.m_flags |= Body.e_islandFlag;
 
-                        if (other.m_type != BodyType.STATIC) {
+                        if (other.getType() != BodyType.STATIC) {
                             other.setAwake(true);
                         }
 
@@ -1464,7 +1465,7 @@ public class World {
                 Body body = island.m_bodies[i];
                 body.m_flags &= ~Body.e_islandFlag;
 
-                if (body.m_type != BodyType.DYNAMIC) {
+                if (body.getType() != BodyType.DYNAMIC) {
                     continue;
                 }
 
@@ -1499,7 +1500,7 @@ public class World {
         joint.getAnchorA(p1);
         joint.getAnchorB(p2);
 
-        color.set(0.5f, 0.8f, 0.8f);
+        Color color = Color.color(0.5f, 0.8f, 0.8f);
 
         switch (joint.getType()) {
             // TODO djm write after writing joints
@@ -1535,7 +1536,7 @@ public class World {
     private float averageLinearVel = -1;
     private final Vec2 liquidOffset = new Vec2();
     private final Vec2 circCenterMoved = new Vec2();
-    private final Color3f liquidColor = new Color3f(.4f, .4f, 1f);
+    private final Color liquidColor = Color.color(.4, .4, 1);
 
     private final Vec2 center = new Vec2();
     private final Vec2 axis = new Vec2();
@@ -1543,7 +1544,7 @@ public class World {
     private final Vec2 v2 = new Vec2();
     private final Vec2Array tlvertices = new Vec2Array();
 
-    private void drawShape(Fixture fixture, Transform xf, Color3f color, boolean wireframe) {
+    private void drawShape(Fixture fixture, Transform xf, Color color, boolean wireframe) {
         switch (fixture.getType()) {
             case CIRCLE: {
                 CircleShape circle = (CircleShape) fixture.getShape();

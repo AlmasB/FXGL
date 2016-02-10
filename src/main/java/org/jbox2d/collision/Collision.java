@@ -254,8 +254,8 @@ public class Collision {
         // final float cLocaly = cLocal.y;
         // after inline:
         final Vec2 circlep = circle.m_p;
-        final Rot xfBq = xfB.q;
-        final Rot xfAq = xfA.q;
+        final Rotation xfBq = xfB.q;
+        final Rotation xfAq = xfA.q;
         final float cx = (xfBq.c * circlep.x - xfBq.s * circlep.y) + xfB.p.x;
         final float cy = (xfBq.s * circlep.x + xfBq.c * circlep.y) + xfB.p.y;
         final float px = cx - xfA.p.x;
@@ -446,13 +446,13 @@ public class Collision {
         Vec2[] v2s = poly2.m_vertices;
 
         Transform.mulTransToOutUnsafe(xf2, xf1, xf);
-        final Rot xfq = xf.q;
+        final Rotation xfq = xf.q;
 
         int bestIndex = 0;
         float maxSeparation = -Float.MAX_VALUE;
         for (int i = 0; i < count1; i++) {
             // Get poly1 normal in frame2.
-            Rot.mulToOutUnsafe(xfq, n1s[i], n);
+            Rotation.mulToOutUnsafe(xfq, n1s[i], n);
             Transform.mulToOutUnsafe(xf, v1s[i], v1);
 
             // Find deepest point for normal i.
@@ -488,8 +488,8 @@ public class Collision {
 
         final ClipVertex c0 = c[0];
         final ClipVertex c1 = c[1];
-        final Rot xf1q = xf1.q;
-        final Rot xf2q = xf2.q;
+        final Rotation xf1q = xf1.q;
+        final Rotation xf2q = xf2.q;
 
         // Get the normal of the reference edge in poly2's frame.
         // Vec2 normal1 = MulT(xf2.R, Mul(xf1.R, normals1[edge1]));
@@ -610,7 +610,7 @@ public class Collision {
             manifold.type = ManifoldType.FACE_A;
             flip = false;
         }
-        final Rot xf1q = xf1.q;
+        final Rotation xf1q = xf1.q;
 
         findIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
 
@@ -1201,7 +1201,7 @@ public class Collision {
             m_polygonB.count = polygonB.m_count;
             for (int i = 0; i < polygonB.m_count; ++i) {
                 Transform.mulToOutUnsafe(m_xf, polygonB.m_vertices[i], m_polygonB.vertices[i]);
-                Rot.mulToOutUnsafe(m_xf.q, polygonB.m_normals[i], m_polygonB.normals[i]);
+                Rotation.mulToOutUnsafe(m_xf.q, polygonB.m_normals[i], m_polygonB.normals[i]);
             }
 
             m_radius = 2.0f * Settings.polygonRadius;

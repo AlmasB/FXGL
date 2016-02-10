@@ -246,8 +246,8 @@ public class ContactSolver {
 
             assert (manifold.pointCount > 0);
 
-            final Rot xfAq = xfA.q;
-            final Rot xfBq = xfB.q;
+            final Rotation xfAq = xfA.q;
+            final Rotation xfBq = xfB.q;
             xfAq.set(aA);
             xfBq.set(aB);
             xfA.p.x = cA.x - (xfAq.c * localCenterA.x - xfAq.s * localCenterA.y);
@@ -830,8 +830,8 @@ public class ContactSolver {
 
             // Solve normal constraints
             for (int j = 0; j < pointCount; ++j) {
-                final Rot xfAq = xfA.q;
-                final Rot xfBq = xfB.q;
+                final Rotation xfAq = xfA.q;
+                final Rotation xfBq = xfB.q;
                 xfAq.set(aA);
                 xfBq.set(aB);
                 xfA.p.x = cA.x - xfAq.c * localCenterAx + xfAq.s * localCenterAy;
@@ -929,8 +929,8 @@ public class ContactSolver {
 
             // Solve normal constraints
             for (int j = 0; j < pointCount; ++j) {
-                final Rot xfAq = xfA.q;
-                final Rot xfBq = xfB.q;
+                final Rotation xfAq = xfA.q;
+                final Rotation xfBq = xfB.q;
                 xfAq.set(aA);
                 xfBq.set(aB);
                 xfA.p.x = cA.x - xfAq.c * localCenterAx + xfAq.s * localCenterAy;
@@ -1009,8 +1009,8 @@ class PositionSolverManifold {
     public void initialize(ContactPositionConstraint pc, Transform xfA, Transform xfB, int index) {
         assert (pc.pointCount > 0);
 
-        final Rot xfAq = xfA.q;
-        final Rot xfBq = xfB.q;
+        final Rotation xfAq = xfA.q;
+        final Rotation xfBq = xfB.q;
         final Vec2 pcLocalPointsI = pc.localPoints[index];
         switch (pc.type) {
             case CIRCLES: {

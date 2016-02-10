@@ -128,7 +128,7 @@ public class EdgeShape extends Shape {
         float tempx, tempy;
         final Vec2 v1 = m_vertex1;
         final Vec2 v2 = m_vertex2;
-        final Rot xfq = xf.q;
+        final Rotation xfq = xf.q;
         final Vec2 xfp = xf.p;
 
         // Put the ray into the edge's frame of reference.
@@ -210,7 +210,7 @@ public class EdgeShape extends Shape {
     public void computeAABB(AABB aabb, Transform xf, int childIndex) {
         final Vec2 lowerBound = aabb.lowerBound;
         final Vec2 upperBound = aabb.upperBound;
-        final Rot xfq = xf.q;
+        final Rotation xfq = xf.q;
 
         final float v1x = (xfq.c * m_vertex1.x - xfq.s * m_vertex1.y) + xf.p.x;
         final float v1y = (xfq.s * m_vertex1.x + xfq.c * m_vertex1.y) + xf.p.y;

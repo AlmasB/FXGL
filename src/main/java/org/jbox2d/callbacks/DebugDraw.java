@@ -28,7 +28,7 @@
  */
 package org.jbox2d.callbacks;
 
-import org.jbox2d.common.Color3f;
+import javafx.scene.paint.Color;
 import org.jbox2d.common.IViewportTransform;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
@@ -92,13 +92,13 @@ public abstract class DebugDraw {
 
     /**
      * Draw a closed polygon provided in CCW order. This implementation uses
-     * {@link #drawSegment(Vec2, Vec2, Color3f)} to draw each side of the polygon.
+     * {@link #drawSegment(Vec2, Vec2, Color)} to draw each side of the polygon.
      *
      * @param vertices
      * @param vertexCount
      * @param color
      */
-    public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
+    public void drawPolygon(Vec2[] vertices, int vertexCount, Color color) {
         if (vertexCount == 1) {
             drawSegment(vertices[0], vertices[0], color);
             return;
@@ -113,7 +113,7 @@ public abstract class DebugDraw {
         }
     }
 
-    public abstract void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor);
+    public abstract void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color argColor);
 
     /**
      * Draw a solid closed polygon provided in CCW order.
@@ -122,7 +122,7 @@ public abstract class DebugDraw {
      * @param vertexCount
      * @param color
      */
-    public abstract void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color);
+    public abstract void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color color);
 
     /**
      * Draw a circle.
@@ -131,10 +131,10 @@ public abstract class DebugDraw {
      * @param radius
      * @param color
      */
-    public abstract void drawCircle(Vec2 center, float radius, Color3f color);
+    public abstract void drawCircle(Vec2 center, float radius, Color color);
 
     /** Draws a circle with an axis */
-    public void drawCircle(Vec2 center, float radius, Vec2 axis, Color3f color) {
+    public void drawCircle(Vec2 center, float radius, Vec2 axis, Color color) {
         drawCircle(center, radius, color);
     }
 
@@ -146,7 +146,7 @@ public abstract class DebugDraw {
      * @param axis
      * @param color
      */
-    public abstract void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color3f color);
+    public abstract void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color color);
 
     /**
      * Draw a line segment.
@@ -155,7 +155,7 @@ public abstract class DebugDraw {
      * @param p2
      * @param color
      */
-    public abstract void drawSegment(Vec2 p1, Vec2 p2, Color3f color);
+    public abstract void drawSegment(Vec2 p1, Vec2 p2, Color color);
 
     /**
      * Draw a transform. Choose your own length scale
@@ -172,7 +172,7 @@ public abstract class DebugDraw {
      * @param s
      * @param color
      */
-    public abstract void drawString(float x, float y, String s, Color3f color);
+    public abstract void drawString(float x, float y, String s, Color color);
 
     /**
      * Draw a particle array
@@ -193,7 +193,7 @@ public abstract class DebugDraw {
     public void flush() {
     }
 
-    public void drawString(Vec2 pos, String s, Color3f color) {
+    public void drawString(Vec2 pos, String s, Color color) {
         drawString(pos.x, pos.y, s, color);
     }
 

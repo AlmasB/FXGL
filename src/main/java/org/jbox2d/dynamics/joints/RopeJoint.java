@@ -1,7 +1,7 @@
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.MathUtils;
-import org.jbox2d.common.Rot;
+import org.jbox2d.common.Rotation;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.SolverData;
@@ -73,16 +73,16 @@ public class RopeJoint extends Joint {
         Vec2 vB = data.velocities[m_indexB].v;
         float wB = data.velocities[m_indexB].w;
 
-        final Rot qA = pool.popRot();
-        final Rot qB = pool.popRot();
+        final Rotation qA = pool.popRot();
+        final Rotation qB = pool.popRot();
         final Vec2 temp = pool.popVec2();
 
         qA.set(aA);
         qB.set(aB);
 
         // Compute the effective masses.
-        Rot.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), m_rA);
-        Rot.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), m_rB);
+        Rotation.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), m_rA);
+        Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), m_rB);
 
         m_u.set(cB).addLocal(m_rB).subLocal(cA).subLocal(m_rA);
 
@@ -191,8 +191,8 @@ public class RopeJoint extends Joint {
         Vec2 cB = data.positions[m_indexB].c;
         float aB = data.positions[m_indexB].a;
 
-        final Rot qA = pool.popRot();
-        final Rot qB = pool.popRot();
+        final Rotation qA = pool.popRot();
+        final Rotation qB = pool.popRot();
         final Vec2 u = pool.popVec2();
         final Vec2 rA = pool.popVec2();
         final Vec2 rB = pool.popVec2();
@@ -202,8 +202,8 @@ public class RopeJoint extends Joint {
         qB.set(aB);
 
         // Compute the effective masses.
-        Rot.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), rA);
-        Rot.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), rB);
+        Rotation.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), rA);
+        Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), rB);
         u.set(cB).addLocal(rB).subLocal(cA).subLocal(rA);
 
         float length = u.normalize();

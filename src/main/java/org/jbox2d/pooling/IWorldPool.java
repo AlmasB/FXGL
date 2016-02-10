@@ -79,7 +79,7 @@ public interface IWorldPool {
 
     public void pushAABB(int num);
 
-    public Rot popRot();
+    public Rotation popRot();
 
     public void pushRot(int num);
 

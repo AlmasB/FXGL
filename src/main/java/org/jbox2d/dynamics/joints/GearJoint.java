@@ -28,7 +28,7 @@
  */
 package org.jbox2d.dynamics.joints;
 
-import org.jbox2d.common.Rot;
+import org.jbox2d.common.Rotation;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
@@ -149,9 +149,9 @@ public class GearJoint extends Joint {
             m_localAxisC.set(prismatic.m_localXAxisA);
 
             Vec2 pC = m_localAnchorC;
-            Rot.mulToOutUnsafe(xfA.q, m_localAnchorA, temp);
+            Rotation.mulToOutUnsafe(xfA.q, m_localAnchorA, temp);
             temp.addLocal(xfA.p).subLocal(xfC.p);
-            Rot.mulTransUnsafe(xfC.q, temp, pA);
+            Rotation.mulTransUnsafe(xfC.q, temp, pA);
             coordinateA = Vec2.dot(pA.subLocal(pC), m_localAxisC);
             pool.pushVec2(2);
         }
@@ -183,9 +183,9 @@ public class GearJoint extends Joint {
             m_localAxisD.set(prismatic.m_localXAxisA);
 
             Vec2 pD = m_localAnchorD;
-            Rot.mulToOutUnsafe(xfB.q, m_localAnchorB, temp);
+            Rotation.mulToOutUnsafe(xfB.q, m_localAnchorB, temp);
             temp.addLocal(xfB.p).subLocal(xfD.p);
-            Rot.mulTransUnsafe(xfD.q, temp, pB);
+            Rotation.mulTransUnsafe(xfD.q, temp, pB);
             coordinateB = Vec2.dot(pB.subLocal(pD), m_localAxisD);
             pool.pushVec2(2);
         }
@@ -266,7 +266,7 @@ public class GearJoint extends Joint {
         Vec2 vD = data.velocities[m_indexD].v;
         float wD = data.velocities[m_indexD].w;
 
-        Rot qA = pool.popRot(), qB = pool.popRot(), qC = pool.popRot(), qD = pool.popRot();
+        Rotation qA = pool.popRot(), qB = pool.popRot(), qC = pool.popRot(), qD = pool.popRot();
         qA.set(aA);
         qB.set(aB);
         qC.set(aC);
@@ -284,9 +284,9 @@ public class GearJoint extends Joint {
         } else {
             Vec2 rC = pool.popVec2();
             Vec2 rA = pool.popVec2();
-            Rot.mulToOutUnsafe(qC, m_localAxisC, m_JvAC);
-            Rot.mulToOutUnsafe(qC, temp.set(m_localAnchorC).subLocal(m_lcC), rC);
-            Rot.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_lcA), rA);
+            Rotation.mulToOutUnsafe(qC, m_localAxisC, m_JvAC);
+            Rotation.mulToOutUnsafe(qC, temp.set(m_localAnchorC).subLocal(m_lcC), rC);
+            Rotation.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_lcA), rA);
             m_JwC = Vec2.cross(rC, m_JvAC);
             m_JwA = Vec2.cross(rA, m_JvAC);
             m_mass += m_mC + m_mA + m_iC * m_JwC * m_JwC + m_iA * m_JwA * m_JwA;
@@ -302,9 +302,9 @@ public class GearJoint extends Joint {
             Vec2 u = pool.popVec2();
             Vec2 rD = pool.popVec2();
             Vec2 rB = pool.popVec2();
-            Rot.mulToOutUnsafe(qD, m_localAxisD, u);
-            Rot.mulToOutUnsafe(qD, temp.set(m_localAnchorD).subLocal(m_lcD), rD);
-            Rot.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_lcB), rB);
+            Rotation.mulToOutUnsafe(qD, m_localAxisD, u);
+            Rotation.mulToOutUnsafe(qD, temp.set(m_localAnchorD).subLocal(m_lcD), rD);
+            Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_lcB), rB);
             m_JvBD.set(u).mulLocal(m_ratio);
             m_JwD = m_ratio * Vec2.cross(rD, u);
             m_JwB = m_ratio * Vec2.cross(rB, u);
@@ -414,7 +414,7 @@ public class GearJoint extends Joint {
         Vec2 cD = data.positions[m_indexD].c;
         float aD = data.positions[m_indexD].a;
 
-        Rot qA = pool.popRot(), qB = pool.popRot(), qC = pool.popRot(), qD = pool.popRot();
+        Rotation qA = pool.popRot(), qB = pool.popRot(), qC = pool.popRot(), qD = pool.popRot();
         qA.set(aA);
         qB.set(aB);
         qC.set(aC);
@@ -442,15 +442,15 @@ public class GearJoint extends Joint {
             Vec2 rA = pool.popVec2();
             Vec2 pC = pool.popVec2();
             Vec2 pA = pool.popVec2();
-            Rot.mulToOutUnsafe(qC, m_localAxisC, JvAC);
-            Rot.mulToOutUnsafe(qC, temp.set(m_localAnchorC).subLocal(m_lcC), rC);
-            Rot.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_lcA), rA);
+            Rotation.mulToOutUnsafe(qC, m_localAxisC, JvAC);
+            Rotation.mulToOutUnsafe(qC, temp.set(m_localAnchorC).subLocal(m_lcC), rC);
+            Rotation.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_lcA), rA);
             JwC = Vec2.cross(rC, JvAC);
             JwA = Vec2.cross(rA, JvAC);
             mass += m_mC + m_mA + m_iC * JwC * JwC + m_iA * JwA * JwA;
 
             pC.set(m_localAnchorC).subLocal(m_lcC);
-            Rot.mulTransUnsafe(qC, temp.set(rA).addLocal(cA).subLocal(cC), pA);
+            Rotation.mulTransUnsafe(qC, temp.set(rA).addLocal(cA).subLocal(cC), pA);
             coordinateA = Vec2.dot(pA.subLocal(pC), m_localAxisC);
             pool.pushVec2(4);
         }
@@ -468,16 +468,16 @@ public class GearJoint extends Joint {
             Vec2 rB = pool.popVec2();
             Vec2 pD = pool.popVec2();
             Vec2 pB = pool.popVec2();
-            Rot.mulToOutUnsafe(qD, m_localAxisD, u);
-            Rot.mulToOutUnsafe(qD, temp.set(m_localAnchorD).subLocal(m_lcD), rD);
-            Rot.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_lcB), rB);
+            Rotation.mulToOutUnsafe(qD, m_localAxisD, u);
+            Rotation.mulToOutUnsafe(qD, temp.set(m_localAnchorD).subLocal(m_lcD), rD);
+            Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_lcB), rB);
             JvBD.set(u).mulLocal(m_ratio);
             JwD = Vec2.cross(rD, u);
             JwB = Vec2.cross(rB, u);
             mass += m_ratio * m_ratio * (m_mD + m_mB) + m_iD * JwD * JwD + m_iB * JwB * JwB;
 
             pD.set(m_localAnchorD).subLocal(m_lcD);
-            Rot.mulTransUnsafe(qD, temp.set(rB).addLocal(cB).subLocal(cD), pB);
+            Rotation.mulTransUnsafe(qD, temp.set(rB).addLocal(cB).subLocal(cD), pB);
             coordinateB = Vec2.dot(pB.subLocal(pD), m_localAxisD);
             pool.pushVec2(5);
         }

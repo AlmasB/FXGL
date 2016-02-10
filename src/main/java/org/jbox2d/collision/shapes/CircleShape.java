@@ -100,7 +100,7 @@ public class CircleShape extends Shape {
         //
         // final Vec2 d = center.subLocal(p).negateLocal();
         // return Vec2.dot(d, d) <= m_radius * m_radius;
-        final Rot q = transform.q;
+        final Rotation q = transform.q;
         final Vec2 tp = transform.p;
         float centerx = -(q.c * m_p.x - q.s * m_p.y + tp.x - p.x);
         float centery = -(q.s * m_p.x + q.c * m_p.y + tp.y - p.y);
@@ -110,7 +110,7 @@ public class CircleShape extends Shape {
 
     @Override
     public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
-        final Rot xfq = xf.q;
+        final Rotation xfq = xf.q;
         float centerx = xfq.c * m_p.x - xfq.s * m_p.y + xf.p.x;
         float centery = xfq.s * m_p.x + xfq.c * m_p.y + xf.p.y;
         float dx = p.x - centerx;
@@ -131,7 +131,7 @@ public class CircleShape extends Shape {
 
         final Vec2 inputp1 = input.p1;
         final Vec2 inputp2 = input.p2;
-        final Rot tq = transform.q;
+        final Rotation tq = transform.q;
         final Vec2 tp = transform.p;
 
         // Rot.mulToOutUnsafe(transform.q, m_p, position);
@@ -176,7 +176,7 @@ public class CircleShape extends Shape {
 
     @Override
     public final void computeAABB(final AABB aabb, final Transform transform, int childIndex) {
-        final Rot tq = transform.q;
+        final Rotation tq = transform.q;
         final Vec2 tp = transform.p;
         final float px = tq.c * m_p.x - tq.s * m_p.y + tp.x;
         final float py = tq.s * m_p.x + tq.c * m_p.y + tp.y;

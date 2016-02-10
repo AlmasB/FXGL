@@ -1,4 +1,30 @@
-/*******************************************************************************
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * <p>
@@ -20,26 +46,27 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ */
+
 package org.jbox2d.common;
 
 import java.io.Serializable;
 
 /**
- * Represents a rotation
+ * Represents a rotation.
  *
  * @author Daniel
  */
-public class Rot implements Serializable {
+public class Rotation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public float s, c; // sin and cos
 
-    public Rot() {
+    public Rotation() {
         setIdentity();
     }
 
-    public Rot(float angle) {
+    public Rotation(float angle) {
         set(angle);
     }
 
@@ -47,28 +74,23 @@ public class Rot implements Serializable {
         return s;
     }
 
-    @Override
-    public String toString() {
-        return "Rot(s:" + s + ", c:" + c + ")";
-    }
-
     public float getCos() {
         return c;
     }
 
-    public Rot set(float angle) {
+    public Rotation set(float angle) {
         s = MathUtils.sin(angle);
         c = MathUtils.cos(angle);
         return this;
     }
 
-    public Rot set(Rot other) {
+    public Rotation set(Rotation other) {
         s = other.s;
         c = other.c;
         return this;
     }
 
-    public Rot setIdentity() {
+    public Rotation setIdentity() {
         s = 0;
         c = 1;
         return this;
@@ -86,21 +108,26 @@ public class Rot implements Serializable {
         yAxis.set(-s, c);
     }
 
-    // @Override // annotation omitted for GWT-compatibility
-    public Rot clone() {
-        Rot copy = new Rot();
+    @Override
+    public Rotation clone() {
+        Rotation copy = new Rotation();
         copy.s = s;
         copy.c = c;
         return copy;
     }
 
-    public static final void mul(Rot q, Rot r, Rot out) {
+    @Override
+    public String toString() {
+        return "Rot(s:" + s + ", c:" + c + ")";
+    }
+
+    public static final void mul(Rotation q, Rotation r, Rotation out) {
         float tempc = q.c * r.c - q.s * r.s;
         out.s = q.s * r.c + q.c * r.s;
         out.c = tempc;
     }
 
-    public static final void mulUnsafe(Rot q, Rot r, Rot out) {
+    public static final void mulUnsafe(Rotation q, Rotation r, Rotation out) {
         assert (r != out);
         assert (q != out);
         // [qc -qs] * [rc -rs] = [qc*rc-qs*rs -qc*rs-qs*rc]
@@ -111,13 +138,13 @@ public class Rot implements Serializable {
         out.c = q.c * r.c - q.s * r.s;
     }
 
-    public static final void mulTrans(Rot q, Rot r, Rot out) {
+    public static final void mulTrans(Rotation q, Rotation r, Rotation out) {
         final float tempc = q.c * r.c + q.s * r.s;
         out.s = q.c * r.s - q.s * r.c;
         out.c = tempc;
     }
 
-    public static final void mulTransUnsafe(Rot q, Rot r, Rot out) {
+    public static final void mulTransUnsafe(Rotation q, Rotation r, Rotation out) {
         // [ qc qs] * [rc -rs] = [qc*rc+qs*rs -qc*rs+qs*rc]
         // [-qs qc] [rs rc] [-qs*rc+qc*rs qs*rs+qc*rc]
         // s = qc * rs - qs * rc
@@ -126,24 +153,24 @@ public class Rot implements Serializable {
         out.c = q.c * r.c + q.s * r.s;
     }
 
-    public static final void mulToOut(Rot q, Vec2 v, Vec2 out) {
+    public static final void mulToOut(Rotation q, Vec2 v, Vec2 out) {
         float tempy = q.s * v.x + q.c * v.y;
         out.x = q.c * v.x - q.s * v.y;
         out.y = tempy;
     }
 
-    public static final void mulToOutUnsafe(Rot q, Vec2 v, Vec2 out) {
+    public static final void mulToOutUnsafe(Rotation q, Vec2 v, Vec2 out) {
         out.x = q.c * v.x - q.s * v.y;
         out.y = q.s * v.x + q.c * v.y;
     }
 
-    public static final void mulTrans(Rot q, Vec2 v, Vec2 out) {
+    public static final void mulTrans(Rotation q, Vec2 v, Vec2 out) {
         final float tempy = -q.s * v.x + q.c * v.y;
         out.x = q.c * v.x + q.s * v.y;
         out.y = tempy;
     }
 
-    public static final void mulTransUnsafe(Rot q, Vec2 v, Vec2 out) {
+    public static final void mulTransUnsafe(Rotation q, Vec2 v, Vec2 out) {
         out.x = q.c * v.x + q.s * v.y;
         out.y = -q.s * v.x + q.c * v.y;
     }

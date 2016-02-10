@@ -52,7 +52,7 @@ public class DefaultWorldPool implements IWorldPool {
     private final OrderedStack<Mat22> mats;
     private final OrderedStack<Mat33> mat33s;
     private final OrderedStack<AABB> aabbs;
-    private final OrderedStack<Rot> rots;
+    private final OrderedStack<Rotation> rots;
 
     private final HashMap<Integer, float[]> afloats = new HashMap<Integer, float[]>();
     private final HashMap<Integer, int[]> aints = new HashMap<Integer, int[]>();
@@ -162,9 +162,9 @@ public class DefaultWorldPool implements IWorldPool {
                 return new AABB();
             }
         };
-        rots = new OrderedStack<Rot>(argSize, argContainerSize) {
-            protected Rot newInstance() {
-                return new Rot();
+        rots = new OrderedStack<Rotation>(argSize, argContainerSize) {
+            protected Rotation newInstance() {
+                return new Rotation();
             }
         };
         mat33s = new OrderedStack<Mat33>(argSize, argContainerSize) {
@@ -266,7 +266,7 @@ public class DefaultWorldPool implements IWorldPool {
         aabbs.push(argNum);
     }
 
-    public final Rot popRot() {
+    public final Rotation popRot() {
         return rots.pop();
     }
 

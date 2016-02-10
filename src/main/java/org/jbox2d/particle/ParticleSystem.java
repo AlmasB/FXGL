@@ -896,7 +896,7 @@ public class ParticleSystem {
     }
 
     private final Vec2 tempVec2 = new Vec2();
-    private final Rot tempRot = new Rot();
+    private final Rotation tempRotation = new Rotation();
     private final Transform tempXf = new Transform();
     private final Transform tempXf2 = new Transform();
 
@@ -906,9 +906,9 @@ public class ParticleSystem {
                 group.updateStatistics();
                 Vec2 temp = tempVec;
                 Vec2 cross = tempVec2;
-                Rot rotation = tempRot;
+                Rotation rotation = tempRotation;
                 rotation.set(step.dt * group.m_angularVelocity);
-                Rot.mulToOutUnsafe(rotation, group.m_center, cross);
+                Rotation.mulToOutUnsafe(rotation, group.m_center, cross);
                 temp.set(group.m_linearVelocity).mulLocal(step.dt).addLocal(group.m_center).subLocal(cross);
                 tempXf.p.set(temp);
                 tempXf.q.set(rotation);

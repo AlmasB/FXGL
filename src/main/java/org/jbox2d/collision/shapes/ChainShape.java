@@ -142,7 +142,7 @@ public class ChainShape extends Shape {
 
         final Vec2 vi1 = m_vertices[i1];
         final Vec2 vi2 = m_vertices[i2];
-        final Rot xfq = xf.q;
+        final Rotation xfq = xf.q;
         final Vec2 xfp = xf.p;
         float v1x = (xfq.c * vi1.x - xfq.s * vi1.y) + xfp.x;
         float v1y = (xfq.s * vi1.x + xfq.c * vi1.y) + xfp.y;
