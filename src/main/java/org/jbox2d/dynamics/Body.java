@@ -218,11 +218,11 @@ public class Body {
             fixture.createProxies(broadPhase, m_xf);
         }
 
-        fixture.m_next = m_fixtureList;
+        fixture.setNext(m_fixtureList);
         m_fixtureList = fixture;
         ++m_fixtureCount;
 
-        fixture.m_body = this;
+        fixture.setBody(this);
 
         // Adjust mass properties if needed.
         if (fixture.getDensity() > 0.0f) {
@@ -270,7 +270,7 @@ public class Body {
             return;
         }
 
-        assert (fixture.m_body == this);
+        assert (fixture.getBody() == this);
 
         // Remove the fixture from this body's singly linked list.
         assert (m_fixtureCount > 0);
@@ -280,12 +280,12 @@ public class Body {
         boolean found = false;
         while (node != null) {
             if (node == fixture) {
-                node = fixture.m_next;
+                node = fixture.getNext();
                 found = true;
                 break;
             }
             last = node;
-            node = node.m_next;
+            node = node.getNext();
         }
 
         // You tried to remove a shape that is not attached to this body.
@@ -293,9 +293,9 @@ public class Body {
 
         // java change, remove it from the list
         if (last == null) {
-            m_fixtureList = fixture.m_next;
+            m_fixtureList = fixture.getNext();
         } else {
-            last.m_next = fixture.m_next;
+            last.setNext(fixture.getNext());
         }
 
         // Destroy any contacts associated with the fixture.
@@ -320,8 +320,6 @@ public class Body {
         }
 
         fixture.destroy();
-        fixture.m_body = null;
-        fixture.m_next = null;
 
         --m_fixtureCount;
 
@@ -355,7 +353,7 @@ public class Body {
         m_sweep.a0 = m_sweep.a;
 
         BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-        for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
+        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
             f.synchronize(broadPhase, m_xf, m_xf);
         }
     }
@@ -702,7 +700,7 @@ public class Body {
         localCenter.setZero();
         final Vec2 temp = world.getPool().popVec2();
         final MassData massData = pmd;
-        for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
+        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
             if (f.getDensity() == 0.0f) {
                 continue;
             }
@@ -940,7 +938,7 @@ public class Body {
 
         // Touch the proxies so that new contacts will be created (when appropriate)
         BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-        for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
+        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
             int proxyCount = f.m_proxyCount;
             for (int i = 0; i < proxyCount; ++i) {
                 broadPhase.touchProxy(f.m_proxies[i].proxyId);
@@ -1041,7 +1039,7 @@ public class Body {
 
             // Create all proxies.
             BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-            for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
+            for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
                 f.createProxies(broadPhase, m_xf);
             }
 
@@ -1051,7 +1049,7 @@ public class Body {
 
             // Destroy all proxies.
             BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-            for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
+            for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
                 f.destroyProxies(broadPhase);
             }
 
@@ -1164,7 +1162,7 @@ public class Body {
         xf1.p.y = m_sweep.c0.y - xf1.q.s * m_sweep.localCenter.x - xf1.q.c * m_sweep.localCenter.y;
         // end inline
 
-        for (Fixture f = m_fixtureList; f != null; f = f.m_next) {
+        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
             f.synchronize(world.m_contactManager.m_broadPhase, xf1, m_xf);
         }
     }

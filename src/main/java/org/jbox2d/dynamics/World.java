@@ -401,7 +401,7 @@ public class World {
         Fixture f = body.getFixtureList();
         while (f != null) {
             Fixture f0 = f;
-            f = f.m_next;
+            f = f.getNext();
 
             if (m_destructionListener != null) {
                 m_destructionListener.onDestroy(f0);
@@ -1123,8 +1123,8 @@ public class World {
                     }
 
                     // Skip sensors.
-                    boolean sensorA = contact.m_fixtureA.m_isSensor;
-                    boolean sensorB = contact.m_fixtureB.m_isSensor;
+                    boolean sensorA = contact.m_fixtureA.isSensor();
+                    boolean sensorB = contact.m_fixtureB.isSensor();
                     if (sensorA || sensorB) {
                         continue;
                     }
@@ -1407,8 +1407,8 @@ public class World {
                         }
 
                         // Skip sensors.
-                        boolean sensorA = contact.m_fixtureA.m_isSensor;
-                        boolean sensorB = contact.m_fixtureB.m_isSensor;
+                        boolean sensorA = contact.m_fixtureA.isSensor();
+                        boolean sensorB = contact.m_fixtureB.isSensor();
                         if (sensorA || sensorB) {
                             continue;
                         }

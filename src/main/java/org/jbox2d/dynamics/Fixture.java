@@ -73,24 +73,22 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
  */
 public class Fixture {
 
+    private Body body = null;
+    private Shape shape = null;
+
+    private final Filter filter = new Filter();
+
+    private Object userData = null;
+
     private float density = 0;
-
-    public Fixture m_next = null;
-    public Body m_body = null;
-
-    public Shape m_shape = null;
-
-    public float m_friction;
-    public float m_restitution;
+    private float friction = 0;
+    private float restitution = 0;
+    private boolean isSensor = false;
 
     public FixtureProxy[] m_proxies = null;
     public int m_proxyCount = 0;
 
-    public final Filter m_filter = new Filter();
-
-    public boolean m_isSensor;
-
-    public Object m_userData = null;
+    private Fixture next = null;
 
     /**
      * Get the type of the child shape. You can use this to down cast to the concrete shape.
@@ -98,7 +96,7 @@ public class Fixture {
      * @return the shape type
      */
     public ShapeType getType() {
-        return m_shape.getType();
+        return shape.getType();
     }
 
     /**
@@ -108,7 +106,7 @@ public class Fixture {
      * @return child shape
      */
     public Shape getShape() {
-        return m_shape;
+        return shape;
     }
 
     /**
@@ -117,7 +115,7 @@ public class Fixture {
      * @return true if the shape is a sensor.
      */
     public boolean isSensor() {
-        return m_isSensor;
+        return isSensor;
     }
 
     /**
@@ -126,9 +124,9 @@ public class Fixture {
      * @param sensor sensor flag
      */
     public void setSensor(boolean sensor) {
-        if (sensor != m_isSensor) {
-            m_body.setAwake(true);
-            m_isSensor = sensor;
+        if (sensor != isSensor) {
+            body.setAwake(true);
+            isSensor = sensor;
         }
     }
 
@@ -140,7 +138,7 @@ public class Fixture {
      * @param filter filter
      */
     public void setFilterData(final Filter filter) {
-        m_filter.set(filter);
+        this.filter.set(filter);
 
         refilter();
     }
@@ -149,7 +147,7 @@ public class Fixture {
      * @return the contact filtering data
      */
     public Filter getFilterData() {
-        return m_filter;
+        return filter;
     }
 
     /**
@@ -157,12 +155,12 @@ public class Fixture {
      * ContactFilter::ShouldCollide.
      */
     public void refilter() {
-        if (m_body == null) {
+        if (body == null) {
             return;
         }
 
         // Flag associated contacts for filtering.
-        ContactEdge edge = m_body.getContactList();
+        ContactEdge edge = body.getContactList();
         while (edge != null) {
             Contact contact = edge.contact;
             Fixture fixtureA = contact.getFixtureA();
@@ -173,7 +171,7 @@ public class Fixture {
             edge = edge.next;
         }
 
-        World world = m_body.getWorld();
+        World world = body.getWorld();
 
         if (world == null) {
             return;
@@ -192,7 +190,11 @@ public class Fixture {
      * @return the parent body
      */
     public Body getBody() {
-        return m_body;
+        return body;
+    }
+
+    void setBody(Body body) {
+        this.body = body;
     }
 
     /**
@@ -201,7 +203,11 @@ public class Fixture {
      * @return the next shape
      */
     public Fixture getNext() {
-        return m_next;
+        return next;
+    }
+
+    void setNext(Fixture next) {
+        this.next = next;
     }
 
     public void setDensity(float density) {
@@ -209,6 +215,9 @@ public class Fixture {
         this.density = density;
     }
 
+    /**
+     * @return density
+     */
     public float getDensity() {
         return density;
     }
@@ -220,7 +229,7 @@ public class Fixture {
      * @return user data
      */
     public Object getUserData() {
-        return m_userData;
+        return userData;
     }
 
     /**
@@ -229,16 +238,16 @@ public class Fixture {
      * @param data user data
      */
     public void setUserData(Object data) {
-        m_userData = data;
+        userData = data;
     }
 
     /**
      * Test a point for containment in this fixture. This only works for convex shapes.
      *
-     * @param p a point in world coordinates.
+     * @param p a point in world coordinates
      */
     public boolean testPoint(final Vec2 p) {
-        return m_shape.testPoint(m_body.m_xf, p);
+        return shape.testPoint(body.m_xf, p);
     }
 
     /**
@@ -248,7 +257,7 @@ public class Fixture {
      * @param input the ray-cast input parameters
      */
     public boolean raycast(RayCastOutput output, RayCastInput input, int childIndex) {
-        return m_shape.raycast(output, input, m_body.m_xf, childIndex);
+        return shape.raycast(output, input, body.m_xf, childIndex);
     }
 
     /**
@@ -256,14 +265,14 @@ public class Fixture {
      * rotational inertia is about the shape's origin.
      */
     public void getMassData(MassData massData) {
-        m_shape.computeMass(massData, density);
+        shape.computeMass(massData, density);
     }
 
     /**
      * @return the coefficient of friction
      */
     public float getFriction() {
-        return m_friction;
+        return friction;
     }
 
     /**
@@ -272,14 +281,14 @@ public class Fixture {
      * @param friction friction
      */
     public void setFriction(float friction) {
-        m_friction = friction;
+        this.friction = friction;
     }
 
     /**
      * @return the coefficient of restitution
      */
     public float getRestitution() {
-        return m_restitution;
+        return restitution;
     }
 
     /**
@@ -289,7 +298,7 @@ public class Fixture {
      * @param restitution restitution
      */
     public void setRestitution(float restitution) {
-        m_restitution = restitution;
+        this.restitution = restitution;
     }
 
     /**
@@ -310,29 +319,28 @@ public class Fixture {
      * @return distance
      */
     public float computeDistance(Vec2 p, int childIndex, Vec2 normalOut) {
-        return m_shape.computeDistanceToOut(m_body.getTransform(), p, childIndex, normalOut);
+        return shape.computeDistanceToOut(body.getTransform(), p, childIndex, normalOut);
     }
 
     // We need separation create/destroy functions from the constructor/destructor because
     // the destructor cannot access the allocator (no destructor arguments allowed by C++).
 
-    public void create(Body body, FixtureDef def) {
-        m_userData = def.getUserData();
-        m_friction = def.getFriction();
-        m_restitution = def.getRestitution();
+    void create(Body body, FixtureDef def) {
+        userData = def.getUserData();
+        friction = def.getFriction();
+        restitution = def.getRestitution();
 
-        m_body = body;
-        m_next = null;
+        this.body = body;
+        next = null;
 
+        filter.set(def.getFilter());
 
-        m_filter.set(def.getFilter());
+        isSensor = def.isSensor();
 
-        m_isSensor = def.isSensor();
-
-        m_shape = def.getShape().clone();
+        shape = def.getShape().clone();
 
         // Reserve proxy space
-        int childCount = m_shape.getChildCount();
+        int childCount = shape.getChildCount();
         if (m_proxies == null) {
             m_proxies = new FixtureProxy[childCount];
             for (int i = 0; i < childCount; i++) {
@@ -360,14 +368,15 @@ public class Fixture {
         density = def.getDensity();
     }
 
-    public void destroy() {
+    void destroy() {
         // The proxies must be destroyed before calling this.
         assert (m_proxyCount == 0);
 
         // Free the child shape.
-        m_shape = null;
+        shape = null;
         m_proxies = null;
-        m_next = null;
+        next = null;
+        body = null;
 
         // TODO pool shapes
         // TODO pool fixtures
@@ -378,11 +387,11 @@ public class Fixture {
         assert (m_proxyCount == 0);
 
         // Create proxies in the broad-phase.
-        m_proxyCount = m_shape.getChildCount();
+        m_proxyCount = shape.getChildCount();
 
         for (int i = 0; i < m_proxyCount; ++i) {
             FixtureProxy proxy = m_proxies[i];
-            m_shape.computeAABB(proxy.aabb, xf, i);
+            shape.computeAABB(proxy.aabb, xf, i);
             proxy.proxyId = broadPhase.createProxy(proxy.aabb, proxy);
             proxy.fixture = this;
             proxy.childIndex = i;
@@ -394,7 +403,7 @@ public class Fixture {
      *
      * @param broadPhase broad phase
      */
-    public void destroyProxies(BroadPhase broadPhase) {
+    void destroyProxies(BroadPhase broadPhase) {
         // Destroy proxies in the broad-phase.
         for (int i = 0; i < m_proxyCount; ++i) {
             FixtureProxy proxy = m_proxies[i];
@@ -416,7 +425,7 @@ public class Fixture {
      * @param transform1 xf1
      * @param transform2 xf2
      */
-    protected void synchronize(BroadPhase broadPhase, final Transform transform1,
+    void synchronize(BroadPhase broadPhase, final Transform transform1,
                                final Transform transform2) {
         if (m_proxyCount == 0) {
             return;
@@ -428,8 +437,8 @@ public class Fixture {
             // Compute an AABB that covers the swept shape (may miss some rotation effect).
             final AABB aabb1 = pool1;
             final AABB aab = pool2;
-            m_shape.computeAABB(aabb1, transform1, proxy.childIndex);
-            m_shape.computeAABB(aab, transform2, proxy.childIndex);
+            shape.computeAABB(aabb1, transform1, proxy.childIndex);
+            shape.computeAABB(aab, transform2, proxy.childIndex);
 
             proxy.aabb.lowerBound.x =
                     aabb1.lowerBound.x < aab.lowerBound.x ? aabb1.lowerBound.x : aab.lowerBound.x;
