@@ -27,6 +27,7 @@ package physics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.Input;
@@ -106,7 +107,7 @@ public class RealPhysicsSample extends GameApplication {
 
                 // 2. pass in "true" to allow graphics generate hit boxes based on view
                 // this is a convenience method if rectangular bbox is sufficient
-                entity.getMainViewComponent().setView(new EntityView(new Circle(20, Color.BLUE)));
+                entity.getMainViewComponent().setView(new EntityView(new Circle(20, Color.RED)));
 
                 PhysicsComponent physics = new PhysicsComponent();
 
@@ -130,14 +131,7 @@ public class RealPhysicsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        GameEntity ground = new GameEntity();
-        ground.getPositionComponent().setValue(0, 500);
-        ground.getMainViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
-
-        // 4. by default a physics component is static
-        ground.addComponent(new PhysicsComponent());
-
-        getGameWorld().addEntity(ground);
+        getGameWorld().addEntity(Entities.makeScreenBounds(50));
     }
 
     @Override

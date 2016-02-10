@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.PhysicsParticleComponent;
@@ -115,7 +116,7 @@ public class PhysicsParticlesSample extends GameApplication {
 
         GameEntity liquid = new GameEntity();
         liquid.getPositionComponent().setValue(300, 10);
-        liquid.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", new BoundingBox(0, 0, 70, 70)));
+        liquid.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", new BoundingBox(0, 0, 70, 70), BoundingShape.CIRCLE));
         liquid.addComponent(ppComponent);
 
         getGameWorld().addEntities(liquid);

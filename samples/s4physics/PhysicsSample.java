@@ -28,9 +28,12 @@ package s4physics;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -39,6 +42,7 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -99,6 +103,21 @@ public class PhysicsSample extends GameApplication {
                 playerControl.down();
             }
         }, KeyCode.S);
+
+        input.addAction(new UserAction("Shoot") {
+            @Override
+            protected void onActionBegin() {
+                Entity e = EntityFactory.newBullet(0, 0, new Point2D(0, 0));
+                getGameWorld().addEntity(e);
+
+                BoundingBoxComponent bbox = Entities.getBBox(e);
+
+                System.out.println(bbox.getMinXLocal() + " " + bbox.getMinYLocal());
+
+                System.out.println(Entities.getBBox(e).getCenterLocal());
+                System.out.println(Entities.getBBox(e).getCenterWorld());
+            }
+        }, KeyCode.F);
     }
 
     @Override
@@ -106,6 +125,8 @@ public class PhysicsSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        MainViewComponent.turnOnDebugBBox(Color.RED);
+
         player = new GameEntity();
         player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(100, 100);
