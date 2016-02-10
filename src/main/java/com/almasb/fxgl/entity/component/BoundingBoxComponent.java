@@ -145,6 +145,10 @@ public class BoundingBoxComponent extends AbstractComponent {
         return minXLocal.get();
     }
 
+    public double getMinXWorld() {
+        return getPositionX() + getMinXLocal();
+    }
+
     public ReadOnlyDoubleProperty minYLocalProperty() {
         return minYLocal.getReadOnlyProperty();
     }
@@ -154,6 +158,10 @@ public class BoundingBoxComponent extends AbstractComponent {
      */
     public double getMinYLocal() {
         return minYLocal.get();
+    }
+
+    public double getMinYWorld() {
+        return getPositionY() + getMinYLocal();
     }
 
     public double getMaxXWorld() {

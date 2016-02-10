@@ -27,8 +27,11 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.ents.Entity;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.component.*;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import javafx.geometry.BoundingBox;
 
 /**
  * Helper class with static convenience methods.
@@ -59,5 +62,25 @@ public class Entities {
 
     public static TypeComponent getType(Entity e) {
         return e.getComponentUnsafe(TypeComponent.class);
+    }
+
+    public static Entity makeScreenBounds(double thickness) {
+        double w = FXGL.getDouble("settings.width");
+        double h = FXGL.getDouble("settings.height");
+
+        Entity bounds = new Entity();
+        bounds.addComponent(new PositionComponent(0, 0));
+        bounds.addComponent(new RotationComponent(0));
+
+        bounds.addComponent(new BoundingBoxComponent(
+                new HitBox("LEFT",  new BoundingBox(-thickness, 0, thickness, h)),
+                new HitBox("RIGHT", new BoundingBox(w, 0, thickness, h)),
+                new HitBox("TOP",   new BoundingBox(0, -thickness, w, thickness)),
+                new HitBox("BOT",   new BoundingBox(0, h, w, thickness))
+        ));
+
+        bounds.addComponent(new PhysicsComponent());
+
+        return bounds;
     }
 }

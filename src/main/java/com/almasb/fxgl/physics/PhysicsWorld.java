@@ -366,7 +366,13 @@ public final class PhysicsWorld {
 
         // if position is 0, 0 then probably not set, so set ourselves
         if (physics.bodyDef.getPosition().x == 0 && physics.bodyDef.getPosition().y == 0) {
-            physics.bodyDef.getPosition().set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
+
+            if (bbox.getMinXLocal() >= 0 && bbox.getMinYLocal() >= 0) {
+                physics.bodyDef.getPosition().set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
+            } else {
+                physics.bodyDef.getPosition().set(toMeters(bbox.getMinXWorld() + w / 2),
+                        toMeters(appHeight - (bbox.getMinYWorld() + h / 2)));
+            }
         }
 
         physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
