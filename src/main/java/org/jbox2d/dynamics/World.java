@@ -352,7 +352,7 @@ public class World {
             JointEdge je0 = je;
             je = je.next;
             if (m_destructionListener != null) {
-                m_destructionListener.sayGoodbye(je0.joint);
+                m_destructionListener.onDestroy(je0.joint);
             }
 
             destroyJoint(je0.joint);
@@ -376,7 +376,7 @@ public class World {
             f = f.m_next;
 
             if (m_destructionListener != null) {
-                m_destructionListener.sayGoodbye(f0);
+                m_destructionListener.onDestroy(f0);
             }
 
             f0.destroyProxies(m_contactManager.m_broadPhase);

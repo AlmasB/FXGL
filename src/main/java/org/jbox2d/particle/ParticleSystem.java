@@ -468,7 +468,7 @@ public class ParticleSystem {
         assert (group != null);
 
         if (m_world.getParticleDestructionListener() != null) {
-            m_world.getParticleDestructionListener().sayGoodbye(group);
+            m_world.getParticleDestructionListener().onDestroy(group);
         }
 
         for (int i = group.m_firstIndex; i < group.m_lastIndex; i++) {
@@ -1200,7 +1200,7 @@ public class ParticleSystem {
             if ((flags & ParticleTypeInternal.b2_zombieParticle) != 0) {
                 ParticleDestructionListener destructionListener = m_world.getParticleDestructionListener();
                 if ((flags & ParticleTypeInternal.b2_destructionListener) != 0 && destructionListener != null) {
-                    destructionListener.sayGoodbye(i);
+                    destructionListener.onDestroy(i);
                 }
                 newIndices[i] = Settings.invalidParticleIndex;
             } else {
