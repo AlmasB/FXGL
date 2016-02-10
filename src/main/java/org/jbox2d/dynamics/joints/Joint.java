@@ -40,7 +40,6 @@ import org.jbox2d.pooling.IWorldPool;
 public abstract class Joint {
 
     public static Joint create(World world, JointDef def) {
-        // Joint joint = null;
         switch (def.type) {
             case MOUSE:
                 return new MouseJoint(world.getPool(), (MouseJointDef) def);
@@ -68,7 +67,7 @@ public abstract class Joint {
                 return new MotorJoint(world.getPool(), (MotorJointDef) def);
             case UNKNOWN:
             default:
-                return null;
+                throw new IllegalArgumentException("Unknown joint type");
         }
     }
 
