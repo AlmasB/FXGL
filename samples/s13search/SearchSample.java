@@ -25,13 +25,13 @@
  */
 package s13search;
 
+import com.almasb.astar.AStarGrid;
+import com.almasb.astar.AStarNode;
+import com.almasb.astar.NodeState;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.search.AStarGrid;
-import com.almasb.fxgl.search.AStarNode;
-import com.almasb.fxgl.search.NodeState;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
