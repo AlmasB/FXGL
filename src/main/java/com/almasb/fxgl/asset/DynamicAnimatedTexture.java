@@ -99,6 +99,9 @@ public final class DynamicAnimatedTexture extends Texture {
         timeline.playFromStart();
     }
 
+    /**
+     * @return current channel
+     */
     public AnimationChannel getCurrentChannel() {
         return currentChannel;
     }

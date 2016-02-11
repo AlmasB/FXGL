@@ -154,8 +154,4 @@ public class EntityView extends Parent {
     public RenderLayer getRenderLayer() {
         return renderLayer.get();
     }
-
-    public ObjectProperty<RenderLayer> renderLayerProperty() {
-        return renderLayer;
-    }
 }

@@ -52,6 +52,12 @@ public class MainViewComponent extends AbstractComponent {
     private static boolean showBBox = false;
     private static Color showBBoxColor = Color.BLACK;
 
+    /**
+     * Turns on displaying of bounding boxes. Useful for debugging.
+     * Note: this only shows bounding boxes, not each hit box.
+     *
+     * @param color the color to highlight bounding boxes
+     */
     public static final void turnOnDebugBBox(Color color) {
         showBBox = true;
         showBBoxColor = color;
@@ -60,36 +66,67 @@ public class MainViewComponent extends AbstractComponent {
     private ObjectProperty<RenderLayer> renderLayer;
     private ObjectProperty<EntityView> view;
 
+    /**
+     * Creates main view component with no graphics.
+     */
     public MainViewComponent() {
         this(new EntityView());
     }
 
+    /**
+     * Creates main view with given graphics.
+     *
+     * @param graphics the graphics
+     */
     public MainViewComponent(Node graphics) {
         this(new EntityView(graphics), RenderLayer.TOP);
     }
 
+    /**
+     * Creates main view with given graphics and given render layer.
+     *
+     * @param graphics the graphics
+     * @param renderLayer render layer to use for view
+     */
     public MainViewComponent(Node graphics, RenderLayer renderLayer) {
         this.view = new SimpleObjectProperty<>(new EntityView(graphics));
         this.renderLayer = new SimpleObjectProperty<>(renderLayer);
     }
 
+    /**
+     * @return render layer
+     */
     public RenderLayer getRenderLayer() {
         return renderLayer.get();
     }
 
+    /**
+     * @return render layer property
+     */
     public ObjectProperty<RenderLayer> renderLayerProperty() {
         return renderLayer;
     }
 
+    /**
+     * Set render layer.
+     *
+     * @param renderLayer render layer
+     */
     public void setRenderLayer(RenderLayer renderLayer) {
         this.renderLayer.set(renderLayer);
         getView().setRenderLayer(renderLayer);
     }
 
+    /**
+     * @return view
+     */
     public EntityView getView() {
         return view.get();
     }
 
+    /**
+     * @return view property
+     */
     public ObjectProperty<EntityView> viewProperty() {
         return view;
     }
@@ -104,10 +141,22 @@ public class MainViewComponent extends AbstractComponent {
         setView(new EntityView(graphics));
     }
 
+    /**
+     * Set view without generating bounding boxes from view.
+     *
+     * @param view the view
+     */
     public void setView(EntityView view) {
         setView(view, false);
     }
 
+    /**
+     * Set view. The generate bbox flag tells the component
+     * whether it should generate bbox from the given view.
+     *
+     * @param view the view
+     * @param generateBoundingBox generate bbox flag
+     */
     public void setView(EntityView view, boolean generateBoundingBox) {
         this.view.set(view);
 
@@ -118,10 +167,21 @@ public class MainViewComponent extends AbstractComponent {
         }
     }
 
+    /**
+     * Convenience method to set texture as view.
+     *
+     * @param textureName name of texture
+     */
     public void setTexture(String textureName) {
         setTexture(textureName, false);
     }
 
+    /**
+     * Convenience method to set texture as view.
+     *
+     * @param textureName name of texture
+     * @param generateBoundingBox generate bbox from view flag
+     */
     public void setTexture(String textureName, boolean generateBoundingBox) {
         EntityView view = new EntityView(GameApplication.getService(ServiceType.ASSET_LOADER)
                 .loadTexture(textureName));

@@ -34,10 +34,18 @@ import javafx.geometry.Point2D;
  */
 public class RotationComponent extends DoubleComponent {
 
+    /**
+     * Constructs rotation with angle = 0.
+     */
     public RotationComponent() {
         this(0);
     }
 
+    /**
+     * Constructs rotation with given angle.
+     *
+     * @param angle the angle
+     */
     public RotationComponent(double angle) {
         super(angle);
     }
@@ -45,7 +53,7 @@ public class RotationComponent extends DoubleComponent {
     /**
      * Rotate entity view by given angle.
      * Note: this doesn't affect hit boxes. For more accurate
-     * collisions use {@link com.almasb.fxgl.physics.PhysicsEntity}.
+     * collisions use {@link com.almasb.fxgl.physics.PhysicsComponent}.
      *
      * @param byAngle rotation angle in degrees
      */

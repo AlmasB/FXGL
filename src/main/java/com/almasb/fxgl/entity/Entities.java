@@ -64,6 +64,12 @@ public class Entities {
         return e.getComponentUnsafe(TypeComponent.class);
     }
 
+    /**
+     * Create an entity with bouding box around the screen with given thickness.
+     *
+     * @param thickness thickness of hit boxes around the screen
+     * @return entity with screen bounds
+     */
     public static Entity makeScreenBounds(double thickness) {
         double w = FXGL.getDouble("settings.width");
         double h = FXGL.getDouble("settings.height");

@@ -745,9 +745,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     private SaveLoadManager saveLoadManager;
 
+    /**
+     * @return save load manager
+     */
     public SaveLoadManager getSaveLoadManager() {
-        if (!getSettings().isMenuEnabled()) {
-            throw new IllegalStateException("Access to SaveLoadManager without menu enabled is not allowed");
+        if (saveLoadManager == null) {
+            throw new IllegalStateException("SaveLoadManager is not ready");
         }
 
         return saveLoadManager;

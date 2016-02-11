@@ -129,7 +129,6 @@ public final class SaveLoadManager {
     }
 
     /**
-     *
      * @return user profile loaded from "profiles/"
      */
     public IOResult<UserProfile> loadProfile() {

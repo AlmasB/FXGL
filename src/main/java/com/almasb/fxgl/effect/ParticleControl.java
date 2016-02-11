@@ -50,6 +50,11 @@ public class ParticleControl extends AbstractControl {
 
     private PositionComponent position;
 
+    /**
+     * Constructs particle control with specified emitter.
+     *
+     * @param emitter particle emitter
+     */
     public ParticleControl(ParticleEmitter emitter) {
         this.emitter = emitter;
     }

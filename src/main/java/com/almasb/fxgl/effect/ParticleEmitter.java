@@ -32,6 +32,7 @@ import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -47,7 +48,7 @@ import java.util.stream.IntStream;
  */
 public class ParticleEmitter {
 
-    private static final List<Particle> EMPTY = new ArrayList<>();
+    private static final List<Particle> EMPTY = Collections.emptyList();
 
     private Random random = new Random();
     private int numParticles = 25;
@@ -57,7 +58,6 @@ public class ParticleEmitter {
     private double sizeMax = 12;
 
     /**
-     *
      * @return minimum particle size
      */
     public final double getSizeMin() {
@@ -65,7 +65,6 @@ public class ParticleEmitter {
     }
 
     /**
-     *
      * @return maximum particle size
      */
     public final double getSizeMax() {
@@ -73,7 +72,6 @@ public class ParticleEmitter {
     }
 
     /**
-     *
      * @return random size between min and max size
      */
     protected final double getRandomSize() {
@@ -96,7 +94,6 @@ public class ParticleEmitter {
     private Supplier<Paint> colorFunction = () -> Color.TRANSPARENT;
 
     /**
-     *
      * @return particles color function
      */
     public final Supplier<Paint> getColorFunction() {

@@ -94,18 +94,36 @@ public class BoundingBoxComponent extends AbstractComponent {
     private ReadOnlyDoubleWrapper width = new ReadOnlyDoubleWrapper();
     private ReadOnlyDoubleWrapper height = new ReadOnlyDoubleWrapper();
 
+    /**
+     * Returns total width of the bounding box, i.e.
+     * distance from the leftmost side to the rightmost side.
+     *
+     * @return width of the bounding box
+     */
     public double getWidth() {
         return width.get();
     }
 
+    /**
+     * @return width property
+     */
     public ReadOnlyDoubleProperty widthProperty() {
         return width.getReadOnlyProperty();
     }
 
+    /**
+     * Returns total height of the bounding box, i.e.
+     * distance from the topmost side to the bottommost side.
+     *
+     * @return height of the bounding box
+     */
     public double getHeight() {
         return height.get();
     }
 
+    /**
+     * @return height property
+     */
     public ReadOnlyDoubleProperty heightProperty() {
         return height.getReadOnlyProperty();
     }
@@ -137,6 +155,9 @@ public class BoundingBoxComponent extends AbstractComponent {
     private ReadOnlyDoubleWrapper minXLocal = new ReadOnlyDoubleWrapper();
     private ReadOnlyDoubleWrapper minYLocal = new ReadOnlyDoubleWrapper();
 
+    /**
+     * @return min X poperty in local coordinates
+     */
     public ReadOnlyDoubleProperty minXLocalProperty() {
         return minXLocal.getReadOnlyProperty();
     }
@@ -148,6 +169,9 @@ public class BoundingBoxComponent extends AbstractComponent {
         return minXLocal.get();
     }
 
+    /**
+     * @return min Y poperty in local coordinates
+     */
     public ReadOnlyDoubleProperty minYLocalProperty() {
         return minYLocal.getReadOnlyProperty();
     }
@@ -159,18 +183,30 @@ public class BoundingBoxComponent extends AbstractComponent {
         return minYLocal.get();
     }
 
+    /**
+     * @return min x in world coordinate system
+     */
     public double getMinXWorld() {
         return getPositionX() + getMinXLocal();
     }
 
+    /**
+     * @return min y in world coordinate system
+     */
     public double getMinYWorld() {
         return getPositionY() + getMinYLocal();
     }
 
+    /**
+     * @return max x in world coordinates
+     */
     public double getMaxXWorld() {
         return getPositionX() + getMinXLocal() + getWidth();
     }
 
+    /**
+     * @return max y in world coordinates
+     */
     public double getMaxYWorld() {
         return getPositionY() + getMinYLocal() + getHeight();
     }
@@ -256,7 +292,6 @@ public class BoundingBoxComponent extends AbstractComponent {
         return checkCollision(other) != CollisionResult.NO_COLLISION;
     }
 
-
     /**
      * @param bounds a rectangular box that represents bounds
      * @return true iff entity is partially or entirely within given bounds
@@ -266,7 +301,6 @@ public class BoundingBoxComponent extends AbstractComponent {
     }
 
     /**
-     *
      * @param minX min x
      * @param minY min y
      * @param maxX max x
@@ -286,7 +320,6 @@ public class BoundingBoxComponent extends AbstractComponent {
     }
 
     /**
-     *
      * @param minX min x
      * @param minY min y
      * @param maxX max x
