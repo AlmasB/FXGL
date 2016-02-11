@@ -39,7 +39,7 @@ public abstract class UserAction {
 
     /**
      * Constructs new user action with given name. Name examples:
-     * Walk_Forward, Shoot, Use, Aim, etc.
+     * Walk Forward, Shoot, Use, Aim, etc.
      *
      * @param name unique name that identifies this action
      */

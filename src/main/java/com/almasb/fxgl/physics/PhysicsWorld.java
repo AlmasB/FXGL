@@ -368,7 +368,10 @@ public final class PhysicsWorld {
                     toMeters(appHeight - (bbox.getMinYWorld() + h / 2)));
         }
 
-        physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
+        if (physics.bodyDef.getAngle() == 0) {
+            physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
+        }
+
         physics.body = physicsWorld.createBody(physics.bodyDef);
 
         createFixtures(e);

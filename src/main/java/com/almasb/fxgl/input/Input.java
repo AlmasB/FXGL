@@ -49,7 +49,7 @@ import java.util.logging.Logger;
 
 /**
  * Provides access to mouse state and allows binding of actions
- * to key and mouse events
+ * to key and mouse events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -199,7 +199,7 @@ public final class Input implements UserProfileSavable {
     }
 
     /**
-     * Handle released event for given trigger
+     * Handle released event for given trigger.
      *
      * @param trigger the trigger
      */

@@ -49,8 +49,18 @@ public final class UpdateEvent extends Event {
         return tpf;
     }
 
+    /**
+     * Constructs update event.
+     *
+     * @param tpf time per last frame
+     */
     public UpdateEvent(double tpf) {
         super(ANY);
         this.tpf = tpf;
+    }
+
+    @Override
+    public String toString() {
+        return "UpdateEvent[tpf=" + tpf + "]";
     }
 }

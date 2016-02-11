@@ -99,18 +99,34 @@ public final class InputMapping {
         return trigger instanceof MouseButton;
     }
 
+    /**
+     * @return action name
+     */
     String getActionName() {
         return actionName;
     }
 
+    /**
+     * @return modifier for this input mapping
+     */
     InputModifier getModifier() {
         return modifier;
     }
 
+    /**
+     * Note: you should check {@link #isKeyTrigger()} first.
+     *
+     * @return trigger cast to key
+     */
     KeyCode getKeyTrigger() {
         return (KeyCode) trigger;
     }
 
+    /**
+     * Note: you should check {@link #isButtonTrigger()} first.
+     *
+     * @return trigger cast to button
+     */
     MouseButton getButtonTrigger() {
         return (MouseButton) trigger;
     }

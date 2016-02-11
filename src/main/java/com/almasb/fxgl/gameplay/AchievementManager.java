@@ -89,7 +89,6 @@ public final class AchievementManager implements UserProfileSavable {
     }
 
     /**
-     *
      * @param name achievement name
      * @return registered achievement
      * @throws IllegalArgumentException if achievement is not registered
@@ -104,7 +103,6 @@ public final class AchievementManager implements UserProfileSavable {
     }
 
     /**
-     *
      * @return unmodifiable list of achievements
      */
     public ObservableList<Achievement> getAchievements() {
