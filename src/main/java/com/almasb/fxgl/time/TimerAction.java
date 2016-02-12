@@ -30,7 +30,7 @@ import javafx.util.Duration;
 /**
  * A wrapper for Runnable which is executed at given intervals.
  * The timer can be made to expire, in which case the action
- * will not execute
+ * will not execute.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -69,7 +69,7 @@ public final class TimerAction {
      * then the action is executed and current time is recorded.
      * <p>
      * Note: the action will not be executed if the timer
-     * has expired
+     * has expired.
      *
      * @param now current time in nanoseconds
      */
@@ -89,7 +89,7 @@ public final class TimerAction {
 
     /**
      * Set the timer as expired. The action will no longer
-     * be executed
+     * be executed.
      */
     public void expire() {
         expired = true;

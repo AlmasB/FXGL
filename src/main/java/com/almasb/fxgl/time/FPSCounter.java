@@ -30,7 +30,7 @@ import java.util.Arrays;
 /**
  * Convenience class that buffers FPS values and calculates
  * the arithmetic mean to approximate FPS value as it
- * varies from frame to frame
+ * varies from frame to frame.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -48,7 +48,7 @@ final class FPSCounter {
 
     /**
      * Calculates average FPS and buffers given value
-     * for future corrections to the FPS value
+     * for future corrections to the FPS value.
      *
      * @param timeTookLastFrame how long it took to compute last frame
      * @return average FPS

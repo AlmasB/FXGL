@@ -90,7 +90,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
 
     /**
      * If set to true, the intro video/animation will
-     * be played before the start of the game
+     * be played before the start of the game.
      *
      * @param b intro flag
      * @defaultValue true
@@ -159,7 +159,6 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
-     *
      * @return a read only copy of settings
      */
     public ReadOnlyGameSettings toReadOnly() {

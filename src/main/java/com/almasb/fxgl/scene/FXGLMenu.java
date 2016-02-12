@@ -257,7 +257,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content containing a list of credits
      */
     protected final MenuContent createContentCredits() {
@@ -268,7 +267,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content containing a list of achievements
      */
     protected final MenuContent createContentAchievements() {
@@ -293,7 +291,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
     /**
      * A generic vertical box container for menu content
-     * where each element is followed by a separator
+     * where each element is followed by a separator.
      */
     protected class MenuContent extends VBox {
         public MenuContent(Node... items) {

@@ -70,11 +70,23 @@ public abstract class FXGLScene {
         return root.getPrefHeight();
     }
 
+    /**
+     * Add event handler.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler handler for events
+     */
     public final <T extends Event> void addEventHandler(EventType<T> eventType,
                                                   EventHandler<? super T> eventHandler) {
         eventHandlers.addEventHandler(eventType, eventHandler);
     }
 
+    /**
+     * Remove event handler.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler handler for events
+     */
     public final <T extends Event> void removeEventHandler(EventType<T> eventType,
                                                      EventHandler<? super T> eventHandler) {
         eventHandlers.removeEventHandler(eventType, eventHandler);
