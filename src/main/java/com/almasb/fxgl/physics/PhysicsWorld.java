@@ -73,12 +73,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Manages physics entities, collision handling and performs the physics tick
+ * Manages physics entities, collision handling and performs the physics tick.
  * <p>
  * Contains several static and instance methods
- * to convert pixels coordinates to meters and vice versa
+ * to convert pixels coordinates to meters and vice versa.
  * <p>
- * Collision handling unifies how they are processed
+ * Collision handling unifies how they are processed.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

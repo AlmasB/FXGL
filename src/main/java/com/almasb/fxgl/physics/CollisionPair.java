@@ -42,6 +42,9 @@ final class CollisionPair extends Pair<Entity> {
         this.handler = handler;
     }
 
+    /**
+     * @return collision handler for this pair
+     */
     CollisionHandler getHandler() {
         return handler;
     }

@@ -71,7 +71,7 @@ public class PhysicsComponent extends AbstractComponent {
 
     /**
      * Set custom fixture definition to describe a generated
-     * fixture for this physics entity
+     * fixture for this physics entity.
      *
      * @param def fixture definition
      */
@@ -81,7 +81,7 @@ public class PhysicsComponent extends AbstractComponent {
 
     /**
      * Set custom body definition to describe a generated
-     * body for this physics entity
+     * body for this physics entity.
      *
      * @param def body definition
      */
@@ -91,7 +91,7 @@ public class PhysicsComponent extends AbstractComponent {
 
     /**
      * A convenience method to avoid setting body definition
-     * if only a change of body type is required
+     * if only a change of body type is required.
      *
      * @param type body type
      */
@@ -100,10 +100,10 @@ public class PhysicsComponent extends AbstractComponent {
     }
 
     /**
-     * Set linear velocity for a physics entity
+     * Set linear velocity for a physics entity.
      * <p>
-     * Use this method to move a physics entity
-     * Please note that the vector x and y are in pixels
+     * Use this method to move a physics entity.
+     * Please note that the vector x and y are in pixels.
      *
      * @param vector x and y in pixels
      */
@@ -112,10 +112,10 @@ public class PhysicsComponent extends AbstractComponent {
     }
 
     /**
-     * Set linear velocity for a physics entity
+     * Set linear velocity for a physics entity.
      * <p>
-     * Use this method to move a physics entity
-     * Please note that x and y are in pixels
+     * Use this method to move a physics entity.
+     * Please note that x and y are in pixels.
      *
      * @param x and y in pixels
      */
@@ -124,16 +124,16 @@ public class PhysicsComponent extends AbstractComponent {
     }
 
     /**
-     * Set linear velocity for a physics entity
+     * Set linear velocity for a physics entity.
      * <p>
      * Similar to {@link #setLinearVelocity(Point2D)} but
-     * x and y of the argument are in meters
+     * x and y of the argument are in meters.
      *
      * @param vector x and y in meters
      */
     public void setBodyLinearVelocity(Vec2 vector) {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
+            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
 
         body.setLinearVelocity(vector);
     }
@@ -143,7 +143,7 @@ public class PhysicsComponent extends AbstractComponent {
      */
     public Point2D getLinearVelocity() {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
+            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
 
         return PhysicsWorld.toVector(body.getLinearVelocity().mul(1 / 60f));
     }
@@ -155,20 +155,20 @@ public class PhysicsComponent extends AbstractComponent {
      */
     public void setAngularVelocity(double velocity) {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
+            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
 
         body.setAngularVelocity((float) -velocity);
     }
 
     public void setBodyAngularVelocity(float velocity) {
         if (body == null)
-            throw new IllegalStateException("PhysicsEntity not initialized yet! Use setOnPhysicsInitialized() instead");
+            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
 
         body.setAngularVelocity(velocity);
     }
 
     /**
-     * Set true to make raycast ignore this entity
+     * Set true to make raycast ignore this entity.
      *
      * @param b raycast flag
      */

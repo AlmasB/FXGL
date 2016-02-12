@@ -63,7 +63,6 @@ public final class CollisionResult {
     }
 
     /**
-     *
      * @return hit box of first entity
      */
     public final HitBox getBoxA() {
@@ -71,7 +70,6 @@ public final class CollisionResult {
     }
 
     /**
-     *
      * @return hit box of second entity
      */
     public final HitBox getBoxB() {

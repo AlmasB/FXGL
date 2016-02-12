@@ -34,6 +34,9 @@ import javafx.scene.paint.Color;
 import org.jbox2d.particle.ParticleGroupDef;
 
 /**
+ * Adds physics particle properties to an entity.
+ * By setting the definition each property can be fine-tuned.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
@@ -42,18 +45,34 @@ public class PhysicsParticleComponent extends AbstractComponent {
     private ParticleGroupDef definition = new ParticleGroupDef();
     private Color color = Color.BLACK;
 
+    /**
+     * Set particle group definition.
+     *
+     * @param definition particle definition
+     */
     public void setDefinition(ParticleGroupDef definition) {
         this.definition = definition;
     }
 
+    /**
+     * @return definition
+     */
     public ParticleGroupDef getDefinition() {
         return definition;
     }
 
+    /**
+     * Set particle color.
+     *
+     * @param color particle color
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * @return particle color
+     */
     public Color getColor() {
         return color;
     }
