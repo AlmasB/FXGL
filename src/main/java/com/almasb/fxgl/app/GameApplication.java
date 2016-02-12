@@ -31,6 +31,7 @@ import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
+import com.almasb.fxgl.scene.intro.FXGLIntroScene;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.scene;
+package com.almasb.fxgl.scene.intro;
 
+import com.almasb.fxgl.scene.IntroScene;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Version;
@@ -54,8 +55,6 @@ public final class FXGLIntroScene extends IntroScene {
 
     private ParallelTransition animation;
 
-    private Random random = new Random();
-
     public FXGLIntroScene(ReadOnlyGameSettings settings) {
         super(settings);
         w = settings.getWidth();
@@ -79,7 +78,11 @@ public final class FXGLIntroScene extends IntroScene {
         Text poweredText = makePoweredBy();
         Text version = makeVersion();
 
-        getRoot().getChildren().addAll(new Rectangle(w, h), fxglText, poweredText, version);
+        FireworksPane fireworks = new FireworksPane(w, h);
+
+        Group content = new Group(fxglText, poweredText, version, fireworks);
+
+        getRoot().getChildren().addAll(new Rectangle(w, h), content);
 
         double originX = w / 2 - f.getLayoutBounds().getWidth() * 4 / 2;
         double dx = f.getLayoutBounds().getWidth();
@@ -100,6 +103,8 @@ public final class FXGLIntroScene extends IntroScene {
         tt4.setToX(originX + dx * 3.3);
         tt4.setToY(h / 2);
 
+        fireworks.play();
+
         animation = new ParallelTransition(tt, tt2, tt3, tt4);
         animation.setOnFinished(event -> {
             poweredText.setVisible(true);
@@ -110,42 +115,13 @@ public final class FXGLIntroScene extends IntroScene {
             rt.setAxis(new Point3D(0, 0, 1));
             rt.setByAngle(-180);
             rt.setOnFinished(e -> {
-
-                Light.Point light = new Light.Point();
-                light.setX(-300);
-                light.setY(0);
-                light.setZ(100);
-
-                Lighting lighting = new Lighting();
-                lighting.setLight(light);
-                lighting.setSurfaceScale(2.0);
-
-                fxglText.setEffect(lighting);
-
-                Timeline timeline = new Timeline();
-                KeyFrame frame = new KeyFrame(Duration.seconds(2.5),
-                        new KeyValue(light.xProperty(), 300),
-                        new KeyValue(light.zProperty(), -10));
-                timeline.getKeyFrames().add(frame);
-                timeline.play();
-
-                double t = 0;
-                for (int i = 0; i < 50; i++) {
-                    Circle c = new Circle(1);
-                    c.setFill(Color.GOLD);
-                    c.setTranslateX(-5);
-                    c.setTranslateY(h / 2 + 10);
-
-                    getRoot().getChildren().add(c);
-
-                    PathTransition pt = new PathTransition(Duration.seconds(1 + t), getPath(f, l), c);
-                    if (i == 49)
-                        pt.setOnFinished(e2 -> finishIntro());
-
-                    pt.play();
-
-                    t += 0.05;
-                }
+                FadeTransition ft = new FadeTransition(Duration.seconds(2.5), getRoot());
+                ft.setToValue(0);
+                ft.setOnFinished(e1 -> {
+                    fireworks.stop();
+                    finishIntro();
+                });
+                ft.play();
             });
             rt.play();
         });
@@ -175,36 +151,6 @@ public final class FXGLIntroScene extends IntroScene {
         text.setTranslateX(w / 2 - text.getLayoutBounds().getWidth() / 2);
         text.setTranslateY(h / 2 - 80);
         return text;
-    }
-
-    private Shape getPath(Node f, Node l) {
-        Path path = new Path();
-
-        MoveTo moveTo = new MoveTo();
-        moveTo.setX(0);
-        moveTo.setY(h / 2 + 10 + random.nextInt(15));
-
-        HLineTo hLineTo = new HLineTo();
-        hLineTo.setX(l.getTranslateX() + 30 + random.nextInt(15));
-
-        LineTo lineTo = new LineTo();
-        lineTo.setX(l.getTranslateX() + 30 + random.nextInt(15));
-        lineTo.setY(l.getTranslateY() - 70 - random.nextInt(15));
-
-        HLineTo hLineTo2 = new HLineTo();
-        hLineTo2.setX(f.getTranslateX() - 10 - random.nextInt(15));
-
-        LineTo lineTo2 = new LineTo();
-        lineTo2.setX(f.getTranslateX() - 10 - random.nextInt(15));
-        lineTo2.setY(f.getTranslateY() + 10 + random.nextInt(15));
-
-        HLineTo hLineTo3 = new HLineTo();
-        hLineTo3.setX(w + 50);
-
-        path.getElements().addAll(moveTo, hLineTo, lineTo,
-                hLineTo2, lineTo2, hLineTo3);
-
-        return path;
     }
 
     @Override
