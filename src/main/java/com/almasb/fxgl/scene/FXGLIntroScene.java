@@ -42,13 +42,13 @@ import javafx.util.Duration;
 import java.util.Random;
 
 /**
- * This is the default FXGL Intro animation
+ * This is the default FXGL Intro animation.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class FXGLIntroScene extends IntroScene {
 
-    //private static final Logger log = FXGLLogger.getLogger("FXGLIntroScene");
+    //private static final Logger log = FXGLLogger.getLogger("FXGL.IntroScene");
 
     private double w, h;
 

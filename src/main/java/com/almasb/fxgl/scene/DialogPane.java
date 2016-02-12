@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  */
 class DialogPane extends Pane {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGLDialogBox");
+    //private static final Logger log = FXGLLogger.getLogger("FXGL.DialogPane");
 
     private Window window = new Window();
     private Display display;
@@ -308,6 +308,13 @@ class DialogPane extends Pane {
         show();
     }
 
+    /**
+     * Shows arbitrary box with message, content and given buttons.
+     *
+     * @param message the header message
+     * @param content the box content
+     * @param buttons buttons present in the box
+     */
     void showBox(String message, Node content, Button... buttons) {
         for (Button btn : buttons) {
             EventHandler<ActionEvent> handler = btn.getOnAction();
@@ -341,6 +348,7 @@ class DialogPane extends Pane {
      * Creates an appropriate size rectangle box around the node
      * to serve as background.
      *
+     * @param title window title
      * @param n content node
      */
     private void setContent(String title, Node n) {

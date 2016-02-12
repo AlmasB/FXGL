@@ -215,6 +215,9 @@ public final class Display implements UserProfileSavable {
         fxScene.setRoot(scene.getRoot());
     }
 
+    /**
+     * @return current scene property
+     */
     public ReadOnlyObjectProperty<FXGLScene> currentSceneProperty() {
         return currentScene.getReadOnlyProperty();
     }
@@ -240,7 +243,7 @@ public final class Display implements UserProfileSavable {
     }
 
     /**
-     * Saves a screenshot of the current main scene into a ".png" file
+     * Saves a screenshot of the current scene into a ".png" file.
      *
      * @return true if the screenshot was saved successfully, false otherwise
      */
@@ -295,22 +298,37 @@ public final class Display implements UserProfileSavable {
         }
     }
 
+    /**
+     * @return target width (requested width)
+     */
     public final double getTargetWidth() {
         return targetWidth.get();
     }
 
+    /**
+     * @return target height (requested height)
+     */
     public final double getTargetHeight() {
         return targetHeight.get();
     }
 
+    /**
+     * @return scaled width (actual width of the scenes)
+     */
     public final double getScaledWidth() {
         return scaledWidth.get();
     }
 
+    /**
+     * @return scaled height (actual height of the scenes)
+     */
     public final double getScaledHeight() {
         return scaledHeight.get();
     }
 
+    /**
+     * @return scale ratio (set width / settings width)
+     */
     public final double getScaleRatio() {
         return scaleRatio.get();
     }
@@ -475,6 +493,12 @@ public final class Display implements UserProfileSavable {
         newDialog.showErrorBox(error);
     }
 
+    /**
+     * Shows a blocking (stops game execution, method returns normally) dialog with the error.
+     *
+     * @param errorMessage error message to show
+     * @param callback the function to be called when dialog is dismissed
+     */
     public void showErrorBox(String errorMessage, Runnable callback) {
         newDialog.showErrorBox(errorMessage, callback);
     }
