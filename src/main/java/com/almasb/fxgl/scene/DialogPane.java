@@ -29,8 +29,10 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.FXGLLogger;
-import javafx.beans.value.ChangeListener;
+import com.sun.javafx.scene.traversal.Algorithm;
+import com.sun.javafx.scene.traversal.Direction;
+import com.sun.javafx.scene.traversal.ParentTraversalEngine;
+import com.sun.javafx.scene.traversal.TraversalContext;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -48,10 +50,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -90,6 +93,28 @@ class DialogPane extends Pane {
         window.layoutYProperty().bind(window.heightProperty().divide(2).negate().add(height / 2));
 
         getChildren().add(window);
+
+        // this is a workaround to avoid users traversing "through" the dialog to underlying nodes
+        initTraversalPolicy();
+    }
+
+    private void initTraversalPolicy() {
+        this.setImpl_traversalEngine(new ParentTraversalEngine(this, new Algorithm() {
+            @Override
+            public Node select(Node owner, Direction dir, TraversalContext context) {
+                return window;
+            }
+
+            @Override
+            public Node selectFirst(TraversalContext context) {
+                return window;
+            }
+
+            @Override
+            public Node selectLast(TraversalContext context) {
+                return window;
+            }
+        }));
     }
 
     private boolean isShowing() {
@@ -382,6 +407,8 @@ class DialogPane extends Pane {
     void show() {
         if (!isShowing()) {
             display.getCurrentScene().getRoot().getChildren().add(this);
+
+            this.requestFocus();
 
             if (onShown != null)
                 onShown.run();
