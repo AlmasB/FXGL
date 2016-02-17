@@ -177,6 +177,7 @@ public abstract class FXGLApplication extends Application {
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
 
+        // TODO: replace to access via settings
         FXGL.setProperty("settings.width", settings.getWidth());
         FXGL.setProperty("settings.height", settings.getHeight());
         FXGL.setSettings(settings);

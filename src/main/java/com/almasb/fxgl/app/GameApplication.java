@@ -350,9 +350,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     /**
      * Creates Main and Game menu scenes.
-     * Registers menu event handlers.
+     * Registers them with the Display service.
+     * Adds key binding so that scenes can be switched on menu key press.
      */
-    private void configureMenu() {
+    private void initMenuScenes() {
         MenuFactory menuFactory = initMenuFactory();
 
         mainMenuScene = menuFactory.newMainMenu(this);
@@ -385,7 +386,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             if (event.getCode() == getSettings().getMenuKey())
                 canSwitchGameMenu = true;
         });
+    }
 
+    /**
+     * Registers menu event handlers, so that we can perform
+     * some actions when menu events occur.
+     */
+    private void initMenuEventHandlers() {
         getEventBus().addEventHandler(MenuEvent.NEW_GAME, event -> startNewGame());
         getEventBus().addEventHandler(MenuEvent.EXIT, event -> exit());
         getEventBus().addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> {
@@ -443,6 +450,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         });
     }
 
+    private void configureMenu() {
+        initMenuScenes();
+        initMenuEventHandlers();
+    }
+
     private void configureIntro() {
         introScene = initIntroFactory().newIntro(getSettings());
         introScene.setOnFinished(this::showGame);
@@ -476,6 +488,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
     }
 
+    /**
+     * Show profile dialog so that user selects existing or creates new profile.
+     * The dialog is only dismissed when profile is chosen either way.
+     */
     private void showProfileDialog() {
         List<String> profileNames = SaveLoadManager.loadProfileNames().orElse(Collections.emptyList());
         ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList(profileNames));
