@@ -93,6 +93,17 @@ public final class Input implements UserProfileSavable {
 
     @Inject
     private Input() {
+        initActionListener();
+        initEventHandlers();
+
+        log.finer("Service [Input] initialized");
+    }
+
+    /**
+     * Listen for any changes in currently active actions
+     * and handle them appropriately.
+     */
+    private void initActionListener() {
         currentActions.addListener((ListChangeListener.Change<? extends UserAction> c) -> {
             while (c.next()) {
                 if (!processActions)
@@ -105,7 +116,12 @@ public final class Input implements UserProfileSavable {
                 }
             }
         });
+    }
 
+    /**
+     * Hook into the global event bus and handle internal events.
+     */
+    private void initEventHandlers() {
         EventBus eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
         eventBus.addEventHandler(UpdateEvent.ANY, event -> {
             if (processActions) {
@@ -149,8 +165,6 @@ public final class Input implements UserProfileSavable {
         eventBus.addEventHandler(LoadEvent.ANY, event -> {
             load(event.getProfile());
         });
-
-        log.finer("Service [Input] initialized");
     }
 
     /**
