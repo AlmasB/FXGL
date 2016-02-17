@@ -138,6 +138,27 @@ public final class PhysicsWorld {
         this.appHeight = appHeight;
         this.tick.bind(GameApplication.getService(ServiceType.MASTER_TIMER).tickProperty());
 
+        initContactListener();
+        initParticles();
+
+        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
+        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
+            addEntity(event.getEntity());
+        });
+        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
+            removeEntity(event.getEntity());
+        });
+        bus.addEventHandler(UpdateEvent.ANY, event -> update(event.tpf()));
+
+        log.finer("Physics world initialized");
+    }
+
+    /**
+     * Registers contact listener to JBox2D world so that collisions are
+     * registered for subsequent notification.
+     * Only collidable entities are checked.
+     */
+    private void initContactListener() {
         physicsWorld.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -185,19 +206,6 @@ public final class PhysicsWorld {
             public void postSolve(Contact contact, ContactImpulse impulse) {
             }
         });
-
-        initParticles();
-
-        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
-        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            addEntity(event.getEntity());
-        });
-        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            removeEntity(event.getEntity());
-        });
-        bus.addEventHandler(UpdateEvent.ANY, event -> update(event.tpf()));
-
-        log.finer("Physics world initialized");
     }
 
     private void initParticles() {
@@ -207,12 +215,24 @@ public final class PhysicsWorld {
     }
 
     /**
+     * Physics tick.
+     *
+     * @param tpf time per frame
+     */
+    private void update(double tpf) {
+        physicsWorld.step((float) tpf, 8, 3);
+
+        checkCollisions();
+        notifyCollisionHandlers();
+    }
+
+    /**
      * Perform collision detection for all entities that have
      * setCollidable(true) and if at least one entity is not PhysicsEntity.
      * Subsequently fire collision handlers for all entities that have
      * setCollidable(true).
      */
-    private void processCollisions() {
+    private void checkCollisions() {
         List<Entity> collidables = entities.stream()
                 .filter(this::isCollidable)
                 .collect(Collectors.toList());
@@ -223,6 +243,8 @@ public final class PhysicsWorld {
             for (int j = i + 1; j < collidables.size(); j++) {
                 Entity e2 = collidables.get(j);
 
+                // if both are physics objects, let JBox2D handle collision checks
+                // unless one is kinematic and the other is static
                 if (supportsPhysics(e1) && supportsPhysics(e2)) {
                     PhysicsComponent p1 = e1.getComponentUnsafe(PhysicsComponent.class);
                     PhysicsComponent p2 = e2.getComponentUnsafe(PhysicsComponent.class);
@@ -256,7 +278,12 @@ public final class PhysicsWorld {
                 }
             }
         }
+    }
 
+    /**
+     * Fires collisions handlers' callbacks based on currently registered collisions.
+     */
+    private void notifyCollisionHandlers() {
         List<CollisionPair> toRemove = new ArrayList<>();
         collisions.forEach((pair, cachedTick) -> {
             if (!pair.getA().isActive() || !pair.getB().isActive()
@@ -331,12 +358,6 @@ public final class PhysicsWorld {
         if (entity.hasComponent(PhysicsComponent.class)) {
             destroyBody(entity);
         }
-    }
-
-    private void update(double tpf) {
-        physicsWorld.step((float) tpf, 8, 3);
-
-        processCollisions();
     }
 
     /**
