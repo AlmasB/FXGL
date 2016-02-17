@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.ents.*;
 import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -78,7 +79,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
 
     /**
-     * Root for entities, it is affected by viewport movement.
+     * Root for entity views, it is affected by viewport movement.
      */
     private Group gameRoot = new Group();
 
@@ -96,20 +97,28 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
-     * May also contain entities as Entity is a subclass of Parent.
      * uiRoot isn't affected by viewport movement.
      */
     private Group uiRoot = new Group();
 
-    private EventBus eventBus;
-
     @Inject
-    private GameScene(ReadOnlyGameSettings settings) {
+    private GameScene() {
         getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
-        initParticlesCanvas(settings.getWidth(), settings.getHeight());
+        initEventHandlers();
 
-        eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
+        double width = FXGL.getSettings().getWidth();
+        double height = FXGL.getSettings().getHeight();
+
+        initParticlesCanvas(width, height);
+        initViewport(width, height);
+
+        log.finer("Game scene initialized");
+    }
+
+    private void initEventHandlers() {
+        EventBus eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
+
         eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
             Entity entity = event.getEntity();
             onEntityAdded(entity);
@@ -135,18 +144,39 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         addEventHandler(KeyEvent.ANY, event -> {
             eventBus.fireEvent(new FXGLInputEvent(event));
         });
-
-        viewport = new Viewport(settings.getWidth(), settings.getHeight());
-        gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
-        gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
-
-        log.finer("Game scene initialized");
     }
 
     private void initParticlesCanvas(double w, double h) {
         particlesCanvas.setWidth(w);
         particlesCanvas.setHeight(h);
         particlesCanvas.setMouseTransparent(true);
+    }
+
+    private Viewport viewport;
+
+    /**
+     * @return viewport
+     */
+    public Viewport getViewport() {
+        return viewport;
+    }
+
+    private void initViewport(double w, double h) {
+        viewport = new Viewport(w, h);
+        gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
+        gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
+    }
+
+    /**
+     * Converts a point on screen to a point within game scene.
+     *
+     * @param screenPoint point in UI coordinates
+     * @return point in game coordinates
+     */
+    public Point2D screenToGame(Point2D screenPoint) {
+        return screenPoint
+                .multiply(1.0 / GameApplication.getService(ServiceType.DISPLAY).getScaleRatio())
+                .add(viewport.getOrigin());
     }
 
     /**
@@ -211,27 +241,6 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     public void removeGameView(EntityView view) {
         getRenderGroup(view.getRenderLayer()).getChildren().remove(view);
         view.removeFromScene();
-    }
-
-    private Viewport viewport;
-
-    /**
-     * @return viewport
-     */
-    public Viewport getViewport() {
-        return viewport;
-    }
-
-    /**
-     * Converts a point on screen to a point within game scene.
-     *
-     * @param screenPoint point in UI coordinates
-     * @return point in game coordinates
-     */
-    public Point2D screenToGame(Point2D screenPoint) {
-        return screenPoint
-                .multiply(1.0 / GameApplication.getService(ServiceType.DISPLAY).getScaleRatio())
-                .add(viewport.getOrigin());
     }
 
     /**
