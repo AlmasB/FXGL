@@ -179,6 +179,7 @@ public abstract class FXGLApplication extends Application {
 
         FXGL.setProperty("settings.width", settings.getWidth());
         FXGL.setProperty("settings.height", settings.getHeight());
+        FXGL.setSettings(settings);
 
         Level logLevel = Level.ALL;
         switch (settings.getApplicationMode()) {

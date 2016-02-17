@@ -27,6 +27,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
 /**
@@ -47,6 +48,7 @@ public class ReadOnlyGameSettings {
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
     protected KeyCode menuKey = KeyCode.ESCAPE;
+    protected Credits credits = new Credits();
 
     /**
      * Constructs game settings with default parameters
@@ -72,6 +74,7 @@ public class ReadOnlyGameSettings {
         this.appMode = copy.appMode;
         this.menuStyle = copy.menuStyle;
         this.menuKey = copy.menuKey;
+        this.credits = new Credits(copy.credits);
     }
 
     public final String getTitle() {
@@ -116,5 +119,9 @@ public class ReadOnlyGameSettings {
 
     public final KeyCode getMenuKey() {
         return menuKey;
+    }
+
+    public final Credits getCredits() {
+        return credits;
     }
 }

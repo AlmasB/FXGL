@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
@@ -79,20 +80,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected final GameApplication app;
 
-    private List<String> credits = new ArrayList<>();
-
     public FXGLMenu(GameApplication app) {
         this.app = app;
-
-        populateCredits();
-    }
-
-    private void populateCredits() {
-        addCredit("Powered by FXGL " + Version.getAsString());
-        addCredit("Graphics Framework: JavaFX " + Version.getJavaFXAsString());
-        addCredit("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
-        addCredit("FXGL Author: Almas Baimagambetov (AlmasB)");
-        addCredit("https://github.com/AlmasB/FXGL");
     }
 
     /**
@@ -248,19 +237,13 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Add a single line of credit text.
-     *
-     * @param text the text to append to credits list
-     */
-    protected final void addCredit(String text) {
-        credits.add(text);
-    }
-
-    /**
      * @return menu content containing a list of credits
      */
     protected final MenuContent createContentCredits() {
-        return new MenuContent(credits.stream()
+        return new MenuContent(FXGL.getSettings()
+                .getCredits()
+                .getList()
+                .stream()
                 .map(UIFactory::newText)
                 .collect(Collectors.toList())
                 .toArray(new Text[0]));

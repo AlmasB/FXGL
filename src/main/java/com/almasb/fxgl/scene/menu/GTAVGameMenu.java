@@ -50,8 +50,6 @@ public final class GTAVGameMenu extends FXGLMenu {
     public GTAVGameMenu(GameApplication app) {
         super(app);
 
-        addCredit("Just a test: Foo Bar");
-
         // placeholders
         contentBox.getChildren().addAll(new Pane(), new Pane());
         contentBox.setAlignment(Pos.TOP_CENTER);
@@ -111,10 +109,10 @@ public final class GTAVGameMenu extends FXGLMenu {
     private VBox makeMainMenu() {
         Button btnResume = createActionButton("RESUME", this::fireResume);
         Button btnSave = createActionButton("SAVE GAME", this::fireSave);
-        Button btnLoad = createContentButton("LOAD GAME", createContentLoad());
+//        Button btnLoad = createContentButton("LOAD GAME", createContentLoad());
         Button btnExit = createActionButton("EXIT", this::fireExit);
 
-        return new VBox(10, btnResume, btnSave, btnLoad, btnExit);
+        return new VBox(10, btnResume, btnSave, btnExit);
     }
 
     private VBox makeOptionsMenu() {

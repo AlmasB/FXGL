@@ -27,6 +27,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
 /**
@@ -156,6 +157,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setMenuKey(KeyCode menuKey) {
         this.menuKey = menuKey;
+    }
+
+    public void setCredits(Credits credits) {
+        this.credits = credits;
     }
 
     /**
