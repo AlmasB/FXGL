@@ -174,8 +174,13 @@ public final class PhysicsWorld {
 
                     if (!collisions.containsKey(pair)) {
                         collisions.put(pair, tick.get());
+
+                        HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
+                        HitBox boxB = (HitBox)contact.getFixtureB().getUserData();
+
                         pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(),
-                                (HitBox)contact.getFixtureA().getUserData(), (HitBox)contact.getFixtureB().getUserData());
+                                e1 == pair.getA() ? boxA : boxB,
+                                e2 == pair.getB() ? boxB : boxA);
                     }
                 }
             }
