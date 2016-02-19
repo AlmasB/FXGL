@@ -48,11 +48,10 @@ public class PhysicsComponent extends AbstractComponent {
     BodyDef bodyDef = new BodyDef();
 
     Body body;
-    Fixture fixture;
 
     private boolean raycastIgnored = false;
 
-    Runnable onInitPhysics;
+    private Runnable onInitPhysics;
 
     void onInitPhysics() {
         if (onInitPhysics != null) {

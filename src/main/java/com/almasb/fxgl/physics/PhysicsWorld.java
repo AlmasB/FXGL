@@ -381,7 +381,6 @@ public final class PhysicsWorld {
      * @param e physics entity
      */
     private void createBody(Entity e) {
-        PositionComponent position = Entities.getPosition(e);
         BoundingBoxComponent bbox = Entities.getBBox(e);
         PhysicsComponent physics = Entities.getPhysics(e);
 
@@ -427,18 +426,20 @@ public final class PhysicsWorld {
 
             FixtureDef fd = physics.fixtureDef;
 
-            Shape shape;
+            Shape shape = null;
 
             if (box.getShape() == BoundingShape.BOX) {
                 PolygonShape rectShape = new PolygonShape();
                 rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
                         new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
                 shape = rectShape;
-            } else {    // if (box.getShape() == BoundingShape.CIRCLE)
+            } else if (box.getShape() == BoundingShape.CIRCLE) {
                 CircleShape circleShape = new CircleShape();
                 circleShape.setRadius(toMeters(w / 2));
                 circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY()));
                 shape = circleShape;
+            } else {
+                log.warning("Unknown hit box shape: " + box.getShape());
             }
 
             // we use definitions from user, but override shape
@@ -466,10 +467,12 @@ public final class PhysicsWorld {
                 PolygonShape rectShape = new PolygonShape();
                 rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
                 shape = rectShape;
-            } else {    // if (box.getShape() == BoundingShape.CIRCLE)
+            } else if (bbox.hitBoxesProperty().get(0).getShape() == BoundingShape.CIRCLE) {
                 CircleShape circleShape = new CircleShape();
                 circleShape.setRadius(toMeters(width / 2));
                 shape = circleShape;
+            } else {
+                log.warning("Unknown hit box shape: " + bbox.hitBoxesProperty().get(0).getShape());
             }
         }
 
