@@ -46,26 +46,62 @@ import javafx.scene.Node;
  */
 public class Entities {
 
+    /**
+     * Convenient way to obtain position component.
+     *
+     * @param e entity
+     * @return position component
+     */
     public static PositionComponent getPosition(Entity e) {
         return e.getComponentUnsafe(PositionComponent.class);
     }
 
+    /**
+     * Convenient way to obtain rotation component.
+     *
+     * @param e entity
+     * @return rotation component
+     */
     public static RotationComponent getRotation(Entity e) {
         return e.getComponentUnsafe(RotationComponent.class);
     }
 
+    /**
+     * Convenient way to obtain bbox component.
+     *
+     * @param e entity
+     * @return bbox component
+     */
     public static BoundingBoxComponent getBBox(Entity e) {
         return e.getComponentUnsafe(BoundingBoxComponent.class);
     }
 
+    /**
+     * Convenient way to obtain physics component.
+     *
+     * @param e entity
+     * @return physics component
+     */
     public static PhysicsComponent getPhysics(Entity e) {
         return e.getComponentUnsafe(PhysicsComponent.class);
     }
 
+    /**
+     * Convenient way to obtain main view component.
+     *
+     * @param e entity
+     * @return main view component
+     */
     public static MainViewComponent getMainView(Entity e) {
         return e.getComponentUnsafe(MainViewComponent.class);
     }
 
+    /**
+     * Convenient way to obtain type component.
+     *
+     * @param e entity
+     * @return type component
+     */
     public static TypeComponent getType(Entity e) {
         return e.getComponentUnsafe(TypeComponent.class);
     }
@@ -96,10 +132,18 @@ public class Entities {
         return bounds;
     }
 
+    /**
+     * Creates new entity builder.
+     *
+     * @return entity builder
+     */
     public static GameEntityBuilder builder() {
         return new GameEntityBuilder();
     }
 
+    /**
+     * Provides fluent API for building entities.
+     */
     public static class GameEntityBuilder {
         private GameEntity entity = new GameEntity();
 
