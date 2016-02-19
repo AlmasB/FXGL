@@ -85,7 +85,7 @@ public class Fixture {
     private float restitution = 0;
     private boolean isSensor = false;
 
-    public FixtureProxy[] m_proxies = null;
+    public FixtureProxy[] m_proxies;
     private int proxyCount = 0;
 
     Fixture(Body body, FixtureDef def) {
@@ -102,13 +102,12 @@ public class Fixture {
 
         // Reserve proxy space
         int childCount = shape.getChildCount();
-        if (m_proxies == null) {
-            m_proxies = new FixtureProxy[childCount];
-            for (int i = 0; i < childCount; i++) {
-                m_proxies[i] = new FixtureProxy();
-                m_proxies[i].fixture = null;
-                m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
-            }
+
+        m_proxies = new FixtureProxy[childCount];
+        for (int i = 0; i < childCount; i++) {
+            m_proxies[i] = new FixtureProxy();
+            m_proxies[i].fixture = null;
+            m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
         }
 
         if (m_proxies.length < childCount) {

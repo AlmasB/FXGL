@@ -274,8 +274,8 @@ public class Island {
             if (b.getType() == BodyType.DYNAMIC) {
                 // Integrate velocities.
                 // v += h * (b.m_gravityScale * gravity + b.m_invMass * b.m_force);
-                v.x += h * (b.m_gravityScale * gravity.x + b.m_invMass * b.m_force.x);
-                v.y += h * (b.m_gravityScale * gravity.y + b.m_invMass * b.m_force.y);
+                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.m_force.x);
+                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.m_force.y);
                 w += h * b.m_invI * b.m_torque;
 
                 // Apply damping.
@@ -286,9 +286,9 @@ public class Island {
                 // v2 = exp(-c * dt) * v1
                 // Pade approximation:
                 // v2 = v1 * 1 / (1 + c * dt)
-                v.x *= 1.0f / (1.0f + h * b.m_linearDamping);
-                v.y *= 1.0f / (1.0f + h * b.m_linearDamping);
-                w *= 1.0f / (1.0f + h * b.m_angularDamping);
+                v.x *= 1.0f / (1.0f + h * b.getLinearDamping());
+                v.y *= 1.0f / (1.0f + h * b.getLinearDamping());
+                w *= 1.0f / (1.0f + h * b.getAngularDamping());
             }
 
             m_positions[i].c.x = c.x;
@@ -426,11 +426,11 @@ public class Island {
                 if ((b.m_flags & Body.e_autoSleepFlag) == 0
                         || b.m_angularVelocity * b.m_angularVelocity > angTolSqr
                         || Vec2.dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
-                    b.m_sleepTime = 0.0f;
+                    b.setSleepTime(0);
                     minSleepTime = 0.0f;
                 } else {
-                    b.m_sleepTime += h;
-                    minSleepTime = MathUtils.min(minSleepTime, b.m_sleepTime);
+                    b.setSleepTime(b.getSleepTime() + h);
+                    minSleepTime = MathUtils.min(minSleepTime, b.getSleepTime());
                 }
             }
 

@@ -59,7 +59,6 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
 import org.jbox2d.dynamics.joints.JointEdge;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -76,8 +75,13 @@ public class Body {
     public static final int e_activeFlag = 0x0020;
     public static final int e_toiFlag = 0x0040;
 
-    private World world;
+    private final World world;
     private BodyType type;
+
+    private List<Fixture> fixtures = new ArrayList<>();
+
+    public JointEdge m_jointList = null;
+    public ContactEdge m_contactList = null;
 
     public int m_flags = 0;
 
@@ -87,6 +91,7 @@ public class Body {
      * The body origin transform.
      */
     public final Transform m_xf = new Transform();
+
     /**
      * The previous transform for particle simulation
      */
@@ -103,31 +108,27 @@ public class Body {
     public final Vec2 m_force = new Vec2();
     public float m_torque = 0;
 
-    public Body m_prev;
-    public Body m_next;
-
-    private List<Fixture> fixtures = new ArrayList<>();
-
-    /**
-     * @return reference to the underlying list of fixtures attached to this body
-     */
-    public List<Fixture> getFixtures() {
-        return fixtures;
-    }
-
-    public JointEdge m_jointList;
-    public ContactEdge m_contactList;
+    public Body m_prev = null;
+    public Body m_next = null;
 
     public float m_mass, m_invMass;
 
     // Rotational inertia about the center of mass.
-    public float m_I, m_invI;
+    public float m_I = 0, m_invI = 0;
 
-    public float m_linearDamping;
-    public float m_angularDamping;
-    public float m_gravityScale;
+    private float linearDamping;
+    private float angularDamping;
+    private float gravityScale;
 
-    public float m_sleepTime;
+    private float sleepTime = 0;
+
+    public float getSleepTime() {
+        return sleepTime;
+    }
+
+    void setSleepTime(float sleepTime) {
+        this.sleepTime = sleepTime;
+    }
 
     private Object userData;
 
@@ -137,6 +138,9 @@ public class Body {
         assert (bd.getGravityScale() >= 0.0f);
         assert (bd.getAngularDamping() >= 0.0f);
         assert (bd.getLinearDamping() >= 0.0f);
+
+        this.world = world;
+        userData = bd.getUserData();
 
         if (bd.isBullet()) {
             m_flags |= e_bulletFlag;
@@ -154,8 +158,6 @@ public class Body {
             m_flags |= e_activeFlag;
         }
 
-        this.world = world;
-
         m_xf.p.set(bd.getPosition());
         m_xf.q.set(bd.getAngle());
 
@@ -166,22 +168,14 @@ public class Body {
         m_sweep.a = bd.getAngle();
         m_sweep.alpha0 = 0.0f;
 
-        m_jointList = null;
-        m_contactList = null;
-        m_prev = null;
-        m_next = null;
-
         m_linearVelocity.set(bd.getLinearVelocity());
         m_angularVelocity = bd.getAngularVelocity();
 
-        m_linearDamping = bd.getLinearDamping();
-        m_angularDamping = bd.getAngularDamping();
-        m_gravityScale = bd.getGravityScale();
+        linearDamping = bd.getLinearDamping();
+        angularDamping = bd.getAngularDamping();
+        gravityScale = bd.getGravityScale();
 
         m_force.setZero();
-        m_torque = 0.0f;
-
-        m_sleepTime = 0.0f;
 
         type = bd.getType();
 
@@ -192,11 +186,13 @@ public class Body {
             m_mass = 0f;
             m_invMass = 0f;
         }
+    }
 
-        m_I = 0.0f;
-        m_invI = 0.0f;
-
-        userData = bd.getUserData();
+    /**
+     * @return reference to the underlying list of fixtures attached to this body
+     */
+    public List<Fixture> getFixtures() {
+        return fixtures;
     }
 
     /**
@@ -432,7 +428,7 @@ public class Body {
      * @return the gravity scale of the body
      */
     public float getGravityScale() {
-        return m_gravityScale;
+        return gravityScale;
     }
 
     /**
@@ -441,7 +437,7 @@ public class Body {
      * @param gravityScale gravity scale
      */
     public void setGravityScale(float gravityScale) {
-        this.m_gravityScale = gravityScale;
+        this.gravityScale = gravityScale;
     }
 
     /**
@@ -840,28 +836,28 @@ public class Body {
      * Get the linear damping of the body.
      **/
     public final float getLinearDamping() {
-        return m_linearDamping;
+        return linearDamping;
     }
 
     /**
      * Set the linear damping of the body.
      **/
     public final void setLinearDamping(float linearDamping) {
-        m_linearDamping = linearDamping;
+        this.linearDamping = linearDamping;
     }
 
     /**
      * Get the angular damping of the body.
      **/
     public final float getAngularDamping() {
-        return m_angularDamping;
+        return angularDamping;
     }
 
     /**
      * Set the angular damping of the body.
      **/
     public final void setAngularDamping(float angularDamping) {
-        m_angularDamping = angularDamping;
+        this.angularDamping = angularDamping;
     }
 
     /**
@@ -971,11 +967,11 @@ public class Body {
         if (flag) {
             if ((m_flags & e_awakeFlag) == 0) {
                 m_flags |= e_awakeFlag;
-                m_sleepTime = 0.0f;
+                sleepTime = 0.0f;
             }
         } else {
             m_flags &= ~e_awakeFlag;
-            m_sleepTime = 0.0f;
+            sleepTime = 0.0f;
             m_linearVelocity.setZero();
             m_angularVelocity = 0.0f;
             m_force.setZero();
