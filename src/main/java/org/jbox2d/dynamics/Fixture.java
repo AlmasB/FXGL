@@ -73,7 +73,7 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
  */
 public class Fixture {
 
-    private Body body = null;
+    private final Body body;
     private Shape shape = null;
 
     private final Filter filter = new Filter();
@@ -86,9 +86,46 @@ public class Fixture {
     private boolean isSensor = false;
 
     public FixtureProxy[] m_proxies = null;
-    public int m_proxyCount = 0;
+    private int proxyCount = 0;
 
-    private Fixture next = null;
+    Fixture(Body body, FixtureDef def) {
+        this.body = body;
+
+        userData = def.getUserData();
+        friction = def.getFriction();
+        restitution = def.getRestitution();
+        density = def.getDensity();
+        isSensor = def.isSensor();
+
+        filter.set(def.getFilter());
+        shape = def.getShape().clone();
+
+        // Reserve proxy space
+        int childCount = shape.getChildCount();
+        if (m_proxies == null) {
+            m_proxies = new FixtureProxy[childCount];
+            for (int i = 0; i < childCount; i++) {
+                m_proxies[i] = new FixtureProxy();
+                m_proxies[i].fixture = null;
+                m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
+            }
+        }
+
+        if (m_proxies.length < childCount) {
+            FixtureProxy[] old = m_proxies;
+            int newLen = MathUtils.max(old.length * 2, childCount);
+            m_proxies = new FixtureProxy[newLen];
+            System.arraycopy(old, 0, m_proxies, 0, old.length);
+            for (int i = 0; i < newLen; i++) {
+                if (i >= old.length) {
+                    m_proxies[i] = new FixtureProxy();
+                }
+                m_proxies[i].fixture = null;
+                m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
+            }
+        }
+        proxyCount = 0;
+    }
 
     /**
      * Get the type of the child shape. You can use this to down cast to the concrete shape.
@@ -150,15 +187,19 @@ public class Fixture {
         return filter;
     }
 
+    public int getProxyCount() {
+        return proxyCount;
+    }
+
+    public FixtureProxy[] getProxies() {
+        return m_proxies;
+    }
+
     /**
      * Call this if you want to establish collision that was previously disabled by
      * ContactFilter::ShouldCollide.
      */
     public void refilter() {
-        if (body == null) {
-            return;
-        }
-
         // Flag associated contacts for filtering.
         ContactEdge edge = body.getContactList();
         while (edge != null) {
@@ -179,35 +220,18 @@ public class Fixture {
 
         // Touch each proxy so that new pairs may be created
         BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-        for (int i = 0; i < m_proxyCount; ++i) {
+        for (int i = 0; i < proxyCount; ++i) {
             broadPhase.touchProxy(m_proxies[i].proxyId);
         }
     }
 
     /**
-     * Get the parent body of this fixture. This is NULL if the fixture is not attached.
+     * Get the parent body of this fixture.
      *
      * @return the parent body
      */
     public Body getBody() {
         return body;
-    }
-
-    void setBody(Body body) {
-        this.body = body;
-    }
-
-    /**
-     * Get the next fixture in the parent body's fixture list.
-     *
-     * @return the next shape
-     */
-    public Fixture getNext() {
-        return next;
-    }
-
-    void setNext(Fixture next) {
-        this.next = next;
     }
 
     public void setDensity(float density) {
@@ -246,7 +270,7 @@ public class Fixture {
      *
      * @param p a point in world coordinates
      */
-    public boolean testPoint(final Vec2 p) {
+    public boolean containsPoint(final Vec2 p) {
         return shape.testPoint(body.m_xf, p);
     }
 
@@ -308,7 +332,7 @@ public class Fixture {
      * @return AABB
      */
     public AABB getAABB(int childIndex) {
-        assert (childIndex >= 0 && childIndex < m_proxyCount);
+        assert (childIndex >= 0 && childIndex < proxyCount);
         return m_proxies[childIndex].aabb;
     }
 
@@ -322,61 +346,13 @@ public class Fixture {
         return shape.computeDistanceToOut(body.getTransform(), p, childIndex, normalOut);
     }
 
-    // We need separation create/destroy functions from the constructor/destructor because
-    // the destructor cannot access the allocator (no destructor arguments allowed by C++).
-
-    void create(Body body, FixtureDef def) {
-        userData = def.getUserData();
-        friction = def.getFriction();
-        restitution = def.getRestitution();
-
-        this.body = body;
-        next = null;
-
-        filter.set(def.getFilter());
-
-        isSensor = def.isSensor();
-
-        shape = def.getShape().clone();
-
-        // Reserve proxy space
-        int childCount = shape.getChildCount();
-        if (m_proxies == null) {
-            m_proxies = new FixtureProxy[childCount];
-            for (int i = 0; i < childCount; i++) {
-                m_proxies[i] = new FixtureProxy();
-                m_proxies[i].fixture = null;
-                m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
-            }
-        }
-
-        if (m_proxies.length < childCount) {
-            FixtureProxy[] old = m_proxies;
-            int newLen = MathUtils.max(old.length * 2, childCount);
-            m_proxies = new FixtureProxy[newLen];
-            System.arraycopy(old, 0, m_proxies, 0, old.length);
-            for (int i = 0; i < newLen; i++) {
-                if (i >= old.length) {
-                    m_proxies[i] = new FixtureProxy();
-                }
-                m_proxies[i].fixture = null;
-                m_proxies[i].proxyId = BroadPhase.NULL_PROXY;
-            }
-        }
-        m_proxyCount = 0;
-
-        density = def.getDensity();
-    }
-
     void destroy() {
         // The proxies must be destroyed before calling this.
-        assert (m_proxyCount == 0);
+        assert (proxyCount == 0);
 
         // Free the child shape.
         shape = null;
         m_proxies = null;
-        next = null;
-        body = null;
 
         // TODO pool shapes
         // TODO pool fixtures
@@ -384,12 +360,12 @@ public class Fixture {
 
     // These support body activation/deactivation.
     public void createProxies(BroadPhase broadPhase, final Transform xf) {
-        assert (m_proxyCount == 0);
+        assert (proxyCount == 0);
 
         // Create proxies in the broad-phase.
-        m_proxyCount = shape.getChildCount();
+        proxyCount = shape.getChildCount();
 
-        for (int i = 0; i < m_proxyCount; ++i) {
+        for (int i = 0; i < proxyCount; ++i) {
             FixtureProxy proxy = m_proxies[i];
             shape.computeAABB(proxy.aabb, xf, i);
             proxy.proxyId = broadPhase.createProxy(proxy.aabb, proxy);
@@ -399,19 +375,17 @@ public class Fixture {
     }
 
     /**
-     * Internal method
-     *
      * @param broadPhase broad phase
      */
     void destroyProxies(BroadPhase broadPhase) {
         // Destroy proxies in the broad-phase.
-        for (int i = 0; i < m_proxyCount; ++i) {
+        for (int i = 0; i < proxyCount; ++i) {
             FixtureProxy proxy = m_proxies[i];
             broadPhase.destroyProxy(proxy.proxyId);
             proxy.proxyId = BroadPhase.NULL_PROXY;
         }
 
-        m_proxyCount = 0;
+        proxyCount = 0;
     }
 
     private final AABB pool1 = new AABB();
@@ -419,19 +393,17 @@ public class Fixture {
     private final Vec2 displacement = new Vec2();
 
     /**
-     * Internal method
-     *
      * @param broadPhase broad phase
      * @param transform1 xf1
      * @param transform2 xf2
      */
     void synchronize(BroadPhase broadPhase, final Transform transform1,
                                final Transform transform2) {
-        if (m_proxyCount == 0) {
+        if (proxyCount == 0) {
             return;
         }
 
-        for (int i = 0; i < m_proxyCount; ++i) {
+        for (int i = 0; i < proxyCount; ++i) {
             FixtureProxy proxy = m_proxies[i];
 
             // Compute an AABB that covers the swept shape (may miss some rotation effect).

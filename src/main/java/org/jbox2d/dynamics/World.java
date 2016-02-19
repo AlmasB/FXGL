@@ -398,23 +398,18 @@ public class World {
         }
         body.m_contactList = null;
 
-        Fixture f = body.getFixtureList();
-        while (f != null) {
-            Fixture f0 = f;
-            f = f.getNext();
-
+        for (Fixture f : body.getFixtures()) {
             if (m_destructionListener != null) {
-                m_destructionListener.onDestroy(f0);
+                m_destructionListener.onDestroy(f);
             }
 
-            f0.destroyProxies(m_contactManager.m_broadPhase);
-            f0.destroy();
+            f.destroyProxies(m_contactManager.m_broadPhase);
+            f.destroy();
+
             // TODO djm recycle fixtures (here or in that destroy method)
-            body.m_fixtureList = f;
-            body.m_fixtureCount -= 1;
         }
-        body.m_fixtureList = null;
-        body.m_fixtureCount = 0;
+
+        body.getFixtures().clear();
 
         // Remove world body list.
         if (body.m_prev != null) {
@@ -697,7 +692,7 @@ public class World {
         if ((flags & DebugDraw.e_shapeBit) != 0) {
             for (Body b = m_bodyList; b != null; b = b.getNext()) {
                 xf.set(b.getTransform());
-                for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
+                for (Fixture f : b.getFixtures()) {
                     if (!b.isActive()) {
                         color = Color.color(0.5f, 0.5f, 0.3f);
                         drawShape(f, xf, color, wireframe);
@@ -744,8 +739,8 @@ public class World {
                     continue;
                 }
 
-                for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
-                    for (int i = 0; i < f.m_proxyCount; ++i) {
+                for (Fixture f : b.getFixtures()) {
+                    for (int i = 0; i < f.getProxyCount(); ++i) {
                         FixtureProxy proxy = f.m_proxies[i];
                         AABB aabb = m_contactManager.m_broadPhase.getFatAABB(proxy.proxyId);
                         if (aabb != null) {

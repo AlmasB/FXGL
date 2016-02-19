@@ -1,3 +1,29 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
@@ -33,18 +59,8 @@ public class Mat22 implements Serializable {
 
     public final Vec2 ex, ey;
 
-    /** Convert the matrix to printable format. */
-    @Override
-    public String toString() {
-        String s = "";
-        s += "[" + ex.x + "," + ey.x + "]\n";
-        s += "[" + ex.y + "," + ey.y + "]";
-        return s;
-    }
-
     /**
-     * Construct zero matrix. Note: this is NOT an identity matrix! djm fixed double allocation
-     * problem
+     * Construct zero matrix. Note: this is NOT an identity matrix!
      */
     public Mat22() {
         ex = new Vec2();
@@ -97,9 +113,9 @@ public class Mat22 implements Serializable {
     }
 
     /**
-     * Return a clone of this matrix. djm fixed double allocation
+     * Return a clone of this matrix.
      */
-    // @Override // annotation omitted for GWT-compatibility
+    @Override
     public final Mat22 clone() {
         return new Mat22(ex, ey);
     }
@@ -140,7 +156,7 @@ public class Mat22 implements Serializable {
     /**
      * Extract the angle from this matrix (assumed to be a rotation matrix).
      *
-     * @return
+     * @return angle
      */
     public final float getAngle() {
         return MathUtils.atan2(ex.y, ex.x);
@@ -577,5 +593,11 @@ public class Mat22 implements Serializable {
             if (other.ey != null) return false;
         } else if (!ey.equals(other.ey)) return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + ex.x + "," + ey.x + "]\n"
+                +"[" + ex.y + "," + ey.y + "]";
     }
 }

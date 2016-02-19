@@ -62,9 +62,9 @@ public class BreakablePhysicsComponent extends AbstractComponent {
 
         Vec2 worldCenter = body.getWorldCenter();
 
-        for (Fixture f = body.getFixtureList(); f != null; f = f.getNext()) {
-            fixtures.add(f);
-        }
+//        for (Fixture f = body.getFixtureList(); f != null; f = f.getNext()) {
+//            fixtures.add(f);
+//        }
 
         fixtures.forEach(f -> {
 

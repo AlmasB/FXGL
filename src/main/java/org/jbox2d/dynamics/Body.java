@@ -58,6 +58,10 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 import org.jbox2d.dynamics.joints.JointEdge;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * A rigid body. These are created via World.createBody.
  *
@@ -72,9 +76,10 @@ public class Body {
     public static final int e_activeFlag = 0x0020;
     public static final int e_toiFlag = 0x0040;
 
+    private World world;
     private BodyType type;
 
-    public int m_flags;
+    public int m_flags = 0;
 
     public int m_islandIndex;
 
@@ -98,12 +103,17 @@ public class Body {
     public final Vec2 m_force = new Vec2();
     public float m_torque = 0;
 
-    private World world;
     public Body m_prev;
     public Body m_next;
 
-    public Fixture m_fixtureList;
-    public int m_fixtureCount;
+    private List<Fixture> fixtures = new ArrayList<>();
+
+    /**
+     * @return reference to the underlying list of fixtures attached to this body
+     */
+    public List<Fixture> getFixtures() {
+        return fixtures;
+    }
 
     public JointEdge m_jointList;
     public ContactEdge m_contactList;
@@ -127,8 +137,6 @@ public class Body {
         assert (bd.getGravityScale() >= 0.0f);
         assert (bd.getAngularDamping() >= 0.0f);
         assert (bd.getLinearDamping() >= 0.0f);
-
-        m_flags = 0;
 
         if (bd.isBullet()) {
             m_flags |= e_bulletFlag;
@@ -189,9 +197,6 @@ public class Body {
         m_invI = 0.0f;
 
         userData = bd.getUserData();
-
-        m_fixtureList = null;
-        m_fixtureCount = 0;
     }
 
     /**
@@ -210,19 +215,14 @@ public class Body {
             return null;
         }
 
-        Fixture fixture = new Fixture();
-        fixture.create(this, def);
+        Fixture fixture = new Fixture(this, def);
 
         if ((m_flags & e_activeFlag) == e_activeFlag) {
             BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
             fixture.createProxies(broadPhase, m_xf);
         }
 
-        fixture.setNext(m_fixtureList);
-        m_fixtureList = fixture;
-        ++m_fixtureCount;
-
-        fixture.setBody(this);
+        fixtures.add(fixture);
 
         // Adjust mass properties if needed.
         if (fixture.getDensity() > 0.0f) {
@@ -272,31 +272,10 @@ public class Body {
 
         assert (fixture.getBody() == this);
 
-        // Remove the fixture from this body's singly linked list.
-        assert (m_fixtureCount > 0);
+        assert (fixtures.size() > 0);
+        assert fixtures.contains(fixture);
 
-        Fixture node = m_fixtureList;
-        Fixture last = null; // java change
-        boolean found = false;
-        while (node != null) {
-            if (node == fixture) {
-                node = fixture.getNext();
-                found = true;
-                break;
-            }
-            last = node;
-            node = node.getNext();
-        }
-
-        // You tried to remove a shape that is not attached to this body.
-        assert (found);
-
-        // java change, remove it from the list
-        if (last == null) {
-            m_fixtureList = fixture.getNext();
-        } else {
-            last.setNext(fixture.getNext());
-        }
+        fixtures.remove(fixture);
 
         // Destroy any contacts associated with the fixture.
         ContactEdge edge = m_contactList;
@@ -321,9 +300,6 @@ public class Body {
 
         fixture.destroy();
 
-        --m_fixtureCount;
-
-        // Reset the mass data.
         resetMassData();
     }
 
@@ -353,7 +329,7 @@ public class Body {
         m_sweep.a0 = m_sweep.a;
 
         BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
+        for (Fixture f : fixtures) {
             f.synchronize(broadPhase, m_xf, m_xf);
         }
     }
@@ -700,7 +676,8 @@ public class Body {
         localCenter.setZero();
         final Vec2 temp = world.getPool().popVec2();
         final MassData massData = pmd;
-        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
+
+        for (Fixture f : fixtures) {
             if (f.getDensity() == 0.0f) {
                 continue;
             }
@@ -938,8 +915,8 @@ public class Body {
 
         // Touch the proxies so that new contacts will be created (when appropriate)
         BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
-            int proxyCount = f.m_proxyCount;
+        for (Fixture f : fixtures) {
+            int proxyCount = f.getProxyCount();
             for (int i = 0; i < proxyCount; ++i) {
                 broadPhase.touchProxy(f.m_proxies[i].proxyId);
             }
@@ -1039,7 +1016,7 @@ public class Body {
 
             // Create all proxies.
             BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-            for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
+            for (Fixture f : fixtures) {
                 f.createProxies(broadPhase, m_xf);
             }
 
@@ -1049,7 +1026,7 @@ public class Body {
 
             // Destroy all proxies.
             BroadPhase broadPhase = world.m_contactManager.m_broadPhase;
-            for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
+            for (Fixture f : fixtures) {
                 f.destroyProxies(broadPhase);
             }
 
@@ -1091,13 +1068,6 @@ public class Body {
      */
     public boolean isFixedRotation() {
         return (m_flags & e_fixedRotationFlag) == e_fixedRotationFlag;
-    }
-
-    /**
-     * Get the list of all fixtures attached to this body.
-     **/
-    public final Fixture getFixtureList() {
-        return m_fixtureList;
     }
 
     /**
@@ -1162,7 +1132,7 @@ public class Body {
         xf1.p.y = m_sweep.c0.y - xf1.q.s * m_sweep.localCenter.x - xf1.q.c * m_sweep.localCenter.y;
         // end inline
 
-        for (Fixture f = m_fixtureList; f != null; f = f.getNext()) {
+        for (Fixture f : fixtures) {
             f.synchronize(world.m_contactManager.m_broadPhase, xf1, m_xf);
         }
     }

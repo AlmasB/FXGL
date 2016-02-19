@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -41,6 +42,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
@@ -90,6 +92,8 @@ public class RealPhysicsSample extends GameApplication {
                 physics.setFixtureDef(fd);
 
                 entity.addComponent(physics);
+
+                entity.addControl(new ExpireCleanControl(Duration.seconds(3)));
 
                 getGameWorld().addEntity(entity);
             }
