@@ -70,7 +70,7 @@ public class BBoxTest extends GameApplication {
         GameEntity e2 = new GameEntity();
         e2.getPositionComponent().setValue(50, 50);
         //e2.getBoundingBoxComponent().addHitBox(new HitBox("ARM", new BoundingBox(50, 50, 40, 60)));
-        e2.getMainViewComponent().setGraphics(new Rectangle(40, 60, Color.YELLOWGREEN));
+        e2.getMainViewComponent().setView(new Rectangle(40, 60, Color.YELLOWGREEN));
 
         getGameWorld().addEntities(e1, e2);
     }

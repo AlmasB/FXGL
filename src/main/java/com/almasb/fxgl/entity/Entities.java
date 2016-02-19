@@ -77,8 +77,8 @@ public class Entities {
      * @return entity with screen bounds
      */
     public static Entity makeScreenBounds(double thickness) {
-        double w = FXGL.getDouble("settings.width");
-        double h = FXGL.getDouble("settings.height");
+        double w = FXGL.getSettings().getWidth();
+        double h = FXGL.getSettings().getHeight();
 
         Entity bounds = new Entity();
         bounds.addComponent(new PositionComponent(0, 0));
@@ -127,18 +127,23 @@ public class Entities {
             return this;
         }
 
-        public GameEntityBuilder view(EntityView view) {
+        public GameEntityBuilder viewFromNode(Node view) {
             entity.getMainViewComponent().setView(view);
             return this;
         }
 
-        public GameEntityBuilder viewFromNode(Node graphics) {
-            entity.getMainViewComponent().setGraphics(graphics);
+        public GameEntityBuilder viewFromNodeWithBBox(Node view) {
+            entity.getMainViewComponent().setView(view, true);
             return this;
         }
 
-        public GameEntityBuilder viewWithBBox(EntityView view) {
-            entity.getMainViewComponent().setView(view, true);
+        public GameEntityBuilder viewFromTexture(String textureName) {
+            entity.getMainViewComponent().setTexture(textureName);
+            return this;
+        }
+
+        public GameEntityBuilder viewFromTextureWithBBox(String textureName) {
+            entity.getMainViewComponent().setTexture(textureName, true);
             return this;
         }
 
