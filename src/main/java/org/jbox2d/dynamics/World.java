@@ -95,40 +95,38 @@ public class World {
     public int activeContacts = 0;
     public int contactPoolCount = 0;
 
-    protected int m_flags;
+    protected int m_flags = CLEAR_FORCES;
 
     protected ContactManager m_contactManager;
 
-    private Body m_bodyList;
-    private Joint m_jointList;
+    private Body m_bodyList = null;
+    private Joint m_jointList = null;
 
-    private int m_bodyCount;
-    private int m_jointCount;
+    private int bodyCount = 0;
+    private int jointCount = 0;
 
     private final Vec2 m_gravity = new Vec2();
-    private boolean m_allowSleep;
+    private boolean allowSleep = true;
 
-    // private Body m_groundBody;
-
-    private DestructionListener m_destructionListener;
-    private ParticleDestructionListener m_particleDestructionListener;
-    private DebugDraw m_debugDraw;
+    private DestructionListener destructionListener = null;
+    private ParticleDestructionListener particleDestructionListener = null;
+    private DebugDraw m_debugDraw = null;
 
     private final IWorldPool pool;
 
     /**
      * This is used to compute the time step ratio to support a variable time step.
      */
-    private float m_inv_dt0;
+    private float dtInverse = 0;
 
     // these are for debugging the solver
-    private boolean m_warmStarting;
-    private boolean m_continuousPhysics;
-    private boolean m_subStepping;
+    private boolean warmStarting = true;
+    private boolean continuousPhysics = true;
+    private boolean subStepping = false;
 
-    private boolean m_stepComplete;
+    private boolean stepComplete = true;
 
-    private Profile m_profile;
+    private Profile profile = new Profile();
 
     private final ParticleSystem particleSystem;
 
@@ -163,29 +161,10 @@ public class World {
 
     public World(Vec2 gravity, IWorldPool pool, BroadPhase broadPhase) {
         this.pool = pool;
-        m_destructionListener = null;
-        m_debugDraw = null;
 
-        m_bodyList = null;
-        m_jointList = null;
-
-        m_bodyCount = 0;
-        m_jointCount = 0;
-
-        m_warmStarting = true;
-        m_continuousPhysics = true;
-        m_subStepping = false;
-        m_stepComplete = true;
-
-        m_allowSleep = true;
         m_gravity.set(gravity);
 
-        m_flags = CLEAR_FORCES;
-
-        m_inv_dt0 = 0f;
-
         m_contactManager = new ContactManager(this, broadPhase);
-        m_profile = new Profile();
 
         particleSystem = new ParticleSystem(this);
 
@@ -193,12 +172,12 @@ public class World {
     }
 
     public void setAllowSleep(boolean flag) {
-        if (flag == m_allowSleep) {
+        if (flag == allowSleep) {
             return;
         }
 
-        m_allowSleep = flag;
-        if (!m_allowSleep) {
+        allowSleep = flag;
+        if (!allowSleep) {
             for (Body b = m_bodyList; b != null; b = b.m_next) {
                 b.setAwake(true);
             }
@@ -206,15 +185,15 @@ public class World {
     }
 
     public void setSubStepping(boolean subStepping) {
-        this.m_subStepping = subStepping;
+        this.subStepping = subStepping;
     }
 
     public boolean isSubStepping() {
-        return m_subStepping;
+        return subStepping;
     }
 
     public boolean isAllowSleep() {
-        return m_allowSleep;
+        return allowSleep;
     }
 
     private void addType(IDynamicStack<Contact> creator, ShapeType type1, ShapeType type2) {
@@ -242,15 +221,15 @@ public class World {
     }
 
     public DestructionListener getDestructionListener() {
-        return m_destructionListener;
+        return destructionListener;
     }
 
     public ParticleDestructionListener getParticleDestructionListener() {
-        return m_particleDestructionListener;
+        return particleDestructionListener;
     }
 
     public void setParticleDestructionListener(ParticleDestructionListener listener) {
-        m_particleDestructionListener = listener;
+        particleDestructionListener = listener;
     }
 
     public Contact popContact(Fixture fixtureA, int indexA, Fixture fixtureB, int indexB) {
@@ -299,7 +278,7 @@ public class World {
      * @param listener destruction listener
      */
     public void setDestructionListener(DestructionListener listener) {
-        m_destructionListener = listener;
+        destructionListener = listener;
     }
 
     /**
@@ -354,7 +333,7 @@ public class World {
             m_bodyList.m_prev = b;
         }
         m_bodyList = b;
-        ++m_bodyCount;
+        ++bodyCount;
 
         return b;
     }
@@ -367,7 +346,7 @@ public class World {
      * @param body body to destroy
      */
     public void destroyBody(Body body) {
-        assert (m_bodyCount > 0);
+        assert (bodyCount > 0);
         assert (!isLocked());
 
         if (isLocked()) {
@@ -379,8 +358,8 @@ public class World {
         while (je != null) {
             JointEdge je0 = je;
             je = je.next;
-            if (m_destructionListener != null) {
-                m_destructionListener.onDestroy(je0.joint);
+            if (destructionListener != null) {
+                destructionListener.onDestroy(je0.joint);
             }
 
             destroyJoint(je0.joint);
@@ -399,8 +378,8 @@ public class World {
         body.m_contactList = null;
 
         for (Fixture f : body.getFixtures()) {
-            if (m_destructionListener != null) {
-                m_destructionListener.onDestroy(f);
+            if (destructionListener != null) {
+                destructionListener.onDestroy(f);
             }
 
             f.destroyProxies(m_contactManager.m_broadPhase);
@@ -424,13 +403,14 @@ public class World {
             m_bodyList = body.m_next;
         }
 
-        --m_bodyCount;
+        --bodyCount;
         // TODO djm recycle body
     }
 
     /**
      * Create a joint to constrain bodies together. No reference to the definition is retained. This
      * may cause the connected bodies to cease colliding. This function is locked during callbacks.
+     * Note: creating a joint doesn't wake the bodies.
      *
      * @param def joint definition
      * @return joint
@@ -451,7 +431,7 @@ public class World {
             m_jointList.m_prev = j;
         }
         m_jointList = j;
-        ++m_jointCount;
+        ++jointCount;
 
         // Connect to the bodies' doubly linked lists.
         j.m_edgeA.joint = j;
@@ -488,8 +468,6 @@ public class World {
                 edge = edge.next;
             }
         }
-
-        // Note: creating a joint doesn't wake the bodies.
 
         return j;
     }
@@ -564,8 +542,8 @@ public class World {
 
         Joint.destroy(j);
 
-        assert (m_jointCount > 0);
-        --m_jointCount;
+        assert (jointCount > 0);
+        --jointCount;
 
         // If the joint prevents collisions, then flag any contacts for filtering.
         if (!collideConnected) {
@@ -616,35 +594,35 @@ public class World {
             step.inv_dt = 0.0f;
         }
 
-        step.dtRatio = m_inv_dt0 * dt;
+        step.dtRatio = dtInverse * dt;
 
-        step.warmStarting = m_warmStarting;
-        m_profile.stepInit.record(tempTimer.getMilliseconds());
+        step.warmStarting = warmStarting;
+        profile.stepInit.record(tempTimer.getMilliseconds());
 
         // Update contacts. This is where some contacts are destroyed.
         tempTimer.reset();
         m_contactManager.collide();
-        m_profile.collide.record(tempTimer.getMilliseconds());
+        profile.collide.record(tempTimer.getMilliseconds());
 
         // Integrate velocities, solve velocity constraints, and integrate positions.
-        if (m_stepComplete && step.dt > 0.0f) {
+        if (stepComplete && step.dt > 0.0f) {
             tempTimer.reset();
             particleSystem.solve(step); // Particle Simulation
-            m_profile.solveParticleSystem.record(tempTimer.getMilliseconds());
+            profile.solveParticleSystem.record(tempTimer.getMilliseconds());
             tempTimer.reset();
             solve(step);
-            m_profile.solve.record(tempTimer.getMilliseconds());
+            profile.solve.record(tempTimer.getMilliseconds());
         }
 
         // Handle TOI events.
-        if (m_continuousPhysics && step.dt > 0.0f) {
+        if (continuousPhysics && step.dt > 0.0f) {
             tempTimer.reset();
             solveTOI(step);
-            m_profile.solveTOI.record(tempTimer.getMilliseconds());
+            profile.solveTOI.record(tempTimer.getMilliseconds());
         }
 
         if (step.dt > 0.0f) {
-            m_inv_dt0 = step.inv_dt;
+            dtInverse = step.inv_dt;
         }
 
         if ((m_flags & CLEAR_FORCES) == CLEAR_FORCES) {
@@ -654,7 +632,7 @@ public class World {
         m_flags &= ~LOCKED;
         // log.debug("ending step");
 
-        m_profile.step.record(stepTimer.getMilliseconds());
+        profile.step.record(stepTimer.getMilliseconds());
     }
 
     /**
@@ -896,11 +874,11 @@ public class World {
     }
 
     public boolean isSleepingAllowed() {
-        return m_allowSleep;
+        return allowSleep;
     }
 
     public void setSleepingAllowed(boolean sleepingAllowed) {
-        m_allowSleep = sleepingAllowed;
+        allowSleep = sleepingAllowed;
     }
 
     /**
@@ -909,11 +887,11 @@ public class World {
      * @param flag warm starting flag
      */
     public void setWarmStarting(boolean flag) {
-        m_warmStarting = flag;
+        warmStarting = flag;
     }
 
     public boolean isWarmStarting() {
-        return m_warmStarting;
+        return warmStarting;
     }
 
     /**
@@ -922,11 +900,11 @@ public class World {
      * @param flag continuous physics flag
      */
     public void setContinuousPhysics(boolean flag) {
-        m_continuousPhysics = flag;
+        continuousPhysics = flag;
     }
 
     public boolean isContinuousPhysics() {
-        return m_continuousPhysics;
+        return continuousPhysics;
     }
 
 
@@ -941,14 +919,14 @@ public class World {
      * @return the number of bodies
      */
     public int getBodyCount() {
-        return m_bodyCount;
+        return bodyCount;
     }
 
     /**
      * @return the number of joints
      */
     public int getJointCount() {
-        return m_jointCount;
+        return jointCount;
     }
 
     /**
@@ -1030,7 +1008,7 @@ public class World {
     }
 
     public Profile getProfile() {
-        return m_profile;
+        return profile;
     }
 
     private final Island island = new Island();
@@ -1038,9 +1016,9 @@ public class World {
     private final Timer broadphaseTimer = new Timer();
 
     private void solve(TimeStep step) {
-        m_profile.solveInit.startAccum();
-        m_profile.solveVelocity.startAccum();
-        m_profile.solvePosition.startAccum();
+        profile.solveInit.startAccum();
+        profile.solveVelocity.startAccum();
+        profile.solvePosition.startAccum();
 
         // update previous transforms
         for (Body b = m_bodyList; b != null; b = b.m_next) {
@@ -1048,7 +1026,7 @@ public class World {
         }
 
         // Size the island for the worst case.
-        island.init(m_bodyCount, m_contactManager.m_contactCount, m_jointCount,
+        island.init(bodyCount, m_contactManager.m_contactCount, jointCount,
                 m_contactManager.m_contactListener);
 
         // Clear all the island flags.
@@ -1063,7 +1041,7 @@ public class World {
         }
 
         // Build and simulate all awake islands.
-        int stackSize = m_bodyCount;
+        int stackSize = bodyCount;
         if (stack.length < stackSize) {
             stack = new Body[stackSize];
         }
@@ -1164,7 +1142,7 @@ public class World {
                     other.m_flags |= Body.e_islandFlag;
                 }
             }
-            island.solve(m_profile, step, m_gravity, m_allowSleep);
+            island.solve(profile, step, m_gravity, allowSleep);
 
             // Post solve cleanup.
             for (int i = 0; i < island.m_bodyCount; ++i) {
@@ -1175,9 +1153,9 @@ public class World {
                 }
             }
         }
-        m_profile.solveInit.endAccum();
-        m_profile.solveVelocity.endAccum();
-        m_profile.solvePosition.endAccum();
+        profile.solveInit.endAccum();
+        profile.solveVelocity.endAccum();
+        profile.solvePosition.endAccum();
 
         broadphaseTimer.reset();
         // Synchronize fixtures, check for out of range bodies.
@@ -1197,7 +1175,7 @@ public class World {
 
         // Look for new contacts.
         m_contactManager.findNewContacts();
-        m_profile.broadphase.record(broadphaseTimer.getMilliseconds());
+        profile.broadphase.record(broadphaseTimer.getMilliseconds());
     }
 
     private final Island toiIsland = new Island();
@@ -1213,7 +1191,7 @@ public class World {
         final Island island = toiIsland;
         island.init(2 * Settings.maxTOIContacts, Settings.maxTOIContacts, 0,
                 m_contactManager.m_contactListener);
-        if (m_stepComplete) {
+        if (stepComplete) {
             for (Body b = m_bodyList; b != null; b = b.m_next) {
                 b.m_flags &= ~Body.e_islandFlag;
                 b.m_sweep.alpha0 = 0.0f;
@@ -1328,7 +1306,7 @@ public class World {
 
             if (minContact == null || 1.0f - 10.0f * Settings.EPSILON < minAlpha) {
                 // No more TOI events. Done!
-                m_stepComplete = true;
+                stepComplete = true;
                 break;
             }
 
@@ -1481,8 +1459,8 @@ public class World {
             // Also, some contacts can be destroyed.
             m_contactManager.findNewContacts();
 
-            if (m_subStepping) {
-                m_stepComplete = false;
+            if (subStepping) {
+                stepComplete = false;
                 break;
             }
         }

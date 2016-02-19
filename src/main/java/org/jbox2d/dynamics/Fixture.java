@@ -74,7 +74,7 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
 public class Fixture {
 
     private final Body body;
-    private Shape shape = null;
+    private final Shape shape;
 
     private final Filter filter = new Filter();
 
@@ -349,8 +349,6 @@ public class Fixture {
         // The proxies must be destroyed before calling this.
         assert (proxyCount == 0);
 
-        // Free the child shape.
-        shape = null;
         m_proxies = null;
 
         // TODO pool shapes
