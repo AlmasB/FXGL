@@ -67,7 +67,7 @@ public class RenderingSample extends GameApplication {
         player.getPositionComponent().setValue(100, 100);
 
         Rectangle graphics = new Rectangle(40, 40);
-        player.getMainViewComponent().setGraphics(graphics);
+        player.getMainViewComponent().setView(graphics);
 
         getGameWorld().addEntity(player);
 
@@ -76,7 +76,7 @@ public class RenderingSample extends GameApplication {
 
         // 1. when adding a scene view also attach a render layer
         // either predefined or created dynamically like below
-        box.getMainViewComponent().setGraphics(new Rectangle(40, 40, Color.RED));
+        box.getMainViewComponent().setView(new Rectangle(40, 40, Color.RED));
         box.getMainViewComponent().setRenderLayer(new RenderLayer() {
             @Override
             public String name() {

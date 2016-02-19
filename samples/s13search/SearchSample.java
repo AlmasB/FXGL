@@ -106,7 +106,7 @@ public class SearchSample extends GameApplication {
                     }
                 });
 
-                tile.getMainViewComponent().setGraphics(graphics);
+                tile.getMainViewComponent().setView(graphics);
 
                 getGameWorld().addEntity(tile);
             }

@@ -38,7 +38,8 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to init a basic game object and attach to world.
+ * Shows how to init a basic game object and attach to world
+ * using fluent API.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -80,28 +81,6 @@ public class InitSample3 extends GameApplication {
                 .rotate(0)
                 .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
-
-
-//        // 2. create entity and add necessary components
-//        player = new Entity();
-//
-//        // give it a type
-//        player.addComponent(new TypeComponent(Type.PLAYER));
-//
-//        // set entity position to x = 100, y = 100
-//        player.addComponent(new PositionComponent(100, 100));
-//
-//        // set rotation before adding a view
-//        player.addComponent(new RotationComponent());
-//
-//        // create graphics for entity
-//        Rectangle graphics = new Rectangle(40, 40);
-//
-//        // set graphics to entity
-//        player.addComponent(new MainViewComponent(new EntityView(graphics)));
-//
-//        // 3. add entity to game world
-//        getGameWorld().addEntity(player);
     }
 
     @Override

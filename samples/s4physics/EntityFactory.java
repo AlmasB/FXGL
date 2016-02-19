@@ -47,7 +47,7 @@ public class EntityFactory {
         GameEntity bullet = new GameEntity();
         bullet.getPositionComponent().setValue(x, y);
         bullet.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(34, 34, 16, 16)));
-        bullet.getMainViewComponent().setGraphics(assetLoader.loadTexture("bullet.png"));
+        bullet.getMainViewComponent().setTexture("bullet.png");
 
         bullet.addControl(new OffscreenCleanControl());
         bullet.addControl(new ProjectileControl(direction, 10));
