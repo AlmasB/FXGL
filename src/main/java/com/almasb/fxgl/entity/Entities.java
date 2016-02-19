@@ -26,12 +26,18 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.ents.Component;
+import com.almasb.ents.Control;
 import com.almasb.ents.Entity;
+import com.almasb.ents.EntityWorld;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.component.*;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 
 /**
  * Helper class with static convenience methods.
@@ -88,5 +94,73 @@ public class Entities {
         bounds.addComponent(new PhysicsComponent());
 
         return bounds;
+    }
+
+    public static GameEntityBuilder builder() {
+        return new GameEntityBuilder();
+    }
+
+    public static class GameEntityBuilder {
+        private GameEntity entity = new GameEntity();
+
+        public GameEntityBuilder type(Enum<?> type) {
+            entity.getTypeComponent().setValue(type);
+            return this;
+        }
+
+        public GameEntityBuilder at(double x, double y) {
+            entity.getPositionComponent().setValue(x, y);
+            return this;
+        }
+
+        public GameEntityBuilder at(Point2D position) {
+            return at(position.getX(), position.getY());
+        }
+
+        public GameEntityBuilder rotate(double angle) {
+            entity.getRotationComponent().setValue(angle);
+            return this;
+        }
+
+        public GameEntityBuilder bbox(HitBox box) {
+            entity.getBoundingBoxComponent().addHitBox(box);
+            return this;
+        }
+
+        public GameEntityBuilder view(EntityView view) {
+            entity.getMainViewComponent().setView(view);
+            return this;
+        }
+
+        public GameEntityBuilder viewFromNode(Node graphics) {
+            entity.getMainViewComponent().setGraphics(graphics);
+            return this;
+        }
+
+        public GameEntityBuilder viewWithBBox(EntityView view) {
+            entity.getMainViewComponent().setView(view, true);
+            return this;
+        }
+
+        public GameEntityBuilder with(Component... components) {
+            for (Component c : components)
+                entity.addComponent(c);
+            return this;
+        }
+
+        public GameEntityBuilder with(Control... controls) {
+            for (Control c : controls)
+                entity.addControl(c);
+            return this;
+        }
+
+        public GameEntity build() {
+            return entity;
+        }
+
+        public GameEntity buildAndAttach(GameWorld world) {
+            world.addEntity(entity);
+            return entity;
+        }
     }
 }
