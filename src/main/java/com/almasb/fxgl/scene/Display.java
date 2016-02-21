@@ -89,7 +89,7 @@ public final class Display implements UserProfileSavable {
      * in FS mode will otherwise temporarily toggle FS.
      */
     private Scene fxScene;
-    private ReadOnlyObjectWrapper<FXGLScene> currentScene = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<FXGLScene> currentScene = new ReadOnlyObjectWrapper<>();
 
     private final List<FXGLScene> scenes = new ArrayList<>();
 
