@@ -110,6 +110,9 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
     }
 
     protected MenuBox createOptionsMenu() {
+        MenuItem itemGameplay = new MenuItem("GAMEPLAY");
+        itemGameplay.setMenuContent(this::createContentGameplay);
+
         MenuItem itemControls = new MenuItem("CONTROLS");
         itemControls.setMenuContent(this::createContentControls);
 
@@ -125,7 +128,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
             });
         });
 
-        return new MenuBox(200, itemControls, itemVideo, itemAudio, btnRestore);
+        return new MenuBox(200, itemGameplay, itemControls, itemVideo, itemAudio, btnRestore);
     }
 
     protected MenuBox createExtraMenu() {

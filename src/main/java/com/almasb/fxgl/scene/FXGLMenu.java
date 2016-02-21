@@ -30,8 +30,10 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.InputBinding;
 import com.almasb.fxgl.settings.SceneDimension;
+import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.almasb.fxgl.util.Version;
@@ -119,6 +121,16 @@ public abstract class FXGLMenu extends FXGLScene {
         hbox.setAlignment(Pos.CENTER);
 
         return new MenuContent(list, hbox);
+    }
+
+    protected final MenuContent createContentGameplay() {
+        Spinner<GameDifficulty> difficultySpinner =
+                new FXGLSpinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
+        difficultySpinner.increment();
+
+        app.getGameWorld().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
+
+        return new MenuContent(new HBox(25, UIFactory.newText("DIFFICULTY:"), difficultySpinner));
     }
 
     /**
