@@ -209,9 +209,10 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      * Remove given node from the UI overlay.
      *
      * @param n node to remove
+     * @return true iff the node has been removed
      */
-    public void removeUINode(Node n) {
-        uiRoot.getChildren().remove(n);
+    public boolean removeUINode(Node n) {
+        return uiRoot.getChildren().remove(n);
     }
 
     /**

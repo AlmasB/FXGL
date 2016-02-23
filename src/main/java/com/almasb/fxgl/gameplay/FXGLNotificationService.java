@@ -100,11 +100,11 @@ public final class FXGLNotificationService implements NotificationService {
 
     private boolean showing = false;
 
-    private Pane parent;
+    private GameScene gameScene;
 
     @Inject
     private FXGLNotificationService(GameScene gameScene) {
-        this.parent = gameScene.getRoot();
+        this.gameScene = gameScene;
 
         GameApplication.getService(ServiceType.EVENT_BUS).addEventHandler(AchievementEvent.ANY, event -> {
             pushNotification("You got an achievement! " + event.getAchievement().getName());
@@ -114,7 +114,9 @@ public final class FXGLNotificationService implements NotificationService {
     }
 
     private void popNotification(NotificationView notificationView) {
-        boolean removed = parent.getChildren().remove(notificationView);
+        boolean removed = gameScene.removeUINode(notificationView);
+
+        // this is called asynchronously so we have to check manually
         if (!removed) {
             return;
         }
@@ -147,7 +149,7 @@ public final class FXGLNotificationService implements NotificationService {
 
     private void showNotification(NotificationView notificationView) {
         showing = true;
-        parent.getChildren().add(notificationView);
+        gameScene.addUINode(notificationView);
         notificationView.show();
 
         GameApplication.getService(ServiceType.EVENT_BUS)
@@ -176,19 +178,19 @@ public final class FXGLNotificationService implements NotificationService {
         switch (position) {
             case LEFT:
                 x = 50;
-                y = parent.getHeight() / 2 - (UIFactory.heightOf(text, 12) + 10) / 2;
+                y = gameScene.getHeight() / 2 - (UIFactory.heightOf(text, 12) + 10) / 2;
                 break;
             case RIGHT:
-                x = parent.getWidth() - (UIFactory.widthOf(text, 12) + 20) - 50;
-                y = parent.getHeight() / 2 - (UIFactory.heightOf(text, 12) + 10) / 2;
+                x = gameScene.getWidth() - (UIFactory.widthOf(text, 12) + 20) - 50;
+                y = gameScene.getHeight() / 2 - (UIFactory.heightOf(text, 12) + 10) / 2;
                 break;
             case TOP:
-                x = parent.getWidth() / 2 - (UIFactory.widthOf(text, 12) + 20) / 2;
+                x = gameScene.getWidth() / 2 - (UIFactory.widthOf(text, 12) + 20) / 2;
                 y = 50;
                 break;
             case BOTTOM:
-                x = parent.getWidth() / 2 - (UIFactory.widthOf(text, 12) + 20) / 2;
-                y = parent.getHeight() - (UIFactory.heightOf(text, 12) + 10) - 50;
+                x = gameScene.getWidth() / 2 - (UIFactory.widthOf(text, 12) + 20) / 2;
+                y = gameScene.getHeight() - (UIFactory.heightOf(text, 12) + 10) - 50;
                 break;
         }
 
