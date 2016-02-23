@@ -29,6 +29,7 @@ import com.almasb.fxgl.asset.IOResult;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.scene.intro.FXGLIntroScene;
@@ -50,6 +51,7 @@ import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -533,10 +535,23 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         getDisplay().showBox("Create new profile or select existing", profilesBox, btnNew, btnSelect);
     }
 
+    private void bindScreenshotKey() {
+        getInput().addAction(new UserAction("Screenshot") {
+            @Override
+            protected void onActionBegin() {
+                boolean ok = getDisplay().saveScreenshot();
+
+                getNotificationService().pushNotification(ok
+                        ? "Screenshot saved" : "Screenshot failed");
+            }
+        }, KeyCode.P);
+    }
+
     private void initFXGL() {
         initAchievements();
         // we call this early to process user input bindings
         // so we can correctly display them in menus
+        bindScreenshotKey();
         initInput();
         // scan for annotated methods and register them too
         getInput().scanForUserActions(this);
