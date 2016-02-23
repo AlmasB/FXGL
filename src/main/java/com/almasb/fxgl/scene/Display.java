@@ -406,15 +406,15 @@ public final class Display implements UserProfileSavable {
         }
     }
 
-    private DialogPane newDialog;
+    private DialogPane dialog;
 
     private void initDialogBox() {
-        newDialog = new DialogPane(this);
-        newDialog.setOnShown(() -> {
+        dialog = new DialogPane(this);
+        dialog.setOnShown(() -> {
             fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
             eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
         });
-        newDialog.setOnClosed(() -> {
+        dialog.setOnClosed(() -> {
             eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_CLOSED));
             fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
         });
@@ -447,7 +447,7 @@ public final class Display implements UserProfileSavable {
      * @param message the message to show
      */
     public void showMessageBox(String message) {
-        newDialog.showMessageBox(message);
+        dialog.showMessageBox(message);
     }
 
     /**
@@ -458,7 +458,7 @@ public final class Display implements UserProfileSavable {
      * @param resultCallback the function to be called
      */
     public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
-        newDialog.showConfirmationBox(message, resultCallback);
+        dialog.showConfirmationBox(message, resultCallback);
     }
 
     /**
@@ -469,7 +469,7 @@ public final class Display implements UserProfileSavable {
      * @param resultCallback the function to be called
      */
     public void showInputBox(String message, Consumer<String> resultCallback) {
-        newDialog.showInputBox(message, resultCallback);
+        dialog.showInputBox(message, resultCallback);
     }
 
     /**
@@ -481,7 +481,7 @@ public final class Display implements UserProfileSavable {
      * @param resultCallback the function to be called
      */
     public void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback) {
-        newDialog.showInputBox(message, filter, resultCallback);
+        dialog.showInputBox(message, filter, resultCallback);
     }
 
     /**
@@ -490,7 +490,7 @@ public final class Display implements UserProfileSavable {
      * @param error the error to show
      */
     public void showErrorBox(Throwable error) {
-        newDialog.showErrorBox(error);
+        dialog.showErrorBox(error);
     }
 
     /**
@@ -500,7 +500,7 @@ public final class Display implements UserProfileSavable {
      * @param callback the function to be called when dialog is dismissed
      */
     public void showErrorBox(String errorMessage, Runnable callback) {
-        newDialog.showErrorBox(errorMessage, callback);
+        dialog.showErrorBox(errorMessage, callback);
     }
 
     /**
@@ -511,7 +511,7 @@ public final class Display implements UserProfileSavable {
      * @param buttons buttons present
      */
     public void showBox(String message, Node content, Button... buttons) {
-        newDialog.showBox(message, content, buttons);
+        dialog.showBox(message, content, buttons);
     }
 
     @Override
