@@ -224,21 +224,23 @@ class Input @Inject private constructor() : UserProfileSavable {
      * Bind given action to a mouse button with special modifier key.
      *
      * @param action the action to bind
-     * @param btn the mouse button
+     * @param button the mouse button
      *
      * @param modifier the key modifier
      *
      * @throws IllegalArgumentException if action with same name exists
      */
-    fun addAction(action: UserAction, btn: MouseButton, modifier: InputModifier) {
+    fun addAction(action: UserAction, button: MouseButton, modifier: InputModifier) {
         if (bindings.containsKey(action))
             throw IllegalArgumentException("Action with name \"$action\" already exists")
 
-        if (bindings.containsValue(MouseTrigger(btn)))
-            throw IllegalArgumentException("Button \"$btn\" is already bound")
+        val trigger = MouseTrigger(button, modifier)
 
-        bindings.put(action, MouseTrigger(btn, modifier))
-        log.finer { "Registered new binding: $action - $btn + $modifier" }
+        if (bindings.containsValue(trigger))
+            throw IllegalArgumentException("Button \"$button\" is already bound")
+
+        bindings.put(action, trigger)
+        log.finer { "Registered new binding: $action - $trigger" }
     }
 
     /**
@@ -293,7 +295,7 @@ class Input @Inject private constructor() : UserProfileSavable {
      * Rebinds an action to given mouse button.
      *
      * @param action the user action
-     * @param btn the mouse button
+     * @param button the mouse button
      * @return true if rebound, false if action not found or
      * there is another action bound to mouse button
      */
@@ -427,7 +429,7 @@ class Input @Inject private constructor() : UserProfileSavable {
      */
     fun addInputMapping(inputMapping: InputMapping) = inputMappings.put(inputMapping.actionName, inputMapping)
 
-    private fun getInputMappingByName(actionName: String) = inputMappings.get(actionName)
+    private fun getInputMappingByName(actionName: String) = inputMappings[actionName]
 
     /**
      * Given an object scans its methods for {@link OnUserAction} annotation
@@ -451,9 +453,9 @@ class Input @Inject private constructor() : UserProfileSavable {
         }
 
         map.forEach { name, mapping ->
-            val onAction = mapping.get(ActionType.ON_ACTION)
-            val onActionBegin = mapping.get(ActionType.ON_ACTION_BEGIN)
-            val onActionEnd = mapping.get(ActionType.ON_ACTION_END)
+            val onAction = mapping[ActionType.ON_ACTION]
+            val onActionBegin = mapping[ActionType.ON_ACTION_BEGIN]
+            val onActionEnd = mapping[ActionType.ON_ACTION_END]
 
             val action = object : UserAction(name) {
                 override fun onActionBegin() {
