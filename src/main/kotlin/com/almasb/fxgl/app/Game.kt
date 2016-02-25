@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,46 +24,22 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.app
+
+import com.almasb.fxgl.gameplay.GameWorld
+import com.almasb.fxgl.physics.PhysicsWorld
+import com.almasb.fxgl.scene.GameScene
+import com.google.inject.Inject
+import com.google.inject.Singleton
 
 /**
- * Valid application states.
- *
+ * Holds state of game and physics worlds and game scene.
+
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum ApplicationState {
-    /**
-     * The app starts with this state.
-     */
-    STARTUP,
+@Singleton
+data class Game @Inject constructor(val gameWorld: GameWorld,
+                                    val physicsWorld: PhysicsWorld,
+                                    val gameScene: GameScene) {
 
-    /**
-     * This state is present when intro is being shown.
-     */
-    INTRO,
-
-    /**
-     * This state is active whenever a game/level is loading.
-     */
-    LOADING,
-
-    /**
-     * This state is active when user is in main menu.
-     */
-    MAIN_MENU,
-
-    /**
-     * This state is active when user is in game menu.
-     */
-    GAME_MENU,
-
-    /**
-     * Active when game is paused but menus are not enabled.
-     */
-    PAUSED,
-
-    /**
-     * This state is active when user is playing.
-     */
-    PLAYING
 }

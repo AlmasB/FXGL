@@ -24,51 +24,31 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.input
 
-import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.physics.PhysicsWorld;
-import com.almasb.fxgl.scene.GameScene;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import kotlin.annotation.Retention
 
 /**
- * Holds state of game and physics worlds and game scene.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * Marks a method that it should be called when user triggers an action.
+ * Note: the method must be in the class extending [com.almasb.fxgl.app.GameApplication]
+ * and its signature must be `public void anyName()`.
  */
-@Singleton
-public final class Game {
-    @Inject
-    private GameWorld gameWorld;
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Repeatable
+annotation class OnUserAction(
+        /**
+         * Returns name of the action. The action must have been specified
+         * during initInput() as [InputMapping].
+         *
+         * @return action name
+         */
+        val name: String,
 
-    /**
-     * @return game world
-     */
-    public GameWorld getGameWorld() {
-        return gameWorld;
-    }
-
-    @Inject
-    private PhysicsWorld physicsWorld;
-
-    /**
-     * @return physics world
-     */
-    public PhysicsWorld getPhysicsWorld() {
-        return physicsWorld;
-    }
-
-    /**
-     * Game scene, this is where all in-game objects are shown.
-     */
-    @Inject
-    private GameScene gameScene;
-
-    /**
-     * @return game scene
-     */
-    public GameScene getGameScene() {
-        return gameScene;
-    }
-}
+        /**
+         * Returns type of the action, i.e. when the method should be called.
+         * Based on the type, the method is called when the action starts, continues or stops.
+         *
+         * @return action type
+         */
+        val type: ActionType)

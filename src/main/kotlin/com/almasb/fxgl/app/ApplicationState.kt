@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,27 +23,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.app;
+
+package com.almasb.fxgl.app
 
 /**
- * Runtime mode of the application. Primarily affects
- * how logging and exception reporting are handled.
+ * Valid application states.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum ApplicationMode {
-    /**
-     * All logging levels and full exception stacktrace.
-     */
-    DEBUG,
+enum class ApplicationState {
 
     /**
-     * Config logging level and full exception stacktrace.
+     * The app starts with this state.
      */
-    DEVELOPER,
+    STARTUP,
 
     /**
-     * Severe logging level and only exception message.
+     * This state is present when intro is being shown.
      */
-    RELEASE
+    INTRO,
+
+    /**
+     * This state is active whenever a game/level is loading.
+     */
+    LOADING,
+
+    /**
+     * This state is active when user is in main menu.
+     */
+    MAIN_MENU,
+
+    /**
+     * This state is active when user is in game menu.
+     */
+    GAME_MENU,
+
+    /**
+     * Active when game is paused but menus are not enabled.
+     */
+    PAUSED,
+
+    /**
+     * This state is active when user is playing.
+     */
+    PLAYING
 }

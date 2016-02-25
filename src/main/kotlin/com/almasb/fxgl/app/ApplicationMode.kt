@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,35 +24,28 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.almasb.fxgl.app
 
 /**
- * Marks a method that it should be called when user triggers an action.
- * Note: the method must be in the class extending {@link com.almasb.fxgl.app.GameApplication}
- * and its signature must be <code>public void anyName()</code>.
+ * Runtime mode of the application. Primarily affects
+ * how logging and exception reporting are handled.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface OnUserAction {
+enum class ApplicationMode {
 
     /**
-     * Returns name of the action. The action must have been specified
-     * during initInput() as {@link InputMapping}.
-     *
-     * @return action name
+     * All logging levels and full exception stacktrace.
      */
-    String name();
+    DEBUG,
 
     /**
-     * Returns type of the action, i.e. when the method should be called.
-     * Based on the type, the method is called when the action starts, continues or stops.
-     *
-     * @return action type
+     * Config logging level and full exception stacktrace.
      */
-    ActionType type();
+    DEVELOPER,
+
+    /**
+     * Severe logging level and only exception message.
+     */
+    RELEASE
 }
