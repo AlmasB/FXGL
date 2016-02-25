@@ -134,12 +134,11 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         });
 
         addEventHandler(MouseEvent.ANY, event -> {
-            FXGLInputEvent e = new FXGLInputEvent(event);
-            e.setGameXY(screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
+            FXGLInputEvent e = new FXGLInputEvent(event, screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
             eventBus.fireEvent(e);
         });
         addEventHandler(KeyEvent.ANY, event -> {
-            eventBus.fireEvent(new FXGLInputEvent(event));
+            eventBus.fireEvent(new FXGLInputEvent(event, Point2D.ZERO));
         });
     }
 

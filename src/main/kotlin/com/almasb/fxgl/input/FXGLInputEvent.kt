@@ -24,46 +24,53 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input;
+package com.almasb.fxgl.input
 
-import javafx.event.Event;
-import javafx.event.EventType;
-import javafx.geometry.Point2D;
-import javafx.scene.input.InputEvent;
+import javafx.event.Event
+import javafx.event.EventType
+import javafx.geometry.Point2D
+import javafx.scene.input.InputEvent
 
 /**
  * Wrapper for JavaFX input events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLInputEvent extends Event {
+class FXGLInputEvent(val fxEvent: InputEvent, val gameXY: Point2D) : Event(ANY) {
 
-    public static final EventType<FXGLInputEvent> ANY =
-            new EventType<>(Event.ANY, "FXGL_INPUT_EVENT");
-
-    private InputEvent event;
-
-    public InputEvent getEvent() {
-        return event;
-    }
-
-    private Point2D gameXY;
-
-    public Point2D getGameXY() {
-        return gameXY;
-    }
-
-    public void setGameXY(Point2D gameXY) {
-        this.gameXY = gameXY;
-    }
-
-    public FXGLInputEvent(InputEvent event) {
-        super(ANY);
-        this.event = event;
-    }
-
-    @Override
-    public String toString() {
-        return "FXGLInputEvent[type=" + getEventType().toString() + "]";
+    companion object {
+        @JvmField val ANY = EventType<FXGLInputEvent>(Event.ANY, "FXGL_INPUT_EVENT")
     }
 }
+
+//public final class FXGLInputEvent extends Event {
+//
+//    public static final EventType<FXGLInputEvent> ANY =
+//    new EventType<>(Event.ANY, "FXGL_INPUT_EVENT");
+//
+//    private InputEvent event;
+//
+//    public InputEvent getEvent() {
+//        return event;
+//    }
+//
+//    private Point2D gameXY;
+//
+//    public Point2D getGameXY() {
+//        return gameXY;
+//    }
+//
+//    public void setGameXY(Point2D gameXY) {
+//        this.gameXY = gameXY;
+//    }
+//
+//    public FXGLInputEvent(InputEvent event) {
+//        super(ANY);
+//        this.event = event;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "FXGLInputEvent[type=" + getEventType().toString() + "]";
+//    }
+//}

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,13 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input;
+package com.almasb.fxgl.input
 
 /**
  * Action type defines when an action needs to be executed.
  */
-public enum ActionType {
+enum class ActionType {
+
     /**
      * Executed once in the same tick when triggered.
      */

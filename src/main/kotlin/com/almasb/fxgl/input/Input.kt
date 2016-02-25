@@ -110,8 +110,8 @@ class Input @Inject private constructor() : UserProfileSavable {
             if (!registerInput)
                 return@addEventHandler
 
-            if (event.event is MouseEvent) {
-                val mouseEvent = event.event as MouseEvent
+            if (event.fxEvent is MouseEvent) {
+                val mouseEvent = event.fxEvent as MouseEvent
                 if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
                     buttons.put(mouseEvent.button, true)
                     handlePressed(mouseEvent)
@@ -123,7 +123,7 @@ class Input @Inject private constructor() : UserProfileSavable {
                 mouse.update(mouseEvent)
                 mouse.gameXY = event.gameXY
             } else {
-                val keyEvent = event.event as KeyEvent
+                val keyEvent = event.fxEvent as KeyEvent
                 if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
                     keys.put(keyEvent.code, true)
                     handlePressed(keyEvent)
@@ -183,8 +183,8 @@ class Input @Inject private constructor() : UserProfileSavable {
         keys.clear()
         buttons.clear()
 
-        mouse.leftPressed = false
-        mouse.rightPressed = false
+        mouse.isLeftPressed = false
+        mouse.isRightPressed = false
     }
 
     /**
@@ -473,10 +473,10 @@ class Input @Inject private constructor() : UserProfileSavable {
 
             val inputMapping: InputMapping = getInputMappingByName(name)!!
 
-            if (inputMapping.isKeyTrigger) {
-                addAction(action, inputMapping.keyTrigger, inputMapping.modifier)
+            if (inputMapping.isKeyTrigger()) {
+                addAction(action, inputMapping.getKeyTrigger(), inputMapping.modifier)
             } else {
-                addAction(action, inputMapping.buttonTrigger, inputMapping.modifier)
+                addAction(action, inputMapping.getButtonTrigger(), inputMapping.modifier)
             }
         }
     }

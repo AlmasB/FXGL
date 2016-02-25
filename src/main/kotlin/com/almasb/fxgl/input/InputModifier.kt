@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,18 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input;
+package com.almasb.fxgl.input
 
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 
 /**
  * A key modifier applied to an input event.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum InputModifier {
+enum class InputModifier {
+
     /**
      * Ctrl key
      */
@@ -55,31 +56,21 @@ public enum InputModifier {
      */
     NONE;
 
-    public boolean isTriggered(KeyEvent event) {
-        switch (this) {
-            case CTRL:
-                return event.isControlDown();
-            case SHIFT:
-                return event.isShiftDown();
-            case ALT:
-                return event.isAltDown();
-            case NONE:
-            default:
-                return !(event.isAltDown() || event.isShiftDown() || event.isControlDown());
+    fun isTriggered(event: KeyEvent): Boolean {
+        when (this) {
+            CTRL -> return event.isControlDown
+            SHIFT -> return event.isShiftDown
+            ALT -> return event.isAltDown
+            else -> return !(event.isAltDown || event.isShiftDown || event.isControlDown)
         }
     }
 
-    public boolean isTriggered(MouseEvent event) {
-        switch (this) {
-            case CTRL:
-                return event.isControlDown();
-            case SHIFT:
-                return event.isShiftDown();
-            case ALT:
-                return event.isAltDown();
-            case NONE:
-            default:
-                return !(event.isAltDown() || event.isShiftDown() || event.isControlDown());
+    fun isTriggered(event: MouseEvent): Boolean {
+        when (this) {
+            CTRL -> return event.isControlDown
+            SHIFT -> return event.isShiftDown
+            ALT -> return event.isAltDown
+            else -> return !(event.isAltDown || event.isShiftDown || event.isControlDown)
         }
     }
 }

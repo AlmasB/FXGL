@@ -26,25 +26,37 @@
 
 package com.almasb.fxgl.input
 
-import javafx.scene.input.InputEvent
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
+import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseButton
 
-class InputBinding(val action: UserAction, val trigger: Trigger) {
+/**
+ * Basic mapping of action name to its trigger.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+class InputMapping {
 
-    fun isTriggered(fxEvent: InputEvent): Boolean {
-        if (fxEvent is MouseEvent && trigger is MouseTrigger
-                && fxEvent.button == trigger.button && trigger.getModifier().isTriggered(fxEvent))
-            return true
+    internal val actionName: String
+    private val trigger: Any
+    internal val modifier: InputModifier
 
-        if (fxEvent is KeyEvent && trigger is KeyTrigger
-                && fxEvent.code == trigger.key && trigger.getModifier().isTriggered(fxEvent))
-            return true
-
-        return false
+    constructor(actionName: String, key: KeyCode) : this(actionName, key, InputModifier.NONE)
+    constructor(actionName: String, key: KeyCode, modifier: InputModifier) {
+        this.actionName = actionName
+        this.trigger = key
+        this.modifier = modifier
     }
 
-    fun getActionName() = action.name
+    constructor(actionName: String, button: MouseButton) : this(actionName, button, InputModifier.NONE)
+    constructor(actionName: String, button: MouseButton, modifier: InputModifier) {
+        this.actionName = actionName
+        this.trigger = button
+        this.modifier = modifier
+    }
 
-    fun getTriggerName() = trigger.getName()
+    fun isKeyTrigger() = trigger is KeyCode
+    fun isButtonTrigger() = trigger is MouseButton
+
+    fun getKeyTrigger() = trigger as KeyCode
+    fun getButtonTrigger() = trigger as MouseButton
 }
