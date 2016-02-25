@@ -40,6 +40,7 @@ import com.google.inject.Singleton
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.event.EventType
+import javafx.geometry.Point2D
 import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
@@ -49,10 +50,31 @@ class Input @Inject private constructor() : UserProfileSavable {
 
     private val log = FXGLLogger.getLogger("FXGL.Input")
 
+    var gameXY = Point2D.ZERO
+        private set
+
+    var screenXY = Point2D.ZERO
+        private set
+
+    fun getGameX() = gameXY.x
+    fun getGameY() = gameXY.y
+
+    fun getScreenX() = screenXY.x
+    fun getScreenY() = screenXY.y
+
     /**
-     * Holds mouse state information
+     * @param gamePosition point in game world
+     *
+     * @return vector from given point to mouse cursor point
      */
-    val mouse = Mouse()
+    fun getVectorToCursor(gamePosition: Point2D) = gameXY.subtract(gamePosition)
+
+    /**
+     * @param gamePosition point in game world
+     *
+     * @return vector from mouse cursor point to given point
+     */
+    fun getVectorFromCursor(gamePosition: Point2D) = getVectorToCursor(gamePosition).multiply(-1.0)
 
     /**
      * Action bindings.
@@ -129,8 +151,8 @@ class Input @Inject private constructor() : UserProfileSavable {
                     handleReleased(mouseEvent)
                 }
 
-                mouse.update(mouseEvent)
-                mouse.gameXY = event.gameXY
+                gameXY = event.gameXY
+                screenXY = Point2D(mouseEvent.sceneX, mouseEvent.sceneY)
             } else {
                 val keyEvent = event.fxEvent as KeyEvent
                 if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
@@ -186,14 +208,11 @@ class Input @Inject private constructor() : UserProfileSavable {
      * for a single frame.
      */
     fun clearAllInput() {
-        log.finer("Clearing active input actions")
+        log.finer { "Clearing active input actions" }
 
         currentActions.clear()
         keys.clear()
         buttons.clear()
-
-        mouse.isLeftPressed = false
-        mouse.isRightPressed = false
     }
 
     /**

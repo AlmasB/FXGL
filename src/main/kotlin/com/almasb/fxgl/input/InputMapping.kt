@@ -36,9 +36,9 @@ import javafx.scene.input.MouseButton
  */
 class InputMapping {
 
-    internal val actionName: String
+    val actionName: String
     private val trigger: Any
-    internal val modifier: InputModifier
+    val modifier: InputModifier
 
     constructor(actionName: String, key: KeyCode) : this(actionName, key, InputModifier.NONE)
     constructor(actionName: String, key: KeyCode, modifier: InputModifier) {
