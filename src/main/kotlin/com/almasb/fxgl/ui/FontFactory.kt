@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,23 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.asset;
 
-import javafx.scene.text.Font;
+package com.almasb.fxgl.ui
+
+import javafx.scene.text.Font
 
 /**
  * A convenience wrapper for native JavaFX Font.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FontFactory {
-    private Font font;
-
-    FontFactory(Font font) {
-        if (font == null)
-            throw new IllegalArgumentException("Font cannot be null");
-        this.font = font;
-    }
+class FontFactory internal constructor(private val font: Font) {
 
     /**
      * Construct new native JavaFX font with given size.
@@ -49,7 +43,5 @@ public final class FontFactory {
      * @param size font size
      * @return font
      */
-    public Font newFont(double size) {
-        return new Font(font.getName(), size);
-    }
+    fun newFont(size: Double) = Font(font.name, size)
 }

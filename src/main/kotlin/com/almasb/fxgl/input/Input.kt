@@ -111,7 +111,7 @@ class Input @Inject private constructor() : UserProfileSavable {
                 return@addEventHandler
 
             if (event.fxEvent is MouseEvent) {
-                val mouseEvent = event.fxEvent as MouseEvent
+                val mouseEvent = event.fxEvent
                 if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
                     buttons.put(mouseEvent.button, true)
                     handlePressed(mouseEvent)

@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -36,6 +37,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.Scale;
 
 /**
  * Base class for all FXGL scenes.
@@ -123,5 +125,23 @@ public abstract class FXGLScene {
      */
     protected BooleanProperty activeProperty() {
         return active;
+    }
+
+    public void appendCSS(CSS css) {
+        getRoot().getStylesheets().add(css.getExternalForm());
+    }
+
+    public void clearCSS() {
+        getRoot().getStylesheets().clear();
+    }
+
+    public void bindSize(DoubleProperty scaledWidth, DoubleProperty scaledHeight, DoubleProperty scaleRatio) {
+        root.prefWidthProperty().bind(scaledWidth);
+        root.prefHeightProperty().bind(scaledHeight);
+
+        Scale scale = new Scale();
+        scale.xProperty().bind(scaleRatio);
+        scale.yProperty().bind(scaleRatio);
+        root.getTransforms().setAll(scale);
     }
 }

@@ -24,41 +24,17 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.scene
 
 /**
  * Represents a CSS file.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class CSS {
-    private final String externalForm;
-
-    /**
-     * Constructs a CSS with given URL external form.
-     *
-     * @param externalForm URL.externalForm()
-     */
-    public CSS(String externalForm) {
-        this.externalForm = externalForm;
-    }
-
-    /**
-     * @return external (loaded) form
-     */
-    public String getExternalForm() {
-        return externalForm;
-    }
+data class CSS(val externalForm: String) {
 
     /**
      * @return true iff this CSS file represents the default FXGL CSS
      */
-    public boolean isDefault() {
-        return externalForm.endsWith("fxgl.css");
-    }
-
-    @Override
-    public String toString() {
-        return "CSS[" + externalForm + "]";
-    }
+    fun isDefault() = externalForm.endsWith("fxgl.css")
 }

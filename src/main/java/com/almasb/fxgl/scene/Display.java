@@ -29,7 +29,6 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.asset.CSS;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.event.LoadEvent;
@@ -187,17 +186,9 @@ public final class Display implements UserProfileSavable {
      */
     public void registerScene(FXGLScene scene) {
         scenes.add(scene);
-        Pane root = scene.getRoot();
 
-        root.prefWidthProperty().bind(scaledWidth);
-        root.prefHeightProperty().bind(scaledHeight);
-
-        Scale scale = new Scale();
-        scale.xProperty().bind(scaleRatio);
-        scale.yProperty().bind(scaleRatio);
-        root.getTransforms().setAll(scale);
-
-        root.getStylesheets().add(css.getExternalForm());
+        scene.bindSize(scaledWidth, scaledHeight, scaleRatio);
+        scene.appendCSS(css);
     }
 
     /**
