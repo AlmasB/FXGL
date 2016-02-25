@@ -29,6 +29,7 @@ package com.almasb.fxgl.event;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxeventbus.FXEventBus;
 import com.almasb.fxeventbus.Subscriber;
+import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

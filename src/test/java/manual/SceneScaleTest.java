@@ -3,14 +3,9 @@ package manual;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.InputOld;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Rectangle;
 
 public class SceneScaleTest extends GameApplication {
 
@@ -35,7 +30,7 @@ public class SceneScaleTest extends GameApplication {
 
     @Override
     protected void initInput() {
-        Input input = getInput();
+        InputOld input = getInput();
 
 //        input.addAction(new UserAction("Move Left") {
 //            @Override

@@ -23,13 +23,14 @@
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
 
         <!-- dependencies -->
+        <kotlin.version>1.0.0</kotlin.version>
+        <guice.version>4.0</guice.version>
+        <jfxtras.version>8.0-r4</jfxtras.version>
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.0</ents.version>
         <astar.version>1.0</astar.version>
 
         <junit.version>4.12</junit.version>
-        <guice.version>4.0</guice.version>
-        <jfxtras.version>8.0-r4</jfxtras.version>
         <commons-math.version>3.5</commons-math.version>
     </properties>
 
@@ -41,6 +42,12 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -85,7 +92,6 @@
             <version>${commons-math.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -109,12 +115,6 @@
             </resource>
         </resources>
 
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -126,6 +126,39 @@
                     <source>${source.version}</source>
                     <target>${source.version}</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/main/kotlin</source>
+                                <source>src/main/java</source>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/test/java</source>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>    <!-- force check on compiler -->

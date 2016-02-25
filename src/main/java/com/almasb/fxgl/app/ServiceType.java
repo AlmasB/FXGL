@@ -35,7 +35,7 @@ import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.FXGLNotificationService;
 import com.almasb.fxgl.gameplay.NotificationService;
-import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.InputOld;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
@@ -120,15 +120,15 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<Input> INPUT = new ServiceType<Input>() {
+    ServiceType<InputOld> INPUT = new ServiceType<InputOld>() {
         @Override
-        public Class<Input> service() {
-            return Input.class;
+        public Class<InputOld> service() {
+            return InputOld.class;
         }
 
         @Override
-        public Class<? extends Input> serviceProvider() {
-            return Input.class;
+        public Class<? extends InputOld> serviceProvider() {
+            return InputOld.class;
         }
     };
 

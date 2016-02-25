@@ -36,7 +36,6 @@ import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.Version;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -59,9 +58,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -146,6 +143,7 @@ public abstract class FXGLMenu extends FXGLScene {
         // add listener for new ones
         app.getInput().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
             while (c.next()) {
+
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(binding -> addNewInputBinding(binding, grid));
                 }
@@ -167,10 +165,10 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     private void addNewInputBinding(InputBinding binding, GridPane grid) {
-        Text actionName = UIFactory.newText(binding.getAction().getName());
+        Text actionName = UIFactory.newText(binding.getActionName());
 
         Button triggerName = UIFactory.newButton("");
-        triggerName.textProperty().bind(binding.triggerNameProperty());
+        triggerName.setText(binding.getTriggerName());
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);

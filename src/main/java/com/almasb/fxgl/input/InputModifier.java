@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.input;
 
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+
 /**
  * A key modifier applied to an input event.
  *
@@ -50,5 +53,33 @@ public enum InputModifier {
     /**
      * No modifier key
      */
-    NONE
+    NONE;
+
+    public boolean isTriggered(KeyEvent event) {
+        switch (this) {
+            case CTRL:
+                return event.isControlDown();
+            case SHIFT:
+                return event.isShiftDown();
+            case ALT:
+                return event.isAltDown();
+            case NONE:
+            default:
+                return !(event.isAltDown() || event.isShiftDown() || event.isControlDown());
+        }
+    }
+
+    public boolean isTriggered(MouseEvent event) {
+        switch (this) {
+            case CTRL:
+                return event.isControlDown();
+            case SHIFT:
+                return event.isShiftDown();
+            case ALT:
+                return event.isAltDown();
+            case NONE:
+            default:
+                return !(event.isAltDown() || event.isShiftDown() || event.isControlDown());
+        }
+    }
 }
