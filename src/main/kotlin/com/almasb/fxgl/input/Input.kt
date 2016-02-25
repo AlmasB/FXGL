@@ -50,16 +50,37 @@ class Input @Inject private constructor() : UserProfileSavable {
 
     private val log = FXGLLogger.getLogger("FXGL.Input")
 
+    /**
+     * Cursor point in game coordinate space.
+     */
     var gameXY = Point2D.ZERO
         private set
 
+    /**
+     * Cursor point in screen coordinate space.
+     * Useful for UI manipulation.
+     */
     var screenXY = Point2D.ZERO
         private set
 
+    /**
+     * @return cursor x in game coordinate space
+     */
     fun getGameX() = gameXY.x
+
+    /**
+     * @return cursor y in game coordinate space
+     */
     fun getGameY() = gameXY.y
 
+    /**
+     * @return cursor x in UI coordinate space
+     */
     fun getScreenX() = screenXY.x
+
+    /**
+     * @return cursor y in UI coordinate space
+     */
     fun getScreenY() = screenXY.y
 
     /**
@@ -100,7 +121,7 @@ class Input @Inject private constructor() : UserProfileSavable {
         initActionListener()
         initEventHandlers()
 
-        log.finer("Service [Input] initialized")
+        log.finer { "Service [Input] initialized" }
     }
 
     /**

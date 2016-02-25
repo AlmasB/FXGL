@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.scene.intro
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.IntroScene
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.ui.UIFactory
@@ -46,7 +47,7 @@ import javafx.util.Duration
 
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLIntroScene(settings: ReadOnlyGameSettings) : IntroScene(settings) {
+class FXGLIntroScene() : IntroScene() {
 
     private val w: Double
     private val h: Double
@@ -54,8 +55,8 @@ class FXGLIntroScene(settings: ReadOnlyGameSettings) : IntroScene(settings) {
     private val animation: ParallelTransition
 
     init {
-        w = settings.width.toDouble()
-        h = settings.height.toDouble()
+        w = FXGL.getSettings().width.toDouble()
+        h = FXGL.getSettings().height.toDouble()
 
         val f = makeLetter("F")
         val x = makeLetter("X")

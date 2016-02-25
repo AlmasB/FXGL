@@ -38,12 +38,6 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings;
  */
 public abstract class IntroScene extends FXGLScene {
 
-    protected final ReadOnlyGameSettings settings;
-
-    public IntroScene(ReadOnlyGameSettings settings) {
-        this.settings = settings;
-    }
-
     /**
      * Called when intro finished.
      */

@@ -248,8 +248,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     protected IntroFactory initIntroFactory() {
         return new IntroFactory() {
             @Override
-            public IntroScene newIntro(ReadOnlyGameSettings settings) {
-                return new FXGLIntroScene(settings);
+            public IntroScene newIntro() {
+                return new FXGLIntroScene();
             }
         };
     }
@@ -458,7 +458,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     }
 
     private void configureIntro() {
-        introScene = initIntroFactory().newIntro(getSettings());
+        introScene = initIntroFactory().newIntro();
         introScene.setOnFinished(this::showGame);
         getDisplay().registerScene(introScene);
     }

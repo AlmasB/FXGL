@@ -35,5 +35,5 @@ public abstract class IntroFactory {
      *
      * @return intro scene
      */
-    public abstract IntroScene newIntro(ReadOnlyGameSettings settings);
+    public abstract IntroScene newIntro();
 }
