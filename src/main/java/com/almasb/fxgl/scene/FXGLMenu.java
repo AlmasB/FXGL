@@ -31,7 +31,7 @@ import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
-import com.almasb.fxgl.input.InputBinding;
+import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
@@ -39,6 +39,7 @@ import com.almasb.fxgl.util.FXGLLogger;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -138,20 +139,11 @@ public abstract class FXGLMenu extends FXGLScene {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(50);
+
+        // row 0
         grid.setUserData(0);
 
-        // add listener for new ones
-        app.getInput().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
-            while (c.next()) {
-
-                if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(binding -> addNewInputBinding(binding, grid));
-                }
-            }
-        });
-
-        // register current ones
-        app.getInput().getBindings().forEach(binding -> addNewInputBinding(binding, grid));
+        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
 
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -164,11 +156,10 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
-    private void addNewInputBinding(InputBinding binding, GridPane grid) {
-        Text actionName = UIFactory.newText(binding.getActionName());
+    private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
+        Text actionName = UIFactory.newText(action.getName());
+        Button triggerName = UIFactory.newButton(trigger.getName());
 
-        Button triggerName = UIFactory.newButton("");
-        triggerName.setText(binding.getTriggerName());
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
@@ -181,11 +172,15 @@ public abstract class FXGLMenu extends FXGLScene {
 
             Scene scene = new Scene(new StackPane(rect, text));
             scene.setOnKeyPressed(e -> {
-                app.getInput().rebind(binding.getAction(), e.getCode());
+                app.getInput().rebind(action, e.getCode());
+
+                // TODO: we manually set name here, would be nice to have data-bind
+                triggerName.setText(new KeyTrigger(e.getCode()).getName());
                 stage.close();
             });
             scene.setOnMouseClicked(e -> {
-                app.getInput().rebind(binding.getAction(), e.getButton());
+                app.getInput().rebind(action, e.getButton());
+                triggerName.setText(new MouseTrigger(e.getButton()).getName());
                 stage.close();
             });
 

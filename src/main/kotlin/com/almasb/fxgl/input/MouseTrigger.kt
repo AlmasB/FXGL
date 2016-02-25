@@ -41,4 +41,6 @@ data class MouseTrigger(val button: MouseButton, private val modifier: InputModi
     override fun isKey() = false
 
     override fun isButton() = true
+
+    override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + button.toString()
 }

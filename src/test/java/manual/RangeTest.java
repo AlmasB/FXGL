@@ -35,7 +35,7 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.input.InputOld;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -60,7 +60,7 @@ public class RangeTest extends GameApplication {
 
     @Override
     protected void initInput() {
-        InputOld input = getInput();
+        Input input = getInput();
 
         input.addAction(new UserAction("Move Left") {
             @Override

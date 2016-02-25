@@ -41,4 +41,6 @@ data class KeyTrigger(val key: KeyCode, private val modifier: InputModifier) : T
     override fun isKey() = true
 
     override fun isButton() = false
+
+    override fun toString() = (if (modifier == InputModifier.NONE) "" else "$modifier+") + key.getName()
 }

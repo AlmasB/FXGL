@@ -31,7 +31,7 @@ import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
-import com.almasb.fxgl.input.InputOld;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -284,12 +284,12 @@ public abstract class FXGLApplication extends Application {
     }
 
     @Inject
-    private InputOld input;
+    private Input input;
 
     /**
      * @return input service
      */
-    public final InputOld getInput() {
+    public final Input getInput() {
         return input;
     }
 

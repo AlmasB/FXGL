@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.event.FXGLEvent
@@ -39,13 +38,11 @@ import com.almasb.fxgl.util.FXGLLogger
 import com.google.inject.Inject
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
-import javafx.event.EventHandler
 import javafx.scene.input.*
+import java.lang.reflect.Method
 import java.util.*
-import java.util.function.Consumer
 
-open class Input @Inject private constructor() : UserProfileSavable {
+class Input @Inject private constructor() : UserProfileSavable {
 
     private val log = FXGLLogger.getLogger("FXGL.Input")
 
@@ -54,12 +51,10 @@ open class Input @Inject private constructor() : UserProfileSavable {
      */
     val mouse = Mouse()
 
-    /**
-     * Contains a list of user actions and keys/mouse buttons which trigger those
-     * actions.
-     */
-    val bindings = FXCollections.observableArrayList<InputBinding>()
-        get() = FXCollections.unmodifiableObservableList(field)
+    val bindings = LinkedHashMap<UserAction, Trigger>()
+
+    //val bindings = FXCollections.observableMap(LinkedHashMap<UserAction, Trigger>())
+    //get() = FXCollections.unmodifiableObservableMap(field)
 
     /**
      * Currently active actions.
@@ -144,11 +139,21 @@ open class Input @Inject private constructor() : UserProfileSavable {
         eventBus.addEventHandler(LoadEvent.ANY) { event -> load(event.profile) }
     }
 
+    private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {
+        if (fxEvent is MouseEvent && trigger is MouseTrigger
+                && fxEvent.button == trigger.button && trigger.getModifier().isTriggered(fxEvent))
+            return true
+
+        if (fxEvent is KeyEvent && trigger is KeyTrigger
+                && fxEvent.code == trigger.key && trigger.getModifier().isTriggered(fxEvent))
+            return true
+
+        return false
+    }
+
     private fun handlePressed(event: InputEvent) {
-        bindings.filter { it.isTriggered(event) }
-                .map { it.action }
-                .filter { !currentActions.contains(it) }
-                .forEach { currentActions.add(it) }
+        bindings.filter { isTriggered(it.value, event) && !currentActions.contains(it.key) }
+                .forEach { currentActions.add(it.key) }
     }
 
     @Suppress("NON_EXHAUSTIVE_WHEN")
@@ -156,16 +161,15 @@ open class Input @Inject private constructor() : UserProfileSavable {
         bindings.filter({ binding ->
             if (event is KeyEvent) {
                 when (event.code) {
-                    KeyCode.CONTROL -> return@filter binding.trigger.getModifier() == InputModifier.CTRL
-                    KeyCode.SHIFT -> return@filter binding.trigger.getModifier() == InputModifier.SHIFT
-                    KeyCode.ALT -> return@filter binding.trigger.getModifier() == InputModifier.ALT
+                    KeyCode.CONTROL -> return@filter binding.value.getModifier() == InputModifier.CTRL
+                    KeyCode.SHIFT -> return@filter binding.value.getModifier() == InputModifier.SHIFT
+                    KeyCode.ALT -> return@filter binding.value.getModifier() == InputModifier.ALT
                 }
             }
 
-            binding.isTriggered(event)
+            isTriggered(binding.value, event)
         })
-        .map { it.action }
-        .forEach { currentActions.remove(it) }
+        .forEach { currentActions.remove(it.key) }
     }
 
     /**
@@ -206,6 +210,101 @@ open class Input @Inject private constructor() : UserProfileSavable {
      * @return true iff button is currently held
      */
     fun isHeld(button: MouseButton) = buttons.getOrDefault(button, false)
+
+    /**
+     * Bind given action to a mouse button.
+     * @param action the action to bind
+     * @param btn the mouse button
+     *
+     * @throws IllegalArgumentException if action with same name exists
+     */
+    fun addAction(action: UserAction, btn: MouseButton) = addAction(action, btn, InputModifier.NONE)
+
+    /**
+     * Bind given action to a mouse button with special modifier key.
+     *
+     * @param action the action to bind
+     * @param btn the mouse button
+     *
+     * @param modifier the key modifier
+     *
+     * @throws IllegalArgumentException if action with same name exists
+     */
+    fun addAction(action: UserAction, btn: MouseButton, modifier: InputModifier) {
+        if (bindings.containsKey(action))
+            throw IllegalArgumentException("Action with name \"$action\" already exists")
+
+        if (bindings.containsValue(MouseTrigger(btn)))
+            throw IllegalArgumentException("Button \"$btn\" is already bound")
+
+        bindings.put(action, MouseTrigger(btn, modifier))
+        log.finer { "Registered new binding: $action - $btn + $modifier" }
+    }
+
+    /**
+     * Bind given action to a keyboard key.
+     *
+     * @param action the action to bind
+     * @param key the key
+     * @throws IllegalArgumentException if action with same name exists
+     */
+    fun addAction(action: UserAction, key: KeyCode) = addAction(action, key, InputModifier.NONE)
+
+    /**
+     * Bind given action to a keyboard key with special modifier key.
+     *
+     * @param action the action to bind
+     * @param key the key
+     * @param modifier the key modifier
+     * @throws IllegalArgumentException if action with same name exists
+     */
+    fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier) {
+        if (bindings.containsKey(action))
+            throw IllegalArgumentException("Action with name \"${action.name}\" already exists")
+
+        val trigger = KeyTrigger(key, modifier)
+
+        // TODO: check if ctrl + w same as w
+        if (bindings.containsValue(trigger))
+            throw IllegalArgumentException("Key $key is already bound")
+
+        bindings.put(action, trigger)
+        log.finer { "Registered new binding: $action - $trigger" }
+    }
+
+    /**
+     * Rebinds an action to given key.
+     *
+     * @param action the user action
+     * @param key the key to rebind to
+     * @return true if rebound, false if action not found or
+     * there is another action bound to key
+     */
+    fun rebind(action: UserAction, key: KeyCode): Boolean {
+        if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key))) {
+            bindings.put(action, KeyTrigger(key))
+            return true
+        }
+
+        return false
+    }
+
+    /**
+     * Rebinds an action to given mouse button.
+     *
+     * @param action the user action
+     * @param btn the mouse button
+     * @return true if rebound, false if action not found or
+     * there is another action bound to mouse button
+     */
+    fun rebind(action: UserAction, button: MouseButton): Boolean {
+        if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button))) {
+            bindings.put(action, MouseTrigger(button))
+            return true
+        }
+
+        return false
+    }
 
     /* MOCKING */
 
@@ -316,139 +415,106 @@ open class Input @Inject private constructor() : UserProfileSavable {
         //        mockButtonRelease(btn, InputModifier.NONE);
         //    }
 
-
-
     /* INPUT MAPPINGS */
 
-//    private Map<String, InputMapping> inputMappings = new HashMap<>();
-//
-//    /**
-//     * Add input mapping. The actual implementation needs to be specified by
-//     * {@link OnUserAction} annotation.
-//     *
-//     * @param inputMapping the mapping
-//     */
-//    public void addInputMapping(InputMapping inputMapping) {
-//        inputMappings.put(inputMapping.getActionName(), inputMapping);
-//    }
-//
-//    private InputMapping getInputMappingByName(String actionName) {
-//        return inputMappings.get(actionName);
-//    }
-//
-//    /**
-//     * Given an object scans its methods for {@link OnUserAction} annotation
-//     * and creates UserActions from its data.
-//     *
-//     * @param instance the class instance to scan
-//     */
-//    public void scanForUserActions(Object instance) {
-//        Map<String, Map<ActionType, Method> > map = new HashMap<>();
-//
-//        for (Method method : instance.getClass().getDeclaredMethods()) {
-//            OnUserAction action = method.getDeclaredAnnotation(OnUserAction.class);
-//            if (action != null) {
-//                Map<ActionType, Method> mapping = map.getOrDefault(action.name(), new HashMap<>());
-//                if (mapping.isEmpty()) {
-//                    map.put(action.name(), mapping);
-//                }
-//                mapping.put(action.type(), method);
-//            }
-//        }
-//
-//        map.forEach((name, mapping) -> {
-//            Method onAction = mapping.get(ActionType.ON_ACTION);
-//            Method onActionBegin = mapping.get(ActionType.ON_ACTION_BEGIN);
-//            Method onActionEnd = mapping.get(ActionType.ON_ACTION_END);
-//
-//            UserAction action = new UserAction(name) {
-//                @Override
-//                protected void onActionBegin() {
-//                    if (onActionBegin != null) {
-//                        try {
-//                            onActionBegin.invoke(instance);
-//                        } catch (Exception e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                protected void onAction() {
-//                    if (onAction != null) {
-//                        try {
-//                            onAction.invoke(instance);
-//                        } catch (Exception e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                protected void onActionEnd() {
-//                    if (onActionEnd != null) {
-//                        try {
-//                            onActionEnd.invoke(instance);
-//                        } catch (Exception e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
-//            };
-//
-//
-//            InputMapping inputMapping = getInputMappingByName(name);
-//            if (inputMapping.isKeyTrigger()) {
-//                addAction(action, inputMapping.getKeyTrigger(), inputMapping.getModifier());
-//            } else if (inputMapping.isButtonTrigger()) {
-//                addAction(action, inputMapping.getButtonTrigger(), inputMapping.getModifier());
-//            }
-//        });
-//    }
+    private val inputMappings = HashMap<String, InputMapping>()
 
+    /**
+     * Add input mapping. The actual implementation needs to be specified by
+     * {@link OnUserAction} annotation.
+     *
+     * @param inputMapping the mapping
+     */
+    fun addInputMapping(inputMapping: InputMapping) = inputMappings.put(inputMapping.actionName, inputMapping)
 
+    private fun getInputMappingByName(actionName: String) = inputMappings.get(actionName)
 
+    /**
+     * Given an object scans its methods for {@link OnUserAction} annotation
+     * and creates UserActions from its data.
+     *
+     * @param instance the class instance to scan
+     */
+    fun scanForUserActions(instance: Any) {
+        val map = HashMap<String, HashMap<ActionType, Method> >()
 
+        for (method in instance.javaClass.declaredMethods) {
+            val action = method.getDeclaredAnnotation(OnUserAction::class.java)
+            if (action != null) {
+                val mapping = map.getOrDefault(action.name, HashMap())
+                if (mapping.isEmpty()) {
+                    map.put(action.name, mapping)
+                }
+
+                mapping.put(action.type, method)
+            }
+        }
+
+        map.forEach { name, mapping ->
+            val onAction = mapping.get(ActionType.ON_ACTION)
+            val onActionBegin = mapping.get(ActionType.ON_ACTION_BEGIN)
+            val onActionEnd = mapping.get(ActionType.ON_ACTION_END)
+
+            val action = object : UserAction(name) {
+                override fun onActionBegin() {
+                    onActionBegin?.invoke(instance)
+                }
+
+                override fun onAction() {
+                    onAction?.invoke(instance)
+                }
+
+                override fun onActionEnd() {
+                    onActionEnd?.invoke(instance)
+                }
+            }
+
+            val inputMapping: InputMapping = getInputMappingByName(name)!!
+
+            if (inputMapping.isKeyTrigger) {
+                addAction(action, inputMapping.keyTrigger, inputMapping.modifier)
+            } else {
+                addAction(action, inputMapping.buttonTrigger, inputMapping.modifier)
+            }
+        }
+    }
 
     override fun save(profile: UserProfile) {
         log.finer("Saving data to profile")
 
         val bundle = UserProfile.Bundle("input")
-        bindings.forEach { bundle.put(it.getActionName(), it.getTriggerName()) }
+        bindings.forEach { bundle.put(it.key.toString(), it.value.toString()) }
 
         bundle.log()
         profile.putBundle(bundle)
     }
 
-    // TODO: refactor
     override fun load(profile: UserProfile) {
-//        log.finer("Loading data from profile")
-//
-//        val bundle = profile.getBundle("input")
-//        bundle.log()
-//
-//        for (binding in bindings) {
-//            var triggerName = bundle.get<String>(binding.getActionName())
-//            val plusIndex = triggerName.indexOf("+")
-//            if (plusIndex != -1) {
-//                triggerName = triggerName.substring(plusIndex + 1)
-//            }
-//
-//            binding.removeTriggers()
-//            try {
-//                val key = KeyCode.getKeyCode(triggerName)
-//                binding.setTrigger(key)
-//            } catch (ignored: Exception) {
-//                try {
-//                    val btn = MouseButton.valueOf(triggerName)
-//                    binding.setTrigger(btn)
-//                } catch (e: Exception) {
-//                    log.warning("Undefined trigger name: " + triggerName)
-//                    throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)
-//                }
-//
-//            }
-//
-//        }
+        log.finer("Loading data from profile")
+
+        val bundle = profile.getBundle("input")
+        bundle.log()
+
+        for (binding in bindings) {
+            var triggerName = bundle.get<String>(binding.key.name)
+
+            val plusIndex = triggerName.indexOf("+")
+            if (plusIndex != -1) {
+                triggerName = triggerName.substring(plusIndex + 1)
+            }
+
+            try {
+                val key = KeyCode.getKeyCode(triggerName)
+                rebind(binding.key, key)
+            } catch (ignored: Exception) {
+                try {
+                    val btn = MouseButton.valueOf(triggerName)
+                    rebind(binding.key, btn)
+                } catch (e: Exception) {
+                    log.warning("Undefined trigger name: " + triggerName)
+                    throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)
+                }
+            }
+        }
     }
 }
