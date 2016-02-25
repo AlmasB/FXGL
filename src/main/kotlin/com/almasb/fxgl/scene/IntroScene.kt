@@ -24,16 +24,45 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene;
+package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-
-public abstract class IntroFactory {
+/**
+ * Intro animation / video played before game starts
+ * if intro is enabled in settings.
+ *
+ * Call [finishIntro] when your intro completed
+ * so that the game can proceed to the next state.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
+abstract class IntroScene : FXGLScene() {
 
     /**
-     * Called to construct intro scene.
-     *
-     * @return intro scene
+     * Called when intro finished.
      */
-    public abstract IntroScene newIntro();
+    private lateinit var onFinished: Runnable
+
+    /**
+     * INTERNAL.
+     *
+     * @param onFinished code to call on finish
+     */
+    fun setOnFinished(onFinished: Runnable) {
+        this.onFinished = onFinished
+    }
+
+    /**
+     * Closes intro and initializes the next game state, whether it's a menu or game.
+     *
+     * Note: call this when your intro completes, otherwise
+     * the game won't proceed to next state.
+     */
+    protected fun finishIntro() {
+        onFinished.run()
+    }
+
+    /**
+     * Starts the intro animation / video.
+     */
+    abstract fun startIntro()
 }

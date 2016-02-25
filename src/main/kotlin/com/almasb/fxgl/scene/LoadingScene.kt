@@ -24,43 +24,51 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene;
+package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-import com.google.inject.Inject;
-import javafx.concurrent.Task;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.ui.UIFactory
+import com.google.inject.Inject
+import javafx.concurrent.Task
+import javafx.scene.control.ProgressIndicator
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
+import javafx.scene.text.Text
 
 /**
  * Loading scene to be used during loading tasks.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class LoadingScene extends FXGLScene {
+class LoadingScene
+@Inject
+private constructor() : FXGLScene() {
 
-    private ProgressIndicator progress;
-    private Text text;
+    private val progress = ProgressIndicator()
+    private val text = Text()
 
-    @Inject
-    private LoadingScene(ReadOnlyGameSettings settings) {
-        Rectangle bg = new Rectangle(settings.getWidth(), settings.getHeight(), Color.rgb(0, 0, 10));
+    init {
+        val settings = FXGL.getSettings()
 
-        progress = new ProgressIndicator();
-        progress.setPrefSize(200, 200);
-        progress.setTranslateX(settings.getWidth() / 2 - 100);
-        progress.setTranslateY(settings.getHeight() / 2 - 100);
+        with(progress) {
+            setPrefSize(200.0, 200.0)
+            translateX = (settings.width / 2 - 100).toDouble()
+            translateY = (settings.height / 2 - 100).toDouble()
+        }
 
-        text = new Text();
-        text.setFill(Color.WHITE);
-        text.setFont(Font.font(24));
-        text.setTranslateX(settings.getWidth() / 2 - 100);
-        text.setTranslateY(settings.getHeight() * 4 / 5);
+        with(text) {
+            font = UIFactory.newFont(24.0)
+            fill = Color.WHITE
+            translateX = (settings.width / 2 - 100).toDouble()
+            translateY = (settings.height * 4 / 5).toDouble()
+        }
 
-        getRoot().getChildren().addAll(bg, progress, text);
+        root.children.addAll(
+                Rectangle(settings.width.toDouble(),
+                        settings.height.toDouble(),
+                        Color.rgb(0, 0, 10)),
+                progress, text)
     }
 
     /**
@@ -68,8 +76,8 @@ public final class LoadingScene extends FXGLScene {
      *
      * @param task the loading task
      */
-    public void bind(Task<?> task) {
-        progress.progressProperty().bind(task.progressProperty());
-        text.textProperty().bind(task.messageProperty());
+    fun bind(task: Task<*>) {
+        progress.progressProperty().bind(task.progressProperty())
+        text.textProperty().bind(task.messageProperty())
     }
 }
