@@ -40,6 +40,7 @@ public final class Version {
     private static final String FXGL_VERSION;
     private static final String JAVAFX_VERSION;
     private static final String JBOX_VERSION;
+    private static final String KOTLIN_VERSION;
 
     static {
         ResourceBundle resources = ResourceBundle.getBundle("com.almasb.fxgl.util.version");
@@ -47,10 +48,14 @@ public final class Version {
         FXGL_VERSION = resources.getString("fxgl.version");
         JAVAFX_VERSION = resources.getString("javafx.version");
         JBOX_VERSION = resources.getString("jbox.version");
+        KOTLIN_VERSION = resources.getString("kotlin.version");
     }
 
     public static void print() {
         log.info("FXGL-" + getAsString());
+        log.info("JavaFX-" + getJavaFXAsString());
+        log.info("JBox2D-" + getJBox2DAsString());
+        log.info("Kotlin-" + getKotlinAsString());
         log.info("Source code and latest builds at: https://github.com/AlmasB/FXGL");
     }
 
@@ -73,5 +78,12 @@ public final class Version {
      */
     public static String getJBox2DAsString() {
         return JBOX_VERSION;
+    }
+
+    /**
+     * @return compile time version of Kotlin
+     */
+    public static String getKotlinAsString() {
+        return KOTLIN_VERSION;
     }
 }

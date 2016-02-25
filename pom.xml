@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.version>1.8</source.version>
-        <jbox.version>2.3.0</jbox.version>
+        <jbox.version>2.3.0-fxgl</jbox.version>
 
         <!-- plugins -->
         <maven.compiler.version>3.3</maven.compiler.version>
