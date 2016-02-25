@@ -58,7 +58,7 @@ public class InputSample2 extends GameApplication {
         Input input = getInput();
 
         // 2. add input mappings (action name -> trigger name)
-        input.addInputMapping(new InputMapping("Print Line", KeyCode.P));
+        input.addInputMapping(new InputMapping("Print Line", KeyCode.F));
     }
 
     @Override

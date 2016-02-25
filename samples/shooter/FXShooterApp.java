@@ -59,7 +59,7 @@ public class FXShooterApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setTitle("FXShooterApp");
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
     }
 
     @Override

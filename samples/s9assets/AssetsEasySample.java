@@ -27,7 +27,6 @@ package s9assets;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
 
