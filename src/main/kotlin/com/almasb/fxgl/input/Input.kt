@@ -39,6 +39,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
+import javafx.event.EventType
 import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
@@ -53,18 +54,24 @@ class Input @Inject private constructor() : UserProfileSavable {
      */
     val mouse = Mouse()
 
+    /**
+     * Action bindings.
+     */
     val bindings = LinkedHashMap<UserAction, Trigger>()
-
-    //val bindings = FXCollections.observableMap(LinkedHashMap<UserAction, Trigger>())
-    //get() = FXCollections.unmodifiableObservableMap(field)
 
     /**
      * Currently active actions.
      */
     private val currentActions = FXCollections.observableArrayList<UserAction>()
 
+    /**
+     * If action events should be processed.
+     */
     var processActions = true
 
+    /**
+     * If input should be registered.
+     */
     var registerInput = true
 
     init {
@@ -214,9 +221,7 @@ class Input @Inject private constructor() : UserProfileSavable {
     fun isHeld(button: MouseButton) = buttons.getOrDefault(button, false)
 
     /**
-     * Bind given action to a mouse button.
-     * @param action the action to bind
-     * @param btn the mouse button
+     * Bind [action] to a mouse [btn].
      *
      * @throws IllegalArgumentException if action with same name exists
      */
@@ -312,112 +317,82 @@ class Input @Inject private constructor() : UserProfileSavable {
 
     /* MOCKING */
 
-    //private KeyEvent makeKeyEvent(KeyCode key, EventType<KeyEvent> eventType, InputModifier modifier) {
-        //        return new KeyEvent(eventType, "", key.toString(), key,
-        //                modifier == InputModifier.SHIFT,
-        //                modifier == InputModifier.CTRL,
-        //                modifier == InputModifier.ALT, false);
-        //    }
-        //
-        //    /**
-        //     * Mocks key press event. The behavior is equivalent to
-        //     * user pressing and holding the key.
-        //     *
-        //     * @param key the key
-        //     * @param modifier key modifier
-        //     */
-        //    public void mockKeyPress(KeyCode key, InputModifier modifier) {
-        //        log.finer("Mocking key press: " + key + " + " + modifier);
-        //        handlePressedNew(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier));
-        //    }
-        //
-        //    /**
-        //     * Mocks key press event. The behavior is equivalent to
-        //     * user pressing and holding the key.
-        //     *
-        //     * @param key the key
-        //     */
-        //    public void mockKeyPress(KeyCode key) {
-        //        mockKeyPress(key, InputModifier.NONE);
-        //    }
-        //
-        //    /**
-        //     * Mocks key release event. The behavior is equivalent to
-        //     * user releasing the key.
-        //     *
-        //     * @param key the key
-        //     * @param modifier key modifier
-        //     */
-        //    public void mockKeyRelease(KeyCode key, InputModifier modifier) {
-        //        log.finer("Mocking key release: " + key + " + " + modifier);
-        //        handleReleasedNew(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier));
-        //    }
-        //
-        //    /**
-        //     * Mocks key release event. The behavior is equivalent to
-        //     * user releasing the key.
-        //     *
-        //     * @param key the key
-        //     */
-        //    public void mockKeyRelease(KeyCode key) {
-        //        mockKeyRelease(key, InputModifier.NONE);
-        //    }
-        //
-        //    private MouseEvent makeMouseEvent(MouseButton btn, EventType<MouseEvent> eventType,
-        //                                      double gameX, double gameY, InputModifier modifier) {
-        //        return new MouseEvent(eventType, gameX, gameY,
-        //                gameX, gameY, btn, 0,
-        //                modifier == InputModifier.SHIFT,
-        //                modifier == InputModifier.CTRL,
-        //                modifier == InputModifier.ALT,
-        //                false, false, false, false, false, false, false, null);
-        //    }
-        //
-        //    /**
-        //     * Mocks mouse button press event. The behavior is equivalent to
-        //     * user pressing and holding the button at given X Y.
-        //     *
-        //     * @param btn mouse button
-        //     * @param modifier mouse button modifier
-        //     */
-        //    public void mockButtonPress(MouseButton btn, double gameX, double gameY, InputModifier modifier) {
-        //        log.finer("Mocking button press: " + btn + " + " + modifier);
-        //        handlePressedNew(makeMouseEvent(btn, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier));
-        //    }
-        //
-        //    /**
-        //     * Mocks mouse button press event. The behavior is equivalent to
-        //     * user pressing and holding the button at given X Y.
-        //     *
-        //     * @param btn mouse button
-        //     * @param gameX x location of cursor
-        //     * @param gameY y location of cursor
-        //     */
-        //    public void mockButtonPress(MouseButton btn, double gameX, double gameY) {
-        //        mockButtonPress(btn, gameX, gameY, InputModifier.NONE);
-        //    }
-        //
-        //    /**
-        //     * Mocks mouse button release event. The behavior is equivalent to
-        //     * user releasing the button.
-        //     *
-        //     * @param btn mouse button
-        //     * @param modifier mouse button modifier
-        //     */
-        //    public void mockButtonRelease(MouseButton btn, InputModifier modifier) {
-        //        log.finer("Mocking button release: " + btn + " + " + modifier);
-        //        handleReleasedNew(makeMouseEvent(btn, MouseEvent.MOUSE_RELEASED, 0, 0, modifier));
-        //    }
-        //
-        //    /**
-        //     * Mocks mouse button release event. The behavior is equivalent to
-        //     * user releasing the button.
-        //     *
-        //     * @param btn mouse button
-        //     */
-        //    public void mockButtonRelease(MouseButton btn) {
-        //        mockButtonRelease(btn, InputModifier.NONE);
-        //    }
+    private fun makeKeyEvent(key: KeyCode, eventType: EventType<KeyEvent>, modifier: InputModifier) =
+        KeyEvent(eventType, "", key.toString(), key,
+                modifier == InputModifier.SHIFT,
+                modifier == InputModifier.CTRL,
+                modifier == InputModifier.ALT,
+                false)
+
+    /**
+     * Mocks key press event. The behavior is equivalent to
+     * user pressing and holding the [key].
+     */
+    fun mockKeyPress(key: KeyCode) = mockKeyPress(key, InputModifier.NONE)
+
+    /**
+     * Mocks key press event. The behavior is equivalent to
+     * user pressing and holding the [key] and [modifier].
+     */
+    fun mockKeyPress(key: KeyCode, modifier: InputModifier) {
+        log.finer { "Mocking key press: ${KeyTrigger(key, modifier)}" }
+        handlePressed(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
+    }
+
+    /**
+     * Mocks key release event.
+     * The behavior is equivalent to user releasing the [key].
+     */
+    fun mockKeyRelease(key: KeyCode) = mockKeyRelease(key, InputModifier.NONE)
+
+    /**
+     * Mocks key release event.
+     * The behavior is equivalent to user releasing the [key] and [modifier].
+     */
+    fun mockKeyRelease(key: KeyCode, modifier: InputModifier) {
+        log.finer { "Mocking key release: ${KeyTrigger(key, modifier)}" }
+        handleReleased(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
+    }
+
+    fun makeMouseEvent(btn: MouseButton, eventType: EventType<MouseEvent>,
+                       gameX: Double, gameY: Double, modifier: InputModifier) =
+        MouseEvent(eventType, gameX, gameY, gameX, gameY, btn, 0,
+                modifier == InputModifier.SHIFT,
+                modifier == InputModifier.CTRL,
+                modifier == InputModifier.ALT,
+                false, false, false, false, false, false, false, null)
+
+    /**
+     * Mocks mouse button press event.
+     * Same as user pressing and holding the [button] at [gameX], [gameY].
+     */
+    fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double) =
+            mockButtonPress(button, gameX, gameY, InputModifier.NONE)
+
+    /**
+     * Mocks mouse button press event.
+     * Same as user pressing and holding the [button] + [modifier] at [gameX], [gameY].
+     */
+    fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
+        log.finer { "Mocking button press: ${MouseTrigger(button, modifier)}" }
+        handlePressed(makeMouseEvent(button, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier))
+    }
+
+    /**
+     * Mocks mouse button release event.
+     * Same as user releasing the [button].
+     */
+    fun mockButtonRelease(button: MouseButton) =
+            mockButtonRelease(button, InputModifier.NONE)
+
+    /**
+     * Mocks mouse button release event.
+     * Same as user releasing the [button] + [modifier].
+     */
+    fun mockButtonRelease(button: MouseButton, modifier: InputModifier) {
+        log.finer { "Mocking button release: ${MouseTrigger(button, modifier)}" }
+        handleReleased(makeMouseEvent(button, MouseEvent.MOUSE_RELEASED, 0.0, 0.0, modifier))
+    }
 
     /* INPUT MAPPINGS */
 
