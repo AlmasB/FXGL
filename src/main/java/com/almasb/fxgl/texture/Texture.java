@@ -46,7 +46,7 @@ public class Texture extends ImageView {
      *
      * @param image the JavaFX image data
      */
-    Texture(Image image) {
+    public Texture(Image image) {
         super(image);
     }
 

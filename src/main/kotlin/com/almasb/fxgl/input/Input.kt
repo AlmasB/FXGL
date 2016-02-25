@@ -36,12 +36,14 @@ import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
 import com.almasb.fxgl.util.FXGLLogger
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
 
+@Singleton
 class Input @Inject private constructor() : UserProfileSavable {
 
     private val log = FXGLLogger.getLogger("FXGL.Input")

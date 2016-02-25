@@ -46,9 +46,7 @@ class Mouse internal constructor() {
      * @param gameXY cursor point in game coordinate system
      */
     var gameXY = Point2D.ZERO
-        internal set(gameXY) {
-            this.gameXY = gameXY
-        }
+        internal set
 
     /**
      * @return mouse x in game coordinate system
@@ -72,15 +70,14 @@ class Mouse internal constructor() {
      */
     var screenX: Double = 0.0
         private set
-    /**
 
+    /**
      * @return mouse y in screen (app) coordinate system
      */
     var screenY: Double = 0.0
         private set
 
     /**
-
      * @return cursor point in screen (app) coordinate system
      */
     val screenXY: Point2D
