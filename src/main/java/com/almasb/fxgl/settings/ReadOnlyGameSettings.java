@@ -28,7 +28,6 @@ package com.almasb.fxgl.settings;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.Credits;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.scene.input.KeyCode;
 
 import java.util.Collections;

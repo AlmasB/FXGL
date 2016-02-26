@@ -223,4 +223,11 @@ public final class GameWorld extends EntityWorld {
                 })
                 .findAny();
     }
+
+    public void setLevel(Level level) {
+        reset();
+
+        log.finer("Setting level: " + level);
+        level.getEntities().forEach(this::addEntity);
+    }
 }
