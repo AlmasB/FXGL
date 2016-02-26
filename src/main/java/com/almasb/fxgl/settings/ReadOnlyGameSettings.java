@@ -28,7 +28,10 @@ package com.almasb.fxgl.settings;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.Credits;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.scene.input.KeyCode;
+
+import java.util.Collections;
 
 /**
  * A copy of GameSettings with public getters only.
@@ -48,7 +51,7 @@ public class ReadOnlyGameSettings {
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
     protected KeyCode menuKey = KeyCode.ESCAPE;
-    protected Credits credits = new Credits();
+    protected Credits credits = new Credits(Collections.emptyList());
 
     /**
      * Constructs game settings with default parameters

@@ -23,31 +23,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.GameApplication;
+package com.almasb.fxgl.util
+
+
+import java.util.*
 
 /**
- * Menu creation methods can be overriden to use
- * custom main/game menus.
+ * Simple data structure to contain a list of credits.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class MenuFactory {
+class Credits {
 
     /**
-     * Called to construct main menu.
-     *
-     * @param app game application
-     * @return main menu
+     * Unmodifiable list of credits.
      */
-    public abstract FXGLMenu newMainMenu(GameApplication app);
+    val list: List<String>
 
     /**
-     * Called to construct game menu.
-     *
-     * @param app game application
-     * @return game menu
+     * Constructs credits from given list of names.
      */
-    public abstract FXGLMenu newGameMenu(GameApplication app);
+    constructor(list: List<String>) {
+        val newList = ArrayList(list)
+        with(newList) {
+            add("")
+            add("Powered by FXGL ${Version.getAsString()}")
+            add("Graphics: JavaFX ${Version.getJavaFXAsString()}")
+            add("Physics: JBox2D (jbox2d.org) ${Version.getJBox2DAsString()}")
+            add("Written in: Java 1.8.0_72, Kotlin ${Version.getKotlinAsString()}")
+            add("Author: Almas Baimagambetov")
+            add("https://github.com/AlmasB/FXGL")
+            add("")
+        }
+
+        this.list = Collections.unmodifiableList(newList)
+    }
+
+    /**
+     * Copy constructor.
+     */
+    constructor(copy: Credits) {
+        list = copy.list
+    }
 }

@@ -24,42 +24,21 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.util;
+package com.almasb.fxgl.concurrent
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.concurrent.Task
 
 /**
- * Simple data structure to contain a list of credits.
- *
- * TODO: make immutable
+ * Defines background thread pool executor service.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Credits {
-    private List<String> credits = new ArrayList<>();
+interface Executor {
 
-    public Credits() {
-        populateCredits();
-    }
-
-    public Credits(Credits copy) {
-        credits.addAll(copy.credits);
-    }
-
-    private void populateCredits() {
-        addCredit("Powered by FXGL " + Version.getAsString());
-        addCredit("Graphics Framework: JavaFX " + Version.getJavaFXAsString());
-        addCredit("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
-        addCredit("FXGL Author: Almas Baimagambetov (AlmasB)");
-        addCredit("https://github.com/AlmasB/FXGL");
-    }
-
-    public void addCredit(String credit) {
-        credits.add(credit);
-    }
-
-    public List<String> getList() {
-        return new ArrayList<>(credits);
-    }
+    /**
+     * Submit a task to be executed in the background.
+     *
+     * @param task the task to execute
+     */
+    fun submit(task: Task<*>)
 }

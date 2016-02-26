@@ -24,21 +24,33 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent;
+package com.almasb.fxgl.scene
 
-import javafx.concurrent.Task;
+import com.almasb.fxgl.app.GameApplication
 
 /**
- * Defines background thread pool executor service.
+ * Menu creation methods can be overriden to use
+ * custom main/game menus.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface Executor {
+abstract class MenuFactory {
 
     /**
-     * Submit a task to be executed in the background.
+     * Called to construct main menu.
      *
-     * @param task the task to execute
+     * @param app game application
+     *
+     * @return main menu
      */
-    void submit(Task<?> task);
+    abstract fun newMainMenu(app: GameApplication): FXGLMenu
+
+    /**
+     * Called to construct game menu.
+     *
+     * @param app game application
+     *
+     * @return game menu
+     */
+    abstract fun newGameMenu(app: GameApplication): FXGLMenu
 }
