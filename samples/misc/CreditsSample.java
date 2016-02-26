@@ -31,6 +31,9 @@ import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.Credits;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This is an example of a basic FXGL game application.
  *
@@ -52,11 +55,11 @@ public class CreditsSample extends GameApplication {
         settings.setMenuStyle(MenuStyle.GTA5);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
-        Credits credits = new Credits();
-        credits.addCredit("------------");
-        credits.addCredit("Sample: A sample credit");
+        List<String> list = new ArrayList<>();
+        list.add("-----------------------");
+        list.add("Sample: A sample credit");
 
-        settings.setCredits(credits);
+        settings.setCredits(new Credits(list));
     }
 
     @Override

@@ -114,7 +114,7 @@ public class FXShooterApp extends GameApplication {
 
     @OnUserAction(name = "Shoot", type = ActionType.ON_ACTION_BEGIN)
     public void shoot() {
-        playerControl.shoot(getInput().getMouse().getVectorToCursor(player.getPositionComponent().getValue()));
+        playerControl.shoot(getInput().getVectorToCursor(player.getPositionComponent().getValue()));
     }
 
     private void initTreasure() {
