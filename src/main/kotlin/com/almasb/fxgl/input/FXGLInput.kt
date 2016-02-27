@@ -46,61 +46,31 @@ import java.lang.reflect.Method
 import java.util.*
 
 @Singleton
-class Input @Inject private constructor() : UserProfileSavable {
+class FXGLInput @Inject private constructor() : Input, UserProfileSavable {
 
     private val log = FXGLLogger.getLogger("FXGL.Input")
 
     /**
      * Cursor point in game coordinate space.
      */
-    var gameXY = Point2D.ZERO
-        private set
+    private var gameXY = Point2D.ZERO
+
+    override fun getMousePositionWorld() = gameXY
 
     /**
      * Cursor point in screen coordinate space.
      * Useful for UI manipulation.
      */
-    var screenXY = Point2D.ZERO
-        private set
+    private var sceneXY = Point2D.ZERO
 
-    /**
-     * @return cursor x in game coordinate space
-     */
-    fun getGameX() = gameXY.x
-
-    /**
-     * @return cursor y in game coordinate space
-     */
-    fun getGameY() = gameXY.y
-
-    /**
-     * @return cursor x in UI coordinate space
-     */
-    fun getScreenX() = screenXY.x
-
-    /**
-     * @return cursor y in UI coordinate space
-     */
-    fun getScreenY() = screenXY.y
-
-    /**
-     * @param gamePosition point in game world
-     *
-     * @return vector from given point to mouse cursor point
-     */
-    fun getVectorToCursor(gamePosition: Point2D) = gameXY.subtract(gamePosition)
-
-    /**
-     * @param gamePosition point in game world
-     *
-     * @return vector from mouse cursor point to given point
-     */
-    fun getVectorFromCursor(gamePosition: Point2D) = getVectorToCursor(gamePosition).multiply(-1.0)
+    override fun getMousePositionUI() = sceneXY
 
     /**
      * Action bindings.
      */
-    val bindings = LinkedHashMap<UserAction, Trigger>()
+    private val bindings = LinkedHashMap<UserAction, Trigger>()
+
+    override fun getBindings() = bindings
 
     /**
      * Currently active actions.
@@ -110,12 +80,24 @@ class Input @Inject private constructor() : UserProfileSavable {
     /**
      * If action events should be processed.
      */
-    var processActions = true
+    private var processActions = true
+
+    override fun setProcessInput(process: Boolean) {
+        processActions = process
+    }
+
+    override fun isProcessInput() = processActions
 
     /**
      * If input should be registered.
      */
-    var registerInput = true
+    private var registerInput = true
+
+    override fun setRegisterInput(register: Boolean) {
+        registerInput = register
+    }
+
+    override fun isRegisterInput() = registerInput
 
     init {
         initActionListener()
@@ -154,9 +136,9 @@ class Input @Inject private constructor() : UserProfileSavable {
             }
         }
 
-        eventBus.addEventHandler(FXGLEvent.PAUSE, { clearAllInput() })
-        eventBus.addEventHandler(FXGLEvent.RESUME, { clearAllInput() })
-        eventBus.addEventHandler(FXGLEvent.RESET, { clearAllInput() })
+        eventBus.addEventHandler(FXGLEvent.PAUSE, { clearAll() })
+        eventBus.addEventHandler(FXGLEvent.RESUME, { clearAll() })
+        eventBus.addEventHandler(FXGLEvent.RESET, { clearAll() })
 
         eventBus.addEventHandler(FXGLInputEvent.ANY) { event ->
             if (!registerInput)
@@ -173,7 +155,7 @@ class Input @Inject private constructor() : UserProfileSavable {
                 }
 
                 gameXY = event.gameXY
-                screenXY = Point2D(mouseEvent.sceneX, mouseEvent.sceneY)
+                sceneXY = Point2D(mouseEvent.sceneX, mouseEvent.sceneY)
             } else {
                 val keyEvent = event.fxEvent as KeyEvent
                 if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
@@ -224,11 +206,7 @@ class Input @Inject private constructor() : UserProfileSavable {
         .forEach { currentActions.remove(it.key) }
     }
 
-    /**
-     * Clears all input, that is releases all key presses and mouse clicks
-     * for a single frame.
-     */
-    fun clearAllInput() {
+    override fun clearAll() {
         log.finer { "Clearing active input actions" }
 
         currentActions.clear()
@@ -241,114 +219,45 @@ class Input @Inject private constructor() : UserProfileSavable {
      */
     private val keys = HashMap<KeyCode, Boolean>()
 
-    /**
-     * @param key the key to check
-     *
-     * @return true iff key is currently held
-     */
-    fun isHeld(key: KeyCode) = keys.getOrDefault(key, false)
+    override fun isHeld(key: KeyCode) = keys.getOrDefault(key, false)
 
     /**
      * Currently held buttons.
      */
     private val buttons = HashMap<MouseButton, Boolean>()
 
-    /**
-     * @param button the button to check
-     *
-     * @return true iff button is currently held
-     */
-    fun isHeld(button: MouseButton) = buttons.getOrDefault(button, false)
+    override fun isHeld(button: MouseButton) = buttons.getOrDefault(button, false)
 
-    /**
-     * Bind [action] to a mouse [btn].
-     *
-     * @throws IllegalArgumentException if action with same name exists
-     */
-    fun addAction(action: UserAction, btn: MouseButton) = addAction(action, btn, InputModifier.NONE)
+    override fun addAction(action: UserAction, button: MouseButton, modifier: InputModifier) =
+            addBinding(action, MouseTrigger(button, modifier))
 
-    /**
-     * Bind given action to a mouse button with special modifier key.
-     *
-     * @param action the action to bind
-     * @param button the mouse button
-     *
-     * @param modifier the key modifier
-     *
-     * @throws IllegalArgumentException if action with same name exists
-     */
-    fun addAction(action: UserAction, button: MouseButton, modifier: InputModifier) {
-        if (bindings.containsKey(action))
-            throw IllegalArgumentException("Action with name \"$action\" already exists")
+    override fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier) =
+            addBinding(action, KeyTrigger(key, modifier))
 
-        val trigger = MouseTrigger(button, modifier)
-
-        if (bindings.containsValue(trigger))
-            throw IllegalArgumentException("Button \"$button\" is already bound")
-
-        bindings.put(action, trigger)
-        log.finer { "Registered new binding: $action - $trigger" }
-    }
-
-    /**
-     * Bind given action to a keyboard key.
-     *
-     * @param action the action to bind
-     * @param key the key
-     * @throws IllegalArgumentException if action with same name exists
-     */
-    fun addAction(action: UserAction, key: KeyCode) = addAction(action, key, InputModifier.NONE)
-
-    /**
-     * Bind given action to a keyboard key with special modifier key.
-     *
-     * @param action the action to bind
-     * @param key the key
-     * @param modifier the key modifier
-     * @throws IllegalArgumentException if action with same name exists
-     */
-    fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier) {
+    private fun addBinding(action: UserAction, trigger: Trigger) {
         if (bindings.containsKey(action))
             throw IllegalArgumentException("Action with name \"${action.name}\" already exists")
 
-        val trigger = KeyTrigger(key, modifier)
-
         // TODO: check if ctrl + w same as w
         if (bindings.containsValue(trigger))
-            throw IllegalArgumentException("Key $key is already bound")
+            throw IllegalArgumentException("Trigger $trigger is already bound")
 
-        bindings.put(action, trigger)
+        bindings[action] = trigger
         log.finer { "Registered new binding: $action - $trigger" }
     }
 
-    /**
-     * Rebinds an action to given key.
-     *
-     * @param action the user action
-     * @param key the key to rebind to
-     * @return true if rebound, false if action not found or
-     * there is another action bound to key
-     */
-    fun rebind(action: UserAction, key: KeyCode): Boolean {
+    override fun rebind(action: UserAction, key: KeyCode): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key))) {
-            bindings.put(action, KeyTrigger(key))
+            bindings[action] = KeyTrigger(key)
             return true
         }
 
         return false
     }
 
-    /**
-     * Rebinds an action to given mouse button.
-     *
-     * @param action the user action
-     * @param button the mouse button
-     * @return true if rebound, false if action not found or
-     * there is another action bound to mouse button
-     */
-    fun rebind(action: UserAction, button: MouseButton): Boolean {
+    override fun rebind(action: UserAction, button: MouseButton): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button))) {
-            bindings.put(action, MouseTrigger(button))
+            bindings[action] = MouseTrigger(button)
             return true
         }
 
@@ -366,35 +275,23 @@ class Input @Inject private constructor() : UserProfileSavable {
 
     /**
      * Mocks key press event. The behavior is equivalent to
-     * user pressing and holding the [key].
-     */
-    fun mockKeyPress(key: KeyCode) = mockKeyPress(key, InputModifier.NONE)
-
-    /**
-     * Mocks key press event. The behavior is equivalent to
      * user pressing and holding the [key] and [modifier].
      */
-    fun mockKeyPress(key: KeyCode, modifier: InputModifier) {
+    override fun mockKeyPress(key: KeyCode, modifier: InputModifier) {
         log.finer { "Mocking key press: ${KeyTrigger(key, modifier)}" }
         handlePressed(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
     }
 
     /**
      * Mocks key release event.
-     * The behavior is equivalent to user releasing the [key].
-     */
-    fun mockKeyRelease(key: KeyCode) = mockKeyRelease(key, InputModifier.NONE)
-
-    /**
-     * Mocks key release event.
      * The behavior is equivalent to user releasing the [key] and [modifier].
      */
-    fun mockKeyRelease(key: KeyCode, modifier: InputModifier) {
+    override fun mockKeyRelease(key: KeyCode, modifier: InputModifier) {
         log.finer { "Mocking key release: ${KeyTrigger(key, modifier)}" }
         handleReleased(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
     }
 
-    fun makeMouseEvent(btn: MouseButton, eventType: EventType<MouseEvent>,
+    private fun makeMouseEvent(btn: MouseButton, eventType: EventType<MouseEvent>,
                        gameX: Double, gameY: Double, modifier: InputModifier) =
         MouseEvent(eventType, gameX, gameY, gameX, gameY, btn, 0,
                 modifier == InputModifier.SHIFT,
@@ -404,32 +301,18 @@ class Input @Inject private constructor() : UserProfileSavable {
 
     /**
      * Mocks mouse button press event.
-     * Same as user pressing and holding the [button] at [gameX], [gameY].
-     */
-    fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double) =
-            mockButtonPress(button, gameX, gameY, InputModifier.NONE)
-
-    /**
-     * Mocks mouse button press event.
      * Same as user pressing and holding the [button] + [modifier] at [gameX], [gameY].
      */
-    fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
+    override fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
         log.finer { "Mocking button press: ${MouseTrigger(button, modifier)}" }
         handlePressed(makeMouseEvent(button, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier))
     }
 
     /**
      * Mocks mouse button release event.
-     * Same as user releasing the [button].
-     */
-    fun mockButtonRelease(button: MouseButton) =
-            mockButtonRelease(button, InputModifier.NONE)
-
-    /**
-     * Mocks mouse button release event.
      * Same as user releasing the [button] + [modifier].
      */
-    fun mockButtonRelease(button: MouseButton, modifier: InputModifier) {
+    override fun mockButtonRelease(button: MouseButton, modifier: InputModifier) {
         log.finer { "Mocking button release: ${MouseTrigger(button, modifier)}" }
         handleReleased(makeMouseEvent(button, MouseEvent.MOUSE_RELEASED, 0.0, 0.0, modifier))
     }
@@ -438,23 +321,17 @@ class Input @Inject private constructor() : UserProfileSavable {
 
     private val inputMappings = HashMap<String, InputMapping>()
 
-    /**
-     * Add input mapping. The actual implementation needs to be specified by
-     * {@link OnUserAction} annotation.
-     *
-     * @param inputMapping the mapping
-     */
-    fun addInputMapping(inputMapping: InputMapping) = inputMappings.put(inputMapping.actionName, inputMapping)
-
-    private fun getInputMappingByName(actionName: String) = inputMappings[actionName]
+    override fun addInputMapping(inputMapping: InputMapping) {
+        inputMappings.put(inputMapping.actionName, inputMapping)
+    }
 
     /**
-     * Given an object scans its methods for {@link OnUserAction} annotation
+     * Given an object, scans its methods for {@link OnUserAction} annotation
      * and creates UserActions from its data.
      *
      * @param instance the class instance to scan
      */
-    fun scanForUserActions(instance: Any) {
+    override fun scanForUserActions(instance: Any) {
         val map = HashMap<String, HashMap<ActionType, Method> >()
 
         for (method in instance.javaClass.declaredMethods) {
@@ -462,33 +339,29 @@ class Input @Inject private constructor() : UserProfileSavable {
             if (action != null) {
                 val mapping = map.getOrDefault(action.name, HashMap())
                 if (mapping.isEmpty()) {
-                    map.put(action.name, mapping)
+                    map[action.name] = mapping
                 }
 
-                mapping.put(action.type, method)
+                mapping[action.type] = method
             }
         }
 
         map.forEach { name, mapping ->
-            val onAction = mapping[ActionType.ON_ACTION]
-            val onActionBegin = mapping[ActionType.ON_ACTION_BEGIN]
-            val onActionEnd = mapping[ActionType.ON_ACTION_END]
-
             val action = object : UserAction(name) {
                 override fun onActionBegin() {
-                    onActionBegin?.invoke(instance)
+                    mapping[ActionType.ON_ACTION_BEGIN]?.invoke(instance)
                 }
 
                 override fun onAction() {
-                    onAction?.invoke(instance)
+                    mapping[ActionType.ON_ACTION]?.invoke(instance)
                 }
 
                 override fun onActionEnd() {
-                    onActionEnd?.invoke(instance)
+                    mapping[ActionType.ON_ACTION_END]?.invoke(instance)
                 }
             }
 
-            val inputMapping: InputMapping = getInputMappingByName(name)!!
+            val inputMapping: InputMapping = inputMappings[name]!!
 
             if (inputMapping.isKeyTrigger()) {
                 addAction(action, inputMapping.getKeyTrigger(), inputMapping.modifier)

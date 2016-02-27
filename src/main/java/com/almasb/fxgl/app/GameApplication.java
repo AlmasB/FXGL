@@ -321,7 +321,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             if (!isMenuOpen())
                 pause();
 
-            getInput().clearAllInput();
+            getInput().clearAll();
         });
         getEventBus().addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
             if (getState() == ApplicationState.INTRO ||

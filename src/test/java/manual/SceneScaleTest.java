@@ -49,7 +49,7 @@ public class SceneScaleTest extends GameApplication {
 //        input.addAction(new UserAction("XY Test") {
 //            @Override
 //            protected void onActionBegin() {
-//                getDisplay().showMessageBox(input.getMouse().getGameX() + "," + input.getMouse().getGameY());
+//                getDisplay().showMessageBox(input.getMouse().getMouseXWorld() + "," + input.getMouse().getMouseYWorld());
 ////                log.info(input.getMouse().x + " " + input.getMouse().y);
 ////                log.info(input.getMouse().screenX + " " + input.getMouse().screenY);
 //            }
