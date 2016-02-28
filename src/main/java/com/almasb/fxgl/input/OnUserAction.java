@@ -24,21 +24,35 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent
+package com.almasb.fxgl.input;
 
-import javafx.concurrent.Task
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Defines background thread pool executor service.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * Marks a method that it should be called when user triggers an action.
+ * Note: the method must be in the class extending {@link com.almasb.fxgl.app.GameApplication}
+ * and its signature must be <code>public void anyName()</code>.
  */
-interface Executor {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface OnUserAction {
 
     /**
-     * Submit a task to be executed in the background.
+     * Returns name of the action. The action must have been specified
+     * during initInput() as {@link InputMapping}.
      *
-     * @param task the task to execute
+     * @return action name
      */
-    fun submit(task: Task<*>)
+    String name();
+
+    /**
+     * Returns type of the action, i.e. when the method should be called.
+     * Based on the type, the method is called when the action starts, continues or stops.
+     *
+     * @return action type
+     */
+    ActionType type();
 }

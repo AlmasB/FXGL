@@ -24,82 +24,68 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.io
 
 /**
  * Represents result of an IO based operation.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class IOResult<T> {
-
-    private final boolean ok;
-    private final String errorMessage;
-    private final T data;
-
-    private IOResult(boolean ok, String errorMessage) {
-        this.ok = ok;
-        this.errorMessage = errorMessage;
-        data = null;
-    }
-
-    private IOResult(T data) {
-        this.ok = true;
-        this.errorMessage = "";
-        this.data = data;
-    }
+class IOResult<T> {
 
     /**
      * @return true iff the IO operation succeeded
      */
-    public boolean isOK() {
-        return ok;
-    }
+    val isOK: Boolean
 
     /**
      * Returns error message associated with the operation.
      * Returns empty string if operation succeeded.
-     *
      * @return error message
      */
-    public String getErrorMessage() {
-        return errorMessage;
+    val errorMessage: String
+
+    /**
+     * @return IO result data
+     */
+    val data: T?
+
+    private constructor(ok: Boolean, errorMessage: String) {
+        this.isOK = ok
+        this.errorMessage = errorMessage
+        data = null
+    }
+
+    private constructor(data: T) {
+        this.isOK = true
+        this.errorMessage = ""
+        this.data = data
     }
 
     /**
      * @return true iff result has data associated with it
      */
-    public boolean hasData() {
-        return data != null;
-    }
+    fun hasData() = data != null
 
-    /**
-     * @return IO result data
-     */
-    public T getData() {
-        return data;
-    }
+    companion object {
 
-    /**
-     * @return successful IO result
-     */
-    public static <T> IOResult<T> success() {
-        return new IOResult<>(true, "");
-    }
+        /**
+         * @return successful IO result
+         */
+        @JvmStatic fun <T> success(): IOResult<T> = IOResult(true, "")
 
-    /**
-     * @param data IO data
-     * @return successful IO result
-     */
-    public static <T> IOResult<T> success(T data) {
-        return new IOResult<>(data);
-    }
+        /**
+         * @param data IO data
+         *
+         * @return successful IO result
+         */
+        @JvmStatic fun <T> success(data: T) = IOResult(data)
 
-    /**
-     * @param message error message
-     * @return failed IO result
-     */
-    public static <T> IOResult<T> failure(String message) {
-        return new IOResult<>(false, message);
+        /**
+         * @param message error message
+         *
+         * @return failed IO result
+         */
+        @JvmStatic fun <T> failure(message: String): IOResult<T> = IOResult(false, message)
     }
 }

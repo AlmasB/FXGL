@@ -24,31 +24,21 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input
+package com.almasb.fxgl.concurrent;
 
-import kotlin.annotation.Retention
+import javafx.concurrent.Task;
 
 /**
- * Marks a method that it should be called when user triggers an action.
- * Note: the method must be in the class extending [com.almasb.fxgl.app.GameApplication]
- * and its signature must be `public void anyName()`.
+ * Defines background thread pool executor service.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Repeatable
-annotation class OnUserAction(
-        /**
-         * Returns name of the action. The action must have been specified
-         * during initInput() as [InputMapping].
-         *
-         * @return action name
-         */
-        val name: String,
+public interface Executor {
 
-        /**
-         * Returns type of the action, i.e. when the method should be called.
-         * Based on the type, the method is called when the action starts, continues or stops.
-         *
-         * @return action type
-         */
-        val type: ActionType)
+    /**
+     * Submit a task to be executed in the background.
+     *
+     * @param task the task to execute
+     */
+    void submit(Task<?> task);
+}

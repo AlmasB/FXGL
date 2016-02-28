@@ -35,6 +35,7 @@ import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.MouseTrigger;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
@@ -61,6 +62,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -91,7 +93,16 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
-        app.getSaveLoadManager().loadSaveFileNames().ifPresent(names -> list.getItems().setAll(names));
+
+        IOResult<List<String> > io = app.getSaveLoadManager().loadSaveFileNames();
+
+        if (io.hasData()) {
+            list.getItems().setAll(io.getData());
+        } else {
+            log.warning(io::getErrorMessage);
+            list.getItems().clear();
+        }
+
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         if (list.getItems().size() > 0) {

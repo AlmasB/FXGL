@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.asset.IOResult;
+import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
@@ -33,7 +33,6 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.scene.intro.FXGLIntroScene;
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
@@ -495,7 +494,17 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * The dialog is only dismissed when profile is chosen either way.
      */
     private void showProfileDialog() {
-        List<String> profileNames = SaveLoadManager.loadProfileNames().orElse(Collections.emptyList());
+        IOResult<List<String> > io = SaveLoadManager.loadProfileNames();
+
+        List<String> profileNames;
+
+        if (io.hasData()) {
+            profileNames = io.getData();
+        } else {
+            log.warning(io::getErrorMessage);
+            profileNames = Collections.emptyList();
+        }
+
         ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList(profileNames));
 
         if (!profileNames.isEmpty())

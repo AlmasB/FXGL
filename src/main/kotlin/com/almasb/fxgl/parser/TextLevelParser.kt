@@ -106,23 +106,3 @@ class TextLevelParser {
         return Level(maxWidth, lines.size, entities)
     }
 }
-
-///**
-// * A callback which is used as part of TextLevelParser.addEntityProducer()
-// * to convert text characters into entities.
-// */
-//@FunctionalInterface
-//interface EntityProducer {
-//
-//    /**
-//     * Called when registered character was found during parsing.
-//     * If your block is 40 units, then position is (x*40, y*40).
-//     *
-//     * @param x column position of character
-//     *
-//     * @param y row position of character
-//     *
-//     * @return entity
-//     */
-//    fun produce(x: Int, y: Int): Entity
-//}

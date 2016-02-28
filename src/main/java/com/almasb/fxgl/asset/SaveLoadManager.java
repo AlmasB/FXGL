@@ -25,20 +25,16 @@
  */
 package com.almasb.fxgl.asset;
 
+import com.almasb.fxgl.io.FS;
+import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.util.FXGLLogger;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public final class SaveLoadManager {
 
@@ -73,8 +69,8 @@ public final class SaveLoadManager {
      * @return io result
      */
     public IOResult<?> save(Serializable data, String fileName) {
-        log.finer("Saving data: " + fileName);
-        return saveImpl(data, saveDir() + fileName);
+        log.finer(() -> "Saving data: " + fileName);
+        return FS.writeData(data, saveDir() + fileName);
     }
 
     /**
@@ -84,34 +80,8 @@ public final class SaveLoadManager {
      * @return io result
      */
     public IOResult<?> saveProfile(UserProfile profile) {
-        log.finer("Saving profile: " + profileName);
-        return saveImpl(profile, profileDir() + PROFILE_FILE_NAME);
-    }
-
-    /**
-     * Saves data to file, creating required directories.
-     *
-     * @param data data object to save
-     * @param fileName to save as
-     * @return io result
-     */
-    private IOResult<?> saveImpl(Serializable data, String fileName) {
-        try {
-            Path file = Paths.get(fileName);
-
-            if (!Files.exists(file.getParent())) {
-                Files.createDirectories(file.getParent());
-            }
-
-            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file))) {
-                oos.writeObject(data);
-            }
-
-            return IOResult.success();
-        } catch (Exception e) {
-            log.warning("Save Failed: " + e.getMessage());
-            return IOResult.failure(e.getMessage());
-        }
+        log.finer(() -> "Saving profile: " + profileName);
+        return FS.writeData(profile, profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
@@ -124,32 +94,16 @@ public final class SaveLoadManager {
      */
     @SuppressWarnings("unchecked")
     public <T> IOResult<T> load(String fileName) {
-        log.finer("Loading data: " + fileName);
-        return loadImpl(saveDir() + fileName);
+        log.finer(() -> "Loading data: " + fileName);
+        return FS.<T>readData(saveDir() + fileName);
     }
 
     /**
      * @return user profile loaded from "profiles/"
      */
     public IOResult<UserProfile> loadProfile() {
-        log.finer("Loading profile: " + profileName);
-        return loadImpl(profileDir() + PROFILE_FILE_NAME);
-    }
-
-    /**
-     * Loads data from file into an object.
-     *
-     * @param fileName file to load from
-     * @return IO result with the data object
-     */
-    @SuppressWarnings("unchecked")
-    private <T> IOResult<T> loadImpl(String fileName) {
-        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(fileName)))) {
-            return IOResult.success((T)ois.readObject());
-        } catch (Exception e) {
-            log.warning("Load Failed: " + e.getMessage());
-            return IOResult.failure(e.getMessage());
-        }
+        log.finer(() -> "Loading profile: " + profileName);
+        return FS.<UserProfile>readData(profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
@@ -167,85 +121,30 @@ public final class SaveLoadManager {
     /**
      * Load all profile names.
      *
-     * @return list of profile names or {@link Optional#empty()} if no profiles or error
+     * @return profile names
      */
-    public static Optional<List<String>> loadProfileNames() {
-        try {
-            Path profilesDir = Paths.get("./" + PROFILES_DIR);
-
-            if (!Files.exists(profilesDir)) {
-                return Optional.empty();
-            }
-
-            try (Stream<Path> files = Files.walk(profilesDir, 1)) {
-                return Optional.of(files.filter(Files::isDirectory)
-                        .map(file -> profilesDir.relativize(file).toString().replace("\\", "/"))
-                        .filter(s -> !s.isEmpty())
-                        .collect(Collectors.toList()));
-            }
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+    public static IOResult<List<String> > loadProfileNames() {
+        log.finer(() -> "Loading profile names");
+        return FS.loadDirectoryNames("./" + PROFILES_DIR, false);
     }
 
     /**
      * Loads file names of existing saves from "{@value #SAVE_DIR}".
-     * <p>
-     * Returns {@link Optional#empty()} if "{@value #SAVE_DIR}" directory
-     * doesn't exist or an exception occurred.
      *
-     * @return Optional containing list of file names
+     * @return save file names
      */
-    public Optional<List<String>> loadSaveFileNames() {
-        try {
-            Path saveDir = Paths.get(saveDir());
-
-            if (!Files.exists(saveDir)) {
-                return Optional.empty();
-            }
-
-            try (Stream<Path> files = Files.walk(saveDir)) {
-                return Optional.of(files.filter(Files::isRegularFile)
-                        .map(file -> saveDir.relativize(file).toString().replace("\\", "/"))
-                        .collect(Collectors.toList()));
-            }
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+    public IOResult<List<String> > loadSaveFileNames() {
+        log.finer(() -> "Loading save file names");
+        return FS.loadFileNames(saveDir(), true);
     }
 
     /**
      * Loads last modified save file from "{@value #SAVE_DIR}".
-     * <p>
-     * Returns {@link Optional#empty()} if "{@value #SAVE_DIR}" directory
-     * doesn't exist, an exception occurred or there are no save files.
      *
      * @return last modified save file
      */
     public <T> IOResult<T> loadLastModifiedSaveFile() {
-        try {
-            Path saveDir = Paths.get(saveDir());
-
-            if (!Files.exists(saveDir)) {
-                return IOResult.failure("File not found: " + saveDir);
-            }
-
-            try (Stream<Path> files = Files.walk(saveDir)) {
-                Path file = files.filter(Files::isRegularFile).sorted((file1, file2) -> {
-                    try {
-                        return Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1));
-                    } catch (Exception e) {
-                        return -1;
-                    }
-                }).findFirst().orElseThrow(Exception::new);
-
-                String fileName = saveDir.relativize(file).toString().replace("\\", "/");
-
-                return load(fileName);
-            }
-        } catch (Exception e) {
-            log.warning("Load last save failed: " + e.getMessage());
-            return IOResult.failure(e.getMessage());
-        }
+        log.finer(() -> "Loading last modified save file");
+        return FS.<T>loadLastModifiedFile(saveDir(), true);
     }
 }
