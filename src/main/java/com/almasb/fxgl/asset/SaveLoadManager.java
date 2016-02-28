@@ -107,6 +107,8 @@ public final class SaveLoadManager {
     }
 
     /**
+     * TODO: move to FS
+     *
      * @param fileName name of the file to delete
      * @return true if file was deleted, false if file wasn't deleted for any reason
      */
