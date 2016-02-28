@@ -24,43 +24,36 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.time;
+package com.almasb.fxgl.time
 
-import com.google.inject.Inject;
-import javafx.util.Duration;
+import com.google.inject.Inject
+import javafx.util.Duration
 
 /**
  * Simple timer to capture current time and check if certain time has passed.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLLocalTimer implements LocalTimer {
-
-    private MasterTimer masterTimer;
-    private long time = 0;
-
-    @Inject
-    private FXGLLocalTimer(MasterTimer masterTimer) {
-        this.masterTimer = masterTimer;
-    }
+class FXGLLocalTimer
+@Inject
+private constructor(private val masterTimer: MasterTimer) : LocalTimer {
+    private var time: Long = 0
 
     /**
      * Captures current time.
      */
-    @Override
-    public void capture() {
-        time = masterTimer.getNow();
+    override fun capture() {
+        time = masterTimer.now
     }
 
     /**
      * Returns true if difference between captured time
      * and now is greater or equal to given duration.
-     *
+
      * @param duration time duration to check
+     * *
      * @return true if elapsed, false otherwise
      */
-    @Override
-    public boolean elapsed(Duration duration) {
-        return masterTimer.getNow() - time >= FXGLMasterTimer.toNanos(duration);
-    }
+    override fun elapsed(duration: Duration) =
+            masterTimer.now - time >= FXGLMasterTimer.toNanos(duration)
 }
