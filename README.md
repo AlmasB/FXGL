@@ -1,6 +1,6 @@
 ## FXGL
-JavaFX 8 Game Library<br/>
-[![Release](https://img.shields.io/badge/maven-0.2.0-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
+JavaFX 8 Game Library written in Java + Kotlin<br/>
+[![Release](https://img.shields.io/badge/maven-0.2.1-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
 
@@ -14,7 +14,7 @@ JavaFX 8 Game Library<br/>
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.0'
+    compile 'com.github.AlmasB:FXGL:0.2.1'
 }
 ```
 
@@ -47,14 +47,16 @@ The videos will walk you through the basics. For advanced examples please see <a
 For more information check out the project <a href="https://github.com/AlmasB/FXGL/wiki">Wiki</a>
 
 ## Latest Release Features
-FXGL 0.2.0 supports:
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
+* Top level Java interfaces with lower level [Kotlin](https://github.com/JetBrains/kotlin) implementation
 * [JBox2D](https://github.com/jbox2d/jbox2d) Physics Engine Integration (fork based on v.2.3.0)
 * [Ents](https://github.com/AlmasB/Ents) Entity Component/Control System Integration
 * [FXEventBus](https://github.com/AlmasB/FXEventBus) Event System Integration
+* [AStar](https://github.com/AlmasB/AStar) AI Pathfinding Integration ([A* Search](https://en.wikipedia.org/wiki/A*_search_algorithm))
 * Game Loop
 * Input Bindings (Keys + Mouse)
-* Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf" custom binary formats)
+* Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf", custom binary formats)
+* Text/Script Parsers
 * Automated Collision Handling (physics collisions are hooked into FXGL)
 * Automated Target Screen Resolution (+Fullscreen)
 * Particle System with Canvas Rendering
@@ -64,12 +66,11 @@ FXGL 0.2.0 supports:
 * Audio System
 * Multithreading
 * Networking (both TCP and UDP)
-* AI Pathfinding ([A* Search](https://en.wikipedia.org/wiki/A*_search_algorithm))
 * Quick Time Events (QTE) (<b>API INCOMPLETE</b>)
-* Intro Video / Animation (supports custom intro)
-* Few Built-in Styles of Main Menu + Game Menu (supports custom Main Menu and Game Menu)
-* Custom Modifiable UI elements (Dialogs, Bars, Buttons, etc)
-* Custom Global CSS to use with existing menus / UI elements
+* Customizable Intro Video / Animation
+* Customizable Main Menu / Game Menu
+* Customizable UI elements (Dialogs, Bars, Buttons, etc)
+* Customizable Global CSS for menus / UI elements
 * Saving / Loading System
 * User Profiles (Save/Load/Restore Game Settings)
 * Achievement System
