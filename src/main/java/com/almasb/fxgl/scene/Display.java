@@ -33,6 +33,7 @@ import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.event.LoadEvent;
 import com.almasb.fxgl.event.SaveEvent;
+import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.settings.UserProfile;
@@ -40,8 +41,10 @@ import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.util.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import javafx.beans.property.*;
-import javafx.embed.swing.SwingFXUtils;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -54,15 +57,9 @@ import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -240,22 +237,11 @@ public final class Display implements UserProfileSavable {
      */
     public boolean saveScreenshot() {
         Image fxImage = fxScene.snapshot(null);
-        BufferedImage img = SwingFXUtils.fromFXImage(fxImage, null);
 
-        String fileName = "./" + settings.getTitle()
-                + settings.getVersion() + LocalDateTime.now() + ".png";
-
+        String fileName = "./" + settings.getTitle() + settings.getVersion() + LocalDateTime.now();
         fileName = fileName.replace(":", "_");
 
-        try (OutputStream os = Files.newOutputStream(Paths.get(fileName))) {
-            return ImageIO.write(img, "png", os);
-        } catch (Exception e) {
-            log.finer(
-                    "Exception occurred during saveScreenshot() - "
-                            + e.getMessage());
-        }
-
-        return false;
+        return FS.writeFxImagePNG(fxImage, fileName).isOK();
     }
 
     private List<SceneDimension> sceneDimensions = new ArrayList<>();

@@ -24,20 +24,20 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.event
 
-import com.almasb.fxeventbus.EventBus;
-import com.almasb.fxeventbus.FXEventBus;
-import com.almasb.fxeventbus.Subscriber;
-import com.almasb.fxgl.input.FXGLInputEvent;
-import com.almasb.fxgl.util.FXGLLogger;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
+import com.almasb.fxeventbus.EventBus
+import com.almasb.fxeventbus.FXEventBus
+import com.almasb.fxeventbus.Subscriber
+import com.almasb.fxgl.input.FXGLInputEvent
+import com.almasb.fxgl.util.FXGLLogger
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 
-import java.util.logging.Logger;
+import java.util.logging.Logger
 
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
@@ -45,32 +45,31 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class FXGLEventBus implements EventBus {
-
-    private static final Logger log = FXGLLogger.getLogger("FXGL.EventBus");
-
-    @Inject
-    private FXGLEventBus() {
-        log.finer("Service [EventBus] initialized");
+class FXGLEventBus
+@Inject
+private constructor() : EventBus {
+    companion object {
+        private val log = FXGLLogger.getLogger("FXGL.EventBus")
     }
 
-    private EventBus bus = new FXEventBus();
-
-    @Override
-    public <T extends Event> Subscriber addEventHandler(EventType<T> eventType, EventHandler<? super T> eventHandler) {
-        return bus.addEventHandler(eventType, eventHandler);
+    init {
+        log.finer { "Service [EventBus] initialized" }
     }
 
-    @Override
-    public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<? super T> eventHandler) {
-        bus.removeEventHandler(eventType, eventHandler);
+    private val bus = FXEventBus()
+
+    override fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber {
+        return bus.addEventHandler(eventType, eventHandler)
     }
 
-    @Override
-    public void fireEvent(Event event) {
-        if (event.getEventType() != UpdateEvent.ANY && event.getEventType() != FXGLInputEvent.ANY)
-            log.finer("Firing event: " + event.toString());
+    override fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
+        bus.removeEventHandler(eventType, eventHandler)
+    }
 
-        bus.fireEvent(event);
+    override fun fireEvent(event: Event) {
+        if (event.eventType != UpdateEvent.ANY && event.eventType != FXGLInputEvent.ANY)
+            log.finer { "Firing event: $event" }
+
+        bus.fireEvent(event)
     }
 }

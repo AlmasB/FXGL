@@ -27,15 +27,19 @@
 package com.almasb.fxgl.io
 
 import com.almasb.fxgl.util.FXGLLogger
+import javafx.embed.swing.SwingFXUtils
+import javafx.scene.image.Image
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.LocalDateTime
 import java.util.*
 import java.util.function.Predicate
 import java.util.stream.Collectors
+import javax.imageio.ImageIO
 
 /**
  *
@@ -67,7 +71,7 @@ class FS {
 
                 return IOResult.success<Any>()
             } catch (e: Exception) {
-                log.warning("Write Failed: ${e.message}")
+                log.warning { "Write Failed: ${e.message}" }
                 return IOResult.failure<Any>(e.message ?: "No error message")
             }
         }
@@ -84,7 +88,7 @@ class FS {
                 ObjectInputStream(Files.newInputStream(Paths.get(fileName)))
                         .use { return IOResult.success(it.readObject() as T) }
             } catch (e: Exception) {
-                log.warning("Read Failed: ${e.message}")
+                log.warning { "Read Failed: ${e.message}" }
                 return IOResult.failure<T>(e.message ?: "No error message")
             }
 
@@ -150,8 +154,28 @@ class FS {
 
                 return readData(dirName + fileName)
             } catch (e: Exception) {
-                log.warning("Load failed: ${e.message}")
+                log.warning { "Load failed: ${e.message}" }
                 return IOResult.failure<T>(e.message ?: "No error message")
+            }
+        }
+
+        /**
+         * Writes [fxImage] to [fileName].
+         * Extension ".png" will be appended to [fileName].
+         *
+         * @return io result of operation
+         */
+        @JvmStatic fun writeFxImagePNG(fxImage: Image, fileName: String): IOResult<*> {
+            val img = SwingFXUtils.fromFXImage(fxImage, null)
+
+            try {
+                Files.newOutputStream(Paths.get(fileName + ".png")).use {
+                    val ok = ImageIO.write(img, "png", it)
+                    return if (ok) IOResult.success<Any>() else IOResult.failure<Any>("Failed to write image")
+                }
+            } catch (e: Exception) {
+                log.warning { "Write Failed: ${e.message}" }
+                return IOResult.failure<Any>(e.message ?: "No error message")
             }
         }
     }

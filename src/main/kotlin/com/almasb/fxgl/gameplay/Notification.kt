@@ -24,29 +24,13 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.gameplay
 
 /**
  * Represents a notification message.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Notification {
-    private String message;
+data class Notification internal constructor(val message: String) {
 
-    /**
-     * @return message associated with this notification
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    Notification(String message) {
-        this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return "Notification: " + message;
-    }
 }
