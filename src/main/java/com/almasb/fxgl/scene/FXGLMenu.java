@@ -184,14 +184,21 @@ public abstract class FXGLMenu extends FXGLScene {
 
             Scene scene = new Scene(new StackPane(rect, text));
             scene.setOnKeyPressed(e -> {
-                app.getInput().rebind(action, e.getCode());
+                boolean rebound = app.getInput().rebind(action, e.getCode());
+
+                if (!rebound)
+                    return;
 
                 // TODO: we manually set name here, would be nice to have data-bind
                 triggerName.setText(new KeyTrigger(e.getCode()).getName());
                 stage.close();
             });
             scene.setOnMouseClicked(e -> {
-                app.getInput().rebind(action, e.getButton());
+                boolean rebound = app.getInput().rebind(action, e.getButton());
+
+                if (!rebound)
+                    return;
+
                 triggerName.setText(new MouseTrigger(e.getButton()).getName());
                 stage.close();
             });
