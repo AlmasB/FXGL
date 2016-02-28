@@ -189,7 +189,7 @@
 //
 //                b.setSceneView(new HBox(new Rectangle(40, 40, Color.BLUE), new Rectangle(40, 40, Color.RED)));
 //                b.setBodyType(BodyType.DYNAMIC);
-//                b.setValue(input.getMouse().getGameXY());
+//                b.setValue(input.getMouse().getMousePositionWorld());
 //
 //                b.setGenerateHitBoxesFromView(false);
 //
@@ -227,7 +227,7 @@
 //            @Override
 //            protected void onActionBegin() {
 //                Entity e = new Entity(Type.BOX);
-//                e.setValue(input.getMouse().getGameX(), input.getMouse().getGameY());
+//                e.setValue(input.getMouse().getMouseXWorld(), input.getMouse().getMouseYWorld());
 //
 //
 //                Pane pane = new Pane();

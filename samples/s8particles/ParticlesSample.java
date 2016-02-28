@@ -67,7 +67,7 @@ public class ParticlesSample extends GameApplication {
             protected void onActionBegin() {
                 // 1. create entity
                 Entity explosion = new Entity();
-                explosion.addComponent(new PositionComponent(input.getGameXY()));
+                explosion.addComponent(new PositionComponent(input.getMousePositionWorld()));
 
                 // 2. create and configure emitter + control
                 ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
