@@ -26,195 +26,48 @@
 
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxeventbus.EventBus;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.event.DisplayEvent;
-import com.almasb.fxgl.event.LoadEvent;
-import com.almasb.fxgl.event.SaveEvent;
-import com.almasb.fxgl.io.FS;
-import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.settings.SceneDimension;
-import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.settings.UserProfileSavable;
-import com.almasb.fxgl.util.FXGLLogger;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.Pane;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 
 /**
  * Display service. Provides access to dialogs and display settings.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
-public final class Display implements UserProfileSavable {
-
-    private static final Logger log = FXGLLogger.getLogger("FXGL.Display");
-
-    private final Stage stage;
-
-    /**
-     * Underlying JavaFX scene. We only use 1 scene to avoid
-     * problems in fullscreen mode. Switching between scenes
-     * in FS mode will otherwise temporarily toggle FS.
-     */
-    private Scene fxScene;
-    private final ReadOnlyObjectWrapper<FXGLScene> currentScene = new ReadOnlyObjectWrapper<>();
-
-    private final List<FXGLScene> scenes = new ArrayList<>();
-
-    private final DoubleProperty targetWidth;
-    private final DoubleProperty targetHeight;
-    private final DoubleProperty scaledWidth;
-    private final DoubleProperty scaledHeight;
-    private final DoubleProperty scaleRatio;
-
-    private final CSS css;
-
-    private final ReadOnlyGameSettings settings;
-
-    private final EventBus eventBus;
-
-    /*
-     * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
-     * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
-     * So we copy the occurred event and reroute to whichever FXGL scene is current.
-     */
-    private final EventHandler<Event> fxToFXGLFilter = event -> {
-        Event copy = event.copyFor(null, null);
-        getCurrentScene().fireEvent(copy);
-    };
-
-    @Inject
-    private Display(Stage stage, Scene fxScene, ReadOnlyGameSettings settings) {
-        this.stage = stage;
-        this.fxScene = fxScene;
-        this.settings = settings;
-
-        targetWidth = new SimpleDoubleProperty(settings.getWidth());
-        targetHeight = new SimpleDoubleProperty(settings.getHeight());
-        scaledWidth = new SimpleDoubleProperty();
-        scaledHeight = new SimpleDoubleProperty();
-        scaleRatio = new SimpleDoubleProperty();
-
-        // if default css then use menu css, else use specified
-        css = FXGLAssets.UI_CSS.isDefault()
-                ? GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(settings.getMenuStyle().getCSSFileName())
-                : FXGLAssets.UI_CSS;
-
-        initStage();
-        initDialogBox();
-
-        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
-
-        computeSceneSettings(settings.getWidth(), settings.getHeight());
-        computeScaledSize();
-
-        eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
-        eventBus.addEventHandler(SaveEvent.ANY, event -> {
-            save(event.getProfile());
-        });
-
-        eventBus.addEventHandler(LoadEvent.ANY, event -> {
-            load(event.getProfile());
-        });
-
-        log.finer("Service [Display] initialized");
-        log.finer("Using CSS: " + css);
-    }
-
-    /**
-     * Configure main stage based on user settings.
-     */
-    private void initStage() {
-        stage.setScene(fxScene);
-        stage.setTitle(settings.getTitle() + " " + settings.getVersion());
-        stage.setResizable(false);
-        stage.setOnCloseRequest(e -> {
-            e.consume();
-
-            showConfirmationBox("Exit the game?", yes -> {
-                if (yes)
-                    eventBus.fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
-            });
-        });
-        stage.getIcons().add(FXGLAssets.UI_ICON);
-
-        if (settings.isFullScreen()) {
-            stage.setFullScreenExitHint("");
-            // don't let the user to exit FS mode manually
-            stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            stage.setFullScreen(true);
-        }
-
-        stage.sizeToScene();
-    }
+public interface Display {
 
     /**
      * Register an FXGL scene to be managed by display settings.
      *
      * @param scene the scene
      */
-    public void registerScene(FXGLScene scene) {
-        scenes.add(scene);
-
-        scene.bindSize(scaledWidth, scaledHeight, scaleRatio);
-        scene.appendCSS(css);
-    }
+    void registerScene(FXGLScene scene);
 
     /**
      * Set current FXGL scene. The scene will be immediately displayed.
      *
      * @param scene the scene
      */
-    public void setScene(FXGLScene scene) {
-        if (getCurrentScene() != null) {
-            getCurrentScene().activeProperty().set(false);
-        }
-        currentScene.set(scene);
-        scene.activeProperty().set(true);
-
-        fxScene.setRoot(scene.getRoot());
-    }
+    void setScene(FXGLScene scene);
 
     /**
      * @return current scene property
      */
-    public ReadOnlyObjectProperty<FXGLScene> currentSceneProperty() {
-        return currentScene.getReadOnlyProperty();
-    }
+    ReadOnlyObjectProperty<FXGLScene> currentSceneProperty();
 
     /**
      * @return current FXGL scene
      */
-    public FXGLScene getCurrentScene() {
-        return currentScene.get();
+    default FXGLScene getCurrentScene() {
+        return currentSceneProperty().get();
     }
 
     /**
@@ -224,149 +77,19 @@ public final class Display implements UserProfileSavable {
      *
      * @return display bounds
      */
-    public Rectangle2D getBounds() {
-        return settings.isFullScreen()
-                ? Screen.getPrimary().getBounds()
-                : Screen.getPrimary().getVisualBounds();
-    }
+    Rectangle2D getBounds();
 
     /**
      * Saves a screenshot of the current scene into a ".png" file.
      *
      * @return true if the screenshot was saved successfully, false otherwise
      */
-    public boolean saveScreenshot() {
-        Image fxImage = fxScene.snapshot(null);
-
-        String fileName = "./" + settings.getTitle() + settings.getVersion() + LocalDateTime.now();
-        fileName = fileName.replace(":", "_");
-
-        return FS.writeFxImagePNG(fxImage, fileName).isOK();
-    }
-
-    private List<SceneDimension> sceneDimensions = new ArrayList<>();
+    boolean saveScreenshot();
 
     /**
-     *
      * @return a list of supported scene dimensions with 360, 480, 720 and 1080 heights
      */
-    public List<SceneDimension> getSceneDimensions() {
-        return new ArrayList<>(sceneDimensions);
-    }
-
-    /**
-     * Computes scene settings based on target size and screen bounds.
-     *
-     * @param width  target (app) width
-     * @param height target (app) height
-     */
-    private void computeSceneSettings(double width, double height) {
-        Rectangle2D bounds = getBounds();
-
-        int[] heights = {360, 480, 720, 1080};
-
-        double ratio = width / height;
-        for (int h : heights) {
-            if (h <= bounds.getHeight() && h * ratio <= bounds.getWidth()) {
-                sceneDimensions.add(new SceneDimension(h*ratio, h));
-            } else {
-                break;
-            }
-        }
-    }
-
-    /**
-     * @return target width (requested width)
-     */
-    public final double getTargetWidth() {
-        return targetWidth.get();
-    }
-
-    /**
-     * @return target height (requested height)
-     */
-    public final double getTargetHeight() {
-        return targetHeight.get();
-    }
-
-    /**
-     * @return scaled width (actual width of the scenes)
-     */
-    public final double getScaledWidth() {
-        return scaledWidth.get();
-    }
-
-    /**
-     * @return scaled height (actual height of the scenes)
-     */
-    public final double getScaledHeight() {
-        return scaledHeight.get();
-    }
-
-    /**
-     * @return scale ratio (set width / settings width)
-     */
-    public final double getScaleRatio() {
-        return scaleRatio.get();
-    }
-
-    /**
-     * Computes scaled size of the output based on screen and target
-     * resolutions.
-     */
-    private void computeScaledSize() {
-        double newW = getTargetWidth();
-        double newH = getTargetHeight();
-        Rectangle2D bounds = getBounds();
-
-        if (newW > bounds.getWidth() || newH > bounds.getHeight()) {
-            log.finer("App size > screen size");
-
-            double ratio = newW / newH;
-
-            for (int newWidth = (int) bounds.getWidth(); newWidth > 0; newWidth--) {
-                if (newWidth / ratio <= bounds.getHeight()) {
-                    newW = newWidth;
-                    newH = newWidth / ratio;
-                    break;
-                }
-            }
-        }
-
-        scaledWidth.set(newW);
-        scaledHeight.set(newH);
-        scaleRatio.set(newW / settings.getWidth());
-
-        log.finer("Target size: " + getTargetWidth() + "x" + getTargetHeight() + "@" + 1.0);
-        log.finer("New size:    " + newW  + "x" + newH   + "@" + getScaleRatio());
-    }
-
-    /**
-     * Performs actual change of output resolution.
-     * It will create a new underlying JavaFX scene.
-     *
-     * @param w new width
-     * @param h new height
-     */
-    private void setNewResolution(double w, double h) {
-        targetWidth.set(w);
-        targetHeight.set(h);
-        computeScaledSize();
-
-        Parent root = fxScene.getRoot();
-        // clear listener
-        fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
-        // clear root of previous JavaFX scene
-        fxScene.setRoot(new Pane());
-
-        // create and init new JavaFX scene
-        fxScene = new Scene(root);
-        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
-        stage.setScene(fxScene);
-        if (settings.isFullScreen()) {
-            stage.setFullScreen(true);
-        }
-    }
+    List<SceneDimension> getSceneDimensions();
 
     /**
      * Set new scene dimension. This will change the video output
@@ -374,28 +97,11 @@ public final class Display implements UserProfileSavable {
      *
      * @param dimension scene dimension
      */
-    public void setSceneDimension(SceneDimension dimension) {
-        if (sceneDimensions.contains(dimension)) {
-            log.finer("Setting scene dimension: " + dimension);
-            setNewResolution(dimension.getWidth(), dimension.getHeight());
-        } else {
-            log.warning(dimension + " is not supported!");
-        }
-    }
+    void setSceneDimension(SceneDimension dimension);
 
-    private DialogPane dialog;
+    double getScaleRatio();
 
-    private void initDialogBox() {
-        dialog = new DialogPane(this);
-        dialog.setOnShown(() -> {
-            fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter);
-            eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
-        });
-        dialog.setOnClosed(() -> {
-            eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_CLOSED));
-            fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter);
-        });
-    }
+    /* DIALOG ACCESS */
 
     /**
      * Shows given dialog and blocks execution of the game until the dialog is
@@ -405,17 +111,7 @@ public final class Display implements UserProfileSavable {
      * @param dialog         JavaFX dialog
      * @param resultCallback the function to be called
      */
-    public <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback) {
-        eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_OPENED));
-
-        dialog.initOwner(stage);
-        dialog.setOnCloseRequest(e -> {
-            eventBus.fireEvent(new DisplayEvent(DisplayEvent.DIALOG_CLOSED));
-
-            resultCallback.accept(dialog.getResult());
-        });
-        dialog.show();
-    }
+    <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
@@ -423,9 +119,7 @@ public final class Display implements UserProfileSavable {
      *
      * @param message the message to show
      */
-    public void showMessageBox(String message) {
-        dialog.showMessageBox(message);
-    }
+    void showMessageBox(String message);
 
     /**
      * Shows a blocking message box with YES and NO buttons. The callback is
@@ -434,9 +128,7 @@ public final class Display implements UserProfileSavable {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    public void showConfirmationBox(String message, Consumer<Boolean> resultCallback) {
-        dialog.showConfirmationBox(message, resultCallback);
-    }
+    void showConfirmationBox(String message, Consumer<Boolean> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
@@ -445,9 +137,7 @@ public final class Display implements UserProfileSavable {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    public void showInputBox(String message, Consumer<String> resultCallback) {
-        dialog.showInputBox(message, resultCallback);
-    }
+    void showInputBox(String message, Consumer<String> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
@@ -457,18 +147,14 @@ public final class Display implements UserProfileSavable {
      * @param filter  filter to validate input
      * @param resultCallback the function to be called
      */
-    public void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback) {
-        dialog.showInputBox(message, filter, resultCallback);
-    }
+    void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) dialog with the error.
      *
      * @param error the error to show
      */
-    public void showErrorBox(Throwable error) {
-        dialog.showErrorBox(error);
-    }
+    void showErrorBox(Throwable error);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) dialog with the error.
@@ -476,9 +162,7 @@ public final class Display implements UserProfileSavable {
      * @param errorMessage error message to show
      * @param callback the function to be called when dialog is dismissed
      */
-    public void showErrorBox(String errorMessage, Runnable callback) {
-        dialog.showErrorBox(errorMessage, callback);
-    }
+    void showErrorBox(String errorMessage, Runnable callback);
 
     /**
      * Shows a blocking (stops game execution, method returns normally) generic dialog.
@@ -487,29 +171,5 @@ public final class Display implements UserProfileSavable {
      * @param content the content
      * @param buttons buttons present
      */
-    public void showBox(String message, Node content, Button... buttons) {
-        dialog.showBox(message, content, buttons);
-    }
-
-    @Override
-    public void save(UserProfile profile) {
-        log.finer("Saving data to profile");
-
-        UserProfile.Bundle bundle = new UserProfile.Bundle("scene");
-        bundle.put("sizeW", getTargetWidth());
-        bundle.put("sizeH", getTargetHeight());
-
-        bundle.log();
-        profile.putBundle(bundle);
-    }
-
-    @Override
-    public void load(UserProfile profile) {
-        log.finer("Loading data from profile");
-
-        UserProfile.Bundle bundle = profile.getBundle("scene");
-        bundle.log();
-
-        setNewResolution(bundle.get("sizeW"), bundle.get("sizeH"));
-    }
+    void showBox(String message, Node content, Button... buttons);
 }
