@@ -26,7 +26,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.input.UserAction;
