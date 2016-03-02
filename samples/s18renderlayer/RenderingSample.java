@@ -27,6 +27,8 @@ package s18renderlayer;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.GameSettings;
@@ -39,8 +41,6 @@ import javafx.scene.shape.Rectangle;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class RenderingSample extends GameApplication {
-
-    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -63,21 +63,15 @@ public class RenderingSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new GameEntity();
-        player.getPositionComponent().setValue(100, 100);
+        Entities.builder()
+                .at(100, 100)
+                .viewFromNode(new Rectangle(40, 40))
+                .buildAndAttach(getGameWorld());
 
-        Rectangle graphics = new Rectangle(40, 40);
-        player.getMainViewComponent().setView(graphics);
+        EntityView view = new EntityView(new Rectangle(40, 40, Color.RED));
 
-        getGameWorld().addEntity(player);
-
-        GameEntity box = new GameEntity();
-        box.getPositionComponent().setValue(80, 80);
-
-        // 1. when adding a scene view also attach a render layer
-        // either predefined or created dynamically like below
-        box.getMainViewComponent().setView(new Rectangle(40, 40, Color.RED));
-        box.getMainViewComponent().setRenderLayer(new RenderLayer() {
+        // 1. predefine or create dynamically like below
+        view.setRenderLayer(new RenderLayer() {
             @Override
             public String name() {
                 // 2. specify the unique name for that layer
@@ -93,7 +87,10 @@ public class RenderingSample extends GameApplication {
 
         // we have added box after player but because of the render layer we specified
         // the red box will be drawn below the player
-        getGameWorld().addEntity(box);
+        Entities.builder()
+                .at(80, 80)
+                .viewFromNode(view)
+                .buildAndAttach(getGameWorld());
     }
 
     @Override

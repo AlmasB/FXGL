@@ -33,10 +33,9 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows an example of FXGL dialogs.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class DialogsSample extends GameApplication {
 
@@ -55,16 +54,13 @@ public class DialogsSample extends GameApplication {
 
     @Override
     protected void initInput() {
-
         getInput().addAction(new UserAction("Dialog") {
             @Override
             protected void onActionBegin() {
-                getDisplay().showInputBox("Simple Dialog", DialogPane.ALPHANUM, result -> {
-                    System.out.println(result);
-                });
+                // 1. get display service and use one of the show* methods
+                getDisplay().showInputBox("Simple Dialog", DialogPane.ALPHANUM, System.out::println);
             }
         }, KeyCode.F);
-
     }
 
     @Override

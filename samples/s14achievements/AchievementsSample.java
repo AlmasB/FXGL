@@ -27,6 +27,7 @@ package s14achievements;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -43,7 +44,6 @@ import javafx.scene.shape.Rectangle;
  */
 public class AchievementsSample extends GameApplication {
 
-    private GameEntity player;
     private PlayerControl playerControl;
 
     @Override
@@ -55,7 +55,7 @@ public class AchievementsSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(true);
+        settings.setShowFPS(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -105,14 +105,13 @@ public class AchievementsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new GameEntity();
-        player.getPositionComponent().setValue(100, 100);
-        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40)));
-
         playerControl = new PlayerControl();
-        player.addControl(playerControl);
-
-        getGameWorld().addEntity(player);
+        
+        GameEntity player = Entities.builder()
+                .at(100, 100)
+                .viewFromNode(new Rectangle(40, 40))
+                .with(playerControl)
+                .buildAndAttach(getGameWorld());
 
         // 2. bind achievedProperty() to the condition
         getAchievementManager().getAchievementByName("World Traveller")

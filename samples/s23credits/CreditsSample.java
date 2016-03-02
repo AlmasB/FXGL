@@ -35,10 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to add extra credits.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class CreditsSample extends GameApplication {
 
@@ -52,12 +51,12 @@ public class CreditsSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setMenuStyle(MenuStyle.GTA5);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
         List<String> list = new ArrayList<>();
         list.add("-----------------------");
         list.add("Sample: A sample credit");
+        list.add("-----------------------");
 
         settings.setCredits(new Credits(list));
     }

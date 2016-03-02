@@ -48,10 +48,6 @@ import java.util.List;
  */
 public class SearchSample extends GameApplication {
 
-    private enum Type {
-        TILE
-    }
-
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
@@ -76,7 +72,7 @@ public class SearchSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        // 2. init grid 20x15
+        // 2. init grid width x height
         grid = new AStarGrid(20, 15);
 
         for (int i = 0; i < 15; i++) {

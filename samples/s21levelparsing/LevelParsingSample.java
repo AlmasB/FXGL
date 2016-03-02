@@ -35,10 +35,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows to load a level.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class LevelParsingSample extends GameApplication {
 
