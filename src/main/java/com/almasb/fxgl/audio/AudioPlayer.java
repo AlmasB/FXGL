@@ -52,7 +52,7 @@ public interface AudioPlayer {
 
     /**
      * Set global music volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%
+     * where 0 = 0%, 1 = 100%.
      *
      * @param volume music volume
      */
@@ -74,7 +74,7 @@ public interface AudioPlayer {
 
     /**
      * Set global sound volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%
+     * where 0 = 0%, 1 = 100%.
      *
      * @param volume sound volume
      */

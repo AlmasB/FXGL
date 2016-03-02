@@ -136,7 +136,6 @@ public final class PhysicsWorld {
     @Inject
     private PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
-        this.tick.bind(GameApplication.getService(ServiceType.MASTER_TIMER).tickProperty());
 
         initContactListener();
         initParticles();
@@ -148,7 +147,7 @@ public final class PhysicsWorld {
         bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
             removeEntity(event.getEntity());
         });
-        bus.addEventHandler(UpdateEvent.ANY, event -> update(event.tpf()));
+        bus.addEventHandler(UpdateEvent.ANY, this::update);
 
         log.finer("Physics world initialized");
     }
@@ -222,10 +221,11 @@ public final class PhysicsWorld {
     /**
      * Physics tick.
      *
-     * @param tpf time per frame
+     * @param event update event
      */
-    private void update(double tpf) {
-        physicsWorld.step((float) tpf, 8, 3);
+    private void update(UpdateEvent event) {
+        tick.set(event.tick());
+        physicsWorld.step((float) event.tpf(), 8, 3);
 
         checkCollisions();
         notifyCollisionHandlers();

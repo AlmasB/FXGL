@@ -129,7 +129,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
         timerActions.removeIf(TimerAction::isExpired);
 
         // this is the master update event
-        eventBus.fireEvent(new UpdateEvent(realTPF / 1000000000.0));
+        eventBus.fireEvent(new UpdateEvent(getTick(), realTPF / 1000000000.0));
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So

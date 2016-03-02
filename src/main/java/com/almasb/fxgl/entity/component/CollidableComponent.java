@@ -30,6 +30,8 @@ import com.almasb.ents.component.BooleanComponent;
 import com.almasb.ents.component.Required;
 
 /**
+ * Marks an entity as collidable.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)

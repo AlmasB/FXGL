@@ -37,7 +37,7 @@ import javafx.scene.shape.Circle;
 import java.util.logging.Logger;
 
 /**
- * Represents the visual aspect of entity.
+ * Represents the visual aspect of an entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

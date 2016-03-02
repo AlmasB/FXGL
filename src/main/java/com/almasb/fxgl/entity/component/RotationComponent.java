@@ -30,6 +30,8 @@ import com.almasb.ents.component.DoubleComponent;
 import javafx.geometry.Point2D;
 
 /**
+ * Adds rotation data to an entity.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class RotationComponent extends DoubleComponent {

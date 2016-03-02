@@ -37,8 +37,14 @@ public final class UpdateEvent extends Event {
     public static final EventType<UpdateEvent> ANY =
             new EventType<>(Event.ANY, "UPDATE_EVENT");
 
-    //private long now;
-    //private long tick;
+    private final long tick;
+
+    /**
+     * @return current tick
+     */
+    public long tick() {
+        return tick;
+    }
 
     private final double tpf;
 
@@ -54,13 +60,17 @@ public final class UpdateEvent extends Event {
      *
      * @param tpf time per last frame
      */
-    public UpdateEvent(double tpf) {
+    public UpdateEvent(long tick, double tpf) {
         super(ANY);
+        this.tick = tick;
         this.tpf = tpf;
     }
 
     @Override
     public String toString() {
-        return "UpdateEvent[tpf=" + tpf + "]";
+        return "UpdateEvent{" +
+                "tick=" + tick +
+                ", tpf=" + tpf +
+                '}';
     }
 }

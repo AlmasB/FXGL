@@ -36,6 +36,7 @@ import javafx.geometry.Point2D;
 
 /**
  * Generic projectile control.
+ * Automatically rotates the entity based on velocity direction.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
