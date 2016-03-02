@@ -28,6 +28,7 @@ package s3input;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -52,11 +53,11 @@ public class InputSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        // 1. get input manager
+        // 1. get input service
         Input input = getInput();
 
         // 2. add key/mouse bound actions
-        // when app is running press P to see output to console
+        // when app is running press F to see output to console
         input.addAction(new UserAction("Print Line") {
             @Override
             protected void onActionBegin() {
@@ -72,7 +73,7 @@ public class InputSample extends GameApplication {
             protected void onActionEnd() {
                 System.out.println("Action End");
             }
-        }, KeyCode.P);
+        }, KeyCode.F);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class InputSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    public void onUpdate() {}
+    public void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

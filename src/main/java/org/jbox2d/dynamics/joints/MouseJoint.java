@@ -148,7 +148,7 @@ public class MouseJoint extends Joint {
         Vec2 vB = data.velocities[m_indexB].v;
         float wB = data.velocities[m_indexB].w;
 
-        final Rot qB = pool.popRot();
+        final Rotation qB = pool.popRot();
 
         qB.set(aB);
 
@@ -177,7 +177,7 @@ public class MouseJoint extends Joint {
         Vec2 temp = pool.popVec2();
 
         // Compute the effective mass matrix.
-        Rot.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), m_rB);
+        Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), m_rB);
 
         // K = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
         // = [1/m1+1/m2 0 ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]

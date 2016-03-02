@@ -30,7 +30,7 @@ package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.MathUtils;
-import org.jbox2d.common.Rot;
+import org.jbox2d.common.Rotation;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.SolverData;
 import org.jbox2d.pooling.IWorldPool;
@@ -145,15 +145,15 @@ public class FrictionJoint extends Joint {
 
 
         final Vec2 temp = pool.popVec2();
-        final Rot qA = pool.popRot();
-        final Rot qB = pool.popRot();
+        final Rotation qA = pool.popRot();
+        final Rotation qB = pool.popRot();
 
         qA.set(aA);
         qB.set(aB);
 
         // Compute the effective mass matrix.
-        Rot.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), m_rA);
-        Rot.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), m_rB);
+        Rotation.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), m_rA);
+        Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), m_rB);
 
         // J = [-I -r1_skew I r2_skew]
         // [ 0 -1 0 1]

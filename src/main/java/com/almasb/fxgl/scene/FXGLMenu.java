@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +25,23 @@
  */
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
-import com.almasb.fxgl.input.InputBinding;
+import com.almasb.fxgl.gameplay.GameDifficulty;
+import com.almasb.fxgl.input.KeyTrigger;
+import com.almasb.fxgl.input.MouseTrigger;
+import com.almasb.fxgl.input.Trigger;
+import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.settings.SceneDimension;
+import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.FXGLLogger;
-import com.almasb.fxgl.util.Version;
+import com.almasb.fxgl.logging.FXGLLogger;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -56,7 +61,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -79,20 +83,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected final GameApplication app;
 
-    private List<String> credits = new ArrayList<>();
-
     public FXGLMenu(GameApplication app) {
         this.app = app;
-
-        populateCredits();
-    }
-
-    private void populateCredits() {
-        addCredit("Powered by FXGL " + Version.getAsString());
-        addCredit("Graphics Framework: JavaFX " + Version.getJavaFXAsString());
-        addCredit("Physics Engine: JBox2d (jbox2d.org) " + Version.getJBox2DAsString());
-        addCredit("FXGL Author: Almas Baimagambetov (AlmasB)");
-        addCredit("https://github.com/AlmasB/FXGL");
     }
 
     /**
@@ -101,7 +93,16 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final MenuContent createContentLoad() {
         ListView<String> list = new ListView<>();
-        app.getSaveLoadManager().loadSaveFileNames().ifPresent(names -> list.getItems().setAll(names));
+
+        IOResult<List<String> > io = app.getSaveLoadManager().loadSaveFileNames();
+
+        if (io.hasData()) {
+            list.getItems().setAll(io.getData());
+        } else {
+            log.warning(io::getErrorMessage);
+            list.getItems().clear();
+        }
+
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         if (list.getItems().size() > 0) {
@@ -132,6 +133,16 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(list, hbox);
     }
 
+    protected final MenuContent createContentGameplay() {
+        Spinner<GameDifficulty> difficultySpinner =
+                new FXGLSpinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
+        difficultySpinner.increment();
+
+        app.getGameWorld().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
+
+        return new MenuContent(new HBox(25, UIFactory.newText("DIFFICULTY:"), difficultySpinner));
+    }
+
     /**
      *
      * @return menu content containing input mappings (action -> key/mouse)
@@ -140,19 +151,11 @@ public abstract class FXGLMenu extends FXGLScene {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(50);
+
+        // row 0
         grid.setUserData(0);
 
-        // add listener for new ones
-        app.getInput().getBindings().addListener((ListChangeListener.Change<? extends InputBinding> c) -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(binding -> addNewInputBinding(binding, grid));
-                }
-            }
-        });
-
-        // register current ones
-        app.getInput().getBindings().forEach(binding -> addNewInputBinding(binding, grid));
+        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
 
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -165,11 +168,10 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
-    private void addNewInputBinding(InputBinding binding, GridPane grid) {
-        Text actionName = UIFactory.newText(binding.getAction().getName());
+    private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
+        Text actionName = UIFactory.newText(action.getName());
+        Button triggerName = UIFactory.newButton(trigger.getName());
 
-        Button triggerName = UIFactory.newButton("");
-        triggerName.textProperty().bind(binding.triggerNameProperty());
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
@@ -182,11 +184,22 @@ public abstract class FXGLMenu extends FXGLScene {
 
             Scene scene = new Scene(new StackPane(rect, text));
             scene.setOnKeyPressed(e -> {
-                app.getInput().rebind(binding.getAction(), e.getCode());
+                boolean rebound = app.getInput().rebind(action, e.getCode());
+
+                if (!rebound)
+                    return;
+
+                // TODO: we manually set name here, would be nice to have data-bind
+                triggerName.setText(new KeyTrigger(e.getCode()).getName());
                 stage.close();
             });
             scene.setOnMouseClicked(e -> {
-                app.getInput().rebind(binding.getAction(), e.getButton());
+                boolean rebound = app.getInput().rebind(action, e.getButton());
+
+                if (!rebound)
+                    return;
+
+                triggerName.setText(new MouseTrigger(e.getButton()).getName());
                 stage.close();
             });
 
@@ -248,27 +261,19 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Add a single line of credit text.
-     *
-     * @param text the text to append to credits list
-     */
-    protected final void addCredit(String text) {
-        credits.add(text);
-    }
-
-    /**
-     *
      * @return menu content containing a list of credits
      */
     protected final MenuContent createContentCredits() {
-        return new MenuContent(credits.stream()
+        return new MenuContent(FXGL.getSettings()
+                .getCredits()
+                .getList()
+                .stream()
                 .map(UIFactory::newText)
                 .collect(Collectors.toList())
                 .toArray(new Text[0]));
     }
 
     /**
-     *
      * @return menu content containing a list of achievements
      */
     protected final MenuContent createContentAchievements() {
@@ -293,7 +298,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
     /**
      * A generic vertical box container for menu content
-     * where each element is followed by a separator
+     * where each element is followed by a separator.
      */
     protected class MenuContent extends VBox {
         public MenuContent(Node... items) {

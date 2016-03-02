@@ -23,12 +23,12 @@
  ******************************************************************************/
 package org.jbox2d.collision.broadphase;
 
+import javafx.scene.paint.Color;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.callbacks.TreeCallback;
 import org.jbox2d.callbacks.TreeRayCastCallback;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.RayCastInput;
-import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
@@ -861,13 +861,12 @@ public class DynamicTree implements BroadPhaseStrategy {
         drawTree(argDraw, m_root, 0, height);
     }
 
-    private final Color3f color = new Color3f();
     private final Vec2 textVec = new Vec2();
 
     public void drawTree(DebugDraw argDraw, DynamicTreeNode node, int spot, int height) {
         node.aabb.getVertices(drawVecs);
 
-        color.set(1, (height - spot) * 1f / height, (height - spot) * 1f / height);
+        Color color = Color.color(1, (height - spot) * 1f / height, (height - spot) * 1f / height);
         argDraw.drawPolygon(drawVecs, 4, color);
 
         argDraw.getViewportTranform().getWorldToScreen(node.aabb.upperBound, textVec);

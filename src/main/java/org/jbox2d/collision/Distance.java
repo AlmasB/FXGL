@@ -698,11 +698,11 @@ public class Distance {
             // Compute a tentative new simplex vertex using support points.
             SimplexVertex vertex = vertices[simplex.m_count];
 
-            Rot.mulTransUnsafe(transformA.q, d.negateLocal(), temp);
+            Rotation.mulTransUnsafe(transformA.q, d.negateLocal(), temp);
             vertex.indexA = proxyA.getSupport(temp);
             Transform.mulToOutUnsafe(transformA, proxyA.getVertex(vertex.indexA), vertex.wA);
             // Vec2 wBLocal;
-            Rot.mulTransUnsafe(transformB.q, d.negateLocal(), temp);
+            Rotation.mulTransUnsafe(transformB.q, d.negateLocal(), temp);
             vertex.indexB = proxyB.getSupport(temp);
             Transform.mulToOutUnsafe(transformB, proxyB.getVertex(vertex.indexB), vertex.wB);
             vertex.w.set(vertex.wB).subLocal(vertex.wA);

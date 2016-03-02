@@ -150,14 +150,14 @@
 //    @Override
 //    protected void onWorldUpdate() {
 //        if (mouse.isRightPressed()) {
-//            double dx = mouse.getScreenX() - x;
+//            double dx = mouse.getMouseXUI() - x;
 //            if (dx > 2) {
 //                rotateRight();
 //            } else if (dx < -2) {
 //                rotateLeft();
 //            }
 //
-//            double dy = mouse.getScreenY() - y;
+//            double dy = mouse.getMouseYUI() - y;
 //            if (dy > 2) {
 //                rotateDown();
 //            } else if (dy < -2) {
@@ -165,8 +165,8 @@
 //            }
 //        }
 //
-//        x = mouse.getScreenX();
-//        y = mouse.getScreenY();
+//        x = mouse.getMouseXUI();
+//        y = mouse.getMouseYUI();
 //    }
 //
 //    PerspectiveCamera camera;

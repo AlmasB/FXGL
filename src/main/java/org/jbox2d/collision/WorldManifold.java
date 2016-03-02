@@ -100,7 +100,7 @@ public class WorldManifold {
             case FACE_A: {
                 final Vec2 planePoint = pool3;
 
-                Rot.mulToOutUnsafe(xfA.q, manifold.localNormal, normal);
+                Rotation.mulToOutUnsafe(xfA.q, manifold.localNormal, normal);
                 Transform.mulToOut(xfA, manifold.localPoint, planePoint);
 
                 final Vec2 clipPoint = pool4;
@@ -138,7 +138,7 @@ public class WorldManifold {
             break;
             case FACE_B:
                 final Vec2 planePoint = pool3;
-                Rot.mulToOutUnsafe(xfB.q, manifold.localNormal, normal);
+                Rotation.mulToOutUnsafe(xfB.q, manifold.localNormal, normal);
                 Transform.mulToOut(xfB, manifold.localPoint, planePoint);
 
                 // final Mat22 R = xfB.q;

@@ -25,13 +25,13 @@
  */
 package s13search;
 
+import com.almasb.astar.AStarGrid;
+import com.almasb.astar.AStarNode;
+import com.almasb.astar.NodeState;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.search.AStarGrid;
-import com.almasb.fxgl.search.AStarNode;
-import com.almasb.fxgl.search.NodeState;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
@@ -47,10 +47,6 @@ import java.util.List;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class SearchSample extends GameApplication {
-
-    private enum Type {
-        TILE
-    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -76,7 +72,7 @@ public class SearchSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        // 2. init grid 20x15
+        // 2. init grid width x height
         grid = new AStarGrid(20, 15);
 
         for (int i = 0; i < 15; i++) {
@@ -106,7 +102,7 @@ public class SearchSample extends GameApplication {
                     }
                 });
 
-                tile.getMainViewComponent().setGraphics(graphics);
+                tile.getMainViewComponent().setView(graphics);
 
                 getGameWorld().addEntity(tile);
             }
@@ -120,7 +116,7 @@ public class SearchSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

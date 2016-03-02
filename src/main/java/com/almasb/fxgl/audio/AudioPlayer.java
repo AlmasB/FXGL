@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ public interface AudioPlayer {
 
     /**
      * Set global music volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%
+     * where 0 = 0%, 1 = 100%.
      *
      * @param volume music volume
      */
@@ -74,7 +74,7 @@ public interface AudioPlayer {
 
     /**
      * Set global sound volume in the range [0..1],
-     * where 0 = 0%, 1 = 100%
+     * where 0 = 0%, 1 = 100%.
      *
      * @param volume sound volume
      */

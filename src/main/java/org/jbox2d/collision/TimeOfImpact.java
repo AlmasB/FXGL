@@ -368,7 +368,7 @@ class SeparationFunction {
             Vec2.crossToOutUnsafe(temp, 1f, m_axis);
             m_axis.normalize();
 
-            Rot.mulToOutUnsafe(xfb.q, m_axis, normal);
+            Rotation.mulToOutUnsafe(xfb.q, m_axis, normal);
 
             m_localPoint.set(localPointB1).addLocal(localPointB2).mulLocal(.5f);
             Transform.mulToOutUnsafe(xfb, m_localPoint, pointB);
@@ -394,7 +394,7 @@ class SeparationFunction {
             Vec2.crossToOutUnsafe(temp, 1.0f, m_axis);
             m_axis.normalize();
 
-            Rot.mulToOutUnsafe(xfa.q, m_axis, normal);
+            Rotation.mulToOutUnsafe(xfa.q, m_axis, normal);
 
             m_localPoint.set(localPointA1).addLocal(localPointA2).mulLocal(.5f);
             Transform.mulToOutUnsafe(xfa, m_localPoint, pointA);
@@ -423,8 +423,8 @@ class SeparationFunction {
 
         switch (m_type) {
             case POINTS: {
-                Rot.mulTransUnsafe(xfa.q, m_axis, axisA);
-                Rot.mulTransUnsafe(xfb.q, m_axis.negateLocal(), axisB);
+                Rotation.mulTransUnsafe(xfa.q, m_axis, axisA);
+                Rotation.mulTransUnsafe(xfb.q, m_axis.negateLocal(), axisB);
                 m_axis.negateLocal();
 
                 indexes[0] = m_proxyA.getSupport(axisA);
@@ -440,10 +440,10 @@ class SeparationFunction {
                 return separation;
             }
             case FACE_A: {
-                Rot.mulToOutUnsafe(xfa.q, m_axis, normal);
+                Rotation.mulToOutUnsafe(xfa.q, m_axis, normal);
                 Transform.mulToOutUnsafe(xfa, m_localPoint, pointA);
 
-                Rot.mulTransUnsafe(xfb.q, normal.negateLocal(), axisB);
+                Rotation.mulTransUnsafe(xfb.q, normal.negateLocal(), axisB);
                 normal.negateLocal();
 
                 indexes[0] = -1;
@@ -456,10 +456,10 @@ class SeparationFunction {
                 return separation;
             }
             case FACE_B: {
-                Rot.mulToOutUnsafe(xfb.q, m_axis, normal);
+                Rotation.mulToOutUnsafe(xfb.q, m_axis, normal);
                 Transform.mulToOutUnsafe(xfb, m_localPoint, pointB);
 
-                Rot.mulTransUnsafe(xfa.q, normal.negateLocal(), axisA);
+                Rotation.mulTransUnsafe(xfa.q, normal.negateLocal(), axisA);
                 normal.negateLocal();
 
                 indexes[1] = -1;
@@ -485,8 +485,8 @@ class SeparationFunction {
 
         switch (m_type) {
             case POINTS: {
-                Rot.mulTransUnsafe(xfa.q, m_axis, axisA);
-                Rot.mulTransUnsafe(xfb.q, m_axis.negateLocal(), axisB);
+                Rotation.mulTransUnsafe(xfa.q, m_axis, axisA);
+                Rotation.mulTransUnsafe(xfb.q, m_axis.negateLocal(), axisB);
                 m_axis.negateLocal();
 
                 localPointA.set(m_proxyA.getVertex(indexA));
@@ -499,10 +499,10 @@ class SeparationFunction {
                 return separation;
             }
             case FACE_A: {
-                Rot.mulToOutUnsafe(xfa.q, m_axis, normal);
+                Rotation.mulToOutUnsafe(xfa.q, m_axis, normal);
                 Transform.mulToOutUnsafe(xfa, m_localPoint, pointA);
 
-                Rot.mulTransUnsafe(xfb.q, normal.negateLocal(), axisB);
+                Rotation.mulTransUnsafe(xfb.q, normal.negateLocal(), axisB);
                 normal.negateLocal();
 
                 localPointB.set(m_proxyB.getVertex(indexB));
@@ -511,10 +511,10 @@ class SeparationFunction {
                 return separation;
             }
             case FACE_B: {
-                Rot.mulToOutUnsafe(xfb.q, m_axis, normal);
+                Rotation.mulToOutUnsafe(xfb.q, m_axis, normal);
                 Transform.mulToOutUnsafe(xfb, m_localPoint, pointB);
 
-                Rot.mulTransUnsafe(xfa.q, normal.negateLocal(), axisA);
+                Rotation.mulTransUnsafe(xfa.q, normal.negateLocal(), axisA);
                 normal.negateLocal();
 
                 localPointA.set(m_proxyA.getVertex(indexA));

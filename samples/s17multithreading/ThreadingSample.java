@@ -29,6 +29,7 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
@@ -86,12 +87,10 @@ public class ThreadingSample extends GameApplication {
                 // 4. it is OK to modify world/scene graph here
                 log.info("Heavy work complete!");
 
-                Entity entity = new Entity();
-                entity.addComponent(new PositionComponent(300, 300));
-                entity.addComponent(new RotationComponent(0));
-                entity.addComponent(new MainViewComponent(new Rectangle(40, 40)));
-
-                getGameWorld().addEntity(entity);
+                Entities.builder()
+                        .at(300, 300)
+                        .viewFromNode(new Rectangle(40, 40))
+                        .buildAndAttach(getGameWorld());
             }
         });
     }
@@ -103,7 +102,7 @@ public class ThreadingSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

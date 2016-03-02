@@ -27,8 +27,12 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.Component;
+import com.almasb.ents.ComponentListener;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
@@ -41,6 +45,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * Adds a game scene view to an entity.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
@@ -50,6 +56,12 @@ public class MainViewComponent extends AbstractComponent {
     private static boolean showBBox = false;
     private static Color showBBoxColor = Color.BLACK;
 
+    /**
+     * Turns on displaying of bounding boxes. Useful for debugging.
+     * Note: this only shows bounding boxes, not each hit box.
+     *
+     * @param color the color to highlight bounding boxes
+     */
     public static final void turnOnDebugBBox(Color color) {
         showBBox = true;
         showBBoxColor = color;
@@ -58,107 +70,181 @@ public class MainViewComponent extends AbstractComponent {
     private ObjectProperty<RenderLayer> renderLayer;
     private ObjectProperty<EntityView> view;
 
+    /**
+     * Creates main view component with no graphics.
+     */
     public MainViewComponent() {
         this(new EntityView());
     }
 
+    /**
+     * Creates main view with given graphics.
+     *
+     * @param graphics the graphics
+     */
     public MainViewComponent(Node graphics) {
         this(new EntityView(graphics), RenderLayer.TOP);
     }
 
+    /**
+     * Creates main view with given graphics and given render layer.
+     *
+     * @param graphics the graphics
+     * @param renderLayer render layer to use for view
+     */
     public MainViewComponent(Node graphics, RenderLayer renderLayer) {
         this.view = new SimpleObjectProperty<>(new EntityView(graphics));
         this.renderLayer = new SimpleObjectProperty<>(renderLayer);
     }
 
+    /**
+     * @return render layer
+     */
     public RenderLayer getRenderLayer() {
         return renderLayer.get();
     }
 
+    /**
+     * @return render layer property
+     */
     public ObjectProperty<RenderLayer> renderLayerProperty() {
         return renderLayer;
     }
 
+    /**
+     * Set render layer.
+     *
+     * @param renderLayer render layer
+     */
     public void setRenderLayer(RenderLayer renderLayer) {
         this.renderLayer.set(renderLayer);
         getView().setRenderLayer(renderLayer);
     }
 
+    /**
+     * @return view
+     */
     public EntityView getView() {
         return view.get();
     }
 
+    /**
+     * @return view property
+     */
     public ObjectProperty<EntityView> viewProperty() {
         return view;
     }
 
     /**
-     * Convenience method to set JavaFX node directly.
-     * This is equivalent to <pre>setView(new EntityView(graphics));</pre>
+     * Set view without generating bounding boxes from view.
      *
-     * @param graphics JavaFX node
+     * @param view the view
      */
-    public void setGraphics(Node graphics) {
-        setView(new EntityView(graphics));
-    }
-
-    public void setView(EntityView view) {
+    public void setView(Node view) {
         setView(view, false);
     }
 
-    public void setView(EntityView view, boolean generateBoundingBox) {
-        this.view.set(view);
+    /**
+     * Set view. The generate bbox flag tells the component
+     * whether it should generate bbox from the given view.
+     *
+     * @param view the view
+     * @param generateBoundingBox generate bbox flag
+     */
+    public void setView(Node view, boolean generateBoundingBox) {
+        EntityView entityView = view instanceof EntityView ? (EntityView) view : new EntityView(view);
+
+        this.view.set(entityView);
 
         if (generateBoundingBox) {
-            Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", new BoundingBox(
-                    0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
-            )));
+            generateBBox();
         }
+    }
+
+    /**
+     * Convenience method to set texture as view.
+     *
+     * @param textureName name of texture
+     */
+    public void setTexture(String textureName) {
+        setTexture(textureName, false);
+    }
+
+    /**
+     * Convenience method to set texture as view.
+     *
+     * @param textureName name of texture
+     * @param generateBoundingBox generate bbox from view flag
+     */
+    public void setTexture(String textureName, boolean generateBoundingBox) {
+        EntityView view = new EntityView(GameApplication.getService(ServiceType.ASSET_LOADER)
+                .loadTexture(textureName));
+
+        setView(view, generateBoundingBox);
     }
 
     @Override
     public void onAdded(Entity entity) {
-        if (!entity.getComponent(BoundingBoxComponent.class).isPresent()) {
-            BoundingBoxComponent bbox = new BoundingBoxComponent(new HitBox("__VIEW__", new BoundingBox(
-                0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
-            )));
-
-            entity.addComponent(bbox);
-        }
-
-        getView().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
-        getView().translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
-        getView().rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
+        bindView();
 
         if (showBBox) {
-            initDebugBBox();
+            if (getEntity().hasComponent(BoundingBoxComponent.class)) {
+                addDebugBBox();
+            } else {
+                getEntity().addComponentListener(new ComponentListener() {
+                    @Override
+                    public void onComponentAdded(Component component) {
+                        if (component instanceof BoundingBoxComponent) {
+                            addDebugBBox();
+                        }
+                    }
+
+                    @Override
+                    public void onComponentRemoved(Component component) {
+                        if (component instanceof BoundingBoxComponent) {
+                            removeDebugBBox();
+                        }
+                    }
+                });
+            }
         }
 
-        view.addListener((observable, oldGraphics, newGraphics) -> {
-            oldGraphics.translateXProperty().unbind();
-            oldGraphics.translateYProperty().unbind();
-            oldGraphics.rotateProperty().unbind();
+        view.addListener((o, oldView, newView) -> {
+            oldView.translateXProperty().unbind();
+            oldView.translateYProperty().unbind();
+            oldView.rotateProperty().unbind();
 
-            newGraphics.translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
-            newGraphics.translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
-            newGraphics.rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
+            oldView.removeNode(debugBBox);
+            newView.addNode(debugBBox);
 
-            if (showBBox) {
-                // TODO: we can reuse the same rectangle
-                initDebugBBox();
-            }
+            bindView();
         });
     }
 
     @Override
-    public void onRemoved(Entity entity) {
+    public void onRemoved(Entity entity) {}
 
+    private void bindView() {
+        getView().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
+        getView().translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
+        getView().rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
     }
 
-    private void initDebugBBox() {
+    private void generateBBox() {
+        if (!getEntity().hasComponent(BoundingBoxComponent.class)) {
+            getEntity().addComponent(new BoundingBoxComponent());
+        }
+
+        Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", new BoundingBox(
+                0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
+        )));
+    }
+
+    private Rectangle debugBBox = new Rectangle();
+
+    private void addDebugBBox() {
         BoundingBoxComponent bbox = Entities.getBBox(getEntity());
 
-        Rectangle debugBBox = new Rectangle();
         debugBBox.setStroke(showBBoxColor);
         debugBBox.setFill(null);
         debugBBox.translateXProperty().bind(bbox.minXLocalProperty());
@@ -167,5 +253,9 @@ public class MainViewComponent extends AbstractComponent {
         debugBBox.heightProperty().bind(bbox.heightProperty());
 
         getView().addNode(debugBBox);
+    }
+
+    private void removeDebugBBox() {
+        getView().removeNode(debugBBox);
     }
 }

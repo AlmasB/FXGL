@@ -47,14 +47,27 @@ final class AssetsCache {
         }
     };
 
+    /**
+     * Put an asset into cache.
+     *
+     * @param assetName asset name
+     * @param asset asset
+     */
     void put(String assetName, Object asset) {
         cache.put(assetName, asset);
     }
 
+    /**
+     * @param assetName asset name
+     * @return asset
+     */
     Object get(String assetName) {
         return cache.get(assetName);
     }
 
+    /**
+     * Clear the cache.
+     */
     void clear() {
         cache.clear();
     }

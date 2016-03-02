@@ -24,7 +24,7 @@
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.MathUtils;
-import org.jbox2d.common.Rot;
+import org.jbox2d.common.Rotation;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -251,21 +251,21 @@ public class WheelJoint extends Joint {
         Vec2 vB = data.velocities[m_indexB].v;
         float wB = data.velocities[m_indexB].w;
 
-        final Rot qA = pool.popRot();
-        final Rot qB = pool.popRot();
+        final Rotation qA = pool.popRot();
+        final Rotation qB = pool.popRot();
         final Vec2 temp = pool.popVec2();
 
         qA.set(aA);
         qB.set(aB);
 
         // Compute the effective masses.
-        Rot.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), rA);
-        Rot.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), rB);
+        Rotation.mulToOutUnsafe(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), rA);
+        Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), rB);
         d.set(cB).addLocal(rB).subLocal(cA).subLocal(rA);
 
         // Point to line constraint
         {
-            Rot.mulToOut(qA, m_localYAxisA, m_ay);
+            Rotation.mulToOut(qA, m_localYAxisA, m_ay);
             m_sAy = Vec2.cross(temp.set(d).addLocal(rA), m_ay);
             m_sBy = Vec2.cross(rB, m_ay);
 
@@ -281,7 +281,7 @@ public class WheelJoint extends Joint {
         m_bias = 0.0f;
         m_gamma = 0.0f;
         if (m_frequencyHz > 0.0f) {
-            Rot.mulToOut(qA, m_localXAxisA, m_ax);
+            Rotation.mulToOut(qA, m_localXAxisA, m_ax);
             m_sAx = Vec2.cross(temp.set(d).addLocal(rA), m_ax);
             m_sBx = Vec2.cross(rB, m_ax);
 
@@ -445,19 +445,19 @@ public class WheelJoint extends Joint {
         Vec2 cB = data.positions[m_indexB].c;
         float aB = data.positions[m_indexB].a;
 
-        final Rot qA = pool.popRot();
-        final Rot qB = pool.popRot();
+        final Rotation qA = pool.popRot();
+        final Rotation qB = pool.popRot();
         final Vec2 temp = pool.popVec2();
 
         qA.set(aA);
         qB.set(aB);
 
-        Rot.mulToOut(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), rA);
-        Rot.mulToOut(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), rB);
+        Rotation.mulToOut(qA, temp.set(m_localAnchorA).subLocal(m_localCenterA), rA);
+        Rotation.mulToOut(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), rB);
         d.set(cB).subLocal(cA).addLocal(rB).subLocal(rA);
 
         Vec2 ay = pool.popVec2();
-        Rot.mulToOut(qA, m_localYAxisA, ay);
+        Rotation.mulToOut(qA, m_localYAxisA, ay);
 
         float sAy = Vec2.cross(temp.set(d).addLocal(rA), ay);
         float sBy = Vec2.cross(rB, ay);

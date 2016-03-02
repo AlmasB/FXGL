@@ -1,6 +1,6 @@
 package org.jbox2d.particle;
 
-import org.jbox2d.common.Color3f;
+import javafx.scene.paint.Color;
 
 /**
  * Small color object for each particle
@@ -21,14 +21,14 @@ public class ParticleColor {
         set(r, g, b, a);
     }
 
-    public ParticleColor(Color3f color) {
+    public ParticleColor(Color color) {
         set(color);
     }
 
-    public void set(Color3f color) {
-        r = (byte) (255 * color.x);
-        g = (byte) (255 * color.y);
-        b = (byte) (255 * color.z);
+    public void set(Color color) {
+        r = (byte) (255 * color.getRed());
+        g = (byte) (255 * color.getGreen());
+        b = (byte) (255 * color.getBlue());
         a = (byte) 255;
     }
 

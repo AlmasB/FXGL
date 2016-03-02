@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,10 @@ import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.FXGLNotificationService;
 import com.almasb.fxgl.gameplay.NotificationService;
+import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.scene.Display;
+import com.almasb.fxgl.scene.FXGLDisplay;
 import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
@@ -128,7 +130,7 @@ public interface ServiceType<T> {
 
         @Override
         public Class<? extends Input> serviceProvider() {
-            return Input.class;
+            return FXGLInput.class;
         }
     };
 
@@ -140,7 +142,7 @@ public interface ServiceType<T> {
 
         @Override
         public Class<? extends Display> serviceProvider() {
-            return Display.class;
+            return FXGLDisplay.class;
         }
     };
 

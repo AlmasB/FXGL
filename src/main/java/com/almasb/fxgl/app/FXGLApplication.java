@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 import com.almasb.fxgl.util.Version;
 import com.google.inject.*;
 import com.google.inject.name.Names;
@@ -83,7 +83,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Set handler for checked exceptions
+     * Set handler for checked exceptions.
      *
      * @param handler exception handler
      */
@@ -173,25 +173,8 @@ public abstract class FXGLApplication extends Application {
         initSystemProperties();
         initUserProperties();
 
-        GameSettings localSettings = new GameSettings();
-        initSettings(localSettings);
-        settings = localSettings.toReadOnly();
-
-        Level logLevel = Level.ALL;
-        switch (settings.getApplicationMode()) {
-            case DEVELOPER:
-                logLevel = Level.CONFIG;
-                break;
-            case RELEASE:
-                logLevel = Level.SEVERE;
-                break;
-            case DEBUG: // fallthru
-            default:
-                break;
-        }
-
-        FXGLLogger.init(logLevel);
-        log.info("Application Mode: " + getSettings().getApplicationMode());
+        initAppSettings();
+        initLogger();
 
         configureServices(stage);
     }
@@ -236,6 +219,38 @@ public abstract class FXGLApplication extends Application {
         } catch (IOException e) {
             log.warning("Loading user properties failed: " + e.getMessage());
         }
+    }
+
+    /**
+     * Take app settings from user.
+     */
+    private void initAppSettings() {
+        GameSettings localSettings = new GameSettings();
+        initSettings(localSettings);
+        settings = localSettings.toReadOnly();
+
+        FXGL.setSettings(settings);
+    }
+
+    /**
+     * Init logging system based on app settings.
+     */
+    private void initLogger() {
+        Level logLevel = Level.ALL;
+        switch (getSettings().getApplicationMode()) {
+            case DEVELOPER:
+                logLevel = Level.CONFIG;
+                break;
+            case RELEASE:
+                logLevel = Level.SEVERE;
+                break;
+            case DEBUG: // fallthru
+            default:
+                break;
+        }
+
+        FXGLLogger.init(logLevel);
+        log.info("Application Mode: " + getSettings().getApplicationMode());
     }
 
     /**
@@ -331,7 +346,6 @@ public abstract class FXGLApplication extends Application {
     private AchievementManager achievementManager;
 
     /**
-     *
      * @return achievement manager
      */
     public final AchievementManager getAchievementManager() {

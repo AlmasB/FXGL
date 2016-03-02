@@ -4,17 +4,17 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
     <description>Simple JavaFX Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/0.1.9</url>
+    <url>https://jitpack.io/#AlmasB/FXGL/0.2.1</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.version>1.8</source.version>
-        <jbox.version>2.3.0</jbox.version>
+        <jbox.version>2.3.0-fxgl</jbox.version>
 
         <!-- plugins -->
         <maven.compiler.version>3.3</maven.compiler.version>
@@ -23,12 +23,14 @@
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
 
         <!-- dependencies -->
-        <fxeventbus.version>1.0</fxeventbus.version>
-        <ents.version>1.0</ents.version>
-
-        <junit.version>4.12</junit.version>
+        <kotlin.version>1.0.0</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
+        <fxeventbus.version>1.0</fxeventbus.version>
+        <ents.version>1.0</ents.version>
+        <astar.version>1.0</astar.version>
+
+        <junit.version>4.12</junit.version>
         <commons-math.version>3.5</commons-math.version>
     </properties>
 
@@ -40,6 +42,12 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -64,6 +72,12 @@
             <version>${ents.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>AStar</artifactId>
+            <version>${astar.version}</version>
+        </dependency>
+
         <!-- test scope dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -78,7 +92,6 @@
             <version>${commons-math.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -102,12 +115,6 @@
             </resource>
         </resources>
 
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -119,6 +126,39 @@
                     <source>${source.version}</source>
                     <target>${source.version}</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/main/kotlin</source>
+                                <source>src/main/java</source>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/test/java</source>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>    <!-- force check on compiler -->
@@ -168,7 +208,8 @@
                         </goals>
                         <configuration> <!-- add this to disable checking -->
                             <additionalparam>-Xdoclint:none</additionalparam>
-
+                            <!-- leave only errors and warning -->
+                            <quiet>true</quiet>
                             <tags>
                                 <tag>
                                     <name>defaultValue</name>
@@ -179,6 +220,11 @@
                                     <name>implNote</name>
                                     <placement>a</placement>
                                     <head>Implementation Note:</head>
+                                </tag>
+                                <tag>
+                                    <name>warning</name>
+                                    <placement>a</placement>
+                                    <head>Warning:</head>
                                 </tag>
                             </tags>
                         </configuration>

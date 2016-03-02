@@ -27,6 +27,7 @@ package s6menu;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
@@ -67,7 +68,7 @@ public class MenuSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

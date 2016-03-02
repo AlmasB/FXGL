@@ -142,7 +142,7 @@ public class RangeTest extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
         List<Entity> list = getGameWorld().getEntitiesInRange(player.getBoundingBoxComponent().range(40, 40));
         list.forEach(e -> {
             if (e == markers)

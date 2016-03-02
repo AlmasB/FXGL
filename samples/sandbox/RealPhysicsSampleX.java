@@ -78,7 +78,7 @@ public class RealPhysicsSampleX extends GameApplication {
             protected void onActionBegin() {
                 // 1. create game entity
                 GameEntity entity = new GameEntity();
-                entity.getPositionComponent().setValue(getInput().getMouse().getGameXY());
+                entity.getPositionComponent().setValue(getInput().getMousePositionWorld());
 
                 // 2. pass in "true" to allow graphics generate hit boxes based on view
                 // this is a convenience method if rectangular bbox is sufficient
@@ -153,7 +153,7 @@ public class RealPhysicsSampleX extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

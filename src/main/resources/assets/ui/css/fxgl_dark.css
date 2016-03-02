@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/*
+    This is a modified version of the following document
+    Document   : JMetroDarkTheme
+    Created on : Oct 23, 2012, 7:12:32 PM
+    Author     : Pedro Duque Vieira
+    Description:
+        Dark Metro style sheet for use in JavaFX applications
+*/
  
  /*
   * FXGLButton
@@ -89,4 +98,54 @@
 
 .fxgl-choice-box:disabled {
     -fx-opacity: 0.4;
+}
+
+/**
+ * FXGLSpinner
+ */
+/*******************************************************************************
+ *                                                                             *
+ * Spinner                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+.spinner {
+    -fx-background-color: white, #4a4a4a;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 0;
+}
+
+.spinner > .text-field{
+    -fx-skin: "com.sun.javafx.scene.control.skin.TextFieldSkin";
+}
+
+.spinner > .text-field {
+    -fx-background-color: #4a4a4a;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-text-fill: white;
+}
+
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button  {
+    -fx-background-color: white;
+    /*Change the two 0's here to -1 to get rid of the horizontal line */
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.spinner .increment-arrow-button .increment-arrow, .spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: black;
+}
+
+.spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover {
+    -fx-background-color: grey;
+}
+
+.spinner .increment-arrow-button:pressed, .spinner .decrement-arrow-button:pressed {
+    -fx-background-color: white;
+}
+
+
+.spinner.split-arrows-horizontal .increment-arrow-button:pressed .increment-arrow, .spinner.split-arrows-horizontal .decrement-arrow-button:pressed .decrement-arrow{
+    -fx-background-color: white;
 }

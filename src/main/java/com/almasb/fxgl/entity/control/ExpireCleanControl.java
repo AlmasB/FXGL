@@ -33,6 +33,8 @@ import com.almasb.fxgl.app.ServiceType;
 import javafx.util.Duration;
 
 /**
+ * Removes an entity from the world after a certain duration.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ExpireCleanControl extends AbstractControl {

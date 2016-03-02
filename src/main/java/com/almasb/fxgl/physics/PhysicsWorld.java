@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -39,7 +39,7 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -55,7 +55,9 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
@@ -71,12 +73,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Manages physics entities, collision handling and performs the physics tick
+ * Manages physics entities, collision handling and performs the physics tick.
  * <p>
  * Contains several static and instance methods
- * to convert pixels coordinates to meters and vice versa
+ * to convert pixels coordinates to meters and vice versa.
  * <p>
- * Collision handling unifies how they are processed
+ * Collision handling unifies how they are processed.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -134,8 +136,28 @@ public final class PhysicsWorld {
     @Inject
     private PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
-        this.tick.bind(GameApplication.getService(ServiceType.MASTER_TIMER).tickProperty());
 
+        initContactListener();
+        initParticles();
+
+        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
+        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
+            addEntity(event.getEntity());
+        });
+        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
+            removeEntity(event.getEntity());
+        });
+        bus.addEventHandler(UpdateEvent.ANY, this::update);
+
+        log.finer("Physics world initialized");
+    }
+
+    /**
+     * Registers contact listener to JBox2D world so that collisions are
+     * registered for subsequent notification.
+     * Only collidable entities are checked.
+     */
+    private void initContactListener() {
         physicsWorld.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -151,8 +173,13 @@ public final class PhysicsWorld {
 
                     if (!collisions.containsKey(pair)) {
                         collisions.put(pair, tick.get());
+
+                        HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
+                        HitBox boxB = (HitBox)contact.getFixtureB().getUserData();
+
                         pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(),
-                                (HitBox)contact.getFixtureA().getUserData(), (HitBox)contact.getFixtureB().getUserData());
+                                e1 == pair.getA() ? boxA : boxB,
+                                e2 == pair.getB() ? boxB : boxA);
                     }
                 }
             }
@@ -183,19 +210,6 @@ public final class PhysicsWorld {
             public void postSolve(Contact contact, ContactImpulse impulse) {
             }
         });
-
-        initParticles();
-
-        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
-        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            addEntity(event.getEntity());
-        });
-        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            removeEntity(event.getEntity());
-        });
-        bus.addEventHandler(UpdateEvent.ANY, event -> update(event.tpf()));
-
-        log.finer("Physics world initialized");
     }
 
     private void initParticles() {
@@ -205,12 +219,25 @@ public final class PhysicsWorld {
     }
 
     /**
+     * Physics tick.
+     *
+     * @param event update event
+     */
+    private void update(UpdateEvent event) {
+        tick.set(event.tick());
+        physicsWorld.step((float) event.tpf(), 8, 3);
+
+        checkCollisions();
+        notifyCollisionHandlers();
+    }
+
+    /**
      * Perform collision detection for all entities that have
      * setCollidable(true) and if at least one entity is not PhysicsEntity.
      * Subsequently fire collision handlers for all entities that have
      * setCollidable(true).
      */
-    private void processCollisions() {
+    private void checkCollisions() {
         List<Entity> collidables = entities.stream()
                 .filter(this::isCollidable)
                 .collect(Collectors.toList());
@@ -221,6 +248,8 @@ public final class PhysicsWorld {
             for (int j = i + 1; j < collidables.size(); j++) {
                 Entity e2 = collidables.get(j);
 
+                // if both are physics objects, let JBox2D handle collision checks
+                // unless one is kinematic and the other is static
                 if (supportsPhysics(e1) && supportsPhysics(e2)) {
                     PhysicsComponent p1 = e1.getComponentUnsafe(PhysicsComponent.class);
                     PhysicsComponent p2 = e2.getComponentUnsafe(PhysicsComponent.class);
@@ -254,7 +283,12 @@ public final class PhysicsWorld {
                 }
             }
         }
+    }
 
+    /**
+     * Fires collisions handlers' callbacks based on currently registered collisions.
+     */
+    private void notifyCollisionHandlers() {
         List<CollisionPair> toRemove = new ArrayList<>();
         collisions.forEach((pair, cachedTick) -> {
             if (!pair.getA().isActive() || !pair.getB().isActive()
@@ -331,12 +365,6 @@ public final class PhysicsWorld {
         }
     }
 
-    private void update(double tpf) {
-        physicsWorld.step((float) tpf, 8, 3);
-
-        processCollisions();
-    }
-
     /**
      * Set global world gravity.
      *
@@ -353,21 +381,22 @@ public final class PhysicsWorld {
      * @param e physics entity
      */
     private void createBody(Entity e) {
-        PositionComponent position = Entities.getPosition(e);
         BoundingBoxComponent bbox = Entities.getBBox(e);
         PhysicsComponent physics = Entities.getPhysics(e);
 
-        double x = position.getX(),
-                y = position.getY(),
-                w = bbox.getWidth(),
+        double w = bbox.getWidth(),
                 h = bbox.getHeight();
 
         // if position is 0, 0 then probably not set, so set ourselves
         if (physics.bodyDef.getPosition().x == 0 && physics.bodyDef.getPosition().y == 0) {
-            physics.bodyDef.getPosition().set(toMeters(x + w / 2), toMeters(appHeight - (y + h / 2)));
+            physics.bodyDef.getPosition().set(toMeters(bbox.getMinXWorld() + w / 2),
+                    toMeters(appHeight - (bbox.getMinYWorld() + h / 2)));
         }
 
-        physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
+        if (physics.bodyDef.getAngle() == 0) {
+            physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
+        }
+
         physics.body = physicsWorld.createBody(physics.bodyDef);
 
         createFixtures(e);
@@ -396,12 +425,25 @@ public final class PhysicsWorld {
             double h = bounds.getHeight();
 
             FixtureDef fd = physics.fixtureDef;
-            PolygonShape rectShape = new PolygonShape();
-            rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
-                    new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
+
+            Shape shape = null;
+
+            if (box.getShape() == BoundingShape.BOX) {
+                PolygonShape rectShape = new PolygonShape();
+                rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
+                        new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
+                shape = rectShape;
+            } else if (box.getShape() == BoundingShape.CIRCLE) {
+                CircleShape circleShape = new CircleShape();
+                circleShape.setRadius(toMeters(w / 2));
+                circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY()));
+                shape = circleShape;
+            } else {
+                log.warning("Unknown hit box shape: " + box.getShape());
+            }
 
             // we use definitions from user, but override shape
-            fd.setShape(rectShape);
+            fd.setShape(shape);
 
             Fixture fixture = physics.body.createFixture(fd);
             fixture.setUserData(box);
@@ -417,8 +459,28 @@ public final class PhysicsWorld {
         ParticleGroupDef def = e.getComponentUnsafe(PhysicsParticleComponent.class).getDefinition();
         def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
 
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+        Shape shape = null;
+
+        BoundingBoxComponent bbox = Entities.getBBox(e);
+        if (!bbox.hitBoxesProperty().isEmpty()) {
+            if (bbox.hitBoxesProperty().get(0).getShape() == BoundingShape.BOX) {
+                PolygonShape rectShape = new PolygonShape();
+                rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+                shape = rectShape;
+            } else if (bbox.hitBoxesProperty().get(0).getShape() == BoundingShape.CIRCLE) {
+                CircleShape circleShape = new CircleShape();
+                circleShape.setRadius(toMeters(width / 2));
+                shape = circleShape;
+            } else {
+                log.warning("Unknown hit box shape: " + bbox.hitBoxesProperty().get(0).getShape());
+            }
+        }
+
+        if (shape == null) {
+            PolygonShape rectShape = new PolygonShape();
+            rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
+            shape = rectShape;
+        }
         def.setShape(shape);
 
         ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);

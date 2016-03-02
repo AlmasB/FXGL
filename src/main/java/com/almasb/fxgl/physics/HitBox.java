@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -37,6 +37,8 @@ public final class HitBox {
     private final Bounds bounds;
     private final String name;
 
+    private final BoundingShape shape;
+
     /**
      * Creates a hit box with given name and bounds.
      * The bounds are calculated from the local entity origin
@@ -57,8 +59,33 @@ public final class HitBox {
      * @param bounds hit box bounds
      */
     public HitBox(String name, BoundingBox bounds) {
+        this(name, bounds, BoundingShape.BOX);
+    }
+
+    /**
+     * Creates a hit box with given name, bounds and shape.
+     * The bounds are calculated from the local entity origin
+     * in local coordinates.
+     * <p>
+     * For example: an entity with width 40 and height 80 could have 2 hit boxes.
+     * one for HEAD and one for BODY as follows:
+     * </p>
+     * <pre>
+     *     Entity entity = ...
+     *     entity.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40));
+     *     entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 40, 40, 40));
+     *
+     * </pre>
+     * Note, the 2nd bounding box has y = 40.
+     *
+     * @param name hit box name
+     * @param bounds hit box bounds
+     * @param shape hit box shape
+     */
+    public HitBox(String name, BoundingBox bounds, BoundingShape shape) {
         this.name = name;
         this.bounds = bounds;
+        this.shape = shape;
     }
 
     /**
@@ -88,20 +115,35 @@ public final class HitBox {
                 bounds.getWidth(), bounds.getHeight());
     }
 
+    /**
+     * @return bounds
+     */
     public Bounds getBounds() {
         return bounds;
     }
 
+    /**
+     * @return hit box shape
+     */
+    public BoundingShape getShape() {
+        return shape;
+    }
+
+    /**
+     * @return min x
+     */
     public double getMinX() {
         return bounds.getMinX();
     }
 
+    /**
+     * @return min y
+     */
     public double getMinY() {
         return bounds.getMinY();
     }
 
     /**
-     *
      * @return maxX of internal bounds (x + width)
      */
     public double getMaxX() {
@@ -109,7 +151,6 @@ public final class HitBox {
     }
 
     /**
-     *
      * @return maxY of internal bounds (y + height)
      */
     public double getMaxY() {
@@ -117,7 +158,6 @@ public final class HitBox {
     }
 
     /**
-     *
      * @return hit box name
      */
     public String getName() {

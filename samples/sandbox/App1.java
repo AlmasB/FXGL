@@ -202,7 +202,7 @@ public class App1 extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

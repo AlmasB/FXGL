@@ -79,7 +79,7 @@
 //            @Override
 //            protected void onActionBegin() {
 //                ParticleEntity smoke = new ParticleEntity(Type.PARTICLES);
-//                smoke.setValue(input.getMouse().getGameX(), input.getMouse().getGameY());
+//                smoke.setValue(input.getMouse().getMouseXWorld(), input.getMouse().getMouseYWorld());
 //
 //                ParticleEmitter emitter = ParticleEmitters.newSmokeEmitter();
 //                emitter.setVelocityFunction((i, x, y) -> new Point2D(-5, 0));
@@ -95,7 +95,7 @@
 //        input.addAction(new UserAction("Spawn Explosion2") {
 //            @Override
 //            protected void onActionBegin() {
-//                spawnSparks(input.getMouse().getGameX(), input.getMouse().getGameY());
+//                spawnSparks(input.getMouse().getMouseXWorld(), input.getMouse().getMouseYWorld());
 //            }
 //        }, MouseButton.SECONDARY);
 //    }

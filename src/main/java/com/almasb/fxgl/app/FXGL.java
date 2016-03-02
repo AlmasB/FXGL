@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+
 /**
  * Represents the entire FXGL infrastructure.
  * Can be used to pass internal properties (key-value pair) around.
@@ -85,5 +87,18 @@ public final class FXGL {
      */
     public static void setProperty(String key, Object value) {
         System.setProperty("FXGL." + key, String.valueOf(value));
+    }
+
+    private static ReadOnlyGameSettings settings;
+
+    static void setSettings(ReadOnlyGameSettings gameSettings) {
+        settings = gameSettings;
+    }
+
+    /**
+     * @return read only copy of game settings
+     */
+    public static ReadOnlyGameSettings getSettings() {
+        return settings;
     }
 }

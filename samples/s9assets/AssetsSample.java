@@ -27,7 +27,7 @@ package s9assets;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.Texture;
+import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
@@ -72,7 +72,7 @@ public class AssetsSample extends GameApplication {
         player.getPositionComponent().setValue(400, 300);
 
         // 3. add texture as main view
-        player.getMainViewComponent().setView(new EntityView(brickTexture));
+        player.getMainViewComponent().setView(brickTexture);
 
         getGameWorld().addEntity(player);
     }
@@ -84,7 +84,7 @@ public class AssetsSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

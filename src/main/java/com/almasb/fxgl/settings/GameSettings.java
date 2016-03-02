@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -27,6 +27,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
 /**
@@ -90,7 +91,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
 
     /**
      * If set to true, the intro video/animation will
-     * be played before the start of the game
+     * be played before the start of the game.
      *
      * @param b intro flag
      * @defaultValue true
@@ -159,7 +160,15 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
+     * Set additional credits.
      *
+     * @param credits credits object
+     */
+    public void setCredits(Credits credits) {
+        this.credits = credits;
+    }
+
+    /**
      * @return a read only copy of settings
      */
     public ReadOnlyGameSettings toReadOnly() {

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ import com.almasb.fxgl.event.LoadEvent;
 import com.almasb.fxgl.event.SaveEvent;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -89,7 +89,6 @@ public final class AchievementManager implements UserProfileSavable {
     }
 
     /**
-     *
      * @param name achievement name
      * @return registered achievement
      * @throws IllegalArgumentException if achievement is not registered
@@ -104,7 +103,6 @@ public final class AchievementManager implements UserProfileSavable {
     }
 
     /**
-     *
      * @return unmodifiable list of achievements
      */
     public ObservableList<Achievement> getAchievements() {

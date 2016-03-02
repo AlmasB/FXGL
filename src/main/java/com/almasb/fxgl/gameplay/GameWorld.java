@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
@@ -115,13 +115,25 @@ public final class GameWorld extends EntityWorld {
 
     /**
      * This query only works on entities with TypeComponent.
+     * If called with no arguments, all entities are returned.
      *
-     * @param type entity type
+     * @param types entity types
      * @return entities
      */
-    public List<Entity> getEntitiesByType(Enum<?> type) {
+    public List<Entity> getEntitiesByType(Enum<?>... types) {
+        if (types.length == 0)
+            return getEntities();
+
         return getEntitiesByComponent(TypeComponent.class).stream()
-                .filter(e -> Entities.getType(e).getValue().equals(type))
+                .filter(e -> {
+                    for (Enum<?> type : types) {
+                        if (Entities.getType(e).isType(type)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -210,5 +222,12 @@ public final class GameWorld extends EntityWorld {
                     return positionComponent.getValue().equals(position);
                 })
                 .findAny();
+    }
+
+    public void setLevel(Level level) {
+        reset();
+
+        log.finer("Setting level: " + level);
+        level.getEntities().forEach(this::addEntity);
     }
 }

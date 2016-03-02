@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,11 +30,13 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.scene.CSS;
+import com.almasb.fxgl.ui.FontFactory;
 import javafx.scene.image.Image;
 
 /**
  * Stores internal assets, i.e. provided by FXGL.
- * These can be overrided by "system.properties" file under "assets/properties".
+ * These can be overridden by "system.properties" file under "assets/properties".
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -47,9 +49,6 @@ public final class FXGLAssets {
 
     public static final FontFactory UI_FONT;
 
-    /**
-     * This is the name of the css file, NOT loaded css.
-     */
     public static final CSS UI_CSS;
     public static final String UI_ICON_NAME;
     public static final Image UI_ICON;

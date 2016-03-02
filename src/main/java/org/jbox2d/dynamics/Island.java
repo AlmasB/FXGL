@@ -1,4 +1,30 @@
-/*******************************************************************************
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * <p>
@@ -20,7 +46,8 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ */
+
 package org.jbox2d.dynamics;
 
 import org.jbox2d.callbacks.ContactImpulse;
@@ -172,10 +199,6 @@ public class Island {
     public int m_contactCapacity;
     public int m_jointCapacity;
 
-    public Island() {
-
-    }
-
     public void init(int bodyCapacity, int contactCapacity, int jointCapacity,
                      ContactListener listener) {
         // System.out.println("Initializing Island");
@@ -248,11 +271,11 @@ public class Island {
             bm_sweep.c0.set(bm_sweep.c);
             bm_sweep.a0 = bm_sweep.a;
 
-            if (b.m_type == BodyType.DYNAMIC) {
+            if (b.getType() == BodyType.DYNAMIC) {
                 // Integrate velocities.
                 // v += h * (b.m_gravityScale * gravity + b.m_invMass * b.m_force);
-                v.x += h * (b.m_gravityScale * gravity.x + b.m_invMass * b.m_force.x);
-                v.y += h * (b.m_gravityScale * gravity.y + b.m_invMass * b.m_force.y);
+                v.x += h * (b.getGravityScale() * gravity.x + b.m_invMass * b.m_force.x);
+                v.y += h * (b.getGravityScale() * gravity.y + b.m_invMass * b.m_force.y);
                 w += h * b.m_invI * b.m_torque;
 
                 // Apply damping.
@@ -263,9 +286,9 @@ public class Island {
                 // v2 = exp(-c * dt) * v1
                 // Pade approximation:
                 // v2 = v1 * 1 / (1 + c * dt)
-                v.x *= 1.0f / (1.0f + h * b.m_linearDamping);
-                v.y *= 1.0f / (1.0f + h * b.m_linearDamping);
-                w *= 1.0f / (1.0f + h * b.m_angularDamping);
+                v.x *= 1.0f / (1.0f + h * b.getLinearDamping());
+                v.y *= 1.0f / (1.0f + h * b.getLinearDamping());
+                w *= 1.0f / (1.0f + h * b.getAngularDamping());
             }
 
             m_positions[i].c.x = c.x;
@@ -403,11 +426,11 @@ public class Island {
                 if ((b.m_flags & Body.e_autoSleepFlag) == 0
                         || b.m_angularVelocity * b.m_angularVelocity > angTolSqr
                         || Vec2.dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
-                    b.m_sleepTime = 0.0f;
+                    b.setSleepTime(0);
                     minSleepTime = 0.0f;
                 } else {
-                    b.m_sleepTime += h;
-                    minSleepTime = MathUtils.min(minSleepTime, b.m_sleepTime);
+                    b.setSleepTime(b.getSleepTime() + h);
+                    minSleepTime = MathUtils.min(minSleepTime, b.getSleepTime());
                 }
             }
 

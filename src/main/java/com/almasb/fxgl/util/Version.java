@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,6 +24,8 @@
  * SOFTWARE.
  */
 package com.almasb.fxgl.util;
+
+import com.almasb.fxgl.logging.FXGLLogger;
 
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -40,6 +42,7 @@ public final class Version {
     private static final String FXGL_VERSION;
     private static final String JAVAFX_VERSION;
     private static final String JBOX_VERSION;
+    private static final String KOTLIN_VERSION;
 
     static {
         ResourceBundle resources = ResourceBundle.getBundle("com.almasb.fxgl.util.version");
@@ -47,10 +50,14 @@ public final class Version {
         FXGL_VERSION = resources.getString("fxgl.version");
         JAVAFX_VERSION = resources.getString("javafx.version");
         JBOX_VERSION = resources.getString("jbox.version");
+        KOTLIN_VERSION = resources.getString("kotlin.version");
     }
 
     public static void print() {
         log.info("FXGL-" + getAsString());
+        log.info("JavaFX-" + getJavaFXAsString());
+        log.info("JBox2D-" + getJBox2DAsString());
+        log.info("Kotlin-" + getKotlinAsString());
         log.info("Source code and latest builds at: https://github.com/AlmasB/FXGL");
     }
 
@@ -73,5 +80,12 @@ public final class Version {
      */
     public static String getJBox2DAsString() {
         return JBOX_VERSION;
+    }
+
+    /**
+     * @return compile time version of Kotlin
+     */
+    public static String getKotlinAsString() {
+        return KOTLIN_VERSION;
     }
 }

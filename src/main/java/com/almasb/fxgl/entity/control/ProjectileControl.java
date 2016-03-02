@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import javafx.geometry.Point2D;
 
 /**
  * Generic projectile control.
+ * Automatically rotates the entity based on velocity direction.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

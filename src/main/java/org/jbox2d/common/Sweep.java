@@ -91,7 +91,7 @@ public class Sweep implements Serializable {
 
         // Shift to origin
         // xf->p -= b2Mul(xf->q, localCenter);
-        final Rot q = xf.q;
+        final Rotation q = xf.q;
         xf.p.x -= q.c * localCenter.x - q.s * localCenter.y;
         xf.p.y -= q.s * localCenter.x + q.c * localCenter.y;
     }

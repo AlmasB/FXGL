@@ -1,4 +1,30 @@
-/*******************************************************************************
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * <p>
@@ -20,7 +46,8 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ */
+
 package org.jbox2d.dynamics;
 
 import org.jbox2d.callbacks.ContactFilter;
@@ -57,9 +84,10 @@ public class ContactManager implements PairCallback {
     /**
      * Broad-phase callback.
      *
-     * @param proxyUserDataA
-     * @param proxyUserDataB
+     * @param proxyUserDataA proxy user data A
+     * @param proxyUserDataB proxy user data B
      */
+    @Override
     public void addPair(Object proxyUserDataA, Object proxyUserDataB) {
         FixtureProxy proxyA = (FixtureProxy) proxyUserDataA;
         FixtureProxy proxyB = (FixtureProxy) proxyUserDataB;
@@ -104,12 +132,12 @@ public class ContactManager implements PairCallback {
         }
 
         // Does a joint override collision? is at least one body dynamic?
-        if (bodyB.shouldCollide(bodyA) == false) {
+        if (!bodyB.shouldCollide(bodyA)) {
             return;
         }
 
         // Check user filtering.
-        if (m_contactFilter != null && m_contactFilter.shouldCollide(fixtureA, fixtureB) == false) {
+        if (m_contactFilter != null && !m_contactFilter.shouldCollide(fixtureA, fixtureB)) {
             return;
         }
 
@@ -244,7 +272,7 @@ public class ContactManager implements PairCallback {
             // is this contact flagged for filtering?
             if ((c.m_flags & Contact.FILTER_FLAG) == Contact.FILTER_FLAG) {
                 // Should these bodies collide?
-                if (bodyB.shouldCollide(bodyA) == false) {
+                if (!bodyB.shouldCollide(bodyA)) {
                     Contact cNuke = c;
                     c = cNuke.getNext();
                     destroy(cNuke);
@@ -252,7 +280,7 @@ public class ContactManager implements PairCallback {
                 }
 
                 // Check user filtering.
-                if (m_contactFilter != null && m_contactFilter.shouldCollide(fixtureA, fixtureB) == false) {
+                if (m_contactFilter != null && !m_contactFilter.shouldCollide(fixtureA, fixtureB)) {
                     Contact cNuke = c;
                     c = cNuke.getNext();
                     destroy(cNuke);
@@ -263,11 +291,11 @@ public class ContactManager implements PairCallback {
                 c.m_flags &= ~Contact.FILTER_FLAG;
             }
 
-            boolean activeA = bodyA.isAwake() && bodyA.m_type != BodyType.STATIC;
-            boolean activeB = bodyB.isAwake() && bodyB.m_type != BodyType.STATIC;
+            boolean activeA = bodyA.isAwake() && bodyA.getType() != BodyType.STATIC;
+            boolean activeB = bodyB.isAwake() && bodyB.getType() != BodyType.STATIC;
 
             // At least one body must be awake and it must be dynamic or kinematic.
-            if (activeA == false && activeB == false) {
+            if (!activeA && !activeB) {
                 c = c.getNext();
                 continue;
             }
@@ -277,7 +305,7 @@ public class ContactManager implements PairCallback {
             boolean overlap = m_broadPhase.testOverlap(proxyIdA, proxyIdB);
 
             // Here we destroy contacts that cease to overlap in the broad-phase.
-            if (overlap == false) {
+            if (!overlap) {
                 Contact cNuke = c;
                 c = cNuke.getNext();
                 destroy(cNuke);

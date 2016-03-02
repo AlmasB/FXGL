@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,10 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * A general FXGL event. Keeps track of its source and target.
- * Target is the triggerEntity on which the event was called, source (if exists)
- * is the triggerEntity that triggered the event. If the source doesn't exist,
- * it is equal to target.
+ * A general entity event. Keeps track of its trigger and target entities.
+ * Trigger entity is the one that triggered the event.
+ * Target entity (if exists) is the one that is targeted by the event.
+ * If target entity doesn't exist then it is the same as trigger entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -83,9 +83,13 @@ public final class EntityEvent extends Event {
      *
      * @param eventType type
      * @param triggerEntity trigger entity
-     * @param targetEntity target entity
      */
     public EntityEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Entity triggerEntity) {
         this(eventType, triggerEntity, triggerEntity);
+    }
+
+    @Override
+    public String toString() {
+        return "EntityEvent[trigger=" + triggerEntity + ",target=" + targetEntity + "]";
     }
 }

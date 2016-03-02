@@ -277,7 +277,7 @@ public class PolygonShape extends Shape {
         // Transform vertices and normals.
         for (int i = 0; i < m_count; ++i) {
             Transform.mulToOut(xf, m_vertices[i], m_vertices[i]);
-            Rot.mulToOut(xf.q, m_normals[i], m_normals[i]);
+            Rotation.mulToOut(xf.q, m_normals[i], m_normals[i]);
         }
     }
 
@@ -288,7 +288,7 @@ public class PolygonShape extends Shape {
     @Override
     public final boolean testPoint(final Transform xf, final Vec2 p) {
         float tempx, tempy;
-        final Rot xfq = xf.q;
+        final Rotation xfq = xf.q;
 
         tempx = p.x - xf.p.x;
         tempy = p.y - xf.p.y;

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,7 +29,7 @@ import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.time.TimerAction.TimerType;
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.animation.AnimationTimer;
@@ -129,7 +129,7 @@ public class FXGLMasterTimer extends AnimationTimer implements MasterTimer {
         timerActions.removeIf(TimerAction::isExpired);
 
         // this is the master update event
-        eventBus.fireEvent(new UpdateEvent(realTPF / 1000000000.0));
+        eventBus.fireEvent(new UpdateEvent(getTick(), realTPF / 1000000000.0));
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So

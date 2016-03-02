@@ -59,7 +59,7 @@ public class FXShooterApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setTitle("FXShooterApp");
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
     }
 
     @Override
@@ -108,19 +108,19 @@ public class FXShooterApp extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
 
     }
 
     @OnUserAction(name = "Shoot", type = ActionType.ON_ACTION_BEGIN)
     public void shoot() {
-        playerControl.shoot(getInput().getMouse().getVectorToCursor(player.getPositionComponent().getValue()));
+        playerControl.shoot(getInput().getVectorToMouse(player.getPositionComponent().getValue()));
     }
 
     private void initTreasure() {
         GameEntity treasure = new GameEntity();
         treasure.getPositionComponent().setValue(getWidth() / 2, getHeight() / 2);
-        treasure.getMainViewComponent().setGraphics(new Rectangle(40, 40, Color.YELLOW));
+        treasure.getMainViewComponent().setView(new Rectangle(40, 40, Color.YELLOW));
 
         getGameWorld().addEntity(treasure);
     }
@@ -128,7 +128,7 @@ public class FXShooterApp extends GameApplication {
     private void initPlayer() {
         player = new GameEntity();
         player.getPositionComponent().setValue(getWidth() / 2, getHeight() / 2);
-        player.getMainViewComponent().setGraphics(new Rectangle(40, 40, Color.BLUE));
+        player.getMainViewComponent().setView(new Rectangle(40, 40, Color.BLUE));
 
         WeaponComponent weapon = new WeaponComponent();
         weapon.setDamage(2);

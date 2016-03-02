@@ -2,7 +2,7 @@ package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.MathUtils;
-import org.jbox2d.common.Rot;
+import org.jbox2d.common.Rotation;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.SolverData;
 import org.jbox2d.pooling.IWorldPool;
@@ -185,8 +185,8 @@ public class MotorJoint extends Joint {
         final Vec2 vB = data.velocities[m_indexB].v;
         float wB = data.velocities[m_indexB].w;
 
-        final Rot qA = pool.popRot();
-        final Rot qB = pool.popRot();
+        final Rotation qA = pool.popRot();
+        final Rotation qB = pool.popRot();
         final Vec2 temp = pool.popVec2();
         Mat22 K = pool.popMat22();
 
@@ -225,7 +225,7 @@ public class MotorJoint extends Joint {
         }
 
         // m_linearError = cB + m_rB - cA - m_rA - b2Mul(qA, m_linearOffset);
-        Rot.mulToOutUnsafe(qA, m_linearOffset, temp);
+        Rotation.mulToOutUnsafe(qA, m_linearOffset, temp);
         m_linearError.x = cB.x + m_rB.x - cA.x - m_rA.x - temp.x;
         m_linearError.y = cB.y + m_rB.y - cA.y - m_rA.y - temp.y;
         m_angularError = aB - aA - m_angularOffset;

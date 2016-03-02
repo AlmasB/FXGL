@@ -29,9 +29,11 @@ import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.RotationComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
@@ -42,8 +44,6 @@ import javafx.scene.shape.Rectangle;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class EntityControlSample extends GameApplication {
-
-    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -66,14 +66,12 @@ public class EntityControlSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new GameEntity();
-        player.getPositionComponent().setValue(400, 300);
-        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40)));
-
-        // 3. add a new instance of control to entity
-        player.addControl(new VibratingControl());
-
-        getGameWorld().addEntity(player);
+        Entities.builder()
+                .at(400, 300)
+                .viewFromNode(new Rectangle(40, 40))
+                // 3. add a new instance of control to entity
+                .with(new RotatingControl())
+                .buildAndAttach(getGameWorld());
     }
 
     @Override
@@ -83,17 +81,15 @@ public class EntityControlSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     // 1. create class that implements Control
-    private class VibratingControl extends AbstractControl {
+    private class RotatingControl extends AbstractControl {
 
         @Override
         public void onUpdate(Entity entity, double tpf) {
             // 2. specify behavior of the entity enforced by this control
-            Point2D vel = new Point2D(Math.random() - 0.5, Math.random() - 0.5);
-
-            entity.getComponentUnsafe(PositionComponent.class).translate(vel.multiply(2 * 60 * tpf));
+            entity.getComponentUnsafe(RotationComponent.class).rotateBy(tpf * 45);
         }
     }
 

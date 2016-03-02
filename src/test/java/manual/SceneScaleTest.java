@@ -3,14 +3,9 @@ package manual;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Rectangle;
 
 public class SceneScaleTest extends GameApplication {
 
@@ -54,7 +49,7 @@ public class SceneScaleTest extends GameApplication {
 //        input.addAction(new UserAction("XY Test") {
 //            @Override
 //            protected void onActionBegin() {
-//                getDisplay().showMessageBox(input.getMouse().getGameX() + "," + input.getMouse().getGameY());
+//                getDisplay().showMessageBox(input.getMouse().getMouseXWorld() + "," + input.getMouse().getMouseYWorld());
 ////                log.info(input.getMouse().x + " " + input.getMouse().y);
 ////                log.info(input.getMouse().screenX + " " + input.getMouse().screenY);
 //            }
@@ -84,7 +79,7 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
     }
 
     private Entity createEntity(double x, double y) {

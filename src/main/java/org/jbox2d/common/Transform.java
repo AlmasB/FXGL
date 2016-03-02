@@ -38,12 +38,12 @@ public class Transform implements Serializable {
     public final Vec2 p;
 
     /** A matrix representing a rotation */
-    public final Rot q;
+    public final Rotation q;
 
     /** The default constructor. */
     public Transform() {
         p = new Vec2();
-        q = new Rot();
+        q = new Rotation();
     }
 
     /** Initialize as a copy of another transform. */
@@ -53,7 +53,7 @@ public class Transform implements Serializable {
     }
 
     /** Initialize using a position vector and a rotation matrix. */
-    public Transform(final Vec2 _position, final Rot _R) {
+    public Transform(final Vec2 _position, final Rotation _R) {
         p = _position.clone();
         q = _R.clone();
     }
@@ -122,24 +122,24 @@ public class Transform implements Serializable {
 
     public final static Transform mul(final Transform A, final Transform B) {
         Transform C = new Transform();
-        Rot.mulUnsafe(A.q, B.q, C.q);
-        Rot.mulToOutUnsafe(A.q, B.p, C.p);
+        Rotation.mulUnsafe(A.q, B.q, C.q);
+        Rotation.mulToOutUnsafe(A.q, B.p, C.p);
         C.p.addLocal(A.p);
         return C;
     }
 
     public final static void mulToOut(final Transform A, final Transform B, final Transform out) {
         assert (out != A);
-        Rot.mul(A.q, B.q, out.q);
-        Rot.mulToOut(A.q, B.p, out.p);
+        Rotation.mul(A.q, B.q, out.q);
+        Rotation.mulToOut(A.q, B.p, out.p);
         out.p.addLocal(A.p);
     }
 
     public final static void mulToOutUnsafe(final Transform A, final Transform B, final Transform out) {
         assert (out != B);
         assert (out != A);
-        Rot.mulUnsafe(A.q, B.q, out.q);
-        Rot.mulToOutUnsafe(A.q, B.p, out.p);
+        Rotation.mulUnsafe(A.q, B.q, out.q);
+        Rotation.mulToOutUnsafe(A.q, B.p, out.p);
         out.p.addLocal(A.p);
     }
 
@@ -147,26 +147,26 @@ public class Transform implements Serializable {
 
     public final static Transform mulTrans(final Transform A, final Transform B) {
         Transform C = new Transform();
-        Rot.mulTransUnsafe(A.q, B.q, C.q);
+        Rotation.mulTransUnsafe(A.q, B.q, C.q);
         pool.set(B.p).subLocal(A.p);
-        Rot.mulTransUnsafe(A.q, pool, C.p);
+        Rotation.mulTransUnsafe(A.q, pool, C.p);
         return C;
     }
 
     public final static void mulTransToOut(final Transform A, final Transform B, final Transform out) {
         assert (out != A);
-        Rot.mulTrans(A.q, B.q, out.q);
+        Rotation.mulTrans(A.q, B.q, out.q);
         pool.set(B.p).subLocal(A.p);
-        Rot.mulTrans(A.q, pool, out.p);
+        Rotation.mulTrans(A.q, pool, out.p);
     }
 
     public final static void mulTransToOutUnsafe(final Transform A, final Transform B,
                                                  final Transform out) {
         assert (out != A);
         assert (out != B);
-        Rot.mulTransUnsafe(A.q, B.q, out.q);
+        Rotation.mulTransUnsafe(A.q, B.q, out.q);
         pool.set(B.p).subLocal(A.p);
-        Rot.mulTransUnsafe(A.q, pool, out.p);
+        Rotation.mulTransUnsafe(A.q, pool, out.p);
     }
 
     @Override

@@ -36,10 +36,13 @@ import com.almasb.fxgl.entity.component.RotationComponent;
 import org.jbox2d.dynamics.Body;
 
 /**
+ * This control updates position and rotation components of entities
+ * based on the physics properties.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PhysicsComponent.class)
-public class PhysicsControl extends AbstractControl {
+class PhysicsControl extends AbstractControl {
 
     private Body body;
 

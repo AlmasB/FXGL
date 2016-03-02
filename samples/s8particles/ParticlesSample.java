@@ -67,7 +67,7 @@ public class ParticlesSample extends GameApplication {
             protected void onActionBegin() {
                 // 1. create entity
                 Entity explosion = new Entity();
-                explosion.addComponent(new PositionComponent(input.getMouse().getGameXY()));
+                explosion.addComponent(new PositionComponent(input.getMousePositionWorld()));
 
                 // 2. create and configure emitter + control
                 ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
@@ -98,7 +98,7 @@ public class ParticlesSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

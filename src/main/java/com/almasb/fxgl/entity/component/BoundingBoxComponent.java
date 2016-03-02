@@ -39,6 +39,9 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 /**
+ * Component that adds bounding box information to an entity.
+ * The bounding box itself comprises a collection of hit boxes.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class BoundingBoxComponent extends AbstractComponent {
@@ -91,18 +94,36 @@ public class BoundingBoxComponent extends AbstractComponent {
     private ReadOnlyDoubleWrapper width = new ReadOnlyDoubleWrapper();
     private ReadOnlyDoubleWrapper height = new ReadOnlyDoubleWrapper();
 
+    /**
+     * Returns total width of the bounding box, i.e.
+     * distance from the leftmost side to the rightmost side.
+     *
+     * @return width of the bounding box
+     */
     public double getWidth() {
         return width.get();
     }
 
+    /**
+     * @return width property
+     */
     public ReadOnlyDoubleProperty widthProperty() {
         return width.getReadOnlyProperty();
     }
 
+    /**
+     * Returns total height of the bounding box, i.e.
+     * distance from the topmost side to the bottommost side.
+     *
+     * @return height of the bounding box
+     */
     public double getHeight() {
         return height.get();
     }
 
+    /**
+     * @return height property
+     */
     public ReadOnlyDoubleProperty heightProperty() {
         return height.getReadOnlyProperty();
     }
@@ -111,14 +132,10 @@ public class BoundingBoxComponent extends AbstractComponent {
      * Computes width of entity based on its hit boxes.
      *
      * @return width
-     * @implNote it computes the rightmost point in X, so
-     * it will return incorrect width if hit box doesn't start from 0
      */
     private double computeWidth() {
-        // we take maxX because even if entity is translated
-        // maxX is relative to entity's 0 origin
         return hitBoxes.stream()
-                .mapToDouble(HitBox::getMaxX)
+                .mapToDouble(h -> h.getBounds().getMaxX() - getMinXLocal())
                 .max()
                 .orElse(0);
     }
@@ -127,14 +144,10 @@ public class BoundingBoxComponent extends AbstractComponent {
      * Computes height of entity based on its hit boxes.
      *
      * @return height
-     * @implNote it computes the highest point in Y, so
-     * it will return incorrect height if hit box doesn't start from 0
      */
     private double computeHeight() {
-        // we take maxY because even if entity is translated
-        // maxY is relative to entity's 0 origin
         return hitBoxes.stream()
-                .mapToDouble(HitBox::getMaxY)
+                .mapToDouble(h -> h.getBounds().getMaxY() - getMinYLocal())
                 .max()
                 .orElse(0);
     }
@@ -142,34 +155,60 @@ public class BoundingBoxComponent extends AbstractComponent {
     private ReadOnlyDoubleWrapper minXLocal = new ReadOnlyDoubleWrapper();
     private ReadOnlyDoubleWrapper minYLocal = new ReadOnlyDoubleWrapper();
 
+    /**
+     * @return min X poperty in local coordinates
+     */
     public ReadOnlyDoubleProperty minXLocalProperty() {
         return minXLocal.getReadOnlyProperty();
     }
 
+    /**
+     * @return min x of bbox in local coordinate system
+     */
     public double getMinXLocal() {
         return minXLocal.get();
     }
 
+    /**
+     * @return min Y poperty in local coordinates
+     */
     public ReadOnlyDoubleProperty minYLocalProperty() {
         return minYLocal.getReadOnlyProperty();
     }
 
+    /**
+     * @return min y of bbox in local coordinate system
+     */
     public double getMinYLocal() {
         return minYLocal.get();
     }
 
-    private double computeMinXLocal() {
-        return hitBoxes.stream()
-                .mapToDouble(HitBox::getMinX)
-                .min()
-                .orElse(0);
+    /**
+     * @return min x in world coordinate system
+     */
+    public double getMinXWorld() {
+        return getPositionX() + getMinXLocal();
     }
 
-    private double computeMinYLocal() {
-        return hitBoxes.stream()
-                .mapToDouble(HitBox::getMinY)
-                .min()
-                .orElse(0);
+    /**
+     * @return min y in world coordinate system
+     */
+    public double getMinYWorld() {
+        return getPositionY() + getMinYLocal();
+    }
+
+    /**
+     * @return max x in world coordinates
+     */
+    public double getMaxXWorld() {
+        return getPositionX() + getMinXLocal() + getWidth();
+    }
+
+    /**
+     * @return max y in world coordinates
+     */
+    public double getMaxYWorld() {
+        return getPositionY() + getMinYLocal() + getHeight();
     }
 
     /**
@@ -186,36 +225,30 @@ public class BoundingBoxComponent extends AbstractComponent {
      * @return center point in world coordinates
      */
     public Point2D getCenterWorld() {
-        Point2D position = getEntity().getComponent(PositionComponent.class)
-                .map(PositionComponent::getValue)
-                .orElse(Point2D.ZERO);
-
-        return getCenterLocal().add(position);
+        return getCenterLocal().add(getMinXWorld(), getMinYWorld());
     }
 
-    public double getMaxXLocal() {
-        return getWidth();
+    private double computeMinXLocal() {
+        return hitBoxes.stream()
+                .mapToDouble(HitBox::getMinX)
+                .min()
+                .orElse(0);
     }
 
-    public double getMaxXWorld() {
-        double minX = getEntity().getComponent(PositionComponent.class)
-                .map(PositionComponent::getX)
-                .orElse(0.0);
-
-        return minX + getWidth();
+    private double computeMinYLocal() {
+        return hitBoxes.stream()
+                .mapToDouble(HitBox::getMinY)
+                .min()
+                .orElse(0);
     }
 
-    public double getMaxYWorld() {
-        return getMinY() + getWidth();
-    }
-
-    private double getMinX() {
+    private double getPositionX() {
         return getEntity().getComponent(PositionComponent.class)
                 .map(PositionComponent::getX)
                 .orElse(0.0);
     }
 
-    private double getMinY() {
+    private double getPositionY() {
         return getEntity().getComponent(PositionComponent.class)
                 .map(PositionComponent::getY)
                 .orElse(0.0);
@@ -236,11 +269,11 @@ public class BoundingBoxComponent extends AbstractComponent {
      */
     public final CollisionResult checkCollision(BoundingBoxComponent other) {
         for (HitBox box1 : hitBoxes) {
-            Bounds b = isXFlipped() ? box1.translateXFlipped(getMinX(), getMinY(), getWidth()) : box1.translate(getMinX(), getMinY());
+            Bounds b = isXFlipped() ? box1.translateXFlipped(getPositionX(), getPositionY(), getWidth()) : box1.translate(getPositionX(), getPositionY());
             for (HitBox box2 : other.hitBoxes) {
                 Bounds b2 = other.isXFlipped()
-                        ? box2.translateXFlipped(other.getMinX(), other.getMinY(), other.getWidth())
-                        : box2.translate(other.getMinX(), other.getMinY());
+                        ? box2.translateXFlipped(other.getPositionX(), other.getPositionY(), other.getWidth())
+                        : box2.translate(other.getPositionX(), other.getPositionY());
                 if (b.intersects(b2)) {
                     return new CollisionResult(box1, box2);
                 }
@@ -259,7 +292,6 @@ public class BoundingBoxComponent extends AbstractComponent {
         return checkCollision(other) != CollisionResult.NO_COLLISION;
     }
 
-
     /**
      * @param bounds a rectangular box that represents bounds
      * @return true iff entity is partially or entirely within given bounds
@@ -269,7 +301,6 @@ public class BoundingBoxComponent extends AbstractComponent {
     }
 
     /**
-     *
      * @param minX min x
      * @param minY min y
      * @param maxX max x
@@ -289,7 +320,6 @@ public class BoundingBoxComponent extends AbstractComponent {
     }
 
     /**
-     *
      * @param minX min x
      * @param minY min y
      * @param maxX max x
@@ -297,8 +327,8 @@ public class BoundingBoxComponent extends AbstractComponent {
      * @return true iff entity is completely outside given bounds
      */
     public final boolean isOutside(double minX, double minY, double maxX, double maxY) {
-        return getMinX() + getWidth() < minX || getMinX() > maxX
-                || getMinY() + getHeight() < minY || getMinY() > maxY;
+        return getPositionX() + getMinXLocal() + getWidth() < minX || getPositionX() + getMinXLocal() > maxX
+                || getPositionY() + getMinYLocal() + getHeight() < minY || getPositionY() + getMinYLocal() > maxY;
     }
 
     /**
@@ -310,8 +340,8 @@ public class BoundingBoxComponent extends AbstractComponent {
      * @return rectangular area
      */
     public final Rectangle2D range(double width, double height) {
-        double minX = getMinX() - width;
-        double minY = getMinY() - height;
+        double minX = getPositionX() - width;
+        double minY = getPositionY() - height;
         double maxX = getMaxXWorld() + width;
         double maxY = getMaxYWorld() + height;
 
