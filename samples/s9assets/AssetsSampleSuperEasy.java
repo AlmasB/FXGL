@@ -23,19 +23,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package s9assets;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
- * Example of loading assets.
+ * Example of using assets the super easy way.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class AssetsEasySample extends GameApplication {
+public class AssetsSampleSuperEasy extends GameApplication {
 
     private GameEntity player;
 
@@ -43,7 +45,7 @@ public class AssetsEasySample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("AssetsEasySample");
+        settings.setTitle("AssetsSampleEasy");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -60,12 +62,11 @@ public class AssetsEasySample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new GameEntity();
-        player.getPositionComponent().setValue(400, 300);
-
-        player.getMainViewComponent().setTexture("brick.png");
-
-        getGameWorld().addEntity(player);
+        // 1. use fluent API viewFromTexture with texture name
+        player = Entities.builder()
+                .at(400, 300)
+                .viewFromTexture("brick.png")
+                .buildAndAttach(getGameWorld());
     }
 
     @Override

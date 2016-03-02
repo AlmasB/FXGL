@@ -44,12 +44,11 @@ public class MenuSample extends GameApplication {
         settings.setFullScreen(false);
 
         // 1. set intro enabled to true
-        settings.setIntroEnabled(false);
+        settings.setIntroEnabled(true);
 
         // 2. set menu enabled to true
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setMenuStyle(MenuStyle.GTA5);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 

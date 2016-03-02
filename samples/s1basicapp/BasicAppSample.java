@@ -33,7 +33,6 @@ import com.almasb.fxgl.settings.GameSettings;
  * This is an example of a basic FXGL game application.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class BasicAppSample extends GameApplication {
 

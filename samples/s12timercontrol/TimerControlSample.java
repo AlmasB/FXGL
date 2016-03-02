@@ -30,6 +30,7 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -47,12 +48,6 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class TimerControlSample extends GameApplication {
-
-    private enum Type {
-        PLAYER
-    }
-
-    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -75,15 +70,11 @@ public class TimerControlSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new Entity();
-        player.addComponent(new TypeComponent(Type.PLAYER));
-        player.addComponent(new PositionComponent(100, 100));
-        player.addComponent(new RotationComponent(0));
-        player.addComponent(new MainViewComponent(new EntityView(new Rectangle(40, 40, Color.BLUE))));
-
-        player.addControl(new LiftControl());
-
-        getGameWorld().addEntity(player);
+        Entities.builder()
+                .at(100, 100)
+                .viewFromNode(new Rectangle(40, 40))
+                .with(new LiftControl())
+                .buildAndAttach(getGameWorld());
     }
 
     @Override
@@ -102,12 +93,18 @@ public class TimerControlSample extends GameApplication {
 
         @Override
         public void onUpdate(Entity entity, double tpf) {
+            // 1. check if timer elapsed
             if (timer.elapsed(Duration.seconds(2))) {
+                // 2. perform logic
                 goingUp = !goingUp;
+
+                // 3. capture time so that timer is reset
                 timer.capture();
             }
 
-            entity.getComponentUnsafe(PositionComponent.class).translate(0, goingUp ? -1 * tpf * 60 : 1 * tpf * 60);
+            double speed = tpf * 60;
+
+            entity.getComponentUnsafe(PositionComponent.class).translateY(goingUp ? -speed : speed);
         }
     }
 

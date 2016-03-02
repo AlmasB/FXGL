@@ -23,37 +23,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s2initgame;
 
-import com.almasb.ents.Entity;
+package s3input;
+
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
- * Shows how to init a basic game object and attach to world
- * using fluent API.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * Shows how to use input service and bind actions to triggers.
  */
-public class InitSample3 extends GameApplication {
-
-    // 1. define types of entities in the game using Enum
-    private enum Type {
-        PLAYER
-    }
-
-    // make the field instance level
-    // but do NOT init here for properly functioning save-load system
-    private Entity player;
+public class InputSample3 extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("InitSample3");
+        settings.setTitle("InputSample3");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -69,23 +59,32 @@ public class InitSample3 extends GameApplication {
     protected void initAssets() {}
 
     @Override
-    protected void initGame() {
-        player = Entities.builder()
-                .type(Type.PLAYER)
-                .at(100, 100)
-                .rotate(0)
-                .viewFromNode(new Rectangle(40, 40))
-                .buildAndAttach(getGameWorld());
-    }
+    protected void initGame() {}
 
     @Override
     protected void initPhysics() {}
 
-    @Override
-    protected void initUI() {}
+    // disregard UI code until sample 5
+    private Text uiText;
 
     @Override
-    protected void onUpdate(double tpf) {}
+    protected void initUI() {
+        uiText = new Text();
+        uiText.setFont(Font.font(18));
+
+        uiText.setTranslateX(400);
+        uiText.setTranslateY(300);
+
+        getGameScene().addUINodes(uiText);
+    }
+
+    @Override
+    public void onUpdate(double tpf) {
+        // 1. you can check if a key is held anytime
+        // however bound actions from InputSample2 are preferred
+        // to manual checks, because they can be altered via menu controls
+        uiText.setText("F is held: " + getInput().isHeld(KeyCode.F));
+    }
 
     public static void main(String[] args) {
         launch(args);

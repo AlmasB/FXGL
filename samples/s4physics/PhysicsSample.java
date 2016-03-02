@@ -49,6 +49,8 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * Shows how to use collision handlers and define hitboxes for entities.
+ * When app is running, use WASD to control player and see how collisions are fired
+ * when player and enemy overlap.
  */
 public class PhysicsSample extends GameApplication {
 
@@ -103,21 +105,6 @@ public class PhysicsSample extends GameApplication {
                 playerControl.down();
             }
         }, KeyCode.S);
-
-        input.addAction(new UserAction("Shoot") {
-            @Override
-            protected void onActionBegin() {
-                Entity e = EntityFactory.newBullet(0, 0, new Point2D(0, 0));
-                getGameWorld().addEntity(e);
-
-                BoundingBoxComponent bbox = Entities.getBBox(e);
-
-                System.out.println(bbox.getMinXLocal() + " " + bbox.getMinYLocal());
-
-                System.out.println(Entities.getBBox(e).getCenterLocal());
-                System.out.println(Entities.getBBox(e).getCenterWorld());
-            }
-        }, KeyCode.F);
     }
 
     @Override
@@ -125,25 +112,25 @@ public class PhysicsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        MainViewComponent.turnOnDebugBBox(Color.RED);
-
-        player = new GameEntity();
-        player.getTypeComponent().setValue(Type.PLAYER);
-        player.getPositionComponent().setValue(100, 100);
-        player.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
-        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)));
-
         playerControl = new PlayerControl();
-        player.addControl(playerControl);
 
-        enemy = new GameEntity();
-        enemy.getTypeComponent().setValue(Type.ENEMY);
-        enemy.getPositionComponent().setValue(200, 100);
-        enemy.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
-        enemy.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)));
+        player = Entities.builder()
+                .type(Type.PLAYER)
+                .at(100, 100)
+                .bbox(new HitBox("PLAYER_BODY", new BoundingBox(0, 0, 40, 40)))
+                .viewFromNode(new Rectangle(40, 40, Color.BLUE))
+                .with(playerControl)
+                .build();
 
-        // 1. we need to set collidable to true
-        // so that collision system can 'see' them
+        enemy = Entities.builder()
+                .type(Type.ENEMY)
+                .at(200, 100)
+                .bbox(new HitBox("ENEMY_BODY", new BoundingBox(0, 0, 40, 40)))
+                .viewFromNode(new Rectangle(40, 40, Color.RED))
+                .build();
+
+        // 1. we need to add Collidable component and set its value to true
+        // so that collision system can 'see' our entities
         player.addComponent(new CollidableComponent(true));
         enemy.addComponent(new CollidableComponent(true));
 

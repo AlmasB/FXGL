@@ -53,7 +53,7 @@ public class InputSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        // 1. get input manager
+        // 1. get input service
         Input input = getInput();
 
         // 2. add key/mouse bound actions
@@ -73,9 +73,7 @@ public class InputSample extends GameApplication {
             protected void onActionEnd() {
                 System.out.println("Action End");
             }
-        }, KeyCode.F, InputModifier.CTRL);
-
-
+        }, KeyCode.F);
     }
 
     @Override

@@ -71,8 +71,8 @@ public class UISample extends GameApplication {
         uiText.setFont(Font.font(18));
 
         // 3. position the object
-        uiText.setTranslateX(600);
-        uiText.setTranslateY(100);
+        uiText.setTranslateX(400);
+        uiText.setTranslateY(300);
 
         // 4. bind text property to some data of interest
         uiText.textProperty().bind(getMasterTimer().tickProperty().asString("Tick: [%d]"));

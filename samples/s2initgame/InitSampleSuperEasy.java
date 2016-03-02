@@ -23,21 +23,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s2initgame2;
+package s2initgame;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to init a basic game object and attach to world.
+ * Shows how to init a basic game object and attach to world
+ * using fluent API.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class InitSample2 extends GameApplication {
+public class InitSampleSuperEasy extends GameApplication {
 
     // 1. define types of entities in the game using Enum
     private enum Type {
@@ -52,7 +54,7 @@ public class InitSample2 extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("InitSample2");
+        settings.setTitle("InitSampleSuperEasy");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -69,13 +71,12 @@ public class InitSample2 extends GameApplication {
 
     @Override
     protected void initGame() {
-        // using game entity might be easier
-        player = new GameEntity();
-        player.getTypeComponent().setValue(Type.PLAYER);
-        player.getPositionComponent().setValue(100, 100);
-        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40)));
-
-        getGameWorld().addEntity(player);
+        // 2. create entity and attach to world using fluent API
+        player = Entities.builder()
+                .type(Type.PLAYER)
+                .at(100, 100)
+                .viewFromNode(new Rectangle(40, 40))
+                .buildAndAttach(getGameWorld());
     }
 
     @Override

@@ -24,62 +24,61 @@
  * SOFTWARE.
  */
 
-package physics;
+package s2initgame;
 
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.RaycastResult;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to use raycast.
+ * Shows how to init a basic game object and attach to world
+ * using predefined GameEntity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class RaycastSample extends GameApplication {
+public class InitSampleEasy extends GameApplication {
+
+    // 1. define types of entities in the game using Enum
+    private enum Type {
+        PLAYER
+    }
+
+    // make the field instance level
+    // but do NOT init here for properly functioning save-load system
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setTitle("RaycastSample");
+        settings.setWidth(800);
+        settings.setHeight(600);
+        settings.setTitle("InitSampleEasy");
+        settings.setVersion("0.1developer");
+        settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(false);
+        settings.setShowFPS(true);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
-    protected void initInput() {
-
-    }
+    protected void initInput() {}
 
     @Override
-    protected void initAssets() {
-
-    }
-
-    private Line laser = new Line();
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {
-        spawnWall(500, 100, 50, 50);
-        spawnWall(550, 150, 50, 50);
-        spawnWall(600, 200, 50, 50);
-        spawnWall(600, 400, 50, 50);
-        spawnWall(300, 450, 50, 50);
-        spawnWall(500, 550, 50, 50);
-        spawnWall(300, 300, 50, 50);
+        // 2. create entity and modify necessary components
+        player = new GameEntity();
+        player.getTypeComponent().setValue(Type.PLAYER);
+        player.getPositionComponent().setValue(100, 100);
+        player.getMainViewComponent().setView(new Rectangle(40, 40));
 
-        laser.setStroke(Color.RED);
-        laser.setStrokeWidth(2);
-        laser.setStartY(300);
-
-        getGameScene().addGameView(new EntityView(laser));
+        // 3. add entity to game world
+        getGameWorld().addEntity(player);
     }
 
     @Override
@@ -88,34 +87,8 @@ public class RaycastSample extends GameApplication {
     @Override
     protected void initUI() {}
 
-    private double endY = -300;
-
     @Override
-    protected void onUpdate(double tpf) {
-        laser.setEndX(getWidth());
-        laser.setEndY(endY);
-
-        RaycastResult result = getPhysicsWorld().raycast(new Point2D(0, 300), new Point2D(getWidth(), endY));
-        result.getPoint().ifPresent(p -> {
-            laser.setEndX(p.getX());
-            laser.setEndY(p.getY());
-        });
-
-        endY++;
-        if (endY >= getHeight() + 300)
-            endY = -300;
-    }
-
-    private Entity spawnWall(double x, double y, double w, double h) {
-        GameEntity entity = new GameEntity();
-        entity.getPositionComponent().setValue(x, y);
-        entity.getMainViewComponent().setView(new EntityView(new Rectangle(w, h)), true);
-        entity.addComponent(new PhysicsComponent());
-
-        getGameWorld().addEntity(entity);
-
-        return entity;
-    }
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,24 +23,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package s10realphysics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.BoundingBox;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 /**
- * Sample that shows basic usage of the JBox2D physics engine.
+ * Sample that shows basic usage of the JBox2D physics engine
+ * via PhysicsComponent.
+ * Left click will spawn a box, right - ball.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -55,7 +65,7 @@ public class RealPhysicsSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(true);
+        settings.setShowFPS(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -66,29 +76,29 @@ public class RealPhysicsSample extends GameApplication {
         input.addAction(new UserAction("Spawn Box") {
             @Override
             protected void onActionBegin() {
-                // 1. create game entity
-                GameEntity entity = new GameEntity();
-                entity.getPositionComponent().setValue(getInput().getMousePositionWorld());
+                GameEntity box = createPhysicsEntity();
 
-                // 2. pass in "true" to allow graphics generate hit boxes based on view
-                // this is a convenience method if rectangular bbox is sufficient
-                entity.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)), true);
+                // 3. use true flag to generate bbox from the view
+                // bbox shape is rectangular
+                box.getMainViewComponent().setView(new Rectangle(40, 40, Color.BLUE), true);
 
-                PhysicsComponent physics = new PhysicsComponent();
-
-                // 3. set various physics properties
-                physics.setBodyType(BodyType.DYNAMIC);
-
-                FixtureDef fd = new FixtureDef();
-                fd.setDensity(0.5f);
-                fd.setRestitution(0.3f);
-                physics.setFixtureDef(fd);
-
-                entity.addComponent(physics);
-
-                getGameWorld().addEntity(entity);
+                getGameWorld().addEntity(box);
             }
         }, MouseButton.PRIMARY);
+
+        input.addAction(new UserAction("Spawn Ball") {
+            @Override
+            protected void onActionBegin() {
+                GameEntity ball = createPhysicsEntity();
+
+                // 3. OR set hit box manually to specify bounding shape
+                ball.getBoundingBoxComponent()
+                        .addHitBox(new HitBox("Test", new BoundingBox(0, 0, 40, 40), BoundingShape.CIRCLE));
+                ball.getMainViewComponent().setView(new Circle(20, Color.RED));
+
+                getGameWorld().addEntity(ball);
+            }
+        }, MouseButton.SECONDARY);
     }
 
     @Override
@@ -96,14 +106,7 @@ public class RealPhysicsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        GameEntity ground = new GameEntity();
-        ground.getPositionComponent().setValue(0, 500);
-        ground.getMainViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
-
-        // 4. by default a physics component is static
-        ground.addComponent(new PhysicsComponent());
-
-        getGameWorld().addEntity(ground);
+        getGameWorld().addEntity(Entities.makeScreenBounds(50));
     }
 
     @Override
@@ -114,6 +117,24 @@ public class RealPhysicsSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {}
+
+    private GameEntity createPhysicsEntity() {
+        // 1. create and configure physics component
+        PhysicsComponent physics = new PhysicsComponent();
+
+        physics.setBodyType(BodyType.DYNAMIC);
+
+        FixtureDef fd = new FixtureDef();
+        fd.setDensity(0.5f);
+        fd.setRestitution(0.3f);
+        physics.setFixtureDef(fd);
+
+        return Entities.builder()
+                .at(getInput().getMousePositionWorld())
+                // 2. add physics component
+                .with(physics)
+                .build();
+    }
 
     public static void main(String[] args) {
         launch(args);

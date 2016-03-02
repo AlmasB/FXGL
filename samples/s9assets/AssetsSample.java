@@ -72,7 +72,7 @@ public class AssetsSample extends GameApplication {
         player.getPositionComponent().setValue(400, 300);
 
         // 3. add texture as main view
-        player.getMainViewComponent().setView(new EntityView(brickTexture));
+        player.getMainViewComponent().setView(brickTexture);
 
         getGameWorld().addEntity(player);
     }
