@@ -83,7 +83,7 @@ public class EntityControlSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     // 1. create class that implements Control
     private class VibratingControl extends AbstractControl {

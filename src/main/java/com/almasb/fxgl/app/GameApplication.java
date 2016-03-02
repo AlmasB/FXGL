@@ -188,12 +188,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     private LoadingScene loadingScene;
 
     /**
-     * Main menu, this is the menu shown at the start of game
+     * Main menu, this is the menu shown at the start of game.
      */
     private FXGLScene mainMenuScene;
 
     /**
-     * In-game menu, this is shown when menu key pressed during the game
+     * In-game menu, this is shown when menu key pressed during the game.
      */
     private FXGLScene gameMenuScene;
 
@@ -269,23 +269,28 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     /**
      * Called when MenuEvent.SAVE occurs.
-     * <p>
-     * Default implementation returns null.
+     * Note: if you enable menus, you are responsible for providing
+     * appropriate serialization of your game state, even if it's ad-hoc null.
      *
      * @return data with required info about current state
+     * @throws UnsupportedOperationException if was not overridden
      */
     public Serializable saveState() {
-        log.warning("Called saveState(), but it wasn't overriden!");
-        return null;
+        log.warning("Called saveState(), but it wasn't overridden!");
+        throw new UnsupportedOperationException("Default implementation is not available");
     }
 
     /**
      * Called when MenuEvent.LOAD occurs.
+     * Note: if you enable menus, you are responsible for providing
+     * appropriate deserialization of your game state, even if it's ad-hoc no-op.
      *
      * @param data previously saved data
+     * @throws UnsupportedOperationException if was not overridden
      */
     public void loadState(Serializable data) {
         log.warning("Called loadState(), but it wasn't overriden!");
+        throw new UnsupportedOperationException("Default implementation is not available");
     }
 
     /**
@@ -305,11 +310,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     /**
      * Main loop update phase, most of game logic.
+     *
+     * @param tpf time per frame
      */
-    protected abstract void onUpdate();
+    protected abstract void onUpdate(double tpf);
 
     private void initEventHandlers() {
-        getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate());
+        getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate(event.tpf()));
 
         getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
         getEventBus().addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {

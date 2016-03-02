@@ -84,7 +84,7 @@ public class FXMLSample extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
         count.set(count.get() + 1);
     }
 

@@ -125,7 +125,7 @@ public class BreakableTest extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     @OnUserAction(name = "Break", type = ActionType.ON_ACTION_BEGIN)
     public void breakE() {

@@ -255,7 +255,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      * Returns graphics context of the game scene.
      * The render layer is over all entities.
      * Use this only if performance is required.
-     * The drawing on this context can be done in {@link GameApplication#onUpdate()}.
+     * The drawing on this context can be done in {@link GameApplication#onUpdate(double)}.
      *
      * @return graphics context
      */

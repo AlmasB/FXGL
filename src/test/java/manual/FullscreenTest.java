@@ -66,7 +66,7 @@ public class FullscreenTest extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
 
     }
 }

@@ -93,7 +93,7 @@ public class TimerControlSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     private class LiftControl extends AbstractControl {
 

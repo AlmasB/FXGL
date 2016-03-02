@@ -116,7 +116,7 @@ public class InitSampleX extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate(double tpf) {}
 
     @OnUserAction(name = "O", type = ActionType.ON_ACTION_BEGIN)
     public void o() {

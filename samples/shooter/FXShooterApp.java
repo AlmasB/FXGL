@@ -108,7 +108,7 @@ public class FXShooterApp extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
 
     }
 

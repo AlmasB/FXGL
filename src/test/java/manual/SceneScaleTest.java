@@ -79,7 +79,7 @@ public class SceneScaleTest extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
     }
 
     private Entity createEntity(double x, double y) {

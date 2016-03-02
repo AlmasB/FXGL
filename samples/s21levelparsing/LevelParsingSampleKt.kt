@@ -85,7 +85,7 @@ class LevelParsingSampleKt : GameApplication() {
 
     override fun initUI() { }
 
-    override fun onUpdate() { }
+    override fun onUpdate(tpf: Double) { }
 }
 
 fun main(args: Array<String>) {

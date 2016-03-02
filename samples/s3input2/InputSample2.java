@@ -74,7 +74,7 @@ public class InputSample2 extends GameApplication {
     protected void initUI() {}
 
     @Override
-    public void onUpdate() {}
+    public void onUpdate(double tpf) {}
 
     // 3. specify which method to call on each action
 

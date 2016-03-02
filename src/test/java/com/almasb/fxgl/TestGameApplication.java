@@ -62,6 +62,6 @@ public class TestGameApplication extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
     }
 }

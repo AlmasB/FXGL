@@ -91,7 +91,7 @@ public class InputSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    public void onUpdate() {}
+    public void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

@@ -91,7 +91,7 @@ public class RaycastSample extends GameApplication {
     private double endY = -300;
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
         laser.setEndX(getWidth());
         laser.setEndY(endY);
 

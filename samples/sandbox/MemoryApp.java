@@ -78,7 +78,7 @@ public class MemoryApp extends GameApplication {
     double MB = 1024 * 1024.0;
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
         text.setText("Free: " + Runtime.getRuntime().freeMemory() / MB
                 + "\nTotal: " + Runtime.getRuntime().totalMemory() / MB
                 + "\nMax:   " + Runtime.getRuntime().maxMemory() / MB);

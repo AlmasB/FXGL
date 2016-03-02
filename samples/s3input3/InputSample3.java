@@ -28,7 +28,6 @@ package s3input3;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -78,7 +77,7 @@ public class InputSample3 extends GameApplication {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(double tpf) {
         // 1. you can check if a key is held anytime
         // however bound actions from s3input2 are preferred
         // to manual checks, because they can altered via menu controls

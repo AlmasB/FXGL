@@ -86,7 +86,7 @@ public class BBoxTest extends GameApplication {
     }
 
     @Override
-    protected void onUpdate() {
+    protected void onUpdate(double tpf) {
 
     }
 }
