@@ -83,7 +83,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Set handler for checked exceptions
+     * Set handler for checked exceptions.
      *
      * @param handler exception handler
      */
@@ -173,27 +173,8 @@ public abstract class FXGLApplication extends Application {
         initSystemProperties();
         initUserProperties();
 
-        GameSettings localSettings = new GameSettings();
-        initSettings(localSettings);
-        settings = localSettings.toReadOnly();
-
-        FXGL.setSettings(settings);
-
-        Level logLevel = Level.ALL;
-        switch (settings.getApplicationMode()) {
-            case DEVELOPER:
-                logLevel = Level.CONFIG;
-                break;
-            case RELEASE:
-                logLevel = Level.SEVERE;
-                break;
-            case DEBUG: // fallthru
-            default:
-                break;
-        }
-
-        FXGLLogger.init(logLevel);
-        log.info("Application Mode: " + getSettings().getApplicationMode());
+        initAppSettings();
+        initLogger();
 
         configureServices(stage);
     }
@@ -238,6 +219,38 @@ public abstract class FXGLApplication extends Application {
         } catch (IOException e) {
             log.warning("Loading user properties failed: " + e.getMessage());
         }
+    }
+
+    /**
+     * Take app settings from user.
+     */
+    private void initAppSettings() {
+        GameSettings localSettings = new GameSettings();
+        initSettings(localSettings);
+        settings = localSettings.toReadOnly();
+
+        FXGL.setSettings(settings);
+    }
+
+    /**
+     * Init logging system based on app settings.
+     */
+    private void initLogger() {
+        Level logLevel = Level.ALL;
+        switch (getSettings().getApplicationMode()) {
+            case DEVELOPER:
+                logLevel = Level.CONFIG;
+                break;
+            case RELEASE:
+                logLevel = Level.SEVERE;
+                break;
+            case DEBUG: // fallthru
+            default:
+                break;
+        }
+
+        FXGLLogger.init(logLevel);
+        log.info("Application Mode: " + getSettings().getApplicationMode());
     }
 
     /**
@@ -333,7 +346,6 @@ public abstract class FXGLApplication extends Application {
     private AchievementManager achievementManager;
 
     /**
-     *
      * @return achievement manager
      */
     public final AchievementManager getAchievementManager() {
