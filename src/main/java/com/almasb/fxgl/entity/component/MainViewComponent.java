@@ -27,6 +27,8 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.Component;
+import com.almasb.ents.ComponentListener;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
 import com.almasb.fxgl.app.GameApplication;
@@ -186,13 +188,34 @@ public class MainViewComponent extends AbstractComponent {
         bindView();
 
         if (showBBox) {
-            initDebugBBox();
+            if (getEntity().hasComponent(BoundingBoxComponent.class)) {
+                addDebugBBox();
+            } else {
+                getEntity().addComponentListener(new ComponentListener() {
+                    @Override
+                    public void onComponentAdded(Component component) {
+                        if (component instanceof BoundingBoxComponent) {
+                            addDebugBBox();
+                        }
+                    }
+
+                    @Override
+                    public void onComponentRemoved(Component component) {
+                        if (component instanceof BoundingBoxComponent) {
+                            removeDebugBBox();
+                        }
+                    }
+                });
+            }
         }
 
         view.addListener((o, oldView, newView) -> {
             oldView.translateXProperty().unbind();
             oldView.translateYProperty().unbind();
             oldView.rotateProperty().unbind();
+
+            oldView.removeNode(debugBBox);
+            newView.addNode(debugBBox);
 
             bindView();
         });
@@ -217,14 +240,11 @@ public class MainViewComponent extends AbstractComponent {
         )));
     }
 
-    private void initDebugBBox() {
-        if (!getEntity().hasComponent(BoundingBoxComponent.class)) {
-            return;
-        }
+    private Rectangle debugBBox = new Rectangle();
 
+    private void addDebugBBox() {
         BoundingBoxComponent bbox = Entities.getBBox(getEntity());
 
-        Rectangle debugBBox = new Rectangle();
         debugBBox.setStroke(showBBoxColor);
         debugBBox.setFill(null);
         debugBBox.translateXProperty().bind(bbox.minXLocalProperty());
@@ -233,5 +253,9 @@ public class MainViewComponent extends AbstractComponent {
         debugBBox.heightProperty().bind(bbox.heightProperty());
 
         getView().addNode(debugBBox);
+    }
+
+    private void removeDebugBBox() {
+        getView().removeNode(debugBBox);
     }
 }
