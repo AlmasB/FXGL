@@ -308,6 +308,16 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected abstract void initUI();
 
+    private void initFPSOverlay() {
+        if (getSettings().isFPSShown()) {
+            Text fpsText = UIFactory.newText("", 24);
+            fpsText.setTranslateY(getSettings().getHeight() - 40);
+            fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
+                    .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
+            getGameScene().addUINode(fpsText);
+        }
+    }
+
     /**
      * Main loop update phase, most of game logic.
      *
@@ -418,7 +428,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         });
 
         getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
-            getDisplay().showInputBox("Enter save file name", input -> input.matches("^[\\pL\\pN]+$"), saveFileName -> {
+            getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
                 IOResult io = saveLoadManager.save(saveState(), saveFileName);
 
                 if (!io.isOK())
@@ -453,7 +463,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             boolean ok = saveLoadManager.delete(fileName);
             if (!ok) {
-                getDisplay().showMessageBox("Failed to delete: " + fileName);
+                getDisplay().showMessageBox("Failed to delete:\n" + fileName);
             }
         });
     }
@@ -522,7 +532,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull());
 
         btnNew.setOnAction(e -> {
-            getDisplay().showInputBox("New Profile", input -> input.matches("^[\\pL\\pN]+$"), name -> {
+            getDisplay().showInputBox("New Profile", DialogPane.ALPHANUM, name -> {
                 profileName = name;
                 saveLoadManager = new SaveLoadManager(profileName);
                 getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
@@ -533,16 +543,15 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             profileName = profilesBox.getValue();
             saveLoadManager = new SaveLoadManager(profileName);
 
-            BooleanProperty ok = new SimpleBooleanProperty(false);
+            boolean ok = false;
 
             IOResult<UserProfile> result = saveLoadManager.loadProfile();
             if (result.hasData()) {
-                ok.set(loadFromProfile(result.getData()));
+                ok = loadFromProfile(result.getData());
             }
 
-            if (!ok.get()) {
-                getDisplay().showErrorBox("Profile is corrupted: " + profileName,
-                                this::showProfileDialog);
+            if (!ok) {
+                getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
             } else {
                 getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
             }
@@ -609,7 +618,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
 
         /**
-         *
          * @param data the data to load from, null if new game
          */
         private InitAppTask(Serializable data) {
@@ -632,14 +640,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             update("Initializing UI", 3);
             initUI();
-
-            if (getSettings().isFPSShown()) {
-                Text fpsText = UIFactory.newText("", 24);
-                fpsText.setTranslateY(getSettings().getHeight() - 40);
-                fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
-                        .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
-                getGameScene().addUINode(fpsText);
-            }
+            initFPSOverlay();
 
             update("Initialization Complete", 4);
             return null;
