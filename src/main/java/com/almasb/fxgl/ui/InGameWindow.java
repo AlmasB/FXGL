@@ -103,8 +103,8 @@ public class InGameWindow extends Window {
     }
 
     private void initXYListeners() {
-        double appW = FXGL.getDouble("settings.width");
-        double appH = FXGL.getDouble("settings.height");
+        double appW = FXGL.getSettings().getWidth();
+        double appH = FXGL.getSettings().getHeight();
 
         layoutXProperty().addListener((observable, oldValue, newValue) -> {
             int newX = newValue.intValue();

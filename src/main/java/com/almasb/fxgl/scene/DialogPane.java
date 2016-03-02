@@ -81,8 +81,8 @@ public class DialogPane extends Pane {
             }
         });
 
-        double width = FXGL.getDouble("settings.width");
-        double height = FXGL.getDouble("settings.height");
+        double width = FXGL.getSettings().getWidth();
+        double height = FXGL.getSettings().getHeight();
 
         setPrefSize(width, height);
         setBackground(new Background(new BackgroundFill(Color.rgb(127, 127, 123, 0.5), null, null)));

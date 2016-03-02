@@ -95,6 +95,9 @@ public final class FXGL {
         settings = gameSettings;
     }
 
+    /**
+     * @return read only copy of game settings
+     */
     public static ReadOnlyGameSettings getSettings() {
         return settings;
     }
