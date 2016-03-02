@@ -208,7 +208,8 @@
                         </goals>
                         <configuration> <!-- add this to disable checking -->
                             <additionalparam>-Xdoclint:none</additionalparam>
-
+                            <!-- leave only errors and warning -->
+                            <quiet>true</quiet>
                             <tags>
                                 <tag>
                                     <name>defaultValue</name>
