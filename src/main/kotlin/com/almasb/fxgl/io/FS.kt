@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.util.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLogger
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
 import java.io.ObjectInputStream

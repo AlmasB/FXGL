@@ -159,6 +159,11 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.menuKey = menuKey;
     }
 
+    /**
+     * Set additional credits.
+     *
+     * @param credits credits object
+     */
     public void setCredits(Credits credits) {
         this.credits = credits;
     }

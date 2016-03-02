@@ -30,7 +30,7 @@ import com.almasb.fxeventbus.EventBus
 import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.input.FXGLInputEvent
-import com.almasb.fxgl.util.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.event.Event

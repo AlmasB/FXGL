@@ -28,7 +28,7 @@ package com.almasb.fxgl.concurrent
 
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.util.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.concurrent.Task

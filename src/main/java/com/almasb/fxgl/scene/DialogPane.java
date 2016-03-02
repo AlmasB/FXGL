@@ -57,6 +57,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
+ * In-game dialog pane. The pane fills the whole scene area so that user
+ * input does not pass through to the underlying nodes.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class DialogPane extends Pane {

@@ -33,6 +33,8 @@ import javafx.scene.input.MouseButton;
 import java.util.Map;
 
 /**
+ * Allows input data queries as well as action bindings.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface Input {

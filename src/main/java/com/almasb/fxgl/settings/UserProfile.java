@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.settings;
 
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 
 import java.io.Serializable;
 import java.util.HashMap;

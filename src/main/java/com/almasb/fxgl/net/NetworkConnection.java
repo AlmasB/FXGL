@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutput;

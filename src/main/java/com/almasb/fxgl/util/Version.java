@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.util;
 
+import com.almasb.fxgl.logging.FXGLLogger;
+
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 

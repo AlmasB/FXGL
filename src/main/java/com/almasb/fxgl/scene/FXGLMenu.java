@@ -39,7 +39,7 @@ import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.Event;

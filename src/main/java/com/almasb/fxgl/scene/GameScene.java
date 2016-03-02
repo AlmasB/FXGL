@@ -41,7 +41,7 @@ import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.gameplay.GameWorldListener;
 import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.physics.PhysicsWorld;
-import com.almasb.fxgl.util.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.value.ChangeListener;
