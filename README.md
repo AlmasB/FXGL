@@ -1,4 +1,6 @@
 ## FXGL
+
+[![Join the chat at https://gitter.im/AlmasB/FXGL](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 JavaFX 8 Game Library written in Java + Kotlin<br/>
 [![Release](https://img.shields.io/badge/maven-0.2.1-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
