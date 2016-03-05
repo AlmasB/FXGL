@@ -5,6 +5,7 @@ JavaFX 8 Game Library written in Java + Kotlin<br/>
 [![Release](https://img.shields.io/badge/maven-0.2.1-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
+[![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
 
 ## Maven
 ```maven
