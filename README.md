@@ -41,6 +41,10 @@ For larger projects the library may not be as suitable, whereas advanced program
 with something like libGDX or JMonkey.
 If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
 
+## Setup Tutorials
+* [Eclipse](https://www.youtube.com/watch?v=2kLIXDhEGo0)
+* [IntelliJ](https://www.youtube.com/watch?v=ZM2NuvMG4cg)
+
 ## Basic Usage / Examples
 The samples/ folder will be constantly updated to include demonstrations of various features.
 Video Tutorials Playlist - <a href="https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp">YouTube Link</a> <br/>
