@@ -99,6 +99,9 @@ public interface Display {
      */
     void setSceneDimension(SceneDimension dimension);
 
+    /**
+     * @return scale ratio of the current size vs target size
+     */
     double getScaleRatio();
 
     /* DIALOG ACCESS */

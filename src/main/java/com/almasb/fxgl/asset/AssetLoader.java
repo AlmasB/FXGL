@@ -111,7 +111,7 @@ public class AssetLoader {
     }
 
     /**
-     * Loads texture with given name from {@value #TEXTURES_DIR}.
+     * Loads texture with given name from /assets/textures/.
      * Either returns a valid texture or throws an exception in case of errors.
      * <p>
      * Supported image formats are:
@@ -123,7 +123,7 @@ public class AssetLoader {
      * </ul>
      * </p>
      *
-     * @param name texture name without the {@value #TEXTURES_DIR}, e.g. "player.png"
+     * @param name texture name without the /assets/textures/, e.g. "player.png"
      * @return texture
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -143,13 +143,13 @@ public class AssetLoader {
     }
 
     /**
-     * Loads sound with given name from {@value #SOUNDS_DIR}.
+     * Loads sound with given name from /assets/sounds/.
      * Either returns a valid sound or throws an exception in case of errors.
      * <p>
      * Supported sound format:
      * <li>WAV</li>
      *
-     * @param name sound name without the {@value #SOUNDS_DIR}, e.g. "explosion.wav"
+     * @param name sound name without the /assets/sounds/, e.g. "explosion.wav"
      * @return sound
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -169,13 +169,13 @@ public class AssetLoader {
     }
 
     /**
-     * Loads sound with given name from {@value #MUSIC_DIR}.
+     * Loads sound with given name from /assets/music/.
      * Either returns a valid sound or throws an exception in case of errors.
      * <p>
      * Supported music format:
      * <li>MP3</li>
      *
-     * @param name music name without the {@value #MUSIC_DIR}, e.g. "background_music.mp3"
+     * @param name music name without the /assets/music/, e.g. "background_music.mp3"
      * @return music
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -195,12 +195,12 @@ public class AssetLoader {
     }
 
     /**
-     * Loads text file with given name from {@value #TEXT_DIR}
+     * Loads text file with given name from /assets/text/
      * into List<String> where each element represents a line
-     * within the file. Either returns a valid list with lines read from the file
-     * or throws an exception in case of errors
+     * in the file. Either returns a valid list with lines read from the file
+     * or throws an exception in case of errors.
      *
-     * @param name text file name without the {@value #TEXT_DIR}, e.g. "level_0.txt"
+     * @param name text file name without the /assets/text/, e.g. "level_0.txt"
      * @return list of lines from file
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -216,10 +216,10 @@ public class AssetLoader {
     }
 
     /**
-     * Loads KVFile with given name from {@value #KV_DIR}.
+     * Loads KVFile with given name from /assets/kv/.
      * Either returns a valid KVFile or throws exception in case of errors.
      *
-     * @param name KVFile name without the {@value #KV_DIR}, .e.g "settings.kv"
+     * @param name KVFile name without the /assets/kv/, .e.g "settings.kv"
      * @return kv file
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -228,10 +228,10 @@ public class AssetLoader {
     }
 
     /**
-     * Loads script with given name from {@value #SCRIPTS_DIR} as a single string.
+     * Loads script with given name from /assets/scripts/ as a single string.
      * Either returns loaded string or throws exception in case of errors.
      *
-     * @param name script file without the {@value #SCRIPTS_DIR}, e.g. "skill_heal.js"
+     * @param name script file without the /assets/scripts/, e.g. "skill_heal.js"
      * @return script as a String
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -243,9 +243,9 @@ public class AssetLoader {
     }
 
     /**
-     * Loads resource bundle with given name from "properties/".
+     * Loads resource bundle with given name from "/assets/properties/".
      *
-     * @param name must be under "properties/", e.g. system.properties, game.properties
+     * @param name must be under "/assets/properties/", e.g. system.properties, game.properties
      * @return resource bundle
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -258,10 +258,10 @@ public class AssetLoader {
     }
 
     /**
-     * Loads cursor image with given name from {@value #CURSORS_DIR}.
+     * Loads cursor image with given name from /assets/ui/cursors/.
      * Either returns a valid image or throws exception in case of errors.
      *
-     * @param name image name without the {@value #CURSORS_DIR}, e.g. "attack_cursor.png"
+     * @param name image name without the /assets/ui/cursors/, e.g. "attack_cursor.png"
      * @return cursor image
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -295,11 +295,11 @@ public class AssetLoader {
     }
 
     /**
-     * Returns external form of of URL to CSS file (from {@value #CSS_DIR} ready to be applied to UI elements.
-     * Can be applied by calling object.getStyleSheets().add().
+     * Loads a CSS file from /assets/ui/css/.
+     * Can be applied by calling object.getStyleSheets().add(css.getExternalForm()).
      * Either returns ready CSS or throws exception in case of errors.
      *
-     * @param name CSS file name without the {@value #CSS_DIR}, e.g. "ui_button.css"
+     * @param name CSS file name without the /assets/ui/css/, e.g. "ui_button.css"
      * @return css
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -312,11 +312,10 @@ public class AssetLoader {
     }
 
     /**
-     * Loads a native JavaFX font with given name from {@value #FONTS_DIR}
+     * Loads a native JavaFX font with given name from /assets/ui/fonts/
      * wrapped in a FontFactory, which later can be used to produce fonts
      * with different sizes without accessing the font file.
-     * Either returns a valid font factory or throws exception in case of errors
-     * <p>
+     * Either returns a valid font factory or throws exception in case of errors.
      * <p>
      * Supported font formats are:
      * <ul>
@@ -325,7 +324,7 @@ public class AssetLoader {
      * </ul>
      * </p>
      *
-     * @param name font file name without the {@value #FONTS_DIR}, e.g. "quest_font.ttf"
+     * @param name font file name without the /assets/ui/fonts/, e.g. "quest_font.ttf"
      * @return font factory
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -348,10 +347,10 @@ public class AssetLoader {
     }
 
     /**
-     * Loads an app icon from {@value #ICON_DIR}.
+     * Loads an app icon from /assets/ui/icons/.
      * Either returns a valid image or throws an exception in case of errors.
      *
-     * @param name image name without the {@value #ICON_DIR}, e.g. "app_icon.png"
+     * @param name image name without the /assets/ui/icons/, e.g. "app_icon.png"
      * @return app icon image
      * @throws IllegalArgumentException if asset not found or loading error
      */
@@ -506,7 +505,7 @@ public class AssetLoader {
      * If it contains other folders they'll be searched too.
      *
      * @param folderName folder files of which need to be retrieved
-     * @return list of filenames
+     * @return list of file names
      */
     private static List<String> loadFileNamesJar(String folderName) {
         List<String> fileNames = new ArrayList<>();

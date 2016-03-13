@@ -182,6 +182,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     private IntroScene introScene;
 
+    /**
+     * This scene is shown during app initialization,
+     * i.e. when assets / game are loaded on bg thread.
+     */
     @Inject
     private LoadingScene loadingScene;
 
@@ -210,18 +214,19 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     }
 
     /**
-     * Initiliaze input, i.e.
-     * bind key presses / key typed, bind mouse.
+     * Initialize input, i.e. bind key presses, bind mouse buttons.
+     *
      * <p>
-     * This method is called prior to any game init.
-     * <p>
+     * Note: This method is called prior to any game init to
+     * register input mappings in the menus.
+     * </p>
      * <pre>
      * Example:
      *
      * Input input = getInput();
      * input.addAction(new UserAction("Move Left") {
      *      protected void onAction() {
-     *          player.translate(-5, 0);
+     *          playerControl.moveLeft();
      *      }
      * }, KeyCode.A);
      * </pre>
@@ -240,7 +245,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * Override to use your custom intro video.
      *
-     * @return intro animation
+     * @return intro animation factory
      */
     protected IntroFactory initIntroFactory() {
         return new IntroFactory() {
@@ -297,12 +302,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     protected abstract void initGame();
 
     /**
-     * Initiliaze collision handlers, physics properties.
+     * Initialize collision handlers, physics properties.
      */
     protected abstract void initPhysics();
 
     /**
-     * Initiliaze UI objects.
+     * Initialize UI objects.
      */
     protected abstract void initUI();
 
@@ -773,6 +778,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Load from given user profile.
      *
      * @param profile the profile
+     * @return true if loaded successfully, false if couldn't load
      */
     public final boolean loadFromProfile(UserProfile profile) {
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
