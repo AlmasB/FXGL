@@ -23,9 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.time;
 
-import java.util.Arrays;
+package com.almasb.fxgl.time
+
+import java.util.Arrays
 
 /**
  * Convenience class that buffers FPS values and calculates
@@ -34,16 +35,18 @@ import java.util.Arrays;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-final class FPSCounter {
+internal class FPSCounter {
 
-    private static final int MAX_SAMPLES = 100;
+    companion object {
+        private val MAX_SAMPLES = 100
+    }
 
-    private final float[] values = new float[MAX_SAMPLES];
-    private float sum = 0.0f;
-    private int index = 0;
+    private val values = FloatArray(MAX_SAMPLES)
+    private var sum = 0.0f
+    private var index = 0
 
-    public FPSCounter() {
-        Arrays.fill(values, 0.0f);
+    init {
+        Arrays.fill(values, 0.0f)
     }
 
     /**
@@ -53,13 +56,13 @@ final class FPSCounter {
      * @param timeTookLastFrame how long it took to compute last frame
      * @return average FPS
      */
-    public float count(float timeTookLastFrame) {
-        sum -= values[index];
-        sum += timeTookLastFrame;
-        values[index] = timeTookLastFrame;
-        if (++index == values.length)
-            index = 0;
+    fun count(timeTookLastFrame: Float): Float {
+        sum -= values[index]
+        sum += timeTookLastFrame
+        values[index] = timeTookLastFrame
+        if (++index == values.size)
+            index = 0
 
-        return sum / values.length;
+        return sum / values.size
     }
 }

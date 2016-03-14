@@ -23,9 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.time;
 
-import javafx.util.Duration;
+package com.almasb.fxgl.time
+
+import javafx.util.Duration
 
 /**
  * A wrapper for Runnable which is executed at given intervals.
@@ -34,32 +35,32 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class TimerAction {
+class TimerAction
+/**
+ * @param now      current time in nanoseconds
+ * *
+ * @param interval interval duration
+ * *
+ * @param action   the action
+ * *
+ * @param type     ONCE or INDEFINITE
+ */
+(private var time: Long, interval: Duration, private val action: Runnable, private val type: TimerAction.TimerType) {
 
-    public enum TimerType {
+    enum class TimerType {
         ONCE, INDEFINITE
     }
 
-    private Runnable action;
-
-    private long time;
-    private double interval;
-
-    private boolean expired = false;
-
-    private TimerType type;
+    private val interval: Double
 
     /**
-     * @param now      current time in nanoseconds
-     * @param interval interval duration
-     * @param action   the action
-     * @param type     ONCE or INDEFINITE
+     * @return true if the timer has expired, false if active
      */
-    public TimerAction(long now, Duration interval, Runnable action, TimerType type) {
-        this.time = now;
-        this.interval = FXGLMasterTimer.secondsToNanos(interval.toSeconds());
-        this.action = action;
-        this.type = type;
+    var isExpired = false
+        private set
+
+    init {
+        this.interval = FXGLMasterTimer.secondsToNanos(interval.toSeconds()).toDouble()
     }
 
     /**
@@ -67,22 +68,22 @@ public final class TimerAction {
      * If the difference between current time
      * and recorded time is greater than the interval
      * then the action is executed and current time is recorded.
-     * <p>
+     *
      * Note: the action will not be executed if the timer
      * has expired.
      *
      * @param now current time in nanoseconds
      */
-    public void update(long now) {
-        if (isExpired())
-            return;
+    fun update(now: Long) {
+        if (isExpired)
+            return
 
         if (now - time >= interval) {
-            action.run();
-            time = now;
+            action.run()
+            time = now
 
             if (type == TimerType.ONCE) {
-                expire();
+                expire()
             }
         }
     }
@@ -91,14 +92,7 @@ public final class TimerAction {
      * Set the timer as expired. The action will no longer
      * be executed.
      */
-    public void expire() {
-        expired = true;
-    }
-
-    /**
-     * @return true if the timer has expired, false if active
-     */
-    public boolean isExpired() {
-        return expired;
+    fun expire() {
+        isExpired = true
     }
 }
