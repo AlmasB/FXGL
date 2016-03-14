@@ -33,8 +33,10 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.util.LRUCache;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
@@ -103,10 +105,12 @@ public class AssetLoader {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
 
-    private final AssetsCache cachedAssets = new AssetsCache();
+    private final LRUCache<String, Object> cachedAssets;
 
     @Inject
-    private AssetLoader() {
+    private AssetLoader(@Named("asset.cache.size") int cacheSize) {
+        cachedAssets = new LRUCache<>(cacheSize);
+
         log.finer("Service [AssetLoader] initialized");
     }
 

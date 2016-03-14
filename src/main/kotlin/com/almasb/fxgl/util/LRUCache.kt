@@ -24,51 +24,33 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.util
 
-import com.almasb.fxgl.app.FXGL;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*
 
 /**
- * Simple LRU cache based on {@link LinkedHashMap}.
+ * Simple LRU cache based on LinkedHashMap.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-final class AssetsCache {
+class LRUCache<K, V>(
+        /**
+         * Max num of elements to keep in cache.
+         */
+        val maxSize: Int) {
 
-    private static final int CACHE_SIZE = FXGL.getInt("asset.cache.size");
-
-    private Map<String, Object> cache = new LinkedHashMap<String, Object>(CACHE_SIZE + 1, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry eldest) {
-            return size() > CACHE_SIZE;
-        }
-    };
-
-    /**
-     * Put an asset into cache.
-     *
-     * @param assetName asset name
-     * @param asset asset
-     */
-    void put(String assetName, Object asset) {
-        cache.put(assetName, asset);
+    private val cache = object : LinkedHashMap<K, V>(maxSize + 1, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<K, V>) = size > maxSize
     }
 
-    /**
-     * @param assetName asset name
-     * @return asset
-     */
-    Object get(String assetName) {
-        return cache.get(assetName);
+    fun put(key: K, value: V) {
+        cache.put(key, value)
     }
+
+    fun get(key: K) = cache[key]
 
     /**
      * Clear the cache.
      */
-    void clear() {
-        cache.clear();
-    }
+    fun clear() = cache.clear()
 }

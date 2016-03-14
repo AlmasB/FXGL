@@ -128,6 +128,10 @@ public abstract class FXGLApplication extends Application {
                         .annotatedWith(Names.named("appHeight"))
                         .toInstance((double)getSettings().getHeight());
 
+                bind(Integer.class)
+                        .annotatedWith(Names.named("asset.cache.size"))
+                        .toInstance(FXGL.getInt("asset.cache.size"));
+
                 bind(ReadOnlyGameSettings.class).toInstance(getSettings());
 
                 for (Field field : ServiceType.class.getDeclaredFields()) {
