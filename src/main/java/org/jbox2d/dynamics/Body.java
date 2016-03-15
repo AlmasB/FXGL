@@ -200,16 +200,12 @@ public class Body {
      * parameters, like friction. Otherwise you can create the fixture directly from a shape. If the
      * density is non-zero, this function automatically updates the mass of the body. Contacts are not
      * created until the next time step.
+     * Note: This function is locked during callbacks.
      *
      * @param def the fixture definition.
-     * @warning This function is locked during callbacks.
      */
     public final Fixture createFixture(FixtureDef def) {
-        assert (!world.isLocked());
-
-        if (world.isLocked()) {
-            return null;
-        }
+        world.assertNotLocked();
 
         Fixture fixture = new Fixture(this, def);
 
@@ -260,14 +256,9 @@ public class Body {
      * @warning This function is locked during callbacks.
      */
     public final void destroyFixture(Fixture fixture) {
-        assert (!world.isLocked());
-
-        if (world.isLocked()) {
-            return;
-        }
+        world.assertNotLocked();
 
         assert (fixture.getBody() == this);
-
         assert (fixtures.size() > 0);
         assert fixtures.contains(fixture);
 
@@ -308,11 +299,7 @@ public class Body {
      * @param angle the world rotation in radians.
      */
     public final void setTransform(Vec2 position, float angle) {
-        assert (!world.isLocked());
-
-        if (world.isLocked()) {
-            return;
-        }
+        world.assertNotLocked();
 
         m_xf.q.set(angle);
         m_xf.p.set(position);
@@ -595,12 +582,7 @@ public class Body {
      * @param massData the mass properties.
      */
     public final void setMassData(MassData massData) {
-        // TODO_ERIN adjust linear velocity and torque to account for movement of center.
-        assert (!world.isLocked());
-
-        if (world.isLocked()) {
-            return;
-        }
+        world.assertNotLocked();
 
         if (type != BodyType.DYNAMIC) {
             return;
@@ -873,11 +855,7 @@ public class Body {
      * @param type body type
      */
     public void setType(BodyType type) {
-        assert (!world.isLocked());
-
-        if (world.isLocked()) {
-            return;
-        }
+        world.assertNotLocked();
 
         if (this.type == type) {
             return;
@@ -1001,7 +979,7 @@ public class Body {
      * @param flag active flag
      */
     public void setActive(boolean flag) {
-        assert (!world.isLocked());
+        world.assertNotLocked();
 
         if (flag == isActive()) {
             return;
@@ -1075,9 +1053,8 @@ public class Body {
 
     /**
      * Get the list of all contacts attached to this body.
-     *
-     * @warning this list changes during the time step and you may miss some collisions if you don't
-     *          use ContactListener.
+     * Note: this list changes during the time step and you may miss some collisions if you don't
+     * use ContactListener.
      */
     public final ContactEdge getContactList() {
         return m_contactList;

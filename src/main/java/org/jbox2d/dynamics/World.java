@@ -318,12 +318,8 @@ public class World {
      * @return rigid body
      */
     public Body createBody(BodyDef def) {
-        assert (!isLocked());
+        assertNotLocked();
 
-        if (isLocked()) {
-            return null;
-        }
-        // TODO djm pooling
         Body b = new Body(def, this);
 
         // add to world doubly linked list
@@ -347,11 +343,7 @@ public class World {
      */
     public void destroyBody(Body body) {
         assert (bodyCount > 0);
-        assert (!isLocked());
-
-        if (isLocked()) {
-            return;
-        }
+        assertNotLocked();
 
         // Delete the attached joints.
         JointEdge je = body.m_jointList;
@@ -416,11 +408,7 @@ public class World {
      * @return joint
      */
     public Joint createJoint(JointDef def) {
-        assert (!isLocked());
-
-        if (isLocked()) {
-            return null;
-        }
+        assertNotLocked();
 
         Joint j = Joint.create(this, def);
 
@@ -479,11 +467,7 @@ public class World {
      * @param j joint
      */
     public void destroyJoint(Joint j) {
-        assert (!isLocked());
-
-        if (isLocked()) {
-            return;
-        }
+        assertNotLocked();
 
         boolean collideConnected = j.getCollideConnected();
 
@@ -978,6 +962,11 @@ public class World {
      */
     public boolean isLocked() {
         return (m_flags & LOCKED) == LOCKED;
+    }
+
+    void assertNotLocked() {
+        if (isLocked())
+            throw new IllegalStateException("Physics world is locked during time step");
     }
 
     /**
@@ -1626,10 +1615,7 @@ public class World {
      * @return the index of the particle.
      */
     public int createParticle(ParticleDef def) {
-        assert (!isLocked());
-        if (isLocked()) {
-            return 0;
-        }
+        assertNotLocked();
 
         return particleSystem.createParticle(def);
     }
@@ -1678,10 +1664,8 @@ public class World {
      * @return Number of particles destroyed.
      */
     public int destroyParticlesInShape(Shape shape, Transform xf, boolean callDestructionListener) {
-        assert (!isLocked());
-        if (isLocked()) {
-            return 0;
-        }
+        assertNotLocked();
+
         return particleSystem.destroyParticlesInShape(shape, xf, callDestructionListener);
     }
 
@@ -1693,10 +1677,8 @@ public class World {
      * @return particle group
      */
     public ParticleGroup createParticleGroup(ParticleGroupDef def) {
-        assert (!isLocked());
-        if (isLocked()) {
-            return null;
-        }
+        assertNotLocked();
+
         return particleSystem.createParticleGroup(def);
     }
 
@@ -1707,10 +1689,8 @@ public class World {
      * @param groupB the second group. It is destroyed.
      */
     public void joinParticleGroups(ParticleGroup groupA, ParticleGroup groupB) {
-        assert (!isLocked());
-        if (isLocked()) {
-            return;
-        }
+        assertNotLocked();
+
         particleSystem.joinParticleGroups(groupA, groupB);
     }
 
@@ -1721,10 +1701,8 @@ public class World {
      * @param callDestructionListener Whether to call the world b2DestructionListener for each particle is destroyed.
      */
     public void destroyParticlesInGroup(ParticleGroup group, boolean callDestructionListener) {
-        assert (!isLocked());
-        if (isLocked()) {
-            return;
-        }
+        assertNotLocked();
+
         particleSystem.destroyParticlesInGroup(group, callDestructionListener);
     }
 
@@ -1802,7 +1780,6 @@ public class World {
      */
     public void setParticleGravityScale(float gravityScale) {
         particleSystem.setParticleGravityScale(gravityScale);
-
     }
 
     /**
