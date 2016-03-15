@@ -35,37 +35,31 @@ import com.almasb.fxgl.event.DisplayEvent
 import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.logging.FXGLLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
-import javafx.geometry.Rectangle2D
 import javafx.scene.Node
-import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Dialog
-import javafx.scene.image.Image
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
-
 import java.time.LocalDateTime
-import java.util.ArrayList
+import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
-import java.util.logging.Logger
 
 /**
  * Display service. Provides access to dialogs and display settings.

@@ -31,9 +31,7 @@ import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.logging.FXGLLogger
-
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 /**
  * Parser for levels represented by plain text.

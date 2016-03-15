@@ -27,12 +27,12 @@ package com.almasb.fxgl.asset;
 
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.logging.FXGLLogger;
 import com.almasb.fxgl.parser.KVFile;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UIController;
-import com.almasb.fxgl.logging.FXGLLogger;
 import com.almasb.fxgl.util.LRUCache;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

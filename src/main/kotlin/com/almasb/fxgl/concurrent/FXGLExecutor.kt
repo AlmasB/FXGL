@@ -32,10 +32,7 @@ import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.concurrent.Task
-
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.logging.Logger
 
 /**
  * Uses cached thread pool to run tasks in the background.

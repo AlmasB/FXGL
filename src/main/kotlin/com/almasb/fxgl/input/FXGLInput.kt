@@ -32,9 +32,9 @@ import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.logging.FXGLLogger
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.collections.FXCollections

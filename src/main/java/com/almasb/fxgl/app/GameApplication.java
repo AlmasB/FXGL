@@ -25,11 +25,12 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
+import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.logging.FXGLLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.scene.intro.FXGLIntroScene;
@@ -37,7 +38,6 @@ import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
-import com.almasb.fxgl.logging.FXGLLogger;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import com.google.inject.Inject;
 import javafx.application.Platform;

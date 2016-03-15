@@ -50,7 +50,6 @@
 
 package org.jbox2d.dynamics;
 
-import javafx.scene.paint.Color;
 import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.RayCastInput;
@@ -62,7 +61,8 @@ import org.jbox2d.collision.broadphase.BroadPhase;
 import org.jbox2d.collision.broadphase.BroadPhaseStrategy;
 import org.jbox2d.collision.broadphase.DefaultBroadPhaseBuffer;
 import org.jbox2d.collision.broadphase.DynamicTree;
-import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.collision.shapes.ShapeType;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
@@ -70,11 +70,9 @@ import org.jbox2d.dynamics.contacts.ContactRegister;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointDef;
 import org.jbox2d.dynamics.joints.JointEdge;
-import org.jbox2d.dynamics.joints.PulleyJoint;
 import org.jbox2d.particle.*;
 import org.jbox2d.pooling.IDynamicStack;
 import org.jbox2d.pooling.IWorldPool;
-import org.jbox2d.pooling.arrays.Vec2Array;
 import org.jbox2d.pooling.normal.DefaultWorldPool;
 
 /**

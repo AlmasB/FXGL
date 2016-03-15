@@ -26,8 +26,6 @@
 package com.almasb.fxgl.entity;
 
 
-import static org.junit.Assert.*;
-
 public class EntityTest {
 //
 //    private enum Type implements EntityType {

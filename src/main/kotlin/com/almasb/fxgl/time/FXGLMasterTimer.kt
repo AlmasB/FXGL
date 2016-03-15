@@ -29,15 +29,16 @@ package com.almasb.fxgl.time
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.UpdateEvent
-import com.almasb.fxgl.time.TimerAction.TimerType
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.time.TimerAction.TimerType
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.animation.AnimationTimer
-import javafx.beans.property.*
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.property.ReadOnlyLongWrapper
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.util.Duration
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.logging.Logger
 
 /**
  * Contains convenience methods and manages timer based actions.

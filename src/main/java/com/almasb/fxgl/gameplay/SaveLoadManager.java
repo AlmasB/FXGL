@@ -28,8 +28,8 @@ package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.settings.UserProfile;
 
 import java.io.Serializable;
 import java.nio.file.Files;

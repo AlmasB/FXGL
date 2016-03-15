@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.time
 
-import java.util.Arrays
+import java.util.*
 
 /**
  * Convenience class that buffers FPS values and calculates

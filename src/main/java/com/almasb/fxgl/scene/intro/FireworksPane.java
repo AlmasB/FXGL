@@ -58,20 +58,17 @@
 
 package com.almasb.fxgl.scene.intro;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.Reflection;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.Paint;
-import javafx.scene.paint.RadialGradient;
-import javafx.scene.paint.Stop;
+import javafx.scene.paint.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 class FireworksPane extends Pane {
     public final int width;

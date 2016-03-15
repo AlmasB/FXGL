@@ -32,16 +32,14 @@ import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.logging.FXGLLogger
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-
-import java.util.ArrayList
-import java.util.logging.Logger
+import java.util.*
 
 /**
  * FXGL provider of audio service.

@@ -37,8 +37,6 @@ import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
 
-import java.util.logging.Logger
-
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
  *
