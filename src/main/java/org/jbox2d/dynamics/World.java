@@ -84,16 +84,16 @@ import org.jbox2d.pooling.normal.DefaultWorldPool;
  * @author Daniel Murphy
  */
 public class World {
-    public static final int WORLD_POOL_SIZE = 100;
-    public static final int WORLD_POOL_CONTAINER_SIZE = 10;
+    private static final int WORLD_POOL_SIZE = 100;
+    private static final int WORLD_POOL_CONTAINER_SIZE = 10;
 
     private boolean newFixture = false;
-    private boolean locked = false;
-    private boolean autoClearForces = true;
 
     void notifyNewFixture() {
         newFixture = true;
     }
+
+    private boolean locked = false;
 
     /**
      * @return is the world locked (in the middle of a time step)
@@ -106,6 +106,8 @@ public class World {
         if (isLocked())
             throw new IllegalStateException("Physics world is locked during time step");
     }
+
+    private boolean autoClearForces = true;
 
     /**
      * Set flag to control automatic clearing of forces after each time step.
@@ -123,10 +125,6 @@ public class World {
         return autoClearForces;
     }
 
-    // statistics gathering
-    public int activeContacts = 0;
-    public int contactPoolCount = 0;
-
     protected ContactManager m_contactManager;
 
     private Body m_bodyList = null;
@@ -138,10 +136,53 @@ public class World {
     private final Vec2 m_gravity = new Vec2();
     private boolean allowSleep = true;
 
+    public boolean isAllowSleep() {
+        return allowSleep;
+    }
+
+    public void setAllowSleep(boolean flag) {
+        if (flag == allowSleep) {
+            return;
+        }
+
+        allowSleep = flag;
+        if (!allowSleep) {
+            for (Body b = m_bodyList; b != null; b = b.m_next) {
+                b.setAwake(true);
+            }
+        }
+    }
+
     private DestructionListener destructionListener = null;
+
+    public DestructionListener getDestructionListener() {
+        return destructionListener;
+    }
+
+    /**
+     * Register a destruction listener. The listener is owned by you and must remain in scope.
+     *
+     * @param listener destruction listener
+     */
+    public void setDestructionListener(DestructionListener listener) {
+        destructionListener = listener;
+    }
+
     private ParticleDestructionListener particleDestructionListener = null;
 
+    public ParticleDestructionListener getParticleDestructionListener() {
+        return particleDestructionListener;
+    }
+
+    public void setParticleDestructionListener(ParticleDestructionListener listener) {
+        particleDestructionListener = listener;
+    }
+
     private final IWorldPool pool;
+
+    public IWorldPool getPool() {
+        return pool;
+    }
 
     /**
      * This is used to compute the time step ratio to support a variable time step.
@@ -151,7 +192,16 @@ public class World {
     // these are for debugging the solver
     private boolean warmStarting = true;
     private boolean continuousPhysics = true;
+
     private boolean subStepping = false;
+
+    public void setSubStepping(boolean subStepping) {
+        this.subStepping = subStepping;
+    }
+
+    public boolean isSubStepping() {
+        return subStepping;
+    }
 
     private boolean stepComplete = true;
 
@@ -200,31 +250,6 @@ public class World {
         initializeRegisters();
     }
 
-    public void setAllowSleep(boolean flag) {
-        if (flag == allowSleep) {
-            return;
-        }
-
-        allowSleep = flag;
-        if (!allowSleep) {
-            for (Body b = m_bodyList; b != null; b = b.m_next) {
-                b.setAwake(true);
-            }
-        }
-    }
-
-    public void setSubStepping(boolean subStepping) {
-        this.subStepping = subStepping;
-    }
-
-    public boolean isSubStepping() {
-        return subStepping;
-    }
-
-    public boolean isAllowSleep() {
-        return allowSleep;
-    }
-
     private void addType(IDynamicStack<Contact> creator, ShapeType type1, ShapeType type2) {
         ContactRegister register = new ContactRegister();
         register.creator = creator;
@@ -247,18 +272,6 @@ public class World {
         addType(pool.getEdgePolyContactStack(), ShapeType.EDGE, ShapeType.POLYGON);
         addType(pool.getChainCircleContactStack(), ShapeType.CHAIN, ShapeType.CIRCLE);
         addType(pool.getChainPolyContactStack(), ShapeType.CHAIN, ShapeType.POLYGON);
-    }
-
-    public DestructionListener getDestructionListener() {
-        return destructionListener;
-    }
-
-    public ParticleDestructionListener getParticleDestructionListener() {
-        return particleDestructionListener;
-    }
-
-    public void setParticleDestructionListener(ParticleDestructionListener listener) {
-        particleDestructionListener = listener;
     }
 
     public Contact popContact(Fixture fixtureA, int indexA, Fixture fixtureB, int indexB) {
@@ -295,19 +308,6 @@ public class World {
 
         IDynamicStack<Contact> creator = contactStacks[type1.ordinal()][type2.ordinal()].creator;
         creator.push(contact);
-    }
-
-    public IWorldPool getPool() {
-        return pool;
-    }
-
-    /**
-     * Register a destruction listener. The listener is owned by you and must remain in scope.
-     *
-     * @param listener destruction listener
-     */
-    public void setDestructionListener(DestructionListener listener) {
-        destructionListener = listener;
     }
 
     /**
@@ -563,7 +563,6 @@ public class World {
         }
     }
 
-    // djm pooling
     private final TimeStep step = new TimeStep();
     private final Timer stepTimer = new Timer();
     private final Timer tempTimer = new Timer();
