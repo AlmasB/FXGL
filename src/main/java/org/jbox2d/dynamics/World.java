@@ -87,15 +87,45 @@ public class World {
     public static final int WORLD_POOL_SIZE = 100;
     public static final int WORLD_POOL_CONTAINER_SIZE = 10;
 
-    public static final int NEW_FIXTURE = 0x0001;
-    public static final int LOCKED = 0x0002;
-    public static final int CLEAR_FORCES = 0x0004;
+    private boolean newFixture = false;
+    private boolean locked = false;
+    private boolean autoClearForces = true;
+
+    void notifyNewFixture() {
+        newFixture = true;
+    }
+
+    /**
+     * @return is the world locked (in the middle of a time step)
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+
+    void assertNotLocked() {
+        if (isLocked())
+            throw new IllegalStateException("Physics world is locked during time step");
+    }
+
+    /**
+     * Set flag to control automatic clearing of forces after each time step.
+     *
+     * @param flag automatically clear forces flag
+     */
+    public void setAutoClearForces(boolean flag) {
+        autoClearForces = flag;
+    }
+
+    /**
+     * @return the flag that controls automatic clearing of forces after each time step
+     */
+    public boolean getAutoClearForces() {
+        return autoClearForces;
+    }
 
     // statistics gathering
     public int activeContacts = 0;
     public int contactPoolCount = 0;
-
-    protected int m_flags = CLEAR_FORCES;
 
     protected ContactManager m_contactManager;
 
@@ -561,13 +591,13 @@ public class World {
         tempTimer.reset();
         // log.debug("Starting step");
         // If new fixtures were added, we need to find the new contacts.
-        if ((m_flags & NEW_FIXTURE) == NEW_FIXTURE) {
+        if (newFixture) {
             // log.debug("There's a new fixture, lets look for new contacts");
             m_contactManager.findNewContacts();
-            m_flags &= ~NEW_FIXTURE;
+            newFixture = false;
         }
 
-        m_flags |= LOCKED;
+        locked = true;
 
         step.dt = dt;
         step.velocityIterations = velocityIterations;
@@ -609,11 +639,11 @@ public class World {
             dtInverse = step.inv_dt;
         }
 
-        if ((m_flags & CLEAR_FORCES) == CLEAR_FORCES) {
+        if (getAutoClearForces()) {
             clearForces();
         }
 
-        m_flags &= ~LOCKED;
+        locked = false;
         // log.debug("ending step");
 
         profile.step.record(stepTimer.getMilliseconds());
@@ -955,38 +985,6 @@ public class World {
      */
     public Vec2 getGravity() {
         return m_gravity;
-    }
-
-    /**
-     * @return is the world locked (in the middle of a time step)
-     */
-    public boolean isLocked() {
-        return (m_flags & LOCKED) == LOCKED;
-    }
-
-    void assertNotLocked() {
-        if (isLocked())
-            throw new IllegalStateException("Physics world is locked during time step");
-    }
-
-    /**
-     * Set flag to control automatic clearing of forces after each time step.
-     *
-     * @param flag automatically clear forces flag
-     */
-    public void setAutoClearForces(boolean flag) {
-        if (flag) {
-            m_flags |= CLEAR_FORCES;
-        } else {
-            m_flags &= ~CLEAR_FORCES;
-        }
-    }
-
-    /**
-     * @return the flag that controls automatic clearing of forces after each time step
-     */
-    public boolean getAutoClearForces() {
-        return (m_flags & CLEAR_FORCES) == CLEAR_FORCES;
     }
 
     /**
