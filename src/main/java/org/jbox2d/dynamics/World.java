@@ -921,7 +921,6 @@ public class World {
         return continuousPhysics;
     }
 
-
     /**
      * @return the number of broad-phase proxies
      */
@@ -1910,7 +1909,6 @@ public class World {
     }
 }
 
-
 class WorldQueryWrapper implements TreeCallback {
     @Override
     public boolean treeCallback(int nodeId) {
@@ -1921,7 +1919,6 @@ class WorldQueryWrapper implements TreeCallback {
     BroadPhase broadPhase;
     QueryCallback callback;
 }
-
 
 class WorldRayCastWrapper implements TreeRayCastCallback {
 
