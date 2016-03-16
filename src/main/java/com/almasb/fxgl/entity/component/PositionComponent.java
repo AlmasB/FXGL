@@ -30,6 +30,7 @@ import com.almasb.ents.AbstractComponent;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
+import kotlin.text.StringsKt;
 
 /**
  * Component that adds a 2d position to an entity.
@@ -185,5 +186,10 @@ public class PositionComponent extends AbstractComponent {
      */
     public double distance(PositionComponent other) {
         return getValue().distance(other.getValue());
+    }
+
+    @Override
+    public String toString() {
+        return "Position(" + getX() + "," + getY() + ")";
     }
 }

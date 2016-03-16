@@ -77,4 +77,9 @@ public class RotationComponent extends DoubleComponent {
         double angle = Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
         setValue(angle);
     }
+
+    @Override
+    public String toString() {
+        return "Rotation(" + getValue() + "deg)";
+    }
 }
