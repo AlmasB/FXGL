@@ -25,6 +25,9 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.ents.Entity;
+import com.almasb.ents.EntityWorldListener;
+import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
@@ -329,10 +332,35 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     protected abstract void onUpdate(double tpf);
 
     private void initEventHandlers() {
-        getEventBus().addEventHandler(UpdateEvent.ANY, event -> onUpdate(event.tpf()));
+        EventBus bus = getEventBus();
 
-        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
-        getEventBus().addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {
+        // WORLD
+
+        bus.addEventHandler(UpdateEvent.ANY, event -> {
+            gameWorld.update(event.tpf());
+        });
+        bus.addEventHandler(FXGLEvent.RESET, event -> {
+            gameWorld.reset();
+        });
+
+        gameWorld.addWorldListener(new EntityWorldListener() {
+            @Override
+            public void onEntityAdded(Entity entity) {
+                bus.fireEvent(WorldEvent.entityAdded(entity));
+            }
+
+            @Override
+            public void onEntityRemoved(Entity entity) {
+                bus.fireEvent(WorldEvent.entityRemoved(entity));
+            }
+        });
+
+        // FXGL App
+
+        bus.addEventHandler(UpdateEvent.ANY, event -> onUpdate(event.tpf()));
+
+        bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
+        bus.addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {
             if (getState() == ApplicationState.INTRO ||
                     getState() == ApplicationState.LOADING)
                 return;
@@ -342,7 +370,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             getInput().clearAll();
         });
-        getEventBus().addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
+        bus.addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
             if (getState() == ApplicationState.INTRO ||
                     getState() == ApplicationState.LOADING)
                 return;

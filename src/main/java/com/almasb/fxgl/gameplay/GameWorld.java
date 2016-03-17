@@ -85,32 +85,20 @@ public final class GameWorld extends EntityWorld {
         return gameDifficulty;
     }
 
-    private EventBus eventBus;
-
     @Inject
-    private GameWorld(EventBus eventBus) {
-        this.eventBus = eventBus;
-        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
-            update(event.tpf());
-        });
-        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
-            log.finer("Resetting game world");
-            reset();
-        });
-
-        addWorldListener(new EntityWorldListener() {
-            @Override
-            public void onEntityAdded(Entity entity) {
-                eventBus.fireEvent(WorldEvent.entityAdded(entity));
-            }
-
-            @Override
-            public void onEntityRemoved(Entity entity) {
-                eventBus.fireEvent(WorldEvent.entityRemoved(entity));
-            }
-        });
-
+    protected GameWorld() {
         log.finer("Game world initialized");
+    }
+
+    @Override
+    public void update(double tpf) {
+        super.update(tpf);
+    }
+
+    @Override
+    public void reset() {
+        log.finer("Resetting game world");
+        super.reset();
     }
 
     /**
