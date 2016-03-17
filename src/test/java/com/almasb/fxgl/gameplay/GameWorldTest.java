@@ -26,137 +26,167 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.ents.Entity;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.physics.HitBox;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.shape.Rectangle;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+
 public class GameWorldTest {
 
-//    private enum Type implements EntityType {
-//        TEST_ENTITY
-//    }
-//
-//    private GameWorld gameWorld;
-//
-//    @Before
-//    public void setUp() {
-//        //gameWorld = new GameWorld();
-//    }
-//
-//    @Test
-//    public void addRemoveEntities() {
-//        Entity entity = new Entity(Type.TEST_ENTITY);
-//
-//        gameWorld.addEntities(entity);
-//        assertEquals(0, gameWorld.getEntities().size());
-//
-//        gameWorld.update();
-//        assertEquals(1, gameWorld.getEntities().size());
-//
-//        List<Entity> list = gameWorld.getEntities(Type.TEST_ENTITY);
-//        assertEquals(1, list.size());
-//        assertEquals(entity, list.get(0));
-//
-//
-//
-////        list = gameWorld.getEntitiesInRange(new Rectangle2D(50, 50, 100, 100));
-////        assertEquals(1, list.size());
-////        assertEquals(entity, list.get(0));
-//
-//        gameWorld.removeEntity(entity);
-//        assertEquals(1, gameWorld.getEntities().size());
-//
-//        gameWorld.update();
-//        assertEquals(0, gameWorld.getEntities().size());
-//    }
-//
-//    @Test
-//    public void getEntityAt() {
-//        Entity entity = new Entity(Type.TEST_ENTITY);
-//        entity.setValue(100, 100);
-//
-//        gameWorld.addEntities(entity);
-//        assertEquals(0, gameWorld.getEntities().size());
-//
-//        gameWorld.update();
-//        assertEquals(1, gameWorld.getEntities().size());
-//
-//        Optional<Entity> maybe = gameWorld.getEntityAt(new Point2D(100, 100));
-//        assertTrue(maybe.isPresent());
-//        assertEquals(entity, maybe.get());
-//    }
-//
-//    @Test
-//    public void getEntitiesFiltered() {
-//        Entity entity = new Entity(Type.TEST_ENTITY);
-//        entity.setValue(100, 100);
-//        entity.setSceneView(new Rectangle(40, 40));
-//
-//        gameWorld.addEntities(entity);
-//        assertEquals(0, gameWorld.getEntities().size());
-//
-//        gameWorld.update();
-//        assertEquals(1, gameWorld.getEntities().size());
-//
-//        List<Entity> list = gameWorld.getEntitiesFiltered(e -> e.getValue().equals(new Point2D(100, 100)));
-//        assertEquals(1, list.size());
-//        assertEquals(entity, list.get(0));
-//    }
-//
-//    @Test
-//    public void getEntitiesInRange() {
-//        Entity entity = new Entity(Type.TEST_ENTITY);
-//        entity.setValue(100, 100);
-//        entity.setSceneView(new Rectangle(40, 40));
-//
-//        Entity entity2 = new Entity(Type.TEST_ENTITY);
-//        entity2.setValue(200, 100);
-//        entity2.setSceneView(new Rectangle(40, 40));
-//
-//        Entity entity3 = new Entity(Type.TEST_ENTITY);
-//        entity3.setValue(300, 100);
-//        entity3.setSceneView(new Rectangle(40, 40));
-//
-//        gameWorld.addEntities(entity, entity2, entity3);
-//        gameWorld.update();
-//
-//        List<Entity> list = gameWorld.getEntitiesInRange(new Rectangle2D(150, 50, 100, 150));
-//        assertEquals(1, list.size());
-//        assertEquals(entity2, list.get(0));
-//
-//        list = gameWorld.getEntitiesInRange(new Rectangle2D(150, 50, 180, 150));
-//        assertEquals(2, list.size());
-//        assertListContains(list, entity2, entity3);
-//
-//        list = gameWorld.getEntitiesInRange(new Rectangle2D(100, 50, 300, 150));
-//        assertEquals(3, list.size());
-//        assertListContains(list, entity, entity2, entity3);
-//
-//        list = gameWorld.getEntitiesInRange(new Rectangle2D(0, 0, 50, 50));
-//        assertEquals(0, list.size());
-//    }
-//
-//    @Test
-//    public void reset() {
-//        Entity entity = new Entity(Type.TEST_ENTITY);
-//
-//        gameWorld.addEntities(entity);
-//        gameWorld.update();
-//
-//        gameWorld.reset();
-//        assertEquals(0, gameWorld.getEntities().size());
-//    }
-//
-//    @Test
-//    public void notifications() {
-//        Entity entity = new Entity(Type.TEST_ENTITY);
-//        assertFalse(entity.isActive());
-//
-//        gameWorld.addEntity(entity);
-//        assertFalse(entity.isActive());
-//
-//        gameWorld.update();
-//        assertTrue(entity.isActive());
-//        assertEquals(gameWorld, entity.getWorld());
-//    }
-//
-//    private static boolean assertListContains(List<?> list, Object... objects) {
-//        return list.containsAll(Arrays.asList(objects));
-//    }
+    private enum TestType {
+        T1, T2, T3, T4
+    }
+
+    private GameWorld gameWorld;
+
+    private Entity e1, e10, e11, e2, e3, e4;
+
+    @Before
+    public void setUp() {
+        gameWorld = new GameWorld();
+
+        EntityView view = new EntityView(new Rectangle(10, 10));
+        view.setRenderLayer(new RenderLayer() {
+            @Override
+            public String name() {
+                return "TEST";
+            }
+
+            @Override
+            public int index() {
+                return 0;
+            }
+        });
+
+        e1 = Entities.builder()
+                .type(TestType.T1)
+                .at(100, 100)
+                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .viewFromNode(view)
+                .buildAndAttach(gameWorld);
+
+        e10 = Entities.builder()
+                .type(TestType.T1)
+                .at(100, 105)
+                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .buildAndAttach(gameWorld);
+
+        e11 = Entities.builder()
+                .type(TestType.T1)
+                .at(100, 110)
+                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .buildAndAttach(gameWorld);
+
+        e2 = Entities.builder()
+                .type(TestType.T2)
+                .at(150, 100)
+                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .buildAndAttach(gameWorld);
+
+        e3 = Entities.builder()
+                .type(TestType.T3)
+                .at(200, 100)
+                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .buildAndAttach(gameWorld);
+
+        e4 = Entities.builder()
+                .type(TestType.T4)
+                .at(250, 100)
+                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .buildAndAttach(gameWorld);
+
+        gameWorld.update(0.016);
+    }
+
+    @Test
+    public void testGetEntitiesByType() throws Exception {
+        List<Entity> list = gameWorld.getEntitiesByType();
+        assertThat(list, is(Arrays.asList(e1, e10, e11, e2, e3, e4)));
+
+        list = gameWorld.getEntitiesByType(TestType.T1);
+        assertThat(list, is(Arrays.asList(e1, e10, e11)));
+
+        list = gameWorld.getEntitiesByType(TestType.T2);
+        assertThat(list, is(Collections.singletonList(e2)));
+
+        list = gameWorld.getEntitiesByType(TestType.T3);
+        assertThat(list, is(Collections.singletonList(e3)));
+
+        list = gameWorld.getEntitiesByType(TestType.T4);
+        assertThat(list, is(Collections.singletonList(e4)));
+    }
+
+    @Test
+    public void testGetClosestEntity() throws Exception {
+        assertThat(gameWorld.getClosestEntity(e1, e -> Entities.getType(e)
+                .isType(TestType.T2))
+                .get(),
+                is(e2));
+
+        assertThat(gameWorld.getClosestEntity(e1, e -> Entities.getType(e)
+                .isType(TestType.T1))
+                .get(),
+                is(e10));
+
+        assertThat(gameWorld.getClosestEntity(e2, e -> Entities.getType(e)
+                .isType(TestType.T2)), is(Optional.empty()));
+    }
+
+    @Test
+    public void testGetEntitiesFiltered() throws Exception {
+        assertThat(gameWorld.getEntitiesFiltered(e -> Entities.getPosition(e).getX() > 150),
+                is(Arrays.asList(e3, e4)));
+
+        assertThat(gameWorld.getEntitiesFiltered(e -> Entities.getPosition(e).getY() < 105),
+                is(Arrays.asList(e1, e2, e3, e4)));
+    }
+
+    @Test
+    public void testGetEntitiesInRange() throws Exception {
+        assertThat(gameWorld.getEntitiesInRange(new Rectangle2D(130, 50, 100, 100)),
+                is(Arrays.asList(e2, e3)));
+    }
+
+    @Test
+    public void testGetEntitiesByLayer() throws Exception {
+        assertThat(gameWorld.getEntitiesByLayer(new RenderLayer() {
+            @Override
+            public String name() {
+                return "TEST";
+            }
+
+            @Override
+            public int index() {
+                return 0;
+            }
+        }), is(Collections.singletonList(e1)));
+
+        assertThat(gameWorld.getEntitiesByLayer(RenderLayer.TOP),
+                is(Arrays.asList(e10, e11, e2, e3, e4)));
+    }
+
+    @Test
+    public void testGetEntityAt() throws Exception {
+        assertThat(gameWorld.getEntityAt(new Point2D(100, 100)).get(), is(e1));
+        assertThat(gameWorld.getEntityAt(new Point2D(150, 100)).get(), is(e2));
+        assertThat(gameWorld.getEntityAt(new Point2D(200, 100)).get(), is(e3));
+        assertThat(gameWorld.getEntityAt(new Point2D(250, 100)).get(), is(e4));
+
+        assertThat(gameWorld.getEntityAt(new Point2D(100.5, 100)), is(Optional.empty()));
+    }
 }
