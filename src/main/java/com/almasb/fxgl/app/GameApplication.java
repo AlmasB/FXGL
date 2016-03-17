@@ -55,6 +55,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -189,7 +190,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * This scene is shown during app initialization,
      * i.e. when assets / game are loaded on bg thread.
      */
-    @Inject
     private LoadingScene loadingScene;
 
     /**
@@ -266,6 +266,15 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected MenuFactory initMenuFactory() {
         return getSettings().getMenuStyle().getFactory();
+    }
+
+    protected SceneFactory initSceneFactory() {
+        return new SceneFactory() {
+            @Override
+            public LoadingScene newLoadingScene() {
+                return new LoadingScene();
+            }
+        };
     }
 
     /**
@@ -623,6 +632,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     public final void start(Stage stage) throws Exception {
         super.start(stage);
         log.finer("Game_start()");
+
+        loadingScene = initSceneFactory().newLoadingScene();
 
         getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);
