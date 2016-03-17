@@ -155,6 +155,7 @@ public class MainViewComponent extends AbstractComponent {
         EntityView entityView = view instanceof EntityView ? (EntityView) view : new EntityView(view);
 
         this.view.set(entityView);
+        this.renderLayer.setValue(entityView.getRenderLayer());
 
         if (generateBoundingBox) {
             generateBBox();
