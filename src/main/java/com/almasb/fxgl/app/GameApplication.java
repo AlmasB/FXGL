@@ -180,6 +180,17 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return gameScene;
     }
 
+    private SceneFactory sceneFactory;
+
+    /**
+     * Override to provide custom intro/loading/menu scenes.
+     *
+     * @return scene factory
+     */
+    protected SceneFactory initSceneFactory() {
+        return new SceneFactory();
+    }
+
     /**
      * Intro scene, this is shown when the application started,
      * before menus and game.
@@ -243,38 +254,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected void preInit() {
 
-    }
-
-    /**
-     * Override to use your custom intro video.
-     *
-     * @return intro animation factory
-     */
-    protected IntroFactory initIntroFactory() {
-        return new IntroFactory() {
-            @Override
-            public IntroScene newIntro() {
-                return new FXGLIntroScene();
-            }
-        };
-    }
-
-    /**
-     * Override to user your custom menus.
-     *
-     * @return menu factory for creating main and game menus
-     */
-    protected MenuFactory initMenuFactory() {
-        return getSettings().getMenuStyle().getFactory();
-    }
-
-    protected SceneFactory initSceneFactory() {
-        return new SceneFactory() {
-            @Override
-            public LoadingScene newLoadingScene() {
-                return new LoadingScene();
-            }
-        };
     }
 
     /**
@@ -412,10 +391,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Adds key binding so that scenes can be switched on menu key press.
      */
     private void initMenuScenes() {
-        MenuFactory menuFactory = initMenuFactory();
-
-        mainMenuScene = menuFactory.newMainMenu(this);
-        gameMenuScene = menuFactory.newGameMenu(this);
+        mainMenuScene = sceneFactory.newMainMenu(this);
+        gameMenuScene = sceneFactory.newGameMenu(this);
 
         getDisplay().registerScene(mainMenuScene);
         getDisplay().registerScene(gameMenuScene);
@@ -514,7 +491,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     }
 
     private void configureIntro() {
-        introScene = initIntroFactory().newIntro();
+        introScene = sceneFactory.newIntro();
         introScene.setOnFinished(this::showGame);
         getDisplay().registerScene(introScene);
     }
@@ -633,7 +610,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         super.start(stage);
         log.finer("Game_start()");
 
-        loadingScene = initSceneFactory().newLoadingScene();
+        sceneFactory = initSceneFactory();
+
+        loadingScene = sceneFactory.newLoadingScene();
 
         getDisplay().registerScene(loadingScene);
         getDisplay().registerScene(gameScene);

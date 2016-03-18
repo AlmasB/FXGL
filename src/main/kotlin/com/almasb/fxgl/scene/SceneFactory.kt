@@ -26,12 +26,58 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.GameApplication
+import com.almasb.fxgl.scene.intro.FXGLIntroScene
+import com.almasb.fxgl.scene.menu.*
+
 /**
- *
+ * Factory for scenes used in FXGL.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class SceneFactory {
+open class SceneFactory {
 
-    abstract fun newLoadingScene(): LoadingScene
+    /**
+     * Called to construct intro scene.
+     *
+     * @return intro scene
+     */
+    open fun newIntro(): IntroScene = FXGLIntroScene()
+
+    /**
+     * Called to construct loading scene.
+     *
+     * @return loading scene
+     */
+    open fun newLoadingScene(): LoadingScene = LoadingScene()
+
+    /**
+     * Called to construct main menu.
+     *
+     * @param app game application
+     *
+     * @return main menu
+     */
+    open fun newMainMenu(app: GameApplication): FXGLMenu {
+        when (app.settings.menuStyle) {
+            MenuStyle.GTA5 -> return GTAVMainMenu(app)
+            MenuStyle.CCTR -> return CCTRMainMenu(app)
+            else -> return FXGLMainMenu(app)
+        }
+    }
+
+    /**
+     * Called to construct game menu.
+     *
+     * @param app game application
+     *
+     * @return game menu
+     */
+    open fun newGameMenu(app: GameApplication): FXGLMenu {
+        when (app.settings.menuStyle) {
+            MenuStyle.GTA5 -> return GTAVGameMenu(app)
+            MenuStyle.CCTR -> return CCTRGameMenu(app)
+            else -> return FXGLGameMenu(app)
+        }
+    }
 }
