@@ -30,7 +30,9 @@ import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
+import com.almasb.fxgl.gameplay.GameWorldListener;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
+import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.logging.FXGLLogger;
@@ -48,11 +50,13 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
@@ -331,7 +335,17 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             gameWorld.reset();
         });
 
-        gameWorld.addWorldListener(new EntityWorldListener() {
+        gameWorld.addWorldListener(new GameWorldListener() {
+            @Override
+            public void onWorldUpdate(double tpf) {
+
+            }
+
+            @Override
+            public void onWorldReset() {
+
+            }
+
             @Override
             public void onEntityAdded(Entity entity) {
                 bus.fireEvent(WorldEvent.entityAdded(entity));
@@ -341,6 +355,34 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             public void onEntityRemoved(Entity entity) {
                 bus.fireEvent(WorldEvent.entityRemoved(entity));
             }
+        });
+
+        // Scene
+
+        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
+            Entity entity = event.getEntity();
+            gameScene.onEntityAdded(entity);
+        });
+        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
+            Entity entity = event.getEntity();
+            gameScene.onEntityRemoved(entity);
+        });
+
+        bus.addEventHandler(UpdateEvent.ANY, event -> {
+            gameScene.onWorldUpdate(event.tpf());
+        });
+
+        bus.addEventHandler(FXGLEvent.RESET, event -> {
+            gameScene.onWorldReset();
+        });
+
+        gameScene.addEventHandler(MouseEvent.ANY, event -> {
+            FXGLInputEvent e = new FXGLInputEvent(event,
+                    gameScene.screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
+            bus.fireEvent(e);
+        });
+        gameScene.addEventHandler(KeyEvent.ANY, event -> {
+            bus.fireEvent(new FXGLInputEvent(event, Point2D.ZERO));
         });
 
         // FXGL App

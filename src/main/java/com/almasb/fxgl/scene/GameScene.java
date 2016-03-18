@@ -27,23 +27,18 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.ents.*;
-import com.almasb.fxeventbus.EventBus;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.event.FXGLEvent;
-import com.almasb.fxgl.event.UpdateEvent;
-import com.almasb.fxgl.event.WorldEvent;
 import com.almasb.fxgl.gameplay.GameWorldListener;
-import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.logging.FXGLLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -52,8 +47,6 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,47 +92,14 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     private Group uiRoot = new Group();
 
     @Inject
-    private GameScene() {
+    protected GameScene(@Named("appWidth") double width,
+                        @Named("appHeight") double height) {
         getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
-
-        initEventHandlers();
-
-        double width = FXGL.getSettings().getWidth();
-        double height = FXGL.getSettings().getHeight();
 
         initParticlesCanvas(width, height);
         initViewport(width, height);
 
-        log.finer("Game scene initialized");
-    }
-
-    private void initEventHandlers() {
-        EventBus eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
-
-        eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            Entity entity = event.getEntity();
-            onEntityAdded(entity);
-        });
-        eventBus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            Entity entity = event.getEntity();
-            onEntityRemoved(entity);
-        });
-
-        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
-            onWorldUpdate(event.tpf());
-        });
-
-        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
-            onWorldReset();
-        });
-
-        addEventHandler(MouseEvent.ANY, event -> {
-            FXGLInputEvent e = new FXGLInputEvent(event, screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
-            eventBus.fireEvent(e);
-        });
-        addEventHandler(KeyEvent.ANY, event -> {
-            eventBus.fireEvent(new FXGLInputEvent(event, Point2D.ZERO));
-        });
+        log.finer("Game scene initialized: " + width + "x" + height);
     }
 
     private void initParticlesCanvas(double w, double h) {
