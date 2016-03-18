@@ -39,6 +39,7 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.event.WorldEvent;
+import com.almasb.fxgl.gameplay.GameWorldListener;
 import com.almasb.fxgl.logging.FXGLLogger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -83,7 +84,7 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class PhysicsWorld {
+public final class PhysicsWorld implements GameWorldListener {
 
     private static final Logger log = FXGLLogger.getLogger("FXGL.PhysicsWorld");
 
@@ -134,20 +135,11 @@ public final class PhysicsWorld {
     }
 
     @Inject
-    private PhysicsWorld(@Named("appHeight") double appHeight) {
+    protected PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
 
         initContactListener();
         initParticles();
-
-        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
-        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            addEntity(event.getEntity());
-        });
-        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            removeEntity(event.getEntity());
-        });
-        bus.addEventHandler(UpdateEvent.ANY, this::update);
 
         log.finer("Physics world initialized");
     }
@@ -218,12 +210,32 @@ public final class PhysicsWorld {
         physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
+    @Override
+    public void onWorldUpdate(double tpf) {
+
+    }
+
+    @Override
+    public void onWorldReset() {
+
+    }
+
+    @Override
+    public void onEntityAdded(Entity entity) {
+        addEntity(entity);
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+        removeEntity(entity);
+    }
+
     /**
      * Physics tick.
      *
      * @param event update event
      */
-    private void update(UpdateEvent event) {
+    public void update(UpdateEvent event) {
         tick.set(event.tick());
         physicsWorld.step((float) event.tpf(), 8, 3);
 

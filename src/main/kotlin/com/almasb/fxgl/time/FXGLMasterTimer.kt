@@ -50,7 +50,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 @Singleton
 class FXGLMasterTimer
 @Inject
-private constructor(private val eventBus: EventBus) : AnimationTimer(), MasterTimer {
+private constructor() : AnimationTimer(), MasterTimer {
 
     companion object {
         private val log = FXGLLogger.getLogger("FXGL.MasterTimer")
@@ -89,21 +89,13 @@ private constructor(private val eventBus: EventBus) : AnimationTimer(), MasterTi
     }
 
     init {
-        eventBus.addEventHandler(FXGLEvent.RESET) { event ->
-            resetTicks()
-            clearActions()
-        }
-
-        eventBus.addEventHandler(FXGLEvent.RESUME) { event ->
-            log.finer("Starting master timer")
-            start()
-        }
-        eventBus.addEventHandler(FXGLEvent.PAUSE) { event ->
-            log.finer("Stopping master timer")
-            stop()
-        }
-
         log.finer("Service [MasterTimer] initialized")
+    }
+
+    private var updateListener: UpdateEventListener? = null
+
+    override fun setUpdateListener(listener: UpdateEventListener) {
+        updateListener = listener
     }
 
     /**
@@ -121,7 +113,7 @@ private constructor(private val eventBus: EventBus) : AnimationTimer(), MasterTi
         timerActions.removeIf { it.isExpired }
 
         // this is the master update event
-        eventBus.fireEvent(UpdateEvent(getTick(), realTPF / 1000000000.0))
+        updateListener?.onUpdateEvent(UpdateEvent(getTick(), realTPF / 1000000000.0))
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
@@ -144,14 +136,27 @@ private constructor(private val eventBus: EventBus) : AnimationTimer(), MasterTi
      */
     override fun tickProperty() = tick.readOnlyProperty
 
+    override fun start() {
+        log.finer { "Starting master timer" }
+        super.start()
+    }
+
+    override fun stop() {
+        log.finer { "Stopping master timer" }
+        super.stop()
+    }
+
     /**
      * Resets current tick to 0.
      */
-    private fun resetTicks() {
+    override fun reset() {
         log.finer("Resetting ticks to 0")
 
         tick.set(0)
         now = 0
+
+        log.finer("Clearing all scheduled actions")
+        timerActions.clear()
     }
 
     /**
@@ -291,13 +296,5 @@ private constructor(private val eventBus: EventBus) : AnimationTimer(), MasterTi
      */
     override fun runOnceAfter(action: Runnable, delay: Duration) {
         timerActions.add(TimerAction(getNow(), delay, action, TimerType.ONCE))
-    }
-
-    /**
-     * Clears all registered timer based actions.
-     */
-    override fun clearActions() {
-        log.finer("Clearing all scheduled actions")
-        timerActions.clear()
     }
 }

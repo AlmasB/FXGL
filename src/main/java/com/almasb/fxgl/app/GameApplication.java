@@ -326,26 +326,37 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     private void initEventHandlers() {
         EventBus bus = getEventBus();
 
-        // WORLD
-
-        bus.addEventHandler(UpdateEvent.ANY, event -> {
+        getMasterTimer().setUpdateListener(event -> {
             gameWorld.update(event.tpf());
+            physicsWorld.update(event);
+
+            onUpdate(event.tpf());
+
+            // notify rest
+            bus.fireEvent(event);
         });
+
+        // World
+
         bus.addEventHandler(FXGLEvent.RESET, event -> {
             gameWorld.reset();
+            getMasterTimer().reset();
         });
 
-        gameWorld.addWorldListener(new GameWorldListener() {
-            @Override
-            public void onWorldUpdate(double tpf) {
+        bus.addEventHandler(FXGLEvent.RESUME, event -> {
+            getMasterTimer().start();
+        });
 
-            }
+        bus.addEventHandler(FXGLEvent.PAUSE, event -> {
+            getMasterTimer().stop();
+        });
 
-            @Override
-            public void onWorldReset() {
+        gameWorld.addWorldListener(physicsWorld);
+        gameWorld.addWorldListener(gameScene);
 
-            }
-
+        // we need to add this listener
+        // to publish entity events via our event bus
+        gameWorld.addWorldListener(new EntityWorldListener() {
             @Override
             public void onEntityAdded(Entity entity) {
                 bus.fireEvent(WorldEvent.entityAdded(entity));
@@ -359,23 +370,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         // Scene
 
-        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            Entity entity = event.getEntity();
-            gameScene.onEntityAdded(entity);
-        });
-        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            Entity entity = event.getEntity();
-            gameScene.onEntityRemoved(entity);
-        });
-
-        bus.addEventHandler(UpdateEvent.ANY, event -> {
-            gameScene.onWorldUpdate(event.tpf());
-        });
-
-        bus.addEventHandler(FXGLEvent.RESET, event -> {
-            gameScene.onWorldReset();
-        });
-
         gameScene.addEventHandler(MouseEvent.ANY, event -> {
             FXGLInputEvent e = new FXGLInputEvent(event,
                     gameScene.screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
@@ -386,8 +380,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         });
 
         // FXGL App
-
-        bus.addEventHandler(UpdateEvent.ANY, event -> onUpdate(event.tpf()));
 
         bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
         bus.addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {

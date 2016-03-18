@@ -128,8 +128,14 @@ public interface MasterTimer {
      */
     void runOnceAfter(Runnable action, Duration delay);
 
+    void start();
+
+    void stop();
+
     /**
      * Clears all registered timer based actions.
      */
-    void clearActions();
+    void reset();
+
+    void setUpdateListener(UpdateEventListener listener);
 }
