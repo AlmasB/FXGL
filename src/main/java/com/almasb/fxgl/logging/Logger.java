@@ -24,40 +24,34 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent
+package com.almasb.fxgl.logging;
 
-import com.almasb.fxeventbus.EventBus
-import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import javafx.concurrent.Task
-import java.util.concurrent.Executors
+import java.util.function.Supplier;
 
 /**
- * Uses cached thread pool to run tasks in the background.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
-class FXGLExecutor
-@Inject
-private constructor(eventBus: EventBus) : Executor {
+public interface Logger {
 
-    companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.Executor")
+    void info(String message);
+    void info(Supplier<String> messageSupplier);
+
+    default void finer(String message) {
+        debug(message);
     }
 
-    private val service = Executors.newCachedThreadPool()
-
-    init {
-        eventBus.addEventHandler(FXGLEvent.EXIT) { event -> service.shutdownNow() }
-
-        log.finer { "Service [Executor] initialized" }
+    default void finer(Supplier<String> messageSupplier) {
+        debug(messageSupplier);
     }
 
-    override fun submit(task: Task<*>) {
-        service.submit(task)
-    }
+    void debug(String message);
+    void debug(Supplier<String> messageSupplier);
+
+    void warning(String message);
+    void warning(Supplier<String> messageSupplier);
+
+    void fatal(String message);
+    void fatal(Supplier<String> messageSupplier);
+
+    void close();
 }

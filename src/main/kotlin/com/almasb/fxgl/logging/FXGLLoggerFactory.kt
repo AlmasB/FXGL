@@ -24,40 +24,32 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent
+package com.almasb.fxgl.logging
 
-import com.almasb.fxeventbus.EventBus
-import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
+import com.almasb.fxgl.app.ApplicationMode
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import javafx.concurrent.Task
-import java.util.concurrent.Executors
+import org.apache.logging.log4j.core.config.Configurator
 
 /**
- * Uses cached thread pool to run tasks in the background.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
-class FXGLExecutor
-@Inject
-private constructor(eventBus: EventBus) : Executor {
-
-    companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.Executor")
-    }
-
-    private val service = Executors.newCachedThreadPool()
+class FXGLLoggerFactory @Inject constructor(private val mode: ApplicationMode) : LoggerFactory(mode) {
 
     init {
-        eventBus.addEventHandler(FXGLEvent.EXIT) { event -> service.shutdownNow() }
+        val resourceName = when (mode) {
+            ApplicationMode.DEBUG -> "log4j2-debug.xml"
+            ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
+            ApplicationMode.RELEASE -> "log4j2-release.xml"
+        }
 
-        log.finer { "Service [Executor] initialized" }
+        Configurator.initialize("FXGL", FXGLLoggerFactory::class.java.getResource(resourceName).toExternalForm())
+
+        newLogger(FXGLLoggerFactory::class.java).debug { "Service [LoggerFactory] initialized" }
     }
 
-    override fun submit(task: Task<*>) {
-        service.submit(task)
-    }
+    override fun newLogger(caller: Class<*>) = FXGLLogger(caller)
 }

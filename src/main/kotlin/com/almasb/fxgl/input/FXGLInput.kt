@@ -33,6 +33,7 @@ import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
@@ -48,7 +49,7 @@ import java.util.*
 @Singleton
 class FXGLInput @Inject private constructor() : Input, UserProfileSavable {
 
-    private val log = FXGLLogger.getLogger("FXGL.Input")
+    private val log = FXGLLoggerOld.getLogger("FXGL.Input")
 
     /**
      * Cursor point in game coordinate space.

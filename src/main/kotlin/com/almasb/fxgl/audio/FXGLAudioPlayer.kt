@@ -33,6 +33,7 @@ import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
@@ -52,7 +53,7 @@ class FXGLAudioPlayer
 private constructor(eventBus: EventBus) : AudioPlayer, UserProfileSavable {
 
     companion object {
-        private val log = FXGLLogger.getLogger("FXGL.AudioPlayer")
+        private val log = FXGLLoggerOld.getLogger("FXGL.AudioPlayer")
     }
 
     init {

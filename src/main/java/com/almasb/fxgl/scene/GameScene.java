@@ -34,7 +34,8 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.gameplay.GameWorldListener;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -50,7 +51,6 @@ import javafx.scene.effect.BlendMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Represents the scene that shows game objects on the screen during "play" mode.
@@ -66,7 +66,7 @@ import java.util.logging.Logger;
 @Singleton
 public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener, ControlListener {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
+    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.GameScene");
 
     /**
      * Root for entity views, it is affected by viewport movement.

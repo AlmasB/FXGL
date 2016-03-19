@@ -24,40 +24,37 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent
+package com.almasb.fxgl.logging
 
-import com.almasb.fxeventbus.EventBus
-import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import javafx.concurrent.Task
-import java.util.concurrent.Executors
+import org.apache.logging.log4j.LogManager
+import java.util.function.Supplier
 
 /**
- * Uses cached thread pool to run tasks in the background.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
-class FXGLExecutor
-@Inject
-private constructor(eventBus: EventBus) : Executor {
+class FXGLLogger(val caller: Class<*>) : Logger {
 
-    companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.Executor")
-    }
+    private val log = LogManager.getLogger(caller)
 
-    private val service = Executors.newCachedThreadPool()
+    override fun info(message: String?) = log.info(message)
 
-    init {
-        eventBus.addEventHandler(FXGLEvent.EXIT) { event -> service.shutdownNow() }
+    override fun info(messageSupplier: Supplier<String>?) = log.info(messageSupplier?.get())
 
-        log.finer { "Service [Executor] initialized" }
-    }
+    override fun debug(message: String?) = log.debug(message)
 
-    override fun submit(task: Task<*>) {
-        service.submit(task)
+    override fun debug(messageSupplier: Supplier<String>?) = log.debug(messageSupplier?.get())
+
+    override fun warning(message: String?) = log.warn(message)
+
+    override fun warning(messageSupplier: Supplier<String>?) = log.warn(messageSupplier?.get())
+
+    override fun fatal(message: String?) = log.fatal(message)
+
+    override fun fatal(messageSupplier: Supplier<String>?) = log.fatal(messageSupplier?.get())
+
+    override fun close() {
+
     }
 }

@@ -32,6 +32,7 @@ import com.almasb.fxgl.event.AchievementEvent
 import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
 import javafx.collections.FXCollections
@@ -43,7 +44,7 @@ import javafx.collections.FXCollections
  */
 class AchievementManager : UserProfileSavable {
 
-    private val log = FXGLLogger.getLogger("FXGL.AchievementManager")
+    private val log = FXGLLoggerOld.getLogger("FXGL.AchievementManager")
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
 

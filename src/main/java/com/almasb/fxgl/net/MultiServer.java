@@ -25,14 +25,14 @@
  */
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+import com.almasb.fxgl.logging.Logger;
 
 /**
  * MultiServer for multiple concurrent network connections (clients)
@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class MultiServer extends NetworkConnection {
-    private static final Logger log = FXGLLogger.getLogger("FXGL.MultiServer");
+    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.MultiServer");
 
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();

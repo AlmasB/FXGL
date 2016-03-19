@@ -24,40 +24,18 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent
+package com.almasb.fxgl.logging;
 
-import com.almasb.fxeventbus.EventBus
-import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import javafx.concurrent.Task
-import java.util.concurrent.Executors
+import com.almasb.fxgl.app.ApplicationMode;
 
 /**
- * Uses cached thread pool to run tasks in the background.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
-class FXGLExecutor
-@Inject
-private constructor(eventBus: EventBus) : Executor {
+public abstract class LoggerFactory {
 
-    companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.Executor")
+    public LoggerFactory(ApplicationMode mode) {
+
     }
 
-    private val service = Executors.newCachedThreadPool()
-
-    init {
-        eventBus.addEventHandler(FXGLEvent.EXIT) { event -> service.shutdownNow() }
-
-        log.finer { "Service [Executor] initialized" }
-    }
-
-    override fun submit(task: Task<*>) {
-        service.submit(task)
-    }
+    public abstract Logger newLogger(Class<?> caller);
 }

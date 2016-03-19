@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -34,7 +34,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
 
-import java.util.logging.Logger;
+import com.almasb.fxgl.logging.Logger;
 
 /**
  * Represents the visual aspect of an entity.
@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class EntityView extends Parent {
 
-    protected static final Logger log = FXGLLogger.getLogger("FXGL.EntityView");
+    protected static final Logger log = FXGLLoggerOld.getLogger("FXGL.EntityView");
 
     /**
      * Constructs a view with no content.

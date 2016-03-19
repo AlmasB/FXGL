@@ -36,7 +36,8 @@ import com.almasb.fxgl.input.MouseTrigger;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
@@ -63,7 +64,6 @@ import javafx.stage.StageStyle;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -79,7 +79,7 @@ public abstract class FXGLMenu extends FXGLScene {
     /**
      * The logger
      */
-    protected static final Logger log = FXGLLogger.getLogger("FXGL.Menu");
+    protected static final Logger log = FXGLLoggerOld.getLogger("FXGL.Menu");
 
     protected final GameApplication app;
 

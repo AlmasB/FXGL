@@ -36,6 +36,7 @@ import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
@@ -78,7 +79,7 @@ private constructor(private val stage: Stage,
                     private var fxScene: Scene) : Display, UserProfileSavable {
 
     companion object {
-        private val log = FXGLLogger.getLogger("FXGL.Display")
+        private val log = FXGLLoggerOld.getLogger("FXGL.Display")
     }
 
     private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()

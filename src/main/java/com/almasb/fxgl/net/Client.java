@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -37,7 +37,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import com.almasb.fxgl.logging.Logger;
 
 /**
  * Client side of the network connection.
@@ -60,7 +60,7 @@ import java.util.logging.Logger;
  */
 public final class Client extends NetworkConnection {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.Client");
+    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.Client");
 
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();

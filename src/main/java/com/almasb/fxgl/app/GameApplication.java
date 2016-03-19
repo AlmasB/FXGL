@@ -30,15 +30,15 @@ import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.gameplay.GameWorldListener;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
-import com.almasb.fxgl.scene.intro.FXGLIntroScene;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
@@ -59,7 +59,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -93,8 +92,10 @@ import java.util.List;
  */
 public abstract class GameApplication extends FXGLApplication implements UserProfileSavable {
 
+    private static Logger log = SystemLogger.INSTANCE;
+
     {
-        log.finer("Game_clinit()");
+        log.finer("Starting JavaFX");
         setDefaultUncaughtExceptionHandler(new FXGLUncaughtExceptionHandler());
     }
 
@@ -106,9 +107,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     public final void setDefaultUncaughtExceptionHandler(ExceptionHandler handler) {
         Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
             pause();
-            log.severe("Uncaught Exception:");
-            log.severe(FXGLLogger.errorTraceAsString(error));
-            log.severe("Application will now exit");
+            log.fatal("Uncaught Exception:");
+            log.fatal(SystemLogger.INSTANCE.errorTraceAsString(error));
+            log.fatal("Application will now exit");
             handler.handle(error);
             exit();
         });
@@ -642,7 +643,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     @Override
     public final void start(Stage stage) throws Exception {
         super.start(stage);
-        log.finer("Game_start()");
+
+        // services are now ready, switch to normal logger
+        log = getService(ServiceType.LOGGER_FACTORY).newLogger(GameApplication.class);
+
+        log.finer("Starting Game Application");
 
         sceneFactory = initSceneFactory();
 
@@ -797,7 +802,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         getEventBus().fireEvent(FXGLEvent.exit());
 
-        FXGLLogger.close();
+        log.close();
+        stop();
         Platform.exit();
         System.exit(0);
     }

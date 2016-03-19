@@ -31,6 +31,7 @@ import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLoggerOld
 import java.util.*
 
 /**
@@ -41,7 +42,7 @@ import java.util.*
 class TextLevelParser {
 
     companion object {
-        private val log = FXGLLogger.getLogger("FXGL.TextLevelParser")
+        private val log = FXGLLoggerOld.getLogger("FXGL.TextLevelParser")
     }
 
     private val producers = HashMap<Char, (Int, Int) -> Entity>()

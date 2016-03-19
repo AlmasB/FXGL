@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.parser;
 
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
 import javafx.util.Pair;
 
 import java.lang.reflect.Field;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
+import com.almasb.fxgl.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
  */
 public final class KVFile {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.KVFile");
+    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.KVFile");
 
     private List<Pair<String, String>> entries = new ArrayList<>();
 

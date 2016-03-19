@@ -27,7 +27,7 @@ package com.almasb.fxgl.asset;
 
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
 import com.almasb.fxgl.parser.KVFile;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.texture.Texture;
@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
+import com.almasb.fxgl.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -103,7 +103,7 @@ public class AssetLoader {
     private static final String ICON_DIR = UI_DIR + "icons/";
     private static final String CURSORS_DIR = UI_DIR + "cursors/";
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.AssetLoader");
+    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.AssetLoader");
 
     private final LRUCache<String, Object> cachedAssets;
 

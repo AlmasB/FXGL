@@ -26,13 +26,13 @@
 
 package com.almasb.fxgl.gameplay;
 
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ChangeListener;
 
-import java.util.logging.Logger;
+import com.almasb.fxgl.logging.Logger;
 
 /**
  * A game achievement.
@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class Achievement {
-    private static final Logger log = FXGLLogger.getLogger("FXGL.Achievement");
+    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.Achievement");
 
     private String name;
     private String description;

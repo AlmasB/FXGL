@@ -37,6 +37,8 @@ import com.almasb.fxgl.gameplay.FXGLNotificationService;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.logging.FXGLLoggerFactory;
+import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.scene.FXGLDisplay;
 import com.almasb.fxgl.time.FXGLLocalTimer;
@@ -179,6 +181,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Game> serviceProvider() {
             return Game.class;
+        }
+    };
+
+    ServiceType<LoggerFactory> LOGGER_FACTORY = new ServiceType<LoggerFactory>() {
+        @Override
+        public Class<LoggerFactory> service() {
+            return LoggerFactory.class;
+        }
+
+        @Override
+        public Class<? extends LoggerFactory> serviceProvider() {
+            return FXGLLoggerFactory.class;
         }
     };
 }

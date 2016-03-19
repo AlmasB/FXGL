@@ -31,6 +31,7 @@ import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.input.FXGLInputEvent
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.event.Event
@@ -47,7 +48,7 @@ class FXGLEventBus
 @Inject
 private constructor() : EventBus {
     companion object {
-        private val log = FXGLLogger.getLogger("FXGL.EventBus")
+        private val log = FXGLLoggerOld.getLogger("FXGL.EventBus")
     }
 
     init {

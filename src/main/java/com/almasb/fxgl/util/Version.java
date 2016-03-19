@@ -25,10 +25,11 @@
  */
 package com.almasb.fxgl.util;
 
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.FXGLLoggerOld;
 
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
+import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.logging.SystemLogger;
 
 /**
  * Holds version info about various frameworks used in FXGL.
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
  */
 public final class Version {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.Version");
+    private static final Logger log = SystemLogger.INSTANCE;
 
     private static final String FXGL_VERSION;
     private static final String JAVAFX_VERSION;

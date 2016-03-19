@@ -29,6 +29,7 @@
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.0</ents.version>
         <astar.version>1.0</astar.version>
+        <log4j.version>2.5</log4j.version>
 
         <junit.version>4.12</junit.version>
         <commons-math.version>3.5</commons-math.version>
@@ -76,6 +77,18 @@
             <groupId>com.github.AlmasB</groupId>
             <artifactId>AStar</artifactId>
             <version>${astar.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
 
         <!-- test scope dependencies -->

@@ -32,7 +32,8 @@ import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -52,8 +53,6 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * General FXGL application that configures services for all parts to use.
@@ -62,16 +61,15 @@ import java.util.logging.Logger;
  */
 public abstract class FXGLApplication extends Application {
 
-    static {
-        FXGLLogger.init(Level.CONFIG);
-        Version.print();
-        setDefaultCheckedExceptionHandler(new FXGLCheckedExceptionHandler());
-    }
-
     /**
      * The logger
      */
-    protected static final Logger log = FXGLLogger.getLogger("FXGL.Application");
+    private static final Logger log = SystemLogger.INSTANCE;
+
+    static {
+        Version.print();
+        setDefaultCheckedExceptionHandler(new FXGLCheckedExceptionHandler());
+    }
 
     private static ExceptionHandler defaultCheckedExceptionHandler;
 
@@ -90,7 +88,7 @@ public abstract class FXGLApplication extends Application {
     public static final void setDefaultCheckedExceptionHandler(ExceptionHandler handler) {
         defaultCheckedExceptionHandler = error -> {
             log.warning("Checked Exception:");
-            log.warning(FXGLLogger.errorTraceAsString(error));
+            log.warning(SystemLogger.INSTANCE.errorTraceAsString(error));
             handler.handle(error);
         };
     }
@@ -133,6 +131,7 @@ public abstract class FXGLApplication extends Application {
                         .toInstance(FXGL.getInt("asset.cache.size"));
 
                 bind(ReadOnlyGameSettings.class).toInstance(getSettings());
+                bind(ApplicationMode.class).toInstance(getSettings().getApplicationMode());
 
                 for (Field field : ServiceType.class.getDeclaredFields()) {
                     try {
@@ -158,7 +157,7 @@ public abstract class FXGLApplication extends Application {
             }
         });
 
-        log.finer("Services configuration complete");
+        log.debug("Services configuration complete");
 
         injector.injectMembers(this);
 
@@ -167,39 +166,37 @@ public abstract class FXGLApplication extends Application {
 
     @Override
     public final void init() throws Exception {
-        log.finer("FXGL_init()");
+        log.debug("Initializing FXGL");
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        log.finer("FXGL_start()");
+        log.debug("Starting FXGL");
 
         initSystemProperties();
         initUserProperties();
-
         initAppSettings();
-        initLogger();
 
         configureServices(stage);
     }
 
     @Override
-    public final void stop() throws Exception {
-        log.finer("FXGL_stop()");
+    public final void stop() {
+        log.debug("Exiting FXGL");
     }
 
     /**
      * Load FXGL system properties.
      */
     private void initSystemProperties() {
-        log.finer("Initializing system properties");
+        log.debug("Initializing system properties");
 
         ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
         props.keySet().forEach(key -> {
             Object value = props.getObject(key);
             FXGL.setProperty(key, value);
 
-            log.finer(key + " = " + value);
+            log.debug(key + " = " + value);
         });
     }
 
@@ -207,7 +204,7 @@ public abstract class FXGLApplication extends Application {
      * Load user defined properties to override FXGL system properties.
      */
     private void initUserProperties() {
-        log.finer("Initializing user properties");
+        log.debug("Initializing user properties");
 
         // services are not ready yet, so load manually
         try (InputStream is = getClass().getResource("/assets/properties/system.properties").openStream()) {
@@ -216,7 +213,7 @@ public abstract class FXGLApplication extends Application {
                 Object value = props.getObject(key);
                 FXGL.setProperty(key, value);
 
-                log.finer(key + " = " + value);
+                log.debug(key + " = " + value);
             });
         } catch (NullPointerException npe) {
             log.info("User properties not found. Using system");
@@ -229,32 +226,13 @@ public abstract class FXGLApplication extends Application {
      * Take app settings from user.
      */
     private void initAppSettings() {
+        log.debug("Initializing app settings");
+
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
 
         FXGL.setSettings(settings);
-    }
-
-    /**
-     * Init logging system based on app settings.
-     */
-    private void initLogger() {
-        Level logLevel = Level.ALL;
-        switch (getSettings().getApplicationMode()) {
-            case DEVELOPER:
-                logLevel = Level.CONFIG;
-                break;
-            case RELEASE:
-                logLevel = Level.SEVERE;
-                break;
-            case DEBUG: // fallthru
-            default:
-                break;
-        }
-
-        FXGLLogger.init(logLevel);
-        log.info("Application Mode: " + getSettings().getApplicationMode());
     }
 
     /**

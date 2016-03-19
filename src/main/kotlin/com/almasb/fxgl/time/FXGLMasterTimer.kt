@@ -30,6 +30,7 @@ import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.time.TimerAction.TimerType
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -53,7 +54,7 @@ class FXGLMasterTimer
 private constructor() : AnimationTimer(), MasterTimer {
 
     companion object {
-        private val log = FXGLLogger.getLogger("FXGL.MasterTimer")
+        private val log = FXGLLoggerOld.getLogger("FXGL.MasterTimer")
 
         /**
          * Time per frame in seconds.

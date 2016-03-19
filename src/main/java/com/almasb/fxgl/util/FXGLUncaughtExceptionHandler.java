@@ -40,7 +40,7 @@ import java.io.StringWriter;
  */
 public final class FXGLUncaughtExceptionHandler implements ExceptionHandler {
 
-    //private static final Logger log = FXGLLogger.getLogger("FXGLExceptionHandler");
+    //private static final Logger log = FXGLLoggerOld.getLogger("FXGLExceptionHandler");
     private boolean handledOnce = false;
 
     @Override
