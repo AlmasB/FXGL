@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
-import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Provides
@@ -119,6 +119,17 @@ class FXGL {
                 }
             })
         }
+
+        /* CONVENIENCE FUNCTIONS */
+        // TODO: cache those into fields and return them instead
+
+        @JvmStatic fun getLogger(name: String) = getService(ServiceType.LOGGER_FACTORY).newLogger(name)
+        @JvmStatic fun getLogger(caller: Class<*>) = getService(ServiceType.LOGGER_FACTORY).newLogger(caller)
+
+        private val _assetLoader: AssetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
+        @JvmStatic fun getAssetLoader() = _assetLoader
+
+        @JvmStatic fun getEventBus() = getService(ServiceType.EVENT_BUS)
 
         /**
          * Get value of an int property.

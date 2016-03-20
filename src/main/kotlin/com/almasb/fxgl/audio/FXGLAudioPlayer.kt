@@ -27,13 +27,13 @@
 package com.almasb.fxgl.audio
 
 import com.almasb.fxeventbus.EventBus
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.event.UpdateEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
@@ -53,7 +53,7 @@ class FXGLAudioPlayer
 private constructor(eventBus: EventBus) : AudioPlayer, UserProfileSavable {
 
     companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.AudioPlayer")
+        private val log = FXGL.getService(ServiceType.LOGGER_FACTORY).newLogger(FXGLAudioPlayer::class.java)
     }
 
     init {

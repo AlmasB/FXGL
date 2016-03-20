@@ -25,11 +25,10 @@
  */
 package com.almasb.fxgl.util;
 
-import com.almasb.fxgl.logging.FXGLLoggerOld;
-
-import java.util.ResourceBundle;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
+
+import java.util.ResourceBundle;
 
 /**
  * Holds version info about various frameworks used in FXGL.

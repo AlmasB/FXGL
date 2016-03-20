@@ -36,7 +36,6 @@ import com.almasb.fxgl.input.MouseTrigger;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.logging.FXGLLoggerOld;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
@@ -79,7 +78,7 @@ public abstract class FXGLMenu extends FXGLScene {
     /**
      * The logger
      */
-    protected static final Logger log = FXGLLoggerOld.getLogger("FXGL.Menu");
+    protected static final Logger log = FXGL.getLogger("FXGL.Menu");
 
     protected final GameApplication app;
 

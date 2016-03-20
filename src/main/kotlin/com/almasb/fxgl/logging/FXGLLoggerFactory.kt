@@ -46,10 +46,12 @@ class FXGLLoggerFactory @Inject constructor(private val mode: ApplicationMode) :
             ApplicationMode.RELEASE -> "log4j2-release.xml"
         }
 
-        Configurator.initialize("FXGL", FXGLLoggerFactory::class.java.getResource(resourceName).toExternalForm())
+        Configurator.initialize("FXGL", javaClass.getResource(resourceName).toExternalForm())
 
-        newLogger(FXGLLoggerFactory::class.java).debug { "Service [LoggerFactory] initialized" }
+        newLogger(javaClass).debug { "Service [LoggerFactory] initialized" }
     }
 
     override fun newLogger(caller: Class<*>) = FXGLLogger(caller)
+
+    override fun newLogger(name: String) = FXGLLogger(name)
 }

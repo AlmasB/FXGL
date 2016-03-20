@@ -25,7 +25,8 @@
  */
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.logging.Logger;
 import javafx.animation.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
@@ -41,7 +42,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import com.almasb.fxgl.logging.Logger;
 
 /**
  * A generic progress bar. Can be used to show
@@ -66,7 +66,7 @@ import com.almasb.fxgl.logging.Logger;
  */
 public final class ProgressBar extends Parent {
 
-    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.ProgressBar");
+    private static final Logger log = FXGL.getLogger("FXGL.ProgressBar");
 
     private DoubleProperty minValue = new SimpleDoubleProperty(0.0);
     private DoubleProperty currentValue = new SimpleDoubleProperty(0.0);

@@ -26,11 +26,8 @@
 
 package com.almasb.fxgl.time
 
-import com.almasb.fxeventbus.EventBus
-import com.almasb.fxgl.event.FXGLEvent
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.UpdateEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.time.TimerAction.TimerType
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -53,9 +50,9 @@ class FXGLMasterTimer
 @Inject
 private constructor() : AnimationTimer(), MasterTimer {
 
-    companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.MasterTimer")
+    private val log = FXGL.getLogger(javaClass)
 
+    companion object {
         /**
          * Time per frame in seconds.
 

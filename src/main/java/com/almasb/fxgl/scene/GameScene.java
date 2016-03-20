@@ -27,6 +27,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.ents.*;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -34,7 +35,6 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.gameplay.GameWorldListener;
-import com.almasb.fxgl.logging.FXGLLoggerOld;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.google.inject.Inject;
@@ -66,7 +66,7 @@ import java.util.List;
 @Singleton
 public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener, ControlListener {
 
-    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.GameScene");
+    private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
     /**
      * Root for entity views, it is affected by viewport movement.

@@ -28,10 +28,8 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ui.UIFactory
-import com.google.inject.Inject
 import javafx.concurrent.Task
 import javafx.scene.control.ProgressBar
-import javafx.scene.control.ProgressIndicator
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text

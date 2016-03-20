@@ -36,7 +36,7 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.gameplay.GameWorldListener;
-import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.logging.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -66,7 +66,6 @@ import org.jbox2d.particle.ParticleGroupDef;
 import org.jbox2d.particle.ParticleSystem;
 
 import java.util.*;
-import com.almasb.fxgl.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +81,7 @@ import java.util.stream.Collectors;
 @Singleton
 public final class PhysicsWorld implements GameWorldListener {
 
-    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.PhysicsWorld");
+    private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
 
     private static final double PIXELS_PER_METER = FXGL.getDouble("physics.ppm");
     private static final double METERS_PER_PIXELS = 1 / PIXELS_PER_METER;

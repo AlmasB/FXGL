@@ -26,8 +26,7 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
+import com.almasb.fxgl.app.FXGL
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
 import java.io.ObjectInputStream
@@ -47,7 +46,7 @@ class FS {
 
     companion object {
 
-        private val log = FXGLLoggerOld.getLogger("FXGL.FS")
+        private val log = FXGL.getLogger("FXGL.FS")
 
         /**
          * Writes data to file, creating required directories.

@@ -26,12 +26,11 @@
 
 package com.almasb.fxgl.gameplay
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.event.AchievementEvent
 import com.almasb.fxgl.event.NotificationEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
 import com.almasb.fxgl.ui.UIFactory
@@ -53,7 +52,7 @@ class FXGLNotificationService
 private constructor(private val gameScene: GameScene) : NotificationService {
 
     companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.NotificationService")
+        private val log = FXGL.getLogger(javaClass)
     }
 
     private val queue = ArrayDeque<NotificationView>()

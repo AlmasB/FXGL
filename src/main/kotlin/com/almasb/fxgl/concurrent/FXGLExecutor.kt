@@ -27,9 +27,8 @@
 package com.almasb.fxgl.concurrent
 
 import com.almasb.fxeventbus.EventBus
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.concurrent.Task
@@ -45,9 +44,7 @@ class FXGLExecutor
 @Inject
 private constructor(eventBus: EventBus) : Executor {
 
-    companion object {
-        private val log = FXGLLoggerOld.getLogger("FXGL.Executor")
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     private val service = Executors.newCachedThreadPool()
 

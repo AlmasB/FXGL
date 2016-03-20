@@ -25,12 +25,12 @@
  */
 package com.almasb.fxgl.settings;
 
-import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.logging.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import com.almasb.fxgl.logging.Logger;
 
 /**
  * User profile can store various preference settings
@@ -40,7 +40,7 @@ import com.almasb.fxgl.logging.Logger;
  */
 public class UserProfile implements Serializable {
 
-    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.UserProfile");
+    private static final Logger log = FXGL.getLogger("FXGL.UserProfile");
 
     private static final long serialVersionUID = 1L;
 

@@ -38,4 +38,6 @@ public abstract class LoggerFactory {
     }
 
     public abstract Logger newLogger(Class<?> caller);
+
+    public abstract Logger newLogger(String name);
 }

@@ -28,13 +28,14 @@ package com.almasb.fxgl.gameplay;
 
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorld;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
-import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.logging.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
@@ -45,7 +46,6 @@ import javafx.geometry.Rectangle2D;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import com.almasb.fxgl.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -60,7 +60,7 @@ public final class GameWorld extends EntityWorld {
     /**
      * The logger
      */
-    protected static final Logger log = FXGLLoggerOld.getLogger("FXGL.GameWorld");
+    protected static final Logger log = FXGL.getLogger("FXGL.GameWorld");
 
     private ObjectProperty<GameDifficulty> gameDifficulty = new SimpleObjectProperty<>(GameDifficulty.MEDIUM);
 

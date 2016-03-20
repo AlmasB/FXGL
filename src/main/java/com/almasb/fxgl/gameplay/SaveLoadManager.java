@@ -26,20 +26,20 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
 
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import com.almasb.fxgl.logging.Logger;
 
 public final class SaveLoadManager {
 
-    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.SaveLoadManager");
+    private static final Logger log = FXGL.getLogger("FXGL.SaveLoadManager");
 
     private static final String PROFILE_FILE_NAME = "user.profile";
     private static final String PROFILES_DIR = "profiles/";

@@ -58,7 +58,7 @@ public final class FXGLAssets {
     }
 
     static {
-        AssetLoader loader = GameApplication.getService(ServiceType.ASSET_LOADER);
+        AssetLoader loader = FXGL.getAssetLoader();
 
         SOUND_NOTIFICATION = loader.loadSound(getName("sound.notification"));
         SOUND_MENU_SELECT = loader.loadSound(getName("sound.menu.select"));

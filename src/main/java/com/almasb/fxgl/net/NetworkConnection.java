@@ -25,7 +25,8 @@
  */
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.logging.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutput;
@@ -33,7 +34,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import com.almasb.fxgl.logging.Logger;
 
 /**
  * Represents a communication between two machines over network.
@@ -42,7 +42,7 @@ import com.almasb.fxgl.logging.Logger;
  */
 abstract class NetworkConnection {
 
-    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.NetworkConnection");
+    private static final Logger log = FXGL.getLogger("FXGL.NetworkConnection");
 
     protected Map<Class<?>, DataParser<? super Serializable>> parsers = new HashMap<>();
 

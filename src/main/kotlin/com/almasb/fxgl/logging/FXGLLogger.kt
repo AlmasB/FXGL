@@ -34,9 +34,15 @@ import java.util.function.Supplier
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLLogger(val caller: Class<*>) : Logger {
+class FXGLLogger(val name: String) : Logger {
 
-    private val log = LogManager.getLogger(caller)
+    constructor(caller: Class<*>) : this(caller.simpleName)
+
+    private val log: org.apache.logging.log4j.Logger
+
+    init {
+        log = LogManager.getLogger(name)
+    }
 
     override fun info(message: String?) = log.info(message)
 

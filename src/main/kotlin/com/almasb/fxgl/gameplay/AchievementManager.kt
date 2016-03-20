@@ -26,13 +26,12 @@
 
 package com.almasb.fxgl.gameplay
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.event.AchievementEvent
 import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.SaveEvent
-import com.almasb.fxgl.logging.FXGLLogger
-import com.almasb.fxgl.logging.FXGLLoggerOld
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
 import javafx.collections.FXCollections
@@ -44,7 +43,7 @@ import javafx.collections.FXCollections
  */
 class AchievementManager : UserProfileSavable {
 
-    private val log = FXGLLoggerOld.getLogger("FXGL.AchievementManager")
+    private val log = FXGL.getLogger(javaClass)
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
 
@@ -69,7 +68,7 @@ class AchievementManager : UserProfileSavable {
             throw IllegalArgumentException("Achievement with name \"${a.name}\" exists")
 
 
-        a.setOnAchieved { GameApplication.getService(ServiceType.EVENT_BUS).fireEvent(AchievementEvent(a)) }
+        a.setOnAchieved { FXGL.getService(ServiceType.EVENT_BUS).fireEvent(AchievementEvent(a)) }
         achievements.add(a)
         log.finer("Registered new achievement \"${a.name}\"")
     }

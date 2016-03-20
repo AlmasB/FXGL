@@ -25,14 +25,14 @@
  */
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.logging.FXGLLoggerOld;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.logging.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.*;
-import com.almasb.fxgl.logging.Logger;
 
 /**
  * Server side of the network connection.
@@ -56,7 +56,7 @@ import com.almasb.fxgl.logging.Logger;
  */
 public final class Server extends NetworkConnection {
 
-    private static final Logger log = FXGLLoggerOld.getLogger("FXGL.Server");
+    private static final Logger log = FXGL.getLogger("FXGL.Server");
 
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();

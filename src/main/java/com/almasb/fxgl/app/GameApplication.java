@@ -34,7 +34,6 @@ import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.logging.FXGLLoggerOld;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;

@@ -30,7 +30,6 @@ import com.almasb.ents.AbstractComponent;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
-import kotlin.text.StringsKt;
 
 /**
  * Component that adds a 2d position to an entity.
