@@ -190,74 +190,53 @@ public abstract class FXGLApplication extends Application {
      */
     protected abstract void initSettings(GameSettings settings);
 
-    @Inject
-    private EventBus eventBus;
-
     /**
      * @return event bus
      */
     public final EventBus getEventBus() {
-        return eventBus;
+        return FXGL.getEventBus();
     }
-
-    @Inject
-    private Display display;
 
     /**
      * @return display service
      */
     public final Display getDisplay() {
-        return display;
+        return FXGL.getDisplay();
     }
-
-    @Inject
-    private Input input;
 
     /**
      * @return input service
      */
     public final Input getInput() {
-        return input;
+        return FXGL.getInput();
     }
-
-    @Inject
-    private AudioPlayer audioPlayer;
 
     /**
      * @return audio player
      */
     public final AudioPlayer getAudioPlayer() {
-        return audioPlayer;
+        return FXGL.getAudioPlayer();
     }
-
-    @Inject
-    private AssetLoader assetLoader;
 
     /**
      * @return asset loader
      */
     public final AssetLoader getAssetLoader() {
-        return assetLoader;
+        return FXGL.getAssetLoader();
     }
-
-    @Inject
-    private MasterTimer masterTimer;
 
     /**
      * @return master timer
      */
     public final MasterTimer getMasterTimer() {
-        return masterTimer;
+        return FXGL.getMasterTimer();
     }
-
-    @Inject
-    private NotificationService notificationService;
 
     /**
      * @return notification service
      */
     public final NotificationService getNotificationService() {
-        return notificationService;
+        return FXGL.getNotificationService();
     }
 
     private AchievementManager achievementManager;

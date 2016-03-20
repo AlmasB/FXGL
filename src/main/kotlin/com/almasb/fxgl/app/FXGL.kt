@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.google.inject.Guice
@@ -61,8 +62,6 @@ class FXGL {
 
             internalSettings = gameSettings
             configureServices(stage)
-
-            injector.injectMembers(app)
         }
 
         /**
@@ -120,16 +119,43 @@ class FXGL {
             })
         }
 
-        /* CONVENIENCE FUNCTIONS */
-        // TODO: cache those into fields and return them instead
+        /* CONVENIENCE ACCESSORS */
 
-        @JvmStatic fun getLogger(name: String) = getService(ServiceType.LOGGER_FACTORY).newLogger(name)
-        @JvmStatic fun getLogger(caller: Class<*>) = getService(ServiceType.LOGGER_FACTORY).newLogger(caller)
+        private val _loggerFactory by lazy { getService(ServiceType.LOGGER_FACTORY) }
+        @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
+        @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
 
-        private val _assetLoader: AssetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
+        private val _assetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
-        @JvmStatic fun getEventBus() = getService(ServiceType.EVENT_BUS)
+        private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
+        @JvmStatic fun getEventBus() = _eventBus
+
+        private val _input by lazy { getService(ServiceType.INPUT) }
+        @JvmStatic fun getInput() = _input
+
+        private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }
+        @JvmStatic fun getAudioPlayer() = _audioPlayer
+
+        private val _display by lazy { getService(ServiceType.DISPLAY) }
+        @JvmStatic fun getDisplay() = _display
+
+        private val _notification by lazy { getService(ServiceType.NOTIFICATION_SERVICE) }
+        @JvmStatic fun getNotificationService() = _notification
+
+        private val _executor by lazy { getService(ServiceType.EXECUTOR) }
+        @JvmStatic fun getExecutor() = _executor
+
+        /**
+         * @return new instance on each call
+         */
+        @JvmStatic fun getLocalTimer() = getService(ServiceType.LOCAL_TIMER)
+
+        private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
+        @JvmStatic fun getMasterTimer() = _masterTimer
+
+        private val _game by lazy { getService(ServiceType.GAME) }
+        @JvmStatic fun getGame() = _game
 
         /**
          * Get value of an int property.

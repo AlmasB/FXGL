@@ -28,6 +28,7 @@ package com.almasb.fxgl.app;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
@@ -151,7 +152,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
     }
 
-    @Inject
+    //@Inject
     private GameWorld gameWorld;
 
     /**
@@ -161,7 +162,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return gameWorld;
     }
 
-    @Inject
+    //@Inject
     private PhysicsWorld physicsWorld;
 
     /**
@@ -174,7 +175,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * Game scene, this is where all in-game objects are shown.
      */
-    @Inject
+    //@Inject
     private GameScene gameScene;
 
     /**
@@ -324,11 +325,16 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     protected abstract void onUpdate(double tpf);
 
     private void initEventHandlers() {
+        log.debug("Initializing global event handlers");
+
         EventBus bus = getEventBus();
 
         getMasterTimer().setUpdateListener(event -> {
-            gameWorld.update(event.tpf());
-            physicsWorld.update(event);
+            getInput().onUpdateEvent(event);
+            getAudioPlayer().onUpdateEvent(event);
+
+            gameWorld.onUpdateEvent(event);
+            physicsWorld.onUpdateEvent(event);
 
             onUpdate(event.tpf());
 
@@ -336,18 +342,44 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             bus.fireEvent(event);
         });
 
+        // Input
+
+        bus.addEventHandler(FXGLInputEvent.ANY, event -> {
+            getInput().onInputEvent(event);
+        });
+
+        // Save/Load events
+
+        bus.addEventHandler(SaveEvent.ANY, event -> {
+            getInput().save(event.getProfile());
+            getDisplay().save(event.getProfile());
+            getAudioPlayer().save(event.getProfile());
+            getAchievementManager().save(event.getProfile());
+        });
+
+        bus.addEventHandler(LoadEvent.ANY, event -> {
+            getInput().load(event.getProfile());
+            getDisplay().load(event.getProfile());
+            getAudioPlayer().load(event.getProfile());
+            getAchievementManager().load(event.getProfile());
+        });
+
+
         // World
 
         bus.addEventHandler(FXGLEvent.RESET, event -> {
+            getInput().clearAll();
             gameWorld.reset();
             getMasterTimer().reset();
         });
 
         bus.addEventHandler(FXGLEvent.RESUME, event -> {
+            getInput().clearAll();
             getMasterTimer().start();
         });
 
         bus.addEventHandler(FXGLEvent.PAUSE, event -> {
+            getInput().clearAll();
             getMasterTimer().stop();
         });
 
@@ -377,6 +409,15 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         });
         gameScene.addEventHandler(KeyEvent.ANY, event -> {
             bus.fireEvent(new FXGLInputEvent(event, Point2D.ZERO));
+        });
+
+        // Audio
+        bus.addEventHandler(NotificationEvent.ANY, event -> {
+            getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
+        });
+
+        bus.addEventHandler(AchievementEvent.ANY, event -> {
+            getNotificationService().pushNotification("You got an achievement! " + event.getAchievement().getName());
         });
 
         // FXGL App
@@ -644,9 +685,15 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         super.start(stage);
 
         // services are now ready, switch to normal logger
-        log = getService(ServiceType.LOGGER_FACTORY).newLogger(GameApplication.class);
+        log = FXGL.getLogger(GameApplication.class);
 
-        log.finer("Starting Game Application");
+        log.debug("Starting Game Application");
+
+        // this will force construction of game world, physics world and game scene
+        Game game = FXGL.getGame();
+        gameWorld = game.getGameWorld();
+        gameScene = game.getGameScene();
+        physicsWorld = game.getPhysicsWorld();
 
         sceneFactory = initSceneFactory();
 
@@ -663,10 +710,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         if (getSettings().isMenuEnabled() && !getSettings().isIntroEnabled())
             showProfileDialog();
 
-        log.finer("Showing stage");
-        log.finer("Root size: " + stage.getScene().getRoot().getLayoutBounds().getWidth() + "x" + stage.getScene().getRoot().getLayoutBounds().getHeight());
-        log.finer("Scene size: " + stage.getScene().getWidth() + "x" + stage.getScene().getHeight());
-        log.finer("Stage size: " + stage.getWidth() + "x" + stage.getHeight());
+        log.debug("Showing stage");
+        log.debug("Root size: " + stage.getScene().getRoot().getLayoutBounds().getWidth() + "x" + stage.getScene().getRoot().getLayoutBounds().getHeight());
+        log.debug("Scene size: " + stage.getScene().getWidth() + "x" + stage.getScene().getHeight());
+        log.debug("Stage size: " + stage.getWidth() + "x" + stage.getHeight());
     }
 
     private class InitAppTask extends Task<Void> {

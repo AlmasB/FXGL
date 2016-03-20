@@ -30,6 +30,7 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
@@ -110,7 +111,7 @@ public class GameWorldTest {
                 .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
                 .buildAndAttach(gameWorld);
 
-        gameWorld.update(0.016);
+        gameWorld.onUpdateEvent(new UpdateEvent(1, 0.016));
     }
 
     @Test

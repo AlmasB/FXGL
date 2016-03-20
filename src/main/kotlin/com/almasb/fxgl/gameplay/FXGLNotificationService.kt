@@ -51,9 +51,7 @@ class FXGLNotificationService
 @Inject
 private constructor(private val gameScene: GameScene) : NotificationService {
 
-    companion object {
-        private val log = FXGL.getLogger(javaClass)
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     private val queue = ArrayDeque<NotificationView>()
 
@@ -89,10 +87,6 @@ private constructor(private val gameScene: GameScene) : NotificationService {
     private var showing = false
 
     init {
-        GameApplication.getService(ServiceType.EVENT_BUS)
-                .addEventHandler(AchievementEvent.ANY) { event ->
-                    pushNotification("You got an achievement! ${event.achievement.name}") }
-
         log.finer { "Service [NotificationService] initialized" }
     }
 

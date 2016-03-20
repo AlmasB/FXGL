@@ -26,6 +26,7 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.ents.Entity;
+import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.effect.Particle;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -37,6 +38,7 @@ import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.gameplay.GameWorldListener;
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.time.UpdateEventListener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -79,7 +81,7 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class PhysicsWorld implements GameWorldListener {
+public final class PhysicsWorld implements EntityWorldListener, UpdateEventListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
 
@@ -206,16 +208,6 @@ public final class PhysicsWorld implements GameWorldListener {
     }
 
     @Override
-    public void onWorldUpdate(double tpf) {
-
-    }
-
-    @Override
-    public void onWorldReset() {
-
-    }
-
-    @Override
     public void onEntityAdded(Entity entity) {
         addEntity(entity);
     }
@@ -230,7 +222,8 @@ public final class PhysicsWorld implements GameWorldListener {
      *
      * @param event update event
      */
-    public void update(UpdateEvent event) {
+    @Override
+    public void onUpdateEvent(UpdateEvent event) {
         tick.set(event.tick());
         physicsWorld.step((float) event.tpf(), 8, 3);
 

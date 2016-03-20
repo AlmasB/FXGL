@@ -28,6 +28,8 @@ package com.almasb.fxgl.audio;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.settings.UserProfileSavable;
+import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.beans.property.DoubleProperty;
 
 /**
@@ -36,7 +38,7 @@ import javafx.beans.property.DoubleProperty;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface AudioPlayer {
+public interface AudioPlayer extends UserProfileSavable, UpdateEventListener {
 
     /**
      * @return global music volume property

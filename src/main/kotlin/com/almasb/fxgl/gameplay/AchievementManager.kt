@@ -48,10 +48,7 @@ class AchievementManager : UserProfileSavable {
     private val achievements = FXCollections.observableArrayList<Achievement>()
 
     init {
-        val eventBus = GameApplication.getService(ServiceType.EVENT_BUS)
-        eventBus.addEventHandler(SaveEvent.ANY) { event -> save(event.profile) }
 
-        eventBus.addEventHandler(LoadEvent.LOAD_PROFILE) { event -> load(event.profile) }
     }
 
     /**
@@ -68,7 +65,7 @@ class AchievementManager : UserProfileSavable {
             throw IllegalArgumentException("Achievement with name \"${a.name}\" exists")
 
 
-        a.setOnAchieved { FXGL.getService(ServiceType.EVENT_BUS).fireEvent(AchievementEvent(a)) }
+        a.setOnAchieved { FXGL.getEventBus().fireEvent(AchievementEvent(a)) }
         achievements.add(a)
         log.finer("Registered new achievement \"${a.name}\"")
     }

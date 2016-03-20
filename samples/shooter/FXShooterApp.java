@@ -27,6 +27,7 @@
 package shooter;
 
 import com.almasb.ents.Entity;
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
@@ -60,6 +61,7 @@ public class FXShooterApp extends GameApplication {
         settings.setTitle("FXShooterApp");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override

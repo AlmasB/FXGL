@@ -74,7 +74,7 @@ private constructor(private val stage: Stage,
                      * problems in fullscreen mode. Switching between scenes
                      * in FS mode will otherwise temporarily toggle FS.
                      */
-                    private var fxScene: Scene) : Display, UserProfileSavable {
+                    private var fxScene: Scene) : Display {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -129,13 +129,10 @@ private constructor(private val stage: Stage,
         computeSceneSettings(settings.width.toDouble(), settings.height.toDouble())
         computeScaledSize()
 
-        eventBus = GameApplication.getService(ServiceType.EVENT_BUS)
-        eventBus.addEventHandler(SaveEvent.ANY) { event -> save(event.profile) }
+        eventBus = FXGL.getEventBus()
 
-        eventBus.addEventHandler(LoadEvent.ANY) { event -> load(event.profile) }
-
-        log.finer { "Service [Display] initialized" }
-        log.finer { "Using CSS: $css" }
+        log.debug { "Service [Display] initialized" }
+        log.debug { "Using CSS: $css" }
     }
 
     /**

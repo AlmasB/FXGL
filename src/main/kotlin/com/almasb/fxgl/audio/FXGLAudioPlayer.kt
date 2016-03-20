@@ -50,30 +50,20 @@ import java.util.*
 @Singleton
 class FXGLAudioPlayer
 @Inject
-private constructor(eventBus: EventBus) : AudioPlayer, UserProfileSavable {
+private constructor() : AudioPlayer {
 
-    companion object {
-        private val log = FXGL.getService(ServiceType.LOGGER_FACTORY).newLogger(FXGLAudioPlayer::class.java)
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     init {
-        eventBus.addEventHandler(UpdateEvent.ANY) { event ->
-            activeMusic.filter({ music ->
-                music.mediaPlayer.getCurrentTime() == music.mediaPlayer.getTotalDuration()
-            })
-            .forEach { music -> music.isStopped = true }
+        log.debug { "Service [AudioPlayer] initialized" }
+    }
 
-            activeSounds.removeIf { !it.clip.isPlaying }
-            activeMusic.removeIf { it.isStopped }
-        }
+    override fun onUpdateEvent(event: UpdateEvent) {
+        activeMusic.filter { it.mediaPlayer.getCurrentTime() == it.mediaPlayer.getTotalDuration() }
+                .forEach { it.isStopped = true }
 
-        eventBus.addEventHandler(NotificationEvent.ANY) { event -> playSound(FXGLAssets.SOUND_NOTIFICATION) }
-
-        eventBus.addEventHandler(SaveEvent.ANY) { event -> save(event.profile) }
-
-        eventBus.addEventHandler(LoadEvent.ANY) { event -> load(event.profile) }
-
-        log.finer { "Service [AudioPlayer] initialized" }
+        activeSounds.removeIf { !it.clip.isPlaying }
+        activeMusic.removeIf { it.isStopped }
     }
 
     /**

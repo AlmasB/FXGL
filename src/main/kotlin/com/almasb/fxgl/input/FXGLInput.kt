@@ -46,7 +46,7 @@ import java.lang.reflect.Method
 import java.util.*
 
 @Singleton
-class FXGLInput @Inject private constructor() : Input, UserProfileSavable {
+class FXGLInput @Inject private constructor() : Input {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -101,7 +101,6 @@ class FXGLInput @Inject private constructor() : Input, UserProfileSavable {
 
     init {
         initActionListener()
-        initEventHandlers()
 
         log.finer { "Service [Input] initialized" }
     }
@@ -125,52 +124,38 @@ class FXGLInput @Inject private constructor() : Input, UserProfileSavable {
         }
     }
 
-    /**
-     * Hook into the global event bus and handle internal events.
-     */
-    private fun initEventHandlers() {
-        val eventBus = GameApplication.getService(ServiceType.EVENT_BUS)
-        eventBus.addEventHandler(UpdateEvent.ANY) {
-            if (processActions) {
-                currentActions.forEach { it.onAction() }
+    override fun onUpdateEvent(event: UpdateEvent) {
+        if (processActions) {
+            currentActions.forEach { it.onAction() }
+        }
+    }
+
+    override fun onInputEvent(event: FXGLInputEvent) {
+        if (!registerInput)
+            return
+
+        if (event.fxEvent is MouseEvent) {
+            val mouseEvent = event.fxEvent
+            if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
+                buttons.put(mouseEvent.button, true)
+                handlePressed(mouseEvent)
+            } else if (mouseEvent.eventType == MouseEvent.MOUSE_RELEASED) {
+                buttons.put(mouseEvent.button, false)
+                handleReleased(mouseEvent)
+            }
+
+            gameXY = event.gameXY
+            sceneXY = Point2D(mouseEvent.sceneX, mouseEvent.sceneY)
+        } else {
+            val keyEvent = event.fxEvent as KeyEvent
+            if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
+                keys.put(keyEvent.code, true)
+                handlePressed(keyEvent)
+            } else if (keyEvent.eventType == KeyEvent.KEY_RELEASED) {
+                keys.put(keyEvent.code, false)
+                handleReleased(keyEvent)
             }
         }
-
-        eventBus.addEventHandler(FXGLEvent.PAUSE, { clearAll() })
-        eventBus.addEventHandler(FXGLEvent.RESUME, { clearAll() })
-        eventBus.addEventHandler(FXGLEvent.RESET, { clearAll() })
-
-        eventBus.addEventHandler(FXGLInputEvent.ANY) { event ->
-            if (!registerInput)
-                return@addEventHandler
-
-            if (event.fxEvent is MouseEvent) {
-                val mouseEvent = event.fxEvent
-                if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
-                    buttons.put(mouseEvent.button, true)
-                    handlePressed(mouseEvent)
-                } else if (mouseEvent.eventType == MouseEvent.MOUSE_RELEASED) {
-                    buttons.put(mouseEvent.button, false)
-                    handleReleased(mouseEvent)
-                }
-
-                gameXY = event.gameXY
-                sceneXY = Point2D(mouseEvent.sceneX, mouseEvent.sceneY)
-            } else {
-                val keyEvent = event.fxEvent as KeyEvent
-                if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
-                    keys.put(keyEvent.code, true)
-                    handlePressed(keyEvent)
-                } else if (keyEvent.eventType == KeyEvent.KEY_RELEASED) {
-                    keys.put(keyEvent.code, false)
-                    handleReleased(keyEvent)
-                }
-            }
-        }
-
-        eventBus.addEventHandler(SaveEvent.ANY) { event -> save(event.profile) }
-
-        eventBus.addEventHandler(LoadEvent.ANY) { event -> load(event.profile) }
     }
 
     private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {

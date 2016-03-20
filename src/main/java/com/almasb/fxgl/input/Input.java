@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.input;
 
+import com.almasb.fxgl.settings.UserProfileSavable;
+import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -37,7 +39,9 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Input {
+public interface Input extends UserProfileSavable, UpdateEventListener {
+
+    void onInputEvent(FXGLInputEvent event);
 
     /**
      * Setting to false will disable capturing of input events.

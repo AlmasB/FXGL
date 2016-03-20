@@ -27,6 +27,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.settings.SceneDimension;
+import com.almasb.fxgl.settings.UserProfileSavable;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -42,7 +43,7 @@ import java.util.function.Predicate;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface Display {
+public interface Display extends UserProfileSavable {
 
     /**
      * Register an FXGL scene to be managed by display settings.

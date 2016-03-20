@@ -47,9 +47,7 @@ import javafx.event.EventType
 class FXGLEventBus
 @Inject
 private constructor() : EventBus {
-    companion object {
-        private val log = FXGL.getService(ServiceType.LOGGER_FACTORY).newLogger(FXGLEventBus::class.java)
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     init {
         log.finer { "Service [EventBus] initialized" }
