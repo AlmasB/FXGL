@@ -42,15 +42,11 @@ import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.Version;
 import com.google.inject.*;
-import com.google.inject.name.Names;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -62,7 +58,7 @@ import java.util.ResourceBundle;
 public abstract class FXGLApplication extends Application {
 
     /**
-     * The logger
+     * We use system logger because logger service is not yet ready.
      */
     private static final Logger log = SystemLogger.INSTANCE;
 
@@ -94,74 +90,11 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Dependency injector.
+     * @deprecated use FXGL.getService() instead
      */
-    private static Injector injector;
-
-    /**
-     * Obtain an instance of a service.
-     * It may be expensive to use this in a loop.
-     * Store a reference to the instance instead.
-     *
-     * @param type service type
-     * @param <T> type
-     * @return service
-     */
+    @Deprecated
     public static final <T> T getService(ServiceType<T> type) {
-        return injector.getInstance(type.service());
-    }
-
-    @SuppressWarnings("unchecked")
-    private void configureServices(Stage stage) {
-        injector = Guice.createInjector(new AbstractModule() {
-            private Scene scene = new Scene(new Pane());
-
-            @Override
-            protected void configure() {
-                bind(Double.class)
-                        .annotatedWith(Names.named("appWidth"))
-                        .toInstance((double)getSettings().getWidth());
-
-                bind(Double.class)
-                        .annotatedWith(Names.named("appHeight"))
-                        .toInstance((double)getSettings().getHeight());
-
-                bind(Integer.class)
-                        .annotatedWith(Names.named("asset.cache.size"))
-                        .toInstance(FXGL.getInt("asset.cache.size"));
-
-                bind(ReadOnlyGameSettings.class).toInstance(getSettings());
-                bind(ApplicationMode.class).toInstance(getSettings().getApplicationMode());
-
-                for (Field field : ServiceType.class.getDeclaredFields()) {
-                    try {
-                        ServiceType type = (ServiceType) field.get(null);
-                        if (type.service().equals(type.serviceProvider()))
-                            bind(type.serviceProvider());
-                        else
-                            bind(type.service()).to(type.serviceProvider());
-                    } catch (IllegalAccessException e) {
-                        throw new IllegalArgumentException("Failed to configure services: " + e.getMessage());
-                    }
-                }
-            }
-
-            @Provides
-            Scene primaryScene() {
-                return scene;
-            }
-
-            @Provides
-            Stage primaryStage() {
-                return stage;
-            }
-        });
-
-        log.debug("Services configuration complete");
-
-        injector.injectMembers(this);
-
-        achievementManager = new AchievementManager();
+        return FXGL.getService(type);
     }
 
     @Override
@@ -177,7 +110,11 @@ public abstract class FXGLApplication extends Application {
         initUserProperties();
         initAppSettings();
 
-        configureServices(stage);
+        FXGL.configure(settings, stage, this);
+
+        log.debug("FXGL configuration complete");
+
+        achievementManager = new AchievementManager();
     }
 
     @Override
@@ -231,8 +168,6 @@ public abstract class FXGLApplication extends Application {
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
-
-        FXGL.setSettings(settings);
     }
 
     /**

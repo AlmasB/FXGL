@@ -31,12 +31,12 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%.-10t] %-5level %-20logger{1} - %msg%n" />
         </Console>
         <RollingFile name="RollingFile" fileName="logs/Game.log"
-                     filePattern="logs/$${date:yyyy-MM}/Game-%d{MM-dd-yyyy}-%i.log.gz">
+                     filePattern="logs/Game-%d{dd-MMM-yyyy@HH.mm.ss}-%i.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%.-10t] %-5level %-20logger{1} - %msg%n" />
             <Policies>
-                <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+                <OnStartupTriggeringPolicy />
             </Policies>
-            <DefaultRolloverStrategy max="20"/>
+            <DefaultRolloverStrategy max="1"/>
         </RollingFile>
     </Appenders>
     <Loggers>
