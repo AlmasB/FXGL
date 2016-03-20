@@ -26,6 +26,7 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
@@ -166,6 +167,15 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setCredits(Credits credits) {
         this.credits = credits;
+    }
+
+    /**
+     * Register a custom service with FXGL.
+     *
+     * @param serviceType type of service
+     */
+    public void addServiceType(ServiceType<?> serviceType) {
+        services.add(serviceType);
     }
 
     /**

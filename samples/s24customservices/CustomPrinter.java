@@ -24,30 +24,17 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package s24customservices;
 
-import com.google.inject.AbstractModule;
-
-import java.util.List;
+import com.google.inject.Singleton;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class ServicesModule extends AbstractModule {
-
-    @SuppressWarnings("unchecked")
-    protected void configureServices(List<ServiceType> services) {
-        for (ServiceType type : services) {
-            try {
-                if (type.service().equals(type.serviceProvider()))
-                    bind(type.serviceProvider());
-                else
-                    bind(type.service()).to(type.serviceProvider());
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to configure service: "
-                        + type.service() + " with provider: " + type.serviceProvider()
-                        + " Error: " + e.getMessage());
-            }
-        }
+@Singleton
+public class CustomPrinter implements Printer {
+    @Override
+    public void print(String message) {
+        System.out.println("Printer says: "+ message);
     }
 }

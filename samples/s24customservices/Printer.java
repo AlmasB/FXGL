@@ -24,30 +24,12 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
-
-import com.google.inject.AbstractModule;
-
-import java.util.List;
+package s24customservices;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class ServicesModule extends AbstractModule {
+public interface Printer {
 
-    @SuppressWarnings("unchecked")
-    protected void configureServices(List<ServiceType> services) {
-        for (ServiceType type : services) {
-            try {
-                if (type.service().equals(type.serviceProvider()))
-                    bind(type.serviceProvider());
-                else
-                    bind(type.service()).to(type.serviceProvider());
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to configure service: "
-                        + type.service() + " with provider: " + type.serviceProvider()
-                        + " Error: " + e.getMessage());
-            }
-        }
-    }
+    void print(String message);
 }

@@ -80,6 +80,8 @@ class FXGL {
          */
         @JvmStatic fun <T> getService(type: ServiceType<T>) = injector.getInstance(type.service())
 
+        @JvmStatic fun <T> getService(type: Class<T>) = injector.getInstance(type)
+
         private fun configureServices(stage: Stage) {
             injector = Guice.createInjector(object : ServicesModule() {
                 private val scene = Scene(Pane())
@@ -101,8 +103,15 @@ class FXGL {
                     bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
                     bind(ApplicationMode::class.java).toInstance(internalSettings.getApplicationMode())
 
+                    val services = ServiceType::class.java
+                            .declaredFields
+                            .map { it.get(null) as ServiceType<*> }
+                            .toList()
+                            // also add user specified services
+                            .plus(internalSettings.services)
+
                     // this actually configures services (written in java due to kotlin's confusion over "to")
-                    super.configure()
+                    super.configureServices(services)
                 }
 
                 @Provides
