@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,32 +23,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s17multithreading;
+package sandbox;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.RotationComponent;
+import com.almasb.fxgl.scene.LoadingScene;
+import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.concurrent.Task;
-import javafx.scene.shape.Rectangle;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Shows how to use multiple threads.
+ * This is an example of a basic FXGL game application.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ThreadingSample extends GameApplication {
+public class LongLoading extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("ThreadingSample");
+        settings.setTitle("LongLoading");
         settings.setVersion("0.1developer");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -58,48 +53,54 @@ public class ThreadingSample extends GameApplication {
     }
 
     @Override
+    protected SceneFactory initSceneFactory() {
+        return new SceneFactory() {
+            @NotNull
+            @Override
+            public LoadingScene newLoadingScene() {
+                return new TestLoadingScene();
+            }
+        };
+    }
+
+    @Override
     protected void initInput() {}
 
     @Override
-    protected void initAssets() {}
-
-    // 1. isolate code that represents some heavy work
-    // ensure it doesn't modify world or the scene graph
-    private void doHeavyWork() throws Exception {
-        Thread.sleep(2000);
+    protected void initAssets() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void initGame() {
-        // 2. get executor service
-        // 3. create a new task that performs heavy work
-
-        getService(ServiceType.EXECUTOR).submit(new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                System.out.println("Heavy work started!");
-                doHeavyWork();
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                // 4. it is OK to modify world/scene graph here
-                System.out.println("Heavy work complete!");
-
-                Entities.builder()
-                        .at(300, 300)
-                        .viewFromNode(new Rectangle(40, 40))
-                        .buildAndAttach(getGameWorld());
-            }
-        });
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    protected void initPhysics() {}
+    protected void initPhysics() {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onUpdate(double tpf) {}
