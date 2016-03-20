@@ -99,7 +99,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         initParticlesCanvas(width, height);
         initViewport(width, height);
 
-        log.finer("Game scene initialized: " + width + "x" + height);
+        log.debug("Game scene initialized: " + width + "x" + height);
     }
 
     private void initParticlesCanvas(double w, double h) {
@@ -148,6 +148,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      * @param node UI node to add
      */
     public void addUINode(Node node) {
+        log.debug("Adding UI node: "+ node);
         uiRoot.getChildren().add(node);
     }
 
@@ -168,6 +169,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      * @return true iff the node has been removed
      */
     public boolean removeUINode(Node n) {
+        log.debug("Removing UI node: "+ n);
         return uiRoot.getChildren().remove(n);
     }
 

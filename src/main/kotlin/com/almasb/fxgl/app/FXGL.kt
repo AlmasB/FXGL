@@ -26,8 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxeventbus.EventBus
-import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -54,7 +52,7 @@ class FXGL {
 
         @JvmStatic fun getSettings() = internalSettings
 
-        @JvmStatic fun configure(gameSettings: ReadOnlyGameSettings, stage: Stage, app: FXGLApplication) {
+        @JvmStatic fun configure(gameSettings: ReadOnlyGameSettings, stage: Stage) {
             if (initGuard)
                 throw IllegalStateException("FXGL is already configured")
 
@@ -146,10 +144,13 @@ class FXGL {
         private val _executor by lazy { getService(ServiceType.EXECUTOR) }
         @JvmStatic fun getExecutor() = _executor
 
+        private val _achievement by lazy { getService(ServiceType.ACHIEVEMENT_MANAGER) }
+        @JvmStatic fun getAchievementManager() = _achievement
+
         /**
          * @return new instance on each call
          */
-        @JvmStatic fun getLocalTimer() = getService(ServiceType.LOCAL_TIMER)
+        @JvmStatic fun newLocalTimer() = getService(ServiceType.LOCAL_TIMER)
 
         private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
         @JvmStatic fun getMasterTimer() = _masterTimer

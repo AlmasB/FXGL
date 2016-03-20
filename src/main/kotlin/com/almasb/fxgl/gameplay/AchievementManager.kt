@@ -48,7 +48,7 @@ class AchievementManager : UserProfileSavable {
     private val achievements = FXCollections.observableArrayList<Achievement>()
 
     init {
-
+        log.debug { "Service [AchievementManager] initialized" }
     }
 
     /**
@@ -67,7 +67,7 @@ class AchievementManager : UserProfileSavable {
 
         a.setOnAchieved { FXGL.getEventBus().fireEvent(AchievementEvent(a)) }
         achievements.add(a)
-        log.finer("Registered new achievement \"${a.name}\"")
+        log.debug { "Registered new achievement \"${a.name}\"" }
     }
 
     /**

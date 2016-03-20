@@ -28,7 +28,6 @@ package s14achievements;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.gameplay.Achievement;
@@ -63,6 +62,7 @@ public class AchievementsSample extends GameApplication {
     // create and register achievement
     @Override
     protected void initAchievements() {
+        // might be a JavaFX bug, but sometimes certain parts of the screen are not updated when screen is empty
         Achievement a = new Achievement("World Traveller", "Get to the other side of the screen.");
         getAchievementManager().registerAchievement(a);
     }

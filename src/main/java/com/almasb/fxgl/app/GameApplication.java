@@ -95,7 +95,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     private static Logger log = SystemLogger.INSTANCE;
 
     {
-        log.finer("Starting JavaFX");
+        log.debug("Starting JavaFX");
         setDefaultUncaughtExceptionHandler(new FXGLUncaughtExceptionHandler());
     }
 
@@ -125,7 +125,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     }
 
     private void setState(ApplicationState appState) {
-        log.finer("State: " + getState() + " -> " + appState);
+        log.debug("State: " + getState() + " -> " + appState);
         state.set(appState);
         switch (appState) {
             case INTRO:
@@ -152,7 +152,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
     }
 
-    //@Inject
     private GameWorld gameWorld;
 
     /**
@@ -162,7 +161,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return gameWorld;
     }
 
-    //@Inject
     private PhysicsWorld physicsWorld;
 
     /**
@@ -175,7 +173,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * Game scene, this is where all in-game objects are shown.
      */
-    //@Inject
     private GameScene gameScene;
 
     /**
@@ -753,7 +750,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
 
         private void update(String message, int step) {
-            log.finer(message);
+            log.debug(message);
             updateMessage(message);
             updateProgress(step, 4);
         }
@@ -778,14 +775,14 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Initialize user application.
      */
     private void initApp(Task<?> initTask) {
-        log.finer("Initializing App");
+        log.debug("Initializing App");
         pause();
         reset();
         setState(ApplicationState.LOADING);
 
         loadingScene.bind(initTask);
 
-        log.finer("Starting FXGL Init Thread");
+        log.debug("Starting FXGL Init Thread");
         Thread thread = new Thread(initTask, "FXGL Init Thread");
         thread.start();
     }
@@ -794,7 +791,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * (Re-)initializes the user application as new and starts the game.
      */
     protected void startNewGame() {
-        log.finer("Starting new game");
+        log.debug("Starting new game");
         initApp(new InitAppTask());
     }
 
@@ -804,7 +801,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * @param data save data to load from
      */
     protected void startLoadedGame(Serializable data) {
-        log.finer("Starting loaded game");
+        log.debug("Starting loaded game");
         initApp(new InitAppTask(data));
     }
 
@@ -812,7 +809,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Pauses the main loop execution.
      */
     protected void pause() {
-        log.finer("Pausing main loop");
+        log.debug("Pausing main loop");
         getEventBus().fireEvent(FXGLEvent.pause());
 
         setState(ApplicationState.PAUSED);
@@ -822,7 +819,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Resumes the main loop execution.
      */
     protected void resume() {
-        log.finer("Resuming main loop");
+        log.debug("Resuming main loop");
         getEventBus().fireEvent(FXGLEvent.resume());
 
         setState(ApplicationState.PLAYING);
@@ -832,7 +829,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Reset the application.
      */
     private void reset() {
-        log.finer("Resetting FXGL application");
+        log.debug("Resetting FXGL application");
         getEventBus().fireEvent(FXGLEvent.reset());
     }
 
@@ -840,7 +837,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Exit the application.
      */
     protected void exit() {
-        log.finer("Exiting Normally");
+        log.debug("Exiting Normally");
 
         // if it is null then we are running without menus
         if (profileName != null)
@@ -975,7 +972,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     @Override
     public void save(UserProfile profile) {
-        log.finer("Saving data to profile");
+        log.debug("Saving data to profile");
 
         UserProfile.Bundle bundle = new UserProfile.Bundle("game");
         bundle.put("playtime", System.nanoTime() - startTime + playtime);
@@ -986,7 +983,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     @Override
     public void load(UserProfile profile) {
-        log.finer("Loading data from profile");
+        log.debug("Loading data from profile");
         UserProfile.Bundle bundle = profile.getBundle("game");
         bundle.log();
 

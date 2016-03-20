@@ -33,6 +33,7 @@ import com.almasb.fxgl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.event.FXGLEventBus;
+import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.FXGLNotificationService;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.FXGLInput;
@@ -193,6 +194,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends LoggerFactory> serviceProvider() {
             return FXGLLoggerFactory.class;
+        }
+    };
+
+    ServiceType<AchievementManager> ACHIEVEMENT_MANAGER = new ServiceType<AchievementManager>() {
+        @Override
+        public Class<AchievementManager> service() {
+            return AchievementManager.class;
+        }
+
+        @Override
+        public Class<? extends AchievementManager> serviceProvider() {
+            return AchievementManager.class;
         }
     };
 }

@@ -87,7 +87,7 @@ private constructor(private val gameScene: GameScene) : NotificationService {
     private var showing = false
 
     init {
-        log.finer { "Service [NotificationService] initialized" }
+        log.debug { "Service [NotificationService] initialized" }
     }
 
     private fun popNotification(notificationView: NotificationView) {
@@ -127,7 +127,7 @@ private constructor(private val gameScene: GameScene) : NotificationService {
         gameScene.addUINode(notificationView)
         notificationView.show()
 
-        GameApplication.getService(ServiceType.EVENT_BUS).fireEvent(NotificationEvent(notificationView.notification))
+        FXGL.getEventBus().fireEvent(NotificationEvent(notificationView.notification))
     }
 
     private fun createNotificationView(text: String): NotificationView {

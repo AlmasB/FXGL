@@ -110,11 +110,9 @@ public abstract class FXGLApplication extends Application {
         initUserProperties();
         initAppSettings();
 
-        FXGL.configure(settings, stage, this);
+        FXGL.configure(settings, stage);
 
         log.debug("FXGL configuration complete");
-
-        achievementManager = new AchievementManager();
     }
 
     @Override
@@ -239,12 +237,10 @@ public abstract class FXGLApplication extends Application {
         return FXGL.getNotificationService();
     }
 
-    private AchievementManager achievementManager;
-
     /**
      * @return achievement manager
      */
     public final AchievementManager getAchievementManager() {
-        return achievementManager;
+        return FXGL.getAchievementManager();
     }
 }
