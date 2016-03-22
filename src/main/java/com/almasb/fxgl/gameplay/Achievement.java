@@ -27,8 +27,10 @@
 package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.event.AchievementProgressEvent;
 import com.almasb.fxgl.logging.Logger;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ChangeListener;
@@ -38,7 +40,7 @@ import javafx.beans.value.ChangeListener;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class Achievement {
+public class Achievement {
     private static final Logger log = FXGL.getLogger("FXGL.Achievement");
 
     private String name;
@@ -102,6 +104,26 @@ public final class Achievement {
     public void bind(BooleanBinding binding) {
         if (!isAchieved())
             achieved.bind(binding);
+    }
+
+    private ChangeListener<Boolean> progressListener;
+
+    public void bind(IntegerProperty property, int value) {
+        if (isAchieved())
+            return;
+
+        bind(property.greaterThanOrEqualTo(value));
+        BooleanBinding bb = property.greaterThanOrEqualTo(value / 2);
+
+        progressListener = (o, fired, reachedHalf) -> {
+            if (reachedHalf && !fired) {
+                // TODO: this should be done via AchievementManager
+                FXGL.getEventBus().fireEvent(new AchievementProgressEvent(this, property.get(), value));
+                bb.removeListener(progressListener);
+            }
+        };
+
+        bb.addListener(progressListener);
     }
 
     /**

@@ -27,44 +27,29 @@
 package com.almasb.fxgl.event;
 
 import com.almasb.fxgl.gameplay.Achievement;
-import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * Occurs on achievement unlocked.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class AchievementEvent extends Event {
+public class AchievementProgressEvent extends AchievementEvent {
 
-    public static final EventType<AchievementEvent> ANY =
-            new EventType<>(Event.ANY, "ACHIEVEMENT_EVENT");
+    public static final EventType<AchievementProgressEvent> PROGRESS =
+            new EventType<>(ANY, "PROGRESS");
 
-    public static final EventType<AchievementEvent> ACHIEVED =
-            new EventType<>(ANY, "ACHIEVED");
+    private double value, max;
 
-    private Achievement achievement;
-
-    public AchievementEvent(Achievement achievement) {
-        this(ANY, achievement);
+    public double getValue() {
+        return value;
     }
 
-    public AchievementEvent(EventType<? extends AchievementEvent> eventType, Achievement achievement) {
-        super(eventType);
-        this.achievement = achievement;
+    public double getMax() {
+        return max;
     }
 
-    /**
-     *
-     * @return achievement associated with the event
-     */
-    public Achievement getAchievement() {
-        return achievement;
-    }
-
-    @Override
-    public String toString() {
-        return "AchievementEvent[name=" + achievement.getName()
-                + ",description= " + achievement.getDescription() + "]";
+    public AchievementProgressEvent(Achievement achievement, double value, double max) {
+        super(PROGRESS, achievement);
+        this.value = value;
+        this.max = max;
     }
 }

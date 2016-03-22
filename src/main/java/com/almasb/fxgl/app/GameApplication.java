@@ -413,8 +413,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
         });
 
-        bus.addEventHandler(AchievementEvent.ANY, event -> {
+        bus.addEventHandler(AchievementEvent.ACHIEVED, event -> {
             getNotificationService().pushNotification("You got an achievement! " + event.getAchievement().getName());
+        });
+
+        bus.addEventHandler(AchievementProgressEvent.PROGRESS, event -> {
+            getNotificationService().pushNotification("Achievement " + event.getAchievement().getName() + "\n"
+                    + "Progress: " + event.getValue() + "/" + event.getMax());
         });
 
         // FXGL App

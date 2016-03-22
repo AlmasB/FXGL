@@ -65,7 +65,7 @@ class AchievementManager : UserProfileSavable {
             throw IllegalArgumentException("Achievement with name \"${a.name}\" exists")
 
 
-        a.setOnAchieved { FXGL.getEventBus().fireEvent(AchievementEvent(a)) }
+        a.setOnAchieved { FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a)) }
         achievements.add(a)
         log.debug { "Registered new achievement \"${a.name}\"" }
     }
