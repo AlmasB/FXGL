@@ -141,7 +141,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 getDisplay().setScene(gameMenuScene);
                 break;
             case PLAYING:
-                getDisplay().setScene(gameScene);
+                getDisplay().setScene(getGameScene());
                 break;
             case PAUSED:
                 // no need to do anything
@@ -152,34 +152,25 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
     }
 
-    private GameWorld gameWorld;
-
     /**
      * @return game world
      */
     public final GameWorld getGameWorld() {
-        return gameWorld;
+        return FXGL.getGame().getGameWorld();
     }
-
-    private PhysicsWorld physicsWorld;
 
     /**
      * @return physics world
      */
     public final PhysicsWorld getPhysicsWorld() {
-        return physicsWorld;
+        return FXGL.getGame().getPhysicsWorld();
     }
-
-    /**
-     * Game scene, this is where all in-game objects are shown.
-     */
-    private GameScene gameScene;
 
     /**
      * @return game scene
      */
     public final GameScene getGameScene() {
-        return gameScene;
+        return FXGL.getGame().getGameScene();
     }
 
     private SceneFactory sceneFactory;
@@ -330,8 +321,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getInput().onUpdateEvent(event);
             getAudioPlayer().onUpdateEvent(event);
 
-            gameWorld.onUpdateEvent(event);
-            physicsWorld.onUpdateEvent(event);
+            getGameWorld().onUpdateEvent(event);
+            getPhysicsWorld().onUpdateEvent(event);
 
             onUpdate(event.tpf());
 
@@ -366,7 +357,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         bus.addEventHandler(FXGLEvent.RESET, event -> {
             getInput().clearAll();
-            gameWorld.reset();
+            getGameWorld().reset();
             getMasterTimer().reset();
         });
 
@@ -380,12 +371,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getMasterTimer().stop();
         });
 
-        gameWorld.addWorldListener(physicsWorld);
-        gameWorld.addWorldListener(gameScene);
+        getGameWorld().addWorldListener(getPhysicsWorld());
+        getGameWorld().addWorldListener(getGameScene());
 
         // we need to add this listener
         // to publish entity events via our event bus
-        gameWorld.addWorldListener(new EntityWorldListener() {
+        getGameWorld().addWorldListener(new EntityWorldListener() {
             @Override
             public void onEntityAdded(Entity entity) {
                 bus.fireEvent(WorldEvent.entityAdded(entity));
@@ -399,12 +390,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         // Scene
 
-        gameScene.addEventHandler(MouseEvent.ANY, event -> {
+        getGameScene().addEventHandler(MouseEvent.ANY, event -> {
             FXGLInputEvent e = new FXGLInputEvent(event,
-                    gameScene.screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
+                    getGameScene().screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
             bus.fireEvent(e);
         });
-        gameScene.addEventHandler(KeyEvent.ANY, event -> {
+        getGameScene().addEventHandler(KeyEvent.ANY, event -> {
             bus.fireEvent(new FXGLInputEvent(event, Point2D.ZERO));
         });
 
@@ -474,7 +465,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         getDisplay().registerScene(mainMenuScene);
         getDisplay().registerScene(gameMenuScene);
 
-        gameScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        getGameScene().addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == getSettings().getMenuKey()
                     && canSwitchGameMenu) {
                 getEventBus().fireEvent(new MenuEvent(MenuEvent.PAUSE));
@@ -490,7 +481,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             }
         });
 
-        gameScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+        getGameScene().addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == getSettings().getMenuKey())
                 canSwitchGameMenu = true;
         });
@@ -691,18 +682,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         log.debug("Starting Game Application");
 
-        // this will force construction of game world, physics world and game scene
-        Game game = FXGL.getGame();
-        gameWorld = game.getGameWorld();
-        gameScene = game.getGameScene();
-        physicsWorld = game.getPhysicsWorld();
-
         sceneFactory = initSceneFactory();
 
         loadingScene = sceneFactory.newLoadingScene();
 
         getDisplay().registerScene(loadingScene);
-        getDisplay().registerScene(gameScene);
+        getDisplay().registerScene(getGameScene());
 
         initFXGL();
 
