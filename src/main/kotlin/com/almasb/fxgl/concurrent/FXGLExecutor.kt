@@ -51,7 +51,7 @@ private constructor(eventBus: EventBus) : Executor {
     init {
         eventBus.addEventHandler(FXGLEvent.EXIT) { event -> service.shutdownNow() }
 
-        log.finer { "Service [Executor] initialized" }
+        log.debug { "Service [Executor] initialized" }
     }
 
     override fun submit(task: Task<*>) {

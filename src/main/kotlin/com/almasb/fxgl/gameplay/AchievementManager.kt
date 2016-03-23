@@ -91,7 +91,7 @@ class AchievementManager : UserProfileSavable {
     fun getAchievements() = FXCollections.unmodifiableObservableList(achievements)
 
     override fun save(profile: UserProfile) {
-        log.finer("Saving data to profile")
+        log.debug("Saving data to profile")
 
         val bundle = UserProfile.Bundle("achievement")
 
@@ -102,7 +102,7 @@ class AchievementManager : UserProfileSavable {
     }
 
     override fun load(profile: UserProfile) {
-        log.finer("Loading data from profile")
+        log.debug("Loading data from profile")
 
         val bundle = profile.getBundle("achievement")
         bundle.log()

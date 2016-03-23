@@ -129,8 +129,8 @@ public class UserProfile implements Serializable {
          * Logs contents of the bundle using FXGL log system.
          */
         public void log() {
-            log.finer("Logging bundle: " + name);
-            data.forEach((k,v) -> log.finer(k + "=" + v));
+            log.debug("Logging bundle: " + name);
+            data.forEach((k,v) -> log.debug(k + "=" + v));
         }
     }
 }

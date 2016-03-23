@@ -70,7 +70,7 @@ public final class SaveLoadManager {
      * @return io result
      */
     public IOResult<?> save(Serializable data, String fileName) {
-        log.finer(() -> "Saving data: " + fileName);
+        log.debug(() -> "Saving data: " + fileName);
         return FS.writeData(data, saveDir() + fileName);
     }
 
@@ -81,7 +81,7 @@ public final class SaveLoadManager {
      * @return io result
      */
     public IOResult<?> saveProfile(UserProfile profile) {
-        log.finer(() -> "Saving profile: " + profileName);
+        log.debug(() -> "Saving profile: " + profileName);
         return FS.writeData(profile, profileDir() + PROFILE_FILE_NAME);
     }
 
@@ -95,7 +95,7 @@ public final class SaveLoadManager {
      */
     @SuppressWarnings("unchecked")
     public <T> IOResult<T> load(String fileName) {
-        log.finer(() -> "Loading data: " + fileName);
+        log.debug(() -> "Loading data: " + fileName);
         return FS.<T>readData(saveDir() + fileName);
     }
 
@@ -103,7 +103,7 @@ public final class SaveLoadManager {
      * @return user profile loaded from "profiles/"
      */
     public IOResult<UserProfile> loadProfile() {
-        log.finer(() -> "Loading profile: " + profileName);
+        log.debug(() -> "Loading profile: " + profileName);
         return FS.<UserProfile>readData(profileDir() + PROFILE_FILE_NAME);
     }
 
@@ -127,7 +127,7 @@ public final class SaveLoadManager {
      * @return profile names
      */
     public static IOResult<List<String> > loadProfileNames() {
-        log.finer(() -> "Loading profile names");
+        log.debug(() -> "Loading profile names");
         return FS.loadDirectoryNames("./" + PROFILES_DIR, false);
     }
 
@@ -137,7 +137,7 @@ public final class SaveLoadManager {
      * @return save file names
      */
     public IOResult<List<String> > loadSaveFileNames() {
-        log.finer(() -> "Loading save file names");
+        log.debug(() -> "Loading save file names");
         return FS.loadFileNames(saveDir(), true);
     }
 
@@ -147,7 +147,7 @@ public final class SaveLoadManager {
      * @return last modified save file
      */
     public <T> IOResult<T> loadLastModifiedSaveFile() {
-        log.finer(() -> "Loading last modified save file");
+        log.debug(() -> "Loading last modified save file");
         return FS.<T>loadLastModifiedFile(saveDir(), true);
     }
 }

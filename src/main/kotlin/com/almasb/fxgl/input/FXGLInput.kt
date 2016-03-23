@@ -102,7 +102,7 @@ class FXGLInput @Inject private constructor() : Input {
     init {
         initActionListener()
 
-        log.finer { "Service [Input] initialized" }
+        log.debug { "Service [Input] initialized" }
     }
 
     /**
@@ -192,7 +192,7 @@ class FXGLInput @Inject private constructor() : Input {
     }
 
     override fun clearAll() {
-        log.finer { "Clearing active input actions" }
+        log.debug { "Clearing active input actions" }
 
         currentActions.clear()
         keys.clear()
@@ -228,7 +228,7 @@ class FXGLInput @Inject private constructor() : Input {
             throw IllegalArgumentException("Trigger $trigger is already bound")
 
         bindings[action] = trigger
-        log.finer { "Registered new binding: $action - $trigger" }
+        log.debug { "Registered new binding: $action - $trigger" }
     }
 
     override fun rebind(action: UserAction, key: KeyCode): Boolean {
@@ -263,7 +263,7 @@ class FXGLInput @Inject private constructor() : Input {
      * user pressing and holding the [key] and [modifier].
      */
     override fun mockKeyPress(key: KeyCode, modifier: InputModifier) {
-        log.finer { "Mocking key press: ${KeyTrigger(key, modifier)}" }
+        log.debug { "Mocking key press: ${KeyTrigger(key, modifier)}" }
         handlePressed(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
     }
 
@@ -272,7 +272,7 @@ class FXGLInput @Inject private constructor() : Input {
      * The behavior is equivalent to user releasing the [key] and [modifier].
      */
     override fun mockKeyRelease(key: KeyCode, modifier: InputModifier) {
-        log.finer { "Mocking key release: ${KeyTrigger(key, modifier)}" }
+        log.debug { "Mocking key release: ${KeyTrigger(key, modifier)}" }
         handleReleased(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
     }
 
@@ -289,7 +289,7 @@ class FXGLInput @Inject private constructor() : Input {
      * Same as user pressing and holding the [button] + [modifier] at [gameX], [gameY].
      */
     override fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
-        log.finer { "Mocking button press: ${MouseTrigger(button, modifier)}" }
+        log.debug { "Mocking button press: ${MouseTrigger(button, modifier)}" }
         handlePressed(makeMouseEvent(button, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier))
     }
 
@@ -298,7 +298,7 @@ class FXGLInput @Inject private constructor() : Input {
      * Same as user releasing the [button] + [modifier].
      */
     override fun mockButtonRelease(button: MouseButton, modifier: InputModifier) {
-        log.finer { "Mocking button release: ${MouseTrigger(button, modifier)}" }
+        log.debug { "Mocking button release: ${MouseTrigger(button, modifier)}" }
         handleReleased(makeMouseEvent(button, MouseEvent.MOUSE_RELEASED, 0.0, 0.0, modifier))
     }
 
@@ -357,7 +357,7 @@ class FXGLInput @Inject private constructor() : Input {
     }
 
     override fun save(profile: UserProfile) {
-        log.finer("Saving data to profile")
+        log.debug("Saving data to profile")
 
         val bundle = UserProfile.Bundle("input")
         bindings.forEach { bundle.put(it.key.toString(), it.value.toString()) }
@@ -367,7 +367,7 @@ class FXGLInput @Inject private constructor() : Input {
     }
 
     override fun load(profile: UserProfile) {
-        log.finer("Loading data from profile")
+        log.debug("Loading data from profile")
 
         val bundle = profile.getBundle("input")
         bundle.log()

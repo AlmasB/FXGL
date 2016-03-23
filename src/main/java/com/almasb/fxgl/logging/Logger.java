@@ -36,16 +36,6 @@ public interface Logger {
     void info(String message);
     void info(Supplier<String> messageSupplier);
 
-    @Deprecated
-    default void finer(String message) {
-        debug(message);
-    }
-
-    @Deprecated
-    default void finer(Supplier<String> messageSupplier) {
-        debug(messageSupplier);
-    }
-
     void debug(String message);
     void debug(Supplier<String> messageSupplier);
 

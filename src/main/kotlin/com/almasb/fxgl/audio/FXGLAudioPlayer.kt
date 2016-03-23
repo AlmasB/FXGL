@@ -198,7 +198,7 @@ private constructor() : AudioPlayer {
      * to be started by [.playMusic].
      */
     override fun stopAllMusic() {
-        log.finer("Stopping all music. Active music size: ${activeMusic.size}")
+        log.debug { "Stopping all music. Active music size: ${activeMusic.size}" }
         val it = activeMusic.iterator()
         while (it.hasNext()) {
             val music = it.next()
@@ -213,7 +213,7 @@ private constructor() : AudioPlayer {
     }
 
     override fun save(profile: UserProfile) {
-        log.finer("Saving data to profile")
+        log.debug("Saving data to profile")
 
         val bundle = UserProfile.Bundle("audio")
         bundle.put("musicVolume", getGlobalMusicVolume())
@@ -224,7 +224,7 @@ private constructor() : AudioPlayer {
     }
 
     override fun load(profile: UserProfile) {
-        log.finer("Loading data from profile")
+        log.debug("Loading data from profile")
         val bundle = profile.getBundle("audio")
         bundle.log()
 

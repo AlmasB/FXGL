@@ -111,7 +111,7 @@ public class AssetLoader {
     private AssetLoader(@Named("asset.cache.size") int cacheSize) {
         cachedAssets = new LRUCache<>(cacheSize);
 
-        log.finer("Service [AssetLoader] initialized");
+        log.debug("Service [AssetLoader] initialized");
     }
 
     /**
@@ -382,7 +382,7 @@ public class AssetLoader {
      * @return URL to resource
      */
     private URL getURL(String name) {
-        log.finer("Loading from disk: " + name);
+        log.debug("Loading from disk: " + name);
 
         URL url = getClass().getResource(name);
         if (url == null) {
@@ -420,7 +420,7 @@ public class AssetLoader {
     private Object getAssetFromCache(String name) {
         Object asset = cachedAssets.get(name);
         if (asset != null) {
-            log.finer("Loading from cache: " + name);
+            log.debug("Loading from cache: " + name);
             return asset;
         } else {
             return null;
@@ -471,7 +471,7 @@ public class AssetLoader {
      * Release all cached assets.
      */
     public void clearCache() {
-        log.finer("Clearing assets cache");
+        log.debug("Clearing assets cache");
         cachedAssets.clear();
     }
 
@@ -546,7 +546,7 @@ public class AssetLoader {
      * @return instance of IAE to be thrown
      */
     private IllegalArgumentException loadFailed(String assetName, Throwable error) {
-        log.finer("Loading failed for asset: " + assetName + ". Cause: " + error.getMessage());
+        log.debug("Loading failed for asset: " + assetName + ". Cause: " + error.getMessage());
         return new IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.getMessage());
     }
 }

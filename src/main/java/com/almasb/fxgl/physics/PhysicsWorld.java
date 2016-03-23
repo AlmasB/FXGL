@@ -138,7 +138,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         initContactListener();
         initParticles();
 
-        log.finer("Physics world initialized");
+        log.debug("Physics world initialized");
     }
 
     /**

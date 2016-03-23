@@ -84,7 +84,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
     @Inject
     protected GameWorld() {
-        log.finer("Game world initialized");
+        log.debug("Game world initialized");
     }
 
     @Override
@@ -94,7 +94,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
     @Override
     public void reset() {
-        log.finer("Resetting game world");
+        log.debug("Resetting game world");
         super.reset();
     }
 
@@ -212,7 +212,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
     public void setLevel(Level level) {
         reset();
 
-        log.finer("Setting level: " + level);
+        log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
     }
 }

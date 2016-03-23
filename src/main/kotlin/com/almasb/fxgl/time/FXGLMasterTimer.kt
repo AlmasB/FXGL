@@ -88,7 +88,7 @@ private constructor() : AnimationTimer(), MasterTimer {
     }
 
     init {
-        log.finer("Service [MasterTimer] initialized")
+        log.debug("Service [MasterTimer] initialized")
     }
 
     override fun handle(event: FXGLEvent) {
@@ -154,15 +154,14 @@ private constructor() : AnimationTimer(), MasterTimer {
     }
 
     /**
-     * Resets current tick to 0.
+     * Resets current tick to 0 and clears scheduled actions.
      */
     override fun reset() {
-        log.finer("Resetting ticks to 0")
+        log.debug("Resetting ticks and clearing all actions")
 
         tick.set(0)
         now = 0
 
-        log.finer("Clearing all scheduled actions")
         timerActions.clear()
     }
 

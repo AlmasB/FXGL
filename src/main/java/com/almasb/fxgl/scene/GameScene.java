@@ -245,7 +245,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
 
         if (group.getUserData() == null) {
-            log.finer("Creating render group for layer: " + layer.asString());
+            log.debug("Creating render group for layer: " + layer.asString());
             group.setUserData(renderLayer);
             gameRoot.getChildren().add(group);
         }
@@ -269,7 +269,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
     @Override
     public void onWorldReset() {
-        log.finer("Resetting game scene");
+        log.debug("Resetting game scene");
 
         getViewport().unbind();
         particles.clear();
@@ -279,7 +279,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
     @Override
     public void onEntityAdded(Entity entity) {
-        log.finer("Entity added to scene");
+        log.debug("Entity added to scene");
 
         entity.getComponent(MainViewComponent.class)
                 .ifPresent(viewComponent -> {
@@ -297,7 +297,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        log.finer("Entity removed from scene");
+        log.debug("Entity removed from scene");
 
         entity.getComponent(MainViewComponent.class)
                 .ifPresent(viewComponent -> {
@@ -332,7 +332,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     @Override
     public void onComponentAdded(Component component) {
         if (component instanceof MainViewComponent) {
-            log.finer("Added MainViewComponent");
+            log.debug("Added MainViewComponent");
 
             MainViewComponent viewComponent = (MainViewComponent) component;
 
@@ -350,7 +350,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     @Override
     public void onComponentRemoved(Component component) {
         if (component instanceof MainViewComponent) {
-            log.finer("Removed MainViewComponent");
+            log.debug("Removed MainViewComponent");
 
             MainViewComponent viewComponent = (MainViewComponent) component;
 

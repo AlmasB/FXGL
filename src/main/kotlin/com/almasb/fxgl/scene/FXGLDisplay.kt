@@ -282,7 +282,7 @@ private constructor(private val stage: Stage,
         val bounds = bounds
 
         if (newW > bounds.width || newH > bounds.height) {
-            log.finer("App size > screen size")
+            log.debug("App size > screen size")
 
             val ratio = newW / newH
 
@@ -299,8 +299,8 @@ private constructor(private val stage: Stage,
         scaledHeight.set(newH)
         scaleRatio.set(newW / settings.width)
 
-        log.finer("Target size: " + getTargetWidth() + "x" + getTargetHeight() + "@" + 1.0)
-        log.finer("New size:    " + newW + "x" + newH + "@" + getScaleRatio())
+        log.debug("Target size: " + getTargetWidth() + "x" + getTargetHeight() + "@" + 1.0)
+        log.debug("New size:    " + newW + "x" + newH + "@" + getScaleRatio())
     }
 
     /**
@@ -339,7 +339,7 @@ private constructor(private val stage: Stage,
      */
     override fun setSceneDimension(dimension: SceneDimension) {
         if (sceneDimensions.contains(dimension)) {
-            log.finer { "Setting scene dimension: $dimension" }
+            log.debug { "Setting scene dimension: $dimension" }
             setNewResolution(dimension.width, dimension.height)
         } else {
             log.warning { "$dimension is not supported!" }
@@ -463,7 +463,7 @@ private constructor(private val stage: Stage,
     }
 
     override fun save(profile: UserProfile) {
-        log.finer("Saving data to profile")
+        log.debug("Saving data to profile")
 
         val bundle = UserProfile.Bundle("scene")
         bundle.put("sizeW", getTargetWidth())
@@ -474,7 +474,7 @@ private constructor(private val stage: Stage,
     }
 
     override fun load(profile: UserProfile) {
-        log.finer("Loading data from profile")
+        log.debug("Loading data from profile")
 
         val bundle = profile.getBundle("scene")
         bundle.log()

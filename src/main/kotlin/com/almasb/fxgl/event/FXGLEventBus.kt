@@ -50,7 +50,7 @@ private constructor() : EventBus {
     private val log = FXGL.getLogger(javaClass)
 
     init {
-        log.finer { "Service [EventBus] initialized" }
+        log.debug { "Service [EventBus] initialized" }
     }
 
     private val bus = FXEventBus()
@@ -65,7 +65,7 @@ private constructor() : EventBus {
 
     override fun fireEvent(event: Event) {
         if (event.eventType != UpdateEvent.ANY && event.eventType != FXGLInputEvent.ANY)
-            log.finer { "Firing event: $event" }
+            log.debug { "Firing event: $event" }
 
         bus.fireEvent(event)
     }
