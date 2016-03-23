@@ -27,6 +27,7 @@
 package com.almasb.fxgl.time
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.time.TimerAction.TimerType
 import com.google.inject.Inject
@@ -90,6 +91,14 @@ private constructor() : AnimationTimer(), MasterTimer {
         log.finer("Service [MasterTimer] initialized")
     }
 
+    override fun handle(event: FXGLEvent) {
+        when(event.eventType) {
+            FXGLEvent.PAUSE -> stop()
+            FXGLEvent.RESUME -> start()
+            FXGLEvent.RESET -> reset()
+        }
+    }
+
     private var updateListener: UpdateEventListener? = null
 
     override fun setUpdateListener(listener: UpdateEventListener) {
@@ -135,12 +144,12 @@ private constructor() : AnimationTimer(), MasterTimer {
     override fun tickProperty() = tick.readOnlyProperty
 
     override fun start() {
-        log.finer { "Starting master timer" }
+        log.debug { "Starting master timer" }
         super.start()
     }
 
     override fun stop() {
-        log.finer { "Stopping master timer" }
+        log.debug { "Stopping master timer" }
         super.stop()
     }
 

@@ -358,18 +358,17 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         bus.addEventHandler(FXGLEvent.RESET, event -> {
             getInput().clearAll();
             getGameWorld().reset();
-            getMasterTimer().reset();
         });
 
         bus.addEventHandler(FXGLEvent.RESUME, event -> {
             getInput().clearAll();
-            getMasterTimer().start();
         });
 
         bus.addEventHandler(FXGLEvent.PAUSE, event -> {
             getInput().clearAll();
-            getMasterTimer().stop();
         });
+
+        bus.addEventHandler(FXGLEvent.ANY, getMasterTimer());
 
         getGameWorld().addWorldListener(getPhysicsWorld());
         getGameWorld().addWorldListener(getGameScene());
@@ -400,18 +399,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         });
 
         // Audio
-        bus.addEventHandler(NotificationEvent.ANY, event -> {
-            getAudioPlayer().playSound(FXGLAssets.SOUND_NOTIFICATION);
-        });
+        bus.addEventHandler(NotificationEvent.ANY, getAudioPlayer());
 
-        bus.addEventHandler(AchievementEvent.ACHIEVED, event -> {
-            getNotificationService().pushNotification("You got an achievement! " + event.getAchievement().getName());
-        });
-
-        bus.addEventHandler(AchievementProgressEvent.PROGRESS, event -> {
-            getNotificationService().pushNotification("Achievement " + event.getAchievement().getName() + "\n"
-                    + "Progress: " + event.getValue() + "/" + event.getMax());
-        });
+        bus.addEventHandler(AchievementEvent.ANY, getNotificationService());
 
         // FXGL App
 

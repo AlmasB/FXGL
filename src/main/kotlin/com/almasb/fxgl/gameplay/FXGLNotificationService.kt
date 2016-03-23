@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.event.AchievementEvent
+import com.almasb.fxgl.event.AchievementProgressEvent
 import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
@@ -50,6 +51,14 @@ import java.util.*
 class FXGLNotificationService
 @Inject
 private constructor(private val gameScene: GameScene) : NotificationService {
+
+    override fun handle(event: AchievementEvent) {
+        when(event.eventType) {
+            AchievementEvent.ACHIEVED -> pushNotification("You got an achievement! " + event.getAchievement().getName())
+            AchievementProgressEvent.PROGRESS -> pushNotification("Achievement " + event.getAchievement().getName() + "\n"
+                + "Progress: " + (event as AchievementProgressEvent).getValue() + "/" + event.getMax());
+        }
+    }
 
     private val log = FXGL.getLogger(javaClass)
 

@@ -208,6 +208,10 @@ private constructor() : AudioPlayer {
         }
     }
 
+    override fun handle(event: NotificationEvent) {
+        playSound(FXGLAssets.SOUND_NOTIFICATION);
+    }
+
     override fun save(profile: UserProfile) {
         log.finer("Saving data to profile")
 
