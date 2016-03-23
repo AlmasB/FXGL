@@ -27,6 +27,8 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.ents.component.DoubleComponent;
+import com.almasb.fxgl.devtools.DeveloperEditable;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
 
 /**
@@ -76,6 +78,11 @@ public class RotationComponent extends DoubleComponent {
     public final void rotateToVector(Point2D vector) {
         double angle = Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
         setValue(angle);
+    }
+
+    @DeveloperEditable("Angle")
+    public final DoubleProperty angleProperty() {
+        return valueProperty();
     }
 
     @Override
