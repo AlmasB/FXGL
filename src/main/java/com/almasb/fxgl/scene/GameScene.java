@@ -131,7 +131,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      */
     public Point2D screenToGame(Point2D screenPoint) {
         return screenPoint
-                .multiply(1.0 / GameApplication.getService(ServiceType.DISPLAY).getScaleRatio())
+                .multiply(1.0 / FXGL.getDisplay().getScaleRatio())
                 .add(viewport.getOrigin());
     }
 

@@ -29,6 +29,7 @@ package com.almasb.fxgl.entity.control;
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -67,7 +68,7 @@ public class LiftControl extends AbstractControl {
     @Override
     public void onAdded(Entity entity) {
         position = entity.getComponentUnsafe(PositionComponent.class);
-        timer = GameApplication.getService(ServiceType.LOCAL_TIMER);
+        timer = FXGL.newLocalTimer();
         speed = distance / duration.toSeconds();
     }
 

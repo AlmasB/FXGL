@@ -31,6 +31,7 @@ import com.almasb.ents.Component;
 import com.almasb.ents.ComponentListener;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.Entities;
@@ -178,8 +179,7 @@ public class MainViewComponent extends AbstractComponent {
      * @param generateBoundingBox generate bbox from view flag
      */
     public void setTexture(String textureName, boolean generateBoundingBox) {
-        EntityView view = new EntityView(GameApplication.getService(ServiceType.ASSET_LOADER)
-                .loadTexture(textureName));
+        EntityView view = new EntityView(FXGL.getAssetLoader().loadTexture(textureName));
 
         setView(view, generateBoundingBox);
     }

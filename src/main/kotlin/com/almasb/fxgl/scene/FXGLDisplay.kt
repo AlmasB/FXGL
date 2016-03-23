@@ -117,7 +117,7 @@ private constructor(private val stage: Stage,
 
         // if default css then use menu css, else use specified
         css = if (FXGLAssets.UI_CSS.isDefault())
-            GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(settings.menuStyle.cssFileName)
+            FXGL.getAssetLoader().loadCSS(settings.menuStyle.cssFileName)
         else
             FXGLAssets.UI_CSS
 

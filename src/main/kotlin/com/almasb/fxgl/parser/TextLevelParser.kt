@@ -77,7 +77,7 @@ class TextLevelParser {
      * @return parsed Level
      */
     fun parse(levelFileName: String): Level {
-        val assetLoader = GameApplication.getService(ServiceType.ASSET_LOADER)
+        val assetLoader = FXGL.getAssetLoader()
         val lines = assetLoader.loadText(levelFileName)
 
         val entities = ArrayList<Entity>()

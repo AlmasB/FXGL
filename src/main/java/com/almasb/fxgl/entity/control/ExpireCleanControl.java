@@ -28,6 +28,7 @@ package com.almasb.fxgl.entity.control;
 
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import javafx.util.Duration;
@@ -49,8 +50,7 @@ public class ExpireCleanControl extends AbstractControl {
     public void onAdded(Entity entity) {
         entity.activeProperty().addListener((observable, oldValue, isActive) -> {
             if (isActive) {
-                GameApplication.getService(ServiceType.MASTER_TIMER)
-                        .runOnceAfter(entity::removeFromWorld, expire);
+                FXGL.getMasterTimer().runOnceAfter(entity::removeFromWorld, expire);
             }
         });
     }

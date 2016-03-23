@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.audio;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.event.NotificationEvent;
@@ -92,7 +93,7 @@ public interface AudioPlayer extends UserProfileSavable, UpdateEventListener, Ev
      * @param assetName name of the sound file
      */
     default void playSound(String assetName) {
-        playSound(GameApplication.getService(ServiceType.ASSET_LOADER).loadSound(assetName));
+        playSound(FXGL.getAssetLoader().loadSound(assetName));
     }
 
     /**
@@ -101,7 +102,7 @@ public interface AudioPlayer extends UserProfileSavable, UpdateEventListener, Ev
      * @param assetName name of the music file
      */
     default void playMusic(String assetName) {
-        playMusic(GameApplication.getService(ServiceType.ASSET_LOADER).loadMusic(assetName));
+        playMusic(FXGL.getAssetLoader().loadMusic(assetName));
     }
 
     /**

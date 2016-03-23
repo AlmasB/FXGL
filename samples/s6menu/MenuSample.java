@@ -49,7 +49,7 @@ public class MenuSample extends GameApplication {
         // 2. set menu enabled to true
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
