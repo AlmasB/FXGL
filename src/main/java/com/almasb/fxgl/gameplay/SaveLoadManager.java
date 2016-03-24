@@ -131,6 +131,11 @@ public final class SaveLoadManager {
         return FS.loadDirectoryNames("./" + PROFILES_DIR, false);
     }
 
+    public static IOResult<?> deleteProfile(String profileName) {
+        log.debug(() -> "Deleting profile: " + profileName);
+        return FS.deleteDirectory("./" + PROFILES_DIR + profileName);
+    }
+
     /**
      * Loads file names of existing saves from "{@value #SAVE_DIR}".
      *

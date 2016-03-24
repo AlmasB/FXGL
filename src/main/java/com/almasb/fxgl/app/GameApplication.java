@@ -605,6 +605,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         Button btnNew = UIFactory.newButton("NEW");
         Button btnSelect = UIFactory.newButton("SELECT");
         btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull());
+        Button btnDelete = UIFactory.newButton("DELETE");
+        btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull());
 
         btnNew.setOnAction(e -> {
             getDisplay().showInputBox("New Profile", DialogPane.ALPHANUM, name -> {
@@ -632,7 +634,20 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             }
         });
 
-        getDisplay().showBox("Create new profile or select existing", profilesBox, btnNew, btnSelect);
+        btnDelete.setOnAction(e -> {
+            profileName = profilesBox.getValue();
+
+            IOResult<?> result = SaveLoadManager.deleteProfile(profileName);
+
+            if (result.isOK()) {
+                showProfileDialog();
+            } else {
+                getDisplay().showErrorBox("Failed to delete: " + profileName
+                        + "\nError: " + result.getErrorMessage(), this::showProfileDialog);
+            }
+        });
+
+        getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
     }
 
     private void bindScreenshotKey() {
