@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.scene.menu;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
@@ -72,7 +73,8 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
         title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-        Text version = UIFactory.newText("v" + app.getSettings().getVersion());
+        Text version = UIFactory.newText("v" + app.getSettings().getVersion()
+                + (app.getSettings().getApplicationMode() == ApplicationMode.RELEASE ? "" : "-" + app.getSettings().getApplicationMode()));
         version.setTranslateY(app.getHeight() - 2);
 
         getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox);
