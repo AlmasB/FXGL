@@ -30,27 +30,26 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
-import com.almasb.fxgl.ui.UIFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import javafx.animation.ScaleTransition
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.Duration
+import org.controlsfx.control.NotificationPane
 import java.util.*
 
 /**
- * Allows to easily push notifications.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
-class FXGLNotificationService
-@Inject
-private constructor(private val gameScene: GameScene) : NotificationService {
+class SlidingNotificationService
+@Inject private constructor(private val gameScene: GameScene): NotificationService {
 
     private val log = FXGL.getLogger(javaClass)
 
-    private val queue = ArrayDeque<NotificationView>()
+    private val queue = ArrayDeque<String>()
 
     private var position = Position.TOP
 
@@ -66,6 +65,13 @@ private constructor(private val gameScene: GameScene) : NotificationService {
      */
     override fun setPosition(position: Position) {
         this.position = position
+        if (position == Position.BOTTOM) {
+            notificationImpl.isShowFromTop = false
+            notificationImpl.translateY = FXGL.getSettings().height - 50.0
+        } else {
+            notificationImpl.isShowFromTop = true
+            notificationImpl.translateY = 0.0
+        }
     }
 
     private var backgroundColor = Color.BLACK
@@ -83,12 +89,26 @@ private constructor(private val gameScene: GameScene) : NotificationService {
 
     private var showing = false
 
+    private val notificationImpl = NotificationPane()
+
     init {
+        val pane = Pane()
+        pane.setPrefSize(FXGL.getSettings().width.toDouble(), 50.0)
+
+        //gameScene.addUINode(notificationImpl)
+
+        //notificationImpl.getStylesheets().add(FXGL.getAssetLoader().loadCSS("test.css").externalForm)
+        //notificationImpl.getStyleClass().add("fxgl")
+
+        notificationImpl.styleClass.add(NotificationPane.STYLE_CLASS_DARK)
+        notificationImpl.content = pane
+        notificationImpl.setOnHidden { popNotification() }
+
         log.debug { "Service [NotificationService] initialized" }
     }
 
-    private fun popNotification(notificationView: NotificationView) {
-        val removed = gameScene.removeUINode(notificationView)
+    private fun popNotification() {
+        val removed = gameScene.removeUINode(notificationImpl)
 
         // this is called asynchronously so we have to check manually
         if (!removed) {
@@ -111,68 +131,27 @@ private constructor(private val gameScene: GameScene) : NotificationService {
      * @param text the text to show
      */
     override fun pushNotification(text: String) {
-        val notificationView = createNotificationView(text)
-
         if (showing)
-            queue.add(notificationView)
+            queue.add(text)
         else
-            showNotification(notificationView)
+            showNotification(text)
     }
 
-    private fun showNotification(notificationView: NotificationView) {
+    private var counter = 0
+
+    private fun showNotification(text: String) {
+        counter++
         showing = true
-        gameScene.addUINode(notificationView)
-        notificationView.show()
+        gameScene.addUINode(notificationImpl)
+        notificationImpl.show(text)
 
-        FXGL.getEventBus().fireEvent(NotificationEvent(notificationView.notification))
-    }
+        FXGL.getEventBus().fireEvent(NotificationEvent(Notification(text)))
 
-    private fun createNotificationView(text: String): NotificationView {
-        val `in` = ScaleTransition(Duration.seconds(0.3))
-        `in`.fromX = 0.0
-        `in`.fromY = 0.0
-        `in`.toX = 1.0
-        `in`.toY = 1.0
+        val id = counter
 
-        val out = ScaleTransition(Duration.seconds(0.3))
-        out.fromX = 1.0
-        out.fromY = 1.0
-        out.toX = 0.0
-        out.toY = 0.0
-
-        val notificationView = NotificationView(Notification(text), backgroundColor, `in`, out)
-        notificationView.scaleX = 0.0
-        notificationView.scaleY = 0.0
-
-        var x = 0.0
-        var y = 0.0
-
-        when (position) {
-            Position.LEFT -> {
-                x = 50.0
-                y = gameScene.height / 2 - (UIFactory.heightOf(text, 12.0) + 10) / 2
-            }
-            Position.RIGHT -> {
-                x = gameScene.width - (UIFactory.widthOf(text, 12.0) + 20) - 50.0
-                y = gameScene.height / 2 - (UIFactory.heightOf(text, 12.0) + 10) / 2
-            }
-            Position.TOP -> {
-                x = gameScene.width / 2 - (UIFactory.widthOf(text, 12.0) + 20) / 2
-                y = 50.0
-            }
-            Position.BOTTOM -> {
-                x = gameScene.width / 2 - (UIFactory.widthOf(text, 12.0) + 20) / 2
-                y = gameScene.height - (UIFactory.heightOf(text, 12.0) + 10) - 50.0
-            }
-        }
-
-        notificationView.translateX = x
-        notificationView.translateY = y
-
-        `in`.node = notificationView
-        out.node = notificationView
-        out.setOnFinished { e -> popNotification(notificationView) }
-
-        return notificationView
+        FXGL.getMasterTimer().runOnceAfter( {
+            if (id == counter)
+                notificationImpl.hide()
+        }, Duration.seconds(3.0))
     }
 }

@@ -26,6 +26,7 @@
         <kotlin.version>1.0.0</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
+        <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.0</ents.version>
         <astar.version>1.0</astar.version>
@@ -59,6 +60,12 @@
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-window</artifactId>
             <version>${jfxtras.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>${controlsfx.version}</version>
         </dependency>
 
         <dependency>

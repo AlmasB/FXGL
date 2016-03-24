@@ -36,6 +36,7 @@ import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.FXGLNotificationService;
 import com.almasb.fxgl.gameplay.NotificationService;
+import com.almasb.fxgl.gameplay.SlidingNotificationService;
 import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.FXGLLoggerFactory;
@@ -169,7 +170,7 @@ public interface ServiceType<T> {
 
         @Override
         public Class<? extends NotificationService> serviceProvider() {
-            return FXGLNotificationService.class;
+            return SlidingNotificationService.class;
         }
     };
 
