@@ -295,7 +295,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected abstract void initUI();
 
-    private void initFPSOverlay() {
+    protected void initFPSOverlay() {
         if (getSettings().isFPSShown()) {
             Text fpsText = UIFactory.newText("", 24);
             fpsText.setTranslateY(getSettings().getHeight() - 40);
@@ -709,64 +709,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         log.debug("Stage size: " + stage.getWidth() + "x" + stage.getHeight());
     }
 
-    private class InitAppTask extends Task<Void> {
-        private Serializable data;
-
-        private InitAppTask() {
-            this.data = null;
-        }
-
-        /**
-         * @param data the data to load from, null if new game
-         */
-        private InitAppTask(Serializable data) {
-            this.data = data;
-        }
-
-        @Override
-        protected Void call() throws Exception {
-            update("Initializing Assets", 0);
-            initAssets();
-
-            update("Initializing Game", 1);
-            if (data == null)
-                initGame();
-            else
-                loadState(data);
-
-            update("Initializing Physics", 2);
-            initPhysics();
-
-            update("Initializing UI", 3);
-            initUI();
-            initFPSOverlay();
-
-            update("Initialization Complete", 4);
-            return null;
-        }
-
-        private void update(String message, int step) {
-            log.debug(message);
-            updateMessage(message);
-            updateProgress(step, 4);
-        }
-
-        @Override
-        protected void succeeded() {
-            getEventBus().fireEvent(FXGLEvent.initAppComplete());
-            resume();
-        }
-
-        @Override
-        protected void failed() {
-            Throwable error = getException();
-            error = error == null ? new RuntimeException("Initialization failed") : error;
-
-            Thread.getDefaultUncaughtExceptionHandler()
-                    .uncaughtException(Thread.currentThread(), error);
-        }
-    }
-
     /**
      * Initialize user application.
      */
@@ -788,7 +730,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected void startNewGame() {
         log.debug("Starting new game");
-        initApp(new InitAppTask());
+        initApp(new InitAppTask(this));
     }
 
     /**
@@ -798,7 +740,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected void startLoadedGame(Serializable data) {
         log.debug("Starting loaded game");
-        initApp(new InitAppTask(data));
+        initApp(new InitAppTask(this, data));
     }
 
     /**
