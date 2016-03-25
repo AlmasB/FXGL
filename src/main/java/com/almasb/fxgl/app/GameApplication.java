@@ -536,9 +536,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         getEventBus().addEventHandler(MenuDataEvent.DELETE, event -> {
             String fileName = event.getData();
 
-            boolean ok = saveLoadManager.delete(fileName);
-            if (!ok) {
-                getDisplay().showMessageBox("Failed to delete:\n" + fileName);
+            IOResult<?> io = saveLoadManager.deleteSaveFile(fileName);
+
+            if (!io.isOK()) {
+                getDisplay().showMessageBox("Failed to delete:\n" + io.getErrorMessage());
             }
         });
     }

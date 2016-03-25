@@ -108,17 +108,12 @@ public final class SaveLoadManager {
     }
 
     /**
-     * TODO: move to FS
-     *
      * @param fileName name of the file to delete
-     * @return true if file was deleted, false if file wasn't deleted for any reason
+     * @return result of the operation
      */
-    public boolean delete(String fileName) {
-        try {
-            return Files.deleteIfExists(Paths.get(saveDir() + fileName));
-        } catch (Exception e) {
-            return false;
-        }
+    public IOResult<?> deleteSaveFile(String fileName) {
+        log.debug(() -> "Deleting save file: " + fileName);
+        return FS.deleteFile(saveDir() + fileName);
     }
 
     /**

@@ -158,6 +158,28 @@ class FS {
         }
 
         /**
+         * Delete file [fileName].
+         */
+        @JvmStatic fun deleteFile(fileName: String): IOResult<*> {
+            log.debug { "Deleting file: $fileName" }
+
+            try {
+                val file = Paths.get(fileName)
+
+                if (!Files.exists(file)) {
+                    return IOResult.failure<Any>("File $file does not exist")
+                }
+
+                Files.delete(file)
+
+                return IOResult.success<Any>()
+            } catch (e: Exception) {
+                log.warning { "Failed to delete: ${e.message}" }
+                return IOResult.failure<Any>(e.message ?: "No error message")
+            }
+        }
+
+        /**
          * Delete directory [dirName] and its contents.
          */
         @JvmStatic fun deleteDirectory(dirName: String): IOResult<*> {
@@ -188,8 +210,6 @@ class FS {
 
                 return IOResult.success<Any>()
             } catch (e: Exception) {
-                e.printStackTrace()
-
                 log.warning { "Failed to delete: ${e.message}" }
                 return IOResult.failure<Any>(e.message ?: "No error message")
             }
