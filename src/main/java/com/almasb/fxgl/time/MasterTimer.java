@@ -102,7 +102,7 @@ public interface MasterTimer extends EventHandler<FXGLEvent> {
      * @param action   the action
      * @param interval time
      */
-    void runAtInterval(Runnable action, Duration interval);
+    TimerAction runAtInterval(Runnable action, Duration interval);
 
     /**
      * The Runnable action will be scheduled for execution iff
@@ -118,7 +118,7 @@ public interface MasterTimer extends EventHandler<FXGLEvent> {
      * @param interval       interval between executions
      * @param whileCondition condition
      */
-    void runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition);
+    TimerAction runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition);
 
     /**
      * The Runnable action will be executed once after given delay
@@ -128,7 +128,7 @@ public interface MasterTimer extends EventHandler<FXGLEvent> {
      * @param action action to execute
      * @param delay  delay after which to execute
      */
-    void runOnceAfter(Runnable action, Duration delay);
+    TimerAction runOnceAfter(Runnable action, Duration delay);
 
     /**
      * Clears all registered timer based actions.

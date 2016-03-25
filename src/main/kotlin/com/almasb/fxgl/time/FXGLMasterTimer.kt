@@ -29,7 +29,7 @@ package com.almasb.fxgl.time
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.UpdateEvent
-import com.almasb.fxgl.time.TimerAction.TimerType
+import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.animation.AnimationTimer
@@ -131,7 +131,7 @@ private constructor() : AnimationTimer(), MasterTimer {
     /**
      * List for all timer based actions
      */
-    private val timerActions = CopyOnWriteArrayList<TimerAction>()
+    private val timerActions = CopyOnWriteArrayList<TimerActionImpl>()
 
     /**
      * Holds current tick (frame)
@@ -250,13 +250,15 @@ private constructor() : AnimationTimer(), MasterTimer {
      *
      *
      * Note: the scheduled action will not run while the game is paused.
-
+     *
      * @param action   the action
      * *
      * @param interval time
      */
-    override fun runAtInterval(action: Runnable, interval: Duration) {
-        timerActions.add(TimerAction(getNow(), interval, action, TimerType.INDEFINITE))
+    override fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
+        val act = TimerActionImpl(getNow(), interval, action, TimerType.INDEFINITE)
+        timerActions.add(act)
+        return act
     }
 
     /**
@@ -265,29 +267,29 @@ private constructor() : AnimationTimer(), MasterTimer {
      * then the Runnable action will be scheduled to run at given interval.
      * The action will run for the first time after given interval
      *
-     *
      * The action will be removed from schedule when whileCondition becomes `false`.
      *
-     *
      * Note: the scheduled action will not run while the game is paused
-
+     *
      * @param action         action to execute
      * *
      * @param interval       interval between executions
      * *
      * @param whileCondition condition
      */
-    override fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty) {
+    override fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
         if (!whileCondition.get()) {
-            return
+            throw IllegalArgumentException("While condition is false")
         }
-        val act = TimerAction(getNow(), interval, action, TimerType.INDEFINITE)
+        val act = TimerActionImpl(getNow(), interval, action, TimerType.INDEFINITE)
         timerActions.add(act)
 
         whileCondition.addListener { obs, old, isTrue ->
             if (!isTrue)
                 act.expire()
         }
+
+        return act
     }
 
     /**
@@ -300,7 +302,9 @@ private constructor() : AnimationTimer(), MasterTimer {
      * *
      * @param delay  delay after which to execute
      */
-    override fun runOnceAfter(action: Runnable, delay: Duration) {
-        timerActions.add(TimerAction(getNow(), delay, action, TimerType.ONCE))
+    override fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
+        val act = TimerActionImpl(getNow(), delay, action, TimerType.ONCE)
+        timerActions.add(act)
+        return act
     }
 }

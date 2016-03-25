@@ -35,17 +35,15 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class TimerAction
+class TimerActionImpl
 /**
  * @param now      current time in nanoseconds
- * *
  * @param interval interval duration
- * *
  * @param action   the action
- * *
  * @param type     ONCE or INDEFINITE
  */
-(private var time: Long, interval: Duration, private val action: Runnable, private val type: TimerAction.TimerType) {
+(private var time: Long, interval: Duration, private val action: Runnable, private val type: TimerActionImpl.TimerType)
+: TimerAction {
 
     enum class TimerType {
         ONCE, INDEFINITE
@@ -56,8 +54,11 @@ class TimerAction
     /**
      * @return true if the timer has expired, false if active
      */
-    var isExpired = false
-        private set
+    private var isExpired = false
+    override fun isExpired() = isExpired
+
+    private var isPaused = false
+    override fun isPaused() = isPaused
 
     init {
         this.interval = FXGLMasterTimer.secondsToNanos(interval.toSeconds()).toDouble()
@@ -75,7 +76,7 @@ class TimerAction
      * @param now current time in nanoseconds
      */
     fun update(now: Long) {
-        if (isExpired)
+        if (isExpired || isPaused)
             return
 
         if (now - time >= interval) {
@@ -88,11 +89,19 @@ class TimerAction
         }
     }
 
+    override fun pause() {
+        isPaused = true
+    }
+
+    override fun resume() {
+        isPaused = false
+    }
+
     /**
      * Set the timer as expired. The action will no longer
      * be executed.
      */
-    fun expire() {
+    override fun expire() {
         isExpired = true
     }
 }
