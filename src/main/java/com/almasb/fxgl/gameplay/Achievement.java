@@ -108,6 +108,12 @@ public class Achievement {
 
     private ChangeListener<Boolean> progressListener;
 
+    /**
+     * Bind achievement condition to given property.
+     *
+     * @param property the property
+     * @param value the value at which the achievement is unlocked
+     */
     public void bind(IntegerProperty property, int value) {
         if (isAchieved())
             return;
@@ -117,7 +123,6 @@ public class Achievement {
 
         progressListener = (o, fired, reachedHalf) -> {
             if (reachedHalf && !fired) {
-                // TODO: this should be done via AchievementManager
                 FXGL.getEventBus().fireEvent(new AchievementProgressEvent(this, property.get(), value));
                 bb.removeListener(progressListener);
             }
