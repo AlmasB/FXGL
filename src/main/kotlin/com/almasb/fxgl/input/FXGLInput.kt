@@ -27,14 +27,8 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.ServiceType
-import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.event.LoadEvent
-import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.collections.FXCollections
@@ -47,12 +41,6 @@ import java.util.*
 
 @Singleton
 class FXGLInput @Inject private constructor() : Input {
-
-    override fun handle(event: FXGLEvent) {
-        when (event.eventType) {
-            FXGLEvent.PAUSE, FXGLEvent.RESUME, FXGLEvent.RESET -> clearAll()
-        }
-    }
 
     private val log = FXGL.getLogger(javaClass)
 

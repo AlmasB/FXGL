@@ -33,8 +33,6 @@ import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
 
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 public final class SaveLoadManager {

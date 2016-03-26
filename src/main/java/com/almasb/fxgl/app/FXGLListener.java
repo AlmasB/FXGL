@@ -24,14 +24,20 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
-
-import com.almasb.ents.EntityWorldListener;
+package com.almasb.fxgl.app;
 
 /**
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface GameWorldListener extends EntityWorldListener {
-    void onWorldUpdate(double tpf);
-    void onWorldReset();
+public interface FXGLListener {
+
+    void onInitComplete();
+
+    void onPause();
+
+    void onResume();
+
+    void onReset();
+
+    void onExit();
 }

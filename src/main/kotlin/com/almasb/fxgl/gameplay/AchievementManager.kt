@@ -27,11 +27,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.event.AchievementEvent
-import com.almasb.fxgl.event.LoadEvent
-import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
 import javafx.collections.FXCollections

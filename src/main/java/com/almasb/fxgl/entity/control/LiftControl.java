@@ -30,8 +30,6 @@ import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.util.Duration;

@@ -27,8 +27,6 @@
 package com.almasb.fxgl.asset;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.ui.FontFactory;

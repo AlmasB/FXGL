@@ -26,11 +26,10 @@
 
 package com.almasb.fxgl.time;
 
-import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.app.FXGLListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
-import javafx.event.EventHandler;
 import javafx.util.Duration;
 
 /**
@@ -39,7 +38,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface MasterTimer extends EventHandler<FXGLEvent> {
+public interface MasterTimer extends FXGLListener {
 
     /**
      * Current time for this tick in nanoseconds. Also time elapsed

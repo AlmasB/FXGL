@@ -34,7 +34,6 @@ import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.gameplay.FXGLNotificationService;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.gameplay.SlidingNotificationService;
 import com.almasb.fxgl.input.FXGLInput;

@@ -41,7 +41,6 @@ import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.Version;
-import com.google.inject.Inject;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

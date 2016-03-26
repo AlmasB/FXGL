@@ -28,7 +28,6 @@ package com.almasb.fxgl.app;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
@@ -45,7 +44,6 @@ import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
-import com.google.inject.Inject;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -59,7 +57,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
@@ -308,7 +305,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected abstract void onUpdate(double tpf);
 
-    private void initEventHandlers() {
+    private void initGlobalEventHandlers() {
         log.debug("Initializing global event handlers");
 
         EventBus bus = getEventBus();
@@ -319,6 +316,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             getGameWorld().onUpdateEvent(event);
             getPhysicsWorld().onUpdateEvent(event);
+            getGameScene().onUpdateEvent(event);
 
             onUpdate(event.tpf());
 
@@ -342,12 +340,23 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getAchievementManager().load(event.getProfile());
         });
 
+        bus.addEventHandler(FXGLEvent.PAUSE, event -> {
+            getInput().onPause();
+            getMasterTimer().onPause();
+        });
 
-        // World
+        bus.addEventHandler(FXGLEvent.RESUME, event -> {
+            getInput().onResume();
+            getMasterTimer().onResume();
+        });
 
-        bus.addEventHandler(FXGLEvent.RESET, getGameWorld());
-        bus.addEventHandler(FXGLEvent.ANY, getInput());
-        bus.addEventHandler(FXGLEvent.ANY, getMasterTimer());
+        bus.addEventHandler(FXGLEvent.RESET, event -> {
+            getGameWorld().reset();
+            getGameScene().onWorldReset();
+
+            getInput().onReset();
+            getMasterTimer().onReset();
+        });
 
         getGameWorld().addWorldListener(getPhysicsWorld());
         getGameWorld().addWorldListener(getGameScene());
@@ -377,10 +386,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getInput().onInputEvent(new FXGLInputEvent(event, Point2D.ZERO));
         });
 
-        // Audio
-        bus.addEventHandler(NotificationEvent.ANY, getAudioPlayer());
+        bus.addEventHandler(NotificationEvent.ANY, event -> {
+            getAudioPlayer().onNotificationEvent(event);
+        });
 
-        bus.addEventHandler(AchievementEvent.ANY, getNotificationService());
+        bus.addEventHandler(AchievementEvent.ANY, event -> {
+            getNotificationService().onAchievementEvent(event);
+        });
 
         // FXGL App
 
@@ -393,7 +405,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             if (!isMenuOpen())
                 pause();
 
-            getInput().clearAll();
+            getInput().onReset();
         });
         bus.addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
             if (getState() == ApplicationState.INTRO ||
@@ -656,7 +668,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         // scan for annotated methods and register them too
         getInput().scanForUserActions(this);
 
-        initEventHandlers();
+        initGlobalEventHandlers();
 
         defaultProfile = createProfile();
 
@@ -692,6 +704,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     private void initApp(Task<?> initTask) {
         log.debug("Initializing App");
+
+        // TODO: this sequence looks weird, do we even need this on first init?
+        // separate first from others?
         pause();
         reset();
         setState(ApplicationState.LOADING);

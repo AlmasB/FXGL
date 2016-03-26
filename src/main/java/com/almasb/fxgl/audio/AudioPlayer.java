@@ -27,13 +27,12 @@
 package com.almasb.fxgl.audio;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.event.NotificationEvent;
+import com.almasb.fxgl.gameplay.NotificationListener;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.beans.property.DoubleProperty;
-import javafx.event.EventHandler;
 
 /**
  * General audio player service that supports playback of sound and music objects.
@@ -41,7 +40,12 @@ import javafx.event.EventHandler;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface AudioPlayer extends UserProfileSavable, UpdateEventListener, EventHandler<NotificationEvent> {
+public interface AudioPlayer extends UserProfileSavable, UpdateEventListener, NotificationListener {
+
+    @Override
+    default void onNotificationEvent(NotificationEvent event) {
+        playSound(FXGLAssets.SOUND_NOTIFICATION);
+    }
 
     /**
      * @return global music volume property

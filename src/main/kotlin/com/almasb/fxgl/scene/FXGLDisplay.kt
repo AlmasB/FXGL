@@ -28,17 +28,12 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
-import com.almasb.fxgl.event.LoadEvent
-import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty

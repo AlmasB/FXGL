@@ -32,8 +32,6 @@ import com.almasb.ents.ComponentListener;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;

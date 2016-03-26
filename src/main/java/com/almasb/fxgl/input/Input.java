@@ -26,10 +26,9 @@
 
 package com.almasb.fxgl.input;
 
-import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.app.FXGLListener;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.time.UpdateEventListener;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -41,7 +40,28 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Input extends UserProfileSavable, UpdateEventListener, EventHandler<FXGLEvent> {
+public interface Input extends UserProfileSavable, UpdateEventListener, FXGLListener {
+
+    @Override
+    default void onInitComplete() {}
+
+    @Override
+    default void onPause() {
+        clearAll();
+    }
+
+    @Override
+    default void onResume() {
+        clearAll();
+    }
+
+    @Override
+    default void onReset() {
+        clearAll();
+    }
+
+    @Override
+    default void onExit() {}
 
     void onInputEvent(FXGLInputEvent event);
 

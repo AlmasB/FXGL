@@ -30,7 +30,6 @@ import com.almasb.fxeventbus.EventBus
 import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.input.FXGLInputEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton

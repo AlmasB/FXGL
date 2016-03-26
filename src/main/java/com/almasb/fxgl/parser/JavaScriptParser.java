@@ -26,8 +26,6 @@
 package com.almasb.fxgl.parser;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 
 import javax.script.Invocable;
 import javax.script.ScriptContext;

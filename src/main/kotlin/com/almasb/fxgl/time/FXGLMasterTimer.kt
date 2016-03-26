@@ -27,7 +27,6 @@
 package com.almasb.fxgl.time
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
@@ -50,6 +49,25 @@ import java.util.concurrent.CopyOnWriteArrayList
 class FXGLMasterTimer
 @Inject
 private constructor() : AnimationTimer(), MasterTimer {
+
+    override fun onInitComplete() {
+    }
+
+    override fun onPause() {
+        stop()
+    }
+
+    override fun onResume() {
+        start()
+    }
+
+    override fun onReset() {
+        reset()
+    }
+
+    override fun onExit() {
+
+    }
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -89,14 +107,6 @@ private constructor() : AnimationTimer(), MasterTimer {
 
     init {
         log.debug("Service [MasterTimer] initialized")
-    }
-
-    override fun handle(event: FXGLEvent) {
-        when(event.eventType) {
-            FXGLEvent.PAUSE -> stop()
-            FXGLEvent.RESUME -> start()
-            FXGLEvent.RESET -> reset()
-        }
     }
 
     private var updateListener: UpdateEventListener? = null

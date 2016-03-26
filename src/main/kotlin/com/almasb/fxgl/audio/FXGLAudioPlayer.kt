@@ -26,16 +26,9 @@
 
 package com.almasb.fxgl.audio
 
-import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.ServiceType
-import com.almasb.fxgl.asset.FXGLAssets
-import com.almasb.fxgl.event.LoadEvent
-import com.almasb.fxgl.event.NotificationEvent
-import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
@@ -206,10 +199,6 @@ private constructor() : AudioPlayer {
             music.isStopped = true
             it.remove()
         }
-    }
-
-    override fun handle(event: NotificationEvent) {
-        playSound(FXGLAssets.SOUND_NOTIFICATION);
     }
 
     override fun save(profile: UserProfile) {

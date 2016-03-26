@@ -26,8 +26,6 @@
 package com.almasb.fxgl.util;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 
 /**
  * Default FXGL exception handler for checked exceptions.

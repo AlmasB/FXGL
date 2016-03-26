@@ -29,14 +29,14 @@ package com.almasb.fxgl.scene;
 import com.almasb.ents.*;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.gameplay.GameWorldListener;
+import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import com.almasb.fxgl.time.UpdateEventListener;
 import com.almasb.fxgl.ui.UIFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -66,7 +66,8 @@ import java.util.List;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener, ControlListener {
+public final class GameScene extends FXGLScene implements EntityWorldListener,
+        UpdateEventListener, ComponentListener, ControlListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
@@ -280,7 +281,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     }
 
     @Override
-    public void onWorldUpdate(double tpf) {
+    public void onUpdateEvent(UpdateEvent event) {
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
@@ -288,7 +289,6 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
-    @Override
     public void onWorldReset() {
         log.debug("Resetting game scene");
 
