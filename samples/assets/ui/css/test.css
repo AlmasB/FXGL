@@ -1,0 +1,103 @@
+/******************************************************************************
+ *
+ * Light theme
+ *
+ *****************************************************************************/
+
+.notification-pane .notification-bar > .pane {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-padding: 0 7 0 7;
+}
+
+.notification-pane.top .notification-bar > .pane {
+    -fx-background-insets: 0 0 0 0, 0 0 1 0, 0 0 2 0;
+}
+
+.notification-pane.bottom .notification-bar > .pane {
+    -fx-background-insets: 0 0 0 0, 1 0 0 0, 2 0 0 0;
+}
+
+.notification-pane .notification-bar > .pane .label {
+    -fx-font-size: 1.166667em; /*15px;*/
+    -fx-text-fill: #292929;
+}
+
+
+/******************************************************************************
+ *
+ * Dark theme
+ *
+ *****************************************************************************/
+
+.notification-pane.fxgl .notification-bar > .pane {
+    -fx-background-color: linear-gradient(#0F0F0F, #0F0F0F 75%, #FFFFFF);
+}
+
+.notification-pane.fxgl .notification-bar > .pane .label {
+    -fx-text-fill: #ebebeb;
+}
+
+
+/******************************************************************************
+ *
+ * Drop shadow support
+ *
+ *****************************************************************************/
+
+/* NotificationPane shows from the top, so put shadow at bottom of bar */
+.notification-pane.top .notification-bar > .pane {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 11, 0.0, 0, 3);
+}
+
+/*
+ * We could have a drop shadow at the top of the bar when it appears from the
+ * bottom, but it doesn't look right as the gradient is running in the opposite
+ * direction of the drop shadow. Therefore, the following is commented out,
+ * but it can always be re-enabled in the future if desired.
+ */
+ /*
+.notification-pane:bottom .notification-bar > .pane {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 11, 0.0, 0, -3);
+}
+*/
+
+
+
+/******************************************************************************
+ *
+ * Close button
+ *
+ *****************************************************************************/
+.notification-pane .notification-bar > .pane .close-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2;
+    -fx-padding: 0 0 0 0;
+    -fx-alignment: center;
+}
+
+.notification-pane .notification-bar > .pane .close-button:hover {
+    -fx-background-color: linear-gradient(#a3a3a3, #8b8b8b 34%, #777777 36%, #777777 63%, #8b8b8b 65%, #adadad);
+}
+
+.notification-pane .notification-bar > .pane .close-button:pressed {
+    -fx-background-color: linear-gradient(#a3a3a3, #8b8b8b 34%, #777777 36%, #777777 63%, #8b8b8b 65%, #adadad);
+}
+
+.notification-pane .notification-bar > .pane .close-button > .graphic {
+    -fx-background-color: #949494;
+    -fx-scale-shape: false;
+    -fx-padding: 4.5 4.5 4.5 4.5; /* Graphic is 9x9 px */
+}
+
+.notification-pane .notification-bar > .pane .close-button:hover > .graphic {
+    -fx-background-color: #fefeff;
+}
+
+.notification-pane .notification-bar > .pane .close-button:pressed > .graphic {
+    -fx-background-color: #cfcfcf;
+}
+
+.notification-pane .notification-bar > .pane .close-button > .graphic {
+    -fx-shape: "M395.992,296.758l1.794-1.794l7.292,7.292l-1.795,1.794 L395.992,296.758z M403.256,294.992l1.794,1.794l-7.292,7.292l-1.794-1.795 L403.256,294.992z";
+}

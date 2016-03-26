@@ -40,7 +40,7 @@ public class MenuSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("MenuSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
 
         // 1. set intro enabled to true
@@ -49,7 +49,7 @@ public class MenuSample extends GameApplication {
         // 2. set menu enabled to true
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
