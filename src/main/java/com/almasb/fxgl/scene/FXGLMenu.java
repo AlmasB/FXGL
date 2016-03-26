@@ -37,6 +37,7 @@ import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
@@ -331,6 +332,12 @@ public abstract class FXGLMenu extends FXGLScene {
         getRoot().getChildren().add(node);
     }
 
+    private MenuEventListener listener;
+
+    public void setListener(MenuEventListener listener) {
+        this.listener = listener;
+    }
+
     private void fireMenuEvent(Event event) {
         app.getEventBus().fireEvent(event);
     }
@@ -341,6 +348,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * Starts new game.
      */
     protected final void fireNewGame() {
+        listener.onNewGame();
         fireMenuEvent(new MenuEvent(MenuEvent.NEW_GAME));
     }
 
@@ -349,6 +357,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * Lads the game state from last modified save file.
      */
     protected final void fireContinue() {
+        listener.onContinue();
         fireMenuEvent(new MenuEvent(MenuEvent.CONTINUE));
     }
 
@@ -359,6 +368,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param fileName  name of the saved file
      */
     protected final void fireLoad(String fileName) {
+        listener.onLoad(fileName);
         fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
     }
 
@@ -367,6 +377,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * Can only be fired from game menu. Saves current state of the game with given file name.
      */
     protected final void fireSave() {
+        listener.onSave();
         fireMenuEvent(new MenuEvent(MenuEvent.SAVE));
     }
 
@@ -376,6 +387,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param fileName name of the save file
      */
     protected final void fireDelete(String fileName) {
+        listener.onDelete(fileName);
         fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
     }
 
@@ -384,6 +396,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * Can only be fired from game menu. Will close the menu and unpause the game.
      */
     protected final void fireResume() {
+        listener.onResume();
         fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
     }
 
@@ -392,6 +405,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * App will clean up the world/the scene and exit.
      */
     protected final void fireExit() {
+        listener.onExit();
         fireMenuEvent(new MenuEvent(MenuEvent.EXIT));
     }
 
@@ -400,6 +414,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * App will clean up the world/the scene and enter main menu.
      */
     protected final void fireExitToMainMenu() {
+        listener.onExitToMainMenu();
         fireMenuEvent(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
     }
 }

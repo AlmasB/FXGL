@@ -48,6 +48,12 @@ import java.util.*
 @Singleton
 class FXGLInput @Inject private constructor() : Input {
 
+    override fun handle(event: FXGLEvent) {
+        when (event.eventType) {
+            FXGLEvent.PAUSE, FXGLEvent.RESUME, FXGLEvent.RESET -> clearAll()
+        }
+    }
+
     private val log = FXGL.getLogger(javaClass)
 
     /**

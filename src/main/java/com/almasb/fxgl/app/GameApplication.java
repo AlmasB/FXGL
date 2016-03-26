@@ -39,6 +39,7 @@ import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
+import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
@@ -50,6 +51,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
@@ -71,12 +73,10 @@ import java.util.List;
  * <ol>
  * <li>Instance fields of YOUR subclass of GameApplication</li>
  * <li>initSettings()</li>
- * <li>Services configuration (after this you can safely call getService())</li>
+ * <li>Services configuration (after this you can safely call FXGL.getService())</li>
  * <li>initAchievements()</li>
  * <li>initInput()</li>
  * <li>preInit()</li>
- * <li>initIntroVideo() (if enabled)</li>
- * <li>initMenuFactory() (if enabled)</li>
  * <p>The following phases are NOT executed on UI thread</p>
  * <li>initAssets()</li>
  * <li>initGame() OR loadState()</li>
@@ -199,12 +199,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * Main menu, this is the menu shown at the start of game.
      */
-    private FXGLScene mainMenuScene;
+    private FXGLMenu mainMenuScene;
 
     /**
      * In-game menu, this is shown when menu key pressed during the game.
      */
-    private FXGLScene gameMenuScene;
+    private FXGLMenu gameMenuScene;
 
     /**
      * Override to register your achievements.
@@ -297,11 +297,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     protected void initFPSOverlay() {
         if (getSettings().isFPSShown()) {
-            Text fpsText = UIFactory.newText("", 24);
-            fpsText.setTranslateY(getSettings().getHeight() - 40);
-            fpsText.textProperty().bind(getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
-                    .concat(getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
-            getGameScene().addUINode(fpsText);
+            getGameScene().setShowFPSOverlay(true);
         }
     }
 
@@ -330,12 +326,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             bus.fireEvent(event);
         });
 
-        // Input
-
-        bus.addEventHandler(FXGLInputEvent.ANY, event -> {
-            getInput().onInputEvent(event);
-        });
-
         // Save/Load events
 
         bus.addEventHandler(SaveEvent.ANY, event -> {
@@ -355,19 +345,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         // World
 
-        bus.addEventHandler(FXGLEvent.RESET, event -> {
-            getInput().clearAll();
-            getGameWorld().reset();
-        });
-
-        bus.addEventHandler(FXGLEvent.RESUME, event -> {
-            getInput().clearAll();
-        });
-
-        bus.addEventHandler(FXGLEvent.PAUSE, event -> {
-            getInput().clearAll();
-        });
-
+        bus.addEventHandler(FXGLEvent.RESET, getGameWorld());
+        bus.addEventHandler(FXGLEvent.ANY, getInput());
         bus.addEventHandler(FXGLEvent.ANY, getMasterTimer());
 
         getGameWorld().addWorldListener(getPhysicsWorld());
@@ -392,10 +371,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         getGameScene().addEventHandler(MouseEvent.ANY, event -> {
             FXGLInputEvent e = new FXGLInputEvent(event,
                     getGameScene().screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
-            bus.fireEvent(e);
+            getInput().onInputEvent(e);
         });
         getGameScene().addEventHandler(KeyEvent.ANY, event -> {
-            bus.fireEvent(new FXGLInputEvent(event, Point2D.ZERO));
+            getInput().onInputEvent(new FXGLInputEvent(event, Point2D.ZERO));
         });
 
         // Audio
@@ -443,87 +422,60 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     private boolean canSwitchGameMenu = true;
 
+    private void onMenuKey(boolean pressed) {
+        if (!pressed) {
+            canSwitchGameMenu = true;
+            return;
+        }
+
+        if (canSwitchGameMenu) {
+            if (getState() == ApplicationState.GAME_MENU) {
+                canSwitchGameMenu = false;
+                resume();
+            } else if (getState() == ApplicationState.PLAYING) {
+                canSwitchGameMenu = false;
+                pause();
+                setState(ApplicationState.GAME_MENU);
+            } else {
+                log.warning("Menu key pressed in unknown state: " + getState());
+            }
+        }
+    }
+
     /**
      * Creates Main and Game menu scenes.
      * Registers them with the Display service.
      * Adds key binding so that scenes can be switched on menu key press.
      */
-    private void initMenuScenes() {
+    private void configureMenu() {
         mainMenuScene = sceneFactory.newMainMenu(this);
         gameMenuScene = sceneFactory.newGameMenu(this);
+
+        MenuEventHandler handler = new MenuEventHandler();
+        mainMenuScene.setListener(handler);
+        gameMenuScene.setListener(handler);
 
         getDisplay().registerScene(mainMenuScene);
         getDisplay().registerScene(gameMenuScene);
 
-        getGameScene().addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == getSettings().getMenuKey()
-                    && canSwitchGameMenu) {
-                getEventBus().fireEvent(new MenuEvent(MenuEvent.PAUSE));
-                canSwitchGameMenu = false;
+        EventHandler<KeyEvent> menuKeyHandler = event -> {
+            if (event.getCode() == getSettings().getMenuKey()) {
+                onMenuKey(event.getEventType() == KeyEvent.KEY_PRESSED);
             }
-        });
+        };
 
-        gameMenuScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == getSettings().getMenuKey()
-                    && canSwitchGameMenu) {
-                getEventBus().fireEvent(new MenuEvent(MenuEvent.RESUME));
-                canSwitchGameMenu = false;
-            }
-        });
-
-        getGameScene().addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == getSettings().getMenuKey())
-                canSwitchGameMenu = true;
-        });
-        gameMenuScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == getSettings().getMenuKey())
-                canSwitchGameMenu = true;
-        });
+        getGameScene().addEventHandler(KeyEvent.ANY, menuKeyHandler);
+        gameMenuScene.addEventHandler(KeyEvent.ANY, menuKeyHandler);
     }
 
-    /**
-     * Registers menu event handlers, so that we can perform
-     * some actions when menu events occur.
-     */
-    private void initMenuEventHandlers() {
-        getEventBus().addEventHandler(MenuEvent.NEW_GAME, event -> startNewGame());
-        getEventBus().addEventHandler(MenuEvent.EXIT, event -> exit());
-        getEventBus().addEventHandler(MenuEvent.EXIT_TO_MAIN_MENU, event -> {
-            pause();
-            reset();
-            setState(ApplicationState.MAIN_MENU);
-        });
+    private class MenuEventHandler implements MenuEventListener {
+        @Override
+        public void onNewGame() {
+            startNewGame();
+        }
 
-        getEventBus().addEventHandler(MenuEvent.PAUSE, event -> {
-            pause();
-            setState(ApplicationState.GAME_MENU);
-        });
-        getEventBus().addEventHandler(MenuEvent.RESUME, event -> {
-            resume();
-        });
-
-        getEventBus().addEventHandler(MenuEvent.SAVE, event -> {
-            getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
-                IOResult io = saveLoadManager.save(saveState(), saveFileName);
-
-                if (!io.isOK())
-                    getDisplay().showMessageBox("Failed to save:\n" + io.getErrorMessage());
-            });
-        });
-
-        getEventBus().addEventHandler(MenuDataEvent.LOAD, event -> {
-            String saveFileName = event.getData();
-
-            IOResult<Serializable> io = saveLoadManager.load(saveFileName);
-
-            if (io.hasData()) {
-                startLoadedGame(io.getData());
-            } else {
-                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
-            }
-        });
-
-        getEventBus().addEventHandler(MenuEvent.CONTINUE, event -> {
+        @Override
+        public void onContinue() {
             IOResult<Serializable> io = saveLoadManager.loadLastModifiedSaveFile();
 
             if (io.hasData()) {
@@ -531,22 +483,54 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             } else {
                 getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
             }
-        });
+        }
 
-        getEventBus().addEventHandler(MenuDataEvent.DELETE, event -> {
-            String fileName = event.getData();
+        @Override
+        public void onResume() {
+            resume();
+        }
 
+        @Override
+        public void onSave() {
+            getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
+                IOResult io = saveLoadManager.save(saveState(), saveFileName);
+
+                if (!io.isOK())
+                    getDisplay().showMessageBox("Failed to save:\n" + io.getErrorMessage());
+            });
+        }
+
+        @Override
+        public void onLoad(String fileName) {
+            IOResult<Serializable> io = saveLoadManager.load(fileName);
+
+            if (io.hasData()) {
+                startLoadedGame(io.getData());
+            } else {
+                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
+            }
+        }
+
+        @Override
+        public void onDelete(String fileName) {
             IOResult<?> io = saveLoadManager.deleteSaveFile(fileName);
 
             if (!io.isOK()) {
                 getDisplay().showMessageBox("Failed to delete:\n" + io.getErrorMessage());
             }
-        });
-    }
+        }
 
-    private void configureMenu() {
-        initMenuScenes();
-        initMenuEventHandlers();
+        @Override
+        public void onExit() {
+            exit();
+        }
+
+        @Override
+        public void onExitToMainMenu() {
+            pause();
+            reset();
+            setState(ApplicationState.MAIN_MENU);
+        }
     }
 
     private void configureIntro() {
@@ -685,7 +669,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         // services are now ready, switch to normal logger
         log = FXGL.getLogger(GameApplication.class);
-
         log.debug("Starting Game Application");
 
         sceneFactory = initSceneFactory();
@@ -702,11 +685,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         if (getSettings().isMenuEnabled() && !getSettings().isIntroEnabled())
             showProfileDialog();
-
-        log.debug("Showing stage");
-        log.debug("Root size: " + stage.getScene().getRoot().getLayoutBounds().getWidth() + "x" + stage.getScene().getRoot().getLayoutBounds().getHeight());
-        log.debug("Scene size: " + stage.getScene().getWidth() + "x" + stage.getScene().getHeight());
-        log.debug("Stage size: " + stage.getWidth() + "x" + stage.getHeight());
     }
 
     /**

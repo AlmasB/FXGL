@@ -151,6 +151,14 @@ private constructor(private val stage: Stage,
                         eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                 })
             }
+
+            setOnShown {
+                log.debug("Showing stage")
+                log.debug("Root size: " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
+                log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
+                log.debug("Stage size: " + stage.width + "x" + stage.height)
+            }
+
             icons.add(FXGLAssets.UI_ICON)
 
             if (settings.isFullScreen) {

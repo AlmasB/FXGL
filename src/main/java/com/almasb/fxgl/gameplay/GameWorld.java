@@ -35,6 +35,7 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
+import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.time.UpdateEventListener;
@@ -42,6 +43,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
@@ -57,7 +59,7 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld extends EntityWorld implements UpdateEventListener {
+public final class GameWorld extends EntityWorld implements UpdateEventListener, EventHandler<FXGLEvent> {
 
     /**
      * The logger
@@ -214,5 +216,12 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
         log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
+    }
+
+    @Override
+    public void handle(FXGLEvent event) {
+        if (event.getEventType() == FXGLEvent.RESET) {
+            reset();
+        }
     }
 }
