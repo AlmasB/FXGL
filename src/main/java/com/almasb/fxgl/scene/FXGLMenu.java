@@ -264,13 +264,24 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing a list of credits
      */
     protected final MenuContent createContentCredits() {
-        return new MenuContent(FXGL.getSettings()
+        ScrollPane pane = new ScrollPane();
+        pane.setPrefWidth(app.getWidth() * 3 / 5);
+        pane.setPrefHeight(app.getHeight() / 2);
+        pane.setStyle("-fx-background:black;");
+
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+
+        FXGL.getSettings()
                 .getCredits()
                 .getList()
                 .stream()
                 .map(UIFactory::newText)
-                .collect(Collectors.toList())
-                .toArray(new Text[0]));
+                .forEach(vbox.getChildren()::add);
+
+        pane.setContent(vbox);
+
+        return new MenuContent(pane);
     }
 
     /**
