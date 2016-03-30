@@ -259,7 +259,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * @return data with required info about current state
      * @throws UnsupportedOperationException if was not overridden
      */
-    public Serializable saveState() {
+    protected Serializable saveState() {
         log.warning("Called saveState(), but it wasn't overridden!");
         throw new UnsupportedOperationException("Default implementation is not available");
     }
@@ -272,7 +272,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * @param data previously saved data
      * @throws UnsupportedOperationException if was not overridden
      */
-    public void loadState(Serializable data) {
+    protected void loadState(Serializable data) {
         log.warning("Called loadState(), but it wasn't overriden!");
         throw new UnsupportedOperationException("Default implementation is not available");
     }
@@ -292,6 +292,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected abstract void initUI();
 
+    // TODO: this doesn't belong here
     protected void initFPSOverlay() {
         if (getSettings().isFPSShown()) {
             getGameScene().setShowFPSOverlay(true);
@@ -343,11 +344,15 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         bus.addEventHandler(FXGLEvent.PAUSE, event -> {
             getInput().onPause();
             getMasterTimer().onPause();
+
+            setState(ApplicationState.PAUSED);
         });
 
         bus.addEventHandler(FXGLEvent.RESUME, event -> {
             getInput().onResume();
             getMasterTimer().onResume();
+
+            setState(ApplicationState.PLAYING);
         });
 
         bus.addEventHandler(FXGLEvent.RESET, event -> {
@@ -356,6 +361,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             getInput().onReset();
             getMasterTimer().onReset();
+        });
+
+        bus.addEventHandler(FXGLEvent.EXIT, event -> {
+            // if it is null then we are running without menus
+            if (profileName != null)
+                saveLoadManager.saveProfile(createProfile());
         });
 
         getGameWorld().addWorldListener(getPhysicsWorld());
@@ -737,52 +748,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     }
 
     /**
-     * Pauses the main loop execution.
-     */
-    protected void pause() {
-        log.debug("Pausing main loop");
-        getEventBus().fireEvent(FXGLEvent.pause());
-
-        setState(ApplicationState.PAUSED);
-    }
-
-    /**
-     * Resumes the main loop execution.
-     */
-    protected void resume() {
-        log.debug("Resuming main loop");
-        getEventBus().fireEvent(FXGLEvent.resume());
-
-        setState(ApplicationState.PLAYING);
-    }
-
-    /**
-     * Reset the application.
-     */
-    private void reset() {
-        log.debug("Resetting FXGL application");
-        getEventBus().fireEvent(FXGLEvent.reset());
-    }
-
-    /**
-     * Exit the application.
-     */
-    protected void exit() {
-        log.debug("Exiting Normally");
-
-        // if it is null then we are running without menus
-        if (profileName != null)
-            saveLoadManager.saveProfile(createProfile());
-
-        getEventBus().fireEvent(FXGLEvent.exit());
-
-        log.close();
-        stop();
-        Platform.exit();
-        System.exit(0);
-    }
-
-    /**
      * Stores the default profile data. This is used to restore default settings.
      */
     private UserProfile defaultProfile;
@@ -839,63 +804,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
 
         return saveLoadManager;
-    }
-
-    /**
-     * Returns target width of the application. This is the
-     * width that was set using GameSettings.
-     * Note that the resulting
-     * width of the scene might be different due to end user screen, in
-     * which case transformations will be automatically scaled down
-     * to ensure identical image on all screens.
-     *
-     * @return target width
-     */
-    public final double getWidth() {
-        return getSettings().getWidth();
-    }
-
-    /**
-     * Returns target height of the application. This is the
-     * height that was set using GameSettings.
-     * Note that the resulting
-     * height of the scene might be different due to end user screen, in
-     * which case transformations will be automatically scaled down
-     * to ensure identical image on all screens.
-     *
-     * @return target height
-     */
-    public final double getHeight() {
-        return getSettings().getHeight();
-    }
-
-    /**
-     * Returns the visual area within the application window,
-     * excluding window borders. Note that it will return the
-     * rectangle with set target width and height, not actual
-     * screen width and height. Meaning on smaller screens
-     * the area will correctly return the GameSettings' width and height.
-     * <p>
-     * Equivalent to new Rectangle2D(0, 0, getWidth(), getHeight()).
-     *
-     * @return screen bounds
-     */
-    public final Rectangle2D getScreenBounds() {
-        return new Rectangle2D(0, 0, getWidth(), getHeight());
-    }
-
-    /**
-     * @return current tick
-     */
-    public final long getTick() {
-        return getMasterTimer().getTick();
-    }
-
-    /**
-     * @return current time since start of game in nanoseconds
-     */
-    public final long getNow() {
-        return getMasterTimer().getNow();
     }
 
     private long playtime = 0;

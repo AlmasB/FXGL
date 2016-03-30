@@ -29,6 +29,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
+import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
@@ -42,6 +43,8 @@ import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -120,6 +123,43 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
+     * Pauses the application.
+     */
+    protected void pause() {
+        log.debug("Pausing main loop");
+        getEventBus().fireEvent(FXGLEvent.pause());
+    }
+
+    /**
+     * Resumes the application.
+     */
+    protected void resume() {
+        log.debug("Resuming main loop");
+        getEventBus().fireEvent(FXGLEvent.resume());
+    }
+
+    /**
+     * Reset the application.
+     */
+    protected void reset() {
+        log.debug("Resetting FXGL application");
+        getEventBus().fireEvent(FXGLEvent.reset());
+    }
+
+    /**
+     * Exit the application.
+     */
+    protected void exit() {
+        log.debug("Exiting Normally");
+        getEventBus().fireEvent(FXGLEvent.exit());
+
+        log.close();
+        stop();
+        Platform.exit();
+        System.exit(0);
+    }
+
+    /**
      * Load FXGL system properties.
      */
     private void initSystemProperties() {
@@ -186,6 +226,63 @@ public abstract class FXGLApplication extends Application {
      * @param settings app settings
      */
     protected abstract void initSettings(GameSettings settings);
+
+    /**
+     * Returns target width of the application. This is the
+     * width that was set using GameSettings.
+     * Note that the resulting
+     * width of the scene might be different due to end user screen, in
+     * which case transformations will be automatically scaled down
+     * to ensure identical image on all screens.
+     *
+     * @return target width
+     */
+    public final double getWidth() {
+        return getSettings().getWidth();
+    }
+
+    /**
+     * Returns target height of the application. This is the
+     * height that was set using GameSettings.
+     * Note that the resulting
+     * height of the scene might be different due to end user screen, in
+     * which case transformations will be automatically scaled down
+     * to ensure identical image on all screens.
+     *
+     * @return target height
+     */
+    public final double getHeight() {
+        return getSettings().getHeight();
+    }
+
+    /**
+     * Returns the visual area within the application window,
+     * excluding window borders. Note that it will return the
+     * rectangle with set target width and height, not actual
+     * screen width and height. Meaning on smaller screens
+     * the area will correctly return the GameSettings' width and height.
+     * <p>
+     * Equivalent to new Rectangle2D(0, 0, getWidth(), getHeight()).
+     *
+     * @return screen bounds
+     */
+    public final Rectangle2D getScreenBounds() {
+        return new Rectangle2D(0, 0, getWidth(), getHeight());
+    }
+
+    /**
+     * @return current tick
+     */
+    public final long getTick() {
+        return getMasterTimer().getTick();
+    }
+
+    /**
+     * @return current time since start of game in nanoseconds
+     */
+    public final long getNow() {
+        return getMasterTimer().getNow();
+    }
 
     /**
      * @return event bus
