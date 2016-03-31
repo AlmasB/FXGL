@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.io
 
+import com.almasb.fxgl.util.ExceptionHandler
+import java.util.function.Consumer
+
 /**
  * Represents result of an IO based operation.
  *
@@ -66,6 +69,29 @@ class IOResult<T> {
      * @return true iff result has data associated with it
      */
     fun hasData() = data != null
+
+    /**
+     * The callback is executed immediately.
+     */
+    fun ifOK(consumer: Consumer<T>): IOResult<T> {
+        if (isOK)
+            consumer.accept(data)
+
+        return this
+    }
+
+    // TODO: this should delegate the actual error, not our wrapper
+    fun ifError(handler: ExceptionHandler): IOResult<T> {
+        if (!isOK)
+            handler.handle(Exception(errorMessage))
+
+        return this
+    }
+
+//    fun always(code: Runnable): IOResult<T> {
+//        code.run()
+//        return this
+//    }
 
     companion object {
 

@@ -499,13 +499,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onContinue() {
-            IOResult<Serializable> io = saveLoadManager.loadLastModifiedSaveFile();
-
-            if (io.hasData()) {
-                startLoadedGame(io.getData());
-            } else {
-                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
-            }
+            saveLoadManager.<Serializable>loadLastModifiedSaveFile()
+                    .ifOK(GameApplication.this::startLoadedGame)
+                    .ifError(getDefaultCheckedExceptionHandler());
         }
 
         @Override
@@ -516,31 +512,22 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         @Override
         public void onSave() {
             getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
-                IOResult io = saveLoadManager.save(saveState(), saveFileName);
-
-                if (!io.isOK())
-                    getDisplay().showMessageBox("Failed to save:\n" + io.getErrorMessage());
+                saveLoadManager.save(saveState(), saveFileName)
+                        .ifError(getDefaultCheckedExceptionHandler());
             });
         }
 
         @Override
         public void onLoad(String fileName) {
-            IOResult<Serializable> io = saveLoadManager.load(fileName);
-
-            if (io.hasData()) {
-                startLoadedGame(io.getData());
-            } else {
-                getDisplay().showMessageBox("Failed to load:\n" + io.getErrorMessage());
-            }
+            saveLoadManager.<Serializable>load(fileName)
+                    .ifOK(GameApplication.this::startLoadedGame)
+                    .ifError(getDefaultCheckedExceptionHandler());
         }
 
         @Override
         public void onDelete(String fileName) {
-            IOResult<?> io = saveLoadManager.deleteSaveFile(fileName);
-
-            if (!io.isOK()) {
-                getDisplay().showMessageBox("Failed to delete:\n" + io.getErrorMessage());
-            }
+            saveLoadManager.deleteSaveFile(fileName)
+                    .ifError(getDefaultCheckedExceptionHandler());
         }
 
         @Override
@@ -643,16 +630,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         });
 
         btnDelete.setOnAction(e -> {
-            profileName = profilesBox.getValue();
+            String name = profilesBox.getValue();
 
-            IOResult<?> result = SaveLoadManager.deleteProfile(profileName);
-
-            if (result.isOK()) {
-                showProfileDialog();
-            } else {
-                getDisplay().showErrorBox("Failed to delete: " + profileName
-                        + "\nError: " + result.getErrorMessage(), this::showProfileDialog);
-            }
+            SaveLoadManager.deleteProfile(name)
+                    .ifOK(o -> showProfileDialog())
+                    .ifError(error -> getDisplay().showErrorBox(error.getMessage(), this::showProfileDialog));
         });
 
         getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
