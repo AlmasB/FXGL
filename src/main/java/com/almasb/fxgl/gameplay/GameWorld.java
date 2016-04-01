@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld extends EntityWorld implements UpdateEventListener, EventHandler<FXGLEvent> {
+public final class GameWorld extends EntityWorld implements UpdateEventListener {
 
     /**
      * The logger
@@ -216,12 +216,5 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener,
 
         log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
-    }
-
-    @Override
-    public void handle(FXGLEvent event) {
-        if (event.getEventType() == FXGLEvent.RESET) {
-            reset();
-        }
     }
 }
