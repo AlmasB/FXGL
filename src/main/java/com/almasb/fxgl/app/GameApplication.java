@@ -273,7 +273,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * @throws UnsupportedOperationException if was not overridden
      */
     protected void loadState(Serializable data) {
-        log.warning("Called loadState(), but it wasn't overriden!");
+        log.warning("Called loadState(), but it wasn't overridden!");
         throw new UnsupportedOperationException("Default implementation is not available");
     }
 
