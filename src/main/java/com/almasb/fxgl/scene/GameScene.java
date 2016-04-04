@@ -360,7 +360,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
             EntityView view = viewComponent.getView();
             addGameView(view);
 
-            viewComponent.viewProperty().addListener(viewChangeListener);
+            //viewComponent.viewProperty().addListener(viewChangeListener);
             viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
                 getRenderGroup(oldLayer).getChildren().remove(view);
                 getRenderGroup(newLayer).getChildren().add(view);
@@ -378,7 +378,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
             EntityView view = viewComponent.getView();
             removeGameView(view);
 
-            viewComponent.viewProperty().removeListener(viewChangeListener);
+            //viewComponent.viewProperty().removeListener(viewChangeListener);
         }
     }
 

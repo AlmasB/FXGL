@@ -91,6 +91,10 @@ public class BoundingBoxComponent extends AbstractComponent {
         hitBoxes.removeIf(h -> h.getName().equals(name));
     }
 
+    public final void clearHitBoxes() {
+        hitBoxes.clear();
+    }
+
     private ReadOnlyDoubleWrapper width = new ReadOnlyDoubleWrapper();
     private ReadOnlyDoubleWrapper height = new ReadOnlyDoubleWrapper();
 

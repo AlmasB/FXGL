@@ -211,6 +211,16 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
                 .findAny();
     }
 
+    private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();
+
+    public Optional<Entity> getSelectedEntity() {
+        return Optional.ofNullable(selectedEntity.get());
+    }
+
+    public ObjectProperty<Entity> selectedEntityProperty() {
+        return selectedEntity;
+    }
+
     public void setLevel(Level level) {
         reset();
 
