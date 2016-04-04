@@ -302,8 +302,8 @@ private constructor(private val stage: Stage,
         scaledHeight.set(newH)
         scaleRatio.set(newW / settings.width)
 
-        log.debug("Target size: " + getTargetWidth() + "x" + getTargetHeight() + "@" + 1.0)
-        log.debug("New size:    " + newW + "x" + newH + "@" + getScaleRatio())
+        log.debug("Target size: $targetWidth x $targetHeight @ 1.0")
+        log.debug("New size:    $newW x $newH @ $scaleRatio")
     }
 
     /**

@@ -213,6 +213,11 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
     private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();
 
+    /**
+     * Returns last selected (clicked on by mouse) entity.
+     *
+     * @return selected entity
+     */
     public Optional<Entity> getSelectedEntity() {
         return Optional.ofNullable(selectedEntity.get());
     }
@@ -221,6 +226,13 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         return selectedEntity;
     }
 
+    /**
+     * Set level to given.
+     * Resets the world.
+     * Adds all level entities to the world.
+     *
+     * @param level the level
+     */
     public void setLevel(Level level) {
         reset();
 

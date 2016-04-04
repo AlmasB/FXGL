@@ -208,12 +208,22 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
 
     @Override
     public void onEntityAdded(Entity entity) {
-        addEntity(entity);
+        entities.add(entity);
+
+        if (entity.hasComponent(PhysicsComponent.class)) {
+            createBody(entity);
+        } else if (entity.hasComponent(PhysicsParticleComponent.class)) {
+            createPhysicsParticles(entity);
+        }
     }
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        removeEntity(entity);
+        entities.remove(entity);
+
+        if (entity.hasComponent(PhysicsComponent.class)) {
+            destroyBody(entity);
+        }
     }
 
     /**
@@ -344,24 +354,6 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      */
     public void removeCollisionHandler(CollisionHandler handler) {
         collisionHandlers.remove(handler);
-    }
-
-    private void addEntity(Entity entity) {
-        entities.add(entity);
-
-        if (entity.hasComponent(PhysicsComponent.class)) {
-            createBody(entity);
-        } else if (entity.hasComponent(PhysicsParticleComponent.class)) {
-            createPhysicsParticles(entity);
-        }
-    }
-
-    private void removeEntity(Entity entity) {
-        entities.remove(entity);
-
-        if (entity.hasComponent(PhysicsComponent.class)) {
-            destroyBody(entity);
-        }
     }
 
     /**

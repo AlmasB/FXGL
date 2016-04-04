@@ -29,15 +29,27 @@ package com.almasb.fxgl.logging;
 import com.almasb.fxgl.app.ApplicationMode;
 
 /**
+ * Factory for producing loggers.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public abstract class LoggerFactory {
 
-    public LoggerFactory(ApplicationMode mode) {
+    public LoggerFactory(ApplicationMode mode) {}
 
-    }
-
+    /**
+     * Construct new logger for given class.
+     *
+     * @param caller caller class
+     * @return logger
+     */
     public abstract Logger newLogger(Class<?> caller);
 
+    /**
+     * Construct new logger with given name.
+     *
+     * @param name logger name
+     * @return logger
+     */
     public abstract Logger newLogger(String name);
 }

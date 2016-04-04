@@ -27,17 +27,34 @@
 package com.almasb.fxgl.app;
 
 /**
+ * Listener for FXGL system events.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface FXGLListener {
 
+    /**
+     * Fired on game initialization complete.
+     */
     void onInitComplete();
 
+    /**
+     * Fired on main loop paused.
+     */
     void onPause();
 
+    /**
+     * Fired on main loop resumed.
+     */
     void onResume();
 
+    /**
+     * Fired on FXGL reset.
+     */
     void onReset();
 
+    /**
+     * Fired before the system is about to shut down.
+     */
     void onExit();
 }

@@ -123,7 +123,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Pauses the application.
+     * Pause the application.
      */
     protected void pause() {
         log.debug("Pausing main loop");
@@ -131,7 +131,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Resumes the application.
+     * Resume the application.
      */
     protected void resume() {
         log.debug("Resuming main loop");

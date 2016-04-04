@@ -29,9 +29,16 @@ package com.almasb.fxgl.gameplay;
 import com.almasb.fxgl.event.AchievementEvent;
 
 /**
+ * Listener for achievement events.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface AchievementListener {
 
+    /**
+     * Fired on achievement event.
+     *
+     * @param event the event
+     */
     void onAchievementEvent(AchievementEvent event);
 }

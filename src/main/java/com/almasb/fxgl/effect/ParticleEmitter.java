@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.util.TriFunction;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;

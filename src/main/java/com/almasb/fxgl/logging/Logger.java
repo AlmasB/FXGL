@@ -29,21 +29,70 @@ package com.almasb.fxgl.logging;
 import java.util.function.Supplier;
 
 /**
+ * Logger service.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface Logger {
 
+    /**
+     * Log an info level message.
+     *
+     * @param message the message
+     */
     void info(String message);
+
+    /**
+     * Log an info level message supplied by object.
+     *
+     * @param messageSupplier the message supplier
+     */
     void info(Supplier<String> messageSupplier);
 
+    /**
+     * Log a debug level message.
+     *
+     * @param message the message
+     */
     void debug(String message);
+
+    /**
+     * Log a debug level message supplied by object.
+     *
+     * @param messageSupplier the message supplier
+     */
     void debug(Supplier<String> messageSupplier);
 
+    /**
+     * Log a warning level message.
+     *
+     * @param message the message
+     */
     void warning(String message);
+
+    /**
+     * Log a warning level message supplied by object.
+     *
+     * @param messageSupplier the message supplier
+     */
     void warning(Supplier<String> messageSupplier);
 
+    /**
+     * Log a fatal level message.
+     *
+     * @param message the message
+     */
     void fatal(String message);
+
+    /**
+     * Log a fatal level message supplied by object.
+     *
+     * @param messageSupplier the message supplier
+     */
     void fatal(Supplier<String> messageSupplier);
 
+    /**
+     * Close the logger.
+     */
     void close();
 }

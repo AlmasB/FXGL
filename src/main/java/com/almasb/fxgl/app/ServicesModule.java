@@ -31,9 +31,12 @@ import com.google.inject.AbstractModule;
 import java.util.List;
 
 /**
+ * Module that binds services with their providers.
+ * Note: written in java because kotlin freaks out with "to()".
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class ServicesModule extends AbstractModule {
+abstract class ServicesModule extends AbstractModule {
 
     @SuppressWarnings("unchecked")
     protected void configureServices(List<ServiceType> services) {

@@ -29,9 +29,16 @@ package com.almasb.fxgl.gameplay;
 import com.almasb.fxgl.event.NotificationEvent;
 
 /**
+ * Listener for notification events.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface NotificationListener {
 
+    /**
+     * Fired on notification event.
+     *
+     * @param event the notification event
+     */
     void onNotificationEvent(NotificationEvent event);
 }
