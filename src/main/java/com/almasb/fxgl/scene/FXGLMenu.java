@@ -64,7 +64,6 @@ import javafx.stage.StageStyle;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is a base class for main/game menus. It provides several
