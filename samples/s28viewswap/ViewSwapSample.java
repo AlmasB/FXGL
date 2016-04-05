@@ -38,20 +38,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to init a basic game object and attach to world
- * using fluent API.
+ * Shows how to change views for an entity at runtime.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ViewSwapSample extends GameApplication {
 
-    // 1. define types of entities in the game using Enum
-    private enum Type {
-        PLAYER
-    }
-
-    // make the field instance level
-    // but do NOT init here for properly functioning save-load system
     private GameEntity player;
 
     @Override
@@ -72,7 +64,8 @@ public class ViewSwapSample extends GameApplication {
         getInput().addAction(new UserAction("Swap View") {
             @Override
             protected void onActionBegin() {
-                player.getMainViewComponent().setView(new Rectangle(30, 30, Color.TRANSPARENT), true);
+                // 1. use main view component to set view at runtime
+                player.getMainViewComponent().setView(new Rectangle(30, 30, Color.BLUE));
             }
         }, KeyCode.F);
     }
@@ -82,13 +75,9 @@ public class ViewSwapSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        MainViewComponent.turnOnDebugBBox(Color.RED);
-
-        // 2. create entity and attach to world using fluent API
         player = Entities.builder()
-                .type(Type.PLAYER)
                 .at(100, 100)
-                .viewFromNodeWithBBox(new Rectangle(40, 40))
+                .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
     }
 

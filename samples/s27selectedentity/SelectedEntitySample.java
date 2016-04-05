@@ -40,20 +40,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to init a basic game object and attach to world
- * using fluent API.
+ * Shows how to make entities selectable with mouse clicks.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class SelectedEntitySample extends GameApplication {
 
-    // 1. define types of entities in the game using Enum
     private enum Type {
         PLAYER, ENEMY
     }
 
-    // make the field instance level
-    // but do NOT init here for properly functioning save-load system
     private GameEntity player, enemy;
 
     @Override
@@ -71,7 +67,7 @@ public class SelectedEntitySample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Remove selectable") {
+        getInput().addAction(new UserAction("Make unselectable") {
             @Override
             protected void onActionBegin() {
                 player.getComponentUnsafe(SelectableComponent.class)
@@ -79,7 +75,7 @@ public class SelectedEntitySample extends GameApplication {
             }
         }, KeyCode.F);
 
-        getInput().addAction(new UserAction("Remove selectable2") {
+        getInput().addAction(new UserAction("Make selectable") {
             @Override
             protected void onActionBegin() {
                 player.getComponentUnsafe(SelectableComponent.class)
@@ -93,11 +89,11 @@ public class SelectedEntitySample extends GameApplication {
 
     @Override
     protected void initGame() {
-        // 2. create entity and attach to world using fluent API
         player = Entities.builder()
                 .type(Type.PLAYER)
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
+                // 1. attach selectable component
                 .with(new SelectableComponent(true))
                 .buildAndAttach(getGameWorld());
 
@@ -108,6 +104,7 @@ public class SelectedEntitySample extends GameApplication {
                 .with(new SelectableComponent(true))
                 .buildAndAttach(getGameWorld());
 
+        // 2. click on entity and see it being selected
         getGameWorld().selectedEntityProperty().addListener((o, oldEntity, newEntity) -> {
             System.out.println(oldEntity);
             System.out.println(newEntity);
