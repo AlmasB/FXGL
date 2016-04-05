@@ -25,13 +25,13 @@
  */
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.util.TriFunction;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;

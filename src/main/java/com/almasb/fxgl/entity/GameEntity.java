@@ -90,4 +90,9 @@ public class GameEntity extends Entity {
     public MainViewComponent getMainViewComponent() {
         return view;
     }
+
+    @Override
+    public String toString() {
+        return "GameEntity(" + type + "," + position + "," + rotation  + ")";
+    }
 }

@@ -29,31 +29,28 @@ package com.almasb.fxgl.app;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
+import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
-import com.almasb.fxgl.logging.FXGLLogger;
 import com.almasb.fxgl.util.Version;
-import com.google.inject.*;
-import com.google.inject.name.Names;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * General FXGL application that configures services for all parts to use.
@@ -62,16 +59,15 @@ import java.util.logging.Logger;
  */
 public abstract class FXGLApplication extends Application {
 
+    /**
+     * We use system logger because logger service is not yet ready.
+     */
+    private static final Logger log = SystemLogger.INSTANCE;
+
     static {
-        FXGLLogger.init(Level.CONFIG);
         Version.print();
         setDefaultCheckedExceptionHandler(new FXGLCheckedExceptionHandler());
     }
-
-    /**
-     * The logger
-     */
-    protected static final Logger log = FXGLLogger.getLogger("FXGL.Application");
 
     private static ExceptionHandler defaultCheckedExceptionHandler;
 
@@ -90,112 +86,91 @@ public abstract class FXGLApplication extends Application {
     public static final void setDefaultCheckedExceptionHandler(ExceptionHandler handler) {
         defaultCheckedExceptionHandler = error -> {
             log.warning("Checked Exception:");
-            log.warning(FXGLLogger.errorTraceAsString(error));
+            log.warning(SystemLogger.INSTANCE.errorTraceAsString(error));
             handler.handle(error);
         };
     }
 
     /**
-     * Dependency injector.
+     * @deprecated use FXGL.getService() instead
      */
-    private static Injector injector;
-
-    /**
-     * Obtain an instance of a service.
-     * It may be expensive to use this in a loop.
-     * Store a reference to the instance instead.
-     *
-     * @param type service type
-     * @param <T> type
-     * @return service
-     */
+    @Deprecated
     public static final <T> T getService(ServiceType<T> type) {
-        return injector.getInstance(type.service());
-    }
-
-    @SuppressWarnings("unchecked")
-    private void configureServices(Stage stage) {
-        injector = Guice.createInjector(new AbstractModule() {
-            private Scene scene = new Scene(new Pane());
-
-            @Override
-            protected void configure() {
-                bind(Double.class)
-                        .annotatedWith(Names.named("appWidth"))
-                        .toInstance((double)getSettings().getWidth());
-
-                bind(Double.class)
-                        .annotatedWith(Names.named("appHeight"))
-                        .toInstance((double)getSettings().getHeight());
-
-                bind(ReadOnlyGameSettings.class).toInstance(getSettings());
-
-                for (Field field : ServiceType.class.getDeclaredFields()) {
-                    try {
-                        ServiceType type = (ServiceType) field.get(null);
-                        if (type.service().equals(type.serviceProvider()))
-                            bind(type.serviceProvider());
-                        else
-                            bind(type.service()).to(type.serviceProvider());
-                    } catch (IllegalAccessException e) {
-                        throw new IllegalArgumentException("Failed to configure services: " + e.getMessage());
-                    }
-                }
-            }
-
-            @Provides
-            Scene primaryScene() {
-                return scene;
-            }
-
-            @Provides
-            Stage primaryStage() {
-                return stage;
-            }
-        });
-
-        log.finer("Services configuration complete");
-
-        injector.injectMembers(this);
-
-        achievementManager = new AchievementManager();
+        return FXGL.getService(type);
     }
 
     @Override
     public final void init() throws Exception {
-        log.finer("FXGL_init()");
+        log.debug("Initializing FXGL");
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        log.finer("FXGL_start()");
+        log.debug("Starting FXGL");
 
         initSystemProperties();
         initUserProperties();
-
         initAppSettings();
-        initLogger();
 
-        configureServices(stage);
+        FXGL.configure(settings, stage);
+
+        log.debug("FXGL configuration complete");
     }
 
     @Override
-    public final void stop() throws Exception {
-        log.finer("FXGL_stop()");
+    public final void stop() {
+        log.debug("Exiting FXGL");
+    }
+
+    /**
+     * Pause the application.
+     */
+    protected void pause() {
+        log.debug("Pausing main loop");
+        getEventBus().fireEvent(FXGLEvent.pause());
+    }
+
+    /**
+     * Resume the application.
+     */
+    protected void resume() {
+        log.debug("Resuming main loop");
+        getEventBus().fireEvent(FXGLEvent.resume());
+    }
+
+    /**
+     * Reset the application.
+     */
+    protected void reset() {
+        log.debug("Resetting FXGL application");
+        getEventBus().fireEvent(FXGLEvent.reset());
+    }
+
+    /**
+     * Exit the application.
+     */
+    protected void exit() {
+        log.debug("Exiting Normally");
+        getEventBus().fireEvent(FXGLEvent.exit());
+
+        log.close();
+        stop();
+        Platform.exit();
+        System.exit(0);
     }
 
     /**
      * Load FXGL system properties.
      */
     private void initSystemProperties() {
-        log.finer("Initializing system properties");
+        log.debug("Initializing system properties");
 
         ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
         props.keySet().forEach(key -> {
             Object value = props.getObject(key);
             FXGL.setProperty(key, value);
 
-            log.finer(key + " = " + value);
+            log.debug(key + " = " + value);
         });
     }
 
@@ -203,7 +178,7 @@ public abstract class FXGLApplication extends Application {
      * Load user defined properties to override FXGL system properties.
      */
     private void initUserProperties() {
-        log.finer("Initializing user properties");
+        log.debug("Initializing user properties");
 
         // services are not ready yet, so load manually
         try (InputStream is = getClass().getResource("/assets/properties/system.properties").openStream()) {
@@ -212,7 +187,7 @@ public abstract class FXGLApplication extends Application {
                 Object value = props.getObject(key);
                 FXGL.setProperty(key, value);
 
-                log.finer(key + " = " + value);
+                log.debug(key + " = " + value);
             });
         } catch (NullPointerException npe) {
             log.info("User properties not found. Using system");
@@ -225,32 +200,11 @@ public abstract class FXGLApplication extends Application {
      * Take app settings from user.
      */
     private void initAppSettings() {
+        log.debug("Initializing app settings");
+
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
-
-        FXGL.setSettings(settings);
-    }
-
-    /**
-     * Init logging system based on app settings.
-     */
-    private void initLogger() {
-        Level logLevel = Level.ALL;
-        switch (getSettings().getApplicationMode()) {
-            case DEVELOPER:
-                logLevel = Level.CONFIG;
-                break;
-            case RELEASE:
-                logLevel = Level.SEVERE;
-                break;
-            case DEBUG: // fallthru
-            default:
-                break;
-        }
-
-        FXGLLogger.init(logLevel);
-        log.info("Application Mode: " + getSettings().getApplicationMode());
     }
 
     /**
@@ -273,82 +227,116 @@ public abstract class FXGLApplication extends Application {
      */
     protected abstract void initSettings(GameSettings settings);
 
-    @Inject
-    private EventBus eventBus;
+    /**
+     * Returns target width of the application. This is the
+     * width that was set using GameSettings.
+     * Note that the resulting
+     * width of the scene might be different due to end user screen, in
+     * which case transformations will be automatically scaled down
+     * to ensure identical image on all screens.
+     *
+     * @return target width
+     */
+    public final double getWidth() {
+        return getSettings().getWidth();
+    }
+
+    /**
+     * Returns target height of the application. This is the
+     * height that was set using GameSettings.
+     * Note that the resulting
+     * height of the scene might be different due to end user screen, in
+     * which case transformations will be automatically scaled down
+     * to ensure identical image on all screens.
+     *
+     * @return target height
+     */
+    public final double getHeight() {
+        return getSettings().getHeight();
+    }
+
+    /**
+     * Returns the visual area within the application window,
+     * excluding window borders. Note that it will return the
+     * rectangle with set target width and height, not actual
+     * screen width and height. Meaning on smaller screens
+     * the area will correctly return the GameSettings' width and height.
+     * <p>
+     * Equivalent to new Rectangle2D(0, 0, getWidth(), getHeight()).
+     *
+     * @return screen bounds
+     */
+    public final Rectangle2D getScreenBounds() {
+        return new Rectangle2D(0, 0, getWidth(), getHeight());
+    }
+
+    /**
+     * @return current tick
+     */
+    public final long getTick() {
+        return getMasterTimer().getTick();
+    }
+
+    /**
+     * @return current time since start of game in nanoseconds
+     */
+    public final long getNow() {
+        return getMasterTimer().getNow();
+    }
 
     /**
      * @return event bus
      */
     public final EventBus getEventBus() {
-        return eventBus;
+        return FXGL.getEventBus();
     }
-
-    @Inject
-    private Display display;
 
     /**
      * @return display service
      */
     public final Display getDisplay() {
-        return display;
+        return FXGL.getDisplay();
     }
-
-    @Inject
-    private Input input;
 
     /**
      * @return input service
      */
     public final Input getInput() {
-        return input;
+        return FXGL.getInput();
     }
-
-    @Inject
-    private AudioPlayer audioPlayer;
 
     /**
      * @return audio player
      */
     public final AudioPlayer getAudioPlayer() {
-        return audioPlayer;
+        return FXGL.getAudioPlayer();
     }
-
-    @Inject
-    private AssetLoader assetLoader;
 
     /**
      * @return asset loader
      */
     public final AssetLoader getAssetLoader() {
-        return assetLoader;
+        return FXGL.getAssetLoader();
     }
-
-    @Inject
-    private MasterTimer masterTimer;
 
     /**
      * @return master timer
      */
     public final MasterTimer getMasterTimer() {
-        return masterTimer;
+        return FXGL.getMasterTimer();
     }
-
-    @Inject
-    private NotificationService notificationService;
 
     /**
      * @return notification service
      */
     public final NotificationService getNotificationService() {
-        return notificationService;
+        return FXGL.getNotificationService();
     }
-
-    private AchievementManager achievementManager;
 
     /**
      * @return achievement manager
      */
     public final AchievementManager getAchievementManager() {
-        return achievementManager;
+        return FXGL.getAchievementManager();
     }
 }

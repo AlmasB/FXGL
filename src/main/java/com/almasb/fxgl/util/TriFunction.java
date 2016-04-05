@@ -24,51 +24,14 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
-
-import com.almasb.fxgl.app.FXGL;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+package com.almasb.fxgl.util;
 
 /**
- * Simple LRU cache based on {@link LinkedHashMap}.
+ * Represents a function that accepts three arguments and produces a result.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-final class AssetsCache {
-
-    private static final int CACHE_SIZE = FXGL.getInt("asset.cache.size");
-
-    private Map<String, Object> cache = new LinkedHashMap<String, Object>(CACHE_SIZE + 1, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry eldest) {
-            return size() > CACHE_SIZE;
-        }
-    };
-
-    /**
-     * Put an asset into cache.
-     *
-     * @param assetName asset name
-     * @param asset asset
-     */
-    void put(String assetName, Object asset) {
-        cache.put(assetName, asset);
-    }
-
-    /**
-     * @param assetName asset name
-     * @return asset
-     */
-    Object get(String assetName) {
-        return cache.get(assetName);
-    }
-
-    /**
-     * Clear the cache.
-     */
-    void clear() {
-        cache.clear();
-    }
+@FunctionalInterface
+public interface TriFunction<T, U, V, R> {
+    R apply(T t, U u, V v);
 }

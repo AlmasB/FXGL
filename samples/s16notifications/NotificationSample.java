@@ -76,7 +76,7 @@ public class NotificationSample extends GameApplication {
     @OnUserAction(name = "Show Notification", type = ActionType.ON_ACTION_BEGIN)
     public void showNotification() {
         // 1. get notification service and push a message
-        getNotificationService().pushNotification("Some Message!");
+        getNotificationService().pushNotification("Some Message! Tick: " + getTick());
     }
 
     public static void main(String[] args) {

@@ -40,4 +40,7 @@ public interface ExceptionHandler {
      * @param e error
      */
     void handle(Throwable e);
+
+    // TODO: allow running code after exception handling
+    //void handle(Throwable e, Runnable code);
 }

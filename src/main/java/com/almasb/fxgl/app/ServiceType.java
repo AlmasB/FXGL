@@ -33,10 +33,13 @@ import com.almasb.fxgl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.event.FXGLEventBus;
-import com.almasb.fxgl.gameplay.FXGLNotificationService;
+import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
+import com.almasb.fxgl.gameplay.SlidingNotificationService;
 import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.logging.FXGLLoggerFactory;
+import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.scene.FXGLDisplay;
 import com.almasb.fxgl.time.FXGLLocalTimer;
@@ -166,7 +169,7 @@ public interface ServiceType<T> {
 
         @Override
         public Class<? extends NotificationService> serviceProvider() {
-            return FXGLNotificationService.class;
+            return SlidingNotificationService.class;
         }
     };
 
@@ -179,6 +182,30 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Game> serviceProvider() {
             return Game.class;
+        }
+    };
+
+    ServiceType<LoggerFactory> LOGGER_FACTORY = new ServiceType<LoggerFactory>() {
+        @Override
+        public Class<LoggerFactory> service() {
+            return LoggerFactory.class;
+        }
+
+        @Override
+        public Class<? extends LoggerFactory> serviceProvider() {
+            return FXGLLoggerFactory.class;
+        }
+    };
+
+    ServiceType<AchievementManager> ACHIEVEMENT_MANAGER = new ServiceType<AchievementManager>() {
+        @Override
+        public Class<AchievementManager> service() {
+            return AchievementManager.class;
+        }
+
+        @Override
+        public Class<? extends AchievementManager> serviceProvider() {
+            return AchievementManager.class;
         }
     };
 }

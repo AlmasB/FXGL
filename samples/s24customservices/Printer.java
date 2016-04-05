@@ -24,14 +24,12 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.effect;
+package s24customservices;
 
 /**
- * Represents a function that accepts three arguments and produces a result.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@FunctionalInterface
-public interface TriFunction<T, U, V, R> {
-    R apply(T t, U u, V v);
+public interface Printer {
+
+    void print(String message);
 }

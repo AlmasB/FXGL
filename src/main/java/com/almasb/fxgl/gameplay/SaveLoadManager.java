@@ -26,20 +26,18 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.logging.FXGLLogger;
 
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.logging.Logger;
 
 public final class SaveLoadManager {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.SaveLoadManager");
+    private static final Logger log = FXGL.getLogger("FXGL.SaveLoadManager");
 
     private static final String PROFILE_FILE_NAME = "user.profile";
     private static final String PROFILES_DIR = "profiles/";
@@ -70,7 +68,7 @@ public final class SaveLoadManager {
      * @return io result
      */
     public IOResult<?> save(Serializable data, String fileName) {
-        log.finer(() -> "Saving data: " + fileName);
+        log.debug(() -> "Saving data: " + fileName);
         return FS.writeData(data, saveDir() + fileName);
     }
 
@@ -81,7 +79,7 @@ public final class SaveLoadManager {
      * @return io result
      */
     public IOResult<?> saveProfile(UserProfile profile) {
-        log.finer(() -> "Saving profile: " + profileName);
+        log.debug(() -> "Saving profile: " + profileName);
         return FS.writeData(profile, profileDir() + PROFILE_FILE_NAME);
     }
 
@@ -95,7 +93,7 @@ public final class SaveLoadManager {
      */
     @SuppressWarnings("unchecked")
     public <T> IOResult<T> load(String fileName) {
-        log.finer(() -> "Loading data: " + fileName);
+        log.debug(() -> "Loading data: " + fileName);
         return FS.<T>readData(saveDir() + fileName);
     }
 
@@ -103,22 +101,17 @@ public final class SaveLoadManager {
      * @return user profile loaded from "profiles/"
      */
     public IOResult<UserProfile> loadProfile() {
-        log.finer(() -> "Loading profile: " + profileName);
+        log.debug(() -> "Loading profile: " + profileName);
         return FS.<UserProfile>readData(profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
-     * TODO: move to FS
-     *
      * @param fileName name of the file to delete
-     * @return true if file was deleted, false if file wasn't deleted for any reason
+     * @return result of the operation
      */
-    public boolean delete(String fileName) {
-        try {
-            return Files.deleteIfExists(Paths.get(saveDir() + fileName));
-        } catch (Exception e) {
-            return false;
-        }
+    public IOResult<?> deleteSaveFile(String fileName) {
+        log.debug(() -> "Deleting save file: " + fileName);
+        return FS.deleteFile(saveDir() + fileName);
     }
 
     /**
@@ -127,8 +120,13 @@ public final class SaveLoadManager {
      * @return profile names
      */
     public static IOResult<List<String> > loadProfileNames() {
-        log.finer(() -> "Loading profile names");
+        log.debug(() -> "Loading profile names");
         return FS.loadDirectoryNames("./" + PROFILES_DIR, false);
+    }
+
+    public static IOResult<?> deleteProfile(String profileName) {
+        log.debug(() -> "Deleting profile: " + profileName);
+        return FS.deleteDirectory("./" + PROFILES_DIR + profileName);
     }
 
     /**
@@ -137,7 +135,7 @@ public final class SaveLoadManager {
      * @return save file names
      */
     public IOResult<List<String> > loadSaveFileNames() {
-        log.finer(() -> "Loading save file names");
+        log.debug(() -> "Loading save file names");
         return FS.loadFileNames(saveDir(), true);
     }
 
@@ -147,7 +145,7 @@ public final class SaveLoadManager {
      * @return last modified save file
      */
     public <T> IOResult<T> loadLastModifiedSaveFile() {
-        log.finer(() -> "Loading last modified save file");
+        log.debug(() -> "Loading last modified save file");
         return FS.<T>loadLastModifiedFile(saveDir(), true);
     }
 }

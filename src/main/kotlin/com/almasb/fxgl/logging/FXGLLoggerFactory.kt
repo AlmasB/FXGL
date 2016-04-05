@@ -24,14 +24,34 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.logging
 
-abstract class IntroFactory {
+import com.almasb.fxgl.app.ApplicationMode
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import org.apache.logging.log4j.core.config.Configurator
 
-    /**
-     * Called to construct intro scene.
-     *
-     * @return intro scene
-     */
-    abstract fun newIntro(): IntroScene
+/**
+ *
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+@Singleton
+class FXGLLoggerFactory @Inject constructor(private val mode: ApplicationMode) : LoggerFactory(mode) {
+
+    init {
+        val resourceName = when (mode) {
+            ApplicationMode.DEBUG -> "log4j2-debug.xml"
+            ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
+            ApplicationMode.RELEASE -> "log4j2-release.xml"
+        }
+
+        Configurator.initialize("FXGL", javaClass.getResource(resourceName).toExternalForm())
+
+        newLogger(javaClass).debug { "Service [LoggerFactory] initialized" }
+    }
+
+    override fun newLogger(caller: Class<*>) = FXGLLogger(caller)
+
+    override fun newLogger(name: String) = FXGLLogger(name)
 }

@@ -28,12 +28,10 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ui.UIFactory
-import com.google.inject.Inject
 import javafx.concurrent.Task
-import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.ProgressBar
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import javafx.scene.text.Font
 import javafx.scene.text.Text
 
 /**
@@ -41,20 +39,18 @@ import javafx.scene.text.Text
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class LoadingScene
-@Inject
-private constructor() : FXGLScene() {
+open class LoadingScene : FXGLScene() {
 
-    private val progress = ProgressIndicator()
-    private val text = Text()
+    private val progress = ProgressBar()
+    val text = Text()
 
     init {
         val settings = FXGL.getSettings()
 
         with(progress) {
-            setPrefSize(200.0, 200.0)
-            translateX = (settings.width / 2 - 100).toDouble()
-            translateY = (settings.height / 2 - 100).toDouble()
+            setPrefSize(settings.width - 200.0, 10.0)
+            translateX = 100.0
+            translateY = settings.height - 100.0
         }
 
         with(text) {

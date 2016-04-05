@@ -33,6 +33,7 @@ import com.almasb.fxgl.util.Credits;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Shows how to add extra credits.
@@ -57,6 +58,8 @@ public class CreditsSample extends GameApplication {
         list.add("-----------------------");
         list.add("Sample: A sample credit");
         list.add("-----------------------");
+
+        IntStream.range(0, 50).forEach(i -> list.add("Line number: " + i));
 
         settings.setCredits(new Credits(list));
     }

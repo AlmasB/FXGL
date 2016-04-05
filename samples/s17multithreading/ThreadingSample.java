@@ -27,6 +27,7 @@ package s17multithreading;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.Entities;
@@ -74,10 +75,10 @@ public class ThreadingSample extends GameApplication {
         // 2. get executor service
         // 3. create a new task that performs heavy work
 
-        getService(ServiceType.EXECUTOR).submit(new Task<Void>() {
+        FXGL.getExecutor().submit(new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                log.info("Heavy work started!");
+                System.out.println("Heavy work started!");
                 doHeavyWork();
                 return null;
             }
@@ -85,7 +86,7 @@ public class ThreadingSample extends GameApplication {
             @Override
             protected void succeeded() {
                 // 4. it is OK to modify world/scene graph here
-                log.info("Heavy work complete!");
+                System.out.println("Heavy work complete!");
 
                 Entities.builder()
                         .at(300, 300)

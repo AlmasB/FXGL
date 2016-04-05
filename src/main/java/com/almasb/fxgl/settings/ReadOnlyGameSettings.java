@@ -26,11 +26,14 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * A copy of GameSettings with public getters only.
@@ -51,6 +54,7 @@ public class ReadOnlyGameSettings {
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
     protected KeyCode menuKey = KeyCode.ESCAPE;
     protected Credits credits = new Credits(Collections.emptyList());
+    protected List<ServiceType<?> > services = new ArrayList<>();
 
     /**
      * Constructs game settings with default parameters
@@ -77,6 +81,7 @@ public class ReadOnlyGameSettings {
         this.menuStyle = copy.menuStyle;
         this.menuKey = copy.menuKey;
         this.credits = new Credits(copy.credits);
+        this.services = copy.services;
     }
 
     public final String getTitle() {
@@ -125,5 +130,9 @@ public class ReadOnlyGameSettings {
 
     public final Credits getCredits() {
         return credits;
+    }
+
+    public final List<ServiceType<?>> getServices() {
+        return services;
     }
 }

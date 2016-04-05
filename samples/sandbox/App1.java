@@ -89,7 +89,7 @@ public class App1 extends GameApplication {
         input.addAction(new UserAction("Print") {
             @Override
             protected void onActionBegin() {
-                log.finer(light.getX() + " " + light.getY());
+                //log.finer(light.getX() + " " + light.getY());
             }
         }, KeyCode.SPACE);
 

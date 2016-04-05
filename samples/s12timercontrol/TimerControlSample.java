@@ -28,6 +28,7 @@ package s12timercontrol;
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.entity.Entities;
@@ -88,7 +89,7 @@ public class TimerControlSample extends GameApplication {
 
     private class LiftControl extends AbstractControl {
 
-        private LocalTimer timer = getService(ServiceType.LOCAL_TIMER);
+        private LocalTimer timer = FXGL.newLocalTimer();
         private boolean goingUp = false;
 
         @Override

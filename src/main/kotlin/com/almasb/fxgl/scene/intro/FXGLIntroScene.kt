@@ -28,7 +28,6 @@ package com.almasb.fxgl.scene.intro
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.IntroScene
-import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.ui.UIFactory
 import com.almasb.fxgl.util.Version
 import javafx.animation.FadeTransition

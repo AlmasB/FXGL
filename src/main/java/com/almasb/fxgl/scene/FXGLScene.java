@@ -25,8 +25,7 @@
  */
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.app.FXGL;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -112,7 +111,7 @@ public abstract class FXGLScene {
      * @param hotspot hotspot location
      */
     public final void setCursor(String imageName, Point2D hotspot) {
-        root.setCursor(new ImageCursor(GameApplication.getService(ServiceType.ASSET_LOADER).loadCursorImage(imageName),
+        root.setCursor(new ImageCursor(FXGL.getAssetLoader().loadCursorImage(imageName),
                 hotspot.getX(), hotspot.getY()));
     }
 

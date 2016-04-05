@@ -25,8 +25,7 @@
  */
 package com.almasb.fxgl.parser;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.app.FXGL;
 
 import javax.script.Invocable;
 import javax.script.ScriptContext;
@@ -52,9 +51,9 @@ public final class JavaScriptParser {
      */
     public JavaScriptParser(String scriptFileName) throws Exception {
         engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("HOME_DIR", getClass().getResource("/assets/scripts/"));
-        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("ASSET_MANAGER", GameApplication.getService(ServiceType.ASSET_LOADER));
+        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("ASSET_LOADER", FXGL.getAssetLoader());
 
-        engine.eval(GameApplication.getService(ServiceType.ASSET_LOADER).loadScript(scriptFileName));
+        engine.eval(FXGL.getAssetLoader().loadScript(scriptFileName));
         invocableEngine = (Invocable) engine;
     }
 

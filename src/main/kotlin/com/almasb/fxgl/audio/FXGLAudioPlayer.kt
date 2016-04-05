@@ -26,22 +26,14 @@
 
 package com.almasb.fxgl.audio
 
-import com.almasb.fxeventbus.EventBus
-import com.almasb.fxgl.asset.FXGLAssets
-import com.almasb.fxgl.event.LoadEvent
-import com.almasb.fxgl.event.NotificationEvent
-import com.almasb.fxgl.event.SaveEvent
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.settings.UserProfileSavable
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-
-import java.util.ArrayList
-import java.util.logging.Logger
+import java.util.*
 
 /**
  * FXGL provider of audio service.
@@ -51,30 +43,20 @@ import java.util.logging.Logger
 @Singleton
 class FXGLAudioPlayer
 @Inject
-private constructor(eventBus: EventBus) : AudioPlayer, UserProfileSavable {
+private constructor() : AudioPlayer {
 
-    companion object {
-        private val log = FXGLLogger.getLogger("FXGL.AudioPlayer")
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     init {
-        eventBus.addEventHandler(UpdateEvent.ANY) { event ->
-            activeMusic.filter({ music ->
-                music.mediaPlayer.getCurrentTime() == music.mediaPlayer.getTotalDuration()
-            })
-            .forEach { music -> music.isStopped = true }
+        log.debug { "Service [AudioPlayer] initialized" }
+    }
 
-            activeSounds.removeIf { !it.clip.isPlaying }
-            activeMusic.removeIf { it.isStopped }
-        }
+    override fun onUpdateEvent(event: UpdateEvent) {
+        activeMusic.filter { it.mediaPlayer.getCurrentTime() == it.mediaPlayer.getTotalDuration() }
+                .forEach { it.isStopped = true }
 
-        eventBus.addEventHandler(NotificationEvent.ANY) { event -> playSound(FXGLAssets.SOUND_NOTIFICATION) }
-
-        eventBus.addEventHandler(SaveEvent.ANY) { event -> save(event.profile) }
-
-        eventBus.addEventHandler(LoadEvent.ANY) { event -> load(event.profile) }
-
-        log.finer { "Service [AudioPlayer] initialized" }
+        activeSounds.removeIf { !it.clip.isPlaying }
+        activeMusic.removeIf { it.isStopped }
     }
 
     /**
@@ -209,7 +191,7 @@ private constructor(eventBus: EventBus) : AudioPlayer, UserProfileSavable {
      * to be started by [.playMusic].
      */
     override fun stopAllMusic() {
-        log.finer("Stopping all music. Active music size: ${activeMusic.size}")
+        log.debug { "Stopping all music. Active music size: ${activeMusic.size}" }
         val it = activeMusic.iterator()
         while (it.hasNext()) {
             val music = it.next()
@@ -220,7 +202,7 @@ private constructor(eventBus: EventBus) : AudioPlayer, UserProfileSavable {
     }
 
     override fun save(profile: UserProfile) {
-        log.finer("Saving data to profile")
+        log.debug("Saving data to profile")
 
         val bundle = UserProfile.Bundle("audio")
         bundle.put("musicVolume", getGlobalMusicVolume())
@@ -231,7 +213,7 @@ private constructor(eventBus: EventBus) : AudioPlayer, UserProfileSavable {
     }
 
     override fun load(profile: UserProfile) {
-        log.finer("Loading data from profile")
+        log.debug("Loading data from profile")
         val bundle = profile.getBundle("audio")
         bundle.log()
 

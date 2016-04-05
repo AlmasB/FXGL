@@ -27,15 +27,12 @@
 package com.almasb.fxgl.concurrent
 
 import com.almasb.fxeventbus.EventBus
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.concurrent.Task
-
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.logging.Logger
 
 /**
  * Uses cached thread pool to run tasks in the background.
@@ -47,16 +44,14 @@ class FXGLExecutor
 @Inject
 private constructor(eventBus: EventBus) : Executor {
 
-    companion object {
-        private val log = FXGLLogger.getLogger("FXGL.Executor")
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     private val service = Executors.newCachedThreadPool()
 
     init {
         eventBus.addEventHandler(FXGLEvent.EXIT) { event -> service.shutdownNow() }
 
-        log.finer { "Service [Executor] initialized" }
+        log.debug { "Service [Executor] initialized" }
     }
 
     override fun submit(task: Task<*>) {

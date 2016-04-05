@@ -28,44 +28,32 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.ServiceType
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
-import com.almasb.fxgl.event.LoadEvent
-import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.settings.UserProfileSavable
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
-import javafx.geometry.Rectangle2D
 import javafx.scene.Node
-import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Dialog
-import javafx.scene.image.Image
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
-
 import java.time.LocalDateTime
-import java.util.ArrayList
+import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
-import java.util.logging.Logger
 
 /**
  * Display service. Provides access to dialogs and display settings.
@@ -81,11 +69,9 @@ private constructor(private val stage: Stage,
                      * problems in fullscreen mode. Switching between scenes
                      * in FS mode will otherwise temporarily toggle FS.
                      */
-                    private var fxScene: Scene) : Display, UserProfileSavable {
+                    private var fxScene: Scene) : Display {
 
-    companion object {
-        private val log = FXGLLogger.getLogger("FXGL.Display")
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
 
@@ -126,7 +112,7 @@ private constructor(private val stage: Stage,
 
         // if default css then use menu css, else use specified
         css = if (FXGLAssets.UI_CSS.isDefault())
-            GameApplication.getService(ServiceType.ASSET_LOADER).loadCSS(settings.menuStyle.cssFileName)
+            FXGL.getAssetLoader().loadCSS(settings.menuStyle.cssFileName)
         else
             FXGLAssets.UI_CSS
 
@@ -138,13 +124,10 @@ private constructor(private val stage: Stage,
         computeSceneSettings(settings.width.toDouble(), settings.height.toDouble())
         computeScaledSize()
 
-        eventBus = GameApplication.getService(ServiceType.EVENT_BUS)
-        eventBus.addEventHandler(SaveEvent.ANY) { event -> save(event.profile) }
+        eventBus = FXGL.getEventBus()
 
-        eventBus.addEventHandler(LoadEvent.ANY) { event -> load(event.profile) }
-
-        log.finer { "Service [Display] initialized" }
-        log.finer { "Using CSS: $css" }
+        log.debug { "Service [Display] initialized" }
+        log.debug { "Using CSS: $css" }
     }
 
     /**
@@ -163,6 +146,14 @@ private constructor(private val stage: Stage,
                         eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                 })
             }
+
+            setOnShown {
+                log.debug("Showing stage")
+                log.debug("Root size: " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
+                log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
+                log.debug("Stage size: " + stage.width + "x" + stage.height)
+            }
+
             icons.add(FXGLAssets.UI_ICON)
 
             if (settings.isFullScreen) {
@@ -294,7 +285,7 @@ private constructor(private val stage: Stage,
         val bounds = bounds
 
         if (newW > bounds.width || newH > bounds.height) {
-            log.finer("App size > screen size")
+            log.debug("App size > screen size")
 
             val ratio = newW / newH
 
@@ -311,8 +302,8 @@ private constructor(private val stage: Stage,
         scaledHeight.set(newH)
         scaleRatio.set(newW / settings.width)
 
-        log.finer("Target size: " + getTargetWidth() + "x" + getTargetHeight() + "@" + 1.0)
-        log.finer("New size:    " + newW + "x" + newH + "@" + getScaleRatio())
+        log.debug("Target size: $targetWidth x $targetHeight @ 1.0")
+        log.debug("New size:    $newW x $newH @ $scaleRatio")
     }
 
     /**
@@ -351,7 +342,7 @@ private constructor(private val stage: Stage,
      */
     override fun setSceneDimension(dimension: SceneDimension) {
         if (sceneDimensions.contains(dimension)) {
-            log.finer { "Setting scene dimension: $dimension" }
+            log.debug { "Setting scene dimension: $dimension" }
             setNewResolution(dimension.width, dimension.height)
         } else {
             log.warning { "$dimension is not supported!" }
@@ -475,7 +466,7 @@ private constructor(private val stage: Stage,
     }
 
     override fun save(profile: UserProfile) {
-        log.finer("Saving data to profile")
+        log.debug("Saving data to profile")
 
         val bundle = UserProfile.Bundle("scene")
         bundle.put("sizeW", getTargetWidth())
@@ -486,7 +477,7 @@ private constructor(private val stage: Stage,
     }
 
     override fun load(profile: UserProfile) {
-        log.finer("Loading data from profile")
+        log.debug("Loading data from profile")
 
         val bundle = profile.getBundle("scene")
         bundle.log()

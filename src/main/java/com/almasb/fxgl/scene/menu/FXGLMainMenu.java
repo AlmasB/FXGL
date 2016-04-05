@@ -66,6 +66,7 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
         });
 
         app.getEventBus().addEventHandler(MenuDataEvent.PROFILE_SELECTED, event -> {
+            // TODO: remove save load manager dep
             itemContinue.setDisable(!app.getSaveLoadManager().loadLastModifiedSaveFile().hasData());
         });
 

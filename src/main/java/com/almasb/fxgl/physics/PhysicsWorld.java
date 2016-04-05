@@ -26,10 +26,8 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.ents.Entity;
-import com.almasb.fxeventbus.EventBus;
+import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.Particle;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.Entities;
@@ -38,8 +36,8 @@ import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.UpdateEvent;
-import com.almasb.fxgl.event.WorldEvent;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.time.UpdateEventListener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -69,7 +67,6 @@ import org.jbox2d.particle.ParticleGroupDef;
 import org.jbox2d.particle.ParticleSystem;
 
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -83,9 +80,9 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class PhysicsWorld {
+public final class PhysicsWorld implements EntityWorldListener, UpdateEventListener {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.PhysicsWorld");
+    private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
 
     private static final double PIXELS_PER_METER = FXGL.getDouble("physics.ppm");
     private static final double METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
@@ -134,22 +131,13 @@ public final class PhysicsWorld {
     }
 
     @Inject
-    private PhysicsWorld(@Named("appHeight") double appHeight) {
+    protected PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
 
         initContactListener();
         initParticles();
 
-        EventBus bus = GameApplication.getService(ServiceType.EVENT_BUS);
-        bus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            addEntity(event.getEntity());
-        });
-        bus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            removeEntity(event.getEntity());
-        });
-        bus.addEventHandler(UpdateEvent.ANY, this::update);
-
-        log.finer("Physics world initialized");
+        log.debug("Physics world initialized");
     }
 
     /**
@@ -218,12 +206,33 @@ public final class PhysicsWorld {
         physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
+    @Override
+    public void onEntityAdded(Entity entity) {
+        entities.add(entity);
+
+        if (entity.hasComponent(PhysicsComponent.class)) {
+            createBody(entity);
+        } else if (entity.hasComponent(PhysicsParticleComponent.class)) {
+            createPhysicsParticles(entity);
+        }
+    }
+
+    @Override
+    public void onEntityRemoved(Entity entity) {
+        entities.remove(entity);
+
+        if (entity.hasComponent(PhysicsComponent.class)) {
+            destroyBody(entity);
+        }
+    }
+
     /**
      * Physics tick.
      *
      * @param event update event
      */
-    private void update(UpdateEvent event) {
+    @Override
+    public void onUpdateEvent(UpdateEvent event) {
         tick.set(event.tick());
         physicsWorld.step((float) event.tpf(), 8, 3);
 
@@ -345,24 +354,6 @@ public final class PhysicsWorld {
      */
     public void removeCollisionHandler(CollisionHandler handler) {
         collisionHandlers.remove(handler);
-    }
-
-    private void addEntity(Entity entity) {
-        entities.add(entity);
-
-        if (entity.hasComponent(PhysicsComponent.class)) {
-            createBody(entity);
-        } else if (entity.hasComponent(PhysicsParticleComponent.class)) {
-            createPhysicsParticles(entity);
-        }
-    }
-
-    private void removeEntity(Entity entity) {
-        entities.remove(entity);
-
-        if (entity.hasComponent(PhysicsComponent.class)) {
-            destroyBody(entity);
-        }
     }
 
     /**

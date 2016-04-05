@@ -27,8 +27,6 @@
 package com.almasb.fxgl.asset;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.ui.FontFactory;
@@ -36,7 +34,7 @@ import javafx.scene.image.Image;
 
 /**
  * Stores internal assets, i.e. provided by FXGL.
- * These can be overridden by "system.properties" file under "assets/properties".
+ * These can be overridden by "system.properties" file under "/assets/properties/".
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -58,7 +56,7 @@ public final class FXGLAssets {
     }
 
     static {
-        AssetLoader loader = GameApplication.getService(ServiceType.ASSET_LOADER);
+        AssetLoader loader = FXGL.getAssetLoader();
 
         SOUND_NOTIFICATION = loader.loadSound(getName("sound.notification"));
         SOUND_MENU_SELECT = loader.loadSound(getName("sound.menu.select"));

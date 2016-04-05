@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.time;
 
+import com.almasb.fxgl.app.FXGLListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
@@ -37,7 +38,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface MasterTimer {
+public interface MasterTimer extends FXGLListener {
 
     /**
      * Current time for this tick in nanoseconds. Also time elapsed
@@ -100,7 +101,7 @@ public interface MasterTimer {
      * @param action   the action
      * @param interval time
      */
-    void runAtInterval(Runnable action, Duration interval);
+    TimerAction runAtInterval(Runnable action, Duration interval);
 
     /**
      * The Runnable action will be scheduled for execution iff
@@ -116,7 +117,7 @@ public interface MasterTimer {
      * @param interval       interval between executions
      * @param whileCondition condition
      */
-    void runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition);
+    TimerAction runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition);
 
     /**
      * The Runnable action will be executed once after given delay
@@ -126,10 +127,12 @@ public interface MasterTimer {
      * @param action action to execute
      * @param delay  delay after which to execute
      */
-    void runOnceAfter(Runnable action, Duration delay);
+    TimerAction runOnceAfter(Runnable action, Duration delay);
 
     /**
      * Clears all registered timer based actions.
      */
-    void clearActions();
+    void reset();
+
+    void setUpdateListener(UpdateEventListener listener);
 }

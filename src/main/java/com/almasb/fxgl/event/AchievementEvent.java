@@ -35,15 +35,22 @@ import javafx.event.EventType;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AchievementEvent extends Event {
+public class AchievementEvent extends Event {
 
     public static final EventType<AchievementEvent> ANY =
             new EventType<>(Event.ANY, "ACHIEVEMENT_EVENT");
 
+    public static final EventType<AchievementEvent> ACHIEVED =
+            new EventType<>(ANY, "ACHIEVED");
+
     private Achievement achievement;
 
     public AchievementEvent(Achievement achievement) {
-        super(ANY);
+        this(ANY, achievement);
+    }
+
+    public AchievementEvent(EventType<? extends AchievementEvent> eventType, Achievement achievement) {
+        super(eventType);
         this.achievement = achievement;
     }
 

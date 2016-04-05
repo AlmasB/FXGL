@@ -65,4 +65,9 @@ public class TypeComponent extends ObjectComponent<Object> {
     public boolean isType(Object type) {
         return getValue().equals(type);
     }
+
+    @Override
+    public String toString() {
+        return "Type(" + getValue().toString() + ")";
+    }
 }

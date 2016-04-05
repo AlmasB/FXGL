@@ -4,12 +4,12 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
     <description>Simple JavaFX Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/0.2.1</url>
+    <url>https://jitpack.io/#AlmasB/FXGL/0.2.2</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,9 +26,11 @@
         <kotlin.version>1.0.0</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
+        <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.0</ents.version>
         <astar.version>1.0</astar.version>
+        <log4j.version>2.5</log4j.version>
 
         <junit.version>4.12</junit.version>
         <commons-math.version>3.5</commons-math.version>
@@ -61,6 +63,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>${controlsfx.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.AlmasB</groupId>
             <artifactId>FXEventBus</artifactId>
             <version>${fxeventbus.version}</version>
@@ -76,6 +84,18 @@
             <groupId>com.github.AlmasB</groupId>
             <artifactId>AStar</artifactId>
             <version>${astar.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
 
         <!-- test scope dependencies -->

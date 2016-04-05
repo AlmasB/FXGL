@@ -25,7 +25,6 @@
  */
 package com.almasb.fxgl.effect;
 
-import com.almasb.fxgl.time.FXGLMasterTimer;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
@@ -81,19 +80,7 @@ public class Particle {
      */
     private Point2D scale;
 
-    /**
-     * Percentage ratio of particle lifetime.
-     * 1.0 = 100% (just spawned).
-     * 0.5 =  50% (has spent 50% of its time).
-     * 0.0 =   0% (dead).
-     */
-    private double life = 1.0;
-
-    /**
-     * Percentage ratio by which life is reduced
-     * every frame.
-     */
-    private double decay;
+    private double life;
 
     /**
      * Color used when rendering
@@ -118,7 +105,7 @@ public class Particle {
         this.gravity = gravity;
         this.color = color;
         this.blendMode = blendMode;
-        this.decay = FXGLMasterTimer.tpfSeconds() / expireTime.toSeconds();
+        this.life = expireTime.toSeconds();
     }
 
     /**
@@ -143,7 +130,7 @@ public class Particle {
         radiusX += scale.getX();
         radiusY += scale.getY();
 
-        life -= decay;
+        life -= tpf;
 
         if (control != null)
             control.accept(this);
@@ -212,14 +199,6 @@ public class Particle {
 
     public void setScale(Point2D scale) {
         this.scale = scale;
-    }
-
-    public double getDecay() {
-        return decay;
-    }
-
-    public void setDecay(double decay) {
-        this.decay = decay;
     }
 
     public Paint getColor() {

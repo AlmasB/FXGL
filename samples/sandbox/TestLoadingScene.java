@@ -23,43 +23,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.time;
 
-import java.util.Arrays;
+package sandbox;
+
+import com.almasb.fxgl.scene.LoadingScene;
+import javafx.animation.RotateTransition;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 /**
- * Convenience class that buffers FPS values and calculates
- * the arithmetic mean to approximate FPS value as it
- * varies from frame to frame.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-final class FPSCounter {
+public class TestLoadingScene extends LoadingScene {
 
-    private static final int MAX_SAMPLES = 100;
+    public TestLoadingScene() {
 
-    private final float[] values = new float[MAX_SAMPLES];
-    private float sum = 0.0f;
-    private int index = 0;
+        getText().setFont(Font.font("Segoe UI", 24));
+        getText().setTranslateY(50);
 
-    public FPSCounter() {
-        Arrays.fill(values, 0.0f);
-    }
+        Circle circle = new Circle(50, 50, 50);
 
-    /**
-     * Calculates average FPS and buffers given value
-     * for future corrections to the FPS value.
-     *
-     * @param timeTookLastFrame how long it took to compute last frame
-     * @return average FPS
-     */
-    public float count(float timeTookLastFrame) {
-        sum -= values[index];
-        sum += timeTookLastFrame;
-        values[index] = timeTookLastFrame;
-        if (++index == values.length)
-            index = 0;
+        Shape shape = Shape.subtract(new Rectangle(100, 100), circle);
+        shape.setFill(Color.BLUE);
+        shape.setStroke(Color.YELLOW);
 
-        return sum / values.length;
+        RotateTransition rt = new RotateTransition(Duration.seconds(2), shape);
+        rt.setByAngle(360);
+        rt.setCycleCount(15);
+        rt.play();
+
+        shape.setTranslateX(700);
+        shape.setTranslateY(500);
+
+        getRoot().getChildren().set(1, shape);
     }
 }

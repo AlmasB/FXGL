@@ -350,9 +350,6 @@ public class Fixture {
         assert (proxyCount == 0);
 
         m_proxies = null;
-
-        // TODO pool shapes
-        // TODO pool fixtures
     }
 
     // These support body activation/deactivation.

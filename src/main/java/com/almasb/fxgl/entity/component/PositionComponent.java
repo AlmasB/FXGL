@@ -27,6 +27,7 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.ents.AbstractComponent;
+import com.almasb.fxgl.devtools.DeveloperEditable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
@@ -78,6 +79,7 @@ public class PositionComponent extends AbstractComponent {
     /**
      * @return x property
      */
+    @DeveloperEditable("X")
     public DoubleProperty xProperty() {
         return x;
     }
@@ -101,6 +103,7 @@ public class PositionComponent extends AbstractComponent {
     /**
      * @return y property
      */
+    @DeveloperEditable("Y")
     public DoubleProperty yProperty() {
         return y;
     }
@@ -185,5 +188,10 @@ public class PositionComponent extends AbstractComponent {
      */
     public double distance(PositionComponent other) {
         return getValue().distance(other.getValue());
+    }
+
+    @Override
+    public String toString() {
+        return "Position(" + getX() + "," + getY() + ")";
     }
 }

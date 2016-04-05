@@ -27,13 +27,9 @@
 package com.almasb.fxgl.parser
 
 import com.almasb.ents.Entity
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.ServiceType
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.gameplay.Level
-import com.almasb.fxgl.logging.FXGLLogger
-
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 /**
  * Parser for levels represented by plain text.
@@ -43,7 +39,7 @@ import java.util.HashMap
 class TextLevelParser {
 
     companion object {
-        private val log = FXGLLogger.getLogger("FXGL.TextLevelParser")
+        private val log = FXGL.getLogger("FXGL.TextLevelParser")
     }
 
     private val producers = HashMap<Char, (Int, Int) -> Entity>()
@@ -79,7 +75,7 @@ class TextLevelParser {
      * @return parsed Level
      */
     fun parse(levelFileName: String): Level {
-        val assetLoader = GameApplication.getService(ServiceType.ASSET_LOADER)
+        val assetLoader = FXGL.getAssetLoader()
         val lines = assetLoader.loadText(levelFileName)
 
         val entities = ArrayList<Entity>()

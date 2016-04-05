@@ -26,14 +26,11 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.ServiceType
-import com.almasb.fxgl.event.AchievementEvent
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
 import com.almasb.fxgl.ui.UIFactory
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.animation.ScaleTransition
@@ -51,9 +48,7 @@ class FXGLNotificationService
 @Inject
 private constructor(private val gameScene: GameScene) : NotificationService {
 
-    companion object {
-        private val log = FXGLLogger.getLogger("FXGL.NotificationService")
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     private val queue = ArrayDeque<NotificationView>()
 
@@ -89,11 +84,7 @@ private constructor(private val gameScene: GameScene) : NotificationService {
     private var showing = false
 
     init {
-        GameApplication.getService(ServiceType.EVENT_BUS)
-                .addEventHandler(AchievementEvent.ANY) { event ->
-                    pushNotification("You got an achievement! ${event.achievement.name}") }
-
-        log.finer { "Service [NotificationService] initialized" }
+        log.debug { "Service [NotificationService] initialized" }
     }
 
     private fun popNotification(notificationView: NotificationView) {
@@ -133,7 +124,7 @@ private constructor(private val gameScene: GameScene) : NotificationService {
         gameScene.addUINode(notificationView)
         notificationView.show()
 
-        GameApplication.getService(ServiceType.EVENT_BUS).fireEvent(NotificationEvent(notificationView.notification))
+        FXGL.getEventBus().fireEvent(NotificationEvent(notificationView.notification))
     }
 
     private fun createNotificationView(text: String): NotificationView {

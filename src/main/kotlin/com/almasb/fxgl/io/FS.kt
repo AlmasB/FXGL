@@ -26,18 +26,15 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.logging.FXGLLogger
+import com.almasb.fxgl.app.FXGL
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
+import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.time.LocalDateTime
-import java.util.*
-import java.util.function.Predicate
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.stream.Collectors
 import javax.imageio.ImageIO
 
@@ -50,7 +47,7 @@ class FS {
 
     companion object {
 
-        private val log = FXGLLogger.getLogger("FXGL.FS")
+        private val log = FXGL.getLogger("FXGLFileSystem")
 
         /**
          * Writes data to file, creating required directories.
@@ -140,7 +137,7 @@ class FS {
                 val dir = Paths.get(dirName)
 
                 if (!Files.exists(dir)) {
-                    return IOResult.failure<T>("Directory does not exist")
+                    return IOResult.failure<T>("Directory $dirName does not exist")
                 }
 
                 val fileName = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
@@ -156,6 +153,64 @@ class FS {
             } catch (e: Exception) {
                 log.warning { "Load failed: ${e.message}" }
                 return IOResult.failure<T>(e.message ?: "No error message")
+            }
+        }
+
+        /**
+         * Delete file [fileName].
+         */
+        @JvmStatic fun deleteFile(fileName: String): IOResult<*> {
+            log.debug { "Deleting file: $fileName" }
+
+            try {
+                val file = Paths.get(fileName)
+
+                if (!Files.exists(file)) {
+                    return IOResult.failure<Any>("File $file does not exist")
+                }
+
+                Files.delete(file)
+
+                return IOResult.success<Any>()
+            } catch (e: Exception) {
+                log.warning { "Failed to delete: ${e.message}" }
+                return IOResult.failure<Any>(e.message ?: "No error message")
+            }
+        }
+
+        /**
+         * Delete directory [dirName] and its contents.
+         */
+        @JvmStatic fun deleteDirectory(dirName: String): IOResult<*> {
+            log.debug { "Deleting directory: $dirName" }
+
+            try {
+                val dir = Paths.get(dirName)
+
+                if (!Files.exists(dir)) {
+                    return IOResult.failure<Any>("Directory $dirName does not exist")
+                }
+
+                Files.walkFileTree(dir, object : SimpleFileVisitor<Path>() {
+                    override fun visitFile(file: Path, p1: BasicFileAttributes): FileVisitResult {
+                        Files.delete(file)
+                        return FileVisitResult.CONTINUE
+                    }
+
+                    override fun postVisitDirectory(dir: Path, e: IOException?): FileVisitResult {
+                        if (e == null) {
+                            Files.delete(dir)
+                            return FileVisitResult.CONTINUE
+                        } else {
+                            throw e
+                        }
+                    }
+                });
+
+                return IOResult.success<Any>()
+            } catch (e: Exception) {
+                log.warning { "Failed to delete: ${e.message}" }
+                return IOResult.failure<Any>(e.message ?: "No error message")
             }
         }
 

@@ -29,15 +29,13 @@ package com.almasb.fxgl.event
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.input.FXGLInputEvent
-import com.almasb.fxgl.logging.FXGLLogger
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
-
-import java.util.logging.Logger
 
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
@@ -48,12 +46,10 @@ import java.util.logging.Logger
 class FXGLEventBus
 @Inject
 private constructor() : EventBus {
-    companion object {
-        private val log = FXGLLogger.getLogger("FXGL.EventBus")
-    }
+    private val log = FXGL.getLogger(javaClass)
 
     init {
-        log.finer { "Service [EventBus] initialized" }
+        log.debug { "Service [EventBus] initialized" }
     }
 
     private val bus = FXEventBus()
@@ -68,7 +64,7 @@ private constructor() : EventBus {
 
     override fun fireEvent(event: Event) {
         if (event.eventType != UpdateEvent.ANY && event.eventType != FXGLInputEvent.ANY)
-            log.finer { "Firing event: $event" }
+            log.debug { "Firing event: $event" }
 
         bus.fireEvent(event)
     }

@@ -26,8 +26,7 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.app.ServiceType
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ui.UIFactory
 import javafx.animation.Transition
 import javafx.geometry.Pos
@@ -62,8 +61,7 @@ internal class NotificationView(
                 (bgColor.green * 255).toInt(),
                 (bgColor.blue * 255).toInt())
 
-        `in`.setOnFinished { e -> GameApplication.getService(ServiceType.MASTER_TIMER)
-                .runOnceAfter( { hide() }, Duration.seconds(3.0)) }
+        `in`.setOnFinished { e -> FXGL.getMasterTimer().runOnceAfter( { hide() }, Duration.seconds(3.0)) }
     }
 
     fun show() = `in`.play()

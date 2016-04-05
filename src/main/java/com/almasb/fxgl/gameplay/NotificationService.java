@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxgl.event.AchievementEvent;
+import com.almasb.fxgl.event.AchievementProgressEvent;
 import com.almasb.fxgl.ui.Position;
 import javafx.scene.paint.Color;
 
@@ -35,7 +37,7 @@ import javafx.scene.paint.Color;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface NotificationService {
+public interface NotificationService extends AchievementListener {
 
     /**
      * Push a notification with given message.
@@ -69,4 +71,14 @@ public interface NotificationService {
      * @param backgroundColor the color
      */
     void setBackgroundColor(Color backgroundColor);
+
+    @Override
+    default void onAchievementEvent(AchievementEvent event) {
+        if (event.getEventType() == AchievementEvent.ACHIEVED) {
+            pushNotification("You got an achievement! " + event.getAchievement().getName());
+        } else if (event.getEventType() == AchievementProgressEvent.PROGRESS) {
+            pushNotification("Achievement " + event.getAchievement().getName() + "\n"
+                + "Progress: " + ((AchievementProgressEvent)event).getValue() + "/" + ((AchievementProgressEvent)event).getMax());
+        }
+    }
 }

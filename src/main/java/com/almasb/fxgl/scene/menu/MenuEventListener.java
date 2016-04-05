@@ -24,33 +24,26 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene
-
-import com.almasb.fxgl.app.GameApplication
+package com.almasb.fxgl.scene.menu;
 
 /**
- * Menu creation methods can be overriden to use
- * custom main/game menus.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class MenuFactory {
+public interface MenuEventListener {
 
-    /**
-     * Called to construct main menu.
-     *
-     * @param app game application
-     *
-     * @return main menu
-     */
-    abstract fun newMainMenu(app: GameApplication): FXGLMenu
+    void onNewGame();
 
-    /**
-     * Called to construct game menu.
-     *
-     * @param app game application
-     *
-     * @return game menu
-     */
-    abstract fun newGameMenu(app: GameApplication): FXGLMenu
+    void onContinue();
+
+    void onResume();
+
+    void onSave();
+
+    void onLoad(String fileName);
+
+    void onDelete(String fileName);
+
+    void onExit();
+
+    void onExitToMainMenu();
 }

@@ -29,7 +29,6 @@ package com.almasb.fxgl.entity;
 import com.almasb.ents.Component;
 import com.almasb.ents.Control;
 import com.almasb.ents.Entity;
-import com.almasb.ents.EntityWorld;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.gameplay.GameWorld;

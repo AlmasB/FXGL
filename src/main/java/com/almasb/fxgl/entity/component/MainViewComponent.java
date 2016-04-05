@@ -31,8 +31,7 @@ import com.almasb.ents.Component;
 import com.almasb.ents.ComponentListener;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
@@ -68,7 +67,7 @@ public class MainViewComponent extends AbstractComponent {
     }
 
     private ObjectProperty<RenderLayer> renderLayer;
-    private ObjectProperty<EntityView> view;
+    private EntityView view;
 
     /**
      * Creates main view component with no graphics.
@@ -93,7 +92,7 @@ public class MainViewComponent extends AbstractComponent {
      * @param renderLayer render layer to use for view
      */
     public MainViewComponent(Node graphics, RenderLayer renderLayer) {
-        this.view = new SimpleObjectProperty<>(new EntityView(graphics));
+        this.view = new EntityView(graphics);
         this.renderLayer = new SimpleObjectProperty<>(renderLayer);
     }
 
@@ -125,13 +124,6 @@ public class MainViewComponent extends AbstractComponent {
      * @return view
      */
     public EntityView getView() {
-        return view.get();
-    }
-
-    /**
-     * @return view property
-     */
-    public ObjectProperty<EntityView> viewProperty() {
         return view;
     }
 
@@ -154,7 +146,14 @@ public class MainViewComponent extends AbstractComponent {
     public void setView(Node view, boolean generateBoundingBox) {
         EntityView entityView = view instanceof EntityView ? (EntityView) view : new EntityView(view);
 
-        this.view.set(entityView);
+        this.view.getNodes().setAll(entityView.getNodes());
+
+        // TODO: double check logic
+        if (showBBox) {
+            this.view.addNode(debugBBox);
+        }
+
+        this.renderLayer.setValue(entityView.getRenderLayer());
 
         if (generateBoundingBox) {
             generateBBox();
@@ -177,8 +176,7 @@ public class MainViewComponent extends AbstractComponent {
      * @param generateBoundingBox generate bbox from view flag
      */
     public void setTexture(String textureName, boolean generateBoundingBox) {
-        EntityView view = new EntityView(GameApplication.getService(ServiceType.ASSET_LOADER)
-                .loadTexture(textureName));
+        EntityView view = new EntityView(FXGL.getAssetLoader().loadTexture(textureName));
 
         setView(view, generateBoundingBox);
     }
@@ -208,17 +206,6 @@ public class MainViewComponent extends AbstractComponent {
                 });
             }
         }
-
-        view.addListener((o, oldView, newView) -> {
-            oldView.translateXProperty().unbind();
-            oldView.translateYProperty().unbind();
-            oldView.rotateProperty().unbind();
-
-            oldView.removeNode(debugBBox);
-            newView.addNode(debugBBox);
-
-            bindView();
-        });
     }
 
     @Override
@@ -234,6 +221,8 @@ public class MainViewComponent extends AbstractComponent {
         if (!getEntity().hasComponent(BoundingBoxComponent.class)) {
             getEntity().addComponent(new BoundingBoxComponent());
         }
+
+        Entities.getBBox(getEntity()).clearHitBoxes();
 
         Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", new BoundingBox(
                 0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()

@@ -28,18 +28,16 @@ package com.almasb.fxgl.gameplay;
 
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorld;
-import com.almasb.ents.EntityWorldListener;
-import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
-import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
-import com.almasb.fxgl.event.WorldEvent;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.time.UpdateEventListener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
@@ -50,7 +48,6 @@ import javafx.geometry.Rectangle2D;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -60,12 +57,12 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld extends EntityWorld {
+public final class GameWorld extends EntityWorld implements UpdateEventListener {
 
     /**
      * The logger
      */
-    protected static final Logger log = FXGLLogger.getLogger("FXGL.GameWorld");
+    protected static final Logger log = FXGL.getLogger("FXGL.GameWorld");
 
     private ObjectProperty<GameDifficulty> gameDifficulty = new SimpleObjectProperty<>(GameDifficulty.MEDIUM);
 
@@ -85,32 +82,20 @@ public final class GameWorld extends EntityWorld {
         return gameDifficulty;
     }
 
-    private EventBus eventBus;
-
     @Inject
-    private GameWorld(EventBus eventBus) {
-        this.eventBus = eventBus;
-        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
-            update(event.tpf());
-        });
-        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
-            log.finer("Resetting game world");
-            reset();
-        });
+    protected GameWorld() {
+        log.debug("Game world initialized");
+    }
 
-        addWorldListener(new EntityWorldListener() {
-            @Override
-            public void onEntityAdded(Entity entity) {
-                eventBus.fireEvent(WorldEvent.entityAdded(entity));
-            }
+    @Override
+    public void onUpdateEvent(UpdateEvent event) {
+        update(event.tpf());
+    }
 
-            @Override
-            public void onEntityRemoved(Entity entity) {
-                eventBus.fireEvent(WorldEvent.entityRemoved(entity));
-            }
-        });
-
-        log.finer("Game world initialized");
+    @Override
+    public void reset() {
+        log.debug("Resetting game world");
+        super.reset();
     }
 
     /**
@@ -224,10 +209,32 @@ public final class GameWorld extends EntityWorld {
                 .findAny();
     }
 
+    private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();
+
+    /**
+     * Returns last selected (clicked on by mouse) entity.
+     *
+     * @return selected entity
+     */
+    public Optional<Entity> getSelectedEntity() {
+        return Optional.ofNullable(selectedEntity.get());
+    }
+
+    public ObjectProperty<Entity> selectedEntityProperty() {
+        return selectedEntity;
+    }
+
+    /**
+     * Set level to given.
+     * Resets the world.
+     * Adds all level entities to the world.
+     *
+     * @param level the level
+     */
     public void setLevel(Level level) {
         reset();
 
-        log.finer("Setting level: " + level);
+        log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
     }
 }

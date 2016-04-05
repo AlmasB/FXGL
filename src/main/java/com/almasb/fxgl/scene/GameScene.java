@@ -27,23 +27,20 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.ents.*;
-import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.event.UpdateEvent;
-import com.almasb.fxgl.event.WorldEvent;
-import com.almasb.fxgl.gameplay.GameWorldListener;
-import com.almasb.fxgl.input.FXGLInputEvent;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
-import com.almasb.fxgl.logging.FXGLLogger;
+import com.almasb.fxgl.time.UpdateEventListener;
+import com.almasb.fxgl.ui.UIFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -52,12 +49,10 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Represents the scene that shows game objects on the screen during "play" mode.
@@ -71,9 +66,10 @@ import java.util.logging.Logger;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameScene extends FXGLScene implements GameWorldListener, ComponentListener, ControlListener {
+public final class GameScene extends FXGLScene implements EntityWorldListener,
+        UpdateEventListener, ComponentListener, ControlListener {
 
-    private static final Logger log = FXGLLogger.getLogger("FXGL.GameScene");
+    private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
     /**
      * Root for entity views, it is affected by viewport movement.
@@ -99,47 +95,15 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     private Group uiRoot = new Group();
 
     @Inject
-    private GameScene() {
+    protected GameScene(@Named("appWidth") double width,
+                        @Named("appHeight") double height) {
         getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
-
-        initEventHandlers();
-
-        double width = FXGL.getSettings().getWidth();
-        double height = FXGL.getSettings().getHeight();
 
         initParticlesCanvas(width, height);
         initViewport(width, height);
+        initFPSText(height);
 
-        log.finer("Game scene initialized");
-    }
-
-    private void initEventHandlers() {
-        EventBus eventBus = GameApplication.getService(ServiceType.EVENT_BUS);
-
-        eventBus.addEventHandler(WorldEvent.ENTITY_ADDED, event -> {
-            Entity entity = event.getEntity();
-            onEntityAdded(entity);
-        });
-        eventBus.addEventHandler(WorldEvent.ENTITY_REMOVED, event -> {
-            Entity entity = event.getEntity();
-            onEntityRemoved(entity);
-        });
-
-        eventBus.addEventHandler(UpdateEvent.ANY, event -> {
-            onWorldUpdate(event.tpf());
-        });
-
-        eventBus.addEventHandler(FXGLEvent.RESET, event -> {
-            onWorldReset();
-        });
-
-        addEventHandler(MouseEvent.ANY, event -> {
-            FXGLInputEvent e = new FXGLInputEvent(event, screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
-            eventBus.fireEvent(e);
-        });
-        addEventHandler(KeyEvent.ANY, event -> {
-            eventBus.fireEvent(new FXGLInputEvent(event, Point2D.ZERO));
-        });
+        log.debug("Game scene initialized: " + width + "x" + height);
     }
 
     private void initParticlesCanvas(double w, double h) {
@@ -163,6 +127,13 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
     }
 
+    private Text fpsText;
+
+    private void initFPSText(double height) {
+        fpsText = UIFactory.newText("", 24);
+        fpsText.setTranslateY(height - 40);
+    }
+
     /**
      * Converts a point on screen to a point within game scene.
      *
@@ -171,7 +142,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      */
     public Point2D screenToGame(Point2D screenPoint) {
         return screenPoint
-                .multiply(1.0 / GameApplication.getService(ServiceType.DISPLAY).getScaleRatio())
+                .multiply(1.0 / FXGL.getDisplay().getScaleRatio())
                 .add(viewport.getOrigin());
     }
 
@@ -188,6 +159,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      * @param node UI node to add
      */
     public void addUINode(Node node) {
+        log.debug("Adding UI node: "+ node);
         uiRoot.getChildren().add(node);
     }
 
@@ -208,6 +180,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
      * @return true iff the node has been removed
      */
     public boolean removeUINode(Node n) {
+        log.debug("Removing UI node: "+ n);
         return uiRoot.getChildren().remove(n);
     }
 
@@ -251,6 +224,17 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         uiRoot.setMouseTransparent(b);
     }
 
+    public void setShowFPSOverlay(boolean show) {
+        // TODO: reduce dependency
+        if (show) {
+            fpsText.textProperty().bind(FXGL.getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
+                    .concat(FXGL.getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
+            addUINode(fpsText);
+        } else {
+            removeUINode(fpsText);
+        }
+    }
+
     /**
      * Returns graphics context of the game scene.
      * The render layer is over all entities.
@@ -283,7 +267,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
 
         if (group.getUserData() == null) {
-            log.finer("Creating render group for layer: " + layer.asString());
+            log.debug("Creating render group for layer: " + layer.asString());
             group.setUserData(renderLayer);
             gameRoot.getChildren().add(group);
         }
@@ -297,7 +281,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     }
 
     @Override
-    public void onWorldUpdate(double tpf) {
+    public void onUpdateEvent(UpdateEvent event) {
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
@@ -305,9 +289,8 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
         particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
-    @Override
     public void onWorldReset() {
-        log.finer("Resetting game scene");
+        log.debug("Resetting game scene");
 
         getViewport().unbind();
         particles.clear();
@@ -317,7 +300,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
     @Override
     public void onEntityAdded(Entity entity) {
-        log.finer("Entity added to scene");
+        log.debug("Entity added to scene");
 
         entity.getComponent(MainViewComponent.class)
                 .ifPresent(viewComponent -> {
@@ -335,7 +318,7 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        log.finer("Entity removed from scene");
+        log.debug("Entity removed from scene");
 
         entity.getComponent(MainViewComponent.class)
                 .ifPresent(viewComponent -> {
@@ -370,14 +353,14 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     @Override
     public void onComponentAdded(Component component) {
         if (component instanceof MainViewComponent) {
-            log.finer("Added MainViewComponent");
+            log.debug("Added MainViewComponent");
 
             MainViewComponent viewComponent = (MainViewComponent) component;
 
             EntityView view = viewComponent.getView();
             addGameView(view);
 
-            viewComponent.viewProperty().addListener(viewChangeListener);
+            //viewComponent.viewProperty().addListener(viewChangeListener);
             viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
                 getRenderGroup(oldLayer).getChildren().remove(view);
                 getRenderGroup(newLayer).getChildren().add(view);
@@ -388,14 +371,14 @@ public final class GameScene extends FXGLScene implements GameWorldListener, Com
     @Override
     public void onComponentRemoved(Component component) {
         if (component instanceof MainViewComponent) {
-            log.finer("Removed MainViewComponent");
+            log.debug("Removed MainViewComponent");
 
             MainViewComponent viewComponent = (MainViewComponent) component;
 
             EntityView view = viewComponent.getView();
             removeGameView(view);
 
-            viewComponent.viewProperty().removeListener(viewChangeListener);
+            //viewComponent.viewProperty().removeListener(viewChangeListener);
         }
     }
 

@@ -24,14 +24,32 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.event;
 
-import com.almasb.ents.EntityWorldListener;
+import com.almasb.fxgl.gameplay.Achievement;
+import javafx.event.EventType;
 
 /**
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface GameWorldListener extends EntityWorldListener {
-    void onWorldUpdate(double tpf);
-    void onWorldReset();
+public class AchievementProgressEvent extends AchievementEvent {
+
+    public static final EventType<AchievementProgressEvent> PROGRESS =
+            new EventType<>(ANY, "PROGRESS");
+
+    private double value, max;
+
+    public double getValue() {
+        return value;
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public AchievementProgressEvent(Achievement achievement, double value, double max) {
+        super(PROGRESS, achievement);
+        this.value = value;
+        this.max = max;
+    }
 }
