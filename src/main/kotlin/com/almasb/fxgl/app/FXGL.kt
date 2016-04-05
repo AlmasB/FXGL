@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.logging.LoggerFactory
+import com.almasb.fxgl.logging.MockLoggerFactory
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -128,7 +130,7 @@ class FXGL {
 
         /* CONVENIENCE ACCESSORS */
 
-        private val _loggerFactory by lazy { getService(ServiceType.LOGGER_FACTORY) }
+        private val _loggerFactory by lazy { if (initGuard) getService(ServiceType.LOGGER_FACTORY) else MockLoggerFactory }
         @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
         @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
 
