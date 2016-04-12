@@ -330,6 +330,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getDisplay().save(event.getProfile());
             getAudioPlayer().save(event.getProfile());
             getAchievementManager().save(event.getProfile());
+            getMasterTimer().save(event.getProfile());
         });
 
         bus.addEventHandler(LoadEvent.ANY, event -> {
@@ -337,6 +338,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getDisplay().load(event.getProfile());
             getAudioPlayer().load(event.getProfile());
             getAchievementManager().load(event.getProfile());
+
+            if (event.getEventType() != LoadEvent.RESTORE_SETTINGS) {
+                getMasterTimer().load(event.getProfile());
+            }
         });
 
         bus.addEventHandler(FXGLEvent.PAUSE, event -> {
@@ -786,26 +791,21 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return saveLoadManager;
     }
 
-    private long playtime = 0;
-    private long startTime = System.nanoTime();
-
     @Override
     public void save(UserProfile profile) {
-        log.debug("Saving data to profile");
-
-        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
-        bundle.put("playtime", System.nanoTime() - startTime + playtime);
-
-        bundle.log();
-        profile.putBundle(bundle);
+//        log.debug("Saving data to profile");
+//
+//        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
+//        bundle.put("...", ...);
+//
+//        bundle.log();
+//        profile.putBundle(bundle);
     }
 
     @Override
     public void load(UserProfile profile) {
-        log.debug("Loading data from profile");
-        UserProfile.Bundle bundle = profile.getBundle("game");
-        bundle.log();
-
-        playtime = bundle.get("playtime");
+//        log.debug("Loading data from profile");
+//        UserProfile.Bundle bundle = profile.getBundle("game");
+//        bundle.log();
     }
 }

@@ -61,6 +61,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -139,7 +140,10 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getGameWorld().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
-        return new MenuContent(new HBox(25, UIFactory.newText("DIFFICULTY:"), difficultySpinner));
+        return new MenuContent(new HBox(25, UIFactory.newText("DIFFICULTY:"), difficultySpinner),
+                UIFactory.newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
+                    + app.getMasterTimer().getPlaytimeMinutes() + "M "
+                    + app.getMasterTimer().getPlaytimeSeconds() + "S"));
     }
 
     /**
