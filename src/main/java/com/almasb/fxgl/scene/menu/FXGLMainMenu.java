@@ -57,6 +57,9 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
         MenuItem itemExtra = new MenuItem("EXTRA");
         itemExtra.setChild(createExtraMenu());
 
+        MenuItem itemLogout = new MenuItem("LOGOUT");
+        itemLogout.setOnAction(e -> fireLogout());
+
         MenuItem itemExit = new MenuItem("EXIT");
         itemExit.setOnAction(e -> {
             app.getDisplay().showConfirmationBox("Exit the game?", yes -> {
@@ -70,7 +73,8 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
             itemContinue.setDisable(!app.getSaveLoadManager().loadLastModifiedSaveFile().hasData());
         });
 
-        MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad, itemOptions, itemExtra, itemExit);
+        MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad,
+                itemOptions, itemExtra, itemLogout, itemExit);
         menu.setTranslateX(50);
         menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
         return menu;

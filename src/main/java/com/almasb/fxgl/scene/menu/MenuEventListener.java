@@ -43,6 +43,8 @@ public interface MenuEventListener {
 
     void onDelete(String fileName);
 
+    void onLogout();
+
     void onExit();
 
     void onExitToMainMenu();

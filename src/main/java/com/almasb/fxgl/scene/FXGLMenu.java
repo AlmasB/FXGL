@@ -414,6 +414,12 @@ public abstract class FXGLMenu extends FXGLScene {
         fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
     }
 
+    protected final void fireLogout() {
+        listener.onLogout();
+        // TODO: do we need events now?
+        // TODO: we must clear menu content, since we are logging out
+    }
+
     /**
      * Fire {@link MenuEvent#EXIT} event.
      * App will clean up the world/the scene and exit.

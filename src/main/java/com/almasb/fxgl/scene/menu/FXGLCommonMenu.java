@@ -77,16 +77,14 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
                 + (app.getSettings().getApplicationMode() == ApplicationMode.RELEASE ? "" : "-" + app.getSettings().getApplicationMode()));
         version.setTranslateY(app.getHeight() - 2);
 
-        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox);
+        Text profile = UIFactory.newText("");
+        profile.setTranslateY(app.getHeight() - 2);
+
+        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox, profile);
 
         app.getEventBus().addEventHandler(MenuDataEvent.PROFILE_SELECTED, event -> {
-            String profileName = event.getData();
-
-            Text text = UIFactory.newText("Profile: " + profileName);
-            text.setTranslateX(app.getWidth() - text.getLayoutBounds().getWidth());
-            text.setTranslateY(app.getHeight() - 2);
-
-            getRoot().getChildren().add(text);
+            profile.setText("Profile: " + event.getData());
+            profile.setTranslateX(app.getWidth() - profile.getLayoutBounds().getWidth());
         });
 
         activeProperty().addListener((observable, wasActive, isActive) -> {

@@ -534,6 +534,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
 
         @Override
+        public void onLogout() {
+            showProfileDialog();
+        }
+
+        @Override
         public void onExit() {
             exit();
         }
