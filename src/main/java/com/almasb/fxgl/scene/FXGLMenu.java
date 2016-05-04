@@ -310,6 +310,10 @@ public abstract class FXGLMenu extends FXGLScene {
         return content;
     }
 
+    protected final MenuContent createContentMultiplayer() {
+        return new MenuContent(UIFactory.newText("TODO: MULTIPLAYER"));
+    }
+
     /**
      * A generic vertical box container for menu content
      * where each element is followed by a separator.
@@ -418,6 +422,10 @@ public abstract class FXGLMenu extends FXGLScene {
         listener.onLogout();
         // TODO: do we need events now?
         // TODO: we must clear menu content, since we are logging out
+    }
+
+    protected final void fireMultiplayer() {
+        listener.onMultiplayer();
     }
 
     /**

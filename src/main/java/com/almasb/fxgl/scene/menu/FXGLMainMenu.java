@@ -57,6 +57,9 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
         MenuItem itemExtra = new MenuItem("EXTRA");
         itemExtra.setChild(createExtraMenu());
 
+        MenuItem itemMultiplayer = new MenuItem("ONLINE");
+        itemMultiplayer.setOnAction(e -> fireMultiplayer());
+
         MenuItem itemLogout = new MenuItem("LOGOUT");
         itemLogout.setOnAction(e -> fireLogout());
 
@@ -74,7 +77,7 @@ public final class FXGLMainMenu extends FXGLCommonMenu {
         });
 
         MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad,
-                itemOptions, itemExtra, itemLogout, itemExit);
+                itemOptions, itemExtra, itemMultiplayer, itemLogout, itemExit);
         menu.setTranslateX(50);
         menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
         return menu;

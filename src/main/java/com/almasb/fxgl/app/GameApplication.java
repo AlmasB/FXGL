@@ -539,6 +539,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
 
         @Override
+        public void onMultiplayer() {
+            showMultiplayerDialog();
+        }
+
+        @Override
         public void onExit() {
             exit();
         }
@@ -582,6 +587,22 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         } else {
             startNewGame();
         }
+    }
+
+    private void showMultiplayerDialog() {
+        Button btnHost = UIFactory.newButton("Host...");
+        btnHost.setOnAction(e -> System.out.println("Hosting the game at ..."));
+
+        // TODO: waiting for player dialog ...
+
+        Button btnConnect = UIFactory.newButton("Connect...");
+        btnConnect.setOnAction(e -> {
+            getDisplay().showInputBox("Enter Server IP", input -> input.contains("."), ip -> {
+                // TODO: connect using ip
+            });
+        });
+
+        getDisplay().showBox("Multiplayer Options", UIFactory.newText(""), btnHost, btnConnect);
     }
 
     /**

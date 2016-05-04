@@ -23,7 +23,7 @@
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.0.0</kotlin.version>
+        <kotlin.version>1.0.1-2</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.10</controlsfx.version>
@@ -31,6 +31,7 @@
         <ents.version>1.0</ents.version>
         <astar.version>1.0</astar.version>
         <log4j.version>2.5</log4j.version>
+        <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
         <junit.version>4.12</junit.version>
         <commons-math.version>3.5</commons-math.version>
@@ -40,6 +41,11 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>jME3</id>
+            <url>http://updates.jmonkeyengine.org/maven/</url>
         </repository>
     </repositories>
 
@@ -96,6 +102,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jme3</groupId>
+            <artifactId>jme3-networking</artifactId>
+            <version>${jme3.net.version}</version>
         </dependency>
 
         <!-- test scope dependencies -->
