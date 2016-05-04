@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +23,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s18renderlayer;
+
+package s29networking;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.input.ActionType;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.InputMapping;
+import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.paint.Color;
+import com.jme3.network.Client;
+import com.jme3.network.Network;
+import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
- * Shows how to use render layers.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * Shows how to use networking in multiplayer games.
  */
-public class RenderingSample extends GameApplication {
+public class NetworkingSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("RenderingSample");
-        settings.setVersion("0.1developer");
+        settings.setTitle("NetworkingSample");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -55,54 +61,74 @@ public class RenderingSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
+    private Client client;
+    private UpdateMessage lastMessage = null;
+
     @Override
-    protected void initInput() {}
+    protected void preInit() {
+        try {
+            client = Network.connectToServer("Test", 1, "localhost", 55555, 55554);
+            client.addMessageListener((source, message) -> {
+                lastMessage = (UpdateMessage) message;
+            }, UpdateMessage.class);
+
+            getEventBus().addEventHandler(FXGLEvent.EXIT, e -> client.close());
+
+            client.start();
+        } catch (Exception e) {
+            getDefaultCheckedExceptionHandler().handle(e);
+            exit();
+        }
+    }
+
+    @Override
+    protected void initInput() {
+        Input input = getInput();
+
+        input.addInputMapping(new InputMapping("Ask for time", KeyCode.F));
+    }
 
     @Override
     protected void initAssets() {}
 
+    private GameEntity player;
+
     @Override
     protected void initGame() {
-        Entities.builder()
+        player = Entities.builder()
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
-                .buildAndAttach(getGameWorld());
-
-        EntityView view = new EntityView(new Rectangle(40, 40, Color.RED));
-
-        // 1. predefine or create dynamically like below
-        view.setRenderLayer(new RenderLayer() {
-            @Override
-            public String name() {
-                // 2. specify the unique name for that layer
-                return "LAYER_BELOW_PLAYER";
-            }
-
-            @Override
-            public int index() {
-                // 3. specify layer index, higher values will drawn above lower values
-                return 1000;
-            }
-        });
-
-        // TODO: fix
-
-        // we have added box after player but because of the render layer we specified
-        // the red box will be drawn below the player
-        Entities.builder()
-                .at(80, 80)
-                .viewFromNode(view)
                 .buildAndAttach(getGameWorld());
     }
 
     @Override
     protected void initPhysics() {}
 
-    @Override
-    protected void initUI() {}
+    private Text uiText;
 
     @Override
-    protected void onUpdate(double tpf) {}
+    protected void initUI() {
+        uiText = new Text();
+        uiText.setFont(Font.font(18));
+
+        uiText.setTranslateX(400);
+        uiText.setTranslateY(300);
+
+        getGameScene().addUINode(uiText);
+    }
+
+    @Override
+    public void onUpdate(double tpf) {
+        if (lastMessage != null) {
+            player.getPositionComponent().setX(lastMessage.getX());
+        }
+    }
+
+    @OnUserAction(name = "Ask for time", type = ActionType.ON_ACTION_BEGIN)
+    public void askServerForTime() {
+        // just send empty message
+        client.send(new UpdateMessage());
+    }
 
     public static void main(String[] args) {
         launch(args);
