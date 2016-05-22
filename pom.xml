@@ -104,11 +104,11 @@
             <version>${log4j.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.jme3</groupId>
-            <artifactId>jme3-networking</artifactId>
-            <version>${jme3.net.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.jme3</groupId>-->
+            <!--<artifactId>jme3-networking</artifactId>-->
+            <!--<version>${jme3.net.version}</version>-->
+        <!--</dependency>-->
 
         <!-- test scope dependencies -->
         <dependency>
