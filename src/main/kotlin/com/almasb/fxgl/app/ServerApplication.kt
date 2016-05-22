@@ -24,62 +24,62 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app
-
-import com.almasb.fxgl.gameplay.GameWorld
-import com.almasb.fxgl.physics.PhysicsWorld
-import com.jme3.network.*
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
-
-/**
- * API INCOMPLETE
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
- */
-abstract class ServerApplication {
-
-    private val executor: ScheduledExecutorService
-    private val server: Server
-
-    init {
-        server = Network.createServer("Test", 1, 55555, 55554)
-
-        executor = Executors.newSingleThreadScheduledExecutor()
-    }
-
-    protected fun launch() {
-        server.start()
-
-        executor.scheduleAtFixedRate({ update() }, 0, 16, TimeUnit.MILLISECONDS)
-    }
-
-    //private val gameWorld = GameWorld()
-    //private val physicsWorld = PhysicsWorld()
-
-    protected fun addMessageListener(listener: MessageListener<HostedConnection>) {
-        server.addMessageListener(listener)
-    }
-
-    protected fun broadcast(message: Message) {
-        server.broadcast(message)
-    }
-
-    private fun update() {
-
-        //gameWorld.onUpdate(tpf)
-        //physicsWorld.onUpdate(tpf)
-        val tpf = 0.016
-
-        onUpdate(tpf)
-    }
-
-    abstract fun onUpdate(tpf: Double)
-
-    protected fun exit() {
-        executor.shutdownNow()
-
-        server.close()
-    }
-}
+//package com.almasb.fxgl.app
+//
+//import com.almasb.fxgl.gameplay.GameWorld
+//import com.almasb.fxgl.physics.PhysicsWorld
+//import com.jme3.network.*
+//import java.util.concurrent.Executors
+//import java.util.concurrent.ScheduledExecutorService
+//import java.util.concurrent.TimeUnit
+//
+///**
+// * API INCOMPLETE
+// *
+// * @author Almas Baimagambetov (almaslvl@gmail.com)
+// */
+//abstract class ServerApplication {
+//
+//    private val executor: ScheduledExecutorService
+//    private val server: Server
+//
+//    init {
+//        server = Network.createServer("Test", 1, 55555, 55554)
+//
+//        executor = Executors.newSingleThreadScheduledExecutor()
+//    }
+//
+//    protected fun launch() {
+//        server.start()
+//
+//        executor.scheduleAtFixedRate({ update() }, 0, 16, TimeUnit.MILLISECONDS)
+//    }
+//
+//    //private val gameWorld = GameWorld()
+//    //private val physicsWorld = PhysicsWorld()
+//
+//    protected fun addMessageListener(listener: MessageListener<HostedConnection>) {
+//        server.addMessageListener(listener)
+//    }
+//
+//    protected fun broadcast(message: Message) {
+//        server.broadcast(message)
+//    }
+//
+//    private fun update() {
+//
+//        //gameWorld.onUpdate(tpf)
+//        //physicsWorld.onUpdate(tpf)
+//        val tpf = 0.016
+//
+//        onUpdate(tpf)
+//    }
+//
+//    abstract fun onUpdate(tpf: Double)
+//
+//    protected fun exit() {
+//        executor.shutdownNow()
+//
+//        server.close()
+//    }
+//}
