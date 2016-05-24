@@ -28,10 +28,12 @@ package com.almasb.fxgl.app;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.devtools.DeveloperTools;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.input.FXGLInputEvent;
+import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.logging.Logger;
@@ -681,11 +683,22 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }, KeyCode.P);
     }
 
+    private void bindDeveloperKey() {
+        getInput().addAction(new UserAction("Developer Options") {
+            @Override
+            protected void onActionBegin() {
+                log.debug("Scene graph contains " + DeveloperTools.INSTANCE.getChildrenSize(getGameScene().getRoot())
+                        + " nodes");
+            }
+        }, KeyCode.DIGIT0, InputModifier.CTRL);
+    }
+
     private void initFXGL() {
         initAchievements();
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         bindScreenshotKey();
+        bindDeveloperKey();
         initInput();
         // scan for annotated methods and register them too
         getInput().scanForUserActions(this);
