@@ -268,6 +268,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
+                <configuration>
+                    <outputFile>${project.build.directory}/${project.name}-${project.version}-uber.jar</outputFile>
+                </configuration>
                 <executions>
                     <!-- Run shade goal on package phase -->
                     <execution>
