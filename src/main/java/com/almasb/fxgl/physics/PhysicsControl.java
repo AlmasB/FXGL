@@ -44,7 +44,7 @@ import org.jbox2d.dynamics.Body;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PhysicsComponent.class)
-class PhysicsControl extends AbstractControl {
+public class PhysicsControl extends AbstractControl {
 
     private Body body;
 
