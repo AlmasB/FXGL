@@ -112,7 +112,7 @@ public abstract class FXGLApplication extends Application {
         initUserProperties();
         initAppSettings();
 
-        FXGL.configure(settings, stage);
+        FXGL.configure(this, stage);
 
         log.debug("FXGL configuration complete");
     }
