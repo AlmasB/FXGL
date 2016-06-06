@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.algorithm
 
-import javafx.geometry.Point2D
 import java.util.*
 
 /**

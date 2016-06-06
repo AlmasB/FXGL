@@ -34,7 +34,6 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.animation.AnimationTimer
 import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.beans.property.ReadOnlyLongProperty
 import javafx.beans.property.ReadOnlyLongWrapper
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.util.Duration
