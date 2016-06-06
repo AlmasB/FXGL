@@ -91,14 +91,6 @@ public abstract class FXGLApplication extends Application {
         };
     }
 
-    /**
-     * @deprecated use FXGL.getService() instead
-     */
-    @Deprecated
-    public static final <T> T getService(ServiceType<T> type) {
-        return FXGL.getService(type);
-    }
-
     @Override
     public final void init() throws Exception {
         log.debug("Initializing FXGL");
