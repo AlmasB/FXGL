@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Usage: update-javadoc-main.sh JAVADOC_JAR_FILE
+
 # make dir desktop/tmp/javadoc if !exists
 
 # unjar there
