@@ -28,6 +28,7 @@ package com.almasb.fxgl.time
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -153,6 +154,10 @@ private constructor() : AnimationTimer(), MasterTimer {
      */
     override fun tickProperty() = tick.readOnlyProperty
 
+    private var playtime = ReadOnlyLongWrapper(0)
+
+    override fun playtimeProperty() = playtime.readOnlyProperty
+
     override fun start() {
         log.debug { "Starting master timer" }
         super.start()
@@ -242,6 +247,7 @@ private constructor() : AnimationTimer(), MasterTimer {
         }
 
         now += realTPF
+        playtime.value += realTPF
 
         previousInternalTime = internalTime
     }
@@ -316,5 +322,23 @@ private constructor() : AnimationTimer(), MasterTimer {
         val act = TimerActionImpl(getNow(), delay, action, TimerType.ONCE)
         timerActions.add(act)
         return act
+    }
+
+    override fun save(profile: UserProfile) {
+        log.debug("Saving data to profile")
+
+        val bundle = UserProfile.Bundle("timer")
+        bundle.put("playtime", playtime.value)
+
+        bundle.log()
+        profile.putBundle(bundle)
+    }
+
+    override fun load(profile: UserProfile) {
+        log.debug("Loading data from profile")
+        val bundle = profile.getBundle("timer")
+        bundle.log()
+
+        playtime.value = bundle.get<Long>("playtime")
     }
 }

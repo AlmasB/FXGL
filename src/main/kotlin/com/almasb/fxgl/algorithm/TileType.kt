@@ -24,30 +24,17 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene.menu;
+package com.almasb.fxgl.algorithm
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MenuEventListener {
+enum class TileType {
+    WATER, EARTH;
 
-    void onNewGame();
-
-    void onContinue();
-
-    void onResume();
-
-    void onSave();
-
-    void onLoad(String fileName);
-
-    void onDelete(String fileName);
-
-    void onLogout();
-
-    void onMultiplayer();
-
-    void onExit();
-
-    void onExitToMainMenu();
+    override fun toString(): String {
+        return name.substring(0, 1)
+    }
 }

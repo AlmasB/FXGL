@@ -24,30 +24,14 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene.menu;
+package com.almasb.fxgl.algorithm
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MenuEventListener {
+class Tile {
 
-    void onNewGame();
-
-    void onContinue();
-
-    void onResume();
-
-    void onSave();
-
-    void onLoad(String fileName);
-
-    void onDelete(String fileName);
-
-    void onLogout();
-
-    void onMultiplayer();
-
-    void onExit();
-
-    void onExitToMainMenu();
+    lateinit var type: TileType
 }

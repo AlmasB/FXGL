@@ -50,13 +50,15 @@ object SystemLogger : Logger {
     private val threadNames = HashMap<Long, String>()
 
     private val consoleHandler = ConsoleHandler()
-    private val fileHandler = FileHandler("logs/FXGL-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy HH-mm-ss-SSS"))}.log",
-            1024 * 1024, 1)
+    private val fileHandler: FileHandler
 
     private val logger = java.util.logging.Logger.getLogger("FXGL.SystemLogger")
 
     init {
         cleanOldLogs()
+
+        fileHandler = FileHandler("logs/FXGL-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy HH-mm-ss-SSS"))}.log",
+                1024 * 1024, 1)
 
         initLogger()
 

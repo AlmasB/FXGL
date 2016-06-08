@@ -139,7 +139,10 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getGameWorld().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
-        return new MenuContent(new HBox(25, UIFactory.newText("DIFFICULTY:"), difficultySpinner));
+        return new MenuContent(new HBox(25, UIFactory.newText("DIFFICULTY:"), difficultySpinner),
+                UIFactory.newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
+                    + app.getMasterTimer().getPlaytimeMinutes() + "M "
+                    + app.getMasterTimer().getPlaytimeSeconds() + "S"));
     }
 
     /**
@@ -306,6 +309,10 @@ public abstract class FXGLMenu extends FXGLScene {
         return content;
     }
 
+    protected final MenuContent createContentMultiplayer() {
+        return new MenuContent(UIFactory.newText("TODO: MULTIPLAYER"));
+    }
+
     /**
      * A generic vertical box container for menu content
      * where each element is followed by a separator.
@@ -408,6 +415,16 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final void fireResume() {
         listener.onResume();
         fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
+    }
+
+    protected final void fireLogout() {
+        listener.onLogout();
+        // TODO: do we need events now?
+        // TODO: we must clear menu content, since we are logging out
+    }
+
+    protected final void fireMultiplayer() {
+        listener.onMultiplayer();
     }
 
     /**

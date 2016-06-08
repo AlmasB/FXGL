@@ -28,10 +28,12 @@ package com.almasb.fxgl.app;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.devtools.DeveloperTools;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.input.FXGLInputEvent;
+import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.logging.Logger;
@@ -330,6 +332,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getDisplay().save(event.getProfile());
             getAudioPlayer().save(event.getProfile());
             getAchievementManager().save(event.getProfile());
+            getMasterTimer().save(event.getProfile());
         });
 
         bus.addEventHandler(LoadEvent.ANY, event -> {
@@ -337,6 +340,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getDisplay().load(event.getProfile());
             getAudioPlayer().load(event.getProfile());
             getAchievementManager().load(event.getProfile());
+
+            if (event.getEventType() != LoadEvent.RESTORE_SETTINGS) {
+                getMasterTimer().load(event.getProfile());
+            }
         });
 
         bus.addEventHandler(FXGLEvent.PAUSE, event -> {
@@ -529,6 +536,16 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
 
         @Override
+        public void onLogout() {
+            showProfileDialog();
+        }
+
+        @Override
+        public void onMultiplayer() {
+            showMultiplayerDialog();
+        }
+
+        @Override
         public void onExit() {
             exit();
         }
@@ -572,6 +589,22 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         } else {
             startNewGame();
         }
+    }
+
+    private void showMultiplayerDialog() {
+        Button btnHost = UIFactory.newButton("Host...");
+        btnHost.setOnAction(e -> System.out.println("Hosting the game at ..."));
+
+        // TODO: waiting for player dialog ...
+
+        Button btnConnect = UIFactory.newButton("Connect...");
+        btnConnect.setOnAction(e -> {
+            getDisplay().showInputBox("Enter Server IP", input -> input.contains("."), ip -> {
+                // TODO: connect using ip
+            });
+        });
+
+        getDisplay().showBox("Multiplayer Options", UIFactory.newText(""), btnHost, btnConnect);
     }
 
     /**
@@ -650,11 +683,22 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }, KeyCode.P);
     }
 
+    private void bindDeveloperKey() {
+        getInput().addAction(new UserAction("Developer Options") {
+            @Override
+            protected void onActionBegin() {
+                log.debug("Scene graph contains " + DeveloperTools.INSTANCE.getChildrenSize(getGameScene().getRoot())
+                        + " nodes");
+            }
+        }, KeyCode.DIGIT0, InputModifier.CTRL);
+    }
+
     private void initFXGL() {
         initAchievements();
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         bindScreenshotKey();
+        bindDeveloperKey();
         initInput();
         // scan for annotated methods and register them too
         getInput().scanForUserActions(this);
@@ -786,26 +830,21 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return saveLoadManager;
     }
 
-    private long playtime = 0;
-    private long startTime = System.nanoTime();
-
     @Override
     public void save(UserProfile profile) {
-        log.debug("Saving data to profile");
-
-        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
-        bundle.put("playtime", System.nanoTime() - startTime + playtime);
-
-        bundle.log();
-        profile.putBundle(bundle);
+//        log.debug("Saving data to profile");
+//
+//        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
+//        bundle.put("...", ...);
+//
+//        bundle.log();
+//        profile.putBundle(bundle);
     }
 
     @Override
     public void load(UserProfile profile) {
-        log.debug("Loading data from profile");
-        UserProfile.Bundle bundle = profile.getBundle("game");
-        bundle.log();
-
-        playtime = bundle.get("playtime");
+//        log.debug("Loading data from profile");
+//        UserProfile.Bundle bundle = profile.getBundle("game");
+//        bundle.log();
     }
 }
