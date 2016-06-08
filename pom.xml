@@ -4,12 +4,12 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
     <description>Simple JavaFX Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/0.2.2</url>
+    <url>https://jitpack.io/#AlmasB/FXGL/0.2.3</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -264,7 +264,7 @@
                 </executions>
             </plugin>
 
-            <plugin>
+            <plugin>    <!-- Create uber jar -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
