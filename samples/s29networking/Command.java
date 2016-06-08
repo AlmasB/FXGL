@@ -24,30 +24,11 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene.menu;
+package s29networking;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface MenuEventListener {
-
-    void onNewGame();
-
-    void onContinue();
-
-    void onResume();
-
-    void onSave();
-
-    void onLoad(String fileName);
-
-    void onDelete(String fileName);
-
-    void onLogout();
-
-    void onMultiplayer();
-
-    void onExit();
-
-    void onExitToMainMenu();
+public enum Command {
+    LEFT, RIGHT, UP, DOWN
 }

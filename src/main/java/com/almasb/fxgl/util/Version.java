@@ -58,7 +58,8 @@ public final class Version {
         log.info("JavaFX-" + getJavaFXAsString());
         log.info("JBox2D-" + getJBox2DAsString());
         log.info("Kotlin-" + getKotlinAsString());
-        log.info("Source code and latest builds at: https://github.com/AlmasB/FXGL");
+        log.info("Source code and latest versions at: https://github.com/AlmasB/FXGL");
+        log.info("             Join the FXGL chat at: https://gitter.im/AlmasB/FXGL");
     }
 
     /**

@@ -33,6 +33,8 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
+import javafx.geometry.Point2D;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
 /**
@@ -42,7 +44,7 @@ import org.jbox2d.dynamics.Body;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PhysicsComponent.class)
-class PhysicsControl extends AbstractControl {
+public class PhysicsControl extends AbstractControl {
 
     private Body body;
 
@@ -78,5 +80,17 @@ class PhysicsControl extends AbstractControl {
                                 - PhysicsWorld.toMeters(bbox.getHeight() / 2))));
 
         rotation.setValue(-Math.toDegrees(body.getAngle()));
+    }
+
+    public void reposition(Point2D point) {
+        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
+
+        double w = bbox.getWidth(),
+                h = bbox.getHeight();
+
+        body.setTransform(new Vec2(
+                PhysicsWorld.toMeters(point.getX() + w / 2),
+                PhysicsWorld.toMeters(appHeight - (point.getY() + h / 2))),
+                body.getAngle());
     }
 }

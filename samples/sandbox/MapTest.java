@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,35 +23,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package s18renderlayer;
+package sandbox;
 
+import com.almasb.astar.AStarGrid;
+import com.almasb.astar.AStarNode;
+import com.almasb.astar.NodeState;
+import com.almasb.ents.Entity;
+import com.almasb.fxgl.algorithm.Grid;
+import com.almasb.fxgl.algorithm.MapGenerator;
+import com.almasb.fxgl.algorithm.TileType;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import kotlin.Pair;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Shows how to use render layers.
+ * Demo that uses A* search to find a path between 2 nodes in a grid.
+ * Right click to place a wall, left click to move.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class RenderingSample extends GameApplication {
+public class MapTest extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("RenderingSample");
-        settings.setVersion("0.1developer");
+        settings.setTitle("Map");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(true);
+        settings.setShowFPS(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -61,38 +72,33 @@ public class RenderingSample extends GameApplication {
     @Override
     protected void initAssets() {}
 
+    private static final int TILE_SIZE = 10;
+
+    // 1. Define A* grid
+    private Grid grid;
+
     @Override
     protected void initGame() {
-        Entities.builder()
-                .at(100, 100)
-                .viewFromNode(new Rectangle(40, 40))
-                .buildAndAttach(getGameWorld());
+        // 2. init grid width x height
+        grid = new MapGenerator(1000).create(128, 72, Arrays.asList(
+                new Pair<>(TileType.WATER, 79),
+                new Pair<>(TileType.EARTH, 3000)));
 
-        EntityView view = new EntityView(new Rectangle(40, 40, Color.RED));
+        for (int i = 0; i < grid.getHeight(); i++) {
+            for (int j = 0; j < grid.getWidth(); j++) {
+                final int x = j;
+                final int y = i;
 
-        // 1. predefine or create dynamically like below
-        view.setRenderLayer(new RenderLayer() {
-            @Override
-            public String name() {
-                // 2. specify the unique name for that layer
-                return "LAYER_BELOW_PLAYER";
+                GameEntity tile = new GameEntity();
+                tile.getPositionComponent().setValue(j*TILE_SIZE, i*TILE_SIZE);
+
+                Rectangle graphics = new Rectangle(TILE_SIZE, TILE_SIZE,
+                        grid.getTile(x, y).getType() == TileType.WATER ? Color.BLUE : Color.BROWN);
+                tile.getMainViewComponent().setView(graphics);
+
+                getGameWorld().addEntity(tile);
             }
-
-            @Override
-            public int index() {
-                // 3. specify layer index, higher values will drawn above lower values
-                return 1000;
-            }
-        });
-
-        // TODO: fix
-
-        // we have added box after player but because of the render layer we specified
-        // the red box will be drawn below the player
-        Entities.builder()
-                .at(80, 80)
-                .viewFromNode(view)
-                .buildAndAttach(getGameWorld());
+        }
     }
 
     @Override

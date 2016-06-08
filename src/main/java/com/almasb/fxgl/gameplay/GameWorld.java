@@ -31,10 +31,7 @@ import com.almasb.ents.EntityWorld;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.entity.component.BoundingBoxComponent;
-import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.TypeComponent;
+import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.time.UpdateEventListener;
@@ -205,6 +202,25 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
                 .filter(e -> {
                     PositionComponent positionComponent = Entities.getPosition(e);
                     return positionComponent.getValue().equals(position);
+                })
+                .findAny();
+    }
+
+    /**
+     * Returns an entity whose IDComponent matches given name and id.
+     * <p>
+     * Returns {@link Optional#empty()} if no entity was found with such combination.
+     * This query only works on entities with IDComponent.
+     *
+     * @param name entity name
+     * @param id entity id
+     * @return entity that matches the query or {@link Optional#empty()}
+     */
+    public Optional<Entity> getEntityByID(String name, int id) {
+        return getEntitiesByComponent(IDComponent.class).stream()
+                .filter(e -> {
+                    IDComponent idComponent = e.getComponentUnsafe(IDComponent.class);
+                    return idComponent.getName().equals(name) && idComponent.getID() == id;
                 })
                 .findAny();
     }

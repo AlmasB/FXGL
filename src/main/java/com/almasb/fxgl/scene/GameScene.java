@@ -147,6 +147,18 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
     }
 
     /**
+     * Converts a point in game world to a point within screen (viewport).
+     *
+     * @param gamePoint point in game world coordinates
+     * @return point in UI coordinates
+     */
+    public Point2D gameToScreen(Point2D gamePoint) {
+        return gamePoint
+                .subtract(viewport.getOrigin())
+                .multiply(FXGL.getDisplay().getScaleRatio());
+    }
+
+    /**
      * @return unmodifiable list of UI nodes
      */
     public ObservableList<Node> getUINodes() {

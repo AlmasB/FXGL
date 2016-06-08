@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.logging.LoggerFactory
 import com.almasb.fxgl.logging.MockLoggerFactory
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.google.inject.Guice
@@ -49,18 +48,21 @@ class FXGL {
 
     companion object {
         private lateinit var internalSettings: ReadOnlyGameSettings
+        private lateinit var internalApp: FXGLApplication
 
         private var initGuard = false
 
         @JvmStatic fun getSettings() = internalSettings
+        @JvmStatic fun getApp() = internalApp
 
-        @JvmStatic fun configure(gameSettings: ReadOnlyGameSettings, stage: Stage) {
+        @JvmStatic fun configure(app: FXGLApplication, stage: Stage) {
             if (initGuard)
                 throw IllegalStateException("FXGL is already configured")
 
             initGuard = true
 
-            internalSettings = gameSettings
+            internalApp = app
+            internalSettings = app.settings
             configureServices(stage)
         }
 
@@ -167,6 +169,11 @@ class FXGL {
         @JvmStatic fun getMasterTimer() = _masterTimer
 
         private val _game by lazy { getService(ServiceType.GAME) }
+
+        /**
+         * @deprecated use FXGL.getApp()
+         */
+        @Deprecated("DO NOT USE, WILL BE REMOVED", ReplaceWith("FXGL.getApp()"), DeprecationLevel.WARNING)
         @JvmStatic fun getGame() = _game
 
         /**

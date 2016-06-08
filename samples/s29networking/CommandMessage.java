@@ -24,30 +24,30 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene.menu;
-
-/**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
- */
-public interface MenuEventListener {
-
-    void onNewGame();
-
-    void onContinue();
-
-    void onResume();
-
-    void onSave();
-
-    void onLoad(String fileName);
-
-    void onDelete(String fileName);
-
-    void onLogout();
-
-    void onMultiplayer();
-
-    void onExit();
-
-    void onExitToMainMenu();
-}
+//package s29networking;
+//
+//import com.jme3.network.AbstractMessage;
+//import com.jme3.network.serializing.Serializable;
+//
+///**
+// * @author Almas Baimagambetov (almaslvl@gmail.com)
+// */
+//@Serializable
+//public class CommandMessage extends AbstractMessage {
+//
+//    private Command command;
+//
+//    public CommandMessage() {}
+//
+//    public CommandMessage(Command command) {
+//        this.command = command;
+//    }
+//
+//    public Command getCommand() {
+//        return command;
+//    }
+//
+//    public void setCommand(Command command) {
+//        this.command = command;
+//    }
+//}

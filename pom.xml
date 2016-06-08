@@ -4,12 +4,12 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.2</version>
+    <version>0.2.3</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
     <description>Simple JavaFX Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/0.2.2</url>
+    <url>https://jitpack.io/#AlmasB/FXGL/0.2.3</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,14 +23,15 @@
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.0.0</kotlin.version>
+        <kotlin.version>1.0.1-2</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
-        <ents.version>1.0</ents.version>
+        <ents.version>1.0.1</ents.version>
         <astar.version>1.0</astar.version>
         <log4j.version>2.5</log4j.version>
+        <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
         <junit.version>4.12</junit.version>
         <commons-math.version>3.5</commons-math.version>
@@ -40,6 +41,11 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>jME3</id>
+            <url>http://updates.jmonkeyengine.org/maven/</url>
         </repository>
     </repositories>
 
@@ -97,6 +103,12 @@
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.jme3</groupId>-->
+            <!--<artifactId>jme3-networking</artifactId>-->
+            <!--<version>${jme3.net.version}</version>-->
+        <!--</dependency>-->
 
         <!-- test scope dependencies -->
         <dependency>
@@ -248,6 +260,24 @@
                                 </tag>
                             </tags>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>    <!-- Create uber jar -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <outputFile>${project.build.directory}/${project.name}-${project.version}-uber.jar</outputFile>
+                </configuration>
+                <executions>
+                    <!-- Run shade goal on package phase -->
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

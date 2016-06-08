@@ -68,11 +68,23 @@ public final class DynamicAnimatedTexture extends Texture {
     /**
      * Set animation channel. If animation channel wasn't registered
      * when creating instance of DynamicAnimatedTexture, this method
-     * will throw IllegalArgumentException
+     * will throw IllegalArgumentException.
      *
      * @param channel animation channel
      */
     public void setAnimationChannel(AnimationChannel channel) {
+        setAnimationChannel(channel, () -> {});
+    }
+
+    /**
+     * Set animation channel. If animation channel wasn't registered
+     * when creating instance of DynamicAnimatedTexture, this method
+     * will throw IllegalArgumentException.
+     *
+     * @param channel animation channel
+     * @param onAnimationEnd callback run when animation channel ends
+     */
+    public void setAnimationChannel(AnimationChannel channel, Runnable onAnimationEnd) {
         if (!animationChannels.contains(channel)) {
             throw new IllegalArgumentException("Channel: [" + channel + "] is not registered for this texture.");
         }
@@ -82,7 +94,10 @@ public final class DynamicAnimatedTexture extends Texture {
 
         currentChannel = channel;
         timeline.setCycleCount(currentChannel == defaultChannel ? Timeline.INDEFINITE : 1);
-        timeline.setOnFinished(currentChannel == defaultChannel ? null : e -> setAnimationChannel(defaultChannel));
+        timeline.setOnFinished(currentChannel == defaultChannel ? null : e -> {
+            onAnimationEnd.run();
+            setAnimationChannel(defaultChannel);
+        });
 
         setFitWidth(channel.computeFrameWidth());
         setFitHeight(channel.computeFrameHeight());

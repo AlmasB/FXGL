@@ -27,6 +27,7 @@
 package com.almasb.fxgl.time;
 
 import com.almasb.fxgl.app.FXGLListener;
+import com.almasb.fxgl.settings.UserProfileSavable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
@@ -38,7 +39,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface MasterTimer extends FXGLListener {
+public interface MasterTimer extends FXGLListener, UserProfileSavable {
 
     /**
      * Current time for this tick in nanoseconds. Also time elapsed
@@ -48,6 +49,24 @@ public interface MasterTimer extends FXGLListener {
      * @return current time in nanoseconds
      */
     long getNow();
+
+    default long getPlaytime() {
+        return playtimeProperty().get();
+    }
+
+    default long getPlaytimeHours() {
+        return (long) (getPlaytime() / 1000000000.0 / 3600);
+    }
+
+    default long getPlaytimeMinutes() {
+        return (long) (getPlaytime() / 1000000000.0 / 60) % 60;
+    }
+
+    default long getPlaytimeSeconds() {
+        return (long) (getPlaytime() / 1000000000.0) % 60;
+    }
+
+    ReadOnlyLongProperty playtimeProperty();
 
     /**
      * Returns current tick (frame). When the game has just started,

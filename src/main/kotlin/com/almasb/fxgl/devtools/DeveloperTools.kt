@@ -24,30 +24,29 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene.menu;
+package com.almasb.fxgl.devtools
+
+import com.almasb.fxgl.app.FXGL
+import javafx.scene.Node
+import javafx.scene.Parent
 
 /**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface MenuEventListener {
+object DeveloperTools {
 
-    void onNewGame();
+    private val log = FXGL.getLogger("FXGLDeveloperTools")
 
-    void onContinue();
+    /**
+     * Recursively counts number of children of [node].
+     */
+    fun getChildrenSize(node: Node): Int {
+        log.debug("Counting children for $node")
 
-    void onResume();
-
-    void onSave();
-
-    void onLoad(String fileName);
-
-    void onDelete(String fileName);
-
-    void onLogout();
-
-    void onMultiplayer();
-
-    void onExit();
-
-    void onExitToMainMenu();
+        when (node) {
+            is Parent -> return node.childrenUnmodifiable.size + node.childrenUnmodifiable.map { getChildrenSize(it) }.sum()
+            else      -> return 0
+        }
+    }
 }
