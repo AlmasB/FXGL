@@ -99,6 +99,6 @@ class DeveloperPane : Pane() {
 
     // TODO: we should have databinds instead
     fun update() {
-        cbEntity.items = FXCollections.observableArrayList(FXGL.getGame().gameWorld.entities)
+        cbEntity.items = FXCollections.observableArrayList(FXGL.getApp().gameWorld.entities)
     }
 }

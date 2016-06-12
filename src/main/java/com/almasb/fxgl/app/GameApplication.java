@@ -150,25 +150,29 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
     }
 
+    private GameWorld gameWorld;
+    private PhysicsWorld physicsWorld;
+    private GameScene gameScene;
+
     /**
      * @return game world
      */
     public final GameWorld getGameWorld() {
-        return FXGL.getGame().getGameWorld();
+        return gameWorld;
     }
 
     /**
      * @return physics world
      */
     public final PhysicsWorld getPhysicsWorld() {
-        return FXGL.getGame().getPhysicsWorld();
+        return physicsWorld;
     }
 
     /**
      * @return game scene
      */
     public final GameScene getGameScene() {
-        return FXGL.getGame().getGameScene();
+        return gameScene;
     }
 
     private SceneFactory sceneFactory;
@@ -723,6 +727,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         // services are now ready, switch to normal logger
         log = FXGL.getLogger(GameApplication.class);
         log.debug("Starting Game Application");
+
+        gameWorld = FXGL.getInstance(GameWorld.class);
+        physicsWorld = FXGL.getInstance(PhysicsWorld.class);
+        gameScene = FXGL.getInstance(GameScene.class);
 
         sceneFactory = initSceneFactory();
 

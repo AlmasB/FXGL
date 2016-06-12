@@ -72,7 +72,7 @@ public class CustomServicesSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        Printer printer = FXGL.getService(Printer.class);
+        Printer printer = FXGL.getInstance(Printer.class);
 
         printer.print("Using custom service");
     }

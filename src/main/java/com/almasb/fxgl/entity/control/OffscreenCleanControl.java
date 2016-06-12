@@ -46,7 +46,7 @@ public class OffscreenCleanControl extends AbstractControl {
     private BoundingBoxComponent bbox;
 
     public OffscreenCleanControl() {
-        viewport = FXGL.getGame().getGameScene().getViewport();
+        viewport = FXGL.getApp().getGameScene().getViewport();
     }
 
     @Override

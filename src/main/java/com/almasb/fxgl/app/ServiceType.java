@@ -174,18 +174,6 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<Game> GAME = new ServiceType<Game>() {
-        @Override
-        public Class<Game> service() {
-            return Game.class;
-        }
-
-        @Override
-        public Class<? extends Game> serviceProvider() {
-            return Game.class;
-        }
-    };
-
     ServiceType<LoggerFactory> LOGGER_FACTORY = new ServiceType<LoggerFactory>() {
         @Override
         public Class<LoggerFactory> service() {

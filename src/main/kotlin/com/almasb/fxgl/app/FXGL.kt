@@ -48,7 +48,7 @@ class FXGL {
 
     companion object {
         private lateinit var internalSettings: ReadOnlyGameSettings
-        private lateinit var internalApp: FXGLApplication
+        private lateinit var internalApp: GameApplication
 
         private var initGuard = false
 
@@ -61,7 +61,7 @@ class FXGL {
 
             initGuard = true
 
-            internalApp = app
+            internalApp = app as GameApplication
             internalSettings = app.settings
             configureServices(stage)
         }
@@ -76,15 +76,22 @@ class FXGL {
          * It may be expensive to use this in a loop.
          * Store a reference to the instance instead.
          *
-         * @param type service type
-         *
-         * @param  type
+         * @param serviceType service type
          *
          * @return service
          */
-        @JvmStatic fun <T> getService(type: ServiceType<T>) = injector.getInstance(type.service())
+        @JvmStatic fun <T> getService(serviceType: ServiceType<T>) = injector.getInstance(serviceType.service())
 
-        @JvmStatic fun <T> getService(type: Class<T>) = injector.getInstance(type)
+        /**
+         * Obtain an instance of a type.
+         * It may be expensive to use this in a loop.
+         * Store a reference to the instance instead.
+         *
+         * @param type type
+         *
+         * @return instance
+         */
+        @JvmStatic fun <T> getInstance(type: Class<T>) = injector.getInstance(type)
 
         private fun configureServices(stage: Stage) {
             injector = Guice.createInjector(object : ServicesModule() {
@@ -167,14 +174,6 @@ class FXGL {
 
         private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
         @JvmStatic fun getMasterTimer() = _masterTimer
-
-        private val _game by lazy { getService(ServiceType.GAME) }
-
-        /**
-         * @deprecated use FXGL.getApp()
-         */
-        @Deprecated("DO NOT USE, WILL BE REMOVED", ReplaceWith("FXGL.getApp()"), DeprecationLevel.WARNING)
-        @JvmStatic fun getGame() = _game
 
         /**
          * @return new instance on each call
