@@ -33,7 +33,7 @@ import javafx.geometry.Bounds;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class HitBox {
+public class HitBox {
     private final Bounds bounds;
     private final String name;
 

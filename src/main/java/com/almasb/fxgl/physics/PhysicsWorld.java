@@ -53,9 +53,7 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
@@ -405,12 +403,58 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
 
         Point2D entityCenter = bbox.getCenterWorld();
 
+        // TODO: HitBox should be interface
         for (HitBox box : bbox.hitBoxesProperty()) {
             Bounds bounds = box.translate(position.getX(), position.getY());
 
             // take world center bounds and subtract from entity center (all in pixels) to get local center
             Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
             Point2D boundsCenterLocal = boundsCenter.subtract(entityCenter);
+
+            System.out.println("Center local " + bbox.getCenterLocal());
+            System.out.println("Center local " + toVector(bbox.getCenterLocal()));
+
+
+
+
+            if (box instanceof PolygonHitBox) {
+                PolygonHitBox pbox = (PolygonHitBox) box;
+
+                Vec2[] vertices = new Vec2[pbox.getEdgePoints().length];
+
+                for (int i = 0; i < vertices.length; i++) {
+                    vertices[i] = toVector(pbox.getEdgePoints()[i].subtract(boundsCenterLocal))
+                            .subLocal(toVector(bbox.getCenterLocal()));
+
+                    System.out.println(vertices[i]);
+                }
+
+
+
+
+                // TODO: for statics only
+                ChainShape shape = new ChainShape();
+                shape.createLoop(vertices, vertices.length);
+
+
+
+//                PolygonShape shape = new PolygonShape();
+//                shape.set(vertices, vertices.length);
+
+                FixtureDef fd = physics.fixtureDef;
+                // we use definitions from user, but override shape
+                fd.setShape(shape);
+
+                Fixture fixture = physics.body.createFixture(fd);
+                fixture.setUserData(box);
+
+
+                continue;
+            }
+
+
+
+
 
             double w = bounds.getWidth();
             double h = bounds.getHeight();

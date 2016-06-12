@@ -31,19 +31,21 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.PolygonHitBox;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
@@ -99,6 +101,39 @@ public class RealPhysicsSample extends GameApplication {
                 getGameWorld().addEntity(ball);
             }
         }, MouseButton.SECONDARY);
+
+        input.addAction(new UserAction("Spawn Polygon") {
+            @Override
+            protected void onActionBegin() {
+                GameEntity polygon = createPhysicsEntity();
+
+                int size = 40;
+
+                // 3. OR set hit box manually to specify bounding shape
+                polygon.getBoundingBoxComponent()
+                        //.addHitBox(new HitBox("Test", new BoundingBox(0, 0, 60, 60), BoundingShape.BOX));
+                        .addHitBox(new PolygonHitBox(
+                                new Point2D(0, 0),
+                                new Point2D(size, 0),
+                                new Point2D(size, size),
+                                new Point2D(size * 2, size),
+                                new Point2D(size * 2, size * 2),
+                                new Point2D(0, size * 2)
+                        ));
+
+                EntityView view = new EntityView();
+                view.addNode(new Line(0, 0, size, 0));
+                view.addNode(new Line(size, 0, size, size));
+                view.addNode(new Line(size, size, size * 2, size));
+                view.addNode(new Line(size * 2, size, size * 2, size * 2));
+                view.addNode(new Line(size * 2, size * 2, 0, size * 2));
+                view.addNode(new Line(0, size * 2, 0, 0));
+
+                polygon.getMainViewComponent().setView(view);
+
+                getGameWorld().addEntity(polygon);
+            }
+        }, KeyCode.F);
     }
 
     @Override
@@ -125,7 +160,7 @@ public class RealPhysicsSample extends GameApplication {
         physics.setBodyType(BodyType.DYNAMIC);
 
         FixtureDef fd = new FixtureDef();
-        fd.setDensity(0.5f);
+        fd.setDensity(0.7f);
         fd.setRestitution(0.3f);
         physics.setFixtureDef(fd);
 
