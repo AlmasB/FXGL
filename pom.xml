@@ -21,6 +21,7 @@
         <maven.enforcer.version>1.4.1</maven.enforcer.version>
         <maven.source.version>2.4</maven.source.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
+        <maven.shade.version>2.4.3</maven.shade.version>
 
         <!-- dependencies -->
         <kotlin.version>1.0.1-2</kotlin.version>
@@ -267,7 +268,7 @@
             <plugin>    <!-- Create uber jar -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>${maven.shade.version}</version>
                 <configuration>
                     <outputFile>${project.build.directory}/${project.name}-${project.version}-uber.jar</outputFile>
                 </configuration>
