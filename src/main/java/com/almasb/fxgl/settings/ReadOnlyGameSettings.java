@@ -50,6 +50,7 @@ public class ReadOnlyGameSettings {
     protected boolean introEnabled = true;
     protected boolean menuEnabled = true;
     protected boolean showFPS = true;
+    protected boolean profilingEnabled = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
     protected KeyCode menuKey = KeyCode.ESCAPE;
@@ -114,6 +115,10 @@ public class ReadOnlyGameSettings {
 
     public final boolean isFPSShown() {
         return showFPS;
+    }
+
+    public final boolean isProfilingEnabled() {
+        return profilingEnabled;
     }
 
     public final ApplicationMode getApplicationMode() {

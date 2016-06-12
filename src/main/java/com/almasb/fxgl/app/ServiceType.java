@@ -32,6 +32,7 @@ import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
+import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
@@ -206,6 +207,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends AchievementManager> serviceProvider() {
             return AchievementManager.class;
+        }
+    };
+
+    ServiceType<Profiler> PROFILER = new ServiceType<Profiler>() {
+        @Override
+        public Class<Profiler> service() {
+            return Profiler.class;
+        }
+
+        @Override
+        public Class<? extends Profiler> serviceProvider() {
+            return Profiler.class;
         }
     };
 }

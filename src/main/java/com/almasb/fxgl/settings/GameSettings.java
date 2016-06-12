@@ -133,6 +133,17 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
+     * Setting to true will enable profiler that reports on performance
+     * when FXGL exits.
+     *
+     * @param b profiling enabled flag
+     * @defaultValue true
+     */
+    public void setProfilingEnabled(boolean b) {
+        profilingEnabled = b;
+    }
+
+    /**
      * Sets application run mode. See {@link ApplicationMode} for more info.
      *
      * @param mode app mode

@@ -177,6 +177,11 @@ class FXGL {
         @JvmStatic fun getGame() = _game
 
         /**
+         * @return new instance on each call
+         */
+        @JvmStatic fun newProfiler() = getService(ServiceType.PROFILER)
+
+        /**
          * Get value of an int property.
 
          * @param key property key

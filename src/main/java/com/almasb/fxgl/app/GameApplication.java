@@ -29,6 +29,7 @@ import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.devtools.DeveloperTools;
+import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
@@ -202,6 +203,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * In-game menu, this is shown when menu key pressed during the game.
      */
     private FXGLMenu gameMenuScene;
+
+    /**
+     * Main game profiler.
+     */
+    private Profiler profiler;
 
     /**
      * Override to register your achievements.
@@ -732,6 +738,16 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         if (getSettings().isMenuEnabled() && !getSettings().isIntroEnabled())
             showProfileDialog();
+
+        if (getSettings().isProfilingEnabled()) {
+            profiler = FXGL.newProfiler();
+            profiler.start();
+
+            getEventBus().addEventHandler(FXGLEvent.EXIT, e -> {
+                profiler.stop();
+                profiler.print();
+            });
+        }
     }
 
     /**
