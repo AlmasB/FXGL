@@ -32,6 +32,7 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.gameplay.GameWorld;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.BoundingBox;
@@ -120,10 +121,10 @@ public class Entities {
         bounds.addComponent(new RotationComponent(0));
 
         bounds.addComponent(new BoundingBoxComponent(
-                new HitBox("LEFT",  new BoundingBox(-thickness, 0, thickness, h)),
-                new HitBox("RIGHT", new BoundingBox(w, 0, thickness, h)),
-                new HitBox("TOP",   new BoundingBox(0, -thickness, w, thickness)),
-                new HitBox("BOT",   new BoundingBox(0, h, w, thickness))
+                new HitBox("LEFT",  new Point2D(-thickness, 0), BoundingShape.box(thickness, h)),
+                new HitBox("RIGHT", new Point2D(w, 0), BoundingShape.box(thickness, h)),
+                new HitBox("TOP",   new Point2D(0, -thickness), BoundingShape.box(w, thickness)),
+                new HitBox("BOT",   new Point2D(0, h), BoundingShape.box(w, thickness))
         ));
 
         bounds.addComponent(new PhysicsComponent());

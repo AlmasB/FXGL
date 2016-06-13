@@ -35,6 +35,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -224,8 +225,8 @@ public class MainViewComponent extends AbstractComponent {
 
         Entities.getBBox(getEntity()).clearHitBoxes();
 
-        Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", new BoundingBox(
-                0, 0, getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
+        Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", BoundingShape.box(
+                getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
         )));
     }
 

@@ -27,65 +27,65 @@ package com.almasb.fxgl.physics;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 
 /**
  * A bounding collision box.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class HitBox {
-    private final Bounds bounds;
+public final class HitBox {
+
+    /**
+     * Name of this hit box.
+     */
     private final String name;
 
+    /**
+     * Shape of this hit box.
+     */
     private final BoundingShape shape;
 
     /**
-     * Creates a hit box with given name and bounds.
-     * The bounds are calculated from the local entity origin
-     * in local coordinates.
-     * <p>
-     * For example: an entity with width 40 and height 80 could have 2 hit boxes.
-     * one for HEAD and one for BODY as follows:
-     * </p>
-     * <pre>
-     *     Entity entity = ...
-     *     entity.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40));
-     *     entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 40, 40, 40));
-     *
-     * </pre>
-     * Note, the 2nd bounding box has y = 40.
-     *
-     * @param name hit box name
-     * @param bounds hit box bounds
+     * Bounding box (computed from shape) of this hit box.
      */
-    public HitBox(String name, BoundingBox bounds) {
-        this(name, bounds, BoundingShape.BOX);
+    private final Bounds bounds;
+
+    public HitBox(String name, BoundingShape shape) {
+        this(name, Point2D.ZERO, shape);
     }
 
+//    /**
+//     * Creates a hit box with given name and bounds.
+//     * The bounds are calculated from the local entity origin
+//     * in local coordinates.
+//     * <p>
+//     * For example: an entity with width 40 and height 80 could have 2 hit boxes.
+//     * one for HEAD and one for BODY as follows:
+//     * </p>
+//     * <pre>
+//     *     Entity entity = ...
+//     *     entity.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40));
+//     *     entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 40, 40, 40));
+//     *
+//     * </pre>
+//     * Note, the 2nd bounding box has y = 40.
+//     *
+//     * @param name hit box name
+//     * @param bounds hit box bounds
+//     */
+
     /**
-     * Creates a hit box with given name, bounds and shape.
-     * The bounds are calculated from the local entity origin
-     * in local coordinates.
-     * <p>
-     * For example: an entity with width 40 and height 80 could have 2 hit boxes.
-     * one for HEAD and one for BODY as follows:
-     * </p>
-     * <pre>
-     *     Entity entity = ...
-     *     entity.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40));
-     *     entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 40, 40, 40));
      *
-     * </pre>
-     * Note, the 2nd bounding box has y = 40.
-     *
-     * @param name hit box name
-     * @param bounds hit box bounds
-     * @param shape hit box shape
+     * @param name
+     * @param localOrigin
+     * @param shape
      */
-    public HitBox(String name, BoundingBox bounds, BoundingShape shape) {
+    public HitBox(String name, Point2D localOrigin, BoundingShape shape) {
         this.name = name;
-        this.bounds = bounds;
         this.shape = shape;
+        this.bounds = new BoundingBox(localOrigin.getX(), localOrigin.getY(),
+                shape.getSize().getWidth(), shape.getSize().getHeight());
     }
 
     /**
@@ -162,5 +162,22 @@ public class HitBox {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return center point of this hit box, local to 0,0 (top,left) of the entity
+     */
+    public Point2D centerLocal() {
+        return new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2,
+                (bounds.getMinY() + bounds.getMaxY()) / 2);
+    }
+
+    /**
+     * @param x position x of entity
+     * @param y position y of entity
+     * @return center point of this hit box in world coordinates
+     */
+    public Point2D centerWorld(double x, double y) {
+        return centerLocal().add(x, y);
     }
 }
