@@ -1,3 +1,29 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
@@ -23,34 +49,45 @@
  ******************************************************************************/
 package org.jbox2d.collision.shapes;
 
-
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.RayCastInput;
 import org.jbox2d.collision.RayCastOutput;
 import org.jbox2d.common.*;
 
 /**
- * A chain shape is a free form sequence of line segments. The chain has two-sided collision, so you
- * can use inside and outside collision. Therefore, you may use any winding order. Connectivity
- * information is used to create smooth collisions. WARNING: The chain will not collide properly if
- * there are self-intersections.
+ * A chain shape is a free form sequence of line segments.
+ * The chain has two-sided collision, so you can use inside and outside collision.
+ * Therefore, you may use any winding order.
+ * Connectivity information is used to create smooth collisions.
+ *
+ * WARNING: The chain will not collide properly if there are self-intersections.
  *
  * @author Daniel
  */
 public class ChainShape extends Shape {
 
-    public Vec2[] m_vertices;
-    public int m_count;
-    public final Vec2 m_prevVertex = new Vec2(), m_nextVertex = new Vec2();
-    public boolean m_hasPrevVertex = false, m_hasNextVertex = false;
+    public Vec2[] m_vertices = null;
+    public int m_count = 0;
+
+    private final Vec2 m_prevVertex = new Vec2(), m_nextVertex = new Vec2();
+    private boolean m_hasPrevVertex = false, m_hasNextVertex = false;
 
     private final EdgeShape pool0 = new EdgeShape();
 
     public ChainShape() {
         super(ShapeType.CHAIN);
-        m_vertices = null;
-        m_radius = Settings.polygonRadius;
-        m_count = 0;
+        setRadius(Settings.polygonRadius);
+    }
+
+    @Override
+    public Shape clone() {
+        ChainShape clone = new ChainShape();
+        clone.createChain(m_vertices, m_count);
+        clone.m_prevVertex.set(m_prevVertex);
+        clone.m_nextVertex.set(m_nextVertex);
+        clone.m_hasPrevVertex = m_hasPrevVertex;
+        clone.m_hasNextVertex = m_hasNextVertex;
+        return clone;
     }
 
     @Override
@@ -63,7 +100,8 @@ public class ChainShape extends Shape {
      */
     public void getChildEdge(EdgeShape edge, int index) {
         assert (0 <= index && index < m_count - 1);
-        edge.m_radius = m_radius;
+
+        edge.setRadius(getRadius());
 
         final Vec2 v0 = m_vertices[index + 0];
         final Vec2 v1 = m_vertices[index + 1];
@@ -160,17 +198,6 @@ public class ChainShape extends Shape {
         massData.mass = 0.0f;
         massData.center.setZero();
         massData.I = 0.0f;
-    }
-
-    @Override
-    public Shape clone() {
-        ChainShape clone = new ChainShape();
-        clone.createChain(m_vertices, m_count);
-        clone.m_prevVertex.set(m_prevVertex);
-        clone.m_nextVertex.set(m_nextVertex);
-        clone.m_hasPrevVertex = m_hasPrevVertex;
-        clone.m_hasNextVertex = m_hasNextVertex;
-        return clone;
     }
 
     /**

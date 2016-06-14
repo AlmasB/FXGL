@@ -216,7 +216,7 @@ public class WorldView {
 
                 // Vec2 center = Mul(xf, circle.m_p);
                 Transform.mulToOutUnsafe(xf, circle.m_p, center);
-                float radius = circle.m_radius;
+                float radius = circle.getRadius();
                 xf.q.getXAxis(axis);
 
                 if (fixture.getUserData() != null && fixture.getUserData().equals(LIQUID_INT)) {
@@ -244,7 +244,7 @@ public class WorldView {
 
             case POLYGON: {
                 PolygonShape poly = (PolygonShape) fixture.getShape();
-                int vertexCount = poly.m_count;
+                int vertexCount = poly.getVertexCount();
                 assert (vertexCount <= Settings.maxPolygonVertices);
                 Vec2[] vertices = tlvertices.get(Settings.maxPolygonVertices);
 

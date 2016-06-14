@@ -144,8 +144,8 @@ public abstract class Contact {
         final Shape shapeA = m_fixtureA.getShape();
         final Shape shapeB = m_fixtureB.getShape();
 
-        worldManifold.initialize(m_manifold, bodyA.getTransform(), shapeA.m_radius,
-                bodyB.getTransform(), shapeB.m_radius);
+        worldManifold.initialize(m_manifold, bodyA.getTransform(), shapeA.getRadius(),
+                bodyB.getTransform(), shapeB.getRadius());
     }
 
     /**

@@ -1,3 +1,29 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
@@ -31,10 +57,12 @@ import org.jbox2d.pooling.arrays.IntArray;
 import org.jbox2d.pooling.arrays.Vec2Array;
 
 /**
- * A convex polygon shape. Polygons have a maximum number of vertices equal to _maxPolygonVertices.
+ * A convex polygon shape.
+ * Polygons have a maximum number of vertices equal to Settings.maxPolygonVertices.
  * In most cases you should not need many vertices for a convex polygon.
  */
 public class PolygonShape extends Shape {
+
     /** Dump lots of debug information. */
     private final static boolean m_debug = false;
 
@@ -47,18 +75,18 @@ public class PolygonShape extends Shape {
      * The vertices of the shape. Note: use getVertexCount(), not m_vertices.length, to get number of
      * active vertices.
      */
-    public final Vec2 m_vertices[];
+    public final Vec2[] m_vertices = new Vec2[Settings.maxPolygonVertices];
 
     /**
      * The normals of the shape. Note: use getVertexCount(), not m_normals.length, to get number of
      * active normals.
      */
-    public final Vec2 m_normals[];
+    public final Vec2[] m_normals = new Vec2[Settings.maxPolygonVertices];
 
     /**
      * Number of active vertices in the shape.
      */
-    public int m_count;
+    private int vertexCount = 0;
 
     // pooling
     private final Vec2 pool1 = new Vec2();
@@ -70,15 +98,14 @@ public class PolygonShape extends Shape {
     public PolygonShape() {
         super(ShapeType.POLYGON);
 
-        m_count = 0;
-        m_vertices = new Vec2[Settings.maxPolygonVertices];
         for (int i = 0; i < m_vertices.length; i++) {
             m_vertices[i] = new Vec2();
         }
-        m_normals = new Vec2[Settings.maxPolygonVertices];
+
         for (int i = 0; i < m_normals.length; i++) {
             m_normals[i] = new Vec2();
         }
+
         setRadius(Settings.polygonRadius);
         m_centroid.setZero();
     }
@@ -91,7 +118,7 @@ public class PolygonShape extends Shape {
             shape.m_vertices[i].set(m_vertices[i]);
         }
         shape.setRadius(this.getRadius());
-        shape.m_count = this.m_count;
+        shape.vertexCount = this.vertexCount;
         return shape;
     }
 
@@ -204,10 +231,10 @@ public class PolygonShape extends Shape {
             }
         }
 
-        this.m_count = m;
+        this.vertexCount = m;
 
         // Copy vertices.
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             if (m_vertices[i] == null) {
                 m_vertices[i] = new Vec2();
             }
@@ -217,9 +244,9 @@ public class PolygonShape extends Shape {
         final Vec2 edge = pool1;
 
         // Compute normals. Ensure the edges have non-zero length.
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             final int i1 = i;
-            final int i2 = i + 1 < m_count ? i + 1 : 0;
+            final int i2 = i + 1 < vertexCount ? i + 1 : 0;
             edge.set(m_vertices[i2]).subLocal(m_vertices[i1]);
 
             assert (edge.lengthSquared() > Settings.EPSILON * Settings.EPSILON);
@@ -228,7 +255,7 @@ public class PolygonShape extends Shape {
         }
 
         // Compute the polygon centroid.
-        computeCentroidToOut(m_vertices, m_count, m_centroid);
+        computeCentroidToOut(m_vertices, vertexCount, m_centroid);
     }
 
     /**
@@ -238,7 +265,7 @@ public class PolygonShape extends Shape {
      * @param hy the half-height.
      */
     public final void setAsBox(final float hx, final float hy) {
-        m_count = 4;
+        vertexCount = 4;
         m_vertices[0].set(-hx, -hy);
         m_vertices[1].set(hx, -hy);
         m_vertices[2].set(hx, hy);
@@ -259,7 +286,7 @@ public class PolygonShape extends Shape {
      * @param angle the rotation of the box in local coordinates.
      */
     public final void setAsBox(final float hx, final float hy, final Vec2 center, final float angle) {
-        m_count = 4;
+        vertexCount = 4;
         m_vertices[0].set(-hx, -hy);
         m_vertices[1].set(hx, -hy);
         m_vertices[2].set(hx, hy);
@@ -275,7 +302,7 @@ public class PolygonShape extends Shape {
         xf.q.set(angle);
 
         // Transform vertices and normals.
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             Transform.mulToOut(xf, m_vertices[i], m_vertices[i]);
             Rotation.mulToOut(xf.q, m_normals[i], m_normals[i]);
         }
@@ -298,13 +325,13 @@ public class PolygonShape extends Shape {
         if (m_debug) {
             System.out.println("--testPoint debug--");
             System.out.println("Vertices: ");
-            for (int i = 0; i < m_count; ++i) {
+            for (int i = 0; i < vertexCount; ++i) {
                 System.out.println(m_vertices[i]);
             }
             System.out.println("pLocal: " + pLocalx + ", " + pLocaly);
         }
 
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             Vec2 vertex = m_vertices[i];
             Vec2 normal = m_normals[i];
             tempx = pLocalx - vertex.x;
@@ -332,7 +359,7 @@ public class PolygonShape extends Shape {
         upper.x = lower.x;
         upper.y = lower.y;
 
-        for (int i = 1; i < m_count; ++i) {
+        for (int i = 1; i < vertexCount; ++i) {
             Vec2 v2 = m_vertices[i];
             // Vec2 v = Mul(xf, m_vertices[i]);
             float vx = (xfqc * v2.x - xfqs * v2.y) + xfpx;
@@ -343,10 +370,10 @@ public class PolygonShape extends Shape {
             upper.y = upper.y > vy ? upper.y : vy;
         }
 
-        lower.x -= m_radius;
-        lower.y -= m_radius;
-        upper.x += m_radius;
-        upper.y += m_radius;
+        lower.x -= radius;
+        lower.y -= radius;
+        upper.x += radius;
+        upper.y += radius;
     }
 
     /**
@@ -355,7 +382,7 @@ public class PolygonShape extends Shape {
      * @return
      */
     public final int getVertexCount() {
-        return m_count;
+        return vertexCount;
     }
 
     /**
@@ -365,7 +392,7 @@ public class PolygonShape extends Shape {
      * @return
      */
     public final Vec2 getVertex(final int index) {
-        assert (0 <= index && index < m_count);
+        assert (0 <= index && index < vertexCount);
         return m_vertices[index];
     }
 
@@ -382,7 +409,7 @@ public class PolygonShape extends Shape {
         float normalForMaxDistanceX = pLocalx;
         float normalForMaxDistanceY = pLocaly;
 
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             Vec2 vertex = m_vertices[i];
             Vec2 normal = m_normals[i];
             tx = pLocalx - vertex.x;
@@ -400,7 +427,7 @@ public class PolygonShape extends Shape {
             float minDistanceX = normalForMaxDistanceX;
             float minDistanceY = normalForMaxDistanceY;
             float minDistance2 = maxDistance * maxDistance;
-            for (int i = 0; i < m_count; ++i) {
+            for (int i = 0; i < vertexCount; ++i) {
                 Vec2 vertex = m_vertices[i];
                 float distanceVecX = pLocalx - vertex.x;
                 float distanceVecY = pLocaly - vertex.y;
@@ -450,7 +477,7 @@ public class PolygonShape extends Shape {
 
         int index = -1;
 
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             Vec2 normal = m_normals[i];
             Vec2 vertex = m_vertices[i];
             // p = p1 + a * d
@@ -567,7 +594,7 @@ public class PolygonShape extends Shape {
         //
         // The rest of the derivation is handled by computer algebra.
 
-        assert (m_count >= 3);
+        assert (vertexCount >= 3);
 
         final Vec2 center = pool1;
         center.setZero();
@@ -579,20 +606,20 @@ public class PolygonShape extends Shape {
         final Vec2 s = pool2;
         s.setZero();
         // This code would put the reference point inside the polygon.
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             s.addLocal(m_vertices[i]);
         }
-        s.mulLocal(1.0f / m_count);
+        s.mulLocal(1.0f / vertexCount);
 
         final float k_inv3 = 1.0f / 3.0f;
 
         final Vec2 e1 = pool3;
         final Vec2 e2 = pool4;
 
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             // Triangle vertices.
             e1.set(m_vertices[i]).subLocal(s);
-            e2.set(s).negateLocal().addLocal(i + 1 < m_count ? m_vertices[i + 1] : m_vertices[0]);
+            e2.set(s).negateLocal().addLocal(i + 1 < vertexCount ? m_vertices[i + 1] : m_vertices[0]);
 
             final float D = Vec2.cross(e1, e2);
 
@@ -633,13 +660,13 @@ public class PolygonShape extends Shape {
      * @return
      */
     public boolean validate() {
-        for (int i = 0; i < m_count; ++i) {
+        for (int i = 0; i < vertexCount; ++i) {
             int i1 = i;
-            int i2 = i < m_count - 1 ? i1 + 1 : 0;
+            int i2 = i < vertexCount - 1 ? i1 + 1 : 0;
             Vec2 p = m_vertices[i1];
             Vec2 e = pool1.set(m_vertices[i2]).subLocal(p);
 
-            for (int j = 0; j < m_count; ++j) {
+            for (int j = 0; j < vertexCount; ++j) {
                 if (j == i1 || j == i2) {
                     continue;
                 }

@@ -103,8 +103,8 @@ public class ContactSolver {
             final Fixture fixtureB = contact.m_fixtureB;
             final Shape shapeA = fixtureA.getShape();
             final Shape shapeB = fixtureB.getShape();
-            final float radiusA = shapeA.m_radius;
-            final float radiusB = shapeB.m_radius;
+            final float radiusA = shapeA.getRadius();
+            final float radiusB = shapeB.getRadius();
             final Body bodyA = fixtureA.getBody();
             final Body bodyB = fixtureB.getBody();
             final Manifold manifold = contact.getManifold();
