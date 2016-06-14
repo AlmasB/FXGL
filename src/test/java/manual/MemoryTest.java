@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package sandbox;
+
+package manual;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
@@ -38,14 +39,13 @@ import javafx.scene.text.Text;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public class MemoryApp extends GameApplication {
+public class MemoryTest extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("BasicAppSample");
-        settings.setVersion("0.1developer");
+        settings.setTitle("Memory Test");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -79,7 +79,8 @@ public class MemoryApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        text.setText("Free: " + Runtime.getRuntime().freeMemory() / MB
+        text.setText("Occupied: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB
+                + "\nFree: " + Runtime.getRuntime().freeMemory() / MB
                 + "\nTotal: " + Runtime.getRuntime().totalMemory() / MB
                 + "\nMax:   " + Runtime.getRuntime().maxMemory() / MB);
     }
