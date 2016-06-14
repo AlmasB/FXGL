@@ -36,6 +36,7 @@ import com.almasb.fxgl.input.MouseTrigger;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.SceneDimension;
@@ -64,6 +65,7 @@ import javafx.stage.StageStyle;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is a base class for main/game menus. It provides several
@@ -91,12 +93,16 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing list of save files and load/delete buttons
      */
     protected final MenuContent createContentLoad() {
-        ListView<String> list = new ListView<>();
+        ListView<SaveFile> list = new ListView<>();
 
-        IOResult<List<String> > io = app.getSaveLoadManager().loadSaveFileNames();
+        IOResult<List<SaveFile> > io = app.getSaveLoadManager().loadSaveFiles();
 
         if (io.hasData()) {
-            list.getItems().setAll(io.getData());
+            list.getItems().setAll(io.getData()
+//                    .stream()
+//                    .map(SaveFile::toString)
+//                    .collect(Collectors.toList())
+            );
         } else {
             log.warning(io::getErrorMessage);
             list.getItems().clear();
@@ -110,19 +116,19 @@ public abstract class FXGLMenu extends FXGLScene {
 
         Button btnLoad = UIFactory.newButton("LOAD");
         btnLoad.setOnAction(e -> {
-            String fileName = list.getSelectionModel().getSelectedItem();
+            SaveFile fileName = list.getSelectionModel().getSelectedItem();
             if (fileName == null)
                 return;
 
-            fireLoad(fileName);
+            fireLoad(fileName.getName());
         });
         Button btnDelete = UIFactory.newButton("DELETE");
         btnDelete.setOnAction(e -> {
-            String fileName = list.getSelectionModel().getSelectedItem();
+            SaveFile fileName = list.getSelectionModel().getSelectedItem();
             if (fileName == null)
                 return;
 
-            fireDelete(fileName);
+            fireDelete(fileName.getName());
             list.getItems().remove(fileName);
         });
 

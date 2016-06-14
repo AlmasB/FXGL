@@ -36,7 +36,9 @@ import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -61,6 +63,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -269,7 +272,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * @return data with required info about current state
      * @throws UnsupportedOperationException if was not overridden
      */
-    protected Serializable saveState() {
+    protected DataFile saveState() {
         log.warning("Called saveState(), but it wasn't overridden!");
         throw new UnsupportedOperationException("Default implementation is not available");
     }
@@ -279,10 +282,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Note: if you enable menus, you are responsible for providing
      * appropriate deserialization of your game state, even if it's ad-hoc no-op.
      *
-     * @param data previously saved data
+     * @param dataFile previously saved data
      * @throws UnsupportedOperationException if was not overridden
      */
-    protected void loadState(Serializable data) {
+    protected void loadState(DataFile dataFile) {
         log.warning("Called loadState(), but it wasn't overridden!");
         throw new UnsupportedOperationException("Default implementation is not available");
     }
@@ -514,9 +517,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onContinue() {
-            saveLoadManager.<Serializable>loadLastModifiedSaveFile()
-                    .ifOK(GameApplication.this::startLoadedGame)
-                    .ifError(getDefaultCheckedExceptionHandler());
+
+            //TODO: refactor
+//            saveLoadManager.<Serializable>loadLastModifiedSaveFile()
+//                    .ifOK(GameApplication.this::startLoadedGame)
+//                    .ifError(getDefaultCheckedExceptionHandler());
         }
 
         @Override
@@ -527,7 +532,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         @Override
         public void onSave() {
             getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
-                saveLoadManager.save(saveState(), saveFileName)
+                DataFile dataFile = saveState();
+                SaveFile saveFile = new SaveFile(saveFileName, LocalDateTime.now());
+
+                saveLoadManager.save(dataFile, saveFile)
                         .ifError(getDefaultCheckedExceptionHandler());
             });
         }
@@ -788,11 +796,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * (Re-)initializes the user application from the given data file and starts the game.
      *
-     * @param data save data to load from
+     * @param dataFile save data to load from
      */
-    protected void startLoadedGame(Serializable data) {
+    protected void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
-        initApp(new InitAppTask(this, data));
+        initApp(new InitAppTask(this, dataFile));
     }
 
     /**

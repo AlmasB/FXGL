@@ -27,13 +27,16 @@
 package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class SaveLoadManager {
 
@@ -42,6 +45,10 @@ public final class SaveLoadManager {
     private static final String PROFILE_FILE_NAME = "user.profile";
     private static final String PROFILES_DIR = "profiles/";
     private static final String SAVE_DIR = "saves/";
+
+    // TODO: these need to be read from external source
+    private static final String SAVE_FILE_EXT = ".sav";
+    private static final String DATA_FILE_EXT = ".dat";
 
     private final String profileName;
 
@@ -67,9 +74,19 @@ public final class SaveLoadManager {
      * @param fileName to save as
      * @return io result
      */
+    @Deprecated
     public IOResult<?> save(Serializable data, String fileName) {
         log.debug(() -> "Saving data: " + fileName);
         return FS.writeData(data, saveDir() + fileName);
+    }
+
+    public IOResult<?> save(DataFile dataFile, SaveFile saveFile) {
+        log.debug(() -> "Saving data: " + saveFile.getName());
+
+        // TODO: check result of this too
+        FS.writeData(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT);
+
+        return FS.writeData(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT);
     }
 
     /**
@@ -92,9 +109,15 @@ public final class SaveLoadManager {
      * @return instance of deserialized data structure
      */
     @SuppressWarnings("unchecked")
-    public <T> IOResult<T> load(String fileName) {
+    @Deprecated
+    public IOResult<DataFile> load(String fileName) {
         log.debug(() -> "Loading data: " + fileName);
-        return FS.<T>readData(saveDir() + fileName);
+        return FS.<DataFile>readData(saveDir() + fileName + DATA_FILE_EXT);
+    }
+
+    public IOResult<DataFile> load(SaveFile saveFile) {
+        log.debug(() -> "Loading data: " + saveFile);
+        return FS.<DataFile>readData(saveDir() + saveFile.getName() + DATA_FILE_EXT);
     }
 
     /**
@@ -109,9 +132,15 @@ public final class SaveLoadManager {
      * @param fileName name of the file to delete
      * @return result of the operation
      */
+    @Deprecated
     public IOResult<?> deleteSaveFile(String fileName) {
         log.debug(() -> "Deleting save file: " + fileName);
         return FS.deleteFile(saveDir() + fileName);
+    }
+
+    public IOResult<?> deleteSaveFile(SaveFile saveFile) {
+        log.debug(() -> "Deleting save file: " + saveFile);
+        return FS.deleteFile(saveDir() + saveFile.getName() + SAVE_FILE_EXT);
     }
 
     /**
@@ -134,9 +163,29 @@ public final class SaveLoadManager {
      *
      * @return save file names
      */
+    @Deprecated
     public IOResult<List<String> > loadSaveFileNames() {
         log.debug(() -> "Loading save file names");
         return FS.loadFileNames(saveDir(), true);
+    }
+
+    public IOResult<List<SaveFile> > loadSaveFiles() {
+        log.debug(() -> "Loading save files");
+
+        IOResult<List<String> > io = FS.loadFileNames(saveDir(), true);
+        if (io.hasData()) {
+
+            List<SaveFile> saveFiles = io.getData().stream()
+                    .filter(name -> name.endsWith(SAVE_FILE_EXT))
+                    .map(name -> FS.<SaveFile>readData(saveDir() + name))
+                    .filter(IOResult::hasData)
+                    .map(IOResult::getData)
+                    .collect(Collectors.toList());
+
+            return IOResult.success(saveFiles);
+        } else {
+            return IOResult.<List<SaveFile>>failure(io.getErrorMessage());
+        }
     }
 
     /**

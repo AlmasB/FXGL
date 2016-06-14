@@ -24,11 +24,8 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.io
 
-import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.io.DataFile
-import javafx.concurrent.Task
 import java.io.Serializable
 
 /**
@@ -36,46 +33,14 @@ import java.io.Serializable
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class InitAppTask(val app: GameApplication, val data: DataFile) : Task<Void>() {
+data class DataFile(
 
-    private val log = FXGL.getLogger(javaClass)
+        /**
+         * The actual serializable game data structure.
+         */
+        val data: Serializable) : Serializable {
 
-    constructor(app: GameApplication) : this(app, DataFile.EMPTY)
-
-    override fun call(): Void? {
-        update("Initializing Assets", 0)
-        app.initAssets()
-
-        update("Initializing Game", 1)
-        if (data === DataFile.EMPTY)
-            app.initGame()
-        else
-            app.loadState(data)
-
-        update("Initializing Physics", 2)
-        app.initPhysics()
-
-        update("Initializing UI", 3)
-        app.initUI()
-        app.initFPSOverlay()
-
-        update("Initialization Complete", 4)
-        return null
-    }
-
-    private fun update(message: String, step: Int) {
-        log.debug(message)
-        updateMessage(message)
-        updateProgress(step.toLong(), 4)
-    }
-
-    override fun succeeded() {
-        app.getEventBus().fireEvent(FXGLEvent.initAppComplete())
-        app.resume()
-    }
-
-    override fun failed() {
-        Thread.getDefaultUncaughtExceptionHandler()
-                .uncaughtException(Thread.currentThread(), exception ?: RuntimeException("Initialization failed"))
+    companion object {
+        @JvmStatic val EMPTY = DataFile("")
     }
 }
