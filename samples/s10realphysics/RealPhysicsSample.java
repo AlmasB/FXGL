@@ -36,7 +36,6 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.PolygonHitBox;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
@@ -80,9 +79,13 @@ public class RealPhysicsSample extends GameApplication {
             protected void onActionBegin() {
                 GameEntity box = createPhysicsEntity();
 
+                box.getBoundingBoxComponent()
+                        .addHitBox(new HitBox("Left", BoundingShape.box(40, 40)));
+                box.getBoundingBoxComponent()
+                        .addHitBox(new HitBox("Right", new Point2D(40, 0), BoundingShape.box(40, 40)));
                 // 3. use true flag to generate bbox from the view
                 // bbox shape is rectangular
-                box.getMainViewComponent().setView(new Rectangle(40, 40, Color.BLUE), true);
+                box.getMainViewComponent().setView(new Rectangle(80, 40, Color.BLUE), false);
 
                 getGameWorld().addEntity(box);
             }
@@ -95,7 +98,7 @@ public class RealPhysicsSample extends GameApplication {
 
                 // 3. OR set hit box manually to specify bounding shape
                 ball.getBoundingBoxComponent()
-                        .addHitBox(new HitBox("Test", new BoundingBox(0, 0, 40, 40), BoundingShape.CIRCLE));
+                        .addHitBox(new HitBox("Test", BoundingShape.circle(20)));
                 ball.getMainViewComponent().setView(new Circle(20, Color.RED));
 
                 getGameWorld().addEntity(ball);
@@ -112,13 +115,13 @@ public class RealPhysicsSample extends GameApplication {
                 // 3. OR set hit box manually to specify bounding shape
                 polygon.getBoundingBoxComponent()
                         //.addHitBox(new HitBox("Test", new BoundingBox(0, 0, 60, 60), BoundingShape.BOX));
-                        .addHitBox(new PolygonHitBox(
+                        .addHitBox(new HitBox("Test", BoundingShape.chain(
                                 new Point2D(0, 0),
                                 new Point2D(size, 0),
                                 new Point2D(size, size),
                                 new Point2D(size * 2, size),
                                 new Point2D(size * 2, size * 2),
-                                new Point2D(0, size * 2)
+                                new Point2D(0, size * 2))
                         ));
 
                 EntityView view = new EntityView();

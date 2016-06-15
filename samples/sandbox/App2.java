@@ -26,14 +26,24 @@
 package sandbox;
 
 import com.almasb.ents.Entity;
+import com.almasb.ents.component.StringComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
+import com.almasb.fxgl.io.DataFile;
+import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -53,7 +63,7 @@ public class App2 extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
@@ -65,26 +75,8 @@ public class App2 extends GameApplication {
     @Override
     protected void initAssets() {}
 
-    private Entity e;
-
     @Override
     protected void initGame() {
-//        for (int i = 0; i < 10; i++) {
-//            for (int j = 0; j < 10; j++) {
-//                Entity g = Entity.noType();
-//                g.setValue(101 * j, 171 * i);
-//                g.setSceneView(getAssetLoader().loadTexture("Grass Block.png"));
-//
-//                getGameWorld().addEntity(g);
-//            }
-//        }
-
-
-//        Entity cat = Entity.noType();
-//        cat.setValue(100, 100);
-//        cat.setSceneView(getAssetLoader().loadTexture("cat.png").toStaticAnimatedTexture(6, Duration.seconds(0.6)));
-//
-//        getGameWorld().addEntity(cat);
 
     }
 
@@ -97,17 +89,23 @@ public class App2 extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {}
 
+    private CompletableFuture<String> future = new CompletableFuture<>();
+
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
-    public void openWindow() {
+    public void retryDialog() {
 
-//        e = Entity.noType();
-//        e.setValue(300, 300);
-//        e.setSceneView(new Rectangle(10, 1));
-//        e.addControl(new OffscreenCleanControl());
-//        e.addControl(new ProjectileControl(new Point2D(0, -1), 10));
-//
-//        getGameWorld().addEntity(e);
+        IOResult<DataFile> io = getSaveLoadManager().load(new SaveFile("Test", LocalDateTime.now()));
 
+        DataFile dataFile = io.getData();
+    }
+
+    private CompletableFuture<String> openDialog() {
+        getDisplay().showInputBox("Enter a number", input -> {
+            System.out.println("Entered: " + input);
+            future.complete(input);
+        });
+
+        return future;
     }
 
     public static void main(String[] args) {

@@ -33,6 +33,7 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
 import javafx.geometry.Point2D;
@@ -105,23 +106,22 @@ public class SaveSample extends GameApplication {
 
     // 2. override and specify how to serialize
     @Override
-    public Serializable saveState() {
+    public DataFile saveState() {
         PositionComponent playerComponent = Entities.getPosition(player);
         PositionComponent enemyComponent = Entities.getPosition(enemy);
-
 
         String data = "";
         data += playerComponent.getX() + "," + playerComponent.getY();
         data += ",";
         data += enemyComponent.getX() + "," + enemyComponent.getY();
-        return data;
+        return new DataFile(data);
     }
 
     // 3. override and specify how to deserialize
     // this will be called on "load" game
     @Override
-    public void loadState(Serializable loadData) {
-        String data = (String) loadData;
+    public void loadState(DataFile dataFile) {
+        String data = (String) dataFile.getData();
         String[] values = data.split(",");
 
         initGame(new Point2D(Double.parseDouble(values[0]), Double.parseDouble(values[1])),

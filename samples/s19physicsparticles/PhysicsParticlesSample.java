@@ -98,7 +98,7 @@ public class PhysicsParticlesSample extends GameApplication {
         // 3. create entity, place it and specify volume of particles via bounding box
         GameEntity cloth = new GameEntity();
         cloth.getPositionComponent().setValue(150, 10);
-        cloth.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", new BoundingBox(0, 0, 75, 150)));
+        cloth.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", BoundingShape.box(75, 150)));
 
         // 4. add component
         cloth.addComponent(ppComponent);
@@ -116,7 +116,7 @@ public class PhysicsParticlesSample extends GameApplication {
 
         GameEntity liquid = new GameEntity();
         liquid.getPositionComponent().setValue(300, 10);
-        liquid.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", new BoundingBox(0, 0, 70, 70), BoundingShape.CIRCLE));
+        liquid.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", BoundingShape.circle(35)));
         liquid.addComponent(ppComponent);
 
         getGameWorld().addEntities(liquid);
