@@ -36,7 +36,7 @@ import java.io.Serializable
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class InitAppTask(val app: GameApplication, val data: DataFile) : Task<Void>() {
+class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>() {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -47,10 +47,10 @@ class InitAppTask(val app: GameApplication, val data: DataFile) : Task<Void>() {
         app.initAssets()
 
         update("Initializing Game", 1)
-        if (data === DataFile.EMPTY)
+        if (dataFile === DataFile.EMPTY)
             app.initGame()
         else
-            app.loadState(data)
+            app.loadState(dataFile)
 
         update("Initializing Physics", 2)
         app.initPhysics()

@@ -108,7 +108,6 @@ public final class SaveLoadManager {
      * @param fileName file name to load from
      * @return instance of deserialized data structure
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public IOResult<DataFile> load(String fileName) {
         log.debug(() -> "Loading data: " + fileName);
@@ -135,12 +134,20 @@ public final class SaveLoadManager {
     @Deprecated
     public IOResult<?> deleteSaveFile(String fileName) {
         log.debug(() -> "Deleting save file: " + fileName);
-        return FS.deleteFile(saveDir() + fileName);
+
+        // TODO: check result of this too
+        FS.deleteFile(saveDir() + fileName + SAVE_FILE_EXT);
+
+        return FS.deleteFile(saveDir() + fileName + DATA_FILE_EXT);
     }
 
     public IOResult<?> deleteSaveFile(SaveFile saveFile) {
         log.debug(() -> "Deleting save file: " + saveFile);
-        return FS.deleteFile(saveDir() + saveFile.getName() + SAVE_FILE_EXT);
+
+        // TODO: check result of this too
+        FS.deleteFile(saveDir() + saveFile.getName() + SAVE_FILE_EXT);
+
+        return FS.deleteFile(saveDir() + saveFile.getName() + DATA_FILE_EXT);
     }
 
     /**
@@ -169,6 +176,11 @@ public final class SaveLoadManager {
         return FS.loadFileNames(saveDir(), true);
     }
 
+    /**
+     * Loads save files with save file extension from SAVE_DIR.
+     *
+     * @return save files
+     */
     public IOResult<List<SaveFile> > loadSaveFiles() {
         log.debug(() -> "Loading save files");
 
@@ -193,8 +205,23 @@ public final class SaveLoadManager {
      *
      * @return last modified save file
      */
-    public <T> IOResult<T> loadLastModifiedSaveFile() {
+    public IOResult<SaveFile> loadLastModifiedSaveFile() {
         log.debug(() -> "Loading last modified save file");
-        return FS.<T>loadLastModifiedFile(saveDir(), true);
+
+        IOResult<List<SaveFile> > io = loadSaveFiles();
+
+        if (io.hasData()) {
+            if (io.getData().isEmpty()) {
+                return IOResult.<SaveFile>failure("No save files found");
+            }
+
+            return IOResult.success(io.getData()
+                    .stream()
+                    .sorted(SaveFile.RECENT_FIRST)
+                    .findFirst()
+                    .get());
+        } else {
+            return IOResult.<SaveFile>failure(io.getErrorMessage());
+        }
     }
 }

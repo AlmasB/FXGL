@@ -517,11 +517,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onContinue() {
-
-            //TODO: refactor
-//            saveLoadManager.<Serializable>loadLastModifiedSaveFile()
-//                    .ifOK(GameApplication.this::startLoadedGame)
-//                    .ifError(getDefaultCheckedExceptionHandler());
+            saveLoadManager.<Serializable>loadLastModifiedSaveFile()
+                    .ifOK(saveFile -> {
+                        saveLoadManager.load(saveFile)
+                                .ifOK(GameApplication.this::startLoadedGame)
+                                .ifError(getDefaultCheckedExceptionHandler());
+                    })
+                    .ifError(getDefaultCheckedExceptionHandler());
         }
 
         @Override

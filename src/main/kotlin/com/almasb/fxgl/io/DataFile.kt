@@ -41,6 +41,8 @@ data class DataFile(
         val data: Serializable) : Serializable {
 
     companion object {
+        private val serialVersionUid: Long = 1
+
         @JvmStatic val EMPTY = DataFile("")
     }
 }

@@ -29,9 +29,11 @@ package com.almasb.fxgl.io
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 /**
- *
+ * Data structure for save files.
+ * The actual data saved is in [DataFile].
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -47,6 +49,12 @@ data class SaveFile(
          * Date and time of the save.
          */
         val dateTime: LocalDateTime) : Serializable {
+
+    companion object RECENT_FIRST : Comparator<SaveFile> {
+        private val serialVersionUid: Long = 1
+
+        override fun compare(o1: SaveFile, o2: SaveFile) = o2.dateTime.compareTo(o1.dateTime)
+    }
 
     override fun toString() = name + " " + dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm"))
 }

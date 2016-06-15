@@ -64,6 +64,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,7 +90,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content containing list of save files and load/delete buttons
      */
     protected final MenuContent createContentLoad() {
@@ -98,11 +98,8 @@ public abstract class FXGLMenu extends FXGLScene {
         IOResult<List<SaveFile> > io = app.getSaveLoadManager().loadSaveFiles();
 
         if (io.hasData()) {
-            list.getItems().setAll(io.getData()
-//                    .stream()
-//                    .map(SaveFile::toString)
-//                    .collect(Collectors.toList())
-            );
+            list.getItems().setAll(io.getData());
+            Collections.sort(list.getItems(), SaveFile.RECENT_FIRST);
         } else {
             log.warning(io::getErrorMessage);
             list.getItems().clear();
@@ -110,26 +107,26 @@ public abstract class FXGLMenu extends FXGLScene {
 
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
-        if (list.getItems().size() > 0) {
+        if (!list.getItems().isEmpty()) {
             list.getSelectionModel().selectFirst();
         }
 
         Button btnLoad = UIFactory.newButton("LOAD");
         btnLoad.setOnAction(e -> {
-            SaveFile fileName = list.getSelectionModel().getSelectedItem();
-            if (fileName == null)
+            SaveFile saveFile = list.getSelectionModel().getSelectedItem();
+            if (saveFile == null)
                 return;
 
-            fireLoad(fileName.getName());
+            fireLoad(saveFile.getName());
         });
         Button btnDelete = UIFactory.newButton("DELETE");
         btnDelete.setOnAction(e -> {
-            SaveFile fileName = list.getSelectionModel().getSelectedItem();
-            if (fileName == null)
+            SaveFile saveFile = list.getSelectionModel().getSelectedItem();
+            if (saveFile == null)
                 return;
 
-            fireDelete(fileName.getName());
-            list.getItems().remove(fileName);
+            fireDelete(saveFile.getName());
+            list.getItems().remove(saveFile);
         });
 
         HBox hbox = new HBox(50, btnLoad, btnDelete);
@@ -138,6 +135,9 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(list, hbox);
     }
 
+    /**
+     * @return menu content with difficulty and playtime
+     */
     protected final MenuContent createContentGameplay() {
         Spinner<GameDifficulty> difficultySpinner =
                 new FXGLSpinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
@@ -152,7 +152,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content containing input mappings (action -> key/mouse)
      */
     protected final MenuContent createContentControls() {
@@ -224,7 +223,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content with video settings
      */
     protected final MenuContent createContentVideo() {
@@ -241,7 +239,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content containing music and sound volume sliders
      */
     protected final MenuContent createContentAudio() {
