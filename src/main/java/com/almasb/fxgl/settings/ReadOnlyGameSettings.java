@@ -78,6 +78,7 @@ public class ReadOnlyGameSettings {
         this.introEnabled = copy.introEnabled;
         this.menuEnabled = copy.menuEnabled;
         this.showFPS = copy.showFPS;
+        this.profilingEnabled = copy.profilingEnabled;
         this.appMode = copy.appMode;
         this.menuStyle = copy.menuStyle;
         this.menuKey = copy.menuKey;
