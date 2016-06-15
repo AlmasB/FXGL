@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene.menu;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
+import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.UIFactory;
@@ -82,8 +83,8 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
         getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox, profile);
 
-        app.getEventBus().addEventHandler(MenuDataEvent.PROFILE_SELECTED, event -> {
-            profile.setText("Profile: " + event.getData());
+        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
+            profile.setText("Profile: " + event.getProfileName());
             profile.setTranslateX(app.getWidth() - profile.getLayoutBounds().getWidth());
         });
 

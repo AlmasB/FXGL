@@ -94,9 +94,6 @@ public class App2 extends GameApplication {
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void retryDialog() {
 
-        IOResult<DataFile> io = getSaveLoadManager().load(new SaveFile("Test", LocalDateTime.now()));
-
-        DataFile dataFile = io.getData();
     }
 
     private CompletableFuture<String> openDialog() {

@@ -30,55 +30,27 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * MenuEvent that carries necessary data.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class MenuDataEvent extends MenuEvent {
+public final class ProfileSelectedEvent extends MenuEvent {
 
-    /**
-     * Common super-type for all menu data event types.
-     */
-    public static final EventType<MenuDataEvent> ANY =
-            new EventType<>(MenuEvent.ANY, "MENU_DATA_EVENT");
+    public static final EventType<ProfileSelectedEvent> ANY
+            = new EventType<>(MenuEvent.ANY, "PROFILE_SELECTED");
 
-    /**
-     * When user clicks load.
-     */
-    public static final EventType<MenuDataEvent> LOAD =
-            new EventType<>(ANY, "LOAD");
+    private final String profileName;
+    private final boolean hasSaves;
 
-    /**
-     * When user clicks delete.
-     */
-    public static final EventType<MenuDataEvent> DELETE =
-            new EventType<>(ANY, "DELETE");
-
-    /**
-     * When profile has been selected.
-     */
-    //public static final EventType<MenuDataEvent> PROFILE_SELECTED = new EventType<>(ANY, "PROFILE_SELECTED");
-
-    private final String data;
-
-    public MenuDataEvent(EventType<? extends Event> eventType, String data) {
-        super(eventType);
-        this.data = data;
-
-        if (this.data == null) {
-            throw new IllegalArgumentException("Data cannot be null");
-        }
+    public ProfileSelectedEvent(String profileName, boolean hasSaves) {
+        super(ANY);
+        this.profileName = profileName;
+        this.hasSaves = hasSaves;
     }
 
-    /**
-     * @return data associated with this event
-     */
-    public String getData() {
-        return data;
+    public String getProfileName() {
+        return profileName;
     }
 
-    @Override
-    public String toString() {
-        return "MenuEvent[type=" + getEventType() + ",data=" + data + "]";
+    public boolean hasSaves() {
+        return hasSaves;
     }
 }

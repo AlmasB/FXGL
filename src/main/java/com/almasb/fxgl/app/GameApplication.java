@@ -658,7 +658,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getDisplay().showInputBox("New Profile", DialogPane.ALPHANUM, name -> {
                 profileName = name;
                 saveLoadManager = new SaveLoadManager(profileName);
-                getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
+                //getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
+                getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
             });
         });
 
@@ -676,7 +677,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             if (!ok) {
                 getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
             } else {
-                getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
+                //getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
+
+                IOResult<SaveFile> lastSave = saveLoadManager.loadLastModifiedSaveFile();
+
+                getEventBus().fireEvent(new ProfileSelectedEvent(profileName, lastSave.hasData()));
             }
         });
 
