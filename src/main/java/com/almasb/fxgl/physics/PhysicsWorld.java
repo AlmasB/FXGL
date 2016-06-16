@@ -444,7 +444,9 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                     break;
                 case CHAIN:
 
-                    // TODO: check if type is static, if not - fail
+                    if (physics.body.getType() != BodyType.STATIC) {
+                        throw new IllegalArgumentException("BoundingShape.chain() can only be used with static objects");
+                    }
 
                     Point2D[] points = (Point2D[]) boundingShape.data;
 
