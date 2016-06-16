@@ -78,6 +78,8 @@ import java.util.stream.Collectors;
  */
 public abstract class FXGLMenu extends FXGLScene {
 
+    protected static final MenuContent EMPTY = new MenuContent();
+
     /**
      * The logger
      */
@@ -320,18 +322,21 @@ public abstract class FXGLMenu extends FXGLScene {
      * A generic vertical box container for menu content
      * where each element is followed by a separator.
      */
-    protected class MenuContent extends VBox {
+    protected static class MenuContent extends VBox {
         public MenuContent(Node... items) {
-            int maxW = Arrays.asList(items)
-                    .stream()
-                    .mapToInt(n -> (int)n.getLayoutBounds().getWidth())
-                    .max()
-                    .orElse(0);
 
-            getChildren().add(createSeparator(maxW));
+            if (items.length > 0) {
+                int maxW = Arrays.asList(items)
+                        .stream()
+                        .mapToInt(n -> (int) n.getLayoutBounds().getWidth())
+                        .max()
+                        .orElse(0);
 
-            for (Node item : items) {
-                getChildren().addAll(item, createSeparator(maxW));
+                getChildren().add(createSeparator(maxW));
+
+                for (Node item : items) {
+                    getChildren().addAll(item, createSeparator(maxW));
+                }
             }
         }
 
@@ -342,6 +347,8 @@ public abstract class FXGLMenu extends FXGLScene {
             return sep;
         }
     }
+
+    protected void switchMenuContentTo(MenuContent content) {}
 
     /**
      * Adds a UI node.
@@ -421,9 +428,10 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     protected final void fireLogout() {
+        switchMenuContentTo(EMPTY);
+
         listener.onLogout();
         // TODO: do we need events now?
-        // TODO: we must clear menu content, since we are logging out
     }
 
     protected final void fireMultiplayer() {

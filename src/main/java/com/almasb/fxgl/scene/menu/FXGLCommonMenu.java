@@ -93,7 +93,7 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
                 // the scene is no longer active so reset everything
                 // so that next time scene is active everything is loaded properly
                 switchMenuTo(menu);
-                switchMenuContentTo(new MenuContent());
+                switchMenuContentTo(EMPTY);
             }
         });
     }
@@ -161,7 +161,8 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         ft.play();
     }
 
-    private void switchMenuContentTo(MenuContent content) {
+    @Override
+    protected void switchMenuContentTo(MenuContent content) {
         content.setTranslateX(menuX * 2 + 200);
         content.setTranslateY(menuY);
         getRoot().getChildren().set(4, content);
