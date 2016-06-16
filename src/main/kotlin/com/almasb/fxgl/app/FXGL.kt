@@ -97,7 +97,6 @@ class FXGL {
             injector = Guice.createInjector(object : ServicesModule() {
                 private val scene = Scene(Pane())
 
-                // TODO: autobind property names from .properties
                 override fun configure() {
                     bind(Double::class.java)
                             .annotatedWith(Names.named("appWidth"))
