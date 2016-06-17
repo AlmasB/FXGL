@@ -27,6 +27,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.logging.MockLoggerFactory
+import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -35,6 +36,7 @@ import com.google.inject.name.Names
 import javafx.scene.Scene
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
+import java.util.*
 
 /**
  * Represents the entire FXGL infrastructure.
@@ -50,16 +52,21 @@ class FXGL {
         private lateinit var internalSettings: ReadOnlyGameSettings
         private lateinit var internalApp: GameApplication
 
-        private var initGuard = false
+        /**
+         * Temporarily holds k-v pairs from system.properties.
+         */
+        private val internalProperties = ArrayList<Pair<String, Any> >()
+
+        private var initDone = false
 
         @JvmStatic fun getSettings() = internalSettings
         @JvmStatic fun getApp() = internalApp
 
         @JvmStatic fun configure(app: FXGLApplication, stage: Stage) {
-            if (initGuard)
+            if (initDone)
                 throw IllegalStateException("FXGL is already configured")
 
-            initGuard = true
+            initDone = true
 
             internalApp = app as GameApplication
             internalSettings = app.settings
@@ -106,9 +113,18 @@ class FXGL {
                             .annotatedWith(Names.named("appHeight"))
                             .toInstance(internalSettings.getHeight().toDouble())
 
-                    bind(Int::class.java)
-                            .annotatedWith(Names.named("asset.cache.size"))
-                            .toInstance(getInt("asset.cache.size"))
+                    // add internal properties directly to Guice
+                    for ((k,v) in internalProperties) {
+                        when(v) {
+                            is Int -> bind(Int::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            is Double -> bind(Double::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            is Boolean -> bind(Boolean::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            is String -> bind(String::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            else -> SystemLogger.warning("Unknown property type")
+                        }
+                    }
+
+                    internalProperties.clear()
 
                     bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
                     bind(ApplicationMode::class.java).toInstance(internalSettings.getApplicationMode())
@@ -138,7 +154,7 @@ class FXGL {
 
         /* CONVENIENCE ACCESSORS */
 
-        private val _loggerFactory by lazy { if (initGuard) getService(ServiceType.LOGGER_FACTORY) else MockLoggerFactory }
+        private val _loggerFactory by lazy { if (initDone) getService(ServiceType.LOGGER_FACTORY) else MockLoggerFactory }
         @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
         @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
 
@@ -223,6 +239,23 @@ class FXGL {
          */
         @JvmStatic fun setProperty(key: String, value: Any) {
             System.setProperty("FXGL.$key", value.toString())
+
+            if (!initDone) {
+
+                if (value == "true" || value == "false") {
+                    internalProperties.add(Pair(key, java.lang.Boolean.parseBoolean(value)))
+                } else {
+                    try {
+                        internalProperties.add(Pair(key, Integer.parseInt(value.toString())))
+                    } catch(e: Exception) {
+                        try {
+                            internalProperties.add(Pair(key, java.lang.Double.parseDouble(value.toString())))
+                        } catch(e: Exception) {
+                            internalProperties.add(Pair(key, value.toString()))
+                        }
+                    }
+                }
+            }
         }
     }
 }
