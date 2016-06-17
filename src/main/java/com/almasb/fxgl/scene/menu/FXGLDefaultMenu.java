@@ -36,6 +36,8 @@ import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -53,14 +55,17 @@ import java.util.function.Supplier;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class FXGLCommonMenu extends FXGLMenu {
+public class FXGLDefaultMenu extends FXGLMenu {
 
     private double menuX, menuY;
 
-    public FXGLCommonMenu(GameApplication app) {
-        super(app);
+    public FXGLDefaultMenu(GameApplication app, MenuType type) {
+        super(app, type);
 
-        MenuBox menu = createMenuBody();
+        MenuBox menu = type == MenuType.MAIN_MENU
+                ? createMenuBodyMainMenu()
+                : createMenuBodyGameMenu();
+
         menuX = 50;
         menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
@@ -98,8 +103,6 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         });
     }
 
-    protected abstract MenuBox createMenuBody();
-
     /**
      *
      * @return background for menu
@@ -108,6 +111,77 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
         bg.setFill(Color.rgb(10, 1, 1));
         return bg;
+    }
+
+    protected MenuBox createMenuBodyMainMenu() {
+        MenuItem itemContinue = new MenuItem("CONTINUE");
+        itemContinue.setOnAction(e -> fireContinue());
+
+        MenuItem itemNewGame = new MenuItem("NEW GAME");
+        itemNewGame.setOnAction(e -> fireNewGame());
+
+        MenuItem itemLoad = new MenuItem("LOAD");
+        itemLoad.setMenuContent(this::createContentLoad);
+
+        MenuItem itemOptions = new MenuItem("OPTIONS");
+        itemOptions.setChild(createOptionsMenu());
+
+        MenuItem itemExtra = new MenuItem("EXTRA");
+        itemExtra.setChild(createExtraMenu());
+
+        MenuItem itemMultiplayer = new MenuItem("ONLINE");
+        itemMultiplayer.setOnAction(e -> fireMultiplayer());
+
+        MenuItem itemLogout = new MenuItem("LOGOUT");
+        itemLogout.setOnAction(e -> fireLogout());
+
+        MenuItem itemExit = new MenuItem("EXIT");
+        itemExit.setOnAction(e -> {
+            app.getDisplay().showConfirmationBox("Exit the game?", yes -> {
+                if (yes)
+                    fireExit();
+            });
+        });
+
+        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
+            itemContinue.setDisable(!event.hasSaves());
+        });
+
+        MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad,
+                itemOptions, itemExtra, itemMultiplayer, itemLogout, itemExit);
+        menu.setTranslateX(50);
+        menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
+        return menu;
+    }
+
+    protected MenuBox createMenuBodyGameMenu() {
+        MenuItem itemResume = new MenuItem("RESUME");
+        itemResume.setOnAction(e -> fireResume());
+
+        MenuItem itemSave = new MenuItem("SAVE");
+        itemSave.setOnAction(e -> fireSave());
+
+        MenuItem itemLoad = new MenuItem("LOAD");
+        itemLoad.setMenuContent(this::createContentLoad);
+
+        MenuItem itemOptions = new MenuItem("OPTIONS");
+        itemOptions.setChild(createOptionsMenu());
+
+        MenuItem itemExtra = new MenuItem("EXTRA");
+        itemExtra.setChild(createExtraMenu());
+
+        MenuItem itemExit = new MenuItem("MAIN MENU");
+        itemExit.setOnAction(e -> {
+            app.getDisplay().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
+                if (yes)
+                    fireExitToMainMenu();
+            });
+        });
+
+        MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
+        menu.setTranslateX(50);
+        menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
+        return menu;
     }
 
     protected MenuBox createOptionsMenu() {
@@ -142,7 +216,8 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
         return new MenuBox(200, itemCredits, itemAchievements);
     }
 
-    private void switchMenuTo(MenuBox menu) {
+    @Override
+    protected void switchMenuTo(Parent menu) {
         Node oldMenu = getRoot().getChildren().get(3);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
@@ -216,7 +291,6 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
 
     protected class MenuItem extends FXGLButton {
         private MenuBox parent;
-        private MenuContent content;
 
         public MenuItem(String name) {
             super(name);
@@ -244,5 +318,15 @@ public abstract class FXGLCommonMenu extends FXGLMenu {
                 switchMenuTo(menu);
             });
         }
+    }
+
+    @Override
+    protected Button createActionButton(String name, Runnable action) {
+        MenuItem btn = new MenuItem(name);
+        btn.addEventHandler(ActionEvent.ACTION, event -> {
+            action.run();
+        });
+
+        return btn;
     }
 }

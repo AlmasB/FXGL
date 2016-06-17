@@ -46,7 +46,7 @@ public final class CCTRMainMenu extends FXGLMenu {
     int i = 0;
 
     public CCTRMainMenu(GameApplication app) {
-        super(app);
+        super(app, MenuType.MAIN_MENU);
 
         int start = 100;
 

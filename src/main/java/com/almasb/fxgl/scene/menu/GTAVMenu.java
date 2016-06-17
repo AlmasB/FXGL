@@ -26,14 +26,11 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
-import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Spinner;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -43,15 +40,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.function.Supplier;
+
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class GTAVMainMenu extends FXGLMenu {
+public final class GTAVMenu extends FXGLMenu {
 
     private HBox contentBox = new HBox(10);
 
-    public GTAVMainMenu(GameApplication app) {
-        super(app);
+    public GTAVMenu(GameApplication app, MenuType type) {
+        super(app, type);
 
         // placeholders
         contentBox.getChildren().addAll(new Pane(), new Pane());
@@ -64,7 +63,6 @@ public final class GTAVMainMenu extends FXGLMenu {
         vbox.setPrefSize(app.getWidth(), app.getHeight());
         vbox.setAlignment(Pos.TOP_CENTER);
 
-        // override menu children
         getRoot().getChildren().setAll(makeBackground(), vbox);
     }
 
@@ -74,7 +72,7 @@ public final class GTAVMainMenu extends FXGLMenu {
 
     private Text makeTitle() {
         Text title = UIFactory.newText(app.getSettings().getTitle(), 24);
-        //title.setTranslateY(title.getLayoutBounds().getHeight());
+        // TODO: version + profile
         return title;
     }
 
@@ -91,7 +89,7 @@ public final class GTAVMainMenu extends FXGLMenu {
         tb2.setToggleGroup(group);
         tb3.setToggleGroup(group);
 
-        tb1.setUserData(makeMainMenu());
+        tb1.setUserData(type == MenuType.MAIN_MENU ? createMenuBodyMainMenu() : createMenuBodyGameMenu());
         tb2.setUserData(makeOptionsMenu());
         tb3.setUserData(makeExtraMenu());
 
@@ -109,34 +107,43 @@ public final class GTAVMainMenu extends FXGLMenu {
         return hbox;
     }
 
-    private VBox makeMainMenu() {
+    private VBox createMenuBodyMainMenu() {
         Button btnContinue = createActionButton("CONTINUE", this::fireContinue);
         Button btnNew = createActionButton("NEW GAME", this::fireNewGame);
-        //Button btnLoad = createContentButton("LOAD GAME", createContentLoad());
+        Button btnLoad = createContentButton("LOAD GAME", this::createContentLoad);
         Button btnExit = createActionButton("EXIT", this::fireExit);
 
-        return new VBox(10, btnContinue, btnNew, btnExit);
+        return new VBox(10, btnContinue, btnNew, btnLoad, btnExit);
+    }
+
+    private VBox createMenuBodyGameMenu() {
+        Button btnResume = createActionButton("RESUME", this::fireResume);
+        Button btnSave = createActionButton("SAVE", this::fireSave);
+        Button btnLoad = createContentButton("LOAD", this::createContentLoad);
+        Button btnExit = createActionButton("EXIT", () -> {
+            app.getDisplay().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
+                if (yes)
+                    fireExitToMainMenu();
+            });
+        });
+
+        return new VBox(10, btnResume, btnSave, btnLoad, btnExit);
     }
 
     private VBox makeOptionsMenu() {
-        Spinner<GameDifficulty> difficultySpinner =
-                new Spinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
-        difficultySpinner.increment();
-        app.getGameWorld().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
-
-        Button btnGameplay = createContentButton("GAMEPLAY", new MenuContent(new HBox(25,
-                UIFactory.newText("DIFFICULTY:"), difficultySpinner)));
-        Button btnControls = createContentButton("CONTROLS", createContentControls());
-        Button btnVideo = createContentButton("VIDEO", new MenuContent(new Text("TODO")));
-        Button btnAudio = createContentButton("AUDIO", createContentAudio());
+        Button btnGameplay = createContentButton("GAMEPLAY", this::createContentGameplay);
+        Button btnControls = createContentButton("CONTROLS", this::createContentControls);
+        Button btnVideo = createContentButton("VIDEO", this::createContentVideo);
+        Button btnAudio = createContentButton("AUDIO", this::createContentAudio);
 
         return new VBox(10, btnGameplay, btnControls, btnVideo, btnAudio);
     }
 
     private VBox makeExtraMenu() {
-        Button btnCredits = createContentButton("CREDITS", createContentCredits());
+        Button btnCredits = createContentButton("CREDITS", this::createContentCredits);
+        Button btnTrophies = createContentButton("TROPHIES", this::createContentAchievements);
 
-        return new VBox(10, btnCredits);
+        return new VBox(10, btnCredits, btnTrophies);
     }
 
     protected void setContent(Node content) {
@@ -160,13 +167,13 @@ public final class GTAVMainMenu extends FXGLMenu {
      * Creates a new button with given name that sets given content on click/press.
      *
      * @param name  button name
-     * @param content button content
+     * @param contentSupplier content supplier
      * @return new button
      */
-    protected final Button createContentButton(String name, MenuContent content) {
+    protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         Button btn = UIFactory.newButton(name);
-        btn.setUserData(content);
-        btn.setOnAction(e -> setContent((Node)btn.getUserData()));
+        btn.setUserData(contentSupplier);
+        btn.setOnAction(e -> setContent(((Supplier<MenuContent>)btn.getUserData()).get()));
         return btn;
     }
 }

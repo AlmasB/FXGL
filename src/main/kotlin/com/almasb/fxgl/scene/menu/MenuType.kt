@@ -23,17 +23,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.scene.menu;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.scene.FXGLMenu;
+package com.almasb.fxgl.scene.menu
 
 /**
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class CCTRGameMenu extends FXGLMenu {
-    public CCTRGameMenu(GameApplication app) {
-        super(app, MenuType.GAME_MENU);
-    }
-
+enum class MenuType {
+    MAIN_MENU, GAME_MENU
 }

@@ -39,6 +39,7 @@ import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
+import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
@@ -48,6 +49,7 @@ import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -66,6 +68,7 @@ import javafx.stage.StageStyle;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -81,14 +84,39 @@ public abstract class FXGLMenu extends FXGLScene {
     protected static final MenuContent EMPTY = new MenuContent();
 
     /**
-     * The logger
+     * The logger.
      */
     protected static final Logger log = FXGL.getLogger("FXGL.Menu");
 
     protected final GameApplication app;
 
-    public FXGLMenu(GameApplication app) {
+    protected final MenuType type;
+
+    public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
+        this.type = type;
+    }
+
+    /**
+     * Switches current active menu body to given.
+     *
+     * @param menuBox parent node containing menu body
+     */
+    protected void switchMenuTo(Parent menuBox) {}
+
+    /**
+     * Switches current active content to given.
+     *
+     * @param content menu content
+     */
+    protected void switchMenuContentTo(MenuContent content) {}
+
+    protected Button createActionButton(String name, Runnable action) {
+        return null;
+    }
+
+    protected Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
+        return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
     }
 
     /**
@@ -346,9 +374,11 @@ public abstract class FXGLMenu extends FXGLScene {
             sep.setStroke(Color.DARKGREY);
             return sep;
         }
-    }
 
-    protected void switchMenuContentTo(MenuContent content) {}
+        public double getLayoutHeight() {
+            return 10 * getChildren().size();
+        }
+    }
 
     /**
      * Adds a UI node.
