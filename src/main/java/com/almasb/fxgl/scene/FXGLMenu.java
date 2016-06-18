@@ -25,10 +25,12 @@
  */
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.KeyTrigger;
@@ -49,14 +51,10 @@ import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -69,7 +67,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * This is a base class for main/game menus. It provides several
@@ -77,11 +74,20 @@ import java.util.stream.Collectors;
  * It also allows for implementors to build menus from scratch. Freshly
  * build menus can interact with FXGL by calling fire* methods.
  *
+ * Both main and game menus <strong>should</strong> have the following items:
+ * <ul>
+ *     <li>Title</li>
+ *     <li>Version</li>
+ *     <li>Profile name</li>
+ *     <li>Menu Body</li>
+ *     <li>Menu Content</li>
+ * </ul>
+ *
+ * However, in reality a menu can contain anything.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class FXGLMenu extends FXGLScene {
-
-    protected static final MenuContent EMPTY = new MenuContent();
 
     /**
      * The logger.
@@ -92,9 +98,25 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected final MenuType type;
 
+    protected final Pane menuRoot = new Pane();
+    protected final Pane contentRoot = new Pane();
+
+    protected final MenuContent EMPTY = new MenuContent();
+
     public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
         this.type = type;
+
+        getRoot().getChildren().addAll(
+                createBackground(app.getWidth(), app.getHeight()),
+                createTitleView(app.getSettings().getTitle()),
+                createVersionView(makeVersionString()),
+                menuRoot, contentRoot);
+
+        // TODO: if different user logs in, does not handle
+        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
+            getRoot().getChildren().add(createProfileView("Profile: " + event.getProfileName()));
+        });
     }
 
     /**
@@ -102,14 +124,14 @@ public abstract class FXGLMenu extends FXGLScene {
      *
      * @param menuBox parent node containing menu body
      */
-    protected void switchMenuTo(Parent menuBox) {}
+    protected void switchMenuTo(Node menuBox) {}
 
     /**
      * Switches current active content to given.
      *
      * @param content menu content
      */
-    protected void switchMenuContentTo(MenuContent content) {}
+    protected void switchMenuContentTo(Node content) {}
 
     protected Button createActionButton(String name, Runnable action) {
         return null;
@@ -118,6 +140,17 @@ public abstract class FXGLMenu extends FXGLScene {
     protected Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
     }
+
+    private String makeVersionString() {
+        return "v" + app.getSettings().getVersion()
+                + (app.getSettings().getApplicationMode() == ApplicationMode.RELEASE
+                ? "" : "-" + app.getSettings().getApplicationMode());
+    }
+
+    protected abstract Node createBackground(double width, double height);
+    protected abstract Node createTitleView(String title);
+    protected abstract Node createVersionView(String version);
+    protected abstract Node createProfileView(String profileName);
 
     /**
      * @return menu content containing list of save files and load/delete buttons

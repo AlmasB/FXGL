@@ -25,9 +25,7 @@
  */
 package com.almasb.fxgl.scene.menu;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLButton;
@@ -36,7 +34,6 @@ import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -55,9 +52,7 @@ import java.util.function.Supplier;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class FXGLDefaultMenu extends FXGLMenu {
-
-    private double menuX, menuY;
+public final class FXGLDefaultMenu extends FXGLMenu {
 
     public FXGLDefaultMenu(GameApplication app, MenuType type) {
         super(app, type);
@@ -66,32 +61,17 @@ public class FXGLDefaultMenu extends FXGLMenu {
                 ? createMenuBodyMainMenu()
                 : createMenuBodyGameMenu();
 
-        menuX = 50;
-        menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
+        double menuX = 50;
+        double menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
-        // just a placeholder
-        MenuBox menuBox = new MenuBox((int) app.getWidth() - 300 - 50);
-        menuBox.setTranslateX(300);
-        menuBox.setTranslateY(menu.getTranslateY());
-        menuBox.setVisible(false);
+        menuRoot.setTranslateX(menuX);
+        menuRoot.setTranslateY(menuY);
 
-        Title title = new Title(app.getSettings().getTitle());
-        title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
-        title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
+        contentRoot.setTranslateX(menuX * 2 + 200);
+        contentRoot.setTranslateY(menuY);
 
-        Text version = UIFactory.newText("v" + app.getSettings().getVersion()
-                + (app.getSettings().getApplicationMode() == ApplicationMode.RELEASE ? "" : "-" + app.getSettings().getApplicationMode()));
-        version.setTranslateY(app.getHeight() - 2);
-
-        Text profile = UIFactory.newText("");
-        profile.setTranslateY(app.getHeight() - 2);
-
-        getRoot().getChildren().addAll(createBackground(), title, version, menu, menuBox, profile);
-
-        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
-            profile.setText("Profile: " + event.getProfileName());
-            profile.setTranslateX(app.getWidth() - profile.getLayoutBounds().getWidth());
-        });
+        menuRoot.getChildren().add(menu);
+        contentRoot.getChildren().add(EMPTY);
 
         activeProperty().addListener((observable, wasActive, isActive) -> {
             if (!isActive) {
@@ -103,14 +83,42 @@ public class FXGLDefaultMenu extends FXGLMenu {
         });
     }
 
-    /**
-     *
-     * @return background for menu
-     */
-    protected Node createBackground() {
-        Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
+    @Override
+    protected Node createBackground(double width, double height) {
+        Rectangle bg = new Rectangle(width, height);
         bg.setFill(Color.rgb(10, 1, 1));
         return bg;
+    }
+
+    @Override
+    protected Node createTitleView(String title) {
+        Text text = UIFactory.newText(title, 50);
+
+        Rectangle bg = new Rectangle(text.getLayoutBounds().getWidth() + 20, 60, null);
+        bg.setStroke(Color.WHITE);
+        bg.setStrokeWidth(2);
+
+        StackPane titleRoot = new StackPane();
+        titleRoot.getChildren().addAll(bg, text);
+
+        titleRoot.setTranslateX(app.getWidth() / 2 - (text.getLayoutBounds().getWidth() + 20) / 2);
+        titleRoot.setTranslateY(50);
+        return titleRoot;
+    }
+
+    @Override
+    protected Node createVersionView(String version) {
+        Text view = UIFactory.newText(version);
+        view.setTranslateY(app.getHeight() - 2);
+        return view;
+    }
+
+    @Override
+    protected Node createProfileView(String profileName) {
+        Text view = UIFactory.newText(profileName);
+        view.setTranslateY(app.getHeight() - 2);
+        view.setTranslateX(app.getWidth() - view.getLayoutBounds().getWidth());
+        return view;
     }
 
     protected MenuBox createMenuBodyMainMenu() {
@@ -149,8 +157,6 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad,
                 itemOptions, itemExtra, itemMultiplayer, itemLogout, itemExit);
-        menu.setTranslateX(50);
-        menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
         return menu;
     }
 
@@ -179,8 +185,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
         });
 
         MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
-        menu.setTranslateX(50);
-        menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
+
         return menu;
     }
 
@@ -217,16 +222,14 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     @Override
-    protected void switchMenuTo(Parent menu) {
-        Node oldMenu = getRoot().getChildren().get(3);
+    protected void switchMenuTo(Node menu) {
+        Node oldMenu = menuRoot.getChildren().get(0);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
         ft.setToValue(0);
         ft.setOnFinished(e -> {
-            menu.setTranslateX(menuX);
-            menu.setTranslateY(menuY);
             menu.setOpacity(0);
-            getRoot().getChildren().set(3, menu);
+            menuRoot.getChildren().set(0, menu);
             oldMenu.setOpacity(1);
 
             FadeTransition ft2 = new FadeTransition(Duration.seconds(0.33), menu);
@@ -237,38 +240,12 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     @Override
-    protected void switchMenuContentTo(MenuContent content) {
-        content.setTranslateX(menuX * 2 + 200);
-        content.setTranslateY(menuY);
-        getRoot().getChildren().set(4, content);
+    protected void switchMenuContentTo(Node content) {
+        contentRoot.getChildren().set(0, content);
     }
 
-    protected static class Title extends StackPane {
-        private Text text;
-
-        public Title(String name) {
-            text = UIFactory.newText(name, 50);
-
-            Rectangle bg = new Rectangle(text.getLayoutBounds().getWidth() + 20, 60);
-            bg.setStroke(Color.WHITE);
-            bg.setStrokeWidth(2);
-            bg.setFill(null);
-
-            setAlignment(Pos.CENTER);
-            getChildren().addAll(bg, text);
-        }
-
-        public double getLayoutWidth() {
-            return text.getLayoutBounds().getWidth() + 20;
-        }
-
-        public double getLayoutHeight() {
-            return text.getLayoutBounds().getHeight() + 20;
-        }
-    }
-
-    protected static class MenuBox extends VBox {
-        public MenuBox(int width, MenuItem... items) {
+    private static class MenuBox extends VBox {
+        MenuBox(int width, MenuItem... items) {
             getChildren().add(createSeparator(width));
 
             for (MenuItem item : items) {
@@ -284,12 +261,12 @@ public class FXGLDefaultMenu extends FXGLMenu {
             return sep;
         }
 
-        public double getLayoutHeight() {
+        double getLayoutHeight() {
             return 10 * getChildren().size();
         }
     }
 
-    protected class MenuItem extends FXGLButton {
+    private class MenuItem extends FXGLButton {
         private MenuBox parent;
 
         public MenuItem(String name) {

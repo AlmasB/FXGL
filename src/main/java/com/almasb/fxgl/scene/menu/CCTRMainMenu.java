@@ -135,4 +135,24 @@ public final class CCTRMainMenu extends FXGLMenu {
         btn.setOnAction(e -> action.run());
         return btn;
     }
+
+    @Override
+    protected Node createBackground(double width, double height) {
+        return null;
+    }
+
+    @Override
+    protected Node createTitleView(String title) {
+        return null;
+    }
+
+    @Override
+    protected Node createVersionView(String version) {
+        return null;
+    }
+
+    @Override
+    protected Node createProfileView(String profileName) {
+        return null;
+    }
 }

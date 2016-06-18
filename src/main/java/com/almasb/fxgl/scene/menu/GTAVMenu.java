@@ -47,33 +47,75 @@ import java.util.function.Supplier;
  */
 public final class GTAVMenu extends FXGLMenu {
 
-    private HBox contentBox = new HBox(10);
+    private VBox vbox = new VBox(50);
+
+    private Node menuBody;
 
     public GTAVMenu(GameApplication app, MenuType type) {
         super(app, type);
 
-        // placeholders
-        contentBox.getChildren().addAll(new Pane(), new Pane());
-        contentBox.setAlignment(Pos.TOP_CENTER);
+        menuBody = type == MenuType.MAIN_MENU
+                ? createMenuBodyMainMenu()
+                : createMenuBodyGameMenu();
 
-        VBox vbox = new VBox(50,
-                makeTitle(),
-                makeMenuBar(),
-                contentBox);
-        vbox.setPrefSize(app.getWidth(), app.getHeight());
-        vbox.setAlignment(Pos.TOP_CENTER);
+        vbox.getChildren().addAll(new Pane(), new Pane());
+        vbox.setTranslateX(50);
+        vbox.setTranslateY(50);
 
-        getRoot().getChildren().setAll(makeBackground(), vbox);
+        contentRoot.setTranslateX(280);
+        contentRoot.setTranslateY(130);
+
+        menuRoot.getChildren().add(vbox);
+        contentRoot.getChildren().add(EMPTY);
+
+        vbox.getChildren().set(0, makeMenuBar());
+
+        activeProperty().addListener((observable, wasActive, isActive) -> {
+            if (!isActive) {
+                // the scene is no longer active so reset everything
+                // so that next time scene is active everything is loaded properly
+                switchMenuTo(menuBody);
+                switchMenuContentTo(EMPTY);
+            }
+        });
     }
 
-    private Node makeBackground() {
+    @Override
+    protected Node createBackground(double width, double height) {
         return new Rectangle(app.getWidth(), app.getHeight(), Color.BROWN);
     }
 
-    private Text makeTitle() {
-        Text title = UIFactory.newText(app.getSettings().getTitle(), 24);
-        // TODO: version + profile
-        return title;
+    @Override
+    protected Node createTitleView(String title) {
+        Text titleView = UIFactory.newText(app.getSettings().getTitle(), 18);
+        titleView.setTranslateY(30);
+        return titleView;
+    }
+
+    @Override
+    protected Node createVersionView(String version) {
+        Text view = UIFactory.newText(version, 16);
+        view.setTranslateX(app.getWidth() - view.getLayoutBounds().getWidth());
+        view.setTranslateY(20);
+        return view;
+    }
+
+    @Override
+    protected Node createProfileView(String profileName) {
+        Text view = UIFactory.newText(profileName, 24);
+        view.setTranslateX(app.getWidth() - view.getLayoutBounds().getWidth());
+        view.setTranslateY(50);
+        return view;
+    }
+
+    @Override
+    protected void switchMenuTo(Node menuBox) {
+        vbox.getChildren().set(1, menuBox);
+    }
+
+    @Override
+    protected void switchMenuContentTo(Node content) {
+        contentRoot.getChildren().set(0, content);
     }
 
     private HBox makeMenuBar() {
@@ -89,7 +131,7 @@ public final class GTAVMenu extends FXGLMenu {
         tb2.setToggleGroup(group);
         tb3.setToggleGroup(group);
 
-        tb1.setUserData(type == MenuType.MAIN_MENU ? createMenuBodyMainMenu() : createMenuBodyGameMenu());
+        tb1.setUserData(menuBody);
         tb2.setUserData(makeOptionsMenu());
         tb3.setUserData(makeExtraMenu());
 
@@ -98,7 +140,7 @@ public final class GTAVMenu extends FXGLMenu {
                 group.selectToggle(old);
                 return;
             }
-            contentBox.getChildren().set(0, (Node)newToggle.getUserData());
+            switchMenuTo((Node)newToggle.getUserData());
         });
         group.selectToggle(tb1);
 
@@ -111,9 +153,10 @@ public final class GTAVMenu extends FXGLMenu {
         Button btnContinue = createActionButton("CONTINUE", this::fireContinue);
         Button btnNew = createActionButton("NEW GAME", this::fireNewGame);
         Button btnLoad = createContentButton("LOAD GAME", this::createContentLoad);
+        Button btnLogout = createActionButton("LOGOUT", this::fireLogout);
         Button btnExit = createActionButton("EXIT", this::fireExit);
 
-        return new VBox(10, btnContinue, btnNew, btnLoad, btnExit);
+        return new VBox(10, btnContinue, btnNew, btnLoad, btnLogout, btnExit);
     }
 
     private VBox createMenuBodyGameMenu() {
@@ -146,10 +189,6 @@ public final class GTAVMenu extends FXGLMenu {
         return new VBox(10, btnCredits, btnTrophies);
     }
 
-    protected void setContent(Node content) {
-        contentBox.getChildren().set(1, content);
-    }
-
     /**
      * Creates a new button with given name that performs given action on click/press.
      *
@@ -173,7 +212,7 @@ public final class GTAVMenu extends FXGLMenu {
     protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         Button btn = UIFactory.newButton(name);
         btn.setUserData(contentSupplier);
-        btn.setOnAction(e -> setContent(((Supplier<MenuContent>)btn.getUserData()).get()));
+        btn.setOnAction(e -> switchMenuContentTo(((Supplier<MenuContent>)btn.getUserData()).get()));
         return btn;
     }
 }
