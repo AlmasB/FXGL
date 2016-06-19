@@ -29,7 +29,6 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
@@ -47,7 +46,7 @@ public class RenderingSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("RenderingSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -80,12 +79,10 @@ public class RenderingSample extends GameApplication {
 
             @Override
             public int index() {
-                // 3. specify layer index, higher values will drawn above lower values
+                // 3. specify layer index, higher values will be drawn above lower values
                 return 1000;
             }
         });
-
-        // TODO: fix
 
         // we have added box after player but because of the render layer we specified
         // the red box will be drawn below the player

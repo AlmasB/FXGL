@@ -346,22 +346,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
                 .ifPresent(particles::remove);
     }
 
-    private ChangeListener<EntityView> viewChangeListener = (o, oldView, newView) -> {
-        Group renderGroup = getRenderGroup(oldView.getRenderLayer());
-        int index = renderGroup.getChildren().indexOf(oldView);
-
-        if (index != -1) {
-            renderGroup.getChildren().set(index, newView);
-        } else {
-            log.warning("Old view was not in the scene graph. Adding new view");
-            addGameView(newView);
-        }
-    };
-
-//    private ChangeListener<RenderLayer> renderLayerChangeListener = (o, oldLayer, newLayer) -> {
-//
-//    };
-
     @Override
     public void onComponentAdded(Component component) {
         if (component instanceof MainViewComponent) {
@@ -372,7 +356,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
             EntityView view = viewComponent.getView();
             addGameView(view);
 
-            //viewComponent.viewProperty().addListener(viewChangeListener);
             viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
                 getRenderGroup(oldLayer).getChildren().remove(view);
                 getRenderGroup(newLayer).getChildren().add(view);
@@ -389,8 +372,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
 
             EntityView view = viewComponent.getView();
             removeGameView(view);
-
-            //viewComponent.viewProperty().removeListener(viewChangeListener);
         }
     }
 

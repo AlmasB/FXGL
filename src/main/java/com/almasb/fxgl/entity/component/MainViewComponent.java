@@ -46,6 +46,7 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * Adds a game scene view to an entity.
+ * To change view of an entity use {@link #setView(Node)}.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -67,8 +68,12 @@ public class MainViewComponent extends AbstractComponent {
         showBBoxColor = color;
     }
 
-    private ObjectProperty<RenderLayer> renderLayer;
-    private EntityView view;
+    /**
+     * The view is not reassigned since its properties are bound
+     * to entity properties.
+     * To alter the view - change its nodes.
+     */
+    private final EntityView view;
 
     /**
      * Creates main view component with no graphics.
@@ -94,21 +99,21 @@ public class MainViewComponent extends AbstractComponent {
      */
     public MainViewComponent(Node graphics, RenderLayer renderLayer) {
         this.view = new EntityView(graphics);
-        this.renderLayer = new SimpleObjectProperty<>(renderLayer);
+        this.view.setRenderLayer(renderLayer);
     }
 
     /**
      * @return render layer
      */
     public RenderLayer getRenderLayer() {
-        return renderLayer.get();
+        return view.getRenderLayer();
     }
 
     /**
      * @return render layer property
      */
     public ObjectProperty<RenderLayer> renderLayerProperty() {
-        return renderLayer;
+        return view.renderLayerProperty();
     }
 
     /**
@@ -117,8 +122,7 @@ public class MainViewComponent extends AbstractComponent {
      * @param renderLayer render layer
      */
     public void setRenderLayer(RenderLayer renderLayer) {
-        this.renderLayer.set(renderLayer);
-        getView().setRenderLayer(renderLayer);
+        view.setRenderLayer(renderLayer);
     }
 
     /**
@@ -148,13 +152,12 @@ public class MainViewComponent extends AbstractComponent {
         EntityView entityView = view instanceof EntityView ? (EntityView) view : new EntityView(view);
 
         this.view.getNodes().setAll(entityView.getNodes());
+        setRenderLayer(entityView.getRenderLayer());
 
         // TODO: double check logic
         if (showBBox) {
             this.view.addNode(debugBBox);
         }
-
-        this.renderLayer.setValue(entityView.getRenderLayer());
 
         if (generateBoundingBox) {
             generateBBox();
