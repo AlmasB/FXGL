@@ -34,6 +34,7 @@ import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -195,7 +196,7 @@ public final class SaveLoadManager {
 
             return IOResult.success(saveFiles);
         } else {
-            return IOResult.<List<SaveFile>>failure(io.getErrorMessage());
+            return IOResult.<List<SaveFile>>failure(io.getError());
         }
     }
 
@@ -211,7 +212,7 @@ public final class SaveLoadManager {
 
         if (io.hasData()) {
             if (io.getData().isEmpty()) {
-                return IOResult.<SaveFile>failure("No save files found");
+                return IOResult.<SaveFile>failure(new FileNotFoundException("No save files found"));
             }
 
             return IOResult.success(io.getData()
@@ -220,7 +221,7 @@ public final class SaveLoadManager {
                     .findFirst()
                     .get());
         } else {
-            return IOResult.<SaveFile>failure(io.getErrorMessage());
+            return IOResult.<SaveFile>failure(io.getError());
         }
     }
 }

@@ -42,28 +42,28 @@ class IOResult<T> {
     val isOK: Boolean
 
     /**
-     * Returns error message associated with the operation.
-     * Returns empty string if operation succeeded.
-     * @return error message
+     * @return error that happened, NONE if OK
      */
-    val errorMessage: String
+    val error: Throwable
 
     /**
      * @return IO result data
      */
     val data: T?
 
-    private constructor(ok: Boolean, errorMessage: String) {
+    private constructor(ok: Boolean, error: Throwable) {
         this.isOK = ok
-        this.errorMessage = errorMessage
+        this.error = error
         data = null
     }
 
     private constructor(data: T) {
         this.isOK = true
-        this.errorMessage = ""
+        this.error = NONE
         this.data = data
     }
+
+    fun getErrorMessage() = error.message
 
     /**
      * @return true iff result has data associated with it
@@ -80,25 +80,24 @@ class IOResult<T> {
         return this
     }
 
-    // TODO: this should delegate the actual error, not our wrapper
+    /**
+     * The callback is executed immediately.
+     */
     fun ifError(handler: ExceptionHandler): IOResult<T> {
         if (!isOK)
-            handler.handle(Exception(errorMessage))
+            handler.handle(error)
 
         return this
     }
 
-//    fun always(code: Runnable): IOResult<T> {
-//        code.run()
-//        return this
-//    }
-
     companion object {
+
+        private val NONE = Exception("NONE")
 
         /**
          * @return successful IO result
          */
-        @JvmStatic fun <T> success(): IOResult<T> = IOResult(true, "")
+        @JvmStatic fun <T> success(): IOResult<T> = IOResult(true, NONE)
 
         /**
          * @param data IO data
@@ -112,6 +111,6 @@ class IOResult<T> {
          *
          * @return failed IO result
          */
-        @JvmStatic fun <T> failure(message: String): IOResult<T> = IOResult(false, message)
+        @JvmStatic fun <T> failure(error: Throwable): IOResult<T> = IOResult(false, error)
     }
 }

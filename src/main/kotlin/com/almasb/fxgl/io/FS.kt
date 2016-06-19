@@ -29,10 +29,7 @@ package com.almasb.fxgl.io
 import com.almasb.fxgl.app.FXGL
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
-import java.io.IOException
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serializable
+import java.io.*
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.stream.Collectors
@@ -69,7 +66,7 @@ class FS {
                 return IOResult.success<Any>()
             } catch (e: Exception) {
                 log.warning { "Write Failed: ${e.message}" }
-                return IOResult.failure<Any>(e.message ?: "No error message")
+                return IOResult.failure<Any>(e)
             }
         }
 
@@ -86,7 +83,7 @@ class FS {
                         .use { return IOResult.success(it.readObject() as T) }
             } catch (e: Exception) {
                 log.warning { "Read Failed: ${e.message}" }
-                return IOResult.failure<T>(e.message ?: "No error message")
+                return IOResult.failure<T>(e)
             }
 
         }
@@ -96,7 +93,7 @@ class FS {
                 val dir = Paths.get(dirName)
 
                 if (!Files.exists(dir)) {
-                    return IOResult.failure("Directory does not exist")
+                    return IOResult.failure(FileNotFoundException("Directory does not exist"))
                 }
 
                 val fileNames = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
@@ -107,7 +104,7 @@ class FS {
                 return IOResult.success<List<String>>(fileNames)
             } catch (e: Exception) {
                 log.warning { "Error: ${e.message}" }
-                return IOResult.failure(e.message ?: "No error message")
+                return IOResult.failure(e)
             }
         }
 
@@ -116,7 +113,7 @@ class FS {
                 val dir = Paths.get(dirName)
 
                 if (!Files.exists(dir)) {
-                    return IOResult.failure("Directory does not exist")
+                    return IOResult.failure(FileNotFoundException("Directory does not exist"))
                 }
 
                 val dirNames = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
@@ -128,7 +125,7 @@ class FS {
                 return IOResult.success<List<String>>(dirNames)
             } catch (e: Exception) {
                 log.warning { "Error: ${e.message}" }
-                return IOResult.failure(e.message ?: "No error message")
+                return IOResult.failure(e)
             }
         }
 
@@ -137,7 +134,7 @@ class FS {
                 val dir = Paths.get(dirName)
 
                 if (!Files.exists(dir)) {
-                    return IOResult.failure<T>("Directory $dirName does not exist")
+                    return IOResult.failure<T>(FileNotFoundException("Directory $dirName does not exist"))
                 }
 
                 val fileName = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
@@ -152,7 +149,7 @@ class FS {
                 return readData(dirName + fileName)
             } catch (e: Exception) {
                 log.warning { "Load failed: ${e.message}" }
-                return IOResult.failure<T>(e.message ?: "No error message")
+                return IOResult.failure<T>(e)
             }
         }
 
@@ -166,7 +163,7 @@ class FS {
                 val file = Paths.get(fileName)
 
                 if (!Files.exists(file)) {
-                    return IOResult.failure<Any>("File $file does not exist")
+                    return IOResult.failure<Any>(FileNotFoundException("File $file does not exist"))
                 }
 
                 Files.delete(file)
@@ -174,7 +171,7 @@ class FS {
                 return IOResult.success<Any>()
             } catch (e: Exception) {
                 log.warning { "Failed to delete: ${e.message}" }
-                return IOResult.failure<Any>(e.message ?: "No error message")
+                return IOResult.failure<Any>(e)
             }
         }
 
@@ -188,7 +185,7 @@ class FS {
                 val dir = Paths.get(dirName)
 
                 if (!Files.exists(dir)) {
-                    return IOResult.failure<Any>("Directory $dirName does not exist")
+                    return IOResult.failure<Any>(FileNotFoundException("Directory $dirName does not exist"))
                 }
 
                 Files.walkFileTree(dir, object : SimpleFileVisitor<Path>() {
@@ -210,7 +207,7 @@ class FS {
                 return IOResult.success<Any>()
             } catch (e: Exception) {
                 log.warning { "Failed to delete: ${e.message}" }
-                return IOResult.failure<Any>(e.message ?: "No error message")
+                return IOResult.failure<Any>(e)
             }
         }
 
@@ -226,11 +223,11 @@ class FS {
             try {
                 Files.newOutputStream(Paths.get(fileName + ".png")).use {
                     val ok = ImageIO.write(img, "png", it)
-                    return if (ok) IOResult.success<Any>() else IOResult.failure<Any>("Failed to write image")
+                    return if (ok) IOResult.success<Any>() else IOResult.failure<Any>(IOException("Failed to write image"))
                 }
             } catch (e: Exception) {
                 log.warning { "Write Failed: ${e.message}" }
-                return IOResult.failure<Any>(e.message ?: "No error message")
+                return IOResult.failure<Any>(e)
             }
         }
     }
