@@ -224,17 +224,22 @@ class FXGL {
 
         /**
          * @param key property key
-         * *
+         * @return string value
+         */
+        @JvmStatic fun getString(key: String) = getProperty(key)
+
+        /**
+         * @param key property key
          * @return property value
          */
-        @JvmStatic fun getProperty(key: String) = System.getProperty("FXGL.$key")
+        private fun getProperty(key: String) = System.getProperty("FXGL.$key")
                 ?: throw IllegalArgumentException("Key \"$key\" not found!")
 
         /**
          * Set an int, double, boolean or String property.
+         * The value can then be retrieved with FXGL.get* methods.
          *
          * @param key property key
-         *
          * @param value property value
          */
         @JvmStatic fun setProperty(key: String, value: Any) {

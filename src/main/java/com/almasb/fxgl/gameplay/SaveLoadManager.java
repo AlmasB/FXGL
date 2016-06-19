@@ -42,13 +42,12 @@ public final class SaveLoadManager {
 
     private static final Logger log = FXGL.getLogger("FXGL.SaveLoadManager");
 
-    private static final String PROFILE_FILE_NAME = "user.profile";
-    private static final String PROFILES_DIR = "profiles/";
-    private static final String SAVE_DIR = "saves/";
+    private static final String PROFILE_FILE_NAME = FXGL.getString("fs.profilename");
+    private static final String PROFILES_DIR = FXGL.getString("fs.profiledir");
+    private static final String SAVE_DIR = FXGL.getString("fs.savedir");
 
-    // TODO: these need to be read from external source
-    private static final String SAVE_FILE_EXT = ".sav";
-    private static final String DATA_FILE_EXT = ".dat";
+    private static final String SAVE_FILE_EXT = FXGL.getString("fs.savefile.ext");
+    private static final String DATA_FILE_EXT = FXGL.getString("fs.datafile.ext");
 
     private final String profileName;
 
@@ -65,7 +64,7 @@ public final class SaveLoadManager {
     }
 
     /**
-     * Save serializable data onto a disk file system under "{@value #SAVE_DIR}"
+     * Save serializable data onto a disk file system under saves directory,
      * which is created if necessary in the directory where the game is run from.
      * <p>
      * All extra directories will also be created if necessary.
@@ -102,7 +101,7 @@ public final class SaveLoadManager {
 
     /**
      * Load serializable data from external
-     * file on disk file system from "{@value #SAVE_DIR}" directory which is
+     * file on disk file system from saves directory which is
      * in the directory where the game is run from.
      *
      * @param fileName file name to load from
@@ -166,7 +165,7 @@ public final class SaveLoadManager {
     }
 
     /**
-     * Loads file names of existing saves from "{@value #SAVE_DIR}".
+     * Loads file names of existing saves from saves directory.
      *
      * @return save file names
      */
@@ -201,7 +200,7 @@ public final class SaveLoadManager {
     }
 
     /**
-     * Loads last modified save file from "{@value #SAVE_DIR}".
+     * Loads last modified save file from saves directory.
      *
      * @return last modified save file
      */
