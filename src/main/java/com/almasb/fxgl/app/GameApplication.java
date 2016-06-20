@@ -55,11 +55,13 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
@@ -305,13 +307,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected abstract void initUI();
 
-    // TODO: this doesn't belong here
-    protected void initFPSOverlay() {
-        if (getSettings().isFPSShown()) {
-            getGameScene().setShowFPSOverlay(true);
-        }
-    }
-
     /**
      * Main loop update phase, most of game logic.
      *
@@ -336,6 +331,16 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             // notify rest
             bus.fireEvent(event);
+
+            if (getSettings().isFPSShown()) {
+                GraphicsContext g = getGameScene().getGraphicsContext();
+
+                g.setFont(UIFactory.newFont(24));
+                g.setFill(Color.RED);
+                String text = String.format("FPS: [%d]\nPerformance: [%d]",
+                        getMasterTimer().getFPS(), getMasterTimer().getPerformanceFPS());
+                g.fillText(text, 0, getHeight() - 40);
+            }
         });
 
         // Save/Load events
@@ -613,15 +618,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     private void showMultiplayerDialog() {
         Button btnHost = UIFactory.newButton("Host...");
-        btnHost.setOnAction(e -> System.out.println("Hosting the game at ..."));
-
-        // TODO: waiting for player dialog ...
+        btnHost.setOnAction(e -> {
+            getDisplay().showMessageBox("NOT SUPPORTED YET");
+        });
 
         Button btnConnect = UIFactory.newButton("Connect...");
         btnConnect.setOnAction(e -> {
-            getDisplay().showInputBox("Enter Server IP", input -> input.contains("."), ip -> {
-                // TODO: connect using ip
-            });
+            getDisplay().showMessageBox("NOT SUPPORTED YET");
         });
 
         getDisplay().showBox("Multiplayer Options", UIFactory.newText(""), btnHost, btnConnect);

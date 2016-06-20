@@ -29,7 +29,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.io.DataFile
 import javafx.concurrent.Task
-import java.io.Serializable
 
 /**
  *
@@ -57,7 +56,6 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initializing UI", 3)
         app.initUI()
-        app.initFPSOverlay()
 
         update("Initialization Complete", 4)
         return null
