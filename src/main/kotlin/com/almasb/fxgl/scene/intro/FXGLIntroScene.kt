@@ -155,7 +155,7 @@ class FXGLIntroScene() : IntroScene() {
             for (x in 0..w.toInt() - 1) {
                 val color = reader.getColor(x, y)
 
-                if (!(color.blue == 0.0 && color.red == 0.0 && color.green == 0.0)) {
+                if (color != Color.BLACK) {
                     particles.add(Particle(x.toDouble(), y.toDouble()))
                 }
             }
@@ -180,19 +180,15 @@ class FXGLIntroScene() : IntroScene() {
                     ft.play()
                 }
 
-                val it = particles.iterator()
-                while (it.hasNext()) {
-                    if (it.next().x < 0)
-                        it.remove()
-                }
+                particles.removeIf { it.x < 0 || it.y < 0 }
 
                 particles.filter({ p -> p.vel === Point2D.ZERO })
                         .sortedWith(Comparator { p1, p2 -> (p1.y - p2.y).toInt() })
-                        .take(25)
-                        .forEach { p -> p.vel = Point2D(-4 - Math.random() * 10, 0.0) }
+                        //.sortedWith(Comparator { p1, p2 -> (p2.x - p1.x).toInt() })
+                        .take(100)
+                        .forEach { p -> p.vel = Point2D(-7 - Math.random() * 10, -Math.random() * 7) }
 
                 g.setGlobalAlpha(1.0)
-                g.clearRect(0.0, 0.0, w, h)
                 g.setFill(Color.BLACK)
                 g.fillRect(0.0, 0.0, w, h)
                 g.setFill(Color.WHITE)
