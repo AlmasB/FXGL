@@ -62,6 +62,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
@@ -319,6 +320,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         EventBus bus = getEventBus();
 
+        Font fpsFont = UIFactory.newFont(24);
+
         getMasterTimer().setUpdateListener(event -> {
             getInput().onUpdateEvent(event);
             getAudioPlayer().onUpdateEvent(event);
@@ -335,7 +338,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             if (getSettings().isFPSShown()) {
                 GraphicsContext g = getGameScene().getGraphicsContext();
 
-                g.setFont(UIFactory.newFont(24));
+                g.setFont(fpsFont);
                 g.setFill(Color.RED);
                 String text = String.format("FPS: [%d]\nPerformance: [%d]",
                         getMasterTimer().getFPS(), getMasterTimer().getPerformanceFPS());
@@ -661,7 +664,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             getDisplay().showInputBox("New Profile", DialogPane.ALPHANUM, name -> {
                 profileName = name;
                 saveLoadManager = new SaveLoadManager(profileName);
-                //getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
+
                 getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
             });
         });
@@ -680,8 +683,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             if (!ok) {
                 getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
             } else {
-                //getEventBus().fireEvent(new MenuDataEvent(MenuDataEvent.PROFILE_SELECTED, profileName));
-
                 IOResult<SaveFile> lastSave = saveLoadManager.loadLastModifiedSaveFile();
 
                 getEventBus().fireEvent(new ProfileSelectedEvent(profileName, lastSave.hasData()));
