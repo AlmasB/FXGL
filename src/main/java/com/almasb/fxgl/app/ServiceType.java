@@ -41,6 +41,8 @@ import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.FXGLLoggerFactory;
 import com.almasb.fxgl.logging.LoggerFactory;
+import com.almasb.fxgl.net.FXGLNet;
+import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.scene.FXGLDisplay;
 import com.almasb.fxgl.time.FXGLLocalTimer;
@@ -207,6 +209,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Profiler> serviceProvider() {
             return Profiler.class;
+        }
+    };
+
+    ServiceType<Net> NET = new ServiceType<Net>() {
+        @Override
+        public Class<Net> service() {
+            return Net.class;
+        }
+
+        @Override
+        public Class<? extends Net> serviceProvider() {
+            return FXGLNet.class;
         }
     };
 }
