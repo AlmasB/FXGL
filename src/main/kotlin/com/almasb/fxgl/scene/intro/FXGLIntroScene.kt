@@ -40,6 +40,8 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
+import java.util.stream.IntStream
+import java.util.stream.Stream
 
 /**
  * This is the default FXGL Intro animation.
@@ -180,13 +182,12 @@ class FXGLIntroScene() : IntroScene() {
                     ft.play()
                 }
 
-                particles.removeIf { it.x < 0 || it.y < 0 }
+                particles.removeIf { it.life == 0.0 }
 
                 particles.filter({ p -> p.vel === Point2D.ZERO })
                         .sortedWith(Comparator { p1, p2 -> (p1.y - p2.y).toInt() })
-                        //.sortedWith(Comparator { p1, p2 -> (p2.x - p1.x).toInt() })
-                        .take(100)
-                        .forEach { p -> p.vel = Point2D(-7 - Math.random() * 10, -Math.random() * 7) }
+                        .take(50)
+                        .forEach { p -> p.vel = Point2D(Math.random() - 0.5, Math.random() - 0.5) }
 
                 g.setGlobalAlpha(1.0)
                 g.setFill(Color.BLACK)
@@ -196,7 +197,7 @@ class FXGLIntroScene() : IntroScene() {
                 for (p in particles) {
                     p.update()
 
-                    g.setGlobalAlpha(p.x / 400 + 0.3)
+                    g.setGlobalAlpha(p.life)
                     g.fillOval(p.x, p.y, 1.0, 1.0)
                 }
             }
@@ -206,8 +207,14 @@ class FXGLIntroScene() : IntroScene() {
 
     private class Particle(var x: Double, var y: Double) {
         var vel = Point2D.ZERO
+        var life = 1.0
 
         fun update() {
+            life -= 0.017 * 0.45
+
+            if (life < 0)
+                life = 0.0
+
             x += vel.x
             y += vel.y
         }
