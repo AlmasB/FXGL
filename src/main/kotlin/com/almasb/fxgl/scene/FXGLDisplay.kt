@@ -46,6 +46,7 @@ import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Dialog
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
@@ -141,10 +142,12 @@ private constructor(private val stage: Stage,
             setOnCloseRequest { e ->
                 e.consume()
 
-                showConfirmationBox("Exit the game?", { yes ->
-                    if (yes)
-                        eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
-                })
+                if (!dialog.isShowing) {
+                    showConfirmationBox("Exit the game?", { yes ->
+                        if (yes)
+                            eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                    })
+                }
             }
 
             setOnShown {
@@ -463,6 +466,18 @@ private constructor(private val stage: Stage,
      */
     override fun showBox(message: String, content: Node, vararg buttons: Button) {
         dialog.showBox(message, content, *buttons)
+    }
+
+    override fun showProgressBox(message: String): DialogHandler {
+        val progress = ProgressIndicator()
+        progress.setPrefSize(200.0, 200.0)
+
+        val btn = Button()
+        btn.isVisible = false
+
+        showBox(message, progress, btn)
+
+        return DialogHandler(btn)
     }
 
     override fun save(profile: UserProfile) {

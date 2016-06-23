@@ -33,6 +33,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.ProgressIndicator;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -176,4 +177,13 @@ public interface Display extends UserProfileSavable {
      * @param buttons buttons present
      */
     void showBox(String message, Node content, Button... buttons);
+
+    /**
+     * Shows a blocking (stops game execution, method returns normally) progress dialog.
+     * Can only be dismissed via the returned handler.
+     *
+     * @param message message to show
+     * @return dialog handler
+     */
+    DialogHandler showProgressBox(String message);
 }
