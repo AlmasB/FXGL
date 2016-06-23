@@ -30,10 +30,10 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.util.ExceptionHandler
 import javafx.concurrent.Task
 import java.util.function.Consumer
-import java.util.function.Supplier
 
 /**
- *
+ * IO Task that wraps some IO or any other operation
+ * that may potentially fail.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -42,6 +42,7 @@ abstract class IOTask<T> {
     private var onSuccess: Consumer<T>? = null
     private var onFailure: ExceptionHandler? = null
 
+    @Throws(Exception::class)
     abstract fun onExecute(): T
 
     fun onSuccess(action: Consumer<T>): IOTask<T> {
@@ -74,6 +75,28 @@ abstract class IOTask<T> {
             }
 
             override fun failed() {
+                onFailure?.handle(exception)
+            }
+        }
+
+        FXGL.getExecutor().submit(task)
+    }
+
+    fun executeAsyncWithProgressDialog(message: String) {
+        val handler = FXGL.getDisplay().showProgressBox(message)
+
+        val task = object : Task<T>() {
+            override fun call(): T {
+                return onExecute()
+            }
+
+            override fun succeeded() {
+                handler.dismiss()
+                onSuccess?.accept(value)
+            }
+
+            override fun failed() {
+                handler.dismiss()
                 onFailure?.handle(exception)
             }
         }

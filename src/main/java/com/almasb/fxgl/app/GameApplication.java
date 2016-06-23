@@ -692,9 +692,14 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         btnDelete.setOnAction(e -> {
             String name = profilesBox.getValue();
 
-            SaveLoadManager.deleteProfile(name)
-                    .ifOK(o -> showProfileDialog())
-                    .ifError(error -> getDisplay().showErrorBox(error.getMessage(), this::showProfileDialog));
+//            SaveLoadManager.deleteProfile(name)
+//                    .ifOK(o -> showProfileDialog())
+//                    .ifError(error -> getDisplay().showErrorBox(error.getMessage(), this::showProfileDialog));
+
+            SaveLoadManager.deleteProfileTask(name)
+                    .onSuccess(n -> showProfileDialog())
+                    .onFailure(error -> getDisplay().showErrorBox(error.getMessage(), this::showProfileDialog))
+                    .execute();
         });
 
         getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);

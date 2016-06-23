@@ -27,12 +27,10 @@
 package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.io.DataFile;
-import com.almasb.fxgl.io.FS;
-import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.io.SaveFile;
+import com.almasb.fxgl.io.*;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
+import com.almasb.fxgl.util.Experimental;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
@@ -163,6 +161,12 @@ public final class SaveLoadManager {
     public static IOResult<?> deleteProfile(String profileName) {
         log.debug(() -> "Deleting profile: " + profileName);
         return FS.deleteDirectory("./" + PROFILES_DIR + profileName);
+    }
+
+    @Experimental
+    public static IOTask<Void> deleteProfileTask(String profileName) {
+        log.debug(() -> "Deleting profile: " + profileName);
+        return FS.deleteDirectoryTask("./" + PROFILES_DIR + profileName);
     }
 
     /**

@@ -27,6 +27,7 @@
 package com.almasb.fxgl.io
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.util.Experimental
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
 import java.io.*
@@ -208,6 +209,39 @@ class FS {
             } catch (e: Exception) {
                 log.warning { "Failed to delete: ${e.message}" }
                 return IOResult.failure<Any>(e)
+            }
+        }
+
+        @Experimental
+        @JvmStatic fun deleteDirectoryTask(dirName: String): IOTask<Void?> {
+            return object : IOTask<Void?>() {
+                override fun onExecute(): Void? {
+                    log.debug { "Deleting directory: $dirName" }
+
+                    val dir = Paths.get(dirName)
+
+                    if (!Files.exists(dir)) {
+                        throw FileNotFoundException("Directory $dirName does not exist")
+                    }
+
+                    Files.walkFileTree(dir, object : SimpleFileVisitor<Path>() {
+                        override fun visitFile(file: Path, p1: BasicFileAttributes): FileVisitResult {
+                            Files.delete(file)
+                            return FileVisitResult.CONTINUE
+                        }
+
+                        override fun postVisitDirectory(dir: Path, e: IOException?): FileVisitResult {
+                            if (e == null) {
+                                Files.delete(dir)
+                                return FileVisitResult.CONTINUE
+                            } else {
+                                throw e
+                            }
+                        }
+                    })
+
+                    return null
+                }
             }
         }
 
