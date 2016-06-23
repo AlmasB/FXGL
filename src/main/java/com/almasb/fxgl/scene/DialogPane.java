@@ -122,7 +122,7 @@ public class DialogPane extends Pane {
         }));
     }
 
-    private boolean isShowing() {
+    public boolean isShowing() {
         return getParent() != null;
     }
 
@@ -351,7 +351,9 @@ public class DialogPane extends Pane {
 
             btn.setOnAction(e -> {
                 close();
-                handler.handle(e);
+
+                if (handler != null)
+                    handler.handle(e);
             });
         }
 
