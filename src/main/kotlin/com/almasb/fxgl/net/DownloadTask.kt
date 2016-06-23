@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.net
 
-import javafx.concurrent.Task
+import com.almasb.fxgl.io.IOTask
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
@@ -38,9 +38,9 @@ import java.nio.file.StandardCopyOption
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DownloadTask(private val url: String) : Task<Path>() {
+class DownloadTask(private val url: String) : IOTask<Path>() {
 
-    override fun call(): Path {
+    override fun onExecute(): Path {
         URL(url).openStream().use {
             val fileName = url.substringAfterLast("/")
 

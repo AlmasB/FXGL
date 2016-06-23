@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.net
 
+import com.almasb.fxgl.io.IOTask
 import com.google.inject.Singleton
 import javafx.concurrent.Task
 import java.net.URL
@@ -42,9 +43,5 @@ import java.nio.file.StandardCopyOption
 @Singleton
 class FXGLNet : Net {
 
-    override fun download(url: String) {
-
-    }
-
-    override fun downloadTask(url: String) = DownloadTask(url)
+    override fun downloadTask(url: String): IOTask<Path> = DownloadTask(url)
 }

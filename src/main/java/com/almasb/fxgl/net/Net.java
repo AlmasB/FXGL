@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.net;
 
+import com.almasb.fxgl.io.IOTask;
 import javafx.concurrent.Task;
 
 import java.nio.file.Path;
@@ -36,11 +37,8 @@ import java.nio.file.Path;
 public interface Net {
 
     /**
-     * Downloads a file from given url into running directory.
-     *
      * @param url web url of a file
+     * @return task that downloads a file from given url into running directory
      */
-    void download(String url);
-
-    Task<Path> downloadTask(String url);
+    IOTask<Path> downloadTask(String url);
 }
