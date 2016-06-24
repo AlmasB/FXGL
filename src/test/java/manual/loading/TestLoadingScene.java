@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package manual.loading;
 
 import com.almasb.fxgl.scene.LoadingScene;
 import javafx.animation.RotateTransition;

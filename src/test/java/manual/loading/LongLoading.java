@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package sandbox;
+
+package manual.loading;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
