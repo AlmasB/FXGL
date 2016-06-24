@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.scene.menu;
 
+import com.almasb.fxgl.io.SaveFile;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -39,9 +41,9 @@ public interface MenuEventListener {
 
     void onSave();
 
-    void onLoad(String fileName);
+    void onLoad(SaveFile saveFile);
 
-    void onDelete(String fileName);
+    void onDelete(SaveFile saveFile);
 
     void onLogout();
 

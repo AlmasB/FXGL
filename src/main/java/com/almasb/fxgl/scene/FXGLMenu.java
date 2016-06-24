@@ -153,26 +153,26 @@ public abstract class FXGLMenu extends FXGLScene {
     protected abstract Node createProfileView(String profileName);
 
     /**
-     * @return menu content containing list of save files and load/delete buttons
+     * @return menu content containing list of save files and loadTask/delete buttons
      */
     protected final MenuContent createContentLoad() {
         ListView<SaveFile> list = new ListView<>();
+        list.setPrefHeight(0);
 
-        IOResult<List<SaveFile> > io = app.getSaveLoadManager().loadSaveFiles();
+        app.getSaveLoadManager()
+                .loadSaveFiles()
+                .onSuccess(files -> {
+                    list.getItems().setAll(files);
+                    Collections.sort(list.getItems(), SaveFile.RECENT_FIRST);
 
-        if (io.hasData()) {
-            list.getItems().setAll(io.getData());
-            Collections.sort(list.getItems(), SaveFile.RECENT_FIRST);
-        } else {
-            log.warning(io::getErrorMessage);
-            list.getItems().clear();
-        }
+                    list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
-        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
-
-        if (!list.getItems().isEmpty()) {
-            list.getSelectionModel().selectFirst();
-        }
+                    if (!list.getItems().isEmpty()) {
+                        list.getSelectionModel().selectFirst();
+                    }
+                })
+                .onFailure(e -> app.getDisplay().showErrorBox(e))
+                .executeAsyncWithProgressDialog("Loading save files");
 
         Button btnLoad = UIFactory.newButton("LOAD");
         btnLoad.setOnAction(e -> {
@@ -180,7 +180,7 @@ public abstract class FXGLMenu extends FXGLScene {
             if (saveFile == null)
                 return;
 
-            fireLoad(saveFile.getName());
+            fireLoad(saveFile);
         });
         Button btnDelete = UIFactory.newButton("DELETE");
         btnDelete.setOnAction(e -> {
@@ -188,7 +188,7 @@ public abstract class FXGLMenu extends FXGLScene {
             if (saveFile == null)
                 return;
 
-            fireDelete(saveFile.getName());
+            fireDelete(saveFile);
             list.getItems().remove(saveFile);
         });
 
@@ -457,9 +457,9 @@ public abstract class FXGLMenu extends FXGLScene {
      *
      * @param fileName  name of the saved file
      */
-    protected final void fireLoad(String fileName) {
+    protected final void fireLoad(SaveFile fileName) {
         listener.onLoad(fileName);
-        fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
+        //fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
     }
 
     /**
@@ -476,9 +476,9 @@ public abstract class FXGLMenu extends FXGLScene {
      *
      * @param fileName name of the save file
      */
-    protected final void fireDelete(String fileName) {
+    protected final void fireDelete(SaveFile fileName) {
         listener.onDelete(fileName);
-        fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
+        //fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
     }
 
     /**

@@ -34,6 +34,9 @@ import com.almasb.fxgl.util.Experimental;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,23 +71,15 @@ public final class SaveLoadManager {
      * <p>
      * All extra directories will also be created if necessary.
      *
-     * @param data data to save
-     * @param fileName to save as
-     * @return io result
+     * @param dataFile data file
+     * @param saveFile save file
+     * @return io task
      */
-    @Deprecated
-    public IOResult<?> save(Serializable data, String fileName) {
-        log.debug(() -> "Saving data: " + fileName);
-        return FS.writeData(data, saveDir() + fileName);
-    }
-
-    public IOResult<?> save(DataFile dataFile, SaveFile saveFile) {
+    public IOTask<Void> saveTask(DataFile dataFile, SaveFile saveFile) {
         log.debug(() -> "Saving data: " + saveFile.getName());
 
-        // TODO: check result of this too
-        FS.writeData(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT);
-
-        return FS.writeData(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT);
+        return FS.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
+                .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT));
     }
 
     /**
@@ -93,9 +88,9 @@ public final class SaveLoadManager {
      * @param profile the profile to save
      * @return io result
      */
-    public IOResult<?> saveProfile(UserProfile profile) {
+    public IOTask<Void> saveProfile(UserProfile profile) {
         log.debug(() -> "Saving profile: " + profileName);
-        return FS.writeData(profile, profileDir() + PROFILE_FILE_NAME);
+        return FS.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
@@ -103,49 +98,31 @@ public final class SaveLoadManager {
      * file on disk file system from saves directory which is
      * in the directory where the game is run from.
      *
-     * @param fileName file name to load from
+     * @param saveFile file name to loadTask from
      * @return instance of deserialized data structure
      */
-    @Deprecated
-    public IOResult<DataFile> load(String fileName) {
-        log.debug(() -> "Loading data: " + fileName);
-        return FS.<DataFile>readData(saveDir() + fileName + DATA_FILE_EXT);
-    }
-
-    public IOResult<DataFile> load(SaveFile saveFile) {
-        log.debug(() -> "Loading data: " + saveFile);
-        return FS.<DataFile>readData(saveDir() + saveFile.getName() + DATA_FILE_EXT);
+    public IOTask<DataFile> loadTask(SaveFile saveFile) {
+        log.debug(() -> "Loading data: " + saveFile.getName());
+        return FS.<DataFile>readDataTask(saveDir() + saveFile.getName() + DATA_FILE_EXT);
     }
 
     /**
      * @return user profile loaded from "profiles/"
      */
-    public IOResult<UserProfile> loadProfile() {
+    public IOTask<UserProfile> loadProfileTask() {
         log.debug(() -> "Loading profile: " + profileName);
-        return FS.<UserProfile>readData(profileDir() + PROFILE_FILE_NAME);
+        return FS.<UserProfile>readDataTask(profileDir() + PROFILE_FILE_NAME);
     }
 
     /**
-     * @param fileName name of the file to delete
+     * @param saveFile name of the file to delete
      * @return result of the operation
      */
-    @Deprecated
-    public IOResult<?> deleteSaveFile(String fileName) {
-        log.debug(() -> "Deleting save file: " + fileName);
+    public IOTask<Void> deleteSaveFile(SaveFile saveFile) {
+        log.debug(() -> "Deleting save file: " + saveFile.getName());
 
-        // TODO: check result of this too
-        FS.deleteFile(saveDir() + fileName + SAVE_FILE_EXT);
-
-        return FS.deleteFile(saveDir() + fileName + DATA_FILE_EXT);
-    }
-
-    public IOResult<?> deleteSaveFile(SaveFile saveFile) {
-        log.debug(() -> "Deleting save file: " + saveFile);
-
-        // TODO: check result of this too
-        FS.deleteFile(saveDir() + saveFile.getName() + SAVE_FILE_EXT);
-
-        return FS.deleteFile(saveDir() + saveFile.getName() + DATA_FILE_EXT);
+        return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
+                .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT));
     }
 
     /**
@@ -153,31 +130,15 @@ public final class SaveLoadManager {
      *
      * @return profile names
      */
+    @Deprecated
     public static IOResult<List<String> > loadProfileNames() {
         log.debug(() -> "Loading profile names");
         return FS.loadDirectoryNames("./" + PROFILES_DIR, false);
     }
 
-    public static IOResult<?> deleteProfile(String profileName) {
-        log.debug(() -> "Deleting profile: " + profileName);
-        return FS.deleteDirectory("./" + PROFILES_DIR + profileName);
-    }
-
-    @Experimental
     public static IOTask<Void> deleteProfileTask(String profileName) {
         log.debug(() -> "Deleting profile: " + profileName);
         return FS.deleteDirectoryTask("./" + PROFILES_DIR + profileName);
-    }
-
-    /**
-     * Loads file names of existing saves from saves directory.
-     *
-     * @return save file names
-     */
-    @Deprecated
-    public IOResult<List<String> > loadSaveFileNames() {
-        log.debug(() -> "Loading save file names");
-        return FS.loadFileNames(saveDir(), true);
     }
 
     /**
@@ -185,23 +146,21 @@ public final class SaveLoadManager {
      *
      * @return save files
      */
-    public IOResult<List<SaveFile> > loadSaveFiles() {
+    public IOTask<List<SaveFile> > loadSaveFiles() {
         log.debug(() -> "Loading save files");
 
-        IOResult<List<String> > io = FS.loadFileNames(saveDir(), true);
-        if (io.hasData()) {
+        return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
+                .then(fileNames -> new IOTask<List<SaveFile> >() {
+                            @Override
+                            protected List<SaveFile> onExecute() throws Exception {
 
-            List<SaveFile> saveFiles = io.getData().stream()
-                    .filter(name -> name.endsWith(SAVE_FILE_EXT))
-                    .map(name -> FS.<SaveFile>readData(saveDir() + name))
-                    .filter(IOResult::hasData)
-                    .map(IOResult::getData)
-                    .collect(Collectors.toList());
-
-            return IOResult.success(saveFiles);
-        } else {
-            return IOResult.<List<SaveFile>>failure(io.getError());
-        }
+                                return fileNames.stream()
+                                        .map(name -> FS.<SaveFile>readDataTask(saveDir() + name).execute())
+                                        .filter(file -> file != null)
+                                        .collect(Collectors.toList());
+                            }
+                        }
+                );
     }
 
     /**
@@ -209,23 +168,23 @@ public final class SaveLoadManager {
      *
      * @return last modified save file
      */
-    public IOResult<SaveFile> loadLastModifiedSaveFile() {
+    public IOTask<SaveFile> loadLastModifiedSaveFile() {
         log.debug(() -> "Loading last modified save file");
 
-        IOResult<List<SaveFile> > io = loadSaveFiles();
+        return loadSaveFiles().then(files -> {
+            return new IOTask<SaveFile>() {
+                @Override
+                protected SaveFile onExecute() throws Exception {
+                    if (files.isEmpty()) {
+                        throw new FileNotFoundException("No save files found");
+                    }
 
-        if (io.hasData()) {
-            if (io.getData().isEmpty()) {
-                return IOResult.<SaveFile>failure(new FileNotFoundException("No save files found"));
-            }
-
-            return IOResult.success(io.getData()
-                    .stream()
-                    .sorted(SaveFile.RECENT_FIRST)
-                    .findFirst()
-                    .get());
-        } else {
-            return IOResult.<SaveFile>failure(io.getError());
-        }
+                    return files.stream()
+                            .sorted(SaveFile.RECENT_FIRST)
+                            .findFirst()
+                            .get();
+                }
+            };
+        });
     }
 }

@@ -38,6 +38,7 @@ import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.io.IOTask;
 import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
@@ -65,7 +66,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -391,8 +391,12 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         bus.addEventHandler(FXGLEvent.EXIT, event -> {
             // if it is null then we are running without menus
-            if (profileName != null)
-                saveLoadManager.saveProfile(createProfile());
+            if (profileName != null) {
+                saveLoadManager.saveProfile(createProfile())
+                        .onFailure(e -> log.warning("Failed to save profile: " + profileName + " - " + e))
+                        // we execute synchronously to avoid incomplete save since we are shutting down
+                        .execute();
+            }
         });
 
         getGameWorld().addWorldListener(getPhysicsWorld());
@@ -525,13 +529,11 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onContinue() {
-            saveLoadManager.<Serializable>loadLastModifiedSaveFile()
-                    .ifOK(saveFile -> {
-                        saveLoadManager.load(saveFile)
-                                .ifOK(GameApplication.this::startLoadedGame)
-                                .ifError(getDefaultCheckedExceptionHandler());
-                    })
-                    .ifError(getDefaultCheckedExceptionHandler());
+            saveLoadManager.loadLastModifiedSaveFile()
+                    .then(file -> saveLoadManager.loadTask(file))
+                    .onSuccess(GameApplication.this::startLoadedGame)
+                    .onFailure(getDefaultCheckedExceptionHandler())
+                    .executeAsyncWithProgressDialog("Loading...");
         }
 
         @Override
@@ -545,22 +547,25 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 DataFile dataFile = saveState();
                 SaveFile saveFile = new SaveFile(saveFileName, LocalDateTime.now());
 
-                saveLoadManager.save(dataFile, saveFile)
-                        .ifError(getDefaultCheckedExceptionHandler());
+                saveLoadManager.saveTask(dataFile, saveFile)
+                        .onFailure(getDefaultCheckedExceptionHandler())
+                        .executeAsyncWithProgressDialog("Saving data: " + saveFileName);
             });
         }
 
         @Override
-        public void onLoad(String fileName) {
-            saveLoadManager.<Serializable>load(fileName)
-                    .ifOK(GameApplication.this::startLoadedGame)
-                    .ifError(getDefaultCheckedExceptionHandler());
+        public void onLoad(SaveFile saveFile) {
+            saveLoadManager.loadTask(saveFile)
+                    .onSuccess(GameApplication.this::startLoadedGame)
+                    .onFailure(getDefaultCheckedExceptionHandler())
+                    .executeAsyncWithProgressDialog("Loading: " + saveFile.getName());
         }
 
         @Override
-        public void onDelete(String fileName) {
-            saveLoadManager.deleteSaveFile(fileName)
-                    .ifError(getDefaultCheckedExceptionHandler());
+        public void onDelete(SaveFile saveFile) {
+            saveLoadManager.deleteSaveFile(saveFile)
+                    .onFailure(getDefaultCheckedExceptionHandler())
+                    .executeAsyncWithProgressDialog("Deleting: " + saveFile.getName());
         }
 
         @Override
@@ -673,20 +678,29 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             profileName = profilesBox.getValue();
             saveLoadManager = new SaveLoadManager(profileName);
 
-            boolean ok = false;
 
-            IOResult<UserProfile> result = saveLoadManager.loadProfile();
-            if (result.hasData()) {
-                ok = loadFromProfile(result.getData());
-            }
+            saveLoadManager.loadProfileTask()
+                    .onSuccess(profile -> {
+                        boolean ok = loadFromProfile(profile);
 
-            if (!ok) {
-                getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
-            } else {
-                IOResult<SaveFile> lastSave = saveLoadManager.loadLastModifiedSaveFile();
-
-                getEventBus().fireEvent(new ProfileSelectedEvent(profileName, lastSave.hasData()));
-            }
+                        if (!ok) {
+                            getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
+                        } else {
+                            saveLoadManager.loadLastModifiedSaveFile()
+                                    .onSuccess(file -> {
+                                        getEventBus().fireEvent(new ProfileSelectedEvent(profileName, true));
+                                    })
+                                    .onFailure(error -> {
+                                        getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
+                                    })
+                                    .executeAsyncWithProgressDialog("Loading last save file");
+                        }
+                    })
+                    .onFailure(error -> {
+                        getDisplay().showErrorBox("Profile is corrupted: " + profileName + "\nError: "
+                                + error.toString(), this::showProfileDialog);
+                    })
+                    .executeAsyncWithProgressDialog("Loading Profile: "+ profileName);
         });
 
         btnDelete.setOnAction(e -> {
@@ -694,7 +708,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
             SaveLoadManager.deleteProfileTask(name)
                     .onSuccess(n -> showProfileDialog())
-                    .onFailure(error -> getDisplay().showErrorBox(error.getMessage(), this::showProfileDialog))
+                    .onFailure(error -> getDisplay().showErrorBox(error.toString(), this::showProfileDialog))
                     .executeAsyncWithProgressDialog("Deleting profile: " + name);
         });
 
@@ -809,7 +823,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * (Re-)initializes the user application from the given data file and starts the game.
      *
-     * @param dataFile save data to load from
+     * @param dataFile save data to loadTask from
      */
     protected void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
@@ -865,7 +879,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     private SaveLoadManager saveLoadManager;
 
     /**
-     * @return save load manager
+     * @return save loadTask manager
      */
     public SaveLoadManager getSaveLoadManager() {
         if (saveLoadManager == null) {
