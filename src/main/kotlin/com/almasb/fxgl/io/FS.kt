@@ -33,6 +33,7 @@ import javafx.scene.image.Image
 import java.io.*
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.function.Predicate
 import java.util.stream.Collectors
 import javax.imageio.ImageIO
 
@@ -52,22 +53,22 @@ class FS {
          *
          * @param data data object to save
          * @param fileName to save as
-         * @return io result
+         * @return io task
          */
-        @JvmStatic fun writeData(data: Serializable, fileName: String): IOResult<*> {
-            try {
-                val file = Paths.get(fileName)
+        @JvmStatic fun writeDataTask(data: Serializable, fileName: String): IOTask<Void?> {
+            return object : IOTask<Void?>() {
+                override fun onExecute(): Void? {
 
-                if (!Files.exists(file.parent)) {
-                    Files.createDirectories(file.parent)
+                    val file = Paths.get(fileName)
+
+                    if (!Files.exists(file.parent)) {
+                        Files.createDirectories(file.parent)
+                    }
+
+                    ObjectOutputStream(Files.newOutputStream(file)).use { it.writeObject(data) }
+
+                    return null
                 }
-
-                ObjectOutputStream(Files.newOutputStream(file)).use { it.writeObject(data) }
-
-                return IOResult.success<Any>()
-            } catch (e: Exception) {
-                log.warning { "Write Failed: ${e.message}" }
-                return IOResult.failure<Any>(e)
             }
         }
 
@@ -78,36 +79,72 @@ class FS {
          *
          * @return IO result with the data object
          */
-        @JvmStatic fun <T> readData(fileName: String): IOResult<T> {
-            try {
-                ObjectInputStream(Files.newInputStream(Paths.get(fileName)))
-                        .use { return IOResult.success(it.readObject() as T) }
-            } catch (e: Exception) {
-                log.warning { "Read Failed: ${e.message}" }
-                return IOResult.failure<T>(e)
-            }
+        @JvmStatic fun <T> readDataTask(fileName: String): IOTask<T> {
+            return object : IOTask<T>() {
+                @Suppress("UNCHECKED_CAST")
+                override fun onExecute(): T {
 
-        }
-
-        @JvmStatic fun loadFileNames(dirName: String, recursive: Boolean): IOResult<List<String> > {
-            try {
-                val dir = Paths.get(dirName)
-
-                if (!Files.exists(dir)) {
-                    return IOResult.failure(FileNotFoundException("Directory does not exist"))
+                    ObjectInputStream(Files.newInputStream(Paths.get(fileName)))
+                            .use { return it.readObject() as T }
                 }
-
-                val fileNames = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                        .filter { Files.isRegularFile(it) }
-                        .map { dir.relativize(it).toString().replace("\\", "/") }
-                        .collect(Collectors.toList<String>())
-
-                return IOResult.success<List<String>>(fileNames)
-            } catch (e: Exception) {
-                log.warning { "Error: ${e.message}" }
-                return IOResult.failure(e)
             }
         }
+
+        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean): IOTask<List<String> > {
+            return object : IOTask<List<String> >() {
+                override fun onExecute(): List<String> {
+
+                    val dir = Paths.get(dirName)
+
+                    if (!Files.exists(dir)) {
+                        throw FileNotFoundException("Directory $dir does not exist")
+                    }
+
+                    return Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+                            .filter { Files.isRegularFile(it) }
+                            .map { dir.relativize(it).toString().replace("\\", "/") }
+                            .collect(Collectors.toList<String>())
+                }
+            }
+        }
+
+        @JvmStatic fun loadFileNamesTask(dirName: String, recursive: Boolean, extensions: List<FileExtension>): IOTask<List<String> > {
+            return object : IOTask<List<String> >() {
+                override fun onExecute(): List<String> {
+
+                    val dir = Paths.get(dirName)
+
+                    if (!Files.exists(dir)) {
+                        throw FileNotFoundException("Directory $dir does not exist")
+                    }
+
+                    return Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+                            .filter { file -> Files.isRegularFile(file) && extensions.filter { file.endsWith(it.extension) }.isNotEmpty() }
+                            .map { dir.relativize(it).toString().replace("\\", "/") }
+                            .collect(Collectors.toList<String>())
+                }
+            }
+        }
+
+//        @JvmStatic fun loadFileNames(dirName: String, recursive: Boolean): IOResult<List<String> > {
+//            try {
+//                val dir = Paths.get(dirName)
+//
+//                if (!Files.exists(dir)) {
+//                    return IOResult.failure(FileNotFoundException("Directory does not exist"))
+//                }
+//
+//                val fileNames = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+//                        .filter { Files.isRegularFile(it) }
+//                        .map { dir.relativize(it).toString().replace("\\", "/") }
+//                        .collect(Collectors.toList<String>())
+//
+//                return IOResult.success<List<String>>(fileNames)
+//            } catch (e: Exception) {
+//                log.warning { "Error: ${e.message}" }
+//                return IOResult.failure(e)
+//            }
+//        }
 
         @JvmStatic fun loadDirectoryNames(dirName: String, recursive: Boolean): IOResult<List<String> > {
             try {
@@ -130,29 +167,30 @@ class FS {
             }
         }
 
-        @JvmStatic fun <T> loadLastModifiedFile(dirName: String, recursive: Boolean): IOResult<T> {
-            try {
-                val dir = Paths.get(dirName)
-
-                if (!Files.exists(dir)) {
-                    return IOResult.failure<T>(FileNotFoundException("Directory $dirName does not exist"))
-                }
-
-                val fileName = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                        .filter { Files.isRegularFile(it) }
-                        .sorted { file1, file2 ->
-                            Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1))
-                        }
-                        .findFirst()
-                        .map { dir.relativize(it).toString().replace("\\", "/") }
-                        .orElseThrow { Exception() }
-
-                return readData(dirName + fileName)
-            } catch (e: Exception) {
-                log.warning { "Load failed: ${e.message}" }
-                return IOResult.failure<T>(e)
-            }
-        }
+        // TODO: refactor
+//        @JvmStatic fun <T> loadLastModifiedFile(dirName: String, recursive: Boolean): IOResult<T> {
+//            try {
+//                val dir = Paths.get(dirName)
+//
+//                if (!Files.exists(dir)) {
+//                    return IOResult.failure<T>(FileNotFoundException("Directory $dirName does not exist"))
+//                }
+//
+//                val fileName = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+//                        .filter { Files.isRegularFile(it) }
+//                        .sorted { file1, file2 ->
+//                            Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1))
+//                        }
+//                        .findFirst()
+//                        .map { dir.relativize(it).toString().replace("\\", "/") }
+//                        .orElseThrow { Exception() }
+//
+//                return readData(dirName + fileName)
+//            } catch (e: Exception) {
+//                log.warning { "Load failed: ${e.message}" }
+//                return IOResult.failure<T>(e)
+//            }
+//        }
 
         /**
          * Delete file [fileName].

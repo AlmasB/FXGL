@@ -39,28 +39,43 @@ import java.util.function.Consumer
  */
 abstract class IOTask<T> {
 
+    companion object {
+        private val log = FXGL.getLogger(IOTask::class.java)
+    }
+
     private var onSuccess: Consumer<T>? = null
     private var onFailure: ExceptionHandler? = null
 
     @Throws(Exception::class)
-    abstract fun onExecute(): T
+    protected abstract fun onExecute(): T
 
-    fun onSuccess(action: Consumer<T>): IOTask<T> {
+    open fun onSuccess(action: Consumer<T>): IOTask<T> {
         onSuccess = action
         return this
     }
 
-    fun onFailure(handler: ExceptionHandler): IOTask<T> {
+    open fun onFailure(handler: ExceptionHandler): IOTask<T> {
         onFailure = handler
         return this
     }
 
-    fun execute() {
+    protected fun succeed(value: T) {
+        onSuccess?.accept(value)
+    }
+
+    protected fun fail(error: Throwable) {
+        log.warning("IOTask failed: $error")
+        onFailure?.handle(error)
+    }
+
+    fun execute(): T? {
         try {
             val value = onExecute()
             onSuccess?.accept(value)
+            return value
         } catch (e: Exception) {
             onFailure?.handle(e)
+            return null
         }
     }
 
@@ -71,11 +86,11 @@ abstract class IOTask<T> {
             }
 
             override fun succeeded() {
-                onSuccess?.accept(value)
+                succeed(value)
             }
 
             override fun failed() {
-                onFailure?.handle(exception)
+                fail(exception)
             }
         }
 
@@ -92,12 +107,12 @@ abstract class IOTask<T> {
 
             override fun succeeded() {
                 handler.dismiss()
-                onSuccess?.accept(value)
+                succeed(value)
             }
 
             override fun failed() {
                 handler.dismiss()
-                onFailure?.handle(exception)
+                fail(exception)
             }
         }
 
