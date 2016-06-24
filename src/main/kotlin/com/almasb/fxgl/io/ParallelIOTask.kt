@@ -26,37 +26,10 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.util.ExceptionHandler
-import java.util.*
-import java.util.function.Consumer
-import java.util.function.Function
-
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class SequentialIOTask<T> : IOTask<T>() {
-
-    override fun onSuccess(action: Consumer<T>): SequentialIOTask<T> {
-        super.onSuccess(action)
-        return this
-    }
-
-    override fun onFailure(handler: ExceptionHandler): SequentialIOTask<T> {
-        super.onFailure(handler)
-        return this
-    }
-
-//    fun <R> then(mapper: (T) -> IOTask<R>): SequentialIOTask<R> {
-//
-//        return object : SequentialIOTask<R>() {
-//            override fun onExecute(): R {
-//                val result = this@SequentialIOTask.onExecute()
-//
-//                return mapper.invoke(result).onExecute()
-//            }
-//        }
-//    }
+class ParallelIOTask<T> {
 }

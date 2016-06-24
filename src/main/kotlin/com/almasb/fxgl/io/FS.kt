@@ -75,7 +75,7 @@ class FS {
         /**
          * Loads data from file into an object.
          *
-         * @param fileName file to load from
+         * @param fileName file to loadTask from
          *
          * @return IO result with the data object
          */
@@ -119,32 +119,12 @@ class FS {
                     }
 
                     return Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                            .filter { file -> Files.isRegularFile(file) && extensions.filter { file.endsWith(it.extension) }.isNotEmpty() }
+                            .filter { file -> Files.isRegularFile(file) && extensions.filter { "$file".endsWith(it.extension) }.isNotEmpty() }
                             .map { dir.relativize(it).toString().replace("\\", "/") }
                             .collect(Collectors.toList<String>())
                 }
             }
         }
-
-//        @JvmStatic fun loadFileNames(dirName: String, recursive: Boolean): IOResult<List<String> > {
-//            try {
-//                val dir = Paths.get(dirName)
-//
-//                if (!Files.exists(dir)) {
-//                    return IOResult.failure(FileNotFoundException("Directory does not exist"))
-//                }
-//
-//                val fileNames = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-//                        .filter { Files.isRegularFile(it) }
-//                        .map { dir.relativize(it).toString().replace("\\", "/") }
-//                        .collect(Collectors.toList<String>())
-//
-//                return IOResult.success<List<String>>(fileNames)
-//            } catch (e: Exception) {
-//                log.warning { "Error: ${e.message}" }
-//                return IOResult.failure(e)
-//            }
-//        }
 
         @JvmStatic fun loadDirectoryNames(dirName: String, recursive: Boolean): IOResult<List<String> > {
             try {
@@ -195,22 +175,22 @@ class FS {
         /**
          * Delete file [fileName].
          */
-        @JvmStatic fun deleteFile(fileName: String): IOResult<*> {
+        @JvmStatic fun deleteFileTask(fileName: String): IOTask<Void?> {
             log.debug { "Deleting file: $fileName" }
 
-            try {
-                val file = Paths.get(fileName)
+            return object : IOTask<Void?>() {
+                override fun onExecute(): Void? {
 
-                if (!Files.exists(file)) {
-                    return IOResult.failure<Any>(FileNotFoundException("File $file does not exist"))
+                    val file = Paths.get(fileName)
+
+                    if (!Files.exists(file)) {
+                        throw FileNotFoundException("File $file does not exist")
+                    }
+
+                    Files.delete(file)
+
+                    return null
                 }
-
-                Files.delete(file)
-
-                return IOResult.success<Any>()
-            } catch (e: Exception) {
-                log.warning { "Failed to delete: ${e.message}" }
-                return IOResult.failure<Any>(e)
             }
         }
 

@@ -68,6 +68,17 @@ abstract class IOTask<T> {
         onFailure?.handle(error)
     }
 
+    fun <R> then(mapper: (T) -> IOTask<R>): IOTask<R> {
+
+        return object : IOTask<R>() {
+            override fun onExecute(): R {
+                val result = this@IOTask.onExecute()
+
+                return mapper.invoke(result).onExecute()
+            }
+        }
+    }
+
     fun execute(): T? {
         try {
             val value = onExecute()
