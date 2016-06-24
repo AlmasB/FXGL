@@ -784,8 +784,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     private void initApp(Task<?> initTask) {
         log.debug("Initializing App");
 
-        // TODO: this sequence looks weird, do we even need this on first init?
-        // separate first from others?
+        // on first run this is no-op, as for rest this ensures
+        // that even without menus and during direct calls to start*Game()
+        // the system is clean
         pause();
         reset();
         setState(ApplicationState.LOADING);
