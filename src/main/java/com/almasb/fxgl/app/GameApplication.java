@@ -50,6 +50,7 @@ import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -67,6 +68,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -643,21 +645,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * The dialog is only dismissed when profile is chosen either way.
      */
     private void showProfileDialog() {
-        IOResult<List<String> > io = SaveLoadManager.loadProfileNames();
-
-        List<String> profileNames;
-
-        if (io.hasData()) {
-            profileNames = io.getData();
-        } else {
-            log.warning(io::getErrorMessage);
-            profileNames = Collections.emptyList();
-        }
-
-        ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList(profileNames));
-
-        if (!profileNames.isEmpty())
-            profilesBox.getSelectionModel().selectFirst();
+        ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList());
 
         Button btnNew = UIFactory.newButton("NEW");
         Button btnSelect = UIFactory.newButton("SELECT");
@@ -712,7 +700,21 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                     .executeAsyncWithProgressDialog("Deleting profile: " + name);
         });
 
-        getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
+        SaveLoadManager.loadProfileNamesTask()
+                .onSuccess(names -> {
+
+                    profilesBox.getItems().addAll(names);
+
+                    if (!profilesBox.getItems().isEmpty()) {
+                        profilesBox.getSelectionModel().selectFirst();
+                    }
+
+                    getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
+                })
+                .onFailure(e -> {
+                    log.warning(e.toString());
+                })
+                .executeAsyncWithProgressDialog("Loading profiles");
     }
 
     private void bindScreenshotKey() {

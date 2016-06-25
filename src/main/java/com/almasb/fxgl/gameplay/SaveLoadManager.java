@@ -30,12 +30,8 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.io.*;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.util.Experimental;
 
 import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -130,10 +126,9 @@ public final class SaveLoadManager {
      *
      * @return profile names
      */
-    @Deprecated
-    public static IOResult<List<String> > loadProfileNames() {
+    public static IOTask<List<String> > loadProfileNamesTask() {
         log.debug(() -> "Loading profile names");
-        return FS.loadDirectoryNames("./" + PROFILES_DIR, false);
+        return FS.loadDirectoryNamesTask("./" + PROFILES_DIR, false);
     }
 
     public static IOTask<Void> deleteProfileTask(String profileName) {

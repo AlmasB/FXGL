@@ -27,13 +27,11 @@
 package com.almasb.fxgl.io
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.util.Experimental
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
 import java.io.*
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import java.util.function.Predicate
 import java.util.stream.Collectors
 import javax.imageio.ImageIO
 
@@ -126,54 +124,68 @@ class FS {
             }
         }
 
-        @JvmStatic fun loadDirectoryNames(dirName: String, recursive: Boolean): IOResult<List<String> > {
-            try {
-                val dir = Paths.get(dirName)
+        /**
+         * Loads directory names from [dirName].
+         * Searches subdirectories if [recursive].
+         *
+         * @return io task
+         */
+        @JvmStatic fun loadDirectoryNamesTask(dirName: String, recursive: Boolean): IOTask<List<String> > {
+            return object : IOTask<List<String> >() {
+                override fun onExecute(): List<String> {
 
-                if (!Files.exists(dir)) {
-                    return IOResult.failure(FileNotFoundException("Directory does not exist"))
+                    val dir = Paths.get(dirName)
+
+                    if (!Files.exists(dir)) {
+                        throw FileNotFoundException("Directory does not exist")
+                    }
+
+                    val dirNames = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+                            .filter { Files.isDirectory(it) }
+                            .map { dir.relativize(it).toString().replace("\\", "/") }
+                            .filter { it.isNotEmpty() }
+                            .collect(Collectors.toList<String>())
+
+                    return dirNames
                 }
-
-                val dirNames = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-                        .filter { Files.isDirectory(it) }
-                        .map { dir.relativize(it).toString().replace("\\", "/") }
-                        .filter { it.isNotEmpty() }
-                        .collect(Collectors.toList<String>())
-
-                return IOResult.success<List<String>>(dirNames)
-            } catch (e: Exception) {
-                log.warning { "Error: ${e.message}" }
-                return IOResult.failure(e)
             }
         }
 
-        // TODO: refactor
-//        @JvmStatic fun <T> loadLastModifiedFile(dirName: String, recursive: Boolean): IOResult<T> {
-//            try {
-//                val dir = Paths.get(dirName)
-//
-//                if (!Files.exists(dir)) {
-//                    return IOResult.failure<T>(FileNotFoundException("Directory $dirName does not exist"))
-//                }
-//
-//                val fileName = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
-//                        .filter { Files.isRegularFile(it) }
-//                        .sorted { file1, file2 ->
-//                            Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1))
-//                        }
-//                        .findFirst()
-//                        .map { dir.relativize(it).toString().replace("\\", "/") }
-//                        .orElseThrow { Exception() }
-//
-//                return readData(dirName + fileName)
-//            } catch (e: Exception) {
-//                log.warning { "Load failed: ${e.message}" }
-//                return IOResult.failure<T>(e)
-//            }
-//        }
+        /**
+         * Loads (deserializes) last modified file from given [dirName] directory.
+         * Searches subdirectories if [recursive].
+         *
+         * @return io task
+         */
+        @JvmStatic fun <T> loadLastModifiedFileTask(dirName: String, recursive: Boolean): IOTask<T> {
+            return object : IOTask<String>() {
+                override fun onExecute(): String {
+
+                    val dir = Paths.get(dirName)
+
+                    if (!Files.exists(dir)) {
+                        throw FileNotFoundException("Directory $dirName does not exist")
+                    }
+
+                    val fileName = Files.walk(dir, if (recursive) Int.MAX_VALUE else 1)
+                            .filter { Files.isRegularFile(it) }
+                            .sorted { file1, file2 ->
+                                Files.getLastModifiedTime(file2).compareTo(Files.getLastModifiedTime(file1))
+                            }
+                            .findFirst()
+                            .map { dir.relativize(it).toString().replace("\\", "/") }
+                            .orElseThrow { Exception("No files found") }
+
+                    return fileName
+                }
+            }
+            .then { fileName -> readDataTask<T>(dirName + fileName) }
+        }
 
         /**
          * Delete file [fileName].
+         *
+         * @return io task
          */
         @JvmStatic fun deleteFileTask(fileName: String): IOTask<Void?> {
             log.debug { "Deleting file: $fileName" }
@@ -196,41 +208,9 @@ class FS {
 
         /**
          * Delete directory [dirName] and its contents.
+         *
+         * @return io task
          */
-        @JvmStatic fun deleteDirectory(dirName: String): IOResult<*> {
-            log.debug { "Deleting directory: $dirName" }
-
-            try {
-                val dir = Paths.get(dirName)
-
-                if (!Files.exists(dir)) {
-                    return IOResult.failure<Any>(FileNotFoundException("Directory $dirName does not exist"))
-                }
-
-                Files.walkFileTree(dir, object : SimpleFileVisitor<Path>() {
-                    override fun visitFile(file: Path, p1: BasicFileAttributes): FileVisitResult {
-                        Files.delete(file)
-                        return FileVisitResult.CONTINUE
-                    }
-
-                    override fun postVisitDirectory(dir: Path, e: IOException?): FileVisitResult {
-                        if (e == null) {
-                            Files.delete(dir)
-                            return FileVisitResult.CONTINUE
-                        } else {
-                            throw e
-                        }
-                    }
-                });
-
-                return IOResult.success<Any>()
-            } catch (e: Exception) {
-                log.warning { "Failed to delete: ${e.message}" }
-                return IOResult.failure<Any>(e)
-            }
-        }
-
-        @Experimental
         @JvmStatic fun deleteDirectoryTask(dirName: String): IOTask<Void?> {
             return object : IOTask<Void?>() {
                 override fun onExecute(): Void? {
