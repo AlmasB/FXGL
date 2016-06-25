@@ -70,7 +70,7 @@ public class BreakablePhysicsComponent extends AbstractComponent {
 
             Body tmpBody = f.getBody();
 
-            // TODO: do we always have polygon
+            // hardcoded shape!
             PolygonShape shape = (PolygonShape) f.getShape();
 
 
@@ -80,7 +80,7 @@ public class BreakablePhysicsComponent extends AbstractComponent {
             FixtureDef fd = new FixtureDef();
 
 
-            // TODO: hardcoded values
+            // hardcoded values!
             PolygonShape rectShape = new PolygonShape();
             rectShape.setAsBox(PhysicsWorld.toMeters(40 / 2), PhysicsWorld.toMeters(40 / 2));
 

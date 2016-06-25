@@ -217,7 +217,6 @@ class FXGLInput @Inject private constructor() : Input {
         if (bindings.containsKey(action))
             throw IllegalArgumentException("Action with name \"${action.name}\" already exists")
 
-        // TODO: check if ctrl + w same as w
         if (bindings.containsValue(trigger))
             throw IllegalArgumentException("Trigger $trigger is already bound")
 
