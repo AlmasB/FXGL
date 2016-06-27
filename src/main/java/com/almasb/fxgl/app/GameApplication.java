@@ -648,6 +648,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 saveLoadManager = new SaveLoadManager(profileName);
 
                 getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
+
+                saveProfile();
             });
         });
 
