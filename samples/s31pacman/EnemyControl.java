@@ -42,31 +42,7 @@ import java.util.Random;
  */
 public class EnemyControl extends AbstractControl {
 
-    public enum MoveDirection {
-        UP, RIGHT, DOWN, LEFT;
-
-        MoveDirection next() {
-            int index = ordinal() + 1;
-
-            if (index == values().length) {
-                index = 0;
-            }
-
-            return values()[index];
-        }
-
-        MoveDirection prev() {
-            int index = ordinal() - 1;
-
-            if (index == -1) {
-                index = values().length - 1;
-            }
-
-            return values()[index];
-        }
-    }
-
-    private PositionComponent position;
+    protected PositionComponent position;
     private BoundingBoxComponent bbox;
 
     private MoveDirection moveDir;
@@ -77,11 +53,10 @@ public class EnemyControl extends AbstractControl {
         bbox = Entities.getBBox(entity);
 
         moveDir = MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
-        updateMoveDirection();
     }
 
-    private void updateMoveDirection() {
-        moveDir = Math.random() < 0.5 ? moveDir.next() : moveDir.prev();
+    protected MoveDirection updateMoveDirection() {
+        return MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
     }
 
     private double speed = 0;
@@ -158,7 +133,7 @@ public class EnemyControl extends AbstractControl {
 
             if (collision) {
                 position.translate(unit.multiply(-1));
-                updateMoveDirection();
+                moveDir = updateMoveDirection();
                 break;
             }
         }

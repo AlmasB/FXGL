@@ -26,6 +26,7 @@
 
 package s31pacman;
 
+import com.almasb.ents.Control;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
@@ -37,6 +38,11 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -93,6 +99,38 @@ public class EntityFactory {
                 .build();
     }
 
+    private static List<Class<? extends Control> > enemyControls = Arrays.asList(
+            EnemyControl.class,
+            MirrorEnemyControl.class,
+            CombinedControl.class,
+            DiffEnemyControl.class
+    );
+
+    private static List<Integer> indices = new ArrayList<>();
+
+    private static void populateIndices() {
+        IntStream.range(0, enemyControls.size())
+                .forEach(indices::add);
+
+        Collections.shuffle(indices);
+    }
+
+    private static Control getNextEnemyControl() {
+        Control control = null;
+
+        try {
+            if (indices.isEmpty()) {
+                populateIndices();
+            }
+
+            control = enemyControls.get(indices.remove(0)).newInstance();
+        } catch (Exception e) {
+            // wont happen
+        }
+
+        return control;
+    }
+
     public static GameEntity newEnemy(double x, double y) {
         Rectangle view = new Rectangle(36, 36, Color.RED);
         view.setTranslateX(2);
@@ -104,7 +142,7 @@ public class EntityFactory {
                 .viewFromNode(view)
                 .at(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE)
                 .with(new CollidableComponent(true))
-                .with(new EnemyControl())
+                .with(getNextEnemyControl())
                 .build();
     }
 }

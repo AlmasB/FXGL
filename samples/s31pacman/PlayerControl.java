@@ -43,6 +43,12 @@ public class PlayerControl extends AbstractControl {
     private PositionComponent position;
     private BoundingBoxComponent bbox;
 
+    private MoveDirection moveDir = MoveDirection.UP;
+
+    public MoveDirection getMoveDirection() {
+        return moveDir;
+    }
+
     @Override
     public void onAdded(Entity entity) {
         position = Entities.getPosition(entity);
@@ -65,18 +71,22 @@ public class PlayerControl extends AbstractControl {
     }
 
     public void up() {
+        moveDir = MoveDirection.UP;
         move(new Point2D(0, -5 * speed));
     }
 
     public void down() {
+        moveDir = MoveDirection.DOWN;
         move(new Point2D(0, 5 * speed));
     }
 
     public void left() {
+        moveDir = MoveDirection.LEFT;
         move(new Point2D(-5 * speed, 0));
     }
 
     public void right() {
+        moveDir = MoveDirection.RIGHT;
         move(new Point2D(5 * speed, 0));
     }
 

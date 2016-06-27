@@ -25,6 +25,8 @@
  */
 package s31pacman;
 
+import com.almasb.astar.AStarGrid;
+import com.almasb.astar.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
@@ -50,6 +52,16 @@ public class PacmanApp extends GameApplication {
     public static final int MAP_SIZE = 21;
 
     private PlayerControl playerControl;
+
+    public PlayerControl getPlayerControl() {
+        return playerControl;
+    }
+
+    private AStarGrid grid;
+
+    public AStarGrid getGrid() {
+        return grid;
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -124,6 +136,18 @@ public class PacmanApp extends GameApplication {
 
         coins = new SimpleIntegerProperty();
         coins.setValue(numCoins);
+
+        grid = new AStarGrid(MAP_SIZE, MAP_SIZE);
+        level.getEntities()
+                .stream()
+                .filter(e -> Entities.getType(e).isType(EntityType.BLOCK))
+                .map(e -> Entities.getPosition(e).getValue())
+                .forEach(point -> {
+                    int x = (int) point.getX() / BLOCK_SIZE;
+                    int y = (int) point.getY() / BLOCK_SIZE;
+
+                    grid.setNodeState(x, y, NodeState.NOT_WALKABLE);
+                });
 
         getGameWorld().setLevel(level);
     }
