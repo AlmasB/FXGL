@@ -37,8 +37,6 @@ import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
-import com.almasb.fxgl.io.IOResult;
-import com.almasb.fxgl.io.IOTask;
 import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
@@ -50,7 +48,6 @@ import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -68,9 +65,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -394,7 +388,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         bus.addEventHandler(FXGLEvent.EXIT, event -> {
             // if it is null then we are running without menus
             if (profileName != null) {
-                saveLoadManager.saveProfile(createProfile())
+                saveLoadManager.saveProfileTask(createProfile())
                         .onFailure(e -> log.warning("Failed to save profile: " + profileName + " - " + e))
                         // we execute synchronously to avoid incomplete save since we are shutting down
                         .execute();
@@ -531,7 +525,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onContinue() {
-            saveLoadManager.loadLastModifiedSaveFile()
+            saveLoadManager.loadLastModifiedSaveFileTask()
                     .then(file -> saveLoadManager.loadTask(file))
                     .onSuccess(GameApplication.this::startLoadedGame)
                     .onFailure(getDefaultCheckedExceptionHandler())
@@ -565,7 +559,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onDelete(SaveFile saveFile) {
-            saveLoadManager.deleteSaveFile(saveFile)
+            saveLoadManager.deleteSaveFileTask(saveFile)
                     .onFailure(getDefaultCheckedExceptionHandler())
                     .executeAsyncWithProgressDialog("Deleting: " + saveFile.getName());
         }
@@ -674,7 +668,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                         if (!ok) {
                             getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
                         } else {
-                            saveLoadManager.loadLastModifiedSaveFile()
+                            saveLoadManager.loadLastModifiedSaveFileTask()
                                     .onSuccess(file -> {
                                         getEventBus().fireEvent(new ProfileSelectedEvent(profileName, true));
                                     })

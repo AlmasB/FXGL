@@ -37,7 +37,6 @@ import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.MouseTrigger;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.io.IOResult;
 import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
@@ -65,7 +64,6 @@ import javafx.stage.StageStyle;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -160,7 +158,7 @@ public abstract class FXGLMenu extends FXGLScene {
         list.setPrefHeight(0);
 
         app.getSaveLoadManager()
-                .loadSaveFiles()
+                .loadSaveFilesTask()
                 .onSuccess(files -> {
                     list.getItems().setAll(files);
                     Collections.sort(list.getItems(), SaveFile.RECENT_FIRST);

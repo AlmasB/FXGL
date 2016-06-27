@@ -84,7 +84,7 @@ public final class SaveLoadManager {
      * @param profile the profile to save
      * @return io result
      */
-    public IOTask<Void> saveProfile(UserProfile profile) {
+    public IOTask<Void> saveProfileTask(UserProfile profile) {
         log.debug(() -> "Saving profile: " + profileName);
         return FS.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME);
     }
@@ -114,7 +114,7 @@ public final class SaveLoadManager {
      * @param saveFile name of the file to delete
      * @return result of the operation
      */
-    public IOTask<Void> deleteSaveFile(SaveFile saveFile) {
+    public IOTask<Void> deleteSaveFileTask(SaveFile saveFile) {
         log.debug(() -> "Deleting save file: " + saveFile.getName());
 
         return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
@@ -141,7 +141,7 @@ public final class SaveLoadManager {
      *
      * @return save files
      */
-    public IOTask<List<SaveFile> > loadSaveFiles() {
+    public IOTask<List<SaveFile> > loadSaveFilesTask() {
         log.debug(() -> "Loading save files");
 
         return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
@@ -163,10 +163,10 @@ public final class SaveLoadManager {
      *
      * @return last modified save file
      */
-    public IOTask<SaveFile> loadLastModifiedSaveFile() {
+    public IOTask<SaveFile> loadLastModifiedSaveFileTask() {
         log.debug(() -> "Loading last modified save file");
 
-        return loadSaveFiles().then(files -> {
+        return loadSaveFilesTask().then(files -> {
             return new IOTask<SaveFile>() {
                 @Override
                 protected SaveFile onExecute() throws Exception {
