@@ -100,8 +100,9 @@ public class EntityFactory {
     }
 
     private static List<Class<? extends Control> > enemyControls = Arrays.asList(
+            AStarEnemyControl.class,
             EnemyControl.class,
-            MirrorEnemyControl.class,
+            //MirrorEnemyControl.class,
             CombinedControl.class,
             DiffEnemyControl.class
     );

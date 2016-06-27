@@ -149,6 +149,15 @@ public class PacmanApp extends GameApplication {
                     grid.setNodeState(x, y, NodeState.NOT_WALKABLE);
                 });
 
+//        for (int y = 0; y < grid.getHeight(); y++) {
+//            for (int x = 0; x < grid.getWidth(); x++) {
+//
+//                System.out.print(grid.getNodeState(x, y) == NodeState.WALKABLE ? 0 : 1);
+//            }
+//
+//            System.out.println();
+//        }
+
         getGameWorld().setLevel(level);
     }
 

@@ -28,9 +28,11 @@ package s31pacman;
 
 import com.almasb.astar.AStarGrid;
 import com.almasb.astar.AStarNode;
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,21 +43,64 @@ public class AStarEnemyControl extends EnemyControl {
     private AStarGrid grid;
     private GameEntity player;
 
+    private List<AStarNode> path = new ArrayList<>();
+
+    private double speed;
+
     @Override
-    protected MoveDirection updateMoveDirection() {
-        if (grid == null) {
-            grid = ((PacmanApp) FXGL.getApp()).getGrid();
-            player = (GameEntity) FXGL.getApp().getGameWorld().getEntitiesByType(EntityType.PLAYER).get(0);
+    public void onUpdate(Entity entity, double tpf) {
+        //super.onUpdate(entity, tpf);
+
+        speed = tpf * 60 * 5;
+
+        if (path.isEmpty()) {
+            if (grid == null) {
+                grid = ((PacmanApp) FXGL.getApp()).getGrid();
+                player = (GameEntity) FXGL.getApp().getGameWorld().getEntitiesByType(EntityType.PLAYER).get(0);
+            }
+
+            int startX = (int)(position.getX() / PacmanApp.BLOCK_SIZE);
+            int startY = (int)(position.getY() / PacmanApp.BLOCK_SIZE);
+
+            int targetX = (int)((player.getPositionComponent().getX() + 20) / PacmanApp.BLOCK_SIZE);
+            int targetY = (int)((player.getPositionComponent().getY() + 20) / PacmanApp.BLOCK_SIZE);
+
+
+
+            path = grid.getPath(
+                    startX,
+                    startY,
+                    targetX,
+                    targetY);
+
+            //System.out.println(startX + " " + startY + " " + targetX + " "  +targetY + " " + path.isEmpty());
         }
 
-        List<AStarNode> path = grid.getPath(
-                (int)(position.getX() / PacmanApp.BLOCK_SIZE),
-                (int)(position.getY() / PacmanApp.BLOCK_SIZE),
-                (int)(player.getPositionComponent().getX() / PacmanApp.BLOCK_SIZE),
-                (int)(player.getPositionComponent().getY() / PacmanApp.BLOCK_SIZE));
+        if (path.isEmpty())
+            return;
 
-        // TODO ?
+        AStarNode next = path.get(0);
 
-        return super.updateMoveDirection();
+        int nextX = next.getX() * PacmanApp.BLOCK_SIZE;
+        int nextY = next.getY() * PacmanApp.BLOCK_SIZE;
+
+        double dx = nextX - position.getX();
+        double dy = nextY - position.getY();
+
+        if (Math.abs(dx) <= speed)
+            position.setX(nextX);
+        else
+            position.translateX(speed * Math.signum(dx));
+
+        if (Math.abs(dy) <= speed)
+            position.setY(nextY);
+        else
+            position.translateY(speed * Math.signum(dy));
+
+        if (position.getX() == nextX && position.getY() == nextY) {
+            path.remove(0);
+        }
+
+        //System.out.println(nextX + " " + nextY + " " + position.getValue());
     }
 }
