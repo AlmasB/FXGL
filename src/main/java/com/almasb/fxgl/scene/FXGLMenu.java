@@ -436,6 +436,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * Starts new game.
      */
     protected final void fireNewGame() {
+        log.debug("fireNewGame()");
+
         listener.onNewGame();
         fireMenuEvent(new MenuEvent(MenuEvent.NEW_GAME));
     }
@@ -445,6 +447,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * Lads the game state from last modified save file.
      */
     protected final void fireContinue() {
+        log.debug("fireContinue()");
+
         listener.onContinue();
         fireMenuEvent(new MenuEvent(MenuEvent.CONTINUE));
     }
@@ -456,6 +460,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param fileName  name of the saved file
      */
     protected final void fireLoad(SaveFile fileName) {
+        log.debug("fireLoad()");
+
         listener.onLoad(fileName);
         //fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
     }
@@ -465,6 +471,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * Can only be fired from game menu. Saves current state of the game with given file name.
      */
     protected final void fireSave() {
+        log.debug("fireSave()");
+
         listener.onSave();
         fireMenuEvent(new MenuEvent(MenuEvent.SAVE));
     }
@@ -475,6 +483,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param fileName name of the save file
      */
     protected final void fireDelete(SaveFile fileName) {
+        log.debug("fireDelete()");
+
         listener.onDelete(fileName);
         //fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
     }
@@ -484,18 +494,24 @@ public abstract class FXGLMenu extends FXGLScene {
      * Can only be fired from game menu. Will close the menu and unpause the game.
      */
     protected final void fireResume() {
+        log.debug("fireResume()");
+
         listener.onResume();
         fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
     }
 
     protected final void fireLogout() {
+        log.debug("fireLogout()");
+
         switchMenuContentTo(EMPTY);
 
         listener.onLogout();
-        // TODO: do we need events now?
+        fireMenuEvent(new MenuEvent(MenuEvent.LOGOUT));
     }
 
     protected final void fireMultiplayer() {
+        log.debug("fireMultiplayer()");
+
         listener.onMultiplayer();
     }
 
@@ -504,6 +520,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * App will clean up the world/the scene and exit.
      */
     protected final void fireExit() {
+        log.debug("fireExit()");
+
         listener.onExit();
         fireMenuEvent(new MenuEvent(MenuEvent.EXIT));
     }
@@ -513,6 +531,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * App will clean up the world/the scene and enter main menu.
      */
     protected final void fireExitToMainMenu() {
+        log.debug("fireExitToMainMenu()");
+
         listener.onExitToMainMenu();
         fireMenuEvent(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
     }

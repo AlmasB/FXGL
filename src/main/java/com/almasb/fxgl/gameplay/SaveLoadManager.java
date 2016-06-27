@@ -27,11 +27,16 @@
 package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.io.*;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +51,22 @@ public final class SaveLoadManager {
 
     private static final String SAVE_FILE_EXT = FXGL.getString("fs.savefile.ext");
     private static final String DATA_FILE_EXT = FXGL.getString("fs.datafile.ext");
+
+    static {
+        log.debug(() -> "Checking profiles dir: " + PROFILES_DIR);
+
+        try {
+            Path dir = Paths.get("./" + PROFILES_DIR);
+
+            if (!Files.exists(dir)) {
+                log.debug(() -> "Creating non-existent profiles dir");
+                Files.createDirectories(dir);
+            }
+        } catch (Exception e) {
+            log.warning(() -> "Failed to create profiles dir: " + e);
+            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+        }
+    }
 
     private final String profileName;
 
@@ -80,13 +101,30 @@ public final class SaveLoadManager {
 
     /**
      * Saves user profile to "profiles/".
+     * Creates "saves/" in that directory.
      *
      * @param profile the profile to save
      * @return io result
      */
     public IOTask<Void> saveProfileTask(UserProfile profile) {
         log.debug(() -> "Saving profile: " + profileName);
-        return FS.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME);
+        return FS.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME)
+                .then(n -> new IOTask<Void>() {
+
+                    @Override
+                    protected Void onExecute() throws Exception {
+                        log.debug(() -> "Checking saves dir: "+ saveDir());
+
+                        Path dir = Paths.get(saveDir());
+
+                        if (!Files.exists(dir)) {
+                            log.debug(() -> "Creating non-existent saves dir");
+                            Files.createDirectory(dir);
+                        }
+
+                        return null;
+                    }
+                });
     }
 
     /**

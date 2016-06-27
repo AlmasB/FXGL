@@ -386,13 +386,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         });
 
         bus.addEventHandler(FXGLEvent.EXIT, event -> {
-            // if it is null then we are running without menus
-            if (profileName != null) {
-                saveLoadManager.saveProfileTask(createProfile())
-                        .onFailure(e -> log.warning("Failed to save profile: " + profileName + " - " + e))
-                        // we execute synchronously to avoid incomplete save since we are shutting down
-                        .execute();
-            }
+            saveProfile();
         });
 
         getGameWorld().addWorldListener(getPhysicsWorld());
@@ -566,6 +560,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onLogout() {
+            saveProfile();
             showProfileDialog();
         }
 
@@ -883,6 +878,16 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
 
         return saveLoadManager;
+    }
+
+    private void saveProfile() {
+        // if it is null then we are running without menus
+        if (profileName != null) {
+            saveLoadManager.saveProfileTask(createProfile())
+                    .onFailure(e -> log.warning("Failed to save profile: " + profileName + " - " + e))
+                    // we execute synchronously to avoid incomplete save since we might be shutting down
+                    .execute();
+        }
     }
 
     @Override
