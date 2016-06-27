@@ -53,4 +53,9 @@ public final class ProfileSelectedEvent extends MenuEvent {
     public boolean hasSaves() {
         return hasSaves;
     }
+
+    @Override
+    public String toString() {
+        return "ProfileSelectedEvent[name=" + profileName + ",hasSaves=" + hasSaves + "]";
+    }
 }
