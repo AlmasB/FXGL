@@ -140,6 +140,7 @@ public abstract class FXGLApplication extends Application {
 
     /**
      * Exit the application.
+     * Safe to call this from a paused state.
      */
     protected void exit() {
         log.debug("Exiting Normally");
