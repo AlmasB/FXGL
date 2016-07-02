@@ -24,13 +24,14 @@
         <maven.shade.version>2.4.3</maven.shade.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.0.1-2</kotlin.version>
+        <kotlin.version>1.0.3</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
-        <ents.version>1.0.2</ents.version>
+        <ents.version>1.0.3</ents.version>
         <astar.version>1.0</astar.version>
+        <easyio.version>0.1.1</easyio.version>
         <log4j.version>2.5</log4j.version>
         <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
@@ -91,6 +92,12 @@
             <groupId>com.github.AlmasB</groupId>
             <artifactId>AStar</artifactId>
             <version>${astar.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>EasyIO</artifactId>
+            <version>${easyio.version}</version>
         </dependency>
 
         <dependency>

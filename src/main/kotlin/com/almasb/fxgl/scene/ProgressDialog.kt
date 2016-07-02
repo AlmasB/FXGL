@@ -24,21 +24,25 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent;
+package com.almasb.fxgl.scene
 
-import javafx.concurrent.Task;
+import com.almasb.easyio.UIDialogHandler
+import com.almasb.fxgl.app.FXGL
 
 /**
- * Defines background thread pool executor service.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Executor {
+class ProgressDialog(val message: String) : UIDialogHandler {
 
-    /**
-     * Submit a task to be executed in the background.
-     *
-     * @param task the task to execute
-     */
-    void submit(Task<?> task);
+    private lateinit var handler: DialogHandler
+
+    override fun show() {
+        handler = FXGL.getDisplay().showProgressBox(message)
+    }
+
+    override fun dismiss() {
+        handler.dismiss()
+    }
 }

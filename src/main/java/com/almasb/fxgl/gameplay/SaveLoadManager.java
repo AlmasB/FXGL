@@ -26,14 +26,16 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.easyio.FS;
+import com.almasb.easyio.FileExtension;
+import com.almasb.easyio.IOTask;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.io.*;
+import com.almasb.fxgl.io.DataFile;
+import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.settings.UserProfile;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

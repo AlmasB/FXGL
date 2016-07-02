@@ -26,17 +26,22 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.easyio.UIDialogHandler
 import javafx.scene.control.Button
 
 /**
- *
+ * TODO: replace with anon class
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class DialogHandler
-internal constructor(private val button: Button){
+internal constructor(private val button: Button) : UIDialogHandler {
 
-    fun dismiss() {
+    override fun show() {
+        // no op since handler is generated as part of the showing call
+    }
+
+    override fun dismiss() {
         button.fire()
     }
 }

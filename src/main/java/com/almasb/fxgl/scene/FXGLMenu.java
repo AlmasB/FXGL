@@ -170,7 +170,7 @@ public abstract class FXGLMenu extends FXGLScene {
                     }
                 })
                 .onFailure(e -> app.getDisplay().showErrorBox(e))
-                .executeAsyncWithProgressDialog("Loading save files");
+                .executeAsyncWithDialogFX(FXGL.getExecutor(), new ProgressDialog("Loading save files"));
 
         Button btnLoad = UIFactory.newButton("LOAD");
         btnLoad.setOnAction(e -> {

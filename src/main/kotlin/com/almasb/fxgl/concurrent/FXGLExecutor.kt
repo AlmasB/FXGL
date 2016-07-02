@@ -31,7 +31,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import javafx.concurrent.Task
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 /**
@@ -54,7 +54,7 @@ private constructor(eventBus: EventBus) : Executor {
         log.debug { "Service [Executor] initialized" }
     }
 
-    override fun submit(task: Task<*>) {
+    override fun execute(task: Runnable) {
         service.submit(task)
     }
 }

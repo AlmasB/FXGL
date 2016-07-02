@@ -105,7 +105,7 @@ abstract class IOTask<T> {
             }
         }
 
-        FXGL.getExecutor().submit(task)
+        FXGL.getExecutor().execute(task)
     }
 
     fun executeAsyncWithProgressDialog(message: String) {
@@ -127,6 +127,6 @@ abstract class IOTask<T> {
             }
         }
 
-        FXGL.getExecutor().submit(task)
+        FXGL.getExecutor().execute(task)
     }
 }
