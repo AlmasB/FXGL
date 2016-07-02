@@ -26,18 +26,21 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.serialization.SerializableComponent;
 import com.almasb.fxgl.devtools.DeveloperEditable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Component that adds a 2d position to an entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class PositionComponent extends AbstractComponent {
+public class PositionComponent extends AbstractComponent implements SerializableComponent {
 
     private final DoubleProperty x;
     private final DoubleProperty y;
@@ -193,5 +196,16 @@ public class PositionComponent extends AbstractComponent {
     @Override
     public String toString() {
         return "Position(" + getX() + "," + getY() + ")";
+    }
+
+    @Override
+    public void write(@NotNull Bundle bundle) {
+        bundle.put("x", getX());
+        bundle.put("y", getY());
+    }
+
+    @Override
+    public void read(@NotNull Bundle bundle) {
+        setValue(bundle.get("x"), bundle.get("y"));
     }
 }

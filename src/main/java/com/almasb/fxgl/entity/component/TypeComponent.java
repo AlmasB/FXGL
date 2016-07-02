@@ -26,20 +26,25 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.component.ObjectComponent;
+import com.almasb.ents.serialization.SerializableComponent;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.Serializable;
 
 /**
  * Represents an entity type.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class TypeComponent extends ObjectComponent<Object> {
+public class TypeComponent extends ObjectComponent<Serializable> implements SerializableComponent {
 
     /**
      * Constructs a component with no type.
      */
     public TypeComponent() {
-        this(new Object());
+        this(new SObject());
     }
 
     /**
@@ -49,7 +54,7 @@ public class TypeComponent extends ObjectComponent<Object> {
      *
      * @param type entity type
      */
-    public TypeComponent(Object type) {
+    public TypeComponent(Serializable type) {
         super(type);
     }
 
@@ -68,6 +73,20 @@ public class TypeComponent extends ObjectComponent<Object> {
 
     @Override
     public String toString() {
-        return "Type(" + getValue().toString() + ")";
+        return "Type(" + getValue() + ")";
+    }
+
+    @Override
+    public void write(@NotNull Bundle bundle) {
+        bundle.put("value", getValue());
+    }
+
+    @Override
+    public void read(@NotNull Bundle bundle) {
+        setValue(bundle.get("value"));
+    }
+
+    private static class SObject implements Serializable {
+        private static final long serialVersionUID = -1L;
     }
 }

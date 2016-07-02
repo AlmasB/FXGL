@@ -25,6 +25,7 @@
  */
 package s7saving;
 
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
@@ -35,6 +36,7 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.UserProfile;
 import common.PlayerControl;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
@@ -102,30 +104,64 @@ public class SaveSample extends GameApplication {
                 playerControl.down();
             }
         }, KeyCode.S);
+
+        input.addAction(new UserAction("Rotate") {
+            @Override
+            protected void onAction() {
+                player.getRotationComponent().rotateBy(1);
+            }
+        }, KeyCode.F);
+
+        input.addAction(new UserAction("Switch Types") {
+            @Override
+            protected void onAction() {
+                if (player.getTypeComponent().isType(Type.PLAYER)) {
+                    player.getTypeComponent().setValue(Type.ENEMY);
+                    enemy.getTypeComponent().setValue(Type.PLAYER);
+                } else {
+                    player.getTypeComponent().setValue(Type.PLAYER);
+                    enemy.getTypeComponent().setValue(Type.ENEMY);
+                }
+            }
+        }, KeyCode.G);
     }
 
     // 2. override and specify how to serialize
     @Override
     public DataFile saveState() {
-        PositionComponent playerComponent = Entities.getPosition(player);
-        PositionComponent enemyComponent = Entities.getPosition(enemy);
 
-        String data = "";
-        data += playerComponent.getX() + "," + playerComponent.getY();
-        data += ",";
-        data += enemyComponent.getX() + "," + enemyComponent.getY();
-        return new DataFile(data);
+        Bundle bundlePlayer = new Bundle("Player");
+        Bundle bundleEnemy = new Bundle("Enemy");
+
+        player.save(bundlePlayer);
+        enemy.save(bundleEnemy);
+
+        Bundle bundleRoot = new Bundle("Root");
+        bundleRoot.put("player", bundlePlayer);
+        bundleRoot.put("enemy", bundleEnemy);
+
+        return new DataFile(bundleRoot);
     }
 
     // 3. override and specify how to deserialize
     // this will be called on "load" game
     @Override
     public void loadState(DataFile dataFile) {
-        String data = (String) dataFile.getData();
-        String[] values = data.split(",");
 
-        initGame(new Point2D(Double.parseDouble(values[0]), Double.parseDouble(values[1])),
-                new Point2D(Double.parseDouble(values[2]), Double.parseDouble(values[3])));
+        // call "new" initGame
+        initGame();
+
+        // now load state back
+        Bundle bundleRoot = (Bundle) dataFile.getData();
+
+        System.out.println(player);
+        System.out.println(enemy);
+
+        player.load(bundleRoot.get("player"));
+        enemy.load(bundleRoot.get("enemy"));
+
+        System.out.println(player);
+        System.out.println(enemy);
     }
 
     @Override
@@ -142,6 +178,7 @@ public class SaveSample extends GameApplication {
         enemyPosition = enemyPos;
 
         player = new GameEntity();
+        player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(playerPosition);
         player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)));
 
@@ -149,6 +186,7 @@ public class SaveSample extends GameApplication {
         player.addControl(playerControl);
 
         enemy = new GameEntity();
+        enemy.getTypeComponent().setValue(Type.ENEMY);
         enemy.getPositionComponent().setValue(enemyPosition);
         enemy.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)));
 
