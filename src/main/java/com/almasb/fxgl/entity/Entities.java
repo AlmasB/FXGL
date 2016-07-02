@@ -30,13 +30,16 @@ import com.almasb.ents.Component;
 import com.almasb.ents.Control;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.util.Duration;
 
 /**
  * Helper class with static convenience methods.
@@ -138,6 +141,15 @@ public class Entities {
      */
     public static GameEntityBuilder builder() {
         return new GameEntityBuilder();
+    }
+
+    /**
+     * Creates new animation builder.
+     *
+     * @return animation builder
+     */
+    public static AnimationBuilder animationBuilder() {
+        return new AnimationBuilder();
     }
 
     /**
