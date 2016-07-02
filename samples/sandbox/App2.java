@@ -25,28 +25,17 @@
  */
 package sandbox;
 
+import com.almasb.easyio.IOTask;
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
-import com.almasb.fxgl.io.IOTask;
-import com.almasb.fxgl.io.SequentialIOTask;
-import com.almasb.fxgl.net.Net;
+import com.almasb.fxgl.scene.ProgressDialog;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.concurrent.Task;
 import javafx.scene.input.KeyCode;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -196,7 +185,7 @@ public class App2 extends GameApplication {
             System.out.println("Result: " + value);
         }).onFailure(error -> {
             System.out.println("error: " + error);
-        }).executeAsyncWithProgressDialog("Computing");
+        }).executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Computing"));
 
 
 

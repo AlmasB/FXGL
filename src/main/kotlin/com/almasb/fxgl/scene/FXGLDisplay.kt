@@ -30,7 +30,6 @@ import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
-import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
@@ -39,6 +38,7 @@ import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -51,10 +51,13 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
+import javax.imageio.ImageIO
 
 /**
  * Display service. Provides access to dialogs and display settings.
@@ -217,7 +220,16 @@ private constructor(private val stage: Stage,
         var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
         fileName = fileName.replace(":", "_")
 
-        return FS.writeFxImagePNG(fxImage, fileName).isOK
+        val img = SwingFXUtils.fromFXImage(fxImage, null)
+
+        try {
+            Files.newOutputStream(Paths.get(fileName + ".png")).use {
+                return ImageIO.write(img, "png", it)
+            }
+        } catch (e: Exception) {
+            log.warning("saveScreenshot() failed: $e")
+            return false
+        }
     }
 
     /**

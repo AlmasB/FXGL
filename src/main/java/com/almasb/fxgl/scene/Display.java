@@ -33,7 +33,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.ProgressIndicator;
 
 import java.util.List;
 import java.util.function.Consumer;

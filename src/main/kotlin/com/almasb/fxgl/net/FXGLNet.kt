@@ -26,14 +26,9 @@
 
 package com.almasb.fxgl.net
 
-import com.almasb.fxgl.io.IOTask
+import com.almasb.easyio.IOTask
 import com.google.inject.Singleton
-import javafx.concurrent.Task
-import java.net.URL
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 /**
  *

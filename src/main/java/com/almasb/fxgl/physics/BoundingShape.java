@@ -26,15 +26,10 @@
 
 package com.almasb.fxgl.physics;
 
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
-import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.collision.shapes.ShapeType;
 
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 /**

@@ -26,8 +26,7 @@
 
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.io.IOTask;
-import javafx.concurrent.Task;
+import com.almasb.easyio.IOTask;
 
 import java.nio.file.Path;
 
