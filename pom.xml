@@ -31,6 +31,7 @@
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.0.3</ents.version>
         <astar.version>1.0</astar.version>
+        <gdx.ai.version>1.8.0</gdx.ai.version>
         <easyio.version>0.1.1</easyio.version>
         <log4j.version>2.5</log4j.version>
         <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
@@ -110,6 +111,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-ai</artifactId>
+            <version>${gdx.ai.version}</version>
         </dependency>
 
         <!--<dependency>-->
