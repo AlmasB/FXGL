@@ -49,23 +49,42 @@ public final class BoundingShape {
         this.size = size;
     }
 
+    /**
+     * @return 2d size of this bounding shape
+     */
     Dimension2D getSize() {
         return size;
     }
 
+    /**
+     * Constructs new circular bounding shape with given radius.
+     *
+     * @param radius circle radius
+     * @return circular bounding shape
+     */
     public static BoundingShape circle(double radius) {
         return new BoundingShape(ShapeType.CIRCLE, new Dimension2D(radius * 2, radius * 2), new Dimension2D(radius * 2, radius * 2));
     }
 
+    /**
+     * Constructs new rectangular bounding shape with given width and height.
+     *
+     * @param width box width
+     * @param height box height
+     * @return rectangular bounding shape
+     */
     public static BoundingShape box(double width, double height) {
         return new BoundingShape(ShapeType.POLYGON, new Dimension2D(width, height), new Dimension2D(width, height));
     }
 
     /**
+     * Constructs new closed chain shaped bounding shape.
      * Note: chain shape can only be used with static objects.
+     * Note: chain shape must have at least 2 points
      *
-     * @param points
-     * @return
+     * @param points points to use in a chain
+     * @return closed chain bounding shape
+     * @throws IllegalArgumentException if number of points is less than 2
      */
     public static BoundingShape chain(Point2D... points) {
         if (points.length < 2)

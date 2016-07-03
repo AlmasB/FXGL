@@ -27,6 +27,7 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.easyio.serialization.Bundle;
+import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.component.ObjectComponent;
 import com.almasb.ents.serialization.SerializableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,8 @@ import java.io.Serializable;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class TypeComponent extends ObjectComponent<Serializable> implements SerializableComponent {
+public class TypeComponent extends ObjectComponent<Serializable>
+        implements SerializableComponent, CopyableComponent<TypeComponent> {
 
     /**
      * Constructs a component with no type.
@@ -84,6 +86,11 @@ public class TypeComponent extends ObjectComponent<Serializable> implements Seri
     @Override
     public void read(@NotNull Bundle bundle) {
         setValue(bundle.get("value"));
+    }
+
+    @Override
+    public TypeComponent copy() {
+        return new TypeComponent(getValue());
     }
 
     private static class SObject implements Serializable {

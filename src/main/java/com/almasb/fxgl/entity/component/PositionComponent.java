@@ -28,6 +28,7 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.serialization.SerializableComponent;
 import com.almasb.fxgl.devtools.DeveloperEditable;
 import javafx.beans.property.DoubleProperty;
@@ -40,7 +41,8 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class PositionComponent extends AbstractComponent implements SerializableComponent {
+public class PositionComponent extends AbstractComponent
+        implements SerializableComponent, CopyableComponent<PositionComponent> {
 
     private final DoubleProperty x;
     private final DoubleProperty y;
@@ -207,5 +209,10 @@ public class PositionComponent extends AbstractComponent implements Serializable
     @Override
     public void read(@NotNull Bundle bundle) {
         setValue(bundle.get("x"), bundle.get("y"));
+    }
+
+    @Override
+    public PositionComponent copy() {
+        return new PositionComponent(getX(), getY());
     }
 }

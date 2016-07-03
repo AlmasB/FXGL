@@ -214,10 +214,21 @@ public class Entities {
             return this;
         }
 
+        /**
+         * Finishes building entity.
+         *
+         * @return entity
+         */
         public GameEntity build() {
             return entity;
         }
 
+        /**
+         * Finishes building the entity and attaches it to given world.
+         *
+         * @param world the world to attach entity to
+         * @return entity
+         */
         public GameEntity buildAndAttach(GameWorld world) {
             world.addEntity(entity);
             return entity;

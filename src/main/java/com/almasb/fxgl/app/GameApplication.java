@@ -871,7 +871,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     private SaveLoadManager saveLoadManager;
 
     /**
-     * @return save loadTask manager
+     * @return save load manager
      */
     public SaveLoadManager getSaveLoadManager() {
         if (saveLoadManager == null) {
@@ -893,6 +893,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     @Override
     public void save(UserProfile profile) {
+        // if there is a need for data save
 //        log.debug("Saving data to profile");
 //
 //        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
