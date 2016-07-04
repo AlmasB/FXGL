@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.easyio.EasyIO;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
@@ -799,6 +800,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         // services are now ready, switch to normal logger
         log = FXGL.getLogger(GameApplication.class);
         log.debug("Starting Game Application");
+
+        EasyIO.INSTANCE.setDefaultExceptionHandler(getDefaultCheckedExceptionHandler());
+        EasyIO.INSTANCE.setDefaultExecutor(getExecutor());
 
         gameWorld = FXGL.getInstance(GameWorld.class);
         physicsWorld = FXGL.getInstance(PhysicsWorld.class);

@@ -26,8 +26,10 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.easyio.EasyIO
 import com.almasb.fxgl.logging.MockLoggerFactory
 import com.almasb.fxgl.logging.SystemLogger
+import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.google.inject.Guice
 import com.google.inject.Injector
