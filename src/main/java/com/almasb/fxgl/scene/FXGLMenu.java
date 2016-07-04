@@ -155,22 +155,12 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final MenuContent createContentLoad() {
         ListView<SaveFile> list = new ListView<>();
-        list.setPrefHeight(0);
 
-        app.getSaveLoadManager()
-                .loadSaveFilesTask()
-                .onSuccess(files -> {
-                    list.getItems().setAll(files);
-                    Collections.sort(list.getItems(), SaveFile.RECENT_FIRST);
+        list.setItems(app.getSaveLoadManager().saveFiles());
+        list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
-                    list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
-
-                    if (!list.getItems().isEmpty()) {
-                        list.getSelectionModel().selectFirst();
-                    }
-                })
-                .onFailure(e -> app.getDisplay().showErrorBox(e))
-                .executeAsyncWithDialogFX(FXGL.getExecutor(), new ProgressDialog("Loading save files"));
+        // this runs async
+        app.getSaveLoadManager().querySaveFiles();
 
         Button btnLoad = UIFactory.newButton("LOAD");
         btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
@@ -187,14 +177,7 @@ public abstract class FXGLMenu extends FXGLScene {
         btnDelete.setOnAction(e -> {
             SaveFile saveFile = list.getSelectionModel().getSelectedItem();
 
-            // TODO use databind
-            app.getDisplay().showConfirmationBox("Delete save [" + saveFile.getName() + "]?", yes -> {
-
-                if (yes) {
-                    fireDelete(saveFile);
-                    list.getItems().remove(saveFile);
-                }
-            });
+            fireDelete(saveFile);
         });
 
         HBox hbox = new HBox(50, btnLoad, btnDelete);

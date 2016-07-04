@@ -196,6 +196,11 @@ class FXGL {
         @JvmStatic fun newProfiler() = getService(ServiceType.PROFILER)
 
         /**
+         * @return default checked exception handler
+         */
+        @JvmStatic fun getExceptionHandler() = FXGLApplication.getDefaultCheckedExceptionHandler()
+
+        /**
          * Get value of an int property.
 
          * @param key property key

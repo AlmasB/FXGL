@@ -573,15 +573,27 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onDelete(SaveFile saveFile) {
-            saveLoadManager.deleteSaveFileTask(saveFile)
-                    .onFailure(getDefaultCheckedExceptionHandler())
-                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Deleting: " + saveFile.getName()));
+
+            getDisplay().showConfirmationBox("Delete save [" + saveFile.getName() + "]?", yes -> {
+
+                if (yes) {
+                    saveLoadManager.deleteSaveFileTask(saveFile)
+                            .onFailure(getDefaultCheckedExceptionHandler())
+                            .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Deleting: " + saveFile.getName()));
+                }
+            });
         }
 
         @Override
         public void onLogout() {
-            saveProfile();
-            showProfileDialog();
+
+            getDisplay().showConfirmationBox("Log out?", yes -> {
+
+                if (yes) {
+                    saveProfile();
+                    showProfileDialog();
+                }
+            });
         }
 
         @Override
@@ -591,14 +603,26 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onExit() {
-            exit();
+
+            getDisplay().showConfirmationBox("Exit the game?", yes -> {
+
+                if (yes)
+                    exit();
+            });
         }
 
         @Override
         public void onExitToMainMenu() {
-            pause();
-            reset();
-            setState(ApplicationState.MAIN_MENU);
+
+            getDisplay().showConfirmationBox("Exit to Main Menu?\n"
+                    + "All unsaved progress will be lost!", yes -> {
+
+                if (yes) {
+                    pause();
+                    reset();
+                    setState(ApplicationState.MAIN_MENU);
+                }
+            });
         }
     }
 

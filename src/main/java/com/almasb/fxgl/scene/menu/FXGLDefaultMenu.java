@@ -143,12 +143,7 @@ public final class FXGLDefaultMenu extends FXGLMenu {
         itemLogout.setOnAction(e -> fireLogout());
 
         MenuItem itemExit = new MenuItem("EXIT");
-        itemExit.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Exit the game?", yes -> {
-                if (yes)
-                    fireExit();
-            });
-        });
+        itemExit.setOnAction(e -> fireExit());
 
         app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
             itemContinue.setDisable(!event.hasSaves());
@@ -176,12 +171,7 @@ public final class FXGLDefaultMenu extends FXGLMenu {
         itemExtra.setChild(createExtraMenu());
 
         MenuItem itemExit = new MenuItem("MAIN MENU");
-        itemExit.setOnAction(e -> {
-            app.getDisplay().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
-                if (yes)
-                    fireExitToMainMenu();
-            });
-        });
+        itemExit.setOnAction(e -> fireExitToMainMenu());
 
         MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
 

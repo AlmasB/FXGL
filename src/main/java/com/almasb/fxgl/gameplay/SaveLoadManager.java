@@ -33,7 +33,11 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.scene.ProgressDialog;
 import com.almasb.fxgl.settings.UserProfile;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -84,6 +88,28 @@ public final class SaveLoadManager {
         this.profileName = profileName;
     }
 
+    private ObservableList<SaveFile> saveFiles = FXCollections.observableArrayList();
+
+    /**
+     * @return read only view of observable save files
+     */
+    public ObservableList<SaveFile> saveFiles() {
+        return FXCollections.unmodifiableObservableList(saveFiles);
+    }
+
+    /**
+     * Asynchronously (with a progress dialog) loads save files into observable list {@link #saveFiles()}.
+     */
+    public void querySaveFiles() {
+        loadSaveFilesTask()
+                .onSuccess(files -> {
+                    saveFiles.setAll(files);
+                    Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
+                })
+                .onFailure(FXGL.getExceptionHandler())
+                .executeAsyncWithDialogFX(FXGL.getExecutor(), new ProgressDialog("Loading save files"));
+    }
+
     /**
      * @return relative path as string to profile dir
      */
@@ -112,7 +138,19 @@ public final class SaveLoadManager {
         log.debug(() -> "Saving data: " + saveFile.getName());
 
         return FS.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
-                .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT));
+                .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT))
+                .then(n -> new IOTask<Void>() {
+                    @Override
+                    protected Void onExecute() throws Exception {
+
+                        Platform.runLater(() -> {
+                            saveFiles.add(saveFile);
+                            Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
+                        });
+
+                        return null;
+                    }
+                });
     }
 
     /**
@@ -172,7 +210,16 @@ public final class SaveLoadManager {
         log.debug(() -> "Deleting save file: " + saveFile.getName());
 
         return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
-                .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT));
+                .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT))
+                .then(n -> new IOTask<Void>() {
+                    @Override
+                    protected Void onExecute() throws Exception {
+
+                        Platform.runLater(() -> saveFiles.remove(saveFile));
+
+                        return null;
+                    }
+                });
     }
 
     /**
