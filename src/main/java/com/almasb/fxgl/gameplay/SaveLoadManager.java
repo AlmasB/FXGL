@@ -176,6 +176,21 @@ public final class SaveLoadManager {
     }
 
     /**
+     * @param saveFileName save file name
+     * @return true iff file exists
+     */
+    public boolean saveFileExists(String saveFileName) {
+        log.debug(() -> "Checking if save file exists: " + saveFileName);
+
+        try {
+            return Files.exists(Paths.get(saveDir() + saveFileName + SAVE_FILE_EXT));
+        } catch (Exception e) {
+            log.warning("Failed to check if file exists: " + e);
+            return false;
+        }
+    }
+
+    /**
      * Load all profile names.
      *
      * @return profile names

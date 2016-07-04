@@ -531,24 +531,44 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             resume();
         }
 
+        private void doSave(String saveFileName) {
+            DataFile dataFile = saveState();
+            SaveFile saveFile = new SaveFile(saveFileName, LocalDateTime.now());
+
+            saveLoadManager.saveTask(dataFile, saveFile)
+                    .onFailure(getDefaultCheckedExceptionHandler())
+                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Saving data: " + saveFileName));
+        }
+
         @Override
         public void onSave() {
             getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
-                DataFile dataFile = saveState();
-                SaveFile saveFile = new SaveFile(saveFileName, LocalDateTime.now());
 
-                saveLoadManager.saveTask(dataFile, saveFile)
-                        .onFailure(getDefaultCheckedExceptionHandler())
-                        .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Saving data: " + saveFileName));
+                if (saveLoadManager.saveFileExists(saveFileName)) {
+                    getDisplay().showConfirmationBox("Overwrite save [" + saveFileName + "]?", yes -> {
+
+                        if (yes)
+                            doSave(saveFileName);
+                    });
+                } else {
+                    doSave(saveFileName);
+                }
             });
         }
 
         @Override
         public void onLoad(SaveFile saveFile) {
-            saveLoadManager.loadTask(saveFile)
-                    .onSuccess(GameApplication.this::startLoadedGame)
-                    .onFailure(getDefaultCheckedExceptionHandler())
-                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading: " + saveFile.getName()));
+
+            getDisplay().showConfirmationBox("Load save [" + saveFile.getName() + "]?\n"
+                    + "Unsaved progress will be lost!", yes -> {
+
+                if (yes) {
+                    saveLoadManager.loadTask(saveFile)
+                            .onSuccess(GameApplication.this::startLoadedGame)
+                            .onFailure(getDefaultCheckedExceptionHandler())
+                            .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading: " + saveFile.getName()));
+                }
+            });
         }
 
         @Override

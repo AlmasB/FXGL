@@ -173,21 +173,28 @@ public abstract class FXGLMenu extends FXGLScene {
                 .executeAsyncWithDialogFX(FXGL.getExecutor(), new ProgressDialog("Loading save files"));
 
         Button btnLoad = UIFactory.newButton("LOAD");
+        btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
+
         btnLoad.setOnAction(e -> {
             SaveFile saveFile = list.getSelectionModel().getSelectedItem();
-            if (saveFile == null)
-                return;
 
             fireLoad(saveFile);
         });
+
         Button btnDelete = UIFactory.newButton("DELETE");
+        btnDelete.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
+
         btnDelete.setOnAction(e -> {
             SaveFile saveFile = list.getSelectionModel().getSelectedItem();
-            if (saveFile == null)
-                return;
 
-            fireDelete(saveFile);
-            list.getItems().remove(saveFile);
+            // TODO use databind
+            app.getDisplay().showConfirmationBox("Delete save [" + saveFile.getName() + "]?", yes -> {
+
+                if (yes) {
+                    fireDelete(saveFile);
+                    list.getItems().remove(saveFile);
+                }
+            });
         });
 
         HBox hbox = new HBox(50, btnLoad, btnDelete);
