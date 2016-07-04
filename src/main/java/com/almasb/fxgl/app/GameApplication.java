@@ -747,6 +747,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 })
                 .onFailure(e -> {
                     log.warning(e.toString());
+
+                    getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
                 })
                 .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading profiles"));
     }
