@@ -29,10 +29,15 @@ package com.almasb.fxgl.event;
 import javafx.event.EventType;
 
 /**
+ * Event occurs when profile has been selected.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class ProfileSelectedEvent extends MenuEvent {
 
+    /**
+     * Event occurs when profile has been selected.
+     */
     public static final EventType<ProfileSelectedEvent> ANY
             = new EventType<>(MenuEvent.ANY, "PROFILE_SELECTED");
 
@@ -45,10 +50,16 @@ public final class ProfileSelectedEvent extends MenuEvent {
         this.hasSaves = hasSaves;
     }
 
+    /**
+     * @return profile name
+     */
     public String getProfileName() {
         return profileName;
     }
 
+    /**
+     * @return true iff profile has any save games
+     */
     public boolean hasSaves() {
         return hasSaves;
     }

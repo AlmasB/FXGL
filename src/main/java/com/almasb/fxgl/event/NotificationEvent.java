@@ -43,7 +43,6 @@ public final class NotificationEvent extends Event {
     private Notification notification;
 
     /**
-     *
      * @return notification associated with the event
      */
     public Notification getNotification() {

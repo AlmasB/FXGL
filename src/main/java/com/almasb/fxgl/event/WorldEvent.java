@@ -68,6 +68,6 @@ public class WorldEvent extends Event {
 
     @Override
     public String toString() {
-        return "WorldEvent[type=" + getEventType().toString() + "]";
+        return "WorldEvent[type=" + getEventType() + "]";
     }
 }

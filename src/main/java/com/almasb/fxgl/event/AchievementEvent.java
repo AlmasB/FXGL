@@ -55,7 +55,6 @@ public class AchievementEvent extends Event {
     }
 
     /**
-     *
      * @return achievement associated with the event
      */
     public Achievement getAchievement() {
