@@ -43,6 +43,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Convenient access to saving and loading game data.
+ */
 public final class SaveLoadManager {
 
     private static final Logger log = FXGL.getLogger("FXGL.SaveLoadManager");
@@ -72,14 +75,25 @@ public final class SaveLoadManager {
 
     private final String profileName;
 
+    /**
+     * Constructs manager for given profile name.
+     *
+     * @param profileName profile name
+     */
     public SaveLoadManager(String profileName) {
         this.profileName = profileName;
     }
 
+    /**
+     * @return relative path as string to profile dir
+     */
     private String profileDir() {
         return "./" + PROFILES_DIR + profileName + "/";
     }
 
+    /**
+     * @return relative path as string to save dir
+     */
     private String saveDir() {
         return profileDir() + SAVE_DIR;
     }
