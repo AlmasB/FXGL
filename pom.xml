@@ -32,7 +32,7 @@
         <ents.version>1.0.3</ents.version>
         <astar.version>1.0</astar.version>
         <gdx.ai.version>1.8.0</gdx.ai.version>
-        <easyio.version>163c3abfc6</easyio.version>
+        <easyio.version>0.1.4</easyio.version>
         <log4j.version>2.5</log4j.version>
         <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 

@@ -101,13 +101,14 @@ public final class SaveLoadManager {
      * Asynchronously (with a progress dialog) loads save files into observable list {@link #saveFiles()}.
      */
     public void querySaveFiles() {
+        log.debug("Querying save files");
+
         loadSaveFilesTask()
                 .onSuccess(files -> {
                     saveFiles.setAll(files);
                     Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
                 })
-                .onFailure(FXGL.getExceptionHandler())
-                .executeAsyncWithDialogFX(FXGL.getExecutor(), new ProgressDialog("Loading save files"));
+                .executeAsyncWithDialogFX(new ProgressDialog("Loading save files"));
     }
 
     /**
@@ -139,7 +140,7 @@ public final class SaveLoadManager {
 
         return FS.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT))
-                .then(n -> new IOTask<Void>() {
+                .then(n -> new IOTask<Void>("sortingSaveList") {
                     @Override
                     protected Void onExecute() throws Exception {
 
@@ -163,11 +164,10 @@ public final class SaveLoadManager {
     public IOTask<Void> saveProfileTask(UserProfile profile) {
         log.debug(() -> "Saving profile: " + profileName);
         return FS.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME)
-                .then(n -> new IOTask<Void>() {
+                .then(n -> new IOTask<Void>("checkSavesDir(" + saveDir() + ")") {
 
                     @Override
                     protected Void onExecute() throws Exception {
-                        log.debug(() -> "Checking saves dir: "+ saveDir());
 
                         Path dir = Paths.get(saveDir());
 
@@ -211,7 +211,7 @@ public final class SaveLoadManager {
 
         return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT))
-                .then(n -> new IOTask<Void>() {
+                .then(n -> new IOTask<Void>("updatingSaveList") {
                     @Override
                     protected Void onExecute() throws Exception {
 
@@ -261,7 +261,7 @@ public final class SaveLoadManager {
         log.debug(() -> "Loading save files");
 
         return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
-                .then(fileNames -> new IOTask<List<SaveFile> >() {
+                .then(fileNames -> new IOTask<List<SaveFile> >("readSaveFiles") {
                             @Override
                             protected List<SaveFile> onExecute() throws Exception {
 
@@ -283,7 +283,7 @@ public final class SaveLoadManager {
         log.debug(() -> "Loading last modified save file");
 
         return loadSaveFilesTask().then(files -> {
-            return new IOTask<SaveFile>() {
+            return new IOTask<SaveFile>("findLastSave") {
                 @Override
                 protected SaveFile onExecute() throws Exception {
                     if (files.isEmpty()) {
