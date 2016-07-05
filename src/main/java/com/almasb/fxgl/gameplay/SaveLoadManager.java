@@ -159,7 +159,7 @@ public final class SaveLoadManager {
      * Creates "saves/" in that directory.
      *
      * @param profile the profile to save
-     * @return io result
+     * @return io task
      */
     public IOTask<Void> saveProfileTask(UserProfile profile) {
         log.debug(() -> "Saving profile: " + profileName);
@@ -186,8 +186,8 @@ public final class SaveLoadManager {
      * file on disk file system from saves directory which is
      * in the directory where the game is run from.
      *
-     * @param saveFile file name to loadTask from
-     * @return instance of deserialized data structure
+     * @param saveFile save file to load
+     * @return io task
      */
     public IOTask<DataFile> loadTask(SaveFile saveFile) {
         log.debug(() -> "Loading data: " + saveFile.getName());
@@ -195,7 +195,9 @@ public final class SaveLoadManager {
     }
 
     /**
-     * @return user profile loaded from "profiles/"
+     * Loads user profile from "profiles/".
+     *
+     * @return io task
      */
     public IOTask<UserProfile> loadProfileTask() {
         log.debug(() -> "Loading profile: " + profileName);
@@ -203,8 +205,8 @@ public final class SaveLoadManager {
     }
 
     /**
-     * @param saveFile name of the file to delete
-     * @return result of the operation
+     * @param saveFile save file to delete
+     * @return io task
      */
     public IOTask<Void> deleteSaveFileTask(SaveFile saveFile) {
         log.debug(() -> "Deleting save file: " + saveFile.getName());
@@ -240,13 +242,19 @@ public final class SaveLoadManager {
     /**
      * Load all profile names.
      *
-     * @return profile names
+     * @return io task
      */
     public static IOTask<List<String> > loadProfileNamesTask() {
         log.debug(() -> "Loading profile names");
         return FS.loadDirectoryNamesTask("./" + PROFILES_DIR, false);
     }
 
+    /**
+     * Delete profile.
+     *
+     * @param profileName name of profile to delete
+     * @return io task
+     */
     public static IOTask<Void> deleteProfileTask(String profileName) {
         log.debug(() -> "Deleting profile: " + profileName);
         return FS.deleteDirectoryTask("./" + PROFILES_DIR + profileName);
@@ -255,7 +263,7 @@ public final class SaveLoadManager {
     /**
      * Loads save files with save file extension from SAVE_DIR.
      *
-     * @return save files
+     * @return io task
      */
     public IOTask<List<SaveFile> > loadSaveFilesTask() {
         log.debug(() -> "Loading save files");
@@ -277,7 +285,7 @@ public final class SaveLoadManager {
     /**
      * Loads last modified save file from saves directory.
      *
-     * @return last modified save file
+     * @return io task
      */
     public IOTask<SaveFile> loadLastModifiedSaveFileTask() {
         log.debug(() -> "Loading last modified save file");
