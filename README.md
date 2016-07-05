@@ -2,7 +2,7 @@
 
 JavaFX 8 Game Library written in Java + Kotlin<br/>
 [![Join the chat at https://gitter.im/AlmasB/FXGL](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Release](https://img.shields.io/badge/maven-0.2.3-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Release](https://img.shields.io/badge/maven-0.2.4-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
 [![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
@@ -47,6 +47,7 @@ JavaFX 8 Game Library written in Java + Kotlin<br/>
 * Achievement System
 * In-game Notification System
 * [Log4j2](http://logging.apache.org/log4j/2.x/) Logging Framework
+* [EasyIO](https://github.com/AlmasB/EasyIO) IO Framework
 * Performance Monitor
 * Global Services Framework
 * Other minor game dev features
@@ -110,7 +111,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
 </dependency>
 ```
 
@@ -121,7 +122,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.3'
+    compile 'com.github.AlmasB:FXGL:0.2.4'
 }
 ```
 
