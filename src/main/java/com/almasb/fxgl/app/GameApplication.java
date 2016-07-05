@@ -523,8 +523,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             saveLoadManager.loadLastModifiedSaveFileTask()
                     .then(file -> saveLoadManager.loadTask(file))
                     .onSuccess(GameApplication.this::startLoadedGame)
-                    .onFailure(getDefaultCheckedExceptionHandler())
-                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading..."));
+                    .executeAsyncWithDialogFX(new ProgressDialog("Loading..."));
         }
 
         @Override
@@ -537,8 +536,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             SaveFile saveFile = new SaveFile(saveFileName, LocalDateTime.now());
 
             saveLoadManager.saveTask(dataFile, saveFile)
-                    .onFailure(getDefaultCheckedExceptionHandler())
-                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Saving data: " + saveFileName));
+                    .executeAsyncWithDialogFX(new ProgressDialog("Saving data: " + saveFileName));
         }
 
         @Override
@@ -566,8 +564,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 if (yes) {
                     saveLoadManager.loadTask(saveFile)
                             .onSuccess(GameApplication.this::startLoadedGame)
-                            .onFailure(getDefaultCheckedExceptionHandler())
-                            .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading: " + saveFile.getName()));
+                            .executeAsyncWithDialogFX(new ProgressDialog("Loading: " + saveFile.getName()));
                 }
             });
         }
@@ -579,8 +576,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
                 if (yes) {
                     saveLoadManager.deleteSaveFileTask(saveFile)
-                            .onFailure(getDefaultCheckedExceptionHandler())
-                            .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Deleting: " + saveFile.getName()));
+                            .executeAsyncWithDialogFX(new ProgressDialog("Deleting: " + saveFile.getName()));
                 }
             });
         }
@@ -717,14 +713,14 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                                     .onFailure(error -> {
                                         getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
                                     })
-                                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading last save file"));
+                                    .executeAsyncWithDialogFX(new ProgressDialog("Loading last save file"));
                         }
                     })
                     .onFailure(error -> {
                         getDisplay().showErrorBox("Profile is corrupted: " + profileName + "\nError: "
                                 + error.toString(), this::showProfileDialog);
                     })
-                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading Profile: "+ profileName));
+                    .executeAsyncWithDialogFX(new ProgressDialog("Loading Profile: "+ profileName));
         });
 
         btnDelete.setOnAction(e -> {
@@ -733,7 +729,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             SaveLoadManager.deleteProfileTask(name)
                     .onSuccess(n -> showProfileDialog())
                     .onFailure(error -> getDisplay().showErrorBox(error.toString(), this::showProfileDialog))
-                    .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Deleting profile: " + name));
+                    .executeAsyncWithDialogFX(new ProgressDialog("Deleting profile: " + name));
         });
 
         SaveLoadManager.loadProfileNamesTask()
@@ -751,7 +747,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
                     getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
                 })
-                .executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Loading profiles"));
+                .executeAsyncWithDialogFX(new ProgressDialog("Loading profiles"));
     }
 
     private void bindScreenshotKey() {
