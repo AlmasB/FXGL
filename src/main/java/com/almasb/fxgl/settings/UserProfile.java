@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.settings;
 
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.logging.Logger;
 
@@ -81,11 +82,11 @@ public class UserProfile implements Serializable {
      * @param bundle the bundle to store
      */
     public final void putBundle(Bundle bundle) {
-        if (bundles.containsKey(bundle.name)) {
-            throw new IllegalArgumentException("Bundle \"" + bundle.name + "\" already exists!");
+        if (bundles.containsKey(bundle.getName())) {
+            throw new IllegalArgumentException("Bundle \"" + bundle.getName() + "\" already exists!");
         }
 
-        bundles.put(bundle.name, bundle);
+        bundles.put(bundle.getName(), bundle);
     }
 
     /**
@@ -100,37 +101,5 @@ public class UserProfile implements Serializable {
         }
 
         return bundle;
-    }
-
-    /**
-     * Bundle is used to store values mapped with certain keys.
-     * Bundle name must be unique as it identifies the bundle data within profile.
-     */
-    public static final class Bundle implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private final String name;
-
-        public Bundle(String name) {
-            this.name = name;
-        }
-
-        private Map<String, Object> data = new HashMap<>();
-
-        public void put(String key, Serializable value) {
-            data.put(name + "." + key, value);
-        }
-
-        public <T> T get(String key) {
-            return (T)data.get(name + "." + key);
-        }
-
-        /**
-         * Logs contents of the bundle using FXGL log system.
-         */
-        public void log() {
-            log.debug("Logging bundle: " + name);
-            data.forEach((k,v) -> log.debug(k + "=" + v));
-        }
     }
 }

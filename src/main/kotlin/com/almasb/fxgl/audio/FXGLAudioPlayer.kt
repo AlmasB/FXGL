@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.audio
 
+import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
@@ -204,7 +205,7 @@ private constructor() : AudioPlayer {
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
-        val bundle = UserProfile.Bundle("audio")
+        val bundle = Bundle("audio")
         bundle.put("musicVolume", getGlobalMusicVolume())
         bundle.put("soundVolume", getGlobalSoundVolume())
 

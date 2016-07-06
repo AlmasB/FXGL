@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
@@ -495,7 +496,7 @@ private constructor(private val stage: Stage,
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
-        val bundle = UserProfile.Bundle("scene")
+        val bundle = Bundle("scene")
         bundle.put("sizeW", getTargetWidth())
         bundle.put("sizeH", getTargetHeight())
 

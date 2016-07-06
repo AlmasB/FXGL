@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.input
 
+import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
@@ -352,7 +353,7 @@ class FXGLInput @Inject private constructor() : Input {
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
-        val bundle = UserProfile.Bundle("input")
+        val bundle = Bundle("input")
         bindings.forEach { bundle.put(it.key.toString(), it.value.toString()) }
 
         bundle.log()
