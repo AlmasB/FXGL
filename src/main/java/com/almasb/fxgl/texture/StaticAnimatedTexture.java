@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.texture;
 
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.event.FXGLEvent;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -67,5 +69,13 @@ public final class StaticAnimatedTexture extends Texture {
         timeline = new Timeline(new KeyFrame(duration, new KeyValue(frameProperty, frames - 1)));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+
+        FXGL.getEventBus().addEventHandler(FXGLEvent.PAUSE, e -> {
+            timeline.pause();
+        });
+
+        FXGL.getEventBus().addEventHandler(FXGLEvent.RESUME, e -> {
+            timeline.play();
+        });
     }
 }
