@@ -139,15 +139,46 @@ public abstract class FXGLMenu extends FXGLScene {
         return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
     }
 
+    /**
+     * @return full version string
+     */
     private String makeVersionString() {
         return "v" + app.getSettings().getVersion()
                 + (app.getSettings().getApplicationMode() == ApplicationMode.RELEASE
                 ? "" : "-" + app.getSettings().getApplicationMode());
     }
 
+    /**
+     * Create menu background.
+     *
+     * @param width width of the app
+     * @param height height of the app
+     * @return menu background UI object
+     */
     protected abstract Node createBackground(double width, double height);
+
+    /**
+     * Create view for the app title.
+     *
+     * @param title app title
+     * @return UI object
+     */
     protected abstract Node createTitleView(String title);
+
+    /**
+     * Create view for version string.
+     *
+     * @param version version string
+     * @return UI object
+     */
     protected abstract Node createVersionView(String version);
+
+    /**
+     * Create view for profile name.
+     *
+     * @param profileName profile user name
+     * @return UI object
+     */
     protected abstract Node createProfileView(String profileName);
 
     /**
@@ -363,6 +394,9 @@ public abstract class FXGLMenu extends FXGLScene {
         return content;
     }
 
+    /**
+     * @return menu content containing multiplayer options
+     */
     protected final MenuContent createContentMultiplayer() {
         return new MenuContent(UIFactory.newText("TODO: MULTIPLAYER"));
     }
@@ -412,6 +446,11 @@ public abstract class FXGLMenu extends FXGLScene {
 
     private MenuEventListener listener;
 
+    /**
+     * Set main listener for menu events.
+     *
+     * @param listener menu listener
+     */
     public void setListener(MenuEventListener listener) {
         this.listener = listener;
     }
@@ -481,7 +520,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
     /**
      * Fires {@link MenuEvent#RESUME} event.
-     * Can only be fired from game menu. Will close the menu and unpause the game.
+     * Can only be fired from game menu.
+     * Will close the menu and unpause the game.
      */
     protected final void fireResume() {
         log.debug("fireResume()");
@@ -490,6 +530,11 @@ public abstract class FXGLMenu extends FXGLScene {
         fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
     }
 
+    /**
+     * Fires {@link MenuEvent#LOGOUT} event.
+     * Can only be fired from main menu.
+     * Logs out the user profile.
+     */
     protected final void fireLogout() {
         log.debug("fireLogout()");
 
@@ -499,6 +544,10 @@ public abstract class FXGLMenu extends FXGLScene {
         fireMenuEvent(new MenuEvent(MenuEvent.LOGOUT));
     }
 
+    /**
+     * Call multiplayer access in main menu.
+     * Currently not supported.
+     */
     protected final void fireMultiplayer() {
         log.debug("fireMultiplayer()");
 

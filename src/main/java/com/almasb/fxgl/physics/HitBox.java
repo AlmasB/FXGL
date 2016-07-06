@@ -51,35 +51,23 @@ public final class HitBox {
      */
     private final Bounds bounds;
 
+    /**
+     * Creates a hit box with given name and shape.
+     * Local origin is set to default (0, 0).
+     *
+     * @param name name of the hit box
+     * @param shape bounding shape
+     */
     public HitBox(String name, BoundingShape shape) {
         this(name, Point2D.ZERO, shape);
     }
 
-//    /**
-//     * Creates a hit box with given name and bounds.
-//     * The bounds are calculated from the local entity origin
-//     * in local coordinates.
-//     * <p>
-//     * For example: an entity with width 40 and height 80 could have 2 hit boxes.
-//     * one for HEAD and one for BODY as follows:
-//     * </p>
-//     * <pre>
-//     *     Entity entity = ...
-//     *     entity.addHitBox(new HitBox("HEAD", new BoundingBox(0, 0, 40, 40));
-//     *     entity.addHitBox(new HitBox("BODY", new BoundingBox(0, 40, 40, 40));
-//     *
-//     * </pre>
-//     * Note, the 2nd bounding box has y = 40.
-//     *
-//     * @param name hit box name
-//     * @param bounds hit box bounds
-//     */
-
     /**
+     * Creates a hit box with given name, local origin (top-left) and shape.
      *
-     * @param name
-     * @param localOrigin
-     * @param shape
+     * @param name name of the hit box
+     * @param localOrigin origin of hit box
+     * @param shape bounding shape
      */
     public HitBox(String name, Point2D localOrigin, BoundingShape shape) {
         this.name = name;

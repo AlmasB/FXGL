@@ -123,6 +123,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         return e.hasComponent(PhysicsComponent.class);
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     private int getHandlerIndex(Entity e1, Entity e2) {
         return collisionHandlers.indexOf(new Pair<>(e1.getComponentUnsafe(TypeComponent.class).getValue(),
                 e2.getComponentUnsafe(TypeComponent.class).getValue()));
