@@ -162,12 +162,12 @@ public class PhysicsComponent extends AbstractComponent {
         body.setAngularVelocity((float) -velocity);
     }
 
-    public void setBodyAngularVelocity(float velocity) {
-        if (body == null)
-            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
-
-        body.setAngularVelocity(velocity);
-    }
+//    public void setBodyAngularVelocity(float velocity) {
+//        if (body == null)
+//            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
+//
+//        body.setAngularVelocity(velocity);
+//    }
 
     /**
      * Set true to make raycast ignore this entity.

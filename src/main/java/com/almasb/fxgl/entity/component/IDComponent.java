@@ -26,17 +26,20 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.serialization.SerializableComponent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Adds ID to an entity, so it can be uniquely identified.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class IDComponent extends AbstractComponent {
+public class IDComponent extends AbstractComponent implements SerializableComponent {
 
-    private final String name;
-    private final int id;
+    private String name;
+    private int id;
 
     /**
      * Constructs ID component with given entity name and id.
@@ -85,5 +88,17 @@ public class IDComponent extends AbstractComponent {
     @Override
     public String toString() {
         return getFullID();
+    }
+
+    @Override
+    public void write(@NotNull Bundle bundle) {
+        bundle.put("name", name);
+        bundle.put("id", id);
+    }
+
+    @Override
+    public void read(@NotNull Bundle bundle) {
+        name = bundle.get("name");
+        id = bundle.get("id");
     }
 }

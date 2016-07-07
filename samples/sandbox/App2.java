@@ -25,13 +25,15 @@
  */
 package sandbox;
 
-import com.almasb.ents.Entity;
+import com.almasb.easyio.IOTask;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
+import com.almasb.fxgl.scene.ProgressDialog;
+import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
@@ -48,43 +50,27 @@ public class App2 extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("Basic FXGL Application");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setMenuStyle(MenuStyle.GTA5);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
     protected void initInput() {
         Input input = getInput();
         input.addInputMapping(new InputMapping("Open", KeyCode.O));
+        input.addInputMapping(new InputMapping("Test", KeyCode.K));
     }
 
     @Override
     protected void initAssets() {}
 
-    private Entity e;
-
     @Override
     protected void initGame() {
-//        for (int i = 0; i < 10; i++) {
-//            for (int j = 0; j < 10; j++) {
-//                Entity g = Entity.noType();
-//                g.setValue(101 * j, 171 * i);
-//                g.setSceneView(getAssetLoader().loadTexture("Grass Block.png"));
-//
-//                getGameWorld().addEntity(g);
-//            }
-//        }
-
-
-//        Entity cat = Entity.noType();
-//        cat.setValue(100, 100);
-//        cat.setSceneView(getAssetLoader().loadTexture("cat.png").toStaticAnimatedTexture(6, Duration.seconds(0.6)));
-//
-//        getGameWorld().addEntity(cat);
 
     }
 
@@ -98,16 +84,121 @@ public class App2 extends GameApplication {
     protected void onUpdate(double tpf) {}
 
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
-    public void openWindow() {
-
-//        e = Entity.noType();
-//        e.setValue(300, 300);
-//        e.setSceneView(new Rectangle(10, 1));
-//        e.addControl(new OffscreenCleanControl());
-//        e.addControl(new ProjectileControl(new Point2D(0, -1), 10));
+    public void test() {
+//        Net net = FXGL.getService(ServiceType.NET);
 //
-//        getGameWorld().addEntity(e);
+//        net.downloadTask("https://raw.githubusercontent.com/AlmasB/FXGLGames/master/data/test.txt")
+//                .onSuccess(file -> {
+//                    try {
+//                        Files.readAllLines(file)
+//                                .forEach(System.out::println);
+//                    } catch (IOException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                })
+//                .onFailure(getDefaultCheckedExceptionHandler())
+//                .executeAsyncWithProgressDialog("Downloading...");
+//
+//        System.out.println("Task submitted");
 
+
+
+
+//        IOTask<String> task = new IOTask<String>() {
+//            @Override
+//            public String onExecute() throws Exception {
+//                System.out.println("Executing");
+//
+//                Thread.sleep(3000);
+//
+//                return Files.readAllLines(Paths.get("test.txt")).get(0);
+//            }
+//        };
+//
+//        task.onSuccess(System.out::println)
+//                .onFailure(getDefaultCheckedExceptionHandler())
+//                .executeAsyncWithProgressDialog("Reading from File System");
+//
+//        System.out.println("Task submitted");
+
+
+
+
+
+        new IOTask<String>() {
+            @Override
+            protected String onExecute() throws Exception {
+
+                System.out.println("execute 1");
+
+                //throw new IllegalArgumentException("Testerror");
+
+                return "LongIntDouble";
+            }
+        }.then(s -> {
+
+            System.out.println("Result1: " + s);
+
+            return new IOTask<Integer>() {
+                @Override
+                protected Integer onExecute() throws Exception {
+                    System.out.println("execute 2");
+
+
+                    //throw new IllegalArgumentException("Testerror");
+                    return s.length();
+                }
+            };
+        }).then(i -> {
+
+            System.out.println("Result2: " + i);
+
+            return new IOTask<Double>() {
+                @Override
+                protected Double onExecute() throws Exception {
+                    System.out.println("execute 3.1");
+
+                    //Thread.sleep(1400);
+
+                    return i + 1.5;
+                }
+            }.then(d -> new IOTask<Double>() {
+                @Override
+                protected Double onExecute() throws Exception {
+                    System.out.println("execute 3.2");
+
+                    return d * 2;
+                }
+            });
+
+
+        }).then(i -> new IOTask<Integer>() {
+            @Override
+            protected Integer onExecute() throws Exception {
+                System.out.println("execute 4");
+
+                Thread.sleep(3000);
+
+                return i.intValue();
+            }
+        }).onSuccess(value -> {
+            System.out.println("Result: " + value);
+        }).onFailure(error -> {
+            System.out.println("error: " + error);
+        }).executeAsyncWithDialogFX(getExecutor(), new ProgressDialog("Computing"));
+
+
+
+
+
+
+
+        System.out.println("Task submitted");
+    }
+
+    @OnUserAction(name = "Test", type = ActionType.ON_ACTION_BEGIN)
+    public void test2() {
+        System.out.println("Printing");
     }
 
     public static void main(String[] args) {

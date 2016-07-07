@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.texture;
 
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.event.FXGLEvent;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -63,6 +65,14 @@ public final class DynamicAnimatedTexture extends Texture {
 
         Collections.addAll(animationChannels, channels);
         setAnimationChannel(initialChannel);
+
+        FXGL.getEventBus().addEventHandler(FXGLEvent.PAUSE, e -> {
+            timeline.pause();
+        });
+
+        FXGL.getEventBus().addEventHandler(FXGLEvent.RESUME, e -> {
+            timeline.play();
+        });
     }
 
     /**

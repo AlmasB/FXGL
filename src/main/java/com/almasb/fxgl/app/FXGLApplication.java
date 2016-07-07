@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
 
 /**
  * General FXGL application that configures services for all parts to use.
@@ -140,6 +141,7 @@ public abstract class FXGLApplication extends Application {
 
     /**
      * Exit the application.
+     * Safe to call this from a paused state.
      */
     protected void exit() {
         log.debug("Exiting Normally");
@@ -316,6 +318,13 @@ public abstract class FXGLApplication extends Application {
      */
     public final MasterTimer getMasterTimer() {
         return FXGL.getMasterTimer();
+    }
+
+    /**
+     * @return executor service
+     */
+    public final Executor getExecutor() {
+        return FXGL.getExecutor();
     }
 
     /**

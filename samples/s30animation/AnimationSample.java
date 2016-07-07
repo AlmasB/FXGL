@@ -42,7 +42,7 @@ import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 /**
- * TODO: cleanup
+ * TODO: cleanup, use a smaller sprite sheet
  *
  * Shows how to use sprite sheet animations.
  *

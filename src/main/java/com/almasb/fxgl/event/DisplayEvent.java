@@ -43,12 +43,21 @@ public class DisplayEvent extends Event {
     public static final EventType<DisplayEvent> ANY =
             new EventType<>(Event.ANY, "DISPLAY_EVENT");
 
+    /**
+     * Fired when user requests application close.
+     */
     public static final EventType<DisplayEvent> CLOSE_REQUEST =
             new EventType<>(ANY, "CLOSE_REQUEST");
 
+    /**
+     * Fired when a dialog has opened.
+     */
     public static final EventType<DisplayEvent> DIALOG_OPENED =
             new EventType<>(ANY, "DIALOG_OPENED");
 
+    /**
+     * Fired when a dialog has closed.
+     */
     public static final EventType<DisplayEvent> DIALOG_CLOSED =
             new EventType<>(ANY, "DIALOG_CLOSED");
 
@@ -58,6 +67,6 @@ public class DisplayEvent extends Event {
 
     @Override
     public String toString() {
-        return "DisplayEvent[type=" + getEventType().toString() + "]";
+        return "DisplayEvent[type=" + getEventType() + "]";
     }
 }

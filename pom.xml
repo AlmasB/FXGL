@@ -4,12 +4,12 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
     <description>Simple JavaFX Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/0.2.3</url>
+    <url>https://jitpack.io/#AlmasB/FXGL/${project.version}</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,15 +21,18 @@
         <maven.enforcer.version>1.4.1</maven.enforcer.version>
         <maven.source.version>2.4</maven.source.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
+        <maven.shade.version>2.4.3</maven.shade.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.0.1-2</kotlin.version>
+        <kotlin.version>1.0.3</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
-        <ents.version>1.0.1</ents.version>
+        <ents.version>1.0.3</ents.version>
         <astar.version>1.0</astar.version>
+        <gdx.ai.version>1.8.0</gdx.ai.version>
+        <easyio.version>0.1.4</easyio.version>
         <log4j.version>2.5</log4j.version>
         <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
@@ -93,6 +96,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>EasyIO</artifactId>
+            <version>${easyio.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j.version}</version>
@@ -102,6 +111,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-ai</artifactId>
+            <version>${gdx.ai.version}</version>
         </dependency>
 
         <!--<dependency>-->
@@ -267,7 +282,7 @@
             <plugin>    <!-- Create uber jar -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>${maven.shade.version}</version>
                 <configuration>
                     <outputFile>${project.build.directory}/${project.name}-${project.version}-uber.jar</outputFile>
                 </configuration>

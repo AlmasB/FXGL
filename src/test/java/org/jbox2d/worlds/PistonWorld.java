@@ -111,7 +111,7 @@ public class PistonWorld implements PerformanceTestWorld {
             Body body = world.createBody(bd);
             for (int i = 0; i < numPieces; i++) {
                 cd = new CircleShape();
-                cd.m_radius = .5f;
+                cd.setRadius(.5f);
                 fd.setShape(cd);
                 fd.setDensity(25);
                 fd.setFriction(0.1f);
@@ -224,7 +224,7 @@ public class PistonWorld implements PerformanceTestWorld {
                 }
 
                 CircleShape cd = new CircleShape();
-                cd.m_radius = 0.36f;
+                cd.setRadius(0.36f);
                 for (int i = 0; i < 100; ++i) {
                     bd.getPosition().set(1.0f, 23.0f + i);
                     bd.setBullet(false);

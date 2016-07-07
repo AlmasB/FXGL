@@ -27,13 +27,33 @@ package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.FXGLMenu;
+import javafx.scene.Node;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class CCTRGameMenu extends FXGLMenu {
     public CCTRGameMenu(GameApplication app) {
-        super(app);
+        super(app, MenuType.GAME_MENU);
     }
 
+    @Override
+    protected Node createBackground(double width, double height) {
+        return null;
+    }
+
+    @Override
+    protected Node createTitleView(String title) {
+        return null;
+    }
+
+    @Override
+    protected Node createVersionView(String version) {
+        return null;
+    }
+
+    @Override
+    protected Node createProfileView(String profileName) {
+        return null;
+    }
 }

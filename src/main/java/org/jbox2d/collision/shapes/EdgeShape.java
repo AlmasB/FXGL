@@ -1,3 +1,29 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
@@ -29,8 +55,9 @@ import org.jbox2d.collision.RayCastOutput;
 import org.jbox2d.common.*;
 
 /**
- * A line segment (edge) shape. These can be connected in chains or loops to other edge shapes. The
- * connectivity information is used to ensure correct contact normals.
+ * A line segment (edge) shape.
+ * These can be connected in chains or loops to other edge shapes.
+ * The connectivity information is used to ensure correct contact normals.
  *
  * @author Daniel
  */
@@ -40,6 +67,7 @@ public class EdgeShape extends Shape {
      * edge vertex 1
      */
     public final Vec2 m_vertex1 = new Vec2();
+
     /**
      * edge vertex 2
      */
@@ -49,16 +77,30 @@ public class EdgeShape extends Shape {
      * optional adjacent vertex 1. Used for smooth collision
      */
     public final Vec2 m_vertex0 = new Vec2();
+
     /**
      * optional adjacent vertex 2. Used for smooth collision
      */
     public final Vec2 m_vertex3 = new Vec2();
-    public boolean m_hasVertex0 = false, m_hasVertex3 = false;
 
+    public boolean m_hasVertex0 = false, m_hasVertex3 = false;
 
     public EdgeShape() {
         super(ShapeType.EDGE);
-        m_radius = Settings.polygonRadius;
+        setRadius(Settings.polygonRadius);
+    }
+
+    @Override
+    public Shape clone() {
+        EdgeShape edge = new EdgeShape();
+        edge.setRadius(this.getRadius());
+        edge.m_hasVertex0 = this.m_hasVertex0;
+        edge.m_hasVertex3 = this.m_hasVertex3;
+        edge.m_vertex0.set(this.m_vertex0);
+        edge.m_vertex1.set(this.m_vertex1);
+        edge.m_vertex2.set(this.m_vertex2);
+        edge.m_vertex3.set(this.m_vertex3);
+        return edge;
     }
 
     @Override
@@ -222,10 +264,10 @@ public class EdgeShape extends Shape {
         upperBound.x = v1x > v2x ? v1x : v2x;
         upperBound.y = v1y > v2y ? v1y : v2y;
 
-        lowerBound.x -= m_radius;
-        lowerBound.y -= m_radius;
-        upperBound.x += m_radius;
-        upperBound.y += m_radius;
+        lowerBound.x -= radius;
+        lowerBound.y -= radius;
+        upperBound.x += radius;
+        upperBound.y += radius;
     }
 
     @Override
@@ -233,18 +275,5 @@ public class EdgeShape extends Shape {
         massData.mass = 0.0f;
         massData.center.set(m_vertex1).addLocal(m_vertex2).mulLocal(0.5f);
         massData.I = 0.0f;
-    }
-
-    @Override
-    public Shape clone() {
-        EdgeShape edge = new EdgeShape();
-        edge.m_radius = this.m_radius;
-        edge.m_hasVertex0 = this.m_hasVertex0;
-        edge.m_hasVertex3 = this.m_hasVertex3;
-        edge.m_vertex0.set(this.m_vertex0);
-        edge.m_vertex1.set(this.m_vertex1);
-        edge.m_vertex2.set(this.m_vertex2);
-        edge.m_vertex3.set(this.m_vertex3);
-        return edge;
     }
 }

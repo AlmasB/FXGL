@@ -176,4 +176,13 @@ public interface Display extends UserProfileSavable {
      * @param buttons buttons present
      */
     void showBox(String message, Node content, Button... buttons);
+
+    /**
+     * Shows a blocking (stops game execution, method returns normally) progress dialog.
+     * Can only be dismissed via the returned handler.
+     *
+     * @param message message to show
+     * @return dialog handler
+     */
+    DialogHandler showProgressBox(String message);
 }

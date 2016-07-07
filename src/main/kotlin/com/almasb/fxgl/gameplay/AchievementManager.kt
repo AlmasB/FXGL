@@ -26,10 +26,12 @@
 
 package com.almasb.fxgl.gameplay
 
+import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.AchievementEvent
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.settings.UserProfileSavable
+import com.google.inject.Singleton
 import javafx.collections.FXCollections
 
 /**
@@ -37,6 +39,7 @@ import javafx.collections.FXCollections
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Singleton
 class AchievementManager : UserProfileSavable {
 
     private val log = FXGL.getLogger(javaClass)
@@ -89,7 +92,7 @@ class AchievementManager : UserProfileSavable {
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
-        val bundle = UserProfile.Bundle("achievement")
+        val bundle = Bundle("achievement")
 
         achievements.forEach { a -> bundle.put(a.name, a.isAchieved) }
         bundle.log()

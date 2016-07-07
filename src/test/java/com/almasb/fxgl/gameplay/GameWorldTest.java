@@ -31,6 +31,7 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
@@ -77,38 +78,38 @@ public class GameWorldTest {
         e1 = Entities.builder()
                 .type(TestType.T1)
                 .at(100, 100)
-                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .viewFromNode(view)
                 .buildAndAttach(gameWorld);
 
         e10 = Entities.builder()
                 .type(TestType.T1)
                 .at(100, 105)
-                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .buildAndAttach(gameWorld);
 
         e11 = Entities.builder()
                 .type(TestType.T1)
                 .at(100, 110)
-                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .buildAndAttach(gameWorld);
 
         e2 = Entities.builder()
                 .type(TestType.T2)
                 .at(150, 100)
-                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .buildAndAttach(gameWorld);
 
         e3 = Entities.builder()
                 .type(TestType.T3)
                 .at(200, 100)
-                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .buildAndAttach(gameWorld);
 
         e4 = Entities.builder()
                 .type(TestType.T4)
                 .at(250, 100)
-                .bbox(new HitBox("TEST", new BoundingBox(0, 0, 10, 10)))
+                .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .buildAndAttach(gameWorld);
 
         gameWorld.onUpdateEvent(new UpdateEvent(1, 0.016));

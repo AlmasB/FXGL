@@ -52,7 +52,7 @@ public final class FXGLAssets {
     public static final Image UI_ICON;
 
     private static String getName(String assetKey) {
-        return FXGL.getProperty(assetKey);
+        return FXGL.getString(assetKey);
     }
 
     static {

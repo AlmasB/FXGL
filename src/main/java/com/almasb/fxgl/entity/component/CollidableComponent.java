@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.component.BooleanComponent;
 import com.almasb.ents.component.Required;
 
@@ -37,12 +38,17 @@ import com.almasb.ents.component.Required;
 @Required(PositionComponent.class)
 @Required(TypeComponent.class)
 @Required(BoundingBoxComponent.class)
-public class CollidableComponent extends BooleanComponent {
+public class CollidableComponent extends BooleanComponent implements CopyableComponent<CollidableComponent> {
     public CollidableComponent(boolean collidable) {
         super(collidable);
     }
 
     public CollidableComponent() {
         this(false);
+    }
+
+    @Override
+    public CollidableComponent copy() {
+        return new CollidableComponent(getValue());
     }
 }

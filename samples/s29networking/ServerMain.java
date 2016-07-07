@@ -44,7 +44,7 @@
 //            if (m instanceof CommandMessage) {
 //                CommandMessage message = (CommandMessage) m;
 //
-//                // TODO:
+//                // do something
 //            }
 //        });
 //        app.launch();

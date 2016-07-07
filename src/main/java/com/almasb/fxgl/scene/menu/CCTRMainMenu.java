@@ -46,7 +46,7 @@ public final class CCTRMainMenu extends FXGLMenu {
     int i = 0;
 
     public CCTRMainMenu(GameApplication app) {
-        super(app);
+        super(app, MenuType.MAIN_MENU);
 
         int start = 100;
 
@@ -134,5 +134,25 @@ public final class CCTRMainMenu extends FXGLMenu {
         Button btn = UIFactory.newButton(name);
         btn.setOnAction(e -> action.run());
         return btn;
+    }
+
+    @Override
+    protected Node createBackground(double width, double height) {
+        return null;
+    }
+
+    @Override
+    protected Node createTitleView(String title) {
+        return null;
+    }
+
+    @Override
+    protected Node createVersionView(String version) {
+        return null;
+    }
+
+    @Override
+    protected Node createProfileView(String profileName) {
+        return null;
     }
 }

@@ -26,11 +26,11 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
-import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
@@ -39,6 +39,7 @@ import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -46,14 +47,18 @@ import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Dialog
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
+import javax.imageio.ImageIO
 
 /**
  * Display service. Provides access to dialogs and display settings.
@@ -141,10 +146,12 @@ private constructor(private val stage: Stage,
             setOnCloseRequest { e ->
                 e.consume()
 
-                showConfirmationBox("Exit the game?", { yes ->
-                    if (yes)
-                        eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
-                })
+                if (!dialog.isShowing) {
+                    showConfirmationBox("Exit the game?", { yes ->
+                        if (yes)
+                            eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                    })
+                }
             }
 
             setOnShown {
@@ -214,7 +221,16 @@ private constructor(private val stage: Stage,
         var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
         fileName = fileName.replace(":", "_")
 
-        return FS.writeFxImagePNG(fxImage, fileName).isOK
+        val img = SwingFXUtils.fromFXImage(fxImage, null)
+
+        try {
+            Files.newOutputStream(Paths.get(fileName + ".png")).use {
+                return ImageIO.write(img, "png", it)
+            }
+        } catch (e: Exception) {
+            log.warning("saveScreenshot() failed: $e")
+            return false
+        }
     }
 
     /**
@@ -465,10 +481,22 @@ private constructor(private val stage: Stage,
         dialog.showBox(message, content, *buttons)
     }
 
+    override fun showProgressBox(message: String): DialogHandler {
+        val progress = ProgressIndicator()
+        progress.setPrefSize(200.0, 200.0)
+
+        val btn = Button()
+        btn.isVisible = false
+
+        showBox(message, progress, btn)
+
+        return DialogHandler(btn)
+    }
+
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
-        val bundle = UserProfile.Bundle("scene")
+        val bundle = Bundle("scene")
         bundle.put("sizeW", getTargetWidth())
         bundle.put("sizeH", getTargetHeight())
 

@@ -27,36 +27,35 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.event.FXGLEvent
+import com.almasb.fxgl.io.DataFile
 import javafx.concurrent.Task
-import java.io.Serializable
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class InitAppTask(val app: GameApplication, val data: Serializable?) : Task<Void>() {
+class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>() {
 
     private val log = FXGL.getLogger(javaClass)
 
-    constructor(app: GameApplication) : this(app, null)
+    constructor(app: GameApplication) : this(app, DataFile.EMPTY)
 
     override fun call(): Void? {
         update("Initializing Assets", 0)
         app.initAssets()
 
         update("Initializing Game", 1)
-        if (data == null)
+        if (dataFile === DataFile.EMPTY)
             app.initGame()
         else
-            app.loadState(data)
+            app.loadState(dataFile)
 
         update("Initializing Physics", 2)
         app.initPhysics()
 
         update("Initializing UI", 3)
         app.initUI()
-        app.initFPSOverlay()
 
         update("Initialization Complete", 4)
         return null

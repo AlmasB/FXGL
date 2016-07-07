@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.BooleanComponent;
 import com.almasb.ents.component.Required;
@@ -38,7 +39,7 @@ import com.almasb.fxgl.gameplay.GameWorld;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Required(MainViewComponent.class)
-public class SelectableComponent extends BooleanComponent {
+public class SelectableComponent extends BooleanComponent implements CopyableComponent<SelectableComponent> {
 
 //    private ReadOnlyBooleanWrapper selected = new ReadOnlyBooleanWrapper(false);
 //
@@ -93,5 +94,10 @@ public class SelectableComponent extends BooleanComponent {
                 ((GameWorld) getEntity().getWorld()).selectedEntityProperty().set(null);
             }
         });
+    }
+
+    @Override
+    public SelectableComponent copy() {
+        return new SelectableComponent(getValue());
     }
 }

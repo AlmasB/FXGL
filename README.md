@@ -2,55 +2,20 @@
 
 JavaFX 8 Game Library written in Java + Kotlin<br/>
 [![Join the chat at https://gitter.im/AlmasB/FXGL](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Release](https://img.shields.io/badge/maven-0.2.3-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Release](https://img.shields.io/badge/maven-0.2.4-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
 [![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
 
-## Maven
-```maven
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
+## Good for ...
+* 2D or casual UI based games
+* Hobby & academic projects
+* Learning & practising game development
+* Fast prototyping
 
-<dependency>
-    <groupId>com.github.AlmasB</groupId>
-    <artifactId>FXGL</artifactId>
-    <version>0.2.3</version>
-</dependency>
-```
-
-## Gradle
-```gradle
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
-dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.3'
-}
-```
-
-## Use Case
-FXGL is perfect for small to medium sized games and for beginner / intermediate programmers in JavaFX.
-It is primarily aimed at people who wish to learn and practise game development.
-It also takes care of the common boilerplate code, so it can be used for fast prototyping.
-For larger projects the library may not be as suitable, whereas advanced programmers will probably want to work
-with something like libGDX or JMonkey.
-If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
-
-## Setup Tutorials
-* [Eclipse](https://www.youtube.com/watch?v=2kLIXDhEGo0)
-* [IntelliJ](https://www.youtube.com/watch?v=ZM2NuvMG4cg)
-
-## Basic Usage / Examples
-The samples/ folder will be constantly updated to include demonstrations of various features.
-Video Tutorials Playlist - <a href="https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp">YouTube Link</a> <br/>
-The videos will walk you through the basics. For advanced examples please see <a href="https://github.com/AlmasB/FXGLGames">FXGL Games Repository</a>.
-
-## Extra Info
-For more information check out the project <a href="https://github.com/AlmasB/FXGL/wiki">Wiki</a>
+## Not so good for ...
+* 3D, mobile or web (until JavaFX can painlessly support these)
+* Commercial projects
 
 ## Latest Release Features
 * Full JavaFX Integration (FXGL is built on top of JavaFX 8)
@@ -82,9 +47,84 @@ For more information check out the project <a href="https://github.com/AlmasB/FX
 * Achievement System
 * In-game Notification System
 * [Log4j2](http://logging.apache.org/log4j/2.x/) Logging Framework
+* [EasyIO](https://github.com/AlmasB/EasyIO) IO Framework
 * Performance Monitor
 * Global Services Framework
 * Other minor game dev features
+
+If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
+
+## Extra Info
+For more information check out the project [Wiki](https://github.com/AlmasB/FXGL/wiki).
+
+## Basic Usage / Examples
+```java
+public class BasicGameApp extends GameApplication {
+
+    @Override
+    protected void initSettings(GameSettings settings) {
+        settings.setWidth(800);
+        settings.setHeight(600);
+        settings.setTitle("Basic Game App");
+        settings.setVersion("0.1");
+        // other settings
+    }
+
+    @Override
+    protected void initInput() {}
+
+    @Override
+    protected void initAssets() {}
+
+    @Override
+    protected void initGame() {}
+
+    @Override
+    protected void initPhysics() {}
+
+    @Override
+    protected void initUI() {}
+
+    @Override
+    protected void onUpdate(double tpf) {}
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+* The samples/ folder will be constantly updated to include demonstrations of various features.
+* The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) videos will walk you through the basics.
+* For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
+
+## Setup Tutorials
+* [Eclipse](https://www.youtube.com/watch?v=2kLIXDhEGo0)
+* [IntelliJ](https://www.youtube.com/watch?v=ZM2NuvMG4cg)
+
+## Maven
+```maven
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+
+<dependency>
+    <groupId>com.github.AlmasB</groupId>
+    <artifactId>FXGL</artifactId>
+    <version>0.2.4</version>
+</dependency>
+```
+
+## Gradle
+```gradle
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile 'com.github.AlmasB:FXGL:0.2.4'
+}
+```
 
 ## Contact
 Email: almaslvl@gmail.com<br/>

@@ -216,7 +216,7 @@ public class Collision {
         float distSqr = dx * dx + dy * dy;
         // end inline
 
-        final float radius = circle1.m_radius + circle2.m_radius;
+        final float radius = circle1.getRadius() + circle2.getRadius();
         if (distSqr > radius * radius) {
             return;
         }
@@ -267,8 +267,8 @@ public class Collision {
         // Find the min separating edge.
         int normalIndex = 0;
         float separation = -Float.MAX_VALUE;
-        final float radius = polygon.m_radius + circle.m_radius;
-        final int vertexCount = polygon.m_count;
+        final float radius = polygon.getRadius() + circle.getRadius();
+        final int vertexCount = polygon.getVertexCount();
         float s;
         final Vec2[] vertices = polygon.m_vertices;
         final Vec2[] normals = polygon.m_normals;
@@ -439,8 +439,8 @@ public class Collision {
      */
     public final void findMaxSeparation(EdgeResults results, final PolygonShape poly1,
                                         final Transform xf1, final PolygonShape poly2, final Transform xf2) {
-        int count1 = poly1.m_count;
-        int count2 = poly2.m_count;
+        int count1 = poly1.getVertexCount();
+        int count2 = poly2.getVertexCount();
         Vec2[] n1s = poly1.m_normals;
         Vec2[] v1s = poly1.m_vertices;
         Vec2[] v2s = poly2.m_vertices;
@@ -477,10 +477,10 @@ public class Collision {
 
     public final void findIncidentEdge(final ClipVertex[] c, final PolygonShape poly1,
                                        final Transform xf1, int edge1, final PolygonShape poly2, final Transform xf2) {
-        int count1 = poly1.m_count;
+        int count1 = poly1.getVertexCount();
         final Vec2[] normals1 = poly1.m_normals;
 
-        int count2 = poly2.m_count;
+        int count2 = poly2.getVertexCount();
         final Vec2[] vertices2 = poly2.m_vertices;
         final Vec2[] normals2 = poly2.m_normals;
 
@@ -574,7 +574,7 @@ public class Collision {
         // The normal points from 1 to 2
 
         manifold.pointCount = 0;
-        float totalRadius = polyA.m_radius + polyB.m_radius;
+        float totalRadius = polyA.getRadius() + polyB.getRadius();
 
         findMaxSeparation(results1, polyA, xfA, polyB, xfB);
         if (results1.separation > totalRadius) {
@@ -614,7 +614,7 @@ public class Collision {
 
         findIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
 
-        int count1 = poly1.m_count;
+        int count1 = poly1.getVertexCount();
         final Vec2[] vertices1 = poly1.m_vertices;
 
         final int iv1 = edge1;
@@ -734,7 +734,7 @@ public class Collision {
         float u = Vec2.dot(e, temp.set(B).subLocal(Q));
         float v = Vec2.dot(e, temp.set(Q).subLocal(A));
 
-        float radius = edgeA.m_radius + circleB.m_radius;
+        float radius = edgeA.getRadius() + circleB.getRadius();
 
         // ContactFeature cf;
         cf.indexB = 0;
@@ -1198,8 +1198,8 @@ public class Collision {
             }
 
             // Get polygonB in frameA
-            m_polygonB.count = polygonB.m_count;
-            for (int i = 0; i < polygonB.m_count; ++i) {
+            m_polygonB.count = polygonB.getVertexCount();
+            for (int i = 0; i < polygonB.getVertexCount(); ++i) {
                 Transform.mulToOutUnsafe(m_xf, polygonB.m_vertices[i], m_polygonB.vertices[i]);
                 Rotation.mulToOutUnsafe(m_xf.q, polygonB.m_normals[i], m_polygonB.normals[i]);
             }

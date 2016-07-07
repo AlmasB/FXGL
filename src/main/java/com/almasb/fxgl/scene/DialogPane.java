@@ -122,7 +122,7 @@ public class DialogPane extends Pane {
         }));
     }
 
-    private boolean isShowing() {
+    public boolean isShowing() {
         return getParent() != null;
     }
 
@@ -206,7 +206,7 @@ public class DialogPane extends Pane {
      * @param callback function to call when closed
      */
     void showErrorBox(Throwable error, Runnable callback) {
-        Text text = createMessage(error.getMessage() == null ? "NPE" : error.getMessage());
+        Text text = createMessage(error.toString());
 
         FXGLButton btnOK = new FXGLButton("OK");
         btnOK.setOnAction(e -> {
@@ -351,7 +351,9 @@ public class DialogPane extends Pane {
 
             btn.setOnAction(e -> {
                 close();
-                handler.handle(e);
+
+                if (handler != null)
+                    handler.handle(e);
             });
         }
 

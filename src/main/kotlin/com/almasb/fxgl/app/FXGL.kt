@@ -27,6 +27,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.logging.MockLoggerFactory
+import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -35,6 +36,7 @@ import com.google.inject.name.Names
 import javafx.scene.Scene
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
+import java.util.*
 
 /**
  * Represents the entire FXGL infrastructure.
@@ -48,20 +50,25 @@ class FXGL {
 
     companion object {
         private lateinit var internalSettings: ReadOnlyGameSettings
-        private lateinit var internalApp: FXGLApplication
+        private lateinit var internalApp: GameApplication
 
-        private var initGuard = false
+        /**
+         * Temporarily holds k-v pairs from system.properties.
+         */
+        private val internalProperties = ArrayList<Pair<String, Any> >()
+
+        private var initDone = false
 
         @JvmStatic fun getSettings() = internalSettings
         @JvmStatic fun getApp() = internalApp
 
         @JvmStatic fun configure(app: FXGLApplication, stage: Stage) {
-            if (initGuard)
+            if (initDone)
                 throw IllegalStateException("FXGL is already configured")
 
-            initGuard = true
+            initDone = true
 
-            internalApp = app
+            internalApp = app as GameApplication
             internalSettings = app.settings
             configureServices(stage)
         }
@@ -76,21 +83,27 @@ class FXGL {
          * It may be expensive to use this in a loop.
          * Store a reference to the instance instead.
          *
-         * @param type service type
-         *
-         * @param  type
+         * @param serviceType service type
          *
          * @return service
          */
-        @JvmStatic fun <T> getService(type: ServiceType<T>) = injector.getInstance(type.service())
+        @JvmStatic fun <T> getService(serviceType: ServiceType<T>) = injector.getInstance(serviceType.service())
 
-        @JvmStatic fun <T> getService(type: Class<T>) = injector.getInstance(type)
+        /**
+         * Obtain an instance of a type.
+         * It may be expensive to use this in a loop.
+         * Store a reference to the instance instead.
+         *
+         * @param type type
+         *
+         * @return instance
+         */
+        @JvmStatic fun <T> getInstance(type: Class<T>) = injector.getInstance(type)
 
         private fun configureServices(stage: Stage) {
             injector = Guice.createInjector(object : ServicesModule() {
                 private val scene = Scene(Pane())
 
-                // TODO: autobind property names from .properties
                 override fun configure() {
                     bind(Double::class.java)
                             .annotatedWith(Names.named("appWidth"))
@@ -100,9 +113,18 @@ class FXGL {
                             .annotatedWith(Names.named("appHeight"))
                             .toInstance(internalSettings.getHeight().toDouble())
 
-                    bind(Int::class.java)
-                            .annotatedWith(Names.named("asset.cache.size"))
-                            .toInstance(getInt("asset.cache.size"))
+                    // add internal properties directly to Guice
+                    for ((k,v) in internalProperties) {
+                        when(v) {
+                            is Int -> bind(Int::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            is Double -> bind(Double::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            is Boolean -> bind(Boolean::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            is String -> bind(String::class.java).annotatedWith(Names.named(k)).toInstance(v)
+                            else -> SystemLogger.warning("Unknown property type")
+                        }
+                    }
+
+                    internalProperties.clear()
 
                     bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
                     bind(ApplicationMode::class.java).toInstance(internalSettings.getApplicationMode())
@@ -132,7 +154,7 @@ class FXGL {
 
         /* CONVENIENCE ACCESSORS */
 
-        private val _loggerFactory by lazy { if (initGuard) getService(ServiceType.LOGGER_FACTORY) else MockLoggerFactory }
+        private val _loggerFactory by lazy { if (initDone) getService(ServiceType.LOGGER_FACTORY) else MockLoggerFactory }
         @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
         @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
 
@@ -168,13 +190,15 @@ class FXGL {
         private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
         @JvmStatic fun getMasterTimer() = _masterTimer
 
-        private val _game by lazy { getService(ServiceType.GAME) }
+        /**
+         * @return new instance on each call
+         */
+        @JvmStatic fun newProfiler() = getService(ServiceType.PROFILER)
 
         /**
-         * @deprecated use FXGL.getApp()
+         * @return default checked exception handler
          */
-        @Deprecated("DO NOT USE, WILL BE REMOVED", ReplaceWith("FXGL.getApp()"), DeprecationLevel.WARNING)
-        @JvmStatic fun getGame() = _game
+        @JvmStatic fun getExceptionHandler() = FXGLApplication.getDefaultCheckedExceptionHandler()
 
         /**
          * Get value of an int property.
@@ -205,21 +229,43 @@ class FXGL {
 
         /**
          * @param key property key
-         * *
+         * @return string value
+         */
+        @JvmStatic fun getString(key: String) = getProperty(key)
+
+        /**
+         * @param key property key
          * @return property value
          */
-        @JvmStatic fun getProperty(key: String) = System.getProperty("FXGL.$key")
+        private fun getProperty(key: String) = System.getProperty("FXGL.$key")
                 ?: throw IllegalArgumentException("Key \"$key\" not found!")
 
         /**
          * Set an int, double, boolean or String property.
+         * The value can then be retrieved with FXGL.get* methods.
          *
          * @param key property key
-         *
          * @param value property value
          */
         @JvmStatic fun setProperty(key: String, value: Any) {
             System.setProperty("FXGL.$key", value.toString())
+
+            if (!initDone) {
+
+                if (value == "true" || value == "false") {
+                    internalProperties.add(Pair(key, java.lang.Boolean.parseBoolean(value)))
+                } else {
+                    try {
+                        internalProperties.add(Pair(key, Integer.parseInt(value.toString())))
+                    } catch(e: Exception) {
+                        try {
+                            internalProperties.add(Pair(key, java.lang.Double.parseDouble(value.toString())))
+                        } catch(e: Exception) {
+                            internalProperties.add(Pair(key, value.toString()))
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -40,9 +40,15 @@ public final class LoadEvent extends Event {
     public static final EventType<LoadEvent> ANY =
             new EventType<>(Event.ANY, "LOAD_EVENT");
 
+    /**
+     * Fired when profile is being loaded.
+     */
     public static final EventType<LoadEvent> LOAD_PROFILE =
             new EventType<>(ANY, "LOAD_PROFILE");
 
+    /**
+     * Fired when settings are being restored.
+     */
     public static final EventType<LoadEvent> RESTORE_SETTINGS =
             new EventType<>(ANY, "RESTORE_SETTINGS");
 

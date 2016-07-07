@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.component.DoubleComponent;
 import com.almasb.fxgl.devtools.DeveloperEditable;
 import javafx.beans.property.DoubleProperty;
@@ -36,7 +37,7 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class RotationComponent extends DoubleComponent {
+public class RotationComponent extends DoubleComponent implements CopyableComponent<RotationComponent> {
 
     /**
      * Constructs rotation with angle = 0.
@@ -88,5 +89,10 @@ public class RotationComponent extends DoubleComponent {
     @Override
     public String toString() {
         return "Rotation(" + getValue() + "deg)";
+    }
+
+    @Override
+    public RotationComponent copy() {
+        return new RotationComponent(getValue());
     }
 }

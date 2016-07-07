@@ -75,7 +75,7 @@ public class ThreadingSample extends GameApplication {
         // 2. get executor service
         // 3. create a new task that performs heavy work
 
-        FXGL.getExecutor().submit(new Task<Void>() {
+        FXGL.getExecutor().execute(new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 System.out.println("Heavy work started!");

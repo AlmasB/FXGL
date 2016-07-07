@@ -25,12 +25,14 @@
  */
 package com.almasb.fxgl.util;
 
+import java.util.function.Consumer;
+
 /**
  * An interface for handling exceptions.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface ExceptionHandler {
+public interface ExceptionHandler extends Consumer<Throwable> {
 
     /**
      * Handles given exception. It is up to
@@ -41,6 +43,8 @@ public interface ExceptionHandler {
      */
     void handle(Throwable e);
 
-    // TODO: allow running code after exception handling
-    //void handle(Throwable e, Runnable code);
+    @Override
+    default void accept(Throwable e) {
+        handle(e);
+    }
 }

@@ -1,3 +1,29 @@
+/*
+ * The MIT License (MIT)
+ *
+ * FXGL - JavaFX Game Library
+ *
+ * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
@@ -30,52 +56,54 @@ import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
 /**
- * A shape is used for collision detection. You can create a shape however you like. Shapes used for
- * simulation in World are created automatically when a Fixture is created. Shapes may encapsulate a
- * one or more child shapes.
+ * A shape is used for collision detection.
+ * You can create a shape however you like.
+ * Shapes used for simulation in World are created automatically when a Fixture is created.
+ * Shapes may encapsulate one or more child shapes.
  */
 public abstract class Shape {
 
-    public final ShapeType m_type;
-    public float m_radius;
+    private final ShapeType type;
+
+    float radius;
 
     public Shape(ShapeType type) {
-        this.m_type = type;
+        this.type = type;
     }
+
+    public abstract Shape clone();
 
     /**
      * Get the type of this shape. You can use this to down cast to the concrete shape.
      *
-     * @return the shape type.
+     * @return the shape type
      */
     public ShapeType getType() {
-        return m_type;
+        return type;
     }
 
     /**
      * The radius of the underlying shape. This can refer to different things depending on the shape
-     * implementation
+     * implementation.
      *
-     * @return
+     * @return shape radius
      */
     public float getRadius() {
-        return m_radius;
+        return radius;
     }
 
     /**
      * Sets the radius of the underlying shape. This can refer to different things depending on the
-     * implementation
+     * implementation.
      *
-     * @param radius
+     * @param radius shape radius
      */
     public void setRadius(float radius) {
-        this.m_radius = radius;
+        this.radius = radius;
     }
 
     /**
-     * Get the number of child primitives
-     *
-     * @return
+     * @return the number of child primitives
      */
     public abstract int getChildCount();
 
@@ -90,10 +118,10 @@ public abstract class Shape {
     /**
      * Cast a ray against a child shape.
      *
-     * @param argOutput the ray-cast results.
-     * @param argInput the ray-cast input parameters.
-     * @param argTransform the transform to be applied to the shape.
-     * @param argChildIndex the child shape index
+     * @param output the ray-cast results.
+     * @param input the ray-cast input parameters.
+     * @param transform the transform to be applied to the shape.
+     * @param childIndex the child shape index
      * @return if hit
      */
     public abstract boolean raycast(RayCastOutput output, RayCastInput input, Transform transform,
@@ -103,8 +131,9 @@ public abstract class Shape {
     /**
      * Given a transform, compute the associated axis aligned bounding box for a child shape.
      *
-     * @param argAabb returns the axis aligned box.
-     * @param argXf the world transform of the shape.
+     * @param aabb returns the axis aligned box
+     * @param xf the world transform of the shape
+     * @param childIndex the child shape index
      */
     public abstract void computeAABB(final AABB aabb, final Transform xf, int childIndex);
 
@@ -124,9 +153,7 @@ public abstract class Shape {
      * @param xf the shape world transform.
      * @param p a point in world coordinates.
      * @param normalOut returns the direction in which the distance increases.
-     * @return distance returns the distance from the current shape.
+     * @return the distance from the current shape.
      */
     public abstract float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut);
-
-    public abstract Shape clone();
 }

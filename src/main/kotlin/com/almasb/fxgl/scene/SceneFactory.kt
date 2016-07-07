@@ -60,9 +60,9 @@ open class SceneFactory {
      */
     open fun newMainMenu(app: GameApplication): FXGLMenu {
         when (app.settings.menuStyle) {
-            MenuStyle.GTA5 -> return GTAVMainMenu(app)
+            MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.MAIN_MENU)
             MenuStyle.CCTR -> return CCTRMainMenu(app)
-            else -> return FXGLMainMenu(app)
+            else -> return FXGLDefaultMenu(app, MenuType.MAIN_MENU)
         }
     }
 
@@ -75,9 +75,9 @@ open class SceneFactory {
      */
     open fun newGameMenu(app: GameApplication): FXGLMenu {
         when (app.settings.menuStyle) {
-            MenuStyle.GTA5 -> return GTAVGameMenu(app)
+            MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.GAME_MENU)
             MenuStyle.CCTR -> return CCTRGameMenu(app)
-            else -> return FXGLGameMenu(app)
+            else -> return FXGLDefaultMenu(app, MenuType.GAME_MENU)
         }
     }
 }

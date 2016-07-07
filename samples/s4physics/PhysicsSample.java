@@ -117,7 +117,7 @@ public class PhysicsSample extends GameApplication {
         player = Entities.builder()
                 .type(Type.PLAYER)
                 .at(100, 100)
-                .bbox(new HitBox("PLAYER_BODY", new BoundingBox(0, 0, 40, 40)))
+                //.bbox(new HitBox("PLAYER_BODY", new BoundingBox(0, 0, 40, 40)))
                 .viewFromNode(new Rectangle(40, 40, Color.BLUE))
                 .with(playerControl)
                 .build();
@@ -125,7 +125,7 @@ public class PhysicsSample extends GameApplication {
         enemy = Entities.builder()
                 .type(Type.ENEMY)
                 .at(200, 100)
-                .bbox(new HitBox("ENEMY_BODY", new BoundingBox(0, 0, 40, 40)))
+                //.bbox(new HitBox("ENEMY_BODY", new BoundingBox(0, 0, 40, 40)))
                 .viewFromNode(new Rectangle(40, 40, Color.RED))
                 .build();
 

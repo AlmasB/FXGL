@@ -57,8 +57,7 @@ public final class MenuDataEvent extends MenuEvent {
     /**
      * When profile has been selected.
      */
-    public static final EventType<MenuDataEvent> PROFILE_SELECTED =
-            new EventType<>(ANY, "PROFILE_SELECTED");
+    //public static final EventType<MenuDataEvent> PROFILE_SELECTED = new EventType<>(ANY, "PROFILE_SELECTED");
 
     private final String data;
 

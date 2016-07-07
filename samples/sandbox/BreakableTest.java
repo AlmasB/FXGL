@@ -98,8 +98,8 @@ public class BreakableTest extends GameApplication {
         entity.addComponent(physicsComponent);
         entity.addComponent(new BreakablePhysicsComponent());
 
-        entity.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
-        entity.getBoundingBoxComponent().addHitBox(new HitBox("BODY2", new BoundingBox(40, 0, 40, 40)));
+        //entity.getBoundingBoxComponent().addHitBox(new HitBox("BODY", new BoundingBox(0, 0, 40, 40)));
+        //entity.getBoundingBoxComponent().addHitBox(new HitBox("BODY2", new BoundingBox(40, 0, 40, 40)));
 
         EntityView view = new EntityView();
         view.addNode(new Rectangle(40, 40, Color.BLUE));

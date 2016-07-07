@@ -81,6 +81,6 @@ public class FXGLEvent extends Event {
 
     @Override
     public String toString() {
-        return "FXGLEvent[type=" + getEventType().toString() + "]";
+        return "FXGLEvent[type=" + getEventType() + "]";
     }
 }

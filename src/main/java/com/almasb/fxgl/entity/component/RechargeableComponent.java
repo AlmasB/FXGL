@@ -35,7 +35,7 @@ import com.almasb.ents.component.DoubleComponent;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class RechargeableComponent extends DoubleComponent {
+public abstract class RechargeableComponent extends DoubleComponent {
     private double maxValue;
 
     public RechargeableComponent(double maxValue) {

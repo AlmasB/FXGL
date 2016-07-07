@@ -30,13 +30,16 @@ import com.almasb.ents.Component;
 import com.almasb.ents.Control;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.gameplay.GameWorld;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import javafx.geometry.BoundingBox;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.util.Duration;
 
 /**
  * Helper class with static convenience methods.
@@ -120,10 +123,10 @@ public class Entities {
         bounds.addComponent(new RotationComponent(0));
 
         bounds.addComponent(new BoundingBoxComponent(
-                new HitBox("LEFT",  new BoundingBox(-thickness, 0, thickness, h)),
-                new HitBox("RIGHT", new BoundingBox(w, 0, thickness, h)),
-                new HitBox("TOP",   new BoundingBox(0, -thickness, w, thickness)),
-                new HitBox("BOT",   new BoundingBox(0, h, w, thickness))
+                new HitBox("LEFT",  new Point2D(-thickness, 0), BoundingShape.box(thickness, h)),
+                new HitBox("RIGHT", new Point2D(w, 0), BoundingShape.box(thickness, h)),
+                new HitBox("TOP",   new Point2D(0, -thickness), BoundingShape.box(w, thickness)),
+                new HitBox("BOT",   new Point2D(0, h), BoundingShape.box(w, thickness))
         ));
 
         bounds.addComponent(new PhysicsComponent());
@@ -138,6 +141,15 @@ public class Entities {
      */
     public static GameEntityBuilder builder() {
         return new GameEntityBuilder();
+    }
+
+    /**
+     * Creates new animation builder.
+     *
+     * @return animation builder
+     */
+    public static AnimationBuilder animationBuilder() {
+        return new AnimationBuilder();
     }
 
     /**
@@ -202,10 +214,21 @@ public class Entities {
             return this;
         }
 
+        /**
+         * Finishes building entity.
+         *
+         * @return entity
+         */
         public GameEntity build() {
             return entity;
         }
 
+        /**
+         * Finishes building the entity and attaches it to given world.
+         *
+         * @param world the world to attach entity to
+         * @return entity
+         */
         public GameEntity buildAndAttach(GameWorld world) {
             world.addEntity(entity);
             return entity;

@@ -47,15 +47,18 @@ class LevelParsingSampleKt : GameApplication() {
     private val BLOCK_SIZE = 200.0
 
     override fun initSettings(settings: GameSettings) {
-        settings.width = 800
-        settings.height = 600
-        settings.title = "LevelParsingSample"
-        settings.version = "0.1developer"
-        settings.isFullScreen = false
-        settings.isIntroEnabled = false
-        settings.isMenuEnabled = false
-        settings.setShowFPS(true)
-        settings.applicationMode = ApplicationMode.DEVELOPER
+
+        with(settings) {
+            width = 800
+            height = 600
+            title = "LevelParsingSampleKt"
+            version = "0.1"
+            isFullScreen = false
+            isIntroEnabled = false
+            isMenuEnabled = false
+            setShowFPS(true)
+            applicationMode = ApplicationMode.DEVELOPER
+        }
     }
 
     override fun initInput() { }

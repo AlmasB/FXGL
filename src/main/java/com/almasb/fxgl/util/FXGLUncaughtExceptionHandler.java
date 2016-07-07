@@ -34,7 +34,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Default FXGL exception handler for runtime uncaught exceptions
+ * Default FXGL exception handler for runtime uncaught exceptions.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -59,9 +59,7 @@ public final class FXGLUncaughtExceptionHandler implements ExceptionHandler {
         dialogPane.setContentText("Exception details:");
         dialogPane.getButtonTypes().addAll(ButtonType.OK);
 
-        String message = e.getMessage();
-
-        dialogPane.setContentText(message != null ? message : "Ooops :'(");
+        dialogPane.setContentText(e.toString());
         dialog.initModality(Modality.APPLICATION_MODAL);
 
         Label label = new Label("Exception stacktrace:");

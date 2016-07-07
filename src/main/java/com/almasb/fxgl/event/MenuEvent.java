@@ -66,6 +66,9 @@ public class MenuEvent extends Event {
     public static final EventType<MenuEvent> EXIT_TO_MAIN_MENU =
             new EventType<>(ANY, "EXIT_TO_MAIN_MENU");
 
+    public static final EventType<MenuEvent> LOGOUT =
+            new EventType<>(ANY, "LOGOUT");
+
     public MenuEvent(EventType<? extends Event> eventType) {
         super(eventType);
     }

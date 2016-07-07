@@ -37,11 +37,9 @@ import com.almasb.fxgl.event.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.time.UpdateEventListener;
-import com.almasb.fxgl.ui.UIFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -49,7 +47,6 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +98,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
 
         initParticlesCanvas(width, height);
         initViewport(width, height);
-        initFPSText(height);
 
         log.debug("Game scene initialized: " + width + "x" + height);
     }
@@ -125,13 +121,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
         viewport = new Viewport(w, h);
         gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
-    }
-
-    private Text fpsText;
-
-    private void initFPSText(double height) {
-        fpsText = UIFactory.newText("", 24);
-        fpsText.setTranslateY(height - 40);
     }
 
     /**
@@ -236,17 +225,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
         uiRoot.setMouseTransparent(b);
     }
 
-    public void setShowFPSOverlay(boolean show) {
-        // TODO: reduce dependency
-        if (show) {
-            fpsText.textProperty().bind(FXGL.getMasterTimer().fpsProperty().asString("FPS: [%d]\n")
-                    .concat(FXGL.getMasterTimer().performanceFPSProperty().asString("Performance: [%d]")));
-            addUINode(fpsText);
-        } else {
-            removeUINode(fpsText);
-        }
-    }
-
     /**
      * Returns graphics context of the game scene.
      * The render layer is over all entities.
@@ -346,22 +324,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
                 .ifPresent(particles::remove);
     }
 
-    private ChangeListener<EntityView> viewChangeListener = (o, oldView, newView) -> {
-        Group renderGroup = getRenderGroup(oldView.getRenderLayer());
-        int index = renderGroup.getChildren().indexOf(oldView);
-
-        if (index != -1) {
-            renderGroup.getChildren().set(index, newView);
-        } else {
-            log.warning("Old view was not in the scene graph. Adding new view");
-            addGameView(newView);
-        }
-    };
-
-//    private ChangeListener<RenderLayer> renderLayerChangeListener = (o, oldLayer, newLayer) -> {
-//
-//    };
-
     @Override
     public void onComponentAdded(Component component) {
         if (component instanceof MainViewComponent) {
@@ -372,7 +334,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
             EntityView view = viewComponent.getView();
             addGameView(view);
 
-            //viewComponent.viewProperty().addListener(viewChangeListener);
             viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
                 getRenderGroup(oldLayer).getChildren().remove(view);
                 getRenderGroup(newLayer).getChildren().add(view);
@@ -389,8 +350,6 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
 
             EntityView view = viewComponent.getView();
             removeGameView(view);
-
-            //viewComponent.viewProperty().removeListener(viewChangeListener);
         }
     }
 

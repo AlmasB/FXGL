@@ -30,20 +30,20 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.IntroScene
 import com.almasb.fxgl.ui.UIFactory
 import com.almasb.fxgl.util.Version
-import javafx.animation.FadeTransition
-import javafx.animation.ParallelTransition
-import javafx.animation.RotateTransition
-import javafx.animation.TranslateTransition
+import javafx.animation.*
+import javafx.geometry.Point2D
 import javafx.geometry.Point3D
 import javafx.scene.Group
+import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import javafx.util.Duration
+import java.util.*
 
 /**
  * This is the default FXGL Intro animation.
-
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLIntroScene() : IntroScene() {
@@ -75,9 +75,7 @@ class FXGLIntroScene() : IntroScene() {
         val poweredText = makePoweredBy()
         val version = makeVersion()
 
-        val fireworks = FireworksPane(w, h)
-
-        val content = Group(fxglText, poweredText, version, fireworks)
+        val content = Group(fxglText, poweredText, version)
 
         root.children.addAll(Rectangle(w, h), content)
 
@@ -100,8 +98,6 @@ class FXGLIntroScene() : IntroScene() {
         tt4.toX = originX + dx * 3.3
         tt4.toY = h / 2
 
-        fireworks.play()
-
         animation = ParallelTransition(tt, tt2, tt3, tt4)
         animation.setOnFinished { event ->
             poweredText.isVisible = true
@@ -112,13 +108,7 @@ class FXGLIntroScene() : IntroScene() {
             rt.axis = Point3D(0.0, 0.0, 1.0)
             rt.byAngle = -180.0
             rt.setOnFinished { e ->
-                val ft = FadeTransition(Duration.seconds(2.5), root)
-                ft.toValue = 0.0
-                ft.setOnFinished { e1 ->
-                    fireworks.stop()
-                    finishIntro()
-                }
-                ft.play()
+                animateParticles()
             }
             rt.play()
         }
@@ -154,4 +144,77 @@ class FXGLIntroScene() : IntroScene() {
     }
 
     override fun startIntro() = animation.play()
+
+    private fun animateParticles() {
+        val particles = ArrayList<Particle>()
+
+        val image = root.snapshot(null, null)
+
+        val reader = image.pixelReader
+        for (y in 0..h.toInt() - 1) {
+            for (x in 0..w.toInt() - 1) {
+                val color = reader.getColor(x, y)
+
+                if (color != Color.BLACK) {
+                    particles.add(Particle(x.toDouble(), y.toDouble()))
+                }
+            }
+        }
+
+        val canvas = Canvas(w, h)
+        val g = canvas.graphicsContext2D
+
+        root.children.setAll(canvas)
+
+        val timer = object : AnimationTimer() {
+            override fun handle(now: Long) {
+
+                if (particles.isEmpty()) {
+                    stop()
+
+                    val ft = FadeTransition(Duration.seconds(0.5), root)
+                    ft.toValue = 0.0
+                    ft.setOnFinished { e1 ->
+                        finishIntro()
+                    }
+                    ft.play()
+                }
+
+                particles.removeIf { it.life == 0.0 }
+
+                particles.filter({ p -> p.vel === Point2D.ZERO })
+                        .sortedWith(Comparator { p1, p2 -> (p1.y - p2.y).toInt() })
+                        .take(50)
+                        .forEach { p -> p.vel = Point2D(Math.random() - 0.5, Math.random() - 0.5) }
+
+                g.setGlobalAlpha(1.0)
+                g.setFill(Color.BLACK)
+                g.fillRect(0.0, 0.0, w, h)
+                g.setFill(Color.WHITE)
+
+                for (p in particles) {
+                    p.update()
+
+                    g.setGlobalAlpha(p.life)
+                    g.fillOval(p.x, p.y, 1.0, 1.0)
+                }
+            }
+        }
+        timer.start()
+    }
+
+    private class Particle(var x: Double, var y: Double) {
+        var vel = Point2D.ZERO
+        var life = 1.0
+
+        fun update() {
+            life -= 0.017 * 0.45
+
+            if (life < 0)
+                life = 0.0
+
+            x += vel.x
+            y += vel.y
+        }
+    }
 }

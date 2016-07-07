@@ -51,7 +51,7 @@ class Credits {
             add("Powered by FXGL ${Version.getAsString()}")
             add("Graphics: JavaFX ${Version.getJavaFXAsString()}")
             add("Physics: JBox2D (jbox2d.org) ${Version.getJBox2DAsString()}")
-            add("Written in: Java 1.8.0_72, Kotlin ${Version.getKotlinAsString()}")
+            add("Written in: Java ${Version.getJavaFXAsString()}, Kotlin ${Version.getKotlinAsString()}")
             add("Author: Almas Baimagambetov")
             add("https://github.com/AlmasB/FXGL")
             add("")

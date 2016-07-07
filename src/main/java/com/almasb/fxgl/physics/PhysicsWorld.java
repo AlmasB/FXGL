@@ -53,9 +53,7 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
@@ -125,6 +123,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         return e.hasComponent(PhysicsComponent.class);
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     private int getHandlerIndex(Entity e1, Entity e2) {
         return collisionHandlers.indexOf(new Pair<>(e1.getComponentUnsafe(TypeComponent.class).getValue(),
                 e2.getComponentUnsafe(TypeComponent.class).getValue()));
@@ -412,29 +411,60 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
             Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
             Point2D boundsCenterLocal = boundsCenter.subtract(entityCenter);
 
+            //Point2D boundsCenterLocal = box.centerWorld(position.getX(), position.getY()).subtract(entityCenter);
+
             double w = bounds.getWidth();
             double h = bounds.getHeight();
 
             FixtureDef fd = physics.fixtureDef;
 
-            Shape shape = null;
+            Shape b2Shape = null;
+            BoundingShape boundingShape = box.getShape();
 
-            if (box.getShape() == BoundingShape.BOX) {
-                PolygonShape rectShape = new PolygonShape();
-                rectShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
-                        new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
-                shape = rectShape;
-            } else if (box.getShape() == BoundingShape.CIRCLE) {
-                CircleShape circleShape = new CircleShape();
-                circleShape.setRadius(toMeters(w / 2));
-                circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY()));
-                shape = circleShape;
-            } else {
-                log.warning("Unknown hit box shape: " + box.getShape());
+            switch (boundingShape.type) {
+                case CIRCLE:
+
+                    CircleShape circleShape = new CircleShape();
+                    circleShape.setRadius(toMeters(w / 2));
+                    circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY()));
+
+                    b2Shape = circleShape;
+                    break;
+                case EDGE:
+                    log.warning("Unsupported hit box shape");
+                    throw new UnsupportedOperationException("Using unsupported (yet) edge shape");
+                    //break;
+                case POLYGON:
+                    //Dimension2D wh = (Dimension2D) boundingShape.data;
+
+                    PolygonShape polygonShape = new PolygonShape();
+                    polygonShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
+                            new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
+                    b2Shape = polygonShape;
+                    break;
+                case CHAIN:
+
+                    if (physics.body.getType() != BodyType.STATIC) {
+                        throw new IllegalArgumentException("BoundingShape.chain() can only be used with static objects");
+                    }
+
+                    Point2D[] points = (Point2D[]) boundingShape.data;
+
+                    Vec2[] vertices = new Vec2[points.length];
+
+                    for (int i = 0; i < vertices.length; i++) {
+                        vertices[i] = toVector(points[i].subtract(boundsCenterLocal))
+                                .subLocal(toVector(bbox.getCenterLocal()));
+                    }
+
+                    ChainShape chainShape = new ChainShape();
+                    chainShape.createLoop(vertices, vertices.length);
+                    b2Shape = chainShape;
+                    break;
             }
 
             // we use definitions from user, but override shape
-            fd.setShape(shape);
+            fd.setShape(b2Shape);
 
             Fixture fixture = physics.body.createFixture(fd);
             fixture.setUserData(box);
@@ -453,17 +483,19 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         Shape shape = null;
 
         BoundingBoxComponent bbox = Entities.getBBox(e);
+
         if (!bbox.hitBoxesProperty().isEmpty()) {
-            if (bbox.hitBoxesProperty().get(0).getShape() == BoundingShape.BOX) {
+            if (bbox.hitBoxesProperty().get(0).getShape().type == ShapeType.POLYGON) {
                 PolygonShape rectShape = new PolygonShape();
                 rectShape.setAsBox(toMeters(width / 2), toMeters(height / 2));
                 shape = rectShape;
-            } else if (bbox.hitBoxesProperty().get(0).getShape() == BoundingShape.CIRCLE) {
+            } else if (bbox.hitBoxesProperty().get(0).getShape().type == ShapeType.CIRCLE) {
                 CircleShape circleShape = new CircleShape();
                 circleShape.setRadius(toMeters(width / 2));
                 shape = circleShape;
             } else {
-                log.warning("Unknown hit box shape: " + bbox.hitBoxesProperty().get(0).getShape());
+                log.warning("Unknown hit box shape: " + bbox.hitBoxesProperty().get(0).getShape().type);
+                throw new UnsupportedOperationException();
             }
         }
 

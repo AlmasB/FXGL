@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.time
 
+import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
@@ -327,7 +328,7 @@ private constructor() : AnimationTimer(), MasterTimer {
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
-        val bundle = UserProfile.Bundle("timer")
+        val bundle = Bundle("timer")
         bundle.put("playtime", playtime.value)
 
         bundle.log()

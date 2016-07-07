@@ -25,19 +25,22 @@
  */
 package com.almasb.fxgl.scene;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.MouseTrigger;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.io.IOResult;
+import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
+import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import com.almasb.fxgl.ui.UIFactory;
@@ -50,10 +53,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -63,7 +63,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.function.Supplier;
 
 /**
  * This is a base class for main/game menus. It provides several
@@ -71,59 +72,143 @@ import java.util.List;
  * It also allows for implementors to build menus from scratch. Freshly
  * build menus can interact with FXGL by calling fire* methods.
  *
+ * Both main and game menus <strong>should</strong> have the following items:
+ * <ul>
+ *     <li>Title</li>
+ *     <li>Version</li>
+ *     <li>Profile name</li>
+ *     <li>Menu Body</li>
+ *     <li>Menu Content</li>
+ * </ul>
+ *
+ * However, in reality a menu can contain anything.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class FXGLMenu extends FXGLScene {
 
     /**
-     * The logger
+     * The logger.
      */
     protected static final Logger log = FXGL.getLogger("FXGL.Menu");
 
     protected final GameApplication app;
 
-    public FXGLMenu(GameApplication app) {
+    protected final MenuType type;
+
+    protected final Pane menuRoot = new Pane();
+    protected final Pane contentRoot = new Pane();
+
+    protected final MenuContent EMPTY = new MenuContent();
+
+    public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
+        this.type = type;
+
+        getRoot().getChildren().addAll(
+                createBackground(app.getWidth(), app.getHeight()),
+                createTitleView(app.getSettings().getTitle()),
+                createVersionView(makeVersionString()),
+                menuRoot, contentRoot);
+
+        // TODO: if different user logs in, does not handle
+        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
+            getRoot().getChildren().add(createProfileView("Profile: " + event.getProfileName()));
+        });
     }
 
     /**
+     * Switches current active menu body to given.
      *
-     * @return menu content containing list of save files and load/delete buttons
+     * @param menuBox parent node containing menu body
+     */
+    protected void switchMenuTo(Node menuBox) {}
+
+    /**
+     * Switches current active content to given.
+     *
+     * @param content menu content
+     */
+    protected void switchMenuContentTo(Node content) {}
+
+    protected Button createActionButton(String name, Runnable action) {
+        return null;
+    }
+
+    protected Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
+        return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
+    }
+
+    /**
+     * @return full version string
+     */
+    private String makeVersionString() {
+        return "v" + app.getSettings().getVersion()
+                + (app.getSettings().getApplicationMode() == ApplicationMode.RELEASE
+                ? "" : "-" + app.getSettings().getApplicationMode());
+    }
+
+    /**
+     * Create menu background.
+     *
+     * @param width width of the app
+     * @param height height of the app
+     * @return menu background UI object
+     */
+    protected abstract Node createBackground(double width, double height);
+
+    /**
+     * Create view for the app title.
+     *
+     * @param title app title
+     * @return UI object
+     */
+    protected abstract Node createTitleView(String title);
+
+    /**
+     * Create view for version string.
+     *
+     * @param version version string
+     * @return UI object
+     */
+    protected abstract Node createVersionView(String version);
+
+    /**
+     * Create view for profile name.
+     *
+     * @param profileName profile user name
+     * @return UI object
+     */
+    protected abstract Node createProfileView(String profileName);
+
+    /**
+     * @return menu content containing list of save files and loadTask/delete buttons
      */
     protected final MenuContent createContentLoad() {
-        ListView<String> list = new ListView<>();
+        ListView<SaveFile> list = new ListView<>();
 
-        IOResult<List<String> > io = app.getSaveLoadManager().loadSaveFileNames();
-
-        if (io.hasData()) {
-            list.getItems().setAll(io.getData());
-        } else {
-            log.warning(io::getErrorMessage);
-            list.getItems().clear();
-        }
-
+        list.setItems(app.getSaveLoadManager().saveFiles());
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
-        if (list.getItems().size() > 0) {
-            list.getSelectionModel().selectFirst();
-        }
+        // this runs async
+        app.getSaveLoadManager().querySaveFiles();
 
         Button btnLoad = UIFactory.newButton("LOAD");
+        btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
+
         btnLoad.setOnAction(e -> {
-            String fileName = list.getSelectionModel().getSelectedItem();
-            if (fileName == null)
-                return;
+            SaveFile saveFile = list.getSelectionModel().getSelectedItem();
 
-            fireLoad(fileName);
+            fireLoad(saveFile);
         });
-        Button btnDelete = UIFactory.newButton("DELETE");
-        btnDelete.setOnAction(e -> {
-            String fileName = list.getSelectionModel().getSelectedItem();
-            if (fileName == null)
-                return;
 
-            fireDelete(fileName);
-            list.getItems().remove(fileName);
+        Button btnDelete = UIFactory.newButton("DELETE");
+        btnDelete.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
+
+        btnDelete.setOnAction(e -> {
+            SaveFile saveFile = list.getSelectionModel().getSelectedItem();
+
+            fireDelete(saveFile);
         });
 
         HBox hbox = new HBox(50, btnLoad, btnDelete);
@@ -132,6 +217,9 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(list, hbox);
     }
 
+    /**
+     * @return menu content with difficulty and playtime
+     */
     protected final MenuContent createContentGameplay() {
         Spinner<GameDifficulty> difficultySpinner =
                 new FXGLSpinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
@@ -146,7 +234,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content containing input mappings (action -> key/mouse)
      */
     protected final MenuContent createContentControls() {
@@ -218,7 +305,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content with video settings
      */
     protected final MenuContent createContentVideo() {
@@ -235,7 +321,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     *
      * @return menu content containing music and sound volume sliders
      */
     protected final MenuContent createContentAudio() {
@@ -309,6 +394,9 @@ public abstract class FXGLMenu extends FXGLScene {
         return content;
     }
 
+    /**
+     * @return menu content containing multiplayer options
+     */
     protected final MenuContent createContentMultiplayer() {
         return new MenuContent(UIFactory.newText("TODO: MULTIPLAYER"));
     }
@@ -317,18 +405,21 @@ public abstract class FXGLMenu extends FXGLScene {
      * A generic vertical box container for menu content
      * where each element is followed by a separator.
      */
-    protected class MenuContent extends VBox {
+    protected static class MenuContent extends VBox {
         public MenuContent(Node... items) {
-            int maxW = Arrays.asList(items)
-                    .stream()
-                    .mapToInt(n -> (int)n.getLayoutBounds().getWidth())
-                    .max()
-                    .orElse(0);
 
-            getChildren().add(createSeparator(maxW));
+            if (items.length > 0) {
+                int maxW = Arrays.asList(items)
+                        .stream()
+                        .mapToInt(n -> (int) n.getLayoutBounds().getWidth())
+                        .max()
+                        .orElse(0);
 
-            for (Node item : items) {
-                getChildren().addAll(item, createSeparator(maxW));
+                getChildren().add(createSeparator(maxW));
+
+                for (Node item : items) {
+                    getChildren().addAll(item, createSeparator(maxW));
+                }
             }
         }
 
@@ -337,6 +428,10 @@ public abstract class FXGLMenu extends FXGLScene {
             sep.setEndX(width);
             sep.setStroke(Color.DARKGREY);
             return sep;
+        }
+
+        public double getLayoutHeight() {
+            return 10 * getChildren().size();
         }
     }
 
@@ -351,6 +446,11 @@ public abstract class FXGLMenu extends FXGLScene {
 
     private MenuEventListener listener;
 
+    /**
+     * Set main listener for menu events.
+     *
+     * @param listener menu listener
+     */
     public void setListener(MenuEventListener listener) {
         this.listener = listener;
     }
@@ -365,6 +465,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * Starts new game.
      */
     protected final void fireNewGame() {
+        log.debug("fireNewGame()");
+
         listener.onNewGame();
         fireMenuEvent(new MenuEvent(MenuEvent.NEW_GAME));
     }
@@ -374,6 +476,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * Lads the game state from last modified save file.
      */
     protected final void fireContinue() {
+        log.debug("fireContinue()");
+
         listener.onContinue();
         fireMenuEvent(new MenuEvent(MenuEvent.CONTINUE));
     }
@@ -384,9 +488,11 @@ public abstract class FXGLMenu extends FXGLScene {
      *
      * @param fileName  name of the saved file
      */
-    protected final void fireLoad(String fileName) {
+    protected final void fireLoad(SaveFile fileName) {
+        log.debug("fireLoad()");
+
         listener.onLoad(fileName);
-        fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
+        //fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
     }
 
     /**
@@ -394,6 +500,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * Can only be fired from game menu. Saves current state of the game with given file name.
      */
     protected final void fireSave() {
+        log.debug("fireSave()");
+
         listener.onSave();
         fireMenuEvent(new MenuEvent(MenuEvent.SAVE));
     }
@@ -403,27 +511,46 @@ public abstract class FXGLMenu extends FXGLScene {
      *
      * @param fileName name of the save file
      */
-    protected final void fireDelete(String fileName) {
+    protected final void fireDelete(SaveFile fileName) {
+        log.debug("fireDelete()");
+
         listener.onDelete(fileName);
-        fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
+        //fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
     }
 
     /**
      * Fires {@link MenuEvent#RESUME} event.
-     * Can only be fired from game menu. Will close the menu and unpause the game.
+     * Can only be fired from game menu.
+     * Will close the menu and unpause the game.
      */
     protected final void fireResume() {
+        log.debug("fireResume()");
+
         listener.onResume();
         fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
     }
 
+    /**
+     * Fires {@link MenuEvent#LOGOUT} event.
+     * Can only be fired from main menu.
+     * Logs out the user profile.
+     */
     protected final void fireLogout() {
+        log.debug("fireLogout()");
+
+        switchMenuContentTo(EMPTY);
+
         listener.onLogout();
-        // TODO: do we need events now?
-        // TODO: we must clear menu content, since we are logging out
+        fireMenuEvent(new MenuEvent(MenuEvent.LOGOUT));
     }
 
+    /**
+     * Call multiplayer access in main menu.
+     * Currently not supported.
+     */
     protected final void fireMultiplayer() {
+        log.debug("fireMultiplayer()");
+
         listener.onMultiplayer();
     }
 
@@ -432,6 +559,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * App will clean up the world/the scene and exit.
      */
     protected final void fireExit() {
+        log.debug("fireExit()");
+
         listener.onExit();
         fireMenuEvent(new MenuEvent(MenuEvent.EXIT));
     }
@@ -441,6 +570,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * App will clean up the world/the scene and enter main menu.
      */
     protected final void fireExitToMainMenu() {
+        log.debug("fireExitToMainMenu()");
+
         listener.onExitToMainMenu();
         fireMenuEvent(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
     }

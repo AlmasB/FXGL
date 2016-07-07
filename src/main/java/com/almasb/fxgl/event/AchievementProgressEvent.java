@@ -30,9 +30,11 @@ import com.almasb.fxgl.gameplay.Achievement;
 import javafx.event.EventType;
 
 /**
+ * Fired when a numeric value based achievement has made some progress.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class AchievementProgressEvent extends AchievementEvent {
+public final class AchievementProgressEvent extends AchievementEvent {
 
     public static final EventType<AchievementProgressEvent> PROGRESS =
             new EventType<>(ANY, "PROGRESS");
@@ -51,5 +53,10 @@ public class AchievementProgressEvent extends AchievementEvent {
         super(PROGRESS, achievement);
         this.value = value;
         this.max = max;
+    }
+
+    @Override
+    public String toString() {
+        return "AchievementProgressEvent[value=" + value + ",max=" + max + "]";
     }
 }
