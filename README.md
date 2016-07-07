@@ -57,7 +57,8 @@ If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefu
 ## Extra Info
 For more information check out the project [Wiki](https://github.com/AlmasB/FXGL/wiki).
 
-## Basic Usage / Examples
+## Basic Usage
+#### Java Example
 ```java
 public class BasicGameApp extends GameApplication {
 
@@ -93,7 +94,39 @@ public class BasicGameApp extends GameApplication {
     }
 }
 ```
-* The samples/ folder will be constantly updated to include demonstrations of various features.
+#### Kotlin Example
+```kotlin
+class BasicGameApp : GameApplication() {
+
+    override fun initSettings(settings: GameSettings) {
+        with(settings) {
+            width = 800
+            height = 600
+            title = "Basic Game App"
+            version = "0.1"
+            // other settings
+        }
+    }
+
+    override fun initInput() { }
+
+    override fun initAssets() { }
+
+    override fun initGame() { }
+
+    override fun initPhysics() { }
+
+    override fun initUI() { }
+
+    override fun onUpdate(tpf: Double) { }
+}
+
+fun main(args: Array<String>) {
+    Application.launch(BasicGameApp::class.java, *args)
+}
+```
+
+* The [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
 * The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) videos will walk you through the basics.
 * For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
 
