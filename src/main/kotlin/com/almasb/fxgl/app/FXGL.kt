@@ -253,7 +253,7 @@ class FXGL {
             if (!initDone) {
 
                 if (value == "true" || value == "false") {
-                    internalProperties.add(Pair(key, java.lang.Boolean.parseBoolean(value)))
+                    internalProperties.add(Pair(key, java.lang.Boolean.parseBoolean(value as String)))
                 } else {
                     try {
                         internalProperties.add(Pair(key, Integer.parseInt(value.toString())))
