@@ -36,16 +36,11 @@ import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
-import com.badlogic.gdx.ai.btree.decorator.Include;
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibrary;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager;
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import common.PlayerControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
-import sandbox.Dog;
 
 /**
  * This is an example of a basic FXGL game application.

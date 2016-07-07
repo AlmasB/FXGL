@@ -25,10 +25,6 @@
  */
 package sandbox;
 
-import com.almasb.astar.AStarGrid;
-import com.almasb.astar.AStarNode;
-import com.almasb.astar.NodeState;
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.algorithm.Grid;
 import com.almasb.fxgl.algorithm.MapGenerator;
 import com.almasb.fxgl.algorithm.TileType;
@@ -36,14 +32,11 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
-import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import kotlin.Pair;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Demo that uses A* search to find a path between 2 nodes in a grid.

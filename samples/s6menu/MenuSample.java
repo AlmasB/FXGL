@@ -27,7 +27,6 @@ package s6menu;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**

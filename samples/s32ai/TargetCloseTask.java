@@ -26,7 +26,6 @@
 
 package s32ai;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
 import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;

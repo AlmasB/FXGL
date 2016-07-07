@@ -28,7 +28,6 @@ package s2initgame;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;

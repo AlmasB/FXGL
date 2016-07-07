@@ -26,8 +26,6 @@
 
 package s31pacman;
 
-import com.almasb.fxgl.app.FXGL;
-
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

@@ -26,11 +26,9 @@
 
 package s10realphysics;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.RaycastResult;
 import com.almasb.fxgl.settings.GameSettings;

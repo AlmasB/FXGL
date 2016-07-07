@@ -28,22 +28,17 @@ package s7saving;
 import com.almasb.easyio.serialization.Bundle;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.settings.UserProfile;
 import common.PlayerControl;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
-import java.io.Serializable;
 
 /**
  * Shows how to save and load game state.
