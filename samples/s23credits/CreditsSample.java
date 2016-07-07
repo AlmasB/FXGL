@@ -47,13 +47,14 @@ public class CreditsSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("CreditsSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
+        // 1. create a list of text you want to show
         List<String> list = new ArrayList<>();
         list.add("-----------------------");
         list.add("Sample: A sample credit");
@@ -61,6 +62,7 @@ public class CreditsSample extends GameApplication {
 
         IntStream.range(0, 50).forEach(i -> list.add("Line number: " + i));
 
+        // 2. set credits
         settings.setCredits(new Credits(list));
     }
 

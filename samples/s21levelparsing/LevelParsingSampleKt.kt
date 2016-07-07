@@ -26,7 +26,6 @@
 
 package s21levelparsing
 
-import com.almasb.ents.Entity
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.entity.Entities
@@ -37,7 +36,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 
 /**
- * This is an example of a basic FXGL game application.
+ * This is an example of a basic FXGL game application in Kotlin.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *

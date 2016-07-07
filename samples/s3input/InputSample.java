@@ -43,7 +43,7 @@ public class InputSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("InputSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);

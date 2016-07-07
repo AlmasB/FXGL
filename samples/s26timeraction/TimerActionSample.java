@@ -34,7 +34,9 @@ import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows how to use timer actions.
+ * Press F to pause / resume the action.
+ * Press E to make the action expire.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

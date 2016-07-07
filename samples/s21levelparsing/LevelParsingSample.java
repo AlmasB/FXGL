@@ -35,7 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows to load a level.
+ * Shows how to load a level.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -64,8 +64,14 @@ public class LevelParsingSample extends GameApplication {
 
     @Override
     protected void initGame() {
+
+        // 1. create a parser and set it up
         TextLevelParser parser = new TextLevelParser();
+
+        // 2. empty chars are ignored
         parser.setEmptyChar('0');
+
+        // 3. for each '1' and '2' an entity will be produced based on next callbacks
         parser.addEntityProducer('1', (x, y) -> {
             return Entities.builder()
                     .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
@@ -80,6 +86,7 @@ public class LevelParsingSample extends GameApplication {
                     .build();
         });
 
+        // 4. parse the level file and set it
         Level level = parser.parse("level0.txt");
 
         getGameWorld().setLevel(level);

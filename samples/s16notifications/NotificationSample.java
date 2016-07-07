@@ -35,6 +35,7 @@ import javafx.scene.input.KeyCode;
 
 /**
  * Shows how to use notifications.
+ * When app is running press F to show a notification.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -44,8 +45,8 @@ public class NotificationSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
-        settings.setVersion("0.1developer");
+        settings.setTitle("NotificationSample");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);

@@ -50,7 +50,7 @@ public class ParticlesSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("ParticlesSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);

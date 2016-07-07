@@ -36,6 +36,7 @@ import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -66,7 +67,7 @@ public class PhysicsSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("PhysicsSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -117,7 +118,8 @@ public class PhysicsSample extends GameApplication {
         player = Entities.builder()
                 .type(Type.PLAYER)
                 .at(100, 100)
-                //.bbox(new HitBox("PLAYER_BODY", new BoundingBox(0, 0, 40, 40)))
+                // 1. define hit boxes manually
+                .bbox(new HitBox("PLAYER_BODY", BoundingShape.box(40, 40)))
                 .viewFromNode(new Rectangle(40, 40, Color.BLUE))
                 .with(playerControl)
                 .build();
@@ -125,11 +127,11 @@ public class PhysicsSample extends GameApplication {
         enemy = Entities.builder()
                 .type(Type.ENEMY)
                 .at(200, 100)
-                //.bbox(new HitBox("ENEMY_BODY", new BoundingBox(0, 0, 40, 40)))
-                .viewFromNode(new Rectangle(40, 40, Color.RED))
+                // OR let the view generate it from view data
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.RED))
                 .build();
 
-        // 1. we need to add Collidable component and set its value to true
+        // 2. we need to add Collidable component and set its value to true
         // so that collision system can 'see' our entities
         player.addComponent(new CollidableComponent(true));
         enemy.addComponent(new CollidableComponent(true));
@@ -139,7 +141,7 @@ public class PhysicsSample extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        // 2. get physics world and register a collision handler
+        // 3. get physics world and register a collision handler
         // between Type.PLAYER and Type.ENEMY
 
         PhysicsWorld physics = getPhysicsWorld();

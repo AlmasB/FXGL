@@ -32,7 +32,7 @@ import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
- * This is an example of a basic FXGL game application.
+ * This sample shows how to define and use custom services.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -43,7 +43,7 @@ public class CustomServicesSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("CustomServicesSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -72,6 +72,8 @@ public class CustomServicesSample extends GameApplication {
 
     @Override
     protected void initGame() {
+
+        // 2. ask FXGL to give you an instance
         Printer printer = FXGL.getInstance(Printer.class);
 
         printer.print("Using custom service");

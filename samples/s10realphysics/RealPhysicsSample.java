@@ -62,7 +62,7 @@ public class RealPhysicsSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("RealPhysicsSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -79,13 +79,13 @@ public class RealPhysicsSample extends GameApplication {
             protected void onActionBegin() {
                 GameEntity box = createPhysicsEntity();
 
+                // 3. set hit box (-es) to specify bounding shape
                 box.getBoundingBoxComponent()
                         .addHitBox(new HitBox("Left", BoundingShape.box(40, 40)));
                 box.getBoundingBoxComponent()
                         .addHitBox(new HitBox("Right", new Point2D(40, 0), BoundingShape.box(40, 40)));
-                // 3. use true flag to generate bbox from the view
-                // bbox shape is rectangular
-                box.getMainViewComponent().setView(new Rectangle(80, 40, Color.BLUE), false);
+
+                box.getMainViewComponent().setView(new Rectangle(80, 40, Color.BLUE));
 
                 getGameWorld().addEntity(box);
             }
@@ -96,7 +96,7 @@ public class RealPhysicsSample extends GameApplication {
             protected void onActionBegin() {
                 GameEntity ball = createPhysicsEntity();
 
-                // 3. OR set hit box manually to specify bounding shape
+                // 3. set hit box to specify bounding shape
                 ball.getBoundingBoxComponent()
                         .addHitBox(new HitBox("Test", BoundingShape.circle(20)));
                 ball.getMainViewComponent().setView(new Circle(20, Color.RED));
@@ -104,39 +104,6 @@ public class RealPhysicsSample extends GameApplication {
                 getGameWorld().addEntity(ball);
             }
         }, MouseButton.SECONDARY);
-
-        input.addAction(new UserAction("Spawn Polygon") {
-            @Override
-            protected void onActionBegin() {
-                GameEntity polygon = createPhysicsEntity();
-
-                int size = 40;
-
-                // 3. OR set hit box manually to specify bounding shape
-                polygon.getBoundingBoxComponent()
-                        //.addHitBox(new HitBox("Test", new BoundingBox(0, 0, 60, 60), BoundingShape.BOX));
-                        .addHitBox(new HitBox("Test", BoundingShape.chain(
-                                new Point2D(0, 0),
-                                new Point2D(size, 0),
-                                new Point2D(size, size),
-                                new Point2D(size * 2, size),
-                                new Point2D(size * 2, size * 2),
-                                new Point2D(0, size * 2))
-                        ));
-
-                EntityView view = new EntityView();
-                view.addNode(new Line(0, 0, size, 0));
-                view.addNode(new Line(size, 0, size, size));
-                view.addNode(new Line(size, size, size * 2, size));
-                view.addNode(new Line(size * 2, size, size * 2, size * 2));
-                view.addNode(new Line(size * 2, size * 2, 0, size * 2));
-                view.addNode(new Line(0, size * 2, 0, 0));
-
-                polygon.getMainViewComponent().setView(view);
-
-                getGameWorld().addEntity(polygon);
-            }
-        }, KeyCode.F);
     }
 
     @Override

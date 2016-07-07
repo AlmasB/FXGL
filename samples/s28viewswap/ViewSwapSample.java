@@ -39,6 +39,7 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * Shows how to change views for an entity at runtime.
+ * Press F to change the view for player.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -51,7 +52,7 @@ public class ViewSwapSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("ViewSwapSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);

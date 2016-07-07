@@ -39,6 +39,7 @@ import javafx.scene.paint.Color;
 
 /**
  * Shows how to use in-game windows.
+ * When app is running press O to open an in-game window.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -49,7 +50,7 @@ public class InGameWindowSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("InGameWindowSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -83,7 +84,7 @@ public class InGameWindowSample extends GameApplication {
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void openWindow() {
         // 1. create in-game window
-        InGameWindow window = new InGameWindow("Character Info");
+        InGameWindow window = new InGameWindow("Window Title");
 
         // 2. set properties
         window.setPrefSize(300, 200);

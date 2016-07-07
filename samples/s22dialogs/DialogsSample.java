@@ -34,6 +34,7 @@ import javafx.scene.input.KeyCode;
 
 /**
  * Shows an example of FXGL dialogs.
+ * Press F to open a dialog.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -44,7 +45,7 @@ public class DialogsSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("DialogsSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -58,6 +59,7 @@ public class DialogsSample extends GameApplication {
             @Override
             protected void onActionBegin() {
                 // 1. get display service and use one of the show* methods
+                // this shows a dialog that only takes alphanumerical characters as input
                 getDisplay().showInputBox("Simple Dialog", DialogPane.ALPHANUM, System.out::println);
             }
         }, KeyCode.F);

@@ -43,8 +43,8 @@ public class FXMLSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("Basic FXGL Application");
-        settings.setVersion("0.1developer");
+        settings.setTitle("FXMLSample");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);

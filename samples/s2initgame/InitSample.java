@@ -37,7 +37,8 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to init a basic game object and attach to world.
+ * Shows how to init a basic game object and attach it to the world
+ * using predefined GameEntity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -57,7 +58,7 @@ public class InitSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("InitSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);

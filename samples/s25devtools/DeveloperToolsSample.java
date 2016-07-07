@@ -37,20 +37,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to init a basic game object and attach to world
- * using fluent API.
+ * API INCOMPLETE
+ *
+ * Shows how to use developer panels to modify the game world at runtime.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class DeveloperToolsSample extends GameApplication {
 
-    // 1. define types of entities in the game using Enum
     private enum Type {
         PLAYER
     }
 
-    // make the field instance level
-    // but do NOT init here for properly functioning save-load system
     private GameEntity player;
 
     @Override
@@ -58,7 +56,7 @@ public class DeveloperToolsSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("DeveloperToolsSample");
-        settings.setVersion("0.1developer");
+        settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -81,7 +79,6 @@ public class DeveloperToolsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        // 2. create entity and attach to world using fluent API
         player = Entities.builder()
                 .type(Type.PLAYER)
                 .at(100, 100)
