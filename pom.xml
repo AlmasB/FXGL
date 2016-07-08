@@ -4,11 +4,11 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.4</version>
+    <version>0.2.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
-    <description>Simple JavaFX Game Library</description>
+    <description>JavaFX / Kotlin Game Library</description>
     <url>https://jitpack.io/#AlmasB/FXGL/${project.version}</url>
 
     <properties>
