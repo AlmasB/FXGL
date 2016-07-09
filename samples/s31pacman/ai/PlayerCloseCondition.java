@@ -24,28 +24,24 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.ai;
 
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.entity.GameEntity;
+import javafx.geometry.Point2D;
+import s31pacman.PacmanApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerEnemyHandler extends CollisionHandler {
-
-    private PacmanApp app;
-
-    public PlayerEnemyHandler() {
-        super(EntityType.PLAYER, EntityType.ENEMY);
-
-        app = (PacmanApp) FXGL.getApp();
-    }
+public class PlayerCloseCondition extends Condition {
 
     @Override
-    protected void onCollisionBegin(Entity player, Entity enemy) {
+    public boolean evaluate() {
+        GameEntity player = ((PacmanApp) FXGL.getApp()).getPlayer();
 
-        app.onPlayerKilled();
+        return player.getPositionComponent().distance(getObject().getPositionComponent())
+                < PacmanApp.MAP_SIZE * PacmanApp.BLOCK_SIZE / 3;
     }
 }

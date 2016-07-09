@@ -24,16 +24,19 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.ai;
 
-import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.ai.AIControl;
+import com.almasb.fxgl.ai.Action;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
+import s31pacman.EntityType;
+import s31pacman.MoveDirection;
+import s31pacman.PacmanApp;
 
 import java.util.List;
 import java.util.Random;
@@ -41,34 +44,13 @@ import java.util.Random;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class EnemyControl extends AbstractControl {
-
-    protected PositionComponent position;
-    private BoundingBoxComponent bbox;
-
-    private MoveDirection moveDir;
-
-    public void setMoveDirection(MoveDirection moveDir) {
-        this.moveDir = moveDir;
-    }
+public class RandomMoveAction extends Action {
 
     @Override
-    public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        bbox = Entities.getBBox(entity);
+    public void action() {
+        System.out.println("Moving randomly");
 
-        moveDir = MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
-    }
-
-    protected MoveDirection updateMoveDirection() {
-        return MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
-    }
-
-    private double speed = 0;
-
-    @Override
-    public void onUpdate(Entity entity, double tpf) {
-        speed = tpf * 60;
+        speed = FXGL.getMasterTimer().tpf() * 60;
 
         switch (moveDir) {
             case UP:
@@ -97,6 +79,32 @@ public class EnemyControl extends AbstractControl {
         }
     }
 
+    protected PositionComponent position;
+    private BoundingBoxComponent bbox;
+
+    private MoveDirection moveDir;
+
+    public void setMoveDirection(MoveDirection moveDir) {
+        this.moveDir = moveDir;
+    }
+
+    @Override
+    public void start() {
+        // TODO: is there like init with object?
+        if (position == null) {
+            position = Entities.getPosition(getObject());
+            bbox = Entities.getBBox(getObject());
+
+            moveDir = MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
+        }
+    }
+
+    protected MoveDirection updateMoveDirection() {
+        return MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
+    }
+
+    private double speed = 0;
+
     public void up() {
         move(new Point2D(0, -5 * speed));
     }
@@ -116,7 +124,7 @@ public class EnemyControl extends AbstractControl {
     private List<Entity> blocks;
 
     private void move(Point2D vector) {
-        if (!getEntity().isActive())
+        if (!getObject().isActive())
             return;
 
         if (blocks == null) {
@@ -140,9 +148,6 @@ public class EnemyControl extends AbstractControl {
                 position.translate(unit.multiply(-1));
                 moveDir = updateMoveDirection();
 
-//                getEntity().getControl(AIControl.class).ifPresent(ai -> {
-//                    ai.onUpdate(getEntity(), FXGL.getMasterTimer().tpf());
-//                });
 
                 break;
             }

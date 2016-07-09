@@ -27,6 +27,7 @@
 package s31pacman;
 
 import com.almasb.ents.Control;
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
@@ -144,7 +145,8 @@ public class EntityFactory {
                 .viewFromNode(view)
                 .at(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE)
                 .with(new CollidableComponent(true))
-                .with(getNextEnemyControl())
+                .with(new AIControl("pacman_enemy1.tree"))
+                //.with(getNextEnemyControl())
                 .build();
     }
 }

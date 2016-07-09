@@ -30,18 +30,22 @@ import com.almasb.astar.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.TextLevelParser;
 import com.almasb.fxgl.settings.GameSettings;
+import com.badlogic.gdx.ai.btree.leaf.Wait;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.input.KeyCode;
+import s31pacman.collision.PlayerCoinHandler;
+import s31pacman.collision.PlayerEnemyHandler;
 
 /**
- * This is an example of a basic FXGL game application.
+ * This is a basic demo of Pacman.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -51,7 +55,12 @@ public class PacmanApp extends GameApplication {
 
     public static final int MAP_SIZE = 21;
 
+    private GameEntity player;
     private PlayerControl playerControl;
+
+    public GameEntity getPlayer() {
+        return player;
+    }
 
     public PlayerControl getPlayerControl() {
         return playerControl;
@@ -68,7 +77,7 @@ public class PacmanApp extends GameApplication {
         settings.setWidth(MAP_SIZE * BLOCK_SIZE);
         settings.setHeight(MAP_SIZE * BLOCK_SIZE);
         settings.setTitle("Pacman");
-        settings.setVersion("0.1");
+        settings.setVersion("0.2");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -108,7 +117,11 @@ public class PacmanApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
+    protected void initAssets() {
+
+        Wait d;
+
+    }
 
     @Override
     protected void initGame() {
@@ -122,12 +135,13 @@ public class PacmanApp extends GameApplication {
 
         Level level = parser.parse("pacman_level0.txt");
 
-        playerControl = level.getEntities()
+        player = (GameEntity) level.getEntities()
                 .stream()
                 .filter(p -> p.getComponentUnsafe(TypeComponent.class).isType(EntityType.PLAYER))
                 .findAny()
-                .get()
-                .getControlUnsafe(PlayerControl.class);
+                .get();
+
+        playerControl = player.getControlUnsafe(PlayerControl.class);
 
         long numCoins = level.getEntities()
                 .stream()

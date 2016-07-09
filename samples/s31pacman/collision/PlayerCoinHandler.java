@@ -24,11 +24,13 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.collision;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.physics.CollisionHandler;
+import s31pacman.EntityType;
+import s31pacman.PacmanApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

@@ -123,6 +123,12 @@ public class BehaviorSample extends GameApplication {
                 .with(new AIControl("patrol.tree"))
                 .buildAndAttach(getGameWorld());
 
+        Entities.builder()
+                .at(600, 100)
+                .viewFromNode(new Rectangle(40, 40, Color.LIGHTGOLDENRODYELLOW))
+                .with(new AIControl("patrol.tree"))
+                .buildAndAttach(getGameWorld());
+
         //testB(enemy);
         //enemy.addControl();
 
