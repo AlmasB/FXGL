@@ -24,28 +24,28 @@
  * SOFTWARE.
  */
 
-package s32ai;
+package com.almasb.fxgl.ai
 
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.GameEntity;
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
+import com.almasb.fxgl.entity.GameEntity
+import com.badlogic.gdx.ai.btree.LeafTask
+import com.badlogic.gdx.ai.btree.Task
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CanSeePlayerTask extends LeafTask<GameEntity> {
+abstract class Action : LeafTask<GameEntity>() {
 
-    @Override
-    public Status execute() {
-        GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
+    abstract fun action()
 
-        return player.getPositionComponent().distance(getObject().getPositionComponent()) < 250
-                ? Status.SUCCEEDED : Status.FAILED;
+    override final fun execute(): Status {
+        action()
+
+        return Status.SUCCEEDED
     }
 
-    @Override
-    protected Task<GameEntity> copyTo(Task<GameEntity> task) {
-        return task;
+    override fun copyTo(task: Task<GameEntity>): Task<GameEntity> {
+        return task
     }
 }

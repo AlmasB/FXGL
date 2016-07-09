@@ -24,20 +24,32 @@
  * SOFTWARE.
  */
 
-package s32ai;
+package com.almasb.fxgl.ai
 
-import com.almasb.ents.AbstractControl;
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.entity.GameEntity
+import com.badlogic.gdx.ai.btree.LeafTask
+import com.badlogic.gdx.ai.btree.Task
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class GuardControl extends AbstractControl {
+abstract class GoalAction : LeafTask<GameEntity>() {
 
-    @Override
-    public void onUpdate(Entity entity, double tpf) {
+    abstract fun reachedGoal(): Boolean
 
+    abstract fun action()
+
+    override final fun execute(): Status {
+        if (reachedGoal())
+            return Status.SUCCEEDED
+
+        action()
+        return if (reachedGoal()) Status.SUCCEEDED else Status.RUNNING
     }
 
-
+    override fun copyTo(task: Task<GameEntity>): Task<GameEntity> {
+        return task
+    }
 }

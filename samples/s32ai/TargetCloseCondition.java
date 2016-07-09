@@ -26,6 +26,7 @@
 
 package s32ai;
 
+import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.entity.GameEntity;
 import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
@@ -34,17 +35,10 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class TargetCloseTask extends LeafTask<GameEntity> {
+public class TargetCloseCondition extends Condition {
 
     @Override
-    public Status execute() {
-
-        return new Point2D(400, 300).distance(getObject().getPositionComponent().getValue()) < 400
-                ? Status.SUCCEEDED : Status.FAILED;
-    }
-
-    @Override
-    protected Task<GameEntity> copyTo(Task<GameEntity> task) {
-        return task;
+    public boolean evaluate() {
+        return new Point2D(400, 300).distance(getObject().getPositionComponent().getValue()) < 400;
     }
 }
