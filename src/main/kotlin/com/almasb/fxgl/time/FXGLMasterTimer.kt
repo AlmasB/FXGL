@@ -132,7 +132,7 @@ private constructor() : AnimationTimer(), MasterTimer {
         timerActions.removeIf { it.isExpired }
 
         // this is the master update event
-        updateListener?.onUpdateEvent(UpdateEvent(getTick(), realTPF / 1000000000.0))
+        updateListener?.onUpdateEvent(UpdateEvent(getTick(), tpf))
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
@@ -190,12 +190,16 @@ private constructor() : AnimationTimer(), MasterTimer {
      * Current time for this tick in nanoseconds. Also time elapsed
      * from the start of game. This time does not change while the game is paused.
      * This time does not change while within the same tick.
-
+     *
      * @return current time in nanoseconds
      */
     override fun getNow(): Long {
         return now
     }
+
+    private var tpf = 0.0
+
+    override fun tpf() = tpf
 
     /**
      * These are used to approximate FPS value
@@ -251,6 +255,7 @@ private constructor() : AnimationTimer(), MasterTimer {
         playtime.value += realTPF
 
         previousInternalTime = internalTime
+        tpf = realTPF / 1000000000.0
     }
 
     /**
