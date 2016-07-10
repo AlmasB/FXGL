@@ -48,7 +48,7 @@ public class RandomMoveAction extends Action {
 
     @Override
     public void action() {
-        System.out.println("Moving randomly");
+        //System.out.println("Moving randomly");
 
         speed = FXGL.getMasterTimer().tpf() * 60;
 

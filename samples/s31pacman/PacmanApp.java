@@ -117,11 +117,7 @@ public class PacmanApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-
-        Wait d;
-
-    }
+    protected void initAssets() {}
 
     @Override
     protected void initGame() {
@@ -203,8 +199,7 @@ public class PacmanApp extends GameApplication {
 
     private void gameOver() {
         getDisplay().showConfirmationBox("Demo Over. Press Something", yes -> {
-            // workaround until we can issue requests
-            getEventBus().fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
+            exit();
         });
     }
 

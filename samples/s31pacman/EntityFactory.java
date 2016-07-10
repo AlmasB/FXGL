@@ -124,6 +124,7 @@ public class EntityFactory {
         try {
             if (indices.isEmpty()) {
                 populateIndices();
+                return new AIControl("pacman_enemy1.tree");
             }
 
             control = enemyControls.get(indices.remove(0)).newInstance();
@@ -145,8 +146,8 @@ public class EntityFactory {
                 .viewFromNode(view)
                 .at(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE)
                 .with(new CollidableComponent(true))
-                .with(new AIControl("pacman_enemy1.tree"))
-                //.with(getNextEnemyControl())
+                //.with(new AIControl("pacman_enemy1.tree"))
+                .with(getNextEnemyControl())
                 .build();
     }
 }

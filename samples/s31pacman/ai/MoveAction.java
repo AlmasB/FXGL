@@ -79,7 +79,7 @@ public class MoveAction extends GoalAction {
 
     @Override
     public void action() {
-        System.out.println("Moving A*");
+        //System.out.println("Moving A*");
 
         speed = FXGL.getMasterTimer().tpf() * 60 * 5;
 
