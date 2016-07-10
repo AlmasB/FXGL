@@ -35,11 +35,14 @@ import com.badlogic.gdx.ai.btree.Task
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class Action : LeafTask<GameEntity>() {
+abstract class Action(val name: String) : LeafTask<GameEntity>() {
+
+    constructor() : this("")
 
     abstract fun action()
 
     override final fun execute(): Status {
+        `object`.getControlUnsafe(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
         action()
 
         return Status.SUCCEEDED

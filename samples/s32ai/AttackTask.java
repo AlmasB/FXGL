@@ -26,6 +26,7 @@
 
 package s32ai;
 
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.Action;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
@@ -43,8 +44,9 @@ public class AttackTask extends Action {
         GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
 
         if (player.getPositionComponent().distance(getObject().getPositionComponent()) < 100) {
-            System.out.println("Attacking");
+            getObject().getControlUnsafe(AIControl.class).setBubbleMessage("Attack");
         } else {
+            getObject().getControlUnsafe(AIControl.class).setBubbleMessage("Chase");
             double speed = 0.017 * 60 * 5;
 
             Point2D vector = player.getPositionComponent().getValue()

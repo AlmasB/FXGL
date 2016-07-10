@@ -46,10 +46,12 @@ import java.util.Random;
  */
 public class RandomMoveAction extends Action {
 
+    public RandomMoveAction() {
+        super("RandomMove");
+    }
+
     @Override
     public void action() {
-        //System.out.println("Moving randomly");
-
         speed = FXGL.getMasterTimer().tpf() * 60;
 
         switch (moveDir) {

@@ -26,6 +26,7 @@
 
 package s32ai;
 
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.entity.GameEntity;
 import com.badlogic.gdx.ai.btree.LeafTask;
@@ -39,6 +40,7 @@ public class TargetCloseCondition extends Condition {
 
     @Override
     public boolean evaluate() {
+
         return new Point2D(400, 300).distance(getObject().getPositionComponent().getValue()) < 400;
     }
 }

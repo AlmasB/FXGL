@@ -28,14 +28,17 @@ package com.almasb.fxgl.ai
 
 import com.almasb.ents.AbstractControl
 import com.almasb.ents.Entity
+import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.GameEntity
 import com.badlogic.gdx.ai.btree.BehaviorTree
+import com.badlogic.gdx.ai.btree.Task
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
 import java.util.*
 
 /**
+ * TODO: each task / condition / action before doing should report with message to bubble
  * Allows to attach a behavior tree to a game entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -44,6 +47,8 @@ class AIControl
 private constructor() : AbstractControl() {
 
     private lateinit var behaviorTree: BehaviorTree<GameEntity>
+
+    val bubble = AIBubble()
 
     /**
      * Constructs AI control with given [behaviorTree].
@@ -72,9 +77,17 @@ private constructor() : AbstractControl() {
         private val parsedTreesCache = HashMap<String, BehaviorTree<GameEntity> >()
     }
 
+    fun setBubbleMessage(message: String) {
+        bubble.setMessage(message)
+    }
+
     override fun onAdded(entity: Entity) {
         if (entity is GameEntity) {
             behaviorTree.`object` = entity
+
+            if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
+                entity.mainViewComponent.view.addNode(bubble)
+
         } else {
             throw IllegalArgumentException("Entity $entity is not GameEntity")
         }

@@ -46,6 +46,10 @@ import java.util.List;
  */
 public class MoveAction extends GoalAction {
 
+    public MoveAction() {
+        super("Move");
+    }
+
     private AStarGrid grid;
     private GameEntity player;
 
@@ -79,8 +83,6 @@ public class MoveAction extends GoalAction {
 
     @Override
     public void action() {
-        //System.out.println("Moving A*");
-
         speed = FXGL.getMasterTimer().tpf() * 60 * 5;
 
         AStarNode next = path.get(0);

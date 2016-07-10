@@ -35,7 +35,9 @@ import com.badlogic.gdx.ai.btree.Task
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class GoalAction : LeafTask<GameEntity>() {
+abstract class GoalAction(val name: String) : LeafTask<GameEntity>() {
+
+    constructor() : this("")
 
     /**
      * The action succeeds when this returns true.
@@ -48,6 +50,7 @@ abstract class GoalAction : LeafTask<GameEntity>() {
         if (reachedGoal())
             return Status.SUCCEEDED
 
+        `object`.getControlUnsafe(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
         action()
         return if (reachedGoal()) Status.SUCCEEDED else Status.RUNNING
     }

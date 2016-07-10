@@ -24,39 +24,48 @@
  * SOFTWARE.
  */
 
-package s32ai;
+package com.almasb.fxgl.ai
 
-import com.almasb.fxgl.ai.AIControl;
-import com.almasb.fxgl.ai.GoalAction;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.GameEntity;
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
-import javafx.geometry.Point2D;
+import com.almasb.fxgl.ui.UIFactory
+import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Pos
+import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
+import javafx.scene.text.Text
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class MoveTask extends GoalAction {
+class AIBubble : StackPane() {
 
-    public MoveTask() {
-        super("Move");
+    private val message = SimpleStringProperty()
+
+    init {
+
+        val bg = Rectangle(150.0, 30.0)
+        with(bg) {
+            arcWidth = 25.0
+            arcHeight = 25.0
+            fill = Color.AQUA
+            opacity = 0.5
+        }
+
+        val text = Text()
+        with(text) {
+            font = UIFactory.newFont(14.0)
+            textProperty().bind(message)
+        }
+
+        translateY = -30.0
+        alignment = Pos.CENTER
+        children.addAll(bg, text)
     }
 
-    @Override
-    public boolean reachedGoal() {
-        return getObject().getPositionComponent().getValue().distance(400, 300) < 25;
-    }
-
-    @Override
-    public void action() {
-
-        double speed = FXGL.getMasterTimer().tpf() * 60 * 5;
-
-        Point2D vector = new Point2D(400, 300).subtract(getObject().getPositionComponent().getValue())
-                .normalize()
-                .multiply(speed);
-
-        getObject().getPositionComponent().translate(vector);
+    fun setMessage(message: String) {
+        this.message.value = message
     }
 }
