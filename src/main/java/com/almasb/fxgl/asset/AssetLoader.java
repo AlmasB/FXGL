@@ -35,6 +35,8 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.LRUCache;
+import com.badlogic.gdx.ai.btree.BehaviorTree;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -96,6 +98,7 @@ public class AssetLoader {
     private static final String BINARY_DIR = ASSETS_DIR + "data/";
     private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
     private static final String PROPERTIES_DIR = ASSETS_DIR + "properties/";
+    private static final String AI_DIR = ASSETS_DIR + "ai/";
 
     private static final String UI_DIR = ASSETS_DIR + "ui/";
     private static final String CSS_DIR = UI_DIR + "css/";
@@ -361,6 +364,23 @@ public class AssetLoader {
     public Image loadAppIcon(String name) {
         try (InputStream is = getStream(ICON_DIR + name)) {
             return new Image(is);
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
+     * Loads a behavior tree from /assets/ai/.
+     * Either returns a valid behavior tree or throws an exception in case of errors.
+     *
+     * @param name tree name without the /assets/ai/, e.g. "patrol.tree"
+     * @param <T> tree type
+     * @return loaded and parsed behavior tree
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public <T> BehaviorTree<T> loadBehaviorTree(String name) {
+        try (InputStream is = getStream(AI_DIR + name)) {
+            return new BehaviorTreeParser<T>().parse(is, null);
         } catch (Exception e) {
             throw loadFailed(name, e);
         }
