@@ -27,7 +27,6 @@
 package s32ai;
 
 import com.almasb.fxgl.ai.AIControl;
-import com.almasb.fxgl.ai.BehaviorBuilder;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
@@ -153,20 +152,6 @@ public class BehaviorSample extends GameApplication {
         }
 
         return null;
-    }
-
-    private BehaviorTree<GameEntity> testA() {
-        BehaviorTree<GameEntity> tree2 = new BehaviorBuilder()
-                .ifCondition(() -> "hello".length() == 4)
-                .thenDo(() -> System.out.println("thenDo"))
-//                .thenDoChain(b -> b.ifCondition(() -> false)
-//                                .thenDo(() -> System.out.println("Doing 1"))
-//                                .elseDo(() -> System.out.println("Doing 2"))
-//                )
-                .elseDo(() -> System.out.println("Doing 3"))
-                .build();
-
-        return tree2;
     }
 
     // if (target close)

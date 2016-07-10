@@ -31,12 +31,15 @@ import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
 
 /**
- *
+ * In a behavior tree a goal action is executed until it reaches the goal.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class GoalAction : LeafTask<GameEntity>() {
 
+    /**
+     * The action succeeds when this returns true.
+     */
     abstract fun reachedGoal(): Boolean
 
     abstract fun action()

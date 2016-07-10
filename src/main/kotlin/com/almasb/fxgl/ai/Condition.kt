@@ -31,12 +31,15 @@ import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
 
 /**
- *
+ * Represents a single conditional statement of a behavior tree.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class Condition : LeafTask<GameEntity>() {
 
+    /**
+     * Condition succeeds if this returns true.
+     */
     abstract fun evaluate(): Boolean
 
     override final fun execute(): Status {

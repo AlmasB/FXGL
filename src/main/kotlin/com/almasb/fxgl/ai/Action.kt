@@ -31,7 +31,7 @@ import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
 
 /**
- *
+ * A single action that always succeeds.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

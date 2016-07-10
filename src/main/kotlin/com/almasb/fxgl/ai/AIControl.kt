@@ -28,6 +28,7 @@ package com.almasb.fxgl.ai
 
 import com.almasb.ents.AbstractControl
 import com.almasb.ents.Entity
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.GameEntity
 import com.badlogic.gdx.ai.btree.BehaviorTree
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager
@@ -35,7 +36,7 @@ import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
 import java.util.*
 
 /**
- *
+ * Allows to attach a behavior tree to a game entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -45,21 +46,21 @@ private constructor() : AbstractControl() {
     private lateinit var behaviorTree: BehaviorTree<GameEntity>
 
     /**
-     * Constructs AI control with given behavior tree.
+     * Constructs AI control with given [behaviorTree].
      */
     constructor(behaviorTree: BehaviorTree<GameEntity>) : this() {
         this.behaviorTree = behaviorTree
     }
 
     /**
-     * Constructs AI control with behavior tree parsed from the asset.
+     * Constructs AI control with behavior tree parsed from the asset with name [treeName].
      */
     constructor(treeName: String) : this() {
 
         var tree = parsedTreesCache[treeName]
 
         if (tree == null) {
-            tree = BehaviorTreeParser<GameEntity>().parse(javaClass.getResourceAsStream("/assets/ai/$treeName"), null)
+            tree = FXGL.getAssetLoader().loadBehaviorTree(treeName)
             parsedTreesCache[treeName] = tree
         }
 
@@ -67,21 +68,16 @@ private constructor() : AbstractControl() {
     }
 
     companion object {
-        //private val btreeLibManager = BehaviorTreeLibraryManager.getInstance()
 
         private val parsedTreesCache = HashMap<String, BehaviorTree<GameEntity> >()
     }
 
     override fun onAdded(entity: Entity) {
-
-//        val libraryManager = BehaviorTreeLibraryManager.getInstance()
-//
-//        val actualBehavior = BehaviorTree<GameEntity>(createDogBehavior())
-//        libraryManager.library.registerArchetypeTree("guard", actualBehavior)
-//
-//        tree = libraryManager.createBehaviorTree<GameEntity>("guard", enemy)
-
-        behaviorTree.`object` = entity as GameEntity
+        if (entity is GameEntity) {
+            behaviorTree.`object` = entity
+        } else {
+            throw IllegalArgumentException("Entity $entity is not GameEntity")
+        }
     }
 
     override fun onUpdate(entity: Entity, tpf: Double) {
