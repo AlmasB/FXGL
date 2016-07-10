@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.control;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

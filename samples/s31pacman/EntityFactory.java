@@ -39,6 +39,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import s31pacman.control.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,7 +147,6 @@ public class EntityFactory {
                 .viewFromNode(view)
                 .at(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE)
                 .with(new CollidableComponent(true))
-                //.with(new AIControl("pacman_enemy1.tree"))
                 .with(getNextEnemyControl())
                 .build();
     }

@@ -27,7 +27,6 @@
 package s31pacman.ai;
 
 import com.almasb.ents.Entity;
-import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.Action;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
@@ -35,7 +34,7 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
 import s31pacman.EntityType;
-import s31pacman.MoveDirection;
+import s31pacman.control.MoveDirection;
 import s31pacman.PacmanApp;
 
 import java.util.List;

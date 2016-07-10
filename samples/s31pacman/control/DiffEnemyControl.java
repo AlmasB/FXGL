@@ -24,9 +24,10 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.control;
 
 import com.almasb.fxgl.app.FXGL;
+import s31pacman.PacmanApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

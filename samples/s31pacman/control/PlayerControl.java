@@ -24,8 +24,10 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.control;
 
+import com.almasb.astar.AStarGrid;
+import com.almasb.astar.NodeState;
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
@@ -33,8 +35,11 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
+import s31pacman.EntityType;
+import s31pacman.PacmanApp;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -88,6 +93,21 @@ public class PlayerControl extends AbstractControl {
     public void right() {
         moveDir = MoveDirection.RIGHT;
         move(new Point2D(5 * speed, 0));
+    }
+
+    public void teleport() {
+        Random random = new Random();
+
+        AStarGrid grid = ((PacmanApp) FXGL.getApp()).getGrid();
+
+        int x, y;
+
+        do {
+            x = (random.nextInt(PacmanApp.MAP_SIZE - 2) + 1);
+            y = (random.nextInt(PacmanApp.MAP_SIZE - 2) + 1);
+        } while (grid.getNodeState(x, y) != NodeState.WALKABLE);
+
+        position.setValue(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE);
     }
 
     private List<Entity> blocks;

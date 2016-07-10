@@ -24,24 +24,50 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.control;
 
+import com.almasb.ents.AbstractControl;
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.time.LocalTimer;
+import javafx.util.Duration;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class MirrorEnemyControl extends EnemyControl {
+public class CombinedControl extends AbstractControl {
 
-    private PlayerControl playerControl;
+    private RRLEnemyControl rrlControl;
+    private EnemyControl enemyControl;
+
+    private LocalTimer timer;
 
     @Override
-    protected MoveDirection updateMoveDirection() {
+    public void onAdded(Entity entity) {
+        rrlControl = new RRLEnemyControl();
+        enemyControl = new EnemyControl();
 
-        if (playerControl == null) {
-            playerControl = ((PacmanApp) FXGL.getApp()).getPlayerControl();
+        entity.addControl(rrlControl);
+        entity.addControl(enemyControl);
+
+        enemyControl.pause();
+
+        timer = FXGL.newLocalTimer();
+    }
+
+    @Override
+    public void onUpdate(Entity entity, double tpf) {
+
+        if (timer.elapsed(Duration.seconds(5))) {
+            if (rrlControl.isPaused()) {
+                enemyControl.pause();
+                rrlControl.resume();
+            } else {
+                rrlControl.pause();
+                enemyControl.resume();
+            }
+
+            timer.capture();
         }
-
-        return playerControl.getMoveDirection();
     }
 }

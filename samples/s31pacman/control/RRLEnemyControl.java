@@ -24,50 +24,30 @@
  * SOFTWARE.
  */
 
-package s31pacman;
-
-import com.almasb.ents.AbstractControl;
-import com.almasb.ents.Entity;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.time.LocalTimer;
-import javafx.util.Duration;
+package s31pacman.control;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CombinedControl extends AbstractControl {
+public class RRLEnemyControl extends EnemyControl {
 
-    private RRLEnemyControl rrlControl;
-    private EnemyControl enemyControl;
+    private MoveDirection[] moves = {
+            MoveDirection.RIGHT,
+            MoveDirection.RIGHT,
+            MoveDirection.LEFT,
+            MoveDirection.UP
+    };
 
-    private LocalTimer timer;
-
-    @Override
-    public void onAdded(Entity entity) {
-        rrlControl = new RRLEnemyControl();
-        enemyControl = new EnemyControl();
-
-        entity.addControl(rrlControl);
-        entity.addControl(enemyControl);
-
-        enemyControl.pause();
-
-        timer = FXGL.newLocalTimer();
-    }
+    private int index = 0;
 
     @Override
-    public void onUpdate(Entity entity, double tpf) {
+    protected MoveDirection updateMoveDirection() {
+        MoveDirection move = moves[index];
 
-        if (timer.elapsed(Duration.seconds(5))) {
-            if (rrlControl.isPaused()) {
-                enemyControl.pause();
-                rrlControl.resume();
-            } else {
-                rrlControl.pause();
-                enemyControl.resume();
-            }
+        index++;
+        if (index == moves.length)
+            index = 0;
 
-            timer.capture();
-        }
+        return move;
     }
 }

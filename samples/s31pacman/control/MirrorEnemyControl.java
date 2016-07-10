@@ -24,30 +24,25 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.control;
+
+import com.almasb.fxgl.app.FXGL;
+import s31pacman.PacmanApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class RRLEnemyControl extends EnemyControl {
+public class MirrorEnemyControl extends EnemyControl {
 
-    private MoveDirection[] moves = {
-            MoveDirection.RIGHT,
-            MoveDirection.RIGHT,
-            MoveDirection.LEFT,
-            MoveDirection.UP
-    };
-
-    private int index = 0;
+    private PlayerControl playerControl;
 
     @Override
     protected MoveDirection updateMoveDirection() {
-        MoveDirection move = moves[index];
 
-        index++;
-        if (index == moves.length)
-            index = 0;
+        if (playerControl == null) {
+            playerControl = ((PacmanApp) FXGL.getApp()).getPlayerControl();
+        }
 
-        return move;
+        return playerControl.getMoveDirection();
     }
 }

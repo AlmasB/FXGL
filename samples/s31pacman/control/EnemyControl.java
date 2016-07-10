@@ -24,16 +24,17 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.control;
 
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
-import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
+import s31pacman.EntityType;
+import s31pacman.PacmanApp;
 
 import java.util.List;
 import java.util.Random;
