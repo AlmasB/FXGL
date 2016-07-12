@@ -105,6 +105,8 @@ public abstract class FXGLApplication extends Application {
     public void start(Stage stage) throws Exception {
         log.debug("Starting FXGL");
 
+        long start = System.nanoTime();
+
         initSystemProperties();
         initUserProperties();
         initAppSettings();
@@ -112,6 +114,8 @@ public abstract class FXGLApplication extends Application {
         FXGL.configure(this, stage);
 
         log.debug("FXGL configuration complete");
+
+        log.info("FXGL configuration took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
 
         if (FXGL.isFirstRun() && getSettings().getApplicationMode() != ApplicationMode.RELEASE)
             checkForUpdates();

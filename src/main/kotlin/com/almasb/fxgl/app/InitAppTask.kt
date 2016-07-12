@@ -42,6 +42,8 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     constructor(app: GameApplication) : this(app, DataFile.EMPTY)
 
     override fun call(): Void? {
+        val start = System.nanoTime()
+
         update("Initializing Assets", 0)
         app.initAssets()
 
@@ -58,6 +60,9 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         app.initUI()
 
         update("Initialization Complete", 4)
+
+        log.info("Game init took: " + (System.nanoTime() - start) / 1000000000.0 + " sec")
+
         return null
     }
 

@@ -793,6 +793,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     public final void start(Stage stage) throws Exception {
         super.start(stage);
 
+        long start = System.nanoTime();
+
         // services are now ready, switch to normal logger
         log = FXGL.getLogger(GameApplication.class);
         log.debug("Starting Game Application");
@@ -828,6 +830,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 profiler.print();
             });
         }
+
+        log.info("GameApplication start took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
     }
 
     /**
