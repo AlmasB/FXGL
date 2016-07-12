@@ -80,7 +80,7 @@ class FXGL {
             getLogger("FXGL").info("FXGL configuration complete")
         }
 
-        private var firstRun = true
+        private var firstRun = false
 
         /**
          * @return true iff FXGL is running for the first time

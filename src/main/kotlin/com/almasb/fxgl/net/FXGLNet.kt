@@ -62,8 +62,6 @@ class FXGLNet : Net {
 
                 override fun onExecute(): String {
 
-                    Thread.sleep(3000)
-
                     InputStreamReader(it).useLines {
                         return it.first { it.contains("<version>") }
                                 .trim()

@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.easyio.UIDialogHandler;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
@@ -36,7 +35,7 @@ import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
-import com.almasb.fxgl.scene.DialogHandler;
+import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -47,13 +46,10 @@ import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -226,43 +222,35 @@ public abstract class FXGLApplication extends Application {
 
         Button button = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
 
-        Glyph glyph = new Glyph("FontAwesome", FontAwesome.Glyph.GITHUB);
-
+        button.setDisable(true);
         button.setText("Open GitHub");
-        button.setGraphic(glyph);
         button.setOnAction(e -> {
-            FXGL.getNet()
-                    .openBrowserTask(FXGL.getString("url.github"))
+            getNet().openBrowserTask(FXGL.getString("url.github"))
+                    .onFailure(error -> log.warning("Error opening browser: " + error))
                     .execute();
         });
 
-        FXGL.getNet()
-                .getLatestVersionTask()
+        getNet().getLatestVersionTask()
                 .onSuccess(version -> {
 
                     dialog.getDialogPane().setContentText("Just so you know\n"
                             + "Your version:   " + Version.getAsString() + "\n"
                             + "Latest version: " + version);
 
+                    button.setDisable(false);
+
                 })
                 .onFailure(error -> {
                     // not important, just log it
                     log.warning("Failed to find updates: " + error);
-                    dialog.close();
+
+                    dialog.getDialogPane().setContentText("Failed to find updates: " + error);
+
+                    button.setDisable(false);
                 })
-                .executeAsyncWithDialogFX(getExecutor(), new UIDialogHandler() {
-                    @Override
-                    public void show() {
-                        // already shown
-                    }
+                .executeAsyncWithDialogFX(getExecutor());
 
-                    @Override
-                    public void dismiss() {
-                        //alert.close();
-                    }
-                });
-
-
+        // blocking call
         dialog.showAndWait();
     }
 
@@ -404,5 +392,12 @@ public abstract class FXGLApplication extends Application {
      */
     public final AchievementManager getAchievementManager() {
         return FXGL.getAchievementManager();
+    }
+
+    /**
+     * @return net service
+     */
+    public final Net getNet() {
+        return FXGL.getNet();
     }
 }
