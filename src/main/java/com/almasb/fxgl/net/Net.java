@@ -28,6 +28,7 @@ package com.almasb.fxgl.net;
 
 import com.almasb.easyio.IOTask;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 /**
@@ -40,4 +41,10 @@ public interface Net {
      * @return task that downloads a file from given url into running directory
      */
     IOTask<Path> downloadTask(String url);
+
+    IOTask<InputStream> openStreamTask(String url);
+
+    IOTask<String> getLatestVersionTask();
+
+    IOTask<Void> openBrowserTask(String url);
 }

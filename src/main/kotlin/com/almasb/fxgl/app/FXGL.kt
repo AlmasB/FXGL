@@ -36,6 +36,8 @@ import com.google.inject.name.Names
 import javafx.scene.Scene
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 
 /**
@@ -70,7 +72,36 @@ class FXGL {
 
             internalApp = app as GameApplication
             internalSettings = app.settings
+
+            createRequiredDirs()
             configureServices(stage)
+
+            // log that we are ready, also force logger service to init
+            getLogger("FXGL").info("FXGL configuration complete")
+        }
+
+        private var firstRun = true
+
+        /**
+         * @return true iff FXGL is running for the first time
+         * @implNote we actually check if "system/" exists in running dir, so if it was
+         *            deleted, then this method also returns true
+         */
+        @JvmStatic fun isFirstRun() = firstRun
+
+        private fun createRequiredDirs() {
+
+            val systemDir = Paths.get("system/")
+
+            if (!Files.exists(systemDir)) {
+                firstRun = true
+
+                Files.createDirectories(systemDir)
+
+                val readmeFile = Paths.get("system/Readme.txt")
+
+                Files.write(readmeFile, "This directory contains FXGL system data files.".lines())
+            }
         }
 
         /**
@@ -181,6 +212,9 @@ class FXGL {
 
         private val _achievement by lazy { getService(ServiceType.ACHIEVEMENT_MANAGER) }
         @JvmStatic fun getAchievementManager() = _achievement
+
+        private val _net by lazy { getService(ServiceType.NET) }
+        @JvmStatic fun getNet() = _net
 
         /**
          * @return new instance on each call

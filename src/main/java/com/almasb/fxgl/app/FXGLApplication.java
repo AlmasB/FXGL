@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.easyio.UIDialogHandler;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
@@ -35,6 +36,7 @@ import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
+import com.almasb.fxgl.scene.DialogHandler;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -45,7 +47,13 @@ import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,6 +116,9 @@ public abstract class FXGLApplication extends Application {
         FXGL.configure(this, stage);
 
         log.debug("FXGL configuration complete");
+
+        if (FXGL.isFirstRun() && getSettings().getApplicationMode() != ApplicationMode.RELEASE)
+            checkForUpdates();
     }
 
     @Override
@@ -199,6 +210,60 @@ public abstract class FXGLApplication extends Application {
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
+    }
+
+    /**
+     * Shows a blocking JavaFX dialog, while it runs an async task
+     * to connect to FXGL repo and find latest version string.
+     */
+    private void checkForUpdates() {
+        log.debug("Checking for updates");
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("FXGL Update");
+        dialog.getDialogPane().setContentText("Checking for updates...\n \n ");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Button button = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        Glyph glyph = new Glyph("FontAwesome", FontAwesome.Glyph.GITHUB);
+
+        button.setText("Open GitHub");
+        button.setGraphic(glyph);
+        button.setOnAction(e -> {
+            FXGL.getNet()
+                    .openBrowserTask(FXGL.getString("url.github"))
+                    .execute();
+        });
+
+        FXGL.getNet()
+                .getLatestVersionTask()
+                .onSuccess(version -> {
+
+                    dialog.getDialogPane().setContentText("Just so you know\n"
+                            + "Your version:   " + Version.getAsString() + "\n"
+                            + "Latest version: " + version);
+
+                })
+                .onFailure(error -> {
+                    // not important, just log it
+                    log.warning("Failed to find updates: " + error);
+                    dialog.close();
+                })
+                .executeAsyncWithDialogFX(getExecutor(), new UIDialogHandler() {
+                    @Override
+                    public void show() {
+                        // already shown
+                    }
+
+                    @Override
+                    public void dismiss() {
+                        //alert.close();
+                    }
+                });
+
+
+        dialog.showAndWait();
     }
 
     /**

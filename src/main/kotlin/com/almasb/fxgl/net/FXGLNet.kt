@@ -27,7 +27,12 @@
 package com.almasb.fxgl.net
 
 import com.almasb.easyio.IOTask
+import com.almasb.fxgl.app.FXGL
 import com.google.inject.Singleton
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.URL
 import java.nio.file.Path
 
 /**
@@ -39,4 +44,44 @@ import java.nio.file.Path
 class FXGLNet : Net {
 
     override fun downloadTask(url: String): IOTask<Path> = DownloadTask(url)
+
+    override fun openStreamTask(url: String): IOTask<InputStream> {
+        return object : IOTask<InputStream>() {
+
+            override fun onExecute(): InputStream {
+                return URL(url).openStream()
+            }
+        }
+    }
+
+    override fun getLatestVersionTask(): IOTask<String> {
+
+        return openStreamTask(FXGL.getString("url.pom")).then {
+
+            return@then object : IOTask<String>() {
+
+                override fun onExecute(): String {
+
+                    Thread.sleep(3000)
+
+                    InputStreamReader(it).useLines {
+                        return it.first { it.contains("<version>") }
+                                .trim()
+                                .removeSurrounding("<version>", "</version>")
+                    }
+                }
+            }
+        }
+    }
+
+    override fun openBrowserTask(url: String): IOTask<Void?> {
+        return object : IOTask<Void?>() {
+            override fun onExecute(): Void? {
+
+                FXGL.getApp().hostServices.showDocument(url)
+
+                return null
+            }
+        }
+    }
 }
