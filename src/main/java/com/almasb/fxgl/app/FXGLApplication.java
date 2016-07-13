@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.easyio.FS;
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
@@ -53,6 +55,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
@@ -117,7 +120,7 @@ public abstract class FXGLApplication extends Application {
 
         log.info("FXGL configuration took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
 
-        if (FXGL.isFirstRun() && getSettings().getApplicationMode() != ApplicationMode.RELEASE)
+        if (shouldCheckForUpdate() && getSettings().getApplicationMode() != ApplicationMode.RELEASE)
             checkForUpdates();
     }
 
@@ -158,8 +161,10 @@ public abstract class FXGLApplication extends Application {
         log.debug("Exiting Normally");
         getEventBus().fireEvent(FXGLEvent.exit());
 
-        log.close();
+        FXGL.destroy();
         stop();
+        log.close();
+
         Platform.exit();
         System.exit(0);
     }
@@ -213,6 +218,21 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
+     * Returns true if first run or required number of days have passed.
+     *
+     * @return whether we need check for updates
+     */
+    private boolean shouldCheckForUpdate() {
+        if (FXGL.isFirstRun())
+            return true;
+
+        LocalDate lastChecked = FXGL.getSystemBundle().get("version.check");
+
+        return lastChecked != null
+                && lastChecked.plusDays(FXGL.getInt("version.check.days")).isBefore(LocalDate.now());
+    }
+
+    /**
      * Shows a blocking JavaFX dialog, while it runs an async task
      * to connect to FXGL repo and find latest version string.
      */
@@ -236,6 +256,8 @@ public abstract class FXGLApplication extends Application {
 
         getNet().getLatestVersionTask()
                 .onSuccess(version -> {
+
+                    FXGL.getSystemBundle().put("version.check", LocalDate.now());
 
                     dialog.getDialogPane().setContentText("Just so you know\n"
                             + "Your version:   " + Version.getAsString() + "\n"
