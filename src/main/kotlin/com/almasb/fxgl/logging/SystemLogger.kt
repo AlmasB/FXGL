@@ -69,6 +69,10 @@ object SystemLogger : Logger {
         val logDir = Paths.get("logs/")
         if (!Files.exists(logDir)) {
             Files.createDirectory(logDir)
+
+            val readmeFile = Paths.get("logs/Readme.txt")
+
+            Files.write(readmeFile, "This directory contains FXGL log files.".lines())
         }
 
         val logs = Files.walk(logDir, 1)
