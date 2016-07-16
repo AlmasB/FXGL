@@ -180,7 +180,7 @@ public class GameEntity extends Entity {
     /**
      * Translate X by given value.
      *
-     * @param x dx
+     * @param dx dx
      */
     public final void translateX(double dx) {
         position.translateX(dx);
@@ -189,7 +189,7 @@ public class GameEntity extends Entity {
     /**
      * Translate Y by given value.
      *
-     * @param y dy
+     * @param dy dy
      */
     public final void translateY(double dy) {
         position.translateY(dy);
