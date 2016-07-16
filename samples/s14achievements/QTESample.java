@@ -49,8 +49,6 @@ import javafx.util.Duration;
  */
 public class QTESample extends GameApplication {
 
-    private PlayerControl playerControl;
-
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
@@ -65,62 +63,28 @@ public class QTESample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {
-        Input input = getInput();
-
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onActionBegin() {
-
-                getMasterTimer().runOnceAfter(() -> {
-
-                    QTE qte = FXGL.getService(ServiceType.QTE);
-
-                    qte.start(yes -> {
-
-                        System.out.println(yes);
-
-                    }, Duration.seconds(2), KeyCode.K, KeyCode.A, KeyCode.F);
-
-                }, Duration.seconds(1.2));
-            }
-        }, KeyCode.A);
-
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                playerControl.right();
-            }
-        }, KeyCode.D);
-
-        input.addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                playerControl.up();
-            }
-        }, KeyCode.W);
-
-        input.addAction(new UserAction("Move Down") {
-            @Override
-            protected void onAction() {
-                playerControl.down();
-            }
-        }, KeyCode.S);
-    }
+    protected void initInput() {}
 
     @Override
     protected void initAssets() {}
 
     @Override
     protected void initGame() {
-        playerControl = new PlayerControl();
-        
-        GameEntity player = Entities.builder()
-                .at(100, 100)
-                .viewFromNode(new Rectangle(40, 40))
-                .with(playerControl)
-                .buildAndAttach(getGameWorld());
 
+        // when app runs, after 2 seconds a QTE event will occur
+        getMasterTimer().runOnceAfter(() -> {
+
+            // 1. get QTE service
+            QTE qte = getQTE();
+
+            // 2. start event with duration and keys to be pressed
+            qte.start(yes -> {
+
+                System.out.println("Successful? " + yes);
+
+            }, Duration.seconds(3), KeyCode.F, KeyCode.X, KeyCode.G, KeyCode.L);
+
+        }, Duration.seconds(2));
     }
 
     @Override

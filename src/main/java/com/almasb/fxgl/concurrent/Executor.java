@@ -28,6 +28,8 @@ package com.almasb.fxgl.concurrent;
 
 import javafx.util.Duration;
 
+import java.util.concurrent.ScheduledFuture;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -40,6 +42,7 @@ public interface Executor extends java.util.concurrent.Executor {
      *
      * @param action the action
      * @param delay delay
+     * @return scheduled future which can be cancelled
      */
-    void schedule(Runnable action, Duration delay);
+    ScheduledFuture<?> schedule(Runnable action, Duration delay);
 }

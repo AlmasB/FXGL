@@ -32,8 +32,8 @@ import com.google.inject.Singleton
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.Pos
+import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.ColorPicker
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
@@ -41,52 +41,38 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
+import java.util.concurrent.ScheduledFuture
 import java.util.function.Consumer
 
 /**
- *
+ * FXGL default QTE service provider.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
 class QTEProvider : QTE {
 
-    private lateinit var eventHandler: EventHandler<KeyEvent>
+    private val eventHandler: EventHandler<KeyEvent>
+    private lateinit var scheduledAction: ScheduledFuture<*>
 
-    private var canAccept = false
+    private val fxScene: Scene
+
+    private val closeButton = Button()
+    private val keysBox = HBox(10.0)
 
     private val queue = ArrayDeque<KeyCode>()
     private val labels = ArrayDeque<Text>()
 
-    override fun start(callback: Consumer<Boolean>, duration: Duration, vararg keys: KeyCode) {
-        if (keys.isEmpty())
-            throw IllegalArgumentException("At least 1 key must be specified")
+    private lateinit var callback: Consumer<Boolean>
 
-        canAccept = false
+    init {
+        fxScene = FXGL.getDisplay().currentScene.root.scene
 
-        queue.clear()
-        labels.clear()
+        closeButton.isVisible = false
 
-        queue.addAll(keys)
-
-        val btn = Button()
-        btn.isVisible = false
-
-        labels.addAll(
-                keys.map { UIFactory.newText(it.getName(), Color.WHITE, 72.0) }
-        )
-
-        val hbox = HBox(10.0)
-        hbox.alignment = Pos.CENTER
-        hbox.children.addAll(labels)
-
-        FXGL.getDisplay().showBox("QTE!", hbox, btn)
-
-        val fxScene = FXGL.getDisplay().currentScene.root.scene
+        keysBox.alignment = Pos.CENTER
 
         eventHandler = EventHandler<KeyEvent> {
-
-            println(it.code)
 
             val k = queue.poll()
 
@@ -96,45 +82,61 @@ class QTEProvider : QTE {
                 label.fill = Color.YELLOW
 
                 if (queue.isEmpty()) {
-
-                    fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
-
-                    btn.fire()
-
+                    close()
                     callback.accept(true)
                 }
 
             } else {
-                queue.clear()
-
-                fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
-
-                btn.fire()
-
+                close()
                 callback.accept(false)
             }
-
         }
+    }
+
+    private fun show() {
+        FXGL.getDisplay().showBox("QTE!", keysBox, closeButton)
 
         fxScene.addEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
+    }
 
-        FXGL.getExecutor().schedule( {
+    private fun close() {
+        scheduledAction.cancel(true)
 
-            println("Time's run out")
+        queue.clear()
+        labels.clear()
+
+        fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
+
+        closeButton.fire()
+    }
+
+    override fun start(callback: Consumer<Boolean>, duration: Duration, vararg keys: KeyCode) {
+        if (keys.isEmpty())
+            throw IllegalArgumentException("At least 1 key must be specified")
+
+        if (queue.isNotEmpty())
+            throw IllegalStateException("Cannot start more than 1 QTE at a time")
+
+        this.callback = callback
+
+        queue.addAll(keys)
+        labels.addAll(
+                keys.map { UIFactory.newText(it.getName(), Color.WHITE, 72.0) }
+        )
+
+        keysBox.children.setAll(labels)
+
+        show()
+
+        scheduledAction = FXGL.getExecutor().schedule( {
 
             if (queue.isNotEmpty()) {
                 Platform.runLater {
 
-                    queue.clear()
-
-                    fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
-
-                    btn.fire()
-
+                    close()
                     callback.accept(false)
                 }
             }
-
         }, duration)
     }
 }

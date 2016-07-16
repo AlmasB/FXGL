@@ -33,6 +33,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.util.Duration
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 /**
@@ -63,7 +64,7 @@ private constructor(eventBus: EventBus) : Executor {
         service.submit(task)
     }
 
-    override fun schedule(action: Runnable, delay: Duration) {
-        schedulerService.schedule(action, delay.toMillis().toLong(), TimeUnit.MILLISECONDS)
+    override fun schedule(action: Runnable, delay: Duration): ScheduledFuture<*> {
+        return schedulerService.schedule(action, delay.toMillis().toLong(), TimeUnit.MILLISECONDS)
     }
 }

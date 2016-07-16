@@ -34,6 +34,7 @@ import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
+import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
@@ -418,6 +419,13 @@ public abstract class FXGLApplication extends Application {
      */
     public final AchievementManager getAchievementManager() {
         return FXGL.getAchievementManager();
+    }
+
+    /**
+     * @return QTE service
+     */
+    public final QTE getQTE() {
+        return FXGL.getQTE();
     }
 
     /**
