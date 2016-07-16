@@ -165,6 +165,11 @@ public class GameWorldTest {
     }
 
     @Test
+    public void testGetCollidingEntities() {
+        assertThat(gameWorld.getCollidingEntities(e1), is(Arrays.asList(e10, e11)));
+    }
+
+    @Test
     public void testGetEntitiesByLayer() throws Exception {
         assertThat(gameWorld.getEntitiesByLayer(new RenderLayer() {
             @Override
