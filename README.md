@@ -160,5 +160,5 @@ dependencies {
 ```
 
 ## Contact
-Email: almaslvl@gmail.com<br/>
-<a href="https://plus.google.com/+AlmasB0/about">Google+</a>
+[![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
+[![Google+](https://img.shields.io/badge/Google+-AlmasB-red.svg)](https://plus.google.com/+AlmasB0/about)
