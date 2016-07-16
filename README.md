@@ -37,7 +37,7 @@ JavaFX 8 Game Library written in Java + Kotlin<br/>
 * Audio System
 * Multithreading
 * Networking (both TCP and UDP)
-* Quick Time Events (QTE) (<b>API INCOMPLETE</b>)
+* Quick Time Events (QTE)
 * Customizable Intro Video / Animation
 * Customizable Main Menu / Game Menu
 * Customizable UI elements (Dialogs, Bars, Buttons, etc)
