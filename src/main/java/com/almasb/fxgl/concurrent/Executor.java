@@ -24,17 +24,22 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay.qte;
+package com.almasb.fxgl.concurrent;
 
-import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-
-import java.util.function.Consumer;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface QTE {
+public interface Executor extends java.util.concurrent.Executor {
 
-    void start(Consumer<Boolean> callback, Duration duration, KeyCode... keys);
+    /**
+     * Schedule a single action to run after delay.
+     * Unlike MasterTimer service, this is not blocked by game execution
+     * and runs even if the game is paused.
+     *
+     * @param action the action
+     * @param delay delay
+     */
+    void schedule(Runnable action, Duration delay);
 }
