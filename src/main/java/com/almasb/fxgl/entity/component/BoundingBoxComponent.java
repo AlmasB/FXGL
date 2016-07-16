@@ -191,6 +191,24 @@ public class BoundingBoxComponent extends AbstractComponent {
     }
 
     /**
+     * Note: same as width, unless specified otherwise.
+     *
+     * @return max x of bbox in local coordinates
+     */
+    public double getMaxXLocal() {
+        return getWidth();
+    }
+
+    /**
+     * Note: same as height, unless specified otherwise.
+     *
+     * @return max y of bbox in local coordinates
+     */
+    public double getMaxYLocal() {
+        return getHeight();
+    }
+
+    /**
      * @return min x in world coordinate system
      */
     public double getMinXWorld() {
