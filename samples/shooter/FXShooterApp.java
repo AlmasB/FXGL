@@ -32,14 +32,19 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.control.JSControl;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.ui.UIFactory;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -59,8 +64,9 @@ public class FXShooterApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("FXShooterApp");
+        settings.setWidth(1200);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(true);
+        settings.setMenuEnabled(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -81,7 +87,7 @@ public class FXShooterApp extends GameApplication {
         initTreasure();
         initPlayer();
 
-        getMasterTimer().runAtInterval(this::spawnEnemy, Duration.seconds(1));
+        //getMasterTimer().runAtInterval(this::spawnEnemy, Duration.seconds(1));
     }
 
     @Override
@@ -107,6 +113,22 @@ public class FXShooterApp extends GameApplication {
     @Override
     protected void initUI() {
 
+        TextArea textArea = new TextArea();
+        textArea.setPrefSize(400, 500);
+
+        Button btn = UIFactory.newButton("Execute");
+        btn.setTranslateY(500);
+        btn.setOnAction(e -> {
+            player.removeControl(JSControl.class);
+            player.addControl(new JSControl(textArea.getText()));
+        });
+
+        Pane pane = new Pane();
+        pane.setPrefSize(400, 600);
+        pane.setTranslateX(800);
+        pane.getChildren().addAll(textArea, btn);
+
+        getGameScene().addUINode(pane);
     }
 
     @Override

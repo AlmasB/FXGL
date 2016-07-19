@@ -43,31 +43,44 @@ public final class JavaScriptParser {
     private Invocable invocableEngine;
 
     /**
-     * Constructs new javascript parser for given .js file.
+     * Constructs new javascript parser for given .js file or source string.
      * The file will be loaded with {@link com.almasb.fxgl.asset.AssetLoader#loadScript(String)}
      *
-     * @param scriptFileName name of script file under "/assets/scripts/"
-     * @throws Exception if syntax error
+     * @param scriptFileName name of script file under "/assets/scripts/" or source string
+     * @throws IllegalArgumentException if syntax error
      */
-    public JavaScriptParser(String scriptFileName) throws Exception {
+    public JavaScriptParser(String scriptFileName) {
         engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("HOME_DIR", getClass().getResource("/assets/scripts/"));
         engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("ASSET_LOADER", FXGL.getAssetLoader());
 
-        engine.eval(FXGL.getAssetLoader().loadScript(scriptFileName));
+        try {
+            if (scriptFileName.endsWith(".js")) {
+                engine.eval(FXGL.getAssetLoader().loadScript(scriptFileName));
+            } else {
+                engine.eval(scriptFileName);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Script cannot parsed: " + e);
+        }
+
         invocableEngine = (Invocable) engine;
     }
 
     /**
-     * Invoked a JS function.
+     * Invokes a JS function.
      *
      * @param name function name
      * @param args function arguments
      * @param <T> return type
      * @return object returned by function
-     * @throws Exception if any error occurred during invocation
+     * @throws IllegalArgumentException if any error occurred during invocation
      */
     @SuppressWarnings("unchecked")
-    public <T> T callFunction(String name, Object... args) throws Exception {
-        return (T) invocableEngine.invokeFunction(name, args);
+    public <T> T callFunction(String name, Object... args) {
+        try {
+            return (T) invocableEngine.invokeFunction(name, args);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Function call failed: " + e);
+        }
     }
 }
