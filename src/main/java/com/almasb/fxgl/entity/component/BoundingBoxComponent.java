@@ -26,7 +26,9 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.serialization.SerializableComponent;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -37,6 +39,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 /**
  * Component that adds bounding box information to an entity.
@@ -44,7 +49,7 @@ import javafx.geometry.Rectangle2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class BoundingBoxComponent extends AbstractComponent {
+public class BoundingBoxComponent extends AbstractComponent implements SerializableComponent {
 
     public BoundingBoxComponent(HitBox... boxes) {
         hitBoxes.addAll(boxes);
@@ -371,6 +376,16 @@ public class BoundingBoxComponent extends AbstractComponent {
         double maxY = getMaxYWorld() + height;
 
         return new Rectangle2D(minX, minY, maxX - minX, maxY - minY);
+    }
+
+    @Override
+    public void write(@NotNull Bundle bundle) {
+        bundle.put("hitBoxes", new ArrayList<>(hitBoxes));
+    }
+
+    @Override
+    public void read(@NotNull Bundle bundle) {
+        hitBoxes.addAll(bundle.<ArrayList<HitBox>>get("hitBoxes"));
     }
 
     //
