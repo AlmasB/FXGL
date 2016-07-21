@@ -26,9 +26,14 @@
 
 package sandbox;
 
+import com.almasb.easyio.FS;
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.input.*;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
@@ -47,8 +52,8 @@ public class App1 extends GameApplication {
         settings.setTitle("App1");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
-        settings.setMenuEnabled(true);
+        settings.setIntroEnabled(false);
+        settings.setMenuEnabled(false);
         settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
@@ -57,7 +62,7 @@ public class App1 extends GameApplication {
     protected void initInput() {
         Input input = getInput();
         input.addInputMapping(new InputMapping("Open", KeyCode.O));
-        input.addInputMapping(new InputMapping("Test", KeyCode.O, InputModifier.CTRL));
+        input.addInputMapping(new InputMapping("Test", KeyCode.F, InputModifier.CTRL));
     }
 
     @Override
@@ -79,12 +84,32 @@ public class App1 extends GameApplication {
 
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void test() {
+        BoundingBoxComponent bbox = new BoundingBoxComponent(new HitBox("BOX", BoundingShape.box(30, 40)));
+
+        Bundle bundle = new Bundle("BBOXTest");
+        bbox.write(bundle);
+
+        FS.writeDataTask(bundle, "./test.dat").execute();
+
         System.out.println("O");
     }
 
+    private Bundle bundle2;
+
     @OnUserAction(name = "Test", type = ActionType.ON_ACTION_BEGIN)
     public void test2() {
-        System.out.println("Ctrl + O");
+
+        FS.<Bundle>readDataTask("test.dat")
+                .onSuccess(file -> bundle2 = file)
+                .execute();
+
+        BoundingBoxComponent bbox = new BoundingBoxComponent();
+        bbox.read(bundle2);
+
+        System.out.println(bbox.getWidth() +" " + bbox.getHeight());
+        System.out.println(bbox.hitBoxesProperty().get(0).getName());
+
+        System.out.println("Ctrl + F");
     }
 
     public static void main(String[] args) {
