@@ -36,7 +36,7 @@ import java.net.URL
 import java.nio.file.Path
 
 /**
- *
+ * Main Net service provider for FXGL.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -54,6 +54,10 @@ class FXGLNet : Net {
         }
     }
 
+    /**
+     * Loads pom.xml from GitHub server's master branch
+     * and parses the "version" tag.
+     */
     override fun getLatestVersionTask(): IOTask<String> {
 
         return openStreamTask(FXGL.getString("url.pom")).then {
