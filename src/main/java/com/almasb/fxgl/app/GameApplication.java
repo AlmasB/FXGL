@@ -50,6 +50,8 @@ import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -685,42 +687,44 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         btnNew.setOnAction(e -> {
             getDisplay().showInputBox("New Profile", DialogPane.ALPHANUM, name -> {
-                profileName = name;
-                saveLoadManager = new SaveLoadManager(profileName);
+                profileName.set(name);
+                saveLoadManager = new SaveLoadManager(name);
 
-                getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
+                getEventBus().fireEvent(new ProfileSelectedEvent(name, false));
 
                 saveProfile();
             });
         });
 
         btnSelect.setOnAction(e -> {
-            profileName = profilesBox.getValue();
-            saveLoadManager = new SaveLoadManager(profileName);
+            String name = profilesBox.getValue();
 
+            saveLoadManager = new SaveLoadManager(name);
 
             saveLoadManager.loadProfileTask()
                     .onSuccess(profile -> {
                         boolean ok = loadFromProfile(profile);
 
                         if (!ok) {
-                            getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
+                            getDisplay().showErrorBox("Profile is corrupted: " + name, this::showProfileDialog);
                         } else {
+                            profileName.set(name);
+
                             saveLoadManager.loadLastModifiedSaveFileTask()
                                     .onSuccess(file -> {
-                                        getEventBus().fireEvent(new ProfileSelectedEvent(profileName, true));
+                                        getEventBus().fireEvent(new ProfileSelectedEvent(name, true));
                                     })
                                     .onFailure(error -> {
-                                        getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
+                                        getEventBus().fireEvent(new ProfileSelectedEvent(name, false));
                                     })
                                     .executeAsyncWithDialogFX(new ProgressDialog("Loading last save file"));
                         }
                     })
                     .onFailure(error -> {
-                        getDisplay().showErrorBox("Profile is corrupted: " + profileName + "\nError: "
+                        getDisplay().showErrorBox("Profile is corrupted: " + name + "\nError: "
                                 + error.toString(), this::showProfileDialog);
                     })
-                    .executeAsyncWithDialogFX(new ProgressDialog("Loading Profile: "+ profileName));
+                    .executeAsyncWithDialogFX(new ProgressDialog("Loading Profile: "+ name));
         });
 
         btnDelete.setOnAction(e -> {
@@ -880,7 +884,14 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * Stores current selected profile name for this game.
      */
-    private String profileName;
+    private ReadOnlyStringWrapper profileName = new ReadOnlyStringWrapper("");
+
+    /**
+     * @return profile name property (read-only)
+     */
+    public final ReadOnlyStringProperty profileNameProperty() {
+        return profileName.getReadOnlyProperty();
+    }
 
     /**
      * Create a user profile with current settings.

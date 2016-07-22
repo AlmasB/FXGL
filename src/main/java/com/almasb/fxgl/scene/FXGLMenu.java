@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
-import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.KeyTrigger;
@@ -63,7 +62,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.function.Supplier;
 
 /**
@@ -74,6 +72,7 @@ import java.util.function.Supplier;
  *
  * Both main and game menus <strong>should</strong> have the following items:
  * <ul>
+ *     <li>Background</li>
  *     <li>Title</li>
  *     <li>Version</li>
  *     <li>Profile name</li>
@@ -111,9 +110,15 @@ public abstract class FXGLMenu extends FXGLScene {
                 createVersionView(makeVersionString()),
                 menuRoot, contentRoot);
 
-        // TODO: if different user logs in, does not handle
-        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
-            getRoot().getChildren().add(createProfileView("Profile: " + event.getProfileName()));
+        // we don't data-bind the name because menu subclasses
+        // might use some fancy UI without Text / Label
+        app.profileNameProperty().addListener((o, oldName, newName) -> {
+            if (!oldName.isEmpty()) {
+                // remove last node which *should* be profile view
+                getRoot().getChildren().remove(getRoot().getChildren().size() - 1);
+            }
+
+            getRoot().getChildren().add(createProfileView("Profile: " + newName));
         });
     }
 
