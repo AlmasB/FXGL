@@ -195,6 +195,36 @@ public class PositionComponent extends AbstractComponent
         return getValue().distance(other.getValue());
     }
 
+    /**
+     * Note: if there is no bbox attached, entity is considered as a point,
+     * else as a rectangle with the center placed in the cell.
+     *
+     * @param cellSize size of each cell in the grid
+     * @return x position of the entity in the grid
+     */
+    public int getGridX(int cellSize) {
+        double x = getEntity().getComponent(BoundingBoxComponent.class)
+                .map(bbox -> bbox.getMinXWorld() + bbox.getWidth() / 2)
+                .orElseGet(this::getX);
+
+        return (int) (x / cellSize);
+    }
+
+    /**
+     * Note: if there is no bbox attached, entity is considered as a point,
+     * else as a rectangle with the center placed in the cell.
+     *
+     * @param cellSize size of each cell in the grid
+     * @return y position of the entity in the grid
+     */
+    public int getGridY(int cellSize) {
+        double y = getEntity().getComponent(BoundingBoxComponent.class)
+                .map(bbox -> bbox.getMinYWorld() + bbox.getHeight() / 2)
+                .orElseGet(this::getY);
+
+        return (int) (y / cellSize);
+    }
+
     @Override
     public String toString() {
         return "Position(" + getX() + "," + getY() + ")";
