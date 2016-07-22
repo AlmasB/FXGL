@@ -28,6 +28,7 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.AbstractComponent;
+import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.serialization.SerializableComponent;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
@@ -49,7 +50,8 @@ import java.util.ArrayList;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class BoundingBoxComponent extends AbstractComponent implements SerializableComponent {
+public class BoundingBoxComponent extends AbstractComponent
+        implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {
 
     public BoundingBoxComponent(HitBox... boxes) {
         hitBoxes.addAll(boxes);
@@ -386,6 +388,12 @@ public class BoundingBoxComponent extends AbstractComponent implements Serializa
     @Override
     public void read(@NotNull Bundle bundle) {
         hitBoxes.addAll(bundle.<ArrayList<HitBox>>get("hitBoxes"));
+    }
+
+    @Override
+    public BoundingBoxComponent copy() {
+        // hit boxes are immutable so can safely reuse them
+        return new BoundingBoxComponent(hitBoxes.toArray(new HitBox[0]));
     }
 
     //
