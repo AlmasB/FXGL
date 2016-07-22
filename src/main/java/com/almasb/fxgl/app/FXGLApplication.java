@@ -26,8 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.easyio.FS;
-import com.almasb.easyio.serialization.Bundle;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
@@ -66,7 +64,7 @@ import java.util.concurrent.Executor;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class FXGLApplication extends Application {
+abstract class FXGLApplication extends Application {
 
     /**
      * We use system logger because logger service is not yet ready.
