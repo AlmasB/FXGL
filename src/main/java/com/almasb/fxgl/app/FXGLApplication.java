@@ -64,7 +64,7 @@ import java.util.concurrent.Executor;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-abstract class FXGLApplication extends Application {
+public abstract class FXGLApplication extends Application {
 
     /**
      * We use system logger because logger service is not yet ready.
