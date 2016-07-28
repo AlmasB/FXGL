@@ -396,6 +396,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         bus.addEventHandler(FXGLEvent.RESET, event -> {
             getGameWorld().reset();
+            getPhysicsWorld().reset();
             getGameScene().onWorldReset();
 
             getInput().onReset();
@@ -877,6 +878,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     /**
      * (Re-)initializes the user application as new and starts the game.
+     * Note: cannot be called during callbacks.
      */
     protected void startNewGame() {
         log.debug("Starting new game");
@@ -885,6 +887,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     /**
      * (Re-)initializes the user application from the given data file and starts the game.
+     * Note: cannot be called during callbacks.
      *
      * @param dataFile save data to loadTask from
      */

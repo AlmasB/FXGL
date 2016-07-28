@@ -240,6 +240,17 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
     }
 
     /**
+     * Resets physics world.
+     */
+    public void reset() {
+        log.debug("Resetting physics world");
+
+        entities.clear();
+        collisions.clear();
+        collisionHandlers.clear();
+    }
+
+    /**
      * Perform collision detection for all entities that have
      * setCollidable(true) and if at least one entity is not PhysicsEntity.
      * Subsequently fire collision handlers for all entities that have
