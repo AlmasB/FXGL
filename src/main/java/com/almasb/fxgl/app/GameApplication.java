@@ -946,10 +946,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     }
 
     private void saveProfile() {
-        // if it is null then we are running without menus
-        if (profileName != null) {
+        // if it is empty then we are running without menus
+        if (!profileName.get().isEmpty()) {
             saveLoadManager.saveProfileTask(createProfile())
-                    .onFailure(e -> log.warning("Failed to save profile: " + profileName + " - " + e))
+                    .onFailure(e -> log.warning("Failed to save profile: " + profileName.get() + " - " + e))
                     // we execute synchronously to avoid incomplete save since we might be shutting down
                     .execute();
         }
