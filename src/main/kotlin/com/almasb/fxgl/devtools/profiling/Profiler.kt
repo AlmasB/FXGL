@@ -41,9 +41,13 @@ class Profiler {
 
     companion object {
         private val masterTimer: MasterTimer
+        private val runtime: Runtime
+
+        private val MB = 1024.0 * 1024.0
 
         init {
             masterTimer = FXGL.getMasterTimer()
+            runtime = Runtime.getRuntime()
         }
     }
 
@@ -59,12 +63,40 @@ class Profiler {
 
     fun getAvgPerformance() = performance / frames
 
+    private var memoryUsage = 0L
+    private var memoryUsageMin = Long.MAX_VALUE
+    private var memoryUsageMax = 0L
+
+    /**
+     * @return average memory usage in MB
+     */
+    fun getAvgMemoryUsage() = memoryUsage / frames / MB
+
+    /**
+     * @return max (highest peak) memory usage in MB
+     */
+    fun getMaxMemoryUsage() = memoryUsageMax / MB
+
+    /**
+     * @return min (lowest peak) memory usage in MB
+     */
+    fun getMinMemoryUsage() = memoryUsageMin / MB
+
     private var subscription: Subscriber? = null
 
     private fun onUpdateEvent(event: UpdateEvent) {
         frames++
         fps += masterTimer.fps
         performance += masterTimer.performanceFPS
+
+        val used = runtime.totalMemory() - runtime.freeMemory()
+        memoryUsage += used
+
+        if (used > memoryUsageMax)
+            memoryUsageMax = used
+
+        if (used < memoryUsageMin)
+            memoryUsageMin = used
     }
 
     /**
@@ -89,6 +121,10 @@ class Profiler {
         frames = 1
         fps = 0.0
         performance = 0.0
+
+        memoryUsage = 0L
+        memoryUsageMin = Long.MAX_VALUE
+        memoryUsageMax = 0L
     }
 
     /**
@@ -98,5 +134,8 @@ class Profiler {
         SystemLogger.info("Processed Frames: $frames")
         SystemLogger.info("Average FPS: ${getAvgFPS()}")
         SystemLogger.info("Average Performance: ${getAvgPerformance()}")
+        SystemLogger.info("Average Memory Usage: ${getAvgMemoryUsage()} MB")
+        SystemLogger.info("Min Memory Usage: ${getMinMemoryUsage()} MB")
+        SystemLogger.info("Max Memory Usage: ${getMaxMemoryUsage()} MB")
     }
 }

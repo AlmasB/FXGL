@@ -31,6 +31,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -65,24 +66,35 @@ public class MemoryTest extends GameApplication {
     @Override
     protected void initPhysics() {}
 
-    Text text;
+    private Text text;
 
     @Override
     protected void initUI() {
-        text = UIFactory.newText("", Color.BLACK, 18);
+        text = new Text();
+        text.setFont(Font.font("Lucida Console", 18));
         text.relocate(100, 100);
 
         getGameScene().addUINode(text);
     }
 
-    double MB = 1024 * 1024.0;
+    private static final double MB = 1024 * 1024.0;
 
     @Override
     protected void onUpdate(double tpf) {
-        text.setText("Occupied: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB
-                + "\nFree: " + Runtime.getRuntime().freeMemory() / MB
-                + "\nTotal: " + Runtime.getRuntime().totalMemory() / MB
-                + "\nMax:   " + Runtime.getRuntime().maxMemory() / MB);
+        text.setText(String.format("Used:  %7.1f MB"
+                + "\nFree:  %7.1f MB"
+                + "\nTotal: %7.1f MB"
+                + "\nMax:   %7.1f MB",
+                (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
+                Runtime.getRuntime().freeMemory() / MB,
+                Runtime.getRuntime().totalMemory() / MB,
+                Runtime.getRuntime().maxMemory() / MB));
+
+
+//                "Occupied: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB
+//                + "\nFree: " + Runtime.getRuntime().freeMemory() / MB
+//                + "\nTotal: " + Runtime.getRuntime().totalMemory() / MB
+//                + "\nMax:   " + Runtime.getRuntime().maxMemory() / MB);
     }
 
     public static void main(String[] args) {
