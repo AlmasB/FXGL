@@ -146,10 +146,14 @@ public abstract class FXGLApplication extends Application {
 
     /**
      * Reset the application.
+     * After notifying all interested parties (where all should do a cleanup),
+     * <code>System.gc()</code> will be called.
      */
     protected void reset() {
         log.debug("Resetting FXGL application");
         getEventBus().fireEvent(FXGLEvent.reset());
+
+        System.gc();
     }
 
     /**
