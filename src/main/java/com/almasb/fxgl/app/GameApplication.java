@@ -319,7 +319,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         EventBus bus = getEventBus();
 
-        Font fpsFont = UIFactory.newFont(24);
+        Font fpsFont = Font.font("Lucida Console", 20);
 
         getMasterTimer().setUpdateListener(event -> {
             getInput().onUpdateEvent(event);
@@ -339,9 +339,23 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
                 g.setFont(fpsFont);
                 g.setFill(Color.RED);
-                String text = String.format("FPS: [%d]\nPerformance: [%d]",
-                        getMasterTimer().getFPS(), getMasterTimer().getPerformanceFPS());
-                g.fillText(text, 0, getHeight() - 40);
+
+                double used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+                String text = String.format("FPS: [%d]"
+                        + "\nPerformance: [%d]"
+                        + "\nNow Mem: [%.1f] MB"
+                        + "\nAvg Mem: [%.1f] MB"
+                        + "\nMin Mem: [%.1f] MB"
+                        + "\nMax Mem: [%.1f] MB",
+                        getMasterTimer().getFPS(),
+                        getMasterTimer().getPerformanceFPS(),
+                        used / (1048576),   // (1024 * 1024) B to MB
+                        profiler.getAvgMemoryUsage(),
+                        profiler.getMinMemoryUsage(),
+                        profiler.getMaxMemoryUsage());
+
+                g.fillText(text, 0, getHeight() - 120);
             }
         });
 
