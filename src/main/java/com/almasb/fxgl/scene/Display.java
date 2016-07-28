@@ -154,6 +154,16 @@ public interface Display extends UserProfileSavable {
     void showInputBox(String message, Predicate<String> filter, Consumer<String> resultCallback);
 
     /**
+     * Shows a blocking (stops game execution, method returns normally) message box with OK and CANCEL buttons and input field.
+     * The callback is invoked with the field text as parameter, or with empty string if dialog was cancelled.
+     *
+     * @param message message to show
+     * @param filter the filter to validate input
+     * @param resultCallback result function to call back or empty string if use cancelled the dialog
+     */
+    void showInputBoxWithCancel(String message, Predicate<String> filter, Consumer<String> resultCallback);
+
+    /**
      * Shows a blocking (stops game execution, method returns normally) dialog with the error.
      *
      * @param error the error to show

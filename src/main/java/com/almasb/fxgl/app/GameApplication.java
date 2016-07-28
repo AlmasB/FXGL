@@ -543,7 +543,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onSave() {
-            getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
+            getDisplay().showInputBoxWithCancel("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
+
+                if (saveFileName.isEmpty())
+                    return;
 
                 if (saveLoadManager.saveFileExists(saveFileName)) {
                     getDisplay().showConfirmationBox("Overwrite save [" + saveFileName + "]?", yes -> {
