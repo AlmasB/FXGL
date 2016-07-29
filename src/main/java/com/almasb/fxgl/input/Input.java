@@ -27,11 +27,14 @@
 package com.almasb.fxgl.input;
 
 import com.almasb.fxgl.app.FXGLListener;
+import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
 import java.util.Map;
 
@@ -63,7 +66,9 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     @Override
     default void onExit() {}
 
-    void onInputEvent(FXGLInputEvent event);
+    void onKeyEvent(KeyEvent event);
+
+    void onMouseEvent(MouseEvent event, Viewport viewport);
 
     /**
      * Setting to false will disable capturing of input events.

@@ -34,7 +34,6 @@ import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
-import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
@@ -56,7 +55,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -424,12 +422,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         // Scene
 
         getGameScene().addEventHandler(MouseEvent.ANY, event -> {
-            FXGLInputEvent e = new FXGLInputEvent(event,
-                    getGameScene().screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
-            getInput().onInputEvent(e);
+            getInput().onMouseEvent(event, getGameScene().getViewport());
         });
         getGameScene().addEventHandler(KeyEvent.ANY, event -> {
-            getInput().onInputEvent(new FXGLInputEvent(event, Point2D.ZERO));
+            getInput().onKeyEvent(event);
         });
 
         bus.addEventHandler(NotificationEvent.ANY, event -> {
