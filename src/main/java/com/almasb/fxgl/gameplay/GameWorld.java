@@ -32,7 +32,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.*;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.time.UpdateEventListener;
 import com.google.inject.Inject;

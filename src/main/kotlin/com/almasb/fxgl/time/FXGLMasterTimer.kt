@@ -28,7 +28,7 @@ package com.almasb.fxgl.time
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
@@ -81,12 +81,14 @@ private constructor() : AnimationTimer(), MasterTimer {
          */
         fun tpfSeconds() = 1.0 / 60
 
+        private val TPF_NANOS = 1000000000L / 60
+
         /**
          * Timer per frame in nanoseconds.
 
          * @return 16666666
          */
-        fun tpfNanos() = 1000000000L / 60
+        fun tpfNanos() = TPF_NANOS
 
         /**
          * Converts seconds to nanoseconds.
@@ -117,6 +119,8 @@ private constructor() : AnimationTimer(), MasterTimer {
         updateListener = listener
     }
 
+    private val updateEvent = UpdateEvent(0, 0.0)
+
     /**
      * This is the internal FXGL update tick,
      * executed 60 times a second ~ every 0.166 (6) seconds.
@@ -131,8 +135,11 @@ private constructor() : AnimationTimer(), MasterTimer {
         timerActions.forEach { action -> action.update(now) }
         timerActions.removeIf { it.isExpired }
 
+        updateEvent.setTick(getTick())
+        updateEvent.setTPF(tpf)
+
         // this is the master update event
-        updateListener?.onUpdateEvent(UpdateEvent(getTick(), tpf))
+        updateListener?.onUpdateEvent(updateEvent)
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So

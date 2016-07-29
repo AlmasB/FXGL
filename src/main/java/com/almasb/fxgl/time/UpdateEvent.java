@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.event;
+
+package com.almasb.fxgl.time;
 
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -37,7 +38,11 @@ public final class UpdateEvent extends Event {
     public static final EventType<UpdateEvent> ANY =
             new EventType<>(Event.ANY, "UPDATE_EVENT");
 
-    private final long tick;
+    private long tick;
+
+    void setTick(long tick) {
+        this.tick = tick;
+    }
 
     /**
      * @return current tick
@@ -46,7 +51,11 @@ public final class UpdateEvent extends Event {
         return tick;
     }
 
-    private final double tpf;
+    private double tpf;
+
+    void setTPF(double tpf) {
+        this.tpf = tpf;
+    }
 
     /**
      * @return time per frame

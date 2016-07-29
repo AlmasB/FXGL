@@ -28,7 +28,7 @@ package com.almasb.fxgl.input
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
 import com.google.inject.Singleton

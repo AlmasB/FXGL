@@ -209,6 +209,20 @@ public final class HitBox implements Serializable {
     }
 
     /**
+     * @return width of this hit box
+     */
+    public double getWidth() {
+        return bounds.getWidth();
+    }
+
+    /**
+     * @return height of this hit box
+     */
+    public double getHeight() {
+        return bounds.getHeight();
+    }
+
+    /**
      * @return hit box name
      */
     public String getName() {

@@ -28,7 +28,7 @@ package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.time.MasterTimer
 
@@ -66,6 +66,7 @@ class Profiler {
     private var memoryUsage = 0L
     private var memoryUsageMin = Long.MAX_VALUE
     private var memoryUsageMax = 0L
+    private var memoryUsageCurrent = 0L;
 
     /**
      * @return average memory usage in MB
@@ -82,6 +83,11 @@ class Profiler {
      */
     fun getMinMemoryUsage() = memoryUsageMin / MB
 
+    /**
+     * @return how much memory is used at this moment in MB
+     */
+    fun getCurrentMemoryUsage() = memoryUsageCurrent / MB
+
     private var subscription: Subscriber? = null
 
     private fun onUpdateEvent(event: UpdateEvent) {
@@ -89,14 +95,14 @@ class Profiler {
         fps += masterTimer.fps
         performance += masterTimer.performanceFPS
 
-        val used = runtime.totalMemory() - runtime.freeMemory()
-        memoryUsage += used
+        memoryUsageCurrent = runtime.totalMemory() - runtime.freeMemory()
+        memoryUsage += memoryUsageCurrent
 
-        if (used > memoryUsageMax)
-            memoryUsageMax = used
+        if (memoryUsageCurrent > memoryUsageMax)
+            memoryUsageMax = memoryUsageCurrent
 
-        if (used < memoryUsageMin)
-            memoryUsageMin = used
+        if (memoryUsageCurrent < memoryUsageMin)
+            memoryUsageMin = memoryUsageCurrent
     }
 
     /**
@@ -125,6 +131,7 @@ class Profiler {
         memoryUsage = 0L
         memoryUsageMin = Long.MAX_VALUE
         memoryUsageMax = 0L
+        memoryUsageCurrent = 0L
     }
 
     /**

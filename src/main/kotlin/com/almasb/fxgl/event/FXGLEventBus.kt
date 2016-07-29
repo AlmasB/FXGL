@@ -31,6 +31,7 @@ import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.input.FXGLInputEvent
+import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.event.Event

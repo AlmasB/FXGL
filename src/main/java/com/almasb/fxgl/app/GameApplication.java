@@ -321,6 +321,9 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         Font fpsFont = Font.font("Lucida Console", 20);
 
+        // the debug data max chars is ~110, so just add a margin
+        StringBuilder sb = new StringBuilder(128);
+
         getMasterTimer().setUpdateListener(event -> {
             getInput().onUpdateEvent(event);
             getAudioPlayer().onUpdateEvent(event);
@@ -340,22 +343,16 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 g.setFont(fpsFont);
                 g.setFill(Color.RED);
 
-                double used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                // clear the contents
+                sb.setLength(0);
+                sb.append("FPS: ").append(getMasterTimer().getFPS())
+                        .append("\nPerformance: ").append(getMasterTimer().getPerformanceFPS())
+                        .append("\nNow Mem (MB): ").append((int) profiler.getCurrentMemoryUsage())
+                        .append("\nAvg Mem (MB): ").append((int) profiler.getAvgMemoryUsage())
+                        .append("\nMin Mem (MB): ").append((int) profiler.getMinMemoryUsage())
+                        .append("\nMax Mem (MB): ").append((int) profiler.getMaxMemoryUsage());
 
-                String text = String.format("FPS: [%d]"
-                        + "\nPerformance: [%d]"
-                        + "\nNow Mem: [%.1f] MB"
-                        + "\nAvg Mem: [%.1f] MB"
-                        + "\nMin Mem: [%.1f] MB"
-                        + "\nMax Mem: [%.1f] MB",
-                        getMasterTimer().getFPS(),
-                        getMasterTimer().getPerformanceFPS(),
-                        used / (1048576),   // (1024 * 1024) B to MB
-                        profiler.getAvgMemoryUsage(),
-                        profiler.getMinMemoryUsage(),
-                        profiler.getMaxMemoryUsage());
-
-                g.fillText(text, 0, getHeight() - 120);
+                g.fillText(sb.toString(), 0, getHeight() - 120);
             }
         });
 

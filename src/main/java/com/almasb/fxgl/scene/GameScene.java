@@ -34,7 +34,7 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.time.UpdateEventListener;

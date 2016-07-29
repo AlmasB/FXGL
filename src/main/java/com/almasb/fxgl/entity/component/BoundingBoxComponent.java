@@ -292,6 +292,43 @@ public class BoundingBoxComponent extends AbstractComponent
     }
 
     /**
+     * Internal GC-friendly (and has less checks than JavaFX's BoundingBox)
+     * check for collision between two hit boxes with given x,y of entities.
+     *
+     * @param box1 hit box 1
+     * @param x1 x of entity 1
+     * @param y1 y of entity 1
+     * @param box2 hit box 2
+     * @param x2 x of entity 2
+     * @param y2 y of entity 2
+     * @return true iff box1 is colliding with box2
+     */
+    private boolean checkCollision(HitBox box1, double x1, double y1, HitBox box2, double x2, double y2) {
+        double minX1 = x1 + box1.getMinX();
+        double minY1 = y1 + box1.getMinY();
+        double maxX1 = x1 + box1.getMinX() + box1.getWidth();
+        double maxY1 = y1 + box1.getMinY() + box1.getHeight();
+
+        double minX2 = x2 + box2.getMinX();
+        double minY2 = y2 + box2.getMinY();
+        double maxX2 = x2 + box2.getMinX() + box2.getWidth();
+        double maxY2 = y2 + box2.getMinY() + box2.getHeight();
+
+        return maxX2 >= minX1 &&
+                maxY2 >= minY1 &&
+                minX2 <= maxX1 &&
+                minY2 <= maxY1;
+
+//        new BoundingBox(x + bounds.getMinX(), y + bounds.getMinY(),
+//                bounds.getWidth(), bounds.getHeight());
+
+//        return (x + w >= getMinX() &&
+//                y + h >= getMinY() &&
+//                x <= getMaxX() &&
+//                y <= getMaxY());
+    }
+
+    /**
      * Checks for collision with another entity. Returns collision result
      * containing the first hit box that triggered collision.
      * If no collision - {@link CollisionResult#NO_COLLISION} will be returned.
@@ -300,13 +337,25 @@ public class BoundingBoxComponent extends AbstractComponent
      * @return collision result
      */
     public final CollisionResult checkCollision(BoundingBoxComponent other) {
-        for (HitBox box1 : hitBoxes) {
-            Bounds b = isXFlipped() ? box1.translateXFlipped(getPositionX(), getPositionY(), getWidth()) : box1.translate(getPositionX(), getPositionY());
-            for (HitBox box2 : other.hitBoxes) {
-                Bounds b2 = other.isXFlipped()
-                        ? box2.translateXFlipped(other.getPositionX(), other.getPositionY(), other.getWidth())
-                        : box2.translate(other.getPositionX(), other.getPositionY());
-                if (b.intersects(b2)) {
+//        for (HitBox box1 : hitBoxes) {
+//            Bounds b = isXFlipped() ? box1.translateXFlipped(getPositionX(), getPositionY(), getWidth()) : box1.translate(getPositionX(), getPositionY());
+//            for (HitBox box2 : other.hitBoxes) {
+//                Bounds b2 = other.isXFlipped()
+//                        ? box2.translateXFlipped(other.getPositionX(), other.getPositionY(), other.getWidth())
+//                        : box2.translate(other.getPositionX(), other.getPositionY());
+//
+//                if (b.intersects(b2)) {
+//                    return new CollisionResult(box1, box2);
+//                }
+//            }
+//        }
+
+        for (HitBox box1: hitBoxes) {
+            for (HitBox box2: other.hitBoxes) {
+
+                if (checkCollision(box1, getPositionX(), getPositionY(),
+                        box2, other.getPositionX(), other.getPositionY())) {
+
                     return new CollisionResult(box1, box2);
                 }
             }
