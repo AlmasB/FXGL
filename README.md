@@ -6,6 +6,7 @@ JavaFX 8 Game Library written in Java + Kotlin<br/>
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
 [![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
+[![Wiki](https://img.shields.io/badge/www-Wiki-green.svg)](https://github.com/AlmasB/FXGL/wiki)
 
 ## Good for ...
 * 2D or casual UI based games
@@ -23,11 +24,13 @@ JavaFX 8 Game Library written in Java + Kotlin<br/>
 * [JBox2D](https://github.com/jbox2d/jbox2d) Physics Engine Integration (fork based on v.2.3.0)
 * [Ents](https://github.com/AlmasB/Ents) Entity Component/Control System Integration
 * [FXEventBus](https://github.com/AlmasB/FXEventBus) Event System Integration
-* [AStar](https://github.com/AlmasB/AStar) AI Pathfinding Integration ([A* Search](https://en.wikipedia.org/wiki/A*_search_algorithm))
+* [AStar](https://github.com/AlmasB/AStar) Pathfinding Integration ([A* Search](https://en.wikipedia.org/wiki/A*_search_algorithm))
+* [gdxAI](https://github.com/libgdx/gdx-ai) Artificial Intelligence Framework Integration
 * Game Loop
 * Input Bindings (Keys + Mouse)
 * Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf", custom binary formats)
 * Text/Script Parsers
+* JavaScript Behavior Injections (for entities)
 * Automated Collision Handling (physics collisions are hooked into FXGL)
 * Automated Target Screen Resolution (+Fullscreen)
 * Particle System with Canvas Rendering
@@ -48,14 +51,11 @@ JavaFX 8 Game Library written in Java + Kotlin<br/>
 * In-game Notification System
 * [Log4j2](http://logging.apache.org/log4j/2.x/) Logging Framework
 * [EasyIO](https://github.com/AlmasB/EasyIO) IO Framework
-* Performance Monitor
+* Performance Monitor + Profiling
 * Global Services Framework
 * Other minor game dev features
 
 If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
-
-## Extra Info
-For more information check out the project [Wiki](https://github.com/AlmasB/FXGL/wiki).
 
 ## Basic Usage
 #### Java Example
@@ -126,8 +126,9 @@ fun main(args: Array<String>) {
 }
 ```
 
-* The [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
-* The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) videos will walk you through the basics.
+* For all (**up to date**) "Getting Started" tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki).
+* The (**up to date**) [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
+* The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) (**outdated**) videos will walk you through the basics.
 * For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
 
 ## Setup Tutorials
