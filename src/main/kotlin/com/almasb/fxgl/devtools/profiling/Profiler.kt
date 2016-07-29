@@ -88,6 +88,8 @@ class Profiler {
      */
     fun getCurrentMemoryUsage() = memoryUsageCurrent / MB
 
+    private var gcRuns = 0
+
     private var subscription: Subscriber? = null
 
     private fun onUpdateEvent(event: UpdateEvent) {
@@ -95,7 +97,13 @@ class Profiler {
         fps += masterTimer.fps
         performance += masterTimer.performanceFPS
 
-        memoryUsageCurrent = runtime.totalMemory() - runtime.freeMemory()
+        val used = runtime.totalMemory() - runtime.freeMemory()
+
+        if (used < memoryUsageCurrent) {
+            gcRuns++
+        }
+
+        memoryUsageCurrent = used
         memoryUsage += memoryUsageCurrent
 
         if (memoryUsageCurrent > memoryUsageMax)
@@ -132,6 +140,8 @@ class Profiler {
         memoryUsageMin = Long.MAX_VALUE
         memoryUsageMax = 0L
         memoryUsageCurrent = 0L
+
+        gcRuns = 0
     }
 
     /**
@@ -144,5 +154,6 @@ class Profiler {
         SystemLogger.info("Average Memory Usage: ${getAvgMemoryUsage()} MB")
         SystemLogger.info("Min Memory Usage: ${getMinMemoryUsage()} MB")
         SystemLogger.info("Max Memory Usage: ${getMaxMemoryUsage()} MB")
+        SystemLogger.info("Estimated GC runs: $gcRuns")
     }
 }
