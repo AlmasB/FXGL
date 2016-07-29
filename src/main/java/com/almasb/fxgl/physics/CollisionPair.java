@@ -48,4 +48,16 @@ final class CollisionPair extends Pair<Entity> {
     CollisionHandler getHandler() {
         return handler;
     }
+
+    void collisionBegin() {
+        handler.onCollisionBegin(getA(), getB());
+    }
+
+    void collision() {
+        handler.onCollision(getA(), getB());
+    }
+
+    void collisionEnd() {
+        handler.onCollisionEnd(getA(), getB());
+    }
 }

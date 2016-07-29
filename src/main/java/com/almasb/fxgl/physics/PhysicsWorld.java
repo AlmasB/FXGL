@@ -317,12 +317,12 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
             }
 
             if (cachedTick == -1L) {
-                pair.getHandler().onCollisionEnd(pair.getA(), pair.getB());
+                pair.collisionEnd();
                 toRemove.add(pair);
             } else if (tick.get() == cachedTick) {
-                pair.getHandler().onCollisionBegin(pair.getA(), pair.getB());
+                pair.collisionBegin();
             } else if (tick.get() > cachedTick) {
-                pair.getHandler().onCollision(pair.getA(), pair.getB());
+                pair.collision();
             }
         });
 
