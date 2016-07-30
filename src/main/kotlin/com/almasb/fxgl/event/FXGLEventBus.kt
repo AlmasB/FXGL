@@ -30,7 +30,6 @@ import com.almasb.fxeventbus.EventBus
 import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.input.FXGLInputEvent
 import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -64,7 +63,8 @@ private constructor() : EventBus {
     }
 
     override fun fireEvent(event: Event) {
-        if (event.eventType != UpdateEvent.ANY && event.eventType != FXGLInputEvent.ANY)
+        // don't spam update event
+        if (event.eventType != UpdateEvent.ANY)
             log.debug { "Firing event: $event" }
 
         bus.fireEvent(event)
