@@ -32,14 +32,12 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import javafx.geometry.Point2D;
+import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import s31pacman.EntityType;
 import s31pacman.PacmanApp;
 
-import java.util.AbstractList;
 import java.util.List;
 import java.util.Random;
 
@@ -164,7 +162,7 @@ public class EnemyControl extends AbstractControl {
 
         velocity.set((float) dx, (float) dy);
 
-        int length = MathUtils.roundPositive(velocity.length());
+        int length = MathUtils.round(velocity.length());
 
         velocity.normalizeLocal();
 
