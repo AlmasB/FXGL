@@ -123,10 +123,24 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         return e.hasComponent(PhysicsComponent.class);
     }
 
-    @SuppressWarnings("SuspiciousMethodCalls")
-    private int getHandlerIndex(Entity e1, Entity e2) {
-        return collisionHandlers.indexOf(new Pair<>(e1.getComponentUnsafe(TypeComponent.class).getValue(),
-                e2.getComponentUnsafe(TypeComponent.class).getValue()));
+    /**
+     * @param e1 entity 1
+     * @param e2 entity 2
+     * @return collision handler for e1 and e2 based on their types or null if no such handler exists
+     */
+    private CollisionHandler getHandler(Entity e1, Entity e2) {
+        Object type1 = e1.getComponentUnsafe(TypeComponent.class).getValue();
+        Object type2 = e2.getComponentUnsafe(TypeComponent.class).getValue();
+
+        for (int i = 0; i < collisionHandlers.size(); i++) {
+            CollisionHandler handler = collisionHandlers.get(i);
+
+            if (handler.equal(type1, type2)) {
+                return handler;
+            }
+        }
+
+        return null;
     }
 
     @Inject
@@ -154,9 +168,9 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                 if (!areCollidable(e1, e2))
                     return;
 
-                int index = getHandlerIndex(e1, e2);
-                if (index != -1) {
-                    CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
+                CollisionHandler handler = getHandler(e1, e2);
+                if (handler != null) {
+                    CollisionPair pair = new CollisionPair(e1, e2, handler);
 
                     if (!collisions.containsKey(pair)) {
                         collisions.put(pair, tick.get());
@@ -179,9 +193,9 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                 if (!areCollidable(e1, e2))
                     return;
 
-                int index = getHandlerIndex(e1, e2);
-                if (index != -1) {
-                    CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
+                CollisionHandler handler = getHandler(e1, e2);
+                if (handler != null) {
+                    CollisionPair pair = new CollisionPair(e1, e2, handler);
 
                     if (collisions.containsKey(pair)) {
                         collisions.put(pair, -1L);
@@ -282,9 +296,9 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                         continue;
                 }
 
-                int index = getHandlerIndex(e1, e2);
-                if (index != -1) {
-                    CollisionPair pair = new CollisionPair(e1, e2, collisionHandlers.get(index));
+                CollisionHandler handler = getHandler(e1, e2);
+                if (handler != null) {
+                    CollisionPair pair = new CollisionPair(e1, e2, handler);
 
                     CollisionResult result = e1.getComponentUnsafe(BoundingBoxComponent.class)
                             .checkCollision(e2.getComponentUnsafe(BoundingBoxComponent.class));
