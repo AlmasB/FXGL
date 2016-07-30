@@ -41,6 +41,7 @@ import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.LocalDate
 import java.util.*
 import java.util.function.Consumer
 
@@ -107,7 +108,10 @@ class FXGL {
             internalLogger = getLogger("FXGL")
             internalLogger.info("FXGL configuration complete")
 
-            loadSystemData()
+            if (firstRun)
+                loadDefaultSystemData()
+            else
+                loadSystemData()
         }
 
         /**
@@ -162,9 +166,17 @@ class FXGL {
                     })
                     .onFailure(Consumer {
                         internalLogger.warning("Failed to load: $it")
-                        internalBundle = Bundle("FXGL")
+                        loadDefaultSystemData()
                     })
                     .execute()
+        }
+
+        private fun loadDefaultSystemData() {
+            internalLogger.debug("Loading default FXGL system data")
+
+            // populate with default info
+            internalBundle = Bundle("FXGL")
+            internalBundle.put("version.check", LocalDate.now())
         }
 
         /**
