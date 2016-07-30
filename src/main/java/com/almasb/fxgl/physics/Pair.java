@@ -62,4 +62,16 @@ class Pair<T> {
     public int hashCode() {
         return a.hashCode() + b.hashCode();
     }
+
+    /**
+     * Note: order doesn't matter.
+     *
+     * @param a pair element
+     * @param b pair element
+     * @return true iff this pair equals given pair elements
+     */
+    public boolean equal(T a, T b) {
+        return (this.a == a && this.b == b)
+                || (this.a == b && this.b == a);
+    }
 }
