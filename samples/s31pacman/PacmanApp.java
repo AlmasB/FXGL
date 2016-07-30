@@ -44,6 +44,8 @@ import s31pacman.collision.PlayerCoinHandler;
 import s31pacman.collision.PlayerEnemyHandler;
 import s31pacman.control.PlayerControl;
 
+import java.lang.management.ManagementFactory;
+
 /**
  * This is a basic demo of Pacman.
  *
@@ -83,7 +85,7 @@ public class PacmanApp extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(false);
+        settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -189,6 +191,7 @@ public class PacmanApp extends GameApplication {
 //        }
 
         getGameWorld().setLevel(level);
+        level.getEntities().clear();
     }
 
     @Override
@@ -208,10 +211,24 @@ public class PacmanApp extends GameApplication {
         controller.getLabelTeleport().textProperty().bind(teleports.asString("Teleports:\n[%d]"));
 
         getGameScene().addUINode(fxmlUI);
+
+        System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576.0);
     }
 
     @Override
-    protected void onUpdate(double tpf) {}
+    protected void onUpdate(double tpf) {
+        if (requestNewGame) {
+            requestNewGame = false;
+            startNewGame();
+        }
+
+
+//        long t = totalThreadMemoryAllocated();
+//
+//        t = totalThreadMemoryAllocated() - t;
+//
+//        System.out.println(); // ==> 48 !!!???
+    }
 
     private IntegerProperty coins;
 
@@ -228,8 +245,10 @@ public class PacmanApp extends GameApplication {
         }
     }
 
+    private boolean requestNewGame = false;
+
     public void onPlayerKilled() {
-        startNewGame();
+        requestNewGame = true;
     }
 
     private void gameOver() {
@@ -237,6 +256,8 @@ public class PacmanApp extends GameApplication {
             exit();
         });
     }
+
+
 
     public static void main(String[] args) {
         launch(args);

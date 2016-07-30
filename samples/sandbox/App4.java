@@ -86,6 +86,7 @@ public class App4 extends GameApplication {
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void test() {
 
+        //App4 app = FXGL.getApp();
 
     }
 

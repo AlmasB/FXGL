@@ -33,6 +33,7 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
@@ -81,9 +82,14 @@ public class EntityFactory {
 
         return Entities.builder()
                 .type(EntityType.COIN)
+                .bbox(new HitBox("Main", BoundingShape.box(40, 40)))
                 .viewFromNodeWithBBox(view)
                 .at(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE)
                 .with(new CollidableComponent(true))
+//                .with(new CollidableComponent(true), new DrawableComponent(g -> {
+//                    g.setFill(Color.YELLOW);
+//                    g.fillOval(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE, 40, 40);
+//                }))
                 .build();
     }
 
@@ -103,11 +109,11 @@ public class EntityFactory {
     }
 
     private static List<Class<? extends Control> > enemyControls = Arrays.asList(
-            AStarEnemyControl.class,
+            EnemyControl.class,
             EnemyControl.class,
             //MirrorEnemyControl.class,
-            CombinedControl.class,
-            DiffEnemyControl.class
+            //CombinedControl.class,
+            EnemyControl.class
     );
 
     private static List<Integer> indices = new ArrayList<>();
@@ -125,7 +131,7 @@ public class EntityFactory {
         try {
             if (indices.isEmpty()) {
                 populateIndices();
-                return new AIControl("pacman_enemy1.tree");
+                //return new AIControl("pacman_enemy1.tree");
             }
 
             control = enemyControls.get(indices.remove(0)).newInstance();

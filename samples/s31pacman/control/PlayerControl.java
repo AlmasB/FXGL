@@ -40,6 +40,7 @@ import s31pacman.PacmanApp;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.BaseStream;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -77,22 +78,30 @@ public class PlayerControl extends AbstractControl {
 
     public void up() {
         moveDir = MoveDirection.UP;
-        move(new Point2D(0, -5 * speed));
+        //move(new Point2D(0, -5 * speed));
+
+        move(0, -5*speed);
     }
 
     public void down() {
         moveDir = MoveDirection.DOWN;
-        move(new Point2D(0, 5 * speed));
+        //move(new Point2D(0, 5 * speed));
+
+        move(0, 5*speed);
     }
 
     public void left() {
         moveDir = MoveDirection.LEFT;
-        move(new Point2D(-5 * speed, 0));
+        //move(new Point2D(-5 * speed, 0));
+
+        move(-5*speed, 0);
     }
 
     public void right() {
         moveDir = MoveDirection.RIGHT;
-        move(new Point2D(5 * speed, 0));
+        //move(new Point2D(5 * speed, 0));
+
+        move(5*speed, 0);
     }
 
     public void teleport() {
@@ -135,6 +144,39 @@ public class PlayerControl extends AbstractControl {
 
             if (collision) {
                 position.translate(unit.multiply(-1));
+                break;
+            }
+        }
+    }
+
+    private void move(double dx, double dy) {
+        if (!getEntity().isActive())
+            return;
+
+        if (blocks == null) {
+            blocks = FXGL.getApp().getGameWorld().getEntitiesByType(EntityType.BLOCK);
+        }
+
+        double mag = Math.sqrt(dx * dx + dy * dy);
+        long length = Math.round(mag);
+
+        double unitX = dx / mag;
+        double unitY = dy / mag;
+
+        for (int i = 0; i < length; i++) {
+            position.translate(unitX, unitY);
+
+            boolean collision = false;
+
+            for (int j = 0; j < blocks.size(); j++) {
+                if (Entities.getBBox(blocks.get(j)).isCollidingWith(bbox)) {
+                    collision = true;
+                    break;
+                }
+            }
+
+            if (collision) {
+                position.translate(-unitX, -unitY);
                 break;
             }
         }

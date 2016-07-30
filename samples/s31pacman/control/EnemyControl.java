@@ -32,10 +32,14 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import javafx.geometry.Point2D;
+import org.jbox2d.common.Vec2;
 import s31pacman.EntityType;
 import s31pacman.PacmanApp;
 
+import java.util.AbstractList;
 import java.util.List;
 import java.util.Random;
 
@@ -49,6 +53,8 @@ public class EnemyControl extends AbstractControl {
 
     private MoveDirection moveDir;
 
+    private Random random = new Random();
+
     public void setMoveDirection(MoveDirection moveDir) {
         this.moveDir = moveDir;
     }
@@ -58,11 +64,11 @@ public class EnemyControl extends AbstractControl {
         position = Entities.getPosition(entity);
         bbox = Entities.getBBox(entity);
 
-        moveDir = MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
+        moveDir = MoveDirection.values()[random.nextInt(MoveDirection.values().length)];
     }
 
     protected MoveDirection updateMoveDirection() {
-        return MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
+        return MoveDirection.values()[random.nextInt(MoveDirection.values().length)];
     }
 
     private double speed = 0;
@@ -99,19 +105,19 @@ public class EnemyControl extends AbstractControl {
     }
 
     public void up() {
-        move(new Point2D(0, -5 * speed));
+        move(0, -5 * speed);
     }
 
     public void down() {
-        move(new Point2D(0, 5 * speed));
+        move(0, 5 * speed);
     }
 
     public void left() {
-        move(new Point2D(-5 * speed, 0));
+        move(-5 * speed, 0);
     }
 
     public void right() {
-        move(new Point2D(5 * speed, 0));
+        move(5 * speed, 0);
     }
 
     private List<Entity> blocks;
@@ -141,12 +147,71 @@ public class EnemyControl extends AbstractControl {
                 position.translate(unit.multiply(-1));
                 moveDir = updateMoveDirection();
 
-//                getEntity().getControl(AIControl.class).ifPresent(ai -> {
-//                    ai.onUpdate(getEntity(), FXGL.getMasterTimer().tpf());
-//                });
+                break;
+            }
+        }
+    }
+
+    private Vec2 velocity = new Vec2();
+
+    private void move(double dx, double dy) {
+        if (!getEntity().isActive())
+            return;
+
+        if (blocks == null) {
+            blocks = FXGL.getApp().getGameWorld().getEntitiesByType(EntityType.BLOCK);
+        }
+
+        velocity.set((float) dx, (float) dy);
+
+        int length = MathUtils.roundPositive(velocity.length());
+
+        velocity.normalizeLocal();
+
+        for (int i = 0; i < length; i++) {
+            position.translate(velocity.x, velocity.y);
+
+            boolean collision = false;
+
+            for (int j = 0; j < blocks.size(); j++) {
+                if (Entities.getBBox(blocks.get(j)).isCollidingWith(bbox)) {
+                    collision = true;
+                    break;
+                }
+            }
+
+            if (collision) {
+                position.translate(-velocity.x, -velocity.y);
+                moveDir = updateMoveDirection();
 
                 break;
             }
         }
+
+//        double mag = Math.sqrt(dx * dx + dy * dy);
+//        long length = Math.round(mag);
+//
+//        double unitX = dx / mag;
+//        double unitY = dy / mag;
+//
+//        for (int i = 0; i < length; i++) {
+//            position.translate(unitX, unitY);
+//
+//            boolean collision = false;
+//
+//            for (int j = 0; j < blocks.size(); j++) {
+//                if (Entities.getBBox(blocks.get(j)).isCollidingWith(bbox)) {
+//                    collision = true;
+//                    break;
+//                }
+//            }
+//
+//            if (collision) {
+//                position.translate(-unitX, -unitY);
+//                moveDir = updateMoveDirection();
+//
+//                break;
+//            }
+//        }
     }
 }
