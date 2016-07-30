@@ -32,8 +32,9 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.time.UpdateEventListener;
@@ -84,6 +85,8 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
     private List<ParticleControl> particles = new ArrayList<>();
+
+    private List<Entity> drawables = new ArrayList<>();
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -276,6 +279,10 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
+        drawables.stream().forEach(e ->
+                e.getComponent(DrawableComponent.class).ifPresent(d -> d.draw(particlesGC))
+        );
+
         particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
@@ -297,6 +304,9 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
                     onComponentAdded(viewComponent);
                 });
 
+        entity.getComponent(DrawableComponent.class)
+                .ifPresent(c -> drawables.add(entity));
+
         entity.addComponentListener(this);
         entity.addControlListener(this);
 
@@ -314,6 +324,9 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
                 .ifPresent(viewComponent -> {
                     onComponentRemoved(viewComponent);
                 });
+
+        entity.getComponent(DrawableComponent.class)
+                .ifPresent(c -> drawables.remove(entity));
 
         entity.removeComponentListener(this);
         entity.removeControlListener(this);

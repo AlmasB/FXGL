@@ -31,8 +31,10 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.Executor
+import javafx.util.Duration
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 /**
  * Uses cached thread pool to run tasks in the background.
@@ -47,14 +49,22 @@ private constructor(eventBus: EventBus) : Executor {
     private val log = FXGL.getLogger(javaClass)
 
     private val service = Executors.newCachedThreadPool()
+    private val schedulerService = Executors.newScheduledThreadPool(2)
 
     init {
-        eventBus.addEventHandler(FXGLEvent.EXIT) { event -> service.shutdownNow() }
+        eventBus.addEventHandler(FXGLEvent.EXIT) { event ->
+            service.shutdownNow()
+            schedulerService.shutdownNow()
+        }
 
         log.debug { "Service [Executor] initialized" }
     }
 
     override fun execute(task: Runnable) {
         service.submit(task)
+    }
+
+    override fun schedule(action: Runnable, delay: Duration): ScheduledFuture<*> {
+        return schedulerService.schedule(action, delay.toMillis().toLong(), TimeUnit.MILLISECONDS)
     }
 }

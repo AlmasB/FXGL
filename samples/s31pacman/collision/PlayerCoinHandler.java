@@ -24,24 +24,31 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s31pacman.collision;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.physics.CollisionHandler;
+import s31pacman.EntityType;
+import s31pacman.PacmanApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class DiffEnemyControl extends EnemyControl {
+public class PlayerCoinHandler extends CollisionHandler {
 
-    private PlayerControl playerControl;
+    private PacmanApp app;
+
+    public PlayerCoinHandler() {
+        super(EntityType.PLAYER, EntityType.COIN);
+
+        app = (PacmanApp) FXGL.getApp();
+    }
 
     @Override
-    protected MoveDirection updateMoveDirection() {
+    protected void onCollisionBegin(Entity player, Entity coin) {
 
-        if (playerControl == null) {
-            playerControl = ((PacmanApp) FXGL.getApp()).getPlayerControl();
-        }
-
-        return playerControl.getMoveDirection().next().next();
+        app.onCoinPickup();
+        coin.removeFromWorld();
     }
 }

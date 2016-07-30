@@ -26,6 +26,7 @@
 
 package s32ai;
 
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
@@ -36,7 +37,7 @@ import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import common.PlayerControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -118,19 +119,50 @@ public class BehaviorSample extends GameApplication {
         GameEntity enemy = Entities.builder()
                 .at(400, 100)
                 .viewFromNode(new Rectangle(40, 40, Color.RED))
+                .with(new AIControl("patrol.tree"))
                 .buildAndAttach(getGameWorld());
 
+        Entities.builder()
+                .at(600, 100)
+                .viewFromNode(new Rectangle(40, 40, Color.LIGHTGOLDENRODYELLOW))
+                .with(new AIControl("patrol.tree"))
+                .buildAndAttach(getGameWorld());
 
-        BehaviorTreeLibraryManager libraryManager = BehaviorTreeLibraryManager.getInstance();
+        //testB(enemy);
+        //enemy.addControl();
 
-        BehaviorTree<GameEntity> actualBehavior = new BehaviorTree<>(createDogBehavior());
-        libraryManager.getLibrary().registerArchetypeTree("guard", actualBehavior);
-
-        tree = libraryManager.createBehaviorTree("guard", enemy);
+//        BehaviorTreeLibraryManager libraryManager = BehaviorTreeLibraryManager.getInstance();
+//
+//        BehaviorTree<GameEntity> actualBehavior = new BehaviorTree<>(createDogBehavior());
+//        libraryManager.getLibrary().registerArchetypeTree("guard", actualBehavior);
+//
+//        tree = libraryManager.createBehaviorTree("guard", enemy);
     }
 
     private BehaviorTree<GameEntity> tree;
 
+    private BehaviorTree<GameEntity> testB(GameEntity enemy) {
+
+        try {
+            BehaviorTreeParser<GameEntity> parser = new BehaviorTreeParser<>(BehaviorTreeParser.DEBUG_HIGH);
+
+            tree = parser.parse(getClass().getResourceAsStream("/assets/ai/patrol.tree"), enemy);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    // if (target close)
+    //    do
+    //       if (can see player)
+    //          attack
+    //       else
+    //           patrol
+    // else
+    //    while (!target close)
+    //         move to target
     private Task<GameEntity> createDogBehavior () {
         Selector<GameEntity> selector = new Selector<>();
 
@@ -140,13 +172,13 @@ public class BehaviorSample extends GameApplication {
         Selector<GameEntity> sel2 = new Selector<>();
 
         Sequence<GameEntity> seq2 = new Sequence<>();
-        seq2.addChild(new CanSeePlayerTask());
+        seq2.addChild(new CanSeePlayerCondition());
         seq2.addChild(new AttackTask());
 
         sel2.addChild(seq2);
         sel2.addChild(new PatrolTask());
 
-        seq1.addChild(new TargetCloseTask());
+        seq1.addChild(new TargetCloseCondition());
         seq1.addChild(sel2);
 
         selector.addChild(seq1);
@@ -163,7 +195,7 @@ public class BehaviorSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        tree.step();
+        //tree.step();
         //GdxAI.getTimepiece().update((float) tpf);
     }
 

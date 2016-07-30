@@ -24,27 +24,14 @@
  * SOFTWARE.
  */
 
-package s32ai;
-
-import com.almasb.fxgl.entity.GameEntity;
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
-import javafx.geometry.Point2D;
+package s31pacman;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class TargetCloseTask extends LeafTask<GameEntity> {
+public class GameMath {
 
-    @Override
-    public Status execute() {
-
-        return new Point2D(400, 300).distance(getObject().getPositionComponent().getValue()) < 400
-                ? Status.SUCCEEDED : Status.FAILED;
-    }
-
-    @Override
-    protected Task<GameEntity> copyTo(Task<GameEntity> task) {
-        return task;
+    public static double vectorMagnitude(double dx, double dy) {
+        return Math.sqrt(dx * dx + dy * dy);
     }
 }

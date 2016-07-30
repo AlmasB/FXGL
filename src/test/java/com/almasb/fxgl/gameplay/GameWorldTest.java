@@ -30,10 +30,9 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Rectangle;
@@ -162,6 +161,11 @@ public class GameWorldTest {
     public void testGetEntitiesInRange() throws Exception {
         assertThat(gameWorld.getEntitiesInRange(new Rectangle2D(130, 50, 100, 100)),
                 is(Arrays.asList(e2, e3)));
+    }
+
+    @Test
+    public void testGetCollidingEntities() {
+        assertThat(gameWorld.getCollidingEntities(e1), is(Arrays.asList(e10, e11)));
     }
 
     @Test

@@ -26,9 +26,15 @@
 
 package com.almasb.fxgl.gameplay.qte;
 
+import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
+
+import java.util.function.Consumer;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface QTE {
 
+    void start(Consumer<Boolean> callback, Duration duration, KeyCode... keys);
 }

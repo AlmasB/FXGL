@@ -26,6 +26,8 @@
 
 package s32ai;
 
+import com.almasb.fxgl.ai.AIControl;
+import com.almasb.fxgl.ai.Action;
 import com.almasb.fxgl.entity.GameEntity;
 import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
@@ -33,14 +35,14 @@ import com.badlogic.gdx.ai.btree.Task;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PatrolTask extends LeafTask<GameEntity> {
-    @Override
-    public Status execute() {
-        return Status.SUCCEEDED;
+public class PatrolTask extends Action {
+
+    public PatrolTask() {
+        super("Patrol");
     }
 
     @Override
-    protected Task<GameEntity> copyTo(Task<GameEntity> task) {
-        return task;
+    public void action() {
+
     }
 }

@@ -26,6 +26,9 @@
 
 package s32ai;
 
+import com.almasb.fxgl.ai.AIControl;
+import com.almasb.fxgl.ai.GoalAction;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
 import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
@@ -34,24 +37,26 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class MoveTask extends LeafTask<GameEntity> {
+public class MoveTask extends GoalAction {
+
+    public MoveTask() {
+        super("Move");
+    }
 
     @Override
-    public Status execute() {
-        double speed = 0.017 * 60 * 5;
+    public boolean reachedGoal() {
+        return getObject().getPositionComponent().getValue().distance(400, 300) < 25;
+    }
+
+    @Override
+    public void action() {
+
+        double speed = FXGL.getMasterTimer().tpf() * 60 * 5;
 
         Point2D vector = new Point2D(400, 300).subtract(getObject().getPositionComponent().getValue())
                 .normalize()
                 .multiply(speed);
 
         getObject().getPositionComponent().translate(vector);
-
-        return getObject().getPositionComponent().getValue().distance(400, 300) < 25 ?
-                Status.SUCCEEDED : Status.RUNNING;
-    }
-
-    @Override
-    protected Task<GameEntity> copyTo(Task<GameEntity> task) {
-        return task;
     }
 }

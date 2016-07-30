@@ -28,7 +28,8 @@ package com.almasb.fxgl.input
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.scene.Viewport
+import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -48,17 +49,21 @@ class FXGLInput @Inject private constructor() : Input {
     /**
      * Cursor point in game coordinate space.
      */
-    private var gameXY = Point2D.ZERO
 
-    override fun getMousePositionWorld() = gameXY
+    private var gameX = 0.0
+    private var gameY = 0.0
+
+    override fun getMousePositionWorld() = Point2D(gameX, gameY)
 
     /**
      * Cursor point in screen coordinate space.
      * Useful for UI manipulation.
      */
-    private var sceneXY = Point2D.ZERO
 
-    override fun getMousePositionUI() = sceneXY
+    private var sceneX = 0.0
+    private var sceneY = 0.0
+
+    override fun getMousePositionUI() = Point2D(sceneX, sceneY)
 
     /**
      * Action bindings.
@@ -125,32 +130,36 @@ class FXGLInput @Inject private constructor() : Input {
         }
     }
 
-    override fun onInputEvent(event: FXGLInputEvent) {
+    override fun onKeyEvent(keyEvent: KeyEvent) {
         if (!registerInput)
             return
 
-        if (event.fxEvent is MouseEvent) {
-            val mouseEvent = event.fxEvent
-            if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
-                buttons.put(mouseEvent.button, true)
-                handlePressed(mouseEvent)
-            } else if (mouseEvent.eventType == MouseEvent.MOUSE_RELEASED) {
-                buttons.put(mouseEvent.button, false)
-                handleReleased(mouseEvent)
-            }
-
-            gameXY = event.gameXY
-            sceneXY = Point2D(mouseEvent.sceneX, mouseEvent.sceneY)
-        } else {
-            val keyEvent = event.fxEvent as KeyEvent
-            if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
-                keys.put(keyEvent.code, true)
-                handlePressed(keyEvent)
-            } else if (keyEvent.eventType == KeyEvent.KEY_RELEASED) {
-                keys.put(keyEvent.code, false)
-                handleReleased(keyEvent)
-            }
+        if (keyEvent.eventType == KeyEvent.KEY_PRESSED) {
+            keys.put(keyEvent.code, true)
+            handlePressed(keyEvent)
+        } else if (keyEvent.eventType == KeyEvent.KEY_RELEASED) {
+            keys.put(keyEvent.code, false)
+            handleReleased(keyEvent)
         }
+    }
+
+    override fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport) {
+        if (!registerInput)
+            return
+
+        if (mouseEvent.eventType == MouseEvent.MOUSE_PRESSED) {
+            buttons.put(mouseEvent.button, true)
+            handlePressed(mouseEvent)
+        } else if (mouseEvent.eventType == MouseEvent.MOUSE_RELEASED) {
+            buttons.put(mouseEvent.button, false)
+            handleReleased(mouseEvent)
+        }
+
+        sceneX = mouseEvent.sceneX
+        sceneY = mouseEvent.sceneY
+
+        gameX = sceneX / FXGL.getDisplay().scaleRatio + viewport.getX()
+        gameY = sceneY / FXGL.getDisplay().scaleRatio + viewport.getY()
     }
 
     private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {

@@ -23,24 +23,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.donotuse;
+
+package s31pacman.control;
+
+import com.almasb.fxgl.app.FXGL;
+import s31pacman.PacmanApp;
 
 /**
- * Callback to notify of QTE result.
- *
- * @author Almas Baimagambetov
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface QTEHandler {
+public class DiffEnemyControl extends EnemyControl {
 
-    /**
-     * Called if QTE was successful, i.e. keys
-     * were pressed in correct order and in time
-     */
-    void onSuccess();
+    private PlayerControl playerControl;
 
-    /**
-     * Called if QTE keys were not pressed in correct order,
-     * or the time has run out
-     */
-    void onFailure();
+    @Override
+    protected MoveDirection updateMoveDirection() {
+
+        if (playerControl == null) {
+            playerControl = ((PacmanApp) FXGL.getApp()).getPlayerControl();
+        }
+
+        return playerControl.getMoveDirection().next().next();
+    }
 }

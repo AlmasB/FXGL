@@ -24,20 +24,62 @@
  * SOFTWARE.
  */
 
-package s32ai;
+package com.almasb.fxgl.time;
 
-import com.almasb.ents.AbstractControl;
-import com.almasb.ents.Entity;
+import javafx.event.Event;
+import javafx.event.EventType;
 
 /**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * This is a game update tick event.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class GuardControl extends AbstractControl {
+public final class UpdateEvent extends Event {
+    public static final EventType<UpdateEvent> ANY =
+            new EventType<>(Event.ANY, "UPDATE_EVENT");
 
-    @Override
-    public void onUpdate(Entity entity, double tpf) {
+    private long tick;
 
+    void setTick(long tick) {
+        this.tick = tick;
     }
 
+    /**
+     * @return current tick
+     */
+    public long tick() {
+        return tick;
+    }
 
+    private double tpf;
+
+    void setTPF(double tpf) {
+        this.tpf = tpf;
+    }
+
+    /**
+     * @return time per frame
+     */
+    public double tpf() {
+        return tpf;
+    }
+
+    /**
+     * Constructs update event.
+     *
+     * @param tpf time per last frame
+     */
+    public UpdateEvent(long tick, double tpf) {
+        super(ANY);
+        this.tick = tick;
+        this.tpf = tpf;
+    }
+
+    @Override
+    public String toString() {
+        return "UpdateEvent{" +
+                "tick=" + tick +
+                ", tpf=" + tpf +
+                '}';
+    }
 }

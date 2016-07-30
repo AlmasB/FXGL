@@ -59,6 +59,7 @@ public interface RenderLayer {
     /**
      * Default render layer for entities with no specified
      * render layer.
+     * Note: this is the highest layer that can be used.
      */
     RenderLayer TOP = new RenderLayer() {
         @Override
@@ -69,6 +70,22 @@ public interface RenderLayer {
         @Override
         public int index() {
             return Integer.MAX_VALUE;
+        }
+    };
+
+    /**
+     * Render layer for background.
+     * Note: value of 1000 leaves some scope for using parallax backgrounds.
+     */
+    RenderLayer BACKGROUND = new RenderLayer() {
+        @Override
+        public String name() {
+            return "BACKGROUND";
+        }
+
+        @Override
+        public int index() {
+            return 1000;
         }
     };
 }

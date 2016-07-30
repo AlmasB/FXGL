@@ -82,6 +82,11 @@ public interface MasterTimer extends FXGLListener, UserProfileSavable {
     }
 
     /**
+     * @return time per frame
+     */
+    double tpf();
+
+    /**
      *
      * @return current tick property
      */

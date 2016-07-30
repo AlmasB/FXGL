@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.easyio.FS
+import com.almasb.easyio.serialization.Bundle
+import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.logging.MockLoggerFactory
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
@@ -36,7 +39,10 @@ import com.google.inject.name.Names
 import javafx.scene.Scene
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
+import java.util.function.Consumer
 
 /**
  * Represents the entire FXGL infrastructure.
@@ -52,6 +58,10 @@ class FXGL {
         private lateinit var internalSettings: ReadOnlyGameSettings
         private lateinit var internalApp: GameApplication
 
+        private lateinit var internalBundle: Bundle
+
+        private lateinit var internalLogger: Logger
+
         /**
          * Temporarily holds k-v pairs from system.properties.
          */
@@ -59,10 +69,29 @@ class FXGL {
 
         private var initDone = false
 
+        /**
+         * @return FXGL system settings
+         */
         @JvmStatic fun getSettings() = internalSettings
+
+        /**
+         * @return instance of the running game application
+         */
         @JvmStatic fun getApp() = internalApp
 
-        @JvmStatic fun configure(app: FXGLApplication, stage: Stage) {
+        /**
+         * Note: the system bundle is saved on exit and loaded on init.
+         * This bundle is meant to be used by the FXGL system only.
+         * If you want to save global (non-gameplay) data use user profiles instead.
+         *
+         * @return FXGL system data bundle
+         */
+        @JvmStatic fun getSystemBundle() = internalBundle
+
+        /**
+         * Constructs FXGL.
+         */
+        @JvmStatic protected fun configure(app: FXGLApplication, stage: Stage) {
             if (initDone)
                 throw IllegalStateException("FXGL is already configured")
 
@@ -70,7 +99,72 @@ class FXGL {
 
             internalApp = app as GameApplication
             internalSettings = app.settings
+
+            createRequiredDirs()
             configureServices(stage)
+
+            // log that we are ready, also force logger service to init
+            internalLogger = getLogger("FXGL")
+            internalLogger.info("FXGL configuration complete")
+
+            loadSystemData()
+        }
+
+        /**
+         * Destructs FXGL.
+         */
+        @JvmStatic protected fun destroy() {
+            if (!initDone)
+                throw IllegalStateException("FXGL has not been configured")
+
+            saveSystemData()
+        }
+
+        private var firstRun = false
+
+        /**
+         * @return true iff FXGL is running for the first time
+         * @implNote we actually check if "system/" exists in running dir, so if it was
+         *            deleted, then this method also returns true
+         */
+        @JvmStatic fun isFirstRun() = firstRun
+
+        private fun createRequiredDirs() {
+
+            val systemDir = Paths.get("system/")
+
+            if (!Files.exists(systemDir)) {
+                firstRun = true
+
+                Files.createDirectories(systemDir)
+
+                val readmeFile = Paths.get("system/Readme.txt")
+
+                Files.write(readmeFile, "This directory contains FXGL system data files.".lines())
+            }
+        }
+
+        private fun saveSystemData() {
+            internalLogger.debug("Saving FXGL system data")
+
+            FS.writeDataTask(internalBundle, "system/fxgl.bundle")
+                    .onFailure(Consumer { internalLogger.warning("Failed to save: $it") })
+                    .execute()
+        }
+
+        private fun loadSystemData() {
+            internalLogger.debug("Loading FXGL system data")
+
+            FS.readDataTask<Bundle>("system/fxgl.bundle")
+                    .onSuccess(Consumer {
+                        internalBundle = it
+                        internalBundle.log()
+                    })
+                    .onFailure(Consumer {
+                        internalLogger.warning("Failed to load: $it")
+                        internalBundle = Bundle("FXGL")
+                    })
+                    .execute()
         }
 
         /**
@@ -181,6 +275,12 @@ class FXGL {
 
         private val _achievement by lazy { getService(ServiceType.ACHIEVEMENT_MANAGER) }
         @JvmStatic fun getAchievementManager() = _achievement
+
+        private val _qte by lazy { getService(ServiceType.QTE) }
+        @JvmStatic fun getQTE() = _qte
+
+        private val _net by lazy { getService(ServiceType.NET) }
+        @JvmStatic fun getNet() = _net
 
         /**
          * @return new instance on each call

@@ -27,17 +27,20 @@
 package s31pacman;
 
 import com.almasb.ents.Control;
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import s31pacman.control.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,9 +82,14 @@ public class EntityFactory {
 
         return Entities.builder()
                 .type(EntityType.COIN)
+                .bbox(new HitBox("Main", BoundingShape.box(40, 40)))
                 .viewFromNodeWithBBox(view)
                 .at(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE)
                 .with(new CollidableComponent(true))
+//                .with(new CollidableComponent(true), new DrawableComponent(g -> {
+//                    g.setFill(Color.YELLOW);
+//                    g.fillOval(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE, 40, 40);
+//                }))
                 .build();
     }
 
@@ -101,11 +109,11 @@ public class EntityFactory {
     }
 
     private static List<Class<? extends Control> > enemyControls = Arrays.asList(
-            AStarEnemyControl.class,
+            EnemyControl.class,
             EnemyControl.class,
             //MirrorEnemyControl.class,
-            CombinedControl.class,
-            DiffEnemyControl.class
+            //CombinedControl.class,
+            EnemyControl.class
     );
 
     private static List<Integer> indices = new ArrayList<>();
@@ -123,6 +131,7 @@ public class EntityFactory {
         try {
             if (indices.isEmpty()) {
                 populateIndices();
+                //return new AIControl("pacman_enemy1.tree");
             }
 
             control = enemyControls.get(indices.remove(0)).newInstance();

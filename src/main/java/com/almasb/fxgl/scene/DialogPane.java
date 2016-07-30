@@ -339,6 +339,55 @@ public class DialogPane extends Pane {
     }
 
     /**
+     * Shows input box with input field and OK button.
+     * The button will stay disabled until the input passes given filter.
+     * <p>
+     * The callback function will be invoked with input field text
+     * as parameter.
+     * <p>
+     * Opening more than 1 dialog box is not allowed.
+     *
+     * @param message message to show
+     * @param filter the filter to validate input
+     * @param resultCallback result function to call back or empty string if use cancelled the dialog
+     */
+    void showInputBoxWithCancel(String message, Predicate<String> filter, Consumer<String> resultCallback) {
+        Text text = createMessage(message);
+
+        TextField field = new TextField();
+        field.setMaxWidth(Math.max(text.getLayoutBounds().getWidth(), 200));
+        field.setFont(UIFactory.newFont(18));
+
+        Button btnOK = UIFactory.newButton("OK");
+
+        field.textProperty().addListener((observable, oldValue, newInput) -> {
+            btnOK.setDisable(newInput.isEmpty() || !filter.test(newInput));
+        });
+
+        btnOK.setDisable(true);
+        btnOK.setOnAction(e -> {
+            close();
+            resultCallback.accept(field.getText());
+        });
+
+        Button btnCancel = UIFactory.newButton("CANCEL");
+        btnCancel.setOnAction(e -> {
+            close();
+            resultCallback.accept("");
+        });
+
+        HBox hBox = new HBox(btnOK, btnCancel);
+        hBox.setAlignment(Pos.CENTER);
+
+        VBox vbox = new VBox(50, text, field, hBox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setUserData(new Point2D(Math.max(text.getLayoutBounds().getWidth(), 200), text.getLayoutBounds().getHeight() * 3 + 50 * 2));
+
+        setContent("Input", vbox);
+        show();
+    }
+
+    /**
      * Shows arbitrary box with message, content and given buttons.
      *
      * @param message the header message

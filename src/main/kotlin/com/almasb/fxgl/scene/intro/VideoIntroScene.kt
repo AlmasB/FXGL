@@ -24,31 +24,40 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package com.almasb.fxgl.scene.intro
+
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.scene.IntroScene
+import javafx.scene.media.Media
+import javafx.scene.media.MediaPlayer
+import javafx.scene.media.MediaView
 
 /**
+ * Intro that uses a video file instead of animation.
+ * The video file must be placed under /assets/video/ .
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public enum MoveDirection {
-    UP, RIGHT, DOWN, LEFT;
+class VideoIntroScene(videoName: String) : IntroScene() {
 
-    MoveDirection next() {
-        int index = ordinal() + 1;
+    private val videoPlayer: MediaPlayer
 
-        if (index == values().length) {
-            index = 0;
+    init {
+        val media = Media(javaClass.getResource("/assets/video/$videoName").toExternalForm())
+        videoPlayer = MediaPlayer(media)
+        videoPlayer.onEndOfMedia = Runnable {
+            finishIntro()
+            videoPlayer.dispose()
         }
 
-        return values()[index];
+        val view = MediaView(videoPlayer)
+        view.fitWidth = FXGL.getSettings().width.toDouble()
+        view.fitHeight = FXGL.getSettings().height.toDouble()
+
+        getRoot().children.add(view)
     }
 
-    MoveDirection prev() {
-        int index = ordinal() - 1;
-
-        if (index == -1) {
-            index = values().length - 1;
-        }
-
-        return values()[index];
+    override fun startIntro() {
+        videoPlayer.play()
     }
 }

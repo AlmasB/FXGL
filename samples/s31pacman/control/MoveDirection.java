@@ -23,54 +23,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.event;
 
-import javafx.event.Event;
-import javafx.event.EventType;
+package s31pacman.control;
 
 /**
- * This is a game update tick event.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class UpdateEvent extends Event {
-    public static final EventType<UpdateEvent> ANY =
-            new EventType<>(Event.ANY, "UPDATE_EVENT");
+public enum MoveDirection {
+    UP, RIGHT, DOWN, LEFT;
 
-    private final long tick;
+    MoveDirection next() {
+        int index = ordinal() + 1;
 
-    /**
-     * @return current tick
-     */
-    public long tick() {
-        return tick;
+        if (index == values().length) {
+            index = 0;
+        }
+
+        return values()[index];
     }
 
-    private final double tpf;
+    MoveDirection prev() {
+        int index = ordinal() - 1;
 
-    /**
-     * @return time per frame
-     */
-    public double tpf() {
-        return tpf;
-    }
+        if (index == -1) {
+            index = values().length - 1;
+        }
 
-    /**
-     * Constructs update event.
-     *
-     * @param tpf time per last frame
-     */
-    public UpdateEvent(long tick, double tpf) {
-        super(ANY);
-        this.tick = tick;
-        this.tpf = tpf;
-    }
-
-    @Override
-    public String toString() {
-        return "UpdateEvent{" +
-                "tick=" + tick +
-                ", tpf=" + tpf +
-                '}';
+        return values()[index];
     }
 }

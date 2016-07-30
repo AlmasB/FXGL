@@ -32,7 +32,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.*;
-import com.almasb.fxgl.event.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.time.UpdateEventListener;
 import com.google.inject.Inject;
@@ -159,13 +159,34 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
      * This query only works on entities with BoundingBoxComponent.
      *
      * @param selection Rectangle2D that describes the selection box
-     * @return  list of entities in the range
+     * @return list of entities in the range
      */
     public List<Entity> getEntitiesInRange(Rectangle2D selection) {
         return getEntitiesByComponent(BoundingBoxComponent.class).stream()
                 .filter(e -> {
                     BoundingBoxComponent bbox = Entities.getBBox(e);
                     return bbox.isWithin(selection);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of entities
+     * which colliding with given entity.
+     *
+     * Note: CollidableComponent is not considered.
+     * This query only works on entities with BoundingBoxComponent.
+     *
+     * @param entity the entity
+     * @return list of entities colliding with entity
+     */
+    public List<Entity> getCollidingEntities(Entity entity) {
+        BoundingBoxComponent bbox = Entities.getBBox(entity);
+
+        return getEntitiesByComponent(BoundingBoxComponent.class).stream()
+                .filter(e -> {
+                    BoundingBoxComponent otherBBox = Entities.getBBox(e);
+                    return e != entity && bbox.isCollidingWith(otherBBox);
                 })
                 .collect(Collectors.toList());
     }
@@ -236,6 +257,9 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         return Optional.ofNullable(selectedEntity.get());
     }
 
+    /**
+     * @return selected entity property
+     */
     public ObjectProperty<Entity> selectedEntityProperty() {
         return selectedEntity;
     }

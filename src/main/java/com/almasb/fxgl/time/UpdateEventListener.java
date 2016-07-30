@@ -26,8 +26,6 @@
 
 package com.almasb.fxgl.time;
 
-import com.almasb.fxgl.event.UpdateEvent;
-
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

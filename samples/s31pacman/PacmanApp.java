@@ -30,18 +30,24 @@ import com.almasb.astar.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.TypeComponent;
-import com.almasb.fxgl.event.DisplayEvent;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.TextLevelParser;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Parent;
 import javafx.scene.input.KeyCode;
+import s31pacman.collision.PlayerCoinHandler;
+import s31pacman.collision.PlayerEnemyHandler;
+import s31pacman.control.PlayerControl;
+
+import java.lang.management.ManagementFactory;
 
 /**
- * This is an example of a basic FXGL game application.
+ * This is a basic demo of Pacman.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -51,7 +57,14 @@ public class PacmanApp extends GameApplication {
 
     public static final int MAP_SIZE = 21;
 
+    private static final int UI_SIZE = 200;
+
+    private GameEntity player;
     private PlayerControl playerControl;
+
+    public GameEntity getPlayer() {
+        return player;
+    }
 
     public PlayerControl getPlayerControl() {
         return playerControl;
@@ -65,14 +78,14 @@ public class PacmanApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(MAP_SIZE * BLOCK_SIZE);
+        settings.setWidth(MAP_SIZE * BLOCK_SIZE + UI_SIZE);
         settings.setHeight(MAP_SIZE * BLOCK_SIZE);
         settings.setTitle("Pacman");
-        settings.setVersion("0.1");
+        settings.setVersion("0.2");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(false);
+        settings.setShowFPS(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -105,10 +118,24 @@ public class PacmanApp extends GameApplication {
                 playerControl.right();
             }
         }, KeyCode.D);
+
+        getInput().addAction(new UserAction("Teleport") {
+            @Override
+            protected void onActionBegin() {
+
+                if (teleports.get() > 0) {
+                    teleports.set(teleports.get() - 1);
+                    playerControl.teleport();
+                }
+            }
+        }, KeyCode.F);
     }
 
     @Override
     protected void initAssets() {}
+
+    private IntegerProperty score;
+    private IntegerProperty teleports;
 
     @Override
     protected void initGame() {
@@ -122,12 +149,13 @@ public class PacmanApp extends GameApplication {
 
         Level level = parser.parse("pacman_level0.txt");
 
-        playerControl = level.getEntities()
+        player = (GameEntity) level.getEntities()
                 .stream()
                 .filter(p -> p.getComponentUnsafe(TypeComponent.class).isType(EntityType.PLAYER))
                 .findAny()
-                .get()
-                .getControlUnsafe(PlayerControl.class);
+                .get();
+
+        playerControl = player.getControlUnsafe(PlayerControl.class);
 
         long numCoins = level.getEntities()
                 .stream()
@@ -149,6 +177,10 @@ public class PacmanApp extends GameApplication {
                     grid.setNodeState(x, y, NodeState.NOT_WALKABLE);
                 });
 
+        score = new SimpleIntegerProperty();
+        teleports = new SimpleIntegerProperty();
+
+        // TODO: move to Grid
 //        for (int y = 0; y < grid.getHeight(); y++) {
 //            for (int x = 0; x < grid.getWidth(); x++) {
 //
@@ -159,6 +191,7 @@ public class PacmanApp extends GameApplication {
 //        }
 
         getGameWorld().setLevel(level);
+        level.getEntities().clear();
     }
 
     @Override
@@ -168,31 +201,63 @@ public class PacmanApp extends GameApplication {
     }
 
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+        PacmanUIController controller = new PacmanUIController();
+
+        Parent fxmlUI = getAssetLoader().loadFXML("pacman_ui.fxml", controller);
+        fxmlUI.setTranslateX(MAP_SIZE * BLOCK_SIZE);
+
+        controller.getLabelScore().textProperty().bind(score.asString("Score:\n[%d]"));
+        controller.getLabelTeleport().textProperty().bind(teleports.asString("Teleports:\n[%d]"));
+
+        getGameScene().addUINode(fxmlUI);
+
+        System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576.0);
+    }
 
     @Override
-    protected void onUpdate(double tpf) {}
+    protected void onUpdate(double tpf) {
+        if (requestNewGame) {
+            requestNewGame = false;
+            startNewGame();
+        }
+
+
+//        long t = totalThreadMemoryAllocated();
+//
+//        t = totalThreadMemoryAllocated() - t;
+//
+//        System.out.println(); // ==> 48 !!!???
+    }
 
     private IntegerProperty coins;
 
     public void onCoinPickup() {
         coins.set(coins.get() - 1);
+        score.set(score.get() + 50);
+
+        if (score.get() % 2000 == 0) {
+            teleports.set(teleports.get() + 1);
+        }
 
         if (coins.get() == 0) {
             gameOver();
         }
     }
 
+    private boolean requestNewGame = false;
+
     public void onPlayerKilled() {
-        startNewGame();
+        requestNewGame = true;
     }
 
     private void gameOver() {
         getDisplay().showConfirmationBox("Demo Over. Press Something", yes -> {
-            // workaround until we can issue requests
-            getEventBus().fireEvent(new DisplayEvent(DisplayEvent.CLOSE_REQUEST));
+            exit();
         });
     }
+
+
 
     public static void main(String[] args) {
         launch(args);

@@ -39,14 +39,23 @@ public final class CollisionResult {
      * {@link CollisionResult#getBoxA()} and {@link CollisionResult#getBoxB()}
      * return null and {@link CollisionResult#hasCollided()} returns false.
      */
-    public static final CollisionResult NO_COLLISION = new CollisionResult();
+    public static final CollisionResult NO_COLLISION = new CollisionResult(false);
+
+    /**
+     * Constant for reporting collision.
+     * Used when caller doesn't care about hit boxes.
+     * {@link CollisionResult#getBoxA()} and {@link CollisionResult#getBoxB()}
+     * return null and {@link CollisionResult#hasCollided()} returns true.
+     */
+    public static final CollisionResult COLLISION = new CollisionResult(true);
 
     private HitBox boxA;
     private HitBox boxB;
 
-    private boolean collided = false;
+    private boolean collided;
 
-    private CollisionResult() {
+    private CollisionResult(boolean collided) {
+        this.collided = collided;
     }
 
     /**

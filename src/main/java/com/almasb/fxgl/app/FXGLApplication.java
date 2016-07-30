@@ -32,9 +32,11 @@ import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
+import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
+import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -45,10 +47,14 @@ import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
@@ -101,6 +107,8 @@ public abstract class FXGLApplication extends Application {
     public void start(Stage stage) throws Exception {
         log.debug("Starting FXGL");
 
+        long start = System.nanoTime();
+
         initSystemProperties();
         initUserProperties();
         initAppSettings();
@@ -108,6 +116,11 @@ public abstract class FXGLApplication extends Application {
         FXGL.configure(this, stage);
 
         log.debug("FXGL configuration complete");
+
+        log.info("FXGL configuration took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
+
+        if (shouldCheckForUpdate() && getSettings().getApplicationMode() != ApplicationMode.RELEASE)
+            checkForUpdates();
     }
 
     @Override
@@ -133,10 +146,14 @@ public abstract class FXGLApplication extends Application {
 
     /**
      * Reset the application.
+     * After notifying all interested parties (where all should do a cleanup),
+     * <code>System.gc()</code> will be called.
      */
     protected void reset() {
         log.debug("Resetting FXGL application");
         getEventBus().fireEvent(FXGLEvent.reset());
+
+        System.gc();
     }
 
     /**
@@ -147,8 +164,10 @@ public abstract class FXGLApplication extends Application {
         log.debug("Exiting Normally");
         getEventBus().fireEvent(FXGLEvent.exit());
 
-        log.close();
+        FXGL.destroy();
         stop();
+        log.close();
+
         Platform.exit();
         System.exit(0);
     }
@@ -199,6 +218,69 @@ public abstract class FXGLApplication extends Application {
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
+    }
+
+    /**
+     * Returns true if first run or required number of days have passed.
+     *
+     * @return whether we need check for updates
+     */
+    private boolean shouldCheckForUpdate() {
+        if (FXGL.isFirstRun())
+            return true;
+
+        LocalDate lastChecked = FXGL.getSystemBundle().get("version.check");
+
+        return lastChecked != null
+                && lastChecked.plusDays(FXGL.getInt("version.check.days")).isBefore(LocalDate.now());
+    }
+
+    /**
+     * Shows a blocking JavaFX dialog, while it runs an async task
+     * to connect to FXGL repo and find latest version string.
+     */
+    private void checkForUpdates() {
+        log.debug("Checking for updates");
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("FXGL Update");
+        dialog.getDialogPane().setContentText("Checking for updates...\n \n ");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Button button = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        button.setDisable(true);
+        button.setText("Open GitHub");
+        button.setOnAction(e -> {
+            getNet().openBrowserTask(FXGL.getString("url.github"))
+                    .onFailure(error -> log.warning("Error opening browser: " + error))
+                    .execute();
+        });
+
+        getNet().getLatestVersionTask()
+                .onSuccess(version -> {
+
+                    FXGL.getSystemBundle().put("version.check", LocalDate.now());
+
+                    dialog.getDialogPane().setContentText("Just so you know\n"
+                            + "Your version:   " + Version.getAsString() + "\n"
+                            + "Latest version: " + version);
+
+                    button.setDisable(false);
+
+                })
+                .onFailure(error -> {
+                    // not important, just log it
+                    log.warning("Failed to find updates: " + error);
+
+                    dialog.getDialogPane().setContentText("Failed to find updates: " + error);
+
+                    button.setDisable(false);
+                })
+                .executeAsyncWithDialogFX(getExecutor());
+
+        // blocking call
+        dialog.showAndWait();
     }
 
     /**
@@ -339,5 +421,19 @@ public abstract class FXGLApplication extends Application {
      */
     public final AchievementManager getAchievementManager() {
         return FXGL.getAchievementManager();
+    }
+
+    /**
+     * @return QTE service
+     */
+    public final QTE getQTE() {
+        return FXGL.getQTE();
+    }
+
+    /**
+     * @return net service
+     */
+    public final Net getNet() {
+        return FXGL.getNet();
     }
 }

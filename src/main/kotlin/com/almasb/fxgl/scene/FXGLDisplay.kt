@@ -448,6 +448,10 @@ private constructor(private val stage: Stage,
         dialog.showInputBox(message, filter, resultCallback)
     }
 
+    override fun showInputBoxWithCancel(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
+        dialog.showInputBoxWithCancel(message, filter, resultCallback)
+    }
+
     /**
      * Shows a blocking (stops game execution, method returns normally) dialog with the error.
      *

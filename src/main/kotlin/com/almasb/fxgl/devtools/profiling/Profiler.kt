@@ -28,7 +28,7 @@ package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.UpdateEvent
+import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.time.MasterTimer
 
@@ -41,9 +41,13 @@ class Profiler {
 
     companion object {
         private val masterTimer: MasterTimer
+        private val runtime: Runtime
+
+        private val MB = 1024.0 * 1024.0
 
         init {
             masterTimer = FXGL.getMasterTimer()
+            runtime = Runtime.getRuntime()
         }
     }
 
@@ -59,12 +63,54 @@ class Profiler {
 
     fun getAvgPerformance() = performance / frames
 
+    private var memoryUsage = 0L
+    private var memoryUsageMin = Long.MAX_VALUE
+    private var memoryUsageMax = 0L
+    private var memoryUsageCurrent = 0L;
+
+    /**
+     * @return average memory usage in MB
+     */
+    fun getAvgMemoryUsage() = memoryUsage / frames / MB
+
+    /**
+     * @return max (highest peak) memory usage in MB
+     */
+    fun getMaxMemoryUsage() = memoryUsageMax / MB
+
+    /**
+     * @return min (lowest peak) memory usage in MB
+     */
+    fun getMinMemoryUsage() = memoryUsageMin / MB
+
+    /**
+     * @return how much memory is used at this moment in MB
+     */
+    fun getCurrentMemoryUsage() = memoryUsageCurrent / MB
+
+    private var gcRuns = 0
+
     private var subscription: Subscriber? = null
 
     private fun onUpdateEvent(event: UpdateEvent) {
         frames++
         fps += masterTimer.fps
         performance += masterTimer.performanceFPS
+
+        val used = runtime.totalMemory() - runtime.freeMemory()
+
+        if (used < memoryUsageCurrent) {
+            gcRuns++
+        }
+
+        memoryUsageCurrent = used
+        memoryUsage += memoryUsageCurrent
+
+        if (memoryUsageCurrent > memoryUsageMax)
+            memoryUsageMax = memoryUsageCurrent
+
+        if (memoryUsageCurrent < memoryUsageMin)
+            memoryUsageMin = memoryUsageCurrent
     }
 
     /**
@@ -89,6 +135,13 @@ class Profiler {
         frames = 1
         fps = 0.0
         performance = 0.0
+
+        memoryUsage = 0L
+        memoryUsageMin = Long.MAX_VALUE
+        memoryUsageMax = 0L
+        memoryUsageCurrent = 0L
+
+        gcRuns = 0
     }
 
     /**
@@ -98,5 +151,9 @@ class Profiler {
         SystemLogger.info("Processed Frames: $frames")
         SystemLogger.info("Average FPS: ${getAvgFPS()}")
         SystemLogger.info("Average Performance: ${getAvgPerformance()}")
+        SystemLogger.info("Average Memory Usage: ${getAvgMemoryUsage()} MB")
+        SystemLogger.info("Min Memory Usage: ${getMinMemoryUsage()} MB")
+        SystemLogger.info("Max Memory Usage: ${getMaxMemoryUsage()} MB")
+        SystemLogger.info("Estimated GC runs: $gcRuns")
     }
 }

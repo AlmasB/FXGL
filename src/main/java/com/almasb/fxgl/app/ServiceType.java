@@ -30,12 +30,15 @@ import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.audio.FXGLAudioPlayer;
+import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.gameplay.SlidingNotificationService;
+import com.almasb.fxgl.gameplay.qte.QTE;
+import com.almasb.fxgl.gameplay.qte.QTEProvider;
 import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.FXGLLoggerFactory;
@@ -48,8 +51,6 @@ import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
-
-import java.util.concurrent.Executor;
 
 /**
  * Marks a service type.
@@ -222,6 +223,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Net> serviceProvider() {
             return FXGLNet.class;
+        }
+    };
+
+    ServiceType<QTE> QTE = new ServiceType<QTE>() {
+        @Override
+        public Class<QTE> service() {
+            return com.almasb.fxgl.gameplay.qte.QTE.class;
+        }
+
+        @Override
+        public Class<? extends QTE> serviceProvider() {
+            return QTEProvider.class;
         }
     };
 }

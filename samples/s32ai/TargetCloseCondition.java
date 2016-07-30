@@ -24,29 +24,23 @@
  * SOFTWARE.
  */
 
-package s31pacman;
+package s32ai;
 
-import com.almasb.ents.Entity;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.ai.AIControl;
+import com.almasb.fxgl.ai.Condition;
+import com.almasb.fxgl.entity.GameEntity;
+import com.badlogic.gdx.ai.btree.LeafTask;
+import com.badlogic.gdx.ai.btree.Task;
+import javafx.geometry.Point2D;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerCoinHandler extends CollisionHandler {
-
-    private PacmanApp app;
-
-    public PlayerCoinHandler() {
-        super(EntityType.PLAYER, EntityType.COIN);
-
-        app = (PacmanApp) FXGL.getApp();
-    }
+public class TargetCloseCondition extends Condition {
 
     @Override
-    protected void onCollisionBegin(Entity player, Entity coin) {
+    public boolean evaluate() {
 
-        app.onCoinPickup();
-        coin.removeFromWorld();
+        return new Point2D(400, 300).distance(getObject().getPositionComponent().getValue()) < 400;
     }
 }

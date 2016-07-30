@@ -43,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,6 +71,12 @@ public final class SaveLoadManager {
             if (!Files.exists(dir)) {
                 log.debug(() -> "Creating non-existent profiles dir");
                 Files.createDirectories(dir);
+
+                Path readmeFile = Paths.get("./" + PROFILES_DIR + "Readme.txt");
+
+                Files.write(readmeFile, Collections.singletonList(
+                        "This directory contains user profiles."
+                ));
             }
         } catch (Exception e) {
             log.warning(() -> "Failed to create profiles dir: " + e);
@@ -174,6 +181,12 @@ public final class SaveLoadManager {
                         if (!Files.exists(dir)) {
                             log.debug(() -> "Creating non-existent saves dir");
                             Files.createDirectory(dir);
+
+                            Path readmeFile = Paths.get(saveDir() + "Readme.txt");
+
+                            Files.write(readmeFile, Collections.singletonList(
+                                    "This directory contains save files."
+                            ));
                         }
 
                         return null;

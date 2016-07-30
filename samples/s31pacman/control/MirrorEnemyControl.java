@@ -24,21 +24,25 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input
+package s31pacman.control;
 
-import javafx.event.Event
-import javafx.event.EventType
-import javafx.geometry.Point2D
-import javafx.scene.input.InputEvent
+import com.almasb.fxgl.app.FXGL;
+import s31pacman.PacmanApp;
 
 /**
- * Wrapper for JavaFX input events.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLInputEvent(val fxEvent: InputEvent, val gameXY: Point2D) : Event(ANY) {
+public class MirrorEnemyControl extends EnemyControl {
 
-    companion object {
-        @JvmField val ANY = EventType<FXGLInputEvent>(Event.ANY, "FXGL_INPUT_EVENT")
+    private PlayerControl playerControl;
+
+    @Override
+    protected MoveDirection updateMoveDirection() {
+
+        if (playerControl == null) {
+            playerControl = ((PacmanApp) FXGL.getApp()).getPlayerControl();
+        }
+
+        return playerControl.getMoveDirection();
     }
 }

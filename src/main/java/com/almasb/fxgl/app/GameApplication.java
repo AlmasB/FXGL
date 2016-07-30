@@ -34,7 +34,6 @@ import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
-import com.almasb.fxgl.input.FXGLInputEvent;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
@@ -50,11 +49,12 @@ import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -317,7 +317,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         EventBus bus = getEventBus();
 
-        Font fpsFont = UIFactory.newFont(24);
+        Font fpsFont = Font.font("Lucida Console", 20);
+
+        // the debug data max chars is ~110, so just add a margin
+        StringBuilder sb = new StringBuilder(128);
 
         getMasterTimer().setUpdateListener(event -> {
             getInput().onUpdateEvent(event);
@@ -337,9 +340,17 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
                 g.setFont(fpsFont);
                 g.setFill(Color.RED);
-                String text = String.format("FPS: [%d]\nPerformance: [%d]",
-                        getMasterTimer().getFPS(), getMasterTimer().getPerformanceFPS());
-                g.fillText(text, 0, getHeight() - 40);
+
+                // clear the contents
+                sb.setLength(0);
+                sb.append("FPS: ").append(getMasterTimer().getFPS())
+                        .append("\nPerformance: ").append(getMasterTimer().getPerformanceFPS())
+                        .append("\nNow Mem (MB): ").append((int) profiler.getCurrentMemoryUsage())
+                        .append("\nAvg Mem (MB): ").append((int) profiler.getAvgMemoryUsage())
+                        .append("\nMin Mem (MB): ").append((int) profiler.getMinMemoryUsage())
+                        .append("\nMax Mem (MB): ").append((int) profiler.getMaxMemoryUsage());
+
+                g.fillText(sb.toString(), 0, getHeight() - 120);
             }
         });
 
@@ -380,6 +391,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         bus.addEventHandler(FXGLEvent.RESET, event -> {
             getGameWorld().reset();
+            getPhysicsWorld().reset();
             getGameScene().onWorldReset();
 
             getInput().onReset();
@@ -410,12 +422,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         // Scene
 
         getGameScene().addEventHandler(MouseEvent.ANY, event -> {
-            FXGLInputEvent e = new FXGLInputEvent(event,
-                    getGameScene().screenToGame(new Point2D(event.getSceneX(), event.getSceneY())));
-            getInput().onInputEvent(e);
+            getInput().onMouseEvent(event, getGameScene().getViewport());
         });
         getGameScene().addEventHandler(KeyEvent.ANY, event -> {
-            getInput().onInputEvent(new FXGLInputEvent(event, Point2D.ZERO));
+            getInput().onKeyEvent(event);
         });
 
         bus.addEventHandler(NotificationEvent.ANY, event -> {
@@ -541,7 +551,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         @Override
         public void onSave() {
-            getDisplay().showInputBox("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
+            getDisplay().showInputBoxWithCancel("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
+
+                if (saveFileName.isEmpty())
+                    return;
 
                 if (saveLoadManager.saveFileExists(saveFileName)) {
                     getDisplay().showConfirmationBox("Overwrite save [" + saveFileName + "]?", yes -> {
@@ -685,42 +698,44 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         btnNew.setOnAction(e -> {
             getDisplay().showInputBox("New Profile", DialogPane.ALPHANUM, name -> {
-                profileName = name;
-                saveLoadManager = new SaveLoadManager(profileName);
+                profileName.set(name);
+                saveLoadManager = new SaveLoadManager(name);
 
-                getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
+                getEventBus().fireEvent(new ProfileSelectedEvent(name, false));
 
                 saveProfile();
             });
         });
 
         btnSelect.setOnAction(e -> {
-            profileName = profilesBox.getValue();
-            saveLoadManager = new SaveLoadManager(profileName);
+            String name = profilesBox.getValue();
 
+            saveLoadManager = new SaveLoadManager(name);
 
             saveLoadManager.loadProfileTask()
                     .onSuccess(profile -> {
                         boolean ok = loadFromProfile(profile);
 
                         if (!ok) {
-                            getDisplay().showErrorBox("Profile is corrupted: " + profileName, this::showProfileDialog);
+                            getDisplay().showErrorBox("Profile is corrupted: " + name, this::showProfileDialog);
                         } else {
+                            profileName.set(name);
+
                             saveLoadManager.loadLastModifiedSaveFileTask()
                                     .onSuccess(file -> {
-                                        getEventBus().fireEvent(new ProfileSelectedEvent(profileName, true));
+                                        getEventBus().fireEvent(new ProfileSelectedEvent(name, true));
                                     })
                                     .onFailure(error -> {
-                                        getEventBus().fireEvent(new ProfileSelectedEvent(profileName, false));
+                                        getEventBus().fireEvent(new ProfileSelectedEvent(name, false));
                                     })
                                     .executeAsyncWithDialogFX(new ProgressDialog("Loading last save file"));
                         }
                     })
                     .onFailure(error -> {
-                        getDisplay().showErrorBox("Profile is corrupted: " + profileName + "\nError: "
+                        getDisplay().showErrorBox("Profile is corrupted: " + name + "\nError: "
                                 + error.toString(), this::showProfileDialog);
                     })
-                    .executeAsyncWithDialogFX(new ProgressDialog("Loading Profile: "+ profileName));
+                    .executeAsyncWithDialogFX(new ProgressDialog("Loading Profile: "+ name));
         });
 
         btnDelete.setOnAction(e -> {
@@ -793,6 +808,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     public final void start(Stage stage) throws Exception {
         super.start(stage);
 
+        long start = System.nanoTime();
+
         // services are now ready, switch to normal logger
         log = FXGL.getLogger(GameApplication.class);
         log.debug("Starting Game Application");
@@ -828,6 +845,8 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 profiler.print();
             });
         }
+
+        log.info("GameApplication start took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
     }
 
     /**
@@ -852,6 +871,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     /**
      * (Re-)initializes the user application as new and starts the game.
+     * Note: cannot be called during callbacks.
      */
     protected void startNewGame() {
         log.debug("Starting new game");
@@ -860,6 +880,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
     /**
      * (Re-)initializes the user application from the given data file and starts the game.
+     * Note: cannot be called during callbacks.
      *
      * @param dataFile save data to loadTask from
      */
@@ -876,7 +897,14 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     /**
      * Stores current selected profile name for this game.
      */
-    private String profileName;
+    private ReadOnlyStringWrapper profileName = new ReadOnlyStringWrapper("");
+
+    /**
+     * @return profile name property (read-only)
+     */
+    public final ReadOnlyStringProperty profileNameProperty() {
+        return profileName.getReadOnlyProperty();
+    }
 
     /**
      * Create a user profile with current settings.
@@ -928,10 +956,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     }
 
     private void saveProfile() {
-        // if it is null then we are running without menus
-        if (profileName != null) {
+        // if it is empty then we are running without menus
+        if (!profileName.get().isEmpty()) {
             saveLoadManager.saveProfileTask(createProfile())
-                    .onFailure(e -> log.warning("Failed to save profile: " + profileName + " - " + e))
+                    .onFailure(e -> log.warning("Failed to save profile: " + profileName.get() + " - " + e))
                     // we execute synchronously to avoid incomplete save since we might be shutting down
                     .execute();
         }

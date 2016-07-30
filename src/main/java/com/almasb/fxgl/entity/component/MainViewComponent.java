@@ -143,6 +143,9 @@ public class MainViewComponent extends AbstractComponent {
      * Set view. The generate bbox flag tells the component
      * whether it should generate bbox from the given view.
      *
+     * Note: the generated bounding box is an approximation based on
+     * the layout bounds of the view object.
+     *
      * @param view the view
      * @param generateBoundingBox generate bbox flag
      */

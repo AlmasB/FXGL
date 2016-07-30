@@ -28,9 +28,12 @@ package com.almasb.fxgl.net;
 
 import com.almasb.easyio.IOTask;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 /**
+ * Defines methods for Net service.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface Net {
@@ -40,4 +43,23 @@ public interface Net {
      * @return task that downloads a file from given url into running directory
      */
     IOTask<Path> downloadTask(String url);
+
+    /**
+     * Note: the caller is responsible for closing the stream.
+     *
+     * @param url link to open stream to
+     * @return task that provides stream access to given link
+     */
+    IOTask<InputStream> openStreamTask(String url);
+
+    /**
+     * @return task that loads latest FXGL version from the server as string
+     */
+    IOTask<String> getLatestVersionTask();
+
+    /**
+     * @param url link to open
+     * @return task that opens default browser with given url
+     */
+    IOTask<Void> openBrowserTask(String url);
 }
