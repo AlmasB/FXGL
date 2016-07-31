@@ -51,7 +51,8 @@ public final class JavaScriptParser {
      */
     public JavaScriptParser(String scriptFileName) {
         engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("HOME_DIR", getClass().getResource("/assets/scripts/"));
-        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("ASSET_LOADER", FXGL.getAssetLoader());
+        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("FXGL", FXGL.Companion);
+        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("APP", FXGL.getApp());
 
         try {
             if (scriptFileName.endsWith(".js")) {
