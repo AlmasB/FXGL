@@ -32,6 +32,8 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.logging.MockLoggerFactory
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
+import com.almasb.fxgl.time.LocalTimer
+import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Provides
@@ -298,6 +300,12 @@ class FXGL {
          * @return new instance on each call
          */
         @JvmStatic fun newLocalTimer() = getService(ServiceType.LOCAL_TIMER)
+
+        /**
+         * @param name unique name for timer
+         * @return new instance on each call
+         */
+        @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name)
 
         private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
         @JvmStatic fun getMasterTimer() = _masterTimer
