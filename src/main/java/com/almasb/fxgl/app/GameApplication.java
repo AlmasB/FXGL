@@ -29,20 +29,15 @@ import com.almasb.easyio.EasyIO;
 import com.almasb.ents.Entity;
 import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
-import com.almasb.fxgl.devtools.DeveloperTools;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
-import com.almasb.fxgl.input.InputModifier;
-import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
-import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
-import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
@@ -58,14 +53,11 @@ import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
-import java.time.LocalDateTime;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -651,36 +643,18 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 .executeAsyncWithDialogFX(new ProgressDialog("Loading profiles"));
     }
 
-    private void bindScreenshotKey() {
-        getInput().addAction(new UserAction("Screenshot") {
-            @Override
-            protected void onActionBegin() {
-                boolean ok = getDisplay().saveScreenshot();
-
-                getNotificationService().pushNotification(ok
-                        ? "Screenshot saved" : "Screenshot failed");
-            }
-        }, KeyCode.P);
-    }
-
-    private void bindDeveloperKey() {
-        getInput().addAction(new UserAction("Developer Options") {
-            @Override
-            protected void onActionBegin() {
-                log.debug("Scene graph contains " + DeveloperTools.INSTANCE.getChildrenSize(getGameScene().getRoot())
-                        + " nodes");
-            }
-        }, KeyCode.DIGIT0, InputModifier.CTRL);
-    }
-
     private void initFXGL() {
         initAchievements();
+
         // we call this early to process user input bindings
         // so we can correctly display them in menus
-        bindScreenshotKey();
-        bindDeveloperKey();
+        // 1. register system actions
+        SystemActions.INSTANCE.bind(getInput());
+
+        // 2. register user actions
         initInput();
-        // scan for annotated methods and register them too
+
+        // 3. scan for annotated methods and register them too
         getInput().scanForUserActions(this);
 
         initGlobalEventHandlers();
@@ -743,7 +717,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         // on first run this is no-op, as for rest this ensures
         // that even without menus and during direct calls to start*Game()
-        // the system is clean
+        // the system is clean, also reset performs System.gc() to clear stuff we used in init
         pause();
         reset();
         setState(ApplicationState.LOADING);
