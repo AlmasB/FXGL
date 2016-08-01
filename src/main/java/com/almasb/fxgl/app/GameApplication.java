@@ -706,7 +706,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             });
         }
 
-        log.info("GameApplication start took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
+        SystemLogger.INSTANCE.info("GameApplication start took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
     }
 
     /**

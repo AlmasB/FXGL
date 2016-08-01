@@ -28,6 +28,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.io.DataFile
+import com.almasb.fxgl.logging.SystemLogger
 import javafx.concurrent.Task
 
 /**
@@ -61,7 +62,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initialization Complete", 4)
 
-        log.info("Game init took: " + (System.nanoTime() - start) / 1000000000.0 + " sec")
+        SystemLogger.info("Game init took: " + (System.nanoTime() - start) / 1000000000.0 + " sec")
 
         return null
     }
