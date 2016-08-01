@@ -125,7 +125,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return state.get();
     }
 
-    private void setState(ApplicationState appState) {
+    void setState(ApplicationState appState) {
         log.debug("State: " + getState() + " -> " + appState);
         state.set(appState);
         switch (appState) {
@@ -505,7 +505,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         mainMenuScene = sceneFactory.newMainMenu(this);
         gameMenuScene = sceneFactory.newGameMenu(this);
 
-        MenuEventHandler handler = new MenuEventHandler();
+        MenuEventHandler handler = new MenuEventHandler(this);
         mainMenuScene.setListener(handler);
         gameMenuScene.setListener(handler);
 
@@ -520,120 +520,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         getGameScene().addEventHandler(KeyEvent.ANY, menuKeyHandler);
         gameMenuScene.addEventHandler(KeyEvent.ANY, menuKeyHandler);
-    }
-
-    private class MenuEventHandler implements MenuEventListener {
-        @Override
-        public void onNewGame() {
-            startNewGame();
-        }
-
-        @Override
-        public void onContinue() {
-            saveLoadManager.loadLastModifiedSaveFileTask()
-                    .then(file -> saveLoadManager.loadTask(file))
-                    .onSuccess(GameApplication.this::startLoadedGame)
-                    .executeAsyncWithDialogFX(new ProgressDialog("Loading..."));
-        }
-
-        @Override
-        public void onResume() {
-            resume();
-        }
-
-        private void doSave(String saveFileName) {
-            DataFile dataFile = saveState();
-            SaveFile saveFile = new SaveFile(saveFileName, LocalDateTime.now());
-
-            saveLoadManager.saveTask(dataFile, saveFile)
-                    .executeAsyncWithDialogFX(new ProgressDialog("Saving data: " + saveFileName));
-        }
-
-        @Override
-        public void onSave() {
-            getDisplay().showInputBoxWithCancel("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
-
-                if (saveFileName.isEmpty())
-                    return;
-
-                if (saveLoadManager.saveFileExists(saveFileName)) {
-                    getDisplay().showConfirmationBox("Overwrite save [" + saveFileName + "]?", yes -> {
-
-                        if (yes)
-                            doSave(saveFileName);
-                    });
-                } else {
-                    doSave(saveFileName);
-                }
-            });
-        }
-
-        @Override
-        public void onLoad(SaveFile saveFile) {
-
-            getDisplay().showConfirmationBox("Load save [" + saveFile.getName() + "]?\n"
-                    + "Unsaved progress will be lost!", yes -> {
-
-                if (yes) {
-                    saveLoadManager.loadTask(saveFile)
-                            .onSuccess(GameApplication.this::startLoadedGame)
-                            .executeAsyncWithDialogFX(new ProgressDialog("Loading: " + saveFile.getName()));
-                }
-            });
-        }
-
-        @Override
-        public void onDelete(SaveFile saveFile) {
-
-            getDisplay().showConfirmationBox("Delete save [" + saveFile.getName() + "]?", yes -> {
-
-                if (yes) {
-                    saveLoadManager.deleteSaveFileTask(saveFile)
-                            .executeAsyncWithDialogFX(new ProgressDialog("Deleting: " + saveFile.getName()));
-                }
-            });
-        }
-
-        @Override
-        public void onLogout() {
-
-            getDisplay().showConfirmationBox("Log out?", yes -> {
-
-                if (yes) {
-                    saveProfile();
-                    showProfileDialog();
-                }
-            });
-        }
-
-        @Override
-        public void onMultiplayer() {
-            showMultiplayerDialog();
-        }
-
-        @Override
-        public void onExit() {
-
-            getDisplay().showConfirmationBox("Exit the game?", yes -> {
-
-                if (yes)
-                    exit();
-            });
-        }
-
-        @Override
-        public void onExitToMainMenu() {
-
-            getDisplay().showConfirmationBox("Exit to Main Menu?\n"
-                    + "All unsaved progress will be lost!", yes -> {
-
-                if (yes) {
-                    pause();
-                    reset();
-                    setState(ApplicationState.MAIN_MENU);
-                }
-            });
-        }
     }
 
     private void configureIntro() {
@@ -669,7 +555,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
     }
 
-    private void showMultiplayerDialog() {
+    void showMultiplayerDialog() {
         Button btnHost = UIFactory.newButton("Host...");
         btnHost.setOnAction(e -> {
             getDisplay().showMessageBox("NOT SUPPORTED YET");
@@ -687,7 +573,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Show profile dialog so that user selects existing or creates new profile.
      * The dialog is only dismissed when profile is chosen either way.
      */
-    private void showProfileDialog() {
+    void showProfileDialog() {
         ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList());
 
         Button btnNew = UIFactory.newButton("NEW");
@@ -955,7 +841,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return saveLoadManager;
     }
 
-    private void saveProfile() {
+    void saveProfile() {
         // if it is empty then we are running without menus
         if (!profileName.get().isEmpty()) {
             saveLoadManager.saveProfileTask(createProfile())
