@@ -26,8 +26,6 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.easyio.EasyIO;
-import com.almasb.ents.Entity;
-import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.*;
@@ -39,7 +37,6 @@ import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
@@ -80,10 +77,16 @@ import javafx.stage.Stage;
  * <p>
  * Unless explicitly stated, methods are not thread-safe and must be
  * executed on JavaFX Application (UI) Thread.
+ * <p>
+ *     Callback / listener notes: instance of GameApplication will always be
+ *     notified last along the chain of callbacks.
+ *     However, as per documentation, events are always fired after listeners.
+ * </p>
+ *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class GameApplication extends FXGLApplication implements UserProfileSavable {
+public abstract class GameApplication extends FXGLApplication {
 
     private static Logger log = SystemLogger.INSTANCE;
 
@@ -314,13 +317,13 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         // the debug data max chars is ~110, so just add a margin
         StringBuilder sb = new StringBuilder(128);
 
+        // Main tick
+
         getMasterTimer().setUpdateListener(event -> {
             getInput().onUpdateEvent(event);
             getAudioPlayer().onUpdateEvent(event);
 
             getGameWorld().onUpdateEvent(event);
-            getPhysicsWorld().onUpdateEvent(event);
-            getGameScene().onUpdateEvent(event);
 
             onUpdate(event.tpf());
 
@@ -367,49 +370,34 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             }
         });
 
-        bus.addEventHandler(FXGLEvent.PAUSE, event -> {
-            getInput().onPause();
-            getMasterTimer().onPause();
+        // Core listeners
 
-            setState(ApplicationState.PAUSED);
-        });
+        addFXGLListener(getInput());
+        addFXGLListener(getMasterTimer());
+        addFXGLListener(new FXGLListener() {
+            @Override
+            public void onPause() {
+                setState(ApplicationState.PAUSED);
+            }
 
-        bus.addEventHandler(FXGLEvent.RESUME, event -> {
-            getInput().onResume();
-            getMasterTimer().onResume();
+            @Override
+            public void onResume() {
+                setState(ApplicationState.PLAYING);
+            }
 
-            setState(ApplicationState.PLAYING);
-        });
+            @Override
+            public void onReset() {
+                getGameWorld().reset();
+            }
 
-        bus.addEventHandler(FXGLEvent.RESET, event -> {
-            getGameWorld().reset();
-            getPhysicsWorld().reset();
-            getGameScene().onWorldReset();
-
-            getInput().onReset();
-            getMasterTimer().onReset();
-        });
-
-        bus.addEventHandler(FXGLEvent.EXIT, event -> {
-            saveProfile();
+            @Override
+            public void onExit() {
+                saveProfile();
+            }
         });
 
         getGameWorld().addWorldListener(getPhysicsWorld());
         getGameWorld().addWorldListener(getGameScene());
-
-        // we need to add this listener
-        // to publish entity events via our event bus
-        getGameWorld().addWorldListener(new EntityWorldListener() {
-            @Override
-            public void onEntityAdded(Entity entity) {
-                bus.fireEvent(WorldEvent.entityAdded(entity));
-            }
-
-            @Override
-            public void onEntityRemoved(Entity entity) {
-                bus.fireEvent(WorldEvent.entityRemoved(entity));
-            }
-        });
 
         // Scene
 
@@ -774,7 +762,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     public final UserProfile createProfile() {
         UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
 
-        save(profile);
+        //save(profile);
         getEventBus().fireEvent(new SaveEvent(profile));
 
         return profile;
@@ -790,7 +778,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
             return false;
 
-        load(profile);
+        //load(profile);
         getEventBus().fireEvent(new LoadEvent(LoadEvent.LOAD_PROFILE, profile));
         return true;
     }
@@ -823,24 +811,5 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                     // we execute synchronously to avoid incomplete save since we might be shutting down
                     .execute();
         }
-    }
-
-    @Override
-    public void save(UserProfile profile) {
-        // if there is a need for data save
-//        log.debug("Saving data to profile");
-//
-//        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
-//        bundle.put("...", ...);
-//
-//        bundle.log();
-//        profile.putBundle(bundle);
-    }
-
-    @Override
-    public void load(UserProfile profile) {
-//        log.debug("Loading data from profile");
-//        UserProfile.Bundle bundle = profile.getBundle("game");
-//        bundle.log();
     }
 }

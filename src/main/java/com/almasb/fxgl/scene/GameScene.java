@@ -64,8 +64,8 @@ import java.util.List;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameScene extends FXGLScene implements EntityWorldListener,
-        UpdateEventListener, ComponentListener, ControlListener {
+public final class GameScene extends FXGLScene
+        implements EntityWorldListener, ComponentListener, ControlListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
@@ -274,7 +274,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
     }
 
     @Override
-    public void onUpdateEvent(UpdateEvent event) {
+    public void onWorldUpdate(double tpf) {
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
@@ -286,6 +286,7 @@ public final class GameScene extends FXGLScene implements EntityWorldListener,
         particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
     }
 
+    @Override
     public void onWorldReset() {
         log.debug("Resetting game scene");
 

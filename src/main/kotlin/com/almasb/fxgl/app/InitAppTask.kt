@@ -38,7 +38,9 @@ import javafx.concurrent.Task
  */
 class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>() {
 
-    private val log = FXGL.getLogger(javaClass)
+    companion object {
+        private val log = FXGL.getLogger(InitAppTask::class.java)
+    }
 
     constructor(app: GameApplication) : this(app, DataFile.EMPTY)
 
@@ -74,7 +76,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     }
 
     override fun succeeded() {
-        app.getEventBus().fireEvent(FXGLEvent.initAppComplete())
+        //app.getEventBus().fireEvent(FXGLEvent.initAppComplete())
         app.resume()
     }
 

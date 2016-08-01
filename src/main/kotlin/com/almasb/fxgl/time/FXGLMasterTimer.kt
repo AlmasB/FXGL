@@ -52,8 +52,8 @@ class FXGLMasterTimer
 @Inject
 private constructor() : AnimationTimer(), MasterTimer {
 
-    override fun onInitComplete() {
-    }
+//    override fun onInitComplete() {
+//    }
 
     override fun onPause() {
         stop()

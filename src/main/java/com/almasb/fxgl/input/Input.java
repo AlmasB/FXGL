@@ -46,9 +46,6 @@ import java.util.Map;
 public interface Input extends UserProfileSavable, UpdateEventListener, FXGLListener {
 
     @Override
-    default void onInitComplete() {}
-
-    @Override
     default void onPause() {
         clearAll();
     }

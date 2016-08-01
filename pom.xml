@@ -29,7 +29,7 @@
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
-        <ents.version>1.0.4</ents.version>
+        <ents.version>1.0.5</ents.version>
         <astar.version>1.0</astar.version>
         <gdx.ai.version>1.8.0</gdx.ai.version>
         <easyio.version>0.1.4</easyio.version>

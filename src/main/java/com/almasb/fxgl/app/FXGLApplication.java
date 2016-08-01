@@ -55,6 +55,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
@@ -98,6 +100,16 @@ public abstract class FXGLApplication extends Application {
         };
     }
 
+    private List<FXGLListener> systemListeners = new ArrayList<>();
+
+    public void addFXGLListener(FXGLListener listener) {
+        systemListeners.add(listener);
+    }
+
+    public void removeFXGLListener(FXGLListener listener) {
+        systemListeners.remove(listener);
+    }
+
     @Override
     public final void init() throws Exception {
         log.debug("Initializing FXGL");
@@ -133,6 +145,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void pause() {
         log.debug("Pausing main loop");
+        systemListeners.forEach(FXGLListener::onPause);
         getEventBus().fireEvent(FXGLEvent.pause());
     }
 
@@ -141,6 +154,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void resume() {
         log.debug("Resuming main loop");
+        systemListeners.forEach(FXGLListener::onResume);
         getEventBus().fireEvent(FXGLEvent.resume());
     }
 
@@ -151,6 +165,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void reset() {
         log.debug("Resetting FXGL application");
+        systemListeners.forEach(FXGLListener::onReset);
         getEventBus().fireEvent(FXGLEvent.reset());
 
         System.gc();
@@ -162,6 +177,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void exit() {
         log.debug("Exiting Normally");
+        systemListeners.forEach(FXGLListener::onExit);
         getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGL.destroy();

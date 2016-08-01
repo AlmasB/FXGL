@@ -78,7 +78,7 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class PhysicsWorld implements EntityWorldListener, UpdateEventListener {
+public final class PhysicsWorld implements EntityWorldListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
 
@@ -93,9 +93,9 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
 
     private List<CollisionHandler> collisionHandlers = new ArrayList<>();
 
-    private Map<CollisionPair, Long> collisions = new HashMap<>();
+    private Map<CollisionPair, Integer> collisions = new HashMap<>();
 
-    private LongProperty tick = new SimpleLongProperty(0);
+    private int physicsTick = 0;
 
     private double appHeight;
 
@@ -173,7 +173,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                     CollisionPair pair = new CollisionPair(e1, e2, handler);
 
                     if (!collisions.containsKey(pair)) {
-                        collisions.put(pair, tick.get());
+                        collisions.put(pair, physicsTick);
 
                         HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
                         HitBox boxB = (HitBox)contact.getFixtureB().getUserData();
@@ -198,7 +198,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                     CollisionPair pair = new CollisionPair(e1, e2, handler);
 
                     if (collisions.containsKey(pair)) {
-                        collisions.put(pair, -1L);
+                        collisions.put(pair, -1);
                     }
                 }
             }
@@ -239,15 +239,10 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         }
     }
 
-    /**
-     * Physics tick.
-     *
-     * @param event update event
-     */
     @Override
-    public void onUpdateEvent(UpdateEvent event) {
-        tick.set(event.tick());
-        physicsWorld.step((float) event.tpf(), 8, 3);
+    public void onWorldUpdate(double tpf) {
+        physicsTick++;
+        physicsWorld.step((float) tpf, 8, 3);
 
         checkCollisions();
         notifyCollisionHandlers();
@@ -256,8 +251,11 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
     /**
      * Resets physics world.
      */
-    public void reset() {
+    @Override
+    public void onWorldReset() {
         log.debug("Resetting physics world");
+
+        physicsTick = 0;
 
         entities.clear();
         collisions.clear();
@@ -305,12 +303,12 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
 
                     if (result.hasCollided()) {
                         if (!collisions.containsKey(pair)) {
-                            collisions.put(pair, tick.get());
+                            collisions.put(pair, physicsTick);
                             pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
                         }
                     } else {
                         if (collisions.containsKey(pair)) {
-                            collisions.put(pair, -1L);
+                            collisions.put(pair, -1);
                         }
                     }
                 }
@@ -330,12 +328,12 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                 return;
             }
 
-            if (cachedTick == -1L) {
+            if (cachedTick == -1) {
                 pair.collisionEnd();
                 toRemove.add(pair);
-            } else if (tick.get() == cachedTick) {
+            } else if (physicsTick == cachedTick) {
                 pair.collisionBegin();
-            } else if (tick.get() > cachedTick) {
+            } else if (physicsTick > cachedTick) {
                 pair.collision();
             }
         });
