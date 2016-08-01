@@ -156,4 +156,21 @@ class Profiler {
         SystemLogger.info("Max Memory Usage: ${getMaxMemoryUsage()} MB")
         SystemLogger.info("Estimated GC runs: $gcRuns")
     }
+
+    // the debug data max chars is ~110, so just add a margin
+    // cache string builder to avoid object allocation
+    private val sb = StringBuilder(128)
+
+    fun getInfo(): String {
+        // first clear the contents
+        sb.setLength(0)
+        sb.append("FPS: ").append(masterTimer.fps)
+                .append("\nPerformance: ").append(masterTimer.performanceFPS)
+                .append("\nNow Mem (MB): ").append(getCurrentMemoryUsage().toInt())
+                .append("\nAvg Mem (MB): ").append(getAvgMemoryUsage().toInt())
+                .append("\nMin Mem (MB): ").append(getMinMemoryUsage().toInt())
+                .append("\nMax Mem (MB): ").append(getMaxMemoryUsage().toInt())
+
+        return sb.toString()
+    }
 }

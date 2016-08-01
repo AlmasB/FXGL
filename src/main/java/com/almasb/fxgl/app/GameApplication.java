@@ -314,9 +314,6 @@ public abstract class GameApplication extends FXGLApplication {
 
         Font fpsFont = Font.font("Lucida Console", 20);
 
-        // the debug data max chars is ~110, so just add a margin
-        StringBuilder sb = new StringBuilder(128);
-
         // Main tick
 
         getMasterTimer().setUpdateListener(event -> {
@@ -335,17 +332,7 @@ public abstract class GameApplication extends FXGLApplication {
 
                 g.setFont(fpsFont);
                 g.setFill(Color.RED);
-
-                // clear the contents
-                sb.setLength(0);
-                sb.append("FPS: ").append(getMasterTimer().getFPS())
-                        .append("\nPerformance: ").append(getMasterTimer().getPerformanceFPS())
-                        .append("\nNow Mem (MB): ").append((int) profiler.getCurrentMemoryUsage())
-                        .append("\nAvg Mem (MB): ").append((int) profiler.getAvgMemoryUsage())
-                        .append("\nMin Mem (MB): ").append((int) profiler.getMinMemoryUsage())
-                        .append("\nMax Mem (MB): ").append((int) profiler.getMaxMemoryUsage());
-
-                g.fillText(sb.toString(), 0, getHeight() - 120);
+                g.fillText(profiler.getInfo(), 0, getHeight() - 120);
             }
         });
 
