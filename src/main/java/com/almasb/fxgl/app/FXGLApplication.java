@@ -40,6 +40,7 @@ import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
@@ -51,6 +52,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -131,7 +133,7 @@ public abstract class FXGLApplication extends Application {
 
         log.info("FXGL configuration took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
 
-        if (shouldCheckForUpdate() && getSettings().getApplicationMode() != ApplicationMode.RELEASE)
+        if (shouldCheckForUpdate())
             checkForUpdates();
     }
 
@@ -236,19 +238,23 @@ public abstract class FXGLApplication extends Application {
         settings = localSettings.toReadOnly();
     }
 
+    private LocalTimer updateCheckTimer;
+
     /**
      * Returns true if first run or required number of days have passed.
      *
      * @return whether we need check for updates
      */
     private boolean shouldCheckForUpdate() {
+        if (getSettings().getApplicationMode() == ApplicationMode.RELEASE)
+            return false;
+
         if (FXGL.isFirstRun())
             return true;
 
-        LocalDate lastChecked = FXGL.getSystemBundle().get("version.check");
+        updateCheckTimer = FXGL.newOfflineTimer("version.check");
 
-        return lastChecked != null
-                && lastChecked.plusDays(FXGL.getInt("version.check.days")).isBefore(LocalDate.now());
+        return updateCheckTimer.elapsed(Duration.hours(24 * FXGL.getInt("version.check.days")));
     }
 
     /**
@@ -276,18 +282,25 @@ public abstract class FXGLApplication extends Application {
         getNet().getLatestVersionTask()
                 .onSuccess(version -> {
 
-                    FXGL.getSystemBundle().put("version.check", LocalDate.now());
+                    // update offline timer
+                    updateCheckTimer.capture();
+
+                    // will not need this later
+                    updateCheckTimer = null;
 
                     dialog.getDialogPane().setContentText("Just so you know\n"
                             + "Your version:   " + Version.getAsString() + "\n"
                             + "Latest version: " + version);
 
                     button.setDisable(false);
-
                 })
                 .onFailure(error -> {
+
                     // not important, just log it
                     log.warning("Failed to find updates: " + error);
+
+                    // will not need this later
+                    updateCheckTimer = null;
 
                     dialog.getDialogPane().setContentText("Failed to find updates: " + error);
 

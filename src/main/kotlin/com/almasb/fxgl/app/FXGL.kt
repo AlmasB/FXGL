@@ -178,7 +178,7 @@ class FXGL {
 
             // populate with default info
             internalBundle = Bundle("FXGL")
-            internalBundle.put("version.check", LocalDate.now())
+            //internalBundle.put("version.check", LocalDate.now())
         }
 
         /**
