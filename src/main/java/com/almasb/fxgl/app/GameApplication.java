@@ -316,16 +316,11 @@ public abstract class GameApplication extends FXGLApplication {
 
         // Main tick
 
-        getMasterTimer().setUpdateListener(event -> {
-            getInput().onUpdateEvent(event);
-            getAudioPlayer().onUpdateEvent(event);
-
-            getGameWorld().onUpdateEvent(event);
-
+        getMasterTimer().addUpdateListener(getInput());
+        getMasterTimer().addUpdateListener(getAudioPlayer());
+        getMasterTimer().addUpdateListener(getGameWorld());
+        getMasterTimer().addUpdateListener(event -> {
             onUpdate(event.tpf());
-
-            // notify rest
-            bus.fireEvent(event);
 
             if (getSettings().isFPSShown()) {
                 GraphicsContext g = getGameScene().getGraphicsContext();

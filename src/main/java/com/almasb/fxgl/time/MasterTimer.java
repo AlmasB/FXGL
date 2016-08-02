@@ -158,5 +158,7 @@ public interface MasterTimer extends FXGLListener, UserProfileSavable {
      */
     void reset();
 
-    void setUpdateListener(UpdateEventListener listener);
+    void addUpdateListener(UpdateEventListener listener);
+
+    void removeUpdateListener(UpdateEventListener listener);
 }
