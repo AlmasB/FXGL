@@ -55,7 +55,7 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGL {
+class FXGL private constructor() {
 
     companion object {
         private lateinit var internalSettings: ReadOnlyGameSettings
