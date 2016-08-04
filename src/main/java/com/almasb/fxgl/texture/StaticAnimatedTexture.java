@@ -28,6 +28,9 @@ package com.almasb.fxgl.texture;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.event.FXGLEvent;
+import com.almasb.fxgl.time.LocalTimer;
+import com.almasb.fxgl.time.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -42,9 +45,16 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class StaticAnimatedTexture extends Texture {
+public final class StaticAnimatedTexture extends Texture implements UpdateEventListener {
 
-    private Timeline timeline;
+    // TODO: can we replace with a single AnimationChannel?
+    // Dynamic has similar code, we need to apply DRY
+    private int currentFrame = 0;
+    private double timePerAnimationFrame = 0;
+    private LocalTimer animationTimer;
+
+    private int maxFrames;
+    private double frameW;
 
     /**
      * @param image    actual image
@@ -54,28 +64,34 @@ public final class StaticAnimatedTexture extends Texture {
     StaticAnimatedTexture(Image image, int frames, Duration duration) {
         super(image);
 
-        final double frameW = image.getWidth() / frames;
+        frameW = image.getWidth() / frames;
 
         this.setFitWidth(frameW);
         this.setFitHeight(image.getHeight());
 
         this.setViewport(new Rectangle2D(0, 0, frameW, image.getHeight()));
 
-        SimpleIntegerProperty frameProperty = new SimpleIntegerProperty();
-        frameProperty.addListener((obs, old, newValue) -> {
-            this.setViewport(new Rectangle2D(newValue.intValue() * frameW, 0, frameW, image.getHeight()));
-        });
+        maxFrames = frames;
+        timePerAnimationFrame = duration.toSeconds() / frames;
 
-        timeline = new Timeline(new KeyFrame(duration, new KeyValue(frameProperty, frames - 1)));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        animationTimer = FXGL.newLocalTimer();
 
-        FXGL.getEventBus().addEventHandler(FXGLEvent.PAUSE, e -> {
-            timeline.pause();
-        });
+        // TODO: clean listener
+        FXGL.getMasterTimer().addUpdateListener(this);
+    }
 
-        FXGL.getEventBus().addEventHandler(FXGLEvent.RESUME, e -> {
-            timeline.play();
-        });
+    @Override
+    public void onUpdateEvent(UpdateEvent event) {
+        if (animationTimer.elapsed(Duration.seconds(timePerAnimationFrame))) {
+
+            setViewport(new Rectangle2D(currentFrame * frameW, 0, frameW, getFitHeight()));
+            currentFrame++;
+
+            if (currentFrame == maxFrames) {
+                currentFrame = 0;
+            }
+
+            animationTimer.capture();
+        }
     }
 }
