@@ -37,7 +37,6 @@
         <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
         <junit.version>4.12</junit.version>
-        <commons-math.version>3.5</commons-math.version>
     </properties>
 
     <repositories>
@@ -136,13 +135,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>${commons-math.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
