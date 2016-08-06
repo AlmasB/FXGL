@@ -296,6 +296,9 @@ class FXGL private constructor() {
         private val _net by lazy { getService(ServiceType.NET) }
         @JvmStatic fun getNet() = _net
 
+        private val _pooler by lazy { getService(ServiceType.POOLER) }
+        @JvmStatic fun getPooler() = _pooler
+
         /**
          * @return new instance on each call
          */

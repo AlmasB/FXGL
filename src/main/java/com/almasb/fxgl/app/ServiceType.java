@@ -51,6 +51,8 @@ import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
+import com.almasb.fxgl.util.Pooler;
+import com.almasb.fxgl.util.FXGLPooler;
 
 /**
  * Marks a service type.
@@ -235,6 +237,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends QTE> serviceProvider() {
             return QTEProvider.class;
+        }
+    };
+
+    ServiceType<Pooler> POOLER = new ServiceType<Pooler>() {
+        @Override
+        public Class<Pooler> service() {
+            return Pooler.class;
+        }
+
+        @Override
+        public Class<? extends Pooler> serviceProvider() {
+            return FXGLPooler.class;
         }
     };
 }

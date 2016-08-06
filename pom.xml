@@ -29,6 +29,7 @@
         <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.0.7</ents.version>
+        <game.utils.version>-28d6b487cf-1</game.utils.version>
         <jbox.version>2.3.0-fxgl</jbox.version>
         <astar.version>1.0</astar.version>
         <gdx.ai.version>1.8.0</gdx.ai.version>
@@ -86,6 +87,12 @@
             <groupId>com.github.AlmasB</groupId>
             <artifactId>Ents</artifactId>
             <version>${ents.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>GameUtils</artifactId>
+            <version>${game.utils.version}</version>
         </dependency>
 
         <dependency>
