@@ -26,19 +26,36 @@
 
 package com.almasb.fxgl.util
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.gameutils.pool.Pool
 import com.almasb.gameutils.pool.Pools
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import org.jbox2d.common.Vec2
 
 /**
- *
+ * FXGL provider for [Pooler] service.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
 class FXGLPooler
 @Inject private constructor(): Pooler {
+
+    private val log = FXGL.getLogger(javaClass)
+
+    init {
+        val initialSize = FXGL.getInt("pooling.initialSize")
+
+        // pool commonly used types
+        registerPool(Vec2::class.java, object : Pool<Vec2>(initialSize) {
+            override fun newObject(): Vec2 {
+                return Vec2()
+            }
+        })
+
+        log.debug("Service [Pooler] initialized with default size = $initialSize")
+    }
 
     override fun <T : Any> get(type: Class<T>): T {
         return Pools.obtain(type)
