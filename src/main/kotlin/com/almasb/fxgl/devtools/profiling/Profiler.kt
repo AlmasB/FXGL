@@ -32,6 +32,7 @@ import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.time.MasterTimer
 import com.almasb.fxgl.time.UpdateEventListener
+import com.almasb.gameutils.math.GameMath
 
 /**
  * Basic profiler.
@@ -44,7 +45,7 @@ class Profiler : UpdateEventListener {
         private val masterTimer: MasterTimer
         private val runtime: Runtime
 
-        private val MB = 1024.0 * 1024.0
+        private val MB = 1024.0f * 1024.0f
 
         init {
             masterTimer = FXGL.getMasterTimer()
@@ -60,9 +61,13 @@ class Profiler : UpdateEventListener {
 
     fun getAvgFPS() = fps / frames
 
+    fun getAvgFPSRounded() = getAvgFPS().toInt()
+
     private var performance = 0.0
 
     fun getAvgPerformance() = performance / frames
+
+    fun getAvgPerformanceRounded() = getAvgPerformance().toInt()
 
     private var memoryUsage = 0L
     private var memoryUsageMin = Long.MAX_VALUE
@@ -74,20 +79,28 @@ class Profiler : UpdateEventListener {
      */
     fun getAvgMemoryUsage() = memoryUsage / frames / MB
 
+    fun getAvgMemoryUsageRounded() = GameMath.roundPositive(getAvgMemoryUsage())
+
     /**
      * @return max (highest peak) memory usage in MB
      */
     fun getMaxMemoryUsage() = memoryUsageMax / MB
+
+    fun getMaxMemoryUsageRounded() = GameMath.roundPositive(getMaxMemoryUsage())
 
     /**
      * @return min (lowest peak) memory usage in MB
      */
     fun getMinMemoryUsage() = memoryUsageMin / MB
 
+    fun getMinMemoryUsageRounded() = GameMath.roundPositive(getMinMemoryUsage())
+
     /**
      * @return how much memory is used at this moment in MB
      */
     fun getCurrentMemoryUsage() = memoryUsageCurrent / MB
+
+    fun getCurrentMemoryUsageRounded() = GameMath.roundPositive(getCurrentMemoryUsage())
 
     private var gcRuns = 0
 
@@ -147,11 +160,11 @@ class Profiler : UpdateEventListener {
      */
     fun print() {
         SystemLogger.info("Processed Frames: $frames")
-        SystemLogger.info("Average FPS: ${getAvgFPS()}")
-        SystemLogger.info("Average Performance: ${getAvgPerformance()}")
-        SystemLogger.info("Average Memory Usage: ${getAvgMemoryUsage()} MB")
-        SystemLogger.info("Min Memory Usage: ${getMinMemoryUsage()} MB")
-        SystemLogger.info("Max Memory Usage: ${getMaxMemoryUsage()} MB")
+        SystemLogger.info("Average FPS: ${getAvgFPSRounded()}")
+        SystemLogger.info("Avg Performance: ${getAvgPerformanceRounded()}")
+        SystemLogger.info("Avg Memory Usage: ${getAvgMemoryUsageRounded()} MB")
+        SystemLogger.info("Min Memory Usage: ${getMinMemoryUsageRounded()} MB")
+        SystemLogger.info("Max Memory Usage: ${getMaxMemoryUsageRounded()} MB")
         SystemLogger.info("Estimated GC runs: $gcRuns")
     }
 
@@ -164,10 +177,10 @@ class Profiler : UpdateEventListener {
         sb.setLength(0)
         sb.append("FPS: ").append(masterTimer.fps)
                 .append("\nPerformance: ").append(masterTimer.performanceFPS)
-                .append("\nNow Mem (MB): ").append(getCurrentMemoryUsage().toInt())
-                .append("\nAvg Mem (MB): ").append(getAvgMemoryUsage().toInt())
-                .append("\nMin Mem (MB): ").append(getMinMemoryUsage().toInt())
-                .append("\nMax Mem (MB): ").append(getMaxMemoryUsage().toInt())
+                .append("\nNow Mem (MB): ").append(getCurrentMemoryUsageRounded())
+                .append("\nAvg Mem (MB): ").append(getAvgMemoryUsageRounded())
+                .append("\nMin Mem (MB): ").append(getMinMemoryUsageRounded())
+                .append("\nMax Mem (MB): ").append(getMaxMemoryUsageRounded())
 
         return sb.toString()
     }
