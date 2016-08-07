@@ -68,7 +68,7 @@ class FXGL private constructor() {
         /**
          * Temporarily holds k-v pairs from system.properties.
          */
-        private val internalProperties = ArrayList<Pair<String, Any> >()
+        private val internalProperties = HashMap<String, Any>()
 
         private var initDone = false
 
@@ -376,15 +376,15 @@ class FXGL private constructor() {
             if (!initDone) {
 
                 if (value == "true" || value == "false") {
-                    internalProperties.add(Pair(key, java.lang.Boolean.parseBoolean(value as String)))
+                    internalProperties[key] = java.lang.Boolean.parseBoolean(value as String)
                 } else {
                     try {
-                        internalProperties.add(Pair(key, Integer.parseInt(value.toString())))
+                        internalProperties[key] = Integer.parseInt(value.toString())
                     } catch(e: Exception) {
                         try {
-                            internalProperties.add(Pair(key, java.lang.Double.parseDouble(value.toString())))
+                            internalProperties[key] = java.lang.Double.parseDouble(value.toString())
                         } catch(e: Exception) {
-                            internalProperties.add(Pair(key, value.toString()))
+                            internalProperties[key] = value.toString()
                         }
                     }
                 }
