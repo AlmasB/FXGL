@@ -141,13 +141,20 @@ public final class PhysicsWorld implements EntityWorldListener {
     }
 
     private CollisionPair getPair(Entity e1, Entity e2) {
-        for (CollisionPair pair : collisions) {
+        int index = getPairIndex(e1, e2);
+
+        return index == -1 ? null : collisions.get(index);
+    }
+
+    private int getPairIndex(Entity e1, Entity e2) {
+        for (int i = 0; i < collisions.size; i++) {
+            CollisionPair pair = collisions.get(i);
             if (pair.equal(e1, e2)) {
-                return pair;
+                return i;
             }
         }
 
-        return null;
+        return -1;
     }
 
     @Inject
@@ -221,11 +228,13 @@ public final class PhysicsWorld implements EntityWorldListener {
                 CollisionHandler handler = getHandler(e1, e2);
                 if (handler != null) {
 
-                    CollisionPair pair = getPair(e1, e2);
+                    int pairIndex = getPairIndex(e1, e2);
 
                     // collision registered, so remove it and put pair back to pool
-                    if (pair != null) {
-                        collisions.removeValue(pair, true);
+                    if (pairIndex != -1) {
+                        CollisionPair pair = collisions.get(pairIndex);
+
+                        collisions.removeIndex(pairIndex);
                         pair.collisionEnd();
                         pooler.put(pair);
                     }
@@ -348,10 +357,13 @@ public final class PhysicsWorld implements EntityWorldListener {
                         pooler.put(result);
                     } else {
 
-                        CollisionPair pair = getPair(e1, e2);
+                        int pairIndex = getPairIndex(e1, e2);
 
-                        if (pair != null) {
-                            collisions.removeValue(pair, true);
+                        // collision registered, so remove it and put pair back to pool
+                        if (pairIndex != -1) {
+                            CollisionPair pair = collisions.get(pairIndex);
+
+                            collisions.removeIndex(pairIndex);
                             pair.collisionEnd();
                             pooler.put(pair);
                         }
