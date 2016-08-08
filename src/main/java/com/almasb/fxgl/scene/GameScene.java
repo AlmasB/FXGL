@@ -38,6 +38,7 @@ import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.time.UpdateEventListener;
+import com.almasb.gameutils.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -84,9 +85,9 @@ public final class GameScene extends FXGLScene
      */
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
-    private List<ParticleControl> particles = new ArrayList<>();
+    private Array<ParticleControl> particles = new Array<>(false, 16);
 
-    private List<Entity> drawables = new ArrayList<>();
+    private Array<Entity> drawables = new Array<>(false, 128);
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.
@@ -279,11 +280,17 @@ public final class GameScene extends FXGLScene
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
-        drawables.stream().forEach(e ->
-                e.getComponent(DrawableComponent.class).ifPresent(d -> d.draw(particlesGC))
-        );
+        for (Entity e : drawables) {
+            DrawableComponent drawable = e.getComponentUnsafe(DrawableComponent.class);
 
-        particles.forEach(p -> p.renderParticles(particlesGC, getViewport().getOrigin()));
+            if (drawable != null) {
+                drawable.draw(particlesGC);
+            }
+        }
+
+        for (ParticleControl particle : particles) {
+            particle.renderParticles(particlesGC, getViewport().getOrigin());
+        }
     }
 
     @Override
@@ -291,6 +298,7 @@ public final class GameScene extends FXGLScene
         log.debug("Resetting game scene");
 
         getViewport().unbind();
+        drawables.clear();
         particles.clear();
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
@@ -327,15 +335,15 @@ public final class GameScene extends FXGLScene
                 });
 
         entity.getComponent(DrawableComponent.class)
-                .ifPresent(c -> drawables.remove(entity));
+                .ifPresent(c -> drawables.removeValue(entity, true));
 
         entity.removeComponentListener(this);
         entity.removeControlListener(this);
 
         entity.getControl(ParticleControl.class)
-                .ifPresent(particles::remove);
+                .ifPresent(p -> particles.removeValue(p, true));
         entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
-                .ifPresent(particles::remove);
+                .ifPresent(p -> particles.removeValue(p, true));
     }
 
     @Override
@@ -378,7 +386,7 @@ public final class GameScene extends FXGLScene
     @Override
     public void onControlRemoved(Control control) {
         if (control instanceof PhysicsWorld.PhysicsParticleControl) {
-            particles.remove(control);
+            particles.removeValue((PhysicsWorld.PhysicsParticleControl) control, true);
         }
     }
 }
