@@ -35,14 +35,11 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
-import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.time.UpdateEventListener;
+import com.almasb.gameutils.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
@@ -65,7 +62,6 @@ import org.jbox2d.particle.ParticleGroupDef;
 import org.jbox2d.particle.ParticleSystem;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Manages physics entities, collision handling and performs the physics tick.
@@ -89,13 +85,12 @@ public final class PhysicsWorld implements EntityWorldListener {
 
     private ParticleSystem particleSystem = physicsWorld.getParticleSystem();
 
-    private List<Entity> entities = new ArrayList<>();
+    // TODO: externalize 128
+    private Array<Entity> entities = new Array<>(false, 128);
 
-    private List<CollisionHandler> collisionHandlers = new ArrayList<>();
+    private Array<CollisionHandler> collisionHandlers = new Array<>(false, 16);
 
-    private Map<CollisionPair, Integer> collisions = new HashMap<>();
-
-    private int physicsTick = 0;
+    private Array<CollisionPair> collisions = new Array<>(false, 128);
 
     private double appHeight;
 
@@ -110,9 +105,9 @@ public final class PhysicsWorld implements EntityWorldListener {
     }
 
     private boolean isCollidable(Entity e) {
-        return e.getComponent(CollidableComponent.class)
-                .map(CollidableComponent::getValue)
-                .orElse(false);
+        CollidableComponent collidable = e.getComponentUnsafe(CollidableComponent.class);
+
+        return collidable != null && collidable.getValue();
     }
 
     private boolean areCollidable(Entity e1, Entity e2) {
@@ -132,9 +127,7 @@ public final class PhysicsWorld implements EntityWorldListener {
         Object type1 = e1.getComponentUnsafe(TypeComponent.class).getValue();
         Object type2 = e2.getComponentUnsafe(TypeComponent.class).getValue();
 
-        for (int i = 0; i < collisionHandlers.size(); i++) {
-            CollisionHandler handler = collisionHandlers.get(i);
-
+        for (CollisionHandler handler : collisionHandlers) {
             if (handler.equal(type1, type2)) {
                 return handler;
             }
@@ -172,15 +165,17 @@ public final class PhysicsWorld implements EntityWorldListener {
                 if (handler != null) {
                     CollisionPair pair = new CollisionPair(e1, e2, handler);
 
-                    if (!collisions.containsKey(pair)) {
-                        collisions.put(pair, physicsTick);
+                    if (!collisions.contains(pair, false)) {
+                        collisions.add(pair);
 
                         HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
                         HitBox boxB = (HitBox)contact.getFixtureB().getUserData();
 
-                        pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(),
+                        handler.onHitBoxTrigger(pair.getA(), pair.getB(),
                                 e1 == pair.getA() ? boxA : boxB,
                                 e2 == pair.getB() ? boxB : boxA);
+
+                        pair.collisionBegin();
                     }
                 }
             }
@@ -197,8 +192,9 @@ public final class PhysicsWorld implements EntityWorldListener {
                 if (handler != null) {
                     CollisionPair pair = new CollisionPair(e1, e2, handler);
 
-                    if (collisions.containsKey(pair)) {
-                        collisions.put(pair, -1);
+                    // if value was found
+                    if (collisions.removeValue(pair, false)) {
+                        pair.collisionEnd();
                     }
                 }
             }
@@ -232,7 +228,7 @@ public final class PhysicsWorld implements EntityWorldListener {
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entities.remove(entity);
+        entities.removeValue(entity, true);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
             destroyBody(entity);
@@ -241,11 +237,10 @@ public final class PhysicsWorld implements EntityWorldListener {
 
     @Override
     public void onWorldUpdate(double tpf) {
-        physicsTick++;
         physicsWorld.step((float) tpf, 8, 3);
 
         checkCollisions();
-        notifyCollisionHandlers();
+        notifyCollisions();
     }
 
     /**
@@ -255,12 +250,12 @@ public final class PhysicsWorld implements EntityWorldListener {
     public void onWorldReset() {
         log.debug("Resetting physics world");
 
-        physicsTick = 0;
-
         entities.clear();
         collisions.clear();
         collisionHandlers.clear();
     }
+
+    private Array<Entity> collidables = new Array<>(false, 128);
 
     /**
      * Perform collision detection for all entities that have
@@ -269,14 +264,16 @@ public final class PhysicsWorld implements EntityWorldListener {
      * setCollidable(true).
      */
     private void checkCollisions() {
-        List<Entity> collidables = entities.stream()
-                .filter(this::isCollidable)
-                .collect(Collectors.toList());
+        for (Entity e : entities) {
+            if (isCollidable(e)) {
+                collidables.add(e);
+            }
+        }
 
-        for (int i = 0; i < collidables.size(); i++) {
+        for (int i = 0; i < collidables.size; i++) {
             Entity e1 = collidables.get(i);
 
-            for (int j = i + 1; j < collidables.size(); j++) {
+            for (int j = i + 1; j < collidables.size; j++) {
                 Entity e2 = collidables.get(j);
 
                 // if both are physics objects, let JBox2D handle collision checks
@@ -302,43 +299,43 @@ public final class PhysicsWorld implements EntityWorldListener {
                             .checkCollision(e2.getComponentUnsafe(BoundingBoxComponent.class));
 
                     if (result.hasCollided()) {
-                        if (!collisions.containsKey(pair)) {
-                            collisions.put(pair, physicsTick);
-                            pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
+                        if (!collisions.contains(pair, false)) {
+                            collisions.add(pair);
+                            handler.onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
+                            pair.collisionBegin();
                         }
+
                     } else {
-                        if (collisions.containsKey(pair)) {
-                            collisions.put(pair, -1);
+
+                        // if value was found
+                        if (collisions.removeValue(pair, false)) {
+                            pair.collisionEnd();
                         }
                     }
                 }
             }
         }
-    }
 
+        collidables.clear();
+    }
+    
     /**
-     * Fires collisions handlers' callbacks based on currently registered collisions.
+     * Fires collisions handlers' collision() callback based on currently registered collisions.
      */
-    private void notifyCollisionHandlers() {
-        List<CollisionPair> toRemove = new ArrayList<>();
-        collisions.forEach((pair, cachedTick) -> {
+    private void notifyCollisions() {
+        for (Iterator<CollisionPair> it = collisions.iterator(); it.hasNext(); ) {
+            CollisionPair pair = it.next();
+
+            // if a pair no longer qualifies for collision then just remove it
             if (!pair.getA().isActive() || !pair.getB().isActive()
                     || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
-                toRemove.add(pair);
-                return;
+
+                it.remove();
+                continue;
             }
 
-            if (cachedTick == -1) {
-                pair.collisionEnd();
-                toRemove.add(pair);
-            } else if (physicsTick == cachedTick) {
-                pair.collisionBegin();
-            } else if (physicsTick > cachedTick) {
-                pair.collision();
-            }
-        });
-
-        toRemove.forEach(collisions::remove);
+            pair.collision();
+        }
     }
 
     /**
@@ -375,7 +372,7 @@ public final class PhysicsWorld implements EntityWorldListener {
      * @param handler collision handler to remove
      */
     public void removeCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.remove(handler);
+        collisionHandlers.removeValue(handler, true);
     }
 
     /**
