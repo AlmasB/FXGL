@@ -44,8 +44,16 @@ class Pair<T> {
         return a;
     }
 
+    void setA(T a) {
+        this.a = a;
+    }
+
     T getB() {
         return b;
+    }
+
+    void setB(T b) {
+        this.b = b;
     }
 
     @Override

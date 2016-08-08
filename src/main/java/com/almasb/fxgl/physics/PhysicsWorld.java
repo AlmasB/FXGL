@@ -36,7 +36,9 @@ import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.util.Pooler;
 import com.almasb.gameutils.collection.Array;
+import com.almasb.gameutils.pool.Pool;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -94,6 +96,8 @@ public final class PhysicsWorld implements EntityWorldListener {
 
     private double appHeight;
 
+    private Pooler pooler = FXGL.getPooler();
+
     /**
      * Note: certain modifications to the jbox2d world directly may not be
      * recognized by FXGL.
@@ -136,14 +140,34 @@ public final class PhysicsWorld implements EntityWorldListener {
         return null;
     }
 
+    private CollisionPair getPair(Entity e1, Entity e2) {
+        for (CollisionPair pair : collisions) {
+            if (pair.equal(e1, e2)) {
+                return pair;
+            }
+        }
+
+        return null;
+    }
+
     @Inject
     protected PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
 
+        initCollisionPool();
         initContactListener();
         initParticles();
 
         log.debug("Physics world initialized");
+    }
+
+    private void initCollisionPool() {
+        pooler.registerPool(CollisionPair.class, new Pool<CollisionPair>() {
+            @Override
+            protected CollisionPair newObject() {
+                return new CollisionPair();
+            }
+        });
     }
 
     /**
@@ -163,9 +187,15 @@ public final class PhysicsWorld implements EntityWorldListener {
 
                 CollisionHandler handler = getHandler(e1, e2);
                 if (handler != null) {
-                    CollisionPair pair = new CollisionPair(e1, e2, handler);
 
-                    if (!collisions.contains(pair, false)) {
+                    CollisionPair pair = getPair(e1, e2);
+
+                    // no collision registered, so add the pair
+                    if (pair == null) {
+                        pair = pooler.get(CollisionPair.class);
+                        pair.init(e1, e2, handler);
+
+                        // add pair to list of collisions so we still use it
                         collisions.add(pair);
 
                         HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
@@ -190,11 +220,14 @@ public final class PhysicsWorld implements EntityWorldListener {
 
                 CollisionHandler handler = getHandler(e1, e2);
                 if (handler != null) {
-                    CollisionPair pair = new CollisionPair(e1, e2, handler);
 
-                    // if value was found
-                    if (collisions.removeValue(pair, false)) {
+                    CollisionPair pair = getPair(e1, e2);
+
+                    // collision registered, so remove it and put pair back to pool
+                    if (pair != null) {
+                        collisions.removeValue(pair, true);
                         pair.collisionEnd();
+                        pooler.put(pair);
                     }
                 }
             }
@@ -293,23 +326,32 @@ public final class PhysicsWorld implements EntityWorldListener {
 
                 CollisionHandler handler = getHandler(e1, e2);
                 if (handler != null) {
-                    CollisionPair pair = new CollisionPair(e1, e2, handler);
 
-                    CollisionResult result = e1.getComponentUnsafe(BoundingBoxComponent.class)
-                            .checkCollision(e2.getComponentUnsafe(BoundingBoxComponent.class));
+                    CollisionResult result = Entities.getBBox(e1).checkCollision(Entities.getBBox(e2));
 
                     if (result.hasCollided()) {
-                        if (!collisions.contains(pair, false)) {
+
+                        CollisionPair pair = getPair(e1, e2);
+
+                        if (pair == null) {
+                            pair = pooler.get(CollisionPair.class);
+                            pair.init(e1, e2, handler);
+
+                            // add pair to list of collisions so we still use it
                             collisions.add(pair);
+
                             handler.onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
                             pair.collisionBegin();
                         }
 
                     } else {
 
-                        // if value was found
-                        if (collisions.removeValue(pair, false)) {
+                        CollisionPair pair = getPair(e1, e2);
+
+                        if (pair != null) {
+                            collisions.removeValue(pair, true);
                             pair.collisionEnd();
+                            pooler.put(pair);
                         }
                     }
                 }
@@ -331,6 +373,7 @@ public final class PhysicsWorld implements EntityWorldListener {
                     || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
 
                 it.remove();
+                pooler.put(pair);
                 continue;
             }
 
