@@ -32,8 +32,11 @@ import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
 import com.almasb.ents.serialization.SerializableComponent;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.util.Pooler;
+import com.almasb.gameutils.pool.Pool;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.collections.FXCollections;
@@ -57,6 +60,17 @@ import java.util.ArrayList;
 @Required(PositionComponent.class)
 public class BoundingBoxComponent extends AbstractComponent
         implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {
+
+    private static final Pooler pooler = FXGL.getPooler();
+
+    static {
+        pooler.registerPool(CollisionResult.class, new Pool<CollisionResult>() {
+            @Override
+            protected CollisionResult newObject() {
+                return new CollisionResult();
+            }
+        });
+    }
 
     public BoundingBoxComponent(HitBox... boxes) {
         hitBoxes.addAll(boxes);
@@ -332,6 +346,8 @@ public class BoundingBoxComponent extends AbstractComponent
      * Checks for collision with another entity. Returns collision result
      * containing the first hit box that triggered collision.
      * If no collision - {@link CollisionResult#NO_COLLISION} will be returned.
+     * If there is collision, the CollisionResult object must be put into pooler
+     * after using the data.
      *
      * @param other entity to check collision against
      * @return collision result
@@ -346,7 +362,10 @@ public class BoundingBoxComponent extends AbstractComponent
                 if (checkCollision(box1, getPositionX(), getPositionY(),
                         box2, other.getPositionX(), other.getPositionY())) {
 
-                    return new CollisionResult(box1, box2);
+                    CollisionResult result = pooler.get(CollisionResult.class);
+                    result.init(box1, box2);
+
+                    return result;
                 }
             }
         }

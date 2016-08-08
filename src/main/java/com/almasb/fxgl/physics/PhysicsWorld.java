@@ -344,6 +344,8 @@ public final class PhysicsWorld implements EntityWorldListener {
                             pair.collisionBegin();
                         }
 
+                        // put result back to pool only if collided
+                        pooler.put(result);
                     } else {
 
                         CollisionPair pair = getPair(e1, e2);
