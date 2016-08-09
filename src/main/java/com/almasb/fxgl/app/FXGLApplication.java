@@ -236,6 +236,8 @@ public abstract class FXGLApplication extends Application {
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
+
+        log.debug("Logging settings\n" + settings.toString());
     }
 
     private LocalTimer updateCheckTimer;

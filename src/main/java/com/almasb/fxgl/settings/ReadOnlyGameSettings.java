@@ -29,6 +29,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.ServiceType;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.Credits;
+import com.almasb.gameutils.StringBuilder;
 import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
@@ -140,5 +141,24 @@ public class ReadOnlyGameSettings {
 
     public final List<ServiceType<?>> getServices() {
         return services;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Title: ").append(title).append('\n')
+                .append("Version: ").append(version).append('\n')
+                .append("Width: ").append(width).append('\n')
+                .append("Height: ").append(height).append('\n')
+                .append("Fullscreen: ").append(fullScreen).append('\n')
+                .append("Intro: ").append(introEnabled).append('\n')
+                .append("Menus: ").append(menuEnabled).append('\n')
+                .append("Show FPS: ").append(showFPS).append('\n')
+                .append("Profiling: ").append(profilingEnabled).append('\n')
+                .append("App Mode: ").append(appMode).append('\n')
+                .append("Menu Style: ").append(menuStyle).append('\n')
+                .append("Menu Key: ").append(menuKey).append('\n')
+                .append("Services: ").append(services);
+
+        return sb.toString();
     }
 }
