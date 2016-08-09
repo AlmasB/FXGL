@@ -31,6 +31,7 @@ import com.almasb.gameutils.pool.Pool
 import com.almasb.gameutils.pool.Pools
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import com.google.inject.name.Named
 import org.jbox2d.common.Vec2
 
 /**
@@ -40,13 +41,11 @@ import org.jbox2d.common.Vec2
  */
 @Singleton
 class FXGLPooler
-@Inject private constructor(): Pooler {
+@Inject private constructor(@Named("pooling.initialSize") initialSize: Int): Pooler {
 
     private val log = FXGL.getLogger(javaClass)
 
     init {
-        val initialSize = FXGL.getInt("pooling.initialSize")
-
         // pool commonly used types
         registerPool(Vec2::class.java, object : Pool<Vec2>(initialSize) {
             override fun newObject(): Vec2 {
