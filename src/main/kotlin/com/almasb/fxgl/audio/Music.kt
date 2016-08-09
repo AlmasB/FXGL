@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.audio
 
+import com.almasb.gameutils.Disposable
 import javafx.beans.property.DoubleProperty
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
@@ -36,7 +37,7 @@ import javafx.scene.media.MediaPlayer
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Music(media: Media) {
+class Music(media: Media) : Disposable {
 
     enum class Status {
         PAUSED, PLAYING, STOPPED
@@ -141,6 +142,11 @@ class Music(media: Media) {
         set(count) {
             mediaPlayer.setCycleCount(count)
         }
+
+    override fun dispose() {
+        stop()
+        mediaPlayer.dispose()
+    }
 
     override fun toString(): String {
         val builder = StringBuilder()
