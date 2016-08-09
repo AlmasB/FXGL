@@ -70,7 +70,7 @@ class FXGL private constructor() {
          */
         private val internalProperties = HashMap<String, Any>()
 
-        private var initDone = false
+        private var configured = false
 
         /**
          * @return FXGL system settings
@@ -95,10 +95,10 @@ class FXGL private constructor() {
          * Constructs FXGL.
          */
         @JvmStatic protected fun configure(app: FXGLApplication, stage: Stage) {
-            if (initDone)
+            if (configured)
                 throw IllegalStateException("FXGL is already configured")
 
-            initDone = true
+            configured = true
 
             internalApp = app as GameApplication
             internalSettings = app.settings
@@ -120,7 +120,7 @@ class FXGL private constructor() {
          * Destructs FXGL.
          */
         @JvmStatic protected fun destroy() {
-            if (!initDone)
+            if (!configured)
                 throw IllegalStateException("FXGL has not been configured")
 
             saveSystemData()
@@ -260,9 +260,18 @@ class FXGL private constructor() {
             })
         }
 
+        @JvmStatic fun mockServices() {
+            if (configured)
+                return
+
+            injector = Guice.createInjector(MockServicesModule())
+
+            configured = true
+        }
+
         /* CONVENIENCE ACCESSORS */
 
-        private val _loggerFactory by lazy { if (initDone) getService(ServiceType.LOGGER_FACTORY) else MockLoggerFactory }
+        private val _loggerFactory by lazy { getService(ServiceType.LOGGER_FACTORY) }
         @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
         @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
 
@@ -373,7 +382,7 @@ class FXGL private constructor() {
         @JvmStatic fun setProperty(key: String, value: Any) {
             System.setProperty("FXGL.$key", value.toString())
 
-            if (!initDone) {
+            if (!configured) {
 
                 if (value == "true" || value == "false") {
                     internalProperties[key] = java.lang.Boolean.parseBoolean(value as String)
