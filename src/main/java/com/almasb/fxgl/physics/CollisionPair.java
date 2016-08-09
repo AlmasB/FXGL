@@ -32,7 +32,6 @@ import com.almasb.gameutils.pool.Poolable;
 final class CollisionPair extends Pair<Entity> implements Poolable {
 
     private CollisionHandler handler;
-    private boolean valid = false;
 
     CollisionPair() {
         super(null, null);
@@ -40,7 +39,6 @@ final class CollisionPair extends Pair<Entity> implements Poolable {
 
     void init(Entity a, Entity b, CollisionHandler handler) {
         this.handler = handler;
-        valid = true;
 
         // we check the order here so that we won't have to do that every time
         // when triggering collision between A and B
@@ -62,17 +60,6 @@ final class CollisionPair extends Pair<Entity> implements Poolable {
         return handler;
     }
 
-    /**
-     * @return true if collision is still occurring
-     */
-    boolean isValid() {
-        return valid && getA().isActive() && getB().isActive();
-    }
-
-    void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
     void collisionBegin() {
         handler.onCollisionBegin(getA(), getB());
     }
@@ -88,7 +75,6 @@ final class CollisionPair extends Pair<Entity> implements Poolable {
     @Override
     public void reset() {
         handler = null;
-        valid = false;
         setA(null);
         setB(null);
     }
