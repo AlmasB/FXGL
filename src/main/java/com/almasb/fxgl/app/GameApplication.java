@@ -676,7 +676,7 @@ public abstract class GameApplication extends FXGLApplication {
             });
         }
 
-        SystemLogger.INSTANCE.info("GameApplication start took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
+        SystemLogger.INSTANCE.infof("GameApplication start took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     /**

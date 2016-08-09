@@ -131,7 +131,7 @@ public abstract class FXGLApplication extends Application {
 
         log.debug("FXGL configuration complete");
 
-        log.info("FXGL configuration took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
+        log.infof("FXGL configuration took:    %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
         if (shouldCheckForUpdate())
             checkForUpdates();

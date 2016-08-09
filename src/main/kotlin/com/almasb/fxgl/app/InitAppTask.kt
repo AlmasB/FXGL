@@ -64,7 +64,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initialization Complete", 4)
 
-        SystemLogger.info("Game init took: " + (System.nanoTime() - start) / 1000000000.0 + " sec")
+        SystemLogger.infof("Game initialization took:   %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
         return null
     }
