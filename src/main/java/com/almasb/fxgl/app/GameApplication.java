@@ -40,6 +40,7 @@ import com.almasb.fxgl.settings.UserProfile;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -307,6 +308,10 @@ public abstract class GameApplication extends FXGLApplication {
      */
     protected abstract void onUpdate(double tpf);
 
+    protected void onPostUpdate(double tpf) {
+
+    }
+
     private void initGlobalEventHandlers() {
         log.debug("Initializing global event handlers");
 
@@ -330,6 +335,13 @@ public abstract class GameApplication extends FXGLApplication {
                 g.fillText(profiler.getInfo(), 0, getHeight() - 120);
             }
         });
+
+        AnimationTimer postUpdateTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                onPostUpdate(getMasterTimer().tpf());
+            }
+        };
 
         // Save/Load events
 
@@ -359,11 +371,13 @@ public abstract class GameApplication extends FXGLApplication {
         addFXGLListener(new FXGLListener() {
             @Override
             public void onPause() {
+                postUpdateTimer.stop();
                 setState(ApplicationState.PAUSED);
             }
 
             @Override
             public void onResume() {
+                postUpdateTimer.start();
                 setState(ApplicationState.PLAYING);
             }
 
