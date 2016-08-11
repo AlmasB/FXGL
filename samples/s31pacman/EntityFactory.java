@@ -140,8 +140,8 @@ public class EntityFactory {
             }
 
             control = enemyControls.get(indices.remove(0)).newInstance();
-        } catch (Exception e) {
-            // wont happen
+        } catch (InstantiationException | IllegalAccessException e) {
+            // won't happen
         }
 
         return control;

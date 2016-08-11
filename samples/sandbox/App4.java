@@ -36,7 +36,13 @@ import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.util.Pooler;
 import javafx.scene.input.KeyCode;
+import org.jbox2d.common.Vec2;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -85,9 +91,20 @@ public class App4 extends GameApplication {
 
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void test() {
+        Pooler pooler = FXGL.getPooler();
 
-        //App4 app = FXGL.getApp();
+        Vec2 vector = pooler.get(Vec2.class);
+        vector.set(5, 0);
 
+        Vec2 vector2 = pooler.get(Vec2.class);
+
+        System.out.println(vector.distanceLessThanOrEqual(vector2.x, vector2.y, 4.9f));
+
+        System.out.println(pooler.get(Vec2.class));
+
+        pooler.put(vector);
+
+        System.out.println(pooler.get(Vec2.class));
     }
 
     @OnUserAction(name = "Test", type = ActionType.ON_ACTION_BEGIN)
