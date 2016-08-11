@@ -26,21 +26,38 @@
 
 package s31pacman;
 
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.time.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEventListener;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PacmanUIController implements UIController {
+public class PacmanUIController implements UIController, UpdateEventListener {
+
+    @FXML
+    private Label labelTitle;
 
     @FXML
     private Label labelScore;
 
     @FXML
     private Label labelTeleport;
+
+    @FXML
+    private Canvas canvas;
+
+    private GraphicsContext g;
 
     public Label getLabelScore() {
         return labelScore;
@@ -52,7 +69,28 @@ public class PacmanUIController implements UIController {
 
     @Override
     public void init() {
+        labelTitle.setFont(Font.font(48));
+        labelTitle.setText("Reverse\nPac-man");
+        labelTitle.setEffect(new DropShadow(0.5, 0.5, 1.0, Color.BLACK));
+        labelTitle.setTextAlignment(TextAlignment.CENTER);
+
         labelScore.setFont(UIFactory.newFont(24));
         labelTeleport.setFont(UIFactory.newFont(24));
+
+        g = canvas.getGraphicsContext2D();
+        g.setFill(Color.GREENYELLOW);
+    }
+
+    private double y = 50;
+
+    @Override
+    public void onUpdateEvent(UpdateEvent event) {
+//        y += event.tpf() * 60;
+//
+//        if (y >= 300)
+//            y = 50;
+//
+//        g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+//        g.fillOval(50, y, 3, 3);
     }
 }

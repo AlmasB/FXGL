@@ -81,8 +81,8 @@ public class PacmanApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(MAP_SIZE * BLOCK_SIZE + UI_SIZE);
         settings.setHeight(MAP_SIZE * BLOCK_SIZE);
-        settings.setTitle("Pacman");
-        settings.setVersion("0.2");
+        settings.setTitle("Reverse Pac-man");
+        settings.setVersion("0.3");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -193,15 +193,18 @@ public class PacmanApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new PlayerEnemyHandler());
     }
 
+    private PacmanUIController uiController;
+
     @Override
     protected void initUI() {
-        PacmanUIController controller = new PacmanUIController();
+        uiController = new PacmanUIController();
+        getMasterTimer().addUpdateListener(uiController);
 
-        Parent fxmlUI = getAssetLoader().loadFXML("pacman_ui.fxml", controller);
+        Parent fxmlUI = getAssetLoader().loadFXML("pacman_ui.fxml", uiController);
         fxmlUI.setTranslateX(MAP_SIZE * BLOCK_SIZE);
 
-        controller.getLabelScore().textProperty().bind(score.asString("Score:\n[%d]"));
-        controller.getLabelTeleport().textProperty().bind(teleports.asString("Teleports:\n[%d]"));
+        uiController.getLabelScore().textProperty().bind(score.asString("Score:\n[%d]"));
+        uiController.getLabelTeleport().textProperty().bind(teleports.asString("Teleports:\n[%d]"));
 
         getGameScene().addUINode(fxmlUI);
 
@@ -210,8 +213,13 @@ public class PacmanApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
+    }
+
+    @Override
+    protected void onPostUpdate(double tpf) {
         if (requestNewGame) {
             requestNewGame = false;
+            getMasterTimer().removeUpdateListener(uiController);
             startNewGame();
         }
     }
