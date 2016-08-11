@@ -206,7 +206,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         List<Entity> list = new ArrayList<>();
 
         for (Entity e : getEntitiesByComponent(BoundingBoxComponent.class)) {
-            if (Entities.getBBox(e).isCollidingWith(bbox)) {
+            if (Entities.getBBox(e).isCollidingWith(bbox) && e != entity) {
                 list.add(e);
             }
         }
