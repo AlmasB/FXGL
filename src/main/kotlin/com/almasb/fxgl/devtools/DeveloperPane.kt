@@ -69,8 +69,8 @@ class DeveloperPane : Pane() {
 
         background = Background(BackgroundFill(Color.GRAY.deriveColor(1.0, 1.0, 1.0, 0.5), null, null))
 
-        cbEntity.selectionModel.selectedItemProperty()
-                .addListener { obs, old, entity -> cbComponent.items = FXCollections.observableArrayList(entity.components)}
+//        cbEntity.selectionModel.selectedItemProperty()
+//                .addListener { obs, old, entity -> cbComponent.items = FXCollections.observableArrayList(entity.components)}
 
         cbComponent.selectionModel.selectedItemProperty()
                 .addListener { obs, old, component ->
