@@ -56,7 +56,6 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PropertyResourceBundle;
@@ -251,12 +250,10 @@ public abstract class FXGLApplication extends Application {
         if (getSettings().getApplicationMode() == ApplicationMode.RELEASE)
             return false;
 
-        if (FXGL.isFirstRun())
-            return true;
-
         updateCheckTimer = FXGL.newOfflineTimer("version.check");
 
-        return updateCheckTimer.elapsed(Duration.hours(24 * FXGL.getInt("version.check.days")));
+        return FXGL.isFirstRun() ||
+                updateCheckTimer.elapsed(Duration.hours(24 * FXGL.getInt("version.check.days")));
     }
 
     /**
@@ -284,11 +281,14 @@ public abstract class FXGLApplication extends Application {
         getNet().getLatestVersionTask()
                 .onSuccess(version -> {
 
-                    // update offline timer
-                    updateCheckTimer.capture();
+                    // just a precaution, in case someone called us
+                    if (updateCheckTimer != null) {
+                        // update offline timer
+                        updateCheckTimer.capture();
 
-                    // will not need this later
-                    updateCheckTimer = null;
+                        // will not need this later
+                        updateCheckTimer = null;
+                    }
 
                     dialog.getDialogPane().setContentText("Just so you know\n"
                             + "Your version:   " + Version.getAsString() + "\n"
