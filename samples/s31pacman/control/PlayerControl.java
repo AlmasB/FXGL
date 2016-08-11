@@ -33,14 +33,14 @@ import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import javafx.geometry.Point2D;
+import com.almasb.fxgl.entity.component.RotationComponent;
 import s31pacman.EntityType;
 import s31pacman.PacmanApp;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.BaseStream;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -48,6 +48,8 @@ import java.util.stream.BaseStream;
 public class PlayerControl extends AbstractControl {
     private PositionComponent position;
     private BoundingBoxComponent bbox;
+    private MainViewComponent view;
+    private RotationComponent rotation;
 
     private MoveDirection moveDir = MoveDirection.UP;
 
@@ -59,6 +61,8 @@ public class PlayerControl extends AbstractControl {
     public void onAdded(Entity entity) {
         position = Entities.getPosition(entity);
         bbox = Entities.getBBox(entity);
+        view = Entities.getMainView(entity);
+        rotation = Entities.getRotation(entity);
     }
 
     private double speed = 0;
@@ -78,30 +82,38 @@ public class PlayerControl extends AbstractControl {
 
     public void up() {
         moveDir = MoveDirection.UP;
-        //move(new Point2D(0, -5 * speed));
 
         move(0, -5*speed);
+
+        rotation.setValue(270);
+        view.getView().setScaleX(1);
     }
 
     public void down() {
         moveDir = MoveDirection.DOWN;
-        //move(new Point2D(0, 5 * speed));
 
         move(0, 5*speed);
+
+        rotation.setValue(90);
+        view.getView().setScaleX(1);
     }
 
     public void left() {
         moveDir = MoveDirection.LEFT;
-        //move(new Point2D(-5 * speed, 0));
 
         move(-5*speed, 0);
+
+        view.getView().setScaleX(-1);
+        rotation.setValue(0);
     }
 
     public void right() {
         moveDir = MoveDirection.RIGHT;
-        //move(new Point2D(5 * speed, 0));
 
         move(5*speed, 0);
+
+        view.getView().setScaleX(1);
+        rotation.setValue(0);
     }
 
     public void teleport() {
@@ -120,34 +132,6 @@ public class PlayerControl extends AbstractControl {
     }
 
     private List<Entity> blocks;
-
-    private void move(Point2D vector) {
-        if (!getEntity().isActive())
-            return;
-
-        if (blocks == null) {
-            blocks = FXGL.getApp().getGameWorld().getEntitiesByType(EntityType.BLOCK);
-        }
-
-        long length = Math.round(vector.magnitude());
-
-        Point2D unit = vector.normalize();
-
-        for (int i = 0; i < length; i++) {
-            position.translate(unit);
-
-            boolean collision = blocks.stream()
-                    .map(b -> Entities.getBBox(b))
-                    .filter(box -> box.isCollidingWith(bbox))
-                    .findAny()
-                    .isPresent();
-
-            if (collision) {
-                position.translate(unit.multiply(-1));
-                break;
-            }
-        }
-    }
 
     private void move(double dx, double dy) {
         if (!getEntity().isActive())

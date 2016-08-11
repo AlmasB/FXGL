@@ -28,17 +28,16 @@ package s31pacman;
 
 import com.almasb.ents.Control;
 import com.almasb.fxgl.ai.AIControl;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import s31pacman.control.*;
 
@@ -49,6 +48,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
+ * Factory for creating in-game entities.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class EntityFactory {
@@ -77,7 +78,8 @@ public class EntityFactory {
     }
 
     public static GameEntity newCoin(double x, double y) {
-        EntityView view = new EntityView(new Circle(20, Color.YELLOW));
+        EntityView view = new EntityView(FXGL.getAssetLoader().loadTexture("pacman/coin.png"));
+        view.setTranslateX(2.5);
         view.setRenderLayer(BG);
 
         return Entities.builder()
@@ -94,9 +96,14 @@ public class EntityFactory {
     }
 
     public static GameEntity newPlayer(double x, double y) {
+
         Rectangle view = new Rectangle(36, 36, Color.BLUE);
         view.setTranslateX(2);
         view.setTranslateY(2);
+
+//        Texture view = FXGL.getAssetLoader()
+//                .loadTexture("pacman/player.png")
+//                .toStaticAnimatedTexture(2, Duration.seconds(0.33));
 
         return Entities.builder()
                 .type(EntityType.PLAYER)
@@ -109,10 +116,8 @@ public class EntityFactory {
     }
 
     private static List<Class<? extends Control> > enemyControls = Arrays.asList(
-            EnemyControl.class,
-            EnemyControl.class,
-            //MirrorEnemyControl.class,
-            //CombinedControl.class,
+            DiffEnemyControl.class,
+            AStarEnemyControl.class,
             EnemyControl.class
     );
 
@@ -131,7 +136,7 @@ public class EntityFactory {
         try {
             if (indices.isEmpty()) {
                 populateIndices();
-                //return new AIControl("pacman_enemy1.tree");
+                return new AIControl("pacman_enemy1.tree");
             }
 
             control = enemyControls.get(indices.remove(0)).newInstance();
@@ -143,17 +148,12 @@ public class EntityFactory {
     }
 
     public static GameEntity newEnemy(double x, double y) {
-        Rectangle view = new Rectangle(36, 36, Color.RED);
-        view.setTranslateX(2);
-        view.setTranslateY(2);
-
         return Entities.builder()
                 .type(EntityType.ENEMY)
                 .bbox(new HitBox("ENEMY_BODY", new Point2D(2, 2), BoundingShape.box(36, 36)))
-                .viewFromNode(view)
                 .at(x * PacmanApp.BLOCK_SIZE, y * PacmanApp.BLOCK_SIZE)
                 .with(new CollidableComponent(true))
-                .with(getNextEnemyControl())
+                .with(getNextEnemyControl(), new PaletteChangingControl(FXGL.getAssetLoader().loadTexture("pacman/spritesheet.png")))
                 .build();
     }
 }

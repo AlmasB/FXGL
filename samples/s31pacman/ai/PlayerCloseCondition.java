@@ -29,7 +29,6 @@ package s31pacman.ai;
 import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
-import javafx.geometry.Point2D;
 import s31pacman.PacmanApp;
 
 /**
