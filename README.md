@@ -1,12 +1,15 @@
 ## FXGL
 
-JavaFX 8 Game Library written in Java + Kotlin<br/>
-[![Join the chat at https://gitter.im/AlmasB/FXGL](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Release](https://img.shields.io/badge/maven-0.2.5-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
-[![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
-[![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
+JavaFX Game Development Framework
+
+[![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Maven](https://img.shields.io/badge/maven-0.2.5-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
+![Code](https://img.shields.io/badge/lines%20of%20code-11k-blue.svg)
+
 [![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
 [![Wiki](https://img.shields.io/badge/www-Wiki-green.svg)](https://github.com/AlmasB/FXGL/wiki)
+[![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Good for ...
 * 2D or casual UI based games
