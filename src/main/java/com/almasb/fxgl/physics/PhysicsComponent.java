@@ -110,7 +110,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param vector x and y in pixels
      */
     public void setLinearVelocity(Point2D vector) {
-        setBodyLinearVelocity(PhysicsWorld.toVector(vector).mulLocal(60));
+        setBodyLinearVelocity(PhysicsWorld.toVector(vector));
     }
 
     /**
@@ -147,7 +147,7 @@ public class PhysicsComponent extends AbstractComponent {
         if (body == null)
             throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
 
-        return PhysicsWorld.toVector(body.getLinearVelocity().mul(1 / 60f));
+        return PhysicsWorld.toVector(body.getLinearVelocity());
     }
 
     /**
