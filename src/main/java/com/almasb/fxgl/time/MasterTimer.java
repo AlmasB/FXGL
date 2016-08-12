@@ -158,7 +158,19 @@ public interface MasterTimer extends FXGLListener, UserProfileSavable {
      */
     void reset();
 
+    /**
+     * Adds update event listener.
+     * Note: cannot be used during callbacks.
+     *
+     * @param listener the listener to add
+     */
     void addUpdateListener(UpdateEventListener listener);
 
+    /**
+     * Removes update event listener.
+     * Note: cannot be used during callbacks.
+     *
+     * @param listener the listener to remove
+     */
     void removeUpdateListener(UpdateEventListener listener);
 }

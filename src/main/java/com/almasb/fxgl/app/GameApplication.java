@@ -77,13 +77,13 @@ import javafx.stage.Stage;
  * </ol>
  * <p>
  * Unless explicitly stated, methods are not thread-safe and must be
- * executed on JavaFX Application (UI) Thread.
+ * executed on the JavaFX Application (UI) Thread.
+ * By default all callbacks are executed on the JavaFX Application (UI) Thread.
  * <p>
  *     Callback / listener notes: instance of GameApplication will always be
  *     notified last along the chain of callbacks.
  *     However, as per documentation, events are always fired after listeners.
  * </p>
- *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -121,6 +121,13 @@ public abstract class GameApplication extends FXGLApplication {
         return state.get();
     }
 
+    /**
+     * Set application state.
+     * Setting a state will also trigger scene change associated
+     * with that state.
+     *
+     * @param appState application state
+     */
     void setState(ApplicationState appState) {
         log.debug("State: " + getState() + " -> " + appState);
         state.set(appState);
@@ -308,6 +315,14 @@ public abstract class GameApplication extends FXGLApplication {
      */
     protected abstract void onUpdate(double tpf);
 
+    /**
+     * Called after main loop tick has been completed.
+     * It can be used to de-register callbacks / listeners
+     * and call various methods that otherwise might interfere
+     * with main loop.
+     *
+     * @param tpf time per frame (same as main update tpf)
+     */
     protected void onPostUpdate(double tpf) {
 
     }

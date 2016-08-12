@@ -53,8 +53,6 @@ import java.util.ArrayList;
  * Component that adds bounding box information to an entity.
  * The bounding box itself comprises a collection of hit boxes.
  *
- * TODO: enforce at least 1 hit box rule, this also optimizes a lot of stuff
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
@@ -309,9 +307,9 @@ public class BoundingBoxComponent extends AbstractComponent
     }
 
     // TODO: refactor
-    private boolean isXFlipped() {
-        return false;
-    }
+//    private boolean isXFlipped() {
+//        return false;
+//    }
 
     /**
      * Internal GC-friendly (and has less checks than JavaFX's BoundingBox)

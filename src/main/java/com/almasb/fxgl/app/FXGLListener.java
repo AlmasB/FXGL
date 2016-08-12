@@ -51,6 +51,7 @@ public interface FXGLListener {
 
     /**
      * Fired before the system is about to shut down.
+     * Do NOT make any asynchronous calls as they may not complete.
      */
     void onExit();
 }

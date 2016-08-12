@@ -67,7 +67,8 @@ import java.util.zip.ZipInputStream;
 /**
  * Handles all resource (asset) loading operations.
  * <p>
- * "assets" directory must be located in source folder ("src" by default).
+ * The "assets" directory must be located in source folder ("src" by default).
+ * If you are using the Maven directory structure then under "src/main/resources/".
  * <p>
  * Resources (assets) will be searched for in these specified directories:
  * <ul>
@@ -78,6 +79,7 @@ import java.util.zip.ZipInputStream;
  * <li>KVFile - /assets/kv/</li>
  * <li>Data - /assets/data/</li>
  * <li>Scripts - /assets/scripts/</li>
+ * <li>Behavior Tree - /assets/ai/</li>
  * <li>CSS - /assets/ui/css/</li>
  * <li>Font - /assets/ui/fonts/</li>
  * <li>App icons - /assets/ui/icons/</li>

@@ -63,8 +63,19 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     @Override
     default void onExit() {}
 
+    /**
+     * Called on key event.
+     *
+     * @param event key event
+     */
     void onKeyEvent(KeyEvent event);
 
+    /**
+     * Called on mouse event.
+     *
+     * @param event mouse event
+     * @param viewport current viewport
+     */
     void onMouseEvent(MouseEvent event, Viewport viewport);
 
     /**

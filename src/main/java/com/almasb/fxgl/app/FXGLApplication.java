@@ -103,10 +103,20 @@ public abstract class FXGLApplication extends Application {
 
     private List<FXGLListener> systemListeners = new ArrayList<>();
 
+    /**
+     * Add listener for core FXGL callbacks.
+     *
+     * @param listener the listener
+     */
     public void addFXGLListener(FXGLListener listener) {
         systemListeners.add(listener);
     }
 
+    /**
+     * Remove previously added listener.
+     *
+     * @param listener the listener
+     */
     public void removeFXGLListener(FXGLListener listener) {
         systemListeners.remove(listener);
     }

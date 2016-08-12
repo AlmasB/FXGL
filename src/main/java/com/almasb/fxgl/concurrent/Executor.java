@@ -31,6 +31,9 @@ import javafx.util.Duration;
 import java.util.concurrent.ScheduledFuture;
 
 /**
+ * Asynchronous executor service.
+ * Allows submitting tasks to be run in the background, including after a certain delay.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface Executor extends java.util.concurrent.Executor {

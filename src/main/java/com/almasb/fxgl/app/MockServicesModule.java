@@ -35,6 +35,8 @@ import com.google.inject.name.Names;
 
 /**
  * Module that binds services with their mock providers.
+ * This is only needed for testing, as this allows us to test
+ * each service in isolation (more or less).
  * Some services have actual "live" providers since they are required
  * to be functional by others, e.g. Pooler.
  *

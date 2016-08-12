@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * TODO: API INCOMPLETE.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class AnimationBuilder {

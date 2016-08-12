@@ -59,13 +59,11 @@ public interface Pooler {
     void put(Object object);
 
     /**
-     * Make the pooler use the given supplier to produce
-     * instances for given type.
-     * By default public no-arg constructor is used.
+     * Make the pooler use the given pool for given type.
      *
-     * @param type
-     * @param pool
-     * @param <T>
+     * @param type the object class
+     * @param pool the pool to use
+     * @param <T> type
      */
     <T> void registerPool(Class<T> type, Pool<T> pool);
 }

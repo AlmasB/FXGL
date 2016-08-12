@@ -32,9 +32,25 @@ import javafx.util.Duration;
 import java.util.function.Consumer;
 
 /**
+ * Service for using quick time events.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface QTE {
 
+    /**
+     * Starts quick time event.
+     * Game execution is blocked during the event.
+     * The event can be finishes if one of the following conditions is met:
+     * <ul>
+     *     <li>User runs out of time (fail)</li>
+     *     <li>User presses the wrong key (fail)</li>
+     *     <li>User correctly presses all keys (success)</li>
+     * </ul>
+     *
+     * @param callback called with true if user succeeds in the event, false otherwise
+     * @param duration how long the event should last
+     * @param keys what keys need to be pressed
+     */
     void start(Consumer<Boolean> callback, Duration duration, KeyCode... keys);
 }

@@ -34,8 +34,14 @@ package com.almasb.fxgl.time;
  */
 public interface TimerAction {
 
+    /**
+     * @return is action paused
+     */
     boolean isPaused();
 
+    /**
+     * @return is action expired
+     */
     boolean isExpired();
 
     /**

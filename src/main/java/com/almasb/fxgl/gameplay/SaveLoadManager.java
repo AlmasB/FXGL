@@ -50,6 +50,8 @@ import java.util.stream.Collectors;
 
 /**
  * Convenient access to saving and loading game data.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class SaveLoadManager {
 

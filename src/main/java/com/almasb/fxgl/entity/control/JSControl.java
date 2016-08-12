@@ -50,7 +50,6 @@ public class JSControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-
         parser.callFunction("onUpdate", entity, tpf);
     }
 }
