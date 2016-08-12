@@ -40,6 +40,7 @@ import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
@@ -51,10 +52,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
@@ -98,6 +101,16 @@ public abstract class FXGLApplication extends Application {
         };
     }
 
+    private List<FXGLListener> systemListeners = new ArrayList<>();
+
+    public void addFXGLListener(FXGLListener listener) {
+        systemListeners.add(listener);
+    }
+
+    public void removeFXGLListener(FXGLListener listener) {
+        systemListeners.remove(listener);
+    }
+
     @Override
     public final void init() throws Exception {
         log.debug("Initializing FXGL");
@@ -117,9 +130,9 @@ public abstract class FXGLApplication extends Application {
 
         log.debug("FXGL configuration complete");
 
-        log.info("FXGL configuration took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
+        log.infof("FXGL configuration took:    %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
-        if (shouldCheckForUpdate() && getSettings().getApplicationMode() != ApplicationMode.RELEASE)
+        if (shouldCheckForUpdate())
             checkForUpdates();
     }
 
@@ -133,6 +146,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void pause() {
         log.debug("Pausing main loop");
+        systemListeners.forEach(FXGLListener::onPause);
         getEventBus().fireEvent(FXGLEvent.pause());
     }
 
@@ -141,6 +155,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void resume() {
         log.debug("Resuming main loop");
+        systemListeners.forEach(FXGLListener::onResume);
         getEventBus().fireEvent(FXGLEvent.resume());
     }
 
@@ -151,6 +166,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void reset() {
         log.debug("Resetting FXGL application");
+        systemListeners.forEach(FXGLListener::onReset);
         getEventBus().fireEvent(FXGLEvent.reset());
 
         System.gc();
@@ -162,6 +178,7 @@ public abstract class FXGLApplication extends Application {
      */
     protected void exit() {
         log.debug("Exiting Normally");
+        systemListeners.forEach(FXGLListener::onExit);
         getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGL.destroy();
@@ -218,7 +235,11 @@ public abstract class FXGLApplication extends Application {
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
+
+        log.debug("Logging settings\n" + settings.toString());
     }
+
+    private LocalTimer updateCheckTimer;
 
     /**
      * Returns true if first run or required number of days have passed.
@@ -226,13 +247,13 @@ public abstract class FXGLApplication extends Application {
      * @return whether we need check for updates
      */
     private boolean shouldCheckForUpdate() {
-        if (FXGL.isFirstRun())
-            return true;
+        if (getSettings().getApplicationMode() == ApplicationMode.RELEASE)
+            return false;
 
-        LocalDate lastChecked = FXGL.getSystemBundle().get("version.check");
+        updateCheckTimer = FXGL.newOfflineTimer("version.check");
 
-        return lastChecked != null
-                && lastChecked.plusDays(FXGL.getInt("version.check.days")).isBefore(LocalDate.now());
+        return FXGL.isFirstRun() ||
+                updateCheckTimer.elapsed(Duration.hours(24 * FXGL.getInt("version.check.days")));
     }
 
     /**
@@ -260,18 +281,28 @@ public abstract class FXGLApplication extends Application {
         getNet().getLatestVersionTask()
                 .onSuccess(version -> {
 
-                    FXGL.getSystemBundle().put("version.check", LocalDate.now());
+                    // just a precaution, in case someone called us
+                    if (updateCheckTimer != null) {
+                        // update offline timer
+                        updateCheckTimer.capture();
+
+                        // will not need this later
+                        updateCheckTimer = null;
+                    }
 
                     dialog.getDialogPane().setContentText("Just so you know\n"
                             + "Your version:   " + Version.getAsString() + "\n"
                             + "Latest version: " + version);
 
                     button.setDisable(false);
-
                 })
                 .onFailure(error -> {
+
                     // not important, just log it
                     log.warning("Failed to find updates: " + error);
+
+                    // will not need this later
+                    updateCheckTimer = null;
 
                     dialog.getDialogPane().setContentText("Failed to find updates: " + error);
 

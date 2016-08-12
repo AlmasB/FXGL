@@ -49,15 +49,19 @@ private constructor() : AudioPlayer {
     private val log = FXGL.getLogger(javaClass)
 
     init {
-        log.debug { "Service [AudioPlayer] initialized" }
+        log.debug("Service [AudioPlayer] initialized")
     }
 
     override fun onUpdateEvent(event: UpdateEvent) {
-        activeMusic.filter { it.mediaPlayer.getCurrentTime() == it.mediaPlayer.getTotalDuration() }
-                .forEach { it.isStopped = true }
+
+        activeMusic.filter { it.reachedEnd() }
+                .forEach {
+                    log.debug("Stopping music: $it")
+                    it.stop()
+                }
 
         activeSounds.removeIf { !it.clip.isPlaying }
-        activeMusic.removeIf { it.isStopped }
+        activeMusic.removeIf { it.status == Music.Status.STOPPED }
     }
 
     /**
@@ -114,6 +118,8 @@ private constructor() : AudioPlayer {
      * Stops playing all sounds.
      */
     override fun stopAllSounds() {
+        log.debug("Stopping all sounds")
+
         val it = activeSounds.iterator()
         while (it.hasNext()) {
             it.next().clip.stop()
@@ -123,16 +129,20 @@ private constructor() : AudioPlayer {
 
     /**
      * Plays given music based on its properties.
-
+     *
      * @param music music to play
      */
     override fun playMusic(music: Music) {
+        log.debug("Playing music $music")
+
         if (!activeMusic.contains(music)) {
             activeMusic.add(music)
+        } else {
+            throw IllegalArgumentException("Attempted to play $music, which is already playing / paused")
         }
-        music.mediaPlayer.volumeProperty().bind(globalMusicVolumeProperty())
-        music.mediaPlayer.play()
-        music.isStopped = false
+
+        music.bindVolume(globalMusicVolume)
+        music.start()
     }
 
     /**
@@ -142,8 +152,12 @@ private constructor() : AudioPlayer {
      * @param music music to pause
      */
     override fun pauseMusic(music: Music) {
+        log.debug("Pausing music $music")
+
         if (activeMusic.contains(music))
-            music.mediaPlayer.pause()
+            music.pause()
+        else
+            log.warning("Attempted to pause $music that is not managed by audio player. Managed music: $activeMusic")
     }
 
     /**
@@ -152,8 +166,12 @@ private constructor() : AudioPlayer {
      * @param music music to resume
      */
     override fun resumeMusic(music: Music) {
+        log.debug("Resuming music $music")
+
         if (activeMusic.contains(music))
-            music.mediaPlayer.play()
+            music.resume()
+        else
+            log.warning("Attempted to resume $music that is not managed by audio player. Managed music: $activeMusic")
     }
 
     /**
@@ -164,26 +182,33 @@ private constructor() : AudioPlayer {
      * @param music music to stop
      */
     override fun stopMusic(music: Music) {
+        log.debug("Stopping music $music")
+
         if (activeMusic.contains(music)) {
+            music.stop()
             activeMusic.remove(music)
-            music.mediaPlayer.stop()
-            music.isStopped = true
+        } else {
+            log.warning("Attempted to stop $music that is not managed by audio player. Managed music: $activeMusic")
         }
     }
 
     /**
-     * Pauses all currently playing music. These can be
-     * resumed using [.resumeAllMusic].
+     * Pauses all currently playing music.
+     * These can be resumed using [.resumeAllMusic].
      */
     override fun pauseAllMusic() {
-        activeMusic.forEach { music -> music.mediaPlayer.pause() }
+        log.debug("Pausing all music")
+
+        activeMusic.forEach { it.pause() }
     }
 
     /**
      * Resumes all currently paused music.
      */
     override fun resumeAllMusic() {
-        activeMusic.forEach { music -> music.mediaPlayer.play() }
+        log.debug("Resuming all music")
+
+        activeMusic.forEach { it.resume() }
     }
 
     /**
@@ -192,14 +217,9 @@ private constructor() : AudioPlayer {
      * to be started by [.playMusic].
      */
     override fun stopAllMusic() {
-        log.debug { "Stopping all music. Active music size: ${activeMusic.size}" }
-        val it = activeMusic.iterator()
-        while (it.hasNext()) {
-            val music = it.next()
-            music.mediaPlayer.stop()
-            music.isStopped = true
-            it.remove()
-        }
+        log.debug("Stopping all music. Active music size: ${activeMusic.size}")
+
+        activeMusic.forEach { it.stop() }
     }
 
     override fun save(profile: UserProfile) {

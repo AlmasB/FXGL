@@ -43,6 +43,16 @@ public interface Logger {
     void info(String message);
 
     /**
+     * Log an info level message with given format and arguments.
+     *
+     * @param format message format
+     * @param args arguments
+     */
+    default void infof(String format, Object... args) {
+        info(String.format(format, args));
+    }
+
+    /**
      * Log an info level message supplied by object.
      *
      * @param messageSupplier the message supplier
@@ -55,6 +65,16 @@ public interface Logger {
      * @param message the message
      */
     void debug(String message);
+
+    /**
+     * Log a debug level message with given format and arguments.
+     *
+     * @param format message format
+     * @param args arguments
+     */
+    default void debugf(String format, Object... args) {
+        debug(String.format(format, args));
+    }
 
     /**
      * Log a debug level message supplied by object.
@@ -71,6 +91,16 @@ public interface Logger {
     void warning(String message);
 
     /**
+     * Log a warning level message with given format and arguments.
+     *
+     * @param format message format
+     * @param args arguments
+     */
+    default void warningf(String format, Object... args) {
+        warning(String.format(format, args));
+    }
+
+    /**
      * Log a warning level message supplied by object.
      *
      * @param messageSupplier the message supplier
@@ -83,6 +113,16 @@ public interface Logger {
      * @param message the message
      */
     void fatal(String message);
+
+    /**
+     * Log a fatal level message with given format and arguments.
+     *
+     * @param format message format
+     * @param args arguments
+     */
+    default void fatalf(String format, Object... args) {
+        fatal(String.format(format, args));
+    }
 
     /**
      * Log a fatal level message supplied by object.

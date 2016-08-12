@@ -78,6 +78,16 @@ public interface AnimationChannel {
     }
 
     /**
+     * Computes time per each frame in this animation channel by
+     * dividing the duration by number of frames.
+     *
+     * @return time per each animation frame
+     */
+    default double computeFrameTime() {
+        return duration().toSeconds() / frames();
+    }
+
+    /**
      * Computes the viewport for given frame. Frames
      * start from 0.
      *

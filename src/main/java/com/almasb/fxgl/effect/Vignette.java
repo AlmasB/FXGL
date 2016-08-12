@@ -38,7 +38,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class Vignette extends Parent {
+public final class Vignette extends Parent {
 
     private Rectangle region;
 

@@ -130,8 +130,10 @@ public interface AudioPlayer extends UserProfileSavable, UpdateEventListener, No
 
     /**
      * Plays given music based on its properties.
+     * If the music has been paused, you need to call {@link #resumeMusic(Music)} instead.
      *
      * @param music music to play
+     * @throws IllegalArgumentException if the music is already playing / paused
      */
     void playMusic(Music music);
 

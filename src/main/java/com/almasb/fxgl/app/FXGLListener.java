@@ -34,11 +34,6 @@ package com.almasb.fxgl.app;
 public interface FXGLListener {
 
     /**
-     * Fired on game initialization complete.
-     */
-    void onInitComplete();
-
-    /**
      * Fired on main loop paused.
      */
     void onPause();
@@ -50,6 +45,7 @@ public interface FXGLListener {
 
     /**
      * Fired on FXGL reset.
+     * This is where all resources should be freed if they are no longer used.
      */
     void onReset();
 

@@ -34,8 +34,8 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
 import s31pacman.EntityType;
-import s31pacman.control.MoveDirection;
 import s31pacman.PacmanApp;
+import s31pacman.control.MoveDirection;
 
 import java.util.List;
 import java.util.Random;

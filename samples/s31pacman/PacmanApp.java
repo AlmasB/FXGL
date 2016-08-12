@@ -44,10 +44,11 @@ import s31pacman.collision.PlayerCoinHandler;
 import s31pacman.collision.PlayerEnemyHandler;
 import s31pacman.control.PlayerControl;
 
-import java.lang.management.ManagementFactory;
-
 /**
  * This is a basic demo of Pacman.
+ *
+ * Assets taken from opengameart.org
+ * (Carlos Alface 2014 kalface@gmail.com, http://c-toy.blogspot.pt/).
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -80,8 +81,8 @@ public class PacmanApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(MAP_SIZE * BLOCK_SIZE + UI_SIZE);
         settings.setHeight(MAP_SIZE * BLOCK_SIZE);
-        settings.setTitle("Pacman");
-        settings.setVersion("0.2");
+        settings.setTitle("Reverse Pac-man");
+        settings.setVersion("0.3");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
@@ -180,15 +181,7 @@ public class PacmanApp extends GameApplication {
         score = new SimpleIntegerProperty();
         teleports = new SimpleIntegerProperty();
 
-        // TODO: move to Grid
-//        for (int y = 0; y < grid.getHeight(); y++) {
-//            for (int x = 0; x < grid.getWidth(); x++) {
-//
-//                System.out.print(grid.getNodeState(x, y) == NodeState.WALKABLE ? 0 : 1);
-//            }
-//
-//            System.out.println();
-//        }
+
 
         getGameWorld().setLevel(level);
         level.getEntities().clear();
@@ -200,34 +193,35 @@ public class PacmanApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new PlayerEnemyHandler());
     }
 
+    private PacmanUIController uiController;
+
     @Override
     protected void initUI() {
-        PacmanUIController controller = new PacmanUIController();
+        uiController = new PacmanUIController();
+        getMasterTimer().addUpdateListener(uiController);
 
-        Parent fxmlUI = getAssetLoader().loadFXML("pacman_ui.fxml", controller);
+        Parent fxmlUI = getAssetLoader().loadFXML("pacman_ui.fxml", uiController);
         fxmlUI.setTranslateX(MAP_SIZE * BLOCK_SIZE);
 
-        controller.getLabelScore().textProperty().bind(score.asString("Score:\n[%d]"));
-        controller.getLabelTeleport().textProperty().bind(teleports.asString("Teleports:\n[%d]"));
+        uiController.getLabelScore().textProperty().bind(score.asString("Score:\n[%d]"));
+        uiController.getLabelTeleport().textProperty().bind(teleports.asString("Teleports:\n[%d]"));
 
         getGameScene().addUINode(fxmlUI);
 
-        System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576.0);
+        //System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576.0);
     }
 
     @Override
     protected void onUpdate(double tpf) {
+    }
+
+    @Override
+    protected void onPostUpdate(double tpf) {
         if (requestNewGame) {
             requestNewGame = false;
+            getMasterTimer().removeUpdateListener(uiController);
             startNewGame();
         }
-
-
-//        long t = totalThreadMemoryAllocated();
-//
-//        t = totalThreadMemoryAllocated() - t;
-//
-//        System.out.println(); // ==> 48 !!!???
     }
 
     private IntegerProperty coins;
@@ -256,8 +250,6 @@ public class PacmanApp extends GameApplication {
             exit();
         });
     }
-
-
 
     public static void main(String[] args) {
         launch(args);

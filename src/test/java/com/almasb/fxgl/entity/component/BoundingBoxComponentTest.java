@@ -27,11 +27,13 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.ents.Entity;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -45,6 +47,11 @@ public class BoundingBoxComponentTest {
     private PositionComponent position;
     private BoundingBoxComponent bbox;
     private Entity entity;
+
+    @BeforeClass
+    public static void before() {
+        FXGL.mockServices();
+    }
 
     @Before
     public void setUp() throws Exception {

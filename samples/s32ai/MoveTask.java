@@ -26,12 +26,8 @@
 
 package s32ai;
 
-import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.GoalAction;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.GameEntity;
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
 import javafx.geometry.Point2D;
 
 /**
@@ -45,7 +41,7 @@ public class MoveTask extends GoalAction {
 
     @Override
     public boolean reachedGoal() {
-        return getObject().getPositionComponent().getValue().distance(400, 300) < 25;
+        return getObject().getPosition().distance(400, 300) < 25;
     }
 
     @Override
@@ -53,10 +49,10 @@ public class MoveTask extends GoalAction {
 
         double speed = FXGL.getMasterTimer().tpf() * 60 * 5;
 
-        Point2D vector = new Point2D(400, 300).subtract(getObject().getPositionComponent().getValue())
+        Point2D vector = new Point2D(400, 300).subtract(getObject().getPosition())
                 .normalize()
                 .multiply(speed);
 
-        getObject().getPositionComponent().translate(vector);
+        getObject().translate(vector);
     }
 }

@@ -413,14 +413,19 @@ public class AssetLoader {
     }
 
     /**
-     * Opens a stream to resource with given name. The caller is responsible for
-     * closing the stream. Either returns a valid stream or throws an exception.
+     * Opens a stream to resource with given name.
+     * The caller is responsible for closing the stream.
+     * Either returns a valid stream or throws an exception.
+     *
+     * This is useful for loading resources that do not fall under any asset category.
+     * Resource is anything located within the source root / resource root, whether "src/" or "resources/".
+     * The resource name must always begin with "/", e.g. "/assets/textures/player.png".
      *
      * @param name resource name
      * @return resource stream
      * @throws IllegalArgumentException if any error occurs or stream is null
      */
-    private InputStream getStream(String name) {
+    public InputStream getStream(String name) {
         try {
             InputStream is = getURL(name).openStream();
             if (is == null)

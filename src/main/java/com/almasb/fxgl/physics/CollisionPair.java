@@ -27,19 +27,30 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.entity.component.TypeComponent;
+import com.almasb.gameutils.pool.Poolable;
 
-final class CollisionPair extends Pair<Entity> {
+final class CollisionPair extends Pair<Entity> implements Poolable {
 
     private CollisionHandler handler;
 
-    CollisionPair(Entity a, Entity b, CollisionHandler handler) {
+    CollisionPair() {
+        super(null, null);
+    }
+
+    void init(Entity a, Entity b, CollisionHandler handler) {
+        this.handler = handler;
+
         // we check the order here so that we won't have to do that every time
         // when triggering collision between A and B
         // this ensures that client gets back entities in the same order
         // he registered the handler with
-        super(a.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getA()) ? a : b,
-                b.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getB()) ? b : a);
-        this.handler = handler;
+        if (a.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getA())) {
+            setA(a);
+            setB(b);
+        } else {
+            setA(b);
+            setB(a);
+        }
     }
 
     /**
@@ -59,5 +70,12 @@ final class CollisionPair extends Pair<Entity> {
 
     void collisionEnd() {
         handler.onCollisionEnd(getA(), getB());
+    }
+
+    @Override
+    public void reset() {
+        handler = null;
+        setA(null);
+        setB(null);
     }
 }

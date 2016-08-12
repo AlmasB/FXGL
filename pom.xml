@@ -4,7 +4,7 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
@@ -14,7 +14,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.version>1.8</source.version>
-        <jbox.version>2.3.0-fxgl</jbox.version>
 
         <!-- plugins -->
         <maven.compiler.version>3.3</maven.compiler.version>
@@ -29,7 +28,9 @@
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
-        <ents.version>1.0.4</ents.version>
+        <ents.version>1.0.8</ents.version>
+        <game.utils.version>0.0.1</game.utils.version>
+        <jbox.version>2.3.1-fxgl</jbox.version>
         <astar.version>1.0</astar.version>
         <gdx.ai.version>1.8.0</gdx.ai.version>
         <easyio.version>0.1.4</easyio.version>
@@ -37,7 +38,6 @@
         <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
         <junit.version>4.12</junit.version>
-        <commons-math.version>3.5</commons-math.version>
     </properties>
 
     <repositories>
@@ -91,6 +91,18 @@
 
         <dependency>
             <groupId>com.github.AlmasB</groupId>
+            <artifactId>GameUtils</artifactId>
+            <version>${game.utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
+            <artifactId>jbox2d</artifactId>
+            <version>${jbox.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.AlmasB</groupId>
             <artifactId>AStar</artifactId>
             <version>${astar.version}</version>
         </dependency>
@@ -130,13 +142,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>${commons-math.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

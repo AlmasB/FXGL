@@ -35,12 +35,6 @@ class KotlinTest {
 }
 
 fun main(args: Array<String>) {
+    val list = arrayListOf("Hello", "World")
 
-    val list = arrayListOf(1, 2, 3, 4)
-
-    println(list.zip(list))
-
-    //val point: Point = MutablePoint(0.0, 0.0)
-
-    //println(point.x)
 }

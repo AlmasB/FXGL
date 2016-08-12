@@ -32,6 +32,8 @@ import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.logging.MockLoggerFactory
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
+import com.almasb.fxgl.time.LocalTimer
+import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Provides
@@ -53,7 +55,7 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGL {
+class FXGL private constructor() {
 
     companion object {
         private lateinit var internalSettings: ReadOnlyGameSettings
@@ -66,9 +68,9 @@ class FXGL {
         /**
          * Temporarily holds k-v pairs from system.properties.
          */
-        private val internalProperties = ArrayList<Pair<String, Any> >()
+        private val internalProperties = HashMap<String, Any>()
 
-        private var initDone = false
+        private var configured = false
 
         /**
          * @return FXGL system settings
@@ -93,10 +95,10 @@ class FXGL {
          * Constructs FXGL.
          */
         @JvmStatic protected fun configure(app: FXGLApplication, stage: Stage) {
-            if (initDone)
+            if (configured)
                 throw IllegalStateException("FXGL is already configured")
 
-            initDone = true
+            configured = true
 
             internalApp = app as GameApplication
             internalSettings = app.settings
@@ -118,7 +120,7 @@ class FXGL {
          * Destructs FXGL.
          */
         @JvmStatic protected fun destroy() {
-            if (!initDone)
+            if (!configured)
                 throw IllegalStateException("FXGL has not been configured")
 
             saveSystemData()
@@ -176,7 +178,7 @@ class FXGL {
 
             // populate with default info
             internalBundle = Bundle("FXGL")
-            internalBundle.put("version.check", LocalDate.now())
+            //internalBundle.put("version.check", LocalDate.now())
         }
 
         /**
@@ -258,9 +260,18 @@ class FXGL {
             })
         }
 
+        @JvmStatic fun mockServices() {
+            if (configured)
+                return
+
+            injector = Guice.createInjector(MockServicesModule())
+
+            configured = true
+        }
+
         /* CONVENIENCE ACCESSORS */
 
-        private val _loggerFactory by lazy { if (initDone) getService(ServiceType.LOGGER_FACTORY) else MockLoggerFactory }
+        private val _loggerFactory by lazy { getService(ServiceType.LOGGER_FACTORY) }
         @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
         @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
 
@@ -294,10 +305,19 @@ class FXGL {
         private val _net by lazy { getService(ServiceType.NET) }
         @JvmStatic fun getNet() = _net
 
+        private val _pooler by lazy { getService(ServiceType.POOLER) }
+        @JvmStatic fun getPooler() = _pooler
+
         /**
          * @return new instance on each call
          */
         @JvmStatic fun newLocalTimer() = getService(ServiceType.LOCAL_TIMER)
+
+        /**
+         * @param name unique name for timer
+         * @return new instance on each call
+         */
+        @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name)
 
         private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
         @JvmStatic fun getMasterTimer() = _masterTimer
@@ -362,18 +382,18 @@ class FXGL {
         @JvmStatic fun setProperty(key: String, value: Any) {
             System.setProperty("FXGL.$key", value.toString())
 
-            if (!initDone) {
+            if (!configured) {
 
                 if (value == "true" || value == "false") {
-                    internalProperties.add(Pair(key, java.lang.Boolean.parseBoolean(value as String)))
+                    internalProperties[key] = java.lang.Boolean.parseBoolean(value as String)
                 } else {
                     try {
-                        internalProperties.add(Pair(key, Integer.parseInt(value.toString())))
+                        internalProperties[key] = Integer.parseInt(value.toString())
                     } catch(e: Exception) {
                         try {
-                            internalProperties.add(Pair(key, java.lang.Double.parseDouble(value.toString())))
+                            internalProperties[key] = java.lang.Double.parseDouble(value.toString())
                         } catch(e: Exception) {
-                            internalProperties.add(Pair(key, value.toString()))
+                            internalProperties[key] = value.toString()
                         }
                     }
                 }

@@ -28,13 +28,10 @@ package s31pacman.ai;
 
 import com.almasb.astar.AStarGrid;
 import com.almasb.astar.AStarNode;
-import com.almasb.ents.Entity;
-import com.almasb.fxgl.ai.Action;
 import com.almasb.fxgl.ai.GoalAction;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import javafx.geometry.Point2D;
 import s31pacman.EntityType;
 import s31pacman.PacmanApp;
 

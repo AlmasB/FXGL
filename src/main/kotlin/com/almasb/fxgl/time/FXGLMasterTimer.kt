@@ -38,6 +38,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyLongWrapper
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.util.Duration
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -51,9 +52,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 class FXGLMasterTimer
 @Inject
 private constructor() : AnimationTimer(), MasterTimer {
-
-    override fun onInitComplete() {
-    }
 
     override fun onPause() {
         stop()
@@ -113,12 +111,17 @@ private constructor() : AnimationTimer(), MasterTimer {
         log.debug("Service [MasterTimer] initialized")
     }
 
-    private var updateListener: UpdateEventListener? = null
+    private val listeners = ArrayList<UpdateEventListener>()
 
-    override fun setUpdateListener(listener: UpdateEventListener) {
-        updateListener = listener
+    override fun addUpdateListener(listener: UpdateEventListener) {
+        listeners.add(listener)
     }
 
+    override fun removeUpdateListener(listener: UpdateEventListener) {
+        listeners.remove(listener)
+    }
+
+    // we cache update event to avoid alloc on each frame
     private val updateEvent = UpdateEvent(0, 0.0)
 
     /**
@@ -139,7 +142,7 @@ private constructor() : AnimationTimer(), MasterTimer {
         updateEvent.setTPF(tpf)
 
         // this is the master update event
-        updateListener?.onUpdateEvent(updateEvent)
+        listeners.forEach { it.onUpdateEvent(updateEvent) }
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So

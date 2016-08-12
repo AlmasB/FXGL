@@ -26,28 +26,21 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.easyio.EasyIO;
-import com.almasb.ents.Entity;
-import com.almasb.ents.EntityWorldListener;
 import com.almasb.fxeventbus.EventBus;
-import com.almasb.fxgl.devtools.DeveloperTools;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.*;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.gameplay.SaveLoadManager;
-import com.almasb.fxgl.input.InputModifier;
-import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.DataFile;
-import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
-import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -58,14 +51,11 @@ import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
-import java.time.LocalDateTime;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -88,10 +78,16 @@ import java.time.LocalDateTime;
  * <p>
  * Unless explicitly stated, methods are not thread-safe and must be
  * executed on JavaFX Application (UI) Thread.
+ * <p>
+ *     Callback / listener notes: instance of GameApplication will always be
+ *     notified last along the chain of callbacks.
+ *     However, as per documentation, events are always fired after listeners.
+ * </p>
+ *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class GameApplication extends FXGLApplication implements UserProfileSavable {
+public abstract class GameApplication extends FXGLApplication {
 
     private static Logger log = SystemLogger.INSTANCE;
 
@@ -125,7 +121,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return state.get();
     }
 
-    private void setState(ApplicationState appState) {
+    void setState(ApplicationState appState) {
         log.debug("State: " + getState() + " -> " + appState);
         state.set(appState);
         switch (appState) {
@@ -312,6 +308,10 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      */
     protected abstract void onUpdate(double tpf);
 
+    protected void onPostUpdate(double tpf) {
+
+    }
+
     private void initGlobalEventHandlers() {
         log.debug("Initializing global event handlers");
 
@@ -319,40 +319,29 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         Font fpsFont = Font.font("Lucida Console", 20);
 
-        // the debug data max chars is ~110, so just add a margin
-        StringBuilder sb = new StringBuilder(128);
+        // Main tick
 
-        getMasterTimer().setUpdateListener(event -> {
-            getInput().onUpdateEvent(event);
-            getAudioPlayer().onUpdateEvent(event);
-
-            getGameWorld().onUpdateEvent(event);
-            getPhysicsWorld().onUpdateEvent(event);
-            getGameScene().onUpdateEvent(event);
-
+        getMasterTimer().addUpdateListener(getInput());
+        getMasterTimer().addUpdateListener(getAudioPlayer());
+        getMasterTimer().addUpdateListener(getGameWorld());
+        getMasterTimer().addUpdateListener(event -> {
             onUpdate(event.tpf());
-
-            // notify rest
-            bus.fireEvent(event);
 
             if (getSettings().isFPSShown()) {
                 GraphicsContext g = getGameScene().getGraphicsContext();
 
                 g.setFont(fpsFont);
                 g.setFill(Color.RED);
-
-                // clear the contents
-                sb.setLength(0);
-                sb.append("FPS: ").append(getMasterTimer().getFPS())
-                        .append("\nPerformance: ").append(getMasterTimer().getPerformanceFPS())
-                        .append("\nNow Mem (MB): ").append((int) profiler.getCurrentMemoryUsage())
-                        .append("\nAvg Mem (MB): ").append((int) profiler.getAvgMemoryUsage())
-                        .append("\nMin Mem (MB): ").append((int) profiler.getMinMemoryUsage())
-                        .append("\nMax Mem (MB): ").append((int) profiler.getMaxMemoryUsage());
-
-                g.fillText(sb.toString(), 0, getHeight() - 120);
+                g.fillText(profiler.getInfo(), 0, getHeight() - 120);
             }
         });
+
+        AnimationTimer postUpdateTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                onPostUpdate(getMasterTimer().tpf());
+            }
+        };
 
         // Save/Load events
 
@@ -375,49 +364,36 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             }
         });
 
-        bus.addEventHandler(FXGLEvent.PAUSE, event -> {
-            getInput().onPause();
-            getMasterTimer().onPause();
+        // Core listeners
 
-            setState(ApplicationState.PAUSED);
-        });
+        addFXGLListener(getInput());
+        addFXGLListener(getMasterTimer());
+        addFXGLListener(new FXGLListener() {
+            @Override
+            public void onPause() {
+                postUpdateTimer.stop();
+                setState(ApplicationState.PAUSED);
+            }
 
-        bus.addEventHandler(FXGLEvent.RESUME, event -> {
-            getInput().onResume();
-            getMasterTimer().onResume();
+            @Override
+            public void onResume() {
+                postUpdateTimer.start();
+                setState(ApplicationState.PLAYING);
+            }
 
-            setState(ApplicationState.PLAYING);
-        });
+            @Override
+            public void onReset() {
+                getGameWorld().reset();
+            }
 
-        bus.addEventHandler(FXGLEvent.RESET, event -> {
-            getGameWorld().reset();
-            getPhysicsWorld().reset();
-            getGameScene().onWorldReset();
-
-            getInput().onReset();
-            getMasterTimer().onReset();
-        });
-
-        bus.addEventHandler(FXGLEvent.EXIT, event -> {
-            saveProfile();
+            @Override
+            public void onExit() {
+                saveProfile();
+            }
         });
 
         getGameWorld().addWorldListener(getPhysicsWorld());
         getGameWorld().addWorldListener(getGameScene());
-
-        // we need to add this listener
-        // to publish entity events via our event bus
-        getGameWorld().addWorldListener(new EntityWorldListener() {
-            @Override
-            public void onEntityAdded(Entity entity) {
-                bus.fireEvent(WorldEvent.entityAdded(entity));
-            }
-
-            @Override
-            public void onEntityRemoved(Entity entity) {
-                bus.fireEvent(WorldEvent.entityRemoved(entity));
-            }
-        });
 
         // Scene
 
@@ -505,7 +481,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         mainMenuScene = sceneFactory.newMainMenu(this);
         gameMenuScene = sceneFactory.newGameMenu(this);
 
-        MenuEventHandler handler = new MenuEventHandler();
+        MenuEventHandler handler = new MenuEventHandler(this);
         mainMenuScene.setListener(handler);
         gameMenuScene.setListener(handler);
 
@@ -520,120 +496,6 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         getGameScene().addEventHandler(KeyEvent.ANY, menuKeyHandler);
         gameMenuScene.addEventHandler(KeyEvent.ANY, menuKeyHandler);
-    }
-
-    private class MenuEventHandler implements MenuEventListener {
-        @Override
-        public void onNewGame() {
-            startNewGame();
-        }
-
-        @Override
-        public void onContinue() {
-            saveLoadManager.loadLastModifiedSaveFileTask()
-                    .then(file -> saveLoadManager.loadTask(file))
-                    .onSuccess(GameApplication.this::startLoadedGame)
-                    .executeAsyncWithDialogFX(new ProgressDialog("Loading..."));
-        }
-
-        @Override
-        public void onResume() {
-            resume();
-        }
-
-        private void doSave(String saveFileName) {
-            DataFile dataFile = saveState();
-            SaveFile saveFile = new SaveFile(saveFileName, LocalDateTime.now());
-
-            saveLoadManager.saveTask(dataFile, saveFile)
-                    .executeAsyncWithDialogFX(new ProgressDialog("Saving data: " + saveFileName));
-        }
-
-        @Override
-        public void onSave() {
-            getDisplay().showInputBoxWithCancel("Enter save file name", DialogPane.ALPHANUM, saveFileName -> {
-
-                if (saveFileName.isEmpty())
-                    return;
-
-                if (saveLoadManager.saveFileExists(saveFileName)) {
-                    getDisplay().showConfirmationBox("Overwrite save [" + saveFileName + "]?", yes -> {
-
-                        if (yes)
-                            doSave(saveFileName);
-                    });
-                } else {
-                    doSave(saveFileName);
-                }
-            });
-        }
-
-        @Override
-        public void onLoad(SaveFile saveFile) {
-
-            getDisplay().showConfirmationBox("Load save [" + saveFile.getName() + "]?\n"
-                    + "Unsaved progress will be lost!", yes -> {
-
-                if (yes) {
-                    saveLoadManager.loadTask(saveFile)
-                            .onSuccess(GameApplication.this::startLoadedGame)
-                            .executeAsyncWithDialogFX(new ProgressDialog("Loading: " + saveFile.getName()));
-                }
-            });
-        }
-
-        @Override
-        public void onDelete(SaveFile saveFile) {
-
-            getDisplay().showConfirmationBox("Delete save [" + saveFile.getName() + "]?", yes -> {
-
-                if (yes) {
-                    saveLoadManager.deleteSaveFileTask(saveFile)
-                            .executeAsyncWithDialogFX(new ProgressDialog("Deleting: " + saveFile.getName()));
-                }
-            });
-        }
-
-        @Override
-        public void onLogout() {
-
-            getDisplay().showConfirmationBox("Log out?", yes -> {
-
-                if (yes) {
-                    saveProfile();
-                    showProfileDialog();
-                }
-            });
-        }
-
-        @Override
-        public void onMultiplayer() {
-            showMultiplayerDialog();
-        }
-
-        @Override
-        public void onExit() {
-
-            getDisplay().showConfirmationBox("Exit the game?", yes -> {
-
-                if (yes)
-                    exit();
-            });
-        }
-
-        @Override
-        public void onExitToMainMenu() {
-
-            getDisplay().showConfirmationBox("Exit to Main Menu?\n"
-                    + "All unsaved progress will be lost!", yes -> {
-
-                if (yes) {
-                    pause();
-                    reset();
-                    setState(ApplicationState.MAIN_MENU);
-                }
-            });
-        }
     }
 
     private void configureIntro() {
@@ -669,7 +531,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         }
     }
 
-    private void showMultiplayerDialog() {
+    void showMultiplayerDialog() {
         Button btnHost = UIFactory.newButton("Host...");
         btnHost.setOnAction(e -> {
             getDisplay().showMessageBox("NOT SUPPORTED YET");
@@ -687,7 +549,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
      * Show profile dialog so that user selects existing or creates new profile.
      * The dialog is only dismissed when profile is chosen either way.
      */
-    private void showProfileDialog() {
+    void showProfileDialog() {
         ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList());
 
         Button btnNew = UIFactory.newButton("NEW");
@@ -765,36 +627,18 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                 .executeAsyncWithDialogFX(new ProgressDialog("Loading profiles"));
     }
 
-    private void bindScreenshotKey() {
-        getInput().addAction(new UserAction("Screenshot") {
-            @Override
-            protected void onActionBegin() {
-                boolean ok = getDisplay().saveScreenshot();
-
-                getNotificationService().pushNotification(ok
-                        ? "Screenshot saved" : "Screenshot failed");
-            }
-        }, KeyCode.P);
-    }
-
-    private void bindDeveloperKey() {
-        getInput().addAction(new UserAction("Developer Options") {
-            @Override
-            protected void onActionBegin() {
-                log.debug("Scene graph contains " + DeveloperTools.INSTANCE.getChildrenSize(getGameScene().getRoot())
-                        + " nodes");
-            }
-        }, KeyCode.DIGIT0, InputModifier.CTRL);
-    }
-
     private void initFXGL() {
         initAchievements();
+
         // we call this early to process user input bindings
         // so we can correctly display them in menus
-        bindScreenshotKey();
-        bindDeveloperKey();
+        // 1. register system actions
+        SystemActions.INSTANCE.bind(getInput());
+
+        // 2. register user actions
         initInput();
-        // scan for annotated methods and register them too
+
+        // 3. scan for annotated methods and register them too
         getInput().scanForUserActions(this);
 
         initGlobalEventHandlers();
@@ -846,7 +690,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
             });
         }
 
-        log.info("GameApplication start took: " + (System.nanoTime() - start) / 1000000000.0 + " sec");
+        SystemLogger.INSTANCE.infof("GameApplication start took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     /**
@@ -857,7 +701,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
 
         // on first run this is no-op, as for rest this ensures
         // that even without menus and during direct calls to start*Game()
-        // the system is clean
+        // the system is clean, also reset performs System.gc() to clear stuff we used in init
         pause();
         reset();
         setState(ApplicationState.LOADING);
@@ -914,7 +758,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
     public final UserProfile createProfile() {
         UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
 
-        save(profile);
+        //save(profile);
         getEventBus().fireEvent(new SaveEvent(profile));
 
         return profile;
@@ -930,7 +774,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
             return false;
 
-        load(profile);
+        //load(profile);
         getEventBus().fireEvent(new LoadEvent(LoadEvent.LOAD_PROFILE, profile));
         return true;
     }
@@ -955,7 +799,7 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
         return saveLoadManager;
     }
 
-    private void saveProfile() {
+    void saveProfile() {
         // if it is empty then we are running without menus
         if (!profileName.get().isEmpty()) {
             saveLoadManager.saveProfileTask(createProfile())
@@ -963,24 +807,5 @@ public abstract class GameApplication extends FXGLApplication implements UserPro
                     // we execute synchronously to avoid incomplete save since we might be shutting down
                     .execute();
         }
-    }
-
-    @Override
-    public void save(UserProfile profile) {
-        // if there is a need for data save
-//        log.debug("Saving data to profile");
-//
-//        UserProfile.Bundle bundle = new UserProfile.Bundle("game");
-//        bundle.put("...", ...);
-//
-//        bundle.log();
-//        profile.putBundle(bundle);
-    }
-
-    @Override
-    public void load(UserProfile profile) {
-//        log.debug("Loading data from profile");
-//        UserProfile.Bundle bundle = profile.getBundle("game");
-//        bundle.log();
     }
 }
