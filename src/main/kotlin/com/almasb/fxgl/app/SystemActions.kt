@@ -26,14 +26,14 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.devtools.DeveloperTools
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
+import javafx.scene.Parent
 import javafx.scene.input.KeyCode
 
 /**
- *
+ * Default FXGL system actions.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -56,9 +56,24 @@ object SystemActions {
     }
 
     private fun devOptions() = object : UserAction("Dev Options") {
+        private var devBarOpen = false
+        private var devBar: Parent? = null
+
         override fun onActionBegin() {
-            FXGL.getLogger(GameApplication::class.java)
-                    .debug("Scene graph contains ${DeveloperTools.getChildrenSize(FXGL.getApp().gameScene.root)} nodes");
+            if (FXGL.getSettings().applicationMode == ApplicationMode.RELEASE)
+                return
+
+            if (devBar == null) {
+                devBar = FXGL.getAssetLoader().loadFXML("dev_menu_bar.fxml", DeveloperMenuBarController())
+            }
+
+            if (devBarOpen) {
+                FXGL.getApp().gameScene.removeUINode(devBar)
+                devBarOpen = false
+            } else {
+                FXGL.getApp().gameScene.addUINode(devBar)
+                devBarOpen = true
+            }
         }
     }
 }
