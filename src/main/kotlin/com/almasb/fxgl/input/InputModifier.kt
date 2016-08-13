@@ -56,6 +56,30 @@ enum class InputModifier {
      */
     NONE;
 
+    companion object {
+        @JvmStatic fun from(event: KeyEvent): InputModifier {
+            if (event.isControlDown)
+                return CTRL
+            if (event.isShiftDown)
+                return SHIFT
+            if (event.isAltDown)
+                return ALT
+
+            return NONE
+        }
+
+        @JvmStatic fun from(event: MouseEvent): InputModifier {
+            if (event.isControlDown)
+                return CTRL
+            if (event.isShiftDown)
+                return SHIFT
+            if (event.isAltDown)
+                return ALT
+
+            return NONE
+        }
+    }
+
     fun isTriggered(event: KeyEvent): Boolean {
         when (this) {
             CTRL -> return event.isControlDown

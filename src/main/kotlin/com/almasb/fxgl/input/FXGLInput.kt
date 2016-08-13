@@ -44,6 +44,8 @@ import java.util.*
 @Singleton
 class FXGLInput @Inject private constructor() : Input {
 
+    private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
+
     private val log = FXGL.getLogger(javaClass)
 
     /**
@@ -220,8 +222,12 @@ class FXGLInput @Inject private constructor() : Input {
     override fun addAction(action: UserAction, button: MouseButton, modifier: InputModifier) =
             addBinding(action, MouseTrigger(button, modifier))
 
-    override fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier) =
-            addBinding(action, KeyTrigger(key, modifier))
+    override fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier) {
+        if (ILLEGAL_KEYS.contains(key))
+            throw IllegalArgumentException("Cannot bind to illegal key: $key")
+
+        addBinding(action, KeyTrigger(key, modifier))
+    }
 
     private fun addBinding(action: UserAction, trigger: Trigger) {
         if (bindings.containsKey(action))
@@ -234,18 +240,18 @@ class FXGLInput @Inject private constructor() : Input {
         log.debug { "Registered new binding: $action - $trigger" }
     }
 
-    override fun rebind(action: UserAction, key: KeyCode): Boolean {
-        if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key))) {
-            bindings[action] = KeyTrigger(key)
+    override fun rebind(action: UserAction, key: KeyCode, modifier: InputModifier): Boolean {
+        if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key, modifier))) {
+            bindings[action] = KeyTrigger(key, modifier)
             return true
         }
 
         return false
     }
 
-    override fun rebind(action: UserAction, button: MouseButton): Boolean {
-        if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button))) {
-            bindings[action] = MouseTrigger(button)
+    override fun rebind(action: UserAction, button: MouseButton, modifier: InputModifier): Boolean {
+        if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button, modifier))) {
+            bindings[action] = MouseTrigger(button, modifier)
             return true
         }
 
@@ -377,19 +383,21 @@ class FXGLInput @Inject private constructor() : Input {
 
         for (binding in bindings) {
             var triggerName = bundle.get<String>(binding.key.name)
+            var modifierName = "NONE"
 
             val plusIndex = triggerName.indexOf("+")
             if (plusIndex != -1) {
+                modifierName = triggerName.substring(0, plusIndex)
                 triggerName = triggerName.substring(plusIndex + 1)
             }
 
             try {
                 val key = KeyCode.getKeyCode(triggerName)
-                rebind(binding.key, key)
+                rebind(binding.key, key, InputModifier.valueOf(modifierName))
             } catch (ignored: Exception) {
                 try {
                     val btn = MouseButton.valueOf(triggerName)
-                    rebind(binding.key, btn)
+                    rebind(binding.key, btn, InputModifier.valueOf(modifierName))
                 } catch (e: Exception) {
                     log.warning("Undefined trigger name: " + triggerName)
                     throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)

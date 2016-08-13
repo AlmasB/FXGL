@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.input.FXGLInput;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.logging.MockLoggerFactory;
 import com.almasb.fxgl.util.FXGLPooler;
@@ -39,6 +41,7 @@ import com.google.inject.name.Names;
  * each service in isolation (more or less).
  * Some services have actual "live" providers since they are required
  * to be functional by others, e.g. Pooler.
+ * Almost all services are singleton only, so tests must reflect that.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -48,6 +51,7 @@ class MockServicesModule extends AbstractModule {
     protected void configure() {
         mockPooler();
         mockLoggerFactory();
+        mockInput();
     }
 
     private void mockPooler() {
@@ -57,5 +61,9 @@ class MockServicesModule extends AbstractModule {
 
     private void mockLoggerFactory() {
         bind(LoggerFactory.class).toInstance(MockLoggerFactory.INSTANCE);
+    }
+
+    private void mockInput() {
+        bind(Input.class).to(FXGLInput.class);
     }
 }

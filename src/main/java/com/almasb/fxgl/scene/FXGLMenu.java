@@ -32,10 +32,7 @@ import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
-import com.almasb.fxgl.input.KeyTrigger;
-import com.almasb.fxgl.input.MouseTrigger;
-import com.almasb.fxgl.input.Trigger;
-import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.io.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
@@ -52,6 +49,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -264,7 +262,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
     private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
         Text actionName = UIFactory.newText(action.getName());
-        Button triggerName = UIFactory.newButton(trigger.getName());
+        Button triggerName = UIFactory.newButton(trigger.toString());
 
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
@@ -278,22 +276,30 @@ public abstract class FXGLMenu extends FXGLScene {
 
             Scene scene = new Scene(new StackPane(rect, text));
             scene.setOnKeyPressed(e -> {
-                boolean rebound = app.getInput().rebind(action, e.getCode());
+                // ignore illegal keys, however they may be part of a different event
+                // which is correctly processed further because code will be different
+                if (e.getCode() == KeyCode.CONTROL
+                        || e.getCode() == KeyCode.SHIFT
+                        || e.getCode() == KeyCode.ALT)
+                    return;
+
+                boolean rebound = app.getInput().rebind(action, e.getCode(), InputModifier.from(e));
 
                 if (!rebound)
                     return;
 
                 // TODO: we manually set name here, would be nice to have data-bind
-                triggerName.setText(new KeyTrigger(e.getCode()).getName());
+                triggerName.setText(new KeyTrigger(e.getCode(), InputModifier.from(e)).toString());
                 stage.close();
             });
             scene.setOnMouseClicked(e -> {
-                boolean rebound = app.getInput().rebind(action, e.getButton());
+
+                boolean rebound = app.getInput().rebind(action, e.getButton(), InputModifier.from(e));
 
                 if (!rebound)
                     return;
 
-                triggerName.setText(new MouseTrigger(e.getButton()).getName());
+                triggerName.setText(new MouseTrigger(e.getButton(), InputModifier.from(e)).toString());
                 stage.close();
             });
 

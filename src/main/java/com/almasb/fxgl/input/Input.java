@@ -152,7 +152,20 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      * @return true if rebound, false if action not found or
      * there is another action bound to key
      */
-    boolean rebind(UserAction action, KeyCode key);
+    default boolean rebind(UserAction action, KeyCode key) {
+        return rebind(action, key, InputModifier.NONE);
+    }
+
+    /**
+     * Rebinds an existing action to given key.
+     *
+     * @param action the user action
+     * @param key the key to rebind to
+     * @param modifier the key modifier
+     * @return true if rebound, false if action not found or
+     * there is another action bound to key
+     */
+    boolean rebind(UserAction action, KeyCode key, InputModifier modifier);
 
     /**
      * Bind given action to a mouse button with special modifier key.
@@ -170,7 +183,7 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      *
      * @param action the action to bind
      * @param button the mouse button
-     * @param modifier the key modifier
+     * @param modifier the button modifier
      * @throws IllegalArgumentException if action with same name exists or button is in use
      */
     void addAction(UserAction action, MouseButton button, InputModifier modifier);
@@ -183,7 +196,20 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      * @return true if rebound, false if action not found or
      * there is another action bound to mouse button
      */
-    boolean rebind(UserAction action, MouseButton button);
+    default boolean rebind(UserAction action, MouseButton button) {
+        return rebind(action, button, InputModifier.NONE);
+    }
+
+    /**
+     * Rebinds an action to given mouse button.
+     *
+     * @param action the user action
+     * @param button the mouse button
+     * @param modifier the buttin modifier
+     * @return true if rebound, false if action not found or
+     * there is another action bound to mouse button
+     */
+    boolean rebind(UserAction action, MouseButton button, InputModifier modifier);
 
     /**
      * Add input mapping. The actual implementation needs to be specified by
