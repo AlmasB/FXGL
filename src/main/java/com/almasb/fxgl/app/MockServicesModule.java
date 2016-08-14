@@ -26,6 +26,10 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxeventbus.FXEventBus;
+import com.almasb.fxgl.concurrent.Executor;
+import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.LoggerFactory;
@@ -52,6 +56,8 @@ class MockServicesModule extends AbstractModule {
         mockPooler();
         mockLoggerFactory();
         mockInput();
+        mockExecutor();
+        mockEventBus();
     }
 
     private void mockPooler() {
@@ -65,5 +71,13 @@ class MockServicesModule extends AbstractModule {
 
     private void mockInput() {
         bind(Input.class).to(FXGLInput.class);
+    }
+
+    private void mockExecutor() {
+        bind(Executor.class).to(FXGLExecutor.class);
+    }
+
+    private void mockEventBus() {
+        bind(EventBus.class).to(FXEventBus.class);
     }
 }
