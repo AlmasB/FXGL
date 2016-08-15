@@ -36,21 +36,15 @@ import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
-import com.almasb.fxgl.settings.UserProfile;
-import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -403,7 +397,8 @@ public abstract class GameApplication extends FXGLApplication {
 
             @Override
             public void onExit() {
-                saveProfile();
+                if (getSettings().isMenuEnabled())
+                    menuHandler.saveProfile();
             }
         });
 
@@ -481,18 +476,21 @@ public abstract class GameApplication extends FXGLApplication {
         }
     }
 
+    private MenuEventHandler menuHandler;
+
     /**
      * Creates Main and Game menu scenes.
      * Registers them with the Display service.
      * Adds key binding so that scenes can be switched on menu key press.
      */
     private void configureMenu() {
+        menuHandler = new MenuEventHandler(this);
+
         mainMenuScene = sceneFactory.newMainMenu(this);
         gameMenuScene = sceneFactory.newGameMenu(this);
 
-        MenuEventHandler handler = new MenuEventHandler(this);
-        mainMenuScene.setListener(handler);
-        gameMenuScene.setListener(handler);
+        mainMenuScene.setListener(menuHandler);
+        gameMenuScene.setListener(menuHandler);
 
         getDisplay().registerScene(mainMenuScene);
         getDisplay().registerScene(gameMenuScene);
@@ -534,106 +532,10 @@ public abstract class GameApplication extends FXGLApplication {
 
             // we haven't shown the dialog yet so show now
             if (getSettings().isIntroEnabled())
-                showProfileDialog();
+                menuHandler.showProfileDialog();
         } else {
             startNewGame();
         }
-    }
-
-    void showMultiplayerDialog() {
-        Button btnHost = UIFactory.newButton("Host...");
-        btnHost.setOnAction(e ->
-            getDisplay().showMessageBox("NOT SUPPORTED YET")
-        );
-
-        Button btnConnect = UIFactory.newButton("Connect...");
-        btnConnect.setOnAction(e ->
-            getDisplay().showMessageBox("NOT SUPPORTED YET")
-        );
-
-        getDisplay().showBox("Multiplayer Options", UIFactory.newText(""), btnHost, btnConnect);
-    }
-
-    /**
-     * Show profile dialog so that user selects existing or creates new profile.
-     * The dialog is only dismissed when profile is chosen either way.
-     */
-    void showProfileDialog() {
-        ChoiceBox<String> profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList());
-
-        Button btnNew = UIFactory.newButton("NEW");
-        Button btnSelect = UIFactory.newButton("SELECT");
-        btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull());
-        Button btnDelete = UIFactory.newButton("DELETE");
-        btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull());
-
-        btnNew.setOnAction(e -> {
-            getDisplay().showInputBox("New Profile", DialogPane.ALPHANUM, name -> {
-                profileName.set(name);
-                saveLoadManager = new SaveLoadManager(name);
-
-                getEventBus().fireEvent(new ProfileSelectedEvent(name, false));
-
-                saveProfile();
-            });
-        });
-
-        btnSelect.setOnAction(e -> {
-            String name = profilesBox.getValue();
-
-            saveLoadManager = new SaveLoadManager(name);
-
-            saveLoadManager.loadProfileTask()
-                    .onSuccess(profile -> {
-                        boolean ok = loadFromProfile(profile);
-
-                        if (!ok) {
-                            getDisplay().showErrorBox("Profile is corrupted: " + name, this::showProfileDialog);
-                        } else {
-                            profileName.set(name);
-
-                            saveLoadManager.loadLastModifiedSaveFileTask()
-                                    .onSuccess(file -> {
-                                        getEventBus().fireEvent(new ProfileSelectedEvent(name, true));
-                                    })
-                                    .onFailure(error -> {
-                                        getEventBus().fireEvent(new ProfileSelectedEvent(name, false));
-                                    })
-                                    .executeAsyncWithDialogFX(new ProgressDialog("Loading last save file"));
-                        }
-                    })
-                    .onFailure(error -> {
-                        getDisplay().showErrorBox("Profile is corrupted: " + name + "\nError: "
-                                + error.toString(), this::showProfileDialog);
-                    })
-                    .executeAsyncWithDialogFX(new ProgressDialog("Loading Profile: "+ name));
-        });
-
-        btnDelete.setOnAction(e -> {
-            String name = profilesBox.getValue();
-
-            SaveLoadManager.deleteProfileTask(name)
-                    .onSuccess(n -> showProfileDialog())
-                    .onFailure(error -> getDisplay().showErrorBox(error.toString(), this::showProfileDialog))
-                    .executeAsyncWithDialogFX(new ProgressDialog("Deleting profile: " + name));
-        });
-
-        SaveLoadManager.loadProfileNamesTask()
-                .onSuccess(names -> {
-                    profilesBox.getItems().addAll(names);
-
-                    if (!profilesBox.getItems().isEmpty()) {
-                        profilesBox.getSelectionModel().selectFirst();
-                    }
-
-                    getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
-                })
-                .onFailure(e -> {
-                    log.warning(e.toString());
-
-                    getDisplay().showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete);
-                })
-                .executeAsyncWithDialogFX(new ProgressDialog("Loading profiles"));
     }
 
     private void initFXGL() {
@@ -651,8 +553,6 @@ public abstract class GameApplication extends FXGLApplication {
         getInput().scanForUserActions(this);
 
         initGlobalEventHandlers();
-
-        defaultProfile = createProfile();
 
         preInit();
     }
@@ -687,7 +587,7 @@ public abstract class GameApplication extends FXGLApplication {
         stage.show();
 
         if (getSettings().isMenuEnabled() && !getSettings().isIntroEnabled())
-            showProfileDialog();
+            menuHandler.showProfileDialog();
 
         if (getSettings().isProfilingEnabled()) {
             profiler = FXGL.newProfiler();
@@ -742,79 +642,20 @@ public abstract class GameApplication extends FXGLApplication {
         initApp(new InitAppTask(this, dataFile));
     }
 
-    /**
-     * Stores the default profile data. This is used to restore default settings.
-     */
-    private UserProfile defaultProfile;
-
-    /**
-     * Stores current selected profile name for this game.
-     */
-    private ReadOnlyStringWrapper profileName = new ReadOnlyStringWrapper("");
-
-    /**
-     * @return profile name property (read-only)
-     */
-    public final ReadOnlyStringProperty profileNameProperty() {
-        return profileName.getReadOnlyProperty();
+    public ReadOnlyStringProperty profileNameProperty() {
+        return menuHandler.profileNameProperty();
     }
 
-    /**
-     * Create a user profile with current settings.
-     *
-     * @return user profile
-     */
-    public final UserProfile createProfile() {
-        UserProfile profile = new UserProfile(getSettings().getTitle(), getSettings().getVersion());
-
-        //save(profile);
-        getEventBus().fireEvent(new SaveEvent(profile));
-
-        return profile;
+    public void restoreDefaultSettings() {
+        menuHandler.restoreDefaultSettings();
     }
-
-    /**
-     * Load from given user profile.
-     *
-     * @param profile the profile
-     * @return true if loaded successfully, false if couldn't load
-     */
-    public final boolean loadFromProfile(UserProfile profile) {
-        if (!profile.isCompatible(getSettings().getTitle(), getSettings().getVersion()))
-            return false;
-
-        //load(profile);
-        getEventBus().fireEvent(new LoadEvent(LoadEvent.LOAD_PROFILE, profile));
-        return true;
-    }
-
-    /**
-     * Restores default settings, e.g. audio, video, controls.
-     */
-    public final void restoreDefaultSettings() {
-        getEventBus().fireEvent(new LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile));
-    }
-
-    private SaveLoadManager saveLoadManager;
 
     /**
      * @return save load manager
+     * @deprecated access to save load manager should be done through menus, this method will be removed
      */
+    @Deprecated
     public SaveLoadManager getSaveLoadManager() {
-        if (saveLoadManager == null) {
-            throw new IllegalStateException("SaveLoadManager is not ready");
-        }
-
-        return saveLoadManager;
-    }
-
-    void saveProfile() {
-        // if it is empty then we are running without menus
-        if (!profileName.get().isEmpty()) {
-            saveLoadManager.saveProfileTask(createProfile())
-                    .onFailure(e -> log.warning("Failed to save profile: " + profileName.get() + " - " + e))
-                    // we execute synchronously to avoid incomplete save since we might be shutting down
-                    .execute();
-        }
+        return menuHandler.getSaveLoadManager();
     }
 }

@@ -26,28 +26,63 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.event.LoadEvent
+import com.almasb.fxgl.event.ProfileSelectedEvent
+import com.almasb.fxgl.event.SaveEvent
+import com.almasb.fxgl.gameplay.SaveLoadManager
 import com.almasb.fxgl.io.SaveFile
 import com.almasb.fxgl.scene.DialogPane
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
+import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.ui.UIFactory
+import javafx.beans.property.ReadOnlyStringProperty
+import javafx.beans.property.ReadOnlyStringWrapper
+import javafx.collections.FXCollections
 import java.time.LocalDateTime
 import java.util.function.Consumer
 
 /**
- *
+ * Handles events that happen within menus.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
+internal class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
+
+    private val log = FXGL.getLogger(javaClass)
+
+    private lateinit var saveLoadManager: SaveLoadManager
+
+    fun getSaveLoadManager(): SaveLoadManager {
+        if (saveLoadManager == null) {
+            throw IllegalStateException("SaveLoadManager is not ready")
+        }
+
+        return saveLoadManager
+    }
+
+    /**
+     * Stores the default profile data. This is used to restore default settings.
+     */
+    private val defaultProfile: UserProfile
+
+    /**
+     * Stores current selected profile name for this game.
+     */
+    private val profileName = ReadOnlyStringWrapper("")
+
+    init {
+        defaultProfile = createProfile()
+    }
 
     override fun onNewGame() {
         app.startNewGame()
     }
 
     override fun onContinue() {
-        app.saveLoadManager
+        saveLoadManager
                 .loadLastModifiedSaveFileTask()
-                .then { app.saveLoadManager.loadTask(it) }
+                .then { saveLoadManager.loadTask(it) }
                 .onSuccess(Consumer { app.startLoadedGame(it) })
                 .executeAsyncWithDialogFX(ProgressDialog("Loading..."))
     }
@@ -60,7 +95,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
         val dataFile = app.saveState()
         val saveFile = SaveFile(saveFileName, LocalDateTime.now())
 
-        app.saveLoadManager
+        saveLoadManager
                 .saveTask(dataFile, saveFile)
                 .executeAsyncWithDialogFX(ProgressDialog("Saving data: $saveFileName"))
     }
@@ -71,7 +106,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
             if (saveFileName.isEmpty())
                 return@Consumer;
 
-            if (app.saveLoadManager.saveFileExists(saveFileName)) {
+            if (saveLoadManager.saveFileExists(saveFileName)) {
                 app.display.showConfirmationBox("Overwrite save [$saveFileName]?", { yes ->
 
                     if (yes)
@@ -87,7 +122,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
         app.display.showConfirmationBox("Load save [${saveFile.name}]?\nUnsaved progress will be lost!", { yes ->
 
             if (yes) {
-                app.saveLoadManager
+                saveLoadManager
                         .loadTask(saveFile)
                         .onSuccess(Consumer { app.startLoadedGame(it) })
                         .executeAsyncWithDialogFX(ProgressDialog("Loading: ${saveFile.name}"));
@@ -99,7 +134,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
         app.display.showConfirmationBox("Delete save [${saveFile.name}]?", { yes ->
 
             if (yes) {
-                app.saveLoadManager
+                saveLoadManager
                         .deleteSaveFileTask(saveFile)
                         .executeAsyncWithDialogFX(ProgressDialog("Deleting: ${saveFile.name}"));
             }
@@ -110,14 +145,14 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
         app.display.showConfirmationBox("Log out?", { yes ->
 
             if (yes) {
-                app.saveProfile();
-                app.showProfileDialog();
+                saveProfile();
+                showProfileDialog();
             }
         });
     }
 
     override fun onMultiplayer() {
-        app.showMultiplayerDialog();
+        showMultiplayerDialog();
     }
 
     override fun onExit() {
@@ -136,6 +171,147 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
                 app.reset();
                 app.setState(ApplicationState.MAIN_MENU);
             }
-        });
+        })
+    }
+
+    /**
+     * @return profile name property (read-only)
+     */
+    fun profileNameProperty(): ReadOnlyStringProperty {
+        return profileName.readOnlyProperty
+    }
+
+    /**
+     * Create a user profile with current settings.
+
+     * @return user profile
+     */
+    fun createProfile(): UserProfile {
+        val profile = UserProfile(app.settings.getTitle(), app.settings.getVersion())
+
+        app.eventBus.fireEvent(SaveEvent(profile))
+
+        return profile
+    }
+
+    /**
+     * Load from given user profile.
+
+     * @param profile the profile
+     * *
+     * @return true if loaded successfully, false if couldn't load
+     */
+    fun loadFromProfile(profile: UserProfile): Boolean {
+        if (!profile.isCompatible(app.settings.getTitle(), app.settings.getVersion()))
+            return false
+
+        app.eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+        return true
+    }
+
+    /**
+     * Restores default settings, e.g. audio, video, controls.
+     */
+    fun restoreDefaultSettings() {
+        app.eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+    }
+
+    fun saveProfile() {
+        // if it is empty then we are running without menus
+        if (!profileName.get().isEmpty()) {
+            saveLoadManager.saveProfileTask(createProfile())
+                    .onFailure(Consumer { e -> log.warning("Failed to save profile: " + profileName.get() + " - " + e) })
+                    .execute() // we execute synchronously to avoid incomplete save since we might be shutting down
+        }
+    }
+
+    /* DIALOGS */
+
+    private fun showMultiplayerDialog() {
+        val btnHost = UIFactory.newButton("Host...")
+        btnHost.setOnAction { e -> app.display.showMessageBox("NOT SUPPORTED YET") }
+
+        val btnConnect = UIFactory.newButton("Connect...")
+        btnConnect.setOnAction { e -> app.display.showMessageBox("NOT SUPPORTED YET") }
+
+        app.display.showBox("Multiplayer Options", UIFactory.newText(""), btnHost, btnConnect)
+    }
+
+    /**
+     * Show profile dialog so that user selects existing or creates new profile.
+     * The dialog is only dismissed when profile is chosen either way.
+     */
+    fun showProfileDialog() {
+        val profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList<String>())
+
+        val btnNew = UIFactory.newButton("NEW")
+        val btnSelect = UIFactory.newButton("SELECT")
+        btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull)
+        val btnDelete = UIFactory.newButton("DELETE")
+        btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
+
+        btnNew.setOnAction { e ->
+            app.display.showInputBox("New Profile", DialogPane.ALPHANUM, Consumer { name ->
+                profileName.set(name)
+                saveLoadManager = SaveLoadManager(name)
+
+                app.eventBus.fireEvent(ProfileSelectedEvent(name, false))
+
+                saveProfile()
+            })
+        }
+
+        btnSelect.setOnAction { e ->
+            val name = profilesBox.value
+
+            saveLoadManager = SaveLoadManager(name)
+
+            saveLoadManager.loadProfileTask()
+                    .onSuccess(Consumer { profile ->
+                        val ok = loadFromProfile(profile)
+
+                        if (!ok) {
+                            app.display.showErrorBox("Profile is corrupted: " + name, Runnable { showProfileDialog() })
+                        } else {
+                            profileName.set(name)
+
+                            saveLoadManager.loadLastModifiedSaveFileTask()
+                                    .onSuccess(Consumer { file -> app.eventBus.fireEvent(ProfileSelectedEvent(name, true)) })
+                                    .onFailure(Consumer { error -> app.eventBus.fireEvent(ProfileSelectedEvent(name, false)) })
+                                    .executeAsyncWithDialogFX(ProgressDialog("Loading last save file"))
+                        }
+                    })
+                    .onFailure(Consumer { error ->
+                        app.display.showErrorBox("Profile is corrupted: " + name + "\nError: "
+                                + error.toString(), Runnable { this.showProfileDialog() })
+                    })
+                    .executeAsyncWithDialogFX(ProgressDialog("Loading Profile: " + name))
+        }
+
+        btnDelete.setOnAction { e ->
+            val name = profilesBox.value
+
+            SaveLoadManager.deleteProfileTask(name)
+                    .onSuccess(Consumer { n -> showProfileDialog() })
+                    .onFailure(Consumer { error -> app.display.showErrorBox(error.toString(), Runnable { showProfileDialog() }) })
+                    .executeAsyncWithDialogFX(ProgressDialog("Deleting profile: " + name))
+        }
+
+        SaveLoadManager.loadProfileNamesTask()
+                .onSuccess(Consumer { names ->
+                    profilesBox.items.addAll(names)
+
+                    if (!profilesBox.items.isEmpty()) {
+                        profilesBox.selectionModel.selectFirst()
+                    }
+
+                    app.display.showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete)
+                })
+                .onFailure(Consumer { e ->
+                    log.warning(e.toString())
+
+                    app.display.showBox("Select profile or create new", profilesBox, btnSelect, btnNew, btnDelete)
+                })
+                .executeAsyncWithDialogFX(ProgressDialog("Loading profiles"))
     }
 }
