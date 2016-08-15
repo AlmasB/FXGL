@@ -49,7 +49,7 @@ abstract class ServicesModule extends AbstractModule {
             } catch (Exception e) {
                 throw new IllegalArgumentException("Failed to configure service: "
                         + type.service() + " with provider: " + type.serviceProvider()
-                        + " Error: " + e.getMessage());
+                        + " Error: " + e);
             }
         }
     }
