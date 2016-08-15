@@ -232,7 +232,7 @@ public abstract class FXGLApplication extends Application {
         } catch (NullPointerException npe) {
             log.info("User properties not found. Using system");
         } catch (IOException e) {
-            log.warning("Loading user properties failed: " + e.getMessage());
+            log.warning("Loading user properties failed: " + e);
         }
     }
 
@@ -282,11 +282,11 @@ public abstract class FXGLApplication extends Application {
 
         button.setDisable(true);
         button.setText("Open GitHub");
-        button.setOnAction(e -> {
-            getNet().openBrowserTask(FXGL.getString("url.github"))
-                    .onFailure(error -> log.warning("Error opening browser: " + error))
-                    .execute();
-        });
+        button.setOnAction(e ->
+                getNet().openBrowserTask(FXGL.getString("url.github"))
+                        .onFailure(error -> log.warning("Error opening browser: " + error))
+                        .execute()
+        );
 
         getNet().getLatestVersionTask()
                 .onSuccess(version -> {
