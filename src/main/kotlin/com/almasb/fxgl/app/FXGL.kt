@@ -83,6 +83,12 @@ class FXGL private constructor() {
         @JvmStatic fun getApp() = internalApp
 
         /**
+         * @return instance of the running game application cast to the actual type
+         */
+        @Suppress("UNCHECKED_CAST")
+        @JvmStatic fun <T : GameApplication> getAppCast() = internalApp as T
+
+        /**
          * Note: the system bundle is saved on exit and loaded on init.
          * This bundle is meant to be used by the FXGL system only.
          * If you want to save global (non-gameplay) data use user profiles instead.
