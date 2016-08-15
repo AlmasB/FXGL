@@ -142,8 +142,7 @@ public abstract class FXGLApplication extends Application {
 
         log.infof("FXGL configuration took:    %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
-        if (shouldCheckForUpdate())
-            checkForUpdates();
+        new UpdaterTask().run();
     }
 
     @Override
@@ -247,81 +246,6 @@ public abstract class FXGLApplication extends Application {
         settings = localSettings.toReadOnly();
 
         log.debug("Logging settings\n" + settings.toString());
-    }
-
-    private LocalTimer updateCheckTimer;
-
-    /**
-     * Returns true if first run or required number of days have passed.
-     *
-     * @return whether we need check for updates
-     */
-    private boolean shouldCheckForUpdate() {
-        if (getSettings().getApplicationMode() == ApplicationMode.RELEASE)
-            return false;
-
-        updateCheckTimer = FXGL.newOfflineTimer("version.check");
-
-        return FXGL.isFirstRun() ||
-                updateCheckTimer.elapsed(Duration.hours(24 * FXGL.getInt("version.check.days")));
-    }
-
-    /**
-     * Shows a blocking JavaFX dialog, while it runs an async task
-     * to connect to FXGL repo and find latest version string.
-     */
-    private void checkForUpdates() {
-        log.debug("Checking for updates");
-
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("FXGL Update");
-        dialog.getDialogPane().setContentText("Checking for updates...\n \n ");
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        Button button = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-
-        button.setDisable(true);
-        button.setText("Open GitHub");
-        button.setOnAction(e ->
-                getNet().openBrowserTask(FXGL.getString("url.github"))
-                        .onFailure(error -> log.warning("Error opening browser: " + error))
-                        .execute()
-        );
-
-        getNet().getLatestVersionTask()
-                .onSuccess(version -> {
-
-                    // just a precaution, in case someone called us
-                    if (updateCheckTimer != null) {
-                        // update offline timer
-                        updateCheckTimer.capture();
-
-                        // will not need this later
-                        updateCheckTimer = null;
-                    }
-
-                    dialog.getDialogPane().setContentText("Just so you know\n"
-                            + "Your version:   " + Version.getAsString() + "\n"
-                            + "Latest version: " + version);
-
-                    button.setDisable(false);
-                })
-                .onFailure(error -> {
-
-                    // not important, just log it
-                    log.warning("Failed to find updates: " + error);
-
-                    // will not need this later
-                    updateCheckTimer = null;
-
-                    dialog.getDialogPane().setContentText("Failed to find updates: " + error);
-
-                    button.setDisable(false);
-                })
-                .executeAsyncWithDialogFX(getExecutor());
-
-        // blocking call
-        dialog.showAndWait();
     }
 
     /**
