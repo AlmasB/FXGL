@@ -89,7 +89,7 @@ import javafx.stage.Stage;
  */
 public abstract class GameApplication extends FXGLApplication {
 
-    private static Logger log = SystemLogger.INSTANCE;
+    private Logger log = SystemLogger.INSTANCE;
 
     {
         log.debug("Starting JavaFX");
@@ -412,20 +412,14 @@ public abstract class GameApplication extends FXGLApplication {
 
         // Scene
 
-        getGameScene().addEventHandler(MouseEvent.ANY, event -> {
-            getInput().onMouseEvent(event, getGameScene().getViewport());
-        });
-        getGameScene().addEventHandler(KeyEvent.ANY, event -> {
-            getInput().onKeyEvent(event);
-        });
+        getGameScene().addEventHandler(MouseEvent.ANY, event ->
+                getInput().onMouseEvent(event, getGameScene().getViewport())
+        );
+        getGameScene().addEventHandler(KeyEvent.ANY, getInput()::onKeyEvent);
 
-        bus.addEventHandler(NotificationEvent.ANY, event -> {
-            getAudioPlayer().onNotificationEvent(event);
-        });
+        bus.addEventHandler(NotificationEvent.ANY, getAudioPlayer()::onNotificationEvent);
 
-        bus.addEventHandler(AchievementEvent.ANY, event -> {
-            getNotificationService().onAchievementEvent(event);
-        });
+        bus.addEventHandler(AchievementEvent.ANY, getNotificationService()::onAchievementEvent);
 
         // FXGL App
 
@@ -548,14 +542,14 @@ public abstract class GameApplication extends FXGLApplication {
 
     void showMultiplayerDialog() {
         Button btnHost = UIFactory.newButton("Host...");
-        btnHost.setOnAction(e -> {
-            getDisplay().showMessageBox("NOT SUPPORTED YET");
-        });
+        btnHost.setOnAction(e ->
+            getDisplay().showMessageBox("NOT SUPPORTED YET")
+        );
 
         Button btnConnect = UIFactory.newButton("Connect...");
-        btnConnect.setOnAction(e -> {
-            getDisplay().showMessageBox("NOT SUPPORTED YET");
-        });
+        btnConnect.setOnAction(e ->
+            getDisplay().showMessageBox("NOT SUPPORTED YET")
+        );
 
         getDisplay().showBox("Multiplayer Options", UIFactory.newText(""), btnHost, btnConnect);
     }
