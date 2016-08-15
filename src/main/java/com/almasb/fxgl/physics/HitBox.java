@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.physics;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
@@ -227,6 +229,63 @@ public final class HitBox implements Serializable {
      */
     public String getName() {
         return name;
+    }
+
+    /*
+     * These are lazily evaluated and used for caching
+     * bbox data in the world coord space.
+     * Otherwise these would have to be recomputed every time
+     * this hit box is used for collision detection.
+     */
+    private transient DoubleProperty minXWorld = new SimpleDoubleProperty();
+    private transient DoubleProperty maxXWorld = new SimpleDoubleProperty();
+    private transient DoubleProperty minYWorld = new SimpleDoubleProperty();
+    private transient DoubleProperty maxYWorld = new SimpleDoubleProperty();
+
+    /**
+     * Bind to x property of entity.
+     *
+     * @param xProperty x property
+     */
+    public void bindX(DoubleProperty xProperty) {
+        minXWorld.bind(xProperty.add(getMinX()));
+        maxXWorld.bind(minXWorld.add(getWidth()));
+    }
+
+    /**
+     * Bind to y property of entity.
+     *
+     * @param yProperty y property
+     */
+    public void bindY(DoubleProperty yProperty) {
+        minYWorld.bind(yProperty.add(getMinY()));
+        maxYWorld.bind(minYWorld.add(getHeight()));
+    }
+
+    /**
+     * Unbind the hit box.
+     */
+    public void unbind() {
+        minXWorld.unbind();
+        maxXWorld.unbind();
+        minYWorld.unbind();
+        maxYWorld.unbind();
+    }
+
+    public double getMinXWorld() {
+        return minXWorld.get();
+    }
+
+    public double getMaxXWorld() {
+        return maxXWorld.get();
+    }
+
+    public double getMinYWorld() {
+        return minYWorld.get();
+    }
+
+    public double getMaxYWorld() {
+        return maxYWorld.get();
     }
 
     /**
