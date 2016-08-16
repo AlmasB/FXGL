@@ -159,14 +159,7 @@ public class PhysicsComponent extends AbstractComponent {
     public void setAngularVelocity(double velocity) {
         getBody().setAngularVelocity((float) -velocity);
     }
-
-//    public void setBodyAngularVelocity(float velocity) {
-//        if (body == null)
-//            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
-//
-//        body.setAngularVelocity(velocity);
-//    }
-
+    
     /**
      * Apply an impulse at a point. This immediately modifies the velocity. It also modifies the angular velocity if the point of application is not at the center of mass. This wakes up the body.
      *
