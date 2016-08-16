@@ -80,6 +80,7 @@ import java.util.zip.ZipInputStream;
  * <li>Data - /assets/data/</li>
  * <li>Scripts - /assets/scripts/</li>
  * <li>Behavior Tree - /assets/ai/</li>
+ * <li>FXML - /assets/ui/</li>
  * <li>CSS - /assets/ui/css/</li>
  * <li>Font - /assets/ui/fonts/</li>
  * <li>App icons - /assets/ui/icons/</li>
@@ -213,6 +214,7 @@ public class AssetLoader {
      * @return list of lines from file
      * @throws IllegalArgumentException if asset not found or loading error
      */
+    @SuppressWarnings("unchecked")
     public List<String> loadText(String name) {
         Object asset = getAssetFromCache(TEXT_DIR + name);
         if (asset != null) {
@@ -434,7 +436,7 @@ public class AssetLoader {
                 throw new IOException("Input stream to \"" + name + "\" is null!");
             return is;
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e.getMessage());
+            throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e);
         }
     }
 
@@ -555,7 +557,7 @@ public class AssetLoader {
                     }
                 }
             } catch (IOException e) {
-                log.warning("Failed to load file names from jar - " + e.getMessage());
+                log.warning("Failed to load file names from jar - " + e);
             }
         } else {
             log.warning("Failed to load file names from jar - No code source");
