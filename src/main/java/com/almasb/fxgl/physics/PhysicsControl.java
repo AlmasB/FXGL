@@ -89,10 +89,8 @@ public class PhysicsControl extends AbstractControl {
      * @param point point in game world coordinates (pixels)
      */
     public void reposition(Point2D point) {
-        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
-
-        double w = bbox.getWidth(),
-                h = bbox.getHeight();
+        double w = bbox.getWidth();
+        double h = bbox.getHeight();
 
         body.setTransform(new Vec2(
                 PhysicsWorld.toMeters(point.getX() + w / 2),
