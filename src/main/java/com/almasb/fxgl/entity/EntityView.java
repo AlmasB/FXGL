@@ -123,7 +123,7 @@ public class EntityView extends Parent {
 
             removedFromScene = true;
         } catch (Exception e) {
-            log.warning("View wasn't removed from scene: " + e.getMessage());
+            log.warning("View wasn't removed from scene: " + e);
         }
     }
 
