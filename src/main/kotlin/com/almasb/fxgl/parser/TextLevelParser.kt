@@ -46,7 +46,7 @@ class TextLevelParser {
 
     /**
      * The empty (ignored) character.
-     * If you don't set this, there will a warning generated for
+     * If you don't set this, there will be a warning generated for
      * each such character.
      *
      * @defaultValue ' '
@@ -87,7 +87,7 @@ class TextLevelParser {
             if (line.length > maxWidth)
                 maxWidth = line.length
 
-            for (j in 0..line.length - 1) {
+            for (j in 0 until line.length) {
                 val c = line[j]
                 val producer = producers[c]
                 if (producer != null) {
