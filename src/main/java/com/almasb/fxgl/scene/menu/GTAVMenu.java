@@ -26,6 +26,7 @@
 package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
 import javafx.geometry.Pos;
@@ -155,6 +156,10 @@ public final class GTAVMenu extends FXGLMenu {
         Button btnLoad = createContentButton("LOAD GAME", this::createContentLoad);
         Button btnLogout = createActionButton("LOGOUT", this::fireLogout);
         Button btnExit = createActionButton("EXIT", this::fireExit);
+
+        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
+            btnContinue.setDisable(!event.hasSaves());
+        });
 
         return new VBox(10, btnContinue, btnNew, btnLoad, btnLogout, btnExit);
     }
