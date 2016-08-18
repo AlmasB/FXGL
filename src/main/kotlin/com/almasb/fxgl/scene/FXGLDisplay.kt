@@ -165,7 +165,7 @@ private constructor(private val stage: Stage,
 
             if (settings.isFullScreen) {
                 fullScreenExitHint = ""
-                // don't let the user to exit FS mode manually
+                // don't let the user exit FS mode manually
                 fullScreenExitKeyCombination = KeyCombination.NO_MATCH
                 isFullScreen = true
             }
