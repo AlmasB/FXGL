@@ -201,7 +201,7 @@ object SystemLogger : Logger {
         Thread.enumerate(threads)
 
         for (t in threads) {
-            threadNames.put(t!!.id, t.name)
+            threadNames.put(t!!.id, t.name.padStart(25))
         }
     }
 

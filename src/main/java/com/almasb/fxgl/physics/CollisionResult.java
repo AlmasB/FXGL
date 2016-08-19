@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.gameutils.pool.Poolable;
+
 /**
  * Data structure for holding info about collision result.
  * {@link CollisionResult#hasCollided()} will return true
@@ -32,7 +34,7 @@ package com.almasb.fxgl.physics;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class CollisionResult {
+public final class CollisionResult implements Poolable {
 
     /**
      * Constant for reporting no collision.
@@ -58,14 +60,16 @@ public final class CollisionResult {
         this.collided = collided;
     }
 
+    public CollisionResult() {}
+
     /**
-     * Constructs CollisionResult with positive result, i.e.
+     * Init CollisionResult with positive result, i.e.
      * {@link CollisionResult#hasCollided()} returns true.
      *
      * @param boxA hit box of first entity
      * @param boxB hit box of second entity
      */
-    public CollisionResult(HitBox boxA, HitBox boxB) {
+    public void init(HitBox boxA, HitBox boxB) {
         this.boxA = boxA;
         this.boxB = boxB;
         collided = true;
@@ -74,21 +78,33 @@ public final class CollisionResult {
     /**
      * @return hit box of first entity
      */
-    public final HitBox getBoxA() {
+    public HitBox getBoxA() {
         return boxA;
     }
 
     /**
      * @return hit box of second entity
      */
-    public final HitBox getBoxB() {
+    public HitBox getBoxB() {
         return boxB;
     }
 
     /**
      * @return true if collision occurred, false otherwise
      */
-    public final boolean hasCollided() {
+    public boolean hasCollided() {
         return collided;
+    }
+
+    @Override
+    public void reset() {
+        // someone called "put" to pooler on NO_COLLISION object
+        // so guard it
+        if (!collided) {
+            return;
+        }
+
+        boxA = null;
+        boxB = null;
     }
 }

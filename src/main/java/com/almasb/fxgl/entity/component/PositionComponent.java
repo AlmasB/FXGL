@@ -203,11 +203,11 @@ public class PositionComponent extends AbstractComponent
      * @return x position of the entity in the grid
      */
     public int getGridX(int cellSize) {
-        double x = getEntity().getComponent(BoundingBoxComponent.class)
+        double centerX = getEntity().getComponent(BoundingBoxComponent.class)
                 .map(bbox -> bbox.getMinXWorld() + bbox.getWidth() / 2)
                 .orElseGet(this::getX);
 
-        return (int) (x / cellSize);
+        return (int) (centerX / cellSize);
     }
 
     /**
@@ -218,11 +218,11 @@ public class PositionComponent extends AbstractComponent
      * @return y position of the entity in the grid
      */
     public int getGridY(int cellSize) {
-        double y = getEntity().getComponent(BoundingBoxComponent.class)
+        double centerY = getEntity().getComponent(BoundingBoxComponent.class)
                 .map(bbox -> bbox.getMinYWorld() + bbox.getHeight() / 2)
                 .orElseGet(this::getY);
 
-        return (int) (y / cellSize);
+        return (int) (centerY / cellSize);
     }
 
     @Override

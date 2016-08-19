@@ -26,22 +26,66 @@
 
 package com.almasb.fxgl.audio
 
+import com.almasb.gameutils.Disposable
+import javafx.beans.property.DoubleProperty
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
 
 /**
- * Represents a long-term audio in mp3 file. Use for
- * background (looping) music or recorded dialogues.
-
+ * Represents a long-term audio in mp3 file.
+ * Use for background (looping) music or recorded dialogues.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class Music(private val media: Media) {
+class Music(media: Media) : Disposable {
 
-    internal val mediaPlayer: MediaPlayer
-    internal var isStopped = false
+    enum class Status {
+        PAUSED, PLAYING, STOPPED
+    }
+
+    private val mediaPlayer: MediaPlayer
+
+    internal var status = Status.STOPPED
+        private set
 
     init {
         mediaPlayer = MediaPlayer(media)
+    }
+
+    // check current time + current count
+    // cycle count may have been altered, hence >=
+    internal fun reachedEnd() =
+            mediaPlayer.currentTime == mediaPlayer.cycleDuration
+                    && mediaPlayer.currentCount >= mediaPlayer.cycleCount
+
+    internal fun start() {
+        if (status == Status.STOPPED) {
+            status = Status.PLAYING
+            mediaPlayer.play()
+        }
+    }
+
+    internal fun pause() {
+        if (status == Status.PLAYING) {
+            status = Status.PAUSED
+            mediaPlayer.pause()
+        }
+    }
+
+    internal fun resume() {
+        if (status == Status.PAUSED) {
+            status = Status.PLAYING
+            mediaPlayer.play()
+        }
+    }
+
+    internal fun stop() {
+        status = Status.STOPPED
+        mediaPlayer.stop()
+    }
+
+    internal fun bindVolume(volume: DoubleProperty) {
+        mediaPlayer.volumeProperty().bind(volume)
     }
 
     /**
@@ -53,7 +97,7 @@ class Music(private val media: Media) {
      * being full left, `0.0` center, and `1.0` full right.
      * The default value is `0.0`.
 
-     * @param balance the music balance
+     * @param balance
      */
     var balance: Double
         get() = mediaPlayer.balance
@@ -71,7 +115,7 @@ class Music(private val media: Media) {
      * supported range of rates is `[0.0,&nbsp;8.0]`. The default
      * value is `1.0`.
 
-     * @param rate music rate
+     * @param rate
      */
     var rate: Double
         get() {
@@ -89,7 +133,7 @@ class Music(private val media: Media) {
      * to [Integer.MAX_VALUE] effectively loops the music.
      * Useful for background music.
 
-     * @param count number of times to play
+     * @param count
      */
     var cycleCount: Int
         get() {
@@ -98,4 +142,23 @@ class Music(private val media: Media) {
         set(count) {
             mediaPlayer.setCycleCount(count)
         }
+
+    override fun dispose() {
+        stop()
+        mediaPlayer.dispose()
+    }
+
+    override fun toString(): String {
+        val builder = StringBuilder()
+        builder.append("Music [balance=")
+        builder.append(balance)
+        builder.append(", volume=")
+        builder.append(mediaPlayer.getVolume())
+        builder.append(", rate=")
+        builder.append(rate)
+        builder.append(", cycleCount=")
+        builder.append(cycleCount)
+        builder.append("]")
+        return builder.toString()
+    }
 }

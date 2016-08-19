@@ -29,12 +29,13 @@ package com.almasb.fxgl.entity.animation;
 import com.almasb.fxgl.entity.GameEntity;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
+ * TODO: API INCOMPLETE.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class AnimationBuilder {

@@ -28,6 +28,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.ents.AbstractComponent;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
@@ -60,6 +61,12 @@ public class PhysicsComponent extends AbstractComponent {
         if (onInitPhysics != null) {
             onInitPhysics.run();
         }
+    }
+
+    private Body getBody() {
+        if (body == null)
+            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
+        return body;
     }
 
     /**
@@ -110,7 +117,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param vector x and y in pixels
      */
     public void setLinearVelocity(Point2D vector) {
-        setBodyLinearVelocity(PhysicsWorld.toVector(vector).mulLocal(60));
+        setBodyLinearVelocity(PhysicsWorld.toVector(vector));
     }
 
     /**
@@ -134,20 +141,14 @@ public class PhysicsComponent extends AbstractComponent {
      * @param vector x and y in meters
      */
     public void setBodyLinearVelocity(Vec2 vector) {
-        if (body == null)
-            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
-
-        body.setLinearVelocity(vector);
+        getBody().setLinearVelocity(vector);
     }
 
     /**
      * @return linear velocity in pixels
      */
     public Point2D getLinearVelocity() {
-        if (body == null)
-            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
-
-        return PhysicsWorld.toVector(body.getLinearVelocity().mul(1 / 60f));
+        return PhysicsWorld.toVector(getBody().getLinearVelocity());
     }
 
     /**
@@ -156,18 +157,104 @@ public class PhysicsComponent extends AbstractComponent {
      * @param velocity value in ~ degrees per tick
      */
     public void setAngularVelocity(double velocity) {
-        if (body == null)
-            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
-
-        body.setAngularVelocity((float) -velocity);
+        getBody().setAngularVelocity((float) -velocity);
     }
 
-//    public void setBodyAngularVelocity(float velocity) {
-//        if (body == null)
-//            throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
-//
-//        body.setAngularVelocity(velocity);
-//    }
+    /**
+     * Apply an impulse at a point. This immediately modifies the velocity. It also modifies the angular velocity if the point of application is not at the center of mass. This wakes up the body.
+     *
+     * @param impulse the world impulse vector (in pixel/sec)
+     * @param point the world position of the point of application (in pixel)
+     * @param wake if this impulse should wake up the body
+     */
+    public void applyLinearImpulse(Point2D impulse, Point2D point, boolean wake) {
+        applyBodyLinearImpulse(PhysicsWorld.toVector(impulse), FXGL.getApp().getPhysicsWorld().toPoint(point), wake);
+    }
+
+    /**
+     * Apply an impulse at a point. This immediately modifies the velocity. It also modifies the angular velocity if the point of application is not at the center of mass. This wakes up the body.
+     *
+     * @param impulse the world impulse vector (in meter/sec)
+     * @param point the world position of the point of application (in meter)
+     * @param wake if this impulse should wake up the body
+     */
+    public void applyBodyLinearImpulse(Vec2 impulse, Vec2 point, boolean wake) {
+        getBody().applyLinearImpulse(impulse, point, wake);
+    }
+
+    /**
+     * Apply a force at a world point. If the force is not applied at the center of mass, it will generate a torque and affect the angular velocity. This wakes up the body.
+     *
+     * @param force the world force vector (in pixel/sec)
+     * @param point the world position of the point of application (in pixel)
+     */
+    public void applyForce(Point2D force, Point2D point) {
+        applyBodyForce(PhysicsWorld.toVector(force), FXGL.getApp().getPhysicsWorld().toPoint(point));
+    }
+
+    /**
+     * Apply a force at a world point. If the force is not applied at the center of mass, it will generate a torque and affect the angular velocity. This wakes up the body.
+     *
+     * @param force the world force vector (in meter/sec)
+     * @param point the world position of the point of application (in meter)
+     */
+    public void applyBodyForce(Vec2 force, Vec2 point) {
+        getBody().applyForce(force, point);
+    }
+
+    /**
+     * Apply a force to the center of mass. This wakes up the body.
+     *
+     * @param force the world force vector (in pixel/sec)
+     */
+    public void applyForceToCenter(Point2D force) {
+        applyBodyForceToCenter(PhysicsWorld.toVector(force));
+    }
+
+    /**
+     * Apply a force to the center of mass. This wakes up the body.
+     *
+     * @param force the world force vector (in meter/sec)
+     */
+    public void applyBodyForceToCenter(Vec2 force) {
+        getBody().applyForceToCenter(force);
+    }
+
+    /**
+     * Apply an angular impulse.
+     *
+     * @param impulse the angular impulse (in pixel/sec)
+     */
+    public void applyAngularImpulse(float impulse) {
+        applyBodyAngularImpulse(PhysicsWorld.toMeters(impulse));
+    }
+
+    /**
+     * Apply an angular impulse.
+     *
+     * @param impulse the angular impulse (in meter/sec)
+     */
+    public void applyBodyAngularImpulse(float impulse) {
+        getBody().applyAngularImpulse(impulse);
+    }
+
+    /**
+     * Apply a torque. This affects the angular velocity without affecting the linear velocity of the center of mass. This wakes up the body.
+     *
+     * @param torque the force (in pixel)
+     */
+    public void applyTorque(float torque) {
+        applyBodyTorque(PhysicsWorld.toMeters(torque));
+    }
+
+    /**
+     * Apply a torque. This affects the angular velocity without affecting the linear velocity of the center of mass. This wakes up the body.
+     *
+     * @param torque the force (in meter)
+     */
+    public void applyBodyTorque(float torque) {
+        getBody().applyTorque(torque);
+    }
 
     /**
      * Set true to make raycast ignore this entity.

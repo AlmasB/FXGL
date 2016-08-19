@@ -30,6 +30,8 @@ import javafx.beans.NamedArg;
 import javafx.geometry.Dimension2D;
 
 /**
+ * A 2d dimension that describes scene resolution.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class SceneDimension extends Dimension2D {

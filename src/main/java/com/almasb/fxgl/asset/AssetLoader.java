@@ -67,7 +67,8 @@ import java.util.zip.ZipInputStream;
 /**
  * Handles all resource (asset) loading operations.
  * <p>
- * "assets" directory must be located in source folder ("src" by default).
+ * The "assets" directory must be located in source folder ("src" by default).
+ * If you are using the Maven directory structure then under "src/main/resources/".
  * <p>
  * Resources (assets) will be searched for in these specified directories:
  * <ul>
@@ -78,6 +79,8 @@ import java.util.zip.ZipInputStream;
  * <li>KVFile - /assets/kv/</li>
  * <li>Data - /assets/data/</li>
  * <li>Scripts - /assets/scripts/</li>
+ * <li>Behavior Tree - /assets/ai/</li>
+ * <li>FXML - /assets/ui/</li>
  * <li>CSS - /assets/ui/css/</li>
  * <li>Font - /assets/ui/fonts/</li>
  * <li>App icons - /assets/ui/icons/</li>
@@ -211,6 +214,7 @@ public class AssetLoader {
      * @return list of lines from file
      * @throws IllegalArgumentException if asset not found or loading error
      */
+    @SuppressWarnings("unchecked")
     public List<String> loadText(String name) {
         Object asset = getAssetFromCache(TEXT_DIR + name);
         if (asset != null) {
@@ -413,21 +417,26 @@ public class AssetLoader {
     }
 
     /**
-     * Opens a stream to resource with given name. The caller is responsible for
-     * closing the stream. Either returns a valid stream or throws an exception.
+     * Opens a stream to resource with given name.
+     * The caller is responsible for closing the stream.
+     * Either returns a valid stream or throws an exception.
+     *
+     * This is useful for loading resources that do not fall under any asset category.
+     * Resource is anything located within the source root / resource root, whether "src/" or "resources/".
+     * The resource name must always begin with "/", e.g. "/assets/textures/player.png".
      *
      * @param name resource name
      * @return resource stream
      * @throws IllegalArgumentException if any error occurs or stream is null
      */
-    private InputStream getStream(String name) {
+    public InputStream getStream(String name) {
         try {
             InputStream is = getURL(name).openStream();
             if (is == null)
                 throw new IOException("Input stream to \"" + name + "\" is null!");
             return is;
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e.getMessage());
+            throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e);
         }
     }
 
@@ -548,7 +557,7 @@ public class AssetLoader {
                     }
                 }
             } catch (IOException e) {
-                log.warning("Failed to load file names from jar - " + e.getMessage());
+                log.warning("Failed to load file names from jar - " + e);
             }
         } else {
             log.warning("Failed to load file names from jar - No code source");

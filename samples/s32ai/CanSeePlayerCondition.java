@@ -26,12 +26,9 @@
 
 package s32ai;
 
-import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -40,10 +37,8 @@ public class CanSeePlayerCondition extends Condition {
 
     @Override
     public boolean evaluate() {
-
-
         GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
 
-        return player.getPositionComponent().distance(getObject().getPositionComponent()) < 250;
+        return player.distance(getObject()) < 250;
     }
 }

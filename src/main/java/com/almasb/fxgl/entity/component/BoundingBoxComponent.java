@@ -32,14 +32,16 @@ import com.almasb.ents.CopyableComponent;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
 import com.almasb.ents.serialization.SerializableComponent;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.util.Pooler;
+import com.almasb.gameutils.pool.Pool;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import org.jetbrains.annotations.NotNull;
@@ -50,13 +52,22 @@ import java.util.ArrayList;
  * Component that adds bounding box information to an entity.
  * The bounding box itself comprises a collection of hit boxes.
  *
- * TODO: enforce at least 1 hit box rule, this also optimizes a lot of stuff
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
 public class BoundingBoxComponent extends AbstractComponent
         implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {
+
+    private static final Pooler pooler = FXGL.getPooler();
+
+    static {
+        pooler.registerPool(CollisionResult.class, new Pool<CollisionResult>() {
+            @Override
+            protected CollisionResult newObject() {
+                return new CollisionResult();
+            }
+        });
+    }
 
     public BoundingBoxComponent(HitBox... boxes) {
         hitBoxes.addAll(boxes);
@@ -65,12 +76,7 @@ public class BoundingBoxComponent extends AbstractComponent
         width.set(computeWidth());
         height.set(computeHeight());
 
-        hitBoxes.addListener((ListChangeListener<? super HitBox>) c -> {
-            minXLocal.set(computeMinXLocal());
-            minYLocal.set(computeMinYLocal());
-            width.set(computeWidth());
-            height.set(computeHeight());
-        });
+        hitBoxes.addListener(onHitBoxChange);
     }
 
     private PositionComponent position;
@@ -78,6 +84,14 @@ public class BoundingBoxComponent extends AbstractComponent
     @Override
     public void onAdded(Entity entity) {
         position = entity.getComponentUnsafe(PositionComponent.class);
+    }
+
+    @Override
+    public void onRemoved(Entity entity) {
+        hitBoxes.removeListener(onHitBoxChange);
+        for (int i = 0; i < hitBoxes.size(); i++) {
+            hitBoxes.get(i).unbind();
+        }
     }
 
     /**
@@ -272,6 +286,27 @@ public class BoundingBoxComponent extends AbstractComponent
         return getCenterLocal().add(getMinXWorld(), getMinYWorld());
     }
 
+    private ListChangeListener<? super HitBox> onHitBoxChange = (ListChangeListener<? super HitBox>) c -> {
+        minXLocal.set(computeMinXLocal());
+        minYLocal.set(computeMinYLocal());
+        width.set(computeWidth());
+        height.set(computeHeight());
+
+        while (c.next()) {
+            if (c.wasAdded()) {
+                for (HitBox box : c.getAddedSubList()) {
+                    box.bindX(position.xProperty());
+                    box.bindY(position.yProperty());
+                }
+
+            } else if (c.wasRemoved()) {
+                for (HitBox box : c.getRemoved()) {
+                    box.unbind();
+                }
+            }
+        }
+    };
+
     private double computeMinXLocal() {
         return hitBoxes.stream()
                 .mapToDouble(HitBox::getMinX)
@@ -295,45 +330,35 @@ public class BoundingBoxComponent extends AbstractComponent
     }
 
     // TODO: refactor
-    private boolean isXFlipped() {
-        return false;
-    }
+//    private boolean isXFlipped() {
+//        return false;
+//    }
 
     /**
      * Internal GC-friendly (and has less checks than JavaFX's BoundingBox)
-     * check for collision between two hit boxes with given x,y of entities.
+     * check for collision between two hit boxes.
+     * Assuming hit boxes are bound to x, y of entities so the coords
+     * are correctly translated into the world coord space.
      *
      * @param box1 hit box 1
-     * @param x1 x of entity 1
-     * @param y1 y of entity 1
      * @param box2 hit box 2
-     * @param x2 x of entity 2
-     * @param y2 y of entity 2
      * @return true iff box1 is colliding with box2
      */
-    private boolean checkCollision(HitBox box1, double x1, double y1, HitBox box2, double x2, double y2) {
-        double minX1 = x1 + box1.getMinX();
-        double minY1 = y1 + box1.getMinY();
-        double maxX1 = minX1 + box1.getWidth();
-        double maxY1 = minY1 + box1.getHeight();
-
-        double minX2 = x2 + box2.getMinX();
-        double minY2 = y2 + box2.getMinY();
-        double maxX2 = minX2 + box2.getWidth();
-        double maxY2 = minY2 + box2.getHeight();
-
-        return maxX2 >= minX1 &&
-                maxY2 >= minY1 &&
-                minX2 <= maxX1 &&
-                minY2 <= maxY1;
+    private boolean checkCollision(HitBox box1, HitBox box2) {
+        return box2.getMaxXWorld() >= box1.getMinXWorld() &&
+                box2.getMaxYWorld() >= box1.getMinYWorld() &&
+                box2.getMinXWorld() <= box1.getMaxXWorld() &&
+                box2.getMinYWorld() <= box1.getMaxYWorld();
     }
 
     /**
-     * Checks for collision with another entity. Returns collision result
+     * Checks for collision with another bounding box. Returns collision result
      * containing the first hit box that triggered collision.
      * If no collision - {@link CollisionResult#NO_COLLISION} will be returned.
+     * If there is collision, the CollisionResult object must be put into pooler
+     * after using the data.
      *
-     * @param other entity to check collision against
+     * @param other bounding box to check collision against
      * @return collision result
      */
     public final CollisionResult checkCollision(BoundingBoxComponent other) {
@@ -343,10 +368,12 @@ public class BoundingBoxComponent extends AbstractComponent
             for (int j = 0; j < other.hitBoxes.size(); j++) {
                 HitBox box2 = other.hitBoxes.get(j);
 
-                if (checkCollision(box1, getPositionX(), getPositionY(),
-                        box2, other.getPositionX(), other.getPositionY())) {
+                if (checkCollision(box1, box2)) {
 
-                    return new CollisionResult(box1, box2);
+                    CollisionResult result = pooler.get(CollisionResult.class);
+                    result.init(box1, box2);
+
+                    return result;
                 }
             }
         }
@@ -367,9 +394,7 @@ public class BoundingBoxComponent extends AbstractComponent
             for (int j = 0; j < other.hitBoxes.size(); j++) {
                 HitBox box2 = other.hitBoxes.get(j);
 
-                if (checkCollision(box1, getPositionX(), getPositionY(),
-                        box2, other.getPositionX(), other.getPositionY())) {
-
+                if (checkCollision(box1, box2)) {
                     return CollisionResult.COLLISION;
                 }
             }

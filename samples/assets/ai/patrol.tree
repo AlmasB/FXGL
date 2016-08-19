@@ -24,16 +24,3 @@ root
                     attack
                 patrol
         move
-
-
-#root
-#  selector
-#    parallel
-#      care urgentProb:0.8
-#      alwaysFail
-#        com.badlogic.gdx.ai.tests.btree.dog.RestTask # fully qualified task
-#    sequence
-#      bark times:"uniform,1,3"  # the type of attribute times is a IntegerDistribution
-#      walk
-#      com.badlogic.gdx.ai.tests.btree.dog.BarkTask # fully qualified task
-#      mark

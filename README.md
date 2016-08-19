@@ -1,12 +1,15 @@
 ## FXGL
 
-JavaFX 8 Game Library written in Java + Kotlin<br/>
-[![Join the chat at https://gitter.im/AlmasB/FXGL](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Release](https://img.shields.io/badge/maven-0.2.5-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
-[![MIT License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
-[![Javadoc](https://img.shields.io/badge/docs-javadoc-green.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
+JavaFX Game Development Framework
+
+[![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Maven](https://img.shields.io/badge/maven-0.2.6-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
+![Code](https://img.shields.io/badge/lines%20of%20code-11k-blue.svg)
+
 [![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
 [![Wiki](https://img.shields.io/badge/www-Wiki-green.svg)](https://github.com/AlmasB/FXGL/wiki)
+[![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Good for ...
 * 2D or casual UI based games
@@ -19,41 +22,43 @@ JavaFX 8 Game Library written in Java + Kotlin<br/>
 * Commercial projects
 
 ## Latest Release Features
-* Full JavaFX Integration (FXGL is built on top of JavaFX 8)
-* Top level Java interfaces with lower level [Kotlin](https://github.com/JetBrains/kotlin) implementation
-* [JBox2D](https://github.com/jbox2d/jbox2d) Physics Engine Integration (fork based on v.2.3.0)
-* [Ents](https://github.com/AlmasB/Ents) Entity Component/Control System Integration
-* [FXEventBus](https://github.com/AlmasB/FXEventBus) Event System Integration
-* [AStar](https://github.com/AlmasB/AStar) Pathfinding Integration ([A* Search](https://en.wikipedia.org/wiki/A*_search_algorithm))
-* [gdxAI](https://github.com/libgdx/gdx-ai) Artificial Intelligence Framework Integration
-* Game Loop
-* Input Bindings (Keys + Mouse)
-* Automated Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf", custom binary formats)
-* Text/Script Parsers
-* JavaScript Behavior Injections (for entities)
-* Automated Collision Handling (physics collisions are hooked into FXGL)
-* Automated Target Screen Resolution (+Fullscreen)
-* Particle System with Canvas Rendering
-* Multi-Layer Rendering
-* Dynamic Texture Manipulation (Texture Processing + Sprite Sheet Animations)
-* Time Management System
-* Audio System
-* Multithreading
-* Networking (both TCP and UDP)
-* Quick Time Events (QTE)
-* Customizable Intro Video / Animation
-* Customizable Main Menu / Game Menu
-* Customizable UI elements (Dialogs, Bars, Buttons, etc)
-* Customizable Global CSS for menus / UI elements
-* Saving / Loading System
-* User Profiles (Save/Load/Restore Game Settings)
-* Achievement System
-* In-game Notification System
-* [Log4j2](http://logging.apache.org/log4j/2.x/) Logging Framework
-* [EasyIO](https://github.com/AlmasB/EasyIO) IO Framework
-* Performance Monitor + Profiling
-* Global Services Framework
-* Other minor game dev features
+
+Graphics & UI | Application Framework
+:---:    | :---:
+JavaFX 8  | [FXEventBus](https://github.com/AlmasB/FXEventBus)
+Multi-Layer Rendering | Time Management System (in-game time + real time)
+Canvas Particle System | Multithreading
+Dynamic Texture Manipulation | [Log4j2](http://logging.apache.org/log4j/2.x/)
+Sprite Sheet Animations | Performance Monitor + Profiling
+Target Screen Resolution (+Fullscreen) | Global Services Framework
+Customizable Intro Video / Animation | Developer Panel
+Customizable Main Menu / Game Menu (3 built-in menu styles) |
+Customizable UI elements (Dialogs, Bars, Buttons, etc) |
+Customizable Global CSS for menus / UI elements |
+
+
+User Input | I/O
+:---:      | :---:
+Key & Mouse Bindings | [EasyIO](https://github.com/AlmasB/EasyIO) & Networking (TCP and UDP)
+Full Input Mocking   | Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf", custom)
+
+
+Physics |   Utilities
+:---: | :---:
+[JBox2D](https://github.com/jbox2d/jbox2d) | [GameUtils](https://github.com/AlmasB/GameUtils)
+Unified Collision Handling (jbox2d + FXGL physics) |
+
+
+Gameplay | AI
+:---:    | :---:
+[Ents](https://github.com/AlmasB/Ents) | [gdxAI](https://github.com/libgdx/gdx-ai)
+Game Loop                              | [AStar](https://github.com/AlmasB/AStar)
+Quick Time Events (QTE) | JavaScript Behavior Injections (for entities) + JavaScript Coding Environment
+Achievement System | Text/Script Parsers
+Notification System |
+Saving / Loading System |
+User Profiles (Save/Load/Restore Game Settings) |
+
 
 If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
 
@@ -145,7 +150,7 @@ fun main(args: Array<String>) {
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.6</version>
 </dependency>
 ```
 
@@ -156,7 +161,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.5'
+    compile 'com.github.AlmasB:FXGL:0.2.6'
 }
 ```
 

@@ -149,9 +149,8 @@ public final class FXGLDefaultMenu extends FXGLMenu {
             itemContinue.setDisable(!event.hasSaves());
         });
 
-        MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad,
+        return new MenuBox(200, itemContinue, itemNewGame, itemLoad,
                 itemOptions, itemExtra, itemMultiplayer, itemLogout, itemExit);
-        return menu;
     }
 
     protected MenuBox createMenuBodyGameMenu() {
@@ -173,9 +172,7 @@ public final class FXGLDefaultMenu extends FXGLMenu {
         MenuItem itemExit = new MenuItem("MAIN MENU");
         itemExit.setOnAction(e -> fireExitToMainMenu());
 
-        MenuBox menu = new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
-
-        return menu;
+        return new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
     }
 
     protected MenuBox createOptionsMenu() {
@@ -267,31 +264,23 @@ public final class FXGLDefaultMenu extends FXGLMenu {
         }
 
         public void setMenuContent(Supplier<MenuContent> contentSupplier) {
-            this.addEventHandler(ActionEvent.ACTION, event -> {
-                switchMenuContentTo(contentSupplier.get());
-            });
+            this.addEventHandler(ActionEvent.ACTION, event -> switchMenuContentTo(contentSupplier.get()));
         }
 
         public void setChild(MenuBox menu) {
             MenuItem back = new MenuItem("BACK");
             menu.getChildren().add(0, back);
 
-            back.addEventHandler(ActionEvent.ACTION, event -> {
-                switchMenuTo(MenuItem.this.parent);
-            });
+            back.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(MenuItem.this.parent));
 
-            this.addEventHandler(ActionEvent.ACTION, event -> {
-                switchMenuTo(menu);
-            });
+            this.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(menu));
         }
     }
 
     @Override
     protected Button createActionButton(String name, Runnable action) {
         MenuItem btn = new MenuItem(name);
-        btn.addEventHandler(ActionEvent.ACTION, event -> {
-            action.run();
-        });
+        btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
 
         return btn;
     }

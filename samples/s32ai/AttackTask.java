@@ -30,8 +30,6 @@ import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.Action;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
-import com.badlogic.gdx.ai.btree.LeafTask;
-import com.badlogic.gdx.ai.btree.Task;
 import javafx.geometry.Point2D;
 
 /**
@@ -43,14 +41,14 @@ public class AttackTask extends Action {
     public void action() {
         GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
 
-        if (player.getPositionComponent().distance(getObject().getPositionComponent()) < 100) {
+        if (player.distance(getObject()) < 100) {
             getObject().getControlUnsafe(AIControl.class).setBubbleMessage("Attack");
         } else {
             getObject().getControlUnsafe(AIControl.class).setBubbleMessage("Chase");
             double speed = 0.017 * 60 * 5;
 
-            Point2D vector = player.getPositionComponent().getValue()
-                    .subtract(getObject().getPositionComponent().getValue())
+            Point2D vector = player.getPosition()
+                    .subtract(getObject().getPosition())
                     .normalize()
                     .multiply(speed);
 

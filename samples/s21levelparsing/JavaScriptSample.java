@@ -68,6 +68,12 @@ public class JavaScriptSample extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40))
                 .with(new JSControl("spin_control.js"))
                 .buildAndAttach(getGameWorld());
+
+        Entities.builder()
+                .at(180, 100)
+                .viewFromNode(new Rectangle(40, 40))
+                .with(new JSControl("ccw_spin_control.js"))
+                .buildAndAttach(getGameWorld());
     }
 
     @Override

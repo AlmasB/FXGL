@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.io.DataFile
+import com.almasb.fxgl.logging.SystemLogger
 import javafx.concurrent.Task
 
 /**
@@ -37,7 +37,9 @@ import javafx.concurrent.Task
  */
 class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>() {
 
-    private val log = FXGL.getLogger(javaClass)
+    companion object {
+        private val log = FXGL.getLogger(InitAppTask::class.java)
+    }
 
     constructor(app: GameApplication) : this(app, DataFile.EMPTY)
 
@@ -61,7 +63,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initialization Complete", 4)
 
-        log.info("Game init took: " + (System.nanoTime() - start) / 1000000000.0 + " sec")
+        SystemLogger.infof("Game initialization took:   %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
         return null
     }
@@ -73,7 +75,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     }
 
     override fun succeeded() {
-        app.getEventBus().fireEvent(FXGLEvent.initAppComplete())
+        //app.getEventBus().fireEvent(FXGLEvent.initAppComplete())
         app.resume()
     }
 

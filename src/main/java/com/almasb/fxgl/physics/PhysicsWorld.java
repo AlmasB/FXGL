@@ -35,14 +35,13 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
-import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.time.UpdateEventListener;
+import com.almasb.fxgl.util.Pooler;
+import com.almasb.gameutils.collection.Array;
+import com.almasb.gameutils.pool.Pool;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
@@ -64,8 +63,8 @@ import org.jbox2d.particle.ParticleGroup;
 import org.jbox2d.particle.ParticleGroupDef;
 import org.jbox2d.particle.ParticleSystem;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Manages physics entities, collision handling and performs the physics tick.
@@ -78,26 +77,27 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class PhysicsWorld implements EntityWorldListener, UpdateEventListener {
+public final class PhysicsWorld implements EntityWorldListener, ContactListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
 
     private static final double PIXELS_PER_METER = FXGL.getDouble("physics.ppm");
     private static final double METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
 
-    private World physicsWorld = new World(new Vec2(0, -10));
+    private World jboxWorld = new World(new Vec2(0, -10));
 
-    private ParticleSystem particleSystem = physicsWorld.getParticleSystem();
+    private ParticleSystem particleSystem = jboxWorld.getParticleSystem();
 
-    private List<Entity> entities = new ArrayList<>();
+    // TODO: externalize 128
+    private Array<Entity> entities = new Array<>(false, 128);
 
-    private List<CollisionHandler> collisionHandlers = new ArrayList<>();
+    private Array<CollisionHandler> collisionHandlers = new Array<>(false, 16);
 
-    private Map<CollisionPair, Long> collisions = new HashMap<>();
-
-    private LongProperty tick = new SimpleLongProperty(0);
+    private Array<CollisionPair> collisions = new Array<>(false, 128);
 
     private double appHeight;
+
+    private Pooler pooler = FXGL.getPooler();
 
     /**
      * Note: certain modifications to the jbox2d world directly may not be
@@ -106,21 +106,32 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      * @return raw jbox2d physics world
      */
     public World getJBox2DWorld() {
-        return physicsWorld;
+        return jboxWorld;
     }
 
     private boolean isCollidable(Entity e) {
-        return e.getComponent(CollidableComponent.class)
-                .map(CollidableComponent::getValue)
-                .orElse(false);
+        CollidableComponent collidable = e.getComponentUnsafe(CollidableComponent.class);
+
+        return collidable != null && collidable.getValue();
     }
 
     private boolean areCollidable(Entity e1, Entity e2) {
         return isCollidable(e1) && isCollidable(e2);
     }
 
-    private boolean supportsPhysics(Entity e) {
-        return e.hasComponent(PhysicsComponent.class);
+    private boolean needManualCheck(Entity e1, Entity e2) {
+        // if no physics -> check manually
+        PhysicsComponent p1 = e1.getComponentUnsafe(PhysicsComponent.class);
+        if (p1 == null)
+            return true;
+
+        PhysicsComponent p2 = e2.getComponentUnsafe(PhysicsComponent.class);
+        if (p2 == null)
+            return true;
+
+        // if one is kinematic and the other is static -> check manually
+        return (p1.body.getType() == BodyType.KINEMATIC && p2.body.getType() == BodyType.STATIC)
+                || (p2.body.getType() == BodyType.KINEMATIC && p1.body.getType() == BodyType.STATIC);
     }
 
     /**
@@ -132,9 +143,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         Object type1 = e1.getComponentUnsafe(TypeComponent.class).getValue();
         Object type2 = e2.getComponentUnsafe(TypeComponent.class).getValue();
 
-        for (int i = 0; i < collisionHandlers.size(); i++) {
-            CollisionHandler handler = collisionHandlers.get(i);
-
+        for (CollisionHandler handler : collisionHandlers) {
             if (handler.equal(type1, type2)) {
                 return handler;
             }
@@ -143,14 +152,41 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         return null;
     }
 
+    private CollisionPair getPair(Entity e1, Entity e2) {
+        int index = getPairIndex(e1, e2);
+
+        return index == -1 ? null : collisions.get(index);
+    }
+
+    private int getPairIndex(Entity e1, Entity e2) {
+        for (int i = 0; i < collisions.size; i++) {
+            CollisionPair pair = collisions.get(i);
+            if (pair.equal(e1, e2)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     @Inject
     protected PhysicsWorld(@Named("appHeight") double appHeight) {
         this.appHeight = appHeight;
 
+        initCollisionPool();
         initContactListener();
         initParticles();
 
         log.debug("Physics world initialized");
+    }
+
+    private void initCollisionPool() {
+        pooler.registerPool(CollisionPair.class, new Pool<CollisionPair>() {
+            @Override
+            protected CollisionPair newObject() {
+                return new CollisionPair();
+            }
+        });
     }
 
     /**
@@ -159,64 +195,13 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      * Only collidable entities are checked.
      */
     private void initContactListener() {
-        physicsWorld.setContactListener(new ContactListener() {
-            @Override
-            public void beginContact(Contact contact) {
-                Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
-                Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
-
-                if (!areCollidable(e1, e2))
-                    return;
-
-                CollisionHandler handler = getHandler(e1, e2);
-                if (handler != null) {
-                    CollisionPair pair = new CollisionPair(e1, e2, handler);
-
-                    if (!collisions.containsKey(pair)) {
-                        collisions.put(pair, tick.get());
-
-                        HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
-                        HitBox boxB = (HitBox)contact.getFixtureB().getUserData();
-
-                        pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(),
-                                e1 == pair.getA() ? boxA : boxB,
-                                e2 == pair.getB() ? boxB : boxA);
-                    }
-                }
-            }
-
-            @Override
-            public void endContact(Contact contact) {
-                Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
-                Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
-
-                if (!areCollidable(e1, e2))
-                    return;
-
-                CollisionHandler handler = getHandler(e1, e2);
-                if (handler != null) {
-                    CollisionPair pair = new CollisionPair(e1, e2, handler);
-
-                    if (collisions.containsKey(pair)) {
-                        collisions.put(pair, -1L);
-                    }
-                }
-            }
-
-            @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {
-            }
-
-            @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {
-            }
-        });
+        jboxWorld.setContactListener(this);
     }
 
     private void initParticles() {
-        physicsWorld.setParticleGravityScale(0.4f);
-        physicsWorld.setParticleDensity(1.2f);
-        physicsWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
+        jboxWorld.setParticleGravityScale(0.4f);
+        jboxWorld.setParticleDensity(1.2f);
+        jboxWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
     @Override
@@ -232,37 +217,97 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entities.remove(entity);
+        entities.removeValue(entity, true);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
             destroyBody(entity);
         }
     }
 
-    /**
-     * Physics tick.
-     *
-     * @param event update event
-     */
     @Override
-    public void onUpdateEvent(UpdateEvent event) {
-        tick.set(event.tick());
-        physicsWorld.step((float) event.tpf(), 8, 3);
+    public void onWorldUpdate(double tpf) {
+        jboxWorld.step((float) tpf, 8, 3);
 
         checkCollisions();
-        notifyCollisionHandlers();
+        notifyCollisions();
     }
 
     /**
      * Resets physics world.
      */
-    public void reset() {
+    @Override
+    public void onWorldReset() {
         log.debug("Resetting physics world");
 
         entities.clear();
         collisions.clear();
         collisionHandlers.clear();
     }
+
+    @Override
+    public void beginContact(Contact contact) {
+        Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
+        Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
+
+        if (!areCollidable(e1, e2))
+            return;
+
+        CollisionHandler handler = getHandler(e1, e2);
+        if (handler != null) {
+
+            CollisionPair pair = getPair(e1, e2);
+
+            // no collision registered, so add the pair
+            if (pair == null) {
+                pair = pooler.get(CollisionPair.class);
+                pair.init(e1, e2, handler);
+
+                // add pair to list of collisions so we still use it
+                collisions.add(pair);
+
+                HitBox boxA = (HitBox)contact.getFixtureA().getUserData();
+                HitBox boxB = (HitBox)contact.getFixtureB().getUserData();
+
+                handler.onHitBoxTrigger(pair.getA(), pair.getB(),
+                        e1 == pair.getA() ? boxA : boxB,
+                        e2 == pair.getB() ? boxB : boxA);
+
+                pair.collisionBegin();
+            }
+        }
+    }
+
+    @Override
+    public void endContact(Contact contact) {
+        Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
+        Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
+
+        if (!areCollidable(e1, e2))
+            return;
+
+        CollisionHandler handler = getHandler(e1, e2);
+        if (handler != null) {
+
+            int pairIndex = getPairIndex(e1, e2);
+
+            // collision registered, so remove it and put pair back to pool
+            if (pairIndex != -1) {
+                CollisionPair pair = collisions.get(pairIndex);
+
+                collisions.removeIndex(pairIndex);
+                pair.collisionEnd();
+                pooler.put(pair);
+            }
+        }
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {}
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {}
+
+    private Array<Entity> collidables = new Array<>(false, 128);
 
     /**
      * Perform collision detection for all entities that have
@@ -271,76 +316,89 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      * setCollidable(true).
      */
     private void checkCollisions() {
-        List<Entity> collidables = entities.stream()
-                .filter(this::isCollidable)
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < collidables.size(); i++) {
-            Entity e1 = collidables.get(i);
-
-            for (int j = i + 1; j < collidables.size(); j++) {
-                Entity e2 = collidables.get(j);
-
-                // if both are physics objects, let JBox2D handle collision checks
-                // unless one is kinematic and the other is static
-                if (supportsPhysics(e1) && supportsPhysics(e2)) {
-                    PhysicsComponent p1 = e1.getComponentUnsafe(PhysicsComponent.class);
-                    PhysicsComponent p2 = e2.getComponentUnsafe(PhysicsComponent.class);
-
-                    boolean skip = true;
-                    if ((p1.body.getType() == BodyType.KINEMATIC && p2.body.getType() == BodyType.STATIC)
-                            || (p2.body.getType() == BodyType.KINEMATIC && p1.body.getType() == BodyType.STATIC)) {
-                        skip = false;
-                    }
-                    if (skip)
-                        continue;
-                }
-
-                CollisionHandler handler = getHandler(e1, e2);
-                if (handler != null) {
-                    CollisionPair pair = new CollisionPair(e1, e2, handler);
-
-                    CollisionResult result = e1.getComponentUnsafe(BoundingBoxComponent.class)
-                            .checkCollision(e2.getComponentUnsafe(BoundingBoxComponent.class));
-
-                    if (result.hasCollided()) {
-                        if (!collisions.containsKey(pair)) {
-                            collisions.put(pair, tick.get());
-                            pair.getHandler().onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
-                        }
-                    } else {
-                        if (collisions.containsKey(pair)) {
-                            collisions.put(pair, -1L);
-                        }
-                    }
-                }
+        for (Entity e : entities) {
+            if (isCollidable(e)) {
+                collidables.add(e);
             }
         }
-    }
 
+        for (int i = 0; i < collidables.size; i++) {
+            Entity e1 = collidables.get(i);
+
+            for (int j = i + 1; j < collidables.size; j++) {
+                Entity e2 = collidables.get(j);
+
+                CollisionHandler handler = getHandler(e1, e2);
+
+                // if no handler registered, no need to check for this pair
+                if (handler == null)
+                    continue;
+
+                // if no need for manual check, let jbox handle it
+                if (!needManualCheck(e1, e2)) {
+                    continue;
+                }
+
+                // check if colliding
+                CollisionResult result = Entities.getBBox(e1).checkCollision(Entities.getBBox(e2));
+
+                if (result.hasCollided()) {
+
+                    CollisionPair pair = getPair(e1, e2);
+
+                    // check if pair was not colliding before
+                    if (pair == null) {
+                        pair = pooler.get(CollisionPair.class);
+                        pair.init(e1, e2, handler);
+
+                        // add pair to list of collisions so we still use it
+                        collisions.add(pair);
+
+                        handler.onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
+                        pair.collisionBegin();
+                    }
+
+                    // put result back to pool only if collided
+                    pooler.put(result);
+                } else {
+
+                    int pairIndex = getPairIndex(e1, e2);
+
+                    // collision registered, so end the collision
+                    // and remove it and put pair back to pool
+                    if (pairIndex != -1) {
+                        CollisionPair pair = collisions.get(pairIndex);
+
+                        collisions.removeIndex(pairIndex);
+                        pair.collisionEnd();
+                        pooler.put(pair);
+                    }
+                }
+
+            }
+        }
+
+        collidables.clear();
+    }
+    
     /**
-     * Fires collisions handlers' callbacks based on currently registered collisions.
+     * Fires collisions handlers' collision() callback based on currently registered collisions.
      */
-    private void notifyCollisionHandlers() {
-        List<CollisionPair> toRemove = new ArrayList<>();
-        collisions.forEach((pair, cachedTick) -> {
+    private void notifyCollisions() {
+        for (Iterator<CollisionPair> it = collisions.iterator(); it.hasNext(); ) {
+            CollisionPair pair = it.next();
+
+            // if a pair no longer qualifies for collision then just remove it
             if (!pair.getA().isActive() || !pair.getB().isActive()
                     || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
-                toRemove.add(pair);
-                return;
+
+                it.remove();
+                pooler.put(pair);
+                continue;
             }
 
-            if (cachedTick == -1L) {
-                pair.collisionEnd();
-                toRemove.add(pair);
-            } else if (tick.get() == cachedTick) {
-                pair.collisionBegin();
-            } else if (tick.get() > cachedTick) {
-                pair.collision();
-            }
-        });
-
-        toRemove.forEach(collisions::remove);
+            pair.collision();
+        }
     }
 
     /**
@@ -377,7 +435,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      * @param handler collision handler to remove
      */
     public void removeCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.remove(handler);
+        collisionHandlers.removeValue(handler, true);
     }
 
     /**
@@ -387,7 +445,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      * @param y y component
      */
     public void setGravity(double x, double y) {
-        physicsWorld.setGravity(new Vec2().addLocal((float) x, -(float) y));
+        jboxWorld.setGravity(new Vec2().addLocal((float) x, -(float) y));
     }
 
     /**
@@ -399,8 +457,8 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         BoundingBoxComponent bbox = Entities.getBBox(e);
         PhysicsComponent physics = Entities.getPhysics(e);
 
-        double w = bbox.getWidth(),
-                h = bbox.getHeight();
+        double w = bbox.getWidth();
+        double h = bbox.getHeight();
 
         // if position is 0, 0 then probably not set, so set ourselves
         if (physics.bodyDef.getPosition().x == 0 && physics.bodyDef.getPosition().y == 0) {
@@ -412,7 +470,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
             physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
         }
 
-        physics.body = physicsWorld.createBody(physics.bodyDef);
+        physics.body = jboxWorld.createBody(physics.bodyDef);
 
         createFixtures(e);
 
@@ -433,17 +491,15 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
             Bounds bounds = box.translate(position.getX(), position.getY());
 
             // take world center bounds and subtract from entity center (all in pixels) to get local center
-            Point2D boundsCenter = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
-            Point2D boundsCenterLocal = boundsCenter.subtract(entityCenter);
-
-            //Point2D boundsCenterLocal = box.centerWorld(position.getX(), position.getY()).subtract(entityCenter);
+            Point2D boundsCenterWorld = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, (bounds.getMinY() + bounds.getMaxY()) / 2);
+            Point2D boundsCenterLocal = boundsCenterWorld.subtract(entityCenter);
 
             double w = bounds.getWidth();
             double h = bounds.getHeight();
 
             FixtureDef fd = physics.fixtureDef;
 
-            Shape b2Shape = null;
+            Shape b2Shape;
             BoundingShape boundingShape = box.getShape();
 
             switch (boundingShape.type) {
@@ -455,18 +511,14 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
 
                     b2Shape = circleShape;
                     break;
-                case EDGE:
-                    log.warning("Unsupported hit box shape");
-                    throw new UnsupportedOperationException("Using unsupported (yet) edge shape");
-                    //break;
-                case POLYGON:
-                    //Dimension2D wh = (Dimension2D) boundingShape.data;
 
+                case POLYGON:
                     PolygonShape polygonShape = new PolygonShape();
                     polygonShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
                             new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
                     b2Shape = polygonShape;
                     break;
+
                 case CHAIN:
 
                     if (physics.body.getType() != BodyType.STATIC) {
@@ -486,6 +538,11 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
                     chainShape.createLoop(vertices, vertices.length);
                     b2Shape = chainShape;
                     break;
+
+                case EDGE:
+                default:
+                    log.warning("Unsupported hit box shape");
+                    throw new UnsupportedOperationException("Using unsupported shape: " + boundingShape.type);
             }
 
             // we use definitions from user, but override shape
@@ -531,7 +588,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
         }
         def.setShape(shape);
 
-        ParticleGroup particleGroup = physicsWorld.createParticleGroup(def);
+        ParticleGroup particleGroup = jboxWorld.createParticleGroup(def);
 
         Color color = e.getComponentUnsafe(PhysicsParticleComponent.class).getColor();
         e.addControl(new PhysicsParticleControl(particleGroup, color));
@@ -543,7 +600,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      * @param e physics entity
      */
     private void destroyBody(Entity e) {
-        physicsWorld.destroyBody(Entities.getPhysics(e).body);
+        jboxWorld.destroyBody(Entities.getPhysics(e).body);
     }
 
     private EdgeCallback raycastCallback = new EdgeCallback();
@@ -557,7 +614,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      */
     public RaycastResult raycast(Point2D start, Point2D end) {
         raycastCallback.reset();
-        physicsWorld.raycast(raycastCallback, toPoint(start), toPoint(end));
+        jboxWorld.raycast(raycastCallback, toPoint(start), toPoint(end));
 
         Entity entity = null;
         Point2D point = null;
@@ -634,7 +691,6 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
     private static class EdgeCallback implements RayCastCallback {
         Fixture fixture;
         Vec2 point;
-        //Vec2 normal;
         float bestFraction = 1.0f;
 
         @Override
@@ -646,7 +702,6 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
             if (fraction < bestFraction) {
                 this.fixture = fixture;
                 this.point = point.clone();
-                //this.normal = normal.clone();
                 bestFraction = fraction;
             }
 
@@ -667,7 +722,8 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
      */
     public final class PhysicsParticleControl extends ParticleControl {
         private ParticleGroup group;
-        private double radiusMeters, radiusPixels;
+        private double radiusMeters;
+        private double radiusPixels;
         private Color color;
 
         private PhysicsParticleControl(ParticleGroup group, Color color) {
@@ -696,7 +752,7 @@ public final class PhysicsWorld implements EntityWorldListener, UpdateEventListe
 
         @Override
         public void onRemoved(Entity entity) {
-            physicsWorld.destroyParticlesInGroup(group);
+            jboxWorld.destroyParticlesInGroup(group);
             super.onRemoved(entity);
         }
     }

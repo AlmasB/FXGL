@@ -99,6 +99,6 @@ public class ProjectileControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        Entities.getPosition(entity).translate(velocity.multiply(60 * tpf));
+        Entities.getPosition(entity).translate(velocity.multiply(tpf));
     }
 }

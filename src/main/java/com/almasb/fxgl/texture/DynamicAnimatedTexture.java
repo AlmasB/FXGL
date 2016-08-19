@@ -27,14 +27,11 @@
 package com.almasb.fxgl.texture;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.event.FXGLEvent;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
+import com.almasb.fxgl.time.LocalTimer;
+import com.almasb.fxgl.time.UpdateEvent;
+import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,32 +44,30 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class DynamicAnimatedTexture extends Texture {
+public final class DynamicAnimatedTexture extends Texture implements UpdateEventListener {
 
     private List<AnimationChannel> animationChannels = new ArrayList<>();
     private AnimationChannel defaultChannel;
     private AnimationChannel currentChannel;
 
-    private IntegerProperty frame = new SimpleIntegerProperty(0);
-    private ChangeListener<Number> frameListener;
+    private int currentFrame = 0;
+    private double timePerAnimationFrame = 0;
+    private LocalTimer animationTimer;
 
-    private Timeline timeline = new Timeline();
+    private Runnable onAnimationEnd;
 
     DynamicAnimatedTexture(Image image, AnimationChannel initialChannel, AnimationChannel... channels) {
         super(image);
         this.defaultChannel = initialChannel;
-        timeline.setCycleCount(Timeline.INDEFINITE);
 
         Collections.addAll(animationChannels, channels);
         setAnimationChannel(initialChannel);
 
-        FXGL.getEventBus().addEventHandler(FXGLEvent.PAUSE, e -> {
-            timeline.pause();
-        });
+        animationTimer = FXGL.newLocalTimer();
 
-        FXGL.getEventBus().addEventHandler(FXGLEvent.RESUME, e -> {
-            timeline.play();
-        });
+        // TODO: this listener needs to be removed somehow,
+        // possibly via dispose as this is also an asset
+        FXGL.getMasterTimer().addUpdateListener(this);
     }
 
     /**
@@ -99,30 +94,18 @@ public final class DynamicAnimatedTexture extends Texture {
             throw new IllegalArgumentException("Channel: [" + channel + "] is not registered for this texture.");
         }
 
-        if (currentChannel == channel)
+        if (currentChannel == channel && channel != defaultChannel)
             return;
 
+        this.onAnimationEnd = onAnimationEnd;
         currentChannel = channel;
-        timeline.setCycleCount(currentChannel == defaultChannel ? Timeline.INDEFINITE : 1);
-        timeline.setOnFinished(currentChannel == defaultChannel ? null : e -> {
-            onAnimationEnd.run();
-            setAnimationChannel(defaultChannel);
-        });
+
+        currentFrame = 0;
+        timePerAnimationFrame = channel.computeFrameTime();
 
         setFitWidth(channel.computeFrameWidth());
         setFitHeight(channel.computeFrameHeight());
         setViewport(channel.computeViewport(0));
-
-        if (frameListener != null) {
-            frame.removeListener(frameListener);
-        }
-
-        frame.set(0);
-        frameListener = (obs, old, newFrame) -> setViewport(channel.computeViewport(newFrame.intValue()));
-        frame.addListener(frameListener);
-
-        timeline.getKeyFrames().setAll(new KeyFrame(channel.duration(), new KeyValue(frame, channel.frames() - 1)));
-        timeline.playFromStart();
     }
 
     /**
@@ -130,5 +113,21 @@ public final class DynamicAnimatedTexture extends Texture {
      */
     public AnimationChannel getCurrentChannel() {
         return currentChannel;
+    }
+
+    @Override
+    public void onUpdateEvent(UpdateEvent event) {
+        if (animationTimer.elapsed(Duration.seconds(timePerAnimationFrame))) {
+
+            setViewport(currentChannel.computeViewport(currentFrame));
+            currentFrame++;
+
+            if (currentFrame == currentChannel.frames()) {
+                onAnimationEnd.run();
+                setAnimationChannel(defaultChannel);
+            }
+
+            animationTimer.capture();
+        }
     }
 }

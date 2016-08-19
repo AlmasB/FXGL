@@ -29,6 +29,8 @@ package com.almasb.fxgl.scene.menu;
 import com.almasb.fxgl.io.SaveFile;
 
 /**
+ * Listener for events that occur within menus.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface MenuEventListener {

@@ -35,6 +35,7 @@ import javafx.scene.Node;
 /**
  * Entity that guarantees to have Type, Position, Rotation, BoundingBox and View
  * components.
+ * Provides methods to conveniently access commonly used features.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

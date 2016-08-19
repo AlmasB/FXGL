@@ -33,21 +33,15 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.settings.GameSettings;
-import com.badlogic.gdx.ai.btree.BehaviorTree;
-import com.badlogic.gdx.ai.btree.Task;
-import com.badlogic.gdx.ai.btree.branch.Selector;
-import com.badlogic.gdx.ai.btree.branch.Sequence;
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import common.PlayerControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * This is an example of a basic FXGL game application.
+ * Shows to how use gdxAI BehaviorTree.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- *
  */
 public class BehaviorSample extends GameApplication {
 
@@ -70,9 +64,6 @@ public class BehaviorSample extends GameApplication {
     @Override
     protected void initInput() {
         Input input = getInput();
-        input.addInputMapping(new InputMapping("Open", KeyCode.O));
-        input.addInputMapping(new InputMapping("Test", KeyCode.O, InputModifier.CTRL));
-
 
         input.addAction(new UserAction("Move Left") {
             @Override
@@ -116,7 +107,7 @@ public class BehaviorSample extends GameApplication {
 
         playerControl = player.getControlUnsafe(PlayerControl.class);
 
-        GameEntity enemy = Entities.builder()
+        Entities.builder()
                 .at(400, 100)
                 .viewFromNode(new Rectangle(40, 40, Color.RED))
                 .with(new AIControl("patrol.tree"))
@@ -127,64 +118,6 @@ public class BehaviorSample extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40, Color.LIGHTGOLDENRODYELLOW))
                 .with(new AIControl("patrol.tree"))
                 .buildAndAttach(getGameWorld());
-
-        //testB(enemy);
-        //enemy.addControl();
-
-//        BehaviorTreeLibraryManager libraryManager = BehaviorTreeLibraryManager.getInstance();
-//
-//        BehaviorTree<GameEntity> actualBehavior = new BehaviorTree<>(createDogBehavior());
-//        libraryManager.getLibrary().registerArchetypeTree("guard", actualBehavior);
-//
-//        tree = libraryManager.createBehaviorTree("guard", enemy);
-    }
-
-    private BehaviorTree<GameEntity> tree;
-
-    private BehaviorTree<GameEntity> testB(GameEntity enemy) {
-
-        try {
-            BehaviorTreeParser<GameEntity> parser = new BehaviorTreeParser<>(BehaviorTreeParser.DEBUG_HIGH);
-
-            tree = parser.parse(getClass().getResourceAsStream("/assets/ai/patrol.tree"), enemy);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    // if (target close)
-    //    do
-    //       if (can see player)
-    //          attack
-    //       else
-    //           patrol
-    // else
-    //    while (!target close)
-    //         move to target
-    private Task<GameEntity> createDogBehavior () {
-        Selector<GameEntity> selector = new Selector<>();
-
-        Sequence<GameEntity> seq1 = new Sequence<>();
-
-
-        Selector<GameEntity> sel2 = new Selector<>();
-
-        Sequence<GameEntity> seq2 = new Sequence<>();
-        seq2.addChild(new CanSeePlayerCondition());
-        seq2.addChild(new AttackTask());
-
-        sel2.addChild(seq2);
-        sel2.addChild(new PatrolTask());
-
-        seq1.addChild(new TargetCloseCondition());
-        seq1.addChild(sel2);
-
-        selector.addChild(seq1);
-        selector.addChild(new MoveTask());
-
-        return selector;
     }
 
     @Override
@@ -194,20 +127,7 @@ public class BehaviorSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate(double tpf) {
-        //tree.step();
-        //GdxAI.getTimepiece().update((float) tpf);
-    }
-
-    @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
-    public void test() {
-        System.out.println("O");
-    }
-
-    @OnUserAction(name = "Test", type = ActionType.ON_ACTION_BEGIN)
-    public void test2() {
-        System.out.println("Ctrl + O");
-    }
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

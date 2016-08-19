@@ -26,19 +26,16 @@
 package com.almasb.fxgl.physics;
 
 /**
- * For internal use
+ * For internal use.
  *
- * @param <T>
+ * @param <T> pair type
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 class Pair<T> {
 
     private T a, b;
 
     Pair(T a, T b) {
-        if (a == null || b == null)
-            throw new IllegalArgumentException("Objects must not be null");
         this.a = a;
         this.b = b;
     }
@@ -47,8 +44,16 @@ class Pair<T> {
         return a;
     }
 
+    void setA(T a) {
+        this.a = a;
+    }
+
     T getB() {
         return b;
+    }
+
+    void setB(T b) {
+        this.b = b;
     }
 
     @Override
@@ -60,7 +65,15 @@ class Pair<T> {
 
     @Override
     public int hashCode() {
-        return a.hashCode() + b.hashCode();
+        int hash = 0;
+
+        if (a != null)
+            hash += a.hashCode();
+
+        if (b != null)
+            hash += b.hashCode();
+
+        return hash;
     }
 
     /**

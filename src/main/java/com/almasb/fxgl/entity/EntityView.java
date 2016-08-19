@@ -123,7 +123,7 @@ public class EntityView extends Parent {
 
             removedFromScene = true;
         } catch (Exception e) {
-            log.warning("View wasn't removed from scene: " + e.getMessage());
+            log.warning("View wasn't removed from scene: " + e);
         }
     }
 
@@ -154,6 +154,9 @@ public class EntityView extends Parent {
         return renderLayer.get();
     }
 
+    /**
+     * @return render layer property
+     */
     public ObjectProperty<RenderLayer> renderLayerProperty() {
         return renderLayer;
     }

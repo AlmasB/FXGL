@@ -43,13 +43,14 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Convenient access to saving and loading game data.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class SaveLoadManager {
 
@@ -147,18 +148,12 @@ public final class SaveLoadManager {
 
         return FS.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT))
-                .then(n -> new IOTask<Void>("sortingSaveList") {
-                    @Override
-                    protected Void onExecute() throws Exception {
-
-                        Platform.runLater(() -> {
-                            saveFiles.add(saveFile);
-                            Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
-                        });
-
-                        return null;
-                    }
-                });
+                .then(n -> IOTask.ofVoid("updateSaves", () -> {
+                    Platform.runLater(() -> {
+                        saveFiles.add(saveFile);
+                        Collections.sort(saveFiles, SaveFile.RECENT_FIRST);
+                    });
+                }));
     }
 
     /**
@@ -226,15 +221,9 @@ public final class SaveLoadManager {
 
         return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT))
-                .then(n -> new IOTask<Void>("updatingSaveList") {
-                    @Override
-                    protected Void onExecute() throws Exception {
-
-                        Platform.runLater(() -> saveFiles.remove(saveFile));
-
-                        return null;
-                    }
-                });
+                .then(n -> IOTask.ofVoid("updateSaves", () -> {
+                    Platform.runLater(() -> saveFiles.remove(saveFile));
+                }));
     }
 
     /**
@@ -282,17 +271,12 @@ public final class SaveLoadManager {
         log.debug(() -> "Loading save files");
 
         return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
-                .then(fileNames -> new IOTask<List<SaveFile> >("readSaveFiles") {
-                            @Override
-                            protected List<SaveFile> onExecute() throws Exception {
-
-                                return fileNames.stream()
-                                        .map(name -> FS.<SaveFile>readDataTask(saveDir() + name).execute())
-                                        .filter(file -> file != null)
-                                        .collect(Collectors.toList());
-                            }
-                        }
-                );
+                .then(fileNames -> IOTask.of("readSaveFiles", () -> {
+                    return fileNames.stream()
+                            .map(name -> FS.<SaveFile>readDataTask(saveDir() + name).execute())
+                            .filter(file -> file != null)
+                            .collect(Collectors.toList());
+                }));
     }
 
     /**
@@ -303,20 +287,15 @@ public final class SaveLoadManager {
     public IOTask<SaveFile> loadLastModifiedSaveFileTask() {
         log.debug(() -> "Loading last modified save file");
 
-        return loadSaveFilesTask().then(files -> {
-            return new IOTask<SaveFile>("findLastSave") {
-                @Override
-                protected SaveFile onExecute() throws Exception {
-                    if (files.isEmpty()) {
-                        throw new FileNotFoundException("No save files found");
-                    }
+        return loadSaveFilesTask().then(files -> IOTask.of("findLastSave", () -> {
+            if (files.isEmpty()) {
+                throw new FileNotFoundException("No save files found");
+            }
 
-                    return files.stream()
-                            .sorted(SaveFile.RECENT_FIRST)
-                            .findFirst()
-                            .get();
-                }
-            };
-        });
+            return files.stream()
+                    .sorted(SaveFile.RECENT_FIRST)
+                    .findFirst()
+                    .get();
+        }));
     }
 }

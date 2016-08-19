@@ -27,8 +27,16 @@
 package com.almasb.fxgl.time;
 
 /**
+ * Listener for main update tick.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface UpdateEventListener {
+
+    /**
+     * Called on each update tick.
+     *
+     * @param event the event data
+     */
     void onUpdateEvent(UpdateEvent event);
 }

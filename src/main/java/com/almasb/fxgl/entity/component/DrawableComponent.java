@@ -32,6 +32,8 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.function.Consumer;
 
 /**
+ * TODO: API INCOMPLETE.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class DrawableComponent extends AbstractComponent {

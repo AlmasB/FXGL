@@ -32,9 +32,6 @@ import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.GameEntity
 import com.badlogic.gdx.ai.btree.BehaviorTree
-import com.badlogic.gdx.ai.btree.Task
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
 import java.util.*
 
 /**

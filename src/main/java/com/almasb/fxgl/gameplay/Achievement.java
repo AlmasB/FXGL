@@ -132,7 +132,6 @@ public class Achievement {
     }
 
     /**
-     *
      * @return achievement name
      */
     public String getName() {

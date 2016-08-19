@@ -31,12 +31,13 @@ import javafx.geometry.Point2D;
 import java.util.Optional;
 
 /**
+ * TODO: redesign to avoid optionals.
+ *
  * Result of a raycast. Contains optional entity and point
  * which represent first non ignored physics entity
- * and its point of collision in the ray's path
+ * and its point of collision in the ray's path.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 public final class RaycastResult {
 
