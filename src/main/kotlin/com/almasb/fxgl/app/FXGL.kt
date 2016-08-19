@@ -29,7 +29,6 @@ package com.almasb.fxgl.app
 import com.almasb.easyio.FS
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.logging.MockLoggerFactory
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.time.LocalTimer
@@ -43,7 +42,6 @@ import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.LocalDate
 import java.util.*
 import java.util.function.Consumer
 

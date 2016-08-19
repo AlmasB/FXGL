@@ -26,12 +26,10 @@
 
 package com.almasb.fxgl.scene.menu;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.gameutils.math.GameMath;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;

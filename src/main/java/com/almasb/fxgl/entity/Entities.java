@@ -36,10 +36,8 @@ import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.util.Duration;
 
 /**
  * Helper class with static convenience methods.

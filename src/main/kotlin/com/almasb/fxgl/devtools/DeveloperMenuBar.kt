@@ -26,9 +26,7 @@
 
 package com.almasb.fxgl.devtools
 
-import javafx.scene.control.Menu
 import javafx.scene.control.MenuBar
-import javafx.scene.control.MenuButton
 
 /**
  *

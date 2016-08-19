@@ -51,8 +51,8 @@ import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
-import com.almasb.fxgl.util.Pooler;
 import com.almasb.fxgl.util.FXGLPooler;
+import com.almasb.fxgl.util.Pooler;
 
 /**
  * Marks a service type.

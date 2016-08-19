@@ -28,8 +28,8 @@ package com.almasb.fxgl.audio
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty

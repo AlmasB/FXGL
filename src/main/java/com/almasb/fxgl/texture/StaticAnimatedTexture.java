@@ -27,14 +27,9 @@
 package com.almasb.fxgl.texture;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.time.UpdateEventListener;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.util.Duration;

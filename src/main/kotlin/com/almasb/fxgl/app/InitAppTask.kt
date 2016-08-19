@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.io.DataFile
 import com.almasb.fxgl.logging.SystemLogger
 import javafx.concurrent.Task

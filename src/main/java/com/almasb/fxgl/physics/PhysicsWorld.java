@@ -63,7 +63,8 @@ import org.jbox2d.particle.ParticleGroup;
 import org.jbox2d.particle.ParticleGroupDef;
 import org.jbox2d.particle.ParticleSystem;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Manages physics entities, collision handling and performs the physics tick.
