@@ -26,18 +26,20 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -265,5 +267,28 @@ public class BoundingBoxComponentTest {
     @Test
     public void testRange() throws Exception {
 
+    }
+
+    @Test
+    public void testSerialization() {
+        bbox.addHitBox(new HitBox("BOX", BoundingShape.box(30, 40)));
+
+        // write
+        Bundle bundle = new Bundle("BBOXTest");
+        bbox.write(bundle);
+
+        // read
+        BoundingBoxComponent bbox2 = new BoundingBoxComponent();
+        bbox2.read(bundle);
+
+        assertThat(bbox2.getWidth(), is(30.0));
+        assertThat(bbox2.getHeight(), is(40.0));
+
+        List<HitBox> boxes = bbox2.hitBoxesProperty();
+
+        assertThat(boxes.size(), is(1));
+        assertThat(boxes.get(0).getName(), is("BOX"));
+        assertThat(boxes.get(0).getWidth(), is(30.0));
+        assertThat(boxes.get(0).getHeight(), is(40.0));
     }
 }

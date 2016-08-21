@@ -84,6 +84,11 @@ public class BoundingBoxComponent extends AbstractComponent
     @Override
     public void onAdded(Entity entity) {
         position = entity.getComponentUnsafe(PositionComponent.class);
+
+        for (int i = 0; i < hitBoxes.size(); i++) {
+            hitBoxes.get(i).bindX(position.xProperty());
+            hitBoxes.get(i).bindX(position.yProperty());
+        }
     }
 
     @Override
@@ -294,6 +299,9 @@ public class BoundingBoxComponent extends AbstractComponent
 
         while (c.next()) {
             if (c.wasAdded()) {
+                if (position == null)
+                    continue;
+
                 for (HitBox box : c.getAddedSubList()) {
                     box.bindX(position.xProperty());
                     box.bindY(position.yProperty());
