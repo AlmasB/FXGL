@@ -50,7 +50,7 @@ public class ViewportSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("InitSampleSuperEasy");
+        settings.setTitle("ViewportSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
