@@ -116,6 +116,10 @@ public abstract class FXGLApplication extends Application {
         systemListeners.remove(listener);
     }
 
+    void runTask(Class<? extends Runnable> type) {
+        FXGL.getInstance(type).run();
+    }
+
     @Override
     public final void init() throws Exception {
         log.debug("Initializing FXGL");
@@ -137,7 +141,7 @@ public abstract class FXGLApplication extends Application {
 
         log.infof("FXGL configuration took:    %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
-        new UpdaterTask().run();
+        runTask(UpdaterTask.class);
     }
 
     @Override
