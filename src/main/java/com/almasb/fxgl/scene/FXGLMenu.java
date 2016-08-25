@@ -93,6 +93,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected final MenuType type;
 
+    protected MenuEventListener listener;
+
     protected final Pane menuRoot = new Pane();
     protected final Pane contentRoot = new Pane();
 
@@ -101,6 +103,7 @@ public abstract class FXGLMenu extends FXGLScene {
     public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
         this.type = type;
+        this.listener = app.getMenuListener();
 
         getRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),
@@ -110,7 +113,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         // we don't data-bind the name because menu subclasses
         // might use some fancy UI without Text / Label
-        app.profileNameProperty().addListener((o, oldName, newName) -> {
+        listener.profileNameProperty().addListener((o, oldName, newName) -> {
             if (!oldName.isEmpty()) {
                 // remove last node which *should* be profile view
                 getRoot().getChildren().remove(getRoot().getChildren().size() - 1);
@@ -190,11 +193,11 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentLoad() {
         ListView<SaveFile> list = new ListView<>();
 
-        list.setItems(app.getSaveLoadManager().saveFiles());
+        list.setItems(listener.getSaveLoadManager().saveFiles());
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         // this runs async
-        app.getSaveLoadManager().querySaveFiles();
+        listener.getSaveLoadManager().querySaveFiles();
 
         Button btnLoad = UIFactory.newButton("LOAD");
         btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
@@ -453,17 +456,6 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final void addUINode(Node node) {
         getRoot().getChildren().add(node);
-    }
-
-    private MenuEventListener listener;
-
-    /**
-     * Set main listener for menu events.
-     *
-     * @param listener menu listener
-     */
-    public void setListener(MenuEventListener listener) {
-        this.listener = listener;
     }
 
     private void fireMenuEvent(Event event) {

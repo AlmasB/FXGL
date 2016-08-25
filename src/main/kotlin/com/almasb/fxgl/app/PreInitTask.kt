@@ -24,20 +24,44 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event
+package com.almasb.fxgl.app
 
-import javafx.event.Event
-import javafx.event.EventType
+import com.almasb.easyio.EasyIO
+import com.almasb.fxgl.gameplay.GameWorld
+import com.almasb.fxgl.physics.PhysicsWorld
+import com.google.inject.Inject
 
 /**
  *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class IntroFinishedEvent : Event(ANY) {
+class PreInitTask
+@Inject constructor(private val app: GameApplication) : Runnable {
 
-    companion object {
-        @JvmField val ANY = EventType<IntroFinishedEvent>(Event.ANY, "INTRO_EVENT")
+    private val log = FXGL.getLogger(javaClass)
+
+    override fun run() {
+        EasyIO.defaultExceptionHandler = FXGLApplication.getDefaultCheckedExceptionHandler()
+        EasyIO.defaultExecutor = app.getExecutor()
+
+        log.debug("Injecting gameWorld & physicsWorld")
+        app.gameWorld = FXGL.getInstance(GameWorld::class.java)
+        app.physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
+
+        app.initAchievements()
+
+        // we call this early to process user input bindings
+        // so we can correctly display them in menus
+        // 1. register system actions
+        SystemActions.bind(app.getInput())
+
+        // 2. register user actions
+        app.initInput()
+
+        // 3. scan for annotated methods and register them too
+        app.getInput().scanForUserActions(this)
+
+        app.preInit()
     }
-
-    override fun toString() = "IntroFinishedEvent"
 }

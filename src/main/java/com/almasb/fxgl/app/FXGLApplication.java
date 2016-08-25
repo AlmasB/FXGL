@@ -117,6 +117,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     void runTask(Class<? extends Runnable> type) {
+        log.debug("Running task: " + type.getSimpleName());
         FXGL.getInstance(type).run();
     }
 

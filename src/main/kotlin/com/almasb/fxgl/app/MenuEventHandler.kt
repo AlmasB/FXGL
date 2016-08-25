@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.ProfileSelectedEvent
 import com.almasb.fxgl.event.SaveEvent
@@ -39,6 +40,8 @@ import com.almasb.fxgl.ui.UIFactory
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
+import javafx.event.EventHandler
+import javafx.scene.input.KeyEvent
 import java.time.LocalDateTime
 import java.util.function.Consumer
 
@@ -47,17 +50,13 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MenuEventHandler(private val app: GameApplication) : MenuEventListener {
+internal class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
 
     private val log = FXGL.getLogger(javaClass)
 
     private lateinit var saveLoadManager: SaveLoadManager
 
-    fun getSaveLoadManager(): SaveLoadManager {
-        if (saveLoadManager == null) {
-            throw IllegalStateException("SaveLoadManager is not ready")
-        }
-
+    override fun getSaveLoadManager(): SaveLoadManager {
         return saveLoadManager
     }
 
@@ -71,8 +70,12 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
      */
     private val profileName = ReadOnlyStringWrapper("")
 
+    fun isProfileSelected() = profileName.value.isNotEmpty()
+
     init {
         defaultProfile = createProfile()
+
+        app.eventBus.addEventHandler(FXGLEvent.EXIT, { saveProfile() })
     }
 
     override fun onNewGame() {
@@ -174,10 +177,40 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         })
     }
 
+    /* MENU KEY HANDLER */
+
+    private var canSwitchGameMenu = true
+
+    private fun onMenuKey(pressed: Boolean) {
+        if (!pressed) {
+            canSwitchGameMenu = true
+            return
+        }
+
+        if (canSwitchGameMenu) {
+            if (app.getState() === ApplicationState.GAME_MENU) {
+                canSwitchGameMenu = false
+                app.resume()
+            } else if (app.getState() === ApplicationState.PLAYING) {
+                canSwitchGameMenu = false
+                app.pause()
+                app.setState(ApplicationState.GAME_MENU)
+            } else {
+                log.warning("Menu key pressed in unknown state: " + app.getState())
+            }
+        }
+    }
+
+    override fun handle(event: KeyEvent) {
+        if (event.getCode() == FXGL.getSettings().getMenuKey()) {
+            onMenuKey(event.getEventType() == KeyEvent.KEY_PRESSED)
+        }
+    }
+
     /**
      * @return profile name property (read-only)
      */
-    fun profileNameProperty(): ReadOnlyStringProperty {
+    override fun profileNameProperty(): ReadOnlyStringProperty {
         return profileName.readOnlyProperty
     }
 
@@ -212,7 +245,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     /**
      * Restores default settings, e.g. audio, video, controls.
      */
-    fun restoreDefaultSettings() {
+    override fun restoreDefaultSettings() {
         app.eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
 

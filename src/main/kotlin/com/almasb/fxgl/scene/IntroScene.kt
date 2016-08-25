@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.event.IntroFinishedEvent
+
 /**
  * Intro animation / video played before game starts
  * if intro is enabled in settings.
@@ -38,27 +41,13 @@ package com.almasb.fxgl.scene
 abstract class IntroScene : FXGLScene() {
 
     /**
-     * Called when intro finished.
-     */
-    private lateinit var onFinished: Runnable
-
-    /**
-     * INTERNAL.
-     *
-     * @param onFinished code to call on finish
-     */
-    fun setOnFinished(onFinished: Runnable) {
-        this.onFinished = onFinished
-    }
-
-    /**
      * Closes intro and initializes the next game state, whether it's a menu or game.
      *
      * Note: call this when your intro completes, otherwise
      * the game won't proceed to next state.
      */
     protected fun finishIntro() {
-        onFinished.run()
+        FXGL.getEventBus().fireEvent(IntroFinishedEvent())
     }
 
     /**

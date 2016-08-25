@@ -26,7 +26,9 @@
 
 package com.almasb.fxgl.scene.menu;
 
+import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.io.SaveFile;
+import javafx.beans.property.ReadOnlyStringProperty;
 
 /**
  * Listener for events that occur within menus.
@@ -54,4 +56,10 @@ public interface MenuEventListener {
     void onExit();
 
     void onExitToMainMenu();
+
+    ReadOnlyStringProperty profileNameProperty();
+
+    void restoreDefaultSettings();
+
+    SaveLoadManager getSaveLoadManager();
 }

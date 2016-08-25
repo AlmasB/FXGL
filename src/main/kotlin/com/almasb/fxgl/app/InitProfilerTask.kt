@@ -24,20 +24,33 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event
+package com.almasb.fxgl.app
 
-import javafx.event.Event
-import javafx.event.EventType
+import com.almasb.fxgl.event.FXGLEvent
+import com.google.inject.Inject
 
 /**
  *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class IntroFinishedEvent : Event(ANY) {
+class InitProfilerTask
+@Inject constructor(private val app: GameApplication) : Runnable {
 
-    companion object {
-        @JvmField val ANY = EventType<IntroFinishedEvent>(Event.ANY, "INTRO_EVENT")
+    private val log = FXGL.getLogger(javaClass)
+
+    override fun run() {
+        if (app.getSettings().isProfilingEnabled()) {
+            val profiler = FXGL.newProfiler()
+
+            app.getEventBus().addEventHandler(FXGLEvent.EXIT, { e ->
+                profiler.stop()
+                profiler.print()
+            })
+
+            log.debug("Injecting profiler")
+            app.profiler = profiler
+            profiler.start()
+        }
     }
-
-    override fun toString() = "IntroFinishedEvent"
 }
