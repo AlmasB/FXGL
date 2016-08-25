@@ -50,7 +50,6 @@ public class ReadOnlyGameSettings {
     protected boolean fullScreen = false;
     protected boolean introEnabled = true;
     protected boolean menuEnabled = true;
-    protected boolean showFPS = true;
     protected boolean profilingEnabled = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
@@ -78,7 +77,6 @@ public class ReadOnlyGameSettings {
         this.fullScreen = copy.fullScreen;
         this.introEnabled = copy.introEnabled;
         this.menuEnabled = copy.menuEnabled;
-        this.showFPS = copy.showFPS;
         this.profilingEnabled = copy.profilingEnabled;
         this.appMode = copy.appMode;
         this.menuStyle = copy.menuStyle;
@@ -116,7 +114,7 @@ public class ReadOnlyGameSettings {
     }
 
     public final boolean isFPSShown() {
-        return showFPS;
+        return profilingEnabled;
     }
 
     public final boolean isProfilingEnabled() {
@@ -152,7 +150,6 @@ public class ReadOnlyGameSettings {
                 .append("Fullscreen: ").append(fullScreen).append('\n')
                 .append("Intro: ").append(introEnabled).append('\n')
                 .append("Menus: ").append(menuEnabled).append('\n')
-                .append("Show FPS: ").append(showFPS).append('\n')
                 .append("Profiling: ").append(profilingEnabled).append('\n')
                 .append("App Mode: ").append(appMode).append('\n')
                 .append("Menu Style: ").append(menuStyle).append('\n')

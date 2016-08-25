@@ -129,7 +129,7 @@ public final class GameSettings extends ReadOnlyGameSettings {
      * @defaultValue true
      */
     public void setShowFPS(boolean b) {
-        showFPS = b;
+        profilingEnabled = b;
     }
 
     /**
