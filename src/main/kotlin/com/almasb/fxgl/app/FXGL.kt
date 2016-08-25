@@ -238,6 +238,7 @@ class FXGL private constructor() {
 
                     internalProperties.clear()
 
+                    bind(GameApplication::class.java).toInstance(internalApp)
                     bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
                     bind(ApplicationMode::class.java).toInstance(internalSettings.getApplicationMode())
 
