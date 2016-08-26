@@ -46,7 +46,7 @@ import java.util.function.Supplier;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class GTAVMenu extends FXGLMenu {
+public class GTAVMenu extends FXGLMenu {
 
     private VBox vbox = new VBox(50);
 

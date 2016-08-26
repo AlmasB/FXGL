@@ -51,7 +51,7 @@ import java.util.function.Supplier;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLDefaultMenu extends FXGLMenu {
+public class FXGLDefaultMenu extends FXGLMenu {
 
     public FXGLDefaultMenu(GameApplication app, MenuType type) {
         super(app, type);
