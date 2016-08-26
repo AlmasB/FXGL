@@ -36,7 +36,9 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class TextLevelParser {
+class TextLevelParser(val entityFactory: EntityFactory) {
+
+    constructor() : this(object : EntityFactory(' ') {})
 
     companion object {
         private val log = FXGL.getLogger("FXGL.TextLevelParser")
@@ -52,6 +54,17 @@ class TextLevelParser {
      * @defaultValue ' '
      */
     var emptyChar = ' '
+
+    init {
+        emptyChar = entityFactory.emptyChar
+
+        for (method in entityFactory.javaClass.declaredMethods) {
+            val producer = method.getDeclaredAnnotation(EntityProducer::class.java)
+            if (producer != null) {
+                producers[producer.value] = { x, y -> method.invoke(entityFactory, x, y) as Entity }
+            }
+        }
+    }
 
     /**
      * Register a [producer] that generates an entity when a
