@@ -415,9 +415,7 @@ public abstract class GameApplication extends FXGLApplication {
 
         loadingScene.bind(initTask);
 
-        log.debug("Starting FXGL Init Thread");
-        Thread thread = new Thread(initTask, "FXGL Init Thread");
-        thread.start();
+        getExecutor().execute(initTask);
     }
 
     /**
