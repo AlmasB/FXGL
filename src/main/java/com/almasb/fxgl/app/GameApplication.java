@@ -25,12 +25,9 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.easyio.EasyIO;
-import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.devtools.profiling.Profiler;
-import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.event.IntroFinishedEvent;
 import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
@@ -39,17 +36,9 @@ import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
-import com.google.inject.Inject;
-import javafx.animation.AnimationTimer;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
