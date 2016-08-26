@@ -43,12 +43,13 @@ abstract class ServicesModule extends AbstractModule {
         for (ServiceType type : services) {
             try {
                 if (type.service().equals(type.serviceProvider()))
-                    bind(type.serviceProvider());
+                    bind(type.serviceProvider()).in(type.scope());
                 else
-                    bind(type.service()).to(type.serviceProvider());
+                    bind(type.service()).to(type.serviceProvider()).in(type.scope());
             } catch (Exception e) {
                 throw new IllegalArgumentException("Failed to configure service: "
                         + type.service() + " with provider: " + type.serviceProvider()
+                        + " Scope: " + type.scope()
                         + " Error: " + e);
             }
         }

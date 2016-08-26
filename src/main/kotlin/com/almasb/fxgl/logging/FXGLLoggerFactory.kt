@@ -28,7 +28,6 @@ package com.almasb.fxgl.logging
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import org.apache.logging.log4j.core.config.Configurator
 
 /**
@@ -36,8 +35,8 @@ import org.apache.logging.log4j.core.config.Configurator
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
-class FXGLLoggerFactory @Inject constructor(private val mode: ApplicationMode) : LoggerFactory(mode) {
+class FXGLLoggerFactory
+@Inject constructor(mode: ApplicationMode) : LoggerFactory(mode) {
 
     init {
         val resourceName = when (mode) {

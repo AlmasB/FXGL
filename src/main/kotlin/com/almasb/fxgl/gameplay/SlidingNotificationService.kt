@@ -31,7 +31,6 @@ import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -43,7 +42,6 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
 class SlidingNotificationService
 @Inject private constructor(private val gameScene: GameScene): NotificationService {
 

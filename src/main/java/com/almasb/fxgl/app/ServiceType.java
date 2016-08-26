@@ -53,6 +53,8 @@ import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.util.FXGLPooler;
 import com.almasb.fxgl.util.Pooler;
+import com.google.inject.Scope;
+import com.google.inject.Scopes;
 
 /**
  * Marks a service type.
@@ -67,10 +69,16 @@ public interface ServiceType<T> {
     Class<T> service();
 
     /**
-     *
      * @return service implementation/provider
      */
     Class<? extends T> serviceProvider();
+
+    /**
+     * @return service scope
+     */
+    default Scope scope() {
+        return Scopes.SINGLETON;
+    }
 
     ServiceType<AudioPlayer> AUDIO_PLAYER = new ServiceType<AudioPlayer>() {
         @Override
@@ -105,6 +113,11 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends LocalTimer> serviceProvider() {
             return FXGLLocalTimer.class;
+        }
+
+        @Override
+        public Scope scope() {
+            return Scopes.NO_SCOPE;
         }
     };
 
@@ -213,6 +226,11 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Profiler> serviceProvider() {
             return Profiler.class;
+        }
+
+        @Override
+        public Scope scope() {
+            return Scopes.NO_SCOPE;
         }
     };
 

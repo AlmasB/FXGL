@@ -35,7 +35,6 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
@@ -65,7 +64,6 @@ import javax.imageio.ImageIO
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLDisplay
 @Inject
 private constructor(private val stage: Stage,

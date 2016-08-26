@@ -38,7 +38,6 @@ import com.almasb.fxgl.util.LRUCache;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -89,7 +88,6 @@ import java.util.zip.ZipInputStream;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 public class AssetLoader {
 
     private static final String ASSETS_DIR = "/assets/";

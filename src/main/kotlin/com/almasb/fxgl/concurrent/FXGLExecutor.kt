@@ -30,7 +30,6 @@ import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.util.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -43,7 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLExecutor
 @Inject
 private constructor(eventBus: EventBus) : Executor {

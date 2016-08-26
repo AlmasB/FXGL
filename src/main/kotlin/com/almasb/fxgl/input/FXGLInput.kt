@@ -32,7 +32,6 @@ import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.event.EventType
@@ -41,8 +40,8 @@ import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
 
-@Singleton
-class FXGLInput @Inject private constructor() : Input {
+class FXGLInput
+@Inject private constructor() : Input {
 
     private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 

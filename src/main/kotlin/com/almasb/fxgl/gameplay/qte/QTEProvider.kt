@@ -28,7 +28,7 @@ package com.almasb.fxgl.gameplay.qte
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ui.UIFactory
-import com.google.inject.Singleton
+import com.google.inject.Inject
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.Pos
@@ -49,8 +49,8 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
-class QTEProvider : QTE {
+class QTEProvider
+@Inject private constructor() : QTE {
 
     private val eventHandler: EventHandler<KeyEvent>
     private lateinit var scheduledAction: ScheduledFuture<*>
