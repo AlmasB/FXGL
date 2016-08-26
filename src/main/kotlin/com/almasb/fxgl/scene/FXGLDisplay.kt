@@ -80,8 +80,6 @@ private constructor(private val stage: Stage,
 
     private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
 
-    private val scenes = ArrayList<FXGLScene>()
-
     private val targetWidth: DoubleProperty
     private val targetHeight: DoubleProperty
     private val scaledWidth: DoubleProperty
@@ -180,8 +178,6 @@ private constructor(private val stage: Stage,
      * @param scene the scene
      */
     override fun registerScene(scene: FXGLScene) {
-        scenes.add(scene)
-
         scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
         scene.appendCSS(css)
     }

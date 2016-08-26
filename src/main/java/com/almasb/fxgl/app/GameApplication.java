@@ -364,6 +364,9 @@ public abstract class GameApplication extends FXGLApplication {
         } else {
             startNewGame();
         }
+
+        // we no longer need intro, mark for cleanup
+        introScene = null;
     }
 
     @Override
