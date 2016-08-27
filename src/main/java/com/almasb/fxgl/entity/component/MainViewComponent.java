@@ -252,4 +252,9 @@ public class MainViewComponent extends AbstractComponent {
     private void removeDebugBBox() {
         getView().removeNode(debugBBox);
     }
+
+    @Override
+    public String toString() {
+        return "MainView(" + getRenderLayer().name() + ")";
+    }
 }
