@@ -95,5 +95,10 @@ public class TypeComponent extends ObjectComponent<Serializable>
 
     private static class SObject implements Serializable {
         private static final long serialVersionUID = -1L;
+
+        @Override
+        public String toString() {
+            return "NONE";
+        }
     }
 }
