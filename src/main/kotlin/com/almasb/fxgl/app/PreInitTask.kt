@@ -60,7 +60,7 @@ class PreInitTask
         app.initInput()
 
         // 3. scan for annotated methods and register them too
-        app.getInput().scanForUserActions(this)
+        app.getInput().scanForUserActions(app)
 
         app.preInit()
     }
