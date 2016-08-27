@@ -39,28 +39,9 @@ import javafx.scene.shape.Rectangle
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialogAddEntityController : UIController {
-
-    @FXML
-    private lateinit var fieldPositionX: TextField
-    @FXML
-    private lateinit var fieldPositionY: TextField
-    @FXML
-    private lateinit var fieldRotation: TextField
-    @FXML
-    private lateinit var colorPicker: ColorPicker
+class DialogEditEntityController : UIController {
 
     override fun init() {
 
-    }
-
-    fun onAdd() {
-        val gameWorld = FXGL.getApp().gameWorld
-
-        Entities.builder()
-                .at(fieldPositionX.text.toDouble(), fieldPositionY.text.toDouble())
-                .rotate(fieldRotation.text.toDouble())
-                .viewFromNode(Rectangle(40.0, 40.0, colorPicker.value))
-                .buildAndAttach(gameWorld)
     }
 }

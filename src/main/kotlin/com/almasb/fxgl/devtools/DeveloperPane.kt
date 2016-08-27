@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.devtools
 
-import com.almasb.ents.Component
 import com.almasb.ents.Entity
+import com.almasb.ents.EntityWorldListener
 import com.almasb.fxgl.app.FXGL
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
@@ -38,6 +38,8 @@ import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
+import javafx.scene.text.FontWeight
 import javafx.util.StringConverter
 
 /**
@@ -45,11 +47,9 @@ import javafx.util.StringConverter
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DeveloperPane : Pane() {
+class DeveloperPane : VBox(25.0), EntityWorldListener {
 
     private val cbEntity = ChoiceBox<Entity>()
-    private val cbComponent = ChoiceBox<Component>()
-    private val propertyPane = GridPane()
 
     companion object numberStringConverter : StringConverter<Number>() {
         override fun toString(number: Number): String {
@@ -64,41 +64,58 @@ class DeveloperPane : Pane() {
 
     init {
         prefWidth = 300.0
-        prefHeight = FXGL.getSettings().height.toDouble()
-        translateX = FXGL.getSettings().width - 300.0
+        prefHeight = FXGL.getSettings().height.toDouble() - 200
 
         background = Background(BackgroundFill(Color.GRAY.deriveColor(1.0, 1.0, 1.0, 0.5), null, null))
 
-//        cbEntity.selectionModel.selectedItemProperty()
-//                .addListener { obs, old, entity -> cbComponent.items = FXCollections.observableArrayList(entity.components)}
+        cbEntity.selectionModel.selectedItemProperty()
+                .addListener { obs, old, entity -> onEntitySelect(entity) }
 
-        cbComponent.selectionModel.selectedItemProperty()
-                .addListener { obs, old, component ->
-
-                    component.javaClass.declaredMethods
-                            .filter { it.isAnnotationPresent(DeveloperEditable::class.java) }
-                            .forEachIndexed { i, method ->
-                                val ann = method.getDeclaredAnnotation(DeveloperEditable::class.java)
-                                val label = Label(ann.value)
-                                val field = TextField()
-
-                                val property = method.invoke(component)
-
-                                when(property) {
-                                    is IntegerProperty -> Bindings.bindBidirectional(field.textProperty(), property, numberStringConverter)
-                                    is DoubleProperty -> Bindings.bindBidirectional(field.textProperty(), property, numberStringConverter)
-                                }
-                                // TODO: unresolved else
-
-                                propertyPane.addRow(i, label, field)
-                            }
-                }
-
-        children.addAll(VBox(50.0, cbEntity, cbComponent, propertyPane))
-    }
-
-    // TODO: we should have databinds instead
-    fun update() {
         cbEntity.items = FXCollections.observableArrayList(FXGL.getApp().gameWorld.entities)
+
+        children.add(cbEntity)
     }
+
+    private fun onEntitySelect(entity: Entity) {
+        children.retainAll(cbEntity)
+
+        for (component in entity.components) {
+
+            // add component name
+            val labelComponent = Label(component.toString())
+            labelComponent.font = Font.font("", FontWeight.BOLD, 24.0)
+            children.add(labelComponent)
+
+            // add component values
+            component.javaClass.declaredMethods
+                    .filter { it.isAnnotationPresent(DeveloperEditable::class.java) }
+                    .forEach { method ->
+                        val ann = method.getDeclaredAnnotation(DeveloperEditable::class.java)
+                        val label = Label(ann.value)
+                        val field = TextField()
+
+                        val property = method.invoke(component)
+
+                        when(property) {
+                            is IntegerProperty -> Bindings.bindBidirectional(field.textProperty(), property, numberStringConverter)
+                            is DoubleProperty -> Bindings.bindBidirectional(field.textProperty(), property, numberStringConverter)
+                        }
+                        // TODO: unresolved else
+
+                        children.addAll(HBox(5.0, label, field))
+                    }
+        }
+    }
+
+    override fun onEntityAdded(entity: Entity) {
+        cbEntity.items.add(entity)
+    }
+
+    override fun onEntityRemoved(entity: Entity) {
+        cbEntity.items.remove(entity)
+    }
+
+    override fun onWorldUpdate(tpf: Double) { }
+
+    override fun onWorldReset() { }
 }

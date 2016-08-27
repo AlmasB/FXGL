@@ -33,40 +33,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.text.Text?>
-<VBox xmlns="http://javafx.com/javafx/8.0.60"
-      xmlns:fx="http://javafx.com/fxml/1">
+<?import com.almasb.fxgl.devtools.DeveloperPane?>
+<ScrollPane xmlns="http://javafx.com/javafx/8.0.60"
+            xmlns:fx="http://javafx.com/fxml/1">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20" />
     </padding>
 
-    <GridPane>
-        <Label text="Position X:"
-               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+    <DeveloperPane>
 
-        <TextField fx:id="fieldPositionX" text="0"
-                GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    </DeveloperPane>
 
-        <Label text="Position Y:"
-               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-
-        <TextField fx:id="fieldPositionY" text="0"
-                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-        <Label text="Rotation:"
-               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-
-        <TextField fx:id="fieldRotation" text="0"
-                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
-        <Label text="Color:"
-               GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-
-        <ColorPicker fx:id="colorPicker"
-                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-
-        <Button text="Add" onAction="#onAdd"
-                GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-    </GridPane>
-
-</VBox>
+</ScrollPane>
