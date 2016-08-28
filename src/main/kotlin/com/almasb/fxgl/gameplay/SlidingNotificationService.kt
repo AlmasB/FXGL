@@ -141,7 +141,12 @@ class SlidingNotificationService
         counter++
         showing = true
         gameScene.addUINode(notificationImpl)
-        notificationImpl.show(text)
+
+        // controlsFX notification pane cannot show in the same tick
+        // so we wait a little bit
+        FXGL.getMasterTimer().runOnceAfter( {
+            notificationImpl.show(text)
+        }, Duration.seconds(0.03));
 
         FXGL.getEventBus().fireEvent(NotificationEvent(Notification(text)))
 
