@@ -242,10 +242,13 @@ class FXGL private constructor() {
                     bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
                     bind(ApplicationMode::class.java).toInstance(internalSettings.getApplicationMode())
 
+                    val userServiceTypes = internalSettings.services.map { it.service() }
+
                     val services = ServiceType::class.java
                             .declaredFields
                             .map { it.get(null) as ServiceType<*> }
-                            .toList()
+                            // filter user overriden types
+                            .filter {  !userServiceTypes.contains(it.service()) }
                             // also add user specified services
                             .plus(internalSettings.services)
 
