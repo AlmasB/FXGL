@@ -32,7 +32,6 @@ import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
 import com.almasb.fxgl.ui.UIFactory
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.animation.ScaleTransition
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -43,7 +42,6 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLNotificationService
 @Inject
 private constructor(private val gameScene: GameScene) : NotificationService {
