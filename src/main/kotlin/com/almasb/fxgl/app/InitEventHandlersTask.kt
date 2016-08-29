@@ -46,7 +46,8 @@ internal class InitEventHandlersTask
     override fun run() {
         val bus = app.eventBus
 
-        val fpsFont = Font.font("Lucida Console", 20.0)
+        val isMac = System.getProperty("os.name").contains("Mac")
+        val fpsFont = Font.font(if (isMac) "Monaco" else "Lucida Console", if (isMac) 18.0 else 20.0)
 
         // Main tick
 
