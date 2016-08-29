@@ -47,6 +47,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,13 @@ public final class GameScene extends FXGLScene
         viewport = new Viewport(w, h);
         gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
+
+        Scale scale = new Scale();
+        scale.pivotXProperty().bind(viewport.xProperty());
+        scale.pivotYProperty().bind(viewport.yProperty());
+        scale.xProperty().bind(viewport.zoomProperty());
+        scale.yProperty().bind(viewport.zoomProperty());
+        gameRoot.getTransforms().add(scale);
     }
 
     /**

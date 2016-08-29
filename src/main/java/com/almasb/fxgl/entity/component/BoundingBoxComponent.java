@@ -85,6 +85,9 @@ public class BoundingBoxComponent extends AbstractComponent
     public void onAdded(Entity entity) {
         position = entity.getComponentUnsafe(PositionComponent.class);
 
+        maxXWorld.bind(minXLocal.add(position.xProperty()).add(width));
+        maxYWorld.bind(minYLocal.add(position.yProperty()).add(height));
+
         for (int i = 0; i < hitBoxes.size(); i++) {
             hitBoxes.get(i).bindX(position.xProperty());
             hitBoxes.get(i).bindX(position.yProperty());
@@ -246,11 +249,22 @@ public class BoundingBoxComponent extends AbstractComponent
         return getHeight();
     }
 
+    private ReadOnlyDoubleWrapper maxXWorld = new ReadOnlyDoubleWrapper();
+    private ReadOnlyDoubleWrapper maxYWorld = new ReadOnlyDoubleWrapper();
+
+    public ReadOnlyDoubleProperty maxXWorldProperty() {
+        return maxXWorld.getReadOnlyProperty();
+    }
+
     /**
      * @return min x in world coordinate system
      */
     public double getMinXWorld() {
         return getPositionX() + getMinXLocal();
+    }
+
+    public ReadOnlyDoubleProperty maxYWorldProperty() {
+        return maxYWorld.getReadOnlyProperty();
     }
 
     /**
