@@ -23,16 +23,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
+
+package com.almasb.fxgl.ui
+
+import javafx.scene.Parent
 
 /**
- * Marks a class that it's able to act as a JavaFX controller.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface UIController {
-    /**
-     * Called after FXML fields injection.
-     */
-    void init();
+class UI(val root: Parent, private val controller: UIController) {
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : UIController> getController(): T {
+        return controller as T
+    }
 }

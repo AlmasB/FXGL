@@ -33,6 +33,7 @@ import com.almasb.fxgl.parser.KVFile;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
+import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import com.almasb.fxgl.util.LRUCache;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
@@ -290,7 +291,9 @@ public class AssetLoader {
      * @param controller the controller object
      * @return a JavaFX UI parsed from .fxml
      * @throws IllegalArgumentException if asset not found or loading/parsing error
+     * @deprecated use {@link #loadUI(String, UIController)}
      */
+    @Deprecated
     public Parent loadFXML(String name, UIController controller) {
         try (InputStream is = getStream(UI_DIR + name)) {
             FXMLLoader loader = new FXMLLoader();
@@ -298,6 +301,27 @@ public class AssetLoader {
             Parent ui = loader.load(is);
             controller.init();
             return ui;
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
+     * Loads an FXML (.fxml) file from /assets/ui/.
+     * Either returns a valid parsed UI or throws an exception in case of errors.
+     *
+     * @param name FXML file name
+     * @param controller the controller object
+     * @return a UI object parsed from .fxml
+     * @throws IllegalArgumentException if asset not found or loading/parsing error
+     */
+    public UI loadUI(String name, UIController controller) {
+        try (InputStream is = getStream(UI_DIR + name)) {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setController(controller);
+            Parent root = loader.load(is);
+            controller.init();
+            return new UI(root, controller);
         } catch (Exception e) {
             throw loadFailed(name, e);
         }
