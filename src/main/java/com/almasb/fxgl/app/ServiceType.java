@@ -249,7 +249,7 @@ public interface ServiceType<T> {
     ServiceType<QTE> QTE = new ServiceType<QTE>() {
         @Override
         public Class<QTE> service() {
-            return com.almasb.fxgl.gameplay.qte.QTE.class;
+            return QTE.class;
         }
 
         @Override
