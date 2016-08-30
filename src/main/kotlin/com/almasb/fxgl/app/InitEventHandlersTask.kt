@@ -120,8 +120,8 @@ internal class InitEventHandlersTask
 
         // Scene
 
-        app.getGameScene().addEventHandler(MouseEvent.ANY, { event -> app.getInput().onMouseEvent(event, app.getGameScene().getViewport()) })
-        app.getGameScene().addEventHandler(KeyEvent.ANY, EventHandler<KeyEvent> { app.getInput().onKeyEvent(it) })
+        app.getGameScene().addEventHandler(MouseEvent.ANY, { app.getInput().onMouseEvent(it, app.getGameScene().getViewport(), app.display.scaleRatio) })
+        app.getGameScene().addEventHandler(KeyEvent.ANY, { app.getInput().onKeyEvent(it) })
 
         bus.addEventHandler(NotificationEvent.ANY, EventHandler<NotificationEvent> { app.getAudioPlayer().onNotificationEvent(it) })
 

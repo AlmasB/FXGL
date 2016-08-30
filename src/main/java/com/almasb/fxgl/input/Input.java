@@ -74,9 +74,10 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      * Called on mouse event.
      *
      * @param event mouse event
-     * @param viewport current viewport
+     * @param viewport current viewport where the even occurred
+     * @param scaleRatio scale ratio of the display where the event occurred
      */
-    void onMouseEvent(MouseEvent event, Viewport viewport);
+    void onMouseEvent(MouseEvent event, Viewport viewport, double scaleRatio);
 
     /**
      * Setting to false will disable capturing of input events.

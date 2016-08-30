@@ -144,7 +144,7 @@ class FXGLInput
         }
     }
 
-    override fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport) {
+    override fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport, scaleRatio: Double) {
         if (!registerInput)
             return
 
@@ -159,8 +159,8 @@ class FXGLInput
         sceneX = mouseEvent.sceneX
         sceneY = mouseEvent.sceneY
 
-        gameX = sceneX / FXGL.getDisplay().scaleRatio + viewport.getX()
-        gameY = sceneY / FXGL.getDisplay().scaleRatio + viewport.getY()
+        gameX = sceneX / scaleRatio + viewport.getX()
+        gameY = sceneY / scaleRatio + viewport.getY()
     }
 
     private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {
