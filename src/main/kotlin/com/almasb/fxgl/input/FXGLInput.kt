@@ -381,7 +381,13 @@ class FXGLInput
         bundle.log()
 
         for (binding in bindings) {
-            var triggerName = bundle.get<String>(binding.key.name)
+
+            // if binding is not present in bundle, then we added some new binding thru code
+            // it will saved on next serialization and will be found in bundle
+            var triggerName: String? = bundle.get<String>("${binding.key}")
+            if (triggerName == null)
+                continue
+
             var modifierName = "NONE"
 
             val plusIndex = triggerName.indexOf("+")
