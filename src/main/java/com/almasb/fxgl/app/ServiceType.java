@@ -51,6 +51,7 @@ import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
+import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLPooler;
 import com.almasb.fxgl.util.Pooler;
 import com.google.inject.Scope;
@@ -267,6 +268,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Pooler> serviceProvider() {
             return FXGLPooler.class;
+        }
+    };
+
+    ServiceType<ExceptionHandler> EXCEPTION_HANDLER = new ServiceType<ExceptionHandler>() {
+        @Override
+        public Class<ExceptionHandler> service() {
+            return ExceptionHandler.class;
+        }
+
+        @Override
+        public Class<? extends ExceptionHandler> serviceProvider() {
+            return FXGLExceptionHandler.class;
         }
     };
 }

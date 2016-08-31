@@ -316,6 +316,9 @@ class FXGL private constructor() {
         private val _pooler by lazy { getService(ServiceType.POOLER) }
         @JvmStatic fun getPooler() = _pooler
 
+        private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
+        @JvmStatic fun getExceptionHandler() = _exceptionHandler
+
         /**
          * @return new instance on each call
          */
@@ -334,11 +337,6 @@ class FXGL private constructor() {
          * @return new instance on each call
          */
         @JvmStatic fun newProfiler() = getService(ServiceType.PROFILER)
-
-        /**
-         * @return default checked exception handler
-         */
-        @JvmStatic fun getExceptionHandler() = FXGLApplication.getDefaultCheckedExceptionHandler()
 
         /**
          * Get value of an int property.

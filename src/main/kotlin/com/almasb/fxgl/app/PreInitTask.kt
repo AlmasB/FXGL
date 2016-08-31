@@ -42,7 +42,7 @@ class PreInitTask
     private val log = FXGL.getLogger(javaClass)
 
     override fun run() {
-        EasyIO.defaultExceptionHandler = FXGLApplication.getDefaultCheckedExceptionHandler()
+        EasyIO.defaultExceptionHandler = app.getExceptionHandler()
         EasyIO.defaultExecutor = app.getExecutor()
 
         log.debug("Injecting gameWorld & physicsWorld")
