@@ -40,11 +40,9 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="warn">
-            <AppenderRef ref="Console" />
-        </Root>
         <Root level="all">
-            <AppenderRef ref="RollingFile" />
+            <AppenderRef ref="Console" level="info" />
+            <AppenderRef ref="RollingFile" level="all" />
         </Root>
     </Loggers>
 </Configuration>
