@@ -34,8 +34,6 @@ import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
-import com.almasb.fxgl.util.ExceptionHandler;
-import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
@@ -77,23 +75,6 @@ public abstract class GameApplication extends FXGLApplication {
 
     {
         log.debug("Starting JavaFX");
-        setDefaultUncaughtExceptionHandler(new FXGLUncaughtExceptionHandler());
-    }
-
-    /**
-     * Set handler for runtime uncaught exceptions.
-     *
-     * @param handler exception handler
-     */
-    public final void setDefaultUncaughtExceptionHandler(ExceptionHandler handler) {
-        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
-            pause();
-            log.fatal("Uncaught Exception:");
-            log.fatal(SystemLogger.INSTANCE.errorTraceAsString(error));
-            log.fatal("Application will now exit");
-            handler.handle(error);
-            exit();
-        });
     }
 
     private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
@@ -364,27 +345,34 @@ public abstract class GameApplication extends FXGLApplication {
 
         long start = System.nanoTime();
 
-        // services are now ready, switch to normal logger
-        log = FXGL.getLogger(GameApplication.class);
-        log.debug("Starting Game Application");
+        // if we don't catch it here then:
+        // A) JavaFX will fail to start, so immediate shutdown
+        // B) JavaFX will wrap the error, so we lose some info about error origin
+        try {
+            // services are now ready, switch to normal logger
+            log = FXGL.getLogger(GameApplication.class);
+            log.debug("Starting Game Application");
 
-        runTask(PreInitTask.class);
-        runTask(InitScenesTask.class);
-        runTask(InitEventHandlersTask.class);
+            runTask(PreInitTask.class);
+            runTask(InitScenesTask.class);
+            runTask(InitEventHandlersTask.class);
 
-        // intro runs async so we have to wait with a callback
-        // Stage -> (Intro) -> (Menu) -> Game
-        // if not enabled, call finished directly
-        if (getSettings().isIntroEnabled()) {
-            setState(ApplicationState.INTRO);
-        } else {
-            onIntroFinished();
+            // intro runs async so we have to wait with a callback
+            // Stage -> (Intro) -> (Menu) -> Game
+            // if not enabled, call finished directly
+            if (getSettings().isIntroEnabled()) {
+                setState(ApplicationState.INTRO);
+            } else {
+                onIntroFinished();
+            }
+
+            // this has to be called last when all scenes are configured and set
+            stage.show();
+
+            runTask(InitProfilerTask.class);
+        } catch (Exception e) {
+            getExceptionHandler().handleFatal(e);
         }
-
-        // this has to be called last when all scenes are configured and set
-        stage.show();
-
-        runTask(InitProfilerTask.class);
 
         SystemLogger.INSTANCE.infof("GameApplication start took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
@@ -420,7 +408,7 @@ public abstract class GameApplication extends FXGLApplication {
      * (Re-)initializes the user application from the given data file and starts the game.
      * Note: cannot be called during callbacks.
      *
-     * @param dataFile save data to loadTask from
+     * @param dataFile save data to load from
      */
     protected void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");

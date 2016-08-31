@@ -42,7 +42,6 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.util.ExceptionHandler;
-import com.almasb.fxgl.util.FXGLCheckedExceptionHandler;
 import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -71,29 +70,6 @@ public abstract class FXGLApplication extends Application {
 
     static {
         Version.print();
-        setDefaultCheckedExceptionHandler(new FXGLCheckedExceptionHandler());
-    }
-
-    private static ExceptionHandler defaultCheckedExceptionHandler;
-
-    /**
-     * @return handler for checked exceptions
-     */
-    public static ExceptionHandler getDefaultCheckedExceptionHandler() {
-        return defaultCheckedExceptionHandler;
-    }
-
-    /**
-     * Set handler for checked exceptions.
-     *
-     * @param handler exception handler
-     */
-    public static final void setDefaultCheckedExceptionHandler(ExceptionHandler handler) {
-        defaultCheckedExceptionHandler = error -> {
-            log.warning("Checked Exception:");
-            log.warning(SystemLogger.INSTANCE.errorTraceAsString(error));
-            handler.handle(error);
-        };
     }
 
     private List<FXGLListener> systemListeners = new ArrayList<>();
@@ -400,5 +376,12 @@ public abstract class FXGLApplication extends Application {
      */
     public final Net getNet() {
         return FXGL.getNet();
+    }
+
+    /**
+     * @return exception handler service
+     */
+    public final ExceptionHandler getExceptionHandler() {
+        return FXGL.getExceptionHandler();
     }
 }

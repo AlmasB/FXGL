@@ -56,6 +56,7 @@ class FXGLExceptionHandler
     }
 
     override fun handle(e: Throwable) {
+        log.warning("Caught Exception: $e")
         FXGL.getDisplay().showErrorBox(e)
     }
 
