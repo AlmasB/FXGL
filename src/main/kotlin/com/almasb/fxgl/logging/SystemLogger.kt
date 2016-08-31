@@ -167,7 +167,10 @@ object SystemLogger : Logger {
      */
     fun errorTraceAsString(e: Throwable): String {
         val sb = StringBuilder()
-        sb.append("\n\nException occurred: ").append(e.javaClass.canonicalName).append(" : ").append(e.message)
+        sb.append("\n\nException occurred: ")
+                .append(e.javaClass.canonicalName)
+                .append(" : ")
+                .append("${e.message}\n")
 
         val elements = e.stackTrace
         for (el in elements) {
