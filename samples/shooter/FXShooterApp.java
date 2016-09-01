@@ -113,22 +113,22 @@ public class FXShooterApp extends GameApplication {
     @Override
     protected void initUI() {
 
-        TextArea textArea = new TextArea();
-        textArea.setPrefSize(400, 500);
-
-        Button btn = UIFactory.newButton("Execute");
-        btn.setTranslateY(500);
-        btn.setOnAction(e -> {
-            player.removeControl(JSControl.class);
-            player.addControl(new JSControl(textArea.getText()));
-        });
-
-        Pane pane = new Pane();
-        pane.setPrefSize(400, 600);
-        pane.setTranslateX(800);
-        pane.getChildren().addAll(textArea, btn);
-
-        getGameScene().addUINode(pane);
+//        TextArea textArea = new TextArea();
+//        textArea.setPrefSize(400, 500);
+//
+//        Button btn = UIFactory.newButton("Execute");
+//        btn.setTranslateY(500);
+//        btn.setOnAction(e -> {
+//            player.removeControl(JSControl.class);
+//            player.addControl(new JSControl(textArea.getText()));
+//        });
+//
+//        Pane pane = new Pane();
+//        pane.setPrefSize(400, 600);
+//        pane.setTranslateX(800);
+//        pane.getChildren().addAll(textArea, btn);
+//
+//        getGameScene().addUINode(pane);
     }
 
     @Override
