@@ -38,6 +38,7 @@ import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.scene.Display;
+import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.MasterTimer;
@@ -46,7 +47,10 @@ import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 
 /**
@@ -103,8 +108,77 @@ public abstract class FXGLApplication extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
         log.debug("Starting FXGL");
+
+        showPreloadingStage(primaryStage);
+
+        // this is the only JavaFX scene in use with a placeholder root
+        // the root will be replaced with a relevant FXGL scene
+        primaryStage.setScene(new Scene(new Pane()));
+
+        new Thread(() -> {
+            try {
+                configureFXGL(primaryStage);
+
+                CountDownLatch latch = new CountDownLatch(1);
+
+                Platform.runLater(() -> {
+                    runTask(UpdaterTask.class);
+                    latch.countDown();
+                });
+
+                latch.await();
+
+                configureApp();
+            } catch (Exception e) {
+                log.fatal("Exception during system configuration:");
+                log.fatal(SystemLogger.INSTANCE.errorTraceAsString(e));
+                log.fatal("System will now exit");
+                log.close();
+
+                // we don't know what exactly has been initialized
+                // so to avoid the process hanging just shut down the JVM
+                System.exit(-1);
+            }
+
+            Platform.runLater(primaryStage::show);
+        }, "FXGL Launcher Thread").start();
+    }
+
+    @Override
+    public final void stop() {
+        log.debug("Exiting FXGL");
+    }
+
+    /**
+     * Shows preloading stage with scene while FXGL is being configured.
+     *
+     * @param primaryStage the main stage
+     */
+    private void showPreloadingStage(Stage primaryStage) {
+        Stage preloadingStage = new Stage(StageStyle.UNDECORATED);
+        preloadingStage.initOwner(primaryStage);
+        preloadingStage.setScene(new PreloadingScene());
+        preloadingStage.show();
+
+        // when main stage is ready to show
+        primaryStage.setOnShowing(e -> {
+            // close our preloader
+            preloadingStage.close();
+            // clean the reference to lambda + preloader
+            primaryStage.setOnShowing(null);
+        });
+    }
+
+    /**
+     * Configures FXGL.
+     * After this call all FXGL.* calls are valid.
+     *
+     * @param primaryStage the main stage
+     */
+    private void configureFXGL(Stage primaryStage) {
+        log.debug("Configuring FXGL");
 
         long start = System.nanoTime();
 
@@ -112,19 +186,18 @@ public abstract class FXGLApplication extends Application {
         initUserProperties();
         initAppSettings();
 
-        FXGL.configure(this, stage);
+        FXGL.configure(this, primaryStage);
 
         log.debug("FXGL configuration complete");
 
-        log.infof("FXGL configuration took:    %.3f sec", (System.nanoTime() - start) / 1000000000.0);
-
-        runTask(UpdaterTask.class);
+        log.infof("FXGL configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
-    @Override
-    public final void stop() {
-        log.debug("Exiting FXGL");
-    }
+    /**
+     * Used to configure the actual application that uses FXGL.
+     * Called after the FXGL has been configured.
+     */
+    abstract void configureApp();
 
     /**
      * Pause the application.
@@ -171,7 +244,6 @@ public abstract class FXGLApplication extends Application {
         log.close();
 
         Platform.exit();
-        System.exit(0);
     }
 
     /**
