@@ -36,6 +36,7 @@ import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import com.almasb.fxgl.ui.UI;
 import com.almasb.gameutils.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -203,6 +204,14 @@ public final class GameScene extends FXGLScene
     public void removeUINodes(Node... nodes) {
         for (Node node : nodes)
             removeUINode(node);
+    }
+
+    public void addUI(UI ui) {
+        addUINode(ui.getRoot());
+    }
+
+    public void removeUI(UI ui) {
+        removeUINode(ui.getRoot());
     }
 
     /**
