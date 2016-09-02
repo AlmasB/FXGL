@@ -36,6 +36,7 @@ import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import com.almasb.fxgl.scene.lighting.LightingSystem;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.gameutils.collection.Array;
 import com.google.inject.Inject;
@@ -70,6 +71,8 @@ public final class GameScene extends FXGLScene
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
+    private Group lightRoot = new Group();
+
     /**
      * Root for entity views, it is affected by viewport movement.
      */
@@ -95,10 +98,16 @@ public final class GameScene extends FXGLScene
      */
     private Group uiRoot = new Group();
 
+    private LightingSystem lightingSystem = new LightingSystem(lightRoot, gameRoot, this);
+
+    public LightingSystem getLightingSystem() {
+        return lightingSystem;
+    }
+
     @Inject
     protected GameScene(@Named("appWidth") double width,
                         @Named("appHeight") double height) {
-        getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
+        getRoot().getChildren().addAll(lightRoot, gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas(width, height);
         initViewport(width, height);
@@ -306,6 +315,8 @@ public final class GameScene extends FXGLScene
         for (ParticleControl particle : particles) {
             particle.renderParticles(particlesGC, getViewport().getOrigin());
         }
+
+        lightingSystem.update();
     }
 
     @Override
@@ -338,6 +349,8 @@ public final class GameScene extends FXGLScene
                 .ifPresent(particles::add);
         entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
                 .ifPresent(particles::add);
+
+        lightingSystem.onAddEntity(entity);
     }
 
     @Override
