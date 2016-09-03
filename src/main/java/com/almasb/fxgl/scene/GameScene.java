@@ -71,7 +71,7 @@ public final class GameScene extends FXGLScene
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
-    private Group lightRoot = new Group();
+    private Group lightingRoot = new Group();
 
     /**
      * Root for entity views, it is affected by viewport movement.
@@ -98,7 +98,7 @@ public final class GameScene extends FXGLScene
      */
     private Group uiRoot = new Group();
 
-    private LightingSystem lightingSystem = new LightingSystem(lightRoot, gameRoot, this);
+    private LightingSystem lightingSystem = new LightingSystem(lightingRoot, gameRoot, this);
 
     public LightingSystem getLightingSystem() {
         return lightingSystem;
@@ -107,7 +107,7 @@ public final class GameScene extends FXGLScene
     @Inject
     protected GameScene(@Named("appWidth") double width,
                         @Named("appHeight") double height) {
-        getRoot().getChildren().addAll(lightRoot, gameRoot, particlesCanvas, uiRoot);
+        getRoot().getChildren().addAll(lightingRoot, gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas(width, height);
         initViewport(width, height);

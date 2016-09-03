@@ -29,6 +29,8 @@ package com.almasb.fxgl.scene.lighting
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.EntityView
+import com.almasb.fxgl.entity.RenderLayer
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.scene.GameScene
 import javafx.geometry.Point2D
@@ -36,14 +38,12 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.effect.BlendMode
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.RadialGradient
 import javafx.scene.paint.Stop
-import javafx.scene.shape.Line
-import javafx.scene.shape.Polygon
-import javafx.scene.shape.Rectangle
-import javafx.scene.shape.Shape
+import javafx.scene.shape.*
 import java.util.*
 
 /**
@@ -53,9 +53,9 @@ import java.util.*
  */
 class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, private val gameScene: GameScene) {
 
-    private val shadow: Node
+    private val shadow: Shape
 
-    private val rays = ArrayList<Shape>()
+    //private val rays = ArrayList<Shape>()
 
     private val obstaclePoints = HashSet<Point2D>()
     private val obstacleSegments = HashSet<Segment>()
@@ -64,15 +64,14 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
     private val objectSegments = arrayListOf<Segment>()
 
     // TODO: do game root objects count as walls?
-    private val walls = AnchorPane()
-    private val light = AnchorPane()
+    private val walls = Pane()
+    private val light = Pane()
 
     init {
-        shadow = Rectangle(FXGL.getApp().width, FXGL.getApp().height, Color.valueOf("#000000BB"))
+        shadow = Rectangle(FXGL.getApp().width, FXGL.getApp().height, Color.color(0.0, 0.0, 0.0, 0.5))
         shadow.blendMode = BlendMode.DARKEN
 
-        // TODO: allow add background?
-        lightRoot.children.addAll(FXGL.getAssetLoader().loadTexture("bg.jpg"), walls, AnchorPane(shadow), light)
+        lightRoot.children.addAll(walls, shadow, light)
 
         addObstacle(Point2D(0.0, 0.0),
                 Point2D(FXGL.getApp().width, 0.0),
@@ -81,6 +80,7 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
     }
 
     fun addObstacle(node: Node) {
+        //gameScene.addGameView(EntityView(node, RenderLayer.LIGHTING_OBSTACLES))
         walls.children.add(node)
     }
 
@@ -137,7 +137,7 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
     private fun renderRay(mp: Point2D, points: Set<Point2D>, segmentSet: Set<Segment>): Polygon {
         val lightPoly = Polygon()
 
-        points.map({ p -> Math.atan2(p.getY() - mp.y, p.getX() - mp.x) })
+        points.map({ p -> Math.atan2(p.y - mp.y, p.x - mp.x) })
                 .flatMap({ a -> arrayListOf(a - 0.0001, a, a + 0.0001) })
                 .sorted()
                 .map({ a ->
@@ -153,9 +153,9 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
                     lightPoly.points.add(it.y)
                 }
 
-        lightPoly.fill = RadialGradient(0.0, .5, mp.x, mp.y,
-                400.0, false, CycleMethod.NO_CYCLE,
-                Stop(0.0, Color.valueOf("#FFFFFF55")),
+        lightPoly.fill = RadialGradient(0.0, 0.0, mp.x, mp.y,
+                700.0, false, CycleMethod.NO_CYCLE,
+                Stop(0.0, Color.valueOf("#FFFFFFFF")),
                 Stop(1.0, Color.valueOf("#33333300")))
 
         lightPoly.blendMode = BlendMode.SOFT_LIGHT
@@ -164,8 +164,9 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
     }
 
     fun renderRays() {
-        light.getChildren().removeAll(rays)
-        rays.clear()
+        light.children.clear()
+
+        val rays = arrayListOf<Shape>()
 
         val mx = FXGL.getInput().mouseXUI
         val my = FXGL.getInput().mouseYUI
@@ -178,7 +179,9 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
 
         val clip = rays.reduce { shape1, shape2 -> Shape.union(shape1, shape2) }
 
-        gameRoot.setClip(clip)
+
+        gameRoot.clip = clip
+        //walls.clip = Shape.subtract(walls.children.map { it as Shape }.reduce { shape1, shape2 -> Shape.union(shape1, shape2) }, clip)
 
         rays.clear()
 
@@ -194,7 +197,23 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
             rays.add(beam)
         }
 
-        light.getChildren().addAll(rays)
+
+
+        val vision = rays.reduce { shape1, shape2 -> Shape.union(shape1, shape2) }
+
+
+        //gameRoot.clip = vision
+        //gameRoot.clip = Shape.subtract(clip, largeClip)
+
+        //shadow.clip = Shape.subtract(shadow, largeClip)
+        //shadow.clip = Shape.subtract(shadow, Shape.intersect(Circle(mx, my, 75.0), largeClip))
+                //Shape.union(Shape.subtract(shadow, Circle(mx, my, 75.0)), largeClip)
+
+        //gameRoot.clip = Shape.
+
+
+
+        light.children.addAll(rays)
     }
 }
 
@@ -212,8 +231,4 @@ fun Entity.botRight(): Point2D {
 
 fun Entity.botLeft(): Point2D {
     return Point2D(Entities.getBBox(this).minXWorld, Entities.getBBox(this).maxYWorld)
-}
-
-fun Line.magnitude(): Double {
-    return Math.sqrt(endX * endX + endY * endY)
 }
