@@ -49,6 +49,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.Lighting;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
@@ -98,16 +99,10 @@ public final class GameScene extends FXGLScene
      */
     private Group uiRoot = new Group();
 
-    private LightingSystem lightingSystem = new LightingSystem(lightingRoot, gameRoot, this);
-
-    public LightingSystem getLightingSystem() {
-        return lightingSystem;
-    }
-
     @Inject
     protected GameScene(@Named("appWidth") double width,
                         @Named("appHeight") double height) {
-        getRoot().getChildren().addAll(lightingRoot, gameRoot, particlesCanvas, uiRoot);
+        getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas(width, height);
         initViewport(width, height);
@@ -142,6 +137,24 @@ public final class GameScene extends FXGLScene
         scale.yProperty().bind(viewport.zoomProperty());
         gameRoot.getTransforms().add(scale);
     }
+
+    private LightingSystem lightingSystem = null;
+
+//    /**
+//     * Note: experimental API.
+//     *
+//     * @param lightingSystem lighting system
+//     */
+//    public void setLightingSystem(LightingSystem lightingSystem) {
+//        this.lightingSystem = lightingSystem;
+//    }
+//
+//    /**
+//     * @return lighting system or null if not set
+//     */
+//    public LightingSystem getLightingSystem() {
+//        return lightingSystem;
+//    }
 
     /**
      * Converts a point on screen to a point within game scene.
@@ -316,7 +329,8 @@ public final class GameScene extends FXGLScene
             particle.renderParticles(particlesGC, getViewport().getOrigin());
         }
 
-        lightingSystem.update();
+        if (lightingSystem != null)
+            lightingSystem.update();
     }
 
     @Override
@@ -350,7 +364,8 @@ public final class GameScene extends FXGLScene
         entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
                 .ifPresent(particles::add);
 
-        lightingSystem.onAddEntity(entity);
+        if (lightingSystem != null)
+            lightingSystem.onAddEntity(entity);
     }
 
     @Override

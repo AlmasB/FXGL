@@ -29,31 +29,33 @@ package com.almasb.fxgl.scene.lighting
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Entities
-import com.almasb.fxgl.entity.EntityView
-import com.almasb.fxgl.entity.RenderLayer
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.scene.GameScene
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.effect.BlendMode
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.RadialGradient
 import javafx.scene.paint.Stop
-import javafx.scene.shape.*
+import javafx.scene.shape.Polygon
+import javafx.scene.shape.Rectangle
+import javafx.scene.shape.Shape
 import java.util.*
 
 /**
+ * API INCOMPLETE
+ *
  * Adapted from https://github.com/timyates/ShadowFX
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, private val gameScene: GameScene) {
+class LightingSystem {
 
-    private val shadow: Shape
+    private lateinit var shadow: Shape
+    private lateinit var gameRoot: Group
 
     //private val rays = ArrayList<Shape>()
 
@@ -67,7 +69,9 @@ class LightingSystem(private val lightRoot: Group, private val gameRoot: Group, 
     private val walls = Pane()
     private val light = Pane()
 
-    init {
+    fun init(lightRoot: Group, gameRoot: Group) {
+        this.gameRoot = gameRoot
+
         shadow = Rectangle(FXGL.getApp().width, FXGL.getApp().height, Color.color(0.0, 0.0, 0.0, 0.5))
         shadow.blendMode = BlendMode.DARKEN
 

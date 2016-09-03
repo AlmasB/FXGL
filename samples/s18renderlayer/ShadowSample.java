@@ -29,12 +29,15 @@ package s18renderlayer;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.scene.lighting.LightingSystem;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * API INCOMPLETE
+ *
  * This example shows lighting and shadows.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -68,9 +71,11 @@ public class ShadowSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        getGameScene().getLightingSystem().addObstacle(new Point2D( 100.0, 150.0 ), new Point2D( 120.0, 50.0 ), new Point2D( 200.0, 80.0 ), new Point2D( 140.0, 210.0 ));
-        getGameScene().getLightingSystem().addObstacle(new Point2D( 100.0, 200.0 ), new Point2D( 120.0, 250.0 ), new Point2D( 60.0, 300.0 ));
-        getGameScene().getLightingSystem().addObstacle(new Point2D( 400.0, 350.0 ), new Point2D( 420.0, 250.0 ), new Point2D( 550.0, 280.0 ), new Point2D( 440.0, 410.0 ));
+//        getGameScene().setLightingSystem(new LightingSystem());
+//
+//        getGameScene().getLightingSystem().addObstacle(new Point2D( 100.0, 150.0 ), new Point2D( 120.0, 50.0 ), new Point2D( 200.0, 80.0 ), new Point2D( 140.0, 210.0 ));
+//        getGameScene().getLightingSystem().addObstacle(new Point2D( 100.0, 200.0 ), new Point2D( 120.0, 250.0 ), new Point2D( 60.0, 300.0 ));
+//        getGameScene().getLightingSystem().addObstacle(new Point2D( 400.0, 350.0 ), new Point2D( 420.0, 250.0 ), new Point2D( 550.0, 280.0 ), new Point2D( 440.0, 410.0 ));
 
 
         Entities.builder()
@@ -80,6 +85,26 @@ public class ShadowSample extends GameApplication {
 
         Entities.builder()
                 .at(450, 550)
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.YELLOW))
+                .buildAndAttach(getGameWorld());
+
+        Entities.builder()
+                .at(100, 250)
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.DARKRED))
+                .buildAndAttach(getGameWorld());
+
+        Entities.builder()
+                .at(120, 350)
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.GREEN))
+                .buildAndAttach(getGameWorld());
+
+        Entities.builder()
+                .at(45, 250)
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.DARKBLUE))
+                .buildAndAttach(getGameWorld());
+
+        Entities.builder()
+                .at(550, 260)
                 .viewFromNodeWithBBox(new Rectangle(40, 40, Color.RED))
                 .buildAndAttach(getGameWorld());
     }
