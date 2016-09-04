@@ -27,13 +27,14 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.MockServicesModule
 import javafx.scene.input.KeyCode
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.hasItem
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.assertThat
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -45,7 +46,7 @@ class InputTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices()
+            FXGL.mockServices(MockServicesModule())
         }
     }
 

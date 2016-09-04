@@ -27,7 +27,6 @@
 package com.almasb.fxgl.gameplay.qte
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ui.UIFactory
 import com.google.inject.Inject
 import javafx.application.Platform
 import javafx.event.EventHandler
@@ -121,7 +120,7 @@ class QTEProvider
 
         queue.addAll(keys)
         labels.addAll(
-                keys.map { UIFactory.newText(it.getName(), Color.WHITE, 72.0) }
+                keys.map { FXGL.getUIFactory().newText(it.getName(), Color.WHITE, 72.0) }
         )
 
         keysBox.children.setAll(labels)

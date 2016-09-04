@@ -28,7 +28,6 @@ package com.almasb.fxgl.scene.intro
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.IntroScene
-import com.almasb.fxgl.ui.UIFactory
 import com.almasb.fxgl.util.Version
 import javafx.animation.*
 import javafx.geometry.Point2D
@@ -116,7 +115,7 @@ class FXGLIntroScene() : IntroScene() {
 
     private fun makeLetter(letter: String): Text {
         with(Text(letter)) {
-            font = UIFactory.newFont(72.0)
+            font = FXGL.getUIFactory().newFont(72.0)
             fill = Color.WHITESMOKE
             return this
         }
@@ -125,7 +124,7 @@ class FXGLIntroScene() : IntroScene() {
     private fun makeVersion(): Text {
         with(Text("${Version.getAsString()} by AlmasB")) {
             isVisible = false
-            font = UIFactory.newFont(18.0)
+            font = FXGL.getUIFactory().newFont(18.0)
             fill = Color.ALICEBLUE
             translateY = h - 5
             return this
@@ -135,7 +134,7 @@ class FXGLIntroScene() : IntroScene() {
     private fun makePoweredBy(): Text {
         with(Text("Powered By")) {
             isVisible = false
-            font = UIFactory.newFont(18.0)
+            font = FXGL.getUIFactory().newFont(18.0)
             fill = Color.WHITE
             translateX = (w - layoutBounds.width) / 2
             translateY = h / 2 - 80

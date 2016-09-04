@@ -27,7 +27,6 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ui.UIFactory
 import javafx.animation.Transition
 import javafx.geometry.Pos
 import javafx.scene.control.Button
@@ -55,7 +54,7 @@ internal class NotificationView(
             }
         }
         setOnAction { e -> hide() }
-        font = UIFactory.newFont(12.0)
+        font = FXGL.getUIFactory().newFont(12.0)
         style = "-fx-background-color: " + String.format("rgb(%d,%d,%d);",
                 (bgColor.red * 255).toInt(),
                 (bgColor.green * 255).toInt(),

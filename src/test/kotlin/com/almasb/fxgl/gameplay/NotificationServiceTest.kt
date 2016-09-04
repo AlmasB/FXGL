@@ -24,50 +24,51 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.gameplay
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.event.NotificationEvent
+import org.hamcrest.CoreMatchers.`is`
+import org.junit.Assert.assertThat
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
 
 /**
- * Factory service for creating UI controls.
- * Used to unify the look across FXGL.
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface UIFactory {
+class NotificationServiceTest {
 
-    /**
-     * @param size font size
-     * @return main UI font with given size
-     */
-    Font newFont(double size);
+    private lateinit var notificationService: NotificationService
 
-    default Text newText(String message) {
-        return newText(message, Color.WHITE, 18);
+    companion object {
+        @BeforeClass
+        @JvmStatic fun before() {
+            FXGL.mockServices(MockServicesModule())
+        }
     }
 
-    default Text newText(String message, double fontSize) {
-        return newText(message, Color.WHITE, fontSize);
+    @Before
+    fun setUp() {
+        notificationService = FXGL.getInstance(NotificationService::class.java)
     }
 
-    default Text newText(String message, Color textColor, double fontSize) {
-        Text text = new Text(message);
-        text.setFill(textColor);
-        text.setFont(newFont(fontSize));
-        return text;
+    @Test
+    fun `Test push notification`() {
+        var count = 0
+        val notificationText = "Test"
+
+        FXGL.getEventBus().addEventHandler(NotificationEvent.ANY, {
+
+            assertThat(it.notification.message, `is`(notificationText))
+            count++
+        })
+
+        notificationService.pushNotification(notificationText)
+
+        assertThat(count, `is`(1))
     }
-
-    Button newButton(String text);
-
-    <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
-
-    <T> ChoiceBox<T> newChoiceBox();
-
-    <T> Spinner<T> newSpinner(ObservableList<T> items);
 }

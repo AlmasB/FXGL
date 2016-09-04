@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.NotificationEvent
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
-import com.almasb.fxgl.ui.UIFactory
 import com.google.inject.Inject
 import javafx.animation.ScaleTransition
 import javafx.scene.paint.Color
@@ -148,19 +147,19 @@ private constructor(private val gameScene: GameScene) : NotificationService {
         when (position) {
             Position.LEFT -> {
                 x = 50.0
-                y = gameScene.height / 2 - (UIFactory.heightOf(text, 12.0) + 10) / 2
+                y = gameScene.height / 2 - (heightOf(text, 12.0) + 10) / 2
             }
             Position.RIGHT -> {
-                x = gameScene.width - (UIFactory.widthOf(text, 12.0) + 20) - 50.0
-                y = gameScene.height / 2 - (UIFactory.heightOf(text, 12.0) + 10) / 2
+                x = gameScene.width - (widthOf(text, 12.0) + 20) - 50.0
+                y = gameScene.height / 2 - (heightOf(text, 12.0) + 10) / 2
             }
             Position.TOP -> {
-                x = gameScene.width / 2 - (UIFactory.widthOf(text, 12.0) + 20) / 2
+                x = gameScene.width / 2 - (widthOf(text, 12.0) + 20) / 2
                 y = 50.0
             }
             Position.BOTTOM -> {
-                x = gameScene.width / 2 - (UIFactory.widthOf(text, 12.0) + 20) / 2
-                y = gameScene.height - (UIFactory.heightOf(text, 12.0) + 10) - 50.0
+                x = gameScene.width / 2 - (widthOf(text, 12.0) + 20) / 2
+                y = gameScene.height - (heightOf(text, 12.0) + 10) - 50.0
             }
         }
 
@@ -172,5 +171,13 @@ private constructor(private val gameScene: GameScene) : NotificationService {
         out.setOnFinished { e -> popNotification(notificationView) }
 
         return notificationView
+    }
+
+    fun widthOf(text: String, fontSize: Double): Double {
+        return FXGL.getUIFactory().newText(text, fontSize).getLayoutBounds().getWidth()
+    }
+
+    fun heightOf(text: String, fontSize: Double): Double {
+        return FXGL.getUIFactory().newText(text, fontSize).getLayoutBounds().getHeight()
     }
 }

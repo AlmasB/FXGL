@@ -51,6 +51,8 @@ import com.almasb.fxgl.time.FXGLLocalTimer;
 import com.almasb.fxgl.time.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.MasterTimer;
+import com.almasb.fxgl.ui.FXGLUIFactory;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.FXGLPooler;
 import com.almasb.fxgl.util.Pooler;
@@ -280,6 +282,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends ExceptionHandler> serviceProvider() {
             return FXGLExceptionHandler.class;
+        }
+    };
+
+    ServiceType<UIFactory> UI_FACTORY = new ServiceType<UIFactory>() {
+        @Override
+        public Class<UIFactory> service() {
+            return UIFactory.class;
+        }
+
+        @Override
+        public Class<? extends UIFactory> serviceProvider() {
+            return FXGLUIFactory.class;
         }
     };
 }

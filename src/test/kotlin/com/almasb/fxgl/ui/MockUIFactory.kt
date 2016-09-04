@@ -24,50 +24,38 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.ui
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.collections.ObservableList
+import javafx.scene.control.Button
+import javafx.scene.control.ChoiceBox
+import javafx.scene.control.Spinner
+import javafx.scene.text.Font
 
 /**
- * Factory service for creating UI controls.
- * Used to unify the look across FXGL.
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface UIFactory {
+object MockUIFactory : UIFactory {
 
-    /**
-     * @param size font size
-     * @return main UI font with given size
-     */
-    Font newFont(double size);
-
-    default Text newText(String message) {
-        return newText(message, Color.WHITE, 18);
+    override fun newFont(size: Double): Font {
+        return Font.font(size)
     }
 
-    default Text newText(String message, double fontSize) {
-        return newText(message, Color.WHITE, fontSize);
+    override fun newButton(text: String?): Button {
+        return Button(text)
     }
 
-    default Text newText(String message, Color textColor, double fontSize) {
-        Text text = new Text(message);
-        text.setFill(textColor);
-        text.setFont(newFont(fontSize));
-        return text;
+    override fun <T : Any?> newChoiceBox(items: ObservableList<T>?): ChoiceBox<T> {
+        return ChoiceBox(items)
     }
 
-    Button newButton(String text);
+    override fun <T : Any?> newChoiceBox(): ChoiceBox<T> {
+        return ChoiceBox()
+    }
 
-    <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
-
-    <T> ChoiceBox<T> newChoiceBox();
-
-    <T> Spinner<T> newSpinner(ObservableList<T> items);
+    override fun <T : Any?> newSpinner(items: ObservableList<T>?): Spinner<T> {
+        return Spinner(items)
+    }
 }

@@ -49,7 +49,6 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.Lighting;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;

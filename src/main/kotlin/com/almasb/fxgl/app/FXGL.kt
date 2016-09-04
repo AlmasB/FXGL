@@ -34,6 +34,7 @@ import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.Guice
 import com.google.inject.Injector
+import com.google.inject.Module
 import com.google.inject.Provides
 import com.google.inject.name.Named
 import com.google.inject.name.Names
@@ -273,11 +274,11 @@ class FXGL private constructor() {
             })
         }
 
-        @JvmStatic fun mockServices() {
+        @JvmStatic fun mockServices(mockingModule: Module) {
             if (configured)
                 return
 
-            injector = Guice.createInjector(MockServicesModule())
+            injector = Guice.createInjector(mockingModule)
 
             configured = true
         }
@@ -323,6 +324,9 @@ class FXGL private constructor() {
 
         private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
         @JvmStatic fun getExceptionHandler() = _exceptionHandler
+
+        private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
+        @JvmStatic fun getUIFactory() = _uiFactory
 
         /**
          * @return new instance on each call

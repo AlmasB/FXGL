@@ -25,10 +25,10 @@
  */
 package com.almasb.fxgl.scene.menu;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
-import com.almasb.fxgl.ui.UIFactory;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -88,14 +88,14 @@ public class GTAVMenu extends FXGLMenu {
 
     @Override
     protected Node createTitleView(String title) {
-        Text titleView = UIFactory.newText(app.getSettings().getTitle(), 18);
+        Text titleView = FXGL.getUIFactory().newText(app.getSettings().getTitle(), 18);
         titleView.setTranslateY(30);
         return titleView;
     }
 
     @Override
     protected Node createVersionView(String version) {
-        Text view = UIFactory.newText(version, 16);
+        Text view = FXGL.getUIFactory().newText(version, 16);
         view.setTranslateX(app.getWidth() - view.getLayoutBounds().getWidth());
         view.setTranslateY(20);
         return view;
@@ -103,7 +103,7 @@ public class GTAVMenu extends FXGLMenu {
 
     @Override
     protected Node createProfileView(String profileName) {
-        Text view = UIFactory.newText(profileName, 24);
+        Text view = FXGL.getUIFactory().newText(profileName, 24);
         view.setTranslateX(app.getWidth() - view.getLayoutBounds().getWidth());
         view.setTranslateY(50);
         return view;
@@ -123,9 +123,9 @@ public class GTAVMenu extends FXGLMenu {
         ToggleButton tb1 = new ToggleButton("MAIN MENU");
         ToggleButton tb2 = new ToggleButton("OPTIONS");
         ToggleButton tb3 = new ToggleButton("EXTRA");
-        tb1.setFont(UIFactory.newFont(18));
-        tb2.setFont(UIFactory.newFont(18));
-        tb3.setFont(UIFactory.newFont(18));
+        tb1.setFont(FXGL.getUIFactory().newFont(18));
+        tb2.setFont(FXGL.getUIFactory().newFont(18));
+        tb3.setFont(FXGL.getUIFactory().newFont(18));
 
         ToggleGroup group = new ToggleGroup();
         tb1.setToggleGroup(group);
@@ -202,7 +202,7 @@ public class GTAVMenu extends FXGLMenu {
      * @return new button
      */
     protected final Button createActionButton(String name, Runnable action) {
-        Button btn = UIFactory.newButton(name);
+        Button btn = FXGL.getUIFactory().newButton(name);
         btn.setOnAction(e -> action.run());
         return btn;
     }
@@ -215,7 +215,7 @@ public class GTAVMenu extends FXGLMenu {
      * @return new button
      */
     protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
-        Button btn = UIFactory.newButton(name);
+        Button btn = FXGL.getUIFactory().newButton(name);
         btn.setUserData(contentSupplier);
         btn.setOnAction(e -> switchMenuContentTo(((Supplier<MenuContent>)btn.getUserData()).get()));
         return btn;

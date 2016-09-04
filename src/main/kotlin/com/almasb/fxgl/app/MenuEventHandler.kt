@@ -36,7 +36,6 @@ import com.almasb.fxgl.scene.DialogPane
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.ui.UIFactory
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
@@ -261,13 +260,13 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     /* DIALOGS */
 
     private fun showMultiplayerDialog() {
-        val btnHost = UIFactory.newButton("Host...")
+        val btnHost = FXGL.getUIFactory().newButton("Host...")
         btnHost.setOnAction { e -> app.display.showMessageBox("NOT SUPPORTED YET") }
 
-        val btnConnect = UIFactory.newButton("Connect...")
+        val btnConnect = FXGL.getUIFactory().newButton("Connect...")
         btnConnect.setOnAction { e -> app.display.showMessageBox("NOT SUPPORTED YET") }
 
-        app.display.showBox("Multiplayer Options", UIFactory.newText(""), btnHost, btnConnect)
+        app.display.showBox("Multiplayer Options", FXGL.getUIFactory().newText(""), btnHost, btnConnect)
     }
 
     /**
@@ -275,12 +274,12 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
      * The dialog is only dismissed when profile is chosen either way.
      */
     fun showProfileDialog() {
-        val profilesBox = UIFactory.newChoiceBox(FXCollections.observableArrayList<String>())
+        val profilesBox = FXGL.getUIFactory().newChoiceBox(FXCollections.observableArrayList<String>())
 
-        val btnNew = UIFactory.newButton("NEW")
-        val btnSelect = UIFactory.newButton("SELECT")
+        val btnNew = FXGL.getUIFactory().newButton("NEW")
+        val btnSelect = FXGL.getUIFactory().newButton("SELECT")
         btnSelect.disableProperty().bind(profilesBox.valueProperty().isNull)
-        val btnDelete = UIFactory.newButton("DELETE")
+        val btnDelete = FXGL.getUIFactory().newButton("DELETE")
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
         btnNew.setOnAction { e ->

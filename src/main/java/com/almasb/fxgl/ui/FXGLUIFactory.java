@@ -23,51 +23,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.almasb.fxgl.ui;
 
+import com.almasb.fxgl.asset.FXGLAssets;
+import com.google.inject.Inject;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 /**
- * Factory service for creating UI controls.
- * Used to unify the look across FXGL.
+ * FXGL provider of UI factory service.
  *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface UIFactory {
+public final class FXGLUIFactory implements UIFactory {
 
-    /**
-     * @param size font size
-     * @return main UI font with given size
-     */
-    Font newFont(double size);
+    @Inject
+    private FXGLUIFactory() {}
 
-    default Text newText(String message) {
-        return newText(message, Color.WHITE, 18);
+    public Font newFont(double size) {
+        return FXGLAssets.UI_FONT.newFont(size);
     }
 
-    default Text newText(String message, double fontSize) {
-        return newText(message, Color.WHITE, fontSize);
+    public Button newButton(String text) {
+        return new FXGLButton(text);
     }
 
-    default Text newText(String message, Color textColor, double fontSize) {
-        Text text = new Text(message);
-        text.setFill(textColor);
-        text.setFont(newFont(fontSize));
-        return text;
+    public <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items) {
+        return new FXGLChoiceBox<>(items);
     }
 
-    Button newButton(String text);
+    public <T> ChoiceBox<T> newChoiceBox() {
+        return new FXGLChoiceBox<>();
+    }
 
-    <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
-
-    <T> ChoiceBox<T> newChoiceBox();
-
-    <T> Spinner<T> newSpinner(ObservableList<T> items);
+    @Override
+    public <T> Spinner<T> newSpinner(ObservableList<T> items) {
+        return new FXGLSpinner<>(items);
+    }
 }

@@ -24,50 +24,24 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.app
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.application.Application
+import javafx.stage.Stage
+import java.util.concurrent.CountDownLatch
 
 /**
- * Factory service for creating UI controls.
- * Used to unify the look across FXGL.
+ * Used to mock JavaFX application runtime environment.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface UIFactory {
+class MockApplication : Application() {
 
-    /**
-     * @param size font size
-     * @return main UI font with given size
-     */
-    Font newFont(double size);
-
-    default Text newText(String message) {
-        return newText(message, Color.WHITE, 18);
+    companion object {
+        val READY = CountDownLatch(1)
     }
 
-    default Text newText(String message, double fontSize) {
-        return newText(message, Color.WHITE, fontSize);
+    override fun start(primaryStage: Stage?) {
+        READY.countDown()
     }
-
-    default Text newText(String message, Color textColor, double fontSize) {
-        Text text = new Text(message);
-        text.setFill(textColor);
-        text.setFont(newFont(fontSize));
-        return text;
-    }
-
-    Button newButton(String text);
-
-    <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
-
-    <T> ChoiceBox<T> newChoiceBox();
-
-    <T> Spinner<T> newSpinner(ObservableList<T> items);
 }

@@ -27,8 +27,8 @@
 package manual;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
@@ -38,7 +38,6 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.ui.UIFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -95,7 +94,7 @@ public class ViewportTest extends GameApplication {
 
     @Override
     protected void initUI() {
-        debug = UIFactory.newText("", Color.BLUE, 24);
+        debug = FXGL.getUIFactory().newText("", Color.BLUE, 24);
         debug.setTranslateX(200);
         debug.setTranslateY(350);
 

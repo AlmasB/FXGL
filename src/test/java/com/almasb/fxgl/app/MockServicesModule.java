@@ -30,14 +30,19 @@ import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxeventbus.FXEventBus;
 import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
+import com.almasb.fxgl.gameplay.FXGLNotificationService;
+import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.logging.MockLoggerFactory;
+import com.almasb.fxgl.ui.MockUIFactory;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLPooler;
 import com.almasb.fxgl.util.Pooler;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import javafx.application.Application;
 
 /**
  * Module that binds services with their mock providers.
@@ -49,15 +54,29 @@ import com.google.inject.name.Names;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class MockServicesModule extends AbstractModule {
+public class MockServicesModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        new Thread(() -> {
+            Application.launch(MockApplication.class);
+        }).start();
+
         mockPooler();
         mockLoggerFactory();
         mockInput();
         mockExecutor();
         mockEventBus();
+        mockNotificationService();
+        mockUIFactory();
+
+        try {
+            MockApplication.Companion.getREADY().await();
+        } catch (InterruptedException e) {
+            System.out.println("Exception during mocking: " + e);
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     private void mockPooler() {
@@ -79,5 +98,15 @@ class MockServicesModule extends AbstractModule {
 
     private void mockEventBus() {
         bind(EventBus.class).to(FXEventBus.class);
+    }
+
+    private void mockNotificationService() {
+        bind(Double.class).annotatedWith(Names.named("appWidth")).toInstance(800.0);
+        bind(Double.class).annotatedWith(Names.named("appHeight")).toInstance(600.0);
+        bind(NotificationService.class).to(FXGLNotificationService.class);
+    }
+
+    private void mockUIFactory() {
+        bind(UIFactory.class).toInstance(MockUIFactory.INSTANCE);
     }
 }
