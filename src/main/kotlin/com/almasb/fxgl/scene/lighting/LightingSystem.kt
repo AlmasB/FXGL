@@ -202,7 +202,7 @@ class LightingSystem {
 
 
 
-        val vision = rays.reduce { shape1, shape2 -> Shape.union(shape1, shape2) }
+        //val vision = rays.reduce { shape1, shape2 -> Shape.union(shape1, shape2) }
 
 
         //gameRoot.clip = vision

@@ -71,7 +71,7 @@ public final class GameScene extends FXGLScene
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
-    private Group lightingRoot = new Group();
+    //private Group lightingRoot = new Group();
 
     /**
      * Root for entity views, it is affected by viewport movement.
