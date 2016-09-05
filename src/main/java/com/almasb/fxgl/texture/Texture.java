@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.texture;
 
+import com.almasb.gameutils.Disposable;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VerticalDirection;
@@ -40,7 +41,7 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @apiNote This is essentially a wrapper around {@link javafx.scene.image.ImageView}
  */
-public class Texture extends ImageView {
+public class Texture extends ImageView implements Disposable {
 
     /**
      * Constructs new texture from given image.
@@ -250,7 +251,6 @@ public class Texture extends ImageView {
     }
 
     /**
-     *
      * @return grayscale version of the texture
      */
     public final Texture toGrayscale() {
@@ -279,6 +279,11 @@ public class Texture extends ImageView {
         setFitWidth(other.getFitWidth());
         setFitHeight(other.getFitHeight());
         setImage(other.getImage());
+    }
+
+    @Override
+    public void dispose() {
+        setImage(null);
     }
 
     @Override

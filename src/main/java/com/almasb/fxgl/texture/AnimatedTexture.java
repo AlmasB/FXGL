@@ -55,12 +55,10 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
         super(image);
         this.defaultChannel = initialChannel;
 
-        setAnimationChannel(initialChannel);
-
         animationTimer = FXGL.newLocalTimer();
 
-        // TODO: this listener needs to be removed somehow,
-        // possibly via dispose as this is also an asset
+        setAnimationChannel(initialChannel);
+
         FXGL.getMasterTimer().addUpdateListener(this);
     }
 
@@ -115,5 +113,11 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
 
             animationTimer.capture();
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        FXGL.getMasterTimer().removeUpdateListener(this);
     }
 }

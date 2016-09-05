@@ -26,15 +26,19 @@
 
 package s30animation;
 
+import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
 /**
  * Shows how to use sprite sheet animations.
+ * Shows how to properly dispose of textures.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -54,7 +58,25 @@ public class AnimationSample2 extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
+    protected void initInput() {
+        getInput().addAction(new UserAction("Clean") {
+            @Override
+            protected void onActionBegin() {
+                
+                if (playerTexture != null) {
+
+                    // when cleaning first remove the entity using the texture
+                    getGameWorld().getEntities().forEach(Entity::removeFromWorld);
+
+                    // dispose of the texture
+                    playerTexture.dispose();
+
+                    // nullify the reference to texture
+                    playerTexture = null;
+                }
+            }
+        }, KeyCode.F);
+    }
 
     private AnimatedTexture playerTexture;
 
@@ -66,7 +88,10 @@ public class AnimationSample2 extends GameApplication {
 
     @Override
     protected void initGame() {
-        initPlayer();
+        Entities.builder()
+                .at(150, 150)
+                .viewFromNode(playerTexture)
+                .buildAndAttach(getGameWorld());
     }
 
     @Override
@@ -77,13 +102,6 @@ public class AnimationSample2 extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {}
-
-    private void initPlayer() {
-        Entities.builder()
-                .at(150, 150)
-                .viewFromNode(playerTexture)
-                .buildAndAttach(getGameWorld());
-    }
 
     public static void main(String[] args) {
         launch(args);
