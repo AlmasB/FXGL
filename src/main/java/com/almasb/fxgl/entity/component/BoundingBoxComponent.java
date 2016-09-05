@@ -35,6 +35,7 @@ import com.almasb.ents.serialization.SerializableComponent;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.SAT;
 import com.almasb.fxgl.util.Pooler;
 import com.almasb.gameutils.pool.Pool;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -373,6 +374,10 @@ public class BoundingBoxComponent extends AbstractComponent
                 box2.getMinYWorld() <= box1.getMaxYWorld();
     }
 
+    private boolean checkCollision(HitBox box1, HitBox box2, double angle1, double angle2) {
+        return SAT.isColliding(box1, box2, angle1, angle2);
+    }
+
     /**
      * Checks for collision with another bounding box. Returns collision result
      * containing the first hit box that triggered collision.
@@ -384,13 +389,31 @@ public class BoundingBoxComponent extends AbstractComponent
      * @return collision result
      */
     public final CollisionResult checkCollision(BoundingBoxComponent other) {
+        boolean checkRotation = getEntity().hasComponent(RotationComponent.class)
+                && other.getEntity().hasComponent(RotationComponent.class);
+
         for (int i = 0; i < hitBoxes.size(); i++) {
             HitBox box1 = hitBoxes.get(i);
 
             for (int j = 0; j < other.hitBoxes.size(); j++) {
                 HitBox box2 = other.hitBoxes.get(j);
 
-                if (checkCollision(box1, box2)) {
+                boolean collision;
+
+                if (checkRotation) {
+                    double angle1 = getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+                    double angle2 = other.getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+
+                    if (angle1 == 0 && angle2 == 0) {
+                        collision = checkCollision(box1, box2);
+                    } else {
+                        collision = checkCollision(box1, box2, angle1, angle2);
+                    }
+                } else {
+                    collision = checkCollision(box1, box2);
+                }
+
+                if (collision) {
 
                     CollisionResult result = pooler.get(CollisionResult.class);
                     result.init(box1, box2);
@@ -410,13 +433,31 @@ public class BoundingBoxComponent extends AbstractComponent
      * @return {@link CollisionResult#NO_COLLISION} if no collision, else {@link CollisionResult#COLLISION}
      */
     private CollisionResult checkCollisionInternal(BoundingBoxComponent other) {
+        boolean checkRotation = getEntity().hasComponent(RotationComponent.class)
+                && other.getEntity().hasComponent(RotationComponent.class);
+
         for (int i = 0; i < hitBoxes.size(); i++) {
             HitBox box1 = hitBoxes.get(i);
 
             for (int j = 0; j < other.hitBoxes.size(); j++) {
                 HitBox box2 = other.hitBoxes.get(j);
 
-                if (checkCollision(box1, box2)) {
+                boolean collision;
+
+                if (checkRotation) {
+                    double angle1 = getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+                    double angle2 = other.getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+
+                    if (angle1 == 0 && angle2 == 0) {
+                        collision = checkCollision(box1, box2);
+                    } else {
+                        collision = checkCollision(box1, box2, angle1, angle2);
+                    }
+                } else {
+                    collision = checkCollision(box1, box2);
+                }
+
+                if (collision) {
                     return CollisionResult.COLLISION;
                 }
             }
