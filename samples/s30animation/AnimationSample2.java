@@ -62,7 +62,7 @@ public class AnimationSample2 extends GameApplication {
         getInput().addAction(new UserAction("Clean") {
             @Override
             protected void onActionBegin() {
-                
+
                 if (playerTexture != null) {
 
                     // when cleaning first remove the entity using the texture
