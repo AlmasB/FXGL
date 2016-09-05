@@ -28,6 +28,7 @@ package s15fxml;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.ui.UI;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Parent;
@@ -74,13 +75,13 @@ public class FXMLSample extends GameApplication {
         GameUIController controller = new GameUIController();
 
         // 2. place fxml file in "assets/ui" and load it
-        Parent fxmlUI = getAssetLoader().loadFXML("test_ui.fxml", controller);
+        UI fxmlUI = getAssetLoader().loadUI("test_ui.fxml", controller);
 
         // 3. controller instance now has its @FXML fields injected
         controller.getLabelCount().textProperty().bind(count.asString("Count: [%d]"));
 
         // 4. add UI to game scene
-        getGameScene().addUINode(fxmlUI);
+        getGameScene().addUI(fxmlUI);
     }
 
     @Override
