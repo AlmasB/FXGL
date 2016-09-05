@@ -45,11 +45,6 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-
-        <repository>
-            <id>jME3</id>
-            <url>http://updates.jmonkeyengine.org/maven/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -130,12 +125,6 @@
             <artifactId>gdx-ai</artifactId>
             <version>${gdx.ai.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>com.jme3</groupId>-->
-            <!--<artifactId>jme3-networking</artifactId>-->
-            <!--<version>${jme3.net.version}</version>-->
-        <!--</dependency>-->
 
         <!-- test scope dependencies -->
         <dependency>
