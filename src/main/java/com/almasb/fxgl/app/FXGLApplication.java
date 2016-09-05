@@ -42,6 +42,7 @@ import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.MasterTimer;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.ExceptionHandler;
 import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
@@ -455,5 +456,12 @@ public abstract class FXGLApplication extends Application {
      */
     public final ExceptionHandler getExceptionHandler() {
         return FXGL.getExceptionHandler();
+    }
+
+    /**
+     * @return UI factory service
+     */
+    public final UIFactory getUIFactory() {
+        return FXGL.getUIFactory();
     }
 }
