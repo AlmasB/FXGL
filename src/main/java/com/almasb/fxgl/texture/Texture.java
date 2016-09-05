@@ -34,8 +34,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
- * Represents a 2D image which can be set as graphics for an entity.
- * The size ratio and viewport can be modified as necessary
+ * Represents a 2D image which can be set as view for an entity.
+ * The size ratio and viewport can be modified as necessary.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @apiNote This is essentially a wrapper around {@link javafx.scene.image.ImageView}
@@ -43,7 +43,7 @@ import javafx.util.Duration;
 public class Texture extends ImageView {
 
     /**
-     * Prevent instantiation outside FXGL
+     * Constructs new texture from given image.
      *
      * @param image the JavaFX image data
      */
@@ -52,37 +52,55 @@ public class Texture extends ImageView {
     }
 
     /**
-     * Converts the texture to animated texture
+     * Converts the texture to animated texture.
      *
      * @param frames   number of frames in sprite sheet
      * @param duration overall duration (for all frames) of the animation
-     * @return new StaticAnimatedTexture
+     * @return new AnimatedTexture
      */
-    public final StaticAnimatedTexture toStaticAnimatedTexture(int frames, Duration duration) {
-        return new StaticAnimatedTexture(getImage(), frames, duration);
+    public final AnimatedTexture toAnimatedTexture(int frames, Duration duration) {
+        return toAnimatedTexture(new AnimationChannel() {
+            @Override
+            public Rectangle2D area() {
+                return new Rectangle2D(0, 0, getImage().getWidth(), getImage().getHeight());
+            }
+
+            @Override
+            public int frames() {
+                return frames;
+            }
+
+            @Override
+            public Duration duration() {
+                return duration;
+            }
+
+            @Override
+            public String name() {
+                return "MAIN";
+            }
+        });
     }
 
     /**
-     * Converts the texture to dynamically animated texture.
+     * Converts the texture to animated texture.
      *
-     * @param initialChannel the channel set at the beginning
-     * @param channels animation channels
-     * @return new DynamicAnimatedTexture
+     * @param defaultChannel the default channel
+     * @return new AnimatedTexture
      */
-    public final DynamicAnimatedTexture toDynamicAnimatedTexture(AnimationChannel initialChannel, AnimationChannel... channels) {
-        return new DynamicAnimatedTexture(getImage(), initialChannel, channels);
+    public final AnimatedTexture toAnimatedTexture(AnimationChannel defaultChannel) {
+        return new AnimatedTexture(getImage(), defaultChannel);
     }
 
     /**
      * Call this to create a new texture if you are
      * planning to use the same image as graphics
-     * for multiple entities. This is required because
-     * same Node can only have 1 parent.
+     * for multiple entities.
+     * This is required because same Node can only have 1 parent.
      * <p>
      * Do NOT invoke on instances of StaticAnimatedTexture or
-     * DynamicAnimatedTexture, use {@link #toStaticAnimatedTexture(int, Duration)}
-     * or {@link #toDynamicAnimatedTexture(AnimationChannel, AnimationChannel...)}
-     * instead.
+     * AnimatedTexture, use {@link #toAnimatedTexture(int, Duration)}
+     * or {@link #toAnimatedTexture(AnimationChannel)} instead.
      *
      * @return new Texture with same image
      */

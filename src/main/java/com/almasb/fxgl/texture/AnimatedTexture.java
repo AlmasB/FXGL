@@ -33,20 +33,15 @@ import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Represents a dynamic animated texture. It is similar to StaticAnimatedTexture,
- * but has animation channels, like WALK, RUN, IDLE, ATTACK, etc. which can
+ * Represents an animated texture.
+ * Animation channels, like WALK, RUN, IDLE, ATTACK, etc. can
  * be set dynamically to alter the animation.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class DynamicAnimatedTexture extends Texture implements UpdateEventListener {
+public final class AnimatedTexture extends Texture implements UpdateEventListener {
 
-    private List<AnimationChannel> animationChannels = new ArrayList<>();
     private AnimationChannel defaultChannel;
     private AnimationChannel currentChannel;
 
@@ -56,11 +51,10 @@ public final class DynamicAnimatedTexture extends Texture implements UpdateEvent
 
     private Runnable onAnimationEnd;
 
-    DynamicAnimatedTexture(Image image, AnimationChannel initialChannel, AnimationChannel... channels) {
+    AnimatedTexture(Image image, AnimationChannel initialChannel) {
         super(image);
         this.defaultChannel = initialChannel;
 
-        Collections.addAll(animationChannels, channels);
         setAnimationChannel(initialChannel);
 
         animationTimer = FXGL.newLocalTimer();
@@ -71,9 +65,7 @@ public final class DynamicAnimatedTexture extends Texture implements UpdateEvent
     }
 
     /**
-     * Set animation channel. If animation channel wasn't registered
-     * when creating instance of DynamicAnimatedTexture, this method
-     * will throw IllegalArgumentException.
+     * Set animation channel.
      *
      * @param channel animation channel
      */
@@ -82,18 +74,12 @@ public final class DynamicAnimatedTexture extends Texture implements UpdateEvent
     }
 
     /**
-     * Set animation channel. If animation channel wasn't registered
-     * when creating instance of DynamicAnimatedTexture, this method
-     * will throw IllegalArgumentException.
+     * Set animation channel with a callback to run when the channel ends.
      *
      * @param channel animation channel
      * @param onAnimationEnd callback run when animation channel ends
      */
     public void setAnimationChannel(AnimationChannel channel, Runnable onAnimationEnd) {
-        if (!animationChannels.contains(channel)) {
-            throw new IllegalArgumentException("Channel: [" + channel + "] is not registered for this texture.");
-        }
-
         if (currentChannel == channel && channel != defaultChannel)
             return;
 

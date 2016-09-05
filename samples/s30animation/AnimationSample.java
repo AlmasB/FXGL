@@ -33,7 +33,7 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimationChannel;
-import com.almasb.fxgl.texture.DynamicAnimatedTexture;
+import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
@@ -42,9 +42,8 @@ import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 /**
- * TODO: cleanup, use a smaller sprite sheet
- *
- * Shows how to use sprite sheet animations.
+ * Shows how to use sprite sheet animations and how to build sprite sheets
+ * through code.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -114,7 +113,6 @@ public class AnimationSample extends GameApplication {
                 //playerSprite.setAnimationChannel(AnimChannel.IDLE);
             }
         }, MouseButton.PRIMARY);
-
     }
 
     @Override
@@ -136,7 +134,7 @@ public class AnimationSample extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {}
 
-    private DynamicAnimatedTexture playerSprite;
+    private AnimatedTexture playerSprite;
 
     private void initPlayer() {
         player = Entities.builder()
@@ -151,7 +149,7 @@ public class AnimationSample extends GameApplication {
     private Texture spriteAttack, spriteRun, spriteIdle,
             spriteJump, spriteThrow, spriteFull;
 
-    private DynamicAnimatedTexture buildSpriteSheet() {
+    private AnimatedTexture buildSpriteSheet() {
         spriteAttack = getAssetLoader().loadTexture("Attack__000.png");
         for (int i = 1; i <= 9; i++) {
             spriteAttack = spriteAttack.superTexture(getAssetLoader().loadTexture("Attack__00" + i + ".png"), HorizontalDirection.RIGHT);
@@ -183,7 +181,7 @@ public class AnimationSample extends GameApplication {
                 .superTexture(spriteJump, VerticalDirection.DOWN)
                 .superTexture(spriteThrow, VerticalDirection.DOWN);
 
-        return spriteFull.toDynamicAnimatedTexture(AnimChannel.IDLE, AnimChannel.values());
+        return spriteFull.toAnimatedTexture(AnimChannel.IDLE);
     }
 
     public static void main(String[] args) {
