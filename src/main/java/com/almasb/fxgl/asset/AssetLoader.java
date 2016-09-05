@@ -87,6 +87,10 @@ import java.util.zip.ZipInputStream;
  * <li>Cursors - /assets/ui/cursors/</li>
  * </ul>
  *
+ * If you need to access the "raw" JavaFX objects (e.g. Image), you can use
+ * {@link AssetLoader#getStream(String)} to obtain an InputStream and then
+ * parse into whatever resource you need.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class AssetLoader {
@@ -145,6 +149,43 @@ public class AssetLoader {
         try (InputStream is = getStream(TEXTURES_DIR + name)) {
             Texture texture = new Texture(new Image(is));
             cachedAssets.put(TEXTURES_DIR + name, texture);
+            return texture;
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
+     * Loads texture with given name from /assets/textures/.
+     * Then resizes it to given width and height without preserving aspect ratio.
+     * Either returns a valid texture or throws an exception in case of errors.
+     * <p>
+     * Supported image formats are:
+     * <ul>
+     * <li><a href="http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx">BMP</a></li>
+     * <li><a href="http://www.w3.org/Graphics/GIF/spec-gif89a.txt">GIF</a></li>
+     * <li><a href="http://www.ijg.org">JPEG</a></li>
+     * <li><a href="http://www.libpng.org/pub/png/spec/">PNG</a></li>
+     * </ul>
+     * </p>
+     *
+     * @param name texture name without the /assets/textures/, e.g. "player.png"
+     * @param width requested width
+     * @param height requested height
+     * @return texture
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Texture loadTexture(String name, double width, double height) {
+        String cacheKey = TEXTURES_DIR + name + "@" + width + "x" + height;
+
+        Object asset = getAssetFromCache(cacheKey);
+        if (asset != null) {
+            return Texture.class.cast(asset).copy();
+        }
+
+        try (InputStream is = getStream(TEXTURES_DIR + name)) {
+            Texture texture = new Texture(new Image(is, width, height, false, true));
+            cachedAssets.put(cacheKey, texture);
             return texture;
         } catch (Exception e) {
             throw loadFailed(name, e);
