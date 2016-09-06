@@ -29,3 +29,6 @@ dependency-reduced-pom.xml
 /saves
 /profiles
 /system
+
+# FXGL Tests #
+/testprofiles
