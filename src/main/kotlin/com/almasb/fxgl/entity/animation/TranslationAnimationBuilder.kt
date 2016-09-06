@@ -26,45 +26,44 @@
 
 package com.almasb.fxgl.entity.animation
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.FXGLEvent
-import javafx.animation.Animation
-import javafx.animation.KeyFrame
-import javafx.animation.KeyValue
-import javafx.animation.Timeline
-import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.event.EventHandler
+import javafx.geometry.Point2D
+import javafx.scene.shape.Path
+import javafx.scene.shape.Shape
+
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RotationAnimation(animationBuilder: AnimationBuilder,
-                        val startAngle: Double, val endAngle: Double) : EntityAnimation(animationBuilder) {
+class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
 
-    private lateinit var value: DoubleProperty
+    private var path: Shape? = null
+    private var fromPoint = Point2D.ZERO
+    private var toPoint = Point2D.ZERO
 
-    init {
-        initAnimation()
+    fun alongPath(path: Shape): TranslationAnimationBuilder {
+        this.path = path
+        return this
     }
 
-    override fun buildAnimation(): Animation {
-        value = SimpleDoubleProperty(startAngle)
-
-        return Timeline(KeyFrame(animationBuilder.duration, KeyValue(value, endAngle)))
+    fun from(start: Point2D): TranslationAnimationBuilder {
+        fromPoint = start
+        return this
     }
 
-    override fun bindProperties() {
-        animationBuilder.entities.map { it.rotationComponent }.forEach {
-            it.valueProperty().bind(value)
-        }
+    fun to(end: Point2D): TranslationAnimationBuilder {
+        toPoint = end
+        return this
     }
 
-    override fun unbindProperties() {
-        animationBuilder.entities.map { it.rotationComponent }.forEach {
-            it.valueProperty().unbind()
-        }
+    fun build(): TranslationAnimation {
+        return TranslationAnimation(animationBuilder, path, fromPoint, toPoint)
+    }
+
+    fun buildAndPlay(): TranslationAnimation {
+        val anim = build()
+        anim.play()
+        return anim
     }
 }

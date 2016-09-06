@@ -26,45 +26,44 @@
 
 package com.almasb.fxgl.entity.animation
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.FXGLEvent
 import javafx.animation.Animation
-import javafx.animation.KeyFrame
-import javafx.animation.KeyValue
-import javafx.animation.Timeline
-import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.event.EventHandler
+import javafx.animation.PathTransition
+import javafx.geometry.Point2D
+import javafx.scene.Node
+import javafx.scene.shape.Rectangle
+import javafx.scene.shape.Shape
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RotationAnimation(animationBuilder: AnimationBuilder,
-                        val startAngle: Double, val endAngle: Double) : EntityAnimation(animationBuilder) {
+class TranslationAnimation(animationBuilder: AnimationBuilder,
+                           val path: Shape?, val start: Point2D, val end: Point2D) : EntityAnimation(animationBuilder) {
 
-    private lateinit var value: DoubleProperty
+    private lateinit var node: Node
 
     init {
         initAnimation()
     }
 
     override fun buildAnimation(): Animation {
-        value = SimpleDoubleProperty(startAngle)
+        node = Rectangle()
 
-        return Timeline(KeyFrame(animationBuilder.duration, KeyValue(value, endAngle)))
+        return PathTransition(animationBuilder.duration, path, node)
     }
 
     override fun bindProperties() {
-        animationBuilder.entities.map { it.rotationComponent }.forEach {
-            it.valueProperty().bind(value)
+        animationBuilder.entities.map { it.positionComponent }.forEach {
+            it.xProperty().bind(node.translateXProperty().add(it.x))
+            it.yProperty().bind(node.translateYProperty().add(it.y))
         }
     }
 
     override fun unbindProperties() {
-        animationBuilder.entities.map { it.rotationComponent }.forEach {
-            it.valueProperty().unbind()
+        animationBuilder.entities.map { it.positionComponent }.forEach {
+            it.xProperty().unbind()
+            it.yProperty().unbind()
         }
     }
 }
