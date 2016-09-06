@@ -155,7 +155,7 @@ public class RangeTest extends GameApplication {
                     .forEach(r -> r.setFill(Color.YELLOW));
         });
 
-        List<Entity> list2 = getGameWorld().getEntities();
+        List<Entity> list2 = getGameWorld().getEntitiesCopy();
         list2.removeAll(list);
 
         list2.forEach(e -> {
