@@ -35,7 +35,6 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
-import com.almasb.fxgl.util.LRUCache;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.google.inject.Inject;
@@ -114,11 +113,11 @@ public class AssetLoader {
 
     private static final Logger log = FXGL.getLogger("FXGL.AssetLoader");
 
-    private final LRUCache<String, Object> cachedAssets;
+    private final AssetCache cachedAssets;
 
     @Inject
     private AssetLoader(@Named("asset.cache.size") int cacheSize) {
-        cachedAssets = new LRUCache<>(cacheSize);
+        cachedAssets = new AssetCache(cacheSize);
 
         log.debug("Service [AssetLoader] initialized");
     }
