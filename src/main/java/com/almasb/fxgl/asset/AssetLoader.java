@@ -143,12 +143,12 @@ public class AssetLoader {
     public Texture loadTexture(String name) {
         Object asset = getAssetFromCache(TEXTURES_DIR + name);
         if (asset != null) {
-            return Texture.class.cast(asset).copy();
+            return new Texture(Image.class.cast(asset));
         }
 
         try (InputStream is = getStream(TEXTURES_DIR + name)) {
             Texture texture = new Texture(new Image(is));
-            cachedAssets.put(TEXTURES_DIR + name, texture);
+            cachedAssets.put(TEXTURES_DIR + name, texture.getImage());
             return texture;
         } catch (Exception e) {
             throw loadFailed(name, e);
@@ -180,12 +180,12 @@ public class AssetLoader {
 
         Object asset = getAssetFromCache(cacheKey);
         if (asset != null) {
-            return Texture.class.cast(asset).copy();
+            return new Texture(Image.class.cast(asset));
         }
 
         try (InputStream is = getStream(TEXTURES_DIR + name)) {
             Texture texture = new Texture(new Image(is, width, height, false, true));
-            cachedAssets.put(cacheKey, texture);
+            cachedAssets.put(cacheKey, texture.getImage());
             return texture;
         } catch (Exception e) {
             throw loadFailed(name, e);

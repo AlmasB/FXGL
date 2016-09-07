@@ -91,6 +91,21 @@ class AssetLoaderTest {
         assertThat(texture.image.width, `is`(64.0))
         assertThat(texture.image.height, `is`(64.0))
 
+        // test cache
+        val texture2 = assetLoader.loadTexture("brick.png")
+        assertThat(texture2.image, `is`(texture.image))
+
+        texture.dispose()
+        texture2.dispose()
+    }
+
+    @Test
+    fun loadResizedTexture() {
+        val texture = assetLoader.loadTexture("brick.png", 32.0, 32.0)
+
+        assertThat(texture.image.width, `is`(32.0))
+        assertThat(texture.image.height, `is`(32.0))
+
         texture.dispose()
     }
 
