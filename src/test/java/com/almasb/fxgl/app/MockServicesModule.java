@@ -62,6 +62,7 @@ public class MockServicesModule extends AbstractModule {
             Application.launch(MockApplication.class);
         }).start();
 
+        mockCore();
         mockPooler();
         mockLoggerFactory();
         mockInput();
@@ -78,6 +79,10 @@ public class MockServicesModule extends AbstractModule {
             e.printStackTrace();
             System.exit(-1);
         }
+    }
+
+    private void mockCore() {
+        bind(GameApplication.class).toInstance(new MockGameApplication());
     }
 
     private void mockPooler() {

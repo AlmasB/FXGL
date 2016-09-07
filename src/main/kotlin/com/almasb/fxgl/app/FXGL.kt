@@ -279,6 +279,7 @@ class FXGL private constructor() {
                 return
 
             injector = Guice.createInjector(mockingModule)
+            internalApp = injector.getInstance(GameApplication::class.java)
 
             configured = true
         }
