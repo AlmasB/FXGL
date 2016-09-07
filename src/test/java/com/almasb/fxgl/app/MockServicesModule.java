@@ -36,6 +36,8 @@ import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.logging.MockLoggerFactory;
+import com.almasb.fxgl.time.MasterTimer;
+import com.almasb.fxgl.time.MockMasterTimer;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLPooler;
@@ -63,6 +65,7 @@ public class MockServicesModule extends AbstractModule {
         }).start();
 
         mockCore();
+        mockTimer();
         mockPooler();
         mockLoggerFactory();
         mockInput();
@@ -83,6 +86,10 @@ public class MockServicesModule extends AbstractModule {
 
     private void mockCore() {
         bind(GameApplication.class).toInstance(new MockGameApplication());
+    }
+
+    private void mockTimer() {
+        bind(MasterTimer.class).toInstance(MockMasterTimer.INSTANCE);
     }
 
     private void mockPooler() {
