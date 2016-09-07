@@ -69,6 +69,7 @@ public class MockServicesModule extends AbstractModule {
         mockEventBus();
         mockNotificationService();
         mockUIFactory();
+        mockAssetLoader();
 
         try {
             MockApplication.Companion.getREADY().await();
@@ -108,5 +109,9 @@ public class MockServicesModule extends AbstractModule {
 
     private void mockUIFactory() {
         bind(UIFactory.class).toInstance(MockUIFactory.INSTANCE);
+    }
+
+    private void mockAssetLoader() {
+        bind(Integer.class).annotatedWith(Names.named("asset.cache.size")).toInstance(35);
     }
 }
