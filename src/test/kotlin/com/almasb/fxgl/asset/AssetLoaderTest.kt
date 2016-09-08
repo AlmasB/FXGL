@@ -28,6 +28,7 @@ package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.entity.GameEntity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertThat
@@ -90,13 +91,6 @@ class AssetLoaderTest {
 
         assertThat(texture.image.width, `is`(64.0))
         assertThat(texture.image.height, `is`(64.0))
-
-        // test cache
-        val texture2 = assetLoader.loadTexture("brick.png")
-        assertThat(texture2.image, `is`(texture.image))
-
-        texture.dispose()
-        texture2.dispose()
     }
 
     @Test
@@ -169,7 +163,11 @@ class AssetLoaderTest {
 
     @Test
     fun loadCursorImage() {
+        val cursorImage = assetLoader.loadCursorImage("test_cursor.png")
 
+        assertThat(cursorImage, `is`(notNullValue()))
+        assertThat(cursorImage.width, `is`(64.0))
+        assertThat(cursorImage.height, `is`(64.0))
     }
 
     @Test
@@ -197,17 +195,32 @@ class AssetLoaderTest {
 
     @Test
     fun loadFont() {
+        val fontFactory = assetLoader.loadFont("test.ttf")
 
+        assertThat(fontFactory, `is`(notNullValue()))
+
+        val font = fontFactory.newFont(18.0)
+
+        assertThat(font, `is`(notNullValue()))
+        assertThat(font.family, `is`("Elektra"))
+        assertThat(font.name, `is`("Elektra"))
+        assertThat(font.size, `is`(18.0))
     }
 
     @Test
     fun loadAppIcon() {
+        val icon = assetLoader.loadAppIcon("ic_test.png")
 
+        assertThat(icon, `is`(notNullValue()))
+        assertThat(icon.width, `is`(48.0))
+        assertThat(icon.height, `is`(48.0))
     }
 
     @Test
     fun loadBehaviorTree() {
+        val tree = assetLoader.loadBehaviorTree<GameEntity>("test.tree")
 
+        assertThat(tree, `is`(notNullValue()))
     }
 
     @Test
@@ -217,5 +230,42 @@ class AssetLoaderTest {
         assertThat(stream, `is`(notNullValue()))
 
         stream.close()
+    }
+
+    @Test
+    fun `Load all file names from given asset directory`() {
+        val filenames = assetLoader.loadFileNames("/assets/ui/")
+
+        assertThat(filenames,
+                hasItems(
+                "css/test.css",
+                "cursors/test_cursor.png",
+                "fonts/test.ttf",
+                "icons/ic_test.png",
+                "test_ui.fxml"
+                ))
+    }
+
+    @Test
+    fun `Check loaded from cache when present`() {
+        // ensure cache is clean
+        assetLoader.clearCache()
+
+        val texture = assetLoader.loadTexture("brick.png")
+        val texture2 = assetLoader.loadTexture("brick.png")
+
+        assertThat(texture2.image, `is`(texture.image))
+        
+        assetLoader.clearCache()
+
+        val texture3 = assetLoader.loadTexture("brick.png")
+
+        assertThat(texture3.image, `is`(not(texture.image)))
+
+        texture.dispose()
+        texture2.dispose()
+        texture3.dispose()
+
+        assetLoader.clearCache()
     }
 }

@@ -1,0 +1,18 @@
+#
+# Patrol tree
+#
+
+# Alias definitions
+
+# Conditions
+import canSeePlayer? : "com.almasb.fxgl.ai.CanSeePlayerCondition"
+
+# Actions
+import attack : "com.almasb.fxgl.ai.AttackTask"
+
+# Tree definition (note that root is optional)
+root
+    selector
+        sequence
+            canSeePlayer?
+            attack
