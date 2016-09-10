@@ -32,10 +32,9 @@
         <game.utils.version>0.0.1</game.utils.version>
         <jbox.version>2.3.1-fxgl</jbox.version>
         <astar.version>1.0</astar.version>
-        <gdx.ai.version>1.8.0</gdx.ai.version>
+        <gdx.ai.version>1.8.1-fxgl</gdx.ai.version>
         <easyio.version>0.1.6</easyio.version>
         <log4j.version>2.5</log4j.version>
-        <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
         <junit.version>4.12</junit.version>
     </properties>
@@ -121,7 +120,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.badlogicgames.gdx</groupId>
+            <groupId>com.github.AlmasB</groupId>
             <artifactId>gdx-ai</artifactId>
             <version>${gdx.ai.version}</version>
         </dependency>
