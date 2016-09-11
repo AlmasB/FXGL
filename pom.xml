@@ -4,7 +4,7 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.7-SNAPSHOT</version>
+    <version>0.2.7</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
@@ -21,6 +21,7 @@
         <maven.source.version>2.4</maven.source.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
         <maven.shade.version>2.4.3</maven.shade.version>
+        <jacoco.version>0.7.7.201606060606</jacoco.version>
 
         <!-- dependencies -->
         <kotlin.version>1.0.3</kotlin.version>
@@ -294,7 +295,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.7.201606060606</version>
+                <version>${jacoco.version}</version>
                 <configuration>
                     <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
