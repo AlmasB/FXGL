@@ -65,7 +65,7 @@ public class SaveSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setShowFPS(true);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
