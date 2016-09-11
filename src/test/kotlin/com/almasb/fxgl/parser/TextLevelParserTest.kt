@@ -46,8 +46,6 @@ import org.junit.Test
  */
 class TextLevelParserTest {
 
-    //private lateinit var parser: TextLevelParser
-
     private enum class EntityType {
         TYPE1, TYPE2, TYPE3
     }
@@ -57,11 +55,6 @@ class TextLevelParserTest {
         @JvmStatic fun before() {
             FXGL.mockServices(MockServicesModule())
         }
-    }
-
-    @Before
-    fun setUp() {
-        //parser = TextLevelParser()
     }
 
     @Test(expected = IllegalArgumentException::class)
