@@ -64,6 +64,11 @@ User Profiles (Save/Load/Restore Game Settings) |
 
 If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
 
+## Showcase
+
+You can browse sample games (with screenshots) on the [FXGLGames](http://almasb.github.io/FXGLGames/) website.
+The source code is included.
+
 ## Basic Usage
 #### Java Example
 ```java
@@ -136,7 +141,7 @@ fun main(args: Array<String>) {
 * For all (**up to date**) "Getting Started" tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki).
 * The (**up to date**) [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
 * The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) (**outdated**) videos will walk you through the basics.
-* For advanced examples please see [FXGLGames](http://almasb.github.io/FXGLGames/).
+* For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
 
 ## Setup Tutorials
 * [Eclipse](https://www.youtube.com/watch?v=2kLIXDhEGo0)
