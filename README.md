@@ -152,7 +152,7 @@ fun main(args: Array<String>) {
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.6</version>
+    <version>0.2.7</version>
 </dependency>
 ```
 
@@ -163,7 +163,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.6'
+    compile 'com.github.AlmasB:FXGL:0.2.7'
 }
 ```
 
