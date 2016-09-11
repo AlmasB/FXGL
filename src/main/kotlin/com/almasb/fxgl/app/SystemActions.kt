@@ -29,6 +29,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.ui.UI
 import javafx.scene.Parent
 import javafx.scene.input.KeyCode
 
@@ -57,21 +58,21 @@ object SystemActions {
 
     private fun devOptions() = object : UserAction("Dev Options") {
         private var devBarOpen = false
-        private var devBar: Parent? = null
+        private var devUI: UI? = null
 
         override fun onActionBegin() {
             if (FXGL.getSettings().applicationMode == ApplicationMode.RELEASE)
                 return
 
-            if (devBar == null) {
-                devBar = FXGL.getAssetLoader().loadFXML("dev_menu_bar.fxml", DeveloperMenuBarController())
+            if (devUI == null) {
+                devUI = FXGL.getAssetLoader().loadUI("dev_menu_bar.fxml", DeveloperMenuBarController())
             }
 
             if (devBarOpen) {
-                FXGL.getApp().gameScene.removeUINode(devBar)
+                FXGL.getApp().gameScene.removeUI(devUI)
                 devBarOpen = false
             } else {
-                FXGL.getApp().gameScene.addUINode(devBar)
+                FXGL.getApp().gameScene.addUI(devUI)
                 devBarOpen = true
             }
         }

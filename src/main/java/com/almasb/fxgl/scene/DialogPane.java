@@ -28,7 +28,6 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ui.FXGLButton;
-import com.almasb.fxgl.ui.UIFactory;
 import com.sun.javafx.scene.traversal.Algorithm;
 import com.sun.javafx.scene.traversal.Direction;
 import com.sun.javafx.scene.traversal.ParentTraversalEngine;
@@ -316,7 +315,7 @@ public class DialogPane extends Pane {
 
         TextField field = new TextField();
         field.setMaxWidth(Math.max(text.getLayoutBounds().getWidth(), 200));
-        field.setFont(UIFactory.newFont(18));
+        field.setFont(FXGL.getUIFactory().newFont(18));
 
         FXGLButton btnOK = new FXGLButton("OK");
 
@@ -356,9 +355,9 @@ public class DialogPane extends Pane {
 
         TextField field = new TextField();
         field.setMaxWidth(Math.max(text.getLayoutBounds().getWidth(), 200));
-        field.setFont(UIFactory.newFont(18));
+        field.setFont(FXGL.getUIFactory().newFont(18));
 
-        Button btnOK = UIFactory.newButton("OK");
+        Button btnOK = FXGL.getUIFactory().newButton("OK");
 
         field.textProperty().addListener((observable, oldValue, newInput) -> {
             btnOK.setDisable(newInput.isEmpty() || !filter.test(newInput));
@@ -370,7 +369,7 @@ public class DialogPane extends Pane {
             resultCallback.accept(field.getText());
         });
 
-        Button btnCancel = UIFactory.newButton("CANCEL");
+        Button btnCancel = FXGL.getUIFactory().newButton("CANCEL");
         btnCancel.setOnAction(e -> {
             close();
             resultCallback.accept("");
@@ -421,7 +420,7 @@ public class DialogPane extends Pane {
     }
 
     private Text createMessage(String message) {
-        return UIFactory.newText(message);
+        return FXGL.getUIFactory().newText(message);
     }
 
     /**

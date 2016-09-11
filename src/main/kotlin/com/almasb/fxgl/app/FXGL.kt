@@ -29,20 +29,19 @@ package com.almasb.fxgl.app
 import com.almasb.easyio.FS
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.Guice
 import com.google.inject.Injector
+import com.google.inject.Module
 import com.google.inject.Provides
+import com.google.inject.name.Named
 import com.google.inject.name.Names
 import javafx.scene.Scene
-import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
 import java.util.function.Consumer
 
 /**
@@ -66,7 +65,7 @@ class FXGL private constructor() {
         /**
          * Temporarily holds k-v pairs from system.properties.
          */
-        private val internalProperties = HashMap<String, Any>()
+        private val internalProperties = Properties()
 
         private var configured = false
 
@@ -112,7 +111,7 @@ class FXGL private constructor() {
 
             // log that we are ready, also force logger service to init
             internalLogger = getLogger("FXGL")
-            internalLogger.info("FXGL configuration complete")
+            internalLogger.debug("FXGL configuration complete")
 
             if (firstRun)
                 loadDefaultSystemData()
@@ -214,9 +213,13 @@ class FXGL private constructor() {
 
         private fun configureServices(stage: Stage) {
             injector = Guice.createInjector(object : ServicesModule() {
-                private val scene = Scene(Pane())
 
                 override fun configure() {
+                    bindProperties()
+                    bindServices()
+                }
+
+                private fun bindProperties() {
                     bind(Double::class.java)
                             .annotatedWith(Names.named("appWidth"))
                             .toInstance(internalSettings.getWidth().toDouble())
@@ -225,26 +228,33 @@ class FXGL private constructor() {
                             .annotatedWith(Names.named("appHeight"))
                             .toInstance(internalSettings.getHeight().toDouble())
 
-                    // add internal properties directly to Guice
-                    for ((k,v) in internalProperties) {
-                        when(v) {
-                            is Int -> bind(Int::class.java).annotatedWith(Names.named(k)).toInstance(v)
-                            is Double -> bind(Double::class.java).annotatedWith(Names.named(k)).toInstance(v)
-                            is Boolean -> bind(Boolean::class.java).annotatedWith(Names.named(k)).toInstance(v)
-                            is String -> bind(String::class.java).annotatedWith(Names.named(k)).toInstance(v)
-                            else -> SystemLogger.warning("Unknown property type")
-                        }
-                    }
+                    bind(GameApplication::class.java).toInstance(internalApp)
+                    bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
+                    bind(ApplicationMode::class.java).toInstance(internalSettings.applicationMode)
+
+                    for ((k, v) in internalProperties.intMap)
+                        bind(Int::class.java).annotatedWith(k).toInstance(v)
+
+                    for ((k, v) in internalProperties.doubleMap)
+                        bind(Double::class.java).annotatedWith(k).toInstance(v)
+
+                    for ((k, v) in internalProperties.booleanMap)
+                        bind(Boolean::class.java).annotatedWith(k).toInstance(v)
+
+                    for ((k, v) in internalProperties.stringMap)
+                        bind(String::class.java).annotatedWith(k).toInstance(v)
 
                     internalProperties.clear()
+                }
 
-                    bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
-                    bind(ApplicationMode::class.java).toInstance(internalSettings.getApplicationMode())
+                private fun bindServices() {
+                    val userServiceTypes = internalSettings.services.map { it.service() }
 
                     val services = ServiceType::class.java
                             .declaredFields
                             .map { it.get(null) as ServiceType<*> }
-                            .toList()
+                            // filter user overriden types
+                            .filter {  !userServiceTypes.contains(it.service()) }
                             // also add user specified services
                             .plus(internalSettings.services)
 
@@ -254,7 +264,7 @@ class FXGL private constructor() {
 
                 @Provides
                 internal fun primaryScene(): Scene {
-                    return scene
+                    return stage.scene
                 }
 
                 @Provides
@@ -264,11 +274,12 @@ class FXGL private constructor() {
             })
         }
 
-        @JvmStatic fun mockServices() {
+        @JvmStatic fun mockServices(mockingModule: Module) {
             if (configured)
                 return
 
-            injector = Guice.createInjector(MockServicesModule())
+            injector = Guice.createInjector(mockingModule)
+            internalApp = injector.getInstance(GameApplication::class.java)
 
             configured = true
         }
@@ -312,6 +323,12 @@ class FXGL private constructor() {
         private val _pooler by lazy { getService(ServiceType.POOLER) }
         @JvmStatic fun getPooler() = _pooler
 
+        private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
+        @JvmStatic fun getExceptionHandler() = _exceptionHandler
+
+        private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
+        @JvmStatic fun getUIFactory() = _uiFactory
+
         /**
          * @return new instance on each call
          */
@@ -330,11 +347,6 @@ class FXGL private constructor() {
          * @return new instance on each call
          */
         @JvmStatic fun newProfiler() = getService(ServiceType.PROFILER)
-
-        /**
-         * @return default checked exception handler
-         */
-        @JvmStatic fun getExceptionHandler() = FXGLApplication.getDefaultCheckedExceptionHandler()
 
         /**
          * Get value of an int property.
@@ -389,19 +401,33 @@ class FXGL private constructor() {
             if (!configured) {
 
                 if (value == "true" || value == "false") {
-                    internalProperties[key] = java.lang.Boolean.parseBoolean(value as String)
+                    internalProperties.booleanMap[Names.named(key)] = java.lang.Boolean.parseBoolean(value as String)
                 } else {
                     try {
-                        internalProperties[key] = Integer.parseInt(value.toString())
+                        internalProperties.intMap[Names.named(key)] = Integer.parseInt(value.toString())
                     } catch(e: Exception) {
                         try {
-                            internalProperties[key] = java.lang.Double.parseDouble(value.toString())
+                            internalProperties.doubleMap[Names.named(key)] = java.lang.Double.parseDouble(value.toString())
                         } catch(e: Exception) {
-                            internalProperties[key] = value.toString()
+                            internalProperties.stringMap[Names.named(key)] = value.toString()
                         }
                     }
                 }
             }
+        }
+    }
+
+    private class Properties {
+        val intMap = hashMapOf<Named, Int>()
+        val doubleMap = hashMapOf<Named, Double>()
+        val booleanMap = hashMapOf<Named, Boolean>()
+        val stringMap = hashMapOf<Named, String>()
+
+        fun clear() {
+            intMap.clear()
+            doubleMap.clear()
+            booleanMap.clear()
+            stringMap.clear()
         }
     }
 }

@@ -58,6 +58,11 @@ public class EntityView extends Parent {
         addNode(graphics);
     }
 
+    public EntityView(Node graphics, RenderLayer layer) {
+        addNode(graphics);
+        setRenderLayer(layer);
+    }
+
     /**
      * Returns nodes attached to this view.
      * Modifying the list directly is discouraged as certain events

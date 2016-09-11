@@ -25,31 +25,18 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.easyio.EasyIO;
-import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.devtools.profiling.Profiler;
-import com.almasb.fxgl.event.*;
+import com.almasb.fxgl.event.IntroFinishedEvent;
 import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.gameplay.SaveLoadManager;
 import com.almasb.fxgl.io.DataFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.*;
-import com.almasb.fxgl.util.ExceptionHandler;
-import com.almasb.fxgl.util.FXGLUncaughtExceptionHandler;
-import javafx.animation.AnimationTimer;
+import com.almasb.fxgl.scene.menu.MenuEventListener;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -87,23 +74,6 @@ public abstract class GameApplication extends FXGLApplication {
 
     {
         log.debug("Starting JavaFX");
-        setDefaultUncaughtExceptionHandler(new FXGLUncaughtExceptionHandler());
-    }
-
-    /**
-     * Set handler for runtime uncaught exceptions.
-     *
-     * @param handler exception handler
-     */
-    public final void setDefaultUncaughtExceptionHandler(ExceptionHandler handler) {
-        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
-            pause();
-            log.fatal("Uncaught Exception:");
-            log.fatal(SystemLogger.INSTANCE.errorTraceAsString(error));
-            log.fatal("Application will now exit");
-            handler.handle(error);
-            exit();
-        });
     }
 
     private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
@@ -128,31 +98,39 @@ public abstract class GameApplication extends FXGLApplication {
         switch (appState) {
             case INTRO:
                 getDisplay().setScene(introScene);
+
+                // TODO: remove handler later
+                getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
+                introScene.startIntro();
                 break;
+
             case LOADING:
                 getDisplay().setScene(loadingScene);
                 break;
+
             case MAIN_MENU:
                 getDisplay().setScene(mainMenuScene);
+                if (!menuHandler.isProfileSelected())
+                    menuHandler.showProfileDialog();
                 break;
+
             case GAME_MENU:
                 getDisplay().setScene(gameMenuScene);
                 break;
+
             case PLAYING:
                 getDisplay().setScene(getGameScene());
                 break;
+
             case PAUSED:
                 // no need to do anything
                 break;
+
             default:
                 log.warning("Attempted to set illegal state: " + appState);
                 break;
         }
     }
-
-    private GameWorld gameWorld;
-    private PhysicsWorld physicsWorld;
-    private GameScene gameScene;
 
     /**
      * @return game world
@@ -175,8 +153,6 @@ public abstract class GameApplication extends FXGLApplication {
         return gameScene;
     }
 
-    private SceneFactory sceneFactory;
-
     /**
      * Override to provide custom intro/loading/menu scenes.
      *
@@ -186,32 +162,45 @@ public abstract class GameApplication extends FXGLApplication {
         return new SceneFactory();
     }
 
+    /* The following fields are injected by tasks */
+
+    GameWorld gameWorld;
+
+    PhysicsWorld physicsWorld;
+
+    GameScene gameScene;
+
     /**
      * Intro scene, this is shown when the application started,
      * before menus and game.
      */
-    private IntroScene introScene;
+    IntroScene introScene;
 
     /**
      * This scene is shown during app initialization,
      * i.e. when assets / game are loaded on bg thread.
      */
-    private LoadingScene loadingScene;
+    LoadingScene loadingScene;
 
     /**
      * Main menu, this is the menu shown at the start of game.
      */
-    private FXGLMenu mainMenuScene;
+    FXGLMenu mainMenuScene;
 
     /**
      * In-game menu, this is shown when menu key pressed during the game.
      */
-    private FXGLMenu gameMenuScene;
+    FXGLMenu gameMenuScene;
+
+    /**
+     * Handler for menu events.
+     */
+    private MenuEventHandler menuHandler;
 
     /**
      * Main game profiler.
      */
-    private Profiler profiler;
+    Profiler profiler;
 
     /**
      * Override to register your achievements.
@@ -249,8 +238,8 @@ public abstract class GameApplication extends FXGLApplication {
 
     /**
      * This is called after core services are initialized
-     * but before any game init. Called only once
-     * per application lifetime.
+     * but before any game init.
+     * Called only once per application lifetime.
      */
     protected void preInit() {
 
@@ -264,7 +253,8 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Called when MenuEvent.SAVE occurs.
      * Note: if you enable menus, you are responsible for providing
-     * appropriate serialization of your game state, even if it's ad-hoc null.
+     * appropriate serialization of your game state.
+     * Otherwise an exception will be thrown when save is called.
      *
      * @return data with required info about current state
      * @throws UnsupportedOperationException if was not overridden
@@ -277,7 +267,8 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Called when MenuEvent.LOAD occurs.
      * Note: if you enable menus, you are responsible for providing
-     * appropriate deserialization of your game state, even if it's ad-hoc no-op.
+     * appropriate deserialization of your game state.
+     * Otherwise an exception will be thrown when load is called.
      *
      * @param dataFile previously saved data
      * @throws UnsupportedOperationException if was not overridden
@@ -321,124 +312,6 @@ public abstract class GameApplication extends FXGLApplication {
 
     }
 
-    private void initGlobalEventHandlers() {
-        log.debug("Initializing global event handlers");
-
-        EventBus bus = getEventBus();
-
-        Font fpsFont = Font.font("Lucida Console", 20);
-
-        // Main tick
-
-        getMasterTimer().addUpdateListener(getInput());
-        getMasterTimer().addUpdateListener(getAudioPlayer());
-        getMasterTimer().addUpdateListener(getGameWorld());
-        getMasterTimer().addUpdateListener(event -> {
-            onUpdate(event.tpf());
-
-            if (getSettings().isFPSShown()) {
-                GraphicsContext g = getGameScene().getGraphicsContext();
-
-                g.setFont(fpsFont);
-                g.setFill(Color.RED);
-                g.fillText(profiler.getInfo(), 0, getHeight() - 120);
-            }
-        });
-
-        AnimationTimer postUpdateTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                onPostUpdate(getMasterTimer().tpf());
-            }
-        };
-
-        // Save/Load events
-
-        bus.addEventHandler(SaveEvent.ANY, event -> {
-            getInput().save(event.getProfile());
-            getDisplay().save(event.getProfile());
-            getAudioPlayer().save(event.getProfile());
-            getAchievementManager().save(event.getProfile());
-            getMasterTimer().save(event.getProfile());
-        });
-
-        bus.addEventHandler(LoadEvent.ANY, event -> {
-            getInput().load(event.getProfile());
-            getDisplay().load(event.getProfile());
-            getAudioPlayer().load(event.getProfile());
-            getAchievementManager().load(event.getProfile());
-
-            if (event.getEventType() != LoadEvent.RESTORE_SETTINGS) {
-                getMasterTimer().load(event.getProfile());
-            }
-        });
-
-        // Core listeners
-
-        addFXGLListener(getInput());
-        addFXGLListener(getMasterTimer());
-        addFXGLListener(new FXGLListener() {
-            @Override
-            public void onPause() {
-                postUpdateTimer.stop();
-                setState(ApplicationState.PAUSED);
-            }
-
-            @Override
-            public void onResume() {
-                postUpdateTimer.start();
-                setState(ApplicationState.PLAYING);
-            }
-
-            @Override
-            public void onReset() {
-                getGameWorld().reset();
-            }
-
-            @Override
-            public void onExit() {
-                if (getSettings().isMenuEnabled())
-                    menuHandler.saveProfile();
-            }
-        });
-
-        getGameWorld().addWorldListener(getPhysicsWorld());
-        getGameWorld().addWorldListener(getGameScene());
-
-        // Scene
-
-        getGameScene().addEventHandler(MouseEvent.ANY, event ->
-                getInput().onMouseEvent(event, getGameScene().getViewport())
-        );
-        getGameScene().addEventHandler(KeyEvent.ANY, getInput()::onKeyEvent);
-
-        bus.addEventHandler(NotificationEvent.ANY, getAudioPlayer()::onNotificationEvent);
-
-        bus.addEventHandler(AchievementEvent.ANY, getNotificationService()::onAchievementEvent);
-
-        // FXGL App
-
-        bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
-        bus.addEventHandler(DisplayEvent.DIALOG_OPENED, e -> {
-            if (getState() == ApplicationState.INTRO ||
-                    getState() == ApplicationState.LOADING)
-                return;
-
-            if (!isMenuOpen())
-                pause();
-
-            getInput().onReset();
-        });
-        bus.addEventHandler(DisplayEvent.DIALOG_CLOSED, e -> {
-            if (getState() == ApplicationState.INTRO ||
-                    getState() == ApplicationState.LOADING)
-                return;
-
-            if (!isMenuOpen())
-                resume();
-        });
-    }
-
     /**
      * @return true if any menu is open
      */
@@ -454,152 +327,41 @@ public abstract class GameApplication extends FXGLApplication {
         return isMenuOpen() || getState() == ApplicationState.PAUSED;
     }
 
-    private boolean canSwitchGameMenu = true;
-
-    private void onMenuKey(boolean pressed) {
-        if (!pressed) {
-            canSwitchGameMenu = true;
-            return;
-        }
-
-        if (canSwitchGameMenu) {
-            if (getState() == ApplicationState.GAME_MENU) {
-                canSwitchGameMenu = false;
-                resume();
-            } else if (getState() == ApplicationState.PLAYING) {
-                canSwitchGameMenu = false;
-                pause();
-                setState(ApplicationState.GAME_MENU);
-            } else {
-                log.warning("Menu key pressed in unknown state: " + getState());
-            }
-        }
-    }
-
-    private MenuEventHandler menuHandler;
-
-    /**
-     * Creates Main and Game menu scenes.
-     * Registers them with the Display service.
-     * Adds key binding so that scenes can be switched on menu key press.
-     */
-    private void configureMenu() {
-        menuHandler = new MenuEventHandler(this);
-
-        mainMenuScene = sceneFactory.newMainMenu(this);
-        gameMenuScene = sceneFactory.newGameMenu(this);
-
-        mainMenuScene.setListener(menuHandler);
-        gameMenuScene.setListener(menuHandler);
-
-        getDisplay().registerScene(mainMenuScene);
-        getDisplay().registerScene(gameMenuScene);
-
-        EventHandler<KeyEvent> menuKeyHandler = event -> {
-            if (event.getCode() == getSettings().getMenuKey()) {
-                onMenuKey(event.getEventType() == KeyEvent.KEY_PRESSED);
-            }
-        };
-
-        getGameScene().addEventHandler(KeyEvent.ANY, menuKeyHandler);
-        gameMenuScene.addEventHandler(KeyEvent.ANY, menuKeyHandler);
-    }
-
-    private void configureIntro() {
-        introScene = sceneFactory.newIntro();
-        introScene.setOnFinished(this::showGame);
-        getDisplay().registerScene(introScene);
-    }
-
-    /**
-     * Called right before the main stage is shown.
-     */
-    private void onStageShow() {
-        if (getSettings().isIntroEnabled()) {
-            configureIntro();
-            setState(ApplicationState.INTRO);
-
-            introScene.startIntro();
-        } else {
-            showGame();
-        }
-    }
-
-    private void showGame() {
+    private void onIntroFinished() {
         if (getSettings().isMenuEnabled()) {
-            configureMenu();
             setState(ApplicationState.MAIN_MENU);
-
-            // we haven't shown the dialog yet so show now
-            if (getSettings().isIntroEnabled())
-                menuHandler.showProfileDialog();
         } else {
             startNewGame();
         }
-    }
 
-    private void initFXGL() {
-        initAchievements();
-
-        // we call this early to process user input bindings
-        // so we can correctly display them in menus
-        // 1. register system actions
-        SystemActions.INSTANCE.bind(getInput());
-
-        // 2. register user actions
-        initInput();
-
-        // 3. scan for annotated methods and register them too
-        getInput().scanForUserActions(this);
-
-        initGlobalEventHandlers();
-
-        preInit();
+        // we no longer need intro, mark for cleanup
+        introScene = null;
     }
 
     @Override
-    public final void start(Stage stage) throws Exception {
-        super.start(stage);
-
-        long start = System.nanoTime();
+    void configureApp() {
 
         // services are now ready, switch to normal logger
         log = FXGL.getLogger(GameApplication.class);
-        log.debug("Starting Game Application");
+        log.debug("Configuring GameApplication");
 
-        EasyIO.INSTANCE.setDefaultExceptionHandler(getDefaultCheckedExceptionHandler());
-        EasyIO.INSTANCE.setDefaultExecutor(getExecutor());
+        long start = System.nanoTime();
 
-        gameWorld = FXGL.getInstance(GameWorld.class);
-        physicsWorld = FXGL.getInstance(PhysicsWorld.class);
-        gameScene = FXGL.getInstance(GameScene.class);
+        runTask(PreInitTask.class);
+        runTask(InitScenesTask.class);
+        runTask(InitEventHandlersTask.class);
+        runTask(InitProfilerTask.class);
 
-        sceneFactory = initSceneFactory();
-
-        loadingScene = sceneFactory.newLoadingScene();
-
-        getDisplay().registerScene(loadingScene);
-        getDisplay().registerScene(getGameScene());
-
-        initFXGL();
-
-        onStageShow();
-        stage.show();
-
-        if (getSettings().isMenuEnabled() && !getSettings().isIntroEnabled())
-            menuHandler.showProfileDialog();
-
-        if (getSettings().isProfilingEnabled()) {
-            profiler = FXGL.newProfiler();
-            profiler.start();
-
-            getEventBus().addEventHandler(FXGLEvent.EXIT, e -> {
-                profiler.stop();
-                profiler.print();
-            });
+        // intro runs async so we have to wait with a callback
+        // Stage -> (Intro) -> (Menu) -> Game
+        // if not enabled, call finished directly
+        if (getSettings().isIntroEnabled()) {
+            setState(ApplicationState.INTRO);
+        } else {
+            onIntroFinished();
         }
 
-        SystemLogger.INSTANCE.infof("GameApplication start took: %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+        SystemLogger.INSTANCE.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     /**
@@ -617,9 +379,7 @@ public abstract class GameApplication extends FXGLApplication {
 
         loadingScene.bind(initTask);
 
-        log.debug("Starting FXGL Init Thread");
-        Thread thread = new Thread(initTask, "FXGL Init Thread");
-        thread.start();
+        getExecutor().execute(initTask);
     }
 
     /**
@@ -635,27 +395,16 @@ public abstract class GameApplication extends FXGLApplication {
      * (Re-)initializes the user application from the given data file and starts the game.
      * Note: cannot be called during callbacks.
      *
-     * @param dataFile save data to loadTask from
+     * @param dataFile save data to load from
      */
     protected void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
         initApp(new InitAppTask(this, dataFile));
     }
 
-    public ReadOnlyStringProperty profileNameProperty() {
-        return menuHandler.profileNameProperty();
-    }
-
-    public void restoreDefaultSettings() {
-        menuHandler.restoreDefaultSettings();
-    }
-
-    /**
-     * @return save load manager
-     * @deprecated access to save load manager should be done through menus, this method will be removed
-     */
-    @Deprecated
-    public SaveLoadManager getSaveLoadManager() {
-        return menuHandler.getSaveLoadManager();
+    public MenuEventListener getMenuListener() {
+        if (menuHandler == null)
+            menuHandler = new MenuEventHandler(this);
+        return menuHandler;
     }
 }

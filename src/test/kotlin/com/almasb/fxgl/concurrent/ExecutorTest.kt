@@ -27,18 +27,18 @@
 package com.almasb.fxgl.concurrent
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.MockServicesModule
 import javafx.util.Duration
-import org.junit.Assert
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
+import org.junit.Assert.assertThat
+import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.rules.Timeout
 import java.util.concurrent.TimeUnit
-
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
 
 /**
  *
@@ -52,7 +52,7 @@ class ExecutorTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices()
+            FXGL.mockServices(MockServicesModule())
         }
     }
 

@@ -30,7 +30,7 @@ import com.almasb.easyio.IOTask
 import com.almasb.easyio.taskOf
 import com.almasb.easyio.voidTaskOf
 import com.almasb.fxgl.app.FXGL
-import com.google.inject.Singleton
+import com.google.inject.Inject
 import java.io.InputStreamReader
 import java.net.URL
 import java.nio.file.Path
@@ -40,8 +40,8 @@ import java.nio.file.Path
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
-class FXGLNet : Net {
+class FXGLNet
+@Inject private constructor() : Net {
 
     override fun downloadTask(url: String): IOTask<Path> = DownloadTask(url)
 

@@ -33,12 +33,11 @@ import com.almasb.fxgl.parser.KVFile;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
+import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
-import com.almasb.fxgl.util.LRUCache;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -87,9 +86,12 @@ import java.util.zip.ZipInputStream;
  * <li>Cursors - /assets/ui/cursors/</li>
  * </ul>
  *
+ * If you need to access the "raw" JavaFX objects (e.g. Image), you can use
+ * {@link AssetLoader#getStream(String)} to obtain an InputStream and then
+ * parse into whatever resource you need.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 public class AssetLoader {
 
     private static final String ASSETS_DIR = "/assets/";
@@ -111,11 +113,11 @@ public class AssetLoader {
 
     private static final Logger log = FXGL.getLogger("FXGL.AssetLoader");
 
-    private final LRUCache<String, Object> cachedAssets;
+    private final AssetCache cachedAssets;
 
     @Inject
     private AssetLoader(@Named("asset.cache.size") int cacheSize) {
-        cachedAssets = new LRUCache<>(cacheSize);
+        cachedAssets = new AssetCache(cacheSize);
 
         log.debug("Service [AssetLoader] initialized");
     }
@@ -140,12 +142,49 @@ public class AssetLoader {
     public Texture loadTexture(String name) {
         Object asset = getAssetFromCache(TEXTURES_DIR + name);
         if (asset != null) {
-            return Texture.class.cast(asset).copy();
+            return new Texture(Image.class.cast(asset));
         }
 
         try (InputStream is = getStream(TEXTURES_DIR + name)) {
             Texture texture = new Texture(new Image(is));
-            cachedAssets.put(TEXTURES_DIR + name, texture);
+            cachedAssets.put(TEXTURES_DIR + name, texture.getImage());
+            return texture;
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
+     * Loads texture with given name from /assets/textures/.
+     * Then resizes it to given width and height without preserving aspect ratio.
+     * Either returns a valid texture or throws an exception in case of errors.
+     * <p>
+     * Supported image formats are:
+     * <ul>
+     * <li><a href="http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx">BMP</a></li>
+     * <li><a href="http://www.w3.org/Graphics/GIF/spec-gif89a.txt">GIF</a></li>
+     * <li><a href="http://www.ijg.org">JPEG</a></li>
+     * <li><a href="http://www.libpng.org/pub/png/spec/">PNG</a></li>
+     * </ul>
+     * </p>
+     *
+     * @param name texture name without the /assets/textures/, e.g. "player.png"
+     * @param width requested width
+     * @param height requested height
+     * @return texture
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    public Texture loadTexture(String name, double width, double height) {
+        String cacheKey = TEXTURES_DIR + name + "@" + width + "x" + height;
+
+        Object asset = getAssetFromCache(cacheKey);
+        if (asset != null) {
+            return new Texture(Image.class.cast(asset));
+        }
+
+        try (InputStream is = getStream(TEXTURES_DIR + name)) {
+            Texture texture = new Texture(new Image(is, width, height, false, true));
+            cachedAssets.put(cacheKey, texture.getImage());
             return texture;
         } catch (Exception e) {
             throw loadFailed(name, e);
@@ -292,7 +331,9 @@ public class AssetLoader {
      * @param controller the controller object
      * @return a JavaFX UI parsed from .fxml
      * @throws IllegalArgumentException if asset not found or loading/parsing error
+     * @deprecated use {@link #loadUI(String, UIController)}
      */
+    @Deprecated
     public Parent loadFXML(String name, UIController controller) {
         try (InputStream is = getStream(UI_DIR + name)) {
             FXMLLoader loader = new FXMLLoader();
@@ -300,6 +341,27 @@ public class AssetLoader {
             Parent ui = loader.load(is);
             controller.init();
             return ui;
+        } catch (Exception e) {
+            throw loadFailed(name, e);
+        }
+    }
+
+    /**
+     * Loads an FXML (.fxml) file from /assets/ui/.
+     * Either returns a valid parsed UI or throws an exception in case of errors.
+     *
+     * @param name FXML file name
+     * @param controller the controller object
+     * @return a UI object parsed from .fxml
+     * @throws IllegalArgumentException if asset not found or loading/parsing error
+     */
+    public UI loadUI(String name, UIController controller) {
+        try (InputStream is = getStream(UI_DIR + name)) {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setController(controller);
+            Parent root = loader.load(is);
+            controller.init();
+            return new UI(root, controller);
         } catch (Exception e) {
             throw loadFailed(name, e);
         }

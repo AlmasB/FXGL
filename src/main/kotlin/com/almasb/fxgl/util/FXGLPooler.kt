@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.gameutils.pool.Pool
 import com.almasb.gameutils.pool.Pools
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import com.google.inject.name.Named
 import org.jbox2d.common.Vec2
 
@@ -39,7 +38,6 @@ import org.jbox2d.common.Vec2
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLPooler
 @Inject private constructor(@Named("pooling.initialSize") initialSize: Int): Pooler {
 

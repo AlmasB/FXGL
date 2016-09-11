@@ -23,61 +23,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.asset.FXGLAssets;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Spinner;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
- * A collection of static methods that return UI controls to unify
- * the look across FXGL.
+ * Factory service for creating UI controls.
+ * Used to unify the look across FXGL.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class UIFactory {
-    private UIFactory() {}
+public interface UIFactory {
 
-    public static Font newFont(double size) {
-        return FXGLAssets.UI_FONT.newFont(size);
-    }
+    /**
+     * @param size font size
+     * @return main UI font with given size
+     */
+    Font newFont(double size);
 
-    public static Text newText(String message) {
+    default Text newText(String message) {
         return newText(message, Color.WHITE, 18);
     }
 
-    public static Text newText(String message, double fontSize) {
+    default Text newText(String message, double fontSize) {
         return newText(message, Color.WHITE, fontSize);
     }
 
-    public static Text newText(String message, Color textColor, double fontSize) {
+    default Text newText(String message, Color textColor, double fontSize) {
         Text text = new Text(message);
         text.setFill(textColor);
         text.setFont(newFont(fontSize));
         return text;
     }
 
-    public static Button newButton(String text) {
-        return new FXGLButton(text);
-    }
+    Button newButton(String text);
 
-    public static <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items) {
-        return new FXGLChoiceBox<>(items);
-    }
+    <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
 
-    public static <T> ChoiceBox<T> newChoiceBox() {
-        return new FXGLChoiceBox<>();
-    }
+    <T> ChoiceBox<T> newChoiceBox();
 
-    public static double widthOf(String text, double fontSize) {
-        return newText(text, fontSize).getLayoutBounds().getWidth();
-    }
-
-    public static double heightOf(String text, double fontSize) {
-        return newText(text, fontSize).getLayoutBounds().getHeight();
-    }
+    <T> Spinner<T> newSpinner(ObservableList<T> items);
 }

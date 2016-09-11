@@ -55,7 +55,7 @@ public class PlayerControl extends AbstractControl {
 
         bullet.addComponent(new CollidableComponent(true));
         bullet.addControl(new OffscreenCleanControl());
-        bullet.addControl(new ProjectileControl(direction, 10));
+        bullet.addControl(new ProjectileControl(direction, 10 * 60));
 
         BulletComponent bulletData = new BulletComponent();
         bulletData.setDamage(1);

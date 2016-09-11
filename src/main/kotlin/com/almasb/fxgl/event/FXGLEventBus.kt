@@ -31,7 +31,6 @@ import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -41,7 +40,6 @@ import javafx.event.EventType
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLEventBus
 @Inject
 private constructor() : EventBus {

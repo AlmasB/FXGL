@@ -29,6 +29,7 @@ package com.almasb.fxgl.entity.animation;
 import com.almasb.fxgl.entity.GameEntity;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ public class AnimationBuilder {
     private Duration duration = Duration.seconds(1);
     private Duration delay = Duration.ZERO;
     private int times = 1;
-    private List<GameEntity> entities = Collections.emptyList();
+    private List<GameEntity> entities = new ArrayList<>();
 
     Duration getDelay() {
         return delay;
@@ -81,7 +82,13 @@ public class AnimationBuilder {
     }
 
     public RotationAnimationBuilder rotate(List<GameEntity> entities) {
-        this.entities = entities;
+        this.entities.addAll(entities);
         return new RotationAnimationBuilder(this);
+    }
+
+    public TranslationAnimationBuilder translate(GameEntity... entities) {
+        Collections.addAll(this.entities, entities);
+
+        return new TranslationAnimationBuilder(this);
     }
 }

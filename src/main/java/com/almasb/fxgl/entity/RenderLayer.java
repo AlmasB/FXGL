@@ -88,4 +88,28 @@ public interface RenderLayer {
             return 1000;
         }
     };
+
+    RenderLayer LIGHTING_OBSTACLES = new RenderLayer() {
+        @Override
+        public String name() {
+            return "LIGHTING_OBSTACLES";
+        }
+
+        @Override
+        public int index() {
+            return 1500;
+        }
+    };
+
+    RenderLayer LIGHTING_SHADOW = new RenderLayer() {
+        @Override
+        public String name() {
+            return "LIGHTING_SHADOW";
+        }
+
+        @Override
+        public int index() {
+            return 2000;
+        }
+    };
 }

@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.ai
 
-import com.almasb.fxgl.ui.UIFactory
+import com.almasb.fxgl.app.FXGL
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.layout.StackPane
@@ -55,7 +55,7 @@ class AIBubble : StackPane() {
 
         val text = Text()
         with(text) {
-            font = UIFactory.newFont(14.0)
+            font = FXGL.getUIFactory().newFont(14.0)
             textProperty().bind(message)
         }
 

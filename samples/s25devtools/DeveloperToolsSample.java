@@ -69,7 +69,7 @@ public class DeveloperToolsSample extends GameApplication {
         getInput().addAction(new UserAction("DEVTEST") {
             @Override
             protected void onActionBegin() {
-                devPane.update();
+                //devPane.update();
             }
         }, KeyCode.D);
     }

@@ -36,6 +36,8 @@ import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import com.almasb.fxgl.scene.lighting.LightingSystem;
+import com.almasb.fxgl.ui.UI;
 import com.almasb.gameutils.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -47,6 +49,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +70,8 @@ public final class GameScene extends FXGLScene
         implements EntityWorldListener, ComponentListener, ControlListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
+
+    //private Group lightingRoot = new Group();
 
     /**
      * Root for entity views, it is affected by viewport movement.
@@ -123,7 +128,32 @@ public final class GameScene extends FXGLScene
         viewport = new Viewport(w, h);
         gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
+
+        Scale scale = new Scale();
+        scale.pivotXProperty().bind(viewport.xProperty());
+        scale.pivotYProperty().bind(viewport.yProperty());
+        scale.xProperty().bind(viewport.zoomProperty());
+        scale.yProperty().bind(viewport.zoomProperty());
+        gameRoot.getTransforms().add(scale);
     }
+
+    private LightingSystem lightingSystem = null;
+
+//    /**
+//     * Note: experimental API.
+//     *
+//     * @param lightingSystem lighting system
+//     */
+//    public void setLightingSystem(LightingSystem lightingSystem) {
+//        this.lightingSystem = lightingSystem;
+//    }
+//
+//    /**
+//     * @return lighting system or null if not set
+//     */
+//    public LightingSystem getLightingSystem() {
+//        return lightingSystem;
+//    }
 
     /**
      * Converts a point on screen to a point within game scene.
@@ -195,6 +225,14 @@ public final class GameScene extends FXGLScene
     public void removeUINodes(Node... nodes) {
         for (Node node : nodes)
             removeUINode(node);
+    }
+
+    public void addUI(UI ui) {
+        addUINode(ui.getRoot());
+    }
+
+    public void removeUI(UI ui) {
+        removeUINode(ui.getRoot());
     }
 
     /**
@@ -289,6 +327,9 @@ public final class GameScene extends FXGLScene
         for (ParticleControl particle : particles) {
             particle.renderParticles(particlesGC, getViewport().getOrigin());
         }
+
+        if (lightingSystem != null)
+            lightingSystem.update();
     }
 
     @Override
@@ -321,6 +362,9 @@ public final class GameScene extends FXGLScene
                 .ifPresent(particles::add);
         entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
                 .ifPresent(particles::add);
+
+        if (lightingSystem != null)
+            lightingSystem.onAddEntity(entity);
     }
 
     @Override

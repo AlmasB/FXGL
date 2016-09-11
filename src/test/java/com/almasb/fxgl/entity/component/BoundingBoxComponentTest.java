@@ -29,6 +29,7 @@ package com.almasb.fxgl.entity.component;
 import com.almasb.easyio.serialization.Bundle;
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.MockServicesModule;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
@@ -52,7 +53,7 @@ public class BoundingBoxComponentTest {
 
     @BeforeClass
     public static void before() {
-        FXGL.mockServices();
+        FXGL.mockServices(new MockServicesModule());
     }
 
     @Before

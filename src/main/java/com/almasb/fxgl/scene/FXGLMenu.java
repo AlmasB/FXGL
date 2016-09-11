@@ -39,7 +39,6 @@ import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
-import com.almasb.fxgl.ui.UIFactory;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
@@ -93,6 +92,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected final MenuType type;
 
+    protected MenuEventListener listener;
+
     protected final Pane menuRoot = new Pane();
     protected final Pane contentRoot = new Pane();
 
@@ -101,6 +102,7 @@ public abstract class FXGLMenu extends FXGLScene {
     public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
         this.type = type;
+        this.listener = app.getMenuListener();
 
         getRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),
@@ -110,7 +112,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         // we don't data-bind the name because menu subclasses
         // might use some fancy UI without Text / Label
-        app.profileNameProperty().addListener((o, oldName, newName) -> {
+        listener.profileNameProperty().addListener((o, oldName, newName) -> {
             if (!oldName.isEmpty()) {
                 // remove last node which *should* be profile view
                 getRoot().getChildren().remove(getRoot().getChildren().size() - 1);
@@ -190,13 +192,13 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentLoad() {
         ListView<SaveFile> list = new ListView<>();
 
-        list.setItems(app.getSaveLoadManager().saveFiles());
+        list.setItems(listener.getSaveLoadManager().saveFiles());
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
         // this runs async
-        app.getSaveLoadManager().querySaveFiles();
+        listener.getSaveLoadManager().querySaveFiles();
 
-        Button btnLoad = UIFactory.newButton("LOAD");
+        Button btnLoad = FXGL.getUIFactory().newButton("LOAD");
         btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnLoad.setOnAction(e -> {
@@ -205,7 +207,7 @@ public abstract class FXGLMenu extends FXGLScene {
             fireLoad(saveFile);
         });
 
-        Button btnDelete = UIFactory.newButton("DELETE");
+        Button btnDelete = FXGL.getUIFactory().newButton("DELETE");
         btnDelete.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnDelete.setOnAction(e -> {
@@ -230,8 +232,8 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getGameWorld().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
-        return new MenuContent(new HBox(25, UIFactory.newText("DIFFICULTY:"), difficultySpinner),
-                UIFactory.newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
+        return new MenuContent(new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner),
+                FXGL.getUIFactory().newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
                     + app.getMasterTimer().getPlaytimeMinutes() + "M "
                     + app.getMasterTimer().getPlaytimeSeconds() + "S"));
     }
@@ -261,14 +263,14 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
-        Text actionName = UIFactory.newText(action.getName());
-        Button triggerName = UIFactory.newButton(trigger.toString());
+        Text actionName = FXGL.getUIFactory().newText(action.getName());
+        Button triggerName = FXGL.getUIFactory().newButton(trigger.toString());
 
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
 
-            Text text = UIFactory.newText("PRESS ANY KEY", 24);
+            Text text = FXGL.getUIFactory().newText("PRESS ANY KEY", 24);
 
             Stage stage = new Stage(StageStyle.TRANSPARENT);
             stage.initModality(Modality.WINDOW_MODAL);
@@ -322,13 +324,13 @@ public abstract class FXGLMenu extends FXGLScene {
         Spinner<SceneDimension> spinner =
                 new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
 
-        Button btnApply = UIFactory.newButton("Apply");
+        Button btnApply = FXGL.getUIFactory().newButton("Apply");
         btnApply.setOnAction(e -> {
             SceneDimension dimension = spinner.getValue();
             app.getDisplay().setSceneDimension(dimension);
         });
 
-        return new MenuContent(new HBox(50, UIFactory.newText("Resolution"), spinner), btnApply);
+        return new MenuContent(new HBox(50, FXGL.getUIFactory().newText("Resolution"), spinner), btnApply);
     }
 
     /**
@@ -338,15 +340,15 @@ public abstract class FXGLMenu extends FXGLScene {
         Slider sliderMusic = new Slider(0, 1, 1);
         sliderMusic.valueProperty().bindBidirectional(app.getAudioPlayer().globalMusicVolumeProperty());
 
-        Text textMusic = UIFactory.newText("Music Volume: ");
-        Text percentMusic = UIFactory.newText("");
+        Text textMusic = FXGL.getUIFactory().newText("Music Volume: ");
+        Text percentMusic = FXGL.getUIFactory().newText("");
         percentMusic.textProperty().bind(sliderMusic.valueProperty().multiply(100).asString("%.0f"));
 
         Slider sliderSound = new Slider(0, 1, 1);
         sliderSound.valueProperty().bindBidirectional(app.getAudioPlayer().globalSoundVolumeProperty());
 
-        Text textSound = UIFactory.newText("Sound Volume: ");
-        Text percentSound = UIFactory.newText("");
+        Text textSound = FXGL.getUIFactory().newText("Sound Volume: ");
+        Text percentSound = FXGL.getUIFactory().newText("");
         percentSound.textProperty().bind(sliderSound.valueProperty().multiply(100).asString("%.0f"));
 
         HBox hboxMusic = new HBox(15, textMusic, sliderMusic, percentMusic);
@@ -374,7 +376,7 @@ public abstract class FXGLMenu extends FXGLScene {
                 .getCredits()
                 .getList()
                 .stream()
-                .map(UIFactory::newText)
+                .map(FXGL.getUIFactory()::newText)
                 .forEach(vbox.getChildren()::add);
 
         pane.setContent(vbox);
@@ -393,7 +395,7 @@ public abstract class FXGLMenu extends FXGLScene {
             checkBox.setDisable(true);
             checkBox.selectedProperty().bind(a.achievedProperty());
 
-            Text text = UIFactory.newText(a.getName());
+            Text text = FXGL.getUIFactory().newText(a.getName());
             Tooltip.install(text, new Tooltip(a.getDescription()));
 
             HBox box = new HBox(25, text, checkBox);
@@ -409,7 +411,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing multiplayer options
      */
     protected final MenuContent createContentMultiplayer() {
-        return new MenuContent(UIFactory.newText("TODO: MULTIPLAYER"));
+        return new MenuContent(FXGL.getUIFactory().newText("TODO: MULTIPLAYER"));
     }
 
     /**
@@ -453,17 +455,6 @@ public abstract class FXGLMenu extends FXGLScene {
      */
     protected final void addUINode(Node node) {
         getRoot().getChildren().add(node);
-    }
-
-    private MenuEventListener listener;
-
-    /**
-     * Set main listener for menu events.
-     *
-     * @param listener menu listener
-     */
-    public void setListener(MenuEventListener listener) {
-        this.listener = listener;
     }
 
     private void fireMenuEvent(Event event) {

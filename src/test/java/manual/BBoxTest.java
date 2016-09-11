@@ -29,9 +29,7 @@ package manual;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.MainViewComponent;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.BoundingBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 

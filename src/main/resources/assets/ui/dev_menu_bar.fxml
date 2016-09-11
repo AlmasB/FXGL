@@ -42,9 +42,12 @@
     </Menu>
 
     <Menu text="Add...">
-        <MenuItem text="Entity" onAction="#openAddDialog">
+        <MenuItem text="Entity" onAction="#openAddDialog" />
+        <MenuItem text="Edit Entity" onAction="#openEditDialog" />
+    </Menu>
 
-        </MenuItem>
+    <Menu fx:id="menuCustom" text="Custom">
+
     </Menu>
 
 </DeveloperMenuBar>

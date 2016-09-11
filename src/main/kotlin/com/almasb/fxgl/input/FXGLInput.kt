@@ -32,7 +32,6 @@ import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.event.EventType
@@ -41,8 +40,8 @@ import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
 
-@Singleton
-class FXGLInput @Inject private constructor() : Input {
+class FXGLInput
+@Inject private constructor() : Input {
 
     private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 
@@ -145,7 +144,7 @@ class FXGLInput @Inject private constructor() : Input {
         }
     }
 
-    override fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport) {
+    override fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport, scaleRatio: Double) {
         if (!registerInput)
             return
 
@@ -160,8 +159,8 @@ class FXGLInput @Inject private constructor() : Input {
         sceneX = mouseEvent.sceneX
         sceneY = mouseEvent.sceneY
 
-        gameX = sceneX / FXGL.getDisplay().scaleRatio + viewport.getX()
-        gameY = sceneY / FXGL.getDisplay().scaleRatio + viewport.getY()
+        gameX = sceneX / scaleRatio + viewport.getX()
+        gameY = sceneY / scaleRatio + viewport.getY()
     }
 
     private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {
@@ -382,7 +381,13 @@ class FXGLInput @Inject private constructor() : Input {
         bundle.log()
 
         for (binding in bindings) {
-            var triggerName = bundle.get<String>(binding.key.name)
+
+            // if binding is not present in bundle, then we added some new binding thru code
+            // it will saved on next serialization and will be found in bundle
+            var triggerName: String? = bundle.get<String>("${binding.key}")
+            if (triggerName == null)
+                continue
+
             var modifierName = "NONE"
 
             val plusIndex = triggerName.indexOf("+")

@@ -40,7 +40,7 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class UpdaterTask {
+internal class UpdaterTask : Runnable {
 
     private val log = FXGL.getLogger(javaClass)
     private lateinit var updateCheckTimer: LocalTimer
@@ -48,7 +48,7 @@ internal class UpdaterTask {
     /**
      * Checks for updates if necessary, blocking call.
      */
-    fun run() {
+    override fun run() {
         if (shouldCheckForUpdate()) {
             checkForUpdates()
         }

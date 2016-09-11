@@ -31,7 +31,6 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.animation.AnimationTimer
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyLongWrapper
@@ -47,7 +46,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLMasterTimer
 @Inject
 private constructor() : AnimationTimer(), MasterTimer {

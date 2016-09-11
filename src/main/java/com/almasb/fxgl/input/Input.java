@@ -74,9 +74,10 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      * Called on mouse event.
      *
      * @param event mouse event
-     * @param viewport current viewport
+     * @param viewport current viewport where the even occurred
+     * @param scaleRatio scale ratio of the display where the event occurred
      */
-    void onMouseEvent(MouseEvent event, Viewport viewport);
+    void onMouseEvent(MouseEvent event, Viewport viewport, double scaleRatio);
 
     /**
      * Setting to false will disable capturing of input events.
@@ -108,13 +109,13 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
 
     /**
      * @param key the key to check
-     * @return true iff key is currently held
+     * @return true iff key is currently (physically) held; mocking does not trigger this
      */
     boolean isHeld(KeyCode key);
 
     /**
      * @param button the button to check
-     * @return true iff button is currently held
+     * @return true iff button is currently (physically) held; mocking does not trigger this
      */
     boolean isHeld(MouseButton button);
 
@@ -236,9 +237,11 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /* MOCKING */
 
     /**
-     * Mocks key press event. The behavior is equivalent to
+     * Mocks key press event.
+     * The behavior is equivalent to
      * user pressing and holding the key.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param key the key to mock
      */
@@ -249,7 +252,8 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /**
      * Mocks key press event. The behavior is equivalent to
      * user pressing and holding the key with the modifier.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param key the key to mock
      * @param modifier key modifier
@@ -259,7 +263,8 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /**
      * Mocks key release event. The behavior is equivalent to
      * user releasing the key.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param key the key to mock
      */
@@ -270,7 +275,8 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /**
      * Mocks key release event. The behavior is equivalent to
      * user releasing the key and the modifier.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param key the key to mock
      * @param modifier the modifier
@@ -280,7 +286,8 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /**
      * Mocks button press event. The behavior is equivalent to
      * user pressing and holding the button at x, y.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param button the button to mock
      * @param gameX x in game world
@@ -293,7 +300,8 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /**
      * Mocks button press event. The behavior is equivalent to
      * user pressing and holding the button and the modifier at x, y.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param button the button to mock
      * @param modifier the modifier
@@ -305,7 +313,8 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /**
      * Mocks button release event. The behavior is equivalent to
      * user releasing the button.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param button the button to mock
      */
@@ -316,7 +325,8 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     /**
      * Mocks button release event. The behavior is equivalent to
      * user releasing the button.
-     * Note: the event will be processed directly even if register input or process actions are false.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
      *
      * @param button the button to mock
      * @param modifier the modifier

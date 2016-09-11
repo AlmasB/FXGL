@@ -2,12 +2,14 @@
 
 JavaFX Game Development Framework
 
-[![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Maven](https://img.shields.io/badge/maven-0.2.6-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Maven](https://img.shields.io/badge/maven-0.2.7-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
-![Code](https://img.shields.io/badge/lines%20of%20code-11k-blue.svg)
+![Code](https://img.shields.io/badge/lines%20of%20code-14k-blue.svg)
+![Test](https://img.shields.io/badge/coverage-10%25-red.svg)
 
+[![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
 [![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
+[![Showcase](https://img.shields.io/badge/www-Showcase-green.svg)](http://almasb.github.io/FXGLGames/)
 [![Wiki](https://img.shields.io/badge/www-Wiki-green.svg)](https://github.com/AlmasB/FXGL/wiki)
 [![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
@@ -150,7 +152,7 @@ fun main(args: Array<String>) {
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.6</version>
+    <version>0.2.7</version>
 </dependency>
 ```
 
@@ -161,7 +163,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.6'
+    compile 'com.github.AlmasB:FXGL:0.2.7'
 }
 ```
 

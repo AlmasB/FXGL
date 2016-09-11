@@ -31,7 +31,6 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import java.util.*
@@ -41,7 +40,6 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLAudioPlayer
 @Inject
 private constructor() : AudioPlayer {

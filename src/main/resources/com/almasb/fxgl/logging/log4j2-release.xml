@@ -28,11 +28,11 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%.-10t] %-5level %-20logger{1} - %msg%n" />
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%-25t] %-5level %-20logger{1} - %msg%n" />
         </Console>
         <RollingFile name="RollingFile" fileName="logs/Game.log"
                      filePattern="logs/Game-%d{dd-MMM-yyyy@HH.mm.ss}-%i.log">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%.-10t] %-5level %-20logger{1} - %msg%n" />
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%-25t] %-5level %-20logger{1} - %msg%n" />
             <Policies>
                 <OnStartupTriggeringPolicy />
             </Policies>
@@ -40,11 +40,9 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="error">
-            <AppenderRef ref="Console" />
-        </Root>
         <Root level="all">
-            <AppenderRef ref="RollingFile" />
+            <AppenderRef ref="Console" level="error" />
+            <AppenderRef ref="RollingFile" level="all" />
         </Root>
     </Loggers>
 </Configuration>

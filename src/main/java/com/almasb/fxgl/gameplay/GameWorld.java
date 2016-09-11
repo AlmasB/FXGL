@@ -32,6 +32,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.*;
+import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.time.UpdateEventListener;
@@ -44,6 +45,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -58,15 +60,11 @@ import java.util.stream.Collectors;
 @Singleton
 public final class GameWorld extends EntityWorld implements UpdateEventListener {
 
-    /**
-     * The logger
-     */
-    protected static final Logger log = FXGL.getLogger("FXGL.GameWorld");
+    private static final Logger log = FXGL.getLogger("FXGL.GameWorld");
 
     private ObjectProperty<GameDifficulty> gameDifficulty = new SimpleObjectProperty<>(GameDifficulty.MEDIUM);
 
     /**
-     *
      * @return game difficulty
      */
     public GameDifficulty getGameDifficulty() {
@@ -74,12 +72,13 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
     }
 
     /**
-     *
      * @return game difficulty property
      */
     public ObjectProperty<GameDifficulty> gameDifficultyProperty() {
         return gameDifficulty;
     }
+
+    private Array<EventTrigger<?> > eventTriggers = new Array<>(false, 32);
 
     @Inject
     protected GameWorld() {
@@ -89,12 +88,33 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
     @Override
     public void onUpdateEvent(UpdateEvent event) {
         update(event.tpf());
+        updateTriggers(event);
+    }
+
+    private void updateTriggers(UpdateEvent event) {
+        for (Iterator<EventTrigger<?> > it = eventTriggers.iterator(); it.hasNext(); ) {
+            EventTrigger trigger = it.next();
+
+            trigger.onUpdateEvent(event);
+
+            if (trigger.reachedLimit()) {
+                it.remove();
+            }
+        }
     }
 
     @Override
     public void reset() {
         log.debug("Resetting game world");
         super.reset();
+    }
+
+    public void addEventTrigger(EventTrigger<?> trigger) {
+        eventTriggers.add(trigger);
+    }
+
+    public void removeEventTrigger(EventTrigger<?> trigger) {
+        eventTriggers.removeValue(trigger, true);
     }
 
     /**

@@ -25,11 +25,11 @@
  */
 package com.almasb.fxgl.scene.menu;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLButton;
-import com.almasb.fxgl.ui.UIFactory;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -51,7 +51,7 @@ import java.util.function.Supplier;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLDefaultMenu extends FXGLMenu {
+public class FXGLDefaultMenu extends FXGLMenu {
 
     public FXGLDefaultMenu(GameApplication app, MenuType type) {
         super(app, type);
@@ -91,7 +91,7 @@ public final class FXGLDefaultMenu extends FXGLMenu {
 
     @Override
     protected Node createTitleView(String title) {
-        Text text = UIFactory.newText(title, 50);
+        Text text = FXGL.getUIFactory().newText(title, 50);
 
         Rectangle bg = new Rectangle(text.getLayoutBounds().getWidth() + 20, 60, null);
         bg.setStroke(Color.WHITE);
@@ -107,14 +107,14 @@ public final class FXGLDefaultMenu extends FXGLMenu {
 
     @Override
     protected Node createVersionView(String version) {
-        Text view = UIFactory.newText(version);
+        Text view = FXGL.getUIFactory().newText(version);
         view.setTranslateY(app.getHeight() - 2);
         return view;
     }
 
     @Override
     protected Node createProfileView(String profileName) {
-        Text view = UIFactory.newText(profileName);
+        Text view = FXGL.getUIFactory().newText(profileName);
         view.setTranslateY(app.getHeight() - 2);
         view.setTranslateX(app.getWidth() - view.getLayoutBounds().getWidth());
         return view;
@@ -190,7 +190,7 @@ public final class FXGLDefaultMenu extends FXGLMenu {
         MenuItem btnRestore = new MenuItem("RESTORE");
         btnRestore.setOnAction(e -> {
             app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
-                if (yes) app.restoreDefaultSettings();
+                if (yes) listener.restoreDefaultSettings();
             });
         });
 

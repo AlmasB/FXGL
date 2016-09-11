@@ -27,7 +27,6 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ui.UIFactory
 import javafx.concurrent.Task
 import javafx.scene.control.ProgressBar
 import javafx.scene.paint.Color
@@ -54,7 +53,7 @@ open class LoadingScene : FXGLScene() {
         }
 
         with(text) {
-            font = UIFactory.newFont(24.0)
+            font = FXGL.getUIFactory().newFont(24.0)
             fill = Color.WHITE
             translateX = (settings.width / 2 - 100).toDouble()
             translateY = (settings.height * 4 / 5).toDouble()

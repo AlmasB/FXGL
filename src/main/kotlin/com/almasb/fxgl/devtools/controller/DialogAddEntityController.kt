@@ -26,9 +26,13 @@
 
 package com.almasb.fxgl.devtools.controller
 
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.ui.UIController
 import javafx.fxml.FXML
+import javafx.scene.control.ColorPicker
 import javafx.scene.control.TextField
+import javafx.scene.shape.Rectangle
 
 /**
  *
@@ -38,9 +42,25 @@ import javafx.scene.control.TextField
 class DialogAddEntityController : UIController {
 
     @FXML
-    private var fieldPositionX: TextField? = null
+    private lateinit var fieldPositionX: TextField
+    @FXML
+    private lateinit var fieldPositionY: TextField
+    @FXML
+    private lateinit var fieldRotation: TextField
+    @FXML
+    private lateinit var colorPicker: ColorPicker
 
     override fun init() {
-        println(fieldPositionX?.text)
+
+    }
+
+    fun onAdd() {
+        val gameWorld = FXGL.getApp().gameWorld
+
+        Entities.builder()
+                .at(fieldPositionX.text.toDouble(), fieldPositionY.text.toDouble())
+                .rotate(fieldRotation.text.toDouble())
+                .viewFromNode(Rectangle(40.0, 40.0, colorPicker.value))
+                .buildAndAttach(gameWorld)
     }
 }

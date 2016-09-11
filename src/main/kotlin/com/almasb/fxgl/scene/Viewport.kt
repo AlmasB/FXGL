@@ -27,6 +27,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.ents.Entity
+import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.entity.component.PositionComponent
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleDoubleProperty
@@ -80,6 +81,11 @@ class Viewport
     fun yProperty() = y
     fun setY(y: Double) = yProperty().set(y)
 
+    private val zoom = SimpleDoubleProperty(1.0)
+    fun getZoom() = zoom.get()
+    fun zoomProperty() = zoom
+    fun setZoom(value: Double) = zoomProperty().set(value)
+
     /**
      * @return viewport origin (x, y)
      */
@@ -119,12 +125,50 @@ class Viewport
         y.bind(boundY)
     }
 
+    fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
+        // TODO: use minXWorld
+        val minBindingX = entities.filter { it.hasComponent(PositionComponent::class.java) }
+                .map { it.getComponentUnsafe(PositionComponent::class.java) }
+                .map { it.xProperty() }
+                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, x -> Bindings.min(min, x) })
+                .subtract(xMargin)
+
+        val minBindingY = entities.filter { it.hasComponent(PositionComponent::class.java) }
+                .map { it.getComponentUnsafe(PositionComponent::class.java) }
+                .map { it.yProperty() }
+                .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, y -> Bindings.min(min, y) })
+                .subtract(yMargin)
+
+        val maxBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+                .map { it.getComponentUnsafe(BoundingBoxComponent::class.java) }
+                .map { it.maxXWorldProperty() }
+                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, x -> Bindings.max(max, x) })
+                .add(xMargin)
+
+        val maxBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+                .map { it.getComponentUnsafe(BoundingBoxComponent::class.java) }
+                .map { it.maxYWorldProperty() }
+                .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, y -> Bindings.max(max, y) })
+                .add(yMargin)
+
+        val widthBinding = maxBindingX.subtract(minBindingX)
+        val heightBinding = maxBindingY.subtract(minBindingY)
+
+        val ratio = Bindings.min(Bindings.divide(width, widthBinding), Bindings.divide(height, heightBinding))
+
+        x.bind(minBindingX)
+        y.bind(minBindingY)
+
+        zoom.bind(ratio)
+    }
+
     /**
      * Unbind viewport.
      */
     fun unbind() {
         xProperty().unbind()
         yProperty().unbind()
+        zoomProperty().unbind()
     }
 
     private val minX = SimpleIntegerProperty(Integer.MIN_VALUE)

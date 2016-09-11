@@ -35,7 +35,7 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
-import com.google.inject.Singleton
+import javafx.application.Platform
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
@@ -65,7 +65,6 @@ import javax.imageio.ImageIO
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 class FXGLDisplay
 @Inject
 private constructor(private val stage: Stage,
@@ -79,8 +78,6 @@ private constructor(private val stage: Stage,
     private val log = FXGL.getLogger(javaClass)
 
     private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
-
-    private val scenes = ArrayList<FXGLScene>()
 
     private val targetWidth: DoubleProperty
     private val targetHeight: DoubleProperty
@@ -103,7 +100,7 @@ private constructor(private val stage: Stage,
      */
     private val fxToFXGLFilter: EventHandler<Event> = EventHandler { event ->
         val copy = event.copyFor(null, null)
-        getCurrentScene().fireEvent(copy)
+        getCurrentScene()?.fireEvent(copy)
     }
 
     init {
@@ -121,7 +118,8 @@ private constructor(private val stage: Stage,
         else
             FXGLAssets.UI_CSS
 
-        initStage()
+        Platform.runLater { initStage() }
+
         initDialogBox()
 
         fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
@@ -140,7 +138,6 @@ private constructor(private val stage: Stage,
      */
     private fun initStage() {
         with(stage) {
-            scene = fxScene
             title = settings.title + " " + settings.version
             isResizable = false
             setOnCloseRequest { e ->
@@ -171,6 +168,7 @@ private constructor(private val stage: Stage,
             }
 
             sizeToScene()
+            centerOnScreen()
         }
     }
 
@@ -180,8 +178,6 @@ private constructor(private val stage: Stage,
      * @param scene the scene
      */
     override fun registerScene(scene: FXGLScene) {
-        scenes.add(scene)
-
         scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
         scene.appendCSS(css)
     }
@@ -192,9 +188,7 @@ private constructor(private val stage: Stage,
      * @param scene the scene
      */
     override fun setScene(scene: FXGLScene) {
-        if (getCurrentScene() != null) {
-            getCurrentScene().activeProperty().set(false)
-        }
+        getCurrentScene()?.activeProperty()?.set(false)
 
         currentScene.set(scene)
         scene.activeProperty().set(true)

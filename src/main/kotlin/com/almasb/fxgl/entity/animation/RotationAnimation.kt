@@ -28,9 +28,11 @@ package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
+import javafx.animation.Animation
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
+import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.EventHandler
 
@@ -39,81 +41,30 @@ import javafx.event.EventHandler
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RotationAnimation(private val animationBuilder: AnimationBuilder,
-                        val startAngle: Double, val endAngle: Double) {
+class RotationAnimation(animationBuilder: AnimationBuilder,
+                        val startAngle: Double, val endAngle: Double) : EntityAnimation(animationBuilder) {
 
-    companion object {
-        private val log = FXGL.getLogger(RotationAnimation::class.java)
-    }
-
-    private val timeline: Timeline
-    private var state = AnimationState.INIT
+    private lateinit var value: DoubleProperty
 
     init {
-        timeline = Timeline()
-        timeline.delay = animationBuilder.delay
-        timeline.cycleCount = animationBuilder.times
+        initAnimation()
+    }
 
-        val subscriberPause = FXGL.getEventBus().addEventHandler(FXGLEvent.PAUSE, { e ->
-            if (state == AnimationState.PLAYING)
-                pause()
-        })
+    override fun buildAnimation(): Animation {
+        value = SimpleDoubleProperty(startAngle)
 
-        val subscriberResume = FXGL.getEventBus().addEventHandler(FXGLEvent.RESUME, { e ->
-            if (state == AnimationState.PAUSED)
-                play()
-        })
+        return Timeline(KeyFrame(animationBuilder.duration, KeyValue(value, endAngle)))
+    }
 
-        val value = SimpleDoubleProperty(startAngle)
-
-        val frame = KeyFrame(animationBuilder.duration, KeyValue(value, endAngle))
-        timeline.keyFrames.add(frame)
-
+    override fun bindProperties() {
         animationBuilder.entities.map { it.rotationComponent }.forEach {
             it.valueProperty().bind(value)
         }
-
-        timeline.onFinished = EventHandler {
-            state = AnimationState.FINISHED
-
-            subscriberPause.unsubscribe()
-            subscriberResume.unsubscribe()
-
-            animationBuilder.entities.map { it.rotationComponent }.forEach {
-                it.valueProperty().unbind()
-            }
-
-            timeline.keyFrames.clear()
-        }
     }
 
-    fun play() {
-        if (state == AnimationState.FINISHED) {
-            log.warning("Attempted to play finished animation")
-            return
+    override fun unbindProperties() {
+        animationBuilder.entities.map { it.rotationComponent }.forEach {
+            it.valueProperty().unbind()
         }
-
-        timeline.play()
-        state = AnimationState.PLAYING
-    }
-
-    fun pause() {
-        if (state == AnimationState.FINISHED || state == AnimationState.INIT) {
-            log.warning("Attempted to pause finished or initializing animation")
-            return
-        }
-
-        timeline.pause()
-        state = AnimationState.PAUSED
-    }
-
-    fun finish() {
-        if (state == AnimationState.FINISHED) {
-            log.warning("Attempted to finish already finished animation")
-            return
-        }
-
-        timeline.stop()
-        state = AnimationState.FINISHED
     }
 }

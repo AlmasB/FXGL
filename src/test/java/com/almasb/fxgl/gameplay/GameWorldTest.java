@@ -27,16 +27,19 @@
 package com.almasb.fxgl.gameplay;
 
 import com.almasb.ents.Entity;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.MockServicesModule;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
-import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.time.UpdateEvent;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Rectangle;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -44,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -56,6 +60,11 @@ public class GameWorldTest {
     private GameWorld gameWorld;
 
     private Entity e1, e10, e11, e2, e3, e4;
+
+    @BeforeClass
+    public static void before() {
+        FXGL.mockServices(new MockServicesModule());
+    }
 
     @Before
     public void setUp() {
@@ -194,5 +203,16 @@ public class GameWorldTest {
         assertThat(gameWorld.getEntityAt(new Point2D(250, 100)).get(), is(e4));
 
         assertThat(gameWorld.getEntityAt(new Point2D(100.5, 100)), is(Optional.empty()));
+    }
+
+    @Test
+    public void setLevel() {
+        Level level = new Level(10, 10, Arrays.asList(e1, e2, e3, e4));
+
+        GameWorld world = new GameWorld();
+        world.setLevel(level);
+        world.onUpdateEvent(new UpdateEvent(1, 0.016));
+
+        assertThat(world.getEntities(), hasItems(e1, e2, e3, e4));
     }
 }

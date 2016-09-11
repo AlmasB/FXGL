@@ -4,7 +4,7 @@
 
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.6</version>
+    <version>0.2.7</version>
     <packaging>jar</packaging>
 
     <name>FXGL</name>
@@ -21,6 +21,7 @@
         <maven.source.version>2.4</maven.source.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
         <maven.shade.version>2.4.3</maven.shade.version>
+        <jacoco.version>0.7.7.201606060606</jacoco.version>
 
         <!-- dependencies -->
         <kotlin.version>1.0.3</kotlin.version>
@@ -32,10 +33,9 @@
         <game.utils.version>0.0.1</game.utils.version>
         <jbox.version>2.3.1-fxgl</jbox.version>
         <astar.version>1.0</astar.version>
-        <gdx.ai.version>1.8.0</gdx.ai.version>
+        <gdx.ai.version>1.8.1-fxgl</gdx.ai.version>
         <easyio.version>0.1.6</easyio.version>
         <log4j.version>2.5</log4j.version>
-        <jme3.net.version>3.1.0-SNAPSHOT</jme3.net.version>
 
         <junit.version>4.12</junit.version>
     </properties>
@@ -44,11 +44,6 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-        </repository>
-
-        <repository>
-            <id>jME3</id>
-            <url>http://updates.jmonkeyengine.org/maven/</url>
         </repository>
     </repositories>
 
@@ -126,16 +121,10 @@
         </dependency>
 
         <dependency>
-            <groupId>com.badlogicgames.gdx</groupId>
+            <groupId>com.github.AlmasB</groupId>
             <artifactId>gdx-ai</artifactId>
             <version>${gdx.ai.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>com.jme3</groupId>-->
-            <!--<artifactId>jme3-networking</artifactId>-->
-            <!--<version>${jme3.net.version}</version>-->
-        <!--</dependency>-->
 
         <!-- test scope dependencies -->
         <dependency>
@@ -206,6 +195,7 @@
                         </goals>
                         <configuration>
                             <sourceDirs>
+                                <source>src/test/kotlin</source>
                                 <source>src/test/java</source>
                             </sourceDirs>
                         </configuration>
@@ -297,6 +287,31 @@
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
+                    <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>

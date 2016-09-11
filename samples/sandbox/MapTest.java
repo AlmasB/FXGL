@@ -39,8 +39,7 @@ import kotlin.Pair;
 import java.util.Arrays;
 
 /**
- * Demo that uses A* search to find a path between 2 nodes in a grid.
- * Right click to place a wall, left click to move.
+ * Test for random map generation algorithm.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

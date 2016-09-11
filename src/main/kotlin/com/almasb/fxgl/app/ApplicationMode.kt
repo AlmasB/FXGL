@@ -27,8 +27,9 @@
 package com.almasb.fxgl.app
 
 /**
- * Runtime mode of the application. Primarily affects
- * how logging and exception reporting are handled.
+ * Runtime mode of the application.
+ * Primarily affects how logging and exception reporting are handled.
+ * Some services might show different behavior based on the mode.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -40,12 +41,13 @@ enum class ApplicationMode {
     DEBUG,
 
     /**
-     * Config logging level and full exception stacktrace.
+     * Info / Warning / Fatal logging levels and full exception stacktrace.
      */
     DEVELOPER,
 
     /**
-     * Severe logging level and only exception message.
+     * Fatal logging level and only exception message.
+     * Services and the framework must attempt to maximize performance in this mode.
      */
     RELEASE
 }

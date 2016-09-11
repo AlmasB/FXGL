@@ -27,6 +27,9 @@ package s16notifications;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.gameplay.FXGLNotificationService;
+import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
@@ -51,6 +54,22 @@ public class NotificationSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setShowFPS(true);
+
+        // 2. by default SlidingNotificationService is used
+        // but you can provide your own or use another built-in provider, e.g. FXGLNotificationService
+        settings.addServiceType(new ServiceType<NotificationService>() {
+
+            @Override
+            public Class<NotificationService> service() {
+                return NotificationService.class;
+            }
+
+            @Override
+            public Class<? extends NotificationService> serviceProvider() {
+                return FXGLNotificationService.class;
+            }
+        });
+
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
