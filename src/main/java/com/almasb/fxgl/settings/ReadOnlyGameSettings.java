@@ -51,6 +51,7 @@ public class ReadOnlyGameSettings {
     protected boolean introEnabled = true;
     protected boolean menuEnabled = true;
     protected boolean profilingEnabled = true;
+    protected boolean closeConfirmation = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
     protected KeyCode menuKey = KeyCode.ESCAPE;
@@ -78,6 +79,7 @@ public class ReadOnlyGameSettings {
         this.introEnabled = copy.introEnabled;
         this.menuEnabled = copy.menuEnabled;
         this.profilingEnabled = copy.profilingEnabled;
+        this.closeConfirmation = copy.closeConfirmation;
         this.appMode = copy.appMode;
         this.menuStyle = copy.menuStyle;
         this.menuKey = copy.menuKey;
@@ -113,12 +115,20 @@ public class ReadOnlyGameSettings {
         return menuEnabled;
     }
 
+    /**
+     * @deprecated use {@link #isProfilingEnabled()}
+     */
+    @Deprecated
     public final boolean isFPSShown() {
         return profilingEnabled;
     }
 
     public final boolean isProfilingEnabled() {
         return profilingEnabled;
+    }
+
+    public final boolean isCloseConfirmation() {
+        return closeConfirmation;
     }
 
     public final ApplicationMode getApplicationMode() {

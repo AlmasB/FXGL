@@ -143,11 +143,15 @@ private constructor(private val stage: Stage,
             setOnCloseRequest { e ->
                 e.consume()
 
-                if (!dialog.isShowing) {
-                    showConfirmationBox("Exit the game?", { yes ->
-                        if (yes)
-                            eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
-                    })
+                if (settings.isCloseConfirmation) {
+                    if (!dialog.isShowing) {
+                        showConfirmationBox("Exit the game?", { yes ->
+                            if (yes)
+                                eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                        })
+                    }
+                } else {
+                    eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                 }
             }
 
