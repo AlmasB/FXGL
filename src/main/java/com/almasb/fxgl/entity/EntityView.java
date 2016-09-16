@@ -58,6 +58,10 @@ public class EntityView extends Parent {
         addNode(graphics);
     }
 
+    public EntityView(RenderLayer layer) {
+        setRenderLayer(layer);
+    }
+
     public EntityView(Node graphics, RenderLayer layer) {
         addNode(graphics);
         setRenderLayer(layer);
