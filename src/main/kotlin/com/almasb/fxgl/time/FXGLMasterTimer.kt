@@ -138,8 +138,9 @@ private constructor() : AnimationTimer(), MasterTimer {
         updateEvent.setTick(getTick())
         updateEvent.setTPF(tpf)
 
-        // this is the master update event
-        listeners.forEach { it.onUpdateEvent(updateEvent) }
+        // this is the master update event, use indices to avoid concurrent modification
+        for (i in listeners.indices)
+            listeners[i].onUpdateEvent(updateEvent)
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
