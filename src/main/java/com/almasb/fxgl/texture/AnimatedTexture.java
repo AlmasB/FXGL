@@ -90,6 +90,8 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
         setFitWidth(channel.computeFrameWidth());
         setFitHeight(channel.computeFrameHeight());
         setViewport(channel.computeViewport(0));
+
+        animationTimer.capture();
     }
 
     /**
@@ -103,13 +105,16 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
     public void onUpdateEvent(UpdateEvent event) {
         if (animationTimer.elapsed(Duration.seconds(timePerAnimationFrame))) {
 
-            setViewport(currentChannel.computeViewport(currentFrame));
             currentFrame++;
 
             if (currentFrame == currentChannel.frames()) {
                 onAnimationEnd.run();
                 setAnimationChannel(defaultChannel);
+
+                return;
             }
+
+            setViewport(currentChannel.computeViewport(currentFrame));
 
             animationTimer.capture();
         }
