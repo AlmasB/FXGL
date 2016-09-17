@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxeventbus.Subscriber;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.IntroFinishedEvent;
 import com.almasb.fxgl.gameplay.GameWorld;
@@ -99,8 +100,7 @@ public abstract class GameApplication extends FXGLApplication {
             case INTRO:
                 getDisplay().setScene(introScene);
 
-                // TODO: remove handler later
-                getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
+                introFinishedSubscriber = getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
                 introScene.startIntro();
                 break;
 
@@ -327,6 +327,8 @@ public abstract class GameApplication extends FXGLApplication {
         return isMenuOpen() || getState() == ApplicationState.PAUSED;
     }
 
+    private Subscriber introFinishedSubscriber;
+
     private void onIntroFinished() {
         if (getSettings().isMenuEnabled()) {
             setState(ApplicationState.MAIN_MENU);
@@ -334,8 +336,12 @@ public abstract class GameApplication extends FXGLApplication {
             startNewGame();
         }
 
-        // we no longer need intro, mark for cleanup
-        introScene = null;
+        if (introFinishedSubscriber != null) {
+            introFinishedSubscriber.unsubscribe();
+            // we no longer need intro, mark for cleanup
+            introScene = null;
+            introFinishedSubscriber = null;
+        }
     }
 
     @Override
