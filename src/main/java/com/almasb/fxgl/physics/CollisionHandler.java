@@ -69,9 +69,6 @@ public abstract class CollisionHandler extends Pair<Object> {
 
     /**
      * Called if entities A and B are currently colliding.
-     * <p>
-     * This is called one tick after {@link #onCollisionBegin(Entity, Entity)}
-     * if the entities are still colliding
      *
      * @param a first entity
      * @param b second entity
