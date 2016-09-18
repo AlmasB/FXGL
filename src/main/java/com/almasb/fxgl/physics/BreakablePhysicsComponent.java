@@ -29,6 +29,7 @@ package com.almasb.fxgl.physics;
 import com.almasb.ents.AbstractComponent;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import javafx.scene.paint.Color;
@@ -82,7 +83,7 @@ public class BreakablePhysicsComponent extends AbstractComponent {
 
             // hardcoded values!
             PolygonShape rectShape = new PolygonShape();
-            rectShape.setAsBox(PhysicsWorld.toMeters(40 / 2), PhysicsWorld.toMeters(40 / 2));
+            //rectShape.setAsBox(PhysicsWorld.toMeters(40 / 2), PhysicsWorld.toMeters(40 / 2));
 
             fd.setShape(rectShape);
             fd.setDensity(1);
@@ -110,7 +111,7 @@ public class BreakablePhysicsComponent extends AbstractComponent {
 
             entity.addComponent(p);
 
-            double radius = PhysicsWorld.toPixels(shape.getRadius());
+            double radius = FXGL.getApp().getPhysicsWorld().toPixels(shape.getRadius());
             radius = 20;
             entity.getMainViewComponent().setView(new EntityView(new Rectangle(radius*2,
                     radius * 2, Color.RED)), true);

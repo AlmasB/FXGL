@@ -81,8 +81,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
 
-    private static final double PIXELS_PER_METER = FXGL.getDouble("physics.ppm");
-    private static final double METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
+    private final double PIXELS_PER_METER;
+    private final double METERS_PER_PIXELS;
 
     private World jboxWorld = new World(new Vec2(0, -10));
 
@@ -170,8 +170,12 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     @Inject
-    protected PhysicsWorld(@Named("appHeight") double appHeight) {
+    protected PhysicsWorld(@Named("appHeight") double appHeight,
+                           @Named("physics.ppm") double ppm) {
         this.appHeight = appHeight;
+
+        PIXELS_PER_METER = ppm;
+        METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
 
         initCollisionPool();
         initContactListener();
@@ -634,7 +638,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param pixels value in pixels
      * @return value in meters
      */
-    public static float toMeters(double pixels) {
+    public float toMeters(double pixels) {
         return (float) (pixels * METERS_PER_PIXELS);
     }
 
@@ -644,7 +648,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param meters value in meters
      * @return value in pixels
      */
-    public static float toPixels(double meters) {
+    public float toPixels(double meters) {
         return (float) (meters * PIXELS_PER_METER);
     }
 
@@ -654,7 +658,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param v vector in pixels
      * @return vector in meters
      */
-    public static Vec2 toVector(Point2D v) {
+    public Vec2 toVector(Point2D v) {
         return new Vec2(toMeters(v.getX()), toMeters(-v.getY()));
     }
 
@@ -664,7 +668,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param v vector in meters
      * @return vector in pixels
      */
-    public static Point2D toVector(Vec2 v) {
+    public Point2D toVector(Vec2 v) {
         return new Point2D(toPixels(v.x), toPixels(-v.y));
     }
 

@@ -48,6 +48,7 @@ import org.jbox2d.dynamics.FixtureDef;
 @Required(RotationComponent.class)
 @Required(BoundingBoxComponent.class)
 public class PhysicsComponent extends AbstractComponent {
+
     FixtureDef fixtureDef = new FixtureDef();
     BodyDef bodyDef = new BodyDef();
 
@@ -56,6 +57,12 @@ public class PhysicsComponent extends AbstractComponent {
     private boolean raycastIgnored = false;
 
     private Runnable onInitPhysics;
+
+    private final PhysicsWorld physicsWorld;
+
+    public PhysicsComponent() {
+        physicsWorld = FXGL.getApp().getPhysicsWorld();
+    }
 
     void onInitPhysics() {
         if (onInitPhysics != null) {
@@ -117,7 +124,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param vector x and y in pixels
      */
     public void setLinearVelocity(Point2D vector) {
-        setBodyLinearVelocity(PhysicsWorld.toVector(vector));
+        setBodyLinearVelocity(physicsWorld.toVector(vector));
     }
 
     /**
@@ -148,7 +155,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @return linear velocity in pixels
      */
     public Point2D getLinearVelocity() {
-        return PhysicsWorld.toVector(getBody().getLinearVelocity());
+        return physicsWorld.toVector(getBody().getLinearVelocity());
     }
 
     /**
@@ -168,7 +175,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param wake if this impulse should wake up the body
      */
     public void applyLinearImpulse(Point2D impulse, Point2D point, boolean wake) {
-        applyBodyLinearImpulse(PhysicsWorld.toVector(impulse), FXGL.getApp().getPhysicsWorld().toPoint(point), wake);
+        applyBodyLinearImpulse(physicsWorld.toVector(impulse), physicsWorld.toPoint(point), wake);
     }
 
     /**
@@ -189,7 +196,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param point the world position of the point of application (in pixel)
      */
     public void applyForce(Point2D force, Point2D point) {
-        applyBodyForce(PhysicsWorld.toVector(force), FXGL.getApp().getPhysicsWorld().toPoint(point));
+        applyBodyForce(physicsWorld.toVector(force), physicsWorld.toPoint(point));
     }
 
     /**
@@ -208,7 +215,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param force the world force vector (in pixel/sec)
      */
     public void applyForceToCenter(Point2D force) {
-        applyBodyForceToCenter(PhysicsWorld.toVector(force));
+        applyBodyForceToCenter(physicsWorld.toVector(force));
     }
 
     /**
@@ -226,7 +233,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param impulse the angular impulse (in pixel/sec)
      */
     public void applyAngularImpulse(float impulse) {
-        applyBodyAngularImpulse(PhysicsWorld.toMeters(impulse));
+        applyBodyAngularImpulse(physicsWorld.toMeters(impulse));
     }
 
     /**
@@ -244,7 +251,7 @@ public class PhysicsComponent extends AbstractComponent {
      * @param torque the force (in pixel)
      */
     public void applyTorque(float torque) {
-        applyBodyTorque(PhysicsWorld.toMeters(torque));
+        applyBodyTorque(physicsWorld.toMeters(torque));
     }
 
     /**
