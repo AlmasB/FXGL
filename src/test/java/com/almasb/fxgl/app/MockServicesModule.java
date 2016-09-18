@@ -75,6 +75,8 @@ public class MockServicesModule extends AbstractModule {
         mockUIFactory();
         mockAssetLoader();
 
+        mockPhysics();
+
         try {
             MockApplication.Companion.getREADY().await();
         } catch (InterruptedException e) {
@@ -125,5 +127,9 @@ public class MockServicesModule extends AbstractModule {
 
     private void mockAssetLoader() {
         bind(Integer.class).annotatedWith(Names.named("asset.cache.size")).toInstance(35);
+    }
+
+    private void mockPhysics() {
+        bind(Double.class).annotatedWith(Names.named("physics.ppm")).toInstance(50.0);
     }
 }
