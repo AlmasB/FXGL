@@ -181,7 +181,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         initContactListener();
         initParticles();
 
-        log.debug("Physics world initialized");
+        log.debugf("Physics world initialized: appHeight=%.1f, physics.ppm=%.1f",
+                appHeight, ppm);
     }
 
     private void initCollisionPool() {
