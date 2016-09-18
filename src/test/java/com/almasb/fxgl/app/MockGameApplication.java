@@ -35,10 +35,19 @@ import com.almasb.fxgl.settings.GameSettings;
  */
 public class MockGameApplication extends GameApplication {
 
+    public static MockGameApplication INSTANCE;
+
+    public MockGameApplication() {
+        if (INSTANCE != null)
+            throw new IllegalStateException("INSTANCE != null");
+
+        INSTANCE = this;
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+//        settings.setIntroEnabled(false);
+//        settings.setMenuEnabled(false);
     }
 
     @Override
