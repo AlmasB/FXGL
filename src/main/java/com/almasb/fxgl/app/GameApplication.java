@@ -73,11 +73,54 @@ public abstract class GameApplication extends FXGLApplication {
 
     private Logger log = SystemLogger.INSTANCE;
 
-    {
+    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
+
+    /* The following fields are injected by tasks */
+
+    GameWorld gameWorld;
+
+    PhysicsWorld physicsWorld;
+
+    GameScene gameScene;
+
+    /**
+     * Intro scene, this is shown when the application started,
+     * before menus and game.
+     */
+    IntroScene introScene;
+
+    /**
+     * This scene is shown during app initialization,
+     * i.e. when assets / game are loaded on bg thread.
+     */
+    LoadingScene loadingScene;
+
+    /**
+     * Main menu, this is the menu shown at the start of game.
+     */
+    FXGLMenu mainMenuScene;
+
+    /**
+     * In-game menu, this is shown when menu key pressed during the game.
+     */
+    FXGLMenu gameMenuScene;
+
+    /**
+     * Handler for menu events.
+     */
+    private MenuEventHandler menuHandler;
+
+    /**
+     * Main game profiler.
+     */
+    Profiler profiler;
+
+    /**
+     * The app constructor is called automatically by the JavaFX platform.
+     */
+    public GameApplication() {
         log.debug("Starting JavaFX");
     }
-
-    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
 
     /**
      * @return current application state
@@ -162,46 +205,6 @@ public abstract class GameApplication extends FXGLApplication {
         return new SceneFactory();
     }
 
-    /* The following fields are injected by tasks */
-
-    GameWorld gameWorld;
-
-    PhysicsWorld physicsWorld;
-
-    GameScene gameScene;
-
-    /**
-     * Intro scene, this is shown when the application started,
-     * before menus and game.
-     */
-    IntroScene introScene;
-
-    /**
-     * This scene is shown during app initialization,
-     * i.e. when assets / game are loaded on bg thread.
-     */
-    LoadingScene loadingScene;
-
-    /**
-     * Main menu, this is the menu shown at the start of game.
-     */
-    FXGLMenu mainMenuScene;
-
-    /**
-     * In-game menu, this is shown when menu key pressed during the game.
-     */
-    FXGLMenu gameMenuScene;
-
-    /**
-     * Handler for menu events.
-     */
-    private MenuEventHandler menuHandler;
-
-    /**
-     * Main game profiler.
-     */
-    Profiler profiler;
-
     /**
      * Override to register your achievements.
      *
@@ -213,7 +216,7 @@ public abstract class GameApplication extends FXGLApplication {
      * </pre>
      */
     protected void initAchievements() {
-
+        // no default implementation
     }
 
     /**
@@ -242,7 +245,7 @@ public abstract class GameApplication extends FXGLApplication {
      * Called only once per application lifetime.
      */
     protected void preInit() {
-
+        // no default implementation
     }
 
     /**
@@ -309,7 +312,7 @@ public abstract class GameApplication extends FXGLApplication {
      * @param tpf time per frame (same as main update tpf)
      */
     protected void onPostUpdate(double tpf) {
-
+        // no default implementation
     }
 
     /**
