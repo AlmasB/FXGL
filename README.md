@@ -2,15 +2,13 @@
 
 JavaFX Game Development Framework
 
-[![Maven](https://img.shields.io/badge/maven-0.2.7-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
-[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
+[![Release](https://jitpack.io/v/AlmasB/FXGL.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://jitpack.io/com/github/AlmasB/FXGL/0.2.7/javadoc/index.html)
 ![Code](https://img.shields.io/badge/lines%20of%20code-14k-blue.svg)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=0.2.8)
 [![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/0.2.8/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
 
-
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
-[![Website](https://img.shields.io/badge/www-FXGL-green.svg)](http://almasb.github.io/FXGL/)
 [![Showcase](https://img.shields.io/badge/www-Showcase-green.svg)](http://almasb.github.io/FXGLGames/)
 [![Wiki](https://img.shields.io/badge/www-Wiki-green.svg)](https://github.com/AlmasB/FXGL/wiki)
 [![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
