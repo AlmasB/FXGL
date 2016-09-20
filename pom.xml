@@ -317,6 +317,7 @@
                 </executions>
             </plugin>
 
+            <!--
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
@@ -327,6 +328,7 @@
                     </sourceDirectories>
                 </configuration>
             </plugin>
+            -->
         </plugins>
     </build>
 </project>
