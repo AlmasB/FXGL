@@ -5,6 +5,7 @@ JavaFX Game Development Framework
 [![Maven](https://img.shields.io/badge/maven-0.2.7-blue.svg)](https://jitpack.io/#AlmasB/FXGL)
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](http://almasb.github.io/FXGL/javadoc/index.html)
 ![Code](https://img.shields.io/badge/lines%20of%20code-14k-blue.svg)
+![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=0.2.8)
 ![Test](https://img.shields.io/badge/coverage-10%25-red.svg)
 
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
