@@ -36,7 +36,7 @@ import org.apache.logging.log4j.core.config.Configurator
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class FXGLLoggerFactory
-@Inject constructor(mode: ApplicationMode) : LoggerFactory(mode) {
+@Inject constructor(mode: ApplicationMode) : LoggerFactory() {
 
     init {
         val resourceName = when (mode) {

@@ -26,16 +26,12 @@
 
 package com.almasb.fxgl.logging;
 
-import com.almasb.fxgl.app.ApplicationMode;
-
 /**
  * Factory for producing loggers.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public abstract class LoggerFactory {
-
-    public LoggerFactory(ApplicationMode mode) {}
 
     /**
      * Construct new logger for given class.

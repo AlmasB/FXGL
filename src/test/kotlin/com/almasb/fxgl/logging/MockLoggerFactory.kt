@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.logging
 
-import com.almasb.fxgl.app.ApplicationMode
 import java.util.function.Supplier
 
 /**
@@ -34,7 +33,7 @@ import java.util.function.Supplier
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object MockLoggerFactory : LoggerFactory(ApplicationMode.DEVELOPER) {
+object MockLoggerFactory : LoggerFactory() {
 
     object MockLogger : Logger {
         override fun info(message: String?) {
