@@ -307,17 +307,17 @@ public final class ProgressBar extends Parent {
     }
 
     public void setCurrentValue(double value) {
+        double newValue = value;
+
         if (value < minValue.get()) {
             log.warning("Current value < min value. Setting min value as current");
-            value = minValue.get();
-        }
-
-        if (value > maxValue.get()) {
+            newValue = minValue.get();
+        } else if (value > maxValue.get()) {
             log.warning("Current value > max value. Setting max value as current");
-            value = maxValue.get();
+            newValue = maxValue.get();
         }
 
-        currentValue.set(value);
+        currentValue.set(newValue);
     }
 
     public double getCurrentValue() {
