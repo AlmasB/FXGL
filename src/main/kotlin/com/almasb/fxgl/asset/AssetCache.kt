@@ -57,6 +57,8 @@ class AssetCache(
 
     fun get(key: String) = cache[key]
 
+    fun size() = cache.size
+
     /**
      * Clear the cache.
      */
