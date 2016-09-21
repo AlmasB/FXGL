@@ -29,6 +29,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
 import com.almasb.fxgl.ui.InGameWindow;
+import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -75,21 +76,21 @@ public class DeveloperMenuBarController implements UIController {
 
     // TODO: would be nice to know size beforehand so we can automate these dialogs
     public void openAddDialog() {
-        Parent pane = app.getAssetLoader().loadFXML("dialog_add_entity.fxml", new DialogAddEntityController());
+        UI ui = app.getAssetLoader().loadUI("dialog_add_entity.fxml", new DialogAddEntityController());
 
         Window window = new InGameWindow("Add Entity", InGameWindow.WindowDecor.ALL);
         window.setPrefSize(350, 300);
-        window.setContentPane(new Pane(pane));
+        window.setContentPane(new Pane(ui.getRoot()));
 
         app.getGameScene().addUINode(window);
     }
 
     public void openEditDialog() {
-        Pane pane = new Pane(app.getAssetLoader().loadFXML("dialog_edit_entity.fxml", new DialogEditEntityController()));
+        UI ui = app.getAssetLoader().loadUI("dialog_edit_entity.fxml", new DialogEditEntityController());
 
         Window window = new InGameWindow("Edit Entity", InGameWindow.WindowDecor.ALL);
         window.setPrefSize(380, 450);
-        window.setContentPane(pane);
+        window.setContentPane(new Pane(ui.getRoot()));
 
         app.getGameScene().addUINode(window);
     }
