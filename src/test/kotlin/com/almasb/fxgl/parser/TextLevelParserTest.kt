@@ -28,7 +28,7 @@ package com.almasb.fxgl.parser
 
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.Entities
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
@@ -52,7 +52,7 @@ class TextLevelParserTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 

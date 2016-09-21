@@ -28,7 +28,7 @@ package com.almasb.fxgl.gameplay;
 
 import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.MockServicesModule;
+import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
@@ -63,7 +63,7 @@ public class GameWorldTest {
 
     @BeforeClass
     public static void before() {
-        FXGL.mockServices(new MockServicesModule());
+        FXGL.configure(MockApplicationModule.get());
     }
 
     @Before

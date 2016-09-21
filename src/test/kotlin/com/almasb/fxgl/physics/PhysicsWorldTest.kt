@@ -28,7 +28,7 @@ package com.almasb.fxgl.physics
 
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.component.CollidableComponent
 import com.almasb.fxgl.gameplay.GameWorld
@@ -49,7 +49,7 @@ class PhysicsWorldTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 

@@ -27,7 +27,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.event.NotificationEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
@@ -47,7 +47,7 @@ class NotificationServiceTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 

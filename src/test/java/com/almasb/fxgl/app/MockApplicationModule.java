@@ -36,15 +36,16 @@ import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.logging.MockLoggerFactory;
+import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.time.MockMasterTimer;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.FXGLPooler;
 import com.almasb.fxgl.util.Pooler;
-import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import javafx.application.Application;
+import javafx.stage.Stage;
 
 /**
  * Module that binds services with their mock providers.
@@ -56,15 +57,48 @@ import javafx.application.Application;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class MockServicesModule extends AbstractModule {
+public class MockApplicationModule extends ApplicationModule {
 
-    @Override
-    protected void configure() {
+    // TODO: add single point of mocking
+    private static MockApplicationModule instance;
+
+    public static MockApplicationModule get() {
+        if (instance == null) {
+            Stage stage = mockStage();
+            GameSettings settings = new GameSettings();
+
+            GameApplication app = new MockGameApplication();
+            app.injectStage(stage);
+            app.injectSettings(settings.toReadOnly());
+
+            instance = new MockApplicationModule(app);
+        }
+
+        return instance;
+    }
+
+    private MockApplicationModule(GameApplication app) {
+        super(app);
+    }
+
+    private static Stage mockStage() {
         new Thread(() -> {
             Application.launch(MockApplication.class);
         }).start();
 
-        mockCore();
+        try {
+            MockApplication.Companion.getREADY().await();
+        } catch (InterruptedException e) {
+            System.out.println("Exception during mocking: " + e);
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        return MockApplication.stage;
+    }
+
+    @Override
+    protected void bindServices() {
         mockTimer();
         mockPooler();
         mockLoggerFactory();
@@ -74,20 +108,7 @@ public class MockServicesModule extends AbstractModule {
         mockNotificationService();
         mockUIFactory();
         mockAssetLoader();
-
         mockPhysics();
-
-        try {
-            MockApplication.Companion.getREADY().await();
-        } catch (InterruptedException e) {
-            System.out.println("Exception during mocking: " + e);
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    }
-
-    private void mockCore() {
-        bind(GameApplication.class).toInstance(new MockGameApplication());
     }
 
     private void mockTimer() {
@@ -116,8 +137,6 @@ public class MockServicesModule extends AbstractModule {
     }
 
     private void mockNotificationService() {
-        bind(Double.class).annotatedWith(Names.named("appWidth")).toInstance(800.0);
-        bind(Double.class).annotatedWith(Names.named("appHeight")).toInstance(600.0);
         bind(NotificationService.class).to(FXGLNotificationService.class);
     }
 

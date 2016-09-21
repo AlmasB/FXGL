@@ -78,6 +78,33 @@ public abstract class FXGLApplication extends Application {
         Version.print();
     }
 
+    private Stage primaryStage;
+
+    void injectStage(Stage stage) {
+        primaryStage = stage;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    /**
+     * Settings for this game instance. This is an internal copy
+     * of the settings so that they will not be modified during game lifetime.
+     */
+    private ReadOnlyGameSettings settings;
+
+    void injectSettings(ReadOnlyGameSettings settings) {
+        this.settings = settings;
+    }
+
+    /**
+     * @return read only copy of game settings
+     */
+    public final ReadOnlyGameSettings getSettings() {
+        return settings;
+    }
+
     private List<FXGLListener> systemListeners = new ArrayList<>();
 
     /**
@@ -112,7 +139,8 @@ public abstract class FXGLApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         log.debug("Starting FXGL");
 
-        showPreloadingStage(primaryStage);
+        this.primaryStage = primaryStage;
+        showPreloadingStage();
 
         // this is the only JavaFX scene in use with a placeholder root
         // the root will be replaced with a relevant FXGL scene
@@ -120,7 +148,7 @@ public abstract class FXGLApplication extends Application {
 
         new Thread(() -> {
             try {
-                configureFXGL(primaryStage);
+                configureFXGL();
 
                 CountDownLatch latch = new CountDownLatch(1);
 
@@ -154,10 +182,8 @@ public abstract class FXGLApplication extends Application {
 
     /**
      * Shows preloading stage with scene while FXGL is being configured.
-     *
-     * @param primaryStage the main stage
      */
-    private void showPreloadingStage(Stage primaryStage) {
+    private void showPreloadingStage() {
         Stage preloadingStage = new Stage(StageStyle.UNDECORATED);
         preloadingStage.initOwner(primaryStage);
         preloadingStage.setScene(new PreloadingScene());
@@ -175,10 +201,8 @@ public abstract class FXGLApplication extends Application {
     /**
      * Configures FXGL.
      * After this call all FXGL.* calls are valid.
-     *
-     * @param primaryStage the main stage
      */
-    private void configureFXGL(Stage primaryStage) {
+    private void configureFXGL() {
         log.debug("Configuring FXGL");
 
         long start = System.nanoTime();
@@ -187,7 +211,7 @@ public abstract class FXGLApplication extends Application {
         initUserProperties();
         initAppSettings();
 
-        FXGL.configure(this, primaryStage);
+        FXGL.configure(new ApplicationModule((GameApplication) this));
 
         log.debug("FXGL configuration complete");
 
@@ -295,19 +319,6 @@ public abstract class FXGLApplication extends Application {
         settings = localSettings.toReadOnly();
 
         log.debug("Logging settings\n" + settings.toString());
-    }
-
-    /**
-     * Settings for this game instance. This is an internal copy
-     * of the settings so that they will not be modified during game lifetime.
-     */
-    private ReadOnlyGameSettings settings;
-
-    /**
-     * @return read only copy of game settings
-     */
-    public final ReadOnlyGameSettings getSettings() {
-        return settings;
     }
 
     /**

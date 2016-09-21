@@ -27,7 +27,7 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.GameEntity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
@@ -72,7 +72,7 @@ class AssetLoaderTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 

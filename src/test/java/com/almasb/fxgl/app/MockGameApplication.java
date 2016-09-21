@@ -45,8 +45,7 @@ public class MockGameApplication extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-//        settings.setIntroEnabled(false);
-//        settings.setMenuEnabled(false);
+
     }
 
     @Override

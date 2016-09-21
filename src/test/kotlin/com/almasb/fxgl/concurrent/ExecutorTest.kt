@@ -27,7 +27,7 @@
 package com.almasb.fxgl.concurrent
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
@@ -52,7 +52,7 @@ class ExecutorTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 

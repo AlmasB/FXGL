@@ -28,7 +28,7 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.easyio.FS
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.io.DataFile
 import com.almasb.fxgl.io.SaveFile
 import com.almasb.fxgl.settings.UserProfile
@@ -56,7 +56,7 @@ class SaveLoadManagerTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
             // save load system relies on these to be present
             FXGL.setProperty("fs.profiledir", "testprofiles/")
             FXGL.setProperty("fs.profilename", "user.profile")
