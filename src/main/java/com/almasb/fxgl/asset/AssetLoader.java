@@ -48,8 +48,6 @@ import javafx.scene.text.Font;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -497,7 +495,7 @@ public class AssetLoader {
 
     /**
      * Read all lines from a file. Bytes from the file are decoded into characters
-     * using the {@link StandardCharsets#UTF_8 UTF-8} {@link Charset charset}.
+     * using the {@link java.nio.charset.StandardCharsets#UTF_8 UTF-8} {@link java.nio.charset.Charset charset}.
      *
      * @param name resource name
      * @return the lines from the file as a {@code List}
@@ -523,16 +521,16 @@ public class AssetLoader {
      * from their respective folders.
      */
     public void cache() {
-        try {
-            loadFileNames(TEXTURES_DIR).forEach(this::loadTexture);
-            loadFileNames(SOUNDS_DIR).forEach(this::loadSound);
-            loadFileNames(MUSIC_DIR).forEach(this::loadMusic);
-            loadFileNames(TEXT_DIR).forEach(this::loadText);
-            loadFileNames(FONTS_DIR).forEach(this::loadFont);
-            loadFileNames(BINARY_DIR).forEach(this::loadDataInternal);
-        } catch (Exception e) {
-            throw loadFailed("Caching Failed", e);
-        }
+        log.debug("Caching assets");
+
+        loadFileNames(TEXTURES_DIR).forEach(this::loadTexture);
+        loadFileNames(SOUNDS_DIR).forEach(this::loadSound);
+        loadFileNames(MUSIC_DIR).forEach(this::loadMusic);
+        loadFileNames(TEXT_DIR).forEach(this::loadText);
+        loadFileNames(FONTS_DIR).forEach(this::loadFont);
+        loadFileNames(BINARY_DIR).forEach(this::loadDataInternal);
+
+        log.debug("Caching complete. Size: " + cachedAssets.size());
     }
 
     /**
@@ -550,26 +548,33 @@ public class AssetLoader {
      *
      * @param directory name of directory
      * @return list of file names
-     * @throws Exception
+     * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
      */
-    public List<String> loadFileNames(String directory) throws Exception {
-        URL url = getClass().getResource(directory);
-        if (url != null) {
-            if (url.toString().startsWith("jar"))
-                return loadFileNamesJar(directory.substring(1));
+    public List<String> loadFileNames(String directory) {
+        if (!directory.startsWith(ASSETS_DIR))
+            throw new IllegalArgumentException("Directory must start with: " + ASSETS_DIR + " Provided: " + directory);
 
-            Path dir = Paths.get(url.toURI());
+        try {
+            URL url = getClass().getResource(directory);
+            if (url != null) {
+                if (url.toString().startsWith("jar"))
+                    return loadFileNamesJar(directory.substring(1));
 
-            if (Files.exists(dir)) {
-                try (Stream<Path> files = Files.walk(dir)) {
-                    return files.filter(Files::isRegularFile)
-                            .map(file -> dir.relativize(file).toString().replace("\\", "/"))
-                            .collect(Collectors.toList());
+                Path dir = Paths.get(url.toURI());
+
+                if (Files.exists(dir)) {
+                    try (Stream<Path> files = Files.walk(dir)) {
+                        return files.filter(Files::isRegularFile)
+                                .map(file -> dir.relativize(file).toString().replace("\\", "/"))
+                                .collect(Collectors.toList());
+                    }
                 }
             }
-        }
 
-        return loadFileNamesJar(directory.substring(1));
+            return loadFileNamesJar(directory.substring(1));
+        } catch (Exception e) {
+            throw loadFailed(directory, e);
+        }
     }
 
     /**
