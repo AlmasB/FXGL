@@ -27,7 +27,6 @@
 package com.almasb.fxgl.entity.animation
 
 import javafx.geometry.Point2D
-import javafx.scene.shape.Path
 import javafx.scene.shape.Shape
 
 

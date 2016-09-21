@@ -26,12 +26,11 @@
 
 package com.almasb.fxgl.app
 
-import org.junit.BeforeClass
-import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
+import org.junit.BeforeClass
+import org.junit.Test
 
 /**
  *

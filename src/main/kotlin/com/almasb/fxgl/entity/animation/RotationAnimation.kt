@@ -26,15 +26,12 @@
 
 package com.almasb.fxgl.entity.animation
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.FXGLEvent
 import javafx.animation.Animation
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.event.EventHandler
 
 /**
  *

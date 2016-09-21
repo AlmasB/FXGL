@@ -32,7 +32,6 @@ import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.Pane;
 import jfxtras.scene.control.window.Window;

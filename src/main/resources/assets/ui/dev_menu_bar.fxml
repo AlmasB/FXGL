@@ -26,12 +26,8 @@
 ~ SOFTWARE.
 -->
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.Pane?>
-
-<?import javafx.scene.control.*?>
-
 <?import com.almasb.fxgl.devtools.DeveloperMenuBar?>
+<?import javafx.scene.control.*?>
 <DeveloperMenuBar xmlns="http://javafx.com/javafx/8.0.60"
                   xmlns:fx="http://javafx.com/fxml/1">
 

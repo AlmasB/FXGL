@@ -25,7 +25,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**

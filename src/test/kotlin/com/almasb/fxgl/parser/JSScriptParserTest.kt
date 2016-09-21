@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockServicesModule
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 

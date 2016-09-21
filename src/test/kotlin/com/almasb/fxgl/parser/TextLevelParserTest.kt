@@ -35,7 +35,6 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.Description
 import org.junit.Assert.assertThat
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 

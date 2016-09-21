@@ -33,12 +33,11 @@ import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.component.CollidableComponent
 import com.almasb.fxgl.gameplay.GameWorld
 import com.almasb.fxgl.time.UpdateEvent
-import org.junit.BeforeClass
-import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
+import org.junit.BeforeClass
+import org.junit.Test
 
 /**
  *
