@@ -288,7 +288,7 @@ public final class MultiServer extends NetworkConnection {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj != null && obj instanceof FullInetAddress) {
+            if (obj instanceof FullInetAddress) {
                 FullInetAddress other = (FullInetAddress) obj;
                 return this.address.getHostAddress().equals(
                         other.address.getHostAddress())
