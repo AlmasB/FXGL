@@ -164,7 +164,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
             }
         }
 
-        if (array.size == 0)
+        if (array.size() == 0)
             return Optional.empty();
 
         array.sort((e1, e2) -> (int) (Entities.getPosition(e1).distance(Entities.getPosition(entity))

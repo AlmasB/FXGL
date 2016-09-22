@@ -31,7 +31,7 @@ import com.almasb.gameutils.pool.Pool
 import com.almasb.gameutils.pool.Pools
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import org.jbox2d.common.Vec2
+import com.almasb.gameutils.math.Vec2
 
 /**
  * FXGL provider for [Pooler] service.

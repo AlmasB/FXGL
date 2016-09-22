@@ -30,10 +30,10 @@
         <controlsfx.version>8.40.10</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.1.0</ents.version>
-        <game.utils.version>0.0.1</game.utils.version>
-        <jbox.version>2.3.1-fxgl</jbox.version>
+        <game.utils.version>0.0.3</game.utils.version>
+        <jbox.version>2.3.2-fxgl</jbox.version>
         <astar.version>1.0</astar.version>
-        <gdx.ai.version>1.8.1-fxgl</gdx.ai.version>
+        <gdx.ai.version>1.8.2-fxgl</gdx.ai.version>
         <easyio.version>0.1.6</easyio.version>
         <log4j.version>2.5</log4j.version>
 

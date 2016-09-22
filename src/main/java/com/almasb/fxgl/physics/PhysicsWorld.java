@@ -53,7 +53,7 @@ import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.*;
-import org.jbox2d.common.Vec2;
+import com.almasb.gameutils.math.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
@@ -159,7 +159,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private int getPairIndex(Entity e1, Entity e2) {
-        for (int i = 0; i < collisions.size; i++) {
+        for (int i = 0; i < collisions.size(); i++) {
             CollisionPair pair = collisions.get(i);
             if (pair.equal(e1, e2)) {
                 return i;
@@ -331,10 +331,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             }
         }
 
-        for (int i = 0; i < collidables.size; i++) {
+        for (int i = 0; i < collidables.size(); i++) {
             Entity e1 = collidables.get(i);
 
-            for (int j = i + 1; j < collidables.size; j++) {
+            for (int j = i + 1; j < collidables.size(); j++) {
                 Entity e2 = collidables.get(j);
 
                 CollisionHandler handler = getHandler(e1, e2);

@@ -35,7 +35,7 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
 import javafx.geometry.Point2D;
-import org.jbox2d.common.Vec2;
+import com.almasb.gameutils.math.Vec2;
 import org.jbox2d.dynamics.Body;
 
 /**

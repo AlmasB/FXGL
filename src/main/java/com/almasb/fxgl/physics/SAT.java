@@ -28,7 +28,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.gameutils.collection.Array;
-import org.jbox2d.common.Vec2;
+import com.almasb.gameutils.math.Vec2;
 
 /**
  * Separating Axis Theorem based check for collision.
