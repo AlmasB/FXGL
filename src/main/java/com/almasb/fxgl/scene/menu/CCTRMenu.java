@@ -213,6 +213,7 @@ public class CCTRMenu extends FXGLMenu {
      * @param action button action
      * @return new button
      */
+    @Override
     protected final Button createActionButton(String name, Runnable action) {
         Button btn = FXGL.getUIFactory().newButton(name);
         btn.setOnAction(e -> action.run());
@@ -227,6 +228,7 @@ public class CCTRMenu extends FXGLMenu {
      * @return new button
      */
     @SuppressWarnings("unchecked")
+    @Override
     protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         Button btn = FXGL.getUIFactory().newButton(name);
         btn.setUserData(contentSupplier);

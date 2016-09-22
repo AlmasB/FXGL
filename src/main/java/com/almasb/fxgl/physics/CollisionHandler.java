@@ -56,6 +56,7 @@ public abstract class CollisionHandler extends Pair<Object> {
      * @param boxB hit box of second entity
      */
     protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
+        // no default implementation
     }
 
     /**
@@ -65,6 +66,7 @@ public abstract class CollisionHandler extends Pair<Object> {
      * @param b second entity
      */
     protected void onCollisionBegin(Entity a, Entity b) {
+        // no default implementation
     }
 
     /**
@@ -74,6 +76,7 @@ public abstract class CollisionHandler extends Pair<Object> {
      * @param b second entity
      */
     protected void onCollision(Entity a, Entity b) {
+        // no default implementation
     }
 
     /**
@@ -83,6 +86,7 @@ public abstract class CollisionHandler extends Pair<Object> {
      * @param b second entity
      */
     protected void onCollisionEnd(Entity a, Entity b) {
+        // no default implementation
     }
 
     /**

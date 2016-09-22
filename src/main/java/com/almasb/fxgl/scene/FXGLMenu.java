@@ -126,18 +126,20 @@ public abstract class FXGLMenu extends FXGLScene {
      *
      * @param menuBox parent node containing menu body
      */
-    protected void switchMenuTo(Node menuBox) {}
+    protected void switchMenuTo(Node menuBox) {
+        // no default implementation
+    }
 
     /**
      * Switches current active content to given.
      *
      * @param content menu content
      */
-    protected void switchMenuContentTo(Node content) {}
-
-    protected Button createActionButton(String name, Runnable action) {
-        return null;
+    protected void switchMenuContentTo(Node content) {
+        // no default implementation
     }
+
+    protected abstract Button createActionButton(String name, Runnable action);
 
     protected Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));

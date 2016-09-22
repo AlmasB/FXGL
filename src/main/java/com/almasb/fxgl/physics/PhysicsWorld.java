@@ -307,10 +307,14 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {}
+    public void preSolve(Contact contact, Manifold oldManifold) {
+        // no default implementation
+    }
 
     @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {}
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+        // no default implementation
+    }
 
     private Array<Entity> collidables = new Array<>(false, 128);
 
