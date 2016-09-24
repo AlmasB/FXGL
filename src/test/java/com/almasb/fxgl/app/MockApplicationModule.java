@@ -68,6 +68,8 @@ public class MockApplicationModule extends ApplicationModule {
             GameSettings settings = new GameSettings();
 
             GameApplication app = new MockGameApplication();
+            app.initSettings(settings);
+
             app.injectStage(stage);
             app.injectSettings(settings.toReadOnly());
 
