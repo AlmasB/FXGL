@@ -62,6 +62,17 @@ public class MockGameApplication extends GameApplication {
         settings.setMenuKey(KeyCode.ENTER);
         settings.setMenuStyle(MenuStyle.CCTR);
         settings.setCredits(new Credits(Arrays.asList("TestCredit1", "TestCredit2")));
+        settings.addServiceType(new ServiceType<MockService>() {
+            @Override
+            public Class<MockService> service() {
+                return MockService.class;
+            }
+
+            @Override
+            public Class<? extends MockService> serviceProvider() {
+                return MockServiceProvider.class;
+            }
+        });
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 

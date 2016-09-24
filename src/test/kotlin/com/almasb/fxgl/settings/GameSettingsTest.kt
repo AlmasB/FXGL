@@ -29,6 +29,7 @@ package com.almasb.fxgl.settings
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
+import com.almasb.fxgl.app.MockService
 import com.almasb.fxgl.scene.menu.MenuStyle
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
@@ -93,4 +94,10 @@ class GameSettingsTest {
         assertThat(settings.credits.list, hasItems("TestCredit1", "TestCredit2"))
         assertThat(settings.appMode, `is`(ApplicationMode.DEBUG))
     }
+
+//    @Test
+//    fun `Test custom services`() {
+//        val value = FXGL.getInstance(MockService::class.java).test()
+//        assertThat(value, `is`("Test"))
+//    }
 }
