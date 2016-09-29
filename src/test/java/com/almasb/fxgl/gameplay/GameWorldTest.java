@@ -32,12 +32,21 @@ import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.component.IDComponent;
+import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.time.UpdateEvent;
+import com.almasb.gameutils.collection.Array;
+import javafx.beans.NamedArg;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -88,24 +97,28 @@ public class GameWorldTest {
                 .at(100, 100)
                 .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .viewFromNode(view)
+                .with(new IDComponent("e1", 0))
                 .buildAndAttach(gameWorld);
 
         e10 = Entities.builder()
                 .type(TestType.T1)
                 .at(100, 105)
                 .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
+                .with(new IDComponent("e1", 1))
                 .buildAndAttach(gameWorld);
 
         e11 = Entities.builder()
                 .type(TestType.T1)
                 .at(100, 110)
                 .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
+                .with(new IDComponent("e1", 2))
                 .buildAndAttach(gameWorld);
 
         e2 = Entities.builder()
                 .type(TestType.T2)
                 .at(150, 100)
                 .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
+                .with(new IDComponent("e2", 0))
                 .buildAndAttach(gameWorld);
 
         e3 = Entities.builder()
@@ -139,6 +152,24 @@ public class GameWorldTest {
 
         list = gameWorld.getEntitiesByType(TestType.T4);
         assertThat(list, is(Collections.singletonList(e4)));
+
+        Array<Entity> result = new Array<>(8);
+        gameWorld.getEntitiesByType(result, TestType.T1);
+
+        assertThat(result.size(), is(3));
+        assertThat(result, hasItems(e1, e10, e11));
+
+        result.clear();
+        gameWorld.getEntitiesByType(result, TestType.T2);
+
+        assertThat(result.size(), is(1));
+        assertThat(result, hasItems(e2));
+
+        result.clear();
+        gameWorld.getEntitiesByType(result, TestType.T3);
+
+        assertThat(result.size(), is(1));
+        assertThat(result, hasItems(e3));
     }
 
     @Test
@@ -164,17 +195,41 @@ public class GameWorldTest {
 
         assertThat(gameWorld.getEntitiesFiltered(e -> Entities.getPosition(e).getY() < 105),
                 is(Arrays.asList(e1, e2, e3, e4)));
+
+        Array<Entity> result = new Array<>(8);
+        gameWorld.getEntitiesFiltered(result, e -> Entities.getPosition(e).getX() > 150);
+
+        assertThat(result.size(), is(2));
+        assertThat(result, hasItems(e3, e4));
+
+        result.clear();
+        gameWorld.getEntitiesFiltered(result, e -> Entities.getPosition(e).getY() < 105);
+
+        assertThat(result.size(), is(4));
+        assertThat(result, hasItems(e1, e2, e3, e4));
     }
 
     @Test
     public void testGetEntitiesInRange() throws Exception {
         assertThat(gameWorld.getEntitiesInRange(new Rectangle2D(130, 50, 100, 100)),
                 is(Arrays.asList(e2, e3)));
+
+        Array<Entity> result = new Array<>(8);
+
+        gameWorld.getEntitiesInRange(result, 130, 50, 130+100, 50+100);
+        assertThat(result.size(), is(2));
+        assertThat(result, hasItems(e2, e3));
     }
 
     @Test
     public void testGetCollidingEntities() {
         assertThat(gameWorld.getCollidingEntities(e1), is(Arrays.asList(e10, e11)));
+
+        Array<Entity> result = new Array<>(8);
+        gameWorld.getCollidingEntities(result, e1);
+
+        assertThat(result.size(), is(2));
+        assertThat(result, hasItems(e10, e11));
     }
 
     @Test
@@ -193,6 +248,12 @@ public class GameWorldTest {
 
         assertThat(gameWorld.getEntitiesByLayer(RenderLayer.TOP),
                 is(Arrays.asList(e10, e11, e2, e3, e4)));
+
+        Array<Entity> result = new Array<>(8);
+
+        gameWorld.getEntitiesByLayer(result, RenderLayer.TOP);
+        assertThat(result.size(), is(5));
+        assertThat(result, hasItems(e10, e11, e2, e3, e4));
     }
 
     @Test
@@ -206,6 +267,16 @@ public class GameWorldTest {
     }
 
     @Test
+    public void testGetEntityByID() {
+        assertThat(gameWorld.getEntityByID("e1", 0).get(), is(e1));
+        assertThat(gameWorld.getEntityByID("e1", 1).get(), is(e10));
+        assertThat(gameWorld.getEntityByID("e1", 2).get(), is(e11));
+        assertThat(gameWorld.getEntityByID("e2", 0).get(), is(e2));
+
+        assertThat(gameWorld.getEntityByID("e3", 0), is(Optional.empty()));
+    }
+
+    @Test
     public void setLevel() {
         Level level = new Level(10, 10, Arrays.asList(e1, e2, e3, e4));
 
@@ -214,5 +285,40 @@ public class GameWorldTest {
         world.onUpdateEvent(new UpdateEvent(1, 0.016));
 
         assertThat(world.getEntities(), hasItems(e1, e2, e3, e4));
+    }
+
+//    @Test
+//    public void testTriggers() {
+//        IntegerProperty count = new SimpleIntegerProperty(0);
+//
+//        FXGL.getEventBus().addEventHandler(MyEvent.ANY, e -> {
+//            count.set(count.get() + 1);
+//        });
+//
+//        gameWorld.addEventTrigger(new EventTrigger<>(
+//                () -> gameWorld.getEntities().size() < 6,
+//                MyEvent::new,
+//                2, Duration.millis(0)
+//        ));
+//
+//        assertThat(count.get(), is(0));
+//        gameWorld.onUpdateEvent(new UpdateEvent(2, 0.016));
+//        assertThat(count.get(), is(1));
+//
+//        gameWorld.onUpdateEvent(new UpdateEvent(3, 0.016));
+//        assertThat(count.get(), is(2));
+//
+//        // 2 times only
+//        gameWorld.onUpdateEvent(new UpdateEvent(3, 0.016));
+//        assertThat(count.get(), is(2));
+//    }
+
+    private static class MyEvent extends Event {
+
+        public static final EventType<MyEvent> ANY = new EventType<>(Event.ANY, "MY_EVENT");
+
+        public MyEvent() {
+            super(ANY);
+        }
     }
 }
