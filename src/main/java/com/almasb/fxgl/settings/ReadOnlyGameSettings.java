@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class ReadOnlyGameSettings {
 
-    protected String title = "Untitled FXGL Game Application";
+    protected String title = "Untitled";
     protected String version = "0.0";
     protected int width = 800;
     protected int height = 600;
