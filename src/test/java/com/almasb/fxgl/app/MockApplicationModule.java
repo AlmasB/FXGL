@@ -28,6 +28,8 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxeventbus.FXEventBus;
+import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.gameplay.FXGLNotificationService;
@@ -148,6 +150,7 @@ public class MockApplicationModule extends ApplicationModule {
 
     private void mockAssetLoader() {
         bind(Integer.class).annotatedWith(Names.named("asset.cache.size")).toInstance(35);
+        bind(AssetLoader.class).to(FXGLAssetLoader.class);
     }
 
     private void mockPhysics() {
