@@ -140,22 +140,41 @@ class InputTest {
         input.mockButtonRelease(MouseButton.PRIMARY)
     }
 
-//    @Test
-//    fun `Test mouse cursor coordinates`() {
-//        assertThat(input.mouseXUI, `is`(0.0))
-//        assertThat(input.mouseYUI, `is`(0.0))
-//        assertThat(input.mouseXWorld, `is`(0.0))
-//        assertThat(input.mouseYWorld, `is`(0.0))
-//
-//        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
-//
-//        assertThat(input.mouseXUI, `is`(100.0))
-//        assertThat(input.mouseYUI, `is`(50.0))
-//        assertThat(input.mouseXWorld, `is`(100.0))
-//        assertThat(input.mouseYWorld, `is`(50.0))
-//
-//        input.mockButtonRelease(MouseButton.PRIMARY)
-//    }
+    @Test
+    fun `Test mouse cursor in-game coordinates`() {
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(0.0))
+        assertThat(input.mouseYWorld, `is`(0.0))
+
+        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonPress(MouseButton.SECONDARY)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonRelease(MouseButton.PRIMARY, 50.0, 30.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+
+        input.mockButtonRelease(MouseButton.SECONDARY);
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+    }
 
     @Test
     fun testKeyBinding() {
