@@ -25,10 +25,8 @@
  */
 package com.almasb.fxgl.asset;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.parser.KVFile;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.texture.Texture;
@@ -36,30 +34,11 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.text.Font;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.CodeSource;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * Handles all resource (asset) loading operations.

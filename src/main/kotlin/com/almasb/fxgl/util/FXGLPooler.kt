@@ -27,11 +27,11 @@
 package com.almasb.fxgl.util
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.gameutils.math.Vec2
 import com.almasb.gameutils.pool.Pool
 import com.almasb.gameutils.pool.Pools
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import com.almasb.gameutils.math.Vec2
 
 /**
  * FXGL provider for [Pooler] service.
