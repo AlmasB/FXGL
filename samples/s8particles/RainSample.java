@@ -28,9 +28,13 @@ package s8particles;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.effect.ParticleControl;
+import com.almasb.fxgl.effect.ParticleEmitter;
+import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -60,7 +64,17 @@ public class RainSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        Entities.builder()
+                .viewFromTexture("underwater3.png")
+                .buildAndAttach(getGameWorld());
 
+        ParticleEmitter emitter = ParticleEmitters.newRainEmitter((int)getWidth());
+
+        ParticleControl control = new ParticleControl(emitter);
+
+        Entities.builder()
+                .with(control)
+                .buildAndAttach(getGameWorld());
     }
 
     @Override

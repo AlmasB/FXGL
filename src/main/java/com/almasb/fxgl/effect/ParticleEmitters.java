@@ -158,4 +158,23 @@ public final class ParticleEmitters {
 
         return emitter;
     }
+
+    /**
+     * @param width width of the rain wall
+     * @return new emitter with rain configuration
+     */
+    public static ParticleEmitter newRainEmitter(int width) {
+        ParticleEmitter emitter = new ParticleEmitter();
+        emitter.setNumParticles(5);
+        emitter.setEmissionRate(1);
+        emitter.setSize(1, 2);
+        emitter.setSpawnPointFunction((i, x, y) -> new Point2D(rand()*width, -25));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D(0, (rand() * 15)));
+        emitter.setGravityFunction(() -> new Point2D(0, rand() * 0.03));
+        emitter.setExpireFunction((i, x, y) -> Duration.seconds(rand(1, 3)));
+        emitter.setColorFunction(() -> Color.AQUA.darker());
+        emitter.setScaleFunction((i, x, y) -> new Point2D(-0.02, 0));
+
+        return emitter;
+    }
 }
