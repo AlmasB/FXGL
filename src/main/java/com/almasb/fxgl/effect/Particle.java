@@ -28,6 +28,7 @@ package com.almasb.fxgl.effect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
@@ -92,9 +93,16 @@ public class Particle {
      */
     private BlendMode blendMode;
 
+    private Image image = null;
+
     private Consumer<Particle> control;
 
     public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
+        this(null, position, vel, gravity, radius, scale, expireTime, color, blendMode);
+    }
+
+    public Particle(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
+        this.image = image;
         this.x = position.getX();
         this.y = position.getY();
         this.radiusX = radius;
@@ -149,8 +157,27 @@ public class Particle {
     void render(GraphicsContext g, Point2D viewportOrigin) {
         g.setGlobalAlpha(life);
         g.setGlobalBlendMode(blendMode);
-        g.setFill(color);
-        g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radiusX * 2, radiusY * 2);
+
+        if (image != null) {
+            g.save();
+
+            g.translate(x - viewportOrigin.getX(), y - viewportOrigin.getY());
+            g.scale(radiusX * 2 / image.getWidth(), radiusY * 2 / image.getHeight());
+            g.drawImage(image, 0, 0);
+
+            g.restore();
+        } else {
+            g.setFill(color);
+            g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radiusX * 2, radiusY * 2);
+        }
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 
     public double getVelX() {

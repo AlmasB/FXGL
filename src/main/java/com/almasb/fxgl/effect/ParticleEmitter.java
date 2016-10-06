@@ -28,6 +28,7 @@ package com.almasb.fxgl.effect;
 import com.almasb.fxgl.util.TriFunction;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
@@ -192,6 +193,18 @@ public class ParticleEmitter {
         this.blendFunction = blendFunction;
     }
 
+    private Image sourceImage = null;
+
+    /**
+     * Set source image for this emitter to produce particles.
+     *
+     * @param sourceImage the image
+     * @defaultValue null
+     */
+    public void setSourceImage(Image sourceImage) {
+        this.sourceImage = sourceImage;
+    }
+
     /**
      * Emission rate accumulator. Default value 1.0
      * so that when emitter starts working, it will emit in the same frame
@@ -281,7 +294,7 @@ public class ParticleEmitter {
      * @return particle
      */
     private Particle emit(int i, double x, double y) {
-        return new Particle(spawnPointFunction.apply(i, x, y),
+        return new Particle(sourceImage, spawnPointFunction.apply(i, x, y),
                 velocityFunction.apply(i, x, y),
                 gravityFunction.get(),
                 getRandomSize(),

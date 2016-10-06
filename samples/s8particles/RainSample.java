@@ -69,6 +69,7 @@ public class RainSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
 
         ParticleEmitter emitter = ParticleEmitters.newRainEmitter((int)getWidth());
+        emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").getImage());
 
         ParticleControl control = new ParticleControl(emitter);
 
