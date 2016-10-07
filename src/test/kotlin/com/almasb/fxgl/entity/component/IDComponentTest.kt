@@ -24,34 +24,37 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.entity.component
 
-import com.google.inject.AbstractModule;
-
-import java.util.List;
+import org.junit.Test
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
+import org.junit.Assert.*
 
 /**
- * Module that binds services with their providers.
- * Note: written in java because kotlin freaks out with "to()".
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class ServicesModule extends AbstractModule {
+class IDComponentTest {
 
-    @SuppressWarnings("unchecked")
-    protected void configureServices(List<ServiceType> services) {
-        for (ServiceType type : services) {
-            try {
-                if (type.service().equals(type.serviceProvider()))
-                    bind(type.serviceProvider()).in(type.scope());
-                else
-                    bind(type.service()).to(type.serviceProvider()).in(type.scope());
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to configure service: "
-                        + type.service() + " with provider: " + type.serviceProvider()
-                        + " Scope: " + type.scope()
-                        + " Error: " + e);
-            }
-        }
+    @Test
+    fun `Equality`() {
+        val id1 = IDComponent("Test", 0)
+        val id2 = IDComponent("Test", 1)
+
+        assertThat(id1.name, `is`(id2.name))
+        assertThat(id1.id, `is`(not(id2.id)))
+        assertFalse(id1 == id2)
+        assertThat(id1.fullID, `is`(not(id2.fullID)))
+        assertThat(id1.hashCode(), `is`(not(id2.hashCode())))
+    }
+
+    @Test
+    fun `Serialization`() {
+        // TODO:
+//        val id1 = IDComponent("Test", 0)
+//
+//        val bundle = Bundle()
     }
 }

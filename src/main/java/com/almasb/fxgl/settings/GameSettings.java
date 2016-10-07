@@ -127,7 +127,9 @@ public final class GameSettings extends ReadOnlyGameSettings {
      *
      * @param b show fps flag
      * @defaultValue true
+     * @deprecated use {@link #setProfilingEnabled(boolean)}
      */
+    @Deprecated
     public void setShowFPS(boolean b) {
         profilingEnabled = b;
     }
@@ -141,6 +143,17 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setProfilingEnabled(boolean b) {
         profilingEnabled = b;
+    }
+
+    /**
+     * Setting to false will disable asking for confirmation on exit.
+     * This is useful for faster compile -> run -> exit.
+     *
+     * @param b ask for confirmation on close
+     * @defaultValue true
+     */
+    public void setCloseConfirmation(boolean b) {
+        closeConfirmation = b;
     }
 
     /**

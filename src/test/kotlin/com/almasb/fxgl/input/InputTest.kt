@@ -27,8 +27,9 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.junit.Assert.assertThat
@@ -46,7 +47,7 @@ class InputTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 
@@ -120,6 +121,7 @@ class InputTest {
 
     @Test
     fun `Mocking must not trigger isHeld`() {
+        // keys
         assertThat(input.isHeld(KeyCode.A), `is`(false))
 
         input.mockKeyPress(KeyCode.A)
@@ -127,10 +129,55 @@ class InputTest {
         assertThat(input.isHeld(KeyCode.A), `is`(false))
 
         input.mockKeyRelease(KeyCode.A)
+
+        // buttons
+        assertThat(input.isHeld(MouseButton.PRIMARY), `is`(false))
+
+        input.mockButtonPress(MouseButton.PRIMARY, 0.0, 0.0)
+
+        assertThat(input.isHeld(MouseButton.PRIMARY), `is`(false))
+
+        input.mockButtonRelease(MouseButton.PRIMARY)
     }
 
     @Test
-    fun testAddAction() {
+    fun `Test mouse cursor in-game coordinates`() {
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(0.0))
+        assertThat(input.mouseYWorld, `is`(0.0))
+
+        input.mockButtonPress(MouseButton.PRIMARY, 100.0, 50.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonPress(MouseButton.SECONDARY)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(100.0))
+        assertThat(input.mouseYWorld, `is`(50.0))
+
+        input.mockButtonRelease(MouseButton.PRIMARY, 50.0, 30.0)
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+
+        input.mockButtonRelease(MouseButton.SECONDARY);
+
+        assertThat(input.mouseXUI, `is`(0.0))
+        assertThat(input.mouseYUI, `is`(0.0))
+        assertThat(input.mouseXWorld, `is`(50.0))
+        assertThat(input.mouseYWorld, `is`(30.0))
+    }
+
+    @Test
+    fun testKeyBinding() {
         val action = object : UserAction("Action1") {}
 
         input.addAction(action, KeyCode.A)
@@ -143,6 +190,20 @@ class InputTest {
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
     }
 
+    @Test
+    fun testMouseBinding() {
+        val action = object : UserAction("Action1") {}
+
+        input.addAction(action, MouseButton.PRIMARY)
+
+        assertThat(input.bindings.keys, hasItem(action))
+
+        val trigger = input.bindings[action]
+
+        assertThat(trigger is MouseTrigger, `is`(true))
+        assertThat((trigger as MouseTrigger).button, `is`(MouseButton.PRIMARY))
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun `Do not allow UserActions with same name`() {
         input.addAction(object : UserAction("Action1") {}, KeyCode.A)
@@ -153,6 +214,12 @@ class InputTest {
     fun `Do not allow bindings to same key`() {
         input.addAction(object : UserAction("Action1") {}, KeyCode.A)
         input.addAction(object : UserAction("Action2") {}, KeyCode.A)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Do not allow bindings to same button`() {
+        input.addAction(object : UserAction("Action1") {}, MouseButton.PRIMARY)
+        input.addAction(object : UserAction("Action2") {}, MouseButton.PRIMARY)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -171,7 +238,7 @@ class InputTest {
     }
 
     @Test
-    fun testRebind() {
+    fun `Test rebind key`() {
         val action = object : UserAction("Action1") {}
 
         input.addAction(action, KeyCode.A)
@@ -188,6 +255,26 @@ class InputTest {
 
         assertThat(trigger is KeyTrigger, `is`(true))
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.C))
+    }
+
+    @Test
+    fun `Test rebind mouse button`() {
+        val action = object : UserAction("Action1") {}
+
+        input.addAction(action, MouseButton.PRIMARY)
+        input.addAction(object : UserAction("Action2") {}, MouseButton.SECONDARY)
+
+        // binding to existing button must not succeed
+        var ok = input.rebind(action, MouseButton.SECONDARY)
+        assertThat(ok, `is`(false))
+
+        ok = input.rebind(action, MouseButton.MIDDLE)
+        assertThat(ok, `is`(true))
+
+        val trigger = input.bindings[action]
+
+        assertThat(trigger is MouseTrigger, `is`(true))
+        assertThat((trigger as MouseTrigger).button, `is`(MouseButton.MIDDLE))
     }
 
     @Test

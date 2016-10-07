@@ -157,7 +157,8 @@ public class Texture extends ImageView implements Disposable {
      * @return new combined texture
      */
     public final Texture superTexture(Texture other, HorizontalDirection direction) {
-        Image leftImage, rightImage;
+        Image leftImage;
+        Image rightImage;
 
         if (direction == HorizontalDirection.LEFT) {
             leftImage = other.getImage();
@@ -208,7 +209,8 @@ public class Texture extends ImageView implements Disposable {
      * @return new combined texture
      */
     public final Texture superTexture(Texture other, VerticalDirection direction) {
-        Image topImage, bottomImage;
+        Image topImage;
+        Image bottomImage;
 
         if (direction == VerticalDirection.DOWN) {
             topImage = this.getImage();

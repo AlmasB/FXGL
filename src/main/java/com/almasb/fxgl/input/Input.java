@@ -285,9 +285,35 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
 
     /**
      * Mocks button press event. The behavior is equivalent to
+     * user pressing and holding the button.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     *
+     * @param button the button to mock
+     */
+    default void mockButtonPress(MouseButton button) {
+        mockButtonPress(button, InputModifier.NONE);
+    }
+
+    /**
+     * Mocks button press event. The behavior is equivalent to
+     * user pressing and holding the button.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     *
+     * @param button the button to mock
+     * @param modifier input modifier
+     */
+    default void mockButtonPress(MouseButton button, InputModifier modifier) {
+        mockButtonPress(button, getMouseXWorld(), getMouseYWorld(), modifier);
+    }
+
+    /**
+     * Mocks button press event. The behavior is equivalent to
      * user pressing and holding the button at x, y.
      * Note: the event will be processed directly even if register input is false.
      * The event will NOT be processed if process input is false.
+     * This does not affect mouse UI coordinates but affects game world coordinates.
      *
      * @param button the button to mock
      * @param gameX x in game world
@@ -302,11 +328,12 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      * user pressing and holding the button and the modifier at x, y.
      * Note: the event will be processed directly even if register input is false.
      * The event will NOT be processed if process input is false.
+     * This does not affect mouse UI coordinates but affects game world coordinates.
      *
      * @param button the button to mock
-     * @param modifier the modifier
      * @param gameX x in game world
      * @param gameY y in game world
+     * @param modifier the modifier
      */
     void mockButtonPress(MouseButton button, double gameX, double gameY, InputModifier modifier);
 
@@ -331,7 +358,38 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      * @param button the button to mock
      * @param modifier the modifier
      */
-    void mockButtonRelease(MouseButton button, InputModifier modifier);
+    default void mockButtonRelease(MouseButton button, InputModifier modifier) {
+        mockButtonRelease(button, getMouseXWorld(), getMouseYWorld(), modifier);
+    }
+
+    /**
+     * Mocks button release event. The behavior is equivalent to
+     * user releasing the button.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     * This does not affect mouse UI coordinates but affects game world coordinates.
+     *
+     * @param button the button to mock
+     * @param gameX x in game world
+     * @param gameY y in game world
+     */
+    default void mockButtonRelease(MouseButton button, double gameX, double gameY) {
+        mockButtonRelease(button, gameX, gameY, InputModifier.NONE);
+    }
+
+    /**
+     * Mocks button release event. The behavior is equivalent to
+     * user releasing the button.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     * This does not affect mouse UI coordinates but affects game world coordinates.
+     *
+     * @param button the button to mock
+     * @param gameX x in game world
+     * @param gameY y in game world
+     * @param modifier the modifier
+     */
+    void mockButtonRelease(MouseButton button, double gameX, double gameY, InputModifier modifier);
 
     /* MOUSE DATA */
 

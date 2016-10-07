@@ -28,7 +28,6 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.event.MenuDataEvent;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
@@ -127,18 +126,20 @@ public abstract class FXGLMenu extends FXGLScene {
      *
      * @param menuBox parent node containing menu body
      */
-    protected void switchMenuTo(Node menuBox) {}
+    protected void switchMenuTo(Node menuBox) {
+        // no default implementation
+    }
 
     /**
      * Switches current active content to given.
      *
      * @param content menu content
      */
-    protected void switchMenuContentTo(Node content) {}
-
-    protected Button createActionButton(String name, Runnable action) {
-        return null;
+    protected void switchMenuContentTo(Node content) {
+        // no default implementation
     }
+
+    protected abstract Button createActionButton(String name, Runnable action);
 
     protected Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         return createActionButton(name, () -> switchMenuContentTo(contentSupplier.get()));
@@ -422,8 +423,7 @@ public abstract class FXGLMenu extends FXGLScene {
         public MenuContent(Node... items) {
 
             if (items.length > 0) {
-                int maxW = Arrays.asList(items)
-                        .stream()
+                int maxW = Arrays.stream(items)
                         .mapToInt(n -> (int) n.getLayoutBounds().getWidth())
                         .max()
                         .orElse(0);
@@ -485,10 +485,9 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Fires {@link MenuDataEvent#LOAD} event.
      * Loads the game state from previously saved file.
      *
-     * @param fileName  name of the saved file
+     * @param fileName name of the saved file
      */
     protected final void fireLoad(SaveFile fileName) {
         log.debug("fireLoad()");
@@ -498,8 +497,8 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Fires {@link MenuEvent#SAVE} event.
-     * Can only be fired from game menu. Saves current state of the game with given file name.
+     * Can only be fired from game menu.
+     * Saves current state of the game with given file name.
      */
     protected final void fireSave() {
         log.debug("fireSave()");
@@ -509,8 +508,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Fires {@link MenuDataEvent#DELETE} event.
-     *
      * @param fileName name of the save file
      */
     protected final void fireDelete(SaveFile fileName) {

@@ -255,7 +255,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
     private class MenuItem extends FXGLButton {
         private MenuBox parent;
 
-        public MenuItem(String name) {
+        MenuItem(String name) {
             super(name);
         }
 

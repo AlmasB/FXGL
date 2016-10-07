@@ -29,12 +29,13 @@ package com.almasb.fxgl.physics;
 import com.almasb.ents.AbstractControl;
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.Required;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
+import com.almasb.gameutils.math.Vec2;
 import javafx.geometry.Point2D;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
 /**
@@ -48,6 +49,8 @@ public class PhysicsControl extends AbstractControl {
 
     private Body body;
 
+    private PhysicsWorld physicsWorld;
+
     private PositionComponent position;
     private RotationComponent rotation;
     private BoundingBoxComponent bbox;
@@ -56,6 +59,7 @@ public class PhysicsControl extends AbstractControl {
 
     PhysicsControl(double appHeight) {
         this.appHeight = appHeight;
+        this.physicsWorld = FXGL.getApp().getPhysicsWorld();
     }
 
     @Override
@@ -72,12 +76,12 @@ public class PhysicsControl extends AbstractControl {
         // we round positions so that it's easy for the rest of the world to work with
         // snapped to pixel values
         position.setX(
-                Math.round(PhysicsWorld.toPixels(
-                        body.getPosition().x - PhysicsWorld.toMeters(bbox.getWidth() / 2))));
+                Math.round(toPixels(body.getPosition().x - toMeters(bbox.getWidth() / 2)))
+        );
+
         position.setY(
-                Math.round(PhysicsWorld.toPixels(
-                        PhysicsWorld.toMeters(appHeight) - body.getPosition().y
-                                - PhysicsWorld.toMeters(bbox.getHeight() / 2))));
+                Math.round(toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(bbox.getHeight() / 2)))
+        );
 
         rotation.setValue(-Math.toDegrees(body.getAngle()));
     }
@@ -93,8 +97,16 @@ public class PhysicsControl extends AbstractControl {
         double h = bbox.getHeight();
 
         body.setTransform(new Vec2(
-                PhysicsWorld.toMeters(point.getX() + w / 2),
-                PhysicsWorld.toMeters(appHeight - (point.getY() + h / 2))),
+                toMeters(point.getX() + w / 2),
+                toMeters(appHeight - (point.getY() + h / 2))),
                 body.getAngle());
+    }
+
+    private float toMeters(double pixels) {
+        return physicsWorld.toMeters(pixels);
+    }
+
+    private float toPixels(double meters) {
+        return physicsWorld.toPixels(meters);
     }
 }

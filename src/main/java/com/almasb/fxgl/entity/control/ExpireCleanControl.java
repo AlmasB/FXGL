@@ -33,6 +33,7 @@ import javafx.util.Duration;
 
 /**
  * Removes an entity from the world after a certain duration.
+ * Useful for special effects or temporary entities.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -40,6 +41,12 @@ public class ExpireCleanControl extends AbstractControl {
 
     private Duration expire;
 
+    /**
+     * The expire duration timer starts when the entity is attached to the world,
+     * so it does not start immediately when this control is created.
+     *
+     * @param expire the duration after entity is removed from the world
+     */
     public ExpireCleanControl(Duration expire) {
         this.expire = expire;
     }
@@ -55,6 +62,6 @@ public class ExpireCleanControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-
+        // we use master timer to schedule removal
     }
 }

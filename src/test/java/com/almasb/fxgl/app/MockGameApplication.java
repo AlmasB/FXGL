@@ -25,8 +25,12 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.util.Credits;
+import javafx.scene.input.KeyCode;
+
+import java.util.Arrays;
 
 /**
  * A test game app used to mock the user app.
@@ -35,10 +39,41 @@ import com.almasb.fxgl.settings.GameSettings;
  */
 public class MockGameApplication extends GameApplication {
 
+    public static MockGameApplication INSTANCE;
+
+    public MockGameApplication() {
+        if (INSTANCE != null)
+            throw new IllegalStateException("INSTANCE != null");
+
+        INSTANCE = this;
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
+        settings.setWidth(500);
+        settings.setHeight(500);
+        settings.setTitle("Test");
+        settings.setVersion("0.99");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
+        settings.setFullScreen(false);
+        settings.setProfilingEnabled(false);
+        settings.setCloseConfirmation(false);
+        settings.setMenuKey(KeyCode.ENTER);
+        settings.setMenuStyle(MenuStyle.CCTR);
+        settings.setCredits(new Credits(Arrays.asList("TestCredit1", "TestCredit2")));
+        settings.addServiceType(new ServiceType<MockService>() {
+            @Override
+            public Class<MockService> service() {
+                return MockService.class;
+            }
+
+            @Override
+            public Class<? extends MockService> serviceProvider() {
+                return MockServiceProvider.class;
+            }
+        });
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override

@@ -28,6 +28,7 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxeventbus.EventBus;
 import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.concurrent.Executor;
@@ -103,7 +104,7 @@ public interface ServiceType<T> {
 
         @Override
         public Class<? extends AssetLoader> serviceProvider() {
-            return AssetLoader.class;
+            return FXGLAssetLoader.class;
         }
     };
 

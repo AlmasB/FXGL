@@ -56,6 +56,7 @@ public abstract class CollisionHandler extends Pair<Object> {
      * @param boxB hit box of second entity
      */
     protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
+        // no default implementation
     }
 
     /**
@@ -65,18 +66,17 @@ public abstract class CollisionHandler extends Pair<Object> {
      * @param b second entity
      */
     protected void onCollisionBegin(Entity a, Entity b) {
+        // no default implementation
     }
 
     /**
      * Called if entities A and B are currently colliding.
-     * <p>
-     * This is called one tick after {@link #onCollisionBegin(Entity, Entity)}
-     * if the entities are still colliding
      *
      * @param a first entity
      * @param b second entity
      */
     protected void onCollision(Entity a, Entity b) {
+        // no default implementation
     }
 
     /**
@@ -86,6 +86,7 @@ public abstract class CollisionHandler extends Pair<Object> {
      * @param b second entity
      */
     protected void onCollisionEnd(Entity a, Entity b) {
+        // no default implementation
     }
 
     /**

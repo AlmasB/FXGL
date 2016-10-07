@@ -28,14 +28,13 @@ package com.almasb.fxgl.parser
 
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.Entities
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.Description
 import org.junit.Assert.assertThat
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -53,7 +52,7 @@ class TextLevelParserTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 
@@ -84,6 +83,22 @@ class TextLevelParserTest {
         assertThat(level.entities, hasItem(EntityMatcher(3, 4, EntityType.TYPE3)))
     }
 
+    @Test
+    fun `Parse using given entity factory`() {
+        val parser = TextLevelParser(TestEntityFactory())
+
+        val level = parser.parse("test_level.txt")
+
+        assertThat(level.width, `is`(4))
+        assertThat(level.height, `is`(5))
+        assertThat(level.entities.size, `is`(4))
+
+        assertThat(level.entities, hasItem(EntityMatcher(0, 2, EntityType.TYPE1)))
+        assertThat(level.entities, hasItem(EntityMatcher(1, 2, EntityType.TYPE1)))
+        assertThat(level.entities, hasItem(EntityMatcher(3, 0, EntityType.TYPE2)))
+        assertThat(level.entities, hasItem(EntityMatcher(3, 4, EntityType.TYPE3)))
+    }
+
     private class EntityMatcher(val x: Int, val y: Int, val entityType: EntityType) : BaseMatcher<Entity>() {
 
         override fun matches(item: Any): Boolean {
@@ -96,5 +111,17 @@ class TextLevelParserTest {
         override fun describeTo(description: Description) {
             description.appendText("Entity at $x,$y with type $entityType")
         }
+    }
+
+    private class TestEntityFactory : EntityFactory('0') {
+
+        @EntityProducer('1')
+        fun newType1(x: Int, y: Int) = Entities.builder().type(EntityType.TYPE1).at(x.toDouble(), y.toDouble()).build()
+
+        @EntityProducer('2')
+        fun newType2(x: Int, y: Int) = Entities.builder().type(EntityType.TYPE2).at(x.toDouble(), y.toDouble()).build()
+
+        @EntityProducer('3')
+        fun newType3(x: Int, y: Int) = Entities.builder().type(EntityType.TYPE3).at(x.toDouble(), y.toDouble()).build()
     }
 }

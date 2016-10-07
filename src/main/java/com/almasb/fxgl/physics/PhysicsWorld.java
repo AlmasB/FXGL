@@ -38,6 +38,7 @@ import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.util.Pooler;
 import com.almasb.gameutils.collection.Array;
+import com.almasb.gameutils.math.Vec2;
 import com.almasb.gameutils.pool.Pool;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -53,7 +54,6 @@ import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.*;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
@@ -81,8 +81,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
 
-    private static final double PIXELS_PER_METER = FXGL.getDouble("physics.ppm");
-    private static final double METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
+    private final double PIXELS_PER_METER;
+    private final double METERS_PER_PIXELS;
 
     private World jboxWorld = new World(new Vec2(0, -10));
 
@@ -159,7 +159,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private int getPairIndex(Entity e1, Entity e2) {
-        for (int i = 0; i < collisions.size; i++) {
+        for (int i = 0; i < collisions.size(); i++) {
             CollisionPair pair = collisions.get(i);
             if (pair.equal(e1, e2)) {
                 return i;
@@ -170,14 +170,19 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     @Inject
-    protected PhysicsWorld(@Named("appHeight") double appHeight) {
+    protected PhysicsWorld(@Named("appHeight") double appHeight,
+                           @Named("physics.ppm") double ppm) {
         this.appHeight = appHeight;
+
+        PIXELS_PER_METER = ppm;
+        METERS_PER_PIXELS = 1 / PIXELS_PER_METER;
 
         initCollisionPool();
         initContactListener();
         initParticles();
 
-        log.debug("Physics world initialized");
+        log.debugf("Physics world initialized: appHeight=%.1f, physics.ppm=%.1f",
+                appHeight, ppm);
     }
 
     private void initCollisionPool() {
@@ -302,10 +307,14 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {}
+    public void preSolve(Contact contact, Manifold oldManifold) {
+        // no default implementation
+    }
 
     @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {}
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+        // no default implementation
+    }
 
     private Array<Entity> collidables = new Array<>(false, 128);
 
@@ -322,10 +331,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             }
         }
 
-        for (int i = 0; i < collidables.size; i++) {
+        for (int i = 0; i < collidables.size(); i++) {
             Entity e1 = collidables.get(i);
 
-            for (int j = i + 1; j < collidables.size; j++) {
+            for (int j = i + 1; j < collidables.size(); j++) {
                 Entity e2 = collidables.get(j);
 
                 CollisionHandler handler = getHandler(e1, e2);
@@ -634,7 +643,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param pixels value in pixels
      * @return value in meters
      */
-    public static float toMeters(double pixels) {
+    public float toMeters(double pixels) {
         return (float) (pixels * METERS_PER_PIXELS);
     }
 
@@ -644,7 +653,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param meters value in meters
      * @return value in pixels
      */
-    public static float toPixels(double meters) {
+    public float toPixels(double meters) {
         return (float) (meters * PIXELS_PER_METER);
     }
 
@@ -654,7 +663,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param v vector in pixels
      * @return vector in meters
      */
-    public static Vec2 toVector(Point2D v) {
+    public Vec2 toVector(Point2D v) {
         return new Vec2(toMeters(v.getX()), toMeters(-v.getY()));
     }
 
@@ -664,7 +673,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param v vector in meters
      * @return vector in pixels
      */
-    public static Point2D toVector(Vec2 v) {
+    public Point2D toVector(Vec2 v) {
         return new Point2D(toPixels(v.x), toPixels(-v.y));
     }
 

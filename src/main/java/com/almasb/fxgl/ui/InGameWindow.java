@@ -27,6 +27,7 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.app.FXGL;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Paint;
@@ -56,6 +57,9 @@ public class InGameWindow extends Window {
 
     private static final CopyOnWriteArrayList<InGameWindow> windows = new CopyOnWriteArrayList<>();
 
+    private final int appW;
+    private final int appH;
+
     /**
      * Constructs an in-game window with minimize and close icons.
      *
@@ -74,8 +78,6 @@ public class InGameWindow extends Window {
     public InGameWindow(String title, WindowDecor decor) {
         super(title);
         switch (decor) {
-            case NONE:
-                break;
             case MINIMIZE:
                 getRightIcons().addAll(new MinimizeIcon(this));
                 break;
@@ -85,40 +87,28 @@ public class InGameWindow extends Window {
             case ALL:
                 getRightIcons().addAll(new MinimizeIcon(this), new CloseIcon(this));
                 break;
+            case NONE:  // fallthru
+            default:    // do nothing
+                break;
         }
 
-        initXYListeners();
+        appW = FXGL.getSettings().getWidth();
+        appH = FXGL.getSettings().getHeight();
+
+        layoutXProperty().addListener(makeListenerX());
+        layoutYProperty().addListener(makeListenerY());
 
         windows.add(this);
     }
 
-    private void initXYListeners() {
-        double appW = FXGL.getSettings().getWidth();
-        double appH = FXGL.getSettings().getHeight();
-
-        layoutXProperty().addListener((observable, oldValue, newValue) -> {
+    private ChangeListener<Number> makeListenerX() {
+        return (observable, oldValue, newValue) -> {
             int newX = newValue.intValue();
             int width = (int) getWidth();
             int newMaxX = newX + width;
 
             if (snapToWindows) {
-                for (InGameWindow window : windows) {
-                    if (window == this)
-                        continue;
-
-                    int nodeMinX = (int) window.getLayoutX();
-                    int nodeMaxX = (int) (window.getLayoutX() + window.getWidth());
-
-                    if (between(newX, nodeMaxX - SNAP_SIZE, nodeMaxX + SNAP_SIZE)) {
-                        relocateX(nodeMaxX);
-                        break;
-                    }
-
-                    if (between(newMaxX, nodeMinX - SNAP_SIZE, nodeMinX + SNAP_SIZE)) {
-                        relocateX(nodeMinX - width);
-                        break;
-                    }
-                }
+                snapToWindowsX(newX);
             }
 
             if (snapToScreen) {
@@ -129,38 +119,20 @@ public class InGameWindow extends Window {
                 }
             }
 
-            if (canGoOffscreen)
-                return;
+            if (!canGoOffscreen) {
+                keepOnScreenX(newX);
+            }
+        };
+    }
 
-            if (newX < 0)
-                relocateX(0);
-            else if (newMaxX > appW)
-                relocateX(appW - width);
-        });
-
-        layoutYProperty().addListener((observable, oldValue, newValue) -> {
+    private ChangeListener<Number> makeListenerY() {
+        return (observable, oldValue, newValue) -> {
             int newY = newValue.intValue();
             int height = (int) getHeight();
             int newMaxY = newY + height;
 
             if (snapToWindows) {
-                for (InGameWindow window : windows) {
-                    if (window == this)
-                        continue;
-
-                    int nodeMinY = (int) window.getLayoutY();
-                    int nodeMaxY = (int) (window.getLayoutY() + window.getHeight());
-
-                    if (between(newY, nodeMaxY - SNAP_SIZE, nodeMaxY + SNAP_SIZE)) {
-                        relocateY(nodeMaxY);
-                        break;
-                    }
-
-                    if (between(newMaxY, nodeMinY - SNAP_SIZE, nodeMinY + SNAP_SIZE)) {
-                        relocateY(nodeMinY - height);
-                        break;
-                    }
-                }
+                snapToWindowsY(newY);
             }
 
             if (snapToScreen) {
@@ -171,14 +143,76 @@ public class InGameWindow extends Window {
                 }
             }
 
-            if (canGoOffscreen)
-                return;
+            if (!canGoOffscreen) {
+                keepOnScreenY(newY);
+            }
+        };
+    }
 
-            if (newY < 0)
-                relocateY(0);
-            else if (newMaxY > appH)
-                relocateY(appH - (int)getHeight());
-        });
+    private void snapToWindowsX(int newX) {
+        int width = (int) getWidth();
+        int newMaxX = newX + width;
+
+        for (InGameWindow window : windows) {
+            if (window == this)
+                continue;
+
+            int nodeMinX = (int) window.getLayoutX();
+            int nodeMaxX = (int) (window.getLayoutX() + window.getWidth());
+
+            if (between(newX, nodeMaxX - SNAP_SIZE, nodeMaxX + SNAP_SIZE)) {
+                relocateX(nodeMaxX);
+                break;
+            }
+
+            if (between(newMaxX, nodeMinX - SNAP_SIZE, nodeMinX + SNAP_SIZE)) {
+                relocateX(nodeMinX - width);
+                break;
+            }
+        }
+    }
+
+    private void snapToWindowsY(int newY) {
+        int height = (int) getHeight();
+        int newMaxY = newY + height;
+
+        for (InGameWindow window : windows) {
+            if (window == this)
+                continue;
+
+            int nodeMinY = (int) window.getLayoutY();
+            int nodeMaxY = (int) (window.getLayoutY() + window.getHeight());
+
+            if (between(newY, nodeMaxY - SNAP_SIZE, nodeMaxY + SNAP_SIZE)) {
+                relocateY(nodeMaxY);
+                break;
+            }
+
+            if (between(newMaxY, nodeMinY - SNAP_SIZE, nodeMinY + SNAP_SIZE)) {
+                relocateY(nodeMinY - height);
+                break;
+            }
+        }
+    }
+
+    private void keepOnScreenX(int newX) {
+        int width = (int) getWidth();
+        int newMaxX = newX + width;
+
+        if (newX < 0)
+            relocateX(0);
+        else if (newMaxX > appW)
+            relocateX(appW - width);
+    }
+
+    private void keepOnScreenY(int newY) {
+        int height = (int) getHeight();
+        int newMaxY = newY + height;
+
+        if (newY < 0)
+            relocateY(0);
+        else if (newMaxY > appH)
+            relocateY(appH - height);
     }
 
     /**
@@ -238,7 +272,7 @@ public class InGameWindow extends Window {
         relocate(x, y);
     }
 
-    private static boolean between(double value, double min, double max) {
+    private static boolean between(int value, int min, int max) {
         return value > min && value < max;
     }
 
@@ -247,20 +281,6 @@ public class InGameWindow extends Window {
         super.close();
         windows.remove(this);
     }
-
-    //    private static class WindowLayout {
-//        final int id;
-//        DoubleProperty layoutX, layoutY;
-//        ReadOnlyObjectProperty<Bounds> layoutBounds;
-//
-//        public WindowLayout(int id, DoubleProperty layoutX, DoubleProperty layoutY,
-//                            ReadOnlyObjectProperty<Bounds> layoutBounds) {
-//            this.id = id;
-//            this.layoutX = layoutX;
-//            this.layoutY = layoutY;
-//            this.layoutBounds = layoutBounds;
-//        }
-//    }
 
     public enum WindowDecor {
         NONE,

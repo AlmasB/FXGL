@@ -25,10 +25,8 @@
  */
 package com.almasb.fxgl.asset;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.parser.KVFile;
 import com.almasb.fxgl.scene.CSS;
 import com.almasb.fxgl.texture.Texture;
@@ -36,32 +34,11 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.text.Font;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.CodeSource;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * Handles all resource (asset) loading operations.
@@ -84,6 +61,7 @@ import java.util.zip.ZipInputStream;
  * <li>Font - /assets/ui/fonts/</li>
  * <li>App icons - /assets/ui/icons/</li>
  * <li>Cursors - /assets/ui/cursors/</li>
+ * <li>Resource bundles - /assets/properties/</li>
  * </ul>
  *
  * If you need to access the "raw" JavaFX objects (e.g. Image), you can use
@@ -92,35 +70,7 @@ import java.util.zip.ZipInputStream;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class AssetLoader {
-
-    private static final String ASSETS_DIR = "/assets/";
-    private static final String TEXTURES_DIR = ASSETS_DIR + "textures/";
-    private static final String SOUNDS_DIR = ASSETS_DIR + "sounds/";
-    private static final String MUSIC_DIR = ASSETS_DIR + "music/";
-    private static final String TEXT_DIR = ASSETS_DIR + "text/";
-    private static final String KV_DIR = ASSETS_DIR + "kv/";
-    private static final String BINARY_DIR = ASSETS_DIR + "data/";
-    private static final String SCRIPTS_DIR = ASSETS_DIR + "scripts/";
-    private static final String PROPERTIES_DIR = ASSETS_DIR + "properties/";
-    private static final String AI_DIR = ASSETS_DIR + "ai/";
-
-    private static final String UI_DIR = ASSETS_DIR + "ui/";
-    private static final String CSS_DIR = UI_DIR + "css/";
-    private static final String FONTS_DIR = UI_DIR + "fonts/";
-    private static final String ICON_DIR = UI_DIR + "icons/";
-    private static final String CURSORS_DIR = UI_DIR + "cursors/";
-
-    private static final Logger log = FXGL.getLogger("FXGL.AssetLoader");
-
-    private final AssetCache cachedAssets;
-
-    @Inject
-    private AssetLoader(@Named("asset.cache.size") int cacheSize) {
-        cachedAssets = new AssetCache(cacheSize);
-
-        log.debug("Service [AssetLoader] initialized");
-    }
+public interface AssetLoader {
 
     /**
      * Loads texture with given name from /assets/textures/.
@@ -139,20 +89,7 @@ public class AssetLoader {
      * @return texture
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public Texture loadTexture(String name) {
-        Object asset = getAssetFromCache(TEXTURES_DIR + name);
-        if (asset != null) {
-            return new Texture(Image.class.cast(asset));
-        }
-
-        try (InputStream is = getStream(TEXTURES_DIR + name)) {
-            Texture texture = new Texture(new Image(is));
-            cachedAssets.put(TEXTURES_DIR + name, texture.getImage());
-            return texture;
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    Texture loadTexture(String name);
 
     /**
      * Loads texture with given name from /assets/textures/.
@@ -174,22 +111,7 @@ public class AssetLoader {
      * @return texture
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public Texture loadTexture(String name, double width, double height) {
-        String cacheKey = TEXTURES_DIR + name + "@" + width + "x" + height;
-
-        Object asset = getAssetFromCache(cacheKey);
-        if (asset != null) {
-            return new Texture(Image.class.cast(asset));
-        }
-
-        try (InputStream is = getStream(TEXTURES_DIR + name)) {
-            Texture texture = new Texture(new Image(is, width, height, false, true));
-            cachedAssets.put(cacheKey, texture.getImage());
-            return texture;
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    Texture loadTexture(String name, double width, double height);
 
     /**
      * Loads sound with given name from /assets/sounds/.
@@ -202,20 +124,7 @@ public class AssetLoader {
      * @return sound
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public Sound loadSound(String name) {
-        Object asset = getAssetFromCache(SOUNDS_DIR + name);
-        if (asset != null) {
-            return Sound.class.cast(asset);
-        }
-
-        try {
-            Sound sound = new Sound(new AudioClip(getURL(SOUNDS_DIR + name).toExternalForm()));
-            cachedAssets.put(SOUNDS_DIR + name, sound);
-            return sound;
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    Sound loadSound(String name);
 
     /**
      * Loads sound with given name from /assets/music/.
@@ -228,20 +137,7 @@ public class AssetLoader {
      * @return music
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public Music loadMusic(String name) {
-        Object asset = getAssetFromCache(MUSIC_DIR + name);
-        if (asset != null) {
-            return Music.class.cast(asset);
-        }
-
-        try {
-            Music music = new Music(new Media(getURL(MUSIC_DIR + name).toExternalForm()));
-            cachedAssets.put(MUSIC_DIR + name, music);
-            return music;
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    Music loadMusic(String name);
 
     /**
      * Loads text file with given name from /assets/text/
@@ -253,17 +149,7 @@ public class AssetLoader {
      * @return list of lines from file
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    @SuppressWarnings("unchecked")
-    public List<String> loadText(String name) {
-        Object asset = getAssetFromCache(TEXT_DIR + name);
-        if (asset != null) {
-            return (List<String>)asset;
-        }
-
-        List<String> text = readAllLines(TEXT_DIR + name);
-        cachedAssets.put(TEXT_DIR + name, text);
-        return text;
-    }
+    List<String> loadText(String name);
 
     /**
      * Loads KVFile with given name from /assets/kv/.
@@ -273,9 +159,7 @@ public class AssetLoader {
      * @return kv file
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public KVFile loadKV(String name) {
-        return new KVFile(readAllLines(KV_DIR + name));
-    }
+    KVFile loadKV(String name);
 
     /**
      * Loads script with given name from /assets/scripts/ as a single string.
@@ -285,12 +169,7 @@ public class AssetLoader {
      * @return script as a String
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public String loadScript(String name) {
-        StringBuilder builder = new StringBuilder();
-        readAllLines(SCRIPTS_DIR + name)
-                .forEach(line -> builder.append(line).append('\n'));
-        return builder.toString();
-    }
+    String loadScript(String name);
 
     /**
      * Loads resource bundle with given name from "/assets/properties/".
@@ -299,13 +178,7 @@ public class AssetLoader {
      * @return resource bundle
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public ResourceBundle loadResourceBundle(String name) {
-        try (InputStream is = getStream(PROPERTIES_DIR + name)) {
-            return new PropertyResourceBundle(is);
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    ResourceBundle loadResourceBundle(String name);
 
     /**
      * Loads cursor image with given name from /assets/ui/cursors/.
@@ -315,36 +188,7 @@ public class AssetLoader {
      * @return cursor image
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public Image loadCursorImage(String name) {
-        try (InputStream is = getStream(CURSORS_DIR + name)) {
-            return new Image(is);
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
-
-    /**
-     * Loads an FXML (.fxml) file from /assets/ui/.
-     * Either returns a valid parsed UI or throws an exception in case of errors.
-     *
-     * @param name FXML file name
-     * @param controller the controller object
-     * @return a JavaFX UI parsed from .fxml
-     * @throws IllegalArgumentException if asset not found or loading/parsing error
-     * @deprecated use {@link #loadUI(String, UIController)}
-     */
-    @Deprecated
-    public Parent loadFXML(String name, UIController controller) {
-        try (InputStream is = getStream(UI_DIR + name)) {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setController(controller);
-            Parent ui = loader.load(is);
-            controller.init();
-            return ui;
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    Image loadCursorImage(String name);
 
     /**
      * Loads an FXML (.fxml) file from /assets/ui/.
@@ -355,17 +199,7 @@ public class AssetLoader {
      * @return a UI object parsed from .fxml
      * @throws IllegalArgumentException if asset not found or loading/parsing error
      */
-    public UI loadUI(String name, UIController controller) {
-        try (InputStream is = getStream(UI_DIR + name)) {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setController(controller);
-            Parent root = loader.load(is);
-            controller.init();
-            return new UI(root, controller);
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    UI loadUI(String name, UIController controller);
 
     /**
      * Loads a CSS file from /assets/ui/css/.
@@ -376,13 +210,7 @@ public class AssetLoader {
      * @return css
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public CSS loadCSS(String name) {
-        try {
-            return new CSS(getURL(CSS_DIR + name).toExternalForm());
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    CSS loadCSS(String name);
 
     /**
      * Loads a native JavaFX font with given name from /assets/ui/fonts/
@@ -401,23 +229,7 @@ public class AssetLoader {
      * @return font factory
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public FontFactory loadFont(String name) {
-        Object asset = getAssetFromCache(FONTS_DIR + name);
-        if (asset != null) {
-            return FontFactory.class.cast(asset);
-        }
-
-        try (InputStream is = getStream(FONTS_DIR + name)) {
-            Font font = Font.loadFont(is, 12);
-            if (font == null)
-                font = Font.font(12);
-            FontFactory fontFactory = new FontFactory(font);
-            cachedAssets.put(FONTS_DIR + name, fontFactory);
-            return fontFactory;
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    FontFactory loadFont(String name);
 
     /**
      * Loads an app icon from /assets/ui/icons/.
@@ -427,13 +239,7 @@ public class AssetLoader {
      * @return app icon image
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public Image loadAppIcon(String name) {
-        try (InputStream is = getStream(ICON_DIR + name)) {
-            return new Image(is);
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
+    Image loadAppIcon(String name);
 
     /**
      * Loads a behavior tree from /assets/ai/.
@@ -444,39 +250,7 @@ public class AssetLoader {
      * @return loaded and parsed behavior tree
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    public <T> BehaviorTree<T> loadBehaviorTree(String name) {
-        try (InputStream is = getStream(AI_DIR + name)) {
-            return new BehaviorTreeParser<T>().parse(is, null);
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T loadDataInternal(String name) {
-        try (ObjectInputStream ois = new ObjectInputStream(getStream(BINARY_DIR + name))) {
-            return (T) ois.readObject();
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
-
-    /**
-     * Returns a valid URL to resource or throws {@link IllegalArgumentException}.
-     *
-     * @param name resource name
-     * @return URL to resource
-     */
-    private URL getURL(String name) {
-        log.debug("Loading from disk: " + name);
-
-        URL url = getClass().getResource(name);
-        if (url == null) {
-            throw new IllegalArgumentException("Asset \"" + name + "\" was not found!");
-        }
-
-        return url;
-    }
+    <T> BehaviorTree<T> loadBehaviorTree(String name);
 
     /**
      * Opens a stream to resource with given name.
@@ -491,80 +265,7 @@ public class AssetLoader {
      * @return resource stream
      * @throws IllegalArgumentException if any error occurs or stream is null
      */
-    public InputStream getStream(String name) {
-        try {
-            InputStream is = getURL(name).openStream();
-            if (is == null)
-                throw new IOException("Input stream to \"" + name + "\" is null!");
-            return is;
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to obtain input stream to URL: " + e);
-        }
-    }
-
-    /**
-     * Load an asset from cache.
-     *
-     * @param name asset name
-     * @return asset object or null if not found
-     */
-    private Object getAssetFromCache(String name) {
-        Object asset = cachedAssets.get(name);
-        if (asset != null) {
-            log.debug("Loading from cache: " + name);
-            return asset;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Read all lines from a file. Bytes from the file are decoded into characters
-     * using the {@link StandardCharsets#UTF_8 UTF-8} {@link Charset charset}.
-     *
-     * @param name resource name
-     * @return the lines from the file as a {@code List}
-     */
-    private List<String> readAllLines(String name) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(name)))) {
-            List<String> result = new ArrayList<>();
-
-            for (; ; ) {
-                String line = reader.readLine();
-                if (line == null)
-                    break;
-                result.add(line);
-            }
-            return result;
-        } catch (Exception e) {
-            throw loadFailed(name, e);
-        }
-    }
-
-    /**
-     * Pre-loads all textures / sounds / music / text / fonts and binary data
-     * from their respective folders.
-     */
-    public void cache() {
-        try {
-            loadFileNames(TEXTURES_DIR).forEach(this::loadTexture);
-            loadFileNames(SOUNDS_DIR).forEach(this::loadSound);
-            loadFileNames(MUSIC_DIR).forEach(this::loadMusic);
-            loadFileNames(TEXT_DIR).forEach(this::loadText);
-            loadFileNames(FONTS_DIR).forEach(this::loadFont);
-            loadFileNames(BINARY_DIR).forEach(this::loadDataInternal);
-        } catch (Exception e) {
-            throw loadFailed("Caching Failed", e);
-        }
-    }
-
-    /**
-     * Release all cached assets.
-     */
-    public void clearCache() {
-        log.debug("Clearing assets cache");
-        cachedAssets.clear();
-    }
+    InputStream getStream(String name);
 
     /**
      * Loads file names from a directory.
@@ -573,71 +274,18 @@ public class AssetLoader {
      *
      * @param directory name of directory
      * @return list of file names
-     * @throws Exception
+     * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
      */
-    public List<String> loadFileNames(String directory) throws Exception {
-        URL url = getClass().getResource(directory);
-        if (url != null) {
-            if (url.toString().startsWith("jar"))
-                return loadFileNamesJar(directory.substring(1));
-
-            Path dir = Paths.get(url.toURI());
-
-            if (Files.exists(dir)) {
-                try (Stream<Path> files = Files.walk(dir)) {
-                    return files.filter(Files::isRegularFile)
-                            .map(file -> dir.relativize(file).toString().replace("\\", "/"))
-                            .collect(Collectors.toList());
-                }
-            }
-        }
-
-        return loadFileNamesJar(directory.substring(1));
-    }
+    List<String> loadFileNames(String directory);
 
     /**
-     * Loads file names from a directory when running within a jar.
-     * If it contains other folders they'll be searched too.
-     *
-     * @param folderName folder files of which need to be retrieved
-     * @return list of file names
+     * Pre-loads all textures / sounds / music / text / fonts and binary data
+     * from their respective folders.
      */
-    private static List<String> loadFileNamesJar(String folderName) {
-        List<String> fileNames = new ArrayList<>();
-        CodeSource src = AssetLoader.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-            URL jar = src.getLocation();
-            try (InputStream is = jar.openStream();
-                 ZipInputStream zip = new ZipInputStream(is)) {
-                ZipEntry ze;
-                while ((ze = zip.getNextEntry()) != null) {
-                    String entryName = ze.getName();
-                    if (entryName.startsWith(folderName)) {
-                        if (entryName.endsWith("/"))
-                            continue;
-                        fileNames.add(entryName.substring(entryName.indexOf(folderName) + folderName.length()));
-                    }
-                }
-            } catch (IOException e) {
-                log.warning("Failed to load file names from jar - " + e);
-            }
-        } else {
-            log.warning("Failed to load file names from jar - No code source");
-        }
-
-        return fileNames;
-    }
+    void cache();
 
     /**
-     * Constructs new IllegalArgumentException with "load failed" message
-     * and with relevant information about the asset.
-     *
-     * @param assetName name of the asset load of which failed
-     * @param error the error that occurred
-     * @return instance of IAE to be thrown
+     * Release all cached assets.
      */
-    private IllegalArgumentException loadFailed(String assetName, Throwable error) {
-        log.debug("Loading failed for asset: " + assetName + ". Cause: " + error.getMessage());
-        return new IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.getMessage());
-    }
+    void clearCache();
 }

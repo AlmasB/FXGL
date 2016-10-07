@@ -29,17 +29,14 @@ package com.almasb.fxgl.app
 import com.almasb.easyio.FS
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
-import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
+import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Module
-import com.google.inject.Provides
 import com.google.inject.name.Named
 import com.google.inject.name.Names
-import javafx.scene.Scene
-import javafx.stage.Stage
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.function.Consumer
@@ -55,7 +52,6 @@ import java.util.function.Consumer
 class FXGL private constructor() {
 
     companion object {
-        private lateinit var internalSettings: ReadOnlyGameSettings
         private lateinit var internalApp: GameApplication
 
         private lateinit var internalBundle: Bundle
@@ -72,7 +68,7 @@ class FXGL private constructor() {
         /**
          * @return FXGL system settings
          */
-        @JvmStatic fun getSettings() = internalSettings
+        @JvmStatic fun getSettings() = internalApp.settings
 
         /**
          * @return instance of the running game application
@@ -97,17 +93,21 @@ class FXGL private constructor() {
         /**
          * Constructs FXGL.
          */
-        @JvmStatic protected fun configure(app: FXGLApplication, stage: Stage) {
+        @JvmStatic fun configure(appModule: ApplicationModule, vararg modules: Module) {
             if (configured)
-                throw IllegalStateException("FXGL is already configured")
+                return
 
             configured = true
 
-            internalApp = app as GameApplication
-            internalSettings = app.settings
+            internalApp = appModule.app
 
             createRequiredDirs()
-            configureServices(stage)
+
+            val allModules = arrayListOf(*modules)
+            allModules.add(buildPropertiesModule())
+            allModules.add(appModule)
+
+            injector = Guice.createInjector(allModules)
 
             // log that we are ready, also force logger service to init
             internalLogger = getLogger("FXGL")
@@ -211,27 +211,10 @@ class FXGL private constructor() {
          */
         @JvmStatic fun <T> getInstance(type: Class<T>) = injector.getInstance(type)
 
-        private fun configureServices(stage: Stage) {
-            injector = Guice.createInjector(object : ServicesModule() {
+        private fun buildPropertiesModule(): Module {
+            return object : AbstractModule() {
 
                 override fun configure() {
-                    bindProperties()
-                    bindServices()
-                }
-
-                private fun bindProperties() {
-                    bind(Double::class.java)
-                            .annotatedWith(Names.named("appWidth"))
-                            .toInstance(internalSettings.getWidth().toDouble())
-
-                    bind(Double::class.java)
-                            .annotatedWith(Names.named("appHeight"))
-                            .toInstance(internalSettings.getHeight().toDouble())
-
-                    bind(GameApplication::class.java).toInstance(internalApp)
-                    bind(ReadOnlyGameSettings::class.java).toInstance(internalSettings)
-                    bind(ApplicationMode::class.java).toInstance(internalSettings.applicationMode)
-
                     for ((k, v) in internalProperties.intMap)
                         bind(Int::class.java).annotatedWith(k).toInstance(v)
 
@@ -246,43 +229,18 @@ class FXGL private constructor() {
 
                     internalProperties.clear()
                 }
-
-                private fun bindServices() {
-                    val userServiceTypes = internalSettings.services.map { it.service() }
-
-                    val services = ServiceType::class.java
-                            .declaredFields
-                            .map { it.get(null) as ServiceType<*> }
-                            // filter user overriden types
-                            .filter {  !userServiceTypes.contains(it.service()) }
-                            // also add user specified services
-                            .plus(internalSettings.services)
-
-                    // this actually configures services (written in java due to kotlin's confusion over "to")
-                    super.configureServices(services)
-                }
-
-                @Provides
-                internal fun primaryScene(): Scene {
-                    return stage.scene
-                }
-
-                @Provides
-                internal fun primaryStage(): Stage {
-                    return stage
-                }
-            })
+            }
         }
 
-        @JvmStatic fun mockServices(mockingModule: Module) {
-            if (configured)
-                return
-
-            injector = Guice.createInjector(mockingModule)
-            internalApp = injector.getInstance(GameApplication::class.java)
-
-            configured = true
-        }
+//        @JvmStatic fun configure(mockingModule: Module) {
+//            if (configured)
+//                return
+//
+//            injector = Guice.createInjector(mockingModule)
+//            internalApp = injector.getInstance(GameApplication::class.java)
+//
+//            configured = true
+//        }
 
         /* CONVENIENCE ACCESSORS */
 

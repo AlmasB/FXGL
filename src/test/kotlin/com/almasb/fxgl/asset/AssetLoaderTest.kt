@@ -27,11 +27,12 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockServicesModule
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.GameEntity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertThat
+import org.junit.Assume.assumeThat
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -71,7 +72,7 @@ class AssetLoaderTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.mockServices(MockServicesModule())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 
@@ -113,6 +114,9 @@ class AssetLoaderTest {
 
     @Test
     fun loadMusic() {
+        // setting up potentially missing libavformat for jfxmedia is an overkill, so just skip
+        assumeThat(System.getProperty("os.name"), not(containsString("Linux")))
+
         val music = assetLoader.loadMusic("intro.mp3")
 
         assertThat(music, `is`(notNullValue()))

@@ -26,8 +26,6 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -40,8 +38,6 @@ import java.util.Map;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class UserProfile implements Serializable {
-
-    private static final Logger log = FXGL.getLogger("FXGL.UserProfile");
 
     private static final long serialVersionUID = 1L;
 

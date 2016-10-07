@@ -58,6 +58,21 @@ public class EntityView extends Parent {
         addNode(graphics);
     }
 
+    /**
+     * Constructs a view with given render layer.
+     *
+     * @param layer render layer
+     */
+    public EntityView(RenderLayer layer) {
+        setRenderLayer(layer);
+    }
+
+    /**
+     * Constructs a view with given graphics and render layer.
+     *
+     * @param graphics content
+     * @param layer render layer
+     */
     public EntityView(Node graphics, RenderLayer layer) {
         addNode(graphics);
         setRenderLayer(layer);

@@ -43,11 +43,15 @@ class AssetCache(
     private val cache = object : LinkedHashMap<String, Any>(maxSize + 1, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Any>): Boolean {
 
-            if (eldest.value is Disposable) {
-                (eldest.value as Disposable).dispose()
+            if (size > maxSize) {
+                if (eldest.value is Disposable) {
+                    (eldest.value as Disposable).dispose()
+                }
+
+                return true
             }
 
-            return size > maxSize
+            return false
         }
     }
 
@@ -56,6 +60,8 @@ class AssetCache(
     }
 
     fun get(key: String) = cache[key]
+
+    fun size() = cache.size
 
     /**
      * Clear the cache.

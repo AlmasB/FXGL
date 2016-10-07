@@ -46,12 +46,10 @@ import java.util.function.Supplier;
  */
 public class CCTRMenu extends FXGLMenu {
 
-    private Node menuBody;
-
     public CCTRMenu(GameApplication app, MenuType type) {
         super(app, type);
 
-        menuBody = type == MenuType.MAIN_MENU
+        Node menuBody = type == MenuType.MAIN_MENU
                 ? createMenuBodyMainMenu()
                 : createMenuBodyGameMenu();
 
@@ -181,16 +179,6 @@ public class CCTRMenu extends FXGLMenu {
 
             angle -= dtheta;
 
-            // slightly hacky way to get a nice looking radial menu
-            // we assume that there are 8 items
-//            if (i == 0 || i == group.getChildren().size() - 2) {
-//                angle -= dtheta / 2;
-//            } else if (i == 2 || i == 4) {
-//                angle += dtheta / 4;
-//            } else if (i == 3) {
-//                angle += dtheta / 2;
-//            }
-
             i++;
         }
 
@@ -225,6 +213,7 @@ public class CCTRMenu extends FXGLMenu {
      * @param action button action
      * @return new button
      */
+    @Override
     protected final Button createActionButton(String name, Runnable action) {
         Button btn = FXGL.getUIFactory().newButton(name);
         btn.setOnAction(e -> action.run());
@@ -238,6 +227,8 @@ public class CCTRMenu extends FXGLMenu {
      * @param contentSupplier content supplier
      * @return new button
      */
+    @SuppressWarnings("unchecked")
+    @Override
     protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         Button btn = FXGL.getUIFactory().newButton(name);
         btn.setUserData(contentSupplier);

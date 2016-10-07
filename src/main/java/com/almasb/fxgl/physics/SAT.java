@@ -28,7 +28,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.gameutils.collection.Array;
-import org.jbox2d.common.Vec2;
+import com.almasb.gameutils.math.Vec2;
 
 /**
  * Separating Axis Theorem based check for collision.
@@ -107,18 +107,6 @@ public final class SAT {
                 box.getMinYWorld() + box.getHeight() / 2);
     }
 
-//    public List<Point2D> cornerVectors() {
-//        return Arrays.asList(
-//                new Point2D(x, y),
-//                new Point2D(x + w, y),
-//                new Point2D(x + w, y + h),
-//                new Point2D(x, y + h)
-//        )
-//                .stream()
-//                .map(v -> v.subtract(center()))
-//                .collect(Collectors.toList());
-//    }
-
     private static void corners(HitBox box, double angle, Array<Vec2> array) {
         Vec2 center = center(box);
 
@@ -139,21 +127,6 @@ public final class SAT {
         }
 
         freeVec(center);
-
-//        return Stream.of(
-//                new Point2D(x, y),
-//                new Point2D(x + w, y),
-//                new Point2D(x + w, y + h),
-//                new Point2D(x, y + h)
-//        )
-//                .map(v -> v.subtract(center()))
-//                .map(v -> new Point2D(
-//                                v.getX() * cos(angle) - v.getY() * sin(angle),
-//                                v.getX() * sin(angle) + v.getY() * cos(angle)
-//                        )
-//                )
-//                .map(v -> v.add(center()))
-//                .collect(Collectors.toList());
     }
 
     private static float getMin(Array<Vec2> arrayCorners, Vec2 axis) {
@@ -178,12 +151,6 @@ public final class SAT {
         }
 
         return max;
-    }
-
-    //private static <T, R> Array<R> mapLocal(Array<T> array, )
-
-    private static Vec2 newVec() {
-        return newVec(0, 0);
     }
 
     private static Vec2 newVec(double x, double y) {

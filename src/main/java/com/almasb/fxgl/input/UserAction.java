@@ -74,6 +74,7 @@ public abstract class UserAction {
      * Called once in the same tick when triggered.
      */
     protected void onActionBegin() {
+        // no default implementation
     }
 
     /**
@@ -81,11 +82,13 @@ public abstract class UserAction {
      * Starts from the next tick from the one when was triggered
      */
     protected void onAction() {
+        // no default implementation
     }
 
     /**
      * Called once in the same tick when trigger was released.
      */
     protected void onActionEnd() {
+        // no default implementation
     }
 }

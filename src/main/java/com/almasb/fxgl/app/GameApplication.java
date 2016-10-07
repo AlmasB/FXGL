@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxeventbus.Subscriber;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.IntroFinishedEvent;
 import com.almasb.fxgl.gameplay.GameWorld;
@@ -72,11 +73,54 @@ public abstract class GameApplication extends FXGLApplication {
 
     private Logger log = SystemLogger.INSTANCE;
 
-    {
+    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
+
+    /* The following fields are injected by tasks */
+
+    GameWorld gameWorld;
+
+    PhysicsWorld physicsWorld;
+
+    GameScene gameScene;
+
+    /**
+     * Intro scene, this is shown when the application started,
+     * before menus and game.
+     */
+    IntroScene introScene;
+
+    /**
+     * This scene is shown during app initialization,
+     * i.e. when assets / game are loaded on bg thread.
+     */
+    LoadingScene loadingScene;
+
+    /**
+     * Main menu, this is the menu shown at the start of game.
+     */
+    FXGLMenu mainMenuScene;
+
+    /**
+     * In-game menu, this is shown when menu key pressed during the game.
+     */
+    FXGLMenu gameMenuScene;
+
+    /**
+     * Handler for menu events.
+     */
+    private MenuEventHandler menuHandler;
+
+    /**
+     * Main game profiler.
+     */
+    Profiler profiler;
+
+    /**
+     * The app constructor is called automatically by the JavaFX platform.
+     */
+    public GameApplication() {
         log.debug("Starting JavaFX");
     }
-
-    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
 
     /**
      * @return current application state
@@ -99,8 +143,7 @@ public abstract class GameApplication extends FXGLApplication {
             case INTRO:
                 getDisplay().setScene(introScene);
 
-                // TODO: remove handler later
-                getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
+                introFinishedSubscriber = getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
                 introScene.startIntro();
                 break;
 
@@ -162,46 +205,6 @@ public abstract class GameApplication extends FXGLApplication {
         return new SceneFactory();
     }
 
-    /* The following fields are injected by tasks */
-
-    GameWorld gameWorld;
-
-    PhysicsWorld physicsWorld;
-
-    GameScene gameScene;
-
-    /**
-     * Intro scene, this is shown when the application started,
-     * before menus and game.
-     */
-    IntroScene introScene;
-
-    /**
-     * This scene is shown during app initialization,
-     * i.e. when assets / game are loaded on bg thread.
-     */
-    LoadingScene loadingScene;
-
-    /**
-     * Main menu, this is the menu shown at the start of game.
-     */
-    FXGLMenu mainMenuScene;
-
-    /**
-     * In-game menu, this is shown when menu key pressed during the game.
-     */
-    FXGLMenu gameMenuScene;
-
-    /**
-     * Handler for menu events.
-     */
-    private MenuEventHandler menuHandler;
-
-    /**
-     * Main game profiler.
-     */
-    Profiler profiler;
-
     /**
      * Override to register your achievements.
      *
@@ -213,7 +216,7 @@ public abstract class GameApplication extends FXGLApplication {
      * </pre>
      */
     protected void initAchievements() {
-
+        // no default implementation
     }
 
     /**
@@ -242,7 +245,7 @@ public abstract class GameApplication extends FXGLApplication {
      * Called only once per application lifetime.
      */
     protected void preInit() {
-
+        // no default implementation
     }
 
     /**
@@ -309,7 +312,7 @@ public abstract class GameApplication extends FXGLApplication {
      * @param tpf time per frame (same as main update tpf)
      */
     protected void onPostUpdate(double tpf) {
-
+        // no default implementation
     }
 
     /**
@@ -327,6 +330,8 @@ public abstract class GameApplication extends FXGLApplication {
         return isMenuOpen() || getState() == ApplicationState.PAUSED;
     }
 
+    private Subscriber introFinishedSubscriber;
+
     private void onIntroFinished() {
         if (getSettings().isMenuEnabled()) {
             setState(ApplicationState.MAIN_MENU);
@@ -334,8 +339,12 @@ public abstract class GameApplication extends FXGLApplication {
             startNewGame();
         }
 
-        // we no longer need intro, mark for cleanup
-        introScene = null;
+        if (introFinishedSubscriber != null) {
+            introFinishedSubscriber.unsubscribe();
+            // we no longer need intro, mark for cleanup
+            introScene = null;
+            introFinishedSubscriber = null;
+        }
     }
 
     @Override
@@ -402,7 +411,14 @@ public abstract class GameApplication extends FXGLApplication {
         initApp(new InitAppTask(this, dataFile));
     }
 
+    /**
+     * @return menu event handler associated with this game
+     * @throws IllegalStateException if menus are not enabled
+     */
     public MenuEventListener getMenuListener() {
+        if (!getSettings().isMenuEnabled())
+            throw new IllegalStateException("Menus are not enabled");
+
         if (menuHandler == null)
             menuHandler = new MenuEventHandler(this);
         return menuHandler;

@@ -297,17 +297,19 @@ class FXGLInput
      * Same as user pressing and holding the [button] + [modifier] at [gameX], [gameY].
      */
     override fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
-        log.debug { "Mocking button press: ${MouseTrigger(button, modifier)}" }
+        log.debug { "Mocking button press: ${MouseTrigger(button, modifier)} at $gameX, $gameY" }
+
+        this.gameX = gameX
+        this.gameY = gameY
         handlePressed(makeMouseEvent(button, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier))
     }
 
-    /**
-     * Mocks mouse button release event.
-     * Same as user releasing the [button] + [modifier].
-     */
-    override fun mockButtonRelease(button: MouseButton, modifier: InputModifier) {
-        log.debug { "Mocking button release: ${MouseTrigger(button, modifier)}" }
-        handleReleased(makeMouseEvent(button, MouseEvent.MOUSE_RELEASED, 0.0, 0.0, modifier))
+    override fun mockButtonRelease(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
+        log.debug { "Mocking button release: ${MouseTrigger(button, modifier)} at $gameX, $gameY" }
+
+        this.gameX = gameX
+        this.gameY = gameY
+        handleReleased(makeMouseEvent(button, MouseEvent.MOUSE_RELEASED, gameX, gameY, modifier))
     }
 
     /* INPUT MAPPINGS */
