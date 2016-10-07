@@ -411,7 +411,14 @@ public abstract class GameApplication extends FXGLApplication {
         initApp(new InitAppTask(this, dataFile));
     }
 
+    /**
+     * @return menu event handler associated with this game
+     * @throws IllegalStateException if menus are not enabled
+     */
     public MenuEventListener getMenuListener() {
+        if (!getSettings().isMenuEnabled())
+            throw new IllegalStateException("Menus are not enabled");
+
         if (menuHandler == null)
             menuHandler = new MenuEventHandler(this);
         return menuHandler;

@@ -80,20 +80,34 @@ public abstract class FXGLApplication extends Application {
 
     private Stage primaryStage;
 
+    /**
+     * Used by mocking.
+     *
+     * @param stage mock stage
+     */
     void injectStage(Stage stage) {
         primaryStage = stage;
     }
 
+    /**
+     * @return primary stage as set by JavaFX
+     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
     /**
-     * Settings for this game instance. This is an internal copy
-     * of the settings so that they will not be modified during game lifetime.
+     * Settings for this game instance.
+     * This is an internal copy of the settings
+     * so that they will not be modified during game lifetime.
      */
     private ReadOnlyGameSettings settings;
 
+    /**
+     * Used by mocking.
+     *
+     * @param settings mock settings
+     */
     void injectSettings(ReadOnlyGameSettings settings) {
         this.settings = settings;
     }

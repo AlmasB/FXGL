@@ -107,10 +107,20 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         super.reset();
     }
 
+    /**
+     * Add event trigger to the world.
+     *
+     * @param trigger the event trigger
+     */
     public void addEventTrigger(EventTrigger<?> trigger) {
         eventTriggers.add(trigger);
     }
 
+    /**
+     * Remove event trigger from the world.
+     *
+     * @param trigger the event trigger
+     */
     public void removeEventTrigger(EventTrigger<?> trigger) {
         eventTriggers.removeValue(trigger, true);
     }

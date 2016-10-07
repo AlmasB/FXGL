@@ -35,7 +35,7 @@ import javafx.util.Duration;
 import java.util.function.Consumer;
 
 /**
- * Simple particle represented by a circle.
+ * Simple particle represented by a circle or an image.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -81,6 +81,10 @@ public class Particle {
      */
     private Point2D scale;
 
+    /**
+     * Current life.
+     * When life <= 0, the particle dies.
+     */
     private double life;
 
     /**
@@ -93,6 +97,10 @@ public class Particle {
      */
     private BlendMode blendMode;
 
+    /**
+     * Image from which the particle is created.
+     * If the image is null, the particle is a software generated circle.
+     */
     private Image image = null;
 
     private Consumer<Particle> control;

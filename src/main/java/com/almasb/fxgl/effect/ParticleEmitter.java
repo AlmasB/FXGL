@@ -41,9 +41,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * A general particle emitter with a few default settings.
- * Subclass implementations provide the actual logic for how
- * particles are emitted and their behavior.
+ * A general particle emitter.
+ * The configuration is done via setters, which allow
+ * changing how the particle is emitted and rendered.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
