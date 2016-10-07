@@ -3,7 +3,7 @@
 JavaFX Game Development Framework
 
 [![Release](https://jitpack.io/v/AlmasB/FXGL.svg)](https://jitpack.io/#AlmasB/FXGL)
-[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://jitpack.io/com/github/AlmasB/FXGL/0.2.7/javadoc/index.html)
+[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://jitpack.io/com/github/AlmasB/FXGL/0.2.8/javadoc/index.html)
 ![Code](https://img.shields.io/badge/lines%20of%20code-14k-blue.svg)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=0.2.8)
 [![codecov](https://codecov.io/gh/AlmasB/FXGL/branch/0.2.8/graph/badge.svg)](https://codecov.io/gh/AlmasB/FXGL)
@@ -158,7 +158,7 @@ fun main(args: Array<String>) {
 <dependency>
     <groupId>com.github.AlmasB</groupId>
     <artifactId>FXGL</artifactId>
-    <version>0.2.7</version>
+    <version>0.2.8</version>
 </dependency>
 ```
 
@@ -169,7 +169,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.7'
+    compile 'com.github.AlmasB:FXGL:0.2.8'
 }
 ```
 
