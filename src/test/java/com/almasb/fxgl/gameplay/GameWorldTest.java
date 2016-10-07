@@ -69,6 +69,7 @@ public class GameWorldTest {
     private GameWorld gameWorld;
 
     private Entity e1, e10, e11, e2, e3, e4;
+    private Entity genericEntity;
 
     @BeforeClass
     public static void before() {
@@ -133,13 +134,16 @@ public class GameWorldTest {
                 .bbox(new HitBox("TEST", BoundingShape.box(10, 10)))
                 .buildAndAttach(gameWorld);
 
+        genericEntity = new Entity();
+        gameWorld.addEntity(genericEntity);
+
         gameWorld.onUpdateEvent(new UpdateEvent(1, 0.016));
     }
 
     @Test
     public void testGetEntitiesByType() throws Exception {
         List<Entity> list = gameWorld.getEntitiesByType();
-        assertThat(list, is(Arrays.asList(e1, e10, e11, e2, e3, e4)));
+        assertThat(list, hasItems(e1, e10, e11, e2, e3, e4, genericEntity));
 
         list = gameWorld.getEntitiesByType(TestType.T1);
         assertThat(list, is(Arrays.asList(e1, e10, e11)));
@@ -190,20 +194,20 @@ public class GameWorldTest {
 
     @Test
     public void testGetEntitiesFiltered() throws Exception {
-        assertThat(gameWorld.getEntitiesFiltered(e -> Entities.getPosition(e).getX() > 150),
+        assertThat(gameWorld.getEntitiesFiltered(e -> Entities.getPosition(e) != null && Entities.getPosition(e).getX() > 150),
                 is(Arrays.asList(e3, e4)));
 
-        assertThat(gameWorld.getEntitiesFiltered(e -> Entities.getPosition(e).getY() < 105),
+        assertThat(gameWorld.getEntitiesFiltered(e -> Entities.getPosition(e) != null && Entities.getPosition(e).getY() < 105),
                 is(Arrays.asList(e1, e2, e3, e4)));
 
         Array<Entity> result = new Array<>(8);
-        gameWorld.getEntitiesFiltered(result, e -> Entities.getPosition(e).getX() > 150);
+        gameWorld.getEntitiesFiltered(result, e -> Entities.getPosition(e) != null && Entities.getPosition(e).getX() > 150);
 
         assertThat(result.size(), is(2));
         assertThat(result, hasItems(e3, e4));
 
         result.clear();
-        gameWorld.getEntitiesFiltered(result, e -> Entities.getPosition(e).getY() < 105);
+        gameWorld.getEntitiesFiltered(result, e -> Entities.getPosition(e) != null && Entities.getPosition(e).getY() < 105);
 
         assertThat(result.size(), is(4));
         assertThat(result, hasItems(e1, e2, e3, e4));
