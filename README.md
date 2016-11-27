@@ -56,7 +56,7 @@ Gameplay | AI
 :---:    | :---:
 [Ents](https://github.com/AlmasB/Ents) | [gdxAI](https://github.com/libgdx/gdx-ai)
 Game Loop                              | [AStar](https://github.com/AlmasB/AStar)
-Quick Time Events (QTE) | JavaScript Behavior Injections (for entities) + JavaScript Coding Environment
+Quick Time Events (QTE)<br/> <img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/QTE.jpg" width="128" /> | JavaScript Behavior Injections (for entities) + JavaScript Coding Environment
 Achievement System | Text/Script Parsers
 Notification System |
 Saving / Loading System |
