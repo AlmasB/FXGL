@@ -61,7 +61,7 @@ public class QTESample extends GameApplication {
     @Override
     protected void initGame() {
 
-        // when app runs, after 2 seconds a QTE event will occur
+        // when app runs, every 5 seconds a QTE event will occur
         getMasterTimer().runAtInterval(() -> {
 
             // 1. get QTE service
