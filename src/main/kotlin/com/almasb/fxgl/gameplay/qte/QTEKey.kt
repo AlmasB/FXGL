@@ -37,7 +37,7 @@ import javafx.scene.shape.Rectangle
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class QTEKey(keyCode: KeyCode) : StackPane() {
+class QTEKey(val keyCode: KeyCode) : StackPane() {
 
     private val background = Rectangle(72.0, 72.0, Color.BLACK)
     private val text = FXGL.getUIFactory().newText(keyCode.getName(), Color.WHITE, 72.0)

@@ -30,6 +30,8 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -60,7 +62,7 @@ public class QTESample extends GameApplication {
     protected void initGame() {
 
         // when app runs, after 2 seconds a QTE event will occur
-        getMasterTimer().runOnceAfter(() -> {
+        getMasterTimer().runAtInterval(() -> {
 
             // 1. get QTE service
             QTE qte = getQTE();
@@ -72,14 +74,19 @@ public class QTESample extends GameApplication {
 
             }, Duration.seconds(3), KeyCode.F, KeyCode.X, KeyCode.G, KeyCode.L);
 
-        }, Duration.seconds(2));
+        }, Duration.seconds(5));
     }
 
     @Override
     protected void initPhysics() {}
 
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+        Text text = getUIFactory().newText("Prepare! QTE runs every 5 seconds", Color.BLACK, 16.0);
+        text.setTranslateY(50);
+
+        getGameScene().addUINode(text);
+    }
 
     @Override
     public void onUpdate(double tpf) {}

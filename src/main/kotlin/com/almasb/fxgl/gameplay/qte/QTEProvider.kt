@@ -57,7 +57,6 @@ class QTEProvider
     private val closeButton = Button()
     private val keysBox = HBox(10.0)
 
-    private val queue = ArrayDeque<KeyCode>()
     private val qteKeys = ArrayDeque<QTEKey>()
 
     private lateinit var callback: Consumer<Boolean>
@@ -71,14 +70,12 @@ class QTEProvider
 
         eventHandler = EventHandler<KeyEvent> {
 
-            val k = queue.poll()
+            val qteKey = qteKeys.poll()
 
-            if (k == it.code) {
-
-                val qteKey = qteKeys.poll()
+            if (qteKey.keyCode == it.code) {
                 qteKey.lightUp()
 
-                if (queue.isEmpty()) {
+                if (qteKeys.isEmpty()) {
                     close()
                     callback.accept(true)
                 }
@@ -99,8 +96,8 @@ class QTEProvider
     private fun close() {
         scheduledAction.cancel(true)
 
-        queue.clear()
         qteKeys.clear()
+        keysBox.children.clear()
 
         fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
 
@@ -111,21 +108,21 @@ class QTEProvider
         if (keys.isEmpty())
             throw IllegalArgumentException("At least 1 key must be specified")
 
-        if (queue.isNotEmpty())
+        if (qteKeys.isNotEmpty())
             throw IllegalStateException("Cannot start more than 1 QTE at a time")
 
         this.callback = callback
 
-        queue.addAll(keys)
         qteKeys.addAll(keys.map { QTEKey(it) })
 
         keysBox.children.setAll(qteKeys)
 
         show()
 
+        // timer
         scheduledAction = FXGL.getExecutor().schedule( {
 
-            if (queue.isNotEmpty()) {
+            if (qteKeys.isNotEmpty()) {
                 Platform.runLater {
 
                     close()
