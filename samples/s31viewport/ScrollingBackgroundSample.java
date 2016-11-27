@@ -23,32 +23,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package sandbox;
+
+package s31viewport;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import org.controlsfx.control.Rating;
 
 /**
  * This is an example of a basic FXGL game application.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class RatingSample extends GameApplication {
+public class ScrollingBackgroundSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("RatingSample");
+        settings.setTitle("ScrollingBackgroundSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -75,19 +73,19 @@ public class RatingSample extends GameApplication {
             }
         }, KeyCode.A);
 
-        getInput().addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                getGameScene().getViewport().setY(getGameScene().getViewport().getY() - 10);
-            }
-        }, KeyCode.W);
-
-        getInput().addAction(new UserAction("Move Down") {
-            @Override
-            protected void onAction() {
-                getGameScene().getViewport().setY(getGameScene().getViewport().getY() + 10);
-            }
-        }, KeyCode.S);
+//        getInput().addAction(new UserAction("Move Up") {
+//            @Override
+//            protected void onAction() {
+//                getGameScene().getViewport().setY(getGameScene().getViewport().getY() - 10);
+//            }
+//        }, KeyCode.W);
+//
+//        getInput().addAction(new UserAction("Move Down") {
+//            @Override
+//            protected void onAction() {
+//                getGameScene().getViewport().setY(getGameScene().getViewport().getY() + 10);
+//            }
+//        }, KeyCode.S);
     }
 
     @Override
@@ -97,49 +95,18 @@ public class RatingSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        //bgImage = getAssetLoader().loadTexture("bg_wrap.png", 1280, 720).getImage();
-
         getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 600),
-                Orientation.VERTICAL));
-//        Entities.builder()
-//                .viewFromNode(getAssetLoader().loadTexture("bg_wrap.png", 1280, 720))
-//                .buildAndAttach(getGameWorld());
+                Orientation.HORIZONTAL));
     }
 
     @Override
     protected void initPhysics() {}
 
     @Override
-    protected void initUI() {
-
-//        Rating rating = new Rating(6, 1);
-//        rating.setPartialRating(false);
-//        rating.setUpdateOnHover(false);
-//        //rating.setDisable(true);
-//
-//        getGameScene().addUINode(rating);
-
-    }
+    protected void initUI() {}
 
     @Override
-    protected void onUpdate(double tpf) {
-
-//        double dx = getGameScene().getViewport().getX() % 1280;
-//        double dy = getGameScene().getViewport().getY();
-//
-//        GraphicsContext g = getGameScene().getGraphicsContext();
-//
-//        double sx = dx;
-//
-//        if (sx < 0)
-//            return;
-//
-//        g.drawImage(bgImage, sx, 0, 1280 - sx, 720,
-//                            0, 0, 1280 - sx, 720);
-//
-//        g.drawImage(bgImage, 0, 0, sx, 720,
-//                            1280 - sx, 0, sx, 720);
-    }
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);
