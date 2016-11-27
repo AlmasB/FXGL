@@ -32,6 +32,7 @@ import com.sun.javafx.scene.traversal.Algorithm;
 import com.sun.javafx.scene.traversal.Direction;
 import com.sun.javafx.scene.traversal.ParentTraversalEngine;
 import com.sun.javafx.scene.traversal.TraversalContext;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -439,7 +440,10 @@ public class DialogPane extends Pane {
 
         Point2D size = (Point2D) n.getUserData();
 
-        Rectangle box = new Rectangle(size.getX() + 200, size.getY() + 100);
+        Rectangle box = new Rectangle();
+        box.widthProperty().bind(Bindings.max(size.getX() + 200, window.widthProperty()));
+        box.setHeight(size.getY() + 100);
+        box.setTranslateY(3);
         box.setStroke(Color.AZURE);
 
         StackPane root = new StackPane();
