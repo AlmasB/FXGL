@@ -27,7 +27,7 @@
         <kotlin.version>1.0.3</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
-        <controlsfx.version>8.40.10</controlsfx.version>
+        <controlsfx.version>8.40.12</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
         <ents.version>1.1.1</ents.version>
         <game.utils.version>0.0.3</game.utils.version>
