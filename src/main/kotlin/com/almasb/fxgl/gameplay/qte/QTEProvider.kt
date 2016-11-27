@@ -36,8 +36,6 @@ import javafx.scene.control.Button
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
-import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
 import java.util.concurrent.ScheduledFuture
@@ -60,7 +58,7 @@ class QTEProvider
     private val keysBox = HBox(10.0)
 
     private val queue = ArrayDeque<KeyCode>()
-    private val labels = ArrayDeque<Text>()
+    private val qteKeys = ArrayDeque<QTEKey>()
 
     private lateinit var callback: Consumer<Boolean>
 
@@ -77,8 +75,8 @@ class QTEProvider
 
             if (k == it.code) {
 
-                val label = labels.poll()
-                label.fill = Color.YELLOW
+                val qteKey = qteKeys.poll()
+                qteKey.lightUp()
 
                 if (queue.isEmpty()) {
                     close()
@@ -102,7 +100,7 @@ class QTEProvider
         scheduledAction.cancel(true)
 
         queue.clear()
-        labels.clear()
+        qteKeys.clear()
 
         fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
 
@@ -119,11 +117,9 @@ class QTEProvider
         this.callback = callback
 
         queue.addAll(keys)
-        labels.addAll(
-                keys.map { FXGL.getUIFactory().newText(it.getName(), Color.WHITE, 72.0) }
-        )
+        qteKeys.addAll(keys.map { QTEKey(it) })
 
-        keysBox.children.setAll(labels)
+        keysBox.children.setAll(qteKeys)
 
         show()
 
