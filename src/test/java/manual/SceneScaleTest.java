@@ -24,7 +24,7 @@ public class SceneScaleTest extends GameApplication {
         settings.setFullScreen(true);
         settings.setIntroEnabled(true);
         settings.setMenuEnabled(true);
-        settings.setShowFPS(true);
+        settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 

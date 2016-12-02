@@ -49,7 +49,7 @@ public class LongLoading extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(true);
+        settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 

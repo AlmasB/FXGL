@@ -50,7 +50,7 @@ public class CustomMenuBackgroundSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
-        settings.setShowFPS(true);
+        settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 

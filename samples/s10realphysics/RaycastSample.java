@@ -49,7 +49,7 @@ public class RaycastSample extends GameApplication {
         settings.setTitle("RaycastSample");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(false);
+        settings.setProfilingEnabled(false);
     }
 
     @Override

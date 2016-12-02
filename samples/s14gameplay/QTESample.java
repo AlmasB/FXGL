@@ -48,7 +48,7 @@ public class QTESample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(false);
+        settings.setProfilingEnabled(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 

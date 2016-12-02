@@ -122,21 +122,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
-     * Setting to true will show render and performance FPS
-     * in the bottom left corner.
-     *
-     * @param b show fps flag
-     * @defaultValue true
-     * @deprecated use {@link #setProfilingEnabled(boolean)}
-     */
-    @Deprecated
-    public void setShowFPS(boolean b) {
-        profilingEnabled = b;
-    }
-
-    /**
      * Setting to true will enable profiler that reports on performance
      * when FXGL exits.
+     * Also shows render and performance FPS in the bottom left corner
+     * when the application is run.
      *
      * @param b profiling enabled flag
      * @defaultValue true

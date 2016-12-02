@@ -53,7 +53,7 @@ public class NotificationSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setShowFPS(true);
+        settings.setProfilingEnabled(true);
 
         // 2. by default SlidingNotificationService is used
         // but you can provide your own or use another built-in provider, e.g. FXGLNotificationService

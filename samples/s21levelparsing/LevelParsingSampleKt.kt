@@ -55,7 +55,7 @@ class LevelParsingSampleKt : GameApplication() {
             isFullScreen = false
             isIntroEnabled = false
             isMenuEnabled = false
-            setShowFPS(true)
+            setProfilingEnabled(true)
             applicationMode = ApplicationMode.DEVELOPER
         }
     }

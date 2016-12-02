@@ -50,7 +50,7 @@ public class CreditsSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
-        settings.setShowFPS(true);
+        settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
         // 1. create a list of text you want to show

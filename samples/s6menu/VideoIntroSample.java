@@ -51,7 +51,7 @@ public class VideoIntroSample extends GameApplication {
 
         // 2. set menu enabled to true
         settings.setMenuEnabled(true);
-        settings.setShowFPS(true);
+        settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
