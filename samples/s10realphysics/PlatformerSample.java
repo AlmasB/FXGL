@@ -38,12 +38,9 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
 
 /**
  * Sample that shows how to use ChainShape for platforms.
