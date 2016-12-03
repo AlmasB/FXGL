@@ -20,6 +20,7 @@
         <maven.enforcer.version>1.4.1</maven.enforcer.version>
         <maven.source.version>2.4</maven.source.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
+        <!--<dokka.version>0.9.10</dokka.version>-->
         <maven.shade.version>2.4.3</maven.shade.version>
         <jacoco.version>0.7.7.201606060606</jacoco.version>
 
@@ -46,6 +47,14 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -157,6 +166,8 @@
         </resources>
 
         <plugins>
+
+            <!-- Compile java -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
@@ -169,6 +180,7 @@
                 </configuration>
             </plugin>
 
+            <!-- Compile kotlin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -203,7 +215,8 @@
                 </executions>
             </plugin>
 
-            <plugin>    <!-- force check on compiler -->
+            <!-- Force check on compiler 1.8.0_101+ -->
+            <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${maven.enforcer.version}</version>
                 <executions>
@@ -216,7 +229,7 @@
                             <rules>
                                 <DependencyConvergence/>
                                 <requireJavaVersion>
-                                    <version>[1.8.0-40,)</version>
+                                    <version>[1.8.0-101,)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -224,7 +237,8 @@
                 </executions>
             </plugin>
 
-            <plugin>  <!-- Create sources.jar -->
+            <!-- Create sources.jar -->
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven.source.version}</version>
@@ -238,7 +252,8 @@
                 </executions>
             </plugin>
 
-            <plugin>  <!-- Create javadoc.jar -->
+            <!-- Create javadoc.jar -->
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.version}</version>
@@ -274,7 +289,24 @@
                 </executions>
             </plugin>
 
-            <plugin>    <!-- Create uber jar -->
+            <!-- This *should* allow us to merge javadoc and KDoc, unfortunately now it is missing tools.jar -->
+            <!--<plugin>-->
+                <!--<groupId>org.jetbrains.dokka</groupId>-->
+                <!--<artifactId>dokka-maven-plugin</artifactId>-->
+                <!--<version>${dokka.version}</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>attach-javadocs</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>javadocJar</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
+            <!-- Create uber jar -->
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>${maven.shade.version}</version>
@@ -292,6 +324,7 @@
                 </executions>
             </plugin>
 
+            <!-- Generate test coverage reports -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
