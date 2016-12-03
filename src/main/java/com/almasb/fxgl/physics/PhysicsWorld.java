@@ -633,7 +633,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (raycastCallback.point != null)
             point = toPoint(raycastCallback.point);
 
-        return new RaycastResult(Optional.ofNullable(entity), Optional.ofNullable(point));
+        if (entity == null && point == null)
+            return RaycastResult.NONE;
+
+        return new RaycastResult(entity, point);
     }
 
     /**
