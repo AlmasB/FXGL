@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.easyio.UIDialogHandler
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxeventbus.EventBus
 import com.almasb.fxgl.app.FXGL
@@ -483,7 +484,7 @@ private constructor(private val stage: Stage,
         dialog.showBox(message, content, *buttons)
     }
 
-    override fun showProgressBox(message: String): DialogHandler {
+    override fun showProgressBox(message: String): UIDialogHandler {
         val progress = ProgressIndicator()
         progress.setPrefSize(200.0, 200.0)
 
@@ -492,7 +493,15 @@ private constructor(private val stage: Stage,
 
         showBox(message, progress, btn)
 
-        return DialogHandler(btn)
+        return object : UIDialogHandler {
+            override fun show() {
+                // no-op as we show our own box
+            }
+
+            override fun dismiss() {
+                btn.fire()
+            }
+        }
     }
 
     override fun save(profile: UserProfile) {

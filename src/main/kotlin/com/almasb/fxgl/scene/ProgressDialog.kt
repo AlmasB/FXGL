@@ -36,7 +36,7 @@ import com.almasb.fxgl.app.FXGL
  */
 class ProgressDialog(val message: String) : UIDialogHandler {
 
-    private lateinit var handler: DialogHandler
+    private lateinit var handler: UIDialogHandler
 
     override fun show() {
         handler = FXGL.getDisplay().showProgressBox(message)

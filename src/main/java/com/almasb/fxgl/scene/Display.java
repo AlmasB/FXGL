@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.easyio.UIDialogHandler;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -194,5 +195,5 @@ public interface Display extends UserProfileSavable {
      * @param message message to show
      * @return dialog handler
      */
-    DialogHandler showProgressBox(String message);
+    UIDialogHandler showProgressBox(String message);
 }
