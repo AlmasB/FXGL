@@ -88,7 +88,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private ParticleSystem particleSystem = jboxWorld.getParticleSystem();
 
-    // TODO: externalize 128
     private Array<Entity> entities = new Array<>(false, 128);
 
     private Array<CollisionHandler> collisionHandlers = new Array<>(false, 16);
