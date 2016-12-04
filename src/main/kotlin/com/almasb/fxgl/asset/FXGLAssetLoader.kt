@@ -635,7 +635,7 @@ class FXGLAssetLoader
      * @return instance of IAE to be thrown
      */
     private fun loadFailed(assetName: String, error: Throwable): IllegalArgumentException {
-        log.debug("Loading failed for asset: " + assetName + ". Cause: " + error.message)
+        log.fatal("Loading failed for asset: " + assetName + ". Cause: " + error.message)
         return IllegalArgumentException("Failed to load asset: " + assetName + ". Cause: " + error.message)
     }
 }
