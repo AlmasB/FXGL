@@ -139,6 +139,22 @@ public class PhysicsComponent extends AbstractComponent {
         setLinearVelocity(new Point2D(x, y));
     }
 
+    public void setVelocityX(double x) {
+        setLinearVelocity(x, getVelocityY());
+    }
+
+    public void setVelocityY(double y) {
+        setLinearVelocity(getVelocityX(), y);
+    }
+
+    public double getVelocityX() {
+        return getLinearVelocity().getX();
+    }
+
+    public double getVelocityY() {
+        return getLinearVelocity().getY();
+    }
+
     /**
      * Set linear velocity for a physics entity.
      * <p>
