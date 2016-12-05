@@ -24,11 +24,36 @@
  * SOFTWARE.
  */
 
-package sandbox.towerfall;
+package sandbox.towerfall.ai;
+
+import com.almasb.fxgl.ai.Action;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.gameutils.math.GameMath;
+import sandbox.towerfall.CharacterControl;
+import sandbox.towerfall.TowerfallApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public enum EntityType {
-    PLAYER, ENEMY, ARROW, PLATFORM
+public class MoveTask extends Action {
+
+    private CharacterControl control;
+
+    @Override
+    public void action() {
+        if (control == null) {
+            control = getObject().getControlUnsafe(CharacterControl.class);
+        }
+
+        if (getObject().getY() - FXGL.<TowerfallApp>getAppCast().getPlayer().getY() > 0) {
+            control.jump();
+        }
+
+        boolean moveLeft = getObject().getX() - FXGL.<TowerfallApp>getAppCast().getPlayer().getX() > 0;
+
+        if (moveLeft)
+            control.left();
+        else
+            control.right();
+    }
 }

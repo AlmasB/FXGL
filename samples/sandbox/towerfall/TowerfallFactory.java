@@ -27,9 +27,11 @@
 package sandbox.towerfall;
 
 import com.almasb.ents.Entity;
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.parser.EntityFactory;
 import com.almasb.fxgl.parser.EntityProducer;
@@ -41,6 +43,7 @@ import com.almasb.gameutils.math.Vec2;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
@@ -76,31 +79,33 @@ public class TowerfallFactory extends EntityFactory {
                 .viewFromNode(new Rectangle(36, 36, Color.BLUE))
                 .bbox(new HitBox("Main", BoundingShape.circle(18)))
                 .with(physics)
+                .with(new CharacterControl())
+                .build();
+    }
+
+    @EntityProducer('E')
+    public Entity newEnemy(int x, int y) {
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.DYNAMIC);
+
+        return Entities.builder()
+                .type(EntityType.ENEMY)
+                .at(x * 40, y * 40)
+                .viewFromNode(new Rectangle(36, 36, Color.RED))
+                .bbox(new HitBox("Main", BoundingShape.circle(18)))
+                .with(physics)
+                //.with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
                 .build();
     }
 
     public Entity newArrow(int x, int y, Point2D velocity) {
-//        PhysicsComponent physics = new PhysicsComponent();
-//        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
-//
-//        FixtureDef fixtureDef = new FixtureDef();
-//        fixtureDef.setDensity(0.03f);
-//
-//
-//
-//        BodyDef bodyDef = new BodyDef();
-//        bodyDef.setType(BodyType.DYNAMIC);
-//        bodyDef.setAngle(-new Vec2((float)velocity.getX(), (float)velocity.getY()).angle());
-//
-//        physics.setFixtureDef(fixtureDef);
-//        physics.setBodyDef(bodyDef);
-
         return Entities.builder()
                 .type(EntityType.ARROW)
                 .at(x, y)
                 .viewFromNodeWithBBox(new Rectangle(15, 2, Color.RED))
                 .with(new CollidableComponent(true))
-                .with(new OffscreenCleanControl(), new ArrowControl(velocity.normalize()))
+                .with(new OffscreenCleanControl(), new ExpireCleanControl(Duration.seconds(3)),
+                        new ArrowControl(velocity.normalize()))
                 .build();
     }
 }

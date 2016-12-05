@@ -24,11 +24,19 @@
  * SOFTWARE.
  */
 
-package sandbox.towerfall;
+package sandbox.towerfall.ai;
+
+import com.almasb.fxgl.ai.Condition;
+import com.almasb.fxgl.app.FXGL;
+import sandbox.towerfall.TowerfallApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public enum EntityType {
-    PLAYER, ENEMY, ARROW, PLATFORM
+public class TargetFarCondition extends Condition {
+
+    @Override
+    public boolean evaluate() {
+        return getObject().distance(FXGL.<TowerfallApp>getAppCast().getPlayer()) > 500;
+    }
 }

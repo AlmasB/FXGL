@@ -37,7 +37,6 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.TextLevelParser;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
@@ -50,6 +49,15 @@ public class TowerfallApp extends GameApplication {
 
     private TowerfallFactory factory = new TowerfallFactory();
     private GameEntity player;
+    private CharacterControl playerControl;
+
+    public GameEntity getPlayer() {
+        return player;
+    }
+
+    public TowerfallFactory getFactory() {
+        return factory;
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -71,42 +79,28 @@ public class TowerfallApp extends GameApplication {
         input.addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
-                double dy = player.getComponentUnsafe(PhysicsComponent.class).getLinearVelocity().getY();
-
-                player.getComponentUnsafe(PhysicsComponent.class).setLinearVelocity(new Point2D(-150, dy));
+                playerControl.left();
             }
         }, KeyCode.A);
 
         input.addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
-                double dy = player.getComponentUnsafe(PhysicsComponent.class).getLinearVelocity().getY();
-
-                player.getComponentUnsafe(PhysicsComponent.class).setLinearVelocity(new Point2D(150, dy));
+                playerControl.right();
             }
         }, KeyCode.D);
 
         input.addAction(new UserAction("Jump") {
             @Override
             protected void onActionBegin() {
-                double dx = player.getComponentUnsafe(PhysicsComponent.class).getLinearVelocity().getX();
-
-                player.getComponentUnsafe(PhysicsComponent.class).setLinearVelocity(new Point2D(dx, -300));
+                playerControl.jump();
             }
         }, KeyCode.W);
 
         input.addAction(new UserAction("Shoot") {
             @Override
             protected void onActionBegin() {
-                double x = player.getX();
-                double y = player.getY();
-
-                Point2D velocity = input.getMousePositionWorld()
-                        .subtract(x, y)
-                        .normalize()
-                        .multiply(500);
-
-                getGameWorld().addEntity(factory.newArrow((int) x + 40, (int) y, velocity));
+                playerControl.shoot(input.getMousePositionWorld());
             }
         }, MouseButton.PRIMARY);
     }
@@ -125,6 +119,8 @@ public class TowerfallApp extends GameApplication {
                 .filter(e -> e.getComponentUnsafe(TypeComponent.class).isType(EntityType.PLAYER))
                 .findAny()
                 .get();
+
+        playerControl = player.getControlUnsafe(CharacterControl.class);
 
         getGameWorld().setLevel(level);
     }
