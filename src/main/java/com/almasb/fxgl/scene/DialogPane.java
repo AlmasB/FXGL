@@ -64,8 +64,6 @@ import java.util.function.Predicate;
  */
 public class DialogPane extends Pane {
 
-    //private static final Logger log = FXGLLoggerOld.getLogger("FXGL.DialogPane");
-
     public static final Predicate<String> ALPHANUM = input -> input.matches("^[\\pL\\pN]+$");
 
     private Window window = new Window();
