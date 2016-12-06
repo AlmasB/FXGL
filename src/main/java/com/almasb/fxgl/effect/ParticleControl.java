@@ -44,6 +44,8 @@ import java.util.List;
 @Required(PositionComponent.class)
 public class ParticleControl extends AbstractControl {
 
+    // TODO: there is a lot of GC happening here, we need to fix that
+
     private ParticleEmitter emitter;
 
     protected List<Particle> particles = new ArrayList<>();
