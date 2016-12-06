@@ -40,6 +40,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -461,8 +462,11 @@ public class DialogPane extends Pane {
 
     private Deque<DialogData> states = new ArrayDeque<>();
 
+    private Effect bgBlur = new BoxBlur(5, 5, 3);
+
     void show() {
         if (!isShowing()) {
+            display.getCurrentScene().getRoot().getChildren().forEach(n -> n.setEffect(bgBlur));
             display.getCurrentScene().getRoot().getChildren().add(this);
 
             this.requestFocus();
@@ -475,6 +479,7 @@ public class DialogPane extends Pane {
     void close() {
         if (states.isEmpty()) {
             display.getCurrentScene().getRoot().getChildren().remove(this);
+            display.getCurrentScene().getRoot().getChildren().forEach(n -> n.setEffect(null));
 
             if (onClosed != null)
                 onClosed.run();
