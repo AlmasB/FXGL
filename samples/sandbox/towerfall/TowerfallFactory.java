@@ -27,6 +27,7 @@
 package sandbox.towerfall;
 
 import com.almasb.ents.Entity;
+import com.almasb.ents.component.UserDataComponent;
 import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
@@ -49,6 +50,10 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 /**
+ * Arrow sprite from https://www.spriters-resource.com/game_boy_advance/justiceleagueheroestheflash/sheet/18563/
+ *
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class TowerfallFactory extends EntityFactory {
@@ -93,18 +98,18 @@ public class TowerfallFactory extends EntityFactory {
                 .at(x * 40, y * 40)
                 .viewFromNode(new Rectangle(36, 36, Color.RED))
                 .bbox(new HitBox("Main", BoundingShape.circle(18)))
-                .with(physics)
-                //.with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
+                .with(physics, new CollidableComponent(true))
+                .with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
                 .build();
     }
 
-    public Entity newArrow(int x, int y, Point2D velocity) {
+    public Entity newArrow(int x, int y, Point2D velocity, Entity shooter) {
         return Entities.builder()
                 .type(EntityType.ARROW)
                 .at(x, y)
-                .viewFromNodeWithBBox(new Rectangle(15, 2, Color.RED))
-                .with(new CollidableComponent(true))
-                .with(new OffscreenCleanControl(), new ExpireCleanControl(Duration.seconds(3)),
+                .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("arrow.png", 35, 9))
+                .with(new CollidableComponent(true), new UserDataComponent(shooter))
+                .with(new OffscreenCleanControl(), new ExpireCleanControl(Duration.seconds(7)),
                         new ArrowControl(velocity.normalize()))
                 .build();
     }

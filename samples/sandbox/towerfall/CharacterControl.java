@@ -77,7 +77,7 @@ public class CharacterControl extends AbstractControl {
         getEntity().getWorld().addEntity(
                 FXGL.<TowerfallApp>getAppCast()
                 .getFactory()
-                .newArrow((int) x, (int) y, velocity)
+                .newArrow((int) x, (int) y, velocity, getEntity())
         );
     }
 }

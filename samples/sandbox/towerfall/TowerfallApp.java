@@ -27,6 +27,7 @@
 package sandbox.towerfall;
 
 import com.almasb.ents.Entity;
+import com.almasb.ents.component.UserDataComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
@@ -135,6 +136,18 @@ public class TowerfallApp extends GameApplication {
                     arrow.getComponentUnsafe(CollidableComponent.class).setValue(false);
                     arrow.removeControl(ArrowControl.class);
                 }
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.ARROW, EntityType.ENEMY) {
+            @Override
+            protected void onCollisionBegin(Entity arrow, Entity enemy) {
+                if (arrow.getComponentUnsafe(UserDataComponent.class).getValue() == enemy)
+                    return;
+
+                arrow.removeFromWorld();
+                enemy.removeFromWorld();
+                getGameWorld().addEntity(factory.newEnemy(27, 6));
             }
         });
     }
