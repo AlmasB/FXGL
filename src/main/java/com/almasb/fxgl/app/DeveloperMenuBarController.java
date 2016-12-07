@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
 import com.almasb.fxgl.ui.InGameWindow;
@@ -90,6 +91,25 @@ public class DeveloperMenuBarController implements UIController {
         Window window = new InGameWindow("Edit Entity", InGameWindow.WindowDecor.ALL);
         window.setPrefSize(380, 450);
         window.setContentPane(new Pane(ui.getRoot()));
+
+        app.getGameScene().addUINode(window);
+    }
+
+    // TODO: we might want to keep our controllers cached
+    // so that we don't lose data and don't load ui again
+    //private ColorAdjustController colorAdjustController = null;
+    private UI uiColorAdjust = null;
+
+    // TODO: what happens if same dialog is opened twice?
+    // we need to keep track of dialog / window state (open / closed)
+    public void openColorAdjustDialog() {
+        if (uiColorAdjust == null) {
+            uiColorAdjust = app.getAssetLoader().loadUI("dialog_color_adjust.fxml", new ColorAdjustController());
+        }
+
+        Window window = new InGameWindow("Color Adjust", InGameWindow.WindowDecor.ALL);
+        window.setPrefSize(380, 450);
+        window.setContentPane(new Pane(uiColorAdjust.getRoot()));
 
         app.getGameScene().addUINode(window);
     }

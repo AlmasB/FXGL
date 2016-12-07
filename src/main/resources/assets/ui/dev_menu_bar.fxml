@@ -42,6 +42,10 @@
         <MenuItem text="Edit Entity" onAction="#openEditDialog" />
     </Menu>
 
+    <Menu text="Graphics">
+        <MenuItem text="Color Adjust" onAction="#openColorAdjustDialog" />
+    </Menu>
+
     <Menu fx:id="menuCustom" text="Custom">
 
     </Menu>
