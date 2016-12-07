@@ -59,7 +59,7 @@ open class LoadingScene : FXGLScene() {
             translateY = (settings.height * 4 / 5).toDouble()
         }
 
-        root.children.addAll(
+        contentRoot.children.addAll(
                 Rectangle(settings.width.toDouble(),
                         settings.height.toDouble(),
                         Color.rgb(0, 0, 10)),

@@ -33,10 +33,12 @@ import com.sun.javafx.scene.traversal.Direction;
 import com.sun.javafx.scene.traversal.ParentTraversalEngine;
 import com.sun.javafx.scene.traversal.TraversalContext;
 import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -78,8 +80,8 @@ public class DialogPane extends Pane {
         display.currentSceneProperty().addListener((o, oldScene, newScene) -> {
             // if we somehow changed scene while the dialog is showing
             if (isShowing()) {
-                oldScene.getRoot().getChildren().remove(this);
-                newScene.getRoot().getChildren().add(this);
+                closeInScene(oldScene);
+                openInScene(newScene);
             }
         });
 
@@ -466,8 +468,7 @@ public class DialogPane extends Pane {
 
     void show() {
         if (!isShowing()) {
-            display.getCurrentScene().getRoot().getChildren().forEach(n -> n.setEffect(bgBlur));
-            display.getCurrentScene().getRoot().getChildren().add(this);
+            openInScene(display.getCurrentScene());
 
             this.requestFocus();
 
@@ -478,8 +479,7 @@ public class DialogPane extends Pane {
 
     void close() {
         if (states.isEmpty()) {
-            display.getCurrentScene().getRoot().getChildren().remove(this);
-            display.getCurrentScene().getRoot().getChildren().forEach(n -> n.setEffect(null));
+            closeInScene(display.getCurrentScene());
 
             if (onClosed != null)
                 onClosed.run();
@@ -488,6 +488,16 @@ public class DialogPane extends Pane {
             window.setTitle(data.title);
             window.setContentPane(data.contentPane);
         }
+    }
+
+    private void openInScene(FXGLScene scene) {
+        scene.getContentRoot().setEffect(bgBlur);
+        scene.getRoot().getChildren().add(this);
+    }
+
+    private void closeInScene(FXGLScene scene) {
+        scene.getRoot().getChildren().remove(this);
+        scene.getContentRoot().setEffect(null);
     }
 
     private static class DialogData {

@@ -59,6 +59,6 @@ public class TestLoadingScene extends LoadingScene {
         shape.setTranslateX(700);
         shape.setTranslateY(500);
 
-        getRoot().getChildren().set(1, shape);
+        getContentRoot().getChildren().set(1, shape);
     }
 }

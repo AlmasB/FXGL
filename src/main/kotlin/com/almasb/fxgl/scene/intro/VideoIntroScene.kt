@@ -54,7 +54,7 @@ class VideoIntroScene(videoName: String) : IntroScene() {
         view.fitWidth = FXGL.getSettings().width.toDouble()
         view.fitHeight = FXGL.getSettings().height.toDouble()
 
-        getRoot().children.add(view)
+        contentRoot.children.add(view)
     }
 
     override fun startIntro() {

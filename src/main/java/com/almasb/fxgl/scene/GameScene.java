@@ -101,7 +101,7 @@ public final class GameScene extends FXGLScene
     @Inject
     protected GameScene(@Named("appWidth") double width,
                         @Named("appHeight") double height) {
-        getRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
+        getContentRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas(width, height);
         initViewport(width, height);

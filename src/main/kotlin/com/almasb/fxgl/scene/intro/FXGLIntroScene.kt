@@ -76,7 +76,7 @@ class FXGLIntroScene() : IntroScene() {
 
         val content = Group(fxglText, poweredText, version)
 
-        root.children.addAll(Rectangle(w, h), content)
+        contentRoot.children.addAll(Rectangle(w, h), content)
 
         val originX = w / 2 - f.layoutBounds.width * 4 / 2
         val dx = f.layoutBounds.width
@@ -147,7 +147,11 @@ class FXGLIntroScene() : IntroScene() {
     private fun animateParticles() {
         val particles = ArrayList<Particle>()
 
-        val image = root.snapshot(null, null)
+        val oldEffect = contentRoot.effect
+
+        contentRoot.effect = null
+        val image = contentRoot.snapshot(null, null)
+        contentRoot.effect = oldEffect
 
         val reader = image.pixelReader
         for (y in 0..h.toInt() - 1) {
@@ -163,7 +167,7 @@ class FXGLIntroScene() : IntroScene() {
         val canvas = Canvas(w, h)
         val g = canvas.graphicsContext2D
 
-        root.children.setAll(canvas)
+        contentRoot.children.setAll(canvas)
 
         val timer = object : AnimationTimer() {
             override fun handle(now: Long) {
@@ -171,7 +175,7 @@ class FXGLIntroScene() : IntroScene() {
                 if (particles.isEmpty()) {
                     stop()
 
-                    val ft = FadeTransition(Duration.seconds(0.5), root)
+                    val ft = FadeTransition(Duration.seconds(0.5), contentRoot)
                     ft.toValue = 0.0
                     ft.setOnFinished { e1 ->
                         finishIntro()

@@ -42,19 +42,41 @@ import javafx.scene.transform.Scale;
  * Base class for all FXGL scenes.
  */
 public abstract class FXGLScene {
+
+    /**
+     * Top-level root node.
+     */
     private Pane root;
+
+    /**
+     * Root node for content.
+     */
+    private Pane contentRoot;
+
     private Group eventHandlers = new Group();
 
     public FXGLScene() {
         root = new Pane();
         root.setBackground(null);
+
+        contentRoot = new Pane();
+        contentRoot.setBackground(null);
+
+        root.getChildren().addAll(contentRoot);
     }
 
     /**
-     * @return root node of the scene
+     * @return top-level root node of the scene
      */
     public final Pane getRoot() {
         return root;
+    }
+
+    /**
+     * @return root node of the content
+     */
+    public final Pane getContentRoot() {
+        return contentRoot;
     }
 
     /**

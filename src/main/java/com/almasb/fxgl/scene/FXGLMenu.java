@@ -103,7 +103,7 @@ public abstract class FXGLMenu extends FXGLScene {
         this.type = type;
         this.listener = app.getMenuListener();
 
-        getRoot().getChildren().addAll(
+        getContentRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),
                 createTitleView(app.getSettings().getTitle()),
                 createVersionView(makeVersionString()),
@@ -114,10 +114,10 @@ public abstract class FXGLMenu extends FXGLScene {
         listener.profileNameProperty().addListener((o, oldName, newName) -> {
             if (!oldName.isEmpty()) {
                 // remove last node which *should* be profile view
-                getRoot().getChildren().remove(getRoot().getChildren().size() - 1);
+                getContentRoot().getChildren().remove(getContentRoot().getChildren().size() - 1);
             }
 
-            getRoot().getChildren().add(createProfileView("Profile: " + newName));
+            getContentRoot().getChildren().add(createProfileView("Profile: " + newName));
         });
     }
 
@@ -454,7 +454,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param node the node to add
      */
     protected final void addUINode(Node node) {
-        getRoot().getChildren().add(node);
+        getContentRoot().getChildren().add(node);
     }
 
     private void fireMenuEvent(Event event) {
