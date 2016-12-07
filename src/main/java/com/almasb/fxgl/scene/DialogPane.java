@@ -464,8 +464,6 @@ public class DialogPane extends Pane {
 
     private Deque<DialogData> states = new ArrayDeque<>();
 
-    private Effect bgBlur = new BoxBlur(5, 5, 3);
-
     void show() {
         if (!isShowing()) {
             openInScene(display.getCurrentScene());
@@ -490,14 +488,18 @@ public class DialogPane extends Pane {
         }
     }
 
+    private Effect bgBlur = new BoxBlur(5, 5, 3);
+    private Effect savedEffect = null;
+
     private void openInScene(FXGLScene scene) {
-        scene.getContentRoot().setEffect(bgBlur);
+        savedEffect = scene.getEffect();
+        scene.setEffect(bgBlur);
         scene.getRoot().getChildren().add(this);
     }
 
     private void closeInScene(FXGLScene scene) {
         scene.getRoot().getChildren().remove(this);
-        scene.getContentRoot().setEffect(null);
+        scene.setEffect(savedEffect);
     }
 
     private static class DialogData {

@@ -35,6 +35,7 @@ import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 
@@ -91,6 +92,29 @@ public abstract class FXGLScene {
      */
     public final double getHeight() {
         return root.getPrefHeight();
+    }
+
+    /**
+     * Applies given effect to the scene.
+     *
+     * @param effect the effect to apply
+     */
+    public final void setEffect(Effect effect) {
+        contentRoot.setEffect(effect);
+    }
+
+    /**
+     * @return currently applied effect or null if no effect is applied
+     */
+    public final Effect getEffect() {
+        return contentRoot.getEffect();
+    }
+
+    /**
+     * Removes any effects applied to the scene.
+     */
+    public final void clearEffect() {
+        setEffect(null);
     }
 
     /**
