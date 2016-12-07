@@ -142,7 +142,7 @@ public final class SAT {
     }
 
     private static float getMax(Array<Vec2> arrayCorners, Vec2 axis) {
-        float max = -Float.MIN_VALUE;
+        float max = Integer.MIN_VALUE;
 
         for (Vec2 corner : arrayCorners) {
             float value = Vec2.dot(corner, axis);
