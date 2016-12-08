@@ -58,6 +58,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -383,6 +384,33 @@ public abstract class FXGLMenu extends FXGLScene {
         pane.setContent(vbox);
 
         return new MenuContent(pane);
+    }
+
+    /**
+     * @return menu content containing feedback options
+     */
+    protected final MenuContent createContentFeedback() {
+        // url is a string key defined in system.properties
+        Consumer<String> openBrowser = url -> {
+            FXGL.getNet()
+                    .openBrowserTask(FXGL.getString(url))
+                    .onFailure(error -> log.warning("Error opening browser: " + error))
+                    .execute();
+        };
+
+        Button btnGoogle = new Button("Google Forms");
+        btnGoogle.setOnAction(e -> openBrowser.accept("url.googleforms"));
+
+        Button btnSurveyMonkey = new Button("Survey Monkey");
+        btnSurveyMonkey.setOnAction(e -> openBrowser.accept("url.surveymonkey"));
+
+        VBox vbox = new VBox(15,
+                FXGL.getUIFactory().newText("Choose your feedback method", Color.WHEAT, 18),
+                btnGoogle,
+                btnSurveyMonkey);
+        vbox.setAlignment(Pos.CENTER);
+
+        return new MenuContent(vbox);
     }
 
     /**

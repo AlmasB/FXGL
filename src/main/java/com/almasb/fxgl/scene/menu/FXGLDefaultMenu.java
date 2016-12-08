@@ -198,13 +198,16 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createExtraMenu() {
-        MenuItem itemCredits = new MenuItem("CREDITS");
-        itemCredits.setMenuContent(this::createContentCredits);
-
         MenuItem itemAchievements = new MenuItem("TROPHIES");
         itemAchievements.setMenuContent(this::createContentAchievements);
 
-        return new MenuBox(200, itemCredits, itemAchievements);
+        MenuItem itemCredits = new MenuItem("CREDITS");
+        itemCredits.setMenuContent(this::createContentCredits);
+
+        MenuItem itemFeedback = new MenuItem("FEEDBACK");
+        itemFeedback.setMenuContent(this::createContentFeedback);
+
+        return new MenuBox(200, itemAchievements, itemCredits, itemFeedback);
     }
 
     @Override
