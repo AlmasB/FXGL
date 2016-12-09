@@ -29,7 +29,10 @@ package manual;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -40,8 +43,6 @@ public class BBoxTest extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("BBoxTest");
-        //settings.setWidth(1920);
-        //settings.setHeight(1080);
         settings.setMenuEnabled(false);
         settings.setIntroEnabled(false);
         settings.setFullScreen(false);
@@ -62,12 +63,14 @@ public class BBoxTest extends GameApplication {
         MainViewComponent.turnOnDebugBBox(Color.RED);
 
         GameEntity e1 = new GameEntity();
-        //e1.getBoundingBoxComponent().addHitBox(new HitBox("ARM", new BoundingBox(50, 50, 40, 60)));
-        //e1.getMainViewComponent().setGraphics(new Rectangle(100, 100));
+        e1.setPosition(new Point2D(100, 100));
+        e1.getBoundingBoxComponent().addHitBox(new HitBox("HEAD", new Point2D(50, 0), BoundingShape.box(50, 80)));
+        e1.getBoundingBoxComponent().addHitBox(new HitBox("ARM", BoundingShape.box(30, 30)));
+        e1.setView(new Rectangle(100, 100));
 
         GameEntity e2 = new GameEntity();
         e2.getPositionComponent().setValue(50, 50);
-        //e2.getBoundingBoxComponent().addHitBox(new HitBox("ARM", new BoundingBox(50, 50, 40, 60)));
+        e2.getBoundingBoxComponent().addHitBox(new HitBox("ARM", BoundingShape.circle(20)));
         e2.getMainViewComponent().setView(new Rectangle(40, 60, Color.YELLOWGREEN));
 
         getGameWorld().addEntities(e1, e2);

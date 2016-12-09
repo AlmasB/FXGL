@@ -38,9 +38,13 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 /**
  * Adds a game scene view to an entity.
@@ -234,22 +238,52 @@ public class MainViewComponent extends AbstractComponent {
         )));
     }
 
-    private Rectangle debugBBox = new Rectangle();
+    private Group debugBBox = new Group();
+
+    private ListChangeListener<? super HitBox> hitboxListener = c -> {
+        debugBBox.getChildren().clear();
+        c.getList().forEach(this::addDebugView);
+    };
 
     private void addDebugBBox() {
         BoundingBoxComponent bbox = Entities.getBBox(getEntity());
 
-        debugBBox.setStroke(showBBoxColor);
-        debugBBox.setFill(null);
-        debugBBox.translateXProperty().bind(bbox.minXLocalProperty());
-        debugBBox.translateYProperty().bind(bbox.minYLocalProperty());
-        debugBBox.widthProperty().bind(bbox.widthProperty());
-        debugBBox.heightProperty().bind(bbox.heightProperty());
+        // generate view for future boxes
+        bbox.hitBoxesProperty().addListener(hitboxListener);
+
+        // generate view for current
+        bbox.hitBoxesProperty().forEach(this::addDebugView);
 
         getView().addNode(debugBBox);
     }
 
+    private void addDebugView(HitBox hitBox) {
+        Shape view = null;
+
+        if (hitBox.getShape().isCircle()) {
+            double radius = hitBox.getWidth() / 2;
+            view = new Circle(radius, radius, radius, null);
+
+        } else if (hitBox.getShape().isRectangle()) {
+            view = new Rectangle(hitBox.getWidth(), hitBox.getHeight(), null);
+        }
+
+        if (view != null) {
+            view.setStroke(showBBoxColor);
+
+            view.setTranslateX(hitBox.getMinX());
+            view.setTranslateY(hitBox.getMinY());
+
+            debugBBox.getChildren().add(view);
+        }
+    }
+
     private void removeDebugBBox() {
+        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
+
+        bbox.hitBoxesProperty().removeListener(hitboxListener);
+
+        debugBBox.getChildren().clear();
         getView().removeNode(debugBBox);
     }
 

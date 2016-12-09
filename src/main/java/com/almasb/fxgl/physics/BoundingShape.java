@@ -57,6 +57,20 @@ public final class BoundingShape {
     }
 
     /**
+     * @return true if the type of this shape is a circle
+     */
+    public boolean isCircle() {
+        return type == ShapeType.CIRCLE;
+    }
+
+    /**
+     * @return true if the type of this shape is a rectangle/square
+     */
+    public boolean isRectangle() {
+        return type == ShapeType.POLYGON;
+    }
+
+    /**
      * Constructs new circular bounding shape with given radius.
      *
      * @param radius circle radius
