@@ -32,6 +32,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.input.Input;
@@ -42,6 +43,7 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -98,6 +100,13 @@ public class TowerfallApp extends GameApplication {
             }
         }, KeyCode.W);
 
+        input.addAction(new UserAction("Break") {
+            @Override
+            protected void onActionBegin() {
+                playerControl.stop();
+            }
+        }, KeyCode.S);
+
         input.addAction(new UserAction("Shoot") {
             @Override
             protected void onActionBegin() {
@@ -111,6 +120,8 @@ public class TowerfallApp extends GameApplication {
 
     @Override
     protected void initGame() {
+        MainViewComponent.turnOnDebugBBox(Color.RED);
+
         TextLevelParser parser = new TextLevelParser(factory);
         Level level = parser.parse("towerfall_level.txt");
 

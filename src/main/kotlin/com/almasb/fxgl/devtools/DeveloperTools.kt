@@ -66,7 +66,7 @@ object DeveloperTools {
 
     /**
      * Add [node] to [parent].
-     * 
+     *
      * @throws IllegalArgumentException if parent is unsupported
      */
     fun addToParent(parent: Parent, node: Node) {

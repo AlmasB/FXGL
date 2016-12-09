@@ -65,6 +65,10 @@ public class CharacterControl extends AbstractControl {
         physics.setVelocityY(-350);
     }
 
+    public void stop() {
+        physics.setVelocityX(physics.getVelocityX() * 0.7);
+    }
+
     public void shoot(Point2D endPoint) {
         double x = position.getX();
         double y = position.getY();

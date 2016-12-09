@@ -99,7 +99,7 @@ public class TowerfallFactory extends EntityFactory {
                 .viewFromNode(new Rectangle(36, 36, Color.RED))
                 .bbox(new HitBox("Main", BoundingShape.circle(18)))
                 .with(physics, new CollidableComponent(true))
-                .with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
+                //.with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
                 .build();
     }
 
