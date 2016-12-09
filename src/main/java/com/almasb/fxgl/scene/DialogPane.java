@@ -104,6 +104,7 @@ public class DialogPane extends Pane {
         initTraversalPolicy();
     }
 
+    @SuppressWarnings("deprecation")
     private void initTraversalPolicy() {
         this.setImpl_traversalEngine(new ParentTraversalEngine(this, new Algorithm() {
             @Override
