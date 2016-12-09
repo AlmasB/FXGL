@@ -29,6 +29,8 @@ package com.almasb.fxgl.devtools
 import com.almasb.fxgl.app.FXGL
 import javafx.scene.Node
 import javafx.scene.Parent
+import jfxtras.util.NodeUtil
+import org.controlsfx.tools.Utils
 
 /**
  *
@@ -48,5 +50,26 @@ object DeveloperTools {
             is Parent -> return node.childrenUnmodifiable.size + node.childrenUnmodifiable.map { getChildrenSize(it) }.sum()
             else      -> return 0
         }
+    }
+
+    /**
+     * @return window in which [node] is located
+     */
+    fun getWindow(node: Node) = Utils.getWindow(node)
+
+    /**
+     * Remove [node] from its parent.
+     *
+     * @throws IllegalArgumentException if parent is unsupported
+     */
+    fun removeFromParent(node: Node) = NodeUtil.removeFromParent(node)
+
+    /**
+     * Add [node] to [parent].
+     * 
+     * @throws IllegalArgumentException if parent is unsupported
+     */
+    fun addToParent(parent: Parent, node: Node) {
+        NodeUtil.addToParent(parent, node)
     }
 }
