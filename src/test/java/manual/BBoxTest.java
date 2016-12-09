@@ -28,7 +28,6 @@ package manual;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
@@ -60,8 +59,6 @@ public class BBoxTest extends GameApplication {
 
     @Override
     protected void initGame() {
-        MainViewComponent.turnOnDebugBBox(Color.RED);
-
         GameEntity e1 = new GameEntity();
         e1.setPosition(new Point2D(100, 100));
         e1.getBoundingBoxComponent().addHitBox(new HitBox("HEAD", new Point2D(50, 0), BoundingShape.box(50, 80)));

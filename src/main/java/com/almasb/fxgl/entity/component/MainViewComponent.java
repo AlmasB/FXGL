@@ -58,6 +58,9 @@ public class MainViewComponent extends AbstractComponent {
 
     private static Color showBBoxColor = Color.RED;
 
+    /**
+     * @param color the color to highlight bounding boxes
+     */
     public static void setShowBBoxColor(Color showBBoxColor) {
         MainViewComponent.showBBoxColor = showBBoxColor;
     }
@@ -67,15 +70,11 @@ public class MainViewComponent extends AbstractComponent {
     }
 
     /**
-     * Turns on displaying of bounding boxes.
-     * Useful for debugging.
+     * Turn on / off bounding box display.
+     * Useful for debugging to see the bounds of each hit box.
      *
-     * @param color the color to highlight bounding boxes
+     * @param on on / off flag
      */
-    public static final void turnOnDebugBBox(Color color) {
-        // TODO: remove
-    }
-
     public final void turnOnDebugBBox(boolean on) {
         if (!on) {
             removeDebugBBox();
@@ -192,7 +191,8 @@ public class MainViewComponent extends AbstractComponent {
         this.view.getNodes().setAll(entityView.getNodes());
         setRenderLayer(entityView.getRenderLayer());
 
-        // TODO: double check logic
+        // TODO: double check logic when adding / removing views; adding / removing hit boxes
+        // also view / bbox components
         if (showBBox()) {
             this.view.addNode(debugBBox);
         }
