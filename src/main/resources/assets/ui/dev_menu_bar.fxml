@@ -44,6 +44,7 @@
 
     <Menu text="Graphics">
         <MenuItem text="Color Adjust" onAction="#openColorAdjustDialog" />
+        <CheckMenuItem text="Show BBox" onAction="#onShowBBox" />
     </Menu>
 
     <Menu fx:id="menuCustom" text="Custom">

@@ -56,18 +56,51 @@ import javafx.scene.shape.Shape;
 @Required(RotationComponent.class)
 public class MainViewComponent extends AbstractComponent {
 
-    private static boolean showBBox = false;
-    private static Color showBBoxColor = Color.BLACK;
+    private static Color showBBoxColor = Color.RED;
+
+    public static void setShowBBoxColor(Color showBBoxColor) {
+        MainViewComponent.showBBoxColor = showBBoxColor;
+    }
+
+    private boolean showBBox() {
+        return FXGL.getBoolean("dev.showbbox");
+    }
 
     /**
-     * Turns on displaying of bounding boxes. Useful for debugging.
-     * Note: this only shows bounding boxes, not each hit box.
+     * Turns on displaying of bounding boxes.
+     * Useful for debugging.
      *
      * @param color the color to highlight bounding boxes
      */
     public static final void turnOnDebugBBox(Color color) {
-        showBBox = true;
-        showBBoxColor = color;
+        // TODO: remove
+    }
+
+    public final void turnOnDebugBBox(boolean on) {
+        if (!on) {
+            removeDebugBBox();
+            return;
+        }
+
+        if (getEntity().hasComponent(BoundingBoxComponent.class)) {
+            addDebugBBox();
+        } else {
+            getEntity().addComponentListener(new ComponentListener() {
+                @Override
+                public void onComponentAdded(Component component) {
+                    if (component instanceof BoundingBoxComponent) {
+                        addDebugBBox();
+                    }
+                }
+
+                @Override
+                public void onComponentRemoved(Component component) {
+                    if (component instanceof BoundingBoxComponent) {
+                        removeDebugBBox();
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -160,7 +193,7 @@ public class MainViewComponent extends AbstractComponent {
         setRenderLayer(entityView.getRenderLayer());
 
         // TODO: double check logic
-        if (showBBox) {
+        if (showBBox()) {
             this.view.addNode(debugBBox);
         }
 
@@ -194,26 +227,8 @@ public class MainViewComponent extends AbstractComponent {
     public void onAdded(Entity entity) {
         bindView();
 
-        if (showBBox) {
-            if (getEntity().hasComponent(BoundingBoxComponent.class)) {
-                addDebugBBox();
-            } else {
-                getEntity().addComponentListener(new ComponentListener() {
-                    @Override
-                    public void onComponentAdded(Component component) {
-                        if (component instanceof BoundingBoxComponent) {
-                            addDebugBBox();
-                        }
-                    }
-
-                    @Override
-                    public void onComponentRemoved(Component component) {
-                        if (component instanceof BoundingBoxComponent) {
-                            removeDebugBBox();
-                        }
-                    }
-                });
-            }
+        if (showBBox()) {
+            turnOnDebugBBox(true);
         }
     }
 
@@ -248,6 +263,9 @@ public class MainViewComponent extends AbstractComponent {
     private void addDebugBBox() {
         BoundingBoxComponent bbox = Entities.getBBox(getEntity());
 
+        if (bbox == null)
+            return;
+
         // generate view for future boxes
         bbox.hitBoxesProperty().addListener(hitboxListener);
 
@@ -280,6 +298,9 @@ public class MainViewComponent extends AbstractComponent {
 
     private void removeDebugBBox() {
         BoundingBoxComponent bbox = Entities.getBBox(getEntity());
+
+        if (bbox == null)
+            return;
 
         bbox.hitBoxesProperty().removeListener(hitboxListener);
 
