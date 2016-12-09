@@ -1,1 +1,0 @@
-This directory contains **old** releases. For latest builds please go to <a href="https://github.com/AlmasB/FXGL/releases">Releases</a>
