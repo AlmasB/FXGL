@@ -2,20 +2,57 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.AlmasB</groupId>
+    <groupId>com.github.almasb</groupId>
     <artifactId>FXGL</artifactId>
     <version>0.2.9-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>FXGL</name>
-    <description>JavaFX / Kotlin Game Library</description>
-    <url>https://jitpack.io/#AlmasB/FXGL/${project.version}</url>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>JavaFX Game Development Framework</description>
+    <url>http://almasb.github.io/FXGL/</url>
+
+    <issueManagement>
+        <url>https://github.com/AlmasB/FXGL/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/AlmasB/FXGL</url>
+        <connection>scm:git:git://github.com/AlmasB/FXGL.git</connection>
+        <developerConnection>scm:git:git@github.com:AlmasB/FXGL.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <email>almaslvl@gmail.com</email>
+            <name>Almas Baimagambetov</name>
+            <url>https://github.com/AlmasB</url>
+            <id>almasb</id>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.version>1.8</source.version>
 
         <!-- plugins -->
+        <maven.gpg.version>1.6</maven.gpg.version>
+        <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
         <maven.compiler.version>3.3</maven.compiler.version>
         <maven.enforcer.version>1.4.1</maven.enforcer.version>
         <maven.source.version>2.4</maven.source.version>
@@ -166,6 +203,35 @@
         </resources>
 
         <plugins>
+
+            <!-- Sign artifact using gpg -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven.gpg.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Upload to sonatype nexus / maven central -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${sonatype.nexus.staging.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
 
             <!-- Compile java -->
             <plugin>
