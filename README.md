@@ -2,7 +2,7 @@
 
 JavaFX Game Development Framework
 
-[![Release](https://jitpack.io/v/AlmasB/FXGL.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/FXGL.svg)]()
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://jitpack.io/com/github/AlmasB/FXGL/0.2.8/javadoc/index.html)
 ![Code](https://img.shields.io/badge/lines%20of%20code-15k-blue.svg)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)
@@ -177,3 +177,4 @@ dependencies {
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
 [![Google+](https://img.shields.io/badge/Google+-AlmasB-red.svg)](https://plus.google.com/+AlmasB0/about)
 [![Survey](https://img.shields.io/badge/Feedback-SurveyMonkey-red.svg)](https://www.surveymonkey.com/r/BH6LLPM)
+[![Survey2](https://img.shields.io/badge/Feedback-Google%20Forms-red.svg)](https://goo.gl/forms/6wrMnOBxTE1fEpOy2)
