@@ -103,6 +103,7 @@ public class MockApplicationModule extends ApplicationModule {
 
     @Override
     protected void bindServices() {
+        mockProperties();
         mockTimer();
         mockPooler();
         mockLoggerFactory();
@@ -113,6 +114,14 @@ public class MockApplicationModule extends ApplicationModule {
         mockUIFactory();
         mockAssetLoader();
         mockPhysics();
+    }
+
+    /**
+     * Supplies values for properties that would normally be loaded
+     * from the system.properties file.
+     */
+    private void mockProperties() {
+        FXGL.setProperty("dev.showbbox", false);
     }
 
     private void mockTimer() {
