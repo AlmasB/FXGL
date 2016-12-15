@@ -17,6 +17,8 @@ after_success:
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=target/site/jacoco/jacoco.xml -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
 notifications:
   email:
+    recipients:
+      - almaslvl@gmail.com
     on_success: change
     on_failure: always
     on_start: never
