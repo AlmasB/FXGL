@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * TODO: API INCOMPLETE.
+ * A convenient builder for standard (translate, rotate, scale) animations.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -90,5 +90,11 @@ public class AnimationBuilder {
         Collections.addAll(this.entities, entities);
 
         return new TranslationAnimationBuilder(this);
+    }
+
+    public ScaleAnimationBuilder scale(GameEntity... entities) {
+        Collections.addAll(this.entities, entities);
+
+        return new ScaleAnimationBuilder(this);
     }
 }

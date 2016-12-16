@@ -26,23 +26,27 @@
 
 package s30animation;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.animation.EntityAnimation;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.shape.*;
+import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
+import javafx.scene.shape.QuadCurve;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
- * Shows how to init a basic game object and attach it to the world
- * using fluent API.
+ * Shows how to use common animations patterns for entities.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class AnimationSample3 extends GameApplication {
+
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -58,15 +62,26 @@ public class AnimationSample3 extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
+    protected void initInput() {
+        getInput().addAction(new UserAction("Grow") {
+            @Override
+            protected void onActionBegin() {
+                Entities.animationBuilder()
+                        .duration(Duration.seconds(3))
+                        .scale(player)
+                        .from(new Point2D(2, 2))
+                        .to(new Point2D(1, 1))
+                        .buildAndPlay();
+            }
+        }, KeyCode.F);
+    }
 
     @Override
     protected void initAssets() {}
 
     @Override
     protected void initGame() {
-        // 2. create entity and attach to world using fluent API
-        GameEntity player = Entities.builder()
+        player = Entities.builder()
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
@@ -78,10 +93,17 @@ public class AnimationSample3 extends GameApplication {
                 .rotateTo(360)
                 .buildAndPlay();
 
+        Entities.animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeat(1)
+                .scale(player)
+                .to(new Point2D(2, 2))
+                .buildAndPlay();
+
         EntityAnimation anim = Entities.animationBuilder()
                 .duration(Duration.seconds(3))
                 .repeat(2)
-                //.delay(Duration.millis(3002))
+                .delay(Duration.millis(3002))
                 .translate(player)
                 .alongPath(new QuadCurve(33, 33, 150, 144, 350, 344))
                 .build();
