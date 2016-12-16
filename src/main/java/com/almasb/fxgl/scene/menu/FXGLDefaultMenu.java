@@ -121,6 +121,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createMenuBodyMainMenu() {
+        log.debug("createMenuBodyMainMenu()");
+
         MenuItem itemContinue = new MenuItem("CONTINUE");
         itemContinue.setOnAction(e -> fireContinue());
 
@@ -154,6 +156,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createMenuBodyGameMenu() {
+        log.debug("createMenuBodyGameMenu()");
+
         MenuItem itemResume = new MenuItem("RESUME");
         itemResume.setOnAction(e -> fireResume());
 
@@ -176,6 +180,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createOptionsMenu() {
+        log.debug("createOptionsMenu()");
+
         MenuItem itemGameplay = new MenuItem("GAMEPLAY");
         itemGameplay.setMenuContent(this::createContentGameplay);
 
@@ -198,6 +204,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createExtraMenu() {
+        log.debug("createExtraMenu()");
+
         MenuItem itemAchievements = new MenuItem("TROPHIES");
         itemAchievements.setMenuContent(this::createContentAchievements);
 
@@ -257,6 +265,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
     private class MenuItem extends FXGLButton {
         private MenuBox parent;
+        private MenuContent cachedContent = null;
 
         MenuItem(String name) {
             super(name);
@@ -267,7 +276,13 @@ public class FXGLDefaultMenu extends FXGLMenu {
         }
 
         public void setMenuContent(Supplier<MenuContent> contentSupplier) {
-            this.addEventHandler(ActionEvent.ACTION, event -> switchMenuContentTo(contentSupplier.get()));
+
+            this.addEventHandler(ActionEvent.ACTION, event -> {
+                if (cachedContent == null)
+                    cachedContent = contentSupplier.get();
+
+                switchMenuContentTo(cachedContent);
+            });
         }
 
         public void setChild(MenuBox menu) {
