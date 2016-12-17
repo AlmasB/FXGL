@@ -57,7 +57,7 @@ internal class InitEventHandlersTask
         app.masterTimer.addUpdateListener({ event ->
             app.onUpdate(event.tpf())
 
-            if (app.settings.isFPSShown()) {
+            if (app.settings.isProfilingEnabled) {
                 val g = app.gameScene.getGraphicsContext()
 
                 g.setFont(fpsFont)

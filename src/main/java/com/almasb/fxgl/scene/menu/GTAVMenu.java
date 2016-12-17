@@ -214,6 +214,7 @@ public class GTAVMenu extends FXGLMenu {
      * @param contentSupplier content supplier
      * @return new button
      */
+    @SuppressWarnings("unchecked")
     protected final Button createContentButton(String name, Supplier<MenuContent> contentSupplier) {
         Button btn = FXGL.getUIFactory().newButton(name);
         btn.setUserData(contentSupplier);

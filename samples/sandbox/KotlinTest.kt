@@ -35,6 +35,5 @@ class KotlinTest {
 }
 
 fun main(args: Array<String>) {
-    val list = arrayListOf("Hello", "World")
 
 }

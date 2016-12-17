@@ -59,7 +59,7 @@ public class ReadOnlyGameSettings {
     protected List<ServiceType<?> > services = new ArrayList<>();
 
     /**
-     * Constructs game settings with default parameters
+     * Constructs game settings with default parameters.
      */
     ReadOnlyGameSettings() {
     }
@@ -113,14 +113,6 @@ public class ReadOnlyGameSettings {
 
     public final boolean isMenuEnabled() {
         return menuEnabled;
-    }
-
-    /**
-     * @deprecated use {@link #isProfilingEnabled()}
-     */
-    @Deprecated
-    public final boolean isFPSShown() {
-        return profilingEnabled;
     }
 
     public final boolean isProfilingEnabled() {
