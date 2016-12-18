@@ -53,13 +53,13 @@
         <!-- plugins -->
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
-        <maven.compiler.version>3.3</maven.compiler.version>
+        <maven.compiler.version>3.6.0</maven.compiler.version>
         <maven.enforcer.version>1.4.1</maven.enforcer.version>
-        <maven.source.version>2.4</maven.source.version>
+        <maven.source.version>3.0.1</maven.source.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
         <!--<dokka.version>0.9.10</dokka.version>-->
         <maven.shade.version>2.4.3</maven.shade.version>
-        <jacoco.version>0.7.7.201606060606</jacoco.version>
+        <jacoco.version>0.7.8</jacoco.version>
 
         <!-- dependencies -->
         <kotlin.version>1.0.3</kotlin.version>
