@@ -67,12 +67,12 @@
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.12</controlsfx.version>
         <fxeventbus.version>1.0</fxeventbus.version>
-        <ents.version>1.1.2</ents.version>
-        <game.utils.version>0.0.3</game.utils.version>
-        <jbox.version>2.3.2-fxgl</jbox.version>
+        <ents.version>1.1.3</ents.version>
+        <game.utils.version>0.0.4</game.utils.version>
+        <jbox.version>2.3.3-fxgl</jbox.version>
         <astar.version>1.0.1</astar.version>
-        <gdx.ai.version>1.8.2-fxgl</gdx.ai.version>
-        <easyio.version>0.1.6</easyio.version>
+        <gdx.ai.version>1.8.3-fxgl</gdx.ai.version>
+        <easyio.version>0.1.7</easyio.version>
         <log4j.version>2.5</log4j.version>
 
         <junit.version>4.12</junit.version>
