@@ -54,5 +54,5 @@ public @interface OnUserAction {
      *
      * @return action type
      */
-    ActionType type() default ActionType.ON_ACTION_BEGIN;
+    ActionType type() default ActionType.ON_ACTION;
 }
