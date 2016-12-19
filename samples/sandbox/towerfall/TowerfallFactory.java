@@ -31,6 +31,8 @@ import com.almasb.ents.component.UserDataComponent;
 import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
@@ -43,6 +45,9 @@ import com.almasb.gameutils.math.GameMath;
 import com.almasb.gameutils.math.Vec2;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyDef;
@@ -60,6 +65,18 @@ public class TowerfallFactory extends EntityFactory {
 
     public TowerfallFactory() {
         super('0');
+    }
+
+    @EntityProducer('B')
+    public Entity newBackground(int x, int y) {
+        Rectangle rect = new Rectangle(1280, 720);
+        rect.setFill(new LinearGradient(0, 0, 0, 720, false, CycleMethod.REFLECT,
+                new Stop(0, Color.BLACK),
+                new Stop(0.5, Color.GRAY)));
+
+        return Entities.builder()
+                .viewFromNode(new EntityView(rect, RenderLayer.BACKGROUND))
+                .build();
     }
 
     @EntityProducer('1')
@@ -107,7 +124,8 @@ public class TowerfallFactory extends EntityFactory {
         return Entities.builder()
                 .type(EntityType.ARROW)
                 .at(x, y)
-                .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("arrow.png", 35, 9))
+                .viewFromNode(FXGL.getAssetLoader().loadTexture("arrow.png", 35, 9))
+                .bbox(new HitBox("MAIN", BoundingShape.box(28, 8)))
                 .with(new CollidableComponent(true), new UserDataComponent(shooter))
                 .with(new OffscreenCleanControl(), new ExpireCleanControl(Duration.seconds(7)),
                         new ArrowControl(velocity.normalize()))
