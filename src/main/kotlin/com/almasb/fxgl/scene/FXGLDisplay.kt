@@ -28,7 +28,7 @@ package com.almasb.fxgl.scene
 
 import com.almasb.easyio.UIDialogHandler
 import com.almasb.easyio.serialization.Bundle
-import com.almasb.fxeventbus.EventBus
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent

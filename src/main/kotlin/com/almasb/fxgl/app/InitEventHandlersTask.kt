@@ -27,13 +27,18 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.event.*
+import com.almasb.fxgl.input.OnUserAction
 import com.google.inject.Inject
 import javafx.animation.AnimationTimer
+import javafx.event.Event
 import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import java.lang.reflect.Modifier
+import java.util.*
 
 /**
  *
@@ -146,5 +151,7 @@ internal class InitEventHandlersTask
             if (!app.isMenuOpen())
                 app.resume()
         })
+
+        bus.scanForHandlers(app)
     }
 }

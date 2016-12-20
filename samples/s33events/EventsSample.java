@@ -25,29 +25,22 @@
  */
 package s33events;
 
-import com.almasb.ents.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.event.EntityEvent;
 import com.almasb.fxgl.event.EventTrigger;
-import com.almasb.fxgl.event.NotificationEvent;
-import com.almasb.fxgl.gameplay.Notification;
+import com.almasb.fxgl.event.Handles;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
-import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
-import javafx.event.Event;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 /**
  * Shows how to use event triggers and fire custom events.
@@ -73,6 +66,7 @@ public class EventsSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(true);
+        settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -150,13 +144,9 @@ public class EventsSample extends GameApplication {
                 //, 2, Duration.seconds(1)
         ));
 
-        // 2. add event handler
-        getEventBus().addEventHandler(Events.PASSED, event -> {
-            System.out.println(event.getTriggerEntity() + " passed " + event.getTargetEntity());
-        });
-
+        // 2. add event handler using code OR
         getEventBus().addEventHandler(MyGameEvent.ANY, event -> {
-            System.out.println("Handled event: " + event);
+            System.out.println("Code handler: " + event);
         });
     }
 
@@ -168,6 +158,20 @@ public class EventsSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {}
+
+    // 3. add event handler using annotation
+    // specify where event type object is located
+    @Handles(eventClass = Events.class, eventType = "PASSED")
+    public void onPassed(EntityEvent event) {
+        System.out.println(event.getTriggerEntity() + " passed " + event.getTargetEntity());
+    }
+
+    // class detail can be omitted if class matches method type param
+    // here it's MyGameEvent.class, so no need to explicitly state it
+    @Handles(eventType = "ANY")
+    public void onMyEvent(MyGameEvent event) {
+        System.out.println("Annotation handler: " + event);
+    }
 
     public static void main(String[] args) {
         launch(args);

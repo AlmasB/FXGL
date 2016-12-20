@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.concurrent
 
-import com.almasb.fxeventbus.EventBus
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.FXGLEvent
 import com.google.inject.Inject
