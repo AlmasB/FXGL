@@ -24,34 +24,37 @@
  * SOFTWARE.
  */
 
-package sandbox
+package sandbox;
 
-import com.almasb.fxgl.parser.json.JSONEntity
-import com.almasb.fxgl.parser.json.JSONWorld
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.File
+import com.almasb.ents.Entity;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.parser.EntityFactory;
+import com.almasb.fxgl.parser.json.JSONEntityProducer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KotlinTest {
-}
+public class JSONEntityFactory extends EntityFactory {
 
-fun main(args: Array<String>) {
+    public JSONEntityFactory() {
+        super(' ');
+    }
 
-    val mapper = ObjectMapper()
+    @JSONEntityProducer("Player")
+    public Entity newPlayer(double x, double y) {
+        return Entities.builder()
+                .at(x, y)
+                .viewFromNode(new Rectangle(40, 40, Color.BLUE))
+                .build();
+    }
 
-    val world = JSONWorld("Level1", arrayListOf(
-            JSONEntity("Player", 300.0, 400.0),
-            JSONEntity("EnemyArcher", 200.0, 55.0)
-    ))
-
-    //mapper.writeValue(File("level1.json"), world)
-
-    val world2 = mapper.readValue<JSONWorld>(File("level1.json"), JSONWorld::class.java)
-
-    println(world2.name)
-    println(world2.entities)
+    @JSONEntityProducer("EnemyArcher")
+    public Entity newEnemyArcher(double x, double y) {
+        return Entities.builder()
+                .at(x, y)
+                .viewFromNode(new Rectangle(40, 40, Color.RED))
+                .build();
+    }
 }

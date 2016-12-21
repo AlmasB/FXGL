@@ -24,34 +24,46 @@
  * SOFTWARE.
  */
 
-package sandbox
+package com.almasb.fxgl.parser.json
 
-import com.almasb.fxgl.parser.json.JSONEntity
-import com.almasb.fxgl.parser.json.JSONWorld
+import com.almasb.ents.Entity
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.gameplay.Level
+import com.almasb.fxgl.parser.EntityFactory
+import com.almasb.fxgl.parser.EntityProducer
+import com.almasb.fxgl.parser.LevelParser
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.File
+import java.util.*
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KotlinTest {
-}
+class JSONLevelParser(private val entityFactory: EntityFactory) : LevelParser {
 
-fun main(args: Array<String>) {
+    private val producers = HashMap<String, (Double, Double) -> Entity>()
 
-    val mapper = ObjectMapper()
+    init {
+        for (method in entityFactory.javaClass.declaredMethods) {
+            val producer = method.getDeclaredAnnotation(JSONEntityProducer::class.java)
+            if (producer != null) {
+                producers[producer.value] = { x, y -> method.invoke(entityFactory, x, y) as Entity }
+            }
+        }
+    }
 
-    val world = JSONWorld("Level1", arrayListOf(
-            JSONEntity("Player", 300.0, 400.0),
-            JSONEntity("EnemyArcher", 200.0, 55.0)
-    ))
+    override fun parse(levelFileName: String): Level {
+        val stream = FXGL.getAssetLoader().getStream("/assets/json/$levelFileName")
+        val jsonWorld = ObjectMapper().readValue<JSONWorld>(stream, JSONWorld::class.java)
+        stream.close()
 
-    //mapper.writeValue(File("level1.json"), world)
+        val entities = jsonWorld.entities.map {
+            producers[it.name]!!.invoke(it.x, it.y)
+        }
 
-    val world2 = mapper.readValue<JSONWorld>(File("level1.json"), JSONWorld::class.java)
 
-    println(world2.name)
-    println(world2.entities)
+        // TODO: w, h
+        return Level(0, 0, entities)
+    }
 }
