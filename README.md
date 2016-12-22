@@ -35,9 +35,10 @@ Dynamic Texture Manipulation | [Log4j2](http://logging.apache.org/log4j/2.x/)
 Sprite Sheet Animations | Performance Monitor + Profiling
 Target Screen Resolution (+Fullscreen) | Global Services Framework
 Customizable Intro Video / Animation | Developer Panel
-Customizable Main Menu / Game Menu (3 built-in menu styles) |
+Customizable Main Menu / Game Menu (3 built-in menu styles) | GC-free Object Pooling
 Customizable UI elements (Dialogs, Bars, Buttons, etc) |
 Customizable Global CSS for menus / UI elements |
+Post-processing Effects (**alpha**) |
 
 
 User Input | I/O
@@ -49,7 +50,8 @@ Full Input Mocking   | Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt",
 Physics |   Utilities
 :---: | :---:
 [JBox2D](https://github.com/jbox2d/jbox2d) | [GameUtils](https://github.com/AlmasB/GameUtils)
-Unified Collision Handling (jbox2d + FXGL physics) |
+FXGL Physics (BBox + SAT) |
+Unified Collision Handling (JBox2D + FXGL physics) |
 
 
 Gameplay | AI
@@ -57,11 +59,11 @@ Gameplay | AI
 [Ents](https://github.com/AlmasB/Ents) | [gdxAI](https://github.com/libgdx/gdx-ai)
 Game Loop                              | [AStar](https://github.com/AlmasB/AStar)
 Quick Time Events (QTE)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/QTE.jpg" width="256" /> | JavaScript Behavior Injections (for entities) + JavaScript FXGL Environment Variables<br/><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/JS.jpg" width="768" />
-Achievement System<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/achievement.jpg" width="512" /> | Text/Script Parsers
+Achievement System<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/achievement.jpg" width="512" /> | 
 Notification System |
 Saving / Loading System |
 User Profiles (Save/Load/Restore Game Settings)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/profile.jpg" width="512" /> |
-
+Level Parsers (.txt, .json (**alpha**) using [jackson](https://github.com/FasterXML/jackson-databind))|
 
 If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
 
