@@ -35,7 +35,9 @@ public enum MenuStyle {
 
     GTA5("fxgl_gta5.css"),
 
-    CCTR("fxgl_cctr.css");
+    CCTR("fxgl_cctr.css"),
+
+    WARCRAFT3("fxgl_war3.css");
 
     private String css;
 
