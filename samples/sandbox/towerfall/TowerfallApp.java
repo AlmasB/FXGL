@@ -39,6 +39,7 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.TextLevelParser;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.ui.InGamePanel;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
@@ -111,6 +112,16 @@ public class TowerfallApp extends GameApplication {
                 playerControl.shoot(input.getMousePositionWorld());
             }
         }, MouseButton.PRIMARY);
+
+        input.addAction(new UserAction("Open/Close Panel") {
+            @Override
+            protected void onActionBegin() {
+                if (panel.isOpen())
+                    panel.close();
+                else
+                    panel.open();
+            }
+        }, KeyCode.TAB);
     }
 
     @Override
@@ -159,8 +170,14 @@ public class TowerfallApp extends GameApplication {
         });
     }
 
+    private InGamePanel panel;
+
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+        panel = new InGamePanel();
+
+        getGameScene().addUINode(panel);
+    }
 
     @Override
     protected void onUpdate(double tpf) {}
