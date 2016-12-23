@@ -27,79 +27,54 @@
 package com.almasb.fxgl.gameplay.rpg.quest
 
 import com.almasb.fxgl.app.FXGL
-import javafx.animation.FillTransition
-import javafx.animation.ParallelTransition
-import javafx.animation.RotateTransition
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.IntegerProperty
 import javafx.geometry.Pos
-import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import javafx.util.Duration
 
 /**
  * A single quest objective.
- * TODO: timer?
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class QuestObjective(val description: String, val valueProperty: IntegerProperty, val times: Int = 1) : HBox(10.0) {
+class QuestObjective
+@JvmOverloads
+constructor(val description: String,
+            val valueProperty: IntegerProperty,
+            val times: Int = 1,
+            val duration: Duration = Duration.ZERO) : HBox(10.0) {
 
-    companion object {
-        private val COLOR_SUCCESS = Color.GREEN.brighter().brighter().brighter()
-        private val COLOR_FAIL = Color.DARKRED
-    }
-
-    private val checkRect = Rectangle(18.0, 18.0, null)
-    private val successListener: BooleanBinding
+    val successListener: BooleanBinding
+    val checkBox = QuestCheckBox()
 
     init {
-        with(checkRect) {
-            arcWidth = 12.0
-            arcHeight = 12.0
-            stroke = Color.WHITESMOKE
-            strokeWidth = 1.0
-        }
-
         val factory = FXGL.getUIFactory()
 
         val text = factory.newText("", Color.WHITE, 18.0)
         text.textProperty().bind(valueProperty.asString("%d/$times"))
 
-        val hboxLeft = HBox(10.0, factory.newText(description, Color.WHITE, 18.0), text)
-        hboxLeft.alignment = Pos.CENTER_LEFT
-
-        val hbox = HBox(checkRect)
+        val hbox = HBox(checkBox)
         hbox.alignment = Pos.CENTER_RIGHT
 
         HBox.setHgrow(hbox, Priority.ALWAYS)
 
-        children.addAll(hboxLeft, hbox)
+        children.addAll(factory.newText(description, Color.WHITE, 18.0), text, hbox)
 
         successListener = valueProperty.greaterThanOrEqualTo(times)
 
         successListener.addListener { o, old, isReached ->
-            if (isReached)
-                onSuccess()
+            if (isReached) {
+                checkBox.setState(QuestState.COMPLETED)
+            } else {
+                checkBox.setState(QuestState.ACTIVE)
+            }
         }
-    }
 
-    private fun onSuccess() {
-        val fill = FillTransition(Duration.seconds(0.35), checkRect, Color.TRANSPARENT, COLOR_SUCCESS)
-        val rotation = RotateTransition(Duration.seconds(0.35), checkRect)
-        rotation.toAngle = 180.0
-
-        ParallelTransition(fill, rotation).play()
-    }
-
-    private fun onFail() {
-        val fill = FillTransition(Duration.seconds(0.35), checkRect, Color.TRANSPARENT, COLOR_FAIL)
-        val rotation = RotateTransition(Duration.seconds(0.35), checkRect)
-        rotation.toAngle = -180.0
-
-        ParallelTransition(fill, rotation).play()
+        if (duration !== Duration.ZERO) {
+            FXGL.getMasterTimer().runOnceAfter({ checkBox.setState(QuestState.FAILED) }, duration)
+        }
     }
 }

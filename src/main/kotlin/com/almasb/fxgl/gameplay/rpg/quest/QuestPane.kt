@@ -26,12 +26,22 @@
 
 package com.almasb.fxgl.gameplay.rpg.quest
 
+import com.almasb.fxgl.app.FXGL
+import javafx.beans.binding.Binding
+import javafx.beans.binding.Bindings
+import javafx.beans.binding.BooleanBinding
+import javafx.beans.binding.When
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
-import javafx.scene.Node
+import javafx.geometry.NodeOrientation
+import javafx.geometry.Pos
 import javafx.scene.control.TitledPane
-import javafx.scene.layout.Pane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
+import java.util.concurrent.Callable
 
 
 /**
@@ -39,19 +49,53 @@ import javafx.scene.layout.VBox
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class QuestPane(vararg initialQuests: Quest) : VBox() {
+class QuestPane(width: Double, height: Double, vararg initialQuests: Quest) : VBox() {
 
     private val quests = FXCollections.observableArrayList<Quest>(*initialQuests)
 
     init {
-        prefWidth = 450.0
-        prefHeight = 350.0
+        prefWidth = width
+        prefHeight = height
 
-        quests.forEach {
+        quests.forEach { quest ->
             val vbox = VBox()
-            vbox.children.addAll(it.objectives)
+            vbox.children.addAll(quest.objectives)
 
-            val pane = TitledPane(it.name, vbox)
+            val mainCheckBox = QuestCheckBox()
+            mainCheckBox.stroke = Color.BLACK
+
+            val failedBinding = quest.objectives.map { it.checkBox.stateProperty() }
+                    .foldRight(Bindings.createBooleanBinding(Callable { false }), { state, binding ->
+                        state.isEqualTo(QuestState.FAILED).or(binding)
+                    })
+
+            val completedBinding = quest.objectives.map { it.checkBox.stateProperty() }
+                    .foldRight(Bindings.createBooleanBinding(Callable { true }), { state, binding ->
+                        state.isEqualTo(QuestState.COMPLETED).and(binding)
+                    })
+
+//            val activeBinding = quest.objectives.map { it.checkBox.stateProperty() }
+//                    .foldRight(Bindings.createBooleanBinding(Callable { true }), { state, binding ->
+//                        state.isEqualTo(QuestState.COMPLETED).and(binding)
+//                    })
+
+
+            val intermediateBinding = Bindings.`when`(completedBinding).then(QuestState.COMPLETED).otherwise(QuestState.ACTIVE)
+            val finalBinding = Bindings.`when`(failedBinding).then(QuestState.FAILED).otherwise(intermediateBinding)
+
+            mainCheckBox.stateProperty().bind(finalBinding)
+
+            val hbox = HBox(mainCheckBox)
+            hbox.alignment = Pos.CENTER_RIGHT
+
+            HBox.setHgrow(hbox, Priority.ALWAYS)
+
+            val hboxRoot = HBox(10.0, FXGL.getUIFactory().newText(quest.name, Color.BLACK, 18.0), hbox)
+            hboxRoot.prefWidth = width - mainCheckBox.width*3 + 2
+
+            val pane = TitledPane("", vbox)
+            pane.graphic = hboxRoot
+
             children.add(pane)
         }
     }

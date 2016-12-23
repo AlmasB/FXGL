@@ -34,14 +34,25 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Level;
+import com.almasb.fxgl.gameplay.rpg.quest.Quest;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestObjective;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestWindow;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.TextLevelParser;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.InGamePanel;
+import com.almasb.fxgl.ui.InGameWindow;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.util.Duration;
+
+import java.util.Arrays;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -96,6 +107,7 @@ public class TowerfallApp extends GameApplication {
             @Override
             protected void onActionBegin() {
                 playerControl.jump();
+                jumps.set(jumps.get() + 1);
             }
         }, KeyCode.W);
 
@@ -110,8 +122,9 @@ public class TowerfallApp extends GameApplication {
             @Override
             protected void onActionBegin() {
                 playerControl.shoot(input.getMousePositionWorld());
+                shotArrows.set(shotArrows.get() + 1);
             }
-        }, MouseButton.PRIMARY);
+        }, KeyCode.F);
 
         input.addAction(new UserAction("Open/Close Panel") {
             @Override
@@ -129,6 +142,9 @@ public class TowerfallApp extends GameApplication {
 
     @Override
     protected void initGame() {
+        shotArrows = new SimpleIntegerProperty(0);
+        jumps = new SimpleIntegerProperty(0);
+
         TextLevelParser parser = new TextLevelParser(factory);
         Level level = parser.parse("towerfall_level.txt");
 
@@ -172,11 +188,47 @@ public class TowerfallApp extends GameApplication {
 
     private InGamePanel panel;
 
+    private IntegerProperty shotArrows;
+    private IntegerProperty jumps;
+
     @Override
     protected void initUI() {
         panel = new InGamePanel();
 
         getGameScene().addUINode(panel);
+
+        QuestPane questPane = new QuestPane(350, 450,
+                new Quest("Test Quest", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", shotArrows, 15),
+                        new QuestObjective("Jump", jumps)
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", shotArrows, 25, Duration.seconds(3))
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", shotArrows, 25)
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", shotArrows, 25)
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", shotArrows, 25)
+                ))
+        );
+
+//        InGameWindow window = new InGameWindow("Quests", InGameWindow.WindowDecor.MINIMIZE);
+////        window.prefWidthProperty().bind(questPane.widthProperty());
+////        window.prefHeightProperty().bind(questPane.heightProperty());
+//        window.setContentPane(questPane);
+//        window.setResizableWindow(true);
+
+        QuestWindow window = new QuestWindow(questPane);
+
+        getGameScene().addUINode(window);
     }
 
     @Override
