@@ -28,6 +28,7 @@ package com.almasb.fxgl.ui;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.paint.Color;
@@ -68,6 +69,8 @@ public interface UIFactory {
     <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
 
     <T> ChoiceBox<T> newChoiceBox();
+
+    CheckBox newCheckBox();
 
     <T> Spinner<T> newSpinner(ObservableList<T> items);
 }

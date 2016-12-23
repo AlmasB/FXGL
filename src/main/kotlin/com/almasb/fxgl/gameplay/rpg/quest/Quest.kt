@@ -23,50 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.asset.FXGLAssets;
-import com.google.inject.Inject;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.text.Font;
+package com.almasb.fxgl.gameplay.rpg.quest
+
+import javafx.beans.property.SimpleStringProperty
 
 /**
- * FXGL provider of UI factory service.
+ * TODO: reward?
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class FXGLUIFactory implements UIFactory {
+class Quest(val name: String, val objectives: List<QuestObjective>) {
 
-    @Inject
-    private FXGLUIFactory() {}
-
-    public Font newFont(double size) {
-        return FXGLAssets.UI_FONT.newFont(size);
-    }
-
-    public Button newButton(String text) {
-        return new FXGLButton(text);
-    }
-
-    public <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items) {
-        return new FXGLChoiceBox<>(items);
-    }
-
-    public <T> ChoiceBox<T> newChoiceBox() {
-        return new FXGLChoiceBox<>();
-    }
-
-    @Override
-    public CheckBox newCheckBox() {
-        return new FXGLCheckBox();
-    }
-
-    @Override
-    public <T> Spinner<T> newSpinner(ObservableList<T> items) {
-        return new FXGLSpinner<>(items);
-    }
+    //fun nameProperty() = SimpleStringProperty(name)
 }

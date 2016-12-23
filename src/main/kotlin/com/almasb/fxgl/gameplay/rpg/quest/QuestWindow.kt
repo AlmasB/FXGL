@@ -23,50 +23,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.asset.FXGLAssets;
-import com.google.inject.Inject;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.text.Font;
+package com.almasb.fxgl.gameplay.rpg.quest
+
+import com.almasb.fxgl.ui.InGameWindow
+import javafx.scene.control.ScrollPane
+import javafx.scene.layout.Pane
 
 /**
- * FXGL provider of UI factory service.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class FXGLUIFactory implements UIFactory {
+class QuestWindow
+@JvmOverloads
+constructor(title: String = "Quests", val questPane: QuestPane) : InGameWindow(title, WindowDecor.MINIMIZE) {
 
-    @Inject
-    private FXGLUIFactory() {}
+    init {
+        isResizableWindow = false
+        setPrefSize(questPane.prefWidth + 25, questPane.prefHeight + 32)
 
-    public Font newFont(double size) {
-        return FXGLAssets.UI_FONT.newFont(size);
-    }
+        val scroll = ScrollPane(questPane)
+        scroll.vbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
+        scroll.maxHeight = prefHeight
+        scroll.style = "-fx-background: black;"
 
-    public Button newButton(String text) {
-        return new FXGLButton(text);
-    }
+        val pane = Pane(scroll)
 
-    public <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items) {
-        return new FXGLChoiceBox<>(items);
-    }
-
-    public <T> ChoiceBox<T> newChoiceBox() {
-        return new FXGLChoiceBox<>();
-    }
-
-    @Override
-    public CheckBox newCheckBox() {
-        return new FXGLCheckBox();
-    }
-
-    @Override
-    public <T> Spinner<T> newSpinner(ObservableList<T> items) {
-        return new FXGLSpinner<>(items);
+        contentPane = pane
     }
 }

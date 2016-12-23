@@ -28,6 +28,7 @@ package com.almasb.fxgl.ui
 
 import javafx.collections.ObservableList
 import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Spinner
 import javafx.scene.text.Font
@@ -53,6 +54,10 @@ object MockUIFactory : UIFactory {
 
     override fun <T : Any?> newChoiceBox(): ChoiceBox<T> {
         return ChoiceBox()
+    }
+
+    override fun newCheckBox(): CheckBox {
+        return CheckBox()
     }
 
     override fun <T : Any?> newSpinner(items: ObservableList<T>?): Spinner<T> {
