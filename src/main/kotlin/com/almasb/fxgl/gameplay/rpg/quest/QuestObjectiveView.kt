@@ -43,7 +43,9 @@ class QuestObjectiveView(val questObjective: QuestObjective) : HBox(10.0) {
         val factory = FXGL.getUIFactory()
 
         val text = factory.newText("", Color.WHITE, 18.0)
-        text.textProperty().bind(questObjective.valueProperty.asString("%d/${questObjective.times}"))
+        if (questObjective.times != 1) {
+            text.textProperty().bind(questObjective.valueProperty.asString("%d/${questObjective.times}"))
+        }
 
         val checkBox = QuestCheckBox()
         checkBox.stateProperty().bind(questObjective.stateProperty())

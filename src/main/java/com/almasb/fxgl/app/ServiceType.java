@@ -40,6 +40,7 @@ import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.gameplay.SlidingNotificationService;
 import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.gameplay.qte.QTEProvider;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestManager;
 import com.almasb.fxgl.input.FXGLInput;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.FXGLLoggerFactory;
@@ -295,6 +296,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends UIFactory> serviceProvider() {
             return FXGLUIFactory.class;
+        }
+    };
+
+    ServiceType<QuestManager> QUEST_MANAGER = new ServiceType<QuestManager>() {
+        @Override
+        public Class<QuestManager> service() {
+            return QuestManager.class;
+        }
+
+        @Override
+        public Class<? extends QuestManager> serviceProvider() {
+            return QuestManager.class;
         }
     };
 }

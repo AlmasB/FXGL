@@ -26,34 +26,36 @@
 
 package com.almasb.fxgl.gameplay.rpg.quest
 
-import com.almasb.fxgl.app.FXGL
-import javafx.collections.ListChangeListener
-import javafx.scene.layout.VBox
+import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.settings.UserProfileSavable
+import com.google.inject.Inject
+import javafx.collections.FXCollections
 
 /**
- * Convenient pane that contains quests in a vertical layout.
+ * Keeps track of quests, allows addition and removal.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class QuestPane(width: Double, height: Double) : VBox() {
+class QuestManager
+@Inject private constructor(): UserProfileSavable {
 
-    init {
-        prefWidth = width
-        prefHeight = height
+    private val quests = FXCollections.observableArrayList<Quest>()
 
-        children.addAll(FXGL.getQuestManager().questsProperty().map { QuestView(it, prefWidth) })
+    fun questsProperty() = FXCollections.unmodifiableObservableList(quests)
 
-        FXGL.getQuestManager().questsProperty().addListener(ListChangeListener { c ->
-            while (c.next()) {
-
-                if (c.wasAdded()) {
-                    c.addedSubList.forEach { children.add(QuestView(it, prefWidth)) }
-                } else if (c.wasRemoved()) {
-                    c.removed.map { getView(it) }.forEach { children.remove(it) }
-                }
-            }
-        })
+    fun addQuest(quest: Quest) {
+        quests.add(quest)
     }
 
-    private fun getView(quest: Quest) = children.map { it as QuestView }.filter { it.quest === quest }.firstOrNull()
+    fun removeQuest(quest: Quest) {
+        quests.remove(quest)
+    }
+
+    override fun save(profile: UserProfile) {
+        // TODO:
+    }
+
+    override fun load(profile: UserProfile) {
+        // TODO:
+    }
 }

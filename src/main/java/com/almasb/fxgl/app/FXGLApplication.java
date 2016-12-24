@@ -33,6 +33,7 @@ import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.gameplay.qte.QTE;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestManager;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
@@ -488,5 +489,12 @@ public abstract class FXGLApplication extends Application {
      */
     public final UIFactory getUIFactory() {
         return FXGL.getUIFactory();
+    }
+
+    /**
+     * @return quest manager
+     */
+    public final QuestManager getQuestManager() {
+        return FXGL.getQuestManager();
     }
 }
