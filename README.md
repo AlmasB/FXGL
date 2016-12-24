@@ -72,8 +72,7 @@ If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefu
 You can browse sample games (with screenshots) on the [FXGLGames](http://almasb.github.io/FXGLGames/) website.
 The source code is included.
 
-## Basic Usage
-#### Java Example
+## Java Example
 ```java
 public class BasicGameApp extends GameApplication {
 
@@ -109,7 +108,8 @@ public class BasicGameApp extends GameApplication {
     }
 }
 ```
-#### Kotlin Example
+
+## Kotlin Example
 ```kotlin
 class BasicGameApp : GameApplication() {
 
