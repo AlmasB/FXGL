@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.almasb</groupId>
-    <artifactId>FXGL</artifactId>
-    <version>0.2.9-SNAPSHOT</version>
+    <artifactId>fxgl</artifactId>
+    <version>0.2.9</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>

@@ -15,14 +15,13 @@ JavaFX Game Development Framework
 [![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Good for ...
-* 2D or casual UI based games
-* Hobby & academic projects
-* Learning & practising game development
-* Fast prototyping
+* 2D / casual games
+* Hobby / academic projects
+* Learning / improving game development skills
+* Fast prototyping of game ideas
 
 ## Not so good for ...
-* 3D, mobile or web (until JavaFX can painlessly support these)
-* Commercial projects
+* 3D, mobile or web (until JavaFX can readily support these)
 
 ## Latest Release Features
 
@@ -142,37 +141,28 @@ fun main(args: Array<String>) {
 }
 ```
 
-* For all (**up to date**) "Getting Started" tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki).
-* The (**up to date**) [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
-* The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) (**outdated**) videos will walk you through the basics.
+* (**up to date**) For all "Getting Started" tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki).
+* (**up to date**) The [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
+* (**outdated**) The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) videos will walk you through the basics.
 * For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
 
-## Setup Tutorials
+## Setup Video Tutorials
 * [Eclipse](https://www.youtube.com/watch?v=2kLIXDhEGo0)
 * [IntelliJ](https://www.youtube.com/watch?v=ZM2NuvMG4cg)
 
 ## Maven
 ```maven
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-
 <dependency>
-    <groupId>com.github.AlmasB</groupId>
-    <artifactId>FXGL</artifactId>
-    <version>0.2.8</version>
+    <groupId>com.github.almasb</groupId>
+    <artifactId>fxgl</artifactId>
+    <version>0.2.9</version>
 </dependency>
 ```
 
 ## Gradle
 ```gradle
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.8'
+    compile 'com.github.almasb:fxgl:0.2.9'
 }
 ```
 
