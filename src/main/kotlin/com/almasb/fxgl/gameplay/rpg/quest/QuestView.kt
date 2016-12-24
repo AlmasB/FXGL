@@ -26,42 +26,38 @@
 
 package com.almasb.fxgl.gameplay.rpg.quest
 
-import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleObjectProperty
-import java.util.concurrent.Callable
+import com.almasb.fxgl.app.FXGL
+import javafx.geometry.Pos
+import javafx.scene.control.TitledPane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 
 /**
- * TODO: reward?
+ * View for a quest in the form of a titled pane.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Quest(val name: String, val objectives: List<QuestObjective>) {
-
-    private val state = SimpleObjectProperty<QuestState>(QuestState.ACTIVE)
-
-    // TODO: make read only
-    fun stateProperty() = state
-
-    /**
-     * @return current state of this quest
-     */
-    fun getState() = state.get()
+class QuestView(val quest: Quest, width: Double) : TitledPane() {
 
     init {
+        val vbox = VBox()
+        vbox.children.addAll(quest.objectives.map { QuestObjectiveView(it) })
 
-        val failedBinding = objectives.map { it.stateProperty() }
-                .foldRight(Bindings.createBooleanBinding(Callable { false }), { state, binding ->
-                    state.isEqualTo(QuestState.FAILED).or(binding)
-                })
+        val mainCheckBox = QuestCheckBox()
+        mainCheckBox.stroke = Color.BLACK
+        mainCheckBox.stateProperty().bind(quest.stateProperty())
 
-        val completedBinding = objectives.map { it.stateProperty() }
-                .foldRight(Bindings.createBooleanBinding(Callable { true }), { state, binding ->
-                    state.isEqualTo(QuestState.COMPLETED).and(binding)
-                })
+        val hbox = HBox(mainCheckBox)
+        hbox.alignment = Pos.CENTER_RIGHT
 
-        val intermediateBinding = Bindings.`when`(completedBinding).then(QuestState.COMPLETED).otherwise(QuestState.ACTIVE)
-        val finalBinding = Bindings.`when`(failedBinding).then(QuestState.FAILED).otherwise(intermediateBinding)
+        HBox.setHgrow(hbox, Priority.ALWAYS)
 
-        state.bind(finalBinding)
+        val hboxRoot = HBox(10.0, FXGL.getUIFactory().newText(quest.name, Color.BLACK, 18.0), hbox)
+        hboxRoot.prefWidth = width - mainCheckBox.width*3 + 2
+
+        content = vbox
+        graphic = hboxRoot
     }
 }

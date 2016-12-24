@@ -27,12 +27,9 @@
 package com.almasb.fxgl.gameplay.rpg.quest
 
 import com.almasb.fxgl.app.FXGL
-import javafx.beans.binding.BooleanBinding
+import com.almasb.fxgl.time.TimerAction
 import javafx.beans.property.IntegerProperty
-import javafx.geometry.Pos
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
+import javafx.beans.property.SimpleObjectProperty
 import javafx.util.Duration
 
 /**
@@ -42,39 +39,65 @@ import javafx.util.Duration
  */
 class QuestObjective
 @JvmOverloads
-constructor(val description: String,
-            val valueProperty: IntegerProperty,
-            val times: Int = 1,
-            val duration: Duration = Duration.ZERO) : HBox(10.0) {
+constructor(
 
-    val successListener: BooleanBinding
-    val checkBox = QuestCheckBox()
+        /**
+         * Text that tells the user how to achieve this objective
+         */
+        val description: String,
+
+        /**
+         * Property that keeps track of number of times user has completed objective.
+         */
+        val valueProperty: IntegerProperty,
+
+        /**
+         * Number of times the objective needs to be completed.
+         * Default: 1.
+         */
+        val times: Int = 1,
+
+        /**
+         * How much time is given to complete this objective.
+         * Default: unlimited.
+         */
+        val expireDuration: Duration = Duration.ZERO) {
+
+    private val state = SimpleObjectProperty<QuestState>(QuestState.ACTIVE)
+
+    // TODO: make read only
+    fun stateProperty() = state
+
+    fun getState() = state.get()
+
+    private fun setState(state: QuestState) {
+        if (state == QuestState.ACTIVE) {
+            throw IllegalArgumentException("Quest objective cannot be reactivated!")
+        }
+
+        clean()
+        this.state.set(state)
+    }
+
+    private val successBinding = valueProperty.greaterThanOrEqualTo(times)
+    private val listener = javafx.beans.value.ChangeListener<Boolean> { o, old, isReached ->
+        if (isReached) {
+            setState(QuestState.COMPLETED)
+        }
+    }
+
+    private var failBinding: TimerAction? = null
 
     init {
-        val factory = FXGL.getUIFactory()
+        successBinding.addListener(listener)
 
-        val text = factory.newText("", Color.WHITE, 18.0)
-        text.textProperty().bind(valueProperty.asString("%d/$times"))
-
-        val hbox = HBox(checkBox)
-        hbox.alignment = Pos.CENTER_RIGHT
-
-        HBox.setHgrow(hbox, Priority.ALWAYS)
-
-        children.addAll(factory.newText(description, Color.WHITE, 18.0), text, hbox)
-
-        successListener = valueProperty.greaterThanOrEqualTo(times)
-
-        successListener.addListener { o, old, isReached ->
-            if (isReached) {
-                checkBox.setState(QuestState.COMPLETED)
-            } else {
-                checkBox.setState(QuestState.ACTIVE)
-            }
+        if (expireDuration !== Duration.ZERO) {
+            failBinding = FXGL.getMasterTimer().runOnceAfter({ setState(QuestState.FAILED) }, expireDuration)
         }
+    }
 
-        if (duration !== Duration.ZERO) {
-            FXGL.getMasterTimer().runOnceAfter({ checkBox.setState(QuestState.FAILED) }, duration)
-        }
+    private fun clean() {
+        successBinding.removeListener(listener)
+        failBinding?.expire()
     }
 }

@@ -35,7 +35,8 @@ import javafx.scene.shape.Rectangle
 import javafx.util.Duration
 
 /**
- *
+ * A check box with three states.
+ * Cannot be activated from UI.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

@@ -26,42 +26,33 @@
 
 package com.almasb.fxgl.gameplay.rpg.quest
 
-import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleObjectProperty
-import java.util.concurrent.Callable
+import com.almasb.fxgl.app.FXGL
+import javafx.geometry.Pos
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
+import javafx.scene.paint.Color
 
 /**
- * TODO: reward?
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Quest(val name: String, val objectives: List<QuestObjective>) {
-
-    private val state = SimpleObjectProperty<QuestState>(QuestState.ACTIVE)
-
-    // TODO: make read only
-    fun stateProperty() = state
-
-    /**
-     * @return current state of this quest
-     */
-    fun getState() = state.get()
+class QuestObjectiveView(val questObjective: QuestObjective) : HBox(10.0) {
 
     init {
+        val factory = FXGL.getUIFactory()
 
-        val failedBinding = objectives.map { it.stateProperty() }
-                .foldRight(Bindings.createBooleanBinding(Callable { false }), { state, binding ->
-                    state.isEqualTo(QuestState.FAILED).or(binding)
-                })
+        val text = factory.newText("", Color.WHITE, 18.0)
+        text.textProperty().bind(questObjective.valueProperty.asString("%d/${questObjective.times}"))
 
-        val completedBinding = objectives.map { it.stateProperty() }
-                .foldRight(Bindings.createBooleanBinding(Callable { true }), { state, binding ->
-                    state.isEqualTo(QuestState.COMPLETED).and(binding)
-                })
+        val checkBox = QuestCheckBox()
+        checkBox.stateProperty().bind(questObjective.stateProperty())
 
-        val intermediateBinding = Bindings.`when`(completedBinding).then(QuestState.COMPLETED).otherwise(QuestState.ACTIVE)
-        val finalBinding = Bindings.`when`(failedBinding).then(QuestState.FAILED).otherwise(intermediateBinding)
+        val hbox = HBox(checkBox)
+        hbox.alignment = Pos.CENTER_RIGHT
 
-        state.bind(finalBinding)
+        HBox.setHgrow(hbox, Priority.ALWAYS)
+
+        children.addAll(factory.newText(questObjective.description, Color.WHITE, 18.0), text, hbox)
     }
 }
