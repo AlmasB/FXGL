@@ -53,6 +53,7 @@ import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -144,6 +145,7 @@ public class TowerfallApp extends GameApplication {
     protected void initGame() {
         shotArrows = new SimpleIntegerProperty(0);
         jumps = new SimpleIntegerProperty(0);
+        enemiesKilled = new SimpleIntegerProperty(0);
 
         TextLevelParser parser = new TextLevelParser(factory);
         Level level = parser.parse("towerfall_level.txt");
@@ -181,6 +183,8 @@ public class TowerfallApp extends GameApplication {
 
                 arrow.removeFromWorld();
                 enemy.removeFromWorld();
+                enemiesKilled.set(enemiesKilled.get() + 1);
+
                 getGameWorld().addEntity(factory.newEnemy(27, 6));
             }
         });
@@ -190,14 +194,19 @@ public class TowerfallApp extends GameApplication {
 
     private IntegerProperty shotArrows;
     private IntegerProperty jumps;
+    private IntegerProperty enemiesKilled;
 
     @Override
     protected void initUI() {
         panel = new InGamePanel();
-
         getGameScene().addUINode(panel);
 
-        QuestPane questPane = new QuestPane(350, 450,
+        QuestPane questPane = new QuestPane(350, 450);
+        QuestWindow window = new QuestWindow(questPane);
+
+        getGameScene().addUINode(window);
+
+        List<Quest> quests = Arrays.asList(
                 new Quest("Test Quest", Arrays.asList(
                         new QuestObjective("Shoot Arrows", shotArrows, 15),
                         new QuestObjective("Jump", jumps)
@@ -208,7 +217,7 @@ public class TowerfallApp extends GameApplication {
                 )),
 
                 new Quest("Test Quest 2", Arrays.asList(
-                        new QuestObjective("Shoot Arrows", shotArrows, 25)
+                        new QuestObjective("Kill an enemy", enemiesKilled)
                 )),
 
                 new Quest("Test Quest 2", Arrays.asList(
@@ -220,15 +229,7 @@ public class TowerfallApp extends GameApplication {
                 ))
         );
 
-//        InGameWindow window = new InGameWindow("Quests", InGameWindow.WindowDecor.MINIMIZE);
-////        window.prefWidthProperty().bind(questPane.widthProperty());
-////        window.prefHeightProperty().bind(questPane.heightProperty());
-//        window.setContentPane(questPane);
-//        window.setResizableWindow(true);
-
-        QuestWindow window = new QuestWindow(questPane);
-
-        getGameScene().addUINode(window);
+        quests.forEach(getQuestManager()::addQuest);
     }
 
     @Override
