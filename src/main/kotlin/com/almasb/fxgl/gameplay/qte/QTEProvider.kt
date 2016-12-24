@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,6 @@ import javafx.scene.control.Button
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
-import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import javafx.util.Duration
 import java.util.*
 import java.util.concurrent.ScheduledFuture
@@ -59,8 +57,7 @@ class QTEProvider
     private val closeButton = Button()
     private val keysBox = HBox(10.0)
 
-    private val queue = ArrayDeque<KeyCode>()
-    private val labels = ArrayDeque<Text>()
+    private val qteKeys = ArrayDeque<QTEKey>()
 
     private lateinit var callback: Consumer<Boolean>
 
@@ -73,14 +70,12 @@ class QTEProvider
 
         eventHandler = EventHandler<KeyEvent> {
 
-            val k = queue.poll()
+            val qteKey = qteKeys.poll()
 
-            if (k == it.code) {
+            if (qteKey.keyCode == it.code) {
+                qteKey.lightUp()
 
-                val label = labels.poll()
-                label.fill = Color.YELLOW
-
-                if (queue.isEmpty()) {
+                if (qteKeys.isEmpty()) {
                     close()
                     callback.accept(true)
                 }
@@ -101,8 +96,8 @@ class QTEProvider
     private fun close() {
         scheduledAction.cancel(true)
 
-        queue.clear()
-        labels.clear()
+        qteKeys.clear()
+        keysBox.children.clear()
 
         fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
 
@@ -113,23 +108,21 @@ class QTEProvider
         if (keys.isEmpty())
             throw IllegalArgumentException("At least 1 key must be specified")
 
-        if (queue.isNotEmpty())
+        if (qteKeys.isNotEmpty())
             throw IllegalStateException("Cannot start more than 1 QTE at a time")
 
         this.callback = callback
 
-        queue.addAll(keys)
-        labels.addAll(
-                keys.map { FXGL.getUIFactory().newText(it.getName(), Color.WHITE, 72.0) }
-        )
+        qteKeys.addAll(keys.map { QTEKey(it) })
 
-        keysBox.children.setAll(labels)
+        keysBox.children.setAll(qteKeys)
 
         show()
 
+        // timer
         scheduledAction = FXGL.getExecutor().schedule( {
 
-            if (queue.isNotEmpty()) {
+            if (qteKeys.isNotEmpty()) {
                 Platform.runLater {
 
                     close()

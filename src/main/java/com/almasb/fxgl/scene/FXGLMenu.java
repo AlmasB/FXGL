@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,6 +58,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -103,7 +104,7 @@ public abstract class FXGLMenu extends FXGLScene {
         this.type = type;
         this.listener = app.getMenuListener();
 
-        getRoot().getChildren().addAll(
+        getContentRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),
                 createTitleView(app.getSettings().getTitle()),
                 createVersionView(makeVersionString()),
@@ -114,10 +115,10 @@ public abstract class FXGLMenu extends FXGLScene {
         listener.profileNameProperty().addListener((o, oldName, newName) -> {
             if (!oldName.isEmpty()) {
                 // remove last node which *should* be profile view
-                getRoot().getChildren().remove(getRoot().getChildren().size() - 1);
+                getContentRoot().getChildren().remove(getContentRoot().getChildren().size() - 1);
             }
 
-            getRoot().getChildren().add(createProfileView("Profile: " + newName));
+            getContentRoot().getChildren().add(createProfileView("Profile: " + newName));
         });
     }
 
@@ -191,6 +192,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing list of save files and loadTask/delete buttons
      */
     protected final MenuContent createContentLoad() {
+        log.debug("createContentLoad()");
+
         ListView<SaveFile> list = new ListView<>();
 
         list.setItems(listener.getSaveLoadManager().saveFiles());
@@ -227,6 +230,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content with difficulty and playtime
      */
     protected final MenuContent createContentGameplay() {
+        log.debug("createContentGameplay()");
+
         Spinner<GameDifficulty> difficultySpinner =
                 new FXGLSpinner<>(FXCollections.observableArrayList(GameDifficulty.values()));
         difficultySpinner.increment();
@@ -243,6 +248,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing input mappings (action -> key/mouse)
      */
     protected final MenuContent createContentControls() {
+        log.debug("createContentControls()");
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(50);
@@ -322,6 +329,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content with video settings
      */
     protected final MenuContent createContentVideo() {
+        log.debug("createContentVideo()");
+
         Spinner<SceneDimension> spinner =
                 new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
 
@@ -338,6 +347,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing music and sound volume sliders
      */
     protected final MenuContent createContentAudio() {
+        log.debug("createContentAudio()");
+
         Slider sliderMusic = new Slider(0, 1, 1);
         sliderMusic.valueProperty().bindBidirectional(app.getAudioPlayer().globalMusicVolumeProperty());
 
@@ -365,6 +376,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing a list of credits
      */
     protected final MenuContent createContentCredits() {
+        log.debug("createContentCredits()");
+
         ScrollPane pane = new ScrollPane();
         pane.setPrefWidth(app.getWidth() * 3 / 5);
         pane.setPrefHeight(app.getHeight() / 2);
@@ -386,9 +399,40 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
+     * @return menu content containing feedback options
+     */
+    protected final MenuContent createContentFeedback() {
+        log.debug("createContentFeedback()");
+
+        // url is a string key defined in system.properties
+        Consumer<String> openBrowser = url -> {
+            FXGL.getNet()
+                    .openBrowserTask(FXGL.getString(url))
+                    .onFailure(error -> log.warning("Error opening browser: " + error))
+                    .execute();
+        };
+
+        Button btnGoogle = new Button("Google Forms");
+        btnGoogle.setOnAction(e -> openBrowser.accept("url.googleforms"));
+
+        Button btnSurveyMonkey = new Button("Survey Monkey");
+        btnSurveyMonkey.setOnAction(e -> openBrowser.accept("url.surveymonkey"));
+
+        VBox vbox = new VBox(15,
+                FXGL.getUIFactory().newText("Choose your feedback method", Color.WHEAT, 18),
+                btnGoogle,
+                btnSurveyMonkey);
+        vbox.setAlignment(Pos.CENTER);
+
+        return new MenuContent(vbox);
+    }
+
+    /**
      * @return menu content containing a list of achievements
      */
     protected final MenuContent createContentAchievements() {
+        log.debug("createContentAchievements()");
+
         MenuContent content = new MenuContent();
 
         for (Achievement a : app.getAchievementManager().getAchievements()) {
@@ -412,6 +456,8 @@ public abstract class FXGLMenu extends FXGLScene {
      * @return menu content containing multiplayer options
      */
     protected final MenuContent createContentMultiplayer() {
+        log.debug("createContentMultiplayer()");
+
         return new MenuContent(FXGL.getUIFactory().newText("TODO: MULTIPLAYER"));
     }
 
@@ -434,6 +480,14 @@ public abstract class FXGLMenu extends FXGLScene {
                     getChildren().addAll(item, createSeparator(maxW));
                 }
             }
+
+            sceneProperty().addListener((o, oldScene, newScene) -> {
+                if (newScene != null) {
+                    onOpen();
+                } else {
+                    onClose();
+                }
+            });
         }
 
         private Line createSeparator(int width) {
@@ -443,8 +497,35 @@ public abstract class FXGLMenu extends FXGLScene {
             return sep;
         }
 
-        public double getLayoutHeight() {
-            return 10 * getChildren().size();
+        private Runnable onOpen = null;
+        private Runnable onClose = null;
+
+        /**
+         * Set on open handler.
+         *
+         * @param onOpenAction method to be called when content opens
+         */
+        public void setOnOpen(Runnable onOpenAction) {
+            this.onOpen = onOpenAction;
+        }
+
+        /**
+         * Set on close handler.
+         *
+         * @param onCloseAction method to be called when content closes
+         */
+        public void setOnClose(Runnable onCloseAction) {
+            this.onClose = onCloseAction;
+        }
+
+        private void onOpen() {
+            if (onOpen != null)
+                onOpen.run();
+        }
+
+        private void onClose() {
+            if (onClose != null)
+                onClose.run();
         }
     }
 
@@ -454,7 +535,7 @@ public abstract class FXGLMenu extends FXGLScene {
      * @param node the node to add
      */
     protected final void addUINode(Node node) {
-        getRoot().getChildren().add(node);
+        getContentRoot().getChildren().add(node);
     }
 
     private void fireMenuEvent(Event event) {
@@ -493,7 +574,6 @@ public abstract class FXGLMenu extends FXGLScene {
         log.debug("fireLoad()");
 
         listener.onLoad(fileName);
-        //fireMenuEvent(new MenuDataEvent(MenuDataEvent.LOAD, fileName));
     }
 
     /**
@@ -514,7 +594,6 @@ public abstract class FXGLMenu extends FXGLScene {
         log.debug("fireDelete()");
 
         listener.onDelete(fileName);
-        //fireMenuEvent(new MenuDataEvent(MenuDataEvent.DELETE, fileName));
     }
 
     /**

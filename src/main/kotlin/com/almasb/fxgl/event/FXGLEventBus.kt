@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.fxeventbus.EventBus
 import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
@@ -34,6 +33,7 @@ import com.google.inject.Inject
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
+import java.lang.reflect.Modifier
 
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
@@ -43,6 +43,7 @@ import javafx.event.EventType
 class FXGLEventBus
 @Inject
 private constructor() : EventBus {
+
     private val log = FXGL.getLogger(javaClass)
 
     init {
@@ -63,5 +64,36 @@ private constructor() : EventBus {
         log.debug { "Firing event: $event" }
 
         bus.fireEvent(event)
+    }
+
+    override fun scanForHandlers(instance: Any) {
+        for (method in instance.javaClass.declaredMethods) {
+            val annotation = method.getDeclaredAnnotation(Handles::class.java)
+
+            // method is marked @Handles
+            if (annotation != null) {
+
+                if (method.parameterTypes.isEmpty() || method.parameterTypes.size > 1) {
+                    throw IllegalArgumentException("Method ${method.name} must have a single parameter of type Event or subtype")
+                }
+
+                val eventClass: Class<*> = if (annotation.eventClass == Event::class) {
+                    // default is used, so get class from method param type
+                    method.parameterTypes[0]
+                } else {
+                    annotation.eventClass.java
+                }
+
+                val eventTypeObject = (eventClass.declaredFields
+                        // find by name and static modifier
+                        .find { it.name == annotation.eventType && Modifier.isStatic(it.modifiers) }
+                        // fail if null
+                        ?.get(null) ?: throw IllegalArgumentException("<${annotation.eventType}> public static field not found in ${eventClass}"))
+                        // ensure that it's EventType
+                        as? EventType<*> ?: throw IllegalArgumentException("<${annotation.eventType}> is not of type EventType<*> in ${eventClass}")
+
+                addEventHandler(eventTypeObject, { method.invoke(instance, it) })
+            }
+        }
     }
 }

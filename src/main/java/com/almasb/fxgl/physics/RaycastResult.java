@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +31,8 @@ import javafx.geometry.Point2D;
 import java.util.Optional;
 
 /**
- * TODO: redesign to avoid optionals.
- *
- * Result of a raycast. Contains optional entity and point
+ * Result of a raycast.
+ * Contains optional entity and point
  * which represent first non ignored physics entity
  * and its point of collision in the ray's path.
  *
@@ -41,10 +40,12 @@ import java.util.Optional;
  */
 public final class RaycastResult {
 
-    private Optional<Entity> entity;
-    private Optional<Point2D> point;
+    public static final RaycastResult NONE = new RaycastResult(null, null);
 
-    RaycastResult(Optional<Entity> entity, Optional<Point2D> point) {
+    private Entity entity;
+    private Point2D point;
+
+    RaycastResult(Entity entity, Point2D point) {
         this.entity = entity;
         this.point = point;
     }
@@ -54,13 +55,13 @@ public final class RaycastResult {
      * whose raycastIgnored flag is false
      */
     public Optional<Entity> getEntity() {
-        return entity;
+        return Optional.ofNullable(entity);
     }
 
     /**
      * @return the collision point in world coordinates
      */
     public Optional<Point2D> getPoint() {
-        return point;
+        return Optional.ofNullable(point);
     }
 }

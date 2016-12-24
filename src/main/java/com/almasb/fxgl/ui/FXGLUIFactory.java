@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ import com.almasb.fxgl.asset.FXGLAssets;
 import com.google.inject.Inject;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.text.Font;
@@ -57,6 +58,11 @@ public final class FXGLUIFactory implements UIFactory {
 
     public <T> ChoiceBox<T> newChoiceBox() {
         return new FXGLChoiceBox<>();
+    }
+
+    @Override
+    public CheckBox newCheckBox() {
+        return new FXGLCheckBox();
     }
 
     @Override

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,14 +26,19 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
+import com.almasb.fxgl.entity.component.MainViewComponent;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import jfxtras.scene.control.window.Window;
 
 /**
@@ -92,5 +97,35 @@ public class DeveloperMenuBarController implements UIController {
         window.setContentPane(new Pane(ui.getRoot()));
 
         app.getGameScene().addUINode(window);
+    }
+
+    // TODO: we might want to keep our controllers cached
+    // so that we don't lose data and don't load ui again
+    //private ColorAdjustController colorAdjustController = null;
+    private UI uiColorAdjust = null;
+
+    // TODO: what happens if same dialog is opened twice?
+    // we need to keep track of dialog / window state (open / closed)
+    public void openColorAdjustDialog() {
+        if (uiColorAdjust == null) {
+            uiColorAdjust = app.getAssetLoader().loadUI("dialog_color_adjust.fxml", new ColorAdjustController());
+        }
+
+        Window window = new InGameWindow("Color Adjust", InGameWindow.WindowDecor.ALL);
+        window.setPrefSize(380, 450);
+        window.setContentPane(new Pane(uiColorAdjust.getRoot()));
+
+        app.getGameScene().addUINode(window);
+    }
+
+    public void onShowBBox(ActionEvent event) {
+        CheckMenuItem item = (CheckMenuItem) event.getSource();
+        FXGL.setProperty("dev.showbbox", item.isSelected());
+
+        app.getGameWorld()
+                .getEntitiesByComponent(MainViewComponent.class)
+                .forEach(e -> {
+                    e.getComponentUnsafe(MainViewComponent.class).turnOnDebugBBox(item.isSelected());
+                });
     }
 }

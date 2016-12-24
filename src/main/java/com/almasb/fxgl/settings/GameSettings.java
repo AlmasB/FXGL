@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -122,21 +122,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
-     * Setting to true will show render and performance FPS
-     * in the bottom left corner.
-     *
-     * @param b show fps flag
-     * @defaultValue true
-     * @deprecated use {@link #setProfilingEnabled(boolean)}
-     */
-    @Deprecated
-    public void setShowFPS(boolean b) {
-        profilingEnabled = b;
-    }
-
-    /**
      * Setting to true will enable profiler that reports on performance
      * when FXGL exits.
+     * Also shows render and performance FPS in the bottom left corner
+     * when the application is run.
      *
      * @param b profiling enabled flag
      * @defaultValue true

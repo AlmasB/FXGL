@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,13 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxeventbus.EventBus;
+import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxeventbus.FXEventBus;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.concurrent.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
+import com.almasb.fxgl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.FXGLNotificationService;
 import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.input.FXGLInput;
@@ -103,6 +104,7 @@ public class MockApplicationModule extends ApplicationModule {
 
     @Override
     protected void bindServices() {
+        mockProperties();
         mockTimer();
         mockPooler();
         mockLoggerFactory();
@@ -113,6 +115,14 @@ public class MockApplicationModule extends ApplicationModule {
         mockUIFactory();
         mockAssetLoader();
         mockPhysics();
+    }
+
+    /**
+     * Supplies values for properties that would normally be loaded
+     * from the system.properties file.
+     */
+    private void mockProperties() {
+        FXGL.setProperty("dev.showbbox", false);
     }
 
     private void mockTimer() {
@@ -137,7 +147,7 @@ public class MockApplicationModule extends ApplicationModule {
     }
 
     private void mockEventBus() {
-        bind(EventBus.class).to(FXEventBus.class);
+        bind(EventBus.class).to(FXGLEventBus.class);
     }
 
     private void mockNotificationService() {

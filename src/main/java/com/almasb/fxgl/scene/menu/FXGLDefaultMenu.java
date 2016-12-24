@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -121,6 +121,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createMenuBodyMainMenu() {
+        log.debug("createMenuBodyMainMenu()");
+
         MenuItem itemContinue = new MenuItem("CONTINUE");
         itemContinue.setOnAction(e -> fireContinue());
 
@@ -154,6 +156,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createMenuBodyGameMenu() {
+        log.debug("createMenuBodyGameMenu()");
+
         MenuItem itemResume = new MenuItem("RESUME");
         itemResume.setOnAction(e -> fireResume());
 
@@ -176,6 +180,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createOptionsMenu() {
+        log.debug("createOptionsMenu()");
+
         MenuItem itemGameplay = new MenuItem("GAMEPLAY");
         itemGameplay.setMenuContent(this::createContentGameplay);
 
@@ -198,13 +204,18 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     protected MenuBox createExtraMenu() {
-        MenuItem itemCredits = new MenuItem("CREDITS");
-        itemCredits.setMenuContent(this::createContentCredits);
+        log.debug("createExtraMenu()");
 
         MenuItem itemAchievements = new MenuItem("TROPHIES");
         itemAchievements.setMenuContent(this::createContentAchievements);
 
-        return new MenuBox(200, itemCredits, itemAchievements);
+        MenuItem itemCredits = new MenuItem("CREDITS");
+        itemCredits.setMenuContent(this::createContentCredits);
+
+        MenuItem itemFeedback = new MenuItem("FEEDBACK");
+        itemFeedback.setMenuContent(this::createContentFeedback);
+
+        return new MenuBox(200, itemAchievements, itemCredits, itemFeedback);
     }
 
     @Override
@@ -254,6 +265,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
     private class MenuItem extends FXGLButton {
         private MenuBox parent;
+        private MenuContent cachedContent = null;
 
         MenuItem(String name) {
             super(name);
@@ -264,7 +276,13 @@ public class FXGLDefaultMenu extends FXGLMenu {
         }
 
         public void setMenuContent(Supplier<MenuContent> contentSupplier) {
-            this.addEventHandler(ActionEvent.ACTION, event -> switchMenuContentTo(contentSupplier.get()));
+
+            this.addEventHandler(ActionEvent.ACTION, event -> {
+                if (cachedContent == null)
+                    cachedContent = contentSupplier.get();
+
+                switchMenuContentTo(cachedContent);
+            });
         }
 
         public void setChild(MenuBox menu) {

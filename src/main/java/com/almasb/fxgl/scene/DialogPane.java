@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,13 +32,17 @@ import com.sun.javafx.scene.traversal.Algorithm;
 import com.sun.javafx.scene.traversal.Direction;
 import com.sun.javafx.scene.traversal.ParentTraversalEngine;
 import com.sun.javafx.scene.traversal.TraversalContext;
+import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -63,8 +67,6 @@ import java.util.function.Predicate;
  */
 public class DialogPane extends Pane {
 
-    //private static final Logger log = FXGLLoggerOld.getLogger("FXGL.DialogPane");
-
     public static final Predicate<String> ALPHANUM = input -> input.matches("^[\\pL\\pN]+$");
 
     private Window window = new Window();
@@ -78,8 +80,8 @@ public class DialogPane extends Pane {
         display.currentSceneProperty().addListener((o, oldScene, newScene) -> {
             // if we somehow changed scene while the dialog is showing
             if (isShowing()) {
-                oldScene.getRoot().getChildren().remove(this);
-                newScene.getRoot().getChildren().add(this);
+                closeInScene(oldScene);
+                openInScene(newScene);
             }
         });
 
@@ -102,6 +104,7 @@ public class DialogPane extends Pane {
         initTraversalPolicy();
     }
 
+    @SuppressWarnings("deprecation")
     private void initTraversalPolicy() {
         this.setImpl_traversalEngine(new ParentTraversalEngine(this, new Algorithm() {
             @Override
@@ -439,7 +442,10 @@ public class DialogPane extends Pane {
 
         Point2D size = (Point2D) n.getUserData();
 
-        Rectangle box = new Rectangle(size.getX() + 200, size.getY() + 100);
+        Rectangle box = new Rectangle();
+        box.widthProperty().bind(Bindings.max(size.getX() + 200, window.widthProperty()));
+        box.setHeight(size.getY() + 100);
+        box.setTranslateY(3);
         box.setStroke(Color.AZURE);
 
         StackPane root = new StackPane();
@@ -461,7 +467,7 @@ public class DialogPane extends Pane {
 
     void show() {
         if (!isShowing()) {
-            display.getCurrentScene().getRoot().getChildren().add(this);
+            openInScene(display.getCurrentScene());
 
             this.requestFocus();
 
@@ -472,7 +478,7 @@ public class DialogPane extends Pane {
 
     void close() {
         if (states.isEmpty()) {
-            display.getCurrentScene().getRoot().getChildren().remove(this);
+            closeInScene(display.getCurrentScene());
 
             if (onClosed != null)
                 onClosed.run();
@@ -481,6 +487,20 @@ public class DialogPane extends Pane {
             window.setTitle(data.title);
             window.setContentPane(data.contentPane);
         }
+    }
+
+    private Effect bgBlur = new BoxBlur(5, 5, 3);
+    private Effect savedEffect = null;
+
+    private void openInScene(FXGLScene scene) {
+        savedEffect = scene.getEffect();
+        scene.setEffect(bgBlur);
+        scene.getRoot().getChildren().add(this);
+    }
+
+    private void closeInScene(FXGLScene scene) {
+        scene.getRoot().getChildren().remove(this);
+        scene.setEffect(savedEffect);
     }
 
     private static class DialogData {

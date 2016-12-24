@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -88,7 +88,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private ParticleSystem particleSystem = jboxWorld.getParticleSystem();
 
-    // TODO: externalize 128
     private Array<Entity> entities = new Array<>(false, 128);
 
     private Array<CollisionHandler> collisionHandlers = new Array<>(false, 16);
@@ -634,7 +633,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (raycastCallback.point != null)
             point = toPoint(raycastCallback.point);
 
-        return new RaycastResult(Optional.ofNullable(entity), Optional.ofNullable(point));
+        if (entity == null && point == null)
+            return RaycastResult.NONE;
+
+        return new RaycastResult(entity, point);
     }
 
     /**

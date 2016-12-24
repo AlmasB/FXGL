@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,9 @@ public enum MenuStyle {
 
     GTA5("fxgl_gta5.css"),
 
-    CCTR("fxgl_cctr.css");
+    CCTR("fxgl_cctr.css"),
+
+    WARCRAFT3("fxgl_war3.css");
 
     private String css;
 

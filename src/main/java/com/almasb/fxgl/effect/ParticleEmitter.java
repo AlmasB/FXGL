@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -278,6 +278,7 @@ public class ParticleEmitter {
             return EMPTY;
         }
 
+        // TODO: this generates new lists
         rateAC = 0;
         return IntStream.range(0, numParticles)
                 .mapToObj(i -> emit(i, x, y))
@@ -294,6 +295,7 @@ public class ParticleEmitter {
      * @return particle
      */
     private Particle emit(int i, double x, double y) {
+        // TODO: too many particles are created, pool instead
         return new Particle(sourceImage, spawnPointFunction.apply(i, x, y),
                 velocityFunction.apply(i, x, y),
                 gravityFunction.get(),

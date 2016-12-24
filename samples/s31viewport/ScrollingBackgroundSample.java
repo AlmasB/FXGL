@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,11 +28,12 @@ package s31viewport;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
 /**
@@ -41,6 +42,8 @@ import javafx.scene.input.KeyCode;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ScrollingBackgroundSample extends GameApplication {
+
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -62,39 +65,32 @@ public class ScrollingBackgroundSample extends GameApplication {
         getInput().addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-                getGameScene().getViewport().setX(getGameScene().getViewport().getX() + 10);
+
+                player.translateX(10);
             }
         }, KeyCode.D);
 
         getInput().addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-                getGameScene().getViewport().setX(getGameScene().getViewport().getX() - 10);
+
+                if (player.getX() >= 10)
+                    player.translateX(-10);
             }
         }, KeyCode.A);
-
-//        getInput().addAction(new UserAction("Move Up") {
-//            @Override
-//            protected void onAction() {
-//                getGameScene().getViewport().setY(getGameScene().getViewport().getY() - 10);
-//            }
-//        }, KeyCode.W);
-//
-//        getInput().addAction(new UserAction("Move Down") {
-//            @Override
-//            protected void onAction() {
-//                getGameScene().getViewport().setY(getGameScene().getViewport().getY() + 10);
-//            }
-//        }, KeyCode.S);
     }
 
     @Override
     protected void initAssets() {}
 
-    private Image bgImage;
-
     @Override
     protected void initGame() {
+        player = Entities.builder()
+                .buildAndAttach(getGameWorld());
+
+        getGameScene().getViewport().bindToEntity(player, 0, 0);
+
+        // 1. load texture to be the background and specify orientation (horizontal or vertical)
         getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 600),
                 Orientation.HORIZONTAL));
     }

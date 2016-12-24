@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.scene;
 
+import com.almasb.easyio.UIDialogHandler;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -194,5 +195,5 @@ public interface Display extends UserProfileSavable {
      * @param message message to show
      * @return dialog handler
      */
-    DialogHandler showProgressBox(String message);
+    UIDialogHandler showProgressBox(String message);
 }

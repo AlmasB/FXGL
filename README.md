@@ -2,7 +2,7 @@
 
 JavaFX Game Development Framework
 
-[![Release](https://jitpack.io/v/AlmasB/FXGL.svg)](https://jitpack.io/#AlmasB/FXGL)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/FXGL.svg)]()
 [![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://jitpack.io/com/github/AlmasB/FXGL/0.2.8/javadoc/index.html)
 ![Code](https://img.shields.io/badge/lines%20of%20code-15k-blue.svg)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)
@@ -15,14 +15,13 @@ JavaFX Game Development Framework
 [![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Good for ...
-* 2D or casual UI based games
-* Hobby & academic projects
-* Learning & practising game development
-* Fast prototyping
+* 2D / casual games
+* Hobby / academic projects
+* Learning / improving game development skills
+* Fast prototyping of game ideas
 
 ## Not so good for ...
-* 3D, mobile or web (until JavaFX can painlessly support these)
-* Commercial projects
+* 3D, mobile or web (until JavaFX can readily support these)
 
 ## Latest Release Features
 
@@ -35,9 +34,10 @@ Dynamic Texture Manipulation | [Log4j2](http://logging.apache.org/log4j/2.x/)
 Sprite Sheet Animations | Performance Monitor + Profiling
 Target Screen Resolution (+Fullscreen) | Global Services Framework
 Customizable Intro Video / Animation | Developer Panel
-Customizable Main Menu / Game Menu (3 built-in menu styles) |
-Customizable UI elements (Dialogs, Bars, Buttons, etc) |
+Customizable Main Menu / Game Menu (3 built-in menu styles) | GC-free Object Pooling
+Customizable UI elements (Dialogs, Bars, Buttons, etc)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/progress_bar.jpg" width="512" /><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/profile.jpg" width="512" /> |
 Customizable Global CSS for menus / UI elements |
+Post-processing Effects (**alpha**) |
 
 
 User Input | I/O
@@ -49,19 +49,21 @@ Full Input Mocking   | Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt",
 Physics |   Utilities
 :---: | :---:
 [JBox2D](https://github.com/jbox2d/jbox2d) | [GameUtils](https://github.com/AlmasB/GameUtils)
-Unified Collision Handling (jbox2d + FXGL physics) |
+FXGL Physics (BBox + SAT) |
+Unified Collision Handling (JBox2D + FXGL physics) |
 
 
 Gameplay | AI
 :---:    | :---:
-[Ents](https://github.com/AlmasB/Ents) | [gdxAI](https://github.com/libgdx/gdx-ai)
-Game Loop                              | [AStar](https://github.com/AlmasB/AStar)
-Quick Time Events (QTE) | JavaScript Behavior Injections (for entities) + JavaScript Coding Environment
-Achievement System | Text/Script Parsers
-Notification System |
+[Ents (ECS)](https://github.com/AlmasB/Ents) | [gdxAI](https://github.com/libgdx/gdx-ai)
+Full Game Loop                              | [AStar](https://github.com/AlmasB/AStar)
+Quick Time Events (QTE)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/QTE.jpg" width="256" /> | JavaScript Behavior Injections (for entities) + JavaScript FXGL Environment Variables<br/><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/JS.jpg" width="768" />
+Achievement System| 
+Notification System<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/achievement.jpg" width="512" /> |
 Saving / Loading System |
 User Profiles (Save/Load/Restore Game Settings) |
-
+Level Parsers (.txt, .json (**alpha**) using [jackson](https://github.com/FasterXML/jackson-databind))|
+Quest Tracker<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/quests.jpg" width="512" />|
 
 If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
 
@@ -139,40 +141,36 @@ fun main(args: Array<String>) {
 }
 ```
 
-* For all (**up to date**) "Getting Started" tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki).
-* The (**up to date**) [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
-* The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) (**outdated**) videos will walk you through the basics.
+* (**up to date**) For all "Getting Started" tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki).
+* (**up to date**) The [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
+* (**outdated**) The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) videos will walk you through the basics.
 * For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
 
-## Setup Tutorials
+## Setup Video Tutorials
 * [Eclipse](https://www.youtube.com/watch?v=2kLIXDhEGo0)
 * [IntelliJ](https://www.youtube.com/watch?v=ZM2NuvMG4cg)
 
 ## Maven
 ```maven
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-
 <dependency>
-    <groupId>com.github.AlmasB</groupId>
-    <artifactId>FXGL</artifactId>
-    <version>0.2.8</version>
+    <groupId>com.github.almasb</groupId>
+    <artifactId>fxgl</artifactId>
+    <version>0.2.9</version>
 </dependency>
 ```
 
 ## Gradle
 ```gradle
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
 dependencies {
-    compile 'com.github.AlmasB:FXGL:0.2.8'
+    compile 'com.github.almasb:fxgl:0.2.9'
 }
 ```
+
+## Uber jar
+Latest pre-compiled uber jar can be found in [Releases](https://github.com/AlmasB/FXGL/releases)
 
 ## Contact
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
 [![Google+](https://img.shields.io/badge/Google+-AlmasB-red.svg)](https://plus.google.com/+AlmasB0/about)
+[![Survey](https://img.shields.io/badge/Feedback-SurveyMonkey-red.svg)](https://www.surveymonkey.com/r/BH6LLPM)
+[![Survey2](https://img.shields.io/badge/Feedback-Google%20Forms-red.svg)](https://goo.gl/forms/6wrMnOBxTE1fEpOy2)

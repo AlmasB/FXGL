@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,9 +38,13 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 /**
  * Adds a game scene view to an entity.
@@ -52,18 +56,50 @@ import javafx.scene.shape.Rectangle;
 @Required(RotationComponent.class)
 public class MainViewComponent extends AbstractComponent {
 
-    private static boolean showBBox = false;
-    private static Color showBBoxColor = Color.BLACK;
+    private static Color showBBoxColor = Color.RED;
 
     /**
-     * Turns on displaying of bounding boxes. Useful for debugging.
-     * Note: this only shows bounding boxes, not each hit box.
-     *
      * @param color the color to highlight bounding boxes
      */
-    public static final void turnOnDebugBBox(Color color) {
-        showBBox = true;
-        showBBoxColor = color;
+    public static void setShowBBoxColor(Color showBBoxColor) {
+        MainViewComponent.showBBoxColor = showBBoxColor;
+    }
+
+    private boolean showBBox() {
+        return FXGL.getBoolean("dev.showbbox");
+    }
+
+    /**
+     * Turn on / off bounding box display.
+     * Useful for debugging to see the bounds of each hit box.
+     *
+     * @param on on / off flag
+     */
+    public final void turnOnDebugBBox(boolean on) {
+        if (!on) {
+            removeDebugBBox();
+            return;
+        }
+
+        if (getEntity().hasComponent(BoundingBoxComponent.class)) {
+            addDebugBBox();
+        } else {
+            getEntity().addComponentListener(new ComponentListener() {
+                @Override
+                public void onComponentAdded(Component component) {
+                    if (component instanceof BoundingBoxComponent) {
+                        addDebugBBox();
+                    }
+                }
+
+                @Override
+                public void onComponentRemoved(Component component) {
+                    if (component instanceof BoundingBoxComponent) {
+                        removeDebugBBox();
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -155,8 +191,9 @@ public class MainViewComponent extends AbstractComponent {
         this.view.getNodes().setAll(entityView.getNodes());
         setRenderLayer(entityView.getRenderLayer());
 
-        // TODO: double check logic
-        if (showBBox) {
+        // TODO: double check logic when adding / removing views; adding / removing hit boxes
+        // also view / bbox components
+        if (showBBox()) {
             this.view.addNode(debugBBox);
         }
 
@@ -190,26 +227,8 @@ public class MainViewComponent extends AbstractComponent {
     public void onAdded(Entity entity) {
         bindView();
 
-        if (showBBox) {
-            if (getEntity().hasComponent(BoundingBoxComponent.class)) {
-                addDebugBBox();
-            } else {
-                getEntity().addComponentListener(new ComponentListener() {
-                    @Override
-                    public void onComponentAdded(Component component) {
-                        if (component instanceof BoundingBoxComponent) {
-                            addDebugBBox();
-                        }
-                    }
-
-                    @Override
-                    public void onComponentRemoved(Component component) {
-                        if (component instanceof BoundingBoxComponent) {
-                            removeDebugBBox();
-                        }
-                    }
-                });
-            }
+        if (showBBox()) {
+            turnOnDebugBBox(true);
         }
     }
 
@@ -234,22 +253,58 @@ public class MainViewComponent extends AbstractComponent {
         )));
     }
 
-    private Rectangle debugBBox = new Rectangle();
+    private Group debugBBox = new Group();
+
+    private ListChangeListener<? super HitBox> hitboxListener = c -> {
+        debugBBox.getChildren().clear();
+        c.getList().forEach(this::addDebugView);
+    };
 
     private void addDebugBBox() {
         BoundingBoxComponent bbox = Entities.getBBox(getEntity());
 
-        debugBBox.setStroke(showBBoxColor);
-        debugBBox.setFill(null);
-        debugBBox.translateXProperty().bind(bbox.minXLocalProperty());
-        debugBBox.translateYProperty().bind(bbox.minYLocalProperty());
-        debugBBox.widthProperty().bind(bbox.widthProperty());
-        debugBBox.heightProperty().bind(bbox.heightProperty());
+        if (bbox == null)
+            return;
+
+        // generate view for future boxes
+        bbox.hitBoxesProperty().addListener(hitboxListener);
+
+        // generate view for current
+        bbox.hitBoxesProperty().forEach(this::addDebugView);
 
         getView().addNode(debugBBox);
     }
 
+    private void addDebugView(HitBox hitBox) {
+        Shape view = null;
+
+        if (hitBox.getShape().isCircle()) {
+            double radius = hitBox.getWidth() / 2;
+            view = new Circle(radius, radius, radius, null);
+
+        } else if (hitBox.getShape().isRectangle()) {
+            view = new Rectangle(hitBox.getWidth(), hitBox.getHeight(), null);
+        }
+
+        if (view != null) {
+            view.setStroke(showBBoxColor);
+
+            view.setTranslateX(hitBox.getMinX());
+            view.setTranslateY(hitBox.getMinY());
+
+            debugBBox.getChildren().add(view);
+        }
+    }
+
     private void removeDebugBBox() {
+        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
+
+        if (bbox == null)
+            return;
+
+        bbox.hitBoxesProperty().removeListener(hitboxListener);
+
+        debugBBox.getChildren().clear();
         getView().removeNode(debugBBox);
     }
 

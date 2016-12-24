@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,9 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
 
 /**
- *
+ * EntityView for scrollable backgrounds.
+ * Ensure that your viewport x, y cannot go < 0.
+ * In other words, limit min x, y to 0.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -86,13 +88,9 @@ class ScrollingBackgroundView
         addNode(canvas)
 
         redraw()
-
-        //FXGL.getMasterTimer().addUpdateListener { redraw() }
     }
 
     private fun redraw() {
-        println("redraw $sx $sy")
-
         g.clearRect(0.0, 0.0, canvas.width, canvas.height)
 
         if (orientation == Orientation.HORIZONTAL) {
@@ -100,33 +98,11 @@ class ScrollingBackgroundView
         } else {
             redrawY()
         }
-
-//        var w = canvas.width
-//        var h = canvas.height
-//
-//        val overflowX = sx + w > image.width
-//        val overflowY = sy + h > image.height
-//
-//        if (overflowX) {
-//            w = image.width - sx
-//        }
-//
-//        if (overflowY) {
-//            h = image.height - sy
-//        }
-//
-//        g.drawImage(image, sx, sy, w, h,
-//                0.0, 0.0, w, h)
-//
-//        if (overflowX || overflowY) {
-//            g.drawImage(image, 0.0, 0.0, canvas.width - w, canvas.height - h,
-//                    w, h, canvas.width - w, canvas.height - h)
-//        }
     }
 
     private fun redrawX() {
         var w = canvas.width
-        var h = canvas.height
+        val h = canvas.height
 
         val overflowX = sx + w > image.width
 
@@ -144,7 +120,7 @@ class ScrollingBackgroundView
     }
 
     private fun redrawY() {
-        var w = canvas.width
+        val w = canvas.width
         var h = canvas.height
 
         val overflowY = sy + h > image.height

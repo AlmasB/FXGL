@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,6 +62,7 @@ open class SceneFactory {
         when (app.settings.menuStyle) {
             MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.MAIN_MENU)
             MenuStyle.CCTR -> return CCTRMenu(app, MenuType.MAIN_MENU)
+            MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.MAIN_MENU)
             else -> return FXGLDefaultMenu(app, MenuType.MAIN_MENU)
         }
     }
@@ -77,6 +78,7 @@ open class SceneFactory {
         when (app.settings.menuStyle) {
             MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.GAME_MENU)
             MenuStyle.CCTR -> return CCTRMenu(app, MenuType.GAME_MENU)
+            MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.GAME_MENU)
             else -> return FXGLDefaultMenu(app, MenuType.GAME_MENU)
         }
     }

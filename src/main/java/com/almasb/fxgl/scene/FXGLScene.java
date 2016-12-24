@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@ import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 
@@ -42,19 +43,41 @@ import javafx.scene.transform.Scale;
  * Base class for all FXGL scenes.
  */
 public abstract class FXGLScene {
+
+    /**
+     * Top-level root node.
+     */
     private Pane root;
+
+    /**
+     * Root node for content.
+     */
+    private Pane contentRoot;
+
     private Group eventHandlers = new Group();
 
     public FXGLScene() {
         root = new Pane();
         root.setBackground(null);
+
+        contentRoot = new Pane();
+        contentRoot.setBackground(null);
+
+        root.getChildren().addAll(contentRoot);
     }
 
     /**
-     * @return root node of the scene
+     * @return top-level root node of the scene
      */
     public final Pane getRoot() {
         return root;
+    }
+
+    /**
+     * @return root node of the content
+     */
+    public final Pane getContentRoot() {
+        return contentRoot;
     }
 
     /**
@@ -69,6 +92,29 @@ public abstract class FXGLScene {
      */
     public final double getHeight() {
         return root.getPrefHeight();
+    }
+
+    /**
+     * Applies given effect to the scene.
+     *
+     * @param effect the effect to apply
+     */
+    public final void setEffect(Effect effect) {
+        contentRoot.setEffect(effect);
+    }
+
+    /**
+     * @return currently applied effect or null if no effect is applied
+     */
+    public final Effect getEffect() {
+        return contentRoot.getEffect();
+    }
+
+    /**
+     * Removes any effects applied to the scene.
+     */
+    public final void clearEffect() {
+        setEffect(null);
     }
 
     /**

@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -59,7 +59,7 @@ public class ReadOnlyGameSettings {
     protected List<ServiceType<?> > services = new ArrayList<>();
 
     /**
-     * Constructs game settings with default parameters
+     * Constructs game settings with default parameters.
      */
     ReadOnlyGameSettings() {
     }
@@ -113,14 +113,6 @@ public class ReadOnlyGameSettings {
 
     public final boolean isMenuEnabled() {
         return menuEnabled;
-    }
-
-    /**
-     * @deprecated use {@link #isProfilingEnabled()}
-     */
-    @Deprecated
-    public final boolean isFPSShown() {
-        return profilingEnabled;
     }
 
     public final boolean isProfilingEnabled() {

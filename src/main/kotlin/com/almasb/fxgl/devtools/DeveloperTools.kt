@@ -3,7 +3,7 @@
  *
  * FXGL - JavaFX Game Library
  *
- * Copyright (c) 2015-2016 AlmasB (almaslvl@gmail.com)
+ * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,8 @@ package com.almasb.fxgl.devtools
 import com.almasb.fxgl.app.FXGL
 import javafx.scene.Node
 import javafx.scene.Parent
+import jfxtras.util.NodeUtil
+import org.controlsfx.tools.Utils
 
 /**
  *
@@ -48,5 +50,26 @@ object DeveloperTools {
             is Parent -> return node.childrenUnmodifiable.size + node.childrenUnmodifiable.map { getChildrenSize(it) }.sum()
             else      -> return 0
         }
+    }
+
+    /**
+     * @return window in which [node] is located
+     */
+    fun getWindow(node: Node) = Utils.getWindow(node)
+
+    /**
+     * Remove [node] from its parent.
+     *
+     * @throws IllegalArgumentException if parent is unsupported
+     */
+    fun removeFromParent(node: Node) = NodeUtil.removeFromParent(node)
+
+    /**
+     * Add [node] to [parent].
+     *
+     * @throws IllegalArgumentException if parent is unsupported
+     */
+    fun addToParent(parent: Parent, node: Node) {
+        NodeUtil.addToParent(parent, node)
     }
 }
