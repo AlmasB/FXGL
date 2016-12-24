@@ -384,7 +384,7 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>${maven.shade.version}</version>
                 <configuration>
-                    <outputFile>${project.build.directory}/${project.name}-${project.version}-uber.jar</outputFile>
+                    <outputFile>${project.build.directory}/fxgl-${project.version}-uber.jar</outputFile>
                 </configuration>
                 <executions>
                     <!-- Run shade goal on package phase -->
