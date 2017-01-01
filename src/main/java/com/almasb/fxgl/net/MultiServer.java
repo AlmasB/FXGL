@@ -107,6 +107,11 @@ public final class MultiServer extends NetworkConnection {
     }
 
     @Override
+    public void close() {
+        stop();
+    }
+
+    @Override
     protected void sendUDP(Serializable data) throws Exception {
         if (udpThread.running) {
             byte[] buf = toByteArray(data);

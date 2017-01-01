@@ -129,6 +129,11 @@ public final class Client extends NetworkConnection {
     }
 
     @Override
+    public void close() {
+        disconnect();
+    }
+
+    @Override
     protected void sendUDP(Serializable data) throws Exception {
         if (udpThread.running) {
             byte[] buf = toByteArray(data);

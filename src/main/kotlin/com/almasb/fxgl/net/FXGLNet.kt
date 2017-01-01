@@ -32,8 +32,10 @@ import com.almasb.easyio.voidTaskOf
 import com.almasb.fxgl.app.FXGL
 import com.google.inject.Inject
 import java.io.InputStreamReader
+import java.io.Serializable
 import java.net.URL
 import java.nio.file.Path
+import java.util.*
 
 /**
  * Main Net service provider for FXGL.
@@ -64,4 +66,41 @@ class FXGLNet
     }
 
     override fun openBrowserTask(url: String) = voidTaskOf("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
+
+    private val dummy by lazy { Server() }
+    private var connectionInternal: NetworkConnection? = null
+
+    override fun getConnection(): Optional<NetworkConnection> {
+        return Optional.ofNullable(connectionInternal)
+    }
+
+    override fun <T : Serializable> addDataParser(cl: Class<T>, parser: DataParser<T>) {
+        dummy.addParser(cl, parser)
+    }
+
+    override fun hostMultiplayerTask(): IOTask<Server> {
+        return taskOf("Create Host", {
+            val server = Server()
+            server.parsers = dummy.parsers
+
+            server.startAndWait(10)
+
+            connectionInternal = server
+
+            return@taskOf server
+        })
+    }
+
+    override fun connectMultiplayerTask(serverIP: String): IOTask<Client> {
+        return taskOf("Connect To Host", {
+            val client = Client(serverIP)
+            client.parsers = dummy.parsers
+
+            client.connect()
+
+            connectionInternal = client
+
+            return@taskOf client
+        })
+    }
 }

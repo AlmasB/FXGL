@@ -260,11 +260,26 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     /* DIALOGS */
 
     private fun showMultiplayerDialog() {
-        val btnHost = FXGL.getUIFactory().newButton("Host...")
-        btnHost.setOnAction { e -> app.display.showMessageBox("NOT SUPPORTED YET") }
+        val btnHost = FXGL.getUIFactory().newButton("Host")
+        btnHost.setOnAction {
+            FXGL.getNet()
+                    .hostMultiplayerTask()
+                    //.onSuccessKt { server -> }
+                    //.onFailureKt {  }
+                    .executeAsyncWithDialogFX(ProgressDialog("Hosting Game"))
+
+        }
 
         val btnConnect = FXGL.getUIFactory().newButton("Connect...")
-        btnConnect.setOnAction { e -> app.display.showMessageBox("NOT SUPPORTED YET") }
+        btnConnect.setOnAction {
+            app.display.showInputBox("Enter Server IP", {
+                FXGL.getNet()
+                        .connectMultiplayerTask(it)
+                        //.onSuccessKt {  }
+                        //.onFailureKt {  }
+                        .executeAsyncWithDialogFX(ProgressDialog("Connecting to Game"))
+            })
+        }
 
         app.display.showBox("Multiplayer Options", FXGL.getUIFactory().newText(""), btnHost, btnConnect)
     }

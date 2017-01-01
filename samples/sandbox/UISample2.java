@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.ProgressBar;
+import com.almasb.fxgl.ui.WheelMenu;
 import javafx.scene.paint.Color;
 
 /**
@@ -75,7 +76,15 @@ public class UISample2 extends GameApplication {
         bar.setTranslateY(100);
         bar.setCurrentValue(50);
 
-        getGameScene().addUINode(bar);
+        //getGameScene().addUINode(bar);
+
+        WheelMenu menu = new WheelMenu("Hi", "Hello", "World", "FXGL");
+        menu.setTranslateX(100);
+        menu.setTranslateY(100);
+
+        menu.setSelectionHandler(System.out::println);
+
+        getGameScene().addUINode(menu);
     }
 
     @Override

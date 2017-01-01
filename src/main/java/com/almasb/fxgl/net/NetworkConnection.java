@@ -40,7 +40,7 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-abstract class NetworkConnection {
+public abstract class NetworkConnection {
 
     private static final Logger log = FXGL.getLogger("FXGL.NetworkConnection");
 
@@ -104,6 +104,8 @@ abstract class NetworkConnection {
     protected abstract void sendUDP(Serializable data) throws Exception;
 
     protected abstract void sendTCP(Serializable data) throws Exception;
+
+    public abstract void close();
 
     protected static byte[] toByteArray(Serializable data) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

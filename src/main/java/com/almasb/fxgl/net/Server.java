@@ -33,6 +33,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Server side of the network connection.
@@ -52,7 +54,6 @@ import java.net.*;
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- * @version 1.0
  */
 public final class Server extends NetworkConnection {
 
@@ -93,6 +94,14 @@ public final class Server extends NetworkConnection {
         udpThread.start();
     }
 
+    private CountDownLatch latch = new CountDownLatch(2);
+
+    public void startAndWait(long seconds) throws Exception {
+        start();
+
+        latch.await(seconds, TimeUnit.SECONDS);
+    }
+
     /**
      * Sends a message to all connected clients that
      * the server is about to shut down. Then stops the server
@@ -106,6 +115,15 @@ public final class Server extends NetworkConnection {
 
         tcpThread.running = false;
         udpThread.running = false;
+    }
+
+    @Override
+    public void close() {
+        stop();
+    }
+
+    public boolean isConnected() {
+        return tcpThread.running || udpThread.running;
     }
 
     @Override
@@ -139,6 +157,7 @@ public final class Server extends NetworkConnection {
                  ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
                 outputStream = out;
                 socket.setTcpNoDelay(true);
+                latch.countDown();
                 running = true;
 
                 while (running) {
@@ -175,6 +194,7 @@ public final class Server extends NetworkConnection {
         public void run() {
             try (DatagramSocket socket = new DatagramSocket(udpPort)) {
                 outSocket = socket;
+                latch.countDown();
                 running = true;
 
                 while (running) {

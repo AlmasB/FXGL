@@ -29,7 +29,9 @@ package com.almasb.fxgl.net;
 import com.almasb.easyio.IOTask;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Defines methods for Net service.
@@ -62,4 +64,12 @@ public interface Net {
      * @return task that opens default browser with given url
      */
     IOTask<Void> openBrowserTask(String url);
+
+    IOTask<Server> hostMultiplayerTask();
+
+    IOTask<Client> connectMultiplayerTask(String serverIP);
+
+    Optional<NetworkConnection> getConnection();
+
+    <T extends Serializable> void addDataParser(Class<T> cl, DataParser<T> parser);
 }
