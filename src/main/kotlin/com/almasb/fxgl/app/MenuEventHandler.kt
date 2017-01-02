@@ -264,6 +264,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         btnHost.setOnAction {
             FXGL.getNet()
                     .hostMultiplayerTask()
+                    .onFailureKt { app.display.showErrorBox(it) }
                     .executeAsyncWithDialogFX(ProgressDialog("Hosting Game"))
         }
 

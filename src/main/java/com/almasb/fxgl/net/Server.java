@@ -96,10 +96,22 @@ public final class Server extends NetworkConnection {
 
     private CountDownLatch latch = new CountDownLatch(2);
 
-    public void startAndWait(long seconds) throws Exception {
-        start();
+    public boolean startAndWait(long seconds) {
+        tcpThread.start((int) seconds);
+        udpThread.start((int) seconds);
 
-        latch.await(seconds, TimeUnit.SECONDS);
+        boolean result = false;
+
+        try {
+            result = latch.await(seconds, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.warning("startAndWait(" + seconds + "): " + e);
+        }
+
+        if (!result)
+            throw new RuntimeException("Client did not connect in " + seconds + " seconds");
+
+        return true;
     }
 
     /**
@@ -148,36 +160,44 @@ public final class Server extends NetworkConnection {
     private class TCPConnectionThread extends Thread {
         private boolean running = false;
         private ObjectOutputStream outputStream;
+        private int timeoutSeconds = 0;
+
+        void start(int timeoutSeconds) {
+            this.timeoutSeconds = timeoutSeconds;
+            start();
+        }
 
         @Override
         public void run() {
-            try (ServerSocket server = new ServerSocket(tcpPort);
-                 Socket socket = server.accept();
-                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-                outputStream = out;
-                socket.setTcpNoDelay(true);
-                latch.countDown();
-                running = true;
+            try (ServerSocket server = new ServerSocket(tcpPort)) {
+                server.setSoTimeout(timeoutSeconds * 1000);
 
-                while (running) {
-                    Object data = in.readObject();
-                    if (data == ConnectionMessage.CLOSE) {
-                        running = false;
-                        break;
-                    }
-                    if (data == ConnectionMessage.CLOSING) {
-                        sendTCP(ConnectionMessage.CLOSE);
-                        running = false;
-                        break;
-                    }
+                try (Socket socket = server.accept();
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+                    outputStream = out;
+                    socket.setTcpNoDelay(true);
+                    latch.countDown();
+                    running = true;
 
-                    parsers.getOrDefault(data.getClass(), d -> {
-                    }).parse((Serializable) data);
+                    while (running) {
+                        Object data = in.readObject();
+                        if (data == ConnectionMessage.CLOSE) {
+                            running = false;
+                            break;
+                        }
+                        if (data == ConnectionMessage.CLOSING) {
+                            sendTCP(ConnectionMessage.CLOSE);
+                            running = false;
+                            break;
+                        }
+
+                        parsers.getOrDefault(data.getClass(), d -> {
+                        }).parse((Serializable) data);
+                    }
                 }
-
             } catch (Exception e) {
-                log.warning("Exception during TCP connection execution: " + e.getMessage());
+                log.warning("Exception during TCP connection execution: " + e);
                 running = false;
                 return;
             }
@@ -189,11 +209,18 @@ public final class Server extends NetworkConnection {
     private class UDPConnectionThread extends Thread {
         private DatagramSocket outSocket;
         private boolean running = false;
+        private int timeoutSeconds = 0;
+
+        void start(int timeoutSeconds) {
+            this.timeoutSeconds = timeoutSeconds;
+            start();
+        }
 
         @Override
         public void run() {
             try (DatagramSocket socket = new DatagramSocket(udpPort)) {
                 outSocket = socket;
+                socket.setSoTimeout(timeoutSeconds * 1000);
                 latch.countDown();
                 running = true;
 
@@ -224,7 +251,7 @@ public final class Server extends NetworkConnection {
                     }
                 }
             } catch (Exception e) {
-                log.warning("Exception during UDP connection execution: " + e.getMessage());
+                log.warning("Exception during UDP connection execution: " + e);
                 running = false;
                 return;
             }
