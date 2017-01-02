@@ -264,8 +264,6 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         btnHost.setOnAction {
             FXGL.getNet()
                     .hostMultiplayerTask()
-                    //.onSuccessKt { server -> }
-                    //.onFailureKt {  }
                     .executeAsyncWithDialogFX(ProgressDialog("Hosting Game"))
 
         }
@@ -275,8 +273,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
             app.display.showInputBox("Enter Server IP", {
                 FXGL.getNet()
                         .connectMultiplayerTask(it)
-                        //.onSuccessKt {  }
-                        //.onFailureKt {  }
+                        .onSuccessKt { onNewGame() }
                         .executeAsyncWithDialogFX(ProgressDialog("Connecting to Game"))
             })
         }

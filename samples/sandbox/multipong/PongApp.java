@@ -38,12 +38,16 @@ import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
+import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.UI;
+import com.almasb.gameutils.math.Vec2;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -52,6 +56,12 @@ import javafx.scene.shape.Rectangle;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class PongApp extends GameApplication {
+
+    private PongFactory factory;
+
+    private GameEntity ball;
+    private GameEntity bat1;
+    private GameEntity bat2;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -63,8 +73,15 @@ public class PongApp extends GameApplication {
 
     @Override
     protected void preInit() {
-        FXGL.getNet().addDataParser(String.class, value -> {
-            System.out.println("Got: " + value);
+        FXGL.getNet().addDataParser(ServerMessage.class, message -> {
+            Platform.runLater(() -> {
+                if (ball != null) {
+
+                    ball.setPosition(new Point2D(message.ballPosition.x, message.ballPosition.y));
+                    bat1.setY(message.bat1PositionY);
+                    bat2.setY(message.bat2PositionY);
+                }
+            });
         });
 
         addFXGLListener(new FXGLListener() {
@@ -103,8 +120,18 @@ public class PongApp extends GameApplication {
 
     private IntegerProperty scorePlayer, scoreEnemy;
 
+    private GameMode mode;
+
     @Override
     protected void initGame() {
+        if (getNet().getConnection().isPresent()) {
+            mode = getNet().getConnection().get() instanceof Server ? GameMode.MP_HOST : GameMode.MP_CLIENT;
+        } else {
+            mode = GameMode.SP;
+        }
+
+        factory = new PongFactory(mode);
+
         scorePlayer = new SimpleIntegerProperty(0);
         scoreEnemy = new SimpleIntegerProperty(0);
 
@@ -113,14 +140,6 @@ public class PongApp extends GameApplication {
         initBall();
         initPlayerBat();
         initEnemyBat();
-
-        getNet().getConnection().ifPresent(conn -> {
-            try {
-                conn.send("It's something");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     @Override
@@ -151,7 +170,18 @@ public class PongApp extends GameApplication {
     }
 
     @Override
-    protected void onUpdate(double tpf) {}
+    protected void onUpdate(double tpf) {
+
+        if (mode == GameMode.MP_HOST) {
+            getNet().getConnection().ifPresent(conn -> {
+                try {
+                    conn.send(new ServerMessage(new Vec2((float)ball.getX(), (float)ball.getY()), bat1.getY(), bat2.getY()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
 
     private void initBackground() {
         GameEntity bg = new GameEntity();
@@ -169,22 +199,26 @@ public class PongApp extends GameApplication {
     }
 
     private void initBall() {
-        getGameWorld().addEntity(EntityFactory.newBall(getWidth() / 2 - 5, getHeight() / 2 - 5));
+        ball = factory.newBall(getWidth() / 2 - 5, getHeight() / 2 - 5);
+        getGameWorld().addEntity(ball);
     }
 
     private BatControl playerBat;
 
     private void initPlayerBat() {
-        Entity bat = EntityFactory.newBat(getWidth() / 4, getHeight() / 2 - 30, true);
-        getGameWorld().addEntity(bat);
+        bat1 = factory.newBat(getWidth() / 4, getHeight() / 2 - 30, true);
+        getGameWorld().addEntity(bat1);
 
-        playerBat = bat.getControlUnsafe(BatControl.class);
+        playerBat = bat1.getControlUnsafe(BatControl.class);
     }
 
     private void initEnemyBat() {
-        getGameWorld().addEntity(EntityFactory.newBat(3 * getWidth() / 4 - 20, getHeight() / 2 - 30, false));
+        bat2 = factory.newBat(3 * getWidth() / 4 - 20, getHeight() / 2 - 30, false);
+
+        getGameWorld().addEntity(bat2);
     }
 
+    // TODO: handle client movement
     @OnUserAction(name = "Up", type = ActionType.ON_ACTION)
     public void up() {
         playerBat.up();
