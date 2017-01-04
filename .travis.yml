@@ -14,7 +14,7 @@ install:
 - 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-- mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=target/site/jacoco/jacoco.xml -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
+- mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl-framework/target/site/jacoco/jacoco.xml -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
 notifications:
   email:
     recipients:
