@@ -48,31 +48,31 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-io</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-ents</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-physics</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-ai</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-core</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>

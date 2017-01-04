@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-core</artifactId>
-            <version>0.3.0-SNAPSHOT</version>
+            <version>${fxgl.version}</version>
         </dependency>
 
         <dependency>

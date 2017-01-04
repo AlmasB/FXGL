@@ -51,12 +51,12 @@ import java.time.LocalDateTime
  */
 class SaveLoadManagerTest {
 
-    private lateinit var manager: com.almasb.fxgl.gameplay.SaveLoadManager
+    private lateinit var manager: SaveLoadManager
 
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
+            FXGL.configure(MockApplicationModule.get())
             // save load system relies on these to be present
             FXGL.setProperty("fs.profiledir", "testprofiles/")
             FXGL.setProperty("fs.profilename", "user.profile")
@@ -78,7 +78,7 @@ class SaveLoadManagerTest {
 
     @Before
     fun setUp() {
-        manager = com.almasb.fxgl.gameplay.SaveLoadManager("TestProfileName")
+        manager = SaveLoadManager("TestProfileName")
     }
 
     @Test
@@ -91,7 +91,7 @@ class SaveLoadManagerTest {
     }
 
     fun `Save new profile`() {
-        manager.saveProfileTask(com.almasb.fxgl.settings.UserProfile("TestApp", "TestVersion")).execute()
+        manager.saveProfileTask(UserProfile("TestApp", "TestVersion")).execute()
 
         assertTrue("Profiles dir was not created",
                 Files.exists(Paths.get("testprofiles/")))

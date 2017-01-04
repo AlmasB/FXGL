@@ -60,6 +60,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.version>1.8</source.version>
+        <fxgl.version>${project.version}</fxgl.version>
 
         <!-- plugins -->
         <maven.gpg.version>1.6</maven.gpg.version>
