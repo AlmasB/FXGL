@@ -120,12 +120,12 @@ public class FilterSample extends GameApplication {
         ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
         //emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x + t * 10 * spread, y + GameMath.sin(t * 10) * spread));
         emitter.setSpawnPointFunction((i, x, y) -> curveFunction().add(x, y));
-        emitter.setColorFunction(() -> Color.color(Math.abs(sin(t)), Math.abs(cos(t)), Math.abs(cos(t))));
+        emitter.setColorFunction(() -> Color.color(abs(sin(t)), abs(cos(t)), abs(cos(t))));
         //emitter.setGravityFunction(() -> new Point2D(spread * cos(t), spread * pow(t, 0.55)));
 
         ParticleEmitter emitter2 = ParticleEmitters.newSparkEmitter();
         emitter2.setSpawnPointFunction((i, x, y) -> new Point2D(x + GameMath.cos(t * 10) * spread, y + pow(t, 0.55)));
-        emitter2.setColorFunction(() -> Color.color(Math.abs(sin(t)), 0.75, 1.0));
+        emitter2.setColorFunction(() -> Color.color(abs(sin(t)), 0.75, 1.0));
         emitter2.setEmissionRate(0.33);
 
 
@@ -244,7 +244,7 @@ public class FilterSample extends GameApplication {
                     //spectrum = -sin(toRadians(t + x)) / (p.y);
                 }
 
-                double howFar = Math.abs(1 - spectrum);
+                double howFar = abs(1 - spectrum);
 
                 //System.out.println(howFar);
 
@@ -277,7 +277,7 @@ public class FilterSample extends GameApplication {
             for (int x = 1; x < 800; x++) {
                 Vec2 p = new Vec2(x / 800.0f - 0.5f, y / 600.0f - 0.5f);
 
-                double sx = (float)(0.3f * (p.x + 0.8) * sin(900 * p.x - Math.pow(t, 0.55) * 5));
+                double sx = (float)(0.3f * (p.x + 0.8) * sin(900 * p.x - pow(t, 0.55) * 5));
 
                 double dy =  4.0f / (500 * abs(p.y - sx));
 

@@ -5,11 +5,22 @@
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
     <version>0.3.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>JavaFX Game Development Framework</description>
     <url>http://almasb.github.io/FXGL/</url>
+
+    <modules>
+        <module>fxgl-framework</module>
+        <module>fxgl-net</module>
+        <module>fxgl-core</module>
+        <module>fxgl-io</module>
+        <module>fxgl-ents</module>
+        <module>fxgl-ai</module>
+        <module>fxgl-physics</module>
+        <!--<module>fxgl-samples</module>-->
+    </modules>
 
     <licenses>
         <license>
@@ -96,63 +107,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>${guice.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jfxtras</groupId>
-            <artifactId>jfxtras-window</artifactId>
-            <version>${jfxtras.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>${controlsfx.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.AlmasB</groupId>
             <artifactId>FXEventBus</artifactId>
             <version>${fxeventbus.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.AlmasB</groupId>
-            <artifactId>Ents</artifactId>
-            <version>${ents.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.AlmasB</groupId>
-            <artifactId>GameUtils</artifactId>
-            <version>${game.utils.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.AlmasB</groupId>
-            <artifactId>jbox2d</artifactId>
-            <version>${jbox.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.AlmasB</groupId>
-            <artifactId>AStar</artifactId>
-            <version>${astar.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.AlmasB</groupId>
-            <artifactId>EasyIO</artifactId>
-            <version>${easyio.version}</version>
         </dependency>
 
         <dependency>
@@ -167,18 +124,6 @@
             <version>${log4j.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.AlmasB</groupId>
-            <artifactId>gdx-ai</artifactId>
-            <version>${gdx.ai.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
         <!-- test scope dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -189,246 +134,119 @@
     </dependencies>
     
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
+        <pluginManagement>
+            <plugins>
 
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                    <exclude>**/version.properties</exclude>
-                </excludes>
-            </resource>
+                <!-- Sign artifact using gpg -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven.gpg.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/version.properties</include>
-                </includes>
-            </resource>
-        </resources>
+                <!-- Upload to sonatype nexus / maven central -->
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${sonatype.nexus.staging.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
 
-        <plugins>
+                <!-- Compile java -->
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.version}</version>
+                    <configuration>
+                        <source>${source.version}</source>
+                        <target>${source.version}</target>
+                    </configuration>
+                </plugin>
 
-            <!-- Sign artifact using gpg -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>${maven.gpg.version}</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                <!-- Force check on compiler 1.8.0_101+ -->
+                <plugin>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven.enforcer.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-all</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <DependencyConvergence/>
+                                    <requireJavaVersion>
+                                        <version>[1.8.0-101,)</version>
+                                    </requireJavaVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
 
-            <!-- Upload to sonatype nexus / maven central -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${sonatype.nexus.staging.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
+                <!-- This *should* allow us to merge javadoc and KDoc, unfortunately now it is missing tools.jar -->
+                <!--<plugin>-->
+                    <!--<groupId>org.jetbrains.dokka</groupId>-->
+                    <!--<artifactId>dokka-maven-plugin</artifactId>-->
+                    <!--<version>${dokka.version}</version>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>attach-javadocs</id>-->
+                            <!--<phase>package</phase>-->
+                            <!--<goals>-->
+                                <!--<goal>javadocJar</goal>-->
+                            <!--</goals>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
 
-            <!-- Compile java -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.version}</version>
-                <configuration>
-                    <excludes> <!-- Do not include samples directory -->
-                        <exclude>**/samples/*.java</exclude>
-                    </excludes>
-                    <source>${source.version}</source>
-                    <target>${source.version}</target>
-                </configuration>
-            </plugin>
-
-            <!-- Compile kotlin -->
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/main/kotlin</source>
-                                <source>src/main/java</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>process-test-sources</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/test/kotlin</source>
-                                <source>src/test/java</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Force check on compiler 1.8.0_101+ -->
-            <plugin>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>${maven.enforcer.version}</version>
-                <executions>
-                    <execution>
-                        <id>enforce-all</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <DependencyConvergence/>
-                                <requireJavaVersion>
-                                    <version>[1.8.0-101,)</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Create sources.jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Create javadoc.jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.javadoc.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration> <!-- add this to disable checking -->
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                            <!-- leave only errors and warning -->
-                            <quiet>true</quiet>
-                            <tags>
-                                <tag>
-                                    <name>defaultValue</name>
-                                    <placement>a</placement>
-                                    <head>Default Value:</head>
-                                </tag>
-                                <tag>
-                                    <name>implNote</name>
-                                    <placement>a</placement>
-                                    <head>Implementation Note:</head>
-                                </tag>
-                                <tag>
-                                    <name>warning</name>
-                                    <placement>a</placement>
-                                    <head>Warning:</head>
-                                </tag>
-                            </tags>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- This *should* allow us to merge javadoc and KDoc, unfortunately now it is missing tools.jar -->
-            <!--<plugin>-->
-                <!--<groupId>org.jetbrains.dokka</groupId>-->
-                <!--<artifactId>dokka-maven-plugin</artifactId>-->
-                <!--<version>${dokka.version}</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>attach-javadocs</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>javadocJar</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-
-            <!-- Create uber jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven.shade.version}</version>
-                <configuration>
-                    <outputFile>${project.build.directory}/fxgl-${project.version}-uber.jar</outputFile>
-                </configuration>
-                <executions>
-                    <!-- Run shade goal on package phase -->
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Generate test coverage reports -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
-                    <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+                <!-- Generate test coverage reports -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                    <configuration>
+                        <destFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</destFile>
+                        <dataFile>${project.build.directory}/coverage-reports/jacoco-unit.exec</dataFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>jacoco-initialize</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>jacoco-site</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

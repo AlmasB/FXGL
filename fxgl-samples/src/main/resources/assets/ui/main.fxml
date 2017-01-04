@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Label?>
+<Pane prefWidth="800" prefHeight="600" xmlns="http://javafx.com/javafx/8.0.60"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    <Label translateX="100" translateY="100" fx:id="labelScorePlayer" textFill="azure" />
+    <Label translateX="700" translateY="100" fx:id="labelScoreEnemy" textFill="azure" />
+
+</Pane>

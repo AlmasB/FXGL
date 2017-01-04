@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package tutorials.com.almasb.mygame;
+package mygame;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
