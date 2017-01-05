@@ -19,6 +19,7 @@
         <module>fxgl-ents</module>
         <module>fxgl-ai</module>
         <module>fxgl-physics</module>
+        <module>fxgl-eventbus</module>
         <!--<module>fxgl-samples</module>-->
     </modules>
 
@@ -91,13 +92,6 @@
         <junit.version>4.12</junit.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>jcenter</id>
@@ -107,12 +101,6 @@
     </pluginRepositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.github.AlmasB</groupId>
-            <artifactId>FXEventBus</artifactId>
-            <version>${fxeventbus.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
