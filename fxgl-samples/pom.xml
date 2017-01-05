@@ -40,7 +40,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-framework</artifactId>
+            <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
     </dependencies>

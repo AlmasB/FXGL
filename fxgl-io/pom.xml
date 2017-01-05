@@ -48,6 +48,14 @@
         </dependency>
     </dependencies>
 
+    <!--<pluginRepositories>-->
+        <!--<pluginRepository>-->
+            <!--<id>jcenter</id>-->
+            <!--<name>JCenter</name>-->
+            <!--<url>https://jcenter.bintray.com/</url>-->
+        <!--</pluginRepository>-->
+    <!--</pluginRepositories>-->
+
     <build>
 
         <plugins>
@@ -137,6 +145,21 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.jetbrains.dokka</groupId>-->
+                <!--<artifactId>dokka-maven-plugin</artifactId>-->
+                <!--<version>${dokka.version}</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                    <!--<id>attach-javadocs</id>-->
+                    <!--<phase>package</phase>-->
+                    <!--<goals>-->
+                        <!--<goal>javadocJar</goal>-->
+                    <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 </project>
