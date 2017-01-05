@@ -26,10 +26,10 @@ JavaFX Game Development Framework
 
 Graphics & UI | Application Framework
 :---:    | :---:
-JavaFX 8  | [FXEventBus](https://github.com/AlmasB/FXEventBus)
+JavaFX 8  | Global / Scoped Event Bus
 Multi-Layer Rendering | Time Management System (in-game time + real time)
 Canvas Particle System | Multithreading
-Dynamic Texture Manipulation | [Log4j2](http://logging.apache.org/log4j/2.x/)
+Dynamic Texture Manipulation | [Log4j2](http://logging.apache.org/log4j/2.x/) Logging
 Sprite Sheet Animations | Performance Monitor + Profiling
 Target Screen Resolution (+Fullscreen) | Global Services Framework
 Customizable Intro Video / Animation | Developer Panel
@@ -41,21 +41,21 @@ Post-processing Effects (**alpha**) |
 
 User Input | I/O
 :---:      | :---:
-Key & Mouse Bindings | [EasyIO](https://github.com/AlmasB/EasyIO) & Networking (TCP and UDP)
+Key & Mouse Bindings | IO Task Mechanism / Networking (TCP and UDP)
 Full Input Mocking   | Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf", custom)
 
 
 Physics |   Utilities
 :---: | :---:
-[JBox2D](https://github.com/jbox2d/jbox2d) | [GameUtils](https://github.com/AlmasB/GameUtils)
+[JBox2D](https://github.com/jbox2d/jbox2d) | Commonly used data structures and algorithms from various frameworks
 FXGL Physics (BBox + SAT) |
 Unified Collision Handling (JBox2D + FXGL physics) |
 
 
 Gameplay | AI
 :---:    | :---:
-[Ents (ECS)](https://github.com/AlmasB/Ents) | [gdxAI](https://github.com/libgdx/gdx-ai)
-Full Game Loop                              | [AStar](https://github.com/AlmasB/AStar)
+Entity Component Control System | [gdxAI](https://github.com/libgdx/gdx-ai) Integration
+Full Game Loop                              | A* Pathfinding
 Quick Time Events (QTE)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/QTE.jpg" width="256" /> | JavaScript Behavior Injections (for entities) + JavaScript FXGL Environment Variables<br/><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/JS.jpg" width="768" />
 Achievement System| 
 Notification System<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/achievement.jpg" width="512" /> |
