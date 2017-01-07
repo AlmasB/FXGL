@@ -486,7 +486,7 @@ public class PrismaticJoint extends Joint {
             m_impulse.z = 0.0f;
         }
 
-        if (m_enableMotor == false) {
+        if (!m_enableMotor) {
             m_motorImpulse = 0.0f;
         }
 

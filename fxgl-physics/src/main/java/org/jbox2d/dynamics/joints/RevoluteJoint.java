@@ -162,11 +162,11 @@ public class RevoluteJoint extends Joint {
             m_motorMass = 1.0f / m_motorMass;
         }
 
-        if (m_enableMotor == false || fixedRotation) {
+        if (!m_enableMotor || fixedRotation) {
             m_motorImpulse = 0.0f;
         }
 
-        if (m_enableLimit && fixedRotation == false) {
+        if (m_enableLimit && !fixedRotation) {
             float jointAngle = aB - aA - m_referenceAngle;
             if (JBoxUtils.abs(m_upperAngle - m_lowerAngle) < 2.0f * JBoxSettings.angularSlop) {
                 m_limitState = LimitState.EQUAL;
@@ -232,7 +232,7 @@ public class RevoluteJoint extends Joint {
         boolean fixedRotation = (iA + iB == 0.0f);
 
         // Solve motor constraint.
-        if (m_enableMotor && m_limitState != LimitState.EQUAL && fixedRotation == false) {
+        if (m_enableMotor && m_limitState != LimitState.EQUAL && !fixedRotation) {
             float Cdot = wB - wA - m_motorSpeed;
             float impulse = -m_motorMass * Cdot;
             float oldImpulse = m_motorImpulse;
@@ -246,7 +246,7 @@ public class RevoluteJoint extends Joint {
         final Vec2 temp = pool.popVec2();
 
         // Solve limit constraint.
-        if (m_enableLimit && m_limitState != LimitState.INACTIVE && fixedRotation == false) {
+        if (m_enableLimit && m_limitState != LimitState.INACTIVE && !fixedRotation) {
 
             final Vec2 Cdot1 = pool.popVec2();
             final Vec3 Cdot = pool.popVec3();
@@ -362,7 +362,7 @@ public class RevoluteJoint extends Joint {
         boolean fixedRotation = (m_invIA + m_invIB == 0.0f);
 
         // Solve angular limit constraint.
-        if (m_enableLimit && m_limitState != LimitState.INACTIVE && fixedRotation == false) {
+        if (m_enableLimit && m_limitState != LimitState.INACTIVE && !fixedRotation) {
             float angle = aB - aA - m_referenceAngle;
             float limitImpulse = 0.0f;
 
