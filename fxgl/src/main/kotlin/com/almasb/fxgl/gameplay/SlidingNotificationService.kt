@@ -27,9 +27,6 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.NotificationEvent
-import com.almasb.fxgl.scene.GameScene
-import com.almasb.fxgl.ui.Position
 import com.google.inject.Inject
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color

@@ -33,11 +33,11 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.entity.control.ProjectileControl;
+import com.google.inject.Singleton;
+import javafx.geometry.Point2D;
 import sandbox.spacerunner.control.EnemyControl;
 import sandbox.spacerunner.control.KeepOnScreenControl;
 import sandbox.spacerunner.control.PlayerControl;
-import com.google.inject.Singleton;
-import javafx.geometry.Point2D;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

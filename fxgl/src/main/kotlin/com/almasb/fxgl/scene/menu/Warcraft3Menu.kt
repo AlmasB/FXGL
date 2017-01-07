@@ -26,9 +26,6 @@
 
 package com.almasb.fxgl.scene.menu
 
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.scene.FXGLMenu
-import com.almasb.fxgl.ui.FXGLButton
 import javafx.animation.Interpolator
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
@@ -37,7 +34,6 @@ import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Button
-import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color

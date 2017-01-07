@@ -27,7 +27,6 @@
 package com.almasb.fxgl.concurrent
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not

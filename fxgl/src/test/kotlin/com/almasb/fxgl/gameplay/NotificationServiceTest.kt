@@ -27,9 +27,6 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
-import com.almasb.fxgl.event.NotificationEvent
-import com.almasb.fxgl.ui.Position
 import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat

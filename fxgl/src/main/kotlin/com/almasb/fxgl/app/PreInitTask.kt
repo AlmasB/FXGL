@@ -27,8 +27,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.easyio.EasyIO
-import com.almasb.fxgl.gameplay.GameWorld
-import com.almasb.fxgl.physics.PhysicsWorld
 import com.google.inject.Inject
 
 /**

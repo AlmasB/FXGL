@@ -28,7 +28,6 @@ package com.almasb.fxgl.time
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
 import javafx.animation.AnimationTimer

@@ -27,7 +27,6 @@
 package com.almasb.fxgl.gameplay.rpg.quest
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.time.TimerAction
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.util.Duration

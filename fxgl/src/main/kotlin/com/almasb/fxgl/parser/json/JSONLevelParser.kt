@@ -30,7 +30,6 @@ import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.parser.EntityFactory
-import com.almasb.fxgl.parser.EntityProducer
 import com.almasb.fxgl.parser.LevelParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*

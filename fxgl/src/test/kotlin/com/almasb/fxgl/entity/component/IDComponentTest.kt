@@ -26,10 +26,11 @@
 
 package com.almasb.fxgl.entity.component
 
-import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
-import org.junit.Assert.*
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThat
+import org.junit.Test
 
 /**
  *

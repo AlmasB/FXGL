@@ -37,9 +37,9 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
-import sandbox.spacerunner.control.PlayerControl;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;
+import sandbox.spacerunner.control.PlayerControl;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

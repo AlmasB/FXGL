@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.time
 
-import com.almasb.fxgl.settings.UserProfile
 import javafx.beans.property.*
 import javafx.util.Duration
 

@@ -27,7 +27,6 @@
 package com.almasb.fxgl.devtools.controller
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.ui.UIController
 import javafx.fxml.FXML
 import javafx.scene.control.ColorPicker

@@ -28,7 +28,6 @@ package sandbox.towerfall;
 
 import com.almasb.ents.Entity;
 import com.almasb.ents.component.UserDataComponent;
-import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;

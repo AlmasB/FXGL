@@ -26,8 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.time.LocalTimer
-import com.almasb.fxgl.util.Version
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog

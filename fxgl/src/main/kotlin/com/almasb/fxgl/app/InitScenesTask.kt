@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.scene.GameScene
 import com.google.inject.Inject
 import javafx.scene.input.KeyEvent
 

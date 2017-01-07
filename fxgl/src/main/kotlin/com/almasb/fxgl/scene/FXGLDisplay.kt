@@ -28,13 +28,8 @@ package com.almasb.fxgl.scene
 
 import com.almasb.easyio.UIDialogHandler
 import com.almasb.easyio.serialization.Bundle
-import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
-import com.almasb.fxgl.settings.ReadOnlyGameSettings
-import com.almasb.fxgl.settings.SceneDimension
-import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
 import javafx.application.Platform
 import javafx.beans.property.DoubleProperty

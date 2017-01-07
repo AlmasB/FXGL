@@ -27,10 +27,10 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.gameutils.Disposable
-import org.junit.Before
-import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
+import org.junit.Before
+import org.junit.Test
 
 /**
  *

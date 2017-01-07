@@ -28,9 +28,6 @@ package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.logging.SystemLogger
-import com.almasb.fxgl.time.MasterTimer
-import com.almasb.fxgl.time.UpdateEvent
-import com.almasb.fxgl.time.UpdateEventListener
 import com.almasb.gameutils.math.GameMath
 
 /**

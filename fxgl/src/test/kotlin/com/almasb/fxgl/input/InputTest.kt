@@ -27,7 +27,6 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`

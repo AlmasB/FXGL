@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.gameplay.rpg.quest
 
-import com.almasb.fxgl.ui.InGameWindow
 import javafx.animation.ScaleTransition
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane

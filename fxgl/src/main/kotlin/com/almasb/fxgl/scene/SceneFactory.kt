@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.scene
 
-import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.scene.intro.FXGLIntroScene
-import com.almasb.fxgl.scene.menu.*
+import com.almasb.fxgl.scene.menu.MenuType
+import com.almasb.fxgl.scene.menu.Warcraft3Menu
 
 /**
  * Factory for scenes used in FXGL.

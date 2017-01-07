@@ -27,8 +27,6 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.ents.Entity
-import com.almasb.fxgl.entity.component.BoundingBoxComponent
-import com.almasb.fxgl.entity.component.PositionComponent
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty

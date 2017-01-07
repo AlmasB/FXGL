@@ -27,10 +27,6 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.ents.Entity
-import com.almasb.fxgl.entity.Entities
-import com.almasb.fxgl.entity.RenderLayer
-import com.almasb.fxgl.entity.component.BoundingBoxComponent
-import com.almasb.fxgl.entity.component.MainViewComponent
 import javafx.geometry.Rectangle2D
 import java.util.*
 import java.util.function.Predicate

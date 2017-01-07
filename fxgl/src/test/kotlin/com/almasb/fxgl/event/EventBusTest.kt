@@ -27,7 +27,6 @@
 package com.almasb.fxgl.event
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertThat

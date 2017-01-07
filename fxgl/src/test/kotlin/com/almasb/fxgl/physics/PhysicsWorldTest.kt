@@ -28,11 +28,6 @@ package com.almasb.fxgl.physics
 
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
-import com.almasb.fxgl.entity.Entities
-import com.almasb.fxgl.entity.component.CollidableComponent
-import com.almasb.fxgl.gameplay.GameWorld
-import com.almasb.fxgl.time.UpdateEvent
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue

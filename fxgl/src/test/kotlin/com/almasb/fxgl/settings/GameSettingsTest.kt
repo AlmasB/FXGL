@@ -28,13 +28,11 @@ package com.almasb.fxgl.settings
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
-import com.almasb.fxgl.app.MockService
-import com.almasb.fxgl.scene.menu.MenuStyle
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
-import org.junit.Assert.*
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThat
 import org.junit.BeforeClass
 import org.junit.Test
 

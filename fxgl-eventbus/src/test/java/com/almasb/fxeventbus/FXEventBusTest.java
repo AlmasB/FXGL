@@ -1,14 +1,10 @@
 package com.almasb.fxeventbus;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventType;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

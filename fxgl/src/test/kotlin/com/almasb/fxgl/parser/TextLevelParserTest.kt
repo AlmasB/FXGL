@@ -28,8 +28,6 @@ package com.almasb.fxgl.parser
 
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
-import com.almasb.fxgl.entity.Entities
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem

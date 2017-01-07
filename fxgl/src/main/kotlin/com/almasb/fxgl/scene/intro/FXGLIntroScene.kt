@@ -28,7 +28,6 @@ package com.almasb.fxgl.scene.intro
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.IntroScene
-import com.almasb.fxgl.util.Version
 import javafx.animation.*
 import javafx.geometry.Point2D
 import javafx.geometry.Point3D

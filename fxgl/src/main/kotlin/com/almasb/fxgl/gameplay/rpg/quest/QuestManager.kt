@@ -26,8 +26,6 @@
 
 package com.almasb.fxgl.gameplay.rpg.quest
 
-import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
 import javafx.collections.FXCollections
 

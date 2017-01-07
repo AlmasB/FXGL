@@ -29,7 +29,6 @@ package s18renderlayer;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.scene.lighting.LightingSystem;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
