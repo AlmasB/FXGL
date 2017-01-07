@@ -35,7 +35,7 @@
         <version>0.3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fxgl-ents</artifactId>
+    <artifactId>fxgl-ecs</artifactId>
     <packaging>jar</packaging>
 
     <description>Simple entity component system (control) framework</description>

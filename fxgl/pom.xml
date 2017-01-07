@@ -53,7 +53,7 @@
 
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-ents</artifactId>
+            <artifactId>fxgl-ecs</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
