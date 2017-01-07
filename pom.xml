@@ -16,7 +16,7 @@
         <module>fxgl-net</module>
         <module>fxgl-core</module>
         <module>fxgl-io</module>
-        <module>fxgl-ents</module>
+        <module>fxgl-ecs</module>
         <module>fxgl-ai</module>
         <module>fxgl-physics</module>
         <module>fxgl-eventbus</module>
