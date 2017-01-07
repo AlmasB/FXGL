@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.scene.intro.FXGLIntroScene
-import com.almasb.fxgl.scene.menu.MenuType
-import com.almasb.fxgl.scene.menu.Warcraft3Menu
+import com.almasb.fxgl.scene.menu.*
 
 /**
  * Factory for scenes used in FXGL.
@@ -58,12 +58,12 @@ open class SceneFactory {
      *
      * @return main menu
      */
-    open fun newMainMenu(app: com.almasb.fxgl.app.GameApplication): com.almasb.fxgl.scene.FXGLMenu {
+    open fun newMainMenu(app: GameApplication): FXGLMenu {
         when (app.settings.menuStyle) {
-            com.almasb.fxgl.scene.menu.MenuStyle.GTA5 -> return com.almasb.fxgl.scene.menu.GTAVMenu(app, MenuType.MAIN_MENU)
-            com.almasb.fxgl.scene.menu.MenuStyle.CCTR -> return com.almasb.fxgl.scene.menu.CCTRMenu(app, MenuType.MAIN_MENU)
+            com.almasb.fxgl.scene.menu.MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.MAIN_MENU)
+            com.almasb.fxgl.scene.menu.MenuStyle.CCTR -> return CCTRMenu(app, MenuType.MAIN_MENU)
             com.almasb.fxgl.scene.menu.MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.MAIN_MENU)
-            else -> return com.almasb.fxgl.scene.menu.FXGLDefaultMenu(app, MenuType.MAIN_MENU)
+            else -> return FXGLDefaultMenu(app, MenuType.MAIN_MENU)
         }
     }
 
@@ -74,12 +74,12 @@ open class SceneFactory {
      *
      * @return game menu
      */
-    open fun newGameMenu(app: com.almasb.fxgl.app.GameApplication): com.almasb.fxgl.scene.FXGLMenu {
+    open fun newGameMenu(app: GameApplication): FXGLMenu {
         when (app.settings.menuStyle) {
-            com.almasb.fxgl.scene.menu.MenuStyle.GTA5 -> return com.almasb.fxgl.scene.menu.GTAVMenu(app, MenuType.GAME_MENU)
-            com.almasb.fxgl.scene.menu.MenuStyle.CCTR -> return com.almasb.fxgl.scene.menu.CCTRMenu(app, MenuType.GAME_MENU)
+            com.almasb.fxgl.scene.menu.MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.GAME_MENU)
+            com.almasb.fxgl.scene.menu.MenuStyle.CCTR -> return CCTRMenu(app, MenuType.GAME_MENU)
             com.almasb.fxgl.scene.menu.MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.GAME_MENU)
-            else -> return com.almasb.fxgl.scene.menu.FXGLDefaultMenu(app, MenuType.GAME_MENU)
+            else -> return FXGLDefaultMenu(app, MenuType.GAME_MENU)
         }
     }
 }

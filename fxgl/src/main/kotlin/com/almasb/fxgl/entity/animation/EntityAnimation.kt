@@ -27,6 +27,7 @@
 package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.event.FXGLEvent
 import javafx.animation.Animation
 import javafx.event.EventHandler
 
@@ -35,7 +36,7 @@ import javafx.event.EventHandler
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class EntityAnimation(protected val animationBuilder: com.almasb.fxgl.entity.animation.AnimationBuilder) {
+abstract class EntityAnimation(protected val animationBuilder: AnimationBuilder) {
 
     companion object {
         private val log = FXGL.getLogger(EntityAnimation::class.java)
@@ -49,12 +50,12 @@ abstract class EntityAnimation(protected val animationBuilder: com.almasb.fxgl.e
         animation.cycleCount = animationBuilder.times
         animation.delay = animationBuilder.delay
 
-        val subscriberPause = FXGL.getEventBus().addEventHandler(com.almasb.fxgl.event.FXGLEvent.PAUSE, { e ->
+        val subscriberPause = FXGL.getEventBus().addEventHandler(FXGLEvent.PAUSE, { e ->
             if (state == AnimationState.PLAYING)
                 pause()
         })
 
-        val subscriberResume = FXGL.getEventBus().addEventHandler(com.almasb.fxgl.event.FXGLEvent.RESUME, { e ->
+        val subscriberResume = FXGL.getEventBus().addEventHandler(FXGLEvent.RESUME, { e ->
             if (state == AnimationState.PAUSED)
                 play()
         })

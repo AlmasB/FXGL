@@ -29,6 +29,8 @@ package com.almasb.fxgl.gameplay
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.AchievementEvent
+import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
 import javafx.collections.FXCollections
 
@@ -38,11 +40,11 @@ import javafx.collections.FXCollections
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class AchievementManager
-@Inject private constructor(): com.almasb.fxgl.settings.UserProfileSavable {
+@Inject private constructor(): UserProfileSavable {
 
     private val log = FXGL.getLogger(javaClass)
 
-    private val achievements = FXCollections.observableArrayList<com.almasb.fxgl.gameplay.Achievement>()
+    private val achievements = FXCollections.observableArrayList<Achievement>()
 
     init {
         log.debug { "Service [AchievementManager] initialized" }
@@ -55,7 +57,7 @@ class AchievementManager
      *
      * @param a the achievement
      */
-    fun registerAchievement(a: com.almasb.fxgl.gameplay.Achievement) {
+    fun registerAchievement(a: Achievement) {
         val count = achievements.filter { it.name == a.name }.size
 
         if (count > 0)
@@ -74,7 +76,7 @@ class AchievementManager
      *
      * @throws IllegalArgumentException if achievement is not registered
      */
-    fun getAchievementByName(name: String): com.almasb.fxgl.gameplay.Achievement {
+    fun getAchievementByName(name: String): Achievement {
         for (a in achievements)
             if (a.name == name)
                 return a
@@ -87,7 +89,7 @@ class AchievementManager
      */
     fun getAchievements() = FXCollections.unmodifiableObservableList(achievements)
 
-    override fun save(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
         val bundle = Bundle("achievement")
@@ -98,7 +100,7 @@ class AchievementManager
         profile.putBundle(bundle)
     }
 
-    override fun load(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun load(profile: UserProfile) {
         log.debug("Loading data from profile")
 
         val bundle = profile.getBundle("achievement")

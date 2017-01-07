@@ -41,7 +41,7 @@ import javafx.scene.text.Font
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 internal class InitEventHandlersTask
-@Inject constructor(private val app: com.almasb.fxgl.app.GameApplication) : Runnable {
+@Inject constructor(private val app: GameApplication) : Runnable {
 
     override fun run() {
         val bus = app.eventBus
@@ -74,7 +74,7 @@ internal class InitEventHandlersTask
 
         // Save/Load events
 
-        bus.addEventHandler(com.almasb.fxgl.event.SaveEvent.ANY, { event ->
+        bus.addEventHandler(SaveEvent.ANY, { event ->
             app.getInput().save(event.getProfile())
             app.getDisplay().save(event.getProfile())
             app.getAudioPlayer().save(event.getProfile())
@@ -82,13 +82,13 @@ internal class InitEventHandlersTask
             app.getMasterTimer().save(event.getProfile())
         })
 
-        bus.addEventHandler(com.almasb.fxgl.event.LoadEvent.ANY, { event ->
+        bus.addEventHandler(LoadEvent.ANY, { event ->
             app.getInput().load(event.getProfile())
             app.getDisplay().load(event.getProfile())
             app.getAudioPlayer().load(event.getProfile())
             app.getAchievementManager().load(event.getProfile())
 
-            if (event.getEventType() != com.almasb.fxgl.event.LoadEvent.RESTORE_SETTINGS) {
+            if (event.getEventType() != LoadEvent.RESTORE_SETTINGS) {
                 app.getMasterTimer().load(event.getProfile())
             }
         })
@@ -129,8 +129,8 @@ internal class InitEventHandlersTask
 
         // FXGL App
 
-        bus.addEventHandler(com.almasb.fxgl.event.DisplayEvent.CLOSE_REQUEST, { e -> app.exit() })
-        bus.addEventHandler(com.almasb.fxgl.event.DisplayEvent.DIALOG_OPENED, { e ->
+        bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, { e -> app.exit() })
+        bus.addEventHandler(DisplayEvent.DIALOG_OPENED, { e ->
             if (app.getState() === ApplicationState.INTRO || app.getState() === ApplicationState.LOADING)
                 return@addEventHandler
 
@@ -139,7 +139,7 @@ internal class InitEventHandlersTask
 
             app.getInput().onReset()
         })
-        bus.addEventHandler(com.almasb.fxgl.event.DisplayEvent.DIALOG_CLOSED, { e ->
+        bus.addEventHandler(DisplayEvent.DIALOG_CLOSED, { e ->
             if (app.getState() === ApplicationState.INTRO || app.getState() === ApplicationState.LOADING)
                 return@addEventHandler
 

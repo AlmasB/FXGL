@@ -47,7 +47,7 @@ import java.util.function.Consumer
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class QTEProvider
-@Inject private constructor() : com.almasb.fxgl.gameplay.qte.QTE {
+@Inject private constructor() : QTE {
 
     private val eventHandler: EventHandler<KeyEvent>
     private lateinit var scheduledAction: ScheduledFuture<*>

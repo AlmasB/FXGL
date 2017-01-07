@@ -27,6 +27,8 @@
 package com.almasb.fxgl.app
 
 import com.almasb.easyio.EasyIO
+import com.almasb.fxgl.gameplay.GameWorld
+import com.almasb.fxgl.physics.PhysicsWorld
 import com.google.inject.Inject
 
 /**
@@ -35,7 +37,7 @@ import com.google.inject.Inject
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class PreInitTask
-@Inject constructor(private val app: com.almasb.fxgl.app.GameApplication) : Runnable {
+@Inject constructor(private val app: GameApplication) : Runnable {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -44,8 +46,8 @@ class PreInitTask
         EasyIO.defaultExecutor = app.getExecutor()
 
         log.debug("Injecting gameWorld & physicsWorld")
-        app.gameWorld = FXGL.getInstance(com.almasb.fxgl.gameplay.GameWorld::class.java)
-        app.physicsWorld = FXGL.getInstance(com.almasb.fxgl.physics.PhysicsWorld::class.java)
+        app.gameWorld = FXGL.getInstance(GameWorld::class.java)
+        app.physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
 
         app.initAchievements()
 

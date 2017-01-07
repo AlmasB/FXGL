@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.time.LocalTimer
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
@@ -41,7 +42,7 @@ import java.util.function.Consumer
 internal class UpdaterTask : Runnable {
 
     private val log = FXGL.getLogger(javaClass)
-    private lateinit var updateCheckTimer: com.almasb.fxgl.time.LocalTimer
+    private lateinit var updateCheckTimer: LocalTimer
 
     /**
      * Checks for updates if necessary, blocking call.

@@ -38,7 +38,7 @@ import com.almasb.fxgl.event.IntroFinishedEvent
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-abstract class IntroScene : com.almasb.fxgl.scene.FXGLScene() {
+abstract class IntroScene : FXGLScene() {
 
     /**
      * Closes intro and initializes the next game state, whether it's a menu or game.

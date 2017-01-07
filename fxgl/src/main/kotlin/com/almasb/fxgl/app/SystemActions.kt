@@ -26,7 +26,9 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.ui.UI
 import javafx.scene.input.KeyCode
 
@@ -40,12 +42,12 @@ object SystemActions {
     /**
      * Binds system actions to keys and registers with the [input] service.
      */
-    fun bind(input: com.almasb.fxgl.input.Input) {
+    fun bind(input: Input) {
         input.addAction(screenshot(), KeyCode.P)
         input.addAction(devOptions(), KeyCode.DIGIT0, InputModifier.CTRL)
     }
 
-    private fun screenshot() = object : com.almasb.fxgl.input.UserAction("Screenshot") {
+    private fun screenshot() = object : UserAction("Screenshot") {
         override fun onActionBegin() {
             val ok = FXGL.getDisplay().saveScreenshot()
 
@@ -53,7 +55,7 @@ object SystemActions {
         }
     }
 
-    private fun devOptions() = object : com.almasb.fxgl.input.UserAction("Dev Options") {
+    private fun devOptions() = object : UserAction("Dev Options") {
         private var devBarOpen = false
         private var devUI: UI? = null
 
@@ -62,7 +64,7 @@ object SystemActions {
                 return
 
             if (devUI == null) {
-                devUI = FXGL.getAssetLoader().loadUI("dev_menu_bar.fxml", com.almasb.fxgl.app.DeveloperMenuBarController())
+                devUI = FXGL.getAssetLoader().loadUI("dev_menu_bar.fxml", DeveloperMenuBarController())
             }
 
             if (devBarOpen) {

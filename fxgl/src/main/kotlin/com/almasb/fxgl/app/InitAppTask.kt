@@ -35,13 +35,13 @@ import javafx.concurrent.Task
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class InitAppTask(val app: com.almasb.fxgl.app.GameApplication, val dataFile: DataFile) : Task<Void>() {
+class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>() {
 
     companion object {
         private val log = FXGL.getLogger(InitAppTask::class.java)
     }
 
-    constructor(app: com.almasb.fxgl.app.GameApplication) : this(app, DataFile.EMPTY)
+    constructor(app: GameApplication) : this(app, DataFile.EMPTY)
 
     override fun call(): Void? {
         val start = System.nanoTime()

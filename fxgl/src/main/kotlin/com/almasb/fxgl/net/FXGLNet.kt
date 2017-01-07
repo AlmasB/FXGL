@@ -43,7 +43,7 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class FXGLNet
-@Inject private constructor() : com.almasb.fxgl.net.Net {
+@Inject private constructor() : Net {
 
     override fun downloadTask(url: String): IOTask<Path> = DownloadTask(url)
 
@@ -67,20 +67,20 @@ class FXGLNet
 
     override fun openBrowserTask(url: String) = voidTaskOf("openBrowser($url)", { FXGL.getApp().hostServices.showDocument(url) })
 
-    private val dummy by lazy { com.almasb.fxgl.net.Server() }
-    private var connectionInternal: com.almasb.fxgl.net.NetworkConnection? = null
+    private val dummy by lazy { Server() }
+    private var connectionInternal: NetworkConnection? = null
 
-    override fun getConnection(): Optional<com.almasb.fxgl.net.NetworkConnection> {
+    override fun getConnection(): Optional<NetworkConnection> {
         return Optional.ofNullable(connectionInternal)
     }
 
-    override fun <T : Serializable> addDataParser(cl: Class<T>, parser: com.almasb.fxgl.net.DataParser<T>) {
+    override fun <T : Serializable> addDataParser(cl: Class<T>, parser: DataParser<T>) {
         dummy.addParser(cl, parser)
     }
 
-    override fun hostMultiplayerTask(): IOTask<com.almasb.fxgl.net.Server> {
+    override fun hostMultiplayerTask(): IOTask<Server> {
         return taskOf("Create Host", {
-            val server = com.almasb.fxgl.net.Server()
+            val server = Server()
             server.parsers = dummy.parsers
 
             // TODO: wait 5 minutes until fail
@@ -92,9 +92,9 @@ class FXGLNet
         })
     }
 
-    override fun connectMultiplayerTask(serverIP: String): IOTask<com.almasb.fxgl.net.Client> {
+    override fun connectMultiplayerTask(serverIP: String): IOTask<Client> {
         return taskOf("Connect To Host", {
-            val client = com.almasb.fxgl.net.Client(serverIP)
+            val client = Client(serverIP)
             client.parsers = dummy.parsers
 
             client.connect()

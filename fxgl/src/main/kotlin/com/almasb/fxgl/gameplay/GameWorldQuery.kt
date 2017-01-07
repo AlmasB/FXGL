@@ -27,6 +27,8 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.ents.Entity
+import com.almasb.fxgl.entity.component.BoundingBoxComponent
+import com.almasb.fxgl.entity.component.MainViewComponent
 import javafx.geometry.Rectangle2D
 import java.util.*
 import java.util.function.Predicate
@@ -37,7 +39,7 @@ import java.util.function.Predicate
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-internal class GameWorldQuery(private val entities: List<com.almasb.ents.Entity>) {
+internal class GameWorldQuery(private val entities: List<Entity>) {
 
     /**
      * Returns a list of entities which are filtered by
@@ -87,7 +89,7 @@ internal class GameWorldQuery(private val entities: List<com.almasb.ents.Entity>
      * @return list of entities in the range (do NOT modify)
      */
     fun getEntitiesInRange(selection: Rectangle2D): List<Entity> {
-        return entities.filter { it.getComponentUnsafe(com.almasb.fxgl.entity.component.BoundingBoxComponent::class.java)?.isWithin(selection) ?: false }
+        return entities.filter { it.getComponentUnsafe(BoundingBoxComponent::class.java)?.isWithin(selection) ?: false }
     }
 
 
@@ -105,7 +107,7 @@ internal class GameWorldQuery(private val entities: List<com.almasb.ents.Entity>
     fun getCollidingEntities(entity: Entity): List<Entity> {
         val bbox = com.almasb.fxgl.entity.Entities.getBBox(entity)
 
-        return entities.filter { it.getComponentUnsafe(com.almasb.fxgl.entity.component.BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
+        return entities.filter { it.getComponentUnsafe(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
     }
 
     /**
@@ -118,7 +120,7 @@ internal class GameWorldQuery(private val entities: List<com.almasb.ents.Entity>
      */
     fun getEntitiesByLayer(layer: com.almasb.fxgl.entity.RenderLayer): List<Entity> {
         return entities.filter {
-            val view = it.getComponentUnsafe(com.almasb.fxgl.entity.component.MainViewComponent::class.java)
+            val view = it.getComponentUnsafe(MainViewComponent::class.java)
 
             if (view != null) {
                 return@filter view.renderLayer.index() == layer.index()

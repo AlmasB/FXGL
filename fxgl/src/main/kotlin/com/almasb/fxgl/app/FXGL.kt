@@ -28,6 +28,8 @@ package com.almasb.fxgl.app
 
 import com.almasb.easyio.FS
 import com.almasb.easyio.serialization.Bundle
+import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
@@ -50,11 +52,11 @@ import java.util.function.Consumer
 class FXGL private constructor() {
 
     companion object {
-        private lateinit var internalApp: com.almasb.fxgl.app.GameApplication
+        private lateinit var internalApp: GameApplication
 
         private lateinit var internalBundle: Bundle
 
-        private lateinit var internalLogger: com.almasb.fxgl.logging.Logger
+        private lateinit var internalLogger: Logger
 
         /**
          * Temporarily holds k-v pairs from system.properties.
@@ -77,7 +79,7 @@ class FXGL private constructor() {
          * @return instance of the running game application cast to the actual type
          */
         @Suppress("UNCHECKED_CAST")
-        @JvmStatic fun <T : com.almasb.fxgl.app.GameApplication> getAppCast() = internalApp as T
+        @JvmStatic fun <T : GameApplication> getAppCast() = internalApp as T
 
         /**
          * Note: the system bundle is saved on exit and loaded on init.
@@ -91,7 +93,7 @@ class FXGL private constructor() {
         /**
          * Constructs FXGL.
          */
-        @JvmStatic fun configure(appModule: com.almasb.fxgl.app.ApplicationModule, vararg modules: Module) {
+        @JvmStatic fun configure(appModule: ApplicationModule, vararg modules: Module) {
             if (configured)
                 return
 
@@ -196,7 +198,7 @@ class FXGL private constructor() {
          *
          * @return service
          */
-        @JvmStatic fun <T> getService(serviceType: com.almasb.fxgl.app.ServiceType<T>) = injector.getInstance(serviceType.service())
+        @JvmStatic fun <T> getService(serviceType: ServiceType<T>) = injector.getInstance(serviceType.service())
 
         /**
          * Obtain an instance of a type.
@@ -242,70 +244,70 @@ class FXGL private constructor() {
 
         /* CONVENIENCE ACCESSORS */
 
-        private val _loggerFactory by lazy { getService(com.almasb.fxgl.app.ServiceType.LOGGER_FACTORY) }
+        private val _loggerFactory by lazy { getService(ServiceType.LOGGER_FACTORY) }
         @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
         @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
 
-        private val _assetLoader by lazy { getService(com.almasb.fxgl.app.ServiceType.ASSET_LOADER) }
+        private val _assetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
-        private val _eventBus by lazy { getService(com.almasb.fxgl.app.ServiceType.EVENT_BUS) }
+        private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
         @JvmStatic fun getEventBus() = _eventBus
 
-        private val _input by lazy { getService(com.almasb.fxgl.app.ServiceType.INPUT) }
+        private val _input by lazy { getService(ServiceType.INPUT) }
         @JvmStatic fun getInput() = _input
 
-        private val _audioPlayer by lazy { getService(com.almasb.fxgl.app.ServiceType.AUDIO_PLAYER) }
+        private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
 
-        private val _display by lazy { getService(com.almasb.fxgl.app.ServiceType.DISPLAY) }
+        private val _display by lazy { getService(ServiceType.DISPLAY) }
         @JvmStatic fun getDisplay() = _display
 
-        private val _notification by lazy { getService(com.almasb.fxgl.app.ServiceType.NOTIFICATION_SERVICE) }
+        private val _notification by lazy { getService(ServiceType.NOTIFICATION_SERVICE) }
         @JvmStatic fun getNotificationService() = _notification
 
-        private val _executor by lazy { getService(com.almasb.fxgl.app.ServiceType.EXECUTOR) }
+        private val _executor by lazy { getService(ServiceType.EXECUTOR) }
         @JvmStatic fun getExecutor() = _executor
 
-        private val _achievement by lazy { getService(com.almasb.fxgl.app.ServiceType.ACHIEVEMENT_MANAGER) }
+        private val _achievement by lazy { getService(ServiceType.ACHIEVEMENT_MANAGER) }
         @JvmStatic fun getAchievementManager() = _achievement
 
-        private val _qte by lazy { getService(com.almasb.fxgl.app.ServiceType.QTE) }
+        private val _qte by lazy { getService(ServiceType.QTE) }
         @JvmStatic fun getQTE() = _qte
 
-        private val _net by lazy { getService(com.almasb.fxgl.app.ServiceType.NET) }
+        private val _net by lazy { getService(ServiceType.NET) }
         @JvmStatic fun getNet() = _net
 
-        private val _pooler by lazy { getService(com.almasb.fxgl.app.ServiceType.POOLER) }
+        private val _pooler by lazy { getService(ServiceType.POOLER) }
         @JvmStatic fun getPooler() = _pooler
 
-        private val _exceptionHandler by lazy { getService(com.almasb.fxgl.app.ServiceType.EXCEPTION_HANDLER) }
+        private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
         @JvmStatic fun getExceptionHandler() = _exceptionHandler
 
-        private val _uiFactory by lazy { getService(com.almasb.fxgl.app.ServiceType.UI_FACTORY) }
+        private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
         @JvmStatic fun getUIFactory() = _uiFactory
 
-        private val _questManager by lazy { getService(com.almasb.fxgl.app.ServiceType.QUEST_MANAGER) }
+        private val _questManager by lazy { getService(ServiceType.QUEST_MANAGER) }
         @JvmStatic fun getQuestManager() = _questManager
 
         /**
          * @return new instance on each call
          */
-        @JvmStatic fun newLocalTimer() = getService(com.almasb.fxgl.app.ServiceType.LOCAL_TIMER)
+        @JvmStatic fun newLocalTimer() = getService(ServiceType.LOCAL_TIMER)
 
         /**
          * @param name unique name for timer
          * @return new instance on each call
          */
-        @JvmStatic fun newOfflineTimer(name: String): com.almasb.fxgl.time.LocalTimer = OfflineTimer(name)
+        @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name)
 
-        private val _masterTimer by lazy { getService(com.almasb.fxgl.app.ServiceType.MASTER_TIMER) }
+        private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
         @JvmStatic fun getMasterTimer() = _masterTimer
 
         /**
          * @return new instance on each call
          */
-        @JvmStatic fun newProfiler() = getService(com.almasb.fxgl.app.ServiceType.PROFILER)
+        @JvmStatic fun newProfiler() = getService(ServiceType.PROFILER)
 
         /**
          * Get value of an int property.

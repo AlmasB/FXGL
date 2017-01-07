@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.ai
 
+import com.almasb.fxgl.entity.GameEntity
 import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
 
@@ -34,7 +35,7 @@ import com.badlogic.gdx.ai.btree.Task
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class Action(val name: String) : LeafTask<com.almasb.fxgl.entity.GameEntity>() {
+abstract class Action(val name: String) : LeafTask<GameEntity>() {
 
     constructor() : this("")
 
@@ -47,7 +48,7 @@ abstract class Action(val name: String) : LeafTask<com.almasb.fxgl.entity.GameEn
         return Status.SUCCEEDED
     }
 
-    override fun copyTo(task: Task<com.almasb.fxgl.entity.GameEntity>): Task<com.almasb.fxgl.entity.GameEntity> {
+    override fun copyTo(task: Task<GameEntity>): Task<GameEntity> {
         return task
     }
 }

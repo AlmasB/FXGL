@@ -42,7 +42,7 @@ import java.lang.reflect.Modifier
  */
 class FXGLEventBus
 @Inject
-private constructor() : com.almasb.fxgl.event.EventBus {
+private constructor() : EventBus {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -68,7 +68,7 @@ private constructor() : com.almasb.fxgl.event.EventBus {
 
     override fun scanForHandlers(instance: Any) {
         for (method in instance.javaClass.declaredMethods) {
-            val annotation = method.getDeclaredAnnotation(com.almasb.fxgl.event.Handles::class.java)
+            val annotation = method.getDeclaredAnnotation(Handles::class.java)
 
             // method is marked @Handles
             if (annotation != null) {

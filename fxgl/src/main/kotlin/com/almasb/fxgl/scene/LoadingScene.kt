@@ -38,7 +38,7 @@ import javafx.scene.text.Text
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-open class LoadingScene : com.almasb.fxgl.scene.FXGLScene() {
+open class LoadingScene : FXGLScene() {
 
     private val progress = ProgressBar()
     val text = Text()

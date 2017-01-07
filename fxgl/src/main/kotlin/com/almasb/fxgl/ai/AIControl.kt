@@ -30,6 +30,7 @@ import com.almasb.ents.AbstractControl
 import com.almasb.ents.Entity
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.entity.GameEntity
 import com.badlogic.gdx.ai.btree.BehaviorTree
 import java.util.*
 
@@ -42,14 +43,14 @@ import java.util.*
 class AIControl
 private constructor() : AbstractControl() {
 
-    private lateinit var behaviorTree: BehaviorTree<com.almasb.fxgl.entity.GameEntity>
+    private lateinit var behaviorTree: BehaviorTree<GameEntity>
 
     val bubble = AIBubble()
 
     /**
      * Constructs AI control with given [behaviorTree].
      */
-    constructor(behaviorTree: BehaviorTree<com.almasb.fxgl.entity.GameEntity>) : this() {
+    constructor(behaviorTree: BehaviorTree<GameEntity>) : this() {
         this.behaviorTree = behaviorTree
     }
 
@@ -65,12 +66,12 @@ private constructor() : AbstractControl() {
             parsedTreesCache[treeName] = tree
         }
 
-        this.behaviorTree = tree!!.cloneTask() as BehaviorTree<com.almasb.fxgl.entity.GameEntity>
+        this.behaviorTree = tree!!.cloneTask() as BehaviorTree<GameEntity>
     }
 
     companion object {
 
-        private val parsedTreesCache = HashMap<String, BehaviorTree<com.almasb.fxgl.entity.GameEntity> >()
+        private val parsedTreesCache = HashMap<String, BehaviorTree<GameEntity> >()
     }
 
     fun setBubbleMessage(message: String) {
@@ -78,7 +79,7 @@ private constructor() : AbstractControl() {
     }
 
     override fun onAdded(entity: Entity) {
-        if (entity is com.almasb.fxgl.entity.GameEntity) {
+        if (entity is GameEntity) {
             behaviorTree.`object` = entity
 
             if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)

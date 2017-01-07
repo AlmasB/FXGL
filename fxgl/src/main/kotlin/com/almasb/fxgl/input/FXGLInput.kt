@@ -29,6 +29,8 @@ package com.almasb.fxgl.input
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.Viewport
+import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
@@ -39,7 +41,7 @@ import java.lang.reflect.Method
 import java.util.*
 
 class FXGLInput
-@Inject private constructor() : com.almasb.fxgl.input.Input {
+@Inject private constructor() : Input {
 
     private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 
@@ -67,14 +69,14 @@ class FXGLInput
     /**
      * Action bindings.
      */
-    private val bindings = LinkedHashMap<com.almasb.fxgl.input.UserAction, Trigger>()
+    private val bindings = LinkedHashMap<UserAction, Trigger>()
 
     override fun getBindings() = bindings
 
     /**
      * Currently active actions.
      */
-    private val currentActions = FXCollections.observableArrayList<com.almasb.fxgl.input.UserAction>()
+    private val currentActions = FXCollections.observableArrayList<UserAction>()
 
     /**
      * If action events should be processed.
@@ -109,7 +111,7 @@ class FXGLInput
      * and handle them appropriately.
      */
     private fun initActionListener() {
-        currentActions.addListener { c: ListChangeListener.Change<out com.almasb.fxgl.input.UserAction> ->
+        currentActions.addListener { c: ListChangeListener.Change<out UserAction> ->
             while (c.next()) {
                 if (!processActions)
                     continue
@@ -123,7 +125,7 @@ class FXGLInput
         }
     }
 
-    override fun onUpdateEvent(event: com.almasb.fxgl.time.UpdateEvent) {
+    override fun onUpdateEvent(event: UpdateEvent) {
         if (processActions) {
             currentActions.forEach { it.onAction() }
         }
@@ -216,17 +218,17 @@ class FXGLInput
 
     override fun isHeld(button: MouseButton) = buttons.getOrDefault(button, false)
 
-    override fun addAction(action: com.almasb.fxgl.input.UserAction, button: MouseButton, modifier: InputModifier) =
+    override fun addAction(action: UserAction, button: MouseButton, modifier: InputModifier) =
             addBinding(action, MouseTrigger(button, modifier))
 
-    override fun addAction(action: com.almasb.fxgl.input.UserAction, key: KeyCode, modifier: InputModifier) {
+    override fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier) {
         if (ILLEGAL_KEYS.contains(key))
             throw IllegalArgumentException("Cannot bind to illegal key: $key")
 
         addBinding(action, KeyTrigger(key, modifier))
     }
 
-    private fun addBinding(action: com.almasb.fxgl.input.UserAction, trigger: Trigger) {
+    private fun addBinding(action: UserAction, trigger: Trigger) {
         if (bindings.containsKey(action))
             throw IllegalArgumentException("Action with name \"${action.name}\" already exists")
 
@@ -237,7 +239,7 @@ class FXGLInput
         log.debug { "Registered new binding: $action - $trigger" }
     }
 
-    override fun rebind(action: com.almasb.fxgl.input.UserAction, key: KeyCode, modifier: InputModifier): Boolean {
+    override fun rebind(action: UserAction, key: KeyCode, modifier: InputModifier): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key, modifier))) {
             bindings[action] = KeyTrigger(key, modifier)
             return true
@@ -246,7 +248,7 @@ class FXGLInput
         return false
     }
 
-    override fun rebind(action: com.almasb.fxgl.input.UserAction, button: MouseButton, modifier: InputModifier): Boolean {
+    override fun rebind(action: UserAction, button: MouseButton, modifier: InputModifier): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button, modifier))) {
             bindings[action] = MouseTrigger(button, modifier)
             return true
@@ -328,7 +330,7 @@ class FXGLInput
         val map = HashMap<String, HashMap<ActionType, Method> >()
 
         for (method in instance.javaClass.declaredMethods) {
-            val action = method.getDeclaredAnnotation(com.almasb.fxgl.input.OnUserAction::class.java)
+            val action = method.getDeclaredAnnotation(OnUserAction::class.java)
             if (action != null) {
                 val mapping = map.getOrDefault(action.name, HashMap())
                 if (mapping.isEmpty()) {
@@ -340,7 +342,7 @@ class FXGLInput
         }
 
         map.forEach { name, mapping ->
-            val action = object : com.almasb.fxgl.input.UserAction(name) {
+            val action = object : UserAction(name) {
                 override fun onActionBegin() {
                     mapping[ActionType.ON_ACTION_BEGIN]?.invoke(instance)
                 }
@@ -364,7 +366,7 @@ class FXGLInput
         }
     }
 
-    override fun save(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
         val bundle = Bundle("input")
@@ -374,7 +376,7 @@ class FXGLInput
         profile.putBundle(bundle)
     }
 
-    override fun load(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun load(profile: UserProfile) {
         log.debug("Loading data from profile")
 
         val bundle = profile.getBundle("input")

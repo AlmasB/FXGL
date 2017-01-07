@@ -38,7 +38,7 @@ import javafx.scene.shape.Shape
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TranslationAnimation(animationBuilder: com.almasb.fxgl.entity.animation.AnimationBuilder,
+class TranslationAnimation(animationBuilder: AnimationBuilder,
                            val path: Shape?, val start: Point2D, val end: Point2D) : EntityAnimation(animationBuilder) {
 
     private lateinit var node: Node

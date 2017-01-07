@@ -37,7 +37,7 @@ import javafx.scene.shape.Rectangle
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ScaleAnimation(animationBuilder: com.almasb.fxgl.entity.animation.AnimationBuilder,
+class ScaleAnimation(animationBuilder: AnimationBuilder,
                      val startScale: Point2D, val endScale: Point2D) : EntityAnimation(animationBuilder) {
 
     private lateinit var node: Node

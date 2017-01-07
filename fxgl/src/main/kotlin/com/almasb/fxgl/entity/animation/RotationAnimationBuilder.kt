@@ -31,7 +31,7 @@ package com.almasb.fxgl.entity.animation
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RotationAnimationBuilder(private val animationBuilder: com.almasb.fxgl.entity.animation.AnimationBuilder) {
+class RotationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
 
     private var startAngle = 0.0
     private var endAngle = 0.0

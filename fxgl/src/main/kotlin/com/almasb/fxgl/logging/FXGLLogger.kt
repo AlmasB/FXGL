@@ -34,7 +34,7 @@ import java.util.function.Supplier
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLLogger(val name: String) : com.almasb.fxgl.logging.Logger {
+class FXGLLogger(val name: String) : Logger {
 
     constructor(caller: Class<*>) : this(caller.simpleName)
 

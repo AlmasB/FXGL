@@ -38,7 +38,7 @@ import javafx.beans.property.SimpleDoubleProperty
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RotationAnimation(animationBuilder: com.almasb.fxgl.entity.animation.AnimationBuilder,
+class RotationAnimation(animationBuilder: AnimationBuilder,
                         val startAngle: Double, val endAngle: Double) : EntityAnimation(animationBuilder) {
 
     private lateinit var value: DoubleProperty

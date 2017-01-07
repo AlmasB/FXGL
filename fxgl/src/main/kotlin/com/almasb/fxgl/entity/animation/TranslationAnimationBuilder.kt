@@ -35,7 +35,7 @@ import javafx.scene.shape.Shape
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class TranslationAnimationBuilder(private val animationBuilder: com.almasb.fxgl.entity.animation.AnimationBuilder) {
+class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
 
     private var path: Shape? = null
     private var fromPoint = Point2D.ZERO

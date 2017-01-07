@@ -26,9 +26,16 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.LoadEvent
+import com.almasb.fxgl.event.ProfileSelectedEvent
+import com.almasb.fxgl.event.SaveEvent
+import com.almasb.fxgl.gameplay.SaveLoadManager
 import com.almasb.fxgl.io.SaveFile
+import com.almasb.fxgl.scene.DialogPane
 import com.almasb.fxgl.scene.ProgressDialog
+import com.almasb.fxgl.scene.menu.MenuEventListener
+import com.almasb.fxgl.settings.UserProfile
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
@@ -42,20 +49,20 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplication) : com.almasb.fxgl.scene.menu.MenuEventListener, EventHandler<KeyEvent> {
+internal class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
 
     private val log = FXGL.getLogger(javaClass)
 
-    private lateinit var saveLoadManager: com.almasb.fxgl.gameplay.SaveLoadManager
+    private lateinit var saveLoadManager: SaveLoadManager
 
-    override fun getSaveLoadManager(): com.almasb.fxgl.gameplay.SaveLoadManager {
+    override fun getSaveLoadManager(): SaveLoadManager {
         return saveLoadManager
     }
 
     /**
      * Stores the default profile data. This is used to restore default settings.
      */
-    private val defaultProfile: com.almasb.fxgl.settings.UserProfile
+    private val defaultProfile: UserProfile
 
     /**
      * Stores current selected profile name for this game.
@@ -67,7 +74,7 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
     init {
         defaultProfile = createProfile()
 
-        app.eventBus.addEventHandler(com.almasb.fxgl.event.FXGLEvent.EXIT, { saveProfile() })
+        app.eventBus.addEventHandler(FXGLEvent.EXIT, { saveProfile() })
     }
 
     override fun onNewGame() {
@@ -96,7 +103,7 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
     }
 
     override fun onSave() {
-        app.display.showInputBoxWithCancel("Enter save file name", com.almasb.fxgl.scene.DialogPane.ALPHANUM, Consumer { saveFileName ->
+        app.display.showInputBoxWithCancel("Enter save file name", DialogPane.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer;
@@ -211,10 +218,10 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
 
      * @return user profile
      */
-    fun createProfile(): com.almasb.fxgl.settings.UserProfile {
-        val profile = com.almasb.fxgl.settings.UserProfile(app.settings.getTitle(), app.settings.getVersion())
+    fun createProfile(): UserProfile {
+        val profile = UserProfile(app.settings.getTitle(), app.settings.getVersion())
 
-        app.eventBus.fireEvent(com.almasb.fxgl.event.SaveEvent(profile))
+        app.eventBus.fireEvent(SaveEvent(profile))
 
         return profile
     }
@@ -226,11 +233,11 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
      * *
      * @return true if loaded successfully, false if couldn't load
      */
-    fun loadFromProfile(profile: com.almasb.fxgl.settings.UserProfile): Boolean {
+    fun loadFromProfile(profile: UserProfile): Boolean {
         if (!profile.isCompatible(app.settings.getTitle(), app.settings.getVersion()))
             return false
 
-        app.eventBus.fireEvent(com.almasb.fxgl.event.LoadEvent(LoadEvent.LOAD_PROFILE, profile))
+        app.eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
         return true
     }
 
@@ -238,7 +245,7 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
      * Restores default settings, e.g. audio, video, controls.
      */
     override fun restoreDefaultSettings() {
-        app.eventBus.fireEvent(com.almasb.fxgl.event.LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
+        app.eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
 
     fun saveProfile() {
@@ -288,11 +295,11 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
         btnNew.setOnAction {
-            app.display.showInputBox("New Profile", com.almasb.fxgl.scene.DialogPane.ALPHANUM, Consumer { name ->
+            app.display.showInputBox("New Profile", DialogPane.ALPHANUM, Consumer { name ->
                 profileName.set(name)
-                saveLoadManager = com.almasb.fxgl.gameplay.SaveLoadManager(name)
+                saveLoadManager = SaveLoadManager(name)
 
-                app.eventBus.fireEvent(com.almasb.fxgl.event.ProfileSelectedEvent(name, false))
+                app.eventBus.fireEvent(ProfileSelectedEvent(name, false))
 
                 saveProfile()
             })
@@ -301,7 +308,7 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
         btnSelect.setOnAction {
             val name = profilesBox.value
 
-            saveLoadManager = com.almasb.fxgl.gameplay.SaveLoadManager(name)
+            saveLoadManager = SaveLoadManager(name)
 
             saveLoadManager.loadProfileTask()
                     .onSuccessKt { profile ->
@@ -313,8 +320,8 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
                             profileName.set(name)
 
                             saveLoadManager.loadLastModifiedSaveFileTask()
-                                    .onSuccessKt { file -> app.eventBus.fireEvent(com.almasb.fxgl.event.ProfileSelectedEvent(name, true)) }
-                                    .onFailureKt { error -> app.eventBus.fireEvent(com.almasb.fxgl.event.ProfileSelectedEvent(name, false)) }
+                                    .onSuccessKt { file -> app.eventBus.fireEvent(ProfileSelectedEvent(name, true)) }
+                                    .onFailureKt { error -> app.eventBus.fireEvent(ProfileSelectedEvent(name, false)) }
                                     .executeAsyncWithDialogFX(ProgressDialog("Loading last save file"))
                         }
                     }
@@ -327,13 +334,13 @@ internal class MenuEventHandler(private val app: com.almasb.fxgl.app.GameApplica
         btnDelete.setOnAction {
             val name = profilesBox.value
 
-            com.almasb.fxgl.gameplay.SaveLoadManager.deleteProfileTask(name)
+            SaveLoadManager.deleteProfileTask(name)
                     .onSuccessKt { showProfileDialog() }
                     .onFailureKt { error -> app.display.showErrorBox("$error", { showProfileDialog() }) }
                     .executeAsyncWithDialogFX(ProgressDialog("Deleting profile: $name"))
         }
 
-        com.almasb.fxgl.gameplay.SaveLoadManager.loadProfileNamesTask()
+        SaveLoadManager.loadProfileNamesTask()
                 .onSuccessKt { names ->
                     profilesBox.items.addAll(names)
 

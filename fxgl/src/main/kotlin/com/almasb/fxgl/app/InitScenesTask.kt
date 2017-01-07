@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.scene.GameScene
 import com.google.inject.Inject
 import javafx.scene.input.KeyEvent
 
@@ -35,7 +36,7 @@ import javafx.scene.input.KeyEvent
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class InitScenesTask
-@Inject constructor(private val app: com.almasb.fxgl.app.GameApplication) : Runnable {
+@Inject constructor(private val app: GameApplication) : Runnable {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -43,7 +44,7 @@ class InitScenesTask
         val sceneFactory = app.initSceneFactory()
 
         // TODO: allow scene factory to create game scene too
-        val gameScene = FXGL.getInstance(com.almasb.fxgl.scene.GameScene::class.java)
+        val gameScene = FXGL.getInstance(GameScene::class.java)
         val loadingScene = sceneFactory.newLoadingScene()
 
         if (app.getSettings().isIntroEnabled()) {

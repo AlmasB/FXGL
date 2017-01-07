@@ -29,7 +29,9 @@ package com.almasb.fxgl.asset
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.scene.CSS
+import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
@@ -58,7 +60,7 @@ import java.util.zip.ZipInputStream
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class FXGLAssetLoader
-@Inject private constructor(@Named("asset.cache.size") cacheSize: Int): com.almasb.fxgl.asset.AssetLoader {
+@Inject private constructor(@Named("asset.cache.size") cacheSize: Int): AssetLoader {
 
     private val ASSETS_DIR = "/assets/"
     private val TEXTURES_DIR = ASSETS_DIR + "textures/"
@@ -105,15 +107,15 @@ class FXGLAssetLoader
      * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadTexture(name: String): com.almasb.fxgl.texture.Texture {
+    override fun loadTexture(name: String): Texture {
         val asset = getAssetFromCache(TEXTURES_DIR + name)
         if (asset != null) {
-            return com.almasb.fxgl.texture.Texture(Image::class.java.cast(asset))
+            return Texture(Image::class.java.cast(asset))
         }
 
         try {
             getStream(TEXTURES_DIR + name).use {
-                val texture = com.almasb.fxgl.texture.Texture(Image(it))
+                val texture = Texture(Image(it))
                 cachedAssets.put(TEXTURES_DIR + name, texture.image)
                 return texture
             }
@@ -147,17 +149,17 @@ class FXGLAssetLoader
      * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadTexture(name: String, width: Double, height: Double): com.almasb.fxgl.texture.Texture {
+    override fun loadTexture(name: String, width: Double, height: Double): Texture {
         val cacheKey = TEXTURES_DIR + name + "@" + width + "x" + height
 
         val asset = getAssetFromCache(cacheKey)
         if (asset != null) {
-            return com.almasb.fxgl.texture.Texture(Image::class.java.cast(asset))
+            return Texture(Image::class.java.cast(asset))
         }
 
         try {
             getStream(TEXTURES_DIR + name).use {
-                val texture = com.almasb.fxgl.texture.Texture(Image(it, width, height, false, true))
+                val texture = Texture(Image(it, width, height, false, true))
                 cachedAssets.put(cacheKey, texture.image)
                 return texture
             }
@@ -258,8 +260,8 @@ class FXGLAssetLoader
      * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadKV(name: String): com.almasb.fxgl.parser.KVFile {
-        return com.almasb.fxgl.parser.KVFile(readAllLines(KV_DIR + name))
+    override fun loadKV(name: String): KVFile {
+        return KVFile(readAllLines(KV_DIR + name))
     }
 
     /**
@@ -592,7 +594,7 @@ class FXGLAssetLoader
      */
     private fun loadFileNamesJar(folderName: String): List<String> {
         val fileNames = ArrayList<String>()
-        val src = com.almasb.fxgl.asset.AssetLoader::class.java.protectionDomain.codeSource
+        val src = AssetLoader::class.java.protectionDomain.codeSource
         if (src != null) {
             val jar = src.location
             try {

@@ -27,6 +27,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Orientation
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
@@ -40,9 +41,9 @@ import javafx.scene.image.Image
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class ScrollingBackgroundView
-@JvmOverloads constructor(texture: com.almasb.fxgl.texture.Texture,
+@JvmOverloads constructor(texture: Texture,
                           val orientation: Orientation = Orientation.HORIZONTAL,
-                          renderLayer: com.almasb.fxgl.entity.RenderLayer = com.almasb.fxgl.entity.RenderLayer.BACKGROUND) : com.almasb.fxgl.entity.EntityView(renderLayer) {
+                          renderLayer: RenderLayer = RenderLayer.BACKGROUND) : EntityView(renderLayer) {
 
     private val canvas: Canvas
     private val g: GraphicsContext

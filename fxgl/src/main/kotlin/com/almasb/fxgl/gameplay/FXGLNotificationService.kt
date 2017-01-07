@@ -27,6 +27,9 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.event.NotificationEvent
+import com.almasb.fxgl.scene.GameScene
+import com.almasb.fxgl.ui.Position
 import com.google.inject.Inject
 import javafx.animation.ScaleTransition
 import javafx.scene.paint.Color
@@ -40,13 +43,13 @@ import java.util.*
  */
 class FXGLNotificationService
 @Inject
-private constructor(private val gameScene: com.almasb.fxgl.scene.GameScene) : com.almasb.fxgl.gameplay.NotificationService {
+private constructor(private val gameScene: GameScene) : NotificationService {
 
     private val log = FXGL.getLogger(javaClass)
 
     private val queue = ArrayDeque<NotificationView>()
 
-    private var position = com.almasb.fxgl.ui.Position.TOP
+    private var position = Position.TOP
 
     /**
      * @return notification position
@@ -58,7 +61,7 @@ private constructor(private val gameScene: com.almasb.fxgl.scene.GameScene) : co
      *
      * @param position where to show notification
      */
-    override fun setPosition(position: com.almasb.fxgl.ui.Position) {
+    override fun setPosition(position: Position) {
         this.position = position
     }
 
@@ -118,7 +121,7 @@ private constructor(private val gameScene: com.almasb.fxgl.scene.GameScene) : co
         gameScene.addUINode(notificationView)
         notificationView.show()
 
-        FXGL.getEventBus().fireEvent(com.almasb.fxgl.event.NotificationEvent(notificationView.notification))
+        FXGL.getEventBus().fireEvent(NotificationEvent(notificationView.notification))
     }
 
     private fun createNotificationView(text: String): NotificationView {
@@ -142,19 +145,19 @@ private constructor(private val gameScene: com.almasb.fxgl.scene.GameScene) : co
         var y = 0.0
 
         when (position) {
-            com.almasb.fxgl.ui.Position.LEFT -> {
+            Position.LEFT -> {
                 x = 50.0
                 y = gameScene.height / 2 - (heightOf(text, 12.0) + 10) / 2
             }
-            com.almasb.fxgl.ui.Position.RIGHT -> {
+            Position.RIGHT -> {
                 x = gameScene.width - (widthOf(text, 12.0) + 20) - 50.0
                 y = gameScene.height / 2 - (heightOf(text, 12.0) + 10) / 2
             }
-            com.almasb.fxgl.ui.Position.TOP -> {
+            Position.TOP -> {
                 x = gameScene.width / 2 - (widthOf(text, 12.0) + 20) / 2
                 y = 50.0
             }
-            com.almasb.fxgl.ui.Position.BOTTOM -> {
+            Position.BOTTOM -> {
                 x = gameScene.width / 2 - (widthOf(text, 12.0) + 20) / 2
                 y = gameScene.height - (heightOf(text, 12.0) + 10) - 50.0
             }

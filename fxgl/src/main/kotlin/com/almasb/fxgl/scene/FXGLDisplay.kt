@@ -29,7 +29,12 @@ package com.almasb.fxgl.scene
 import com.almasb.easyio.UIDialogHandler
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
+import com.almasb.fxgl.event.EventBus
+import com.almasb.fxgl.settings.ReadOnlyGameSettings
+import com.almasb.fxgl.settings.SceneDimension
+import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
 import javafx.application.Platform
 import javafx.beans.property.DoubleProperty
@@ -69,11 +74,11 @@ private constructor(private val stage: Stage,
                      * problems in fullscreen mode. Switching between scenes
                      * in FS mode will otherwise temporarily toggle FS.
                      */
-                    private var fxScene: Scene) : com.almasb.fxgl.scene.Display {
+                    private var fxScene: Scene) : Display {
 
     private val log = FXGL.getLogger(javaClass)
 
-    private val currentScene = ReadOnlyObjectWrapper<com.almasb.fxgl.scene.FXGLScene>()
+    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
 
     private val targetWidth: DoubleProperty
     private val targetHeight: DoubleProperty
@@ -83,11 +88,11 @@ private constructor(private val stage: Stage,
 
     private val css: CSS
 
-    private val eventBus: com.almasb.fxgl.event.EventBus
+    private val eventBus: EventBus
 
-    private val settings: com.almasb.fxgl.settings.ReadOnlyGameSettings
+    private val settings: ReadOnlyGameSettings
 
-    private val sceneDimensions = ArrayList<com.almasb.fxgl.settings.SceneDimension>()
+    private val sceneDimensions = ArrayList<SceneDimension>()
 
     /*
      * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
@@ -109,10 +114,10 @@ private constructor(private val stage: Stage,
         scaleRatio = SimpleDoubleProperty()
 
         // if default css then use menu css, else use specified
-        css = if (com.almasb.fxgl.asset.FXGLAssets.UI_CSS.isDefault())
+        css = if (FXGLAssets.UI_CSS.isDefault())
             FXGL.getAssetLoader().loadCSS(settings.menuStyle.cssFileName)
         else
-            com.almasb.fxgl.asset.FXGLAssets.UI_CSS
+            FXGLAssets.UI_CSS
 
         Platform.runLater { initStage() }
 
@@ -143,11 +148,11 @@ private constructor(private val stage: Stage,
                     if (!dialog.isShowing) {
                         showConfirmationBox("Exit the game?", { yes ->
                             if (yes)
-                                eventBus.fireEvent(com.almasb.fxgl.event.DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                                eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                         })
                     }
                 } else {
-                    eventBus.fireEvent(com.almasb.fxgl.event.DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                    eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                 }
             }
 
@@ -158,7 +163,7 @@ private constructor(private val stage: Stage,
                 log.debug("Stage size: " + stage.width + "x" + stage.height)
             }
 
-            icons.add(com.almasb.fxgl.asset.FXGLAssets.UI_ICON)
+            icons.add(FXGLAssets.UI_ICON)
 
             if (settings.isFullScreen) {
                 fullScreenExitHint = ""
@@ -177,7 +182,7 @@ private constructor(private val stage: Stage,
      *
      * @param scene the scene
      */
-    override fun registerScene(scene: com.almasb.fxgl.scene.FXGLScene) {
+    override fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
         scene.appendCSS(css)
     }
@@ -187,7 +192,7 @@ private constructor(private val stage: Stage,
      *
      * @param scene the scene
      */
-    override fun setScene(scene: com.almasb.fxgl.scene.FXGLScene) {
+    override fun setScene(scene: FXGLScene) {
         getCurrentScene()?.activeProperty()?.set(false)
 
         currentScene.set(scene)
@@ -246,7 +251,7 @@ private constructor(private val stage: Stage,
         sceneDimensions.addAll(
                 intArrayOf(360, 480, 720, 1080)
                         .filter { it <= bounds.height && it * ratio <= bounds.width }
-                        .map { com.almasb.fxgl.settings.SceneDimension(it * ratio, it.toDouble()) }
+                        .map { SceneDimension(it * ratio, it.toDouble()) }
         )
     }
 
@@ -350,7 +355,7 @@ private constructor(private val stage: Stage,
      *
      * @param dimension scene dimension
      */
-    override fun setSceneDimension(dimension: com.almasb.fxgl.settings.SceneDimension) {
+    override fun setSceneDimension(dimension: SceneDimension) {
         if (sceneDimensions.contains(dimension)) {
             log.debug { "Setting scene dimension: $dimension" }
             setNewResolution(dimension.width, dimension.height)
@@ -365,10 +370,10 @@ private constructor(private val stage: Stage,
         dialog = com.almasb.fxgl.scene.DialogPane(this)
         dialog.setOnShown {
             fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
-            eventBus.fireEvent(com.almasb.fxgl.event.DisplayEvent(DisplayEvent.DIALOG_OPENED))
+            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
         }
         dialog.setOnClosed {
-            eventBus.fireEvent(com.almasb.fxgl.event.DisplayEvent(DisplayEvent.DIALOG_CLOSED))
+            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
             fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
         }
     }
@@ -383,11 +388,11 @@ private constructor(private val stage: Stage,
      * @param resultCallback the function to be called
      */
     override fun <T> showDialog(dialog: Dialog<T>, resultCallback: Consumer<T>) {
-        eventBus.fireEvent(com.almasb.fxgl.event.DisplayEvent(DisplayEvent.DIALOG_OPENED))
+        eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
 
         dialog.initOwner(stage)
         dialog.setOnCloseRequest { e ->
-            eventBus.fireEvent(com.almasb.fxgl.event.DisplayEvent(DisplayEvent.DIALOG_CLOSED))
+            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
 
             resultCallback.accept(dialog.result)
         }
@@ -499,7 +504,7 @@ private constructor(private val stage: Stage,
         }
     }
 
-    override fun save(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
         val bundle = Bundle("scene")
@@ -510,7 +515,7 @@ private constructor(private val stage: Stage,
         profile.putBundle(bundle)
     }
 
-    override fun load(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun load(profile: UserProfile) {
         log.debug("Loading data from profile")
 
         val bundle = profile.getBundle("scene")

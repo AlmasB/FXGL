@@ -27,6 +27,7 @@
 package com.almasb.fxgl.concurrent
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.event.EventBus
 import com.google.inject.Inject
 import javafx.util.Duration
 import java.util.concurrent.Executors
@@ -42,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class FXGLExecutor
 @Inject
-private constructor(eventBus: com.almasb.fxgl.event.EventBus) : com.almasb.fxgl.concurrent.Executor {
+private constructor(eventBus: EventBus) : Executor {
 
     private val log = FXGL.getLogger(javaClass)
 

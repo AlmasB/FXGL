@@ -27,6 +27,9 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.event.NotificationEvent
+import com.almasb.fxgl.scene.GameScene
+import com.almasb.fxgl.ui.Position
 import com.google.inject.Inject
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
@@ -40,13 +43,13 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class SlidingNotificationService
-@Inject private constructor(private val gameScene: com.almasb.fxgl.scene.GameScene): com.almasb.fxgl.gameplay.NotificationService {
+@Inject private constructor(private val gameScene: GameScene): NotificationService {
 
     private val log = FXGL.getLogger(javaClass)
 
     private val queue = ArrayDeque<String>()
 
-    private var position = com.almasb.fxgl.ui.Position.TOP
+    private var position = Position.TOP
 
     /**
      * @return notification position
@@ -58,9 +61,9 @@ class SlidingNotificationService
      *
      * @param position where to show notification
      */
-    override fun setPosition(position: com.almasb.fxgl.ui.Position) {
+    override fun setPosition(position: Position) {
         this.position = position
-        if (position == com.almasb.fxgl.ui.Position.BOTTOM) {
+        if (position == Position.BOTTOM) {
             notificationImpl.isShowFromTop = false
             notificationImpl.translateY = FXGL.getSettings().height - 50.0
         } else {
@@ -145,7 +148,7 @@ class SlidingNotificationService
             notificationImpl.show(text)
         }, Duration.seconds(0.03));
 
-        FXGL.getEventBus().fireEvent(com.almasb.fxgl.event.NotificationEvent(Notification(text)))
+        FXGL.getEventBus().fireEvent(NotificationEvent(Notification(text)))
 
         val id = counter
 

@@ -28,6 +28,8 @@ package com.almasb.fxgl.audio
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
@@ -40,7 +42,7 @@ import java.util.*
  */
 class FXGLAudioPlayer
 @Inject
-private constructor() : com.almasb.fxgl.audio.AudioPlayer {
+private constructor() : AudioPlayer {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -48,7 +50,7 @@ private constructor() : com.almasb.fxgl.audio.AudioPlayer {
         log.debug("Service [AudioPlayer] initialized")
     }
 
-    override fun onUpdateEvent(event: com.almasb.fxgl.time.UpdateEvent) {
+    override fun onUpdateEvent(event: UpdateEvent) {
 
         activeMusic.filter { it.reachedEnd() }
                 .forEach {
@@ -218,7 +220,7 @@ private constructor() : com.almasb.fxgl.audio.AudioPlayer {
         activeMusic.forEach { it.stop() }
     }
 
-    override fun save(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
         val bundle = Bundle("audio")
@@ -229,7 +231,7 @@ private constructor() : com.almasb.fxgl.audio.AudioPlayer {
         profile.putBundle(bundle)
     }
 
-    override fun load(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun load(profile: UserProfile) {
         log.debug("Loading data from profile")
         val bundle = profile.getBundle("audio")
         bundle.log()

@@ -43,7 +43,7 @@ import java.util.stream.Collectors
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object SystemLogger : com.almasb.fxgl.logging.Logger {
+object SystemLogger : Logger {
 
     private val MAX_LOGS = 10
 
