@@ -163,6 +163,8 @@ public class EntityTest {
         entity.addComponent(new TestComponent());
         entity.addComponent(new HPComponent(33));
         entity.addComponent(new ArmorComponent());
+
+        assertTrue(true);
     }
 
     @Test(expected = IllegalArgumentException.class)
