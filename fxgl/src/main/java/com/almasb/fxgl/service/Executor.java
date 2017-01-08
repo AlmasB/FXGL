@@ -24,29 +24,28 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.net
+package com.almasb.fxgl.service;
 
-import com.almasb.easyio.IOTask
-import java.net.URL
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
+import javafx.util.Duration;
+
+import java.util.concurrent.ScheduledFuture;
 
 /**
- *
+ * Asynchronous executor service.
+ * Allows submitting tasks to be run in the background, including after a certain delay.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DownloadTask(private val url: String) : IOTask<Path>() {
+public interface Executor extends java.util.concurrent.Executor {
 
-    override fun onExecute(): Path {
-        URL(url).openStream().use {
-            val fileName = url.substringAfterLast("/")
-
-            val file = Paths.get("./$fileName")
-            Files.copy(it, file, StandardCopyOption.REPLACE_EXISTING)
-            return file
-        }
-    }
+    /**
+     * Schedule a single action to run after delay.
+     * Unlike MasterTimer service, this is not blocked by game execution
+     * and runs even if the game is paused.
+     *
+     * @param action the action
+     * @param delay delay
+     * @return scheduled future which can be cancelled
+     */
+    ScheduledFuture<?> schedule(Runnable action, Duration delay);
 }

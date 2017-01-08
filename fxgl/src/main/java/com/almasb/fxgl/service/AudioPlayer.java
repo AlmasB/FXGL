@@ -24,10 +24,12 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.audio;
+package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.asset.FXGLAssets;
+import com.almasb.fxgl.audio.Music;
+import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.event.NotificationEvent;
 import com.almasb.fxgl.gameplay.NotificationListener;
 import com.almasb.fxgl.settings.UserProfileSavable;

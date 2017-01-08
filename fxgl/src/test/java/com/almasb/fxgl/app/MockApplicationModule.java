@@ -28,7 +28,7 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.concurrent.Executor;
+import com.almasb.fxgl.service.Executor;
 import com.almasb.fxgl.concurrent.FXGLExecutor;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEventBus;

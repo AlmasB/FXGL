@@ -23,10 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.*;
@@ -43,7 +44,8 @@ import java.util.List;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class MultiServer extends NetworkConnection {
-    private static final Logger log = FXGL.getLogger("FXGL.MultiServer");
+
+    private static final Logger log = LogManager.getLogger(MultiServer.class);
 
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();
@@ -120,7 +122,7 @@ public final class MultiServer extends NetworkConnection {
                     try {
                         udpThread.outSocket.send(new DatagramPacket(buf, buf.length, addr.address, addr.port));
                     } catch (Exception e) {
-                        log.warning("Failed to send UDP message: " + e.getMessage());
+                        log.warn("Failed to send UDP message: " + e.getMessage());
                     }
                 }
             }
@@ -136,7 +138,7 @@ public final class MultiServer extends NetworkConnection {
                 try {
                     tcpThread.outputStream.writeObject(data);
                 } catch (Exception e) {
-                    log.warning("Failed to send TCP message: " + e.getMessage());
+                    log.warn("Failed to send TCP message: " + e.getMessage());
                 }
             });
         }
@@ -151,7 +153,7 @@ public final class MultiServer extends NetworkConnection {
             try {
                 server = new ServerSocket(tcpPort);
             } catch (Exception e) {
-                log.warning("Exception during TCP connection creation: " + e.getMessage());
+                log.warn("Exception during TCP connection creation: " + e.getMessage());
                 running = false;
                 return;
             }
@@ -166,7 +168,7 @@ public final class MultiServer extends NetworkConnection {
                     tcpThreads.add(t);
                     t.start();
                 } catch (Exception e) {
-                    log.warning("Exception during TCP connection execution: " + e.getMessage());
+                    log.warn("Exception during TCP connection execution: " + e.getMessage());
                 }
             }
 
@@ -174,7 +176,7 @@ public final class MultiServer extends NetworkConnection {
                 server.close();
             } catch (Exception ignored) {
             }
-            log.info("TCP connection closed normally");
+            log.debug("TCP connection closed normally");
         }
     }
 
@@ -211,7 +213,7 @@ public final class MultiServer extends NetworkConnection {
                     }).parse((Serializable) data);
                 }
             } catch (Exception e) {
-                log.warning("Exception during TCP connection execution: " + e.getMessage());
+                log.warn("Exception during TCP connection execution: " + e.getMessage());
                 running = false;
                 tcpThreads.remove(this);
                 try {
@@ -226,7 +228,7 @@ public final class MultiServer extends NetworkConnection {
                 socket.close();
             } catch (IOException ignored) {
             }
-            log.info("TCP connection closed normally");
+            log.debug("TCP connection closed normally");
         }
     }
 
@@ -269,16 +271,16 @@ public final class MultiServer extends NetworkConnection {
                             }).parse((Serializable) data);
                         }
                     } catch (Exception e) {
-                        log.warning("Exception during UDP connection execution: " + e.getMessage());
+                        log.warn("Exception during UDP connection execution: " + e.getMessage());
                     }
                 }
             } catch (Exception e) {
-                log.warning("Exception during UDP connection execution: " + e.getMessage());
+                log.warn("Exception during UDP connection execution: " + e.getMessage());
                 running = false;
                 return;
             }
 
-            log.info("UDP connection closed normally");
+            log.debug("UDP connection closed normally");
         }
     }
 

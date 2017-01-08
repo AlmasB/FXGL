@@ -27,7 +27,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.audio.AudioPlayer;
+import com.almasb.fxgl.service.AudioPlayer;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
@@ -37,7 +37,7 @@ import com.almasb.fxgl.gameplay.rpg.quest.QuestManager;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
-import com.almasb.fxgl.net.Net;
+import com.almasb.fxgl.service.Net;
 import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.settings.GameSettings;

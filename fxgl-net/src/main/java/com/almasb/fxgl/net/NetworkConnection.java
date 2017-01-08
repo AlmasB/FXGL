@@ -23,10 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutput;
@@ -42,9 +43,17 @@ import java.util.Map;
  */
 public abstract class NetworkConnection {
 
-    private static final Logger log = FXGL.getLogger("FXGL.NetworkConnection");
+    private static final Logger log = LogManager.getLogger(NetworkConnection.class);
 
-    protected Map<Class<?>, DataParser<? super Serializable>> parsers = new HashMap<>();
+    private Map<Class<?>, DataParser<? super Serializable>> parsers = new HashMap<>();
+
+    public Map<Class<?>, DataParser<? super Serializable>> getParsers() {
+        return parsers;
+    }
+
+    public void setParsers(Map<Class<?>, DataParser<? super Serializable>> parsers) {
+        this.parsers = parsers;
+    }
 
     /**
      * Send a message (hint) that this end of connection is about
@@ -54,13 +63,13 @@ public abstract class NetworkConnection {
         try {
             send(ConnectionMessage.CLOSING, NetworkProtocol.TCP);
         } catch (Exception e) {
-            log.warning("TCP already disconnected or error: " + e.getMessage());
+            log.warn("TCP already disconnected or error: " + e.getMessage());
         }
 
         try {
             send(ConnectionMessage.CLOSING, NetworkProtocol.UDP);
         } catch (Exception e) {
-            log.warning("UDP already disconnected or error: " + e.getMessage());
+            log.warn("UDP already disconnected or error: " + e.getMessage());
         }
     }
 

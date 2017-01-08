@@ -24,9 +24,13 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.net;
+package com.almasb.fxgl.service;
 
 import com.almasb.easyio.IOTask;
+import com.almasb.fxgl.net.Client;
+import com.almasb.fxgl.net.DataParser;
+import com.almasb.fxgl.net.NetworkConnection;
+import com.almasb.fxgl.net.Server;
 
 import java.io.InputStream;
 import java.io.Serializable;

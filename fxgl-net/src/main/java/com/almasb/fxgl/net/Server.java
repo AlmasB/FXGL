@@ -23,10 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.almasb.fxgl.net;
 
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -57,7 +58,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Server extends NetworkConnection {
 
-    private static final Logger log = FXGL.getLogger("FXGL.Server");
+    private static final Logger log = LogManager.getLogger(Server.class);
 
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();
@@ -105,7 +106,7 @@ public final class Server extends NetworkConnection {
         try {
             result = latch.await(seconds, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            log.warning("startAndWait(" + seconds + "): " + e);
+            log.warn("startAndWait(" + seconds + "): " + e);
         }
 
         if (!result)
@@ -197,12 +198,12 @@ public final class Server extends NetworkConnection {
                     }
                 }
             } catch (Exception e) {
-                log.warning("Exception during TCP connection execution: " + e);
+                log.warn("Exception during TCP connection execution: " + e);
                 running = false;
                 return;
             }
 
-            log.info("TCP connection closed normally");
+            log.debug("TCP connection closed normally");
         }
     }
 
@@ -251,12 +252,12 @@ public final class Server extends NetworkConnection {
                     }
                 }
             } catch (Exception e) {
-                log.warning("Exception during UDP connection execution: " + e);
+                log.warn("Exception during UDP connection execution: " + e);
                 running = false;
                 return;
             }
 
-            log.info("UDP connection closed normally");
+            log.debug("UDP connection closed normally");
         }
     }
 }
