@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-/**
+/*
  * Origin: libGDX.
  */
 
@@ -34,10 +34,15 @@ import com.almasb.gameutils.reflect.ClassReflection;
 import com.almasb.gameutils.reflect.Constructor;
 import com.almasb.gameutils.reflect.ReflectionException;
 
-/** Pool that creates new instances of a type using reflection. The type must have a zero argument constructor.
+/**
+ * Pool that creates new instances of a type using reflection.
+ * The type must have a zero argument constructor.
  * {@link Constructor#setAccessible(boolean)} will be used if the class and/or constructor is not visible.
- * @author Nathan Sweet */
+ *
+ * @author Nathan Sweet
+ */
 public class ReflectionPool<T> extends Pool<T> {
+
     private final Constructor constructor;
 
     public ReflectionPool(Class<T> type) {
@@ -69,6 +74,7 @@ public class ReflectionPool<T> extends Pool<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected T newObject() {
         try {
             return (T) constructor.newInstance((Object[]) null);

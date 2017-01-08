@@ -484,13 +484,13 @@ public class ObjectSet<T> implements Iterable<T> {
         return iterator2;
     }
 
-    static public <T> ObjectSet<T> with (T... array) {
+    public static <T> ObjectSet<T> with (T... array) {
         ObjectSet set = new ObjectSet();
         set.addAll(array);
         return set;
     }
 
-    static public class ObjectSetIterator<K> implements Iterable<K>, Iterator<K> {
+    public static class ObjectSetIterator<K> implements Iterable<K>, Iterator<K> {
         public boolean hasNext;
 
         final ObjectSet<K> set;
