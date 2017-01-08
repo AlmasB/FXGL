@@ -221,8 +221,10 @@ public class FrictionJoint extends Joint {
         Vec2 vB = data.velocities[m_indexB].v;
         float wB = data.velocities[m_indexB].w;
 
-        float mA = m_invMassA, mB = m_invMassB;
-        float iA = m_invIA, iB = m_invIB;
+        float mA = m_invMassA;
+        float mB = m_invMassB;
+        float iA = m_invIA;
+        float iB = m_invIB;
 
         float h = data.step.dt;
 

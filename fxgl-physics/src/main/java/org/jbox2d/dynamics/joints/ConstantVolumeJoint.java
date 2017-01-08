@@ -173,7 +173,7 @@ public class ConstantVolumeJoint extends Joint {
         }
 
         pool.pushVec2(1);
-        // System.out.println(sumdeltax);
+
         return done;
     }
 
@@ -193,7 +193,7 @@ public class ConstantVolumeJoint extends Joint {
         if (step.step.warmStarting) {
             m_impulse *= step.step.dtRatio;
             // float lambda = -2.0f * crossMassSum / dotMassSum;
-            // System.out.println(crossMassSum + " " +dotMassSum);
+
             // lambda = JBoxUtils.clamp(lambda, -JBoxSettings.maxLinearCorrection,
             // JBoxSettings.maxLinearCorrection);
             // m_impulse = lambda;
@@ -229,33 +229,32 @@ public class ConstantVolumeJoint extends Joint {
             crossMassSum += Vec2.cross(velocities[bodies[i].m_islandIndex].v, d[i]);
         }
         float lambda = -2.0f * crossMassSum / dotMassSum;
-        // System.out.println(crossMassSum + " " +dotMassSum);
+
         // lambda = JBoxUtils.clamp(lambda, -JBoxSettings.maxLinearCorrection,
         // JBoxSettings.maxLinearCorrection);
         m_impulse += lambda;
-        // System.out.println(m_impulse);
+
         for (int i = 0; i < bodies.length; ++i) {
             velocities[bodies[i].m_islandIndex].v.x += bodies[i].m_invMass * d[i].y * .5f * lambda;
             velocities[bodies[i].m_islandIndex].v.y += bodies[i].m_invMass * -d[i].x * .5f * lambda;
         }
     }
 
-    /** No-op */
     @Override
     public void getAnchorA(Vec2 argOut) {
+        // no default implementation
     }
 
-    /** No-op */
     @Override
     public void getAnchorB(Vec2 argOut) {
+        // no default implementation
     }
 
-    /** No-op */
     @Override
     public void getReactionForce(float inv_dt, Vec2 argOut) {
+        // no default implementation
     }
 
-    /** No-op */
     @Override
     public float getReactionTorque(float inv_dt) {
         return 0;

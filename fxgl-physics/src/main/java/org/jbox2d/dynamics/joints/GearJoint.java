@@ -414,7 +414,11 @@ public class GearJoint extends Joint {
         Vec2 cD = data.positions[m_indexD].c;
         float aD = data.positions[m_indexD].a;
 
-        Rotation qA = pool.popRot(), qB = pool.popRot(), qC = pool.popRot(), qD = pool.popRot();
+        Rotation qA = pool.popRot();
+        Rotation qB = pool.popRot();
+        Rotation qC = pool.popRot();
+        Rotation qD = pool.popRot();
+
         qA.set(aA);
         qB.set(aB);
         qC.set(aC);

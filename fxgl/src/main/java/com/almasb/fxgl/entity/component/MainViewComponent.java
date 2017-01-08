@@ -59,7 +59,7 @@ public class MainViewComponent extends AbstractComponent {
     private static Color showBBoxColor = Color.RED;
 
     /**
-     * @param color the color to highlight bounding boxes
+     * @param showBBoxColor the color to highlight bounding boxes
      */
     public static void setShowBBoxColor(Color showBBoxColor) {
         MainViewComponent.showBBoxColor = showBBoxColor;
@@ -233,7 +233,9 @@ public class MainViewComponent extends AbstractComponent {
     }
 
     @Override
-    public void onRemoved(Entity entity) {}
+    public void onRemoved(Entity entity) {
+        // no-op
+    }
 
     private void bindView() {
         getView().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());

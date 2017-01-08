@@ -234,5 +234,6 @@ public abstract class Joint {
      * Override to handle destruction of joint
      */
     public void destructor() {
+        // no default implementation
     }
 }

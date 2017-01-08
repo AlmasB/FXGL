@@ -61,7 +61,9 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
     }
 
     @Override
-    default void onExit() {}
+    default void onExit() {
+        // no-op
+    }
 
     /**
      * Called on key event.

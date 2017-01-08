@@ -316,7 +316,7 @@ public class GameWorldTest {
 
         public static final EventType<MyEvent> ANY = new EventType<>(Event.ANY, "MY_EVENT");
 
-        public MyEvent() {
+        MyEvent() {
             super(ANY);
         }
     }

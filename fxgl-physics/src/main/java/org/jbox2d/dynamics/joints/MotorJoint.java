@@ -54,13 +54,13 @@ import org.jbox2d.pooling.IWorldPool;
 public class MotorJoint extends Joint {
 
     // Solver shared
-    private final Vec2 m_linearOffset = new Vec2();
-    private float m_angularOffset;
-    private final Vec2 m_linearImpulse = new Vec2();
-    private float m_angularImpulse;
-    private float m_maxForce;
-    private float m_maxTorque;
-    private float m_correctionFactor;
+    private final Vec2 linearOffset = new Vec2();
+    private float angularOffset;
+    private final Vec2 linearImpulse = new Vec2();
+    private float angularImpulse;
+    private float maxForce;
+    private float maxTorque;
+    private float correctionFactor;
 
     // Solver temp
     private int m_indexA;
@@ -80,14 +80,14 @@ public class MotorJoint extends Joint {
 
     public MotorJoint(IWorldPool pool, MotorJointDef def) {
         super(pool, def);
-        m_linearOffset.set(def.linearOffset);
-        m_angularOffset = def.angularOffset;
+        linearOffset.set(def.linearOffset);
+        angularOffset = def.angularOffset;
 
-        m_angularImpulse = 0.0f;
+        angularImpulse = 0.0f;
 
-        m_maxForce = def.maxForce;
-        m_maxTorque = def.maxTorque;
-        m_correctionFactor = def.correctionFactor;
+        maxForce = def.maxForce;
+        maxTorque = def.maxTorque;
+        correctionFactor = def.correctionFactor;
     }
 
     @Override
@@ -101,29 +101,29 @@ public class MotorJoint extends Joint {
     }
 
     public void getReactionForce(float inv_dt, Vec2 out) {
-        out.set(m_linearImpulse).mulLocal(inv_dt);
+        out.set(linearImpulse).mulLocal(inv_dt);
     }
 
     public float getReactionTorque(float inv_dt) {
-        return m_angularImpulse * inv_dt;
+        return angularImpulse * inv_dt;
     }
 
     public float getCorrectionFactor() {
-        return m_correctionFactor;
+        return correctionFactor;
     }
 
-    public void setM_correctionFactor(float m_correctionFactor) {
-        this.m_correctionFactor = m_correctionFactor;
+    public void setCorrectionFactor(float correctionFactor) {
+        this.correctionFactor = correctionFactor;
     }
 
     /**
      * Set the target linear offset, in frame A, in meters.
      */
     public void setLinearOffset(Vec2 linearOffset) {
-        if (linearOffset.x != m_linearOffset.x || linearOffset.y != m_linearOffset.y) {
+        if (linearOffset.x != this.linearOffset.x || linearOffset.y != this.linearOffset.y) {
             m_bodyA.setAwake(true);
             m_bodyB.setAwake(true);
-            m_linearOffset.set(linearOffset);
+            this.linearOffset.set(linearOffset);
         }
     }
 
@@ -131,14 +131,14 @@ public class MotorJoint extends Joint {
      * Get the target linear offset, in frame A, in meters.
      */
     public void getLinearOffset(Vec2 out) {
-        out.set(m_linearOffset);
+        out.set(linearOffset);
     }
 
     /**
      * Get the target linear offset, in frame A, in meters. Do not modify.
      */
     public Vec2 getLinearOffset() {
-        return m_linearOffset;
+        return linearOffset;
     }
 
     /**
@@ -147,15 +147,15 @@ public class MotorJoint extends Joint {
      * @param angularOffset
      */
     public void setAngularOffset(float angularOffset) {
-        if (angularOffset != m_angularOffset) {
+        if (angularOffset != this.angularOffset) {
             m_bodyA.setAwake(true);
             m_bodyB.setAwake(true);
-            m_angularOffset = angularOffset;
+            this.angularOffset = angularOffset;
         }
     }
 
     public float getAngularOffset() {
-        return m_angularOffset;
+        return angularOffset;
     }
 
     /**
@@ -165,14 +165,14 @@ public class MotorJoint extends Joint {
      */
     public void setMaxForce(float force) {
         assert (force >= 0.0f);
-        m_maxForce = force;
+        maxForce = force;
     }
 
     /**
      * Get the maximum friction force in N.
      */
     public float getMaxForce() {
-        return m_maxForce;
+        return maxForce;
     }
 
     /**
@@ -180,14 +180,14 @@ public class MotorJoint extends Joint {
      */
     public void setMaxTorque(float torque) {
         assert (torque >= 0.0f);
-        m_maxTorque = torque;
+        maxTorque = torque;
     }
 
     /**
      * Get the maximum friction torque in N*m.
      */
     public float getMaxTorque() {
-        return m_maxTorque;
+        return maxTorque;
     }
 
     @Override
@@ -251,27 +251,27 @@ public class MotorJoint extends Joint {
         }
 
         // m_linearError = cB + m_rB - cA - m_rA - b2Mul(qA, m_linearOffset);
-        Rotation.mulToOutUnsafe(qA, m_linearOffset, temp);
+        Rotation.mulToOutUnsafe(qA, linearOffset, temp);
         m_linearError.x = cB.x + m_rB.x - cA.x - m_rA.x - temp.x;
         m_linearError.y = cB.y + m_rB.y - cA.y - m_rA.y - temp.y;
-        m_angularError = aB - aA - m_angularOffset;
+        m_angularError = aB - aA - angularOffset;
 
         if (data.step.warmStarting) {
             // Scale impulses to support a variable time step.
-            m_linearImpulse.x *= data.step.dtRatio;
-            m_linearImpulse.y *= data.step.dtRatio;
-            m_angularImpulse *= data.step.dtRatio;
+            linearImpulse.x *= data.step.dtRatio;
+            linearImpulse.y *= data.step.dtRatio;
+            angularImpulse *= data.step.dtRatio;
 
-            final Vec2 P = m_linearImpulse;
+            final Vec2 P = linearImpulse;
             vA.x -= mA * P.x;
             vA.y -= mA * P.y;
-            wA -= iA * (m_rA.x * P.y - m_rA.y * P.x + m_angularImpulse);
+            wA -= iA * (m_rA.x * P.y - m_rA.y * P.x + angularImpulse);
             vB.x += mB * P.x;
             vB.y += mB * P.y;
-            wB += iB * (m_rB.x * P.y - m_rB.y * P.x + m_angularImpulse);
+            wB += iB * (m_rB.x * P.y - m_rB.y * P.x + angularImpulse);
         } else {
-            m_linearImpulse.setZero();
-            m_angularImpulse = 0.0f;
+            linearImpulse.setZero();
+            angularImpulse = 0.0f;
         }
 
         pool.pushVec2(1);
@@ -291,8 +291,10 @@ public class MotorJoint extends Joint {
         final Vec2 vB = data.velocities[m_indexB].v;
         float wB = data.velocities[m_indexB].w;
 
-        float mA = m_invMassA, mB = m_invMassB;
-        float iA = m_invIA, iB = m_invIB;
+        float mA = m_invMassA;
+        float mB = m_invMassB;
+        float iA = m_invIA;
+        float iB = m_invIB;
 
         float h = data.step.dt;
         float inv_h = data.step.inv_dt;
@@ -301,13 +303,13 @@ public class MotorJoint extends Joint {
 
         // Solve angular friction
         {
-            float Cdot = wB - wA + inv_h * m_correctionFactor * m_angularError;
+            float Cdot = wB - wA + inv_h * correctionFactor * m_angularError;
             float impulse = -m_angularMass * Cdot;
 
-            float oldImpulse = m_angularImpulse;
-            float maxImpulse = h * m_maxTorque;
-            m_angularImpulse = JBoxUtils.clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
-            impulse = m_angularImpulse - oldImpulse;
+            float oldImpulse = angularImpulse;
+            float maxImpulse = h * maxTorque;
+            angularImpulse = JBoxUtils.clamp(angularImpulse + impulse, -maxImpulse, maxImpulse);
+            impulse = angularImpulse - oldImpulse;
 
             wA -= iA * impulse;
             wB += iB * impulse;
@@ -320,26 +322,26 @@ public class MotorJoint extends Joint {
             // Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA) + inv_h * m_correctionFactor *
             // m_linearError;
             Cdot.x =
-                    vB.x + -wB * m_rB.y - vA.x - -wA * m_rA.y + inv_h * m_correctionFactor * m_linearError.x;
+                    vB.x + -wB * m_rB.y - vA.x - -wA * m_rA.y + inv_h * correctionFactor * m_linearError.x;
             Cdot.y =
-                    vB.y + wB * m_rB.x - vA.y - wA * m_rA.x + inv_h * m_correctionFactor * m_linearError.y;
+                    vB.y + wB * m_rB.x - vA.y - wA * m_rA.x + inv_h * correctionFactor * m_linearError.y;
 
             final Vec2 impulse = temp;
             Mat22.mulToOutUnsafe(m_linearMass, Cdot, impulse);
             impulse.negateLocal();
             final Vec2 oldImpulse = pool.popVec2();
-            oldImpulse.set(m_linearImpulse);
-            m_linearImpulse.addLocal(impulse);
+            oldImpulse.set(linearImpulse);
+            linearImpulse.addLocal(impulse);
 
-            float maxImpulse = h * m_maxForce;
+            float maxImpulse = h * maxForce;
 
-            if (m_linearImpulse.lengthSquared() > maxImpulse * maxImpulse) {
-                m_linearImpulse.normalize();
-                m_linearImpulse.mulLocal(maxImpulse);
+            if (linearImpulse.lengthSquared() > maxImpulse * maxImpulse) {
+                linearImpulse.normalize();
+                linearImpulse.mulLocal(maxImpulse);
             }
 
-            impulse.x = m_linearImpulse.x - oldImpulse.x;
-            impulse.y = m_linearImpulse.y - oldImpulse.y;
+            impulse.x = linearImpulse.x - oldImpulse.x;
+            impulse.y = linearImpulse.y - oldImpulse.y;
 
             vA.x -= mA * impulse.x;
             vA.y -= mA * impulse.y;
