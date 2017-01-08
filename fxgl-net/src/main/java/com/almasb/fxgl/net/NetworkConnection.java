@@ -45,7 +45,7 @@ public abstract class NetworkConnection {
 
     private static final Logger log = LogManager.getLogger(NetworkConnection.class);
 
-    private Map<Class<?>, DataParser<? super Serializable>> parsers = new HashMap<>();
+    protected Map<Class<?>, DataParser<? super Serializable>> parsers = new HashMap<>();
 
     public Map<Class<?>, DataParser<? super Serializable>> getParsers() {
         return parsers;
