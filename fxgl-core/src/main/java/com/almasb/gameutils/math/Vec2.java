@@ -30,6 +30,8 @@
 
 package com.almasb.gameutils.math;
 
+import com.almasb.gameutils.pool.Poolable;
+
 import java.io.Serializable;
 
 /**
@@ -38,7 +40,7 @@ import java.io.Serializable;
  * Can be used instead of JavaFX Point2D to avoid object allocations.
  * This is also preferred for private fields.
  */
-public final class Vec2 implements Serializable {
+public final class Vec2 implements Serializable, Poolable {
     private static final long serialVersionUID = 1L;
 
     public float x, y;
@@ -347,6 +349,11 @@ public final class Vec2 implements Serializable {
     @Override
     public String toString() {
         return "(" + x + "," + y + ")";
+    }
+
+    @Override
+    public void reset() {
+        setZero();
     }
 
     /* STATIC */
