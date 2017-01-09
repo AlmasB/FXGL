@@ -32,9 +32,9 @@ import com.almasb.fxgl.event.ProfileSelectedEvent
 import com.almasb.fxgl.event.SaveEvent
 import com.almasb.fxgl.gameplay.SaveLoadManager
 import com.almasb.fxgl.io.SaveFile
-import com.almasb.fxgl.scene.DialogPane
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
+import com.almasb.fxgl.service.impl.display.DialogPane
 import com.almasb.fxgl.settings.UserProfile
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper

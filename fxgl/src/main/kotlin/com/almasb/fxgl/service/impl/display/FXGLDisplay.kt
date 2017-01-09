@@ -24,13 +24,15 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.scene
+package com.almasb.fxgl.service.impl.display
 
 import com.almasb.easyio.UIDialogHandler
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
+import com.almasb.fxgl.scene.CSS
+import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Display
 import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
@@ -365,18 +367,20 @@ private constructor(private val stage: Stage,
         }
     }
 
-    private lateinit var dialog: com.almasb.fxgl.scene.DialogPane
+    private lateinit var dialog: DialogPane
 
     private fun initDialogBox() {
-        dialog = com.almasb.fxgl.scene.DialogPane(this)
-        dialog.setOnShown {
+        dialog = DialogPane(this)
+
+        dialog.setOnShown(Runnable {
             fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
             eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
-        }
-        dialog.setOnClosed {
+        })
+
+        dialog.setOnClosed(Runnable {
             eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
             fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
-        }
+        })
     }
 
     /**

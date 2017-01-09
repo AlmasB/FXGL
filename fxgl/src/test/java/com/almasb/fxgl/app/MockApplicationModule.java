@@ -32,7 +32,7 @@ import com.almasb.fxgl.service.Executor;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.EventBus;
 import com.almasb.fxgl.service.impl.event.FXGLEventBus;
-import com.almasb.fxgl.gameplay.FXGLNotificationService;
+import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.service.NotificationService;
 import com.almasb.fxgl.service.impl.input.FXGLInput;
 import com.almasb.fxgl.service.Input;

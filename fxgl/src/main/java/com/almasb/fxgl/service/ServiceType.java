@@ -27,25 +27,25 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
-import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
-import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.devtools.profiling.Profiler;
-import com.almasb.fxgl.service.impl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.gameplay.SlidingNotificationService;
-import com.almasb.fxgl.service.impl.qte.QTEProvider;
-import com.almasb.fxgl.gameplay.rpg.quest.QuestManager;
-import com.almasb.fxgl.service.impl.input.FXGLInput;
+import com.almasb.fxgl.service.impl.quest.FXGLQuestServiceProvider;
 import com.almasb.fxgl.logging.FXGLLoggerFactory;
 import com.almasb.fxgl.logging.LoggerFactory;
+import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
+import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
+import com.almasb.fxgl.service.impl.display.FXGLDisplay;
+import com.almasb.fxgl.service.impl.event.FXGLEventBus;
+import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
-import com.almasb.fxgl.scene.FXGLDisplay;
-import com.almasb.fxgl.time.FXGLLocalTimer;
-import com.almasb.fxgl.service.impl.timer.FXGLMasterTimer;
-import com.almasb.fxgl.time.LocalTimer;
-import com.almasb.fxgl.ui.FXGLUIFactory;
+import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
+import com.almasb.fxgl.service.impl.qte.QTEProvider;
+import com.almasb.fxgl.service.impl.timer.FXGLMasterTimer;
+import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
+import com.almasb.fxgl.time.FXGLLocalTimer;
+import com.almasb.fxgl.time.LocalTimer;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
 
@@ -287,15 +287,15 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<QuestManager> QUEST_MANAGER = new ServiceType<QuestManager>() {
+    ServiceType<FXGLQuestServiceProvider> QUEST_MANAGER = new ServiceType<FXGLQuestServiceProvider>() {
         @Override
-        public Class<QuestManager> service() {
-            return QuestManager.class;
+        public Class<FXGLQuestServiceProvider> service() {
+            return FXGLQuestServiceProvider.class;
         }
 
         @Override
-        public Class<? extends QuestManager> serviceProvider() {
-            return QuestManager.class;
+        public Class<? extends FXGLQuestServiceProvider> serviceProvider() {
+            return FXGLQuestServiceProvider.class;
         }
     };
 }

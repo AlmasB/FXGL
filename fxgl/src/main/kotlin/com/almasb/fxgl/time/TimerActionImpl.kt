@@ -37,14 +37,16 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class TimerActionImpl
-/**
- * @param now      current time in nanoseconds
- * @param interval interval duration
- * @param action   the action
- * @param type     ONCE or INDEFINITE
- */
-(private var time: Long, interval: Duration, private val action: Runnable, private val type: TimerActionImpl.TimerType)
-: com.almasb.fxgl.time.TimerAction {
+            /**
+             * @param now      current time in nanoseconds
+             * @param interval interval duration
+             * @param action   the action
+             * @param type     ONCE or INDEFINITE
+             */
+            (private var time: Long,
+             interval: Duration,
+             private val action: Runnable,
+             private val type: TimerType) : TimerAction {
 
     enum class TimerType {
         ONCE, INDEFINITE

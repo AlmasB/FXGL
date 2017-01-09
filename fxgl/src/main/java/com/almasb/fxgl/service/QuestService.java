@@ -23,51 +23,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.service.UIFactory;
-import com.google.inject.Inject;
+package com.almasb.fxgl.service;
+
+import com.almasb.fxgl.gameplay.rpg.quest.Quest;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.text.Font;
 
 /**
- * FXGL provider of UI factory service.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class FXGLUIFactory implements UIFactory {
+public interface QuestService {
 
-    @Inject
-    private FXGLUIFactory() {}
+    /**
+     * @return unmodifiable list of currently managed quests
+     */
+    ObservableList<Quest> questsProperty();
 
-    public Font newFont(double size) {
-        return FXGLAssets.UI_FONT.newFont(size);
-    }
+    /**
+     * Add given quest to service.
+     *
+     * @param quest the quest to add
+     */
+    void addQuest(Quest quest);
 
-    public Button newButton(String text) {
-        return new FXGLButton(text);
-    }
-
-    public <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items) {
-        return new FXGLChoiceBox<>(items);
-    }
-
-    public <T> ChoiceBox<T> newChoiceBox() {
-        return new FXGLChoiceBox<>();
-    }
-
-    @Override
-    public CheckBox newCheckBox() {
-        return new FXGLCheckBox();
-    }
-
-    @Override
-    public <T> Spinner<T> newSpinner(ObservableList<T> items) {
-        return new FXGLSpinner<>(items);
-    }
+    /**
+     * Remove the quest from service.
+     *
+     * @param quest the quest to remove
+     */
+    void removeQuest(Quest quest);
 }

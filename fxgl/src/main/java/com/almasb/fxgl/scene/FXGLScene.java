@@ -168,7 +168,7 @@ public abstract class FXGLScene {
      *
      * @return active property
      */
-    protected BooleanProperty activeProperty() {
+    public BooleanProperty activeProperty() {
         return active;
     }
 

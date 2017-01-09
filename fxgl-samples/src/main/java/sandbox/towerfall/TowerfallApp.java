@@ -226,7 +226,7 @@ public class TowerfallApp extends GameApplication {
                 ))
         );
 
-        quests.forEach(getQuestManager()::addQuest);
+        quests.forEach(getQuestService()::addQuest);
     }
 
     @Override
