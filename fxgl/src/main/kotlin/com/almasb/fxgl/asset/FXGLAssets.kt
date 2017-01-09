@@ -24,13 +24,14 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset;
+package com.almasb.fxgl.asset
 
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.scene.CSS;
-import com.almasb.fxgl.ui.FontFactory;
-import javafx.scene.image.Image;
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGL.Companion.getString
+import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.scene.CSS
+import com.almasb.fxgl.ui.FontFactory
+import javafx.scene.image.Image
 
 /**
  * Stores internal assets, i.e. provided by FXGL.
@@ -38,34 +39,32 @@ import javafx.scene.image.Image;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class FXGLAssets {
+class FXGLAssets {
 
-    public static final Sound SOUND_NOTIFICATION;
-    public static final Sound SOUND_MENU_SELECT;
-    public static final Sound SOUND_MENU_BACK;
-    public static final Sound SOUND_MENU_PRESS;
+    companion object {
+        @JvmField val SOUND_NOTIFICATION: Sound
+        @JvmField val SOUND_MENU_SELECT: Sound
+        @JvmField val SOUND_MENU_BACK: Sound
+        @JvmField val SOUND_MENU_PRESS: Sound
 
-    public static final FontFactory UI_FONT;
+        @JvmField val UI_FONT: FontFactory
 
-    public static final CSS UI_CSS;
-    public static final String UI_ICON_NAME;
-    public static final Image UI_ICON;
+        @JvmField val UI_CSS: CSS
+        @JvmField val UI_ICON_NAME: String
+        @JvmField val UI_ICON: Image
 
-    private static String getName(String assetKey) {
-        return FXGL.getString(assetKey);
-    }
+        init {
+            val loader = FXGL.getAssetLoader();
 
-    static {
-        AssetLoader loader = FXGL.getAssetLoader();
+            SOUND_NOTIFICATION = loader.loadSound(getString("sound.notification"));
+            SOUND_MENU_SELECT = loader.loadSound(getString("sound.menu.select"));
+            SOUND_MENU_BACK = loader.loadSound(getString("sound.menu.back"));
+            SOUND_MENU_PRESS = loader.loadSound(getString("sound.menu.press"));
 
-        SOUND_NOTIFICATION = loader.loadSound(getName("sound.notification"));
-        SOUND_MENU_SELECT = loader.loadSound(getName("sound.menu.select"));
-        SOUND_MENU_BACK = loader.loadSound(getName("sound.menu.back"));
-        SOUND_MENU_PRESS = loader.loadSound(getName("sound.menu.press"));
-
-        UI_FONT = loader.loadFont(getName("ui.font"));
-        UI_CSS = loader.loadCSS(getName("ui.css"));
-        UI_ICON_NAME = getName("ui.icon.name");
-        UI_ICON = loader.loadAppIcon(UI_ICON_NAME);
+            UI_FONT = loader.loadFont(getString("ui.font"));
+            UI_CSS = loader.loadCSS(getString("ui.css"));
+            UI_ICON_NAME = getString("ui.icon.name");
+            UI_ICON = loader.loadAppIcon(UI_ICON_NAME);
+        }
     }
 }

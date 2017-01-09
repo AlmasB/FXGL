@@ -24,45 +24,21 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.util
-
-import com.almasb.fxgl.app.FXGL
-import com.almasb.gameutils.math.Vec2
-import com.almasb.gameutils.pool.Pool
-import com.almasb.gameutils.pool.Pools
-import com.google.inject.Inject
-import com.google.inject.name.Named
+package com.almasb.fxgl.service;
 
 /**
- * FXGL provider for [Pooler] service.
+ * Service for event dispatching, listening and handling.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLPooler
-@Inject private constructor(@Named("pooling.initialSize") initialSize: Int): com.almasb.fxgl.util.Pooler {
+public interface EventBus extends com.almasb.fxeventbus.EventBus {
 
-    private val log = FXGL.getLogger(javaClass)
-
-    init {
-        // pool commonly used types
-        registerPool(Vec2::class.java, object : Pool<Vec2>(initialSize) {
-            override fun newObject(): Vec2 {
-                return Vec2()
-            }
-        })
-
-        log.debug("Service [Pooler] initialized with default size = $initialSize")
-    }
-
-    override fun <T : Any> get(type: Class<T>): T {
-        return Pools.obtain(type)
-    }
-
-    override fun put(`object`: Any) {
-        Pools.free(`object`)
-    }
-
-    override fun <T : Any> registerPool(type: Class<T>, pool: Pool<T>) {
-        Pools.set(type, pool)
-    }
+    /**
+     * Scan an object for public methods marked @Handles
+     * and add them to the event bus.
+     *
+     * @param instance object to scan
+     * @throws IllegalArgumentException if syntax error during scan
+     */
+    void scanForHandlers(Object instance);
 }

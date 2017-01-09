@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.time
 
+import com.almasb.fxgl.service.MasterTimer
 import javafx.beans.property.*
 import javafx.util.Duration
 
@@ -34,7 +35,7 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object MockMasterTimer : com.almasb.fxgl.time.MasterTimer {
+object MockMasterTimer : MasterTimer {
     override fun onPause() {
     }
 

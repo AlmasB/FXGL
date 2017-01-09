@@ -26,7 +26,7 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.Credits;
 import com.almasb.gameutils.StringBuilder;

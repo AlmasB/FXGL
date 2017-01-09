@@ -27,6 +27,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.service.NotificationService
 import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
@@ -41,7 +42,7 @@ import org.junit.Test
  */
 class NotificationServiceTest {
 
-    private lateinit var notificationService: com.almasb.fxgl.gameplay.NotificationService
+    private lateinit var notificationService: NotificationService
 
     companion object {
         @BeforeClass
@@ -52,7 +53,7 @@ class NotificationServiceTest {
 
     @Before
     fun setUp() {
-        notificationService = FXGL.getInstance(com.almasb.fxgl.gameplay.NotificationService::class.java)
+        notificationService = FXGL.getInstance(NotificationService::class.java)
     }
 
     @Test

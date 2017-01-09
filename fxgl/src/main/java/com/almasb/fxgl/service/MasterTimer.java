@@ -24,10 +24,12 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.time;
+package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLListener;
 import com.almasb.fxgl.settings.UserProfileSavable;
+import com.almasb.fxgl.time.TimerAction;
+import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;

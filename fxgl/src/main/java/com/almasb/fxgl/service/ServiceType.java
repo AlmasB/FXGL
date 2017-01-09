@@ -24,40 +24,28 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.service;
 
-import com.almasb.fxgl.asset.AssetLoader;
-import com.almasb.fxgl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.service.AudioPlayer;
-import com.almasb.fxgl.audio.FXGLAudioPlayer;
-import com.almasb.fxgl.service.Executor;
-import com.almasb.fxgl.concurrent.FXGLExecutor;
+import com.almasb.fxgl.app.FXGLExceptionHandler;
+import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
+import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
+import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.devtools.profiling.Profiler;
-import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.event.FXGLEventBus;
+import com.almasb.fxgl.service.impl.event.FXGLEventBus;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.gameplay.NotificationService;
 import com.almasb.fxgl.gameplay.SlidingNotificationService;
-import com.almasb.fxgl.gameplay.qte.QTE;
-import com.almasb.fxgl.gameplay.qte.QTEProvider;
+import com.almasb.fxgl.service.impl.qte.QTEProvider;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestManager;
-import com.almasb.fxgl.input.FXGLInput;
-import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
 import com.almasb.fxgl.logging.FXGLLoggerFactory;
 import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
-import com.almasb.fxgl.service.Net;
-import com.almasb.fxgl.scene.Display;
 import com.almasb.fxgl.scene.FXGLDisplay;
 import com.almasb.fxgl.time.FXGLLocalTimer;
-import com.almasb.fxgl.time.FXGLMasterTimer;
+import com.almasb.fxgl.service.impl.timer.FXGLMasterTimer;
 import com.almasb.fxgl.time.LocalTimer;
-import com.almasb.fxgl.time.MasterTimer;
 import com.almasb.fxgl.ui.FXGLUIFactory;
-import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.ExceptionHandler;
-import com.almasb.fxgl.util.FXGLPooler;
-import com.almasb.fxgl.util.Pooler;
+import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
 

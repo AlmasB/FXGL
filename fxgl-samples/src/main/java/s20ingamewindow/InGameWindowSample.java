@@ -29,7 +29,7 @@ package s20ingamewindow;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
-import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.settings.GameSettings;

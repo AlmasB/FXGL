@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;

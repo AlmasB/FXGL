@@ -24,10 +24,11 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.event.AchievementEvent;
 import com.almasb.fxgl.event.AchievementProgressEvent;
+import com.almasb.fxgl.gameplay.AchievementListener;
 import com.almasb.fxgl.ui.Position;
 import javafx.scene.paint.Color;
 

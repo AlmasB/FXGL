@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.time
 
+import com.almasb.fxgl.service.MasterTimer
+import com.almasb.fxgl.service.impl.timer.FXGLMasterTimer
 import com.google.inject.Inject
 import javafx.util.Duration
 
@@ -36,7 +38,7 @@ import javafx.util.Duration
  */
 class FXGLLocalTimer
 @Inject
-private constructor(private val masterTimer: com.almasb.fxgl.time.MasterTimer) : com.almasb.fxgl.time.LocalTimer {
+private constructor(private val masterTimer: MasterTimer) : com.almasb.fxgl.time.LocalTimer {
     private var time: Long = 0
 
     /**

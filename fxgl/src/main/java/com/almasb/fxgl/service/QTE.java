@@ -24,21 +24,33 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.service;
+
+import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
+
+import java.util.function.Consumer;
 
 /**
- * Service for event dispatching, listening and handling.
+ * Service for using quick time events.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface EventBus extends com.almasb.fxeventbus.EventBus {
+public interface QTE {
 
     /**
-     * Scan an object for public methods marked @Handles
-     * and add them to the event bus.
+     * Starts quick time event.
+     * Game execution is blocked during the event.
+     * The event can be finishes if one of the following conditions is met:
+     * <ul>
+     *     <li>User runs out of time (fail)</li>
+     *     <li>User presses the wrong key (fail)</li>
+     *     <li>User correctly presses all keys (success)</li>
+     * </ul>
      *
-     * @param instance object to scan
-     * @throws IllegalArgumentException if syntax error during scan
+     * @param callback called with true if user succeeds in the event, false otherwise
+     * @param duration how long the event should last
+     * @param keys what keys need to be pressed
      */
-    void scanForHandlers(Object instance);
+    void start(Consumer<Boolean> callback, Duration duration, KeyCode... keys);
 }

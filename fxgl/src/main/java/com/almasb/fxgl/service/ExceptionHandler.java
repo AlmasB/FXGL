@@ -24,39 +24,41 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay.qte
+package com.almasb.fxgl.service;
 
-import com.almasb.fxgl.app.FXGL
-import javafx.scene.input.KeyCode
-import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
+import java.util.function.Consumer;
 
 /**
- * Represents a single QTE key visible on the screen.
+ * A service for handling exceptions.
  *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class QTEKey(val keyCode: KeyCode) : StackPane() {
+public interface ExceptionHandler extends Consumer<Throwable> {
 
-    private val background = Rectangle(72.0, 72.0, Color.BLACK)
-    private val text = FXGL.getUIFactory().newText(keyCode.getName(), Color.WHITE, 72.0)
-
-    init {
-        background.stroke = Color.BLACK
-        background.strokeWidth = 4.0
-
-        val border = Rectangle(72.0, 72.0, null)
-        border.arcWidth = 25.0
-        border.arcHeight = 25.0
-        border.stroke = Color.GRAY
-        border.strokeWidth = 6.0
-
-        children.addAll(background, border, text)
+    /**
+     * Equivalent to <code>handle(e)</code>.
+     *
+     * @param e exception
+     */
+    @Override
+    default void accept(Throwable e) {
+        handle(e);
     }
 
-    fun lightUp() {
-        background.fill = Color.YELLOW
-        text.fill = Color.BLACK
-    }
+    /**
+     * Handles given checked exception.
+     * It is up to the implementation to decide how it should log / display
+     * the exception.
+     *
+     * @param e exception
+     */
+    void handle(Throwable e);
+
+    /**
+     * Handles unchecked fatal exception.
+     * The system is likely to shutdown after the exception was logged / displayed.
+     *
+     * @param e exception
+     */
+    void handleFatal(Throwable e);
 }

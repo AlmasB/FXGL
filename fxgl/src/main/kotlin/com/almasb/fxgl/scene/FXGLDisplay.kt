@@ -31,7 +31,8 @@ import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.DisplayEvent
-import com.almasb.fxgl.event.EventBus
+import com.almasb.fxgl.service.Display
+import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile

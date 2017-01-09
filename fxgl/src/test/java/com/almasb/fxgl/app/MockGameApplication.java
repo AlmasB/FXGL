@@ -26,6 +26,7 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;

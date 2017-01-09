@@ -24,9 +24,10 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay.qte
+package com.almasb.fxgl.service.impl.qte
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.service.QTE
 import com.google.inject.Inject
 import javafx.application.Platform
 import javafx.event.EventHandler
@@ -120,7 +121,7 @@ class QTEProvider
         show()
 
         // timer
-        scheduledAction = FXGL.getExecutor().schedule( {
+        scheduledAction = FXGL.getExecutor().schedule({
 
             if (qteKeys.isNotEmpty()) {
                 Platform.runLater {

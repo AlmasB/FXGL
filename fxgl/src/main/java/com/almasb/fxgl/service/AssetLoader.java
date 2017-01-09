@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.asset;
+
+package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;

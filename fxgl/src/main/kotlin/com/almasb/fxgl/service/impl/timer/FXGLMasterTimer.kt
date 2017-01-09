@@ -24,10 +24,13 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.time
+package com.almasb.fxgl.service.impl.timer
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.service.MasterTimer
+import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.time.*
 import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
 import javafx.animation.AnimationTimer
@@ -47,7 +50,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 class FXGLMasterTimer
 @Inject
-private constructor() : AnimationTimer(), com.almasb.fxgl.time.MasterTimer {
+private constructor() : AnimationTimer(), MasterTimer {
 
     override fun onPause() {
         stop()
@@ -107,18 +110,18 @@ private constructor() : AnimationTimer(), com.almasb.fxgl.time.MasterTimer {
         log.debug("Service [MasterTimer] initialized")
     }
 
-    private val listeners = ArrayList<com.almasb.fxgl.time.UpdateEventListener>()
+    private val listeners = ArrayList<UpdateEventListener>()
 
-    override fun addUpdateListener(listener: com.almasb.fxgl.time.UpdateEventListener) {
+    override fun addUpdateListener(listener: UpdateEventListener) {
         listeners.add(listener)
     }
 
-    override fun removeUpdateListener(listener: com.almasb.fxgl.time.UpdateEventListener) {
+    override fun removeUpdateListener(listener: UpdateEventListener) {
         listeners.remove(listener)
     }
 
     // we cache update event to avoid alloc on each frame
-    private val updateEvent = com.almasb.fxgl.time.UpdateEvent(0, 0.0)
+    private val updateEvent = UpdateEvent(0, 0.0)
 
     /**
      * This is the internal FXGL update tick,
@@ -284,7 +287,7 @@ private constructor() : AnimationTimer(), com.almasb.fxgl.time.MasterTimer {
      * *
      * @param interval time
      */
-    override fun runAtInterval(action: Runnable, interval: Duration): com.almasb.fxgl.time.TimerAction {
+    override fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
         val act = TimerActionImpl(getNow(), interval, action, TimerType.INDEFINITE)
         timerActions.add(act)
         return act
@@ -306,7 +309,7 @@ private constructor() : AnimationTimer(), com.almasb.fxgl.time.MasterTimer {
      * *
      * @param whileCondition condition
      */
-    override fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): com.almasb.fxgl.time.TimerAction {
+    override fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
         if (!whileCondition.get()) {
             throw IllegalArgumentException("While condition is false")
         }
@@ -331,13 +334,13 @@ private constructor() : AnimationTimer(), com.almasb.fxgl.time.MasterTimer {
      * *
      * @param delay  delay after which to execute
      */
-    override fun runOnceAfter(action: Runnable, delay: Duration): com.almasb.fxgl.time.TimerAction {
+    override fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
         val act = TimerActionImpl(getNow(), delay, action, TimerType.ONCE)
         timerActions.add(act)
         return act
     }
 
-    override fun save(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
         val bundle = Bundle("timer")
@@ -347,7 +350,7 @@ private constructor() : AnimationTimer(), com.almasb.fxgl.time.MasterTimer {
         profile.putBundle(bundle)
     }
 
-    override fun load(profile: com.almasb.fxgl.settings.UserProfile) {
+    override fun load(profile: UserProfile) {
         log.debug("Loading data from profile")
         val bundle = profile.getBundle("timer")
         bundle.log()

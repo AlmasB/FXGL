@@ -27,6 +27,7 @@
 package com.almasb.fxgl.event
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.service.EventBus
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertThat
@@ -48,11 +49,11 @@ class EventBusTest {
         }
     }
 
-    private lateinit var eventBus: com.almasb.fxgl.event.EventBus
+    private lateinit var eventBus: EventBus
 
     @Before
     fun setUp() {
-        eventBus = FXGL.getInstance(com.almasb.fxgl.event.EventBus::class.java)
+        eventBus = FXGL.getInstance(EventBus::class.java)
     }
 
     @Test

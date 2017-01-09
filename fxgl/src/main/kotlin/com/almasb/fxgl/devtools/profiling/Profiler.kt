@@ -28,6 +28,7 @@ package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.logging.SystemLogger
+import com.almasb.fxgl.service.MasterTimer
 import com.almasb.gameutils.math.GameMath
 
 /**
@@ -38,7 +39,7 @@ import com.almasb.gameutils.math.GameMath
 class Profiler : com.almasb.fxgl.time.UpdateEventListener {
 
     companion object {
-        private val masterTimer: com.almasb.fxgl.time.MasterTimer
+        private val masterTimer: MasterTimer
         private val runtime: Runtime
 
         private val MB = 1024.0f * 1024.0f

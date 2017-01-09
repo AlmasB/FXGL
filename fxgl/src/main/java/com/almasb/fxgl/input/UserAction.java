@@ -91,4 +91,16 @@ public abstract class UserAction {
     protected void onActionEnd() {
         // no default implementation
     }
+
+    public final void fireActionBegin() {
+        onActionBegin();
+    }
+
+    public final void fireAction() {
+        onAction();
+    }
+
+    public final void fireActionEnd() {
+        onActionEnd();
+    }
 }

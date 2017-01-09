@@ -40,7 +40,7 @@ public final class UpdateEvent extends Event {
 
     private long tick;
 
-    void setTick(long tick) {
+    public void setTick(long tick) {
         this.tick = tick;
     }
 
@@ -53,7 +53,7 @@ public final class UpdateEvent extends Event {
 
     private double tpf;
 
-    void setTPF(double tpf) {
+    public void setTPF(double tpf) {
         this.tpf = tpf;
     }
 

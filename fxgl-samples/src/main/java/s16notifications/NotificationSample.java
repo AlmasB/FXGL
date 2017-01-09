@@ -27,9 +27,9 @@ package s16notifications;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.gameplay.FXGLNotificationService;
-import com.almasb.fxgl.gameplay.NotificationService;
+import com.almasb.fxgl.service.NotificationService;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;

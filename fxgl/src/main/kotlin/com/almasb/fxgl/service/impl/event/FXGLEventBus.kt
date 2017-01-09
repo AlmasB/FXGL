@@ -24,11 +24,13 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event
+package com.almasb.fxgl.service.impl.event
 
 import com.almasb.fxeventbus.FXEventBus
 import com.almasb.fxeventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.event.Handles
+import com.almasb.fxgl.service.EventBus
 import com.google.inject.Inject
 import javafx.event.Event
 import javafx.event.EventHandler

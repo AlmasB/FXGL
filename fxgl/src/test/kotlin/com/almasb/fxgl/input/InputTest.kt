@@ -27,6 +27,7 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.service.Input
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
@@ -41,7 +42,7 @@ import org.junit.Test
  */
 class InputTest {
 
-    private lateinit var input: com.almasb.fxgl.input.Input
+    private lateinit var input: Input
 
     companion object {
         @BeforeClass
@@ -52,7 +53,7 @@ class InputTest {
 
     @Before
     fun setUp() {
-        input = FXGL.getInstance(com.almasb.fxgl.input.Input::class.java)
+        input = FXGL.getInstance(Input::class.java)
     }
 
     @Test

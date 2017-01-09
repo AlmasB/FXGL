@@ -24,13 +24,15 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.asset
+package com.almasb.fxgl.service.impl.asset
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.asset.AssetCache
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.scene.CSS
+import com.almasb.fxgl.service.AssetLoader
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI

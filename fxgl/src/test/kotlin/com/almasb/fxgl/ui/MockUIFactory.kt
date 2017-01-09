@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.ui
 
+import com.almasb.fxgl.service.UIFactory
 import javafx.collections.ObservableList
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
@@ -38,7 +39,7 @@ import javafx.scene.text.Font
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object MockUIFactory : com.almasb.fxgl.ui.UIFactory {
+object MockUIFactory : UIFactory {
 
     override fun newFont(size: Double): Font {
         return Font.font(size)

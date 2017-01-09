@@ -24,9 +24,10 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input;
+package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLListener;
+import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.settings.UserProfileSavable;
 import com.almasb.fxgl.time.UpdateEventListener;

@@ -27,7 +27,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.logging.SystemLogger
-import com.almasb.fxgl.util.ExceptionHandler
+import com.almasb.fxgl.service.ExceptionHandler
 import com.google.inject.Inject
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog

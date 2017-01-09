@@ -36,7 +36,7 @@ import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.util.Pooler;
+import com.almasb.fxgl.service.Pooler;
 import com.almasb.gameutils.collection.Array;
 import com.almasb.gameutils.math.Vec2;
 import com.almasb.gameutils.pool.Pool;

@@ -26,25 +26,25 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.service.AssetLoader;
 import com.almasb.fxgl.service.AudioPlayer;
-import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.service.EventBus;
 import com.almasb.fxgl.event.FXGLEvent;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.gameplay.NotificationService;
-import com.almasb.fxgl.gameplay.qte.QTE;
+import com.almasb.fxgl.service.NotificationService;
+import com.almasb.fxgl.service.QTE;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestManager;
-import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.service.Net;
-import com.almasb.fxgl.scene.Display;
+import com.almasb.fxgl.service.Display;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-import com.almasb.fxgl.time.MasterTimer;
-import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.ExceptionHandler;
+import com.almasb.fxgl.service.MasterTimer;
+import com.almasb.fxgl.service.UIFactory;
+import com.almasb.fxgl.service.ExceptionHandler;
 import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
 import javafx.application.Platform;

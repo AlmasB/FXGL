@@ -35,7 +35,7 @@ import java.time.LocalDateTime
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class OfflineTimer(val name: String) : com.almasb.fxgl.time.LocalTimer {
+class OfflineTimer(val name: String) : LocalTimer {
 
     override fun capture() {
         FXGL.getSystemBundle().put("offline.timer.$name", LocalDateTime.now())

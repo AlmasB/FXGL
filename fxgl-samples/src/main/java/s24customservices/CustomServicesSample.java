@@ -28,7 +28,7 @@ package s24customservices;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.ServiceType;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**

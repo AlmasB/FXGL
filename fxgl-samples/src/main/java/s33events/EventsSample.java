@@ -32,7 +32,7 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.event.EntityEvent;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.event.Handles;
-import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;

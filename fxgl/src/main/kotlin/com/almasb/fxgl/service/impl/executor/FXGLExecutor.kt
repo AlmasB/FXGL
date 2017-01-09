@@ -24,10 +24,11 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent
+package com.almasb.fxgl.service.impl.executor
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.EventBus
+import com.almasb.fxgl.event.FXGLEvent
+import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.service.Executor
 import com.google.inject.Inject
 import javafx.util.Duration
@@ -52,7 +53,7 @@ private constructor(eventBus: EventBus) : Executor {
     private val schedulerService = Executors.newScheduledThreadPool(2)
 
     init {
-        eventBus.addEventHandler(com.almasb.fxgl.event.FXGLEvent.EXIT) { event ->
+        eventBus.addEventHandler(FXGLEvent.EXIT) { event ->
             service.shutdownNow()
             schedulerService.shutdownNow()
         }

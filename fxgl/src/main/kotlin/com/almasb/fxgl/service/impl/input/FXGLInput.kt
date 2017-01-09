@@ -24,11 +24,13 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input
+package com.almasb.fxgl.service.impl.input
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.input.*
 import com.almasb.fxgl.scene.Viewport
+import com.almasb.fxgl.service.Input
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.UpdateEvent
 import com.google.inject.Inject
@@ -117,9 +119,9 @@ class FXGLInput
                     continue
 
                 if (c.wasAdded()) {
-                    c.addedSubList.forEach { it.onActionBegin() }
+                    c.addedSubList.forEach { it.fireActionBegin() }
                 } else if (c.wasRemoved()) {
-                    c.removed.forEach { it.onActionEnd() }
+                    c.removed.forEach { it.fireActionEnd() }
                 }
             }
         }
@@ -127,7 +129,7 @@ class FXGLInput
 
     override fun onUpdateEvent(event: UpdateEvent) {
         if (processActions) {
-            currentActions.forEach { it.onAction() }
+            currentActions.forEach { it.fireAction() }
         }
     }
 
@@ -285,7 +287,7 @@ class FXGLInput
     }
 
     private fun makeMouseEvent(btn: MouseButton, eventType: EventType<MouseEvent>,
-                       gameX: Double, gameY: Double, modifier: InputModifier) =
+                               gameX: Double, gameY: Double, modifier: InputModifier) =
         MouseEvent(eventType, gameX, gameY, gameX, gameY, btn, 0,
                 modifier == InputModifier.SHIFT,
                 modifier == InputModifier.CTRL,

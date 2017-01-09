@@ -24,46 +24,46 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.util;
+package com.almasb.fxgl.service.impl.pooler
 
-import com.almasb.gameutils.pool.Pool;
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.service.Pooler
+import com.almasb.gameutils.math.Vec2
+import com.almasb.gameutils.pool.Pool
+import com.almasb.gameutils.pool.Pools
+import com.google.inject.Inject
+import com.google.inject.name.Named
 
 /**
- * Pooler service.
- * Allows users to get an instance of a class and pool it for future use.
+ * FXGL provider for [Pooler] service.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Pooler {
+class FXGLPooler
+@Inject private constructor(@Named("pooling.initialSize") initialSize: Int): Pooler {
 
-    /**
-     * Either an existing "free" pooled instance is returned
-     * or a new instance will be created.
-     * <p>
-     * Note: type class must have a public no-arg constructor.
-     *
-     * @param type type class
-     * @param <T>  type
-     * @return pooled instance of given type
-     */
-    <T> T get(Class<T> type);
+    private val log = FXGL.getLogger(javaClass)
 
-    /**
-     * Put the given object back to pool so it can reused.
-     * The object will now be managed by the pool.
-     * After this call no attempt should be made to use the object.
-     * Any instance level fields must be "nulled".
-     *
-     * @param object the instance to return to pool
-     */
-    void put(Object object);
+    init {
+        // pool commonly used types
+        registerPool(Vec2::class.java, object : Pool<Vec2>(initialSize) {
+            override fun newObject(): Vec2 {
+                return Vec2()
+            }
+        })
 
-    /**
-     * Make the pooler use the given pool for given type.
-     *
-     * @param type the object class
-     * @param pool the pool to use
-     * @param <T> type
-     */
-    <T> void registerPool(Class<T> type, Pool<T> pool);
+        log.debug("Service [Pooler] initialized with default size = $initialSize")
+    }
+
+    override fun <T : Any> get(type: Class<T>): T {
+        return Pools.obtain(type)
+    }
+
+    override fun put(`object`: Any) {
+        Pools.free(`object`)
+    }
+
+    override fun <T : Any> registerPool(type: Class<T>, pool: Pool<T>) {
+        Pools.set(type, pool)
+    }
 }

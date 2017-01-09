@@ -26,6 +26,7 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.asset.FXGLAssets;
+import com.almasb.fxgl.service.UIFactory;
 import com.google.inject.Inject;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;

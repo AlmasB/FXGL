@@ -24,53 +24,46 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ui;
+package com.almasb.fxgl.service;
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import com.almasb.gameutils.pool.Pool;
 
 /**
- * Factory service for creating UI controls.
- * Used to unify the look across FXGL.
+ * Pooler service.
+ * Allows users to get an instance of a class and pool it for future use.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface UIFactory {
+public interface Pooler {
 
     /**
-     * @param size font size
-     * @return main UI font with given size
+     * Either an existing "free" pooled instance is returned
+     * or a new instance will be created.
+     * <p>
+     * Note: type class must have a public no-arg constructor.
+     *
+     * @param type type class
+     * @param <T>  type
+     * @return pooled instance of given type
      */
-    Font newFont(double size);
+    <T> T get(Class<T> type);
 
-    default Text newText(String message) {
-        return newText(message, Color.WHITE, 18);
-    }
+    /**
+     * Put the given object back to pool so it can reused.
+     * The object will now be managed by the pool.
+     * After this call no attempt should be made to use the object.
+     * Any instance level fields must be "nulled".
+     *
+     * @param object the instance to return to pool
+     */
+    void put(Object object);
 
-    default Text newText(String message, double fontSize) {
-        return newText(message, Color.WHITE, fontSize);
-    }
-
-    default Text newText(String message, Color textColor, double fontSize) {
-        Text text = new Text(message);
-        text.setFill(textColor);
-        text.setFont(newFont(fontSize));
-        return text;
-    }
-
-    Button newButton(String text);
-
-    <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
-
-    <T> ChoiceBox<T> newChoiceBox();
-
-    CheckBox newCheckBox();
-
-    <T> Spinner<T> newSpinner(ObservableList<T> items);
+    /**
+     * Make the pooler use the given pool for given type.
+     *
+     * @param type the object class
+     * @param pool the pool to use
+     * @param <T> type
+     */
+    <T> void registerPool(Class<T> type, Pool<T> pool);
 }

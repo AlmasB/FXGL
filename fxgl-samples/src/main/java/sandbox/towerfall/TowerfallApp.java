@@ -38,7 +38,7 @@ import com.almasb.fxgl.gameplay.rpg.quest.Quest;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestObjective;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestWindow;
-import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.TextLevelParser;
 import com.almasb.fxgl.physics.CollisionHandler;

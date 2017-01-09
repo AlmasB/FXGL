@@ -27,6 +27,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.service.Display;
 import com.almasb.fxgl.ui.FXGLButton;
 import com.sun.javafx.scene.traversal.Algorithm;
 import com.sun.javafx.scene.traversal.Direction;

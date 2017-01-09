@@ -24,33 +24,53 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay.qte;
+package com.almasb.fxgl.service;
 
-import javafx.scene.input.KeyCode;
-import javafx.util.Duration;
-
-import java.util.function.Consumer;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
- * Service for using quick time events.
+ * Factory service for creating UI controls.
+ * Used to unify the look across FXGL.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface QTE {
+public interface UIFactory {
 
     /**
-     * Starts quick time event.
-     * Game execution is blocked during the event.
-     * The event can be finishes if one of the following conditions is met:
-     * <ul>
-     *     <li>User runs out of time (fail)</li>
-     *     <li>User presses the wrong key (fail)</li>
-     *     <li>User correctly presses all keys (success)</li>
-     * </ul>
-     *
-     * @param callback called with true if user succeeds in the event, false otherwise
-     * @param duration how long the event should last
-     * @param keys what keys need to be pressed
+     * @param size font size
+     * @return main UI font with given size
      */
-    void start(Consumer<Boolean> callback, Duration duration, KeyCode... keys);
+    Font newFont(double size);
+
+    default Text newText(String message) {
+        return newText(message, Color.WHITE, 18);
+    }
+
+    default Text newText(String message, double fontSize) {
+        return newText(message, Color.WHITE, fontSize);
+    }
+
+    default Text newText(String message, Color textColor, double fontSize) {
+        Text text = new Text(message);
+        text.setFill(textColor);
+        text.setFont(newFont(fontSize));
+        return text;
+    }
+
+    Button newButton(String text);
+
+    <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
+
+    <T> ChoiceBox<T> newChoiceBox();
+
+    CheckBox newCheckBox();
+
+    <T> Spinner<T> newSpinner(ObservableList<T> items);
 }

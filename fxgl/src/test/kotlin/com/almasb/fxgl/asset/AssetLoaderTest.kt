@@ -29,6 +29,7 @@ package com.almasb.fxgl.asset
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.GameEntity
+import com.almasb.fxgl.service.AssetLoader
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertThat

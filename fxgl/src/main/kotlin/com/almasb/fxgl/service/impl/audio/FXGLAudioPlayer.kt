@@ -24,10 +24,12 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.audio
+package com.almasb.fxgl.service.impl.audio
 
 import com.almasb.easyio.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.audio.Music
+import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.service.AudioPlayer
 import com.almasb.fxgl.settings.UserProfile
 import com.almasb.fxgl.time.UpdateEvent
