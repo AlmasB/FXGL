@@ -1,4 +1,4 @@
-package com.almasb.easyio
+package com.almasb.fxgl.io
 
 /**
  *

@@ -26,7 +26,7 @@
 
 package manual;
 
-import com.almasb.easyio.FS;
+import com.almasb.fxgl.io.FS;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;

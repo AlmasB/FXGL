@@ -24,14 +24,25 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ecs.serialization;
+package com.almasb.fxgl.saving
 
-import com.almasb.fxgl.io.serialization.SerializableType;
+import java.io.Serializable
 
 /**
- * Marks a component as serializable.
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface SerializableComponent extends SerializableType {
+data class DataFile(
+
+        /**
+         * The actual serializable game data structure.
+         */
+        val data: Serializable) : Serializable {
+
+    companion object {
+        private val serialVersionUid: Long = 1
+
+        @JvmStatic val EMPTY = DataFile("")
+    }
 }

@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.ecs;
 
-import com.almasb.easyio.serialization.Bundle;
+import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;

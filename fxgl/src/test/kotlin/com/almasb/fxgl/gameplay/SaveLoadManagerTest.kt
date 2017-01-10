@@ -26,11 +26,11 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.easyio.FS
+import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
-import com.almasb.fxgl.io.DataFile
-import com.almasb.fxgl.io.SaveFile
+import com.almasb.fxgl.saving.DataFile
+import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.settings.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue

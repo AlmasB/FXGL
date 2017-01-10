@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.easyio.serialization.Bundle
+import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.AchievementEvent
 import com.almasb.fxgl.settings.UserProfile

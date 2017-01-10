@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service.impl.timer
 
-import com.almasb.easyio.serialization.Bundle
+import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.settings.UserProfile

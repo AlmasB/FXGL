@@ -26,7 +26,7 @@
 
 package manual;
 
-import com.almasb.easyio.IOTask;
+import com.almasb.fxgl.io.IOTask;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

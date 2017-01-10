@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.ecs.component;
 
-import com.almasb.easyio.serialization.Bundle;
+import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import javafx.beans.property.IntegerProperty;

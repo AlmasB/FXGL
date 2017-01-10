@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service.impl.audio
 
-import com.almasb.easyio.serialization.Bundle
+import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound

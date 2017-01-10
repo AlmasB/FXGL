@@ -26,12 +26,12 @@
 
 package com.almasb.fxgl.gameplay;
 
-import com.almasb.easyio.FS;
-import com.almasb.easyio.FileExtension;
-import com.almasb.easyio.IOTask;
+import com.almasb.fxgl.io.FS;
+import com.almasb.fxgl.io.FileExtension;
+import com.almasb.fxgl.io.IOTask;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.io.DataFile;
-import com.almasb.fxgl.io.SaveFile;
+import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.ProgressDialog;
 import com.almasb.fxgl.settings.UserProfile;
@@ -141,7 +141,7 @@ public final class SaveLoadManager {
      *
      * @param dataFile data file
      * @param saveFile save file
-     * @return io task
+     * @return saving task
      */
     public IOTask<Void> saveTask(DataFile dataFile, SaveFile saveFile) {
         log.debug(() -> "Saving data: " + saveFile.getName());
@@ -161,7 +161,7 @@ public final class SaveLoadManager {
      * Creates "saves/" in that directory.
      *
      * @param profile the profile to save
-     * @return io task
+     * @return saving task
      */
     public IOTask<Void> saveProfileTask(UserProfile profile) {
         log.debug(() -> "Saving profile: " + profileName);
@@ -195,7 +195,7 @@ public final class SaveLoadManager {
      * in the directory where the game is run from.
      *
      * @param saveFile save file to load
-     * @return io task
+     * @return saving task
      */
     public IOTask<DataFile> loadTask(SaveFile saveFile) {
         log.debug(() -> "Loading data: " + saveFile.getName());
@@ -205,7 +205,7 @@ public final class SaveLoadManager {
     /**
      * Loads user profile from "profiles/".
      *
-     * @return io task
+     * @return saving task
      */
     public IOTask<UserProfile> loadProfileTask() {
         log.debug(() -> "Loading profile: " + profileName);
@@ -214,7 +214,7 @@ public final class SaveLoadManager {
 
     /**
      * @param saveFile save file to delete
-     * @return io task
+     * @return saving task
      */
     public IOTask<Void> deleteSaveFileTask(SaveFile saveFile) {
         log.debug(() -> "Deleting save file: " + saveFile.getName());
@@ -244,7 +244,7 @@ public final class SaveLoadManager {
     /**
      * Load all profile names.
      *
-     * @return io task
+     * @return saving task
      */
     public static IOTask<List<String> > loadProfileNamesTask() {
         log.debug(() -> "Loading profile names");
@@ -255,7 +255,7 @@ public final class SaveLoadManager {
      * Delete profile.
      *
      * @param profileName name of profile to delete
-     * @return io task
+     * @return saving task
      */
     public static IOTask<Void> deleteProfileTask(String profileName) {
         log.debug(() -> "Deleting profile: " + profileName);
@@ -265,7 +265,7 @@ public final class SaveLoadManager {
     /**
      * Loads save files with save file extension from SAVE_DIR.
      *
-     * @return io task
+     * @return saving task
      */
     public IOTask<List<SaveFile> > loadSaveFilesTask() {
         log.debug(() -> "Loading save files");
@@ -282,7 +282,7 @@ public final class SaveLoadManager {
     /**
      * Loads last modified save file from saves directory.
      *
-     * @return io task
+     * @return saving task
      */
     public IOTask<SaveFile> loadLastModifiedSaveFileTask() {
         log.debug(() -> "Loading last modified save file");

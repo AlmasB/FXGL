@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service;
 
-import com.almasb.easyio.IOTask;
+import com.almasb.fxgl.io.IOTask;
 import com.almasb.fxgl.net.Client;
 import com.almasb.fxgl.net.DataParser;
 import com.almasb.fxgl.net.NetworkConnection;

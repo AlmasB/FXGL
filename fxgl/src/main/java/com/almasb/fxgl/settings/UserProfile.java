@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.settings;
 
-import com.almasb.easyio.serialization.Bundle;
+import com.almasb.fxgl.io.serialization.Bundle;
 
 import java.io.Serializable;
 import java.util.HashMap;

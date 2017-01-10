@@ -32,7 +32,7 @@ import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.*;
-import com.almasb.fxgl.io.SaveFile;
+import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;

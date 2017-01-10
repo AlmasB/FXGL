@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.ecs.serialization;
 
-import com.almasb.easyio.serialization.SerializableType;
+import com.almasb.fxgl.io.serialization.SerializableType;
 
 /**
  * Marks a control as serializable.

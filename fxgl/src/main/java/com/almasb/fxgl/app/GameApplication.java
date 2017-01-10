@@ -29,7 +29,7 @@ import com.almasb.fxgl.eventbus.Subscriber;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.IntroFinishedEvent;
 import com.almasb.fxgl.gameplay.GameWorld;
-import com.almasb.fxgl.io.DataFile;
+import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;

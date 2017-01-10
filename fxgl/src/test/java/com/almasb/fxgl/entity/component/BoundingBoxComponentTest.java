@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.easyio.serialization.Bundle;
+import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.MockApplicationModule;

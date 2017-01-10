@@ -24,14 +24,47 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ecs.serialization;
+package com.almasb.fxgl.io.serialization
 
-import com.almasb.fxgl.io.serialization.SerializableType;
+import org.apache.logging.log4j.LogManager
+import java.io.Serializable
+import java.util.*
 
 /**
- * Marks a component as serializable.
+ * Bundle is used to store values mapped with certain keys.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface SerializableComponent extends SerializableType {
+class Bundle(val name: String) : Serializable {
+
+    companion object {
+        private val serialVersionUID = 1L
+
+        private val log = LogManager.getLogger(Bundle::class.java)
+    }
+
+    private val data = HashMap<String, Any>()
+
+    /**
+     * Store a [value] with given [key].
+     */
+    fun put(key: String, value: Serializable) {
+        data.put(name + "." + key, value)
+    }
+
+    /**
+     * Retrieve a value with given [key].
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> get(key: String): T {
+        return data[name + "." + key] as T
+    }
+
+    /**
+     * Logs contents of the bundle.
+     */
+    fun log() {
+        log.debug("Logging bundle: $name")
+        data.forEach { k, v -> log.debug("$k=$v") }
+    }
 }

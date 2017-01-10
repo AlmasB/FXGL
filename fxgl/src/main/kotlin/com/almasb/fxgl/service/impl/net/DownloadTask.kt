@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service.impl.net
 
-import com.almasb.easyio.IOTask
+import com.almasb.fxgl.io.IOTask
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path

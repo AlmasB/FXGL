@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.scene
 
-import com.almasb.easyio.UIDialogHandler
+import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.app.FXGL
 
 /**

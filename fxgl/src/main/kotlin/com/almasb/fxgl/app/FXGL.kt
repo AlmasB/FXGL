@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.easyio.FS
-import com.almasb.easyio.serialization.Bundle
+import com.almasb.fxgl.io.FS
+import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.logging.Logger
 import com.almasb.fxgl.service.ServiceType
 import com.almasb.fxgl.time.LocalTimer

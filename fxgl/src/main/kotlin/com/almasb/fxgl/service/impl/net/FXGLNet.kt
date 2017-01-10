@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.service.impl.net
 
-import com.almasb.easyio.IOTask
-import com.almasb.easyio.taskOf
-import com.almasb.easyio.voidTaskOf
+import com.almasb.fxgl.io.IOTask
+import com.almasb.fxgl.io.taskOf
+import com.almasb.fxgl.io.voidTaskOf
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.net.Client
 import com.almasb.fxgl.net.DataParser

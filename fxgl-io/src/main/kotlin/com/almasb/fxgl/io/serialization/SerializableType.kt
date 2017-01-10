@@ -24,25 +24,22 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.io
-
-import java.io.Serializable
+package com.almasb.fxgl.io.serialization
 
 /**
- *
+ * Marks a type as serializable.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-data class DataFile(
+interface SerializableType {
 
-        /**
-         * The actual serializable game data structure.
-         */
-        val data: Serializable) : Serializable {
+    /**
+     * Write state to [bundle].
+     */
+    fun write(bundle: Bundle)
 
-    companion object {
-        private val serialVersionUid: Long = 1
-
-        @JvmStatic val EMPTY = DataFile("")
-    }
+    /**
+     * Read state from [bundle].
+     */
+    fun read(bundle: Bundle)
 }

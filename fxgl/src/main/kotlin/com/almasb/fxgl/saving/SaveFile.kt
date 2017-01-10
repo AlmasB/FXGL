@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.io
+package com.almasb.fxgl.saving
 
 import java.io.Serializable
 import java.time.LocalDateTime

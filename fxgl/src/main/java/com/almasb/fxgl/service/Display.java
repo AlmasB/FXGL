@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service;
 
-import com.almasb.easyio.UIDialogHandler;
+import com.almasb.fxgl.io.UIDialogHandler;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.settings.UserProfileSavable;
