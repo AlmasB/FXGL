@@ -24,10 +24,10 @@
  * SOFTWARE.
  */
 
-package com.almasb.astar.maze;
+package com.almasb.fxgl.ai.pathfinding.maze;
 
-import com.almasb.astar.AStarLogic;
-import com.almasb.astar.AStarNode;
+import com.almasb.fxgl.ai.pathfinding.AStarLogic;
+import com.almasb.fxgl.ai.pathfinding.AStarNode;
 
 import java.util.ArrayList;
 import java.util.List;

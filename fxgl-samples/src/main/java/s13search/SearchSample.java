@@ -25,9 +25,9 @@
  */
 package s13search;
 
-import com.almasb.astar.AStarGrid;
-import com.almasb.astar.AStarNode;
-import com.almasb.astar.NodeState;
+import com.almasb.fxgl.ai.pathfinding.AStarGrid;
+import com.almasb.fxgl.ai.pathfinding.AStarNode;
+import com.almasb.fxgl.ai.pathfinding.NodeState;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;

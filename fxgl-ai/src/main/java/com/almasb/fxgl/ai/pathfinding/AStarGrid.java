@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.astar;
+package com.almasb.fxgl.ai.pathfinding;
 
 import java.util.ArrayList;
 import java.util.List;

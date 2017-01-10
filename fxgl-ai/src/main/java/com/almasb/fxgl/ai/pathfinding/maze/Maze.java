@@ -24,9 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.astar.maze;
+package com.almasb.fxgl.ai.pathfinding.maze;
 
-import com.almasb.astar.AStarGrid;
+import com.almasb.fxgl.ai.pathfinding.AStarGrid;
 
 import java.util.Arrays;
 import java.util.Collections;
