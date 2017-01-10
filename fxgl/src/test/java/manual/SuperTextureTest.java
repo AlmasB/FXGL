@@ -26,7 +26,7 @@
 //
 //package manual;
 //
-//import com.almasb.ents.Entity;
+//import Entity;
 //import ApplicationMode;
 //import com.almasb.fxgl.app.GameApplication;
 //import com.almasb.fxgl.asset.Texture;

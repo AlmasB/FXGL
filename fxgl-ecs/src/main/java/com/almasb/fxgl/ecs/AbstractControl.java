@@ -24,41 +24,58 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
 /**
- * Listener for world events.
+ * Base class for controls.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface EntityWorldListener {
+public abstract class AbstractControl implements Control {
+
+    private Entity entity;
 
     /**
-     * Called after entity was added to the world.
-     *
-     * @param entity the entity
+     * @return entity to which the control is attached, or null if control is not attached
      */
-    void onEntityAdded(Entity entity);
+    public Entity getEntity() {
+        return entity;
+    }
 
-    /**
-     * Called after entity was removed from the world
-     * but before entity has been cleaned.
-     * This allows other parties to free resources before
-     * doing final entity clean.
-     *
-     * @param entity the entity
-     */
-    void onEntityRemoved(Entity entity);
+    void setEntity(Entity entity) {
+        if (entity == null && this.entity == null)
+            throw new IllegalStateException("Attempt to clear entity but control is not attached to an entity");
 
-    /**
-     * Called after the world updated itself.
-     *
-     * @param tpf time per frame
-     */
-    void onWorldUpdate(double tpf);
+        if (entity != null && this.entity != null)
+            throw new IllegalStateException("Attempt to set entity but control is already attached to an entity");
 
-    /**
-     * Called after the world has been reset.
-     */
-    void onWorldReset();
+        this.entity = entity;
+    }
+
+    @Override
+    public void onAdded(Entity entity) {
+
+    }
+
+    @Override
+    public void onRemoved(Entity entity) {
+
+    }
+
+    private boolean isPaused = false;
+
+    @Override
+    public final boolean isPaused() {
+        return isPaused;
+    }
+
+    @Override
+    public final void pause() {
+        isPaused = true;
+    }
+
+    @Override
+    public final void resume() {
+        isPaused = false;
+    }
 }

@@ -24,40 +24,46 @@
  * SOFTWARE.
  */
 
-package shooter;
+package com.almasb.fxgl.ecs;
 
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.component.IntegerComponent;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class WeaponComponent extends AbstractComponent {
+public class CopyableComponentTest {
 
-    private int damage;
-    private double fireRate;
-    private int maxAmmo;
+    @Test
+    public void testCopy() {
+        HPComponent hp1 = new HPComponent(300, 50.0);
+        HPComponent hp2 = hp1.copy();
 
-    public int getDamage() {
-        return damage;
+        assertThat(hp1, is(not(hp2)));
+        assertTrue(hp1.equivalent(hp2));
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
+    private class HPComponent extends IntegerComponent implements CopyableComponent<HPComponent> {
 
-    public double getFireRate() {
-        return fireRate;
-    }
+        private double extraData;
 
-    public void setFireRate(double fireRate) {
-        this.fireRate = fireRate;
-    }
+        public HPComponent(int value, double extraData) {
+            super(value);
+            this.extraData = extraData;
+        }
 
-    public int getMaxAmmo() {
-        return maxAmmo;
-    }
+        @Override
+        public HPComponent copy() {
+            return new HPComponent(getValue(), extraData);
+        }
 
-    public void setMaxAmmo(int maxAmmo) {
-        this.maxAmmo = maxAmmo;
+        public boolean equivalent(HPComponent other) {
+            return getValue() == other.getValue() && extraData == other.extraData;
+        }
     }
 }

@@ -26,10 +26,10 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.ents.CopyableComponent;
-import com.almasb.ents.Entity;
-import com.almasb.ents.component.BooleanComponent;
-import com.almasb.ents.component.Required;
+import com.almasb.fxgl.ecs.CopyableComponent;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.component.BooleanComponent;
+import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.gameplay.GameWorld;
 

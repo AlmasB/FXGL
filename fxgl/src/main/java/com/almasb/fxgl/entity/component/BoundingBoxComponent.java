@@ -27,11 +27,11 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.ents.AbstractComponent;
-import com.almasb.ents.CopyableComponent;
-import com.almasb.ents.Entity;
-import com.almasb.ents.component.Required;
-import com.almasb.ents.serialization.SerializableComponent;
+import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.CopyableComponent;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;

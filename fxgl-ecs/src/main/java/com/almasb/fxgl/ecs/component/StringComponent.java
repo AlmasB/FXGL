@@ -24,11 +24,11 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents.component;
+package com.almasb.fxgl.ecs.component;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.ents.AbstractComponent;
-import com.almasb.ents.serialization.SerializableComponent;
+import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.jetbrains.annotations.NotNull;

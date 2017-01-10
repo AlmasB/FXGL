@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.ents.AbstractComponent;
+import com.almasb.fxgl.ecs.AbstractComponent;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.function.Consumer;

@@ -26,7 +26,7 @@
 
 package shooter;
 
-import com.almasb.ents.AbstractComponent;
+import com.almasb.fxgl.ecs.AbstractComponent;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

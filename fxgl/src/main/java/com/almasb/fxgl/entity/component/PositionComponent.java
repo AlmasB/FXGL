@@ -27,9 +27,9 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.ents.AbstractComponent;
-import com.almasb.ents.CopyableComponent;
-import com.almasb.ents.serialization.SerializableComponent;
+import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.CopyableComponent;
+import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.devtools.DeveloperEditable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

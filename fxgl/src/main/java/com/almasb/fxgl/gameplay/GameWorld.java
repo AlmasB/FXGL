@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.gameplay;
 
-import com.almasb.ents.Entity;
-import com.almasb.ents.EntityWorld;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.EntityWorld;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.RenderLayer;

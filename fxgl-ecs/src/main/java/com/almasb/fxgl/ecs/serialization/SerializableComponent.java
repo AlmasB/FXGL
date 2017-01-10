@@ -24,40 +24,14 @@
  * SOFTWARE.
  */
 
-package shooter;
+package com.almasb.fxgl.ecs.serialization;
 
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.easyio.serialization.SerializableType;
 
 /**
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * Marks a component as serializable.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class WeaponComponent extends AbstractComponent {
-
-    private int damage;
-    private double fireRate;
-    private int maxAmmo;
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public double getFireRate() {
-        return fireRate;
-    }
-
-    public void setFireRate(double fireRate) {
-        this.fireRate = fireRate;
-    }
-
-    public int getMaxAmmo() {
-        return maxAmmo;
-    }
-
-    public void setMaxAmmo(int maxAmmo) {
-        this.maxAmmo = maxAmmo;
-    }
+public interface SerializableComponent extends SerializableType {
 }

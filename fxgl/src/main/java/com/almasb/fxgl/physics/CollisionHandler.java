@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.ecs.Entity;
 
 /**
  * Handler for a collision that occurred between two entities.

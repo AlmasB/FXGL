@@ -24,40 +24,41 @@
  * SOFTWARE.
  */
 
-package shooter;
-
-import com.almasb.fxgl.ecs.AbstractComponent;
+package com.almasb.fxgl.ecs;
 
 /**
+ * Base class for components.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class WeaponComponent extends AbstractComponent {
+public abstract class AbstractComponent implements Component {
 
-    private int damage;
-    private double fireRate;
-    private int maxAmmo;
+    private Entity entity;
 
-    public int getDamage() {
-        return damage;
+    /**
+     * @return entity to which the component is attached, or null if component is not attached
+     */
+    public Entity getEntity() {
+        return entity;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
+    void setEntity(Entity entity) {
+        if (entity == null && this.entity == null)
+            throw new IllegalStateException("Attempt to clear entity but component is not attached to an entity");
+
+        if (entity != null && this.entity != null)
+            throw new IllegalStateException("Attempt to set entity but component is already attached to an entity");
+
+        this.entity = entity;
     }
 
-    public double getFireRate() {
-        return fireRate;
+    @Override
+    public void onAdded(Entity entity) {
+
     }
 
-    public void setFireRate(double fireRate) {
-        this.fireRate = fireRate;
-    }
+    @Override
+    public void onRemoved(Entity entity) {
 
-    public int getMaxAmmo() {
-        return maxAmmo;
-    }
-
-    public void setMaxAmmo(int maxAmmo) {
-        this.maxAmmo = maxAmmo;
     }
 }

@@ -26,8 +26,8 @@
 
 package sandbox.spacerunner.control;
 
-import com.almasb.ents.AbstractControl;
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.service.AudioPlayer;

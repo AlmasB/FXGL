@@ -24,26 +24,41 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
 /**
- * A component in the ECS pattern.
+ * Listener for world events.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface Component {
+public interface EntityWorldListener {
 
     /**
-     * Called when component is added to an entity.
+     * Called after entity was added to the world.
      *
-     * @param entity the entity to which this component was added
+     * @param entity the entity
      */
-    void onAdded(Entity entity);
+    void onEntityAdded(Entity entity);
 
     /**
-     * Called when component is removed from an entity.
+     * Called after entity was removed from the world
+     * but before entity has been cleaned.
+     * This allows other parties to free resources before
+     * doing final entity clean.
      *
-     * @param entity the entity from which this component is removed
+     * @param entity the entity
      */
-    void onRemoved(Entity entity);
+    void onEntityRemoved(Entity entity);
+
+    /**
+     * Called after the world updated itself.
+     *
+     * @param tpf time per frame
+     */
+    void onWorldUpdate(double tpf);
+
+    /**
+     * Called after the world has been reset.
+     */
+    void onWorldReset();
 }

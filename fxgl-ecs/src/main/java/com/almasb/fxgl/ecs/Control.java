@@ -24,41 +24,55 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
 /**
- * Base class for components.
+ * Defines behavior of an entity. Unlike the "System" in the ECS model,
+ * control is attached directly to an entity and is stateful (i.e. it
+ * knows about entity to which it is attached).
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class AbstractComponent implements Component {
-
-    private Entity entity;
+public interface Control {
 
     /**
-     * @return entity to which the component is attached, or null if component is not attached
+     * Called when this control is added to entity.
+     * This is called before any control related listeners are notified.
+     * This allows the control to initiliaze properly.
+     *
+     * @param entity the entity to which this control was added
      */
-    public Entity getEntity() {
-        return entity;
-    }
+    void onAdded(Entity entity);
 
-    void setEntity(Entity entity) {
-        if (entity == null && this.entity == null)
-            throw new IllegalStateException("Attempt to clear entity but component is not attached to an entity");
+    /**
+     * Called on entity world update tick.
+     *
+     * @param entity the entity to which this control is attached
+     * @param tpf time per frame
+     */
+    void onUpdate(Entity entity, double tpf);
 
-        if (entity != null && this.entity != null)
-            throw new IllegalStateException("Attempt to set entity but component is already attached to an entity");
+    /**
+     * Called when this control is removed from entity.
+     * This is called after any control related listeners are notified.
+     * This allows the control to clean up properly.
+     *
+     * @param entity the entity from which the control was removed
+     */
+    void onRemoved(Entity entity);
 
-        this.entity = entity;
-    }
+    /**
+     * @return if execution of this control is paused
+     */
+    boolean isPaused();
 
-    @Override
-    public void onAdded(Entity entity) {
+    /**
+     * Pauses execution of this control.
+     */
+    void pause();
 
-    }
-
-    @Override
-    public void onRemoved(Entity entity) {
-
-    }
+    /**
+     * Resumes execution of this control.
+     */
+    void resume();
 }

@@ -28,7 +28,7 @@ package s13search;
 import com.almasb.astar.AStarGrid;
 import com.almasb.astar.AStarNode;
 import com.almasb.astar.NodeState;
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;

@@ -24,40 +24,21 @@
  * SOFTWARE.
  */
 
-package shooter;
-
-import com.almasb.fxgl.ecs.AbstractComponent;
+package com.almasb.fxgl.ecs;
 
 /**
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * Marks a component as copyable.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class WeaponComponent extends AbstractComponent {
+public interface CopyableComponent<T extends Component> {
 
-    private int damage;
-    private double fireRate;
-    private int maxAmmo;
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public double getFireRate() {
-        return fireRate;
-    }
-
-    public void setFireRate(double fireRate) {
-        this.fireRate = fireRate;
-    }
-
-    public int getMaxAmmo() {
-        return maxAmmo;
-    }
-
-    public void setMaxAmmo(int maxAmmo) {
-        this.maxAmmo = maxAmmo;
-    }
+    /**
+     * Copies this component.
+     * The general contract should be similar to {@link Object#clone()}.
+     * The 'depth' of the copy should be determined by the user.
+     *
+     * @return new instance (copy) of the component with copied values
+     */
+    T copy();
 }

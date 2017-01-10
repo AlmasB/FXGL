@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.ents.AbstractComponent;
-import com.almasb.ents.component.Required;
+import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;

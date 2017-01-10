@@ -24,67 +24,39 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents.component;
+package com.almasb.fxgl.ecs.component;
 
-import com.almasb.easyio.serialization.Bundle;
-import com.almasb.ents.AbstractComponent;
-import com.almasb.ents.serialization.SerializableComponent;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import org.jetbrains.annotations.NotNull;
+import com.almasb.fxgl.ecs.AbstractComponent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
- * Represents a double value based component.
- * <p>
- * <pre>
- * Example:
- *
- * public class AttackSpeedComponent extends DoubleComponent {
- *      public AttackSpeedComponent(double initialValue) {
- *          super(initialValue);
- *      }
- * }
- *
- * Entity player = ...
- * player.addComponent(new AttackSpeedComponent(1.75));
- *
- * double attackSpeed = player.getComponent(AttackSpeedComponent.class).getValue();
- *
- * </pre>
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class DoubleComponent extends AbstractComponent implements SerializableComponent {
-    private DoubleProperty property;
+public abstract class ObjectComponent<T> extends AbstractComponent {
+    private ObjectProperty<T> property;
 
     /**
-     * No-arg ctor, initializes the value to 0.
-     */
-    public DoubleComponent() {
-        this(0);
-    }
-
-    /**
-     * Constructs a double value component with given
+     * Constructs an object value component with given
      * initial value.
      *
-     * @param initialValue initial value
+     * @param initialValue the initial value
      */
-    public DoubleComponent(double initialValue) {
-        property = new SimpleDoubleProperty(initialValue);
+    public ObjectComponent(T initialValue) {
+        property = new SimpleObjectProperty<>(initialValue);
     }
 
     /**
      * @return value property
      */
-    public final DoubleProperty valueProperty() {
+    public final ObjectProperty<T> valueProperty() {
         return property;
     }
 
     /**
      * @return value held by this component
      */
-    public final double getValue() {
+    public final T getValue() {
         return property.get();
     }
 
@@ -93,18 +65,8 @@ public abstract class DoubleComponent extends AbstractComponent implements Seria
      *
      * @param value new value
      */
-    public final void setValue(double value) {
+    public final void setValue(T value) {
         property.set(value);
-    }
-
-    @Override
-    public void write(@NotNull Bundle bundle) {
-        bundle.put("value", getValue());
-    }
-
-    @Override
-    public void read(@NotNull Bundle bundle) {
-        setValue(bundle.get("value"));
     }
 
     @Override

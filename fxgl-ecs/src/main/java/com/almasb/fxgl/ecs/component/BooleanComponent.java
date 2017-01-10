@@ -24,76 +24,76 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents.component;
+package com.almasb.fxgl.ecs.component;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.ents.AbstractComponent;
-import com.almasb.ents.serialization.SerializableComponent;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an int value based component.
+ * Represents a boolean value based component.
  * <p>
  * <pre>
  * Example:
  *
- * public class MoneyComponent extends IntegerComponent {
- *      public MoneyComponent(int initialValue) {
+ * public class GravityComponent extends BooleanComponent {
+ *      public GravityComponent(boolean initialValue) {
  *          super(initialValue);
  *      }
  * }
  *
  * Entity player = ...
- * player.addComponent(new MoneyComponent(5000));
+ * player.addComponent(new GravityComponent(true));
  *
- * int money = player.getComponent(MoneyComponent.class).getValue();
+ * boolean gravityEnabled = player.getComponent(GravityComponent.class).getValue();
  *
  * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class IntegerComponent extends AbstractComponent implements SerializableComponent {
-    private IntegerProperty property;
+public abstract class BooleanComponent extends AbstractComponent implements SerializableComponent {
+    private BooleanProperty property;
 
     /**
-     * No-arg ctor, initializes the value to 0.
+     * No-arg ctor, initializes the value to false.
      */
-    public IntegerComponent() {
-        this(0);
+    public BooleanComponent() {
+        this(false);
     }
 
     /**
-     * Constructs an int value component with given
+     * Constructs a boolean value component with given
      * initial value.
      *
-     * @param initialValue the initial value
+     * @param initialValue initial value
      */
-    public IntegerComponent(int initialValue) {
-        property = new SimpleIntegerProperty(initialValue);
+    public BooleanComponent(boolean initialValue) {
+        property = new SimpleBooleanProperty(initialValue);
     }
 
     /**
      * @return value property
      */
-    public final IntegerProperty valueProperty() {
+    public final BooleanProperty valueProperty() {
         return property;
     }
 
     /**
      * @return value held by this component
      */
-    public final int getValue() {
+    public final boolean getValue() {
         return property.get();
     }
 
     /**
-     * Set value to this component.
+     * Set value of this component.
      *
      * @param value new value
      */
-    public final void setValue(int value) {
+    public final void setValue(boolean value) {
         property.set(value);
     }
 

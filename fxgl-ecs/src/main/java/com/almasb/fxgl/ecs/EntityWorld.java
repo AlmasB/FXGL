@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;

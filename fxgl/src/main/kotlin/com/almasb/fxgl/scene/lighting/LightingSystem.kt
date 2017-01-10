@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.scene.lighting
 
-import com.almasb.ents.Entity
+import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
 import javafx.geometry.Point2D
 import javafx.scene.Group

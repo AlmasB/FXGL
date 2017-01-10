@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.ents.Component;
-import com.almasb.ents.Control;
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.ecs.Component;
+import com.almasb.fxgl.ecs.Control;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;

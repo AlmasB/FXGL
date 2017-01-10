@@ -26,7 +26,7 @@
 
 package sandbox.spacerunner;
 
-import com.almasb.ents.component.UserDataComponent;
+import com.almasb.fxgl.ecs.component.UserDataComponent;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;

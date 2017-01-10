@@ -25,9 +25,9 @@
  */
 package com.almasb.fxgl.entity.control;
 
-import com.almasb.ents.AbstractControl;
-import com.almasb.ents.Entity;
-import com.almasb.ents.component.Required;
+import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.component.PositionComponent;
 
 /**

@@ -24,9 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
-import com.almasb.ents.component.Required;
+import com.almasb.fxgl.ecs.component.Required;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

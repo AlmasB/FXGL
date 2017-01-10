@@ -24,15 +24,38 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents.component;
+package com.almasb.fxgl.ecs;
 
-import com.almasb.ents.Component;
+/**
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+public interface EntitySystem {
 
-import java.lang.annotation.*;
+    /**
+     * @return classes of required components
+     */
+    Class<? extends Component>[] getRequiredComponents();
 
-@Repeatable(RequiredComponents.class)
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Required {
-    Class<? extends Component> value();
+    /**
+     * Performs update on a single entity that qualifies for this system.
+     *
+     * @param entity entity
+     * @param tpf time per frame
+     */
+    void onUpdate(Entity entity, double tpf);
+
+    /**
+     * @return if execution of this system is paused
+     */
+    boolean isPaused();
+
+    /**
+     * Pauses execution of this system.
+     */
+    void pause();
+
+    /**
+     * Resumes execution of this system.
+     */
+    void resume();
 }

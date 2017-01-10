@@ -24,14 +24,15 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.ents.component.BooleanComponent;
-import com.almasb.ents.component.DoubleComponent;
-import com.almasb.ents.component.Required;
-import com.almasb.ents.serialization.SerializableComponent;
-import com.almasb.ents.serialization.SerializableControl;
+import com.almasb.fxgl.ecs.component.BooleanComponent;
+import com.almasb.fxgl.ecs.component.DoubleComponent;
+import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.ecs.serialization.SerializableControl;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -287,10 +288,10 @@ public class EntityTest {
         });
 
         entity.addComponent(hp);
-        assertEquals(10, hp.getValue(), 0);
+        Assert.assertEquals(10, hp.getValue(), 0);
 
         entity.removeComponent(HPComponent.class);
-        assertEquals(0, hp.getValue(), 0);
+        Assert.assertEquals(0, hp.getValue(), 0);
     }
 
     @Test

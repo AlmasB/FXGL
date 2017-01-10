@@ -25,8 +25,8 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.ents.Entity;
-import com.almasb.ents.EntityWorldListener;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.EntityWorldListener;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.effect.Particle;
 import com.almasb.fxgl.effect.ParticleControl;

@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.scene
 
-import com.almasb.ents.Entity
+import com.almasb.fxgl.ecs.Entity
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty

@@ -24,21 +24,16 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs.component;
 
 /**
- * Marks a control as copyable.
+ * Can be used to store user specific data to add as component
+ * to an entity.
  *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface CopyableControl<T extends Control> {
-
-    /**
-     * Copies this control.
-     * The general contract should be similar to {@link Object#clone()}.
-     * The 'depth' of the copy should be determined by the user.
-     *
-     * @return new instance (copy) of the control with copied values
-     */
-    T copy();
+public class UserDataComponent extends ObjectComponent<Object> {
+    public UserDataComponent(Object data) {
+        super(data);
+    }
 }

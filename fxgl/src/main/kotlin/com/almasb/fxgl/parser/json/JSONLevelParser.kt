@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.parser.json
 
-import com.almasb.ents.Entity
+import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.parser.EntityFactory

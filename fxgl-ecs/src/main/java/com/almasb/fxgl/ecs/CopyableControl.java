@@ -24,26 +24,21 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
 /**
- * Listener for control related events.
+ * Marks a control as copyable.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface ControlListener {
+public interface CopyableControl<T extends Control> {
 
     /**
-     * Called after control was added to an entity.
+     * Copies this control.
+     * The general contract should be similar to {@link Object#clone()}.
+     * The 'depth' of the copy should be determined by the user.
      *
-     * @param control the control that was added
+     * @return new instance (copy) of the control with copied values
      */
-    void onControlAdded(Control control);
-
-    /**
-     * Called before control is removed from an entity.
-     *
-     * @param control the control to be removed
-     */
-    void onControlRemoved(Control control);
+    T copy();
 }

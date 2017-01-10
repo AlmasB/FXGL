@@ -24,58 +24,77 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity.component;
+package com.almasb.fxgl.ecs.component;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.component.ObjectComponent;
+import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
-
 /**
- * Represents an entity type.
+ * Represents a double value based component.
+ * <p>
+ * <pre>
+ * Example:
+ *
+ * public class AttackSpeedComponent extends DoubleComponent {
+ *      public AttackSpeedComponent(double initialValue) {
+ *          super(initialValue);
+ *      }
+ * }
+ *
+ * Entity player = ...
+ * player.addComponent(new AttackSpeedComponent(1.75));
+ *
+ * double attackSpeed = player.getComponent(AttackSpeedComponent.class).getValue();
+ *
+ * </pre>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class TypeComponent extends ObjectComponent<Serializable>
-        implements SerializableComponent, CopyableComponent<TypeComponent> {
+public abstract class DoubleComponent extends AbstractComponent implements SerializableComponent {
+    private DoubleProperty property;
 
     /**
-     * Constructs a component with no type.
+     * No-arg ctor, initializes the value to 0.
      */
-    public TypeComponent() {
-        this(new SObject());
+    public DoubleComponent() {
+        this(0);
     }
 
     /**
-     * Constructs a component with given type.
-     * Note: although the type could be any object, it is recommended
-     * that an enum is used to represent types.
+     * Constructs a double value component with given
+     * initial value.
      *
-     * @param type entity type
+     * @param initialValue initial value
      */
-    public TypeComponent(Serializable type) {
-        super(type);
+    public DoubleComponent(double initialValue) {
+        property = new SimpleDoubleProperty(initialValue);
     }
 
     /**
-     * <pre>
-     *     Example:
-     *     entity.getTypeComponent().isType(Type.PLAYER);
-     * </pre>
-     *
-     * @param type entity type
-     * @return true iff this type component is of given type
+     * @return value property
      */
-    public boolean isType(Object type) {
-        return getValue().equals(type);
+    public final DoubleProperty valueProperty() {
+        return property;
     }
 
-    @Override
-    public String toString() {
-        return "Type(" + getValue() + ")";
+    /**
+     * @return value held by this component
+     */
+    public final double getValue() {
+        return property.get();
+    }
+
+    /**
+     * Set value to this component.
+     *
+     * @param value new value
+     */
+    public final void setValue(double value) {
+        property.set(value);
     }
 
     @Override
@@ -89,16 +108,7 @@ public class TypeComponent extends ObjectComponent<Serializable>
     }
 
     @Override
-    public TypeComponent copy() {
-        return new TypeComponent(getValue());
-    }
-
-    private static class SObject implements Serializable {
-        private static final long serialVersionUID = -1L;
-
-        @Override
-        public String toString() {
-            return "NONE";
-        }
+    public String toString() {
+        return getClass().getSimpleName() + "[value=" + getValue() + "]";
     }
 }

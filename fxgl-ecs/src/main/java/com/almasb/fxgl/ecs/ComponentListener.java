@@ -24,40 +24,26 @@
  * SOFTWARE.
  */
 
-package shooter;
-
-import com.almasb.fxgl.ecs.AbstractComponent;
+package com.almasb.fxgl.ecs;
 
 /**
+ * Listener for component related events.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class WeaponComponent extends AbstractComponent {
+public interface ComponentListener {
 
-    private int damage;
-    private double fireRate;
-    private int maxAmmo;
+    /**
+     * Called after a component is added to an entity.
+     *
+     * @param component the component
+     */
+    void onComponentAdded(Component component);
 
-    public int getDamage() {
-        return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public double getFireRate() {
-        return fireRate;
-    }
-
-    public void setFireRate(double fireRate) {
-        this.fireRate = fireRate;
-    }
-
-    public int getMaxAmmo() {
-        return maxAmmo;
-    }
-
-    public void setMaxAmmo(int maxAmmo) {
-        this.maxAmmo = maxAmmo;
-    }
+    /**
+     * Called before a component is removed from an entity.
+     *
+     * @param component the component
+     */
+    void onComponentRemoved(Component component);
 }

@@ -24,12 +24,12 @@
  * SOFTWARE.
  */
 
-package com.almasb.ents;
+package com.almasb.fxgl.ecs;
 
 import com.almasb.easyio.serialization.Bundle;
-import com.almasb.ents.component.Required;
-import com.almasb.ents.serialization.SerializableComponent;
-import com.almasb.ents.serialization.SerializableControl;
+import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import javafx.beans.property.ReadOnlyBooleanProperty;

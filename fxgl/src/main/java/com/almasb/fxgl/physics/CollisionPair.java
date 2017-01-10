@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.core.pool.Poolable;
 

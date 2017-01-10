@@ -26,7 +26,7 @@
 
 package sandbox;
 
-import com.almasb.ents.Entity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.parser.EntityFactory;
 import com.almasb.fxgl.parser.json.JSONEntityProducer;
