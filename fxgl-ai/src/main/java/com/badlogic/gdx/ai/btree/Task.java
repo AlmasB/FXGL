@@ -16,8 +16,8 @@
 
 package com.badlogic.gdx.ai.btree;
 
-import com.almasb.gameutils.reflect.ClassReflection;
-import com.almasb.gameutils.reflect.ReflectionException;
+import com.almasb.fxgl.core.reflect.ClassReflection;
+import com.almasb.fxgl.core.reflect.ReflectionException;
 import com.badlogic.gdx.ai.btree.annotation.TaskConstraint;
 
 /** This is the abstract base class of all behavior tree tasks. The {@code Task} of a behavior tree has a status, one control and a

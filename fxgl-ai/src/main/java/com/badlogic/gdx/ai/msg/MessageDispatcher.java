@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.ai.msg;
 
-import com.almasb.gameutils.collection.Array;
-import com.almasb.gameutils.collection.IntMap;
-import com.almasb.gameutils.pool.Pool;
-import com.almasb.gameutils.reflect.ClassReflection;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.IntMap;
+import com.almasb.fxgl.core.pool.Pool;
+import com.almasb.fxgl.core.reflect.ClassReflection;
 import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.Timepiece;
 

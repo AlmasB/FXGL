@@ -36,7 +36,7 @@ import com.almasb.fxgl.entity.component.IDComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.time.UpdateEvent;
-import com.almasb.gameutils.collection.Array;
+import com.almasb.fxgl.core.collection.Array;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;

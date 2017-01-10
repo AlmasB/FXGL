@@ -26,7 +26,7 @@
 
 package org.jbox2d.callbacks;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 

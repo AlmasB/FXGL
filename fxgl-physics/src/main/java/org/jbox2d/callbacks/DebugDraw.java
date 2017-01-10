@@ -28,7 +28,7 @@
  */
 package org.jbox2d.callbacks;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import javafx.scene.paint.Color;
 import org.jbox2d.common.IViewportTransform;
 import org.jbox2d.common.Transform;

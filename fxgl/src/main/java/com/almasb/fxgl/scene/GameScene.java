@@ -38,7 +38,7 @@ import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.lighting.LightingSystem;
 import com.almasb.fxgl.ui.UI;
-import com.almasb.gameutils.collection.Array;
+import com.almasb.fxgl.core.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;

@@ -25,7 +25,7 @@
  */
 package org.jbox2d.dynamics.joints;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 /**
  * Mouse joint definition. This requires a world target point, tuning parameters, and the time step.

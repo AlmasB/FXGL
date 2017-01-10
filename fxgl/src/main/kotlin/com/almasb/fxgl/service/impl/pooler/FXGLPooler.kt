@@ -28,9 +28,9 @@ package com.almasb.fxgl.service.impl.pooler
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.service.Pooler
-import com.almasb.gameutils.math.Vec2
-import com.almasb.gameutils.pool.Pool
-import com.almasb.gameutils.pool.Pools
+import com.almasb.fxgl.core.math.Vec2
+import com.almasb.fxgl.core.pool.Pool
+import com.almasb.fxgl.core.pool.Pools
 import com.google.inject.Inject
 import com.google.inject.name.Named
 

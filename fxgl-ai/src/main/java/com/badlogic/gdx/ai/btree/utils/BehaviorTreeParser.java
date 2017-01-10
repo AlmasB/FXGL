@@ -16,13 +16,13 @@
 
 package com.badlogic.gdx.ai.btree.utils;
 
-import com.almasb.gameutils.collection.Array;
-import com.almasb.gameutils.collection.ObjectMap;
-import com.almasb.gameutils.collection.ObjectSet;
-import com.almasb.gameutils.reflect.Annotation;
-import com.almasb.gameutils.reflect.ClassReflection;
-import com.almasb.gameutils.reflect.Field;
-import com.almasb.gameutils.reflect.ReflectionException;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.collection.ObjectSet;
+import com.almasb.fxgl.core.reflect.Annotation;
+import com.almasb.fxgl.core.reflect.ClassReflection;
+import com.almasb.fxgl.core.reflect.Field;
+import com.almasb.fxgl.core.reflect.ReflectionException;
 import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;

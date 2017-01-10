@@ -26,7 +26,7 @@
 
 package org.jbox2d.dynamics.joints;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 /**
  * Rope joint definition. This requires two body anchor points and a maximum lengths. Note: by

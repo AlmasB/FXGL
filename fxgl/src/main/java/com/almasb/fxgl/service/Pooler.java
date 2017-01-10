@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service;
 
-import com.almasb.gameutils.pool.Pool;
+import com.almasb.fxgl.core.pool.Pool;
 
 /**
  * Pooler service.

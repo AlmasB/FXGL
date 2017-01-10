@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.fsm;
 
-import com.almasb.gameutils.collection.Array;
+import com.almasb.fxgl.core.collection.Array;
 
 /** A {@link StateMachine} implementation that keeps track of all previous {@link State}s via a stack. This makes sense for example
  * in case of a hierarchical menu structure where each menu screen is one state and one wants to navigate back to the main menu

@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.btree.utils;
 
-import com.almasb.gameutils.collection.ObjectMap;
+import com.almasb.fxgl.core.collection.ObjectMap;
 import com.badlogic.gdx.ai.utils.random.*;
 
 import java.util.StringTokenizer;

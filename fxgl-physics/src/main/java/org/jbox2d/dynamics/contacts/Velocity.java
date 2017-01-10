@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.jbox2d.dynamics.contacts;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 public class Velocity {
     public final Vec2 v = new Vec2();

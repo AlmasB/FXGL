@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.jbox2d.pooling.arrays;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 import java.util.HashMap;
 

@@ -25,7 +25,7 @@
  */
 package org.jbox2d.collision.broadphase;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import javafx.scene.paint.Color;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.callbacks.TreeCallback;

@@ -17,7 +17,7 @@
 package com.badlogic.gdx.ai.msg;
 
 
-import com.almasb.gameutils.collection.ObjectSet;
+import com.almasb.fxgl.core.collection.ObjectSet;
 
 /** An unbounded priority queue based on a priority heap. The elements of the priority queue are ordered according to their
  * {@linkplain Comparable natural ordering}. A priority queue does not permit {@code null} elements.

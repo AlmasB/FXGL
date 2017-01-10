@@ -26,7 +26,7 @@
 
 package org.jbox2d.particle;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import org.jbox2d.common.JBoxUtils;
 import org.jbox2d.pooling.normal.MutableStack;
 

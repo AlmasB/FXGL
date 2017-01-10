@@ -25,7 +25,7 @@
  */
 package org.jbox2d.common;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 /**
  * This is the viewport transform used from drawing. Use yFlip if you are drawing from the top-left

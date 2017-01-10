@@ -28,21 +28,21 @@ package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.gameutils.math.GameMath;
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import static com.almasb.gameutils.math.GameMath.clamp;
+import static com.almasb.fxgl.core.math.FXGLMath.clamp;
 import static java.lang.Math.*;
 
 /**
@@ -118,13 +118,13 @@ public class FilterSample extends GameApplication {
 
 
         ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
-        //emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x + t * 10 * spread, y + GameMath.sin(t * 10) * spread));
+        //emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x + t * 10 * spread, y + FXGLMath.sin(t * 10) * spread));
         emitter.setSpawnPointFunction((i, x, y) -> curveFunction().add(x, y));
         emitter.setColorFunction(() -> Color.color(abs(sin(t)), abs(cos(t)), abs(cos(t))));
         //emitter.setGravityFunction(() -> new Point2D(spread * cos(t), spread * pow(t, 0.55)));
 
         ParticleEmitter emitter2 = ParticleEmitters.newSparkEmitter();
-        emitter2.setSpawnPointFunction((i, x, y) -> new Point2D(x + GameMath.cos(t * 10) * spread, y + pow(t, 0.55)));
+        emitter2.setSpawnPointFunction((i, x, y) -> new Point2D(x + FXGLMath.cos(t * 10) * spread, y + pow(t, 0.55)));
         emitter2.setColorFunction(() -> Color.color(abs(sin(t)), 0.75, 1.0));
         emitter2.setEmissionRate(0.33);
 
@@ -149,7 +149,7 @@ public class FilterSample extends GameApplication {
     }
 
     private Point2D curveFunction2() {
-        double x = 14 * pow(1.5, GameMath.cos(t));
+        double x = 14 * pow(1.5, FXGLMath.cos(t));
         double y = 7 * sin(cos(1.14 * t)) + pow(sin(t), 3);
 
         return new Point2D(x, -y).multiply(15);
@@ -195,7 +195,7 @@ public class FilterSample extends GameApplication {
     double lim = 2;
 
     private double band(Vec2 pos, double amplitude, double frequency) {
-        double wave = scale * amplitude * GameMath.sin((float)(2.0 * PI * frequency * pos.x + t));
+        double wave = scale * amplitude * FXGLMath.sin((float)(2.0 * PI * frequency * pos.x + t));
         return clamp(amplitude * 0.002, 0.001 / scale, 1.0) * scale / abs(wave - pos.y);
     }
 
@@ -238,7 +238,7 @@ public class FilterSample extends GameApplication {
 
                 for (int i = 0; i < lim; i++) {
 
-                    spectrum += band(p, 1.0, i) / pow(1.0, GameMath.cos((float)t));
+                    spectrum += band(p, 1.0, i) / pow(1.0, FXGLMath.cos((float)t));
 
                     // sin wave
                     //spectrum = -sin(toRadians(t + x)) / (p.y);

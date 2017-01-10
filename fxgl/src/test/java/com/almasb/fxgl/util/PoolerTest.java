@@ -28,8 +28,8 @@ package com.almasb.fxgl.util;
 
 import com.almasb.fxgl.service.Pooler;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
-import com.almasb.gameutils.pool.Pool;
-import com.almasb.gameutils.pool.Poolable;
+import com.almasb.fxgl.core.pool.Pool;
+import com.almasb.fxgl.core.pool.Poolable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;

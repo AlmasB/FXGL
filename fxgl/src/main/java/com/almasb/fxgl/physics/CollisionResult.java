@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.gameutils.pool.Poolable;
+import com.almasb.fxgl.core.pool.Poolable;
 
 /**
  * Data structure for holding info about collision result.

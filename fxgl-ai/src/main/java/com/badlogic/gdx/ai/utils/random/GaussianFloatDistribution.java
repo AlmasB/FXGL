@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.utils.random;
 
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** @author davebaol */
 public final class GaussianFloatDistribution extends FloatDistribution {
@@ -33,7 +33,7 @@ public final class GaussianFloatDistribution extends FloatDistribution {
 
 	@Override
 	public float nextFloat () {
-		return mean + (float)GameMath.getRandom().nextGaussian() * standardDeviation;
+		return mean + (float) FXGLMath.getRandom().nextGaussian() * standardDeviation;
 	}
 
 	public float getMean () {

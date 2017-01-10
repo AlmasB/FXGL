@@ -48,7 +48,7 @@
 
 package org.jbox2d.common;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 import java.util.Random;
 

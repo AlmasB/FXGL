@@ -28,6 +28,7 @@ package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.service.Input;
@@ -36,7 +37,6 @@ import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.gameutils.math.GameMath;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
@@ -78,7 +78,7 @@ public class FlyingKeysSample extends GameApplication {
                 box.getBoundingBoxComponent()
                         .addHitBox(new HitBox("Left", BoundingShape.box(20, 30)));
 
-                Button button = new Button(ALPHABET.charAt(GameMath.random(ALPHABET.length() - 1)) + "");
+                Button button = new Button(ALPHABET.charAt(FXGLMath.random(ALPHABET.length() - 1)) + "");
                 button.setPrefWidth(20);
                 button.setPrefHeight(30);
                 button.setOnAction(e -> System.out.println(button.getText()));
@@ -102,7 +102,7 @@ public class FlyingKeysSample extends GameApplication {
     protected void initPhysics() {
 
         getMasterTimer().runAtInterval(() -> {
-            getPhysicsWorld().setGravity(GameMath.random(-10, 10), GameMath.random(-10, 10));
+            getPhysicsWorld().setGravity(FXGLMath.random(-10, 10), FXGLMath.random(-10, 10));
         }, Duration.seconds(2.5));
     }
 

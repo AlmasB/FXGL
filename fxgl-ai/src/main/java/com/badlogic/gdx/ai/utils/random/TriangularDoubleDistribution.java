@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.utils.random;
 
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** @author davebaol */
 public final class TriangularDoubleDistribution extends DoubleDistribution {
@@ -63,7 +63,7 @@ public final class TriangularDoubleDistribution extends DoubleDistribution {
 	 * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-high, high, 0)}
 	 * @param high the upper limit */
 	static double randomTriangular (double high) {
-		return GameMath.randomTriangular() * high;
+		return FXGLMath.randomTriangular() * high;
 	}
 
 	/** Returns a triangularly distributed random number between {@code low} (inclusive) and {@code high} (exclusive), where values
@@ -72,7 +72,7 @@ public final class TriangularDoubleDistribution extends DoubleDistribution {
 	 * @param high the upper limit
 	 * @param mode the point around which the values are more likely */
 	static double randomTriangular (double low, double high, double mode) {
-		double u = GameMath.random();
+		double u = FXGLMath.random();
 		double d = high - low;
 		if (u <= (mode - low) / d) return low + Math.sqrt(u * d * (mode - low));
 		return high - Math.sqrt((1 - u) * d * (high - mode));

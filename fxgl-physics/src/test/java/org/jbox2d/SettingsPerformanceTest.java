@@ -26,7 +26,7 @@
 
 package org.jbox2d;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import org.jbox2d.common.JBoxSettings;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.worlds.PerformanceTestWorld;

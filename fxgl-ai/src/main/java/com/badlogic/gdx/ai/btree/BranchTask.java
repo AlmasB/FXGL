@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.btree;
 
-import com.almasb.gameutils.collection.Array;
+import com.almasb.fxgl.core.collection.Array;
 import com.badlogic.gdx.ai.btree.annotation.TaskConstraint;
 
 /** A branch task defines a behavior tree branch, contains logic of starting or running sub-branches and leaves

@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.utils.random;
 
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** @author davebaol */
 public final class UniformFloatDistribution extends FloatDistribution {
@@ -34,7 +34,7 @@ public final class UniformFloatDistribution extends FloatDistribution {
 	}
 
 	public float nextFloat () {
-		return GameMath.random(low, high);
+		return FXGLMath.random(low, high);
 	}
 
 	public float getLow () {

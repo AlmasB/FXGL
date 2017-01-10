@@ -16,8 +16,8 @@
 
 package com.badlogic.gdx.ai.btree;
 
-import com.almasb.gameutils.collection.Array;
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** A {@code SingleRunningChildBranch} task is a branch task that supports only one running child at a time.
  * 
@@ -74,7 +74,7 @@ public abstract class SingleRunningChildBranch<E> extends BranchTask<E> {
 					int last = children.size() - 1;
 					if (currentChildIndex < last) {
 						// Random swap
-						int otherChildIndex = GameMath.random(currentChildIndex, last);
+						int otherChildIndex = FXGLMath.random(currentChildIndex, last);
 						Task<E> tmp = randomChildren[currentChildIndex];
 						randomChildren[currentChildIndex] = randomChildren[otherChildIndex];
 						randomChildren[otherChildIndex] = tmp;

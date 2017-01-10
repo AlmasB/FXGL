@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.utils.random;
 
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** @author davebaol */
 public final class UniformDoubleDistribution extends DoubleDistribution {
@@ -34,7 +34,7 @@ public final class UniformDoubleDistribution extends DoubleDistribution {
 	}
 
 	public double nextDouble () {
-		return low + GameMath.getRandom().nextDouble() * (high - low);
+		return low + FXGLMath.getRandom().nextDouble() * (high - low);
 	}
 
 	public double getLow () {

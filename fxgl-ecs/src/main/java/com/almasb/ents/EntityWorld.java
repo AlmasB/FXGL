@@ -26,8 +26,8 @@
 
 package com.almasb.ents;
 
-import com.almasb.gameutils.collection.Array;
-import com.almasb.gameutils.collection.ObjectMap;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.ObjectMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

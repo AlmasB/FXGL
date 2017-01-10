@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.jbox2d.dynamics.joints;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 public class Jacobian {
     public final Vec2 linearA = new Vec2();

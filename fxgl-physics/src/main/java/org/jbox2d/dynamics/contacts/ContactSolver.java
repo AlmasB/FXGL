@@ -25,7 +25,7 @@
  */
 package org.jbox2d.dynamics.contacts;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.ManifoldPoint;
 import org.jbox2d.collision.WorldManifold;

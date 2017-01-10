@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.btree.branch;
 
-import com.almasb.gameutils.collection.Array;
+import com.almasb.fxgl.core.collection.Array;
 import com.badlogic.gdx.ai.btree.Task;
 
 /** A {@code RandomSelector} is a selector task's variant that runs its children in a random order.

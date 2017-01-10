@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.audio
 
-import com.almasb.gameutils.Disposable
+import com.almasb.fxgl.core.Disposable
 import javafx.beans.property.DoubleProperty
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer

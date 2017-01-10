@@ -26,7 +26,7 @@
 
 package org.jbox2d.dynamics;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 /**
  * A body definition holds all the data needed to construct a rigid body. You can safely re-use body

@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.utils.random;
 
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** @author davebaol */
 public final class TriangularIntegerDistribution extends IntegerDistribution {
@@ -43,9 +43,9 @@ public final class TriangularIntegerDistribution extends IntegerDistribution {
 	public int nextInt () {
 		float r;
 		if (-low == high && mode == 0)
-			r = GameMath.randomTriangular(high); // It's faster
+			r = FXGLMath.randomTriangular(high); // It's faster
 		else
-			r = GameMath.randomTriangular(low, high, mode);
+			r = FXGLMath.randomTriangular(low, high, mode);
 		return Math.round(r);
 	}
 

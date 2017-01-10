@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.btree;
 
-import com.almasb.gameutils.collection.Array;
+import com.almasb.fxgl.core.collection.Array;
 
 /** The behavior tree itself.
  * 

@@ -37,7 +37,7 @@ import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.SAT;
 import com.almasb.fxgl.service.Pooler;
-import com.almasb.gameutils.pool.Pool;
+import com.almasb.fxgl.core.pool.Pool;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.collections.FXCollections;

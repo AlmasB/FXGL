@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.msg;
 
-import com.almasb.gameutils.pool.Poolable;
+import com.almasb.fxgl.core.pool.Poolable;
 
 /** A Telegram is the container of a message. The {@link MessageDispatcher} manages telegram life-cycle.
  * @author davebaol */

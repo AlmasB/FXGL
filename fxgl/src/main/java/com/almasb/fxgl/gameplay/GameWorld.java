@@ -36,7 +36,7 @@ import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.time.UpdateEventListener;
-import com.almasb.gameutils.collection.Array;
+import com.almasb.fxgl.core.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;

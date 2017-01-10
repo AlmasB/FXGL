@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.utils;
 
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** Some useful math functions.
  * 
@@ -31,12 +31,12 @@ public final class ArithmeticUtils {
 	 * @return the given angle wrapped to the range [-PI, PI] */
 	public static float wrapAngleAroundZero (float a) {
 		if (a >= 0) {
-			float rotation = a % GameMath.PI2;
-			if (rotation > GameMath.PI) rotation -= GameMath.PI2;
+			float rotation = a % FXGLMath.PI2;
+			if (rotation > FXGLMath.PI) rotation -= FXGLMath.PI2;
 			return rotation;
 		} else {
-			float rotation = -a % GameMath.PI2;
-			if (rotation > GameMath.PI) rotation -= GameMath.PI2;
+			float rotation = -a % FXGLMath.PI2;
+			if (rotation > FXGLMath.PI) rotation -= FXGLMath.PI2;
 			return -rotation;
 		}
 	}

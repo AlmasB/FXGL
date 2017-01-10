@@ -26,7 +26,7 @@
 
 package org.jbox2d;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import junit.framework.TestCase;
 import org.jbox2d.common.JBoxUtils;
 import org.jbox2d.common.Mat22;

@@ -48,7 +48,7 @@
 
 package org.jbox2d.collision.shapes;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 // Updated to rev 100
 

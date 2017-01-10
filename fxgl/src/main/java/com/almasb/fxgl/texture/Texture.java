@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.texture;
 
-import com.almasb.gameutils.Disposable;
+import com.almasb.fxgl.core.Disposable;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VerticalDirection;

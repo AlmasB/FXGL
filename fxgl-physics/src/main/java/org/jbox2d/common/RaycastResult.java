@@ -27,7 +27,7 @@ package org.jbox2d.common;
 
 // updated to rev 100
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 
 public class RaycastResult {
     public float lambda = 0.0f;

@@ -16,7 +16,7 @@
 
 package com.badlogic.gdx.ai.btree.decorator;
 
-import com.almasb.gameutils.math.GameMath;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.badlogic.gdx.ai.btree.Decorator;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.annotation.TaskAttribute;
@@ -102,7 +102,7 @@ public class Random<E> extends Decorator<E> {
 	}
 
 	private void decide () {
-		if (GameMath.random() <= p)
+		if (FXGLMath.random() <= p)
 			success();
 		else
 			fail();

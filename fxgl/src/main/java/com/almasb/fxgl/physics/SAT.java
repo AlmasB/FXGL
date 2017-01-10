@@ -27,8 +27,8 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.gameutils.collection.Array;
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.math.Vec2;
 
 /**
  * Separating Axis Theorem based check for collision.

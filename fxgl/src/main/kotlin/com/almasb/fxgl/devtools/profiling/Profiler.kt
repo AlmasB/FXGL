@@ -29,7 +29,7 @@ package com.almasb.fxgl.devtools.profiling
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.service.MasterTimer
-import com.almasb.gameutils.math.GameMath
+import com.almasb.fxgl.core.math.FXGLMath
 
 /**
  * Basic profiler.
@@ -76,28 +76,28 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
      */
     fun getAvgMemoryUsage() = memoryUsage / frames / MB
 
-    fun getAvgMemoryUsageRounded() = GameMath.roundPositive(getAvgMemoryUsage())
+    fun getAvgMemoryUsageRounded() = FXGLMath.roundPositive(getAvgMemoryUsage())
 
     /**
      * @return max (highest peak) memory usage in MB
      */
     fun getMaxMemoryUsage() = memoryUsageMax / MB
 
-    fun getMaxMemoryUsageRounded() = GameMath.roundPositive(getMaxMemoryUsage())
+    fun getMaxMemoryUsageRounded() = FXGLMath.roundPositive(getMaxMemoryUsage())
 
     /**
      * @return min (lowest peak) memory usage in MB
      */
     fun getMinMemoryUsage() = memoryUsageMin / MB
 
-    fun getMinMemoryUsageRounded() = GameMath.roundPositive(getMinMemoryUsage())
+    fun getMinMemoryUsageRounded() = FXGLMath.roundPositive(getMinMemoryUsage())
 
     /**
      * @return how much memory is used at this moment in MB
      */
     fun getCurrentMemoryUsage() = memoryUsageCurrent / MB
 
-    fun getCurrentMemoryUsageRounded() = GameMath.roundPositive(getCurrentMemoryUsage())
+    fun getCurrentMemoryUsageRounded() = FXGLMath.roundPositive(getCurrentMemoryUsage())
 
     private var gcRuns = 0
 

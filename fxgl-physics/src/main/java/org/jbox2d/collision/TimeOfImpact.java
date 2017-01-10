@@ -25,7 +25,7 @@
  */
 package org.jbox2d.collision;
 
-import com.almasb.gameutils.math.Vec2;
+import com.almasb.fxgl.core.math.Vec2;
 import org.jbox2d.collision.Distance.DistanceProxy;
 import org.jbox2d.collision.Distance.SimplexCache;
 import org.jbox2d.common.*;
