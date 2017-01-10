@@ -24,49 +24,33 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxeventbus;
+package com.almasb.fxgl.eventbus;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.scene.Group;
 
 /**
- * An event dispatcher that can be used for subscribing to events and posting the events.
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface EventBus {
-    /**
-     * Register event handler for event type.
-     *
-     * @param eventType type
-     * @param eventHandler handler
-     * @param <T> event
-     */
-    <T extends Event> Subscriber addEventHandler(EventType<T> eventType,
-                                                 EventHandler<? super T> eventHandler);
+public final class FXEventBus implements EventBus {
 
-    /**
-     * Remove event handler for event type.
-     *
-     * @param eventType type
-     * @param eventHandler handler
-     * @param <T> event
-     */
-    <T extends Event> void removeEventHandler(EventType<T> eventType,
-                                              EventHandler<? super T> eventHandler);
+    private Group eventHandlers = new Group();
 
-    /**
-     * Post (fire) given event. All listening parties will be notified.
-     * Events will be handled on the same thread that fired the event,
-     * i.e. synchronous.
-     *
-     * <p>
-     *     Note: according to JavaFX doc this must be called on JavaFX Application Thread.
-     *     In reality this doesn't seem to be true.
-     * </p>
-     *
-     * @param event the event
-     */
-    void fireEvent(Event event);
+    @Override
+    public <T extends Event> Subscriber addEventHandler(EventType<T> eventType, EventHandler<? super T> eventHandler) {
+        eventHandlers.addEventHandler(eventType, eventHandler);
+        return new Subscriber(this, eventType, (EventHandler<? super Event>) eventHandler);
+    }
+
+    @Override
+    public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<? super T> eventHandler) {
+        eventHandlers.removeEventHandler(eventType, eventHandler);
+    }
+
+    @Override
+    public void fireEvent(Event event) {
+        eventHandlers.fireEvent(event);
+    }
 }

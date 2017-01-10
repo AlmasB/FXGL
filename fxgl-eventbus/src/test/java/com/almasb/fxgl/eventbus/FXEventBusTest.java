@@ -24,21 +24,52 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.eventbus;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Service for event dispatching, listening and handling.
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface EventBus extends com.almasb.fxgl.eventbus.EventBus {
+public class FXEventBusTest {
 
-    /**
-     * Scan an object for public methods marked @Handles
-     * and add them to the event bus.
-     *
-     * @param instance object to scan
-     * @throws IllegalArgumentException if syntax error during scan
-     */
-    void scanForHandlers(Object instance);
+    @Before
+    public void localSetUp() {
+        bus = new FXEventBus();
+        calls = 0;
+        threadID = Thread.currentThread().getId();
+    }
+
+    private EventBus bus;
+    private int calls;
+    private long threadID;
+
+    @Test
+    public void testFireEvent() {
+        TestEvent e = new TestEvent(TestEvent.ANY, new Object());
+
+        Subscriber subscriber = bus.addEventHandler(TestEvent.ANY, event -> {
+            calls++;
+
+            assertEquals("Handled event on a different thread", threadID, Thread.currentThread().getId());
+
+            assertTrue("Received wrong event", e.getData() == event.getData()
+                    && e.getEventType() == event.getEventType());
+        });
+
+        bus.fireEvent(e);
+
+        // synchronous
+        assertEquals(calls, 1);
+
+        subscriber.unsubscribe();
+
+        bus.fireEvent(e);
+
+        assertEquals(calls, 1);
+    }
 }

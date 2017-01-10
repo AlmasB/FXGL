@@ -24,21 +24,28 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.eventbus;
+
+import javafx.beans.NamedArg;
+import javafx.event.Event;
+import javafx.event.EventType;
 
 /**
- * Service for event dispatching, listening and handling.
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface EventBus extends com.almasb.fxgl.eventbus.EventBus {
+public class TestEvent extends Event {
 
-    /**
-     * Scan an object for public methods marked @Handles
-     * and add them to the event bus.
-     *
-     * @param instance object to scan
-     * @throws IllegalArgumentException if syntax error during scan
-     */
-    void scanForHandlers(Object instance);
+    public static final EventType<TestEvent> ANY =
+            new EventType<>(Event.ANY, "TEST_EVENT");
+
+    private Object data;
+
+    public TestEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Object data) {
+        super(eventType);
+        this.data = data;
+    }
+
+    public Object getData() {
+        return data;
+    }
 }
