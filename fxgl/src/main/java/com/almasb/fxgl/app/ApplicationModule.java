@@ -29,6 +29,8 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.google.inject.AbstractModule;
+import com.google.inject.Scope;
+import com.google.inject.Scopes;
 import com.google.inject.name.Names;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -97,6 +99,12 @@ public class ApplicationModule extends AbstractModule {
                     bind(type.serviceProvider()).in(type.scope());
                 else
                     bind(type.service()).to(type.serviceProvider()).in(type.scope());
+
+                // this is necessary because even if Service.class is in Singleton scope
+                // ServiceProvider.class may be instantiated multiple times
+                // @see https://github.com/google/guice/wiki/Scopes#applying-scopes
+                if (type.scope() == Scopes.SINGLETON)
+                    bind(type.serviceProvider()).in(Scopes.SINGLETON);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Failed to configure service: "
                         + type.service() + " with provider: " + type.serviceProvider()

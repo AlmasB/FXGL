@@ -81,6 +81,7 @@
         <controlsfx.version>8.40.12</controlsfx.version>
         <jackson.version>2.8.5</jackson.version>
         <log4j.version>2.5</log4j.version>
+        <classpath.scanner.version>2.0.10</classpath.scanner.version>
 
         <!-- test dependencies -->
         <junit.version>4.12</junit.version>

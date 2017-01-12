@@ -110,6 +110,12 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.lukehutch</groupId>
+            <artifactId>fast-classpath-scanner</artifactId>
+            <version>${classpath.scanner.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

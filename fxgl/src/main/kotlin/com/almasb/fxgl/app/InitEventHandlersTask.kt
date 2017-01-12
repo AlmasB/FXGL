@@ -27,9 +27,11 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.event.*
+import com.almasb.fxgl.service.MasterTimer
+import com.almasb.fxgl.settings.UserProfileSavable
 import com.google.inject.Inject
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
 import javafx.animation.AnimationTimer
-import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
@@ -72,32 +74,32 @@ internal class InitEventHandlersTask
             }
         }
 
+        val scanner = FastClasspathScanner()
+
+        val savables = arrayListOf<Class<out UserProfileSavable>>()
+
         // Save/Load events
-
-        bus.addEventHandler(SaveEvent.ANY, { event ->
-            app.getInput().save(event.getProfile())
-            app.getDisplay().save(event.getProfile())
-            app.getAudioPlayer().save(event.getProfile())
-            app.getAchievementManager().save(event.getProfile())
-            app.getMasterTimer().save(event.getProfile())
+        scanner.matchClassesImplementing(UserProfileSavable::class.java, {
+            savables.add(it)
         })
+        scanner.scan()
 
-        bus.addEventHandler(LoadEvent.ANY, { event ->
-            app.getInput().load(event.getProfile())
-            app.getDisplay().load(event.getProfile())
-            app.getAudioPlayer().load(event.getProfile())
-            app.getAchievementManager().load(event.getProfile())
+        savables.forEach {
+            val instance = FXGL.getInstance(it)
 
-            if (event.getEventType() != LoadEvent.RESTORE_SETTINGS) {
-                app.getMasterTimer().load(event.getProfile())
-            }
-        })
+            bus.addEventHandler(SaveEvent.ANY, { instance.save(it.profile) })
+            bus.addEventHandler(LoadEvent.ANY, {
+                if (!(instance is MasterTimer && it.eventType == LoadEvent.RESTORE_SETTINGS)) {
+                    instance.load(it.profile)
+                }
+            })
+        }
 
         // Core listeners
 
         app.addFXGLListener(app.getInput())
         app.addFXGLListener(app.getMasterTimer())
-        app.addFXGLListener(object : com.almasb.fxgl.app.FXGLListener {
+        app.addFXGLListener(object : FXGLListener {
             override fun onPause() {
                 postUpdateTimer.stop()
                 app.setState(ApplicationState.PAUSED)
@@ -123,9 +125,9 @@ internal class InitEventHandlersTask
         app.getGameScene().addEventHandler(MouseEvent.ANY, { app.getInput().onMouseEvent(it, app.getGameScene().getViewport(), app.display.scaleRatio) })
         app.getGameScene().addEventHandler(KeyEvent.ANY, { app.getInput().onKeyEvent(it) })
 
-        bus.addEventHandler(com.almasb.fxgl.event.NotificationEvent.ANY, EventHandler<com.almasb.fxgl.event.NotificationEvent> { app.getAudioPlayer().onNotificationEvent(it) })
+        bus.addEventHandler(NotificationEvent.ANY, { app.getAudioPlayer().onNotificationEvent(it) })
 
-        bus.addEventHandler(com.almasb.fxgl.event.AchievementEvent.ANY, EventHandler<com.almasb.fxgl.event.AchievementEvent> { app.getNotificationService().onAchievementEvent(it) })
+        bus.addEventHandler(AchievementEvent.ANY, { app.getNotificationService().onAchievementEvent(it) })
 
         // FXGL App
 
