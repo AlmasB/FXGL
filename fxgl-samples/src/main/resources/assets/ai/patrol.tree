@@ -5,13 +5,13 @@
 # Alias definitions
 
 # Conditions
-import canSeePlayer? : "s32ai.CanSeePlayerCondition"
-import isTargetClose? : "s32ai.TargetCloseCondition"
+import canSeePlayer? : "s08ai.CanSeePlayerCondition"
+import isTargetClose? : "s08ai.TargetCloseCondition"
 
 # Actions
-import move : "s32ai.MoveTask"
-import attack : "s32ai.AttackTask"
-import patrol : "s32ai.PatrolTask"
+import move : "s08ai.MoveTask"
+import attack : "s08ai.AttackTask"
+import patrol : "s08ai.PatrolTask"
 
 # Tree definition (note that root is optional)
 root
