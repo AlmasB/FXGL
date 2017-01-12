@@ -36,6 +36,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,14 +87,16 @@ public class ApplicationModule extends AbstractModule {
         bind(Double.class).annotatedWith(Names.named("appHeight")).toInstance(app.getHeight());
     }
 
+    List<ServiceType> allServices = new ArrayList<>();
+
     /**
      * Can be overridden to provide own services or mock.
      */
     @SuppressWarnings("unchecked")
     protected void bindServices() {
-        List<ServiceType> services = mergeServices();
+        allServices = mergeServices();
 
-        for (ServiceType type : services) {
+        for (ServiceType type : allServices) {
             try {
                 if (type.service().equals(type.serviceProvider()))
                     bind(type.serviceProvider()).in(type.scope());

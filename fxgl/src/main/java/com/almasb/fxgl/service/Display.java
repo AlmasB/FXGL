@@ -29,7 +29,7 @@ package com.almasb.fxgl.service;
 import com.almasb.fxgl.io.UIDialogHandler;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.settings.SceneDimension;
-import com.almasb.fxgl.settings.UserProfileSavable;
+import com.almasb.fxgl.service.listener.UserProfileSavable;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;

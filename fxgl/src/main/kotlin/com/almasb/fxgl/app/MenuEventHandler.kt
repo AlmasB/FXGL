@@ -219,9 +219,13 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
      * @return user profile
      */
     fun createProfile(): UserProfile {
+        log.debug("Creating default profile")
+
         val profile = UserProfile(app.settings.getTitle(), app.settings.getVersion())
 
         app.eventBus.fireEvent(SaveEvent(profile))
+
+        profile.log(log)
 
         return profile
     }
@@ -245,6 +249,9 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
      * Restores default settings, e.g. audio, video, controls.
      */
     override fun restoreDefaultSettings() {
+        log.debug("restoreDefaultSettings()")
+        defaultProfile.log(log)
+
         app.eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
 

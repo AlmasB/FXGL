@@ -55,6 +55,8 @@ class FXGL private constructor() {
     companion object {
         private lateinit var internalApp: GameApplication
 
+        private lateinit var internalAllServices: List<ServiceType<*>>
+
         private lateinit var internalBundle: Bundle
 
         private lateinit var internalLogger: Logger
@@ -75,6 +77,8 @@ class FXGL private constructor() {
          * @return instance of the running game application
          */
         @JvmStatic fun getApp() = internalApp
+
+        @JvmStatic fun getServices() = internalAllServices
 
         /**
          * @return instance of the running game application cast to the actual type
@@ -109,6 +113,8 @@ class FXGL private constructor() {
             allModules.add(appModule)
 
             injector = Guice.createInjector(allModules)
+
+            internalAllServices = appModule.allServices
 
             // log that we are ready, also force logger service to init
             internalLogger = getLogger("FXGL")

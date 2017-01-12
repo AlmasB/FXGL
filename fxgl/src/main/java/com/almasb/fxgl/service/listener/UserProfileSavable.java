@@ -24,11 +24,12 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.settings;
+package com.almasb.fxgl.service.listener;
+
+import com.almasb.fxgl.settings.UserProfile;
 
 /**
- * Allows interested parties to save/load their state using
- * a user profile.
+ * Allows services to save/load their state using a user profile.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

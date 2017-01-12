@@ -24,21 +24,21 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.service.listener;
 
-import com.almasb.fxgl.event.NotificationEvent;
+import com.almasb.fxgl.event.AchievementEvent;
 
 /**
- * Listener for notification events.
+ * Marks a service that wants to listen for achievement events.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface NotificationListener {
+public interface AchievementListener {
 
     /**
-     * Fired on notification event.
+     * Fired on achievement event.
      *
-     * @param event the notification event
+     * @param event the event
      */
-    void onNotificationEvent(NotificationEvent event);
+    void onAchievementEvent(AchievementEvent event);
 }

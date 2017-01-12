@@ -26,6 +26,7 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.io.serialization.Bundle;
+import com.almasb.fxgl.logging.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -97,5 +98,10 @@ public class UserProfile implements Serializable {
         }
 
         return bundle;
+    }
+
+    public final void log(Logger logger) {
+        logger.info("Logging profile data");
+        logger.info(bundles.toString());
     }
 }

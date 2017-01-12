@@ -29,7 +29,7 @@ package com.almasb.fxgl.service.impl.quest
 import com.almasb.fxgl.gameplay.rpg.quest.Quest
 import com.almasb.fxgl.service.QuestService
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.settings.UserProfileSavable
+import com.almasb.fxgl.service.listener.UserProfileSavable
 import com.google.inject.Inject
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList

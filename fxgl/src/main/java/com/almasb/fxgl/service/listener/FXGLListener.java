@@ -24,10 +24,10 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.service.listener;
 
 /**
- * Listener for FXGL system events.
+ * Marks a service that wants to listen for FXGL system events.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
