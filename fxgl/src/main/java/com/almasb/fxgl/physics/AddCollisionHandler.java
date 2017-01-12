@@ -24,41 +24,18 @@
  * SOFTWARE.
  */
 
-package sandbox
+package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.parser.json.JSONEntity
-import com.almasb.fxgl.parser.json.JSONWorld
-import com.almasb.fxgl.service.listener.UserProfileSavable
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
-import io.github.lukehutch.fastclasspathscanner.matchprocessor.ImplementingClassMatchProcessor
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- *
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * Marks a class that extends {@link CollisionHandler} to be automatically
+ * added to physics world's collision handlers.
  */
-class KotlinTest {
-}
-
-fun main(args: Array<String>) {
-
-    val scanner = FastClasspathScanner()
-    scanner.matchClassesImplementing(UserProfileSavable::class.java, ImplementingClassMatchProcessor { println(it) })
-    scanner.scan()
-
-
-//    val mapper = ObjectMapper()
-//
-//    val world = JSONWorld("Level1", arrayListOf(
-//            JSONEntity("Player", 300.0, 400.0),
-//            JSONEntity("EnemyArcher", 200.0, 55.0)
-//    ))
-//
-//    //mapper.writeValue(File("level1.json"), world)
-//
-//    val world2 = mapper.readValue<JSONWorld>(File("level1.json"), JSONWorld::class.java)
-//
-//    println(world2.name)
-//    println(world2.entities)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface AddCollisionHandler {
 }

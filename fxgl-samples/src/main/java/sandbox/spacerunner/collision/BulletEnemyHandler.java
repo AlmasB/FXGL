@@ -24,41 +24,38 @@
  * SOFTWARE.
  */
 
-package sandbox
+package sandbox.spacerunner.collision;
 
-import com.almasb.fxgl.parser.json.JSONEntity
-import com.almasb.fxgl.parser.json.JSONWorld
-import com.almasb.fxgl.service.listener.UserProfileSavable
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
-import io.github.lukehutch.fastclasspathscanner.matchprocessor.ImplementingClassMatchProcessor
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.component.UserDataComponent;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.physics.AddCollisionHandler;
+import com.almasb.fxgl.physics.CollisionHandler;
+import sandbox.spacerunner.EntityType;
+import sandbox.spacerunner.SpaceRunnerFactory;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KotlinTest {
-}
+@AddCollisionHandler
+public class BulletEnemyHandler extends CollisionHandler {
 
-fun main(args: Array<String>) {
+    public BulletEnemyHandler() {
+        super(EntityType.BULLET, EntityType.ENEMY);
+    }
 
-    val scanner = FastClasspathScanner()
-    scanner.matchClassesImplementing(UserProfileSavable::class.java, ImplementingClassMatchProcessor { println(it) })
-    scanner.scan()
+    @Override
+    protected void onCollisionBegin(Entity bullet, Entity enemy) {
+        EntityType ownerType = (EntityType) bullet.getComponentUnsafe(UserDataComponent.class).getValue();
 
+        if (!Entities.getType(enemy).isType(ownerType)) {
+            PositionComponent position = Entities.getPosition(enemy);
+            enemy.getWorld().addEntity(FXGL.getInstance(SpaceRunnerFactory.class).newEnemy(position.getX() + 500, 300));
 
-//    val mapper = ObjectMapper()
-//
-//    val world = JSONWorld("Level1", arrayListOf(
-//            JSONEntity("Player", 300.0, 400.0),
-//            JSONEntity("EnemyArcher", 200.0, 55.0)
-//    ))
-//
-//    //mapper.writeValue(File("level1.json"), world)
-//
-//    val world2 = mapper.readValue<JSONWorld>(File("level1.json"), JSONWorld::class.java)
-//
-//    println(world2.name)
-//    println(world2.entities)
+            bullet.removeFromWorld();
+            enemy.removeFromWorld();
+        }
+    }
 }

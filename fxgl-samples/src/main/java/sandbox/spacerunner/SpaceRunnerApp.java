@@ -106,20 +106,20 @@ public class SpaceRunnerApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.ENEMY) {
-            @Override
-            protected void onCollisionBegin(Entity bullet, Entity enemy) {
-                EntityType ownerType = (EntityType) bullet.getComponentUnsafe(UserDataComponent.class).getValue();
-
-                if (!Entities.getType(enemy).isType(ownerType)) {
-                    PositionComponent position = Entities.getPosition(enemy);
-                    getGameWorld().addEntity(FXGL.getInstance(SpaceRunnerFactory.class).newEnemy(position.getX() + 500, 300));
-
-                    bullet.removeFromWorld();
-                    enemy.removeFromWorld();
-                }
-            }
-        });
+//        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.ENEMY) {
+//            @Override
+//            protected void onCollisionBegin(Entity bullet, Entity enemy) {
+//                EntityType ownerType = (EntityType) bullet.getComponentUnsafe(UserDataComponent.class).getValue();
+//
+//                if (!Entities.getType(enemy).isType(ownerType)) {
+//                    PositionComponent position = Entities.getPosition(enemy);
+//                    getGameWorld().addEntity(FXGL.getInstance(SpaceRunnerFactory.class).newEnemy(position.getX() + 500, 300));
+//
+//                    bullet.removeFromWorld();
+//                    enemy.removeFromWorld();
+//                }
+//            }
+//        });
     }
 
     @Override

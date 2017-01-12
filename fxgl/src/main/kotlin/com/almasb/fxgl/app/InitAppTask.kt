@@ -28,6 +28,9 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.logging.SystemLogger
+import com.almasb.fxgl.physics.AddCollisionHandler
+import com.almasb.fxgl.physics.CollisionHandler
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
 import javafx.concurrent.Task
 
 /**
@@ -57,6 +60,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initializing Physics", 2)
         app.initPhysics()
+        scanForCollisionHandlers()
 
         update("Initializing UI", 3)
         app.initUI()
@@ -82,5 +86,14 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     override fun failed() {
         Thread.getDefaultUncaughtExceptionHandler()
                 .uncaughtException(Thread.currentThread(), exception ?: RuntimeException("Initialization failed"))
+    }
+
+    private fun scanForCollisionHandlers() {
+        val scanner = FastClasspathScanner()
+        scanner.matchClassesWithAnnotation(AddCollisionHandler::class.java, {
+            // TODO: this might throw exception
+            app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)
+        })
+        scanner.scan()
     }
 }

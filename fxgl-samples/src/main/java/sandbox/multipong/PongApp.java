@@ -28,7 +28,7 @@ package sandbox.multipong;
 
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.FXGLListener;
+import com.almasb.fxgl.service.listener.FXGLListener;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
