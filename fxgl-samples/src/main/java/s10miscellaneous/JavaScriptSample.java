@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.control.JSControl;
+import com.almasb.fxgl.parser.JavaScriptParser;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
@@ -73,6 +74,8 @@ public class JavaScriptSample extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40))
                 .with(new JSControl("ccw_spin_control.js"))
                 .buildAndAttach(getGameWorld());
+
+        JavaScriptParser parser = new JavaScriptParser("sample.js");
     }
 
     @Override

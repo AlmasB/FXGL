@@ -28,10 +28,7 @@ package com.almasb.fxgl.parser;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.service.AssetLoader;
 
-import javax.script.Invocable;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import javax.script.*;
 
 /**
  * Allows to parse valid javascript source files.
@@ -39,7 +36,14 @@ import javax.script.ScriptEngineManager;
  * can be used to invoke a JS function.
  */
 public final class JavaScriptParser {
-    private ScriptEngineManager manager = new ScriptEngineManager();
+    private static final ScriptEngineManager manager = new ScriptEngineManager();
+
+    static {
+        manager.put("HOME_DIR", JavaScriptParser.class.getResource("/assets/scripts/"));
+        manager.put("FXGL", FXGL.Companion);
+        manager.put("APP", FXGL.getApp());
+    }
+
     private ScriptEngine engine = manager.getEngineByName("nashorn");
     private Invocable invocableEngine;
 
@@ -51,11 +55,9 @@ public final class JavaScriptParser {
      * @throws IllegalArgumentException if syntax error
      */
     public JavaScriptParser(String scriptFileName) {
-        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("HOME_DIR", getClass().getResource("/assets/scripts/"));
-        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("FXGL", FXGL.Companion);
-        engine.getContext().getBindings(ScriptContext.GLOBAL_SCOPE).put("APP", FXGL.getApp());
-
         try {
+            engine.eval(FXGL.getAssetLoader().loadScript("FXGL.js"));
+
             if (scriptFileName.endsWith(".js")) {
                 engine.eval(FXGL.getAssetLoader().loadScript(scriptFileName));
             } else {
