@@ -125,7 +125,7 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * @return current application state
      */
-    public final ApplicationState getState() {
+    ApplicationState getState() {
         return state.get();
     }
 
