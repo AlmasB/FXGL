@@ -53,6 +53,10 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         app.initAssets()
 
         update("Initializing Game", 1)
+        val vars = hashMapOf<String, Any>()
+        app.initGameVars(vars)
+        vars.forEach { name, value -> app.gameState.setValue(name, value) }
+
         if (dataFile === DataFile.EMPTY)
             app.initGame()
         else

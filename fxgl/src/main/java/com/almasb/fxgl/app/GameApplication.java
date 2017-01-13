@@ -28,6 +28,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.eventbus.Subscriber;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.event.IntroFinishedEvent;
+import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.logging.Logger;
@@ -38,6 +39,8 @@ import com.almasb.fxgl.scene.menu.MenuEventListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
+
+import java.util.Map;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -74,6 +77,8 @@ public abstract class GameApplication extends FXGLApplication {
     private Logger log = SystemLogger.INSTANCE;
 
     private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
+
+    private GameState gameState = new GameState();
 
     /* The following fields are injected by tasks */
 
@@ -173,6 +178,13 @@ public abstract class GameApplication extends FXGLApplication {
                 log.warning("Attempted to set illegal state: " + appState);
                 break;
         }
+    }
+
+    /**
+     * @return game state
+     */
+    public final GameState getGameState() {
+        return gameState;
     }
 
     /**
@@ -279,6 +291,15 @@ public abstract class GameApplication extends FXGLApplication {
     protected void loadState(DataFile dataFile) {
         log.warning("Called loadState(), but it wasn't overridden!");
         throw new UnsupportedOperationException("Default implementation is not available");
+    }
+
+    /**
+     * Can be overridden to provide global variables.
+     *
+     * @param vars map containing CVars (global variables)
+     */
+    protected void initGameVars(Map<String, Object> vars) {
+        // no default implementation
     }
 
     /**
