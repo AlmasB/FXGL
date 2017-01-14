@@ -37,9 +37,7 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A generic entity in the Entity-Component-System model.
@@ -428,6 +426,23 @@ public class Entity {
         }
     }
 
+    private final Queue<Action> actions = new ArrayDeque<>();
+
+    @SuppressWarnings("unchecked")
+    public final <T extends Entity> void enqueueAction(Action<T> action) {
+        action.setEntity((T) this);
+        actions.add(action);
+    }
+
+    private Action currentAction = null;
+
+    /**
+     * @return currently active action or null if there is no action being executed
+     */
+    public Action getCurrentAction() {
+        return currentAction;
+    }
+
     /**
      * Checks if requirements for given type are met.
      *
@@ -572,6 +587,26 @@ public class Entity {
                 }
             }
         }
+
+        updateActions(tpf);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateActions(double tpf) {
+        if (currentAction != null) {
+
+            if (currentAction.isComplete()) {
+                currentAction.setEntity(null);
+                currentAction = null;
+            } else {
+                currentAction.onUpdate(this, tpf);
+            }
+
+        } else {
+            if (!actions.isEmpty()) {
+                currentAction = actions.poll();
+            }
+        }
     }
 
     private boolean cleaning = false;
@@ -592,6 +627,8 @@ public class Entity {
 
         controlListeners.clear();
         componentListeners.clear();
+
+        actions.clear();
 
         properties.clear();
 
