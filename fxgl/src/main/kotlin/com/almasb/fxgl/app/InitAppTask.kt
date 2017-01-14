@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.physics.AddCollisionHandler
@@ -53,6 +54,15 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         app.initAssets()
 
         update("Initializing Game", 1)
+
+        if (app.gameState != null) {
+            log.debug("Clearing previous gameState")
+            app.gameState.clear()
+        }
+
+        log.debug("Injecting gameState")
+        app.gameState = GameState()
+
         val vars = hashMapOf<String, Any>()
         app.initGameVars(vars)
         vars.forEach { name, value -> app.gameState.setValue(name, value) }

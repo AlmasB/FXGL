@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.gameplay
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.ObjectMap
 import javafx.beans.property.*
 
@@ -37,12 +38,19 @@ import javafx.beans.property.*
  */
 class GameState {
 
+    companion object {
+        private val log = FXGL.getLogger(GameState::class.java)
+    }
+
     private val properties = ObjectMap<String, Any>(32)
 
     fun setValue(propertyName: String, value: Any) {
         when (value) {
+            is Boolean -> booleanProperty(propertyName).value = value
             is Int -> intProperty(propertyName).value = value
             is Double -> doubleProperty(propertyName).value = value
+            is String -> stringProperty(propertyName).value = value
+            else -> log.warning("Value for property $propertyName is of unknown type: ${value.javaClass}")
         }
     }
 
@@ -54,16 +62,28 @@ class GameState {
         doubleProperty(propertyName).value += value
     }
 
+    fun getBoolean(propertyName: String) = booleanProperty(propertyName).value
+
     fun getInt(propertyName: String) = intProperty(propertyName).value
 
     fun getDouble(propertyName: String) = doubleProperty(propertyName).value
 
-    fun intProperty(propertyName: String): IntegerProperty {
-        return getOrCreate(propertyName, Int::class.java) as IntegerProperty
-    }
+    fun getString(propertyName: String) = stringProperty(propertyName).value
 
-    fun doubleProperty(propertyName: String): DoubleProperty {
-        return getOrCreate(propertyName, Double::class.java) as DoubleProperty
+    fun booleanProperty(propertyName: String) =
+            getOrCreate(propertyName, Boolean::class.java) as BooleanProperty
+
+    fun intProperty(propertyName: String) =
+            getOrCreate(propertyName, Int::class.java) as IntegerProperty
+
+    fun doubleProperty(propertyName: String) =
+            getOrCreate(propertyName, Double::class.java) as DoubleProperty
+
+    fun stringProperty(propertyName: String) =
+            getOrCreate(propertyName, String::class.java) as StringProperty
+
+    fun clear() {
+        properties.clear()
     }
 
     private fun getOrCreate(propertyName: String, type: Class<*>): Any {

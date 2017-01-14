@@ -78,9 +78,9 @@ public abstract class GameApplication extends FXGLApplication {
 
     private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
 
-    private GameState gameState = new GameState();
-
     /* The following fields are injected by tasks */
+
+    GameState gameState;
 
     GameWorld gameWorld;
 
