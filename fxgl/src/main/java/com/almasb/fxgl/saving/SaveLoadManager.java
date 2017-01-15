@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.saving;
 
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.FileExtension;

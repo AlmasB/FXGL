@@ -30,7 +30,7 @@ import com.almasb.fxgl.event.FXGLEvent
 import com.almasb.fxgl.event.LoadEvent
 import com.almasb.fxgl.event.ProfileSelectedEvent
 import com.almasb.fxgl.event.SaveEvent
-import com.almasb.fxgl.gameplay.SaveLoadManager
+import com.almasb.fxgl.saving.SaveLoadManager
 import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
