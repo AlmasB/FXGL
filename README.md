@@ -14,12 +14,14 @@ JavaFX Game Development Framework
 [![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Good for ...
+
 * 2D / casual games
-* Hobby / academic projects
+* Hobby / academic / commercial projects
 * Learning / improving game development skills
 * Fast prototyping of game ideas
 
 ## Not so good for ...
+
 * 3D, mobile or web (until JavaFX can readily support these)
 
 ## Latest Release Features
@@ -34,8 +36,8 @@ Sprite Sheet Animations | Performance Monitor + Profiling
 Target Screen Resolution (+Fullscreen) | Global Services Framework
 Customizable Intro Video / Animation | Developer Panel
 Customizable Main Menu / Game Menu (3 built-in menu styles) | GC-free Object Pooling
-Customizable UI elements (Dialogs, Bars, Buttons, etc)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/progress_bar.jpg" width="512" /><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/profile.jpg" width="512" /> |
-Customizable Global CSS for menus / UI elements |
+Customizable UI elements (Dialogs, Bars, Buttons, etc)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/progress_bar.jpg" width="512" /><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/profile.jpg" width="512" /> | 
+Customizable Global CSS for menus / UI elements | Annotations Metaprogramming
 Post-processing Effects (**alpha**) |
 
 
@@ -47,7 +49,7 @@ Full Input Mocking   | Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt",
 
 Physics |   Utilities
 :---: | :---:
-[JBox2D](https://github.com/jbox2d/jbox2d) | Commonly used data structures and algorithms from various frameworks
+[JBox2D](https://github.com/jbox2d/jbox2d) Integration | Commonly used data structures and algorithms from various frameworks
 FXGL Physics (BBox + SAT) |
 Unified Collision Handling (JBox2D + FXGL physics) |
 
@@ -72,6 +74,7 @@ You can browse sample games (with screenshots) on the [FXGLGames](http://almasb.
 The source code is included.
 
 ## Java Example
+
 ```java
 public class BasicGameApp extends GameApplication {
 
@@ -109,6 +112,7 @@ public class BasicGameApp extends GameApplication {
 ```
 
 ## Kotlin Example
+
 ```kotlin
 class BasicGameApp : GameApplication() {
 
@@ -146,10 +150,12 @@ fun main(args: Array<String>) {
 * For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
 
 ## Setup Video Tutorials
+
 * [Eclipse](https://www.youtube.com/watch?v=2kLIXDhEGo0)
 * [IntelliJ](https://www.youtube.com/watch?v=ZM2NuvMG4cg)
 
 ## Maven
+
 ```maven
 <dependency>
     <groupId>com.github.almasb</groupId>
@@ -159,6 +165,7 @@ fun main(args: Array<String>) {
 ```
 
 ## Gradle
+
 ```gradle
 dependencies {
     compile 'com.github.almasb:fxgl:0.2.9'
@@ -166,6 +173,7 @@ dependencies {
 ```
 
 ## Uber jar
+
 Latest pre-compiled uber jar can be found in [Releases](https://github.com/AlmasB/FXGL/releases)
 
 ## Contact
