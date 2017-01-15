@@ -24,45 +24,39 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.parser.json
+package s06gameplay.levelparsing;
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.gameplay.Level
-import com.almasb.fxgl.parser.OldEntityFactory
-import com.almasb.fxgl.parser.LevelParser
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.util.*
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.parser.OldEntityFactory;
+import com.almasb.fxgl.parser.EntityProducer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class JSONLevelParser(private val entityFactory: OldEntityFactory) : LevelParser {
+public class MyGameFactoryOld extends OldEntityFactory {
 
-    private val producers = HashMap<String, (Double, Double) -> Entity>()
+    private static final int BLOCK_SIZE = 200;
 
-    init {
-        for (method in entityFactory.javaClass.declaredMethods) {
-            val producer = method.getDeclaredAnnotation(JSONEntityProducer::class.java)
-            if (producer != null) {
-                producers[producer.value] = { x, y -> method.invoke(entityFactory, x, y) as Entity }
-            }
-        }
+    public MyGameFactoryOld() {
+        super('0');
     }
 
-    override fun parse(levelFileName: String): Level {
-        val stream = FXGL.getAssetLoader().getStream("/assets/json/$levelFileName")
-        val jsonWorld = ObjectMapper().readValue<JSONWorld>(stream, JSONWorld::class.java)
-        stream.close()
+    @EntityProducer('1')
+    public Entity newEnemy(int x, int y) {
+        return Entities.builder()
+                .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
+                .viewFromNode(new Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.RED))
+                .build();
+    }
 
-        val entities = jsonWorld.entities.map {
-            producers[it.name]!!.invoke(it.x, it.y)
-        }
-
-
-        // TODO: w, h
-        return Level(0, 0, entities)
+    @EntityProducer('2')
+    public Entity newCoin(int x, int y) {
+        return Entities.builder()
+                .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
+                .viewFromNode(new Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.YELLOW))
+                .build();
     }
 }

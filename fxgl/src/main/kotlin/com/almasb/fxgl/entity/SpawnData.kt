@@ -24,37 +24,28 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.parser.EntityFactory;
-import com.almasb.fxgl.parser.json.JSONEntityProducer;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import com.almasb.fxgl.core.collection.ObjectMap
 
 /**
+ * Specifies data used to spawn a particular type of entity.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class JSONEntityFactory extends EntityFactory {
+open class SpawnData(val x: Double, val y: Double) {
 
-    public JSONEntityFactory() {
-        super(' ');
+    private val data = ObjectMap<String, Any>()
+
+    fun put(key: String, value: Any): SpawnData {
+        data.put(key, value)
+        return this
     }
 
-    @JSONEntityProducer("Player")
-    public Entity newPlayer(double x, double y) {
-        return Entities.builder()
-                .at(x, y)
-                .viewFromNode(new Rectangle(40, 40, Color.BLUE))
-                .build();
-    }
+    @Suppress("UNCHECKED_CAST")
+    fun <T> get(key: String): T {
+        val value = data.get(key) ?: throw IllegalArgumentException("Key $key has no associated value!")
 
-    @JSONEntityProducer("EnemyArcher")
-    public Entity newEnemyArcher(double x, double y) {
-        return Entities.builder()
-                .at(x, y)
-                .viewFromNode(new Rectangle(40, 40, Color.RED))
-                .build();
+        return value as T
     }
 }

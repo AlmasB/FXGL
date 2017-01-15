@@ -92,16 +92,14 @@ public class SpaceRunnerApp extends GameApplication {
         getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_0.png"),
                 Orientation.HORIZONTAL));
 
-        SpaceRunnerFactory factory = FXGL.getInstance(SpaceRunnerFactory.class);
+        Entity player = getGameWorld().spawn("Player", 50, getHeight() / 2);
 
-        GameEntity player = factory.newPlayer(50, getHeight() / 2);
         playerControl = player.getControlUnsafe(PlayerControl.class);
 
         getGameScene().getViewport().setBounds(0, 0, Integer.MAX_VALUE, (int) getHeight());
         getGameScene().getViewport().bindToEntity(player, 50, getHeight() / 2);
 
-        getGameWorld().addEntity(player);
-        getGameWorld().addEntity(factory.newEnemy(500, 300));
+        getGameWorld().spawn("Enemy1", 500, 300);
     }
 
     @Override

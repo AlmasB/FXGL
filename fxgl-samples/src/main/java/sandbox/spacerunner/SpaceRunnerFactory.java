@@ -28,8 +28,7 @@ package sandbox.spacerunner;
 
 import com.almasb.fxgl.ecs.component.UserDataComponent;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.entity.control.ProjectileControl;
@@ -42,13 +41,15 @@ import sandbox.spacerunner.control.PlayerControl;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@SetEntityFactory
 @Singleton
-public class SpaceRunnerFactory {
+public class SpaceRunnerFactory implements EntityFactory {
 
-    public GameEntity newPlayer(double x, double y) {
+    @Spawns("Player")
+    public GameEntity newPlayer(SpawnData data) {
         return Entities.builder()
                 .type(EntityType.PLAYER)
-                .at(x, y)
+                .at(data.getX(), data.getY())
                 .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("sprite_player.png", 40, 40))
                 .with(new CollidableComponent(true))
                 .with(new PlayerControl(), new KeepOnScreenControl(false, true))
@@ -66,10 +67,11 @@ public class SpaceRunnerFactory {
                 .build();
     }
 
-    public GameEntity newEnemy(double x, double y) {
+    @Spawns("Enemy1")
+    public GameEntity newEnemy(SpawnData data) {
         return Entities.builder()
                 .type(EntityType.ENEMY)
-                .at(x, y)
+                .at(data.getX(), data.getY())
                 .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("sprite_enemy_1.png", 27, 33))
                 .with(new CollidableComponent(true))
                 .with(new EnemyControl())

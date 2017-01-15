@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.entity.EntityFactory
+import com.almasb.fxgl.entity.SetEntityFactory
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.logging.SystemLogger
@@ -67,6 +69,8 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         app.initGameVars(vars)
         vars.forEach { name, value -> app.gameState.setValue(name, value) }
 
+        scanForAnnotations()
+
         if (dataFile === DataFile.EMPTY)
             app.initGame()
         else
@@ -74,7 +78,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initializing Physics", 2)
         app.initPhysics()
-        scanForCollisionHandlers()
+
 
         update("Initializing UI", 3)
         app.initUI()
@@ -102,8 +106,13 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
                 .uncaughtException(Thread.currentThread(), exception ?: RuntimeException("Initialization failed"))
     }
 
-    private fun scanForCollisionHandlers() {
+    private fun scanForAnnotations() {
         val scanner = FastClasspathScanner()
+
+        scanner.matchClassesWithAnnotation(SetEntityFactory::class.java, {
+            app.gameWorld.setEntityFactory(FXGL.getInstance(it) as EntityFactory)
+        })
+
         scanner.matchClassesWithAnnotation(AddCollisionHandler::class.java, {
             // TODO: this might throw exception
             app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)

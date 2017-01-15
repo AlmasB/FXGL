@@ -83,7 +83,7 @@ class TextLevelParserTest {
 
     @Test
     fun `Parse using given entity factory`() {
-        val parser = TextLevelParser(TestEntityFactory())
+        val parser = TextLevelParser(TestOldEntityFactory())
 
         val level = parser.parse("test_level.txt")
 
@@ -111,7 +111,7 @@ class TextLevelParserTest {
         }
     }
 
-    private class TestEntityFactory : EntityFactory('0') {
+    private class TestOldEntityFactory : OldEntityFactory('0') {
 
         @EntityProducer('1')
         fun newType1(x: Int, y: Int) = com.almasb.fxgl.entity.Entities.builder().type(EntityType.TYPE1).at(x.toDouble(), y.toDouble()).build()

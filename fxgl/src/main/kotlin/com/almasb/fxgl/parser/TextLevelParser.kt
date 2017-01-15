@@ -36,9 +36,9 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class TextLevelParser(val entityFactory: EntityFactory) {
+class TextLevelParser(val entityFactory: OldEntityFactory) {
 
-    constructor() : this(object : EntityFactory(' ') {})
+    constructor() : this(object : OldEntityFactory(' ') {})
 
     companion object {
         private val log = FXGL.getLogger("FXGL.TextLevelParser")

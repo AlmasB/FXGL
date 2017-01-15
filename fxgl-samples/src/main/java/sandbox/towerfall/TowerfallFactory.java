@@ -35,7 +35,7 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
-import com.almasb.fxgl.parser.EntityFactory;
+import com.almasb.fxgl.parser.OldEntityFactory;
 import com.almasb.fxgl.parser.EntityProducer;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
@@ -56,7 +56,7 @@ import org.jbox2d.dynamics.BodyType;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class TowerfallFactory extends EntityFactory {
+public class TowerfallFactory extends OldEntityFactory {
 
     public TowerfallFactory() {
         super('0');

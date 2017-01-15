@@ -24,45 +24,23 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.parser.json
+package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.gameplay.Level
-import com.almasb.fxgl.parser.OldEntityFactory
-import com.almasb.fxgl.parser.LevelParser
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.util.*
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- *
+ * Marks a class that will be used as the main entity factory.
+ * The class will be automatically instantiated and attached
+ * to the game world.
+ * Note: if it is important that only a single instance of the factory
+ * is created, then annotate it with {@link com.google.inject.Singleton}.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class JSONLevelParser(private val entityFactory: OldEntityFactory) : LevelParser {
-
-    private val producers = HashMap<String, (Double, Double) -> Entity>()
-
-    init {
-        for (method in entityFactory.javaClass.declaredMethods) {
-            val producer = method.getDeclaredAnnotation(JSONEntityProducer::class.java)
-            if (producer != null) {
-                producers[producer.value] = { x, y -> method.invoke(entityFactory, x, y) as Entity }
-            }
-        }
-    }
-
-    override fun parse(levelFileName: String): Level {
-        val stream = FXGL.getAssetLoader().getStream("/assets/json/$levelFileName")
-        val jsonWorld = ObjectMapper().readValue<JSONWorld>(stream, JSONWorld::class.java)
-        stream.close()
-
-        val entities = jsonWorld.entities.map {
-            producers[it.name]!!.invoke(it.x, it.y)
-        }
-
-
-        // TODO: w, h
-        return Level(0, 0, entities)
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface SetEntityFactory {
 }

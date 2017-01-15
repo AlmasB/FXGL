@@ -24,45 +24,37 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.parser.json
+package sandbox;
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.gameplay.Level
-import com.almasb.fxgl.parser.OldEntityFactory
-import com.almasb.fxgl.parser.LevelParser
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.util.*
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.parser.OldEntityFactory;
+import com.almasb.fxgl.parser.json.JSONEntityProducer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class JSONLevelParser(private val entityFactory: OldEntityFactory) : LevelParser {
+public class JSONOldEntityFactory extends OldEntityFactory {
 
-    private val producers = HashMap<String, (Double, Double) -> Entity>()
-
-    init {
-        for (method in entityFactory.javaClass.declaredMethods) {
-            val producer = method.getDeclaredAnnotation(JSONEntityProducer::class.java)
-            if (producer != null) {
-                producers[producer.value] = { x, y -> method.invoke(entityFactory, x, y) as Entity }
-            }
-        }
+    public JSONOldEntityFactory() {
+        super(' ');
     }
 
-    override fun parse(levelFileName: String): Level {
-        val stream = FXGL.getAssetLoader().getStream("/assets/json/$levelFileName")
-        val jsonWorld = ObjectMapper().readValue<JSONWorld>(stream, JSONWorld::class.java)
-        stream.close()
+    @JSONEntityProducer("Player")
+    public Entity newPlayer(double x, double y) {
+        return Entities.builder()
+                .at(x, y)
+                .viewFromNode(new Rectangle(40, 40, Color.BLUE))
+                .build();
+    }
 
-        val entities = jsonWorld.entities.map {
-            producers[it.name]!!.invoke(it.x, it.y)
-        }
-
-
-        // TODO: w, h
-        return Level(0, 0, entities)
+    @JSONEntityProducer("EnemyArcher")
+    public Entity newEnemyArcher(double x, double y) {
+        return Entities.builder()
+                .at(x, y)
+                .viewFromNode(new Rectangle(40, 40, Color.RED))
+                .build();
     }
 }

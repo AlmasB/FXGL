@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.physics.AddCollisionHandler;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -52,7 +53,7 @@ public class BulletEnemyHandler extends CollisionHandler {
 
         if (!Entities.getType(enemy).isType(ownerType)) {
             PositionComponent position = Entities.getPosition(enemy);
-            enemy.getWorld().addEntity(FXGL.getInstance(SpaceRunnerFactory.class).newEnemy(position.getX() + 500, 300));
+            enemy.getWorld().addEntity(FXGL.getInstance(SpaceRunnerFactory.class).newEnemy(new SpawnData(position.getX() + 500, 300)));
 
             bullet.removeFromWorld();
             enemy.removeFromWorld();

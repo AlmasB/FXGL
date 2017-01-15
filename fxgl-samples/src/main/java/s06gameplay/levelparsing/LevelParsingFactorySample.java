@@ -63,7 +63,7 @@ public class LevelParsingFactorySample extends GameApplication {
 
         // 1. create a parser and set it up with a factory
         // where you specify entity producers for each character
-        TextLevelParser parser = new TextLevelParser(new MyGameFactory());
+        TextLevelParser parser = new TextLevelParser(new MyGameFactoryOld());
 
         // 2. parse the level file and set it
         Level level = parser.parse("level0.txt");

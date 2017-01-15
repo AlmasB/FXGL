@@ -24,39 +24,12 @@
  * SOFTWARE.
  */
 
-package s06gameplay.levelparsing;
-
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.parser.EntityFactory;
-import com.almasb.fxgl.parser.EntityProducer;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+package com.almasb.fxgl.entity;
 
 /**
+ * Marks a class that is responsible for creating entities.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class MyGameFactory extends EntityFactory {
-
-    private static final int BLOCK_SIZE = 200;
-
-    public MyGameFactory() {
-        super('0');
-    }
-
-    @EntityProducer('1')
-    public Entity newEnemy(int x, int y) {
-        return Entities.builder()
-                .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
-                .viewFromNode(new Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.RED))
-                .build();
-    }
-
-    @EntityProducer('2')
-    public Entity newCoin(int x, int y) {
-        return Entities.builder()
-                .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
-                .viewFromNode(new Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.YELLOW))
-                .build();
-    }
+public interface EntityFactory {
 }

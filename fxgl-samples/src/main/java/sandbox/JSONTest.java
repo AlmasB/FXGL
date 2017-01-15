@@ -61,7 +61,7 @@ public class JSONTest extends GameApplication {
 
     @Override
     protected void initGame() {
-        JSONEntityFactory factory = new JSONEntityFactory();
+        JSONOldEntityFactory factory = new JSONOldEntityFactory();
 
         JSONLevelParser parser = new JSONLevelParser(factory);
 

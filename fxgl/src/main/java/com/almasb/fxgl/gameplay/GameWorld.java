@@ -26,17 +26,17 @@
 
 package com.almasb.fxgl.gameplay;
 
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorld;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.time.UpdateEventListener;
-import com.almasb.fxgl.core.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
@@ -44,6 +44,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -155,6 +156,88 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
         log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
+    }
+
+    private EntityFactory entityFactory = null;
+
+    private ObjectMap<String, Method> entityFactoryMethods = new ObjectMap<>();
+
+    /**
+     * @return entity factory or null if not set
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends EntityFactory> T getEntityFactory() {
+        return (T) entityFactory;
+    }
+
+    /**
+     * Set main entity factory to be used via {@link GameWorld#spawn(String, SpawnData)}.
+     *
+     * @param entityFactory factory for creating entities
+     */
+    public void setEntityFactory(EntityFactory entityFactory) {
+        this.entityFactory = entityFactory;
+
+        entityFactoryMethods.clear();
+
+        // TODO: extract reflection code via Function<>?
+
+        for (Method method : entityFactory.getClass().getDeclaredMethods()) {
+            Spawns annotation = method.getDeclaredAnnotation(Spawns.class);
+            if (annotation != null) {
+                entityFactoryMethods.put(annotation.value(), method);
+            }
+        }
+    }
+
+    /**
+     * Creates an entity with given name at x, y using specified entity factory.
+     * Adds created entity to this game world.
+     *
+     * @param entityName name of entity as specified by {@link Spawns}
+     * @param position spawn location
+     * @return spawned entity
+     */
+    public Entity spawn(String entityName, Point2D position) {
+        return spawn(entityName, position.getX(), position.getY());
+    }
+
+    /**
+     * Creates an entity with given name at x, y using specified entity factory.
+     * Adds created entity to this game world.
+     *
+     * @param entityName name of entity as specified by {@link Spawns}
+     * @param x x position
+     * @param y y position
+     * @return spawned entity
+     */
+    public Entity spawn(String entityName, double x, double y) {
+        return spawn(entityName, new SpawnData(x, y));
+    }
+
+    /**
+     * Creates an entity with given name and data using specified entity factory.
+     * Adds created entity to this game world.
+     *
+     * @param entityName name of entity as specified by {@link Spawns}
+     * @param data spawn data, such as x, y and any extra info
+     * @return spawned entity
+     */
+    public Entity spawn(String entityName, SpawnData data) {
+        if (entityFactory == null)
+            throw new IllegalStateException("EntityFactory was not set!");
+
+        Method method = entityFactoryMethods.get(entityName);
+        if (method == null)
+            throw new IllegalArgumentException("EntityFactory does not have a method annotated @Spawns(" + entityName + ")");
+
+        try {
+            Entity entity = (Entity) method.invoke(entityFactory, data);
+            addEntity(entity);
+            return entity;
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot invoke factory method <" + method + ">. Error: " + e);
+        }
     }
 
     /* QUERIES */
