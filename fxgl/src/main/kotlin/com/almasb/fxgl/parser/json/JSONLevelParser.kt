@@ -28,8 +28,10 @@ package com.almasb.fxgl.parser.json
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.entity.EntityFactory
+import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.Spawns
 import com.almasb.fxgl.gameplay.Level
-import com.almasb.fxgl.parser.OldEntityFactory
 import com.almasb.fxgl.parser.LevelParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
@@ -39,15 +41,15 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class JSONLevelParser(private val entityFactory: OldEntityFactory) : LevelParser {
+class JSONLevelParser(private val entityFactory: EntityFactory) : LevelParser {
 
-    private val producers = HashMap<String, (Double, Double) -> Entity>()
+    private val producers = HashMap<String, (SpawnData) -> Entity>()
 
     init {
         for (method in entityFactory.javaClass.declaredMethods) {
-            val producer = method.getDeclaredAnnotation(JSONEntityProducer::class.java)
+            val producer = method.getDeclaredAnnotation(Spawns::class.java)
             if (producer != null) {
-                producers[producer.value] = { x, y -> method.invoke(entityFactory, x, y) as Entity }
+                producers[producer.value] = { data -> method.invoke(entityFactory, data) as Entity }
             }
         }
     }
@@ -58,7 +60,7 @@ class JSONLevelParser(private val entityFactory: OldEntityFactory) : LevelParser
         stream.close()
 
         val entities = jsonWorld.entities.map {
-            producers[it.name]!!.invoke(it.x, it.y)
+            producers[it.name]!!.invoke(SpawnData(it.x, it.y))
         }
 
 

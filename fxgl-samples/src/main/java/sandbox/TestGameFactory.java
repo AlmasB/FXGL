@@ -28,6 +28,9 @@ package sandbox;
 
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.parser.OldEntityFactory;
 import com.almasb.fxgl.parser.json.JSONEntityProducer;
 import javafx.scene.paint.Color;
@@ -36,24 +39,20 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class JSONOldEntityFactory extends OldEntityFactory {
+public class TestGameFactory implements EntityFactory {
 
-    public JSONOldEntityFactory() {
-        super(' ');
-    }
-
-    @JSONEntityProducer("Player")
-    public Entity newPlayer(double x, double y) {
+    @Spawns("Player")
+    public Entity newPlayer(SpawnData data) {
         return Entities.builder()
-                .at(x, y)
+                .at(data.getX(), data.getY())
                 .viewFromNode(new Rectangle(40, 40, Color.BLUE))
                 .build();
     }
 
-    @JSONEntityProducer("EnemyArcher")
-    public Entity newEnemyArcher(double x, double y) {
+    @Spawns("EnemyArcher")
+    public Entity newEnemyArcher(SpawnData data) {
         return Entities.builder()
-                .at(x, y)
+                .at(data.getX(), data.getY())
                 .viewFromNode(new Rectangle(40, 40, Color.RED))
                 .build();
     }
