@@ -64,6 +64,8 @@ public abstract class FXGLScene {
         contentRoot.setBackground(null);
 
         root.getChildren().addAll(contentRoot);
+
+        setCursor("fxgl_default.png", new Point2D(7, 6));
     }
 
     /**
