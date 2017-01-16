@@ -34,9 +34,7 @@ import com.almasb.fxgl.core.StringBuilder;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.reflect.ArrayReflection;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A resizable, ordered or unordered array of objects.
@@ -122,6 +120,18 @@ public class Array<T> implements Iterable<T> {
         this(ordered, count, (Class) array.getClass().getComponentType());
         size = count;
         System.arraycopy(array, start, items, 0, size);
+    }
+
+    /**
+     * Creates a new ordered array containing the elements of the given collection.
+     * The order of elements placed in the array is dependent on the collection implementation.
+     *
+     * @param collection the collection to take elements from
+     */
+    public Array(Collection<T> collection) {
+        this(collection.size());
+        size = collection.size();
+        collection.toArray(items);
     }
 
     /**
