@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package sandbox
+package com.almasb.fxgl.algorithm
 
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.math.FXGLMath.*
