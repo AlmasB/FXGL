@@ -37,7 +37,8 @@ import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
 import javafx.concurrent.Task
 
 /**
- *
+ * Initializes game aspects: assets, game, physics, UI, etc.
+ * This task is rerun every time the game application is restarted.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -97,7 +98,6 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     }
 
     override fun succeeded() {
-        //app.getEventBus().fireEvent(FXGLEvent.initAppComplete())
         app.resume()
     }
 
