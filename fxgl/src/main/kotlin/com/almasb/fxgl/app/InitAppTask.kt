@@ -107,16 +107,19 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     }
 
     private fun scanForAnnotations() {
-        val scanner = FastClasspathScanner()
+        // this ensures that we only scan the appropriate package,
+        // i.e. the package of the "App" and any subpackages recursively
+        // also speeds up the scanning
+        val scanner = FastClasspathScanner(app.javaClass.`package`.name)
 
         scanner.matchClassesWithAnnotation(SetEntityFactory::class.java, {
             app.gameWorld.setEntityFactory(FXGL.getInstance(it) as EntityFactory)
         })
 
         scanner.matchClassesWithAnnotation(AddCollisionHandler::class.java, {
-            // TODO: this might throw exception
             app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)
         })
+
         scanner.scan()
     }
 }
