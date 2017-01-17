@@ -106,7 +106,7 @@ public class RangeTest extends GameApplication {
 
         player = new GameEntity();
         player.getPositionComponent().setValue(400, 300);
-        player.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40)), true);
+        player.getViewComponent().setView(new EntityView(new Rectangle(40, 40)), true);
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
@@ -124,7 +124,7 @@ public class RangeTest extends GameApplication {
         view.addNode(getMarker(-40, 40));
         view.addNode(getMarker(40, 40));
 
-        markers.getMainViewComponent().setView(view);
+        markers.getViewComponent().setView(view);
         markers.getPositionComponent().xProperty().bind(player.getPositionComponent().xProperty());
         markers.getPositionComponent().yProperty().bind(player.getPositionComponent().yProperty());
 
@@ -170,7 +170,7 @@ public class RangeTest extends GameApplication {
     private void spawnEntity(double x, double y) {
         GameEntity entity = new GameEntity();
         entity.getPositionComponent().setValue(x, y);
-        entity.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40)), true);
+        entity.getViewComponent().setView(new EntityView(new Rectangle(40, 40)), true);
 
         getGameWorld().addEntity(entity);
     }

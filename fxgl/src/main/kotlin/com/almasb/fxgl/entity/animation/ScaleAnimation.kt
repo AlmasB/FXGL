@@ -59,14 +59,14 @@ class ScaleAnimation(animationBuilder: AnimationBuilder,
     }
 
     override fun bindProperties() {
-        animationBuilder.entities.map { it.mainViewComponent }.forEach {
+        animationBuilder.entities.map { it.viewComponent }.forEach {
             it.view.scaleXProperty().bind(node.scaleXProperty())
             it.view.scaleYProperty().bind(node.scaleYProperty())
         }
     }
 
     override fun unbindProperties() {
-        animationBuilder.entities.map { it.mainViewComponent }.forEach {
+        animationBuilder.entities.map { it.viewComponent }.forEach {
             it.view.scaleXProperty().unbind()
             it.view.scaleYProperty().unbind()
         }

@@ -91,7 +91,7 @@ public class GameEntity extends Entity {
     /**
      * @return view component
      */
-    public final ViewComponent getMainViewComponent() {
+    public final ViewComponent getViewComponent() {
         return view;
     }
 

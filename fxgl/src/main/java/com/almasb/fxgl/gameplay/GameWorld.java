@@ -405,7 +405,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
 
-            ViewComponent view = Entities.getMainView(e);
+            ViewComponent view = Entities.getView(e);
 
             if (view != null && view.getRenderLayer().index() == layer.index()) {
                 result.add(e);

@@ -92,7 +92,7 @@ public class Entities {
      * @param e entity
      * @return main view component
      */
-    public static ViewComponent getMainView(Entity e) {
+    public static ViewComponent getView(Entity e) {
         return e.getComponentUnsafe(ViewComponent.class);
     }
 
@@ -181,22 +181,22 @@ public class Entities {
         }
 
         public GameEntityBuilder viewFromNode(Node view) {
-            entity.getMainViewComponent().setView(view);
+            entity.getViewComponent().setView(view);
             return this;
         }
 
         public GameEntityBuilder viewFromNodeWithBBox(Node view) {
-            entity.getMainViewComponent().setView(view, true);
+            entity.getViewComponent().setView(view, true);
             return this;
         }
 
         public GameEntityBuilder viewFromTexture(String textureName) {
-            entity.getMainViewComponent().setTexture(textureName);
+            entity.getViewComponent().setTexture(textureName);
             return this;
         }
 
         public GameEntityBuilder viewFromTextureWithBBox(String textureName) {
-            entity.getMainViewComponent().setTexture(textureName, true);
+            entity.getViewComponent().setTexture(textureName, true);
             return this;
         }
 

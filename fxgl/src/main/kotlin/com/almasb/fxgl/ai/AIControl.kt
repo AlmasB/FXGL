@@ -83,7 +83,7 @@ private constructor() : AbstractControl() {
             behaviorTree.`object` = entity
 
             if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
-                entity.mainViewComponent.view.addNode(bubble)
+                entity.viewComponent.view.addNode(bubble)
 
         } else {
             throw IllegalArgumentException("Entity $entity is not GameEntity")
