@@ -81,7 +81,7 @@ public class RealPhysicsSample extends GameApplication {
                 box.getBoundingBoxComponent()
                         .addHitBox(new HitBox("Right", new Point2D(40, 0), BoundingShape.box(40, 40)));
 
-                box.getMainViewComponent().setView(new Rectangle(80, 40, Color.BLUE));
+                box.getViewComponent().setView(new Rectangle(80, 40, Color.BLUE));
 
                 getGameWorld().addEntity(box);
             }
@@ -95,7 +95,7 @@ public class RealPhysicsSample extends GameApplication {
                 // 3. set hit box to specify bounding shape
                 ball.getBoundingBoxComponent()
                         .addHitBox(new HitBox("Test", BoundingShape.circle(20)));
-                ball.getMainViewComponent().setView(new Circle(20, Color.RED));
+                ball.getViewComponent().setView(new Circle(20, Color.RED));
 
                 getGameWorld().addEntity(ball);
             }

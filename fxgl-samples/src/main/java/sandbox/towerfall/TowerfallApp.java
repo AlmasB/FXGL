@@ -26,18 +26,18 @@
 
 package sandbox.towerfall;
 
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Level;
-import com.almasb.fxgl.gameplay.rpg.quest.Quest;
-import com.almasb.fxgl.gameplay.rpg.quest.QuestObjective;
-import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
-import com.almasb.fxgl.gameplay.rpg.quest.QuestWindow;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.TextLevelParser;
@@ -46,8 +46,17 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.InGamePanel;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
+import com.almasb.fxgl.algorithm.AASubdivision;
 
 import java.util.Arrays;
 import java.util.List;
@@ -136,7 +145,9 @@ public class TowerfallApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
+    protected void initAssets() {
+        blockImage = getAssetLoader().loadTexture("brick.png", 40, 40).getImage();
+    }
 
     @Override
     protected void initGame() {
@@ -159,6 +170,8 @@ public class TowerfallApp extends GameApplication {
         getGameWorld().setLevel(level);
     }
 
+    private Image blockImage;
+
     @Override
     protected void initPhysics() {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.ARROW, EntityType.PLATFORM) {
@@ -168,6 +181,38 @@ public class TowerfallApp extends GameApplication {
                 if (arrow.hasControl(ArrowControl.class)) {
                     arrow.getComponentUnsafe(CollidableComponent.class).setValue(false);
                     arrow.removeControl(ArrowControl.class);
+
+                    GameEntity block = (GameEntity) platform;
+
+                    Rectangle2D grid = new Rectangle2D(0, 0, 40, 40);
+
+                    Array<Rectangle2D> grids = new AASubdivision().divide(grid, 30, 5);
+
+                    for (Rectangle2D rect : grids) {
+                        PhysicsComponent physics = new PhysicsComponent();
+                        physics.setBodyType(BodyType.DYNAMIC);
+
+                        FixtureDef fd = new FixtureDef();
+                        fd.setDensity(0.7f);
+                        fd.setRestitution(0.3f);
+                        physics.setFixtureDef(fd);
+
+                        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(FXGLMath.random(-1, 1) * 50, FXGLMath.random(-3, -1) * 50));
+
+                        Image img = new WritableImage(blockImage.getPixelReader(),
+                                (int) rect.getMinX(), (int) rect.getMinY(),
+                                (int) rect.getWidth(), (int) rect.getHeight());
+
+
+                        Entities.builder()
+                                .at(block.getX() + rect.getMinX(), block.getY() + rect.getMinY())
+                                .viewFromNodeWithBBox(new ImageView(img))
+                                //.viewFromNodeWithBBox(new Rectangle(rect.getWidth(), rect.getHeight(), Color.BLUE))
+                                .with(physics)
+                                .buildAndAttach(getGameWorld());
+                    }
+
+                    platform.removeFromWorld();
                 }
             }
         });
@@ -198,35 +243,35 @@ public class TowerfallApp extends GameApplication {
         panel = new InGamePanel();
         getGameScene().addUINode(panel);
 
-        QuestPane questPane = new QuestPane(350, 450);
-        QuestWindow window = new QuestWindow(questPane);
-
-        getGameScene().addUINode(window);
-
-        List<Quest> quests = Arrays.asList(
-                new Quest("Test Quest", Arrays.asList(
-                        new QuestObjective("Shoot Arrows", shotArrows, 15),
-                        new QuestObjective("Jump", jumps)
-                )),
-
-                new Quest("Test Quest 2", Arrays.asList(
-                        new QuestObjective("Shoot Arrows", shotArrows, 25, Duration.seconds(3))
-                )),
-
-                new Quest("Test Quest 2", Arrays.asList(
-                        new QuestObjective("Kill an enemy", enemiesKilled)
-                )),
-
-                new Quest("Test Quest 2", Arrays.asList(
-                        new QuestObjective("Shoot Arrows", shotArrows, 25)
-                )),
-
-                new Quest("Test Quest 2", Arrays.asList(
-                        new QuestObjective("Shoot Arrows", shotArrows, 25)
-                ))
-        );
-
-        quests.forEach(getQuestService()::addQuest);
+//        QuestPane questPane = new QuestPane(350, 450);
+//        QuestWindow window = new QuestWindow(questPane);
+//
+//        getGameScene().addUINode(window);
+//
+//        List<Quest> quests = Arrays.asList(
+//                new Quest("Test Quest", Arrays.asList(
+//                        new QuestObjective("Shoot Arrows", shotArrows, 15),
+//                        new QuestObjective("Jump", jumps)
+//                )),
+//
+//                new Quest("Test Quest 2", Arrays.asList(
+//                        new QuestObjective("Shoot Arrows", shotArrows, 25, Duration.seconds(3))
+//                )),
+//
+//                new Quest("Test Quest 2", Arrays.asList(
+//                        new QuestObjective("Kill an enemy", enemiesKilled)
+//                )),
+//
+//                new Quest("Test Quest 2", Arrays.asList(
+//                        new QuestObjective("Shoot Arrows", shotArrows, 25)
+//                )),
+//
+//                new Quest("Test Quest 2", Arrays.asList(
+//                        new QuestObjective("Shoot Arrows", shotArrows, 25)
+//                ))
+//        );
+//
+//        quests.forEach(getQuestService()::addQuest);
     }
 
     @Override

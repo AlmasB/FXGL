@@ -185,7 +185,7 @@ public class PongApp extends GameApplication {
 
     private void initBackground() {
         GameEntity bg = new GameEntity();
-        bg.getMainViewComponent().setView(new Rectangle(getWidth(), getHeight(), Color.rgb(0, 0, 5)));
+        bg.getViewComponent().setView(new Rectangle(getWidth(), getHeight(), Color.rgb(0, 0, 5)));
 
         getGameWorld().addEntity(bg);
     }

@@ -143,7 +143,7 @@ public class AnimationSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
 
         playerSprite = buildSpriteSheet();
-        player.getMainViewComponent().setView(playerSprite);
+        player.getViewComponent().setView(playerSprite);
 
     }
 

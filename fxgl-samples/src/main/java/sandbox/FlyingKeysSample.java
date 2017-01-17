@@ -83,7 +83,7 @@ public class FlyingKeysSample extends GameApplication {
                 button.setPrefHeight(30);
                 button.setOnAction(e -> System.out.println(button.getText()));
 
-                box.getMainViewComponent().setView(button);
+                box.getViewComponent().setView(button);
 
                 getGameWorld().addEntity(box);
             }

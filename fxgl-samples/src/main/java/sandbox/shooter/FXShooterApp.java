@@ -138,7 +138,7 @@ public class FXShooterApp extends GameApplication {
     private void initTreasure() {
         GameEntity treasure = new GameEntity();
         treasure.getPositionComponent().setValue(getWidth() / 2, getHeight() / 2);
-        treasure.getMainViewComponent().setView(new Rectangle(40, 40, Color.YELLOW));
+        treasure.getViewComponent().setView(new Rectangle(40, 40, Color.YELLOW));
 
         getGameWorld().addEntity(treasure);
     }
@@ -146,7 +146,7 @@ public class FXShooterApp extends GameApplication {
     private void initPlayer() {
         player = new GameEntity();
         player.getPositionComponent().setValue(getWidth() / 2, getHeight() / 2);
-        player.getMainViewComponent().setView(new Rectangle(40, 40, Color.BLUE));
+        player.getViewComponent().setView(new Rectangle(40, 40, Color.BLUE));
 
         WeaponComponent weapon = new WeaponComponent();
         weapon.setDamage(2);
@@ -165,7 +165,7 @@ public class FXShooterApp extends GameApplication {
         GameEntity enemy = new GameEntity();
         enemy.getTypeComponent().setValue(EntityType.ENEMY);
         enemy.getPositionComponent().setValue(getWidth(), 460);
-        enemy.getMainViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)), true);
+        enemy.getViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)), true);
 
         enemy.addComponent(new CollidableComponent(true));
         enemy.addComponent(new HPComponent(5));

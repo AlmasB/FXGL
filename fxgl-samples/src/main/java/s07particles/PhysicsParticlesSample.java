@@ -78,7 +78,7 @@ public class PhysicsParticlesSample extends GameApplication {
     private void initGround() {
         GameEntity ground = new GameEntity();
         ground.getPositionComponent().setValue(100, 500);
-        ground.getMainViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
+        ground.getViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
         ground.addComponent(new PhysicsComponent());
 
         getGameWorld().addEntity(ground);

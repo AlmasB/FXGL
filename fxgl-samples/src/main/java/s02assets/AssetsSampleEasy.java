@@ -64,7 +64,7 @@ public class AssetsSampleEasy extends GameApplication {
         player.getPositionComponent().setValue(400, 300);
 
         // 1. simply specify texture name to setTexture()
-        player.getMainViewComponent().setTexture("brick.png");
+        player.getViewComponent().setTexture("brick.png");
 
         getGameWorld().addEntity(player);
     }

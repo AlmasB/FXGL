@@ -51,7 +51,7 @@ public class PlayerControl extends AbstractControl {
         GameEntity bullet = new GameEntity();
         bullet.getTypeComponent().setValue(FXShooterApp.EntityType.BULLET);
         bullet.getPositionComponent().setValue(getEntity().getComponentUnsafe(PositionComponent.class).getValue().add(20, 20));
-        bullet.getMainViewComponent().setView(new EntityView(new Rectangle(10, 2, Color.BLACK)), true);
+        bullet.getViewComponent().setView(new EntityView(new Rectangle(10, 2, Color.BLACK)), true);
 
         bullet.addComponent(new CollidableComponent(true));
         bullet.addControl(new OffscreenCleanControl());

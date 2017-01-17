@@ -75,7 +75,7 @@ public class InitSampleEasy extends GameApplication {
         player = new GameEntity();
         player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(100, 100);
-        player.getMainViewComponent().setView(new Rectangle(40, 40));
+        player.getViewComponent().setView(new Rectangle(40, 40));
 
         // 3. add entity to game world
         getGameWorld().addEntity(player);

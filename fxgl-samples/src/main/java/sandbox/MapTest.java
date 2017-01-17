@@ -86,7 +86,7 @@ public class MapTest extends GameApplication {
 
                 Rectangle graphics = new Rectangle(TILE_SIZE, TILE_SIZE,
                         grid.getTile(x, y).getType() == TileType.WATER ? Color.BLUE : Color.BROWN);
-                tile.getMainViewComponent().setView(graphics);
+                tile.getViewComponent().setView(graphics);
 
                 getGameWorld().addEntity(tile);
             }

@@ -103,7 +103,7 @@ public class PathfindingSample extends GameApplication {
                     }
                 });
 
-                tile.getMainViewComponent().setView(graphics);
+                tile.getViewComponent().setView(graphics);
 
                 getGameWorld().addEntity(tile);
             }
