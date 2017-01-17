@@ -33,7 +33,7 @@ import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.DrawableComponent;
-import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.lighting.LightingSystem;
@@ -347,7 +347,7 @@ public final class GameScene extends FXGLScene
     public void onEntityAdded(Entity entity) {
         log.debug("Entity added to scene");
 
-        entity.getComponent(MainViewComponent.class)
+        entity.getComponent(ViewComponent.class)
                 .ifPresent(viewComponent -> {
                     onComponentAdded(viewComponent);
                 });
@@ -371,7 +371,7 @@ public final class GameScene extends FXGLScene
     public void onEntityRemoved(Entity entity) {
         log.debug("Entity removed from scene");
 
-        entity.getComponent(MainViewComponent.class)
+        entity.getComponent(ViewComponent.class)
                 .ifPresent(viewComponent -> {
                     onComponentRemoved(viewComponent);
                 });
@@ -390,10 +390,10 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onComponentAdded(Component component) {
-        if (component instanceof MainViewComponent) {
-            log.debug("Added MainViewComponent");
+        if (component instanceof ViewComponent) {
+            log.debug("Added ViewComponent");
 
-            MainViewComponent viewComponent = (MainViewComponent) component;
+            ViewComponent viewComponent = (ViewComponent) component;
 
             EntityView view = viewComponent.getView();
             addGameView(view);
@@ -407,10 +407,10 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onComponentRemoved(Component component) {
-        if (component instanceof MainViewComponent) {
-            log.debug("Removed MainViewComponent");
+        if (component instanceof ViewComponent) {
+            log.debug("Removed ViewComponent");
 
-            MainViewComponent viewComponent = (MainViewComponent) component;
+            ViewComponent viewComponent = (ViewComponent) component;
 
             EntityView view = viewComponent.getView();
             removeGameView(view);

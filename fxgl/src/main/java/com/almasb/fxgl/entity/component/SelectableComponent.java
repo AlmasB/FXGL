@@ -38,7 +38,7 @@ import com.almasb.fxgl.gameplay.GameWorld;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Required(MainViewComponent.class)
+@Required(ViewComponent.class)
 public class SelectableComponent extends BooleanComponent implements CopyableComponent<SelectableComponent> {
 
 //    private ReadOnlyBooleanWrapper selected = new ReadOnlyBooleanWrapper(false);
@@ -57,7 +57,7 @@ public class SelectableComponent extends BooleanComponent implements CopyableCom
 
     @Override
     public void onAdded(Entity entity) {
-        MainViewComponent view = getEntity().getComponentUnsafe(MainViewComponent.class);
+        ViewComponent view = getEntity().getComponentUnsafe(ViewComponent.class);
 
         valueProperty().addListener((o, wasSelectable, isSelectable) -> {
             if (isSelectable) {
@@ -74,7 +74,7 @@ public class SelectableComponent extends BooleanComponent implements CopyableCom
 
     @Override
     public void onRemoved(Entity entity) {
-        MainViewComponent view = getEntity().getComponentUnsafe(MainViewComponent.class);
+        ViewComponent view = getEntity().getComponentUnsafe(ViewComponent.class);
 
         removeSelectListener(view.getView());
     }

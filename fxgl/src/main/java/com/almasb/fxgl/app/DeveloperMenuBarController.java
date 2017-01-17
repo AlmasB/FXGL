@@ -29,7 +29,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
-import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
@@ -122,9 +122,9 @@ public class DeveloperMenuBarController implements UIController {
         FXGL.setProperty("dev.showbbox", item.isSelected());
 
         app.getGameWorld()
-                .getEntitiesByComponent(MainViewComponent.class)
+                .getEntitiesByComponent(ViewComponent.class)
                 .forEach(e -> {
-                    e.getComponentUnsafe(MainViewComponent.class).turnOnDebugBBox(item.isSelected());
+                    e.getComponentUnsafe(ViewComponent.class).turnOnDebugBBox(item.isSelected());
                 });
     }
 }

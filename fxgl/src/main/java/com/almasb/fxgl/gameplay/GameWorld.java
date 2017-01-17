@@ -386,7 +386,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
     /**
      * Returns a list of entities which have the given render layer index.
-     * This query only works on entities with MainViewComponent.
+     * This query only works on entities with ViewComponent.
      *
      * @param layer render layer
      * @return new list containing entities that satisfy query filters
@@ -405,7 +405,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
 
-            MainViewComponent view = Entities.getMainView(e);
+            ViewComponent view = Entities.getMainView(e);
 
             if (view != null && view.getRenderLayer().index() == layer.index()) {
                 result.add(e);

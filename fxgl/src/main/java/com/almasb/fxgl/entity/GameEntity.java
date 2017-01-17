@@ -44,14 +44,14 @@ public class GameEntity extends Entity {
     private PositionComponent position;
     private RotationComponent rotation;
     private BoundingBoxComponent bbox;
-    private MainViewComponent view;
+    private ViewComponent view;
 
     public GameEntity() {
         type = new TypeComponent();
         position = new PositionComponent();
         rotation = new RotationComponent();
         bbox = new BoundingBoxComponent();
-        view = new MainViewComponent();
+        view = new ViewComponent();
 
         addComponent(type);
         addComponent(position);
@@ -91,7 +91,7 @@ public class GameEntity extends Entity {
     /**
      * @return view component
      */
-    public final MainViewComponent getMainViewComponent() {
+    public final ViewComponent getMainViewComponent() {
         return view;
     }
 

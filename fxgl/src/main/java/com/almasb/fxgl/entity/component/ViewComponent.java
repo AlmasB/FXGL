@@ -54,7 +54,7 @@ import javafx.scene.shape.Shape;
  */
 @Required(PositionComponent.class)
 @Required(RotationComponent.class)
-public class MainViewComponent extends AbstractComponent {
+public class ViewComponent extends AbstractComponent {
 
     private static Color showBBoxColor = Color.RED;
 
@@ -62,7 +62,7 @@ public class MainViewComponent extends AbstractComponent {
      * @param showBBoxColor the color to highlight bounding boxes
      */
     public static void setShowBBoxColor(Color showBBoxColor) {
-        MainViewComponent.showBBoxColor = showBBoxColor;
+        ViewComponent.showBBoxColor = showBBoxColor;
     }
 
     private boolean showBBox() {
@@ -112,7 +112,7 @@ public class MainViewComponent extends AbstractComponent {
     /**
      * Creates main view component with no graphics.
      */
-    public MainViewComponent() {
+    public ViewComponent() {
         this(new EntityView());
     }
 
@@ -121,7 +121,7 @@ public class MainViewComponent extends AbstractComponent {
      *
      * @param graphics the graphics
      */
-    public MainViewComponent(Node graphics) {
+    public ViewComponent(Node graphics) {
         this(new EntityView(graphics), RenderLayer.TOP);
     }
 
@@ -131,7 +131,7 @@ public class MainViewComponent extends AbstractComponent {
      * @param graphics the graphics
      * @param renderLayer render layer to use for view
      */
-    public MainViewComponent(Node graphics, RenderLayer renderLayer) {
+    public ViewComponent(Node graphics, RenderLayer renderLayer) {
         this.view = new EntityView(graphics);
         this.view.setRenderLayer(renderLayer);
     }

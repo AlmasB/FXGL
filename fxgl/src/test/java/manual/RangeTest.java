@@ -33,7 +33,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.MainViewComponent;
+import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -148,7 +148,7 @@ public class RangeTest extends GameApplication {
             if (e == markers)
                 return;
 
-            EntityView view = e.getComponentUnsafe(MainViewComponent.class).getView();
+            EntityView view = e.getComponentUnsafe(ViewComponent.class).getView();
             view.getNodes()
                     .stream()
                     .map(n -> (Rectangle)n)
@@ -159,7 +159,7 @@ public class RangeTest extends GameApplication {
         list2.removeAll(list);
 
         list2.forEach(e -> {
-            EntityView view = e.getComponentUnsafe(MainViewComponent.class).getView();
+            EntityView view = e.getComponentUnsafe(ViewComponent.class).getView();
             view.getNodes()
                     .stream()
                     .map(n -> (Rectangle)n)

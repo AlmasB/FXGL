@@ -28,7 +28,7 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
-import com.almasb.fxgl.entity.component.MainViewComponent
+import com.almasb.fxgl.entity.component.ViewComponent
 import javafx.geometry.Rectangle2D
 import java.util.*
 import java.util.function.Predicate
@@ -112,7 +112,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
 
     /**
      * Returns a list of entities which have the given render layer index.
-     * This query only works on entities with MainViewComponent.
+     * This query only works on entities with ViewComponent.
 
      * @param layer render layer
      * *
@@ -120,7 +120,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      */
     fun getEntitiesByLayer(layer: com.almasb.fxgl.entity.RenderLayer): List<Entity> {
         return entities.filter {
-            val view = it.getComponentUnsafe(MainViewComponent::class.java)
+            val view = it.getComponentUnsafe(ViewComponent::class.java)
 
             if (view != null) {
                 return@filter view.renderLayer.index() == layer.index()

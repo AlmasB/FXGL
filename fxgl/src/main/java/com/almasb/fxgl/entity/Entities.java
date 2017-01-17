@@ -92,8 +92,8 @@ public class Entities {
      * @param e entity
      * @return main view component
      */
-    public static MainViewComponent getMainView(Entity e) {
-        return e.getComponentUnsafe(MainViewComponent.class);
+    public static ViewComponent getMainView(Entity e) {
+        return e.getComponentUnsafe(ViewComponent.class);
     }
 
     /**
