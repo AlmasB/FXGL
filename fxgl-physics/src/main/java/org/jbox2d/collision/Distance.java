@@ -468,7 +468,7 @@ public class Distance {
     }
 
     /**
-     * A distance proxy is used by the GJK algorithm. It encapsulates any shape. TODO: see if we can
+     * A distance proxy is used by the GJK algorithm. It encapsulates any shape. jbox2dTODO: see if we can
      * just do assignments with m_vertices, instead of copying stuff over
      *
      * @author daniel

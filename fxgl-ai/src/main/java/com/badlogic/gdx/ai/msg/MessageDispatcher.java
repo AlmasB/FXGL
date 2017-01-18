@@ -476,7 +476,7 @@ public class MessageDispatcher implements Telegraph {
 		// If there is no delay, route telegram immediately
 		if (delay <= 0.0f) {
 
-			// TODO: should we set the timestamp here?
+			// gdxTODO: should we set the timestamp here?
 			// telegram.setTimestamp(GdxAI.getTimepiece().getTime());
 
 			if (debugEnabled) {

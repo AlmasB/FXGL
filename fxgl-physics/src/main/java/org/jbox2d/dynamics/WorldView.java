@@ -167,7 +167,7 @@ public class WorldView {
         Color color = Color.color(0.5f, 0.8f, 0.8f);
 
         switch (joint.getType()) {
-            // TODO djm write after writing joints
+            // jbox2dTODO djm write after writing joints
             case DISTANCE:
                 debugDraw.drawSegment(p1, p2, color);
                 break;

@@ -35,5 +35,3 @@ function notify(message) {
 function sound(filename) {
     FXGL.getAudioPlayer().playSound(filename);
 }
-
-// TODO: remaining

@@ -371,7 +371,7 @@ public class World {
             f.destroyProxies(m_contactManager.m_broadPhase);
             f.destroy();
 
-            // TODO djm recycle fixtures (here or in that destroy method)
+            // jbox2dTODO djm recycle fixtures (here or in that destroy method)
         }
 
         body.getFixtures().clear();
@@ -390,7 +390,7 @@ public class World {
         }
 
         --bodyCount;
-        // TODO djm recycle body
+        // jbox2dTODO djm recycle body
     }
 
     /**
@@ -861,7 +861,7 @@ public class World {
     }
 
     private final Island island = new Island();
-    private Body[] stack = new Body[10]; // TODO djm find a good initial stack number;
+    private Body[] stack = new Body[10]; // jbox2dTODO djm find a good initial stack number;
     private final Timer broadphaseTimer = new Timer();
 
     private void solve(TimeStep step) {

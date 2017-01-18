@@ -76,7 +76,6 @@ public class InGamePanelSample extends GameApplication {
     @Override
     protected void initPhysics() {}
 
-    // TODO: find a way to check if inited here? disallow that
     private InGamePanel panel;
 
     @Override

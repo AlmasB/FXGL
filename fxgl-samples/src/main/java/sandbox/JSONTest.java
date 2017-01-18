@@ -65,7 +65,6 @@ public class JSONTest extends GameApplication {
 
         JSONLevelParser parser = new JSONLevelParser(factory);
 
-        // TODO: do we know text/ json/ or not?
         Level level = parser.parse("level1.json");
 
         getGameWorld().setLevel(level);

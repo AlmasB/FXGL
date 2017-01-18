@@ -1399,7 +1399,7 @@ public class ParticleSystem {
             if (group.m_toBeDestroyed) {
                 destroyParticleGroup(group);
             } else if (group.m_toBeSplit) {
-                // TODO: split the group
+                // jbox2dTODO: split the group
             }
             group = next;
         }
