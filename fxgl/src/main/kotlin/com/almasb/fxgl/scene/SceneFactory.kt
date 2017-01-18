@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.scene.intro.FXGLIntroScene
 import com.almasb.fxgl.scene.menu.*
@@ -52,6 +53,13 @@ open class SceneFactory {
     open fun newLoadingScene(): LoadingScene = LoadingScene()
 
     /**
+     * Called to construct game scene.
+     *
+     * @return game scene
+     */
+    open fun newGameScene(): GameScene = FXGL.getInstance(GameScene::class.java)
+
+    /**
      * Called to construct main menu.
      *
      * @param app game application
@@ -60,9 +68,9 @@ open class SceneFactory {
      */
     open fun newMainMenu(app: GameApplication): FXGLMenu {
         when (app.settings.menuStyle) {
-            com.almasb.fxgl.scene.menu.MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.MAIN_MENU)
-            com.almasb.fxgl.scene.menu.MenuStyle.CCTR -> return CCTRMenu(app, MenuType.MAIN_MENU)
-            com.almasb.fxgl.scene.menu.MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.MAIN_MENU)
+            MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.MAIN_MENU)
+            MenuStyle.CCTR -> return CCTRMenu(app, MenuType.MAIN_MENU)
+            MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.MAIN_MENU)
             else -> return FXGLDefaultMenu(app, MenuType.MAIN_MENU)
         }
     }
@@ -76,9 +84,9 @@ open class SceneFactory {
      */
     open fun newGameMenu(app: GameApplication): FXGLMenu {
         when (app.settings.menuStyle) {
-            com.almasb.fxgl.scene.menu.MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.GAME_MENU)
-            com.almasb.fxgl.scene.menu.MenuStyle.CCTR -> return CCTRMenu(app, MenuType.GAME_MENU)
-            com.almasb.fxgl.scene.menu.MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.GAME_MENU)
+            MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.GAME_MENU)
+            MenuStyle.CCTR -> return CCTRMenu(app, MenuType.GAME_MENU)
+            MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.GAME_MENU)
             else -> return FXGLDefaultMenu(app, MenuType.GAME_MENU)
         }
     }

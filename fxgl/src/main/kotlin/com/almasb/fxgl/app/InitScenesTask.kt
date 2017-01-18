@@ -26,12 +26,11 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.scene.GameScene
 import com.google.inject.Inject
 import javafx.scene.input.KeyEvent
 
 /**
- *
+ * A task for initializing all scenes used in FXGL.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -43,20 +42,19 @@ class InitScenesTask
     override fun run() {
         val sceneFactory = app.initSceneFactory()
 
-        // TODO: allow scene factory to create game scene too
-        val gameScene = FXGL.getInstance(GameScene::class.java)
+        val gameScene = sceneFactory.newGameScene()
         val loadingScene = sceneFactory.newLoadingScene()
 
-        if (app.getSettings().isIntroEnabled()) {
+        if (app.settings.isIntroEnabled) {
             val introScene = sceneFactory.newIntro()
 
-            app.getDisplay().registerScene(introScene)
+            app.display.registerScene(introScene)
 
             log.debug("Injecting introScene")
             app.introScene = introScene
         }
 
-        if (app.getSettings().isMenuEnabled()) {
+        if (app.settings.isMenuEnabled) {
             val menuHandler = app.menuListener
 
             val mainMenuScene = sceneFactory.newMainMenu(app)
@@ -66,16 +64,16 @@ class InitScenesTask
             gameScene.addEventHandler(KeyEvent.ANY, menuHandler as MenuEventHandler)
             gameMenuScene.addEventHandler(KeyEvent.ANY, menuHandler)
 
-            app.getDisplay().registerScene(mainMenuScene)
-            app.getDisplay().registerScene(gameMenuScene)
+            app.display.registerScene(mainMenuScene)
+            app.display.registerScene(gameMenuScene)
 
             log.debug("Injecting mainMenuScene & gameMenuScene")
             app.mainMenuScene = mainMenuScene
             app.gameMenuScene = gameMenuScene
         }
 
-        app.getDisplay().registerScene(loadingScene)
-        app.getDisplay().registerScene(gameScene)
+        app.display.registerScene(loadingScene)
+        app.display.registerScene(gameScene)
 
         log.debug("Injecting loadingScene & gameScene")
         app.loadingScene = loadingScene
