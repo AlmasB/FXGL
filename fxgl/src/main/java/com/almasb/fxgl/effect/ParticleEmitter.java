@@ -25,6 +25,9 @@
  */
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.util.TriFunction;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
@@ -33,12 +36,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * A general particle emitter.
@@ -49,7 +48,14 @@ import java.util.stream.IntStream;
  */
 public class ParticleEmitter {
 
-    private static final List<Particle> EMPTY = Collections.emptyList();
+    static {
+        FXGL.getPooler().registerPool(Particle.class, new Pool<Particle>(256) {
+            @Override
+            protected Particle newObject() {
+                return new Particle();
+            }
+        });
+    }
 
     private Random random = new Random();
     private int numParticles = 25;
@@ -262,6 +268,8 @@ public class ParticleEmitter {
         return rand() * (max - min) + min;
     }
 
+    private Array<Particle> emissionParticles = new Array<>(false, numParticles);
+
     /**
      * Emits {@link #numParticles} particles at x, y. This is
      * called every frame, however {@link #emissionRate} will
@@ -271,23 +279,27 @@ public class ParticleEmitter {
      * @param x x coordinate
      * @param y y coordinate
      * @return list of particles spawned
+     * @implNote cached array is used, do not obtain ownership
      */
-    final List<Particle> emit(double x, double y) {
+    final Array<Particle> emit(double x, double y) {
         rateAC += emissionRate;
         if (rateAC < 1 || emissionRate == 0) {
-            return EMPTY;
+            return Array.empty();
         }
 
-        // TODO: this generates new lists
         rateAC = 0;
-        return IntStream.range(0, numParticles)
-                .mapToObj(i -> emit(i, x, y))
-                .collect(Collectors.toList());
+        emissionParticles.clear();
+
+        for (int i = 0; i < numParticles; i++) {
+            emissionParticles.add(emit(i, x, y));
+        }
+
+        return emissionParticles;
     }
 
     /**
-     * Emits a single particle with index i. x and y
-     * are coordinates of the particle entity this emitter is attached to.
+     * Emits a single particle with index i.
+     * X and Y are coordinates of the particle entity this emitter is attached to.
      *
      * @param i particle index from 0 to {@link #numParticles}
      * @param x top left X of the particle entity
@@ -295,8 +307,8 @@ public class ParticleEmitter {
      * @return particle
      */
     private Particle emit(int i, double x, double y) {
-        // TODO: too many particles are created, pool instead
-        return new Particle(sourceImage, spawnPointFunction.apply(i, x, y),
+        Particle particle = FXGL.getPooler().get(Particle.class);
+        particle.init(sourceImage, spawnPointFunction.apply(i, x, y),
                 velocityFunction.apply(i, x, y),
                 gravityFunction.get(),
                 getRandomSize(),
@@ -304,5 +316,7 @@ public class ParticleEmitter {
                 expireFunction.apply(i, x, y),
                 colorFunction.get(),
                 blendFunction.apply(i, x, y));
+
+        return particle;
     }
 }

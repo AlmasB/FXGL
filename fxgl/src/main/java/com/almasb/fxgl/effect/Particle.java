@@ -25,10 +25,12 @@
  */
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.core.pool.Poolable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
@@ -39,7 +41,7 @@ import java.util.function.Consumer;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Particle {
+public class Particle implements Poolable {
 
     /**
      * Top-left x in game world
@@ -103,13 +105,22 @@ public class Particle {
      */
     private Image image = null;
 
-    private Consumer<Particle> control;
+    private Consumer<Particle> control = null;
 
     public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
         this(null, position, vel, gravity, radius, scale, expireTime, color, blendMode);
     }
 
     public Particle(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
+        init(image, position, vel, gravity, radius, scale, expireTime, color, blendMode);
+    }
+
+    public Particle() {
+        // pooler ctor
+        reset();
+    }
+
+    public final void init(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
         this.image = image;
         this.x = position.getX();
         this.y = position.getY();
@@ -122,6 +133,24 @@ public class Particle {
         this.color = color;
         this.blendMode = blendMode;
         this.life = expireTime.toSeconds();
+    }
+
+    @Override
+    public void reset() {
+        image = null;
+        x = 0;
+        y = 0;
+        radiusX = 0;
+        radiusY = 0;
+        scale = Point2D.ZERO;
+        velX = 0;
+        velY = 0;
+        gravity = Point2D.ZERO;
+        color = Color.BLACK;
+        blendMode = BlendMode.SRC_OVER;
+        life = 0;
+
+        control = null;
     }
 
     /**

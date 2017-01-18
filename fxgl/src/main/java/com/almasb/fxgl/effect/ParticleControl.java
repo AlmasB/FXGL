@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
@@ -34,9 +36,7 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -44,11 +44,9 @@ import java.util.List;
 @Required(PositionComponent.class)
 public class ParticleControl extends AbstractControl {
 
-    // TODO: there is a lot of GC happening here, we need to fix that
-
     private ParticleEmitter emitter;
 
-    protected List<Particle> particles = new ArrayList<>();
+    protected Array<Particle> particles = new Array<>(false, 256);
 
     private PositionComponent position;
 
@@ -77,8 +75,10 @@ public class ParticleControl extends AbstractControl {
 
         for (Iterator<Particle> it = particles.iterator(); it.hasNext(); ) {
             Particle p = it.next();
-            if (p.update(tpf))
+            if (p.update(tpf)) {
                 it.remove();
+                FXGL.getPooler().put(p);
+            }
         }
     }
 
@@ -94,6 +94,8 @@ public class ParticleControl extends AbstractControl {
      * @param viewportOrigin viewport origin
      */
     public void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
-        particles.forEach(p -> p.render(g, viewportOrigin));
+        for (Particle p : particles) {
+            p.render(g, viewportOrigin);
+        }
     }
 }
