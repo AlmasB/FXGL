@@ -8,7 +8,7 @@ fixed or being worked on in newer versions.
 * Proof read public documentation for errors, ambiguities and typos.
 * Crash test features for bugs or write a unit test for one.
 * Create an issue or suggest a feature backed up by a use case.
-* Provide or suggest an implementation of a feature from [[New Features]].
+* Provide or suggest an implementation of a feature from [New Features](https://github.com/AlmasB/FXGL/wiki/New-Features).
 * Fix / implement / close an open issue.
 * Suggest an API change if you think some calls can be made more concise.
 * [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) might get outdated quite quickly, see if you can find something weird / not working
