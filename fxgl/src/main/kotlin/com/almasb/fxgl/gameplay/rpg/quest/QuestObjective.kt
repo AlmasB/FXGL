@@ -28,6 +28,8 @@ package com.almasb.fxgl.gameplay.rpg.quest
 
 import com.almasb.fxgl.app.FXGL
 import javafx.beans.property.IntegerProperty
+import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleObjectProperty
 import javafx.util.Duration
 
@@ -62,10 +64,9 @@ constructor(
          */
         val expireDuration: Duration = Duration.ZERO) {
 
-    private val state = SimpleObjectProperty<QuestState>(QuestState.ACTIVE)
+    private val state = ReadOnlyObjectWrapper<QuestState>(QuestState.ACTIVE)
 
-    // TODO: make read only
-    fun stateProperty() = state
+    fun stateProperty(): ReadOnlyObjectProperty<QuestState> = state.readOnlyProperty
 
     fun getState() = state.get()
 

@@ -56,7 +56,6 @@ class DeveloperPane : VBox(25.0), EntityWorldListener {
 
     companion object numberStringConverter : StringConverter<Number>() {
         override fun toString(number: Number): String {
-            // TODO: format?
             return number.toString()
         }
 
@@ -102,8 +101,8 @@ class DeveloperPane : VBox(25.0), EntityWorldListener {
                         when(property) {
                             is IntegerProperty -> Bindings.bindBidirectional(field.textProperty(), property, numberStringConverter)
                             is DoubleProperty -> Bindings.bindBidirectional(field.textProperty(), property, numberStringConverter)
+                            else -> throw RuntimeException("Unknown property type: $property")
                         }
-                        // TODO: unresolved else
 
                         children.addAll(HBox(5.0, label, field))
                     }

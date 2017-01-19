@@ -27,7 +27,7 @@
 package com.almasb.fxgl.gameplay.rpg
 
 /**
- * TODO: API INCOMPLETE
+ * FXGLTODO: API INCOMPLETE
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

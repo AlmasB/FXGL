@@ -191,8 +191,6 @@ public class ViewComponent extends AbstractComponent {
         this.view.getNodes().setAll(entityView.getNodes());
         setRenderLayer(entityView.getRenderLayer());
 
-        // TODO: double check logic when adding / removing views; adding / removing hit boxes
-        // also view / bbox components
         if (showBBox()) {
             this.view.addNode(debugBBox);
         }

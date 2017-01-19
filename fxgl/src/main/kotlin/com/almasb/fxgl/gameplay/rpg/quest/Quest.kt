@@ -27,20 +27,23 @@
 package com.almasb.fxgl.gameplay.rpg.quest
 
 import javafx.beans.binding.Bindings
+import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleObjectProperty
 import java.util.concurrent.Callable
 
 /**
- * TODO: reward?
+ * A single quest.
+ * A quest can have multiple objectives but at least 1.
+ * A quest can be in one of three states [QuestState].
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class Quest(val name: String, val objectives: List<QuestObjective>) {
 
-    private val state = SimpleObjectProperty<QuestState>(QuestState.ACTIVE)
+    private val state = ReadOnlyObjectWrapper<QuestState>(QuestState.ACTIVE)
 
-    // TODO: make read only
-    fun stateProperty() = state
+    fun stateProperty(): ReadOnlyObjectProperty<QuestState> = state.readOnlyProperty
 
     /**
      * @return current state of this quest
@@ -48,7 +51,6 @@ class Quest(val name: String, val objectives: List<QuestObjective>) {
     fun getState() = state.get()
 
     init {
-
         if (objectives.isEmpty())
             throw IllegalArgumentException("Quest must have at least 1 objective")
 

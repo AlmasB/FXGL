@@ -352,11 +352,6 @@ public class BoundingBoxComponent extends AbstractComponent
         return position.getY();
     }
 
-    // TODO: refactor
-//    private boolean isXFlipped() {
-//        return false;
-//    }
-
     /**
      * Internal GC-friendly (and has less checks than JavaFX's BoundingBox)
      * check for collision between two hit boxes.
@@ -546,6 +541,10 @@ public class BoundingBoxComponent extends AbstractComponent
         // hit boxes are immutable so can safely reuse them
         return new BoundingBoxComponent(hitBoxes.toArray(new HitBox[0]));
     }
+
+//    private boolean isXFlipped() {
+//        return false;
+//    }
 
     //
 //    private BooleanProperty xFlipped = new SimpleBooleanProperty(false);
