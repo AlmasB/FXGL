@@ -27,6 +27,8 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.component.BoundingBoxComponent
+import com.almasb.fxgl.entity.component.PositionComponent
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
@@ -105,7 +107,7 @@ class Viewport
      * @param distY distance in Y between origin and entity
      */
     fun bindToEntity(entity: Entity, distX: Double, distY: Double) {
-        val position = entity.getComponent(com.almasb.fxgl.entity.component.PositionComponent::class.java)
+        val position = entity.getComponent(PositionComponent::class.java)
                 .orElseThrow{ IllegalArgumentException("Cannot bind to entity without PositionComponent") }
 
         // origin X Y with no bounds
@@ -124,27 +126,26 @@ class Viewport
     }
 
     fun bindToFit(xMargin: Double, yMargin: Double, vararg entities: Entity) {
-        // TODO: use minXWorld
-        val minBindingX = entities.filter { it.hasComponent(com.almasb.fxgl.entity.component.PositionComponent::class.java) }
-                .map { it.getComponentUnsafe(com.almasb.fxgl.entity.component.PositionComponent::class.java) }
-                .map { it.xProperty() }
+        val minBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+                .map { it.getComponentUnsafe(BoundingBoxComponent::class.java) }
+                .map { it.minXWorldProperty() }
                 .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, x -> Bindings.min(min, x) })
                 .subtract(xMargin)
 
-        val minBindingY = entities.filter { it.hasComponent(com.almasb.fxgl.entity.component.PositionComponent::class.java) }
-                .map { it.getComponentUnsafe(com.almasb.fxgl.entity.component.PositionComponent::class.java) }
-                .map { it.yProperty() }
+        val minBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+                .map { it.getComponentUnsafe(BoundingBoxComponent::class.java) }
+                .map { it.minYWorldProperty() }
                 .fold(Bindings.min(SimpleIntegerProperty(Int.MAX_VALUE), Integer.MAX_VALUE), { min, y -> Bindings.min(min, y) })
                 .subtract(yMargin)
 
-        val maxBindingX = entities.filter { it.hasComponent(com.almasb.fxgl.entity.component.BoundingBoxComponent::class.java) }
-                .map { it.getComponentUnsafe(com.almasb.fxgl.entity.component.BoundingBoxComponent::class.java) }
+        val maxBindingX = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+                .map { it.getComponentUnsafe(BoundingBoxComponent::class.java) }
                 .map { it.maxXWorldProperty() }
                 .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, x -> Bindings.max(max, x) })
                 .add(xMargin)
 
-        val maxBindingY = entities.filter { it.hasComponent(com.almasb.fxgl.entity.component.BoundingBoxComponent::class.java) }
-                .map { it.getComponentUnsafe(com.almasb.fxgl.entity.component.BoundingBoxComponent::class.java) }
+        val maxBindingY = entities.filter { it.hasComponent(BoundingBoxComponent::class.java) }
+                .map { it.getComponentUnsafe(BoundingBoxComponent::class.java) }
                 .map { it.maxYWorldProperty() }
                 .fold(Bindings.max(SimpleIntegerProperty(Int.MIN_VALUE), Integer.MIN_VALUE), { max, y -> Bindings.max(max, y) })
                 .add(yMargin)
