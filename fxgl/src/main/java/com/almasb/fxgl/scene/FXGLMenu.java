@@ -41,12 +41,14 @@ import com.almasb.fxgl.ui.FXGLSpinner;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -298,8 +300,7 @@ public abstract class FXGLMenu extends FXGLScene {
                 if (!rebound)
                     return;
 
-                // TODO: we manually set name here, would be nice to have data-bind
-                triggerName.setText(new KeyTrigger(e.getCode(), InputModifier.from(e)).toString());
+                triggerName.setText(app.getInput().getBindings().get(action).toString());
                 stage.close();
             });
             scene.setOnMouseClicked(e -> {
@@ -309,7 +310,7 @@ public abstract class FXGLMenu extends FXGLScene {
                 if (!rebound)
                     return;
 
-                triggerName.setText(new MouseTrigger(e.getButton(), InputModifier.from(e)).toString());
+                triggerName.setText(app.getInput().getBindings().get(action).toString());
                 stage.close();
             });
 
