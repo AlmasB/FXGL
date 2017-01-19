@@ -44,6 +44,14 @@ class GameState {
 
     private val properties = ObjectMap<String, Any>(32)
 
+    fun exists(propertyName: String) = properties.containsKey(propertyName)
+
+    fun getType(propertyName: String): Class<*> {
+        val value = properties.get(propertyName) ?: throw IllegalArgumentException("Property $propertyName does not exist")
+
+        return value.javaClass
+    }
+
     fun setValue(propertyName: String, value: Any) {
         when (value) {
             is Boolean -> booleanProperty(propertyName).value = value

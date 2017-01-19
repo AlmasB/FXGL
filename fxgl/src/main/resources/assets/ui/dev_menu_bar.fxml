@@ -32,6 +32,7 @@
                   xmlns:fx="http://javafx.com/fxml/1">
 
     <Menu text="FXGL">
+        <MenuItem text="Console" onAction="#openConsole" />
         <MenuItem text="Pause" onAction="#onPause" />
         <MenuItem text="Resume" onAction="#onResume" />
         <MenuItem text="Exit" onAction="#onExit" />

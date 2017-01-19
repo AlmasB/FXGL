@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.devtools.Console;
 import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
@@ -126,5 +127,21 @@ public class DeveloperMenuBarController implements UIController {
                 .forEach(e -> {
                     e.getComponentUnsafe(ViewComponent.class).turnOnDebugBBox(item.isSelected());
                 });
+    }
+
+    private Console console = null;
+
+    public void openConsole() {
+        if (console == null) {
+            console = new Console();
+        }
+
+        if (console.isOpen()) {
+            app.getGameScene().removeUINode(console);
+            app.getInput().setRegisterInput(true);
+        } else {
+            app.getInput().setRegisterInput(false);
+            app.getGameScene().addUINode(console);
+        }
     }
 }
