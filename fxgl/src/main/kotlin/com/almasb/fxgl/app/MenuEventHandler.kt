@@ -225,7 +225,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
 
         app.eventBus.fireEvent(SaveEvent(profile))
 
-        profile.log(log)
+        //profile.log(log)
 
         return profile
     }
@@ -250,7 +250,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
      */
     override fun restoreDefaultSettings() {
         log.debug("restoreDefaultSettings()")
-        defaultProfile.log(log)
+        //defaultProfile.log(log)
 
         app.eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }
@@ -271,6 +271,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         btnHost.setOnAction {
             FXGL.getNet()
                     .hostMultiplayerTask()
+                    .onSuccessKt { onNewGame() }
                     .onFailureKt { app.display.showErrorBox(it) }
                     .executeAsyncWithDialogFX(ProgressDialog("Hosting Game"))
         }

@@ -88,8 +88,8 @@ class FXGLNet
             val server = Server()
             server.parsers = dummy.parsers
 
-            // TODO: wait 5 minutes until fail
-            server.startAndWait(5)
+            // wait 1 minute
+            server.startAndWait(60)
 
             connectionInternal = server
 
