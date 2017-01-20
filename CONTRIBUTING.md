@@ -23,6 +23,15 @@ mvn package
 
 This will generate FXGL-x.y.z.jar, including sources, javadoc and uber-jar in the "target/" directory.
 
+## Workflow
+
+Typically there will be 2 branches: `master` and `x.y.z`.
+The `master` branch should always be *clean* and deployable.
+Essentially, the `master` branch is for releases.
+All the work goes to and stems from the `x.y.z` branch.
+Hence, after cloning you should always branch away from `x.y.z` and once
+your work is complete, pull a request back to `x.y.z`.
+
 ## Coding Standards
 
 The project uses a few guidelines when it comes to code (the list may grow):
@@ -32,4 +41,4 @@ The project uses a few guidelines when it comes to code (the list may grow):
 * Javadoc on all public and protected methods
 
 The rest is up to the contributor.
-
+If in doubt, skim through the existing source code to get a feel for it.
