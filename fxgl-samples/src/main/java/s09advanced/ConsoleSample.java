@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package s01basics;
+package s09advanced;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
@@ -37,13 +37,15 @@ import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Map;
+
 /**
  * Shows how to init a basic game object and attach it to the world
  * using predefined GameEntity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class InitSample extends GameApplication {
+public class ConsoleSample extends GameApplication {
 
     // 1. define types of entities in the game using Enum
     private enum Type {
@@ -58,7 +60,7 @@ public class InitSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("InitSample");
+        settings.setTitle("ConsoleSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -73,6 +75,11 @@ public class InitSample extends GameApplication {
 
     @Override
     protected void initAssets() {}
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("score", 0);
+    }
 
     @Override
     protected void initGame() {
@@ -105,7 +112,9 @@ public class InitSample extends GameApplication {
     protected void initUI() {}
 
     @Override
-    protected void onUpdate(double tpf) {}
+    protected void onUpdate(double tpf) {
+        System.out.println(getGameState().getInt("score"));
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -186,7 +186,7 @@ public class TowerfallApp extends GameApplication {
 
                     Rectangle2D grid = new Rectangle2D(0, 0, 40, 40);
 
-                    Array<Rectangle2D> grids = new AASubdivision().divide(grid, 30, 5);
+                    Array<Rectangle2D> grids = AASubdivision.divide(grid, 30, 5);
 
                     for (Rectangle2D rect : grids) {
                         PhysicsComponent physics = new PhysicsComponent();
