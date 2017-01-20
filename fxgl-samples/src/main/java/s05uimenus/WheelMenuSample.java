@@ -30,11 +30,8 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.ui.ProgressBar;
 import com.almasb.fxgl.ui.WheelMenu;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -59,7 +56,7 @@ public class WheelMenuSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Open/Close Panel") {
+        getInput().addAction(new UserAction("Open/Close WheelMenu") {
             @Override
             protected void onActionBegin() {
                 if (menu.isOpen())
