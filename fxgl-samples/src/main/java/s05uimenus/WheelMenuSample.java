@@ -24,13 +24,16 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package s05uimenus;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.ProgressBar;
 import com.almasb.fxgl.ui.WheelMenu;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 
 /**
@@ -38,13 +41,13 @@ import javafx.scene.paint.Color;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class UISample2 extends GameApplication {
+public class WheelMenuSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("UISample2");
+        settings.setTitle("WheelMenuSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -55,7 +58,20 @@ public class UISample2 extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
+    protected void initInput() {
+        getInput().addAction(new UserAction("Open/Close Panel") {
+            @Override
+            protected void onActionBegin() {
+                if (menu.isOpen())
+                    menu.close();
+                else
+                    menu.open();
+
+                menu.setTranslateX(getInput().getMouseXWorld() - 25);
+                menu.setTranslateY(getInput().getMouseYWorld() - 75);
+            }
+        }, MouseButton.SECONDARY);
+    }
 
     @Override
     protected void initAssets() {}
@@ -66,22 +82,13 @@ public class UISample2 extends GameApplication {
     @Override
     protected void initPhysics() {}
 
+    private WheelMenu menu;
+
     @Override
     protected void initUI() {
-        ProgressBar bar = new ProgressBar(false);
-        bar.setBackgroundFill(Color.BLACK);
-        bar.setTraceFill(Color.GOLD);
-        bar.setLabelVisible(false);
-        bar.setTranslateX(100);
-        bar.setTranslateY(100);
-        bar.setCurrentValue(50);
-
-        //getGameScene().addUINode(bar);
-
-        WheelMenu menu = new WheelMenu("Hi", "Hello", "World", "FXGL");
-        menu.setTranslateX(100);
-        menu.setTranslateY(100);
-
+        menu = new WheelMenu("Hi", "Hello", "World", "FXGL");
+        menu.setTranslateX(400);
+        menu.setTranslateY(300);
         menu.setSelectionHandler(System.out::println);
 
         getGameScene().addUINode(menu);

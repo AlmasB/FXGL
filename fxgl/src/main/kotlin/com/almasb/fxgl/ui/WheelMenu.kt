@@ -45,7 +45,7 @@ import javafx.scene.text.Text
 import java.util.function.Consumer
 
 /**
- * TODO: API incomplete
+ * Wheel menu with a maximum of 4 selectable elements.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -95,6 +95,8 @@ class WheelMenu(vararg itemNames: String) : Parent() {
 
         children.addAll(circle, circle2, circle3, circle4)
     }
+
+    fun isOpen() = isVisible
 
     fun open() {
         isVisible = true
