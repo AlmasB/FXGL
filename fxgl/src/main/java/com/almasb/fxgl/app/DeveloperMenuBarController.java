@@ -78,7 +78,6 @@ public class DeveloperMenuBarController implements UIController {
         });
     }
 
-    // TODO: would be nice to know size beforehand so we can automate these dialogs
     public void openAddDialog() {
         UI ui = app.getAssetLoader().loadUI("dialog_add_entity.fxml", new DialogAddEntityController());
 
@@ -99,13 +98,9 @@ public class DeveloperMenuBarController implements UIController {
         app.getGameScene().addUINode(window);
     }
 
-    // TODO: we might want to keep our controllers cached
-    // so that we don't lose data and don't load ui again
     //private ColorAdjustController colorAdjustController = null;
     private UI uiColorAdjust = null;
 
-    // TODO: what happens if same dialog is opened twice?
-    // we need to keep track of dialog / window state (open / closed)
     public void openColorAdjustDialog() {
         if (uiColorAdjust == null) {
             uiColorAdjust = app.getAssetLoader().loadUI("dialog_color_adjust.fxml", new ColorAdjustController());

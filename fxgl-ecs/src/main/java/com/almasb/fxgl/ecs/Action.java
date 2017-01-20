@@ -27,8 +27,10 @@
 package com.almasb.fxgl.ecs;
 
 /**
- * TODO: complex action?
- * TODO: stop / interrupt / pause?
+ * A single entity action.
+ * Unlike a {@link Control} the action is finished after its execution,
+ * a control is active during the entity lifetime (or until removed).
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public abstract class Action<T extends Entity> {
