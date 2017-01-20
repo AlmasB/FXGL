@@ -39,7 +39,9 @@ import javafx.scene.shape.StrokeType
 import javafx.util.Duration
 
 /**
- * TODO: API INCOMPLETE
+ * An in-game semi-transparent panel with in/out animations.
+ * Can be used to display various UI elements, e.g. game score, inventory,
+ * player stats, etc.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
