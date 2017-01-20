@@ -16,12 +16,14 @@ fixed or being worked on in newer versions.
 
 ## Building
 
+You will need to have Oracle JDK 1.8.0_101+ to build FXGL.
 You can build FXGL from sources using [Maven](https://maven.apache.org/):
 ```maven
 mvn package
 ```
 
-This will generate FXGL-x.y.z.jar, including sources, javadoc and uber-jar in the "target/" directory.
+This will compile and package all FXGL modules, as well as
+create FXGL-x.y.z.jar, including sources, javadoc and uber-jar in the "fxgl/target/" directory.
 
 ## Workflow
 
