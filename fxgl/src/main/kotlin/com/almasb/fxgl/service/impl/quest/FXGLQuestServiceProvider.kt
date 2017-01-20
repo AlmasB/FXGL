@@ -55,10 +55,8 @@ class FXGLQuestServiceProvider
     }
 
     override fun save(profile: UserProfile) {
-        // TODO:
     }
 
     override fun load(profile: UserProfile) {
-        // TODO:
     }
 }

@@ -27,7 +27,7 @@
 package com.almasb.fxgl.parser.json
 
 /**
- * TODO: API INCOMPLETE
+ * API INCOMPLETE
  *
  * here we can add more fields if we need to
  *

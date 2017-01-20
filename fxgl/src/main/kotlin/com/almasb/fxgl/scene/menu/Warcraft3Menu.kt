@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.scene.menu
 
+import com.almasb.fxgl.app.GameApplication
+import com.almasb.fxgl.scene.FXGLMenu
+import com.almasb.fxgl.ui.FXGLButton
 import javafx.animation.Interpolator
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
@@ -45,11 +48,12 @@ import javafx.scene.text.Text
 import javafx.util.Duration
 
 /**
- * TODO: API INCOMPLETE
+ * Uses a similar design to Warcraft3 main menu.
+ * API INCOMPLETE.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Warcraft3Menu(app: com.almasb.fxgl.app.GameApplication, menuType: MenuType) : com.almasb.fxgl.scene.FXGLMenu(app, menuType) {
+class Warcraft3Menu(app: GameApplication, menuType: MenuType) : FXGLMenu(app, menuType) {
 
     private val menu: Node
 
@@ -120,7 +124,7 @@ class Warcraft3Menu(app: com.almasb.fxgl.app.GameApplication, menuType: MenuType
     }
 
     override fun createActionButton(name: String, action: Runnable): Button {
-        with(com.almasb.fxgl.ui.FXGLButton(name)) {
+        with(FXGLButton(name)) {
             onAction = EventHandler { action.run() }
             return this
         }
