@@ -32,6 +32,7 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.InGamePanel;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Text;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -81,6 +82,11 @@ public class InGamePanelSample extends GameApplication {
     @Override
     protected void initUI() {
         panel = new InGamePanel();
+
+        Text text = getUIFactory().newText("Hello from Panel");
+        text.setTranslateX(50);
+        text.setTranslateY(50);
+        panel.getChildren().add(text);
 
         getGameScene().addUINode(panel);
     }
