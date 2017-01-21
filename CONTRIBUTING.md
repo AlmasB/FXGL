@@ -25,6 +25,10 @@ mvn package
 This will compile and package all FXGL modules, as well as
 create FXGL-x.y.z.jar, including sources, javadoc and uber-jar in the "fxgl/target/" directory.
 
+## Development
+
+Due to heavy use of Kotlin, the only feasible IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/).
+
 ## Workflow
 
 Typically there will be 2 branches: `master` and `x.y.z`.
