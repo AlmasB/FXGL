@@ -20,7 +20,7 @@
         <module>fxgl-ai</module>
         <module>fxgl-physics</module>
         <module>fxgl-eventbus</module>
-        <!--<module>fxgl-samples</module>-->
+        <module>fxgl-samples</module>
     </modules>
 
     <licenses>
