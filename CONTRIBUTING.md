@@ -25,10 +25,6 @@ mvn package
 This will compile and package all FXGL modules, as well as
 create FXGL-x.y.z.jar, including sources, javadoc and uber-jar in the "fxgl/target/" directory.
 
-## Development
-
-Due to heavy use of Kotlin, the only feasible IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/).
-
 ## Workflow
 
 Typically there will be 2 branches: `master` and `x.y.z`.
@@ -37,6 +33,21 @@ Essentially, the `master` branch is for releases.
 All the work goes to and stems from the `x.y.z` branch.
 Hence, after cloning you should always branch away from `x.y.z` and once
 your work is complete, pull a request back to `x.y.z`.
+
+## Development
+
+Due to heavy use of Kotlin, the only feasible IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/).
+To start developing FXGL you can setup IDEA (2016.3.3+) as follows:
+
+1. Fork FXGL into your GitHub repo -> Clone your repo to your machine.
+1. `cd` to that directory -> `git checkout -b BRANCH_NAME x.y.z`, where `x.y.z` is next version and `BRANCH_NAME` is your working branch
+1. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory
+1. Import project from external model -> Maven -> Next -> Next
+1. Select the provided Maven project to import -> Next -> Use JDK8+ -> Next -> Finish
+
+You now should see something like this:
+
+![FXGL](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/FXGL_IDEA.jpg)
 
 ## Coding Standards
 
