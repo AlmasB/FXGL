@@ -63,7 +63,7 @@ class LightingSystem {
     private val objectPoints = arrayListOf<Point2D>()
     private val objectSegments = arrayListOf<Segment>()
 
-    // TODO: do game root objects count as walls?
+    // fxglTODO: do game root objects count as walls?
     private val walls = Pane()
     private val light = Pane()
 
@@ -99,7 +99,7 @@ class LightingSystem {
 
         obstacleSegments.addAll(segments)
 
-        // TODO: remove this
+        // fxglTODO: remove this
         if (f == 0) {
             f++
             return
