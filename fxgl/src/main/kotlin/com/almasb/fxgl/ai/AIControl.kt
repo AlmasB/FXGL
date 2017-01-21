@@ -35,8 +35,7 @@ import com.badlogic.gdx.ai.btree.BehaviorTree
 import java.util.*
 
 /**
- * TODO: each task / condition / action before doing should report with message to bubble
- * Allows to attach a behavior tree to a game entity.
+ * Allows attaching a behavior tree to a game entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

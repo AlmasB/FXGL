@@ -30,42 +30,44 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.ui.InGamePanel;
-import javafx.scene.input.KeyCode;
-import javafx.scene.text.Text;
+import com.almasb.fxgl.ui.WheelMenu;
+import javafx.scene.input.MouseButton;
 
 /**
  * This is an example of a basic FXGL game application.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class InGamePanelSample extends GameApplication {
+public class WheelMenuSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("InGamePanelSample");
+        settings.setTitle("WheelMenuSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
+        settings.setProfilingEnabled(true);
         settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Open/Close Panel") {
+        getInput().addAction(new UserAction("Open/Close WheelMenu") {
             @Override
             protected void onActionBegin() {
-                if (panel.isOpen())
-                    panel.close();
+                if (menu.isOpen())
+                    menu.close();
                 else
-                    panel.open();
+                    menu.open();
+
+                menu.setTranslateX(getInput().getMouseXWorld() - 25);
+                menu.setTranslateY(getInput().getMouseYWorld() - 75);
             }
-        }, KeyCode.TAB);
+        }, MouseButton.SECONDARY);
     }
 
     @Override
@@ -77,18 +79,16 @@ public class InGamePanelSample extends GameApplication {
     @Override
     protected void initPhysics() {}
 
-    private InGamePanel panel;
+    private WheelMenu menu;
 
     @Override
     protected void initUI() {
-        panel = new InGamePanel();
+        menu = new WheelMenu("Hi", "Hello", "World", "FXGL");
+        menu.setTranslateX(400);
+        menu.setTranslateY(300);
+        menu.setSelectionHandler(System.out::println);
 
-        Text text = getUIFactory().newText("Hello from Panel");
-        text.setTranslateX(50);
-        text.setTranslateY(50);
-        panel.getChildren().add(text);
-
-        getGameScene().addUINode(panel);
+        getGameScene().addUINode(menu);
     }
 
     @Override

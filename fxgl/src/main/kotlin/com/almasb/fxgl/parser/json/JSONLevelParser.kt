@@ -63,8 +63,6 @@ class JSONLevelParser(private val entityFactory: EntityFactory) : LevelParser {
             producers[it.name]!!.invoke(SpawnData(it.x, it.y))
         }
 
-
-        // TODO: w, h
         return Level(0, 0, entities)
     }
 }

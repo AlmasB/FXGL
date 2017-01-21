@@ -28,6 +28,8 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
+import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.settings.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.junit.Assert.assertThat
@@ -84,12 +86,18 @@ class AchievementManagerTest {
     }
 
     @Test
-    fun `Save to bundle`() {
-        // TODO:
-    }
+    fun `Serialization`() {
+        val profile = UserProfile("1", "1")
 
-    @Test
-    fun `Load from bundle`() {
-        // TODO:
+        achievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
+        achievementManager.getAchievementByName("TestAchievement").setAchieved()
+        achievementManager.save(profile)
+
+        val newAchievementManager = FXGL.getInstance(AchievementManager::class.java)
+        newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
+        newAchievementManager.load(profile)
+
+        assertThat(newAchievementManager.getAchievements().size, `is`(1))
+        assertThat(newAchievementManager.getAchievementByName("TestAchievement").isAchieved, `is`(true))
     }
 }

@@ -180,8 +180,6 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
         entityFactoryMethods.clear();
 
-        // TODO: extract reflection code via Function<>?
-
         for (Method method : entityFactory.getClass().getDeclaredMethods()) {
             Spawns annotation = method.getDeclaredAnnotation(Spawns.class);
             if (annotation != null) {

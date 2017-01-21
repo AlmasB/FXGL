@@ -27,19 +27,22 @@
 package com.almasb.fxgl.algorithm
 
 import com.almasb.fxgl.core.collection.Array
-import com.almasb.fxgl.core.math.FXGLMath.*
+import com.almasb.fxgl.core.math.FXGLMath.random
+import com.almasb.fxgl.core.math.FXGLMath.randomBoolean
 import javafx.geometry.Rectangle2D
 
 /**
  * Axis-aligned 2D space subdivision.
  *
- * TODO: API INCOMPLETE
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AASubdivision {
+object AASubdivision {
 
-    fun divide(rect: Rectangle2D, subspaces: Int, minSize: Int): Array<Rectangle2D> {
+    /**
+     * Subdivides given 2D space ([rect]) into n = [subspaces] such that
+     * each subspace has width and height no less than [minSize].
+     */
+    @JvmStatic fun divide(rect: Rectangle2D, subspaces: Int, minSize: Int): Array<Rectangle2D> {
         val grids = arrayListOf<Rectangle2D>(rect)
 
         for (i in 1..subspaces -1) {

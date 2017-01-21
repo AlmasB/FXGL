@@ -61,7 +61,6 @@ import javafx.stage.Stage;
  */
 public class MockApplicationModule extends ApplicationModule {
 
-    // TODO: add single point of mocking
     private static MockApplicationModule instance;
 
     public static MockApplicationModule get() {

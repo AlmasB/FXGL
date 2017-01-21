@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene.lighting
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.entity.Entities
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
@@ -62,7 +63,7 @@ class LightingSystem {
     private val objectPoints = arrayListOf<Point2D>()
     private val objectSegments = arrayListOf<Segment>()
 
-    // TODO: do game root objects count as walls?
+    // fxglTODO: do game root objects count as walls?
     private val walls = Pane()
     private val light = Pane()
 
@@ -98,7 +99,7 @@ class LightingSystem {
 
         obstacleSegments.addAll(segments)
 
-        // TODO: remove this
+        // fxglTODO: remove this
         if (f == 0) {
             f++
             return
@@ -219,17 +220,17 @@ class LightingSystem {
 }
 
 fun Entity.topLeft(): Point2D {
-    return Point2D(com.almasb.fxgl.entity.Entities.getBBox(this).minXWorld, com.almasb.fxgl.entity.Entities.getBBox(this).minYWorld)
+    return Point2D(Entities.getBBox(this).minXWorld, Entities.getBBox(this).minYWorld)
 }
 
 fun Entity.topRight(): Point2D {
-    return Point2D(com.almasb.fxgl.entity.Entities.getBBox(this).maxXWorld, com.almasb.fxgl.entity.Entities.getBBox(this).minYWorld)
+    return Point2D(Entities.getBBox(this).maxXWorld, Entities.getBBox(this).minYWorld)
 }
 
 fun Entity.botRight(): Point2D {
-    return Point2D(com.almasb.fxgl.entity.Entities.getBBox(this).maxXWorld, com.almasb.fxgl.entity.Entities.getBBox(this).maxYWorld)
+    return Point2D(Entities.getBBox(this).maxXWorld, Entities.getBBox(this).maxYWorld)
 }
 
 fun Entity.botLeft(): Point2D {
-    return Point2D(com.almasb.fxgl.entity.Entities.getBBox(this).minXWorld, com.almasb.fxgl.entity.Entities.getBBox(this).maxYWorld)
+    return Point2D(Entities.getBBox(this).minXWorld, Entities.getBBox(this).maxYWorld)
 }
