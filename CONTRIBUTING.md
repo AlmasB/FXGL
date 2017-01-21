@@ -4,6 +4,7 @@ Contribution of any form is welcome! Please see the list below on how you can co
 Once you've decided what you would like to do, let me know about it first.
 This is just to make sure that the issue you want hasn't already been implemented,
 fixed or being worked on in newer versions.
+Any new API or changes to existing API should be discussed first to avoid inconsistency.
 
 * Proof read public documentation for errors, ambiguities and typos.
 * Crash test features for bugs or write a unit test for one.
@@ -11,7 +12,7 @@ fixed or being worked on in newer versions.
 * Provide or suggest an implementation of a feature from [New Features](https://github.com/AlmasB/FXGL/wiki/New-Features).
 * Fix / implement / close an open issue.
 * Suggest an API change if you think some calls can be made more concise.
-* [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) might get outdated quite quickly, see if you can find something weird / not working
+* [Samples](fxgl-samples) might get outdated quite quickly, see if you can find something weird / not working
 * Share details about your project based on FXGL (this will go to the showcase section).
 
 ## Building
@@ -51,11 +52,14 @@ You now should see something like this:
 
 ## Coding Standards
 
-The project uses a few guidelines when it comes to code (the list may grow):
+The project uses the following guidelines (the list is likely to grow over time):
 
-* Tabs set to 4 spaces
+* Tabs set to 4 spaces & consistent indentation
 * Consistent naming conventions (no [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation))
-* Javadoc on all public and protected methods
+* Javadoc on all public and protected API
+* Keep access to fields and methods as restricted as you can
+* [License](LICENSE) header in each new file
 
-The rest is up to the contributor.
+Code quality reports are available from [Codacy](https://www.codacy.com/app/AlmasB/FXGL/dashboard).
 If in doubt, skim through the existing source code to get a feel for it.
+If a pull request violates too many guidelines it is unlikely to be merged.
