@@ -176,6 +176,10 @@ dependencies {
 
 Latest pre-compiled uber jar can be found in [Releases](https://github.com/AlmasB/FXGL/releases)
 
+## Contribution
+
+The contribution [guide](CONTRIBUTING.md)
+
 ## Contact
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
 [![Google+](https://img.shields.io/badge/Google+-AlmasB-red.svg)](https://plus.google.com/+AlmasB0/about)
