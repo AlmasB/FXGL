@@ -1,3 +1,0 @@
-function test() {
-    return "JSTest"
-}

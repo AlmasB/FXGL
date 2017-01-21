@@ -1,0 +1,26 @@
+#
+# Patrol tree
+#
+
+# Alias definitions
+
+# Conditions
+import canSeePlayer? : "s08ai.CanSeePlayerCondition"
+import isTargetClose? : "s08ai.TargetCloseCondition"
+
+# Actions
+import move : "s08ai.MoveTask"
+import attack : "s08ai.AttackTask"
+import patrol : "s08ai.PatrolTask"
+
+# Tree definition (note that root is optional)
+root
+    selector
+        sequence
+            isTargetClose?
+            selector
+                sequence
+                    canSeePlayer?
+                    attack
+                patrol
+        move
