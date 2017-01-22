@@ -34,15 +34,18 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.TextField
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
+import org.controlsfx.control.textfield.TextFields
 import java.util.function.Consumer
 
+
 /**
- *
+ * Basic developer console that can be accessed via developer menu bar.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -65,8 +68,9 @@ class Console : Pane() {
         val input = TextField()
         with(input) {
             translateX = 50.0
-            translateY = FXGL.getApp().height - 50.0
+            translateY = FXGL.getApp().height - 100.0
             prefWidth = FXGL.getApp().width - 50.0 - 50.0
+
             setOnAction {
 
                 if (text.isNotEmpty()) {
@@ -75,11 +79,20 @@ class Console : Pane() {
                     text = ""
                 }
             }
+
+            // in case we want any special behaving keys
+            setOnKeyPressed {
+                when (it.code) {
+                    //KeyCode.TAB ->
+                }
+            }
         }
 
         children.addAll(output, input)
 
         initCommands()
+
+        TextFields.bindAutoCompletion(input, commands.keys().toList())
     }
 
     fun isOpen() = scene != null
