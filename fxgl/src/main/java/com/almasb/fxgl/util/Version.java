@@ -37,12 +37,14 @@ import java.util.ResourceBundle;
  */
 public final class Version {
 
+    private Version() {}
+
     private static final Logger log = SystemLogger.INSTANCE;
 
     private static final String FXGL_VERSION;
 
     static {
-        ResourceBundle resources = ResourceBundle.getBundle("com.almasb.fxgl.util.version");
+        ResourceBundle resources = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
 
         FXGL_VERSION = resources.getString("fxgl.version");
     }

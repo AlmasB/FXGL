@@ -124,7 +124,7 @@
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
-                    <exclude>**/version.properties</exclude>
+                    <exclude>**/system.properties</exclude>
                 </excludes>
             </resource>
 
@@ -132,7 +132,7 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>**/version.properties</include>
+                    <include>**/system.properties</include>
                 </includes>
             </resource>
         </resources>
