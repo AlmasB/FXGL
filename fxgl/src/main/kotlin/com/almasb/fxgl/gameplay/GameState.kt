@@ -29,6 +29,7 @@ package com.almasb.fxgl.gameplay
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.ObjectMap
 import javafx.beans.property.*
+import java.util.*
 
 /**
  * Holds game CVars as JavaFX properties and allows
@@ -44,12 +45,31 @@ class GameState {
 
     private val properties = ObjectMap<String, Any>(32)
 
+    /**
+     * @return true if a property with [propertyName] exists
+     */
     fun exists(propertyName: String) = properties.containsKey(propertyName)
 
+    /**
+     * Ensure that property with such name exists first using [exists].
+     *
+     * @return type of a property with [propertyName]
+     */
     fun getType(propertyName: String): Class<*> {
         val value = properties.get(propertyName) ?: throw IllegalArgumentException("Property $propertyName does not exist")
 
         return value.javaClass
+    }
+
+    /**
+     * @return all existing properties in the form (propertyName, rawValue)
+     */
+    fun getProperties(): Map<String, String> {
+        val map = HashMap<String, String>()
+
+        properties.forEach { map.put(it.key, it.value.toString()) }
+
+        return map
     }
 
     fun setValue(propertyName: String, value: Any) {

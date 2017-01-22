@@ -132,11 +132,9 @@ public class DeveloperMenuBarController implements UIController {
         }
 
         if (console.isOpen()) {
-            app.getGameScene().removeUINode(console);
-            app.getInput().setRegisterInput(true);
+            console.close();
         } else {
-            app.getInput().setRegisterInput(false);
-            app.getGameScene().addUINode(console);
+            console.open();
         }
     }
 }
