@@ -62,6 +62,10 @@ public class CreditsSample extends GameApplication {
 
         IntStream.range(0, 50).forEach(i -> list.add("Line number: " + i));
 
+        list.add("Do not forget to split long credits");
+        list.add("so that the flow integrity is");
+        list.add("maintained!");
+
         // 2. set credits
         settings.setCredits(new Credits(list));
     }
