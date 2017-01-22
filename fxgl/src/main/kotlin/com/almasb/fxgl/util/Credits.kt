@@ -48,10 +48,7 @@ class Credits {
         val newList = ArrayList(list)
         with(newList) {
             add("")
-            add("Powered by FXGL ${com.almasb.fxgl.util.Version.getAsString()}")
-            add("Graphics: JavaFX ${com.almasb.fxgl.util.Version.getJavaFXAsString()}")
-            add("Physics: JBox2D (jbox2d.org) ${com.almasb.fxgl.util.Version.getJBox2DAsString()}")
-            add("Written in: Java ${com.almasb.fxgl.util.Version.getJavaFXAsString()}, Kotlin ${com.almasb.fxgl.util.Version.getKotlinAsString()}")
+            add("Powered by FXGL ${Version.getAsString()}")
             add("Author: Almas Baimagambetov")
             add("https://github.com/AlmasB/FXGL")
             add("")
