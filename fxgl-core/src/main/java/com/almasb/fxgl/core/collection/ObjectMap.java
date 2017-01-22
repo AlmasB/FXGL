@@ -33,7 +33,9 @@ package com.almasb.fxgl.core.collection;
 import com.almasb.fxgl.core.StringBuilder;
 import com.almasb.fxgl.core.math.FXGLMath;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /** An unordered map. This implementation is a cuckoo hash map using 3 hashes, random walking, and a small stash for problematic
@@ -790,6 +792,13 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
                 array.add(next());
             return array;
         }
+
+        public List<V> toList() {
+            List<V> list = new ArrayList<>(map.size);
+            while (hasNext)
+                list.add(next());
+            return list;
+        }
     }
 
     public static class Keys<K> extends MapIterator<K, Object, K> {
@@ -825,6 +834,13 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
             while (hasNext)
                 array.add(next());
             return array;
+        }
+
+        public List<K> toList() {
+            List<K> list = new ArrayList<>(map.size);
+            while (hasNext)
+                list.add(next());
+            return list;
         }
     }
 }
