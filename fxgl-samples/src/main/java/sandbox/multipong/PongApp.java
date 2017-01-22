@@ -52,6 +52,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Map;
+
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -68,7 +70,7 @@ public class PongApp extends GameApplication {
         settings.setTitle("Pong");
         settings.setVersion("0.3dev");
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(true);
+        settings.setMenuEnabled(false);
     }
 
     @Override
@@ -132,9 +134,13 @@ public class PongApp extends GameApplication {
     @Override
     protected void initAssets() {}
 
-    private IntegerProperty scorePlayer, scoreEnemy;
-
     private GameMode mode;
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("player1score", 0);
+        vars.put("player2score", 0);
+    }
 
     @Override
     protected void initGame() {
@@ -145,9 +151,6 @@ public class PongApp extends GameApplication {
         }
 
         factory = new PongFactory(mode);
-
-        scorePlayer = new SimpleIntegerProperty(0);
-        scoreEnemy = new SimpleIntegerProperty(0);
 
         initBackground();
         initScreenBounds();
@@ -164,9 +167,9 @@ public class PongApp extends GameApplication {
             @Override
             protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
                 if (boxB.getName().equals("LEFT")) {
-                    scoreEnemy.set(scoreEnemy.get() + 1);
+                    getGameState().increment("player2score", +1);
                 } else if (boxB.getName().equals("RIGHT")) {
-                    scorePlayer.set(scorePlayer.get() + 1);
+                    getGameState().increment("player1score", +1);
                 }
             }
         });
@@ -177,8 +180,8 @@ public class PongApp extends GameApplication {
         AppController controller = new AppController();
         UI ui = getAssetLoader().loadUI("main.fxml", controller);
 
-        controller.getLabelScorePlayer().textProperty().bind(scorePlayer.asString());
-        controller.getLabelScoreEnemy().textProperty().bind(scoreEnemy.asString());
+        controller.getLabelScorePlayer().textProperty().bind(getGameState().intProperty("player1score").asString());
+        controller.getLabelScoreEnemy().textProperty().bind(getGameState().intProperty("player2score").asString());
 
         getGameScene().addUI(ui);
     }
