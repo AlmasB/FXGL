@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.*
 import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.service.listener.AchievementListener
@@ -116,8 +117,7 @@ internal class InitEventHandlersTask
     }
 
     private fun registerUpdateEventListeners() {
-        val isMac = System.getProperty("os.name").contains("Mac")
-        val fpsFont = Font.font(if (isMac) "Monaco" else "Lucida Console", if (isMac) 18.0 else 20.0)
+        val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
 
         app.masterTimer.addUpdateListener(app.input)
         app.masterTimer.addUpdateListener(app.audioPlayer)

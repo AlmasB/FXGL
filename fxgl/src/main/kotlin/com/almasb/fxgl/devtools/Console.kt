@@ -27,6 +27,7 @@
 package com.almasb.fxgl.devtools
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.util.Splitter
 import javafx.beans.property.SimpleBooleanProperty
@@ -90,7 +91,7 @@ class Console : Pane() {
             translateY = 50.0
             prefWidth = FXGL.getApp().width - 50.0 - 50.0
             prefHeight = FXGL.getApp().height - 100.0 - 100.0
-            font = FXGL.getAssetLoader().loadFont("lucida_console.ttf").newFont(14.0)
+            font = FXGLAssets.UI_MONO_FONT.newFont(14.0)
             isEditable = false
             isFocusTraversable = false
 

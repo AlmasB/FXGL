@@ -48,6 +48,7 @@ class FXGLAssets {
         @JvmField val SOUND_MENU_PRESS: Sound
 
         @JvmField val UI_FONT: FontFactory
+        @JvmField val UI_MONO_FONT: FontFactory
 
         @JvmField val UI_CSS: CSS
         @JvmField val UI_ICON_NAME: String
@@ -62,6 +63,7 @@ class FXGLAssets {
             SOUND_MENU_PRESS = loader.loadSound(getString("sound.menu.press"));
 
             UI_FONT = loader.loadFont(getString("ui.font"));
+            UI_MONO_FONT = loader.loadFont(getString("ui.mono.font"))
             UI_CSS = loader.loadCSS(getString("ui.css"));
             UI_ICON_NAME = getString("ui.icon.name");
             UI_ICON = loader.loadAppIcon(UI_ICON_NAME);
