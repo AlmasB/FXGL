@@ -386,6 +386,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
+        vbox.setPrefWidth(pane.getPrefWidth() - 15);
 
         FXGL.getSettings()
                 .getCredits()
