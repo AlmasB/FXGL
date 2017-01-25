@@ -48,7 +48,6 @@ import javafx.geometry.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -161,7 +160,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
     private EntityFactory entityFactory = null;
 
-    private ObjectMap<String, Function<SpawnData, Entity>> entitySpawners = new ObjectMap<>();
+    private ObjectMap<String, EntitySpawner> entitySpawners = new ObjectMap<>();
 
     /**
      * @return entity factory or null if not set
@@ -181,8 +180,8 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
         entitySpawners.clear();
 
-        ReflectionUtils.<SpawnData, Entity, Spawns>findMethodsMapFunctions(entityFactory, Spawns.class)
-                .forEach((annotation, spawnerFunction) -> entitySpawners.put(annotation.value(), spawnerFunction));
+        ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns.class, EntitySpawner.class)
+                .forEach((annotation, entitySpawner) -> entitySpawners.put(annotation.value(), entitySpawner));
     }
 
     /**
@@ -222,11 +221,11 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         if (entityFactory == null)
             throw new IllegalStateException("EntityFactory was not set!");
 
-        Function<SpawnData, Entity> spawner = entitySpawners.get(entityName);
+        EntitySpawner spawner = entitySpawners.get(entityName);
         if (spawner == null)
             throw new IllegalArgumentException("EntityFactory does not have a method annotated @Spawns(" + entityName + ")");
 
-        Entity entity = spawner.apply(data);
+        Entity entity = spawner.spawn(data);
         addEntity(entity);
         return entity;
     }

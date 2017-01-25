@@ -26,9 +26,10 @@
 
 package com.almasb.fxgl.parser.json
 
-import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.EntityFactory
+import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.Spawns
 import com.almasb.fxgl.gameplay.Level
@@ -43,15 +44,11 @@ import java.util.*
  */
 class JSONLevelParser(private val entityFactory: EntityFactory) : LevelParser {
 
-    private val producers = HashMap<String, (SpawnData) -> Entity>()
+    private val producers = HashMap<String, EntitySpawner>()
 
     init {
-        for (method in entityFactory.javaClass.declaredMethods) {
-            val producer = method.getDeclaredAnnotation(Spawns::class.java)
-            if (producer != null) {
-                producers[producer.value] = { data -> method.invoke(entityFactory, data) as Entity }
-            }
-        }
+        ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns::class.java, EntitySpawner::class.java)
+                .forEach { producers.put(it.key.value, it.value) }
     }
 
     override fun parse(levelFileName: String): Level {
@@ -62,7 +59,7 @@ class JSONLevelParser(private val entityFactory: EntityFactory) : LevelParser {
         val entities = jsonWorld.entities.map {
             val spawner = producers[it.name] ?: throw RuntimeException("@Spawns(${it.name}) method not found!")
 
-            spawner.invoke(SpawnData(it.x, it.y))
+            spawner.spawn(SpawnData(it.x, it.y))
         }
 
         return Level(0, 0, entities)
