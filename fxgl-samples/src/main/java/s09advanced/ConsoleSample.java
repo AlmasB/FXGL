@@ -35,7 +35,9 @@ import com.almasb.fxgl.entity.component.RotationComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import java.util.Map;
 
@@ -109,12 +111,17 @@ public class ConsoleSample extends GameApplication {
     protected void initPhysics() {}
 
     @Override
-    protected void initUI() {}
+    protected void initUI() {
+        Text scoreText = getUIFactory().newText("", Color.BLACK, 14);
+        scoreText.setTranslateX(300);
+        scoreText.setTranslateY(50);
+        scoreText.textProperty().bind(getGameState().intProperty("score").asString("Score: %d"));
+
+        getGameScene().addUINode(scoreText);
+    }
 
     @Override
-    protected void onUpdate(double tpf) {
-        System.out.println(getGameState().getInt("score"));
-    }
+    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);
