@@ -163,6 +163,27 @@ public interface AssetLoader {
     KVFile loadKV(String name);
 
     /**
+     * Loads JSON file with given name from /assets/json/.
+     * Either returns a valid JSON content or throws exception in case of errors.
+     *
+     * @param name JSON file name, e.g. level_data.json
+     * @return JSON content as String
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    List<String> loadJSON(String name);
+
+    /**
+     * Loads JSON file with given name from /assets/json/ and parses into an object of type T.
+     * Either returns a valid parsed object or throws exception in case of errors.
+     *
+     * @param name JSON file name, e.g. level_data.json
+     * @param type object type to parse to
+     * @return parsed object
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    <T> T loadJSON(String name, Class<T> type);
+
+    /**
      * Loads script with given name from /assets/scripts/ as a single string.
      * Either returns loaded string or throws exception in case of errors.
      *

@@ -39,6 +39,7 @@ import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
 import com.badlogic.gdx.ai.btree.BehaviorTree
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import javafx.fxml.FXMLLoader
@@ -70,6 +71,7 @@ class FXGLAssetLoader
     private val MUSIC_DIR = ASSETS_DIR + "music/"
     private val TEXT_DIR = ASSETS_DIR + "text/"
     private val KV_DIR = ASSETS_DIR + "kv/"
+    private val JSON_DIR = ASSETS_DIR + "json/"
     private val BINARY_DIR = ASSETS_DIR + "data/"
     private val SCRIPTS_DIR = ASSETS_DIR + "scripts/"
     private val PROPERTIES_DIR = ASSETS_DIR + "properties/"
@@ -264,6 +266,18 @@ class FXGLAssetLoader
      */
     override fun loadKV(name: String): KVFile {
         return KVFile(readAllLines(KV_DIR + name))
+    }
+
+    override fun loadJSON(name: String): List<String> {
+        return readAllLines(JSON_DIR + name)
+    }
+
+    private val jsonMapper by lazy { ObjectMapper() }
+
+    override fun <T : Any> loadJSON(name: String, type: Class<T>): T {
+        getStream(JSON_DIR + name).use {
+            return jsonMapper.readValue(it, type)
+        }
     }
 
     /**

@@ -34,7 +34,6 @@ import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.Spawns
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.parser.LevelParser
-import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
 
 /**
@@ -52,9 +51,7 @@ class JSONLevelParser(private val entityFactory: EntityFactory) : LevelParser {
     }
 
     override fun parse(levelFileName: String): Level {
-        val stream = FXGL.getAssetLoader().getStream("/assets/json/$levelFileName")
-        val jsonWorld = ObjectMapper().readValue<JSONWorld>(stream, JSONWorld::class.java)
-        stream.close()
+        val jsonWorld = FXGL.getAssetLoader().loadJSON(levelFileName, JSONWorld::class.java)
 
         val entities = jsonWorld.entities.map {
             val spawner = producers[it.name] ?: throw RuntimeException("@Spawns(${it.name}) method not found!")
