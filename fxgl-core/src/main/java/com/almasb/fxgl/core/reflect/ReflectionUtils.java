@@ -26,22 +26,24 @@
 
 package com.almasb.fxgl.core.reflect;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
+ * A collection of convenience methods to isolate reflection code.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class ReflectionUtils {
 
     private ReflectionUtils() {}
 
-    public static <A extends java.lang.annotation.Annotation> Map<A, Method> findMethods(Object instance, Class<A> annotationClass) {
+    public static <A extends java.lang.annotation.Annotation> Map<A, Method>
+        findMethods(Object instance, Class<A> annotationClass) {
+
         Map<A, Method> map = new HashMap<>();
 
         for (java.lang.reflect.Method method : instance.getClass().getDeclaredMethods()) {
@@ -54,15 +56,33 @@ public final class ReflectionUtils {
         return map;
     }
 
-    public static <T, R, A extends java.lang.annotation.Annotation> Map<A, Function<T, R>> findMethodsMapFunctions(Object instance, Class<A> annotationClass) {
+    public static <T, R, A extends java.lang.annotation.Annotation> Map<A, Function<T, R>>
+        findMethodsMapToFunctions(Object instance, Class<A> annotationClass) {
+
         Map<A, Function<T, R>> map = new HashMap<>();
 
-        for (java.lang.reflect.Method method : instance.getClass().getDeclaredMethods()) {
-            A annotation = method.getDeclaredAnnotation(annotationClass);
-            if (annotation != null) {
-                map.put(annotation, mapToFunction(instance, method));
-            }
-        }
+        findMethods(instance, annotationClass)
+                .forEach((annotation, method) -> map.put(annotation, mapToFunction(instance, method)));
+
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T, R, F extends Function<T, R>, A extends java.lang.annotation.Annotation> Map<A, F>
+        findMethodsMapToFunctions(Object instance, Class<A> annotationClass, Class<F> functionClass) {
+
+        Map<A, F> map = new HashMap<>();
+
+        findMethods(instance, annotationClass)
+                .forEach((annotation, method) -> {
+                    // we create an instance implementing F on the fly
+                    // so that high-level calling code stays clean
+                    F function = (F) Proxy.newProxyInstance(functionClass.getClassLoader(),
+                            new Class[] { functionClass },
+                            (proxy, proxyMethod, args) -> method.invoke(instance, args));
+
+                    map.put(annotation, function);
+                });
 
         return map;
     }
