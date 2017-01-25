@@ -249,7 +249,9 @@ public abstract class GameApplication extends FXGLApplication {
      * }, KeyCode.A);
      * </pre>
      */
-    protected abstract void initInput();
+    protected void initInput() {
+        // no default implementation
+    }
 
     /**
      * This is called after core services are initialized
@@ -263,7 +265,9 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Initialize game assets, such as Texture, Sound, Music, etc.
      */
-    protected abstract void initAssets();
+    protected void initAssets() {
+        // no default implementation
+    }
 
     /**
      * Called when MenuEvent.SAVE occurs.
@@ -305,24 +309,32 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Initialize game objects.
      */
-    protected abstract void initGame();
+    protected void initGame() {
+        // no default implementation
+    }
 
     /**
      * Initialize collision handlers, physics properties.
      */
-    protected abstract void initPhysics();
+    protected void initPhysics() {
+        // no default implementation
+    }
 
     /**
      * Initialize UI objects.
      */
-    protected abstract void initUI();
+    protected void initUI() {
+        // no default implementation
+    }
 
     /**
      * Main loop update phase, most of game logic.
      *
      * @param tpf time per frame
      */
-    protected abstract void onUpdate(double tpf);
+    protected void onUpdate(double tpf) {
+        // no default implementation
+    }
 
     /**
      * Called after main loop tick has been completed.

@@ -87,24 +87,6 @@ public class BasicGameApp extends GameApplication {
         // other settings
     }
 
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -125,18 +107,6 @@ class BasicGameApp : GameApplication() {
             // other settings
         }
     }
-
-    override fun initInput() { }
-
-    override fun initAssets() { }
-
-    override fun initGame() { }
-
-    override fun initPhysics() { }
-
-    override fun initUI() { }
-
-    override fun onUpdate(tpf: Double) { }
 }
 
 fun main(args: Array<String>) {

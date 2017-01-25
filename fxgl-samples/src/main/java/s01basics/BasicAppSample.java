@@ -26,12 +26,11 @@
 
 package s01basics;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
- * This is an example of a basic self-contained FXGL game application.
+ * This is an example of a minimalistic FXGL game application.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -43,31 +42,10 @@ public class BasicAppSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("BasicAppSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
-
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);
