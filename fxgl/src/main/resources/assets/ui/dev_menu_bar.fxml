@@ -43,9 +43,10 @@
         <MenuItem text="Edit Entity" onAction="#openEditDialog" />
     </Menu>
 
-    <Menu text="Graphics">
+    <Menu text="View">
         <MenuItem text="Color Adjust" onAction="#openColorAdjustDialog" />
         <CheckMenuItem text="Show BBox" onAction="#onShowBBox" />
+        <CheckMenuItem text="Track Clicks" onAction="#onTrackClicks" />
     </Menu>
 
     <Menu fx:id="menuCustom" text="Custom">

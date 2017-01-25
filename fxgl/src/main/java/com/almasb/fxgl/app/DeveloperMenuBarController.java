@@ -31,13 +31,16 @@ import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
 import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import jfxtras.scene.control.window.Window;
 
@@ -45,6 +48,8 @@ import jfxtras.scene.control.window.Window;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class DeveloperMenuBarController implements UIController {
+
+    private static final Logger log = FXGL.getLogger(DeveloperMenuBarController.class);
 
     private GameApplication app;
 
@@ -122,6 +127,20 @@ public class DeveloperMenuBarController implements UIController {
                 .forEach(e -> {
                     e.getComponentUnsafe(ViewComponent.class).turnOnDebugBBox(item.isSelected());
                 });
+    }
+
+    private EventHandler<MouseEvent> clickTracker = e -> {
+        log.info(app.getInput().getMousePositionWorld() + " " + app.getInput().getMousePositionUI());
+    };
+
+    public void onTrackClicks(ActionEvent event) {
+        CheckMenuItem item = (CheckMenuItem) event.getSource();
+
+        if (item.isSelected()) {
+            app.getGameScene().addEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
+        } else {
+            app.getGameScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
+        }
     }
 
     private Console console = null;
