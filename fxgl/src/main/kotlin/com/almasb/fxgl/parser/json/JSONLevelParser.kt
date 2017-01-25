@@ -60,7 +60,9 @@ class JSONLevelParser(private val entityFactory: EntityFactory) : LevelParser {
         stream.close()
 
         val entities = jsonWorld.entities.map {
-            producers[it.name]!!.invoke(SpawnData(it.x, it.y))
+            val spawner = producers[it.name] ?: throw RuntimeException("@Spawns(${it.name}) method not found!")
+
+            spawner.invoke(SpawnData(it.x, it.y))
         }
 
         return Level(0, 0, entities)
