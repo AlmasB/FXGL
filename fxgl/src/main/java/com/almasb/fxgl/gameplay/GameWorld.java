@@ -29,6 +29,7 @@ package com.almasb.fxgl.gameplay;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorld;
 import com.almasb.fxgl.entity.*;
@@ -44,10 +45,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -160,7 +161,7 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
     private EntityFactory entityFactory = null;
 
-    private ObjectMap<String, Method> entityFactoryMethods = new ObjectMap<>();
+    private ObjectMap<String, Function<SpawnData, Entity>> entitySpawners = new ObjectMap<>();
 
     /**
      * @return entity factory or null if not set
@@ -178,14 +179,10 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
     public void setEntityFactory(EntityFactory entityFactory) {
         this.entityFactory = entityFactory;
 
-        entityFactoryMethods.clear();
+        entitySpawners.clear();
 
-        for (Method method : entityFactory.getClass().getDeclaredMethods()) {
-            Spawns annotation = method.getDeclaredAnnotation(Spawns.class);
-            if (annotation != null) {
-                entityFactoryMethods.put(annotation.value(), method);
-            }
-        }
+        ReflectionUtils.<SpawnData, Entity, Spawns>findMethodsMapFunctions(entityFactory, Spawns.class)
+                .forEach((annotation, spawnerFunction) -> entitySpawners.put(annotation.value(), spawnerFunction));
     }
 
     /**
@@ -225,17 +222,13 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         if (entityFactory == null)
             throw new IllegalStateException("EntityFactory was not set!");
 
-        Method method = entityFactoryMethods.get(entityName);
-        if (method == null)
+        Function<SpawnData, Entity> spawner = entitySpawners.get(entityName);
+        if (spawner == null)
             throw new IllegalArgumentException("EntityFactory does not have a method annotated @Spawns(" + entityName + ")");
 
-        try {
-            Entity entity = (Entity) method.invoke(entityFactory, data);
-            addEntity(entity);
-            return entity;
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot invoke factory method <" + method + ">. Error: " + e);
-        }
+        Entity entity = spawner.apply(data);
+        addEntity(entity);
+        return entity;
     }
 
     /* QUERIES */
