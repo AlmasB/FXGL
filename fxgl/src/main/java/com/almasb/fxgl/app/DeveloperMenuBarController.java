@@ -38,6 +38,7 @@ import com.almasb.fxgl.ui.UIController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
@@ -130,7 +131,12 @@ public class DeveloperMenuBarController implements UIController {
     }
 
     private EventHandler<MouseEvent> clickTracker = e -> {
-        log.info(app.getInput().getMousePositionWorld() + " " + app.getInput().getMousePositionUI());
+        log.info("World XY: " + app.getInput().getMousePositionWorld() + ", UI XY: " + app.getInput().getMousePositionUI());
+        log.info("Entities clicked: ");
+
+        app.getGameWorld()
+                .getEntitiesInRange(new Rectangle2D(app.getInput().getMouseXWorld(), app.getInput().getMouseYWorld(), 1, 1))
+                .forEach(entity -> log.info(entity.toString()));
     };
 
     public void onTrackClicks(ActionEvent event) {
