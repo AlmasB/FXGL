@@ -35,5 +35,6 @@ package com.almasb.fxgl.parser.json
  */
 class JSONEntity(var name: String = "",
                  var x: Double = 0.0,
-                 var y: Double = 0.0) {
+                 var y: Double = 0.0,
+                 var layer: Int = Int.MAX_VALUE) {
 }

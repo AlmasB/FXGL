@@ -24,35 +24,22 @@
  * SOFTWARE.
  */
 
-package sandbox
-
-import com.almasb.fxgl.parser.json.JSONEntity
-import com.almasb.fxgl.parser.json.JSONWorld
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.File
+package com.almasb.fxgl.parser.tiled
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KotlinTest {
-}
+class Layer(var width: Int = 0,
+            var height: Int = 0,
+            var name: String = "",
+            var type: String = "",
+            var visible: Boolean = false,
+            var x: Int = 0,
+            var y: Int = 0,
+            var data: List<Int> = arrayListOf(),
+            var opacity: Float = 0.0f,
+            var draworder: String = "") {
 
-fun main(args: Array<String>) {
-
-
-    val mapper = ObjectMapper()
-
-    val world = JSONWorld("Level1", arrayListOf(
-            JSONEntity("Player", 300.0, 400.0, 1001),
-            JSONEntity("EnemyArcher", 200.0, 55.0, 1001)
-    ))
-
-    mapper.writeValue(File("level1.json"), world)
-
-//    val world2 = mapper.readValue<JSONWorld>(File("level1.json"), JSONWorld::class.java)
-//
-//    println(world2.name)
-//    println(world2.entities)
 }

@@ -24,35 +24,23 @@
  * SOFTWARE.
  */
 
-package sandbox
-
-import com.almasb.fxgl.parser.json.JSONEntity
-import com.almasb.fxgl.parser.json.JSONWorld
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.File
+package com.almasb.fxgl.parser.tiled
 
 /**
- *
+ * JSON map format from the Tiled map editor.
+ * Specification: https://github.com/bjorn/tiled/wiki/JSON-Map-Format
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class KotlinTest {
-}
-
-fun main(args: Array<String>) {
-
-
-    val mapper = ObjectMapper()
-
-    val world = JSONWorld("Level1", arrayListOf(
-            JSONEntity("Player", 300.0, 400.0, 1001),
-            JSONEntity("EnemyArcher", 200.0, 55.0, 1001)
-    ))
-
-    mapper.writeValue(File("level1.json"), world)
-
-//    val world2 = mapper.readValue<JSONWorld>(File("level1.json"), JSONWorld::class.java)
-//
-//    println(world2.name)
-//    println(world2.entities)
+class TiledMap(var width: Int = 0,
+               var height: Int = 0,
+               var tilewidth: Int = 0,
+               var tileheight: Int = 0,
+               var orientation: String = "",
+               var layers: List<Layer> = arrayListOf(),
+               var tilesets: List<Tileset> = arrayListOf(),
+               var backgroundcolor: String = "",
+               var renderorder: String = "",
+               var nextobjectid: Int = 0,
+               var version: Int = 0) {
 }
