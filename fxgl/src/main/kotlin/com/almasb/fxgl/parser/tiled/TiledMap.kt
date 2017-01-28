@@ -43,4 +43,7 @@ class TiledMap(var width: Int = 0,
                var renderorder: String = "",
                var nextobjectid: Int = 0,
                var version: Int = 0) {
+
+    fun getLayerByName(name: String) = layers.filter { it.name == name }.firstOrNull()
+            ?: throw IllegalArgumentException("Layer with name=$name not found")
 }

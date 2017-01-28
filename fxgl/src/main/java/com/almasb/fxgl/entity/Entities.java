@@ -26,18 +26,27 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.gameplay.GameWorld;
+import com.almasb.fxgl.parser.tiled.Layer;
+import com.almasb.fxgl.parser.tiled.TiledMap;
+import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+
+import java.util.List;
 
 /**
  * Helper class with static convenience methods.
@@ -200,6 +209,76 @@ public class Entities {
             return this;
         }
 
+        /**
+         * Generates view from tiles with {@link RenderLayer#TOP}.
+         *
+         * @param map parsed Tiled map
+         * @param layerName layer name as specified by Tiled
+         * @return builder
+         */
+        public GameEntityBuilder viewFromTiles(TiledMap map, String layerName) {
+            return viewFromTiles(map, layerName, RenderLayer.TOP);
+        }
+
+        /**
+         * Generates view from tiles.
+         *
+         * @param map parsed Tiled map
+         * @param layerName layer name as specified by Tiled
+         * @param renderLayer created view will use this render layer
+         * @return builder
+         */
+        public GameEntityBuilder viewFromTiles(TiledMap map, String layerName, RenderLayer renderLayer) {
+            entity.getViewComponent().setView(tilesToView(map, layerName), false);
+            entity.getViewComponent().setRenderLayer(renderLayer);
+
+            return this;
+        }
+
+        private Node tilesToView(TiledMap map, String layerName) {
+            Layer layer = map.getLayerByName(layerName);
+
+            WritableImage buffer = new WritableImage(
+                    layer.getWidth() * map.getTilewidth(),
+                    layer.getHeight() * map.getTileheight()
+            );
+
+            for (int i = 0; i < layer.getData().size(); i++) {
+
+                int gid = layer.getData().get(i);
+
+                // empty tile
+                if (gid == 0)
+                    continue;
+
+                Tileset tileset = findTileset(gid, map.getTilesets());
+
+                // we offset because data is encoded as continuous
+                gid -= tileset.getFirstgid();
+
+                // image source
+                int tilex = gid % tileset.getColumns();
+                int tiley = gid / tileset.getColumns();
+
+                // image destination
+                int x = i % layer.getWidth();
+                int y = i / layer.getHeight();
+
+                int w = tileset.getTilewidth();
+                int h = tileset.getTileheight();
+
+                String imageName = tileset.getImage();
+                imageName = imageName.substring(imageName.lastIndexOf("/") + 1);
+
+                Image sourceImage = FXGL.getAssetLoader().loadTexture(imageName).getImage();
+
+                buffer.getPixelWriter().setPixels(x * w, y * h,
+                        w, h, sourceImage.getPixelReader(), tilex * w, tiley * h);
+            }
+
+            return new ImageView(buffer);
+        }
+
         public GameEntityBuilder with(Component... components) {
             for (Component c : components)
                 entity.addComponent(c);
@@ -231,5 +310,20 @@ public class Entities {
             world.addEntity(entity);
             return entity;
         }
+    }
+
+    /**
+     * Finds tileset where gid is located.
+     *
+     * @param gid tile id
+     * @param tilesets all tilesets
+     * @return tileset
+     */
+    private static Tileset findTileset(int gid, List<Tileset> tilesets) {
+        return tilesets.stream()
+                .filter(tileset ->
+                        gid >= tileset.getFirstgid() && gid < tileset.getFirstgid() + tileset.getTilecount())
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Tileset for gid=" + gid + " not found"));
     }
 }
