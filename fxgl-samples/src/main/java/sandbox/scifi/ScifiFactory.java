@@ -28,7 +28,13 @@ package sandbox.scifi;
 
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.jbox2d.dynamics.BodyType;
+import sandbox.towerfall.CharacterControl;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -36,11 +42,25 @@ import javafx.scene.shape.Rectangle;
 @SetEntityFactory
 public class ScifiFactory implements EntityFactory {
 
-    @Spawns("TreeStump")
-    public Entity newTreeStump(SpawnData data) {
+    @Spawns("platform")
+    public Entity newPlatform(SpawnData data) {
         return Entities.builder()
                 .at(data.getX(), data.getY())
-                .viewFromNode(new Rectangle(data.<Integer>get("width"), data.<Integer>get("height")))
+                .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
+                .with(new PhysicsComponent())
+                .build();
+    }
+
+    @Spawns("player")
+    public Entity newPlayer(SpawnData data) {
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.DYNAMIC);
+
+        return Entities.builder()
+                .at(data.getX(), data.getY())
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
+                .with(physics)
+                .with(new CharacterControl())
                 .build();
     }
 }

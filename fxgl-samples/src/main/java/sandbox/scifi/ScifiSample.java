@@ -27,16 +27,11 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.devtools.DeveloperWASDControl;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.tiled.TiledMap;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import org.jbox2d.dynamics.BodyType;
+import javafx.scene.input.KeyCode;
+import sandbox.towerfall.CharacterControl;
 
 /**
  *
@@ -44,6 +39,8 @@ import org.jbox2d.dynamics.BodyType;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ScifiSample extends GameApplication {
+
+    private CharacterControl playerControl;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -58,55 +55,36 @@ public class ScifiSample extends GameApplication {
     }
 
     @Override
+    protected void initInput() {
+        getInput().addAction(new UserAction("Up") {
+            @Override
+            protected void onAction() {
+                playerControl.jump();
+            }
+        }, KeyCode.W);
+
+        getInput().addAction(new UserAction("Left") {
+            @Override
+            protected void onAction() {
+                playerControl.left();
+            }
+        }, KeyCode.A);
+
+        getInput().addAction(new UserAction("Right") {
+            @Override
+            protected void onAction() {
+                playerControl.right();
+            }
+        }, KeyCode.D);
+    }
+
+    @Override
     protected void initGame() {
-        TiledMap map = getAssetLoader().loadJSON("tiled_map.json", TiledMap.class);
-
-        Entities.builder()
-                .viewFromTiles(map, "Background", RenderLayer.BACKGROUND)
-                .buildAndAttach(getGameWorld());
-
-        Entities.builder()
-                .viewFromTiles(map, "Foreground", RenderLayer.BACKGROUND)
-                //.with(new PhysicsComponent())
-                .buildAndAttach(getGameWorld());
-
-        Entities.builder()
-                .viewFromTiles(map, "Top")
-                .buildAndAttach(getGameWorld());
-
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-
-        GameEntity player = Entities.builder()
-                .at(200, 150)
-                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
-                //.with(physics)
-                //.with(new DeveloperWASDControl())
-                .buildAndAttach(getGameWorld());
-
-        player.getViewComponent().setRenderLayer(new RenderLayer() {
-            @Override
-            public String name() {
-                return "PLAYER";
-            }
-
-            @Override
-            public int index() {
-                return RenderLayer.BACKGROUND.index() + 100;
-            }
-        });
+        TiledMap map = getAssetLoader().loadJSON("test_level.json", TiledMap.class);
 
         getGameWorld().setLevelFromMap(map);
-    }
 
-    @Override
-    protected void initPhysics() {
-        getPhysicsWorld().setGravity(0, 20);
-    }
-
-    @Override
-    protected void onUpdate(double tpf) {
-
+        playerControl = getGameWorld().spawn("player", 100, 100).getControlUnsafe(CharacterControl.class);
     }
 
     public static void main(String[] args) {

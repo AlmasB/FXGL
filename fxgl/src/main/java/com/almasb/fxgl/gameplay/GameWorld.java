@@ -166,6 +166,13 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
         map.getLayers()
                 .stream()
+                .filter(l -> l.getType().equals("tilelayer"))
+                .forEach(l -> Entities.builder()
+                        .viewFromTiles(map, l.getName(), RenderLayer.BACKGROUND)
+                        .buildAndAttach(this));
+
+        map.getLayers()
+                .stream()
                 .filter(l -> l.getType().equals("objectgroup"))
                 .forEach(l -> {
                     // need name from layer
