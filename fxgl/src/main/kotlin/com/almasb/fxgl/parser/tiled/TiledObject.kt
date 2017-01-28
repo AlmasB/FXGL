@@ -24,39 +24,23 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity
-
-import com.almasb.fxgl.core.collection.ObjectMap
-import com.almasb.fxgl.parser.tiled.TiledObject
+package com.almasb.fxgl.parser.tiled
 
 /**
- * Specifies data used to spawn a particular type of entity.
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-open class SpawnData(val x: Double, val y: Double) {
-
-    private val data = ObjectMap<String, Any>()
-
-    constructor(tiledObject: TiledObject) : this(tiledObject.x.toDouble(), tiledObject.y.toDouble()) {
-        put("type", tiledObject.type)
-        put("width", tiledObject.width)
-        put("height", tiledObject.height)
-        put("rotation", tiledObject.rotation)
-        put("id", tiledObject.id)
-
-        tiledObject.properties.forEach { put(it.key, it.value) }
-    }
-
-    fun put(key: String, value: Any): SpawnData {
-        data.put(key, value)
-        return this
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T> get(key: String): T {
-        val value = data.get(key) ?: throw IllegalArgumentException("Key $key has no associated value!")
-
-        return value as T
-    }
+class TiledObject(var id: Int = 0,
+                  var width: Int = 0,
+                  var height: Int = 0,
+                  var name: String = "",
+                  var type: String = "",
+                  var visible: Boolean = true,
+                  var x: Int = 0,
+                  var y: Int = 0,
+                  var rotation: Float = 0.0f,
+                  var gid: Int = 0,
+                  var properties: Map<String, Any> = hashMapOf(),
+                  var propertytypes: Map<String, String> = hashMapOf()) {
 }

@@ -39,6 +39,7 @@ class Layer(var width: Int = 0,
             var x: Int = 0,
             var y: Int = 0,
             var data: List<Int> = arrayListOf(),
+            var objects: List<TiledObject> = arrayListOf(),
             var opacity: Float = 0.0f,
             var draworder: String = "") {
 

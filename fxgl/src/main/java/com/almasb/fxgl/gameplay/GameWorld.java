@@ -36,6 +36,7 @@ import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.time.UpdateEventListener;
 import com.google.inject.Inject;
@@ -156,6 +157,23 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
 
         log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
+    }
+
+    public void setLevelFromMap(TiledMap map) {
+        reset();
+
+        log.debug("Setting level from map");
+
+        map.getLayers()
+                .stream()
+                .filter(l -> l.getType().equals("objectgroup"))
+                .forEach(l -> {
+                    // need name from layer
+
+                    l.getObjects().forEach(obj -> {
+                        spawn(obj.getName(), new SpawnData(obj));
+                    });
+                });
     }
 
     private EntityFactory entityFactory = null;

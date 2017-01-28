@@ -27,11 +27,16 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.parser.tiled.Layer;
+import com.almasb.fxgl.devtools.DeveloperWASDControl;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.parser.tiled.TiledMap;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import org.jbox2d.dynamics.BodyType;
 
 /**
  *
@@ -52,40 +57,56 @@ public class ScifiSample extends GameApplication {
         settings.setCloseConfirmation(false);
     }
 
-    private TiledMap map;
-    private Image image;
-
     @Override
     protected void initGame() {
-        map = getAssetLoader().loadJSON("tiled_map.json", TiledMap.class);
+        TiledMap map = getAssetLoader().loadJSON("tiled_map.json", TiledMap.class);
 
-        String imageName = map.getTilesets().get(0).getImage();
+        Entities.builder()
+                .viewFromTiles(map, "Background", RenderLayer.BACKGROUND)
+                .buildAndAttach(getGameWorld());
 
-        imageName = imageName.substring(imageName.lastIndexOf("/") + 1);
+        Entities.builder()
+                .viewFromTiles(map, "Foreground", RenderLayer.BACKGROUND)
+                //.with(new PhysicsComponent())
+                .buildAndAttach(getGameWorld());
 
-        System.out.println(imageName);
+        Entities.builder()
+                .viewFromTiles(map, "Top")
+                .buildAndAttach(getGameWorld());
 
-        image = getAssetLoader().loadTexture(imageName).getImage();
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.DYNAMIC);
+
+        GameEntity player = Entities.builder()
+                .at(200, 150)
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
+                //.with(physics)
+                //.with(new DeveloperWASDControl())
+                .buildAndAttach(getGameWorld());
+
+        player.getViewComponent().setRenderLayer(new RenderLayer() {
+            @Override
+            public String name() {
+                return "PLAYER";
+            }
+
+            @Override
+            public int index() {
+                return RenderLayer.BACKGROUND.index() + 100;
+            }
+        });
+
+        getGameWorld().setLevelFromMap(map);
+    }
+
+    @Override
+    protected void initPhysics() {
+        getPhysicsWorld().setGravity(0, 20);
     }
 
     @Override
     protected void onUpdate(double tpf) {
-        GraphicsContext g = getGameScene().getGraphicsContext();
 
-        Layer bg = map.getLayers().get(0);
-
-        for (int i = 0; i < bg.getData().size(); i++) {
-            // -1 because firstgid is 1 ?
-            int index = bg.getData().get(i) - 1;
-
-            int tilex = index % map.getTilesets().get(0).getColumns();
-            int tiley = index / map.getTilesets().get(0).getColumns();
-
-            int x = i % bg.getWidth();
-            int y = i / bg.getHeight();
-
-            g.drawImage(image, tilex * 32, tiley * 32, 32, 32, x * 32, y * 32, 32, 32);
-        }
     }
 
     public static void main(String[] args) {
