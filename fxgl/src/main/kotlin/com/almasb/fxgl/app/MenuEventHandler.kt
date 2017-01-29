@@ -62,7 +62,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     /**
      * Stores the default profile data. This is used to restore default settings.
      */
-    private val defaultProfile: UserProfile
+    private lateinit var defaultProfile: UserProfile
 
     /**
      * Stores current selected profile name for this game.
@@ -72,9 +72,13 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     fun isProfileSelected() = profileName.value.isNotEmpty()
 
     init {
-        defaultProfile = createProfile()
-
         app.eventBus.addEventHandler(FXGLEvent.EXIT, { saveProfile() })
+    }
+
+    internal fun generateDefaultProfile() {
+        log.debug("generateDefaultProfile()")
+
+        defaultProfile = createProfile()
     }
 
     override fun onNewGame() {
@@ -225,8 +229,6 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
 
         app.eventBus.fireEvent(SaveEvent(profile))
 
-        //profile.log(log)
-
         return profile
     }
 
@@ -250,7 +252,6 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
      */
     override fun restoreDefaultSettings() {
         log.debug("restoreDefaultSettings()")
-        //defaultProfile.log(log)
 
         app.eventBus.fireEvent(LoadEvent(LoadEvent.RESTORE_SETTINGS, defaultProfile))
     }

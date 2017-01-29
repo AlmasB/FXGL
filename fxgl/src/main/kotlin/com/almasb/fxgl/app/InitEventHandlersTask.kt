@@ -114,6 +114,9 @@ internal class InitEventHandlersTask
         })
 
         bus.scanForHandlers(app)
+
+        // services are now ready and listening, we can generate default profile
+        (app.menuListener as MenuEventHandler).generateDefaultProfile()
     }
 
     private fun registerUpdateEventListeners() {
