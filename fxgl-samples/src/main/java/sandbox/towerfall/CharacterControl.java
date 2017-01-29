@@ -30,7 +30,9 @@ import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.gameplay.GameWorld;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.Point2D;
 
@@ -78,10 +80,9 @@ public class CharacterControl extends AbstractControl {
                 .normalize()
                 .multiply(500);
 
-        getEntity().getWorld().addEntity(
-                FXGL.<TowerfallApp>getAppCast()
-                .getFactory()
-                .newArrow((int) x, (int) y, velocity, getEntity())
-        );
+        ((GameWorld) getEntity().getWorld()).spawn("Arrow",
+                new SpawnData(x, y)
+                        .put("velocity", velocity)
+                        .put("shooter", getEntity()));
     }
 }

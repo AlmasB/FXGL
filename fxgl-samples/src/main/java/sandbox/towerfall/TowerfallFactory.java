@@ -26,17 +26,14 @@
 
 package sandbox.towerfall;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
-import com.almasb.fxgl.parser.OldEntityFactory;
-import com.almasb.fxgl.parser.EntityProducer;
+import com.almasb.fxgl.parser.text.SpawnSymbol;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -56,14 +53,11 @@ import org.jbox2d.dynamics.BodyType;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class TowerfallFactory extends OldEntityFactory {
+@SetEntityFactory
+public class TowerfallFactory implements TextEntityFactory {
 
-    public TowerfallFactory() {
-        super('0');
-    }
-
-    @EntityProducer('B')
-    public Entity newBackground(int x, int y) {
+    @SpawnSymbol('B')
+    public Entity newBackground(SpawnData data) {
         Rectangle rect = new Rectangle(1280, 720);
         rect.setFill(new LinearGradient(0, 0, 0, 720, false, CycleMethod.REFLECT,
                 new Stop(0, Color.BLACK),
@@ -74,25 +68,25 @@ public class TowerfallFactory extends OldEntityFactory {
                 .build();
     }
 
-    @EntityProducer('1')
-    public Entity newPlatform(int x, int y) {
+    @SpawnSymbol('1')
+    public Entity newPlatform(SpawnData data) {
         return Entities.builder()
                 .type(EntityType.PLATFORM)
-                .at(x * 40, y * 40)
+                .at(data.getX(), data.getY())
                 .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("brick.png", 40, 40))
                 .with(new CollidableComponent(true))
                 .with(new PhysicsComponent())
                 .build();
     }
 
-    @EntityProducer('P')
-    public Entity newPlayer(int x, int y) {
+    @SpawnSymbol('P')
+    public Entity newPlayer(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
         return Entities.builder()
                 .type(EntityType.PLAYER)
-                .at(x * 40, y * 40)
+                .at(data.getX(), data.getY())
                 .viewFromNode(new Rectangle(36, 36, Color.BLUE))
                 .bbox(new HitBox("Main", BoundingShape.circle(18)))
                 .with(physics)
@@ -100,14 +94,15 @@ public class TowerfallFactory extends OldEntityFactory {
                 .build();
     }
 
-    @EntityProducer('E')
-    public Entity newEnemy(int x, int y) {
+    @Spawns("Enemy")
+    @SpawnSymbol('E')
+    public Entity newEnemy(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
         return Entities.builder()
                 .type(EntityType.ENEMY)
-                .at(x * 40, y * 40)
+                .at(data.getX(), data.getY())
                 .viewFromNode(new Rectangle(36, 36, Color.RED))
                 .bbox(new HitBox("Main", BoundingShape.circle(18)))
                 .with(physics, new CollidableComponent(true))
@@ -115,15 +110,31 @@ public class TowerfallFactory extends OldEntityFactory {
                 .build();
     }
 
-    public Entity newArrow(int x, int y, Point2D velocity, Entity shooter) {
+    @Spawns("Arrow")
+    public Entity newArrow(SpawnData data) {
         return Entities.builder()
                 .type(EntityType.ARROW)
-                .at(x, y)
+                .at(data.getX(), data.getY())
                 .viewFromNode(FXGL.getAssetLoader().loadTexture("arrow.png", 35, 9))
                 .bbox(new HitBox("MAIN", BoundingShape.box(28, 8)))
-                .with(new CollidableComponent(true), new UserDataComponent(shooter))
+                .with(new CollidableComponent(true), new UserDataComponent(data.get("shooter")))
                 .with(new OffscreenCleanControl(), new ExpireCleanControl(Duration.seconds(7)),
-                        new ArrowControl(velocity.normalize()))
+                        new ArrowControl(data.<Point2D>get("velocity").normalize()))
                 .build();
+    }
+
+    @Override
+    public char emptyChar() {
+        return '0';
+    }
+
+    @Override
+    public int blockWidth() {
+        return 40;
+    }
+
+    @Override
+    public int blockHeight() {
+        return 40;
     }
 }

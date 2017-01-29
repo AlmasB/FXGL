@@ -24,29 +24,19 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay
+package com.almasb.fxgl.parser.text;
 
-import com.almasb.fxgl.ecs.Entity
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Represents a game level.
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Level(
-        /**
-         * Level width in pixels.
-         */
-        val width: Int,
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface SpawnSymbol {
 
-        /**
-         * Level height in pixels.
-         */
-        val height: Int,
-
-        /**
-         * Level entities.
-         */
-        val entities: List<Entity>) {
-
+    char value();
 }

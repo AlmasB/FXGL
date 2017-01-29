@@ -29,7 +29,7 @@ package s06gameplay.levelparsing;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.gameplay.Level;
-import com.almasb.fxgl.parser.TextLevelParser;
+import com.almasb.fxgl.parser.text.TextLevelParser;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
@@ -63,7 +63,7 @@ public class LevelParsingFactorySample extends GameApplication {
 
         // 1. create a parser and set it up with a factory
         // where you specify entity producers for each character
-        TextLevelParser parser = new TextLevelParser(new MyGameFactoryOld());
+        TextLevelParser parser = new TextLevelParser(new LevelParsingFactory());
 
         // 2. parse the level file and set it
         Level level = parser.parse("level0.txt");

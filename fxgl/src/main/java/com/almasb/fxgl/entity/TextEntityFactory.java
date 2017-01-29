@@ -24,29 +24,16 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay
-
-import com.almasb.fxgl.ecs.Entity
+package com.almasb.fxgl.entity;
 
 /**
- * Represents a game level.
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Level(
-        /**
-         * Level width in pixels.
-         */
-        val width: Int,
+public interface TextEntityFactory extends EntityFactory {
 
-        /**
-         * Level height in pixels.
-         */
-        val height: Int,
+    char emptyChar();
 
-        /**
-         * Level entities.
-         */
-        val entities: List<Entity>) {
+    int blockWidth();
 
+    int blockHeight();
 }

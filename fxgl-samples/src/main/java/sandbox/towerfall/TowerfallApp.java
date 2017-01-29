@@ -40,7 +40,7 @@ import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.parser.TextLevelParser;
+import com.almasb.fxgl.parser.text.TextLevelParser;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.InGamePanel;
@@ -51,31 +51,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import com.almasb.fxgl.algorithm.AASubdivision;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class TowerfallApp extends GameApplication {
 
-    private TowerfallFactory factory = new TowerfallFactory();
     private GameEntity player;
     private CharacterControl playerControl;
 
     public GameEntity getPlayer() {
         return player;
-    }
-
-    public TowerfallFactory getFactory() {
-        return factory;
     }
 
     @Override
@@ -155,7 +144,7 @@ public class TowerfallApp extends GameApplication {
         jumps = new SimpleIntegerProperty(0);
         enemiesKilled = new SimpleIntegerProperty(0);
 
-        TextLevelParser parser = new TextLevelParser(factory);
+        TextLevelParser parser = new TextLevelParser(getGameWorld().getEntityFactory());
         Level level = parser.parse("towerfall_level.txt");
 
         player = (GameEntity) level.getEntities()
@@ -227,7 +216,7 @@ public class TowerfallApp extends GameApplication {
                 enemy.removeFromWorld();
                 enemiesKilled.set(enemiesKilled.get() + 1);
 
-                getGameWorld().addEntity(factory.newEnemy(27, 6));
+                getGameWorld().spawn("Enemy", 27 * 40, 6 * 40);
             }
         });
     }

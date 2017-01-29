@@ -29,7 +29,8 @@ package s06gameplay.levelparsing
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.GameApplication
 import com.almasb.fxgl.entity.Entities
-import com.almasb.fxgl.parser.TextLevelParser
+import com.almasb.fxgl.entity.EntitySpawner
+import com.almasb.fxgl.parser.text.TextLevelParser
 import com.almasb.fxgl.settings.GameSettings
 import javafx.application.Application
 import javafx.scene.paint.Color
@@ -65,16 +66,15 @@ class LevelParsingSampleKt : GameApplication() {
     override fun initAssets() { }
 
     override fun initGame() {
-        val parser = TextLevelParser()
-        parser.emptyChar = '0'
+        val parser = TextLevelParser('0', BLOCK_SIZE.toInt(), BLOCK_SIZE.toInt())
 
-        parser.addEntityProducer('1', { x, y -> Entities.builder()
-                .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
+        parser.addEntityProducer('1', EntitySpawner { Entities.builder()
+                .at(it.x, it.y)
                 .viewFromNode(Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.RED))
                 .build() })
 
-        parser.addEntityProducer('2', { x, y -> Entities.builder()
-                .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
+        parser.addEntityProducer('2', EntitySpawner { Entities.builder()
+                .at(it.x, it.y)
                 .viewFromNode(Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.GREEN))
                 .build() })
 

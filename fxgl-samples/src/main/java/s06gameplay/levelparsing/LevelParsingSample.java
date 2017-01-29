@@ -30,7 +30,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.gameplay.Level;
-import com.almasb.fxgl.parser.TextLevelParser;
+import com.almasb.fxgl.parser.text.TextLevelParser;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -52,14 +52,9 @@ public class LevelParsingSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(true);
+        settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
-
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
 
     private static final int BLOCK_SIZE = 200;
 
@@ -67,22 +62,19 @@ public class LevelParsingSample extends GameApplication {
     protected void initGame() {
 
         // 1. create a parser and set it up
-        TextLevelParser parser = new TextLevelParser();
-
-        // 2. empty chars are ignored
-        parser.setEmptyChar('0');
+        TextLevelParser parser = new TextLevelParser('0', BLOCK_SIZE, BLOCK_SIZE);
 
         // 3. for each '1' and '2' an entity will be produced based on next callbacks
-        parser.addEntityProducer('1', (x, y) -> {
+        parser.addEntityProducer('1', data -> {
             return Entities.builder()
-                    .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
+                    .at(data.getX(), data.getY())
                     .viewFromNode(new Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.RED))
                     .build();
         });
 
-        parser.addEntityProducer('2', (x, y) -> {
+        parser.addEntityProducer('2', data -> {
             return Entities.builder()
-                    .at(x * BLOCK_SIZE, y * BLOCK_SIZE)
+                    .at(data.getX(), data.getY())
                     .viewFromNode(new Rectangle(BLOCK_SIZE, BLOCK_SIZE, Color.GREEN))
                     .build();
         });
@@ -92,15 +84,6 @@ public class LevelParsingSample extends GameApplication {
 
         getGameWorld().setLevel(level);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

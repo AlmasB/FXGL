@@ -24,16 +24,16 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.parser
+package com.almasb.fxgl.parser.text
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.SpawnData
-import com.almasb.fxgl.entity.Spawns
 import com.almasb.fxgl.entity.TextEntityFactory
 import com.almasb.fxgl.gameplay.Level
+import com.almasb.fxgl.parser.LevelParser
 import java.util.*
 
 /**
@@ -55,21 +55,17 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
         private val log = FXGL.getLogger("FXGL.TextLevelParser")
     }
 
-    private val producers = HashMap<String, EntitySpawner>()
+    private val producers = HashMap<Char, EntitySpawner>()
 
     /**
      * The empty (ignored) character.
-     * If you don't set this, there will be a warning generated for
-     * each such character.
-     *
-     * @defaultValue ' '
      */
-    var emptyChar = ' '
+    val emptyChar: Char
 
     init {
         emptyChar = entityFactory.emptyChar()
 
-        ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns::class.java, EntitySpawner::class.java)
+        ReflectionUtils.findMethodsMapToFunctions(entityFactory, SpawnSymbol::class.java, EntitySpawner::class.java)
                 .forEach { producers.put(it.key.value, it.value) }
     }
 
@@ -83,7 +79,7 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
      * @param y row position of character
      */
     fun addEntityProducer(character: Char, producer: EntitySpawner) {
-        producers.put(character.toString(), producer)
+        producers.put(character, producer)
     }
 
     /**
@@ -109,7 +105,7 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
 
             for (j in 0 until line.length) {
                 val c = line[j]
-                val producer = producers[c.toString()]
+                val producer = producers[c]
                 if (producer != null) {
                     val e = producer.spawn(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight()))
                     entities.add(e)
