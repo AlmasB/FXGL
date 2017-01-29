@@ -56,9 +56,7 @@ class GameState {
      * @return type of a property with [propertyName]
      */
     fun getType(propertyName: String): Class<*> {
-        val value = properties.get(propertyName) ?: throw IllegalArgumentException("Property $propertyName does not exist")
-
-        return value.javaClass
+        return get(propertyName).javaClass
     }
 
     /**
@@ -70,6 +68,21 @@ class GameState {
         properties.forEach { map.put(it.key, it.value.toString()) }
 
         return map
+    }
+
+    fun put(propertyName: String, value: Any) {
+        if (exists(propertyName))
+            throw IllegalArgumentException("Property $propertyName already exists")
+
+        val property = when (value) {
+            is Boolean -> SimpleBooleanProperty()
+            is Int -> SimpleIntegerProperty()
+            is Double-> SimpleDoubleProperty()
+            is String -> SimpleStringProperty()
+            else -> throw IllegalArgumentException("Unknown value type: $value")
+        }
+
+        properties.put(propertyName, property)
     }
 
     fun setValue(propertyName: String, value: Any) {
@@ -98,37 +111,18 @@ class GameState {
 
     fun getString(propertyName: String) = stringProperty(propertyName).value
 
-    fun booleanProperty(propertyName: String) =
-            getOrCreate(propertyName, Boolean::class.java) as BooleanProperty
+    fun booleanProperty(propertyName: String) = get(propertyName) as BooleanProperty
 
-    fun intProperty(propertyName: String) =
-            getOrCreate(propertyName, Int::class.java) as IntegerProperty
+    fun intProperty(propertyName: String) = get(propertyName) as IntegerProperty
 
-    fun doubleProperty(propertyName: String) =
-            getOrCreate(propertyName, Double::class.java) as DoubleProperty
+    fun doubleProperty(propertyName: String) = get(propertyName) as DoubleProperty
 
-    fun stringProperty(propertyName: String) =
-            getOrCreate(propertyName, String::class.java) as StringProperty
+    fun stringProperty(propertyName: String) = get(propertyName) as StringProperty
 
     fun clear() {
         properties.clear()
     }
 
-    private fun getOrCreate(propertyName: String, type: Class<*>): Any {
-        var property = properties.get(propertyName)
-
-        if (property == null) {
-            property = when (type) {
-                Boolean::class.java -> SimpleBooleanProperty()
-                Int::class.java -> SimpleIntegerProperty()
-                Double::class.java -> SimpleDoubleProperty()
-                String::class.java -> SimpleStringProperty()
-                else -> throw IllegalArgumentException("Unknown property type: $type")
-            }
-
-            properties.put(propertyName, property)
-        }
-
-        return property
-    }
+    private fun get(propertyName: String) = properties.get(propertyName)
+            ?: throw IllegalArgumentException("Property $propertyName does not exist")
 }

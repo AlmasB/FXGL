@@ -68,7 +68,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         val vars = hashMapOf<String, Any>()
         app.initGameVars(vars)
-        vars.forEach { name, value -> app.gameState.setValue(name, value) }
+        vars.forEach { name, value -> app.gameState.put(name, value) }
 
         scanForAnnotations()
 

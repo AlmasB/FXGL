@@ -37,6 +37,10 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Level;
+import com.almasb.fxgl.gameplay.rpg.quest.Quest;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestObjective;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestWindow;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -51,9 +55,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import com.almasb.fxgl.algorithm.AASubdivision;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -103,7 +112,7 @@ public class TowerfallApp extends GameApplication {
             @Override
             protected void onActionBegin() {
                 playerControl.jump();
-                jumps.set(jumps.get() + 1);
+                getGameState().increment("jumps", +1);
             }
         }, KeyCode.W);
 
@@ -118,7 +127,7 @@ public class TowerfallApp extends GameApplication {
             @Override
             protected void onActionBegin() {
                 playerControl.shoot(input.getMousePositionWorld());
-                shotArrows.set(shotArrows.get() + 1);
+                getGameState().increment("shotArrows", +1);
             }
         }, KeyCode.F);
 
@@ -139,11 +148,14 @@ public class TowerfallApp extends GameApplication {
     }
 
     @Override
-    protected void initGame() {
-        shotArrows = new SimpleIntegerProperty(0);
-        jumps = new SimpleIntegerProperty(0);
-        enemiesKilled = new SimpleIntegerProperty(0);
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("shotArrows", 0);
+        vars.put("jumps", 0);
+        vars.put("enemiesKilled", 0);
+    }
 
+    @Override
+    protected void initGame() {
         TextLevelParser parser = new TextLevelParser(getGameWorld().getEntityFactory());
         Level level = parser.parse("towerfall_level.txt");
 
@@ -214,7 +226,7 @@ public class TowerfallApp extends GameApplication {
 
                 arrow.removeFromWorld();
                 enemy.removeFromWorld();
-                enemiesKilled.set(enemiesKilled.get() + 1);
+                getGameState().increment("enemiesKilled", +1);
 
                 getGameWorld().spawn("Enemy", 27 * 40, 6 * 40);
             }
@@ -223,44 +235,40 @@ public class TowerfallApp extends GameApplication {
 
     private InGamePanel panel;
 
-    private IntegerProperty shotArrows;
-    private IntegerProperty jumps;
-    private IntegerProperty enemiesKilled;
-
     @Override
     protected void initUI() {
         panel = new InGamePanel();
         getGameScene().addUINode(panel);
 
-//        QuestPane questPane = new QuestPane(350, 450);
-//        QuestWindow window = new QuestWindow(questPane);
-//
-//        getGameScene().addUINode(window);
-//
-//        List<Quest> quests = Arrays.asList(
-//                new Quest("Test Quest", Arrays.asList(
-//                        new QuestObjective("Shoot Arrows", shotArrows, 15),
-//                        new QuestObjective("Jump", jumps)
-//                )),
-//
-//                new Quest("Test Quest 2", Arrays.asList(
-//                        new QuestObjective("Shoot Arrows", shotArrows, 25, Duration.seconds(3))
-//                )),
-//
-//                new Quest("Test Quest 2", Arrays.asList(
-//                        new QuestObjective("Kill an enemy", enemiesKilled)
-//                )),
-//
-//                new Quest("Test Quest 2", Arrays.asList(
-//                        new QuestObjective("Shoot Arrows", shotArrows, 25)
-//                )),
-//
-//                new Quest("Test Quest 2", Arrays.asList(
-//                        new QuestObjective("Shoot Arrows", shotArrows, 25)
-//                ))
-//        );
-//
-//        quests.forEach(getQuestService()::addQuest);
+        QuestPane questPane = new QuestPane(350, 450);
+        QuestWindow window = new QuestWindow(questPane);
+
+        //getGameScene().addUINode(window);
+
+        List<Quest> quests = Arrays.asList(
+                new Quest("Test Quest", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", getGameState().intProperty("shotArrows"), 15),
+                        new QuestObjective("Jump", getGameState().intProperty("jumps"))
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", getGameState().intProperty("shotArrows"), 25, Duration.seconds(3))
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Kill an enemy", getGameState().intProperty("enemiesKilled"))
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", getGameState().intProperty("shotArrows"), 25)
+                )),
+
+                new Quest("Test Quest 2", Arrays.asList(
+                        new QuestObjective("Shoot Arrows", getGameState().intProperty("shotArrows"), 25)
+                ))
+        );
+
+        quests.forEach(getQuestService()::addQuest);
     }
 
     @Override
