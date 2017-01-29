@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.io.EasyIO
+import com.almasb.fxgl.io.FXGLIO
 import com.almasb.fxgl.gameplay.GameWorld
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.google.inject.Inject
@@ -42,8 +42,8 @@ class PreInitTask
     private val log = FXGL.getLogger(javaClass)
 
     override fun run() {
-        EasyIO.defaultExceptionHandler = app.getExceptionHandler()
-        EasyIO.defaultExecutor = app.getExecutor()
+        FXGLIO.defaultExceptionHandler = app.getExceptionHandler()
+        FXGLIO.defaultExecutor = app.getExecutor()
 
         log.debug("Injecting gameWorld & physicsWorld")
         app.gameWorld = FXGL.getInstance(GameWorld::class.java)

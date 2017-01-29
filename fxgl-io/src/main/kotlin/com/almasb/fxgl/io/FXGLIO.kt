@@ -32,14 +32,14 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 
 /**
- * Instance of EasyIO configuration.
+ * Instance of FXGLIO configuration.
  * Allows to set defaults to simplify IOTask construction and usage.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object EasyIO {
+object FXGLIO {
 
-    private val log = LogManager.getLogger(EasyIO::class.java)
+    private val log = LogManager.getLogger(FXGLIO::class.java)
 
     /**
      * Default exception handler that simply logs the exception

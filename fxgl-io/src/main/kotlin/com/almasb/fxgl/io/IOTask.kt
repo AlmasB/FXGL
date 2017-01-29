@@ -118,7 +118,7 @@ abstract class IOTask<T>(val name: String) {
     open protected fun fail(error: Throwable) {
         log.warn("Task failed: $name Error: $error")
         if (onFailure == null) {
-            EasyIO.defaultExceptionHandler.accept(error)
+            FXGLIO.defaultExceptionHandler.accept(error)
         } else {
             onFailure!!.invoke(error)
         }
@@ -168,7 +168,7 @@ abstract class IOTask<T>(val name: String) {
      *
      * @param executor executor to use for async
      */
-    @JvmOverloads fun executeAsync(executor: Executor = EasyIO.defaultExecutor) {
+    @JvmOverloads fun executeAsync(executor: Executor = FXGLIO.defaultExecutor) {
         executor.execute({ execute() })
     }
 
@@ -180,8 +180,8 @@ abstract class IOTask<T>(val name: String) {
      * @param executor executor to use for async
      * @param dialog dialog to use while task is being executed
      */
-    @JvmOverloads fun executeAsyncWithDialog(executor: Executor = EasyIO.defaultExecutor,
-                                             dialog: UIDialogHandler = EasyIO.defaultUIDialogSupplier.get()) {
+    @JvmOverloads fun executeAsyncWithDialog(executor: Executor = FXGLIO.defaultExecutor,
+                                             dialog: UIDialogHandler = FXGLIO.defaultUIDialogSupplier.get()) {
         log.debug("Showing dialog")
         dialog.show()
 
@@ -218,7 +218,7 @@ abstract class IOTask<T>(val name: String) {
      * @param dialog dialog to use while task is being executed
      */
     fun executeAsyncWithDialogFX(dialog: UIDialogHandler) {
-        executeAsyncWithDialogFX(EasyIO.defaultExecutor, dialog)
+        executeAsyncWithDialogFX(FXGLIO.defaultExecutor, dialog)
     }
 
     /**
@@ -232,8 +232,8 @@ abstract class IOTask<T>(val name: String) {
      * @param executor executor to use for async
      * @param dialog dialog to use while task is being executed
      */
-    @JvmOverloads fun executeAsyncWithDialogFX(executor: Executor = EasyIO.defaultExecutor,
-                                               dialog: UIDialogHandler = EasyIO.defaultUIDialogSupplier.get()) {
+    @JvmOverloads fun executeAsyncWithDialogFX(executor: Executor = FXGLIO.defaultExecutor,
+                                               dialog: UIDialogHandler = FXGLIO.defaultUIDialogSupplier.get()) {
         log.debug("Showing dialog")
         dialog.show()
 
