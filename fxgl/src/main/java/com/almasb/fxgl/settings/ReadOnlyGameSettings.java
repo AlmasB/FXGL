@@ -34,6 +34,7 @@ import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -57,6 +58,9 @@ public class ReadOnlyGameSettings {
     protected KeyCode menuKey = KeyCode.ESCAPE;
     protected Credits credits = new Credits(Collections.emptyList());
     protected List<ServiceType<?> > services = new ArrayList<>();
+    protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
+
+    // when adding extra fields, remember to add them to copy constructor
 
     /**
      * Constructs game settings with default parameters.
@@ -85,6 +89,7 @@ public class ReadOnlyGameSettings {
         this.menuKey = copy.menuKey;
         this.credits = new Credits(copy.credits);
         this.services = copy.services;
+        this.enabledMenuItems = copy.enabledMenuItems;
     }
 
     public final String getTitle() {
@@ -141,6 +146,10 @@ public class ReadOnlyGameSettings {
 
     public final List<ServiceType<?>> getServices() {
         return services;
+    }
+
+    public final EnumSet<MenuItem> getEnabledMenuItems() {
+        return enabledMenuItems;
     }
 
     @Override

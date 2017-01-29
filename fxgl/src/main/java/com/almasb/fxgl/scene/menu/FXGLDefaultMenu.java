@@ -29,6 +29,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
+import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.ui.FXGLButton;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
@@ -42,6 +43,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.util.EnumSet;
 import java.util.function.Supplier;
 
 /**
@@ -123,77 +125,111 @@ public class FXGLDefaultMenu extends FXGLMenu {
     protected MenuBox createMenuBodyMainMenu() {
         log.debug("createMenuBodyMainMenu()");
 
-        MenuItem itemContinue = new MenuItem("CONTINUE");
-        itemContinue.setOnAction(e -> fireContinue());
+        MenuBox box = new MenuBox(200);
 
-        MenuItem itemNewGame = new MenuItem("NEW GAME");
+        EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
+
+        if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
+            MenuButton itemContinue = new MenuButton("CONTINUE");
+            itemContinue.setOnAction(e -> fireContinue());
+            box.add(itemContinue);
+
+            app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
+                itemContinue.setDisable(!event.hasSaves());
+            });
+        }
+
+        MenuButton itemNewGame = new MenuButton("NEW GAME");
         itemNewGame.setOnAction(e -> fireNewGame());
+        box.add(itemNewGame);
 
-        MenuItem itemLoad = new MenuItem("LOAD");
-        itemLoad.setMenuContent(this::createContentLoad);
+        if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
+            MenuButton itemLoad = new MenuButton("LOAD");
+            itemLoad.setMenuContent(this::createContentLoad);
+            box.add(itemLoad);
+        }
 
-        MenuItem itemOptions = new MenuItem("OPTIONS");
+        MenuButton itemOptions = new MenuButton("OPTIONS");
         itemOptions.setChild(createOptionsMenu());
+        box.add(itemOptions);
 
-        MenuItem itemExtra = new MenuItem("EXTRA");
-        itemExtra.setChild(createExtraMenu());
+        if (enabledItems.contains(MenuItem.EXTRA)) {
+            MenuButton itemExtra = new MenuButton("EXTRA");
+            itemExtra.setChild(createExtraMenu());
+            box.add(itemExtra);
+        }
 
-        MenuItem itemMultiplayer = new MenuItem("ONLINE");
-        itemMultiplayer.setOnAction(e -> fireMultiplayer());
+        if (enabledItems.contains(MenuItem.ONLINE)) {
+            MenuButton itemMultiplayer = new MenuButton("ONLINE");
+            itemMultiplayer.setOnAction(e -> fireMultiplayer());
+            box.add(itemMultiplayer);
+        }
 
-        MenuItem itemLogout = new MenuItem("LOGOUT");
+        MenuButton itemLogout = new MenuButton("LOGOUT");
         itemLogout.setOnAction(e -> fireLogout());
+        box.add(itemLogout);
 
-        MenuItem itemExit = new MenuItem("EXIT");
+        MenuButton itemExit = new MenuButton("EXIT");
         itemExit.setOnAction(e -> fireExit());
+        box.add(itemExit);
 
-        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
-            itemContinue.setDisable(!event.hasSaves());
-        });
-
-        return new MenuBox(200, itemContinue, itemNewGame, itemLoad,
-                itemOptions, itemExtra, itemMultiplayer, itemLogout, itemExit);
+        return box;
     }
 
     protected MenuBox createMenuBodyGameMenu() {
         log.debug("createMenuBodyGameMenu()");
 
-        MenuItem itemResume = new MenuItem("RESUME");
+        MenuBox box = new MenuBox(200);
+
+        EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
+
+        MenuButton itemResume = new MenuButton("RESUME");
         itemResume.setOnAction(e -> fireResume());
+        box.add(itemResume);
 
-        MenuItem itemSave = new MenuItem("SAVE");
-        itemSave.setOnAction(e -> fireSave());
+        if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
+            MenuButton itemSave = new MenuButton("SAVE");
+            itemSave.setOnAction(e -> fireSave());
 
-        MenuItem itemLoad = new MenuItem("LOAD");
-        itemLoad.setMenuContent(this::createContentLoad);
+            MenuButton itemLoad = new MenuButton("LOAD");
+            itemLoad.setMenuContent(this::createContentLoad);
 
-        MenuItem itemOptions = new MenuItem("OPTIONS");
+            box.add(itemSave);
+            box.add(itemLoad);
+        }
+
+        MenuButton itemOptions = new MenuButton("OPTIONS");
         itemOptions.setChild(createOptionsMenu());
+        box.add(itemOptions);
 
-        MenuItem itemExtra = new MenuItem("EXTRA");
-        itemExtra.setChild(createExtraMenu());
+        if (enabledItems.contains(MenuItem.EXTRA)) {
+            MenuButton itemExtra = new MenuButton("EXTRA");
+            itemExtra.setChild(createExtraMenu());
+            box.add(itemExtra);
+        }
 
-        MenuItem itemExit = new MenuItem("MAIN MENU");
+        MenuButton itemExit = new MenuButton("MAIN MENU");
         itemExit.setOnAction(e -> fireExitToMainMenu());
+        box.add(itemExit);
 
-        return new MenuBox(200, itemResume, itemSave, itemLoad, itemOptions, itemExtra, itemExit);
+        return box;
     }
 
     protected MenuBox createOptionsMenu() {
         log.debug("createOptionsMenu()");
 
-        MenuItem itemGameplay = new MenuItem("GAMEPLAY");
+        MenuButton itemGameplay = new MenuButton("GAMEPLAY");
         itemGameplay.setMenuContent(this::createContentGameplay);
 
-        MenuItem itemControls = new MenuItem("CONTROLS");
+        MenuButton itemControls = new MenuButton("CONTROLS");
         itemControls.setMenuContent(this::createContentControls);
 
-        MenuItem itemVideo = new MenuItem("VIDEO");
+        MenuButton itemVideo = new MenuButton("VIDEO");
         itemVideo.setMenuContent(this::createContentVideo);
-        MenuItem itemAudio = new MenuItem("AUDIO");
+        MenuButton itemAudio = new MenuButton("AUDIO");
         itemAudio.setMenuContent(this::createContentAudio);
 
-        MenuItem btnRestore = new MenuItem("RESTORE");
+        MenuButton btnRestore = new MenuButton("RESTORE");
         btnRestore.setOnAction(e -> {
             app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
                 if (yes) listener.restoreDefaultSettings();
@@ -206,13 +242,13 @@ public class FXGLDefaultMenu extends FXGLMenu {
     protected MenuBox createExtraMenu() {
         log.debug("createExtraMenu()");
 
-        MenuItem itemAchievements = new MenuItem("TROPHIES");
+        MenuButton itemAchievements = new MenuButton("TROPHIES");
         itemAchievements.setMenuContent(this::createContentAchievements);
 
-        MenuItem itemCredits = new MenuItem("CREDITS");
+        MenuButton itemCredits = new MenuButton("CREDITS");
         itemCredits.setMenuContent(this::createContentCredits);
 
-        MenuItem itemFeedback = new MenuItem("FEEDBACK");
+        MenuButton itemFeedback = new MenuButton("FEEDBACK");
         itemFeedback.setMenuContent(this::createContentFeedback);
 
         return new MenuBox(200, itemAchievements, itemCredits, itemFeedback);
@@ -242,13 +278,21 @@ public class FXGLDefaultMenu extends FXGLMenu {
     }
 
     private static class MenuBox extends VBox {
-        MenuBox(int width, MenuItem... items) {
+        private int width;
+
+        MenuBox(int width, MenuButton... items) {
+            this.width = width;
+
             getChildren().add(createSeparator(width));
 
-            for (MenuItem item : items) {
-                item.setParent(this);
-                getChildren().addAll(item, createSeparator(width));
+            for (MenuButton item : items) {
+                add(item);
             }
+        }
+
+        void add(MenuButton item) {
+            item.setParent(this);
+            getChildren().addAll(item, createSeparator(width));
         }
 
         private Line createSeparator(int width) {
@@ -263,11 +307,11 @@ public class FXGLDefaultMenu extends FXGLMenu {
         }
     }
 
-    private class MenuItem extends FXGLButton {
+    private class MenuButton extends FXGLButton {
         private MenuBox parent;
         private MenuContent cachedContent = null;
 
-        MenuItem(String name) {
+        MenuButton(String name) {
             super(name);
         }
 
@@ -286,10 +330,10 @@ public class FXGLDefaultMenu extends FXGLMenu {
         }
 
         public void setChild(MenuBox menu) {
-            MenuItem back = new MenuItem("BACK");
+            MenuButton back = new MenuButton("BACK");
             menu.getChildren().add(0, back);
 
-            back.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(MenuItem.this.parent));
+            back.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(MenuButton.this.parent));
 
             this.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(menu));
         }
@@ -297,7 +341,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
     @Override
     protected Button createActionButton(String name, Runnable action) {
-        MenuItem btn = new MenuItem(name);
+        MenuButton btn = new MenuButton(name);
         btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
 
         return btn;

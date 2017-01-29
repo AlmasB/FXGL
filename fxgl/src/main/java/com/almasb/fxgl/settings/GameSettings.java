@@ -31,6 +31,8 @@ import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
+import java.util.EnumSet;
+
 /**
  * Data structure for variables that are
  * initialised before the application (game) starts.
@@ -189,6 +191,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void addServiceType(ServiceType<?> serviceType) {
         services.add(serviceType);
+    }
+
+    public void setEnabledMenuItems(EnumSet<MenuItem> items) {
+        this.enabledMenuItems = items;
     }
 
     /**

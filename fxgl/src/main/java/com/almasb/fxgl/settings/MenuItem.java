@@ -24,36 +24,25 @@
  * SOFTWARE.
  */
 
-package s05uimenus;
-
-import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.settings.GameSettings;
+package com.almasb.fxgl.settings;
 
 /**
- * Shows how to enable intro/menus and menu items.
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class MenuSample extends GameApplication {
+public enum MenuItem {
 
-    @Override
-    protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
-        settings.setTitle("MenuSample");
-        settings.setVersion("0.1");
-        settings.setFullScreen(false);
+    /**
+     * Enables CONTINUE, SAVE, LOAD.
+     */
+    SAVE_LOAD,
 
-        // 1. set intro enabled to true
-        settings.setIntroEnabled(true);
+    /**
+     * Enables EXTRA -> CREDITS, TROPHIES
+     */
+    EXTRA,
 
-        // 2. set menu enabled to true
-        settings.setMenuEnabled(true);
-
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+    /**
+     * Enables ONLINE (multiplayer).
+     */
+    ONLINE
 }

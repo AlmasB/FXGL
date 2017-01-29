@@ -35,11 +35,14 @@ import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.MenuItem;
 import common.PlayerControl;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
+import java.util.EnumSet;
 
 /**
  * Shows how to save and load game state.
@@ -65,6 +68,7 @@ public class SaveSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.SAVE_LOAD));
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
@@ -160,9 +164,6 @@ public class SaveSample extends GameApplication {
         System.out.println(enemy);
     }
 
-    @Override
-    protected void initAssets() {}
-
     // while this will be called on "new" game
     @Override
     protected void initGame() {
@@ -188,15 +189,6 @@ public class SaveSample extends GameApplication {
 
         getGameWorld().addEntities(player, enemy);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);
