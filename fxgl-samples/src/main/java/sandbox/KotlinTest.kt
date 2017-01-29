@@ -26,10 +26,6 @@
 
 package sandbox
 
-import com.almasb.fxgl.parser.json.JSONEntity
-import com.almasb.fxgl.parser.json.JSONWorld
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.File
 
 /**
  *
@@ -42,17 +38,4 @@ class KotlinTest {
 fun main(args: Array<String>) {
 
 
-    val mapper = ObjectMapper()
-
-    val world = JSONWorld("Level1", arrayListOf(
-            JSONEntity("Player", 300.0, 400.0, 1001),
-            JSONEntity("EnemyArcher", 200.0, 55.0, 1001)
-    ))
-
-    mapper.writeValue(File("level1.json"), world)
-
-//    val world2 = mapper.readValue<JSONWorld>(File("level1.json"), JSONWorld::class.java)
-//
-//    println(world2.name)
-//    println(world2.entities)
 }

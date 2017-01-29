@@ -27,7 +27,7 @@
 package com.almasb.fxgl.parser.tiled
 
 /**
- *
+ * Specification: https://github.com/bjorn/tiled/wiki/JSON-Map-Format
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
