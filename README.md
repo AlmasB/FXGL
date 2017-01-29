@@ -161,6 +161,11 @@ fun main(args: Array<String>) {
 
 ## Gradle
 ```gradle
+repositories {
+    // Needed to resolve unreleased dependencies of com.github.almasb:fxgl:0.2.9
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     compile 'com.github.almasb:fxgl:0.2.9'
 }
