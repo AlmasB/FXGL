@@ -28,6 +28,11 @@ package com.almasb.fxgl.parser
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.reflect.ReflectionUtils
+import com.almasb.fxgl.entity.EntitySpawner
+import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.Spawns
+import com.almasb.fxgl.entity.TextEntityFactory
 import com.almasb.fxgl.gameplay.Level
 import java.util.*
 
@@ -36,15 +41,21 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class TextLevelParser(val entityFactory: OldEntityFactory) {
+class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
 
-    constructor() : this(object : OldEntityFactory(' ') {})
+    constructor(emptyChar: Char, blockWidth: Int, blockHeight: Int) : this(object : TextEntityFactory {
+        override fun emptyChar() = emptyChar
+
+        override fun blockWidth() = blockWidth
+
+        override fun blockHeight() = blockHeight
+    })
 
     companion object {
         private val log = FXGL.getLogger("FXGL.TextLevelParser")
     }
 
-    private val producers = HashMap<Char, (Int, Int) -> Entity>()
+    private val producers = HashMap<String, EntitySpawner>()
 
     /**
      * The empty (ignored) character.
@@ -56,14 +67,10 @@ class TextLevelParser(val entityFactory: OldEntityFactory) {
     var emptyChar = ' '
 
     init {
-        emptyChar = entityFactory.emptyChar
+        emptyChar = entityFactory.emptyChar()
 
-        for (method in entityFactory.javaClass.declaredMethods) {
-            val producer = method.getDeclaredAnnotation(EntityProducer::class.java)
-            if (producer != null) {
-                producers[producer.value] = { x, y -> method.invoke(entityFactory, x, y) as Entity }
-            }
-        }
+        ReflectionUtils.findMethodsMapToFunctions(entityFactory, Spawns::class.java, EntitySpawner::class.java)
+                .forEach { producers.put(it.key.value, it.value) }
     }
 
     /**
@@ -75,8 +82,8 @@ class TextLevelParser(val entityFactory: OldEntityFactory) {
      * @param x column position of character
      * @param y row position of character
      */
-    fun addEntityProducer(character: Char, producer: (x: Int, y: Int) -> Entity) {
-        producers.put(character, producer)
+    fun addEntityProducer(character: Char, producer: EntitySpawner) {
+        producers.put(character.toString(), producer)
     }
 
     /**
@@ -87,7 +94,7 @@ class TextLevelParser(val entityFactory: OldEntityFactory) {
      *
      * @return parsed Level
      */
-    fun parse(levelFileName: String): Level {
+    override fun parse(levelFileName: String): Level {
         val assetLoader = FXGL.getAssetLoader()
         val lines = assetLoader.loadText(levelFileName)
 
@@ -102,9 +109,9 @@ class TextLevelParser(val entityFactory: OldEntityFactory) {
 
             for (j in 0 until line.length) {
                 val c = line[j]
-                val producer = producers[c]
+                val producer = producers[c.toString()]
                 if (producer != null) {
-                    val e = producer.invoke(j, i)
+                    val e = producer.spawn(SpawnData(j.toDouble() * entityFactory.blockWidth(), i.toDouble() * entityFactory.blockHeight()))
                     entities.add(e)
                 } else if (c != emptyChar) {
                     log.warning("No producer found for character: " + c)
@@ -112,6 +119,6 @@ class TextLevelParser(val entityFactory: OldEntityFactory) {
             }
         }
 
-        return Level(maxWidth, lines.size, entities)
+        return Level(maxWidth * entityFactory.blockWidth(), lines.size * entityFactory.blockHeight(), entities)
     }
 }
