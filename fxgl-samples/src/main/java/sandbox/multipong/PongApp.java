@@ -42,6 +42,7 @@ import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.core.math.Vec2;
 import javafx.application.Platform;
@@ -52,6 +53,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.EnumSet;
 import java.util.Map;
 
 /**
@@ -70,7 +72,8 @@ public class PongApp extends GameApplication {
         settings.setTitle("Pong");
         settings.setVersion("0.3dev");
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.ONLINE));
     }
 
     @Override

@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.net;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,6 +55,42 @@ public abstract class NetworkConnection {
 
     public void setParsers(Map<Class<?>, DataParser<? super Serializable>> parsers) {
         this.parsers = parsers;
+    }
+
+    private ReadOnlyBooleanWrapper connectionActive = new ReadOnlyBooleanWrapper(false);
+
+    public final ReadOnlyBooleanProperty connectionActiveProperty() {
+        return connectionActive.getReadOnlyProperty();
+    }
+
+    public boolean isConnectionActive() {
+        return connectionActive.get();
+    }
+
+    private Runnable onConnectionOpen = null;
+
+    public void setOnConnectionOpen(Runnable onConnectionOpen) {
+        this.onConnectionOpen = onConnectionOpen;
+    }
+
+    protected void onConnectionOpen() {
+        if (onConnectionOpen != null)
+            onConnectionOpen.run();
+
+        connectionActive.set(true);
+    }
+
+    private Runnable onConnectionClosed = null;
+
+    public void setOnConnectionClosed(Runnable onConnectionClosed) {
+        this.onConnectionClosed = onConnectionClosed;
+    }
+
+    protected void onConnectionClosed() {
+        if (onConnectionClosed != null)
+            onConnectionClosed.run();
+
+        connectionActive.set(false);
     }
 
     /**

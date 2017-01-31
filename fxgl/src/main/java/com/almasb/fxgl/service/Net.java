@@ -73,6 +73,9 @@ public interface Net {
 
     IOTask<Client> connectMultiplayerTask(String serverIP);
 
+    /**
+     * @return network connection if active or Optional.empty() if not
+     */
     Optional<NetworkConnection> getConnection();
 
     <T extends Serializable> void addDataParser(Class<T> cl, DataParser<T> parser);

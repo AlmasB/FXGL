@@ -181,6 +181,8 @@ public final class Server extends NetworkConnection {
                     latch.countDown();
                     running = true;
 
+                    onConnectionOpen();
+
                     while (running) {
                         Object data = in.readObject();
                         if (data == ConnectionMessage.CLOSE) {
@@ -200,9 +202,11 @@ public final class Server extends NetworkConnection {
             } catch (Exception e) {
                 log.warn("Exception during TCP connection execution: " + e);
                 running = false;
+                onConnectionClosed();
                 return;
             }
 
+            onConnectionClosed();
             log.debug("TCP connection closed normally");
         }
     }

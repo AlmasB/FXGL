@@ -101,7 +101,7 @@ public final class Client extends NetworkConnection {
     }
 
     /**
-     * Performs an actual connection to the server
+     * Performs an actual (blocking for 10 sec) connection to the server.
      *
      * @return true if connected and all is OK, false if something failed
      * @throws Exception
@@ -167,6 +167,8 @@ public final class Client extends NetworkConnection {
                 latch.countDown();
                 running = true;
 
+                onConnectionOpen();
+
                 while (running) {
                     Object data = in.readObject();
                     if (data == ConnectionMessage.CLOSE) {
@@ -185,9 +187,11 @@ public final class Client extends NetworkConnection {
             } catch (Exception e) {
                 log.warn("Exception during TCP connection execution: " + e.getMessage());
                 running = false;
+                onConnectionClosed();
                 return;
             }
 
+            onConnectionClosed();
             log.debug("TCP connection closed normally");
         }
     }

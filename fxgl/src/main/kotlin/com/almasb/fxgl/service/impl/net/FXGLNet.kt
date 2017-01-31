@@ -36,6 +36,7 @@ import com.almasb.fxgl.net.NetworkConnection
 import com.almasb.fxgl.net.Server
 import com.almasb.fxgl.service.Net
 import com.google.inject.Inject
+import javafx.beans.value.ChangeListener
 import java.io.InputStreamReader
 import java.io.Serializable
 import java.net.URL
@@ -75,6 +76,12 @@ class FXGLNet
     private val dummy by lazy { Server() }
     private var connectionInternal: NetworkConnection? = null
 
+    private val connectionListener = ChangeListener<Boolean> { o, was, active ->
+        if (!active) {
+            connectionInternal = null
+        }
+    }
+
     override fun getConnection(): Optional<NetworkConnection> {
         return Optional.ofNullable(connectionInternal)
     }
@@ -88,9 +95,12 @@ class FXGLNet
             val server = Server()
             server.parsers = dummy.parsers
 
+            server.connectionActiveProperty().addListener(connectionListener)
+
             // wait 1 minute
             server.startAndWait(60)
 
+            connectionInternal?.connectionActiveProperty()?.removeListener(connectionListener)
             connectionInternal = server
 
             return@taskOf server
@@ -102,8 +112,11 @@ class FXGLNet
             val client = Client(serverIP)
             client.parsers = dummy.parsers
 
+            client.connectionActiveProperty().addListener(connectionListener)
+
             client.connect()
 
+            connectionInternal?.connectionActiveProperty()?.removeListener(connectionListener)
             connectionInternal = client
 
             return@taskOf client
