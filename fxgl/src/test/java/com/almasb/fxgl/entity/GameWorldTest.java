@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
@@ -34,6 +34,7 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.IDComponent;
+import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.time.UpdateEvent;
