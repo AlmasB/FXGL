@@ -27,7 +27,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.io.FXGLIO
-import com.almasb.fxgl.gameplay.GameWorld
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.google.inject.Inject
 
@@ -42,8 +42,8 @@ class PreInitTask
     private val log = FXGL.getLogger(javaClass)
 
     override fun run() {
-        FXGLIO.defaultExceptionHandler = app.getExceptionHandler()
-        FXGLIO.defaultExecutor = app.getExecutor()
+        FXGLIO.defaultExceptionHandler = app.exceptionHandler
+        FXGLIO.defaultExecutor = app.executor
 
         log.debug("Injecting gameWorld & physicsWorld")
         app.gameWorld = FXGL.getInstance(GameWorld::class.java)
@@ -54,13 +54,13 @@ class PreInitTask
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         // 1. register system actions
-        SystemActions.bind(app.getInput())
+        SystemActions.bind(app.input)
 
         // 2. register user actions
         app.initInput()
 
         // 3. scan for annotated methods and register them too
-        app.getInput().scanForUserActions(app)
+        app.input.scanForUserActions(app)
 
         app.preInit()
     }

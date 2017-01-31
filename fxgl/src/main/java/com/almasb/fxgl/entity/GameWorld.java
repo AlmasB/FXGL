@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
@@ -32,9 +32,10 @@ import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorld;
-import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
+import com.almasb.fxgl.gameplay.GameDifficulty;
+import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.time.UpdateEvent;

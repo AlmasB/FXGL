@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay
+package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
@@ -69,7 +69,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
     }
 
     private fun isOneOfTypes(entity: Entity, vararg types: Enum<*>): Boolean {
-        val entityType = com.almasb.fxgl.entity.Entities.getType(entity)
+        val entityType = Entities.getType(entity)
 
         if (entityType != null)
             return types.any { entityType.isType(it) }
@@ -105,7 +105,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      * @return list of entities colliding with entity
      */
     fun getCollidingEntities(entity: Entity): List<Entity> {
-        val bbox = com.almasb.fxgl.entity.Entities.getBBox(entity)
+        val bbox = Entities.getBBox(entity)
 
         return entities.filter { it.getComponentUnsafe(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
     }
@@ -118,7 +118,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      * *
      * @return list of entities in the layer
      */
-    fun getEntitiesByLayer(layer: com.almasb.fxgl.entity.RenderLayer): List<Entity> {
+    fun getEntitiesByLayer(layer: RenderLayer): List<Entity> {
         return entities.filter {
             val view = it.getComponentUnsafe(ViewComponent::class.java)
 

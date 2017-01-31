@@ -28,6 +28,7 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.entity.GameWorld
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
@@ -109,7 +110,7 @@ class PhysicsWorldTest {
         physicsWorld.addCollisionHandler(handler)
 
         // create game world and add listener
-        val gameWorld = FXGL.getInstance(com.almasb.fxgl.gameplay.GameWorld::class.java)
+        val gameWorld = FXGL.getInstance(GameWorld::class.java)
         gameWorld.addWorldListener(physicsWorld)
 
         gameWorld.addEntity(entity1)
