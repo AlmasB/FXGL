@@ -37,6 +37,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Represents a communication between two machines over network.
@@ -93,6 +94,19 @@ public abstract class NetworkConnection {
         connectionActive.set(false);
     }
 
+    private Consumer<Throwable> exceptionHandler = null;
+
+    public void setExceptionHandler(Consumer<Throwable> exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
+
+    protected void handleError(Exception e) {
+        if (exceptionHandler == null)
+            throw new RuntimeException("Network error: " + e);
+        else
+            exceptionHandler.accept(e);
+    }
+
     /**
      * Send a message (hint) that this end of connection is about
      * to close
@@ -128,9 +142,8 @@ public abstract class NetworkConnection {
      * Send data to the machine at the other end using UDP protocol.
      *
      * @param data the data object
-     * @throws Exception
      */
-    public void send(Serializable data) throws Exception {
+    public void send(Serializable data) {
         send(data, NetworkProtocol.UDP);
     }
 
@@ -139,18 +152,17 @@ public abstract class NetworkConnection {
      *
      * @param data the data object
      * @param protocol the protocol to use
-     * @throws Exception
      */
-    public void send(Serializable data, NetworkProtocol protocol) throws Exception {
+    public void send(Serializable data, NetworkProtocol protocol) {
         if (protocol == NetworkProtocol.TCP)
             sendTCP(data);
         else
             sendUDP(data);
     }
 
-    protected abstract void sendUDP(Serializable data) throws Exception;
+    protected abstract void sendUDP(Serializable data);
 
-    protected abstract void sendTCP(Serializable data) throws Exception;
+    protected abstract void sendTCP(Serializable data);
 
     public abstract void close();
 

@@ -140,19 +140,27 @@ public final class Server extends NetworkConnection {
     }
 
     @Override
-    protected void sendUDP(Serializable data) throws Exception {
+    protected void sendUDP(Serializable data) {
         if (udpThread.running) {
-            byte[] buf = toByteArray(data);
-            udpThread.outSocket.send(new DatagramPacket(buf, buf.length, clientAddress, clientPort));
+            try {
+                byte[] buf = toByteArray(data);
+                udpThread.outSocket.send(new DatagramPacket(buf, buf.length, clientAddress, clientPort));
+            } catch (Exception e) {
+                handleError(e);
+            }
         } else {
             throw new IllegalStateException("UDP connection not active");
         }
     }
 
     @Override
-    protected void sendTCP(Serializable data) throws Exception {
+    protected void sendTCP(Serializable data) {
         if (tcpThread.running) {
-            tcpThread.outputStream.writeObject(data);
+            try {
+                tcpThread.outputStream.writeObject(data);
+            } catch (Exception e) {
+                handleError(e);
+            }
         } else {
             throw new IllegalStateException("Client TCP is not connected");
         }
