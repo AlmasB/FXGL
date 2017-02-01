@@ -25,18 +25,18 @@
  */
 package s04physics;
 
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
 import javafx.scene.input.KeyCode;

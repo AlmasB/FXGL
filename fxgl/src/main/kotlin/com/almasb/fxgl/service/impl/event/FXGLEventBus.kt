@@ -26,10 +26,10 @@
 
 package com.almasb.fxgl.service.impl.event
 
-import com.almasb.fxgl.eventbus.FXEventBus
-import com.almasb.fxgl.eventbus.Subscriber
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.Handles
+import com.almasb.fxgl.eventbus.FXEventBus
+import com.almasb.fxgl.eventbus.Subscriber
 import com.almasb.fxgl.service.EventBus
 import com.google.inject.Inject
 import javafx.event.Event

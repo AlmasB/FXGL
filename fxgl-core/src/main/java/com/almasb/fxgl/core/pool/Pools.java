@@ -30,8 +30,8 @@
 
 package com.almasb.fxgl.core.pool;
 
-import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.ObjectMap;
 
 /**
  * Stores a map of {@link Pool}s (usually {@link ReflectionPool}s) by type for convenient static access.

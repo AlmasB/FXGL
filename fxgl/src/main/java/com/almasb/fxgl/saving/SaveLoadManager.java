@@ -26,12 +26,10 @@
 
 package com.almasb.fxgl.saving;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.io.FileExtension;
 import com.almasb.fxgl.io.IOTask;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.saving.DataFile;
-import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.scene.ProgressDialog;
 import com.almasb.fxgl.settings.UserProfile;

@@ -26,12 +26,12 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.ComponentListener;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;

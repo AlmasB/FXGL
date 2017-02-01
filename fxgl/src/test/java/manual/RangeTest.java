@@ -26,17 +26,17 @@
 
 package manual;
 
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;

@@ -26,10 +26,10 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.service.ServiceType;
-import com.almasb.fxgl.scene.menu.MenuStyle;
-import com.almasb.fxgl.util.Credits;
 import com.almasb.fxgl.core.StringBuilder;
+import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.service.ServiceType;
+import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;

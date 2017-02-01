@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ecs.*;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
@@ -38,7 +39,6 @@ import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.lighting.LightingSystem;
 import com.almasb.fxgl.ui.UI;
-import com.almasb.fxgl.core.collection.Array;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;

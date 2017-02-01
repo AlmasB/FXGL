@@ -27,23 +27,16 @@
 package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.asset.FXGLAssets;
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
 
 /**
  * This is an example of a basic self-contained FXGL game application.

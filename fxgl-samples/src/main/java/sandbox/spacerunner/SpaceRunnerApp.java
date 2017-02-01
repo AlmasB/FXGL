@@ -26,16 +26,10 @@
 
 package sandbox.spacerunner;
 
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.UserDataComponent;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.ScrollingBackgroundView;
-import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;

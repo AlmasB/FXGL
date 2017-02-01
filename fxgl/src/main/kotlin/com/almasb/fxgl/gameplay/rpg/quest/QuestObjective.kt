@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.FXGL
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.beans.property.SimpleObjectProperty
 import javafx.util.Duration
 
 /**

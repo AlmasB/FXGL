@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.ecs.component;
 
-import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import org.jetbrains.annotations.NotNull;

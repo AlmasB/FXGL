@@ -29,7 +29,6 @@ package com.almasb.fxgl.gameplay.rpg.quest
 import javafx.beans.binding.Bindings
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.beans.property.SimpleObjectProperty
 import java.util.concurrent.Callable
 
 /**

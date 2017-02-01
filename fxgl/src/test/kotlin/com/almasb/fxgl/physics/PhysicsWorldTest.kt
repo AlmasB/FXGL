@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.physics
 
-import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.GameWorld
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat

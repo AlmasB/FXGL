@@ -26,12 +26,12 @@
 
 package com.almasb.fxgl.ecs;
 
-import com.almasb.fxgl.io.serialization.Bundle;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import org.apache.logging.log4j.LogManager;

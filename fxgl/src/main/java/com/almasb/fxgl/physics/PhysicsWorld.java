@@ -25,9 +25,12 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorldListener;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.effect.Particle;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.Entities;
@@ -37,9 +40,6 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.service.Pooler;
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.core.pool.Pool;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;

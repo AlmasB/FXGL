@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.parser.text
 
-import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.reflect.ReflectionUtils
+import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.TextEntityFactory

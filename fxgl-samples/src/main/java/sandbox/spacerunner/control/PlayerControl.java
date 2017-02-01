@@ -26,10 +26,10 @@
 
 package sandbox.spacerunner.control;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import sandbox.spacerunner.EntityType;

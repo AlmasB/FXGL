@@ -26,10 +26,10 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.ecs.CopyableComponent;
 import com.almasb.fxgl.ecs.component.ObjectComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.io.serialization.Bundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;

@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.scene.menu;
 
-import com.almasb.fxgl.saving.SaveLoadManager;
 import com.almasb.fxgl.saving.SaveFile;
+import com.almasb.fxgl.saving.SaveLoadManager;
 import javafx.beans.property.ReadOnlyStringProperty;
 
 /**

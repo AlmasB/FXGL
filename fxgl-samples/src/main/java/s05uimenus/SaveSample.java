@@ -26,14 +26,14 @@
 
 package s05uimenus;
 
-import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.MenuItem;
 import common.PlayerControl;

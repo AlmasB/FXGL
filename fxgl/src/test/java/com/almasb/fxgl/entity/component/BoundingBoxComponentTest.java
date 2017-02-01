@@ -26,10 +26,10 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.io.serialization.Bundle;
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.MockApplicationModule;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;

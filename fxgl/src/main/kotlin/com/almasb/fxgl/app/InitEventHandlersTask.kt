@@ -38,7 +38,6 @@ import javafx.animation.AnimationTimer
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
 
 /**
  * Initializes global event handlers.

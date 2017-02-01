@@ -26,28 +26,26 @@
 
 package sandbox.multipong;
 
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.service.listener.FXGLListener;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.input.ActionType;
-import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.service.listener.FXGLListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.ui.UI;
-import com.almasb.fxgl.core.math.Vec2;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;

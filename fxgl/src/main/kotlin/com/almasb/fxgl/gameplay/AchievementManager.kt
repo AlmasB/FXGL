@@ -26,11 +26,11 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.event.AchievementEvent
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.listener.UserProfileSavable
+import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
 import javafx.collections.FXCollections
 

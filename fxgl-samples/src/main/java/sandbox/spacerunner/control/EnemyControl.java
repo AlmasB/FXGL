@@ -26,13 +26,13 @@
 
 package sandbox.spacerunner.control;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.service.ServiceType;
-import com.almasb.fxgl.service.AudioPlayer;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.service.AudioPlayer;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.util.Duration;
 import sandbox.spacerunner.EntityType;

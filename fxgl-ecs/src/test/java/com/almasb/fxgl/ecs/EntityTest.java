@@ -26,12 +26,12 @@
 
 package com.almasb.fxgl.ecs;
 
-import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.ecs.component.BooleanComponent;
 import com.almasb.fxgl.ecs.component.DoubleComponent;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
+import com.almasb.fxgl.io.serialization.Bundle;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

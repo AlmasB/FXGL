@@ -27,9 +27,9 @@
 package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.service.MasterTimer
-import com.almasb.fxgl.core.math.FXGLMath
 
 /**
  * Basic profiler.

@@ -26,12 +26,13 @@
 
 package sandbox.towerfall;
 
+import com.almasb.fxgl.algorithm.AASubdivision;
+import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
-import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
@@ -41,15 +42,13 @@ import com.almasb.fxgl.gameplay.rpg.quest.Quest;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestObjective;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestWindow;
-import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.text.TextLevelParser;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.InGamePanel;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -58,7 +57,6 @@ import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
-import com.almasb.fxgl.algorithm.AASubdivision;
 
 import java.util.Arrays;
 import java.util.List;

@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.io.FXGLIO
 import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.io.FXGLIO
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.google.inject.Inject
 

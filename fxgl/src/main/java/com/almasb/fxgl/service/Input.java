@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.service;
 
-import com.almasb.fxgl.service.listener.FXGLListener;
 import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.scene.Viewport;
+import com.almasb.fxgl.service.listener.FXGLListener;
 import com.almasb.fxgl.service.listener.UserProfileSavable;
 import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.geometry.Point2D;

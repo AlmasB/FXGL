@@ -29,10 +29,10 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.entity.SetEntityFactory
 import com.almasb.fxgl.gameplay.GameState
-import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.physics.AddCollisionHandler
 import com.almasb.fxgl.physics.CollisionHandler
+import com.almasb.fxgl.saving.DataFile
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
 import javafx.concurrent.Task
 

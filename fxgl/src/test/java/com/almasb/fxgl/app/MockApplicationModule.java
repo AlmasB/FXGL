@@ -26,25 +26,18 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.service.AssetLoader;
-import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.service.Executor;
-import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
-import com.almasb.fxgl.service.EventBus;
-import com.almasb.fxgl.service.impl.event.FXGLEventBus;
-import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
-import com.almasb.fxgl.service.NotificationService;
-import com.almasb.fxgl.service.impl.input.FXGLInput;
-import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.logging.LoggerFactory;
 import com.almasb.fxgl.logging.MockLoggerFactory;
+import com.almasb.fxgl.service.*;
+import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
+import com.almasb.fxgl.service.impl.event.FXGLEventBus;
+import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
+import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
+import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.service.MasterTimer;
 import com.almasb.fxgl.time.MockMasterTimer;
 import com.almasb.fxgl.ui.MockUIFactory;
-import com.almasb.fxgl.service.UIFactory;
-import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
-import com.almasb.fxgl.service.Pooler;
 import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.stage.Stage;

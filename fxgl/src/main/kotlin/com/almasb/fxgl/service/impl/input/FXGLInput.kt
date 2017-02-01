@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.service.impl.input
 
-import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.input.*
+import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Input
 import com.almasb.fxgl.settings.UserProfile

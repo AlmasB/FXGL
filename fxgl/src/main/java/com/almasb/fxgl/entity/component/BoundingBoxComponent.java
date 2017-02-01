@@ -26,18 +26,18 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.io.serialization.Bundle;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.CopyableComponent;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
-import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.SAT;
 import com.almasb.fxgl.service.Pooler;
-import com.almasb.fxgl.core.pool.Pool;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.collections.FXCollections;

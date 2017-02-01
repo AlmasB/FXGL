@@ -26,9 +26,9 @@
 
 package manual;
 
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;

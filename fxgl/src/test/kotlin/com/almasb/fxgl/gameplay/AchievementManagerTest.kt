@@ -28,7 +28,6 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
-import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.settings.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
