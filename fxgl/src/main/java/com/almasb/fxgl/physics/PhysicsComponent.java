@@ -70,7 +70,7 @@ public class PhysicsComponent extends AbstractComponent {
         }
     }
 
-    private Body getBody() {
+    public final Body getBody() {
         if (body == null)
             throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
         return body;
