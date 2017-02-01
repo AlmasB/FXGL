@@ -16,14 +16,19 @@
 
 package com.badlogic.gdx.ai.btree;
 
-/** A {@code TaskCloner} allows you to use third-party libraries like Kryo to clone behavior trees. See {@link Task#TASK_CLONER}
+/**
+ * A {@code TaskCloner} allows you to use third-party libraries like Kryo to clone behavior trees.
+ * See {@link Task#TASK_CLONER}.
  * 
- * @author davebaol */
+ * @author davebaol
+ */
 public interface TaskCloner {
 
-	/** Makes a deep copy of the given task.
+	/**
+     * Makes a deep copy of the given task.
+     *
 	 * @param task the task to clone
-	 * @return the cloned task */
-	public <T> Task<T> cloneTask (Task<T> task);
-
+	 * @return the cloned task
+     */
+	<T> Task<T> cloneTask(Task<T> task);
 }
