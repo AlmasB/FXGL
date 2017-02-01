@@ -31,6 +31,7 @@ import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import org.junit.Before;
@@ -236,7 +237,26 @@ public class BoundingBoxComponentTest {
 
     @Test
     public void testCheckCollision() throws Exception {
+        bbox.addHitBox(new HitBox("TEST", BoundingShape.box(40, 40)));
 
+        BoundingBoxComponent bbox2 = new BoundingBoxComponent();
+        bbox2.addHitBox(new HitBox("TEST2", BoundingShape.box(40, 40)));
+
+        CollisionResult result = bbox.checkCollision(bbox2);
+        assertThat(result.hasCollided(), is(true));
+        assertThat(result.getBoxA(), is(bbox.hitBoxesProperty().get(0)));
+        assertThat(result.getBoxB(), is(bbox2.hitBoxesProperty().get(0)));
+
+        BoundingBoxComponent bbox3 = new BoundingBoxComponent();
+        bbox3.addHitBox(new HitBox("TEST3", new Point2D(45, 0), BoundingShape.box(40, 40)));
+
+        Entity entity2 = new Entity();
+        entity2.addComponent(new PositionComponent());
+        entity2.addComponent(bbox3);
+
+        result = bbox.checkCollision(bbox3);
+        assertThat(result.hasCollided(), is(false));
+        assertThat(result == CollisionResult.NO_COLLISION, is(true));
     }
 
     @Test
