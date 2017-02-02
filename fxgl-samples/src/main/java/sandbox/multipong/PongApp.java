@@ -132,9 +132,6 @@ public class PongApp extends GameApplication {
         input.addInputMapping(new InputMapping("Down", KeyCode.S));
     }
 
-    @Override
-    protected void initAssets() {}
-
     private GameMode mode;
 
     @Override
@@ -190,15 +187,9 @@ public class PongApp extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
 
-        // TODO: once callbacks are implemented we need a way of knowing
-        // if connection is done from API
         if (mode == GameMode.MP_HOST) {
             getNet().getConnection().ifPresent(conn -> {
-                try {
-                    conn.send(new ServerMessage(new Vec2((float)ball.getX(), (float)ball.getY()), bat1.getY(), bat2.getY()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                conn.send(new ServerMessage(new Vec2((float)ball.getX(), (float)ball.getY()), bat1.getY(), bat2.getY()));
             });
         }
     }
@@ -242,11 +233,7 @@ public class PongApp extends GameApplication {
     public void up() {
         if (mode == GameMode.MP_CLIENT) {
             getNet().getConnection().ifPresent(conn -> {
-                try {
-                    conn.send(new ClientMessage(true, false, false));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                conn.send(new ClientMessage(true, false, false));
             });
         } else {
             playerBat.up();
@@ -257,11 +244,7 @@ public class PongApp extends GameApplication {
     public void down() {
         if (mode == GameMode.MP_CLIENT) {
             getNet().getConnection().ifPresent(conn -> {
-                try {
-                    conn.send(new ClientMessage(false, true, false));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                conn.send(new ClientMessage(false, true, false));
             });
         } else {
             playerBat.down();
@@ -272,11 +255,7 @@ public class PongApp extends GameApplication {
     public void stopBat() {
         if (mode == GameMode.MP_CLIENT) {
             getNet().getConnection().ifPresent(conn -> {
-                try {
-                    conn.send(new ClientMessage(false, false, true));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                conn.send(new ClientMessage(false, false, true));
             });
         } else {
             playerBat.stop();
@@ -287,11 +266,7 @@ public class PongApp extends GameApplication {
     public void stopBat2() {
         if (mode == GameMode.MP_CLIENT) {
             getNet().getConnection().ifPresent(conn -> {
-                try {
-                    conn.send(new ClientMessage(false, false, true));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                conn.send(new ClientMessage(false, false, true));
             });
         } else {
             playerBat.stop();
