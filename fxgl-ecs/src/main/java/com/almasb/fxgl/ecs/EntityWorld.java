@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,23 +46,19 @@ public class EntityWorld {
     private static final Logger log = LogManager.getLogger(EntityWorld.class);
 
     /**
-     * List of entities currently in the world.
+     * The update list.
+     */
+    private Array<Entity> updateList;
+
+    /**
+     * List of entities added to the update list in the next tick.
+     */
+    private Array<Entity> waitingList;
+
+    /**
+     * List of entities in the world.
      */
     protected List<Entity> entities;
-
-    /**
-     * List of entities waiting to be added to the world.
-     */
-    private List<Entity> addQueue;
-
-    /**
-     * List of entities waiting to be removed from the world.
-     */
-    private List<Entity> removeQueue;
-
-    private ObjectMap<Class<? extends Component>, Array<Entity> > componentMap = new ObjectMap<>();
-
-    //private Array<EntitySystem> entitySystems = new Array<>(true, 32);
 
     /**
      * Constructs the world with initial entity capacity = 32.
@@ -76,27 +73,33 @@ public class EntityWorld {
      * @param initialCapacity initial entity capacity
      */
     public EntityWorld(int initialCapacity) {
+        updateList = new Array<>(true, initialCapacity);
+        waitingList = new Array<>(false, initialCapacity);
         entities = new ArrayList<>(initialCapacity);
-        addQueue = new ArrayList<>(initialCapacity);
-        removeQueue = new ArrayList<>(initialCapacity);
     }
 
     /**
-     * Places an entity in the queue to be added to the world.
-     * The entity will be added to the world in the next tick.
+     * Adds entity to this world.
+     * The entity will be added to update list in the next tick.
      *
      * @param entity the entity to add to world
      */
     public final void addEntity(Entity entity) {
-        if (entities.contains(entity))
+        if (entity.isInWorld())
             throw new IllegalArgumentException("Entity is already attached to world");
 
-        addQueue.add(entity);
+        waitingList.add(entity);
+        entities.add(entity);
+
+        for (Class<? extends Component> type : entity.components.keys()) {
+            addComponentMap(type, entity);
+        }
+
+        entity.init(this);
+        notifyEntityAdded(entity);
     }
 
     /**
-     * Places entities in the queue to be added to the world.
-     * The entities will be added to the world in the next tick.
      *
      * @param entitiesToAdd the entities to add to world
      */
@@ -107,23 +110,24 @@ public class EntityWorld {
     }
 
     /**
-     * Places an entity in the queue to be removed from the world.
-     * The entity will be removed in the next tick.
      *
      * @param entity the entity to remove from world
      */
     public final void removeEntity(Entity entity) {
-        if (!entities.contains(entity)) {
-            log.warn("Attempted to remove entity not attached to world");
-            return;
+        if (entity.getWorld() != this)
+            throw new IllegalArgumentException("Attempted to remove entity not attached to this world");
+
+        entities.remove(entity);
+
+        for (Class<? extends Component> type : entity.components.keys()) {
+            removeComponentMap(type, entity);
         }
 
-        removeQueue.add(entity);
+        notifyEntityRemoved(entity);
+        entity.clean();
     }
 
     /**
-     * Places entities in the queue to be removed from the world.
-     * The entities will be removed in the next tick.
      *
      * @param entitiesToRemove the entity to remove from world
      */
@@ -133,28 +137,59 @@ public class EntityWorld {
         }
     }
 
-//    /**
-//     * @param type
-//     * @param <T>
-//     * @return entity system with given type or null
-//     */
-//    public final <T extends EntitySystem> T getEntitySystem(Class<T> type) {
-//        for (EntitySystem system : entitySystems) {
-//            if (system.getClass().equals(type)) {
-//                return (T) system;
-//            }
-//        }
-//
-//        return null;
-//    }
+    /**
+     * Performs a single world update tick.
+     * <p>
+     * <ol>
+     * </ol>
+     *
+     * @param tpf time per frame
+     */
+    protected void update(double tpf) {
+        updateList.addAll(waitingList);
+        waitingList.clear();
 
-//    public final void addEntitySystem(EntitySystem system) {
-//        entitySystems.add(system);
-//    }
-//
-//    public final void removeEntitySystem(EntitySystem system) {
-//        entitySystems.removeValue(system, true);
-//    }
+        for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+
+            if (e.isInWorld()) {
+                e.update(tpf);
+            } else {
+                it.remove();
+            }
+        }
+
+        notifyWorldUpdated(tpf);
+    }
+
+    /**
+     * Resets the world to its initial state.
+     * Does NOT clear state listeners.
+     * <p>
+     * <ol>
+     * </ol>
+     */
+    protected void reset() {
+        log.trace("Resetting entity world");
+
+        for (Entity e : updateList) {
+            if (e.isInWorld()) {
+                e.clean();
+            }
+        }
+
+        for (Entity e : waitingList) {
+            e.clean();
+        }
+
+        waitingList.clear();
+        updateList.clear();
+        entities.clear();
+
+        componentMap.clear();
+
+        notifyWorldReset();
+    }
 
     private Array<EntityWorldListener> worldListeners = new Array<>(true, 16);
 
@@ -177,118 +212,33 @@ public class EntityWorld {
     }
 
     private void notifyEntityAdded(Entity e) {
-        for (EntityWorldListener l : worldListeners)
-            l.onEntityAdded(e);
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onEntityAdded(e);
+        }
+
+//        for (EntityWorldListener l : worldListeners)
+//            l.onEntityAdded(e);
     }
 
     private void notifyEntityRemoved(Entity e) {
-        for (EntityWorldListener l : worldListeners)
-            l.onEntityRemoved(e);
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onEntityRemoved(e);
+        }
     }
 
     private void notifyWorldUpdated(double tpf) {
-        for (EntityWorldListener l : worldListeners)
-            l.onWorldUpdate(tpf);
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onWorldUpdate(tpf);
+        }
     }
 
     private void notifyWorldReset() {
-        for (EntityWorldListener l : worldListeners)
-            l.onWorldReset();
-    }
-
-    private void registerAndInitPendingEntities() {
-        entities.addAll(addQueue);
-
-        for (int i = 0; i < addQueue.size(); i++) {
-            Entity e = addQueue.get(i);
-
-            for (Class<? extends Component> type : e.components.keys()) {
-                addComponentMap(type, e);
-            }
-
-            e.init(this);
-            notifyEntityAdded(e);
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onWorldReset();
         }
-
-        addQueue.clear();
     }
 
-    private void removeAndCleanPendingEntities() {
-        entities.removeAll(removeQueue);
-
-        for (int i = 0; i < removeQueue.size(); i++) {
-            Entity e = removeQueue.get(i);
-
-            for (Class<? extends Component> type : e.components.keys()) {
-                removeComponentMap(type, e);
-            }
-
-            notifyEntityRemoved(e);
-            e.clean();
-        }
-
-        removeQueue.clear();
-    }
-
-    /**
-     * Resets the world to its initial state.
-     * Does NOT clear state listeners.
-     * <p>
-     * <ol>
-     * <li>Registers waiting "add" entities</li>
-     * <li>Removes waiting "remove" entities</li>
-     * <li>Cleans and removes all entities</li>
-     * <li>Notifies world reset</li>
-     * </ol>
-     */
-    protected void reset() {
-        log.trace("Resetting entity world");
-
-        registerAndInitPendingEntities();
-        removeAndCleanPendingEntities();
-
-        entities.forEach(Entity::clean);
-        entities.clear();
-
-        componentMap.clear();
-
-        notifyWorldReset();
-    }
-
-    /**
-     * Performs a single world update tick.
-     * <p>
-     * <ol>
-     * <li>Registers waiting "add" entities</li>
-     * <li>Removes waiting "remove" entities</li>
-     * <li>Updates all entities</li>
-     * <li>Notifies world update</li>
-     * </ol>
-     *
-     * @param tpf time per frame
-     */
-    protected void update(double tpf) {
-        registerAndInitPendingEntities();
-        removeAndCleanPendingEntities();
-
-        // NOT IMPLEMENTED
-//        for (EntitySystem system : entitySystems) {
-//            if (system.isPaused())
-//                continue;
-//
-//            for (Class<? extends Component> type : system.getRequiredComponents()) {
-//                for (Entity e : getEntitiesByComponent(type)) {
-//                    system.onUpdate(e, tpf);
-//                }
-//            }
-//        }
-
-        for (int i = 0; i < entities.size(); i++) {
-            entities.get(i).update(tpf);
-        }
-
-        notifyWorldUpdated(tpf);
-    }
+    private ObjectMap<Class<? extends Component>, Array<Entity> > componentMap = new ObjectMap<>();
 
     private void addComponentMap(Class<? extends Component> type, Entity e) {
         Array<Entity> array = componentMap.get(type);
@@ -324,14 +274,12 @@ public class EntityWorld {
         return new ArrayList<>(entities);
     }
 
-    private static final Array<Entity> EMPTY = new Array<>(0);
-
     /**
      * @param type component type
      * @return array of entities that have given component (do NOT modify)
      */
     public final Array<Entity> getEntitiesByComponent(Class<? extends Component> type) {
-        return componentMap.get(type, EMPTY);
+        return componentMap.get(type, Array.empty());
     }
 
     void onComponentAdded(Component component, Entity e) {

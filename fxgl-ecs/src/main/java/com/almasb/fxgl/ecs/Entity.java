@@ -41,6 +41,11 @@ import java.util.*;
 
 /**
  * A generic entity in the Entity-Component-System model.
+ * During update (or control update) it is not allowed to:
+ * <ol>
+ *     <li>Add control</li>
+ *     <li>Remove control</li>
+ * </ol>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -489,6 +494,10 @@ public class Entity {
 
     private boolean controlsEnabled = true;
 
+    public final boolean isInWorld() {
+        return world != null;
+    }
+
     /**
      * Setting this to false will disable each control's update until this has
      * been set back to true.
@@ -573,12 +582,16 @@ public class Entity {
         active.set(true);
     }
 
+    private boolean updating = false;
+    private boolean delayedRemove = false;
+
     /**
      * Update tick for this entity.
      *
      * @param tpf time per frame
      */
     void update(double tpf) {
+        updating = true;
 
         if (controlsEnabled) {
             for (Control c : controls.values()) {
@@ -589,6 +602,11 @@ public class Entity {
         }
 
         updateActions(tpf);
+
+        updating = false;
+
+        if (delayedRemove)
+            removeFromWorld();
     }
 
     @SuppressWarnings("unchecked")
@@ -652,7 +670,11 @@ public class Entity {
         if (cleaning && world == null)
             throw new IllegalStateException("Attempted access a cleaned entity!");
 
-        world.removeEntity(this);
+        if (updating) {
+            delayedRemove = true;
+        } else {
+            world.removeEntity(this);
+        }
     }
 
     /**

@@ -273,16 +273,16 @@ public class GameWorldTest {
         assertThat(gameWorld.getEntityByID("e3", 0), is(Optional.empty()));
     }
 
-    @Test
-    public void setLevel() {
-        Level level = new Level(10, 10, Arrays.asList(e1, e2, e3, e4));
-
-        GameWorld world = new GameWorld();
-        world.setLevel(level);
-        world.onUpdateEvent(new UpdateEvent(1, 0.016));
-
-        assertThat(world.getEntities(), hasItems(e1, e2, e3, e4));
-    }
+//    @Test
+//    public void setLevel() {
+//        Level level = new Level(10, 10, Arrays.asList(e1, e2, e3, e4));
+//
+//        GameWorld world = new GameWorld();
+//        world.setLevel(level);
+//        world.onUpdateEvent(new UpdateEvent(1, 0.016));
+//
+//        assertThat(world.getEntities(), hasItems(e1, e2, e3, e4));
+//    }
 
 //    @Test
 //    public void testTriggers() {

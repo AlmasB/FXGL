@@ -375,18 +375,12 @@ public class EntityTest {
 
         EntityWorld world = new EntityWorld();
         world.addEntity(entity);
-        assertThat(hp.value, is(0.0));
-
-        world.update(0);
         assertThat(hp.value, is(30.0));
 
         entity.setOnNotActive(() -> hp.value = -50.0);
         assertThat(hp.value, is(30.0));
 
         world.removeEntity(entity);
-        assertThat(hp.value, is(30.0));
-
-        world.update(0);
         assertThat(hp.value, is(-50.0));
     }
 
