@@ -34,10 +34,7 @@ import com.almasb.fxgl.core.StringBuilder;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.reflect.ArrayReflection;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A resizable, ordered or unordered array of objects.
@@ -646,6 +643,15 @@ public class Array<T> implements Iterable<T> {
         V[] result = (V[]) ArrayReflection.newInstance(type, size);
         System.arraycopy(items, 0, result, 0, size);
         return result;
+    }
+
+    /**
+     * @return new list containing items from this Array
+     */
+    public List<T> toList() {
+        List<T> list = new ArrayList<>(size);
+        Collections.addAll(list, items);
+        return list;
     }
 
     private void requireNotEmpty() {
