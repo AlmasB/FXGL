@@ -113,16 +113,6 @@ public class TowerfallApp extends GameApplication {
                 getGameState().increment("shotArrows", +1);
             }
         }, KeyCode.F);
-
-        input.addAction(new UserAction("Open/Close Panel") {
-            @Override
-            protected void onActionBegin() {
-                if (panel.isOpen())
-                    panel.close();
-                else
-                    panel.open();
-            }
-        }, KeyCode.TAB);
     }
 
     @Override
@@ -137,25 +127,14 @@ public class TowerfallApp extends GameApplication {
         TextLevelParser parser = new TextLevelParser(getGameWorld().getEntityFactory());
         Level level = parser.parse("towerfall_level.txt");
 
-        player = (GameEntity) level.getEntities()
-                .stream()
-                .filter(e -> e.hasComponent(TypeComponent.class))
-                .filter(e -> e.getComponentUnsafe(TypeComponent.class).isType(EntityType.PLAYER))
-                .findAny()
-                .get();
-
-        playerControl = player.getControlUnsafe(CharacterControl.class);
-
         getGameWorld().setLevel(level);
-    }
 
-    private InGamePanel panel;
+        player = (GameEntity) getGameWorld().getEntitiesByType(EntityType.PLAYER).get(0);
+        playerControl = player.getControlUnsafe(CharacterControl.class);
+    }
 
     @Override
     protected void initUI() {
-        panel = new InGamePanel();
-        getGameScene().addUINode(panel);
-
         QuestPane questPane = new QuestPane(350, 450);
         QuestWindow window = new QuestWindow(questPane);
 
