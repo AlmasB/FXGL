@@ -26,6 +26,7 @@
 
 package sandbox.towerfall;
 
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
@@ -106,7 +107,7 @@ public class TowerfallFactory implements TextEntityFactory {
                 .viewFromNode(new Rectangle(36, 36, Color.RED))
                 .bbox(new HitBox("Main", BoundingShape.circle(18)))
                 .with(physics, new CollidableComponent(true))
-                //.with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
+                .with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
                 .build();
     }
 

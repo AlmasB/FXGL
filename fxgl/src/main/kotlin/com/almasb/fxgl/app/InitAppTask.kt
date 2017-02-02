@@ -35,6 +35,7 @@ import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.saving.DataFile
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
 import javafx.concurrent.Task
+import java.util.*
 
 /**
  * Initializes game aspects: assets, game, physics, UI, etc.
@@ -70,7 +71,11 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         app.initGameVars(vars)
         vars.forEach { name, value -> app.gameState.put(name, value) }
 
-        scanForAnnotations()
+        val annotationMap = scanForAnnotations()
+
+        annotationMap[SetEntityFactory::class.java]?.let {
+            app.gameWorld.setEntityFactory(FXGL.getInstance(it[0]) as EntityFactory)
+        }
 
         if (dataFile === DataFile.EMPTY)
             app.initGame()
@@ -80,6 +85,9 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         update("Initializing Physics", 2)
         app.initPhysics()
 
+        annotationMap[AddCollisionHandler::class.java]?.let {
+            it.forEach { app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler) }
+        }
 
         update("Initializing UI", 3)
         app.initUI()
@@ -106,20 +114,28 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
                 .uncaughtException(Thread.currentThread(), exception ?: RuntimeException("Initialization failed"))
     }
 
-    private fun scanForAnnotations() {
+    private fun scanForAnnotations(): Map<Class<*>, List<Class<*>>> {
+        val map = hashMapOf<Class<*>, ArrayList<Class<*>>>()
+
         // this ensures that we only scan the appropriate package,
         // i.e. the package of the "App" and any subpackages recursively
         // also speeds up the scanning
         val scanner = FastClasspathScanner(app.javaClass.`package`.name)
 
+        map[SetEntityFactory::class.java] = arrayListOf()
         scanner.matchClassesWithAnnotation(SetEntityFactory::class.java, {
-            app.gameWorld.setEntityFactory(FXGL.getInstance(it) as EntityFactory)
+            log.debug("@SetEntityFactory: $it")
+            map[SetEntityFactory::class.java]!!.add(it)
         })
 
+        map[AddCollisionHandler::class.java] = arrayListOf()
         scanner.matchClassesWithAnnotation(AddCollisionHandler::class.java, {
-            app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)
+            log.debug("@AddCollisionHandler: $it")
+            map[AddCollisionHandler::class.java]!!.add(it)
         })
 
         scanner.scan()
+
+        return map
     }
 }

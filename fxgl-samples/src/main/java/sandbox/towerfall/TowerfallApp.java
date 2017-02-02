@@ -26,16 +26,9 @@
 
 package sandbox.towerfall;
 
-import com.almasb.fxgl.algorithm.AASubdivision;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.UserDataComponent;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.gameplay.rpg.quest.Quest;
@@ -44,19 +37,11 @@ import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestWindow;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.text.TextLevelParser;
-import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.InGamePanel;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
 
 import java.util.Arrays;
 import java.util.List;
@@ -141,11 +126,6 @@ public class TowerfallApp extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {
-        blockImage = getAssetLoader().loadTexture("brick.png", 40, 40).getImage();
-    }
-
-    @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("shotArrows", 0);
         vars.put("jumps", 0);
@@ -167,68 +147,6 @@ public class TowerfallApp extends GameApplication {
         playerControl = player.getControlUnsafe(CharacterControl.class);
 
         getGameWorld().setLevel(level);
-    }
-
-    private Image blockImage;
-
-    @Override
-    protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.ARROW, EntityType.PLATFORM) {
-            @Override
-            protected void onCollisionBegin(Entity arrow, Entity platform) {
-                // necessary since we can collide with two platforms in the same frame
-                if (arrow.hasControl(ArrowControl.class)) {
-                    arrow.getComponentUnsafe(CollidableComponent.class).setValue(false);
-                    arrow.removeControl(ArrowControl.class);
-
-                    GameEntity block = (GameEntity) platform;
-
-                    Rectangle2D grid = new Rectangle2D(0, 0, 40, 40);
-
-                    Array<Rectangle2D> grids = AASubdivision.divide(grid, 30, 5);
-
-                    for (Rectangle2D rect : grids) {
-                        PhysicsComponent physics = new PhysicsComponent();
-                        physics.setBodyType(BodyType.DYNAMIC);
-
-                        FixtureDef fd = new FixtureDef();
-                        fd.setDensity(0.7f);
-                        fd.setRestitution(0.3f);
-                        physics.setFixtureDef(fd);
-
-                        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(FXGLMath.random(-1, 1) * 50, FXGLMath.random(-3, -1) * 50));
-
-                        Image img = new WritableImage(blockImage.getPixelReader(),
-                                (int) rect.getMinX(), (int) rect.getMinY(),
-                                (int) rect.getWidth(), (int) rect.getHeight());
-
-
-                        Entities.builder()
-                                .at(block.getX() + rect.getMinX(), block.getY() + rect.getMinY())
-                                .viewFromNodeWithBBox(new ImageView(img))
-                                //.viewFromNodeWithBBox(new Rectangle(rect.getWidth(), rect.getHeight(), Color.BLUE))
-                                .with(physics)
-                                .buildAndAttach(getGameWorld());
-                    }
-
-                    platform.removeFromWorld();
-                }
-            }
-        });
-
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.ARROW, EntityType.ENEMY) {
-            @Override
-            protected void onCollisionBegin(Entity arrow, Entity enemy) {
-                if (arrow.getComponentUnsafe(UserDataComponent.class).getValue() == enemy)
-                    return;
-
-                arrow.removeFromWorld();
-                enemy.removeFromWorld();
-                getGameState().increment("enemiesKilled", +1);
-
-                getGameWorld().spawn("Enemy", 27 * 40, 6 * 40);
-            }
-        });
     }
 
     private InGamePanel panel;
@@ -268,9 +186,6 @@ public class TowerfallApp extends GameApplication {
 
         quests.forEach(getQuestService()::addQuest);
     }
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

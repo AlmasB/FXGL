@@ -639,15 +639,18 @@ public class Entity {
     }
 
     private void checkValid() {
+//        if (cleaning && world == null)
+//            throw new IllegalStateException("Attempted access a cleaned entity!");
         if (cleaning && world == null)
-            throw new IllegalStateException("Attempted access a cleaned entity!");
+            log.warn("Attempted access a cleaned entity!");
     }
 
     /**
      * Remove entity from world.
      */
     public final void removeFromWorld() {
-        checkValid();
+        if (cleaning && world == null)
+            throw new IllegalStateException("Attempted access a cleaned entity!");
 
         world.removeEntity(this);
     }
