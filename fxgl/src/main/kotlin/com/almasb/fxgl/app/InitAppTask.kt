@@ -74,7 +74,8 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         val annotationMap = scanForAnnotations()
 
         annotationMap[SetEntityFactory::class.java]?.let {
-            app.gameWorld.setEntityFactory(FXGL.getInstance(it[0]) as EntityFactory)
+            if (it.isNotEmpty())
+                app.gameWorld.setEntityFactory(FXGL.getInstance(it[0]) as EntityFactory)
         }
 
         if (dataFile === DataFile.EMPTY)
