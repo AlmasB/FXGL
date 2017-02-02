@@ -43,6 +43,22 @@ class GameState {
         private val log = FXGL.getLogger(GameState::class.java)
     }
 
+    private val gameDifficulty = SimpleObjectProperty(GameDifficulty.MEDIUM)
+
+    /**
+     * @return game difficulty
+     */
+    fun getGameDifficulty(): GameDifficulty {
+        return gameDifficultyProperty().get()
+    }
+
+    /**
+     * @return game difficulty property
+     */
+    fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> {
+        return gameDifficulty
+    }
+
     private val properties = ObjectMap<String, Any>(32)
 
     /**

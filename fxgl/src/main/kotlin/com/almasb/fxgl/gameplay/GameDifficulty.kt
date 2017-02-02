@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.gameplay;
+
+package com.almasb.fxgl.gameplay
 
 /**
  * Represents game difficulty. Based on selected difficulty
@@ -31,6 +32,6 @@ package com.almasb.fxgl.gameplay;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public enum GameDifficulty {
+enum class GameDifficulty {
     EASY, MEDIUM, HARD, NIGHTMARE
 }

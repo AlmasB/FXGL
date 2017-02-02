@@ -35,7 +35,6 @@ import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorld;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
-import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.parser.tiled.TiledMap;
@@ -63,22 +62,6 @@ import java.util.function.Predicate;
 public final class GameWorld extends EntityWorld implements UpdateEventListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameWorld");
-
-    private ObjectProperty<GameDifficulty> gameDifficulty = new SimpleObjectProperty<>(GameDifficulty.MEDIUM);
-
-    /**
-     * @return game difficulty
-     */
-    public GameDifficulty getGameDifficulty() {
-        return gameDifficultyProperty().get();
-    }
-
-    /**
-     * @return game difficulty property
-     */
-    public ObjectProperty<GameDifficulty> gameDifficultyProperty() {
-        return gameDifficulty;
-    }
 
     private Array<EventTrigger<?> > eventTriggers = new Array<>(false, 32);
 
