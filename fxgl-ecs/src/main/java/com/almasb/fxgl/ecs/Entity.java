@@ -435,6 +435,8 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     public final <T extends Entity> void enqueueAction(Action<T> action) {
+        checkValid();
+
         action.setEntity((T) this);
         actions.add(action);
     }
@@ -493,10 +495,6 @@ public class Entity {
     }
 
     private boolean controlsEnabled = true;
-
-    public final boolean isInWorld() {
-        return world != null;
-    }
 
     /**
      * Setting this to false will disable each control's update until this has
@@ -657,18 +655,15 @@ public class Entity {
     }
 
     private void checkValid() {
-//        if (cleaning && world == null)
-//            throw new IllegalStateException("Attempted access a cleaned entity!");
         if (cleaning && world == null)
-            log.warn("Attempted access a cleaned entity!");
+            throw new IllegalStateException("Attempted access a cleaned entity!");
     }
 
     /**
      * Remove entity from world.
      */
     public final void removeFromWorld() {
-        if (cleaning && world == null)
-            throw new IllegalStateException("Attempted access a cleaned entity!");
+        checkValid();
 
         if (updating) {
             delayedRemove = true;

@@ -85,7 +85,7 @@ public class EntityWorld {
      * @param entity the entity to add to world
      */
     public final void addEntity(Entity entity) {
-        if (entity.isInWorld())
+        if (entity.isActive())
             throw new IllegalArgumentException("Entity is already attached to world");
 
         waitingList.add(entity);
@@ -152,7 +152,7 @@ public class EntityWorld {
         for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            if (e.isInWorld()) {
+            if (e.isActive()) {
                 e.update(tpf);
             } else {
                 it.remove();
@@ -173,7 +173,7 @@ public class EntityWorld {
         log.trace("Resetting entity world");
 
         for (Entity e : updateList) {
-            if (e.isInWorld()) {
+            if (e.isActive()) {
                 e.clean();
             }
         }

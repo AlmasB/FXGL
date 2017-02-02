@@ -125,24 +125,6 @@ public class JointSample extends GameApplication {
 
         PhysicsComponent physics2 = new PhysicsComponent();
         physics2.setBodyType(BodyType.DYNAMIC);
-        physics2.setOnPhysicsInitialized(() -> {
-            RevoluteJointDef rDef = new RevoluteJointDef();
-            rDef.bodyA = physics.getBody();
-            rDef.bodyB = physics2.getBody();
-            rDef.collideConnected = false;
-            rDef.localAnchorA = new Vec2(0, 0);
-            rDef.localAnchorB = new Vec2(0, 5);
-
-            rDef.enableLimit = true;
-            rDef.lowerAngle = FXGLMath.degreesToRadians * -180.0f;
-            rDef.upperAngle = FXGLMath.degreesToRadians * 180.0f;
-
-            rDef.enableMotor = true;
-            rDef.motorSpeed = FXGLMath.degreesToRadians * 30;
-            rDef.maxMotorTorque = 15.0f;
-
-            joint = (RevoluteJoint) getPhysicsWorld().getJBox2DWorld().createJoint(rDef);
-        });
 
         FixtureDef fd = new FixtureDef();
         fd.setDensity(1.0f);
@@ -167,6 +149,23 @@ public class JointSample extends GameApplication {
         line.endYProperty().bind(ball.getPositionComponent().yProperty().add(15));
 
         getGameScene().addGameView(new EntityView(line, RenderLayer.BACKGROUND));
+
+        RevoluteJointDef rDef = new RevoluteJointDef();
+        rDef.bodyA = physics.getBody();
+        rDef.bodyB = physics2.getBody();
+        rDef.collideConnected = false;
+        rDef.localAnchorA = new Vec2(0, 0);
+        rDef.localAnchorB = new Vec2(0, 5);
+
+        rDef.enableLimit = true;
+        rDef.lowerAngle = FXGLMath.degreesToRadians * -180.0f;
+        rDef.upperAngle = FXGLMath.degreesToRadians * 180.0f;
+
+        rDef.enableMotor = true;
+        rDef.motorSpeed = FXGLMath.degreesToRadians * 30;
+        rDef.maxMotorTorque = 15.0f;
+
+        joint = (RevoluteJoint) getPhysicsWorld().getJBox2DWorld().createJoint(rDef);
     }
 
     @Override

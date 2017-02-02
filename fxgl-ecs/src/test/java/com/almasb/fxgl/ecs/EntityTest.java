@@ -241,6 +241,13 @@ public class EntityTest {
         entity.update(0.017);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testConcurrentModificationControl2() {
+        entity.addControl(new TestControl());
+        entity.addControl(new ControlRemovingControl());
+        entity.update(0.017);
+    }
+
     @Test
     public void testSetControlsEnabled() {
         entity.addControl(new ControlAddingControl());
@@ -389,17 +396,31 @@ public class EntityTest {
         entity.getProperty("no_key");
     }
 
-//    @Test(expected = IllegalStateException.class)
-//    public void testIntegrity() {
-//        EntityWorld world = new EntityWorld();
-//
-//        world.addEntity(entity);
-//        world.update(0);
-//        world.removeEntity(entity);
-//        world.update(0);
-//
-//        entity.addComponent(new HPComponent(23));
-//    }
+    @Test
+    public void testIntegrity() {
+        int count = 0;
+
+        EntityWorld world = new EntityWorld();
+
+        world.addEntity(entity);
+        world.removeEntity(entity);
+
+        try {
+            entity.addComponent(new HPComponent(23));
+        } catch (IllegalStateException e) {
+            count++;
+        }
+
+        assertThat(count, is(1));
+
+        try {
+            entity.removeFromWorld();
+        } catch (IllegalStateException e) {
+            count++;
+        }
+
+        assertThat(count, is(2));
+    }
 
     private class TestControl extends AbstractControl {
         @Override
@@ -410,6 +431,13 @@ public class EntityTest {
         @Override
         public void onUpdate(Entity entity, double tpf) {
             entity.addControl(new TestControl());
+        }
+    }
+
+    private class ControlRemovingControl extends AbstractControl {
+        @Override
+        public void onUpdate(Entity entity, double tpf) {
+            entity.removeAllControls();
         }
     }
 

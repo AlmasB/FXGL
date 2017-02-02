@@ -138,7 +138,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @return collision handler for e1 and e2 based on their types or null if no such handler exists
      */
     private CollisionHandler getHandler(Entity e1, Entity e2) {
-        if (!e1.isInWorld() || !e2.isInWorld())
+        if (!e1.isActive() || !e2.isActive())
             return null;
 
         Object type1 = e1.getComponentUnsafe(TypeComponent.class).getValue();
