@@ -163,6 +163,11 @@ public class Entities {
     public static class GameEntityBuilder {
         private GameEntity entity = new GameEntity();
 
+        public GameEntityBuilder from(SpawnData data) {
+            at(data.getX(), data.getY());
+            return this;
+        }
+
         public GameEntityBuilder type(Enum<?> type) {
             entity.getTypeComponent().setValue(type);
             return this;
