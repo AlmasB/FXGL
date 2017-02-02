@@ -35,6 +35,7 @@ import com.almasb.fxgl.service.listener.NotificationListener
 import com.almasb.fxgl.service.listener.UserProfileSavable
 import com.google.inject.Inject
 import javafx.animation.AnimationTimer
+import javafx.scene.effect.BlendMode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
@@ -132,6 +133,8 @@ internal class InitEventHandlersTask
             if (app.settings.isProfilingEnabled) {
                 val g = app.gameScene.graphicsContext
 
+                g.globalBlendMode = BlendMode.SRC_OVER
+                g.globalAlpha = 1.0
                 g.font = fpsFont
                 g.fill = Color.RED
                 g.fillText(app.profiler.getInfo(), 0.0, app.height - 120)
