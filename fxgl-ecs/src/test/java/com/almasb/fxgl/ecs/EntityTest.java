@@ -395,17 +395,17 @@ public class EntityTest {
         entity.getProperty("no_key");
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testIntegrity() {
-        EntityWorld world = new EntityWorld();
-
-        world.addEntity(entity);
-        world.update(0);
-        world.removeEntity(entity);
-        world.update(0);
-
-        entity.addComponent(new HPComponent(23));
-    }
+//    @Test(expected = IllegalStateException.class)
+//    public void testIntegrity() {
+//        EntityWorld world = new EntityWorld();
+//
+//        world.addEntity(entity);
+//        world.update(0);
+//        world.removeEntity(entity);
+//        world.update(0);
+//
+//        entity.addComponent(new HPComponent(23));
+//    }
 
     private class TestControl extends AbstractControl {
         @Override
