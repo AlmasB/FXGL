@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.event
 
+import com.almasb.fxgl.annotation.Handles
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.service.EventBus
 import org.hamcrest.CoreMatchers.`is`
@@ -109,42 +110,42 @@ class EventBusTest {
     }
 
     object validObject {
-        @com.almasb.fxgl.event.Handles(eventType = "ANY")
+        @Handles(eventType = "ANY")
         fun handles(event: com.almasb.fxgl.event.TestEvent) {
 
         }
     }
 
     object invalidObject0 {
-        @com.almasb.fxgl.event.Handles(eventType = "FAIL0")
+        @Handles(eventType = "FAIL0")
         fun handles(event: com.almasb.fxgl.event.TestEvent) {
 
         }
     }
 
     object invalidObject1 {
-        @com.almasb.fxgl.event.Handles(eventType = "FAIL1")
+        @Handles(eventType = "FAIL1")
         fun handles(event: com.almasb.fxgl.event.TestEvent) {
 
         }
     }
 
     object invalidObject2 {
-        @com.almasb.fxgl.event.Handles(eventType = "FAIL2")
+        @Handles(eventType = "FAIL2")
         fun handles(event: com.almasb.fxgl.event.TestEvent) {
 
         }
     }
 
     object invalidObject3 {
-        @com.almasb.fxgl.event.Handles(eventType = "FAIL3")
+        @Handles(eventType = "FAIL3")
         fun handles() {
 
         }
     }
 
     object invalidObject4 {
-        @com.almasb.fxgl.event.Handles(eventType = "HIDDEN")
+        @Handles(eventType = "HIDDEN")
         fun handles(event: com.almasb.fxgl.event.TestEvent) {
 
         }

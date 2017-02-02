@@ -24,7 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.annotation;
+
+import com.almasb.fxgl.physics.CollisionHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -32,15 +34,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a class that will be used as the main entity factory.
- * The class will be automatically instantiated and attached
- * to the game world.
- * Note: if it is important that only a single instance of the factory
- * is created, then annotate it with {@link com.google.inject.Singleton}.
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * Indicates that a class that extends {@link CollisionHandler} will be automatically
+ * added to physics world's collision handlers.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface SetEntityFactory {
+public @interface AddCollisionHandler {
 }

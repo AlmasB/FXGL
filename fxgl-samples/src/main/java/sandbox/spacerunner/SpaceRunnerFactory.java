@@ -26,6 +26,8 @@
 
 package sandbox.spacerunner;
 
+import com.almasb.fxgl.annotation.SetEntityFactory;
+import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
 import com.almasb.fxgl.entity.*;

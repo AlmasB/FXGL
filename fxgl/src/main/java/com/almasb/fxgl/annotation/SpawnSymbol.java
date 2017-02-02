@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.input;
+package com.almasb.fxgl.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -32,27 +32,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method that it should be called when user triggers an action.
- * Note: the method must be in the class extending {@link com.almasb.fxgl.app.GameApplication}
- * and its signature must be <code>public void anyName()</code>.
+ * Indicates that a method is used for creating entities when using {@link com.almasb.fxgl.entity.TextEntityFactory}.
+ * Note: the method signature must be <code>public Entity anyName(SpawnData)</code>.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface OnUserAction {
+public @interface SpawnSymbol {
 
     /**
-     * Returns name of the action. The action must have been specified
-     * during initInput() as {@link InputMapping}.
-     *
-     * @return action name
+     * @return letter used to mark the entity being spawned by this method
      */
-    String name();
-
-    /**
-     * Returns type of the action, i.e. when the method should be called.
-     * Based on the type, the method is called when the action starts, continues or stops.
-     *
-     * @return action type
-     */
-    ActionType type() default ActionType.ON_ACTION;
+    char value();
 }

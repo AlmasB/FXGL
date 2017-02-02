@@ -29,7 +29,7 @@ package sandbox.towerfall.collision;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
-import com.almasb.fxgl.physics.AddCollisionHandler;
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.physics.CollisionHandler;
 import sandbox.towerfall.EntityType;
 

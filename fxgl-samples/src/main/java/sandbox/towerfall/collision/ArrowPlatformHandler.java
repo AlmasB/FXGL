@@ -34,7 +34,7 @@ import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.physics.AddCollisionHandler;
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.Rectangle2D;

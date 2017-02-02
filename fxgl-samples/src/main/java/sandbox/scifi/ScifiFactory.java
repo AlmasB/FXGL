@@ -26,6 +26,8 @@
 
 package sandbox.scifi;
 
+import com.almasb.fxgl.annotation.SetEntityFactory;
+import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.physics.BoundingShape;

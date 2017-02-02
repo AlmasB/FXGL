@@ -24,9 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.annotation;
 
-import javafx.event.Event;
+import com.almasb.fxgl.entity.EntityFactory;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -34,32 +34,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark a method that handles an event of specific type.
+ * Indicates that a class will be used as the main entity factory.
+ * The class will be automatically instantiated and attached
+ * to the game world using {@link com.almasb.fxgl.entity.GameWorld#setEntityFactory(EntityFactory)}.
+ * Note: if it is important that only a single instance of the factory
+ * is created, then you need to annotate it with {@link com.google.inject.Singleton}.
  *
- * @see <a href="https://github.com/AlmasB/FXGL/blob/master/samples/s33events/EventsSample.java">Usage Sample</a>
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Handles {
-
-    /**
-     * If it's an EntityEvent, then the class is EntityEvent.class,
-     * so if you define your own event class, it'll be MyEvent.class.
-     * This member can be omitted if the marked method parameter type
-     * matches the event class.
-     *
-     * @return event class
-     */
-    Class<?> eventClass() default Event.class;
-
-    /**
-     * If you have an event type MyGameEvent.ANY,
-     * then event type is "ANY".
-     * EventType object has to be static in the class
-     * where it is declared.
-     *
-     * @return field name of the EventType object
-     */
-    String eventType();
+@Target(ElementType.TYPE)
+public @interface SetEntityFactory {
 }

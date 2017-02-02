@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.input
 
+import com.almasb.fxgl.annotation.OnUserAction
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.service.Input
 import javafx.scene.input.KeyCode
@@ -293,7 +294,7 @@ class InputTest {
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
     }
 
-    @com.almasb.fxgl.input.OnUserAction(name = "TestAction", type = ActionType.ON_ACTION_BEGIN)
+    @OnUserAction(name = "TestAction", type = ActionType.ON_ACTION_BEGIN)
     fun onCall() {
 
     }

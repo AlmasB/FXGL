@@ -27,6 +27,8 @@
 package sandbox.towerfall;
 
 import com.almasb.fxgl.ai.AIControl;
+import com.almasb.fxgl.annotation.SetEntityFactory;
+import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
@@ -34,7 +36,7 @@ import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
-import com.almasb.fxgl.parser.text.SpawnSymbol;
+import com.almasb.fxgl.annotation.SpawnSymbol;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;

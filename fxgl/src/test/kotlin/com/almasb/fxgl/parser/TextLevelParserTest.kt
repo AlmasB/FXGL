@@ -30,7 +30,7 @@
 //import com.almasb.fxgl.app.FXGL
 //import com.almasb.fxgl.entity.Entities
 //import com.almasb.fxgl.entity.TextEntityFactory
-//import com.almasb.fxgl.parser.text.SpawnSymbol
+//import com.almasb.fxgl.annotation.SpawnSymbol
 //import com.almasb.fxgl.parser.text.TextLevelParser
 //import org.hamcrest.BaseMatcher
 //import org.hamcrest.CoreMatchers.`is`

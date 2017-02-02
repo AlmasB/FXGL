@@ -24,7 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.physics;
+package com.almasb.fxgl.annotation;
+
+import javafx.event.Event;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -32,10 +34,31 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a class that extends {@link CollisionHandler} to be automatically
- * added to physics world's collision handlers.
+ * Indicates that a method handles an event of specific type.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface AddCollisionHandler {
+@Target(ElementType.METHOD)
+public @interface Handles {
+
+    /**
+     * If it's an EntityEvent, then the class is EntityEvent.class,
+     * so if you define your own event class, it'll be MyEvent.class.
+     * This member can be omitted if the marked method parameter type
+     * matches the event class.
+     *
+     * @return event class
+     */
+    Class<?> eventClass() default Event.class;
+
+    /**
+     * If you have an event type MyGameEvent.ANY,
+     * then event type is "ANY".
+     * EventType object has to be static in the class
+     * where it is declared.
+     *
+     * @return field name of the EventType object
+     */
+    String eventType();
 }
