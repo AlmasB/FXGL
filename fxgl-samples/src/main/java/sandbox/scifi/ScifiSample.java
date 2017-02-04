@@ -31,7 +31,6 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
-import sandbox.towerfall.CharacterControl;
 
 /**
  *
@@ -39,8 +38,6 @@ import sandbox.towerfall.CharacterControl;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ScifiSample extends GameApplication {
-
-    private CharacterControl playerControl;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -56,26 +53,26 @@ public class ScifiSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Up") {
-            @Override
-            protected void onAction() {
-                playerControl.jump();
-            }
-        }, KeyCode.W);
-
-        getInput().addAction(new UserAction("Left") {
-            @Override
-            protected void onAction() {
-                playerControl.left();
-            }
-        }, KeyCode.A);
-
-        getInput().addAction(new UserAction("Right") {
-            @Override
-            protected void onAction() {
-                playerControl.right();
-            }
-        }, KeyCode.D);
+//        getInput().addAction(new UserAction("Up") {
+//            @Override
+//            protected void onAction() {
+//                playerControl.jump();
+//            }
+//        }, KeyCode.W);
+//
+//        getInput().addAction(new UserAction("Left") {
+//            @Override
+//            protected void onAction() {
+//                playerControl.left();
+//            }
+//        }, KeyCode.A);
+//
+//        getInput().addAction(new UserAction("Right") {
+//            @Override
+//            protected void onAction() {
+//                playerControl.right();
+//            }
+//        }, KeyCode.D);
     }
 
     @Override
@@ -84,7 +81,7 @@ public class ScifiSample extends GameApplication {
 
         getGameWorld().setLevelFromMap(map);
 
-        playerControl = getGameWorld().spawn("player", 100, 100).getControlUnsafe(CharacterControl.class);
+        //playerControl = getGameWorld().spawn("player", 100, 100).getControlUnsafe(CharacterControl.class);
     }
 
     public static void main(String[] args) {

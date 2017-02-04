@@ -57,7 +57,7 @@ public class ArrowPlatformHandler extends CollisionHandler {
     public ArrowPlatformHandler() {
         super(EntityType.ARROW, EntityType.PLATFORM);
 
-        blockImage = FXGL.getAssetLoader().loadTexture("brick.png", 40, 40).getImage();
+        blockImage = FXGL.getAssetLoader().loadTexture("towerfall/brick.png", 40, 40).getImage();
     }
 
     @Override

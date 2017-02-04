@@ -24,43 +24,23 @@
  * SOFTWARE.
  */
 
-package sandbox.scifi;
+package com.almasb.fxglgames.pacman.ai;
 
-import com.almasb.fxgl.annotation.SetEntityFactory;
-import com.almasb.fxgl.annotation.Spawns;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.physics.BoundingShape;
-import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.physics.PhysicsComponent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import org.jbox2d.dynamics.BodyType;
+import com.almasb.fxgl.ai.Condition;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxglgames.pacman.PacmanApp;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
-public class ScifiFactory implements EntityFactory {
+public class PlayerCloseCondition extends Condition {
 
-    @Spawns("platform")
-    public Entity newPlatform(SpawnData data) {
-        return Entities.builder()
-                .at(data.getX(), data.getY())
-                .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
-                .with(new PhysicsComponent())
-                .build();
-    }
+    @Override
+    public boolean evaluate() {
+        GameEntity player = ((PacmanApp) FXGL.getApp()).getPlayer();
 
-    @Spawns("player")
-    public Entity newPlayer(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-
-        return Entities.builder()
-                .at(data.getX(), data.getY())
-                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
-                .with(physics)
-                .build();
+        return player.getPositionComponent().distance(getObject().getPositionComponent())
+                < PacmanApp.MAP_SIZE * PacmanApp.BLOCK_SIZE / 3;
     }
 }

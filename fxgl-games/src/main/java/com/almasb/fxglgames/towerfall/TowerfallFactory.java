@@ -76,7 +76,7 @@ public class TowerfallFactory implements TextEntityFactory {
         return Entities.builder()
                 .type(EntityType.PLATFORM)
                 .at(data.getX(), data.getY())
-                .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("brick.png", 40, 40))
+                .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("towerfall/brick.png", 40, 40))
                 .with(new CollidableComponent(true))
                 .with(new PhysicsComponent())
                 .build();
@@ -109,7 +109,7 @@ public class TowerfallFactory implements TextEntityFactory {
                 .viewFromNode(new Rectangle(36, 36, Color.RED))
                 .bbox(new HitBox("Main", BoundingShape.circle(18)))
                 .with(physics, new CollidableComponent(true))
-                .with(new CharacterControl(), new AIControl("towerfall_enemy_easy.tree"))
+                .with(new CharacterControl(), new AIControl("towerfall/enemy_easy.tree"))
                 .build();
     }
 
@@ -118,7 +118,7 @@ public class TowerfallFactory implements TextEntityFactory {
         return Entities.builder()
                 .type(EntityType.ARROW)
                 .at(data.getX(), data.getY())
-                .viewFromNode(FXGL.getAssetLoader().loadTexture("arrow.png", 35, 9))
+                .viewFromNode(FXGL.getAssetLoader().loadTexture("towerfall/arrow.png", 35, 9))
                 .bbox(new HitBox("MAIN", BoundingShape.box(28, 8)))
                 .with(new CollidableComponent(true), new UserDataComponent(data.get("shooter")))
                 .with(new OffscreenCleanControl(), new ExpireCleanControl(Duration.seconds(7)),

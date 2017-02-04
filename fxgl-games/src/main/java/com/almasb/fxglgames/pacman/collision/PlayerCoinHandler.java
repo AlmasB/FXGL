@@ -24,43 +24,33 @@
  * SOFTWARE.
  */
 
-package sandbox.scifi;
+package com.almasb.fxglgames.pacman.collision;
 
-import com.almasb.fxgl.annotation.SetEntityFactory;
-import com.almasb.fxgl.annotation.Spawns;
+import com.almasb.fxgl.annotation.AddCollisionHandler;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.physics.BoundingShape;
-import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.physics.PhysicsComponent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import org.jbox2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxglgames.pacman.PacmanApp;
+import com.almasb.fxglgames.pacman.PacmanType;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
-public class ScifiFactory implements EntityFactory {
+@AddCollisionHandler
+public class PlayerCoinHandler extends CollisionHandler {
 
-    @Spawns("platform")
-    public Entity newPlatform(SpawnData data) {
-        return Entities.builder()
-                .at(data.getX(), data.getY())
-                .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
-                .with(new PhysicsComponent())
-                .build();
+    private PacmanApp app;
+
+    public PlayerCoinHandler() {
+        super(PacmanType.PLAYER, PacmanType.COIN);
+
+        app = (PacmanApp) FXGL.getApp();
     }
 
-    @Spawns("player")
-    public Entity newPlayer(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
+    @Override
+    protected void onCollisionBegin(Entity player, Entity coin) {
 
-        return Entities.builder()
-                .at(data.getX(), data.getY())
-                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
-                .with(physics)
-                .build();
+        app.onCoinPickup();
+        coin.removeFromWorld();
     }
 }

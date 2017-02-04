@@ -5,11 +5,11 @@
 # Alias definitions
 
 # Conditions
-import isTargetFar? : "sandbox.towerfall.ai.TargetFarCondition"
+import isTargetFar? : "com.almasb.fxglgames.towerfall.ai.TargetFarCondition"
 
 # Actions
-import move : "sandbox.towerfall.ai.MoveTask"
-import attack : "sandbox.towerfall.ai.AttackTask"
+import move : "com.almasb.fxglgames.towerfall.ai.MoveTask"
+import attack : "com.almasb.fxglgames.towerfall.ai.AttackTask"
 
 # Tree definition (note that root is optional)
 root

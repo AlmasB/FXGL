@@ -123,7 +123,7 @@ public class TowerfallApp extends GameApplication {
     @Override
     protected void initGame() {
         TextLevelParser parser = new TextLevelParser(getGameWorld().getEntityFactory());
-        Level level = parser.parse("towerfall_level.txt");
+        Level level = parser.parse("towerfall/levels/level1.txt");
 
         getGameWorld().setLevel(level);
 

@@ -24,43 +24,11 @@
  * SOFTWARE.
  */
 
-package sandbox.scifi;
-
-import com.almasb.fxgl.annotation.SetEntityFactory;
-import com.almasb.fxgl.annotation.Spawns;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.*;
-import com.almasb.fxgl.physics.BoundingShape;
-import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.physics.PhysicsComponent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import org.jbox2d.dynamics.BodyType;
+package com.almasb.fxglgames.pacman;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@SetEntityFactory
-public class ScifiFactory implements EntityFactory {
-
-    @Spawns("platform")
-    public Entity newPlatform(SpawnData data) {
-        return Entities.builder()
-                .at(data.getX(), data.getY())
-                .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
-                .with(new PhysicsComponent())
-                .build();
-    }
-
-    @Spawns("player")
-    public Entity newPlayer(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-
-        return Entities.builder()
-                .at(data.getX(), data.getY())
-                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
-                .with(physics)
-                .build();
-    }
+public enum PacmanType {
+    PLAYER, ENEMY, BLOCK, COIN
 }
