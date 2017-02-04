@@ -32,3 +32,6 @@ system/
 
 # FXGL Tests #
 testprofiles/
+
+# SpaceInvaders #
+hiscore.dat
