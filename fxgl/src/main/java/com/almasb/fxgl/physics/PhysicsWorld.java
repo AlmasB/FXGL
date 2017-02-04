@@ -54,10 +54,7 @@ import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.*;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
-import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.particle.ParticleGroup;
 import org.jbox2d.particle.ParticleGroupDef;
@@ -108,6 +105,9 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private boolean isCollidable(Entity e) {
+        if (!e.isActive())
+            return false;
+
         CollidableComponent collidable = e.getComponentUnsafe(CollidableComponent.class);
 
         return collidable != null && collidable.getValue();
@@ -210,14 +210,26 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         jboxWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
+    private Array<Entity> delayedBodiesAdd = new Array<>(false, 16);
+    private Array<Entity> delayedParticlesAdd = new Array<>(false, 16);
+    private Array<Body> delayedBodiesRemove = new Array<>(false, 16);
+
     @Override
     public void onEntityAdded(Entity entity) {
         entities.add(entity);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
-            createBody(entity);
+            if (!jboxWorld.isLocked()) {
+                createBody(entity);
+            } else {
+                delayedBodiesAdd.add(entity);
+            }
         } else if (entity.hasComponent(PhysicsParticleComponent.class)) {
-            createPhysicsParticles(entity);
+            if (!jboxWorld.isLocked()) {
+                createPhysicsParticles(entity);
+            } else {
+                delayedParticlesAdd.add(entity);
+            }
         }
     }
 
@@ -226,16 +238,38 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         entities.removeValue(entity, true);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
-            destroyBody(entity);
+            if (!jboxWorld.isLocked()) {
+                destroyBody(entity);
+            } else {
+                delayedBodiesRemove.add(Entities.getPhysics(entity).getBody());
+            }
         }
     }
 
     @Override
     public void onWorldUpdate(double tpf) {
         jboxWorld.step((float) tpf, 8, 3);
+        postStep();
 
         checkCollisions();
         notifyCollisions();
+    }
+
+    private void postStep() {
+        for (Entity e : delayedBodiesAdd)
+            createBody(e);
+
+        delayedBodiesAdd.clear();
+
+        for (Entity e : delayedParticlesAdd)
+            createPhysicsParticles(e);
+
+        delayedParticlesAdd.clear();
+
+        for (Body body : delayedBodiesRemove)
+            jboxWorld.destroyBody(body);
+
+        delayedBodiesRemove.clear();
     }
 
     /**

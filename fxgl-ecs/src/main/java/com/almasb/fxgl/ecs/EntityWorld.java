@@ -174,11 +174,13 @@ public class EntityWorld {
 
         for (Entity e : updateList) {
             if (e.isActive()) {
+                notifyEntityRemoved(e);
                 e.clean();
             }
         }
 
         for (Entity e : waitingList) {
+            notifyEntityRemoved(e);
             e.clean();
         }
 
@@ -215,9 +217,6 @@ public class EntityWorld {
         for (int i = 0; i < worldListeners.size(); i++) {
             worldListeners.get(i).onEntityAdded(e);
         }
-
-//        for (EntityWorldListener l : worldListeners)
-//            l.onEntityAdded(e);
     }
 
     private void notifyEntityRemoved(Entity e) {
