@@ -194,6 +194,10 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
                 .forEach((annotation, entitySpawner) -> entitySpawners.put(annotation.value(), entitySpawner));
     }
 
+    public Entity spawn(String entityName) {
+        return spawn(entityName, 0, 0);
+    }
+
     /**
      * Creates an entity with given name at x, y using specified entity factory.
      * Adds created entity to this game world.

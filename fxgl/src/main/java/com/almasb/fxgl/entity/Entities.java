@@ -212,6 +212,11 @@ public class Entities {
             return this;
         }
 
+        public GameEntityBuilder renderLayer(RenderLayer layer) {
+            entity.getViewComponent().setRenderLayer(layer);
+            return this;
+        }
+
         /**
          * Generates view from tiles with {@link RenderLayer#TOP}.
          *
