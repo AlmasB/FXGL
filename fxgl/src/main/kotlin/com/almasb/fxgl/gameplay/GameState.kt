@@ -107,7 +107,7 @@ class GameState {
             is Int -> intProperty(propertyName).value = value
             is Double -> doubleProperty(propertyName).value = value
             is String -> stringProperty(propertyName).value = value
-            else -> log.warning("Value for property $propertyName is of unknown type: ${value.javaClass}")
+            else -> throw IllegalArgumentException("Value for property $propertyName is of unknown type: ${value.javaClass}")
         }
     }
 
