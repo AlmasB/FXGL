@@ -26,6 +26,7 @@
 
 package com.almasb.fxglgames.spaceinvaders.collision;
 
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -37,6 +38,7 @@ import com.almasb.fxglgames.spaceinvaders.event.BonusPickupEvent;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@AddCollisionHandler
 public class BonusPlayerHandler extends CollisionHandler {
 
     public BonusPlayerHandler() {

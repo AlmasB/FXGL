@@ -26,9 +26,6 @@
 
 package com.almasb.fxglgames.breakout;
 
-import com.almasb.fxglgames.breakout.control.BallControl;
-import com.almasb.fxglgames.breakout.control.BatControl;
-import com.almasb.fxglgames.breakout.control.BrickControl;
 import com.almasb.fxgl.annotation.SpawnSymbol;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
@@ -39,6 +36,9 @@ import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxglgames.breakout.control.BallControl;
+import com.almasb.fxglgames.breakout.control.BatControl;
+import com.almasb.fxglgames.breakout.control.BrickControl;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 

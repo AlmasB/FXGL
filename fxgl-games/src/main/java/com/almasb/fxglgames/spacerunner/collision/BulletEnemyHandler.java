@@ -26,16 +26,16 @@
 
 package com.almasb.fxglgames.spacerunner.collision;
 
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxglgames.spacerunner.SpaceRunnerType;
 import com.almasb.fxglgames.spacerunner.SpaceRunnerFactory;
+import com.almasb.fxglgames.spacerunner.SpaceRunnerType;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

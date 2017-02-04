@@ -32,8 +32,8 @@ import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxglgames.spacerunner.SpaceRunnerType;
 import com.almasb.fxglgames.spacerunner.SpaceRunnerFactory;
+import com.almasb.fxglgames.spacerunner.SpaceRunnerType;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

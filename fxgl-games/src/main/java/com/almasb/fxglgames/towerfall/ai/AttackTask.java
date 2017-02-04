@@ -29,9 +29,9 @@ package com.almasb.fxglgames.towerfall.ai;
 import com.almasb.fxgl.ai.Action;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.time.LocalTimer;
-import javafx.util.Duration;
 import com.almasb.fxglgames.towerfall.CharacterControl;
 import com.almasb.fxglgames.towerfall.TowerfallApp;
+import javafx.util.Duration;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

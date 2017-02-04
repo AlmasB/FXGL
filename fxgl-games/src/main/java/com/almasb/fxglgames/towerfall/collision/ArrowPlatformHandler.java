@@ -27,6 +27,7 @@
 package com.almasb.fxglgames.towerfall.collision;
 
 import com.almasb.fxgl.algorithm.AASubdivision;
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -34,17 +35,16 @@ import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxglgames.towerfall.ArrowControl;
+import com.almasb.fxglgames.towerfall.EntityType;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
-import com.almasb.fxglgames.towerfall.ArrowControl;
-import com.almasb.fxglgames.towerfall.EntityType;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

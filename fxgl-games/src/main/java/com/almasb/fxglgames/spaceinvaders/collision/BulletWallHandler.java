@@ -26,6 +26,7 @@
 
 package com.almasb.fxglgames.spaceinvaders.collision;
 
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxglgames.spaceinvaders.SpaceInvadersType;
@@ -35,6 +36,7 @@ import com.almasb.fxglgames.spaceinvaders.component.OwnerComponent;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@AddCollisionHandler
 public class BulletWallHandler extends CollisionHandler {
 
     public BulletWallHandler() {

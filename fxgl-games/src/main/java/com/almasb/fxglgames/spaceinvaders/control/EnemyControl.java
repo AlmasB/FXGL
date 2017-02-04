@@ -33,7 +33,6 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
-import com.almasb.fxgl.service.AudioPlayer;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxglgames.spaceinvaders.event.GameEvent;
@@ -49,12 +48,8 @@ public class EnemyControl extends AbstractControl {
 
     private BoundingBoxComponent bbox;
 
-    private AudioPlayer audioPlayer;
-
     @Override
     public void onAdded(Entity entity) {
-        audioPlayer = FXGL.getService(ServiceType.AUDIO_PLAYER);
-
         attackTimer = FXGL.getService(ServiceType.LOCAL_TIMER);
         attackTimer.capture();
 
@@ -81,6 +76,6 @@ public class EnemyControl extends AbstractControl {
         GameWorld world = (GameWorld) getEntity().getWorld();
         world.spawn("Bullet", new SpawnData(0, 0).put("owner", getEntity()));
 
-        audioPlayer.playSound("spaceinvaders/shoot" + (int)(Math.random() * 4 + 1) + ".wav");
+        FXGL.getAudioPlayer().playSound("spaceinvaders/shoot" + (int)(Math.random() * 4 + 1) + ".wav");
     }
 }

@@ -30,15 +30,18 @@ import com.almasb.fxgl.annotation.SetEntityFactory;
 import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.component.UserDataComponent;
-import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.entity.control.ProjectileControl;
-import com.google.inject.Singleton;
-import javafx.geometry.Point2D;
 import com.almasb.fxglgames.spacerunner.control.EnemyControl;
 import com.almasb.fxglgames.spacerunner.control.KeepOnScreenControl;
 import com.almasb.fxglgames.spacerunner.control.PlayerControl;
+import com.google.inject.Singleton;
+import javafx.geometry.Point2D;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

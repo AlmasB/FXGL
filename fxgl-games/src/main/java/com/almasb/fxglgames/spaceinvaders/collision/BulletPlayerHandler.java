@@ -26,10 +26,10 @@
 
 package com.almasb.fxglgames.spaceinvaders.collision;
 
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxglgames.spaceinvaders.SpaceInvadersType;
 import com.almasb.fxglgames.spaceinvaders.component.InvincibleComponent;
 import com.almasb.fxglgames.spaceinvaders.component.OwnerComponent;
@@ -38,6 +38,7 @@ import com.almasb.fxglgames.spaceinvaders.event.GameEvent;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@AddCollisionHandler
 public class BulletPlayerHandler extends CollisionHandler {
 
     public BulletPlayerHandler() {
@@ -56,6 +57,6 @@ public class BulletPlayerHandler extends CollisionHandler {
 
         bullet.removeFromWorld();
 
-        FXGL.getService(ServiceType.EVENT_BUS).fireEvent(new GameEvent(GameEvent.PLAYER_GOT_HIT));
+        FXGL.getEventBus().fireEvent(new GameEvent(GameEvent.PLAYER_GOT_HIT));
     }
 }

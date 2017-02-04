@@ -34,9 +34,9 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.service.AudioPlayer;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.time.LocalTimer;
+import com.almasb.fxglgames.spacerunner.SpaceRunnerFactory;
 import com.almasb.fxglgames.spacerunner.SpaceRunnerType;
 import javafx.util.Duration;
-import com.almasb.fxglgames.spacerunner.SpaceRunnerFactory;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

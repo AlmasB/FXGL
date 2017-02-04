@@ -31,10 +31,9 @@ import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxglgames.spacerunner.control.PlayerControl;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;
-
-import com.almasb.fxglgames.spacerunner.control.PlayerControl;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

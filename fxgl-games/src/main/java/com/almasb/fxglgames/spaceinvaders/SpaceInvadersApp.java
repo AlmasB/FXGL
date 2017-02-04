@@ -26,6 +26,7 @@
 
 package com.almasb.fxglgames.spaceinvaders;
 
+import com.almasb.fxgl.annotation.Handles;
 import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
@@ -38,19 +39,13 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.io.FS;
 import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.UI;
-import com.almasb.fxglgames.spaceinvaders.collision.BonusPlayerHandler;
-import com.almasb.fxglgames.spaceinvaders.collision.BulletEnemyHandler;
-import com.almasb.fxglgames.spaceinvaders.collision.BulletPlayerHandler;
-import com.almasb.fxglgames.spaceinvaders.collision.BulletWallHandler;
 import com.almasb.fxglgames.spaceinvaders.control.PlayerControl;
 import com.almasb.fxglgames.spaceinvaders.event.BonusPickupEvent;
 import com.almasb.fxglgames.spaceinvaders.event.GameEvent;
@@ -142,11 +137,6 @@ public class SpaceInvadersApp extends GameApplication {
     protected void preInit() {
         getAudioPlayer().setGlobalSoundVolume(0.2);
         getAudioPlayer().setGlobalMusicVolume(0.2);
-
-        getEventBus().addEventHandler(GameEvent.PLAYER_GOT_HIT, this::onPlayerGotHit);
-        getEventBus().addEventHandler(GameEvent.ENEMY_KILLED, this::onEnemyKilled);
-        getEventBus().addEventHandler(GameEvent.ENEMY_REACHED_END, this::onEnemyReachedEnd);
-        getEventBus().addEventHandler(BonusPickupEvent.ANY, this::onBonusPickup);
     }
 
     private SaveData savedData = null;
@@ -249,14 +239,9 @@ public class SpaceInvadersApp extends GameApplication {
                 SpaceInvadersType.BONUS,
                 SpaceInvadersType.WALL,
                 SpaceInvadersType.BULLET)
-                .stream()
-                .filter(Entity::isActive)
+                //.stream()
+                //.filter(Entity::isActive)
                 .forEach(Entity::removeFromWorld);
-//
-//        getGameWorld().getEntitiesByType(SpaceInvadersType.BULLET)
-//                .stream()
-//                .filter(e -> !e.<Boolean>getProperty("dead"))
-//                .forEach(Entity::removeFromWorld);
     }
 
     private void nextLevel() {
@@ -298,15 +283,6 @@ public class SpaceInvadersApp extends GameApplication {
         getMasterTimer().runOnceAfter(this::initLevel, Duration.seconds(LEVEL_START_DELAY));
 
         getAudioPlayer().playSound(Asset.SOUND_NEW_LEVEL);
-    }
-
-    @Override
-    protected void initPhysics() {
-        PhysicsWorld physicsWorld = getPhysicsWorld();
-        physicsWorld.addCollisionHandler(new BulletPlayerHandler());
-        physicsWorld.addCollisionHandler(new BulletEnemyHandler());
-        physicsWorld.addCollisionHandler(new BulletWallHandler());
-        physicsWorld.addCollisionHandler(new BonusPlayerHandler());
     }
 
     @Override
@@ -381,7 +357,8 @@ public class SpaceInvadersApp extends GameApplication {
         tutorial.play();
     }
 
-    private void onPlayerGotHit(GameEvent event) {
+    @Handles(eventType = "PLAYER_GOT_HIT")
+    public void onPlayerGotHit(GameEvent event) {
         lives.set(lives.get() - 1);
         uiController.loseLife();
 
@@ -397,7 +374,8 @@ public class SpaceInvadersApp extends GameApplication {
             showGameOver();
     }
 
-    private void onEnemyKilled(GameEvent event) {
+    @Handles(eventType = "ENEMY_KILLED")
+    public void onEnemyKilled(GameEvent event) {
         enemiesDestroyed.set(enemiesDestroyed.get() + 1);
         score.set(score.get() + SCORE_ENEMY_KILL * (getGameState().getGameDifficulty().ordinal() + SCORE_DIFFICULTY_MODIFIER));
 
@@ -412,7 +390,8 @@ public class SpaceInvadersApp extends GameApplication {
         }
     }
 
-    private void onEnemyReachedEnd(GameEvent event) {
+    @Handles(eventType = "ENEMY_REACHED_END")
+    public void onEnemyReachedEnd(GameEvent event) {
         enemiesDestroyed.set(enemiesDestroyed.get() + 1);
 
         lives.set(lives.get() - 1);
@@ -425,7 +404,8 @@ public class SpaceInvadersApp extends GameApplication {
             nextLevel();
     }
 
-    private void onBonusPickup(BonusPickupEvent event) {
+    @Handles(eventType = "ANY")
+    public void onBonusPickup(BonusPickupEvent event) {
         switch (event.getType()) {
             case ATTACK_RATE:
                 playerControl.increaseAttackSpeed(PLAYER_BONUS_ATTACK_SPEED);

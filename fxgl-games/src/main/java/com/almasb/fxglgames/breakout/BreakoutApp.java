@@ -26,9 +26,6 @@
 
 package com.almasb.fxglgames.breakout;
 
-import com.almasb.fxglgames.breakout.control.BallControl;
-import com.almasb.fxglgames.breakout.control.BatControl;
-import com.almasb.fxglgames.breakout.control.BrickControl;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.audio.Music;
@@ -45,6 +42,9 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.text.TextLevelParser;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxglgames.breakout.control.BallControl;
+import com.almasb.fxglgames.breakout.control.BatControl;
+import com.almasb.fxglgames.breakout.control.BrickControl;
 import javafx.animation.PathTransition;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;

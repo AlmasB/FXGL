@@ -26,16 +26,14 @@
 
 package com.almasb.fxglgames.spaceinvaders.collision;
 
+import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.GameWorld;
-import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxglgames.spaceinvaders.SpaceInvadersType;
 import com.almasb.fxglgames.spaceinvaders.component.HPComponent;
 import com.almasb.fxglgames.spaceinvaders.component.OwnerComponent;
@@ -47,6 +45,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@AddCollisionHandler
 public class BulletEnemyHandler extends CollisionHandler {
 
     public BulletEnemyHandler() {
@@ -65,7 +64,6 @@ public class BulletEnemyHandler extends CollisionHandler {
         GameWorld world = (GameWorld) bullet.getWorld();
 
         Point2D hitPosition = bullet.getComponentUnsafe(PositionComponent.class).getValue();
-        bullet.setProperty("dead", true);
         bullet.removeFromWorld();
 
         HPComponent hp = enemy.getComponentUnsafe(HPComponent.class);
@@ -78,15 +76,16 @@ public class BulletEnemyHandler extends CollisionHandler {
                 enemy.removeFromWorld();
             }, Duration.seconds(0.1));
 
-            // TODO: do this via a listener to entity world, i.e. when they are actually removed
-            FXGL.getService(ServiceType.AUDIO_PLAYER).playSound("spaceinvaders/explosion.wav");
-            FXGL.getService(ServiceType.EVENT_BUS).fireEvent(new GameEvent(GameEvent.ENEMY_KILLED));
+            FXGL.getAudioPlayer().playSound("spaceinvaders/explosion.wav");
+            FXGL.getEventBus().fireEvent(new GameEvent(GameEvent.ENEMY_KILLED));
         } else {
             world.spawn("LaserHit", hitPosition);
 
+            // make enemy look red
             enemy.getComponentUnsafe(ViewComponent.class).getView().setBlendMode(BlendMode.RED);
 
-            FXGL.getService(ServiceType.MASTER_TIMER)
+            // return enemy look to normal
+            FXGL.getMasterTimer()
                     .runOnceAfter(() -> {
                         if (enemy.isActive())
                             enemy.getComponentUnsafe(ViewComponent.class).getView().setBlendMode(null);
