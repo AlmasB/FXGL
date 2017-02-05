@@ -41,8 +41,8 @@ public class ScifiSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(640);
-        settings.setHeight(640);
+        settings.setWidth(1280);
+        settings.setHeight(720);
         settings.setTitle("ScifiSample");
         settings.setVersion("0.1");
         settings.setIntroEnabled(false);
@@ -77,7 +77,7 @@ public class ScifiSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        TiledMap map = getAssetLoader().loadJSON("test_level.json", TiledMap.class);
+        TiledMap map = getAssetLoader().loadJSON("sample_map.json", TiledMap.class);
 
         getGameWorld().setLevelFromMap(map);
 
