@@ -251,8 +251,6 @@ public class Entities {
                     layer.getHeight() * map.getTileheight()
             );
 
-            System.out.println(buffer.getWidth() + " x " + buffer.getHeight());
-
             for (int i = 0; i < layer.getData().size(); i++) {
 
                 int gid = layer.getData().get(i);
