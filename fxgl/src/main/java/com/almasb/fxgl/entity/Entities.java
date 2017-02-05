@@ -251,6 +251,8 @@ public class Entities {
                     layer.getHeight() * map.getTileheight()
             );
 
+            System.out.println(buffer.getWidth() + " x " + buffer.getHeight());
+
             for (int i = 0; i < layer.getData().size(); i++) {
 
                 int gid = layer.getData().get(i);
@@ -270,7 +272,7 @@ public class Entities {
 
                 // image destination
                 int x = i % layer.getWidth();
-                int y = i / layer.getHeight();
+                int y = i / layer.getWidth();
 
                 int w = tileset.getTilewidth();
                 int h = tileset.getTileheight();
