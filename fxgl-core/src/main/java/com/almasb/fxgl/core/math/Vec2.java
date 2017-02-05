@@ -358,6 +358,10 @@ public final class Vec2 implements Serializable, Poolable {
 
     /* STATIC */
 
+    public static Vec2 fromAngle(double degrees) {
+        return new Vec2(FXGLMath.cosDeg((float)degrees), FXGLMath.sinDeg((float)degrees));
+    }
+
     public static Vec2 abs(Vec2 a) {
         return new Vec2(FXGLMath.abs(a.x), FXGLMath.abs(a.y));
     }
