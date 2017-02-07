@@ -54,6 +54,17 @@ public final class Vec2 implements Serializable, Poolable {
         this.y = y;
     }
 
+    /**
+     * Convenience ctor for double values.
+     * Note: values will be typecast to float.
+     *
+     * @param x x component
+     * @param y y component
+     */
+    public Vec2(double x, double y) {
+        this((float) x, (float) y);
+    }
+
     public Vec2(Vec2 toCopy) {
         this(toCopy.x, toCopy.y);
     }
