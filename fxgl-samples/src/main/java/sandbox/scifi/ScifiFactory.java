@@ -28,13 +28,17 @@ package sandbox.scifi;
 
 import com.almasb.fxgl.annotation.SetEntityFactory;
 import com.almasb.fxgl.annotation.Spawns;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.texture.Texture;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.jbox2d.dynamics.BodyType;
 
 /**
@@ -47,7 +51,28 @@ public class ScifiFactory implements EntityFactory {
     public Entity newPlatform(SpawnData data) {
         return Entities.builder()
                 .at(data.getX(), data.getY())
+                .type(ScifiType.PLATFORM)
                 .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
+                .with(new PhysicsComponent())
+                .build();
+    }
+
+    @Spawns("block")
+    public Entity newBlock(SpawnData data) {
+        return Entities.builder()
+                .at(data.getX(), data.getY())
+                .type(ScifiType.PLATFORM)
+                .viewFromNodeWithBBox(new EntityView(new Rectangle(640 - 512, 64, Color.DARKCYAN), new RenderLayer() {
+                    @Override
+                    public String name() {
+                        return "Block";
+                    }
+
+                    @Override
+                    public int index() {
+                        return 10000;
+                    }
+                }))
                 .with(new PhysicsComponent())
                 .build();
     }
@@ -57,10 +82,30 @@ public class ScifiFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
+        Texture staticTexture = FXGL.getAssetLoader()
+                .loadTexture("dude.png")
+                .subTexture(new Rectangle2D(0, 0, 32, 42));
+
+        Texture animatedTexture = FXGL.getAssetLoader()
+                .loadTexture("dude.png")
+                .toAnimatedTexture(4, Duration.seconds(1));
+
         return Entities.builder()
                 .at(data.getX(), data.getY())
-                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
+                .type(ScifiType.PLAYER)
+                .bbox(new HitBox("main", BoundingShape.circle(19)))
                 .with(physics)
+                .with(new PlayerControl(staticTexture, animatedTexture))
+                .build();
+    }
+
+    @Spawns("button")
+    public Entity newButton(SpawnData data) {
+        return Entities.builder()
+                .at(data.getX(), data.getY())
+                .type(ScifiType.BUTTON)
+                .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("push_button.png", 33, 22))
+                .with(new UsableControl(() -> FXGL.getApp().getGameWorld().spawn("block", 256, 352)))
                 .build();
     }
 }
