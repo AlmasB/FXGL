@@ -88,8 +88,8 @@ public class VoronoiSample extends GameApplication {
 
         Circle c3 = new Circle(100, 100, 100, Color.TRANSPARENT);
         c3.setStroke(Color.GREEN);
-        c3.setTranslateX(390);
-        c3.setTranslateY(220);
+        c3.setTranslateX(450);
+        c3.setTranslateY(250);
 
         Circle c4 = new Circle(5, 5, 5, Color.BLACK);
         c4.setTranslateX(340);
