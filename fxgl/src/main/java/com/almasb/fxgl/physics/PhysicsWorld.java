@@ -104,6 +104,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return jboxWorld;
     }
 
+    public double getAppHeight() {
+        return appHeight;
+    }
+
     private boolean isCollidable(Entity e) {
         if (!e.isActive())
             return false;
@@ -635,7 +639,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         ParticleGroup particleGroup = jboxWorld.createParticleGroup(def);
 
         Color color = e.getComponentUnsafe(PhysicsParticleComponent.class).getColor();
-        e.addControl(new PhysicsParticleControl(particleGroup, color));
+        e.addControl(new PhysicsParticleControl(particleGroup, color, this));
     }
 
     /**
@@ -759,56 +763,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             fixture = null;
             point = null;
             bestFraction = 1.0f;
-        }
-    }
-
-    /**
-     * The difference between physics and normal particle entity is that
-     * the former is managed (controlled) by the physics world, the latter
-     * by the particle emitters.
-     */
-    public final class PhysicsParticleControl extends ParticleControl {
-        private ParticleGroup group;
-        private double radiusMeters;
-        private double radiusPixels;
-        private Color color;
-
-        private PhysicsParticleControl(ParticleGroup group, Color color) {
-            this.group = group;
-            this.color = color;
-
-            radiusMeters = particleSystem.getParticleRadius();
-            radiusPixels = toPixels(radiusMeters);
-        }
-
-        @Override
-        public void onUpdate(Entity entity, double tpf) {
-            this.particles.clear();
-
-            Vec2[] centers = particleSystem.getParticlePositionBuffer();
-
-            for (int i = group.getBufferIndex(); i < group.getBufferIndex() + group.getParticleCount(); i++) {
-                Vec2 center = centers[i];
-
-                double x = toPixels(center.x - radiusMeters);
-                double y = toPixels(toMeters(appHeight) - center.y - radiusMeters);
-
-                this.particles.add(new PhysicsParticle(new Point2D(x, y), radiusPixels, color));
-            }
-        }
-
-        @Override
-        public void onRemoved(Entity entity) {
-            jboxWorld.destroyParticlesInGroup(group);
-            super.onRemoved(entity);
-        }
-    }
-
-    private class PhysicsParticle extends Particle {
-        PhysicsParticle(Point2D position, double radius, Paint color) {
-            super(position, Point2D.ZERO, Point2D.ZERO, radius, Point2D.ZERO,
-                    Duration.seconds(10), color, BlendMode.SRC_OVER);
-
         }
     }
 }

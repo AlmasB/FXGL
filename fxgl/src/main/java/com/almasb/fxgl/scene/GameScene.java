@@ -36,6 +36,7 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.scene.lighting.LightingSystem;
 import com.almasb.fxgl.ui.UI;
@@ -360,7 +361,7 @@ public final class GameScene extends FXGLScene
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::add);
-        entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
+        entity.getControl(PhysicsParticleControl.class)
                 .ifPresent(particles::add);
 
         if (lightingSystem != null)
@@ -384,7 +385,7 @@ public final class GameScene extends FXGLScene
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(p -> particles.removeValue(p, true));
-        entity.getControl(PhysicsWorld.PhysicsParticleControl.class)
+        entity.getControl(PhysicsParticleControl.class)
                 .ifPresent(p -> particles.removeValue(p, true));
     }
 
@@ -419,16 +420,16 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onControlAdded(Control control) {
-        if (control instanceof PhysicsWorld.PhysicsParticleControl) {
-            PhysicsWorld.PhysicsParticleControl particleControl = (PhysicsWorld.PhysicsParticleControl) control;
+        if (control instanceof PhysicsParticleControl) {
+            PhysicsParticleControl particleControl = (PhysicsParticleControl) control;
             particles.add(particleControl);
         }
     }
 
     @Override
     public void onControlRemoved(Control control) {
-        if (control instanceof PhysicsWorld.PhysicsParticleControl) {
-            particles.removeValue((PhysicsWorld.PhysicsParticleControl) control, true);
+        if (control instanceof PhysicsParticleControl) {
+            particles.removeValue((PhysicsParticleControl) control, true);
         }
     }
 }
