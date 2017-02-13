@@ -31,8 +31,6 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorldListener;
-import com.almasb.fxgl.effect.Particle;
-import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.CollidableComponent;
@@ -45,20 +43,15 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.util.Duration;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.particle.ParticleGroup;
 import org.jbox2d.particle.ParticleGroupDef;
-import org.jbox2d.particle.ParticleSystem;
 
 import java.util.Iterator;
 
@@ -81,8 +74,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     private final double METERS_PER_PIXELS;
 
     private World jboxWorld = new World(new Vec2(0, -10));
-
-    private ParticleSystem particleSystem = jboxWorld.getParticleSystem();
 
     private Array<Entity> entities = new Array<>(false, 128);
 
@@ -667,11 +658,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity entity = null;
         Point2D point = null;
 
-        if (raycastCallback.fixture != null)
-            entity = (Entity) raycastCallback.fixture.getBody().getUserData();
+        if (raycastCallback.getFixture() != null)
+            entity = (Entity) raycastCallback.getFixture().getBody().getUserData();
 
-        if (raycastCallback.point != null)
-            point = toPoint(raycastCallback.point);
+        if (raycastCallback.getPoint() != null)
+            point = toPoint(raycastCallback.getPoint());
 
         if (entity == null && point == null)
             return RaycastResult.NONE;
@@ -737,32 +728,5 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      */
     public Point2D toPoint(Vec2 p) {
         return new Point2D(toPixels(p.x), toPixels(toMeters(appHeight) - p.y));
-    }
-
-    private static class EdgeCallback implements RayCastCallback {
-        Fixture fixture;
-        Vec2 point;
-        float bestFraction = 1.0f;
-
-        @Override
-        public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
-            Entity e = (Entity) fixture.getBody().getUserData();
-            if (e.getComponentUnsafe(PhysicsComponent.class).isRaycastIgnored())
-                return 1;
-
-            if (fraction < bestFraction) {
-                this.fixture = fixture;
-                this.point = point.clone();
-                bestFraction = fraction;
-            }
-
-            return bestFraction;
-        }
-
-        void reset() {
-            fixture = null;
-            point = null;
-            bestFraction = 1.0f;
-        }
     }
 }

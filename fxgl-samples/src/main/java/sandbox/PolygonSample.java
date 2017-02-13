@@ -27,35 +27,18 @@
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.application.Platform;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Shape;
-import math.geom2d.AffineTransform2D;
-import math.geom2d.Box2D;
-import math.geom2d.line.LineSegment2D;
 import math.geom2d.polygon.Polygon2D;
 import math.geom2d.polygon.Polygons2D;
 import math.geom2d.polygon.SimplePolygon2D;
-import org.delaunay.TriangulationDemo;
-import org.delaunay.algorithm.Triangulation;
-import org.delaunay.algorithm.Triangulations;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.almasb.fxgl.core.math.FXGLMath.random;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is an example of a minimalistic FXGL game application.
@@ -76,63 +59,40 @@ public class PolygonSample extends GameApplication {
         settings.setCloseConfirmation(false);
     }
 
-    private Triangulation t = new Triangulation();
-
-    private void test() {
-        try {
-            t.setDebugLogger(new Triangulation.DebugLogger() {
-                @Override
-                public void debug(String str) {
-                    System.out.println(str);
-                }
-            });
-
-            //t.addAllVertices(Triangulations.randomVertices(1000, 400, 400));
-            t.triangulate();
-            TriangulationDemo.drawTriangulation(t, 800, 800, "triangulation.png");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void test2() {
-        SimplePolygon2D d;
-    }
-
     @Override
     protected void initGame() {
 
         Circle circle = new Circle(200, 200, 200, Color.BLUE);
-        circle.setTranslateX(150);
-        circle.setTranslateY(80);
+        circle.setTranslateX(170);
+        circle.setTranslateY(100);
 
         Polygon polygon = makePolygon(200, 200, 200, 12);
-        polygon.setTranslateX(150);
-        polygon.setTranslateY(80);
+        polygon.setTranslateX(170);
+        polygon.setTranslateY(100);
 
         Circle circle2 = new Circle(200, 200, 200, Color.YELLOWGREEN);
         circle2.setTranslateX(330);
-        circle2.setTranslateY(215);
+        circle2.setTranslateY(115);
 
         Polygon polygon2 = makePolygon(200, 200, 200, 12);
         polygon2.setTranslateX(330);
-        polygon2.setTranslateY(215);
+        polygon2.setTranslateY(115);
 
         Circle circle3 = new Circle(200, 200, 200, Color.ROSYBROWN);
         circle3.setTranslateX(225);
-        circle3.setTranslateY(340);
+        circle3.setTranslateY(240);
 
         Polygon polygon3 = makePolygon(200, 200, 200, 16);
         polygon3.setTranslateX(225);
-        polygon3.setTranslateY(340);
+        polygon3.setTranslateY(240);
 
         Circle circle4 = new Circle(100, 100, 100, Color.DARKGOLDENROD);
-        circle4.setTranslateX(465);
-        circle4.setTranslateY(230);
+        circle4.setTranslateX(475);
+        circle4.setTranslateY(210);
 
         Polygon polygon4 = makePolygon(100, 100, 100, 8);
-        polygon4.setTranslateX(465);
-        polygon4.setTranslateY(230);
+        polygon4.setTranslateX(475);
+        polygon4.setTranslateY(210);
 
         getGameScene().addUINodes(circle, circle2, circle3, circle4, polygon, polygon2, polygon3, polygon4);
 

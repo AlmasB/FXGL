@@ -106,7 +106,8 @@ class Polylabel {
                 }
 
                 // do not drill down further if there's no chance of a better solution
-                if (cell.max - bestCell.d <= precision) continue;
+                if (cell.max - bestCell.d <= precision)
+                    continue;
 
                 // split the cell into four cells
                 h = cell.h / 2;
@@ -131,27 +132,27 @@ class Polylabel {
 
         // signed distance from point to polygon outline (negative if point is outside)
         fun pointToPolygonDist(x: Double, y: Double, polygon: Polygon2D): Double {
-            var inside = false;
-            var minDistSq = Double.MAX_VALUE;
-
-            for (ring in polygon.contours()) {
-                var i = 0
-                var len = ring.vertexNumber()
-                var j = len - 1
-
-                while (i < len) {
-                    var a = ring.vertex(i)
-                    var b = ring.vertex(j)
-
-                    if ((a.y() > y !== b.y() > y) &&
-                            (x < (b.x() - a.x()) * (y - a.y()) / (b.y() - a.y()) + a.x())) inside = !inside;
-
-                    minDistSq = Math.min(minDistSq, getSegDistSq(x, y, Point2D(a.x(), a.y()), Point2D(b.x(), b.y())));
-
-                    j = i
-                    i++
-                }
-            }
+//            var inside = false;
+//            var minDistSq = Double.MAX_VALUE;
+//
+//            for (ring in polygon.contours()) {
+//                var i = 0
+//                var len = ring.vertexNumber()
+//                var j = len - 1
+//
+//                while (i < len) {
+//                    var a = ring.vertex(i)
+//                    var b = ring.vertex(j)
+//
+//                    if ((a.y() > y !== b.y() > y) &&
+//                            (x < (b.x() - a.x()) * (y - a.y()) / (b.y() - a.y()) + a.x())) inside = !inside;
+//
+//                    minDistSq = Math.min(minDistSq, getSegDistSq(x, y, Point2D(a.x(), a.y()), Point2D(b.x(), b.y())));
+//
+//                    j = i
+//                    i++
+//                }
+//            }
 
 
 //            for (var k = 0; k < polygon.length; k++) {
@@ -167,7 +168,27 @@ class Polylabel {
 //            }
 //            }
 
-            return (if (inside) 1 else -1) * Math.sqrt(minDistSq)
+
+
+
+
+
+
+
+
+
+
+//            val result = (if (inside) 1 else -1) * Math.sqrt(minDistSq)
+//            val result2 = -polygon.boundary().signedDistance(x, y)
+//
+//            if (result.toInt() == result2.toInt()) {
+//                println("EQUALS")
+//            } else {
+//                println("Poly: $result")
+//                println("Comp: $result2")
+//            }
+
+            return -polygon.boundary().signedDistance(x, y)
         }
 
         // get polygon centroid
