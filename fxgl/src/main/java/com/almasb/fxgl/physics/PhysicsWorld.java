@@ -214,17 +214,25 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         entities.add(entity);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
-            if (!jboxWorld.isLocked()) {
-                createBody(entity);
-            } else {
-                delayedBodiesAdd.add(entity);
-            }
+            onPhysicsEntityAdded(entity);
         } else if (entity.hasComponent(PhysicsParticleComponent.class)) {
-            if (!jboxWorld.isLocked()) {
-                createPhysicsParticles(entity);
-            } else {
-                delayedParticlesAdd.add(entity);
-            }
+            onPhysicsParticleEntityAdded(entity);
+        }
+    }
+
+    private void onPhysicsEntityAdded(Entity entity) {
+        if (!jboxWorld.isLocked()) {
+            createBody(entity);
+        } else {
+            delayedBodiesAdd.add(entity);
+        }
+    }
+
+    private void onPhysicsParticleEntityAdded(Entity entity) {
+        if (!jboxWorld.isLocked()) {
+            createPhysicsParticles(entity);
+        } else {
+            delayedParticlesAdd.add(entity);
         }
     }
 
@@ -233,11 +241,15 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         entities.removeValue(entity, true);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
-            if (!jboxWorld.isLocked()) {
-                destroyBody(entity);
-            } else {
-                delayedBodiesRemove.add(Entities.getPhysics(entity).getBody());
-            }
+            onPhysicsEntityRemoved(entity);
+        }
+    }
+
+    private void onPhysicsEntityRemoved(Entity entity) {
+        if (!jboxWorld.isLocked()) {
+            destroyBody(entity);
+        } else {
+            delayedBodiesRemove.add(Entities.getPhysics(entity).getBody());
         }
     }
 
@@ -383,45 +395,53 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
                 if (result.hasCollided()) {
 
-                    CollisionPair pair = getPair(e1, e2);
-
-                    // check if pair was not colliding before
-                    if (pair == null) {
-                        pair = pooler.get(CollisionPair.class);
-                        pair.init(e1, e2, handler);
-
-                        // add pair to list of collisions so we still use it
-                        collisions.add(pair);
-
-                        handler.onHitBoxTrigger(pair.getA(), pair.getB(), result.getBoxA(), result.getBoxB());
-                        pair.collisionBegin();
-                    }
+                    collisionBeginFor(handler, e1, e2, result.getBoxA(), result.getBoxB());
 
                     // put result back to pool only if collided
                     pooler.put(result);
                 } else {
-
-                    int pairIndex = getPairIndex(e1, e2);
-
-                    // collision registered, so end the collision
-                    // and remove it and put pair back to pool
-                    if (pairIndex != -1) {
-                        CollisionPair pair = collisions.get(pairIndex);
-
-                        collisions.removeIndex(pairIndex);
-                        pair.collisionEnd();
-                        pooler.put(pair);
-                    }
+                    collisionEndFor(e1, e2);
                 }
-
             }
         }
 
         collidables.clear();
     }
-    
+
+    private void collisionBeginFor(CollisionHandler handler, Entity e1, Entity e2, HitBox a, HitBox b) {
+        CollisionPair pair = getPair(e1, e2);
+
+        // null means e1 and e2 were not colliding before
+        // if not null, then ignore because e1 and e2 are still colliding
+        if (pair == null) {
+            pair = pooler.get(CollisionPair.class);
+            pair.init(e1, e2, handler);
+
+            // add pair to list of collisions so we still use it
+            collisions.add(pair);
+
+            handler.onHitBoxTrigger(pair.getA(), pair.getB(), a, b);
+            pair.collisionBegin();
+        }
+    }
+
+    private void collisionEndFor(Entity e1, Entity e2) {
+        int pairIndex = getPairIndex(e1, e2);
+
+        // if not -1, then collision registered, so end the collision
+        // and remove it and put pair back to pool
+        // if -1 then collision was not present before either
+        if (pairIndex != -1) {
+            CollisionPair pair = collisions.get(pairIndex);
+
+            collisions.removeIndex(pairIndex);
+            pair.collisionEnd();
+            pooler.put(pair);
+        }
+    }
+
     /**
-     * Fires collisions handlers' collision() callback based on currently registered collisions.
+     * Fires all collision handlers' collision() callback based on currently registered collisions.
      */
     private void notifyCollisions() {
         for (Iterator<CollisionPair> it = collisions.iterator(); it.hasNext(); ) {
