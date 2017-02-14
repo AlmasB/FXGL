@@ -7,11 +7,7 @@ JavaFX Game Development Framework
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)
 [![Coverage](https://api.codacy.com/project/badge/Coverage/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Coverage)
 [![Codacy](https://api.codacy.com/project/badge/Grade/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Grade)
-
-[![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
 [![Showcase](https://img.shields.io/badge/www-Showcase-green.svg)](http://almasb.github.io/FXGLGames/)
-[![Wiki](https://img.shields.io/badge/www-Wiki-green.svg)](https://github.com/AlmasB/FXGL/wiki)
-[![MIT](http://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/AlmasB/FXGL/blob/master/LICENSE)
 
 ## Good for ...
 
@@ -26,47 +22,7 @@ JavaFX Game Development Framework
 
 ## Latest Release Features
 
-Graphics & UI | Application Framework
-:---:    | :---:
-JavaFX 8  | Global / Scoped Event Bus
-Multi-Layer Rendering | Time Management System (in-game time + real time)
-Canvas Particle System | Multithreading
-Dynamic Texture Manipulation | [Log4j2](http://logging.apache.org/log4j/2.x/) Logging
-Sprite Sheet Animations | Performance Monitor + Profiling
-Target Screen Resolution (+Fullscreen) | Global Services Framework
-Customizable Intro Video / Animation | Developer Panel
-Customizable Main Menu / Game Menu (3 built-in menu styles) | GC-free Object Pooling
-Customizable UI elements (Dialogs, Bars, Buttons, etc)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/progress_bar.jpg" width="512" /><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/profile.jpg" width="512" /> | 
-Customizable Global CSS for menus / UI elements | Annotations Metaprogramming
-Post-processing Effects (**alpha**) |
-
-
-User Input | I/O
-:---:      | :---:
-Key & Mouse Bindings | IO Task Mechanism / Networking (TCP and UDP)
-Full Input Mocking   | Asset Management (".png", ".jpg", ".wav", ".mp3", ".txt", ".ttf/.otf", custom)
-
-
-Physics |   Utilities
-:---: | :---:
-[JBox2D](https://github.com/jbox2d/jbox2d) Integration | Commonly used data structures and algorithms from various frameworks
-FXGL Physics (BBox + SAT) |
-Unified Collision Handling (JBox2D + FXGL physics) |
-
-
-Gameplay | AI
-:---:    | :---:
-Entity Component Control System | [gdxAI](https://github.com/libgdx/gdx-ai) Integration
-Full Game Loop                              | A* Pathfinding
-Quick Time Events (QTE)<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/QTE.jpg" width="256" /> | JavaScript Behavior Injections (for entities) + JavaScript FXGL Environment Variables<br/><br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/JS.jpg" width="768" />
-Achievement System| 
-Notification System<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/achievement.jpg" width="512" /> |
-Saving / Loading System |
-User Profiles (Save/Load/Restore Game Settings) |
-Level Parsers (.txt, .json (**alpha**) using [jackson](https://github.com/FasterXML/jackson-databind))|
-Quest Tracker<br/><img src="https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/quests.jpg" width="512" />|
-
-If you have a use case (feature) that FXGL doesn't cover, raise an issue, carefully describing the use case.
+The ever-growing list of features can be found in the [Wiki](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 
 ## Showcase
 
@@ -114,10 +70,12 @@ fun main(args: Array<String>) {
 }
 ```
 
-* (**up to date**) For all "Getting Started" tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki).
-* (**up to date**) The [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder will be constantly updated to include demonstrations of various features.
-* (**outdated**) The [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) videos will walk you through the basics.
-* For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames).
+## Getting Started
+
+* For written tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki)
+* For video tutorials check out the [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) channel
+* The [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder is constantly updated to include demos of various features
+* For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames)
 
 ## Setup Video Tutorials
 
@@ -151,6 +109,7 @@ Latest pre-compiled uber jar can be found in [Releases](https://github.com/Almas
 The contribution [guide](CONTRIBUTING.md)
 
 ## Contact
+[![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
 [![Google+](https://img.shields.io/badge/Google+-AlmasB-red.svg)](https://plus.google.com/+AlmasB0/about)
 [![Survey](https://img.shields.io/badge/Feedback-SurveyMonkey-red.svg)](https://www.surveymonkey.com/r/BH6LLPM)
