@@ -31,6 +31,7 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import math.geom2d.polygon.Polygon2D;
 import math.geom2d.polygon.Polygons2D;
@@ -62,72 +63,115 @@ public class PolygonSample extends GameApplication {
     @Override
     protected void initGame() {
 
-        Circle circle = new Circle(200, 200, 200, Color.BLUE);
+//        Polygon2D p = new SimplePolygon2D(
+//                new math.geom2d.Point2D(77, 900 - 442),
+//                new math.geom2d.Point2D(117, 900 - 492),
+//                new math.geom2d.Point2D(240, 900 - 522),
+//                new math.geom2d.Point2D(297, 900 - 506),
+//                new math.geom2d.Point2D(311, 900 - 436),
+//                new math.geom2d.Point2D(256, 900 - 347),
+//                new math.geom2d.Point2D(57, 900 - 357)
+//        );
+//
+//        Point2D center = Polylabel.findCenter(p);
+//
+//        System.out.println(center);
+//
+//        p.vertices().forEach(v -> {
+//            getGameScene().addUINode(pointView(v.x(), v.y()));
+//        });
+//
+//        p.edges().forEach(e -> {
+//            Line l = new Line(e.origin().x(), e.origin().y(), e.lastPoint().x(), e.lastPoint().y());
+//            getGameScene().addUINode(l);
+//        });
+//
+//        getGameScene().addUINode(pointView(center.getX(), center.getY()));
+
+
+
+
+
+
+
+
+
+
+        Circle circle = new Circle(100, 100, 100, Color.BLUE);
         circle.setTranslateX(170);
         circle.setTranslateY(100);
-
-        Polygon polygon = makePolygon(200, 200, 200, 12);
+//
+        Polygon polygon = makePolygon(100, 100, 100, 16);
         polygon.setTranslateX(170);
         polygon.setTranslateY(100);
 
-        Circle circle2 = new Circle(200, 200, 200, Color.YELLOWGREEN);
-        circle2.setTranslateX(330);
-        circle2.setTranslateY(115);
+        getGameScene().addUINodes(circle, polygon);
 
-        Polygon polygon2 = makePolygon(200, 200, 200, 12);
-        polygon2.setTranslateX(330);
-        polygon2.setTranslateY(115);
+        for (int i = 0; i < polygon.getPoints().size(); i += 2) {
+            int x = polygon.getPoints().get(i).intValue();
+            int y = polygon.getPoints().get(i+1).intValue();
 
-        Circle circle3 = new Circle(200, 200, 200, Color.ROSYBROWN);
-        circle3.setTranslateX(225);
-        circle3.setTranslateY(240);
-
-        Polygon polygon3 = makePolygon(200, 200, 200, 16);
-        polygon3.setTranslateX(225);
-        polygon3.setTranslateY(240);
-
-        Circle circle4 = new Circle(100, 100, 100, Color.DARKGOLDENROD);
-        circle4.setTranslateX(475);
-        circle4.setTranslateY(210);
-
-        Polygon polygon4 = makePolygon(100, 100, 100, 8);
-        polygon4.setTranslateX(475);
-        polygon4.setTranslateY(210);
-
-        getGameScene().addUINodes(circle, circle2, circle3, circle4, polygon, polygon2, polygon3, polygon4);
-
-        Polygon2D a = convert(polygon);
-        Polygon2D b = convert(polygon2);
-        Polygon2D c = convert(polygon3);
-        Polygon2D d = convert(polygon4);
-
-        List<Region> regions = Arrays.asList(
-                new Region("a", Arrays.asList(a), Arrays.asList(b, c, d)), //0
-                new Region("b",Arrays.asList(b), Arrays.asList(a, c, d)),
-                new Region("c",Arrays.asList(c), Arrays.asList(b, a, d)), // 2
-                new Region("ab",Arrays.asList(a, b), Arrays.asList(c, d)), //3
-                new Region("bc",Arrays.asList(b, c), Arrays.asList(a, d)), //4
-                new Region("ac",Arrays.asList(a, c), Arrays.asList(b, d)),
-                new Region("abc",Arrays.asList(a, b, c), Arrays.asList(d)),
-
-                new Region("dabc",Arrays.asList(d, a, b, c), Arrays.asList()), //7
-                new Region("dab",Arrays.asList(d, a, b), Arrays.asList(c)),
-                new Region("db",Arrays.asList(d, b), Arrays.asList(a, c)),
-                new Region("dbc",Arrays.asList(d, b, c), Arrays.asList(a))
-        );
-
-        regions.stream().map(Region::getShape).forEach(poly -> {
-            math.geom2d.Point2D p = poly.centroid();
-
-            getGameScene().addUINode(pointView(p.x(), p.y()));
-
-            Point2D p0 = Polylabel.findCenter(poly);
-
-            Circle c0 = pointView(p0.getX(), p0.getY());
-            c0.setFill(Color.YELLOW);
-
-            getGameScene().addUINode(c0);
-        });
+            System.out.println(x + " , " + (600 - y));
+        }
+//
+//        Circle circle2 = new Circle(200, 200, 200, Color.YELLOWGREEN);
+//        circle2.setTranslateX(330);
+//        circle2.setTranslateY(115);
+//
+//        Polygon polygon2 = makePolygon(200, 200, 200, 12);
+//        polygon2.setTranslateX(330);
+//        polygon2.setTranslateY(115);
+//
+//        Circle circle3 = new Circle(200, 200, 200, Color.ROSYBROWN);
+//        circle3.setTranslateX(225);
+//        circle3.setTranslateY(240);
+//
+//        Polygon polygon3 = makePolygon(200, 200, 200, 16);
+//        polygon3.setTranslateX(225);
+//        polygon3.setTranslateY(240);
+//
+//        Circle circle4 = new Circle(100, 100, 100, Color.DARKGOLDENROD);
+//        circle4.setTranslateX(475);
+//        circle4.setTranslateY(210);
+//
+//        Polygon polygon4 = makePolygon(100, 100, 100, 8);
+//        polygon4.setTranslateX(475);
+//        polygon4.setTranslateY(210);
+//
+//        getGameScene().addUINodes(circle, circle2, circle3, circle4, polygon, polygon2, polygon3, polygon4);
+//
+//        Polygon2D a = convert(polygon);
+//        Polygon2D b = convert(polygon2);
+//        Polygon2D c = convert(polygon3);
+//        Polygon2D d = convert(polygon4);
+//
+//        List<Region> regions = Arrays.asList(
+//                new Region("a", Arrays.asList(a), Arrays.asList(b, c, d)), //0
+//                new Region("b",Arrays.asList(b), Arrays.asList(a, c, d)),
+//                new Region("c",Arrays.asList(c), Arrays.asList(b, a, d)), // 2
+//                new Region("ab",Arrays.asList(a, b), Arrays.asList(c, d)), //3
+//                new Region("bc",Arrays.asList(b, c), Arrays.asList(a, d)), //4
+//                new Region("ac",Arrays.asList(a, c), Arrays.asList(b, d)),
+//                new Region("abc",Arrays.asList(a, b, c), Arrays.asList(d)),
+//
+//                new Region("dabc",Arrays.asList(d, a, b, c), Arrays.asList()), //7
+//                new Region("dab",Arrays.asList(d, a, b), Arrays.asList(c)),
+//                new Region("db",Arrays.asList(d, b), Arrays.asList(a, c)),
+//                new Region("dbc",Arrays.asList(d, b, c), Arrays.asList(a))
+//        );
+//
+//        regions.stream().map(Region::getShape).forEach(poly -> {
+//            math.geom2d.Point2D p = poly.centroid();
+//
+//            getGameScene().addUINode(pointView(p.x(), p.y()));
+//
+//            Point2D p0 = Polylabel.findCenter(poly);
+//
+//            Circle c0 = pointView(p0.getX(), p0.getY());
+//            c0.setFill(Color.YELLOW);
+//
+//            getGameScene().addUINode(c0);
+//        });
 
 
 
