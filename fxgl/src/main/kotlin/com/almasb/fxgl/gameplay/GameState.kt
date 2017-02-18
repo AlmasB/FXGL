@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.ObjectMap
 import javafx.beans.property.*
+import javafx.beans.value.ObservableValue
 import java.util.*
 
 /**
@@ -39,25 +39,17 @@ import java.util.*
  */
 class GameState {
 
-    companion object {
-        private val log = FXGL.getLogger(GameState::class.java)
-    }
-
     private val gameDifficulty = SimpleObjectProperty(GameDifficulty.MEDIUM)
 
     /**
      * @return game difficulty
      */
-    fun getGameDifficulty(): GameDifficulty {
-        return gameDifficultyProperty().get()
-    }
+    fun getGameDifficulty(): GameDifficulty = gameDifficultyProperty().get()
 
     /**
      * @return game difficulty property
      */
-    fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> {
-        return gameDifficulty
-    }
+    fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> = gameDifficulty
 
     private val properties = ObjectMap<String, Any>(32)
 
@@ -91,11 +83,11 @@ class GameState {
             throw IllegalArgumentException("Property $propertyName already exists")
 
         val property = when (value) {
-            is Boolean -> SimpleBooleanProperty()
-            is Int -> SimpleIntegerProperty()
-            is Double-> SimpleDoubleProperty()
-            is String -> SimpleStringProperty()
-            else -> throw IllegalArgumentException("Unknown value type: $value")
+            is Boolean -> SimpleBooleanProperty(value)
+            is Int -> SimpleIntegerProperty(value)
+            is Double-> SimpleDoubleProperty(value)
+            is String -> SimpleStringProperty(value)
+            else -> SimpleObjectProperty(value)
         }
 
         properties.put(propertyName, property)
@@ -107,7 +99,7 @@ class GameState {
             is Int -> intProperty(propertyName).value = value
             is Double -> doubleProperty(propertyName).value = value
             is String -> stringProperty(propertyName).value = value
-            else -> throw IllegalArgumentException("Value for property $propertyName is of unknown type: ${value.javaClass}")
+            else -> objectProperty<Any>(propertyName).value = value
         }
     }
 
@@ -127,6 +119,8 @@ class GameState {
 
     fun getString(propertyName: String) = stringProperty(propertyName).value
 
+    fun <T> getObject(propertyName: String) = objectProperty<T>(propertyName).value
+
     fun booleanProperty(propertyName: String) = get(propertyName) as BooleanProperty
 
     fun intProperty(propertyName: String) = get(propertyName) as IntegerProperty
@@ -134,6 +128,19 @@ class GameState {
     fun doubleProperty(propertyName: String) = get(propertyName) as DoubleProperty
 
     fun stringProperty(propertyName: String) = get(propertyName) as StringProperty
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> objectProperty(propertyName: String) = get(propertyName) as ObjectProperty<T>
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> addListener(propertyName: String, listener: PropertyChangeListener<T>) {
+        (get(propertyName) as ObservableValue<T>).addListener { o, prev, now -> listener.onChange(prev, now) }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> addListenerKt(propertyName: String, listener: (T, T) -> Unit) {
+        (get(propertyName) as ObservableValue<T>).addListener { o, prev, now -> listener.invoke(prev, now) }
+    }
 
     fun clear() {
         properties.clear()
