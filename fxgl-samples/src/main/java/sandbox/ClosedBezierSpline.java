@@ -30,6 +30,8 @@ import javafx.geometry.Point2D;
 import javafx.util.Pair;
 
 /**
+ * From https://www.codeproject.com/Articles/33776/Draw-Closed-Smooth-Curve-with-Bezier-Spline
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class ClosedBezierSpline

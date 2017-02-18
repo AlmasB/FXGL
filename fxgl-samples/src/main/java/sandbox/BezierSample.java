@@ -89,11 +89,10 @@ public class BezierSample extends GameApplication {
 
 
         Point2D[] points = new Point2D[] {
-                new Point2D(132, 252),
                 new Point2D(225, 370),
                 new Point2D(318, 252),
                 new Point2D(225, 205),
-
+                new Point2D(132, 252)
         };
         Pair<Point2D[], Point2D[]> result = ClosedBezierSpline.GetCurveControlPoints(points);
 
