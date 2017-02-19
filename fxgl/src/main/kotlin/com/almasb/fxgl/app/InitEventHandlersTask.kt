@@ -27,7 +27,6 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.FXGLAssets
-import com.almasb.fxgl.event.*
 import com.almasb.fxgl.gameplay.AchievementEvent
 import com.almasb.fxgl.gameplay.NotificationEvent
 import com.almasb.fxgl.saving.LoadEvent
@@ -58,65 +57,14 @@ internal class InitEventHandlersTask
     override fun run() {
         val bus = app.eventBus
 
-        // main tick
-        registerUpdateEventListeners()
+        `Register Update Events`()
+        `Register Post Update Events`()
 
-        // post main tick
-        val postUpdateTimer = object : AnimationTimer() {
-            override fun handle(now: Long) {
-                app.onPostUpdate(app.masterTimer.tpf())
-            }
-        }
+        `Scan for Service Listeners`()
 
-        // services
-        scanForServiceListeners()
-
-        app.addFXGLListener(object : FXGLListener {
-            override fun onPause() {
-                postUpdateTimer.stop()
-                app.state = ApplicationState.PAUSED
-            }
-
-            override fun onResume() {
-                postUpdateTimer.start()
-                app.state = ApplicationState.PLAYING
-            }
-
-            override fun onReset() {
-                app.getGameWorld().reset()
-            }
-
-            override fun onExit() {
-                // no-op
-            }
-        })
-
-        // game world events
-        app.getGameWorld().addWorldListener(app.getPhysicsWorld())
-        app.getGameWorld().addWorldListener(app.getGameScene())
-
-        // game scene events
-        app.getGameScene().addEventHandler(MouseEvent.ANY, { app.input.onMouseEvent(it, app.getGameScene().viewport, app.display.scaleRatio) })
-        app.getGameScene().addEventHandler(KeyEvent.ANY, { app.input.onKeyEvent(it) })
-
-        // display events
-        bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, { e -> app.exit() })
-        bus.addEventHandler(DisplayEvent.DIALOG_OPENED, { e ->
-            if (app.state === ApplicationState.INTRO || app.state === ApplicationState.LOADING)
-                return@addEventHandler
-
-            if (!app.isMenuOpen)
-                app.pause()
-
-            app.input.onReset()
-        })
-        bus.addEventHandler(DisplayEvent.DIALOG_CLOSED, { e ->
-            if (app.state === ApplicationState.INTRO || app.state === ApplicationState.LOADING)
-                return@addEventHandler
-
-            if (!app.isMenuOpen)
-                app.resume()
-        })
+        `Register Game World Events`()
+        `Register Game Scene Events`()
+        `Register Display Events`()
 
         bus.scanForHandlers(app)
 
@@ -126,7 +74,7 @@ internal class InitEventHandlersTask
         }
     }
 
-    private fun registerUpdateEventListeners() {
+    private fun `Register Update Events`() {
         val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
 
         app.masterTimer.addUpdateListener(app.input)
@@ -147,7 +95,35 @@ internal class InitEventHandlersTask
         })
     }
 
-    private fun scanForServiceListeners() {
+    private fun `Register Post Update Events`() {
+        val postUpdateTimer = object : AnimationTimer() {
+            override fun handle(now: Long) {
+                app.onPostUpdate(app.masterTimer.tpf())
+            }
+        }
+
+        app.addFXGLListener(object : FXGLListener {
+            override fun onPause() {
+                postUpdateTimer.stop()
+                app.state = ApplicationState.PAUSED
+            }
+
+            override fun onResume() {
+                postUpdateTimer.start()
+                app.state = ApplicationState.PLAYING
+            }
+
+            override fun onReset() {
+                app.getGameWorld().reset()
+            }
+
+            override fun onExit() {
+                // no-op
+            }
+        })
+    }
+
+    private fun `Scan for Service Listeners`() {
         log.debug("scanForServiceListeners")
 
         val bus = app.eventBus
@@ -193,67 +169,37 @@ internal class InitEventHandlersTask
                 }
     }
 
-//    private fun scanForServiceListeners() {
-//        log.debug("scanForServiceListeners")
-//
-//        val bus = app.eventBus
-//        val scanner = FastClasspathScanner()
-//
-//        val runnables = arrayListOf<Runnable>()
-//
-//        // Core events
-//        scanner.matchClassesImplementing(FXGLListener::class.java, { service ->
-//            log.debug("FXGLListener: $service")
-//
-//            if ("$service".contains("$"))
-//                return@matchClassesImplementing
-//
-//            runnables.add(Runnable {
-//                val instance = FXGL.getInstance(service)
-//                app.addFXGLListener(instance)
-//            })
-//        })
-//
-//        // Save/Load events
-//        scanner.matchClassesImplementing(UserProfileSavable::class.java, { service ->
-//            log.debug("UserProfileSavable: $service")
-//
-//            runnables.add(Runnable {
-//                val instance = FXGL.getInstance(service)
-//
-//                bus.addEventHandler(SaveEvent.ANY, { instance.save(it.profile) })
-//                bus.addEventHandler(LoadEvent.ANY, {
-//                    if (!(instance is MasterTimer && it.eventType == LoadEvent.RESTORE_SETTINGS)) {
-//                        instance.load(it.profile)
-//                    }
-//                })
-//            })
-//        })
-//
-//        // Notification events
-//        scanner.matchClassesImplementing(NotificationListener::class.java, { service ->
-//            log.debug("NotificationListener: $service")
-//
-//            runnables.add(Runnable {
-//                val instance = FXGL.getInstance(service)
-//                bus.addEventHandler(NotificationEvent.ANY, { instance.onNotificationEvent(it) })
-//            })
-//        })
-//
-//        // Achievement events
-//        scanner.matchClassesImplementing(AchievementListener::class.java, { service ->
-//            log.debug("AchievementListener: $service")
-//
-//            runnables.add(Runnable {
-//                val instance = FXGL.getInstance(service)
-//                bus.addEventHandler(AchievementEvent.ANY, { instance.onAchievementEvent(it) })
-//            })
-//        })
-//
-//        // this blocks during above search
-//        scanner.scan()
-//
-//        // do the actual registration on this thread
-//        runnables.forEach { it.run() }
-//    }
+    private fun `Register Game World Events`() {
+        app.getGameWorld().addWorldListener(app.getPhysicsWorld())
+        app.getGameWorld().addWorldListener(app.getGameScene())
+    }
+
+    private fun `Register Game Scene Events`() {
+        app.getGameScene().addEventHandler(MouseEvent.ANY, { app.input.onMouseEvent(it, app.getGameScene().viewport, app.display.scaleRatio) })
+        app.getGameScene().addEventHandler(KeyEvent.ANY, { app.input.onKeyEvent(it) })
+    }
+
+    private fun `Register Display Events`() {
+        val bus = app.eventBus
+
+        bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, { e -> app.exit() })
+
+        bus.addEventHandler(DisplayEvent.DIALOG_OPENED, { e ->
+            if (app.state === ApplicationState.INTRO || app.state === ApplicationState.LOADING)
+                return@addEventHandler
+
+            if (!app.isMenuOpen)
+                app.pause()
+
+            app.input.onReset()
+        })
+
+        bus.addEventHandler(DisplayEvent.DIALOG_CLOSED, { e ->
+            if (app.state === ApplicationState.INTRO || app.state === ApplicationState.LOADING)
+                return@addEventHandler
+
+            if (!app.isMenuOpen)
+                app.resume()
+        })
+    }
 }
