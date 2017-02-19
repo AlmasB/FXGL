@@ -57,14 +57,14 @@ internal class InitEventHandlersTask
     override fun run() {
         val bus = app.eventBus
 
-        `Register Update Events`()
-        `Register Post Update Events`()
+        updateEvents()
+        postUpdateEvents()
 
-        `Scan for Service Listeners`()
+        scanForServiceListeners()
 
-        `Register Game World Events`()
-        `Register Game Scene Events`()
-        `Register Display Events`()
+        gameWorldEvents()
+        gameSceneEvents()
+        displayEvents()
 
         bus.scanForHandlers(app)
 
@@ -74,7 +74,7 @@ internal class InitEventHandlersTask
         }
     }
 
-    private fun `Register Update Events`() {
+    private fun updateEvents() {
         val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
 
         app.masterTimer.addUpdateListener(app.input)
@@ -95,7 +95,7 @@ internal class InitEventHandlersTask
         })
     }
 
-    private fun `Register Post Update Events`() {
+    private fun postUpdateEvents() {
         val postUpdateTimer = object : AnimationTimer() {
             override fun handle(now: Long) {
                 app.onPostUpdate(app.masterTimer.tpf())
@@ -123,7 +123,7 @@ internal class InitEventHandlersTask
         })
     }
 
-    private fun `Scan for Service Listeners`() {
+    private fun scanForServiceListeners() {
         log.debug("scanForServiceListeners")
 
         val bus = app.eventBus
@@ -169,17 +169,17 @@ internal class InitEventHandlersTask
                 }
     }
 
-    private fun `Register Game World Events`() {
+    private fun gameWorldEvents() {
         app.getGameWorld().addWorldListener(app.getPhysicsWorld())
         app.getGameWorld().addWorldListener(app.getGameScene())
     }
 
-    private fun `Register Game Scene Events`() {
+    private fun gameSceneEvents() {
         app.getGameScene().addEventHandler(MouseEvent.ANY, { app.input.onMouseEvent(it, app.getGameScene().viewport, app.display.scaleRatio) })
         app.getGameScene().addEventHandler(KeyEvent.ANY, { app.input.onKeyEvent(it) })
     }
 
-    private fun `Register Display Events`() {
+    private fun displayEvents() {
         val bus = app.eventBus
 
         bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, { e -> app.exit() })
