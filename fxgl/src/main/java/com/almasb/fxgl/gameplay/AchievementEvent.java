@@ -24,48 +24,45 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.gameplay;
 
+import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * Event occurs when profile has been selected.
+ * Occurs on achievement unlocked.
  *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class ProfileSelectedEvent extends MenuEvent {
+public class AchievementEvent extends Event {
 
-    /**
-     * Event occurs when profile has been selected.
-     */
-    public static final EventType<ProfileSelectedEvent> ANY
-            = new EventType<>(MenuEvent.ANY, "PROFILE_SELECTED");
+    public static final EventType<AchievementEvent> ANY =
+            new EventType<>(Event.ANY, "ACHIEVEMENT_EVENT");
 
-    private final String profileName;
-    private final boolean hasSaves;
+    public static final EventType<AchievementEvent> ACHIEVED =
+            new EventType<>(ANY, "ACHIEVED");
 
-    public ProfileSelectedEvent(String profileName, boolean hasSaves) {
-        super(ANY);
-        this.profileName = profileName;
-        this.hasSaves = hasSaves;
+    private Achievement achievement;
+
+    public AchievementEvent(Achievement achievement) {
+        this(ANY, achievement);
+    }
+
+    public AchievementEvent(EventType<? extends AchievementEvent> eventType, Achievement achievement) {
+        super(eventType);
+        this.achievement = achievement;
     }
 
     /**
-     * @return profile name
+     * @return achievement associated with the event
      */
-    public String getProfileName() {
-        return profileName;
-    }
-
-    /**
-     * @return true iff profile has any save games
-     */
-    public boolean hasSaves() {
-        return hasSaves;
+    public Achievement getAchievement() {
+        return achievement;
     }
 
     @Override
     public String toString() {
-        return "ProfileSelectedEvent[name=" + profileName + ",hasSaves=" + hasSaves + "]";
+        return "AchievementEvent[name=" + achievement.getName()
+                + ",description= " + achievement.getDescription() + "]";
     }
 }

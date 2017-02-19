@@ -23,7 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.event;
+
+package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.ecs.Entity;
 import javafx.beans.NamedArg;

@@ -28,7 +28,7 @@ package com.almasb.fxgl.service.impl.display
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
-import com.almasb.fxgl.event.DisplayEvent
+import com.almasb.fxgl.scene.DisplayEvent
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.CSS

@@ -26,7 +26,7 @@
 
 package s06gameplay.events;
 
-import com.almasb.fxgl.event.EntityEvent;
+import com.almasb.fxgl.entity.EntityEvent;
 import javafx.event.EventType;
 
 /**

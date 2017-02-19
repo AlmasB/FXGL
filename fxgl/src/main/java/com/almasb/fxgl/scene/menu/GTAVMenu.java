@@ -27,7 +27,6 @@ package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.event.ProfileSelectedEvent;
 import com.almasb.fxgl.scene.FXGLMenu;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

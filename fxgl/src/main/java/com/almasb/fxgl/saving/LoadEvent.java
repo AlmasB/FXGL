@@ -24,39 +24,47 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.saving;
 
-import com.almasb.fxgl.gameplay.Achievement;
+import com.almasb.fxgl.settings.UserProfile;
+import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * Fired when a numeric value based achievement has made some progress.
+ * Event related to any type of loading.
  *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AchievementProgressEvent extends AchievementEvent {
+public final class LoadEvent extends Event {
 
-    public static final EventType<AchievementProgressEvent> PROGRESS =
-            new EventType<>(ANY, "PROGRESS");
+    public static final EventType<LoadEvent> ANY =
+            new EventType<>(Event.ANY, "LOAD_EVENT");
 
-    private double value, max;
+    /**
+     * Fired when profile is being loaded.
+     */
+    public static final EventType<LoadEvent> LOAD_PROFILE =
+            new EventType<>(ANY, "LOAD_PROFILE");
 
-    public double getValue() {
-        return value;
+    /**
+     * Fired when settings are being restored.
+     */
+    public static final EventType<LoadEvent> RESTORE_SETTINGS =
+            new EventType<>(ANY, "RESTORE_SETTINGS");
+
+    private UserProfile profile;
+
+    public UserProfile getProfile() {
+        return profile;
     }
 
-    public double getMax() {
-        return max;
-    }
-
-    public AchievementProgressEvent(Achievement achievement, double value, double max) {
-        super(PROGRESS, achievement);
-        this.value = value;
-        this.max = max;
+    public LoadEvent(EventType<LoadEvent> eventType, UserProfile profile) {
+        super(eventType);
+        this.profile = profile;
     }
 
     @Override
     public String toString() {
-        return "AchievementProgressEvent[value=" + value + ",max=" + max + "]";
+        return "LoadEvent[type=" + getEventType() + "]";
     }
 }

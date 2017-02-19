@@ -28,6 +28,11 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.event.*
+import com.almasb.fxgl.gameplay.AchievementEvent
+import com.almasb.fxgl.gameplay.NotificationEvent
+import com.almasb.fxgl.saving.LoadEvent
+import com.almasb.fxgl.saving.SaveEvent
+import com.almasb.fxgl.scene.DisplayEvent
 import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.service.listener.AchievementListener
 import com.almasb.fxgl.service.listener.FXGLListener

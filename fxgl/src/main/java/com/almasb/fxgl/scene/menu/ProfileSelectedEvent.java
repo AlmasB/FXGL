@@ -24,49 +24,48 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.scene.menu;
 
-import javafx.beans.NamedArg;
-import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * Event related to display.
+ * Event occurs when profile has been selected.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class DisplayEvent extends Event {
+public final class ProfileSelectedEvent extends MenuEvent {
 
     /**
-     * Common super-type for all display event types.
+     * Event occurs when profile has been selected.
      */
-    public static final EventType<DisplayEvent> ANY =
-            new EventType<>(Event.ANY, "DISPLAY_EVENT");
+    public static final EventType<ProfileSelectedEvent> ANY
+            = new EventType<>(MenuEvent.ANY, "PROFILE_SELECTED");
+
+    private final String profileName;
+    private final boolean hasSaves;
+
+    public ProfileSelectedEvent(String profileName, boolean hasSaves) {
+        super(ANY);
+        this.profileName = profileName;
+        this.hasSaves = hasSaves;
+    }
 
     /**
-     * Fired when user requests application close.
+     * @return profile name
      */
-    public static final EventType<DisplayEvent> CLOSE_REQUEST =
-            new EventType<>(ANY, "CLOSE_REQUEST");
+    public String getProfileName() {
+        return profileName;
+    }
 
     /**
-     * Fired when a dialog has opened.
+     * @return true iff profile has any save games
      */
-    public static final EventType<DisplayEvent> DIALOG_OPENED =
-            new EventType<>(ANY, "DIALOG_OPENED");
-
-    /**
-     * Fired when a dialog has closed.
-     */
-    public static final EventType<DisplayEvent> DIALOG_CLOSED =
-            new EventType<>(ANY, "DIALOG_CLOSED");
-
-    public DisplayEvent(@NamedArg("eventType") EventType<? extends Event> eventType) {
-        super(eventType);
+    public boolean hasSaves() {
+        return hasSaves;
     }
 
     @Override
     public String toString() {
-        return "DisplayEvent[type=" + getEventType() + "]";
+        return "ProfileSelectedEvent[name=" + profileName + ",hasSaves=" + hasSaves + "]";
     }
 }

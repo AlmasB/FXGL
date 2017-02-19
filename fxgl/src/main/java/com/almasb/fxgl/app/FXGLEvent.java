@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.app;
 
 import javafx.beans.NamedArg;
 import javafx.event.Event;

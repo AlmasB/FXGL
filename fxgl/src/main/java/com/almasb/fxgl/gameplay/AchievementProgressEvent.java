@@ -24,38 +24,38 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.gameplay;
 
-import com.almasb.fxgl.gameplay.Notification;
-import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * This event occurs when a notification has been shown to user.
+ * Fired when a numeric value based achievement has made some progress.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public final class NotificationEvent extends Event {
+public final class AchievementProgressEvent extends AchievementEvent {
 
-    public static final EventType<NotificationEvent> ANY =
-            new EventType<>(Event.ANY, "NOTIFICATION_EVENT");
+    public static final EventType<AchievementProgressEvent> PROGRESS =
+            new EventType<>(ANY, "PROGRESS");
 
-    private Notification notification;
+    private double value, max;
 
-    /**
-     * @return notification associated with the event
-     */
-    public Notification getNotification() {
-        return notification;
+    public double getValue() {
+        return value;
     }
 
-    public NotificationEvent(Notification notification) {
-        super(ANY);
-        this.notification = notification;
+    public double getMax() {
+        return max;
+    }
+
+    public AchievementProgressEvent(Achievement achievement, double value, double max) {
+        super(PROGRESS, achievement);
+        this.value = value;
+        this.max = max;
     }
 
     @Override
     public String toString() {
-        return "NotificationEvent[message=" + notification.getMessage() + "]";
+        return "AchievementProgressEvent[value=" + value + ",max=" + max + "]";
     }
 }

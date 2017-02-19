@@ -26,10 +26,10 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.event.FXGLEvent
-import com.almasb.fxgl.event.LoadEvent
-import com.almasb.fxgl.event.ProfileSelectedEvent
-import com.almasb.fxgl.event.SaveEvent
+import com.almasb.fxgl.app.FXGLEvent
+import com.almasb.fxgl.saving.LoadEvent
+import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
+import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.saving.SaveLoadManager
 import com.almasb.fxgl.scene.ProgressDialog

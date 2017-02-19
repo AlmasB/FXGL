@@ -30,7 +30,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.event.EntityEvent;
+import com.almasb.fxgl.entity.EntityEvent;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.annotation.Handles;
 import com.almasb.fxgl.input.UserAction;

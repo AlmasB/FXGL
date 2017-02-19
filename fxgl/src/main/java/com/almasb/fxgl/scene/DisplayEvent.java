@@ -24,61 +24,49 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.scene;
 
+import javafx.beans.NamedArg;
 import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * MenuEvent that carries necessary data.
+ * Event related to display.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class MenuDataEvent extends MenuEvent {
+public class DisplayEvent extends Event {
 
     /**
-     * Common super-type for all menu data event types.
+     * Common super-type for all display event types.
      */
-    public static final EventType<MenuDataEvent> ANY =
-            new EventType<>(MenuEvent.ANY, "MENU_DATA_EVENT");
+    public static final EventType<DisplayEvent> ANY =
+            new EventType<>(Event.ANY, "DISPLAY_EVENT");
 
     /**
-     * When user clicks load.
+     * Fired when user requests application close.
      */
-    public static final EventType<MenuDataEvent> LOAD =
-            new EventType<>(ANY, "LOAD");
+    public static final EventType<DisplayEvent> CLOSE_REQUEST =
+            new EventType<>(ANY, "CLOSE_REQUEST");
 
     /**
-     * When user clicks delete.
+     * Fired when a dialog has opened.
      */
-    public static final EventType<MenuDataEvent> DELETE =
-            new EventType<>(ANY, "DELETE");
+    public static final EventType<DisplayEvent> DIALOG_OPENED =
+            new EventType<>(ANY, "DIALOG_OPENED");
 
     /**
-     * When profile has been selected.
+     * Fired when a dialog has closed.
      */
-    //public static final EventType<MenuDataEvent> PROFILE_SELECTED = new EventType<>(ANY, "PROFILE_SELECTED");
+    public static final EventType<DisplayEvent> DIALOG_CLOSED =
+            new EventType<>(ANY, "DIALOG_CLOSED");
 
-    private final String data;
-
-    public MenuDataEvent(EventType<? extends Event> eventType, String data) {
+    public DisplayEvent(@NamedArg("eventType") EventType<? extends Event> eventType) {
         super(eventType);
-        this.data = data;
-
-        if (this.data == null) {
-            throw new IllegalArgumentException("Data cannot be null");
-        }
-    }
-
-    /**
-     * @return data associated with this event
-     */
-    public String getData() {
-        return data;
     }
 
     @Override
     public String toString() {
-        return "MenuEvent[type=" + getEventType() + ",data=" + data + "]";
+        return "DisplayEvent[type=" + getEventType() + "]";
     }
 }

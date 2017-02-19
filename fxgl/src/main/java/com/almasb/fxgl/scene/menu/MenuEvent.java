@@ -24,35 +24,58 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.scene.menu;
 
-import com.almasb.fxgl.settings.UserProfile;
 import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * Occurs during save.
+ * An event related to menus. This event can only occur if menu is enabled.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class SaveEvent extends Event {
+public class MenuEvent extends Event {
 
-    public static final EventType<SaveEvent> ANY =
-            new EventType<>(Event.ANY, "SAVE_EVENT");
+    /**
+     * Common super-type for all menu event types.
+     */
+    public static final EventType<MenuEvent> ANY =
+            new EventType<>(Event.ANY, "MENU_EVENT");
 
-    private UserProfile profile;
+    /**
+     * This event occurs when the user hit menu key in the game
+     * to open game menu.
+     */
+    public static final EventType<MenuEvent> PAUSE =
+            new EventType<>(ANY, "PAUSE");
 
-    public UserProfile getProfile() {
-        return profile;
-    }
+    public static final EventType<MenuEvent> RESUME =
+            new EventType<>(ANY, "RESUME");
 
-    public SaveEvent(UserProfile profile) {
-        super(ANY);
-        this.profile = profile;
+    public static final EventType<MenuEvent> NEW_GAME =
+            new EventType<>(ANY, "NEW_GAME");
+
+    public static final EventType<MenuEvent> SAVE =
+            new EventType<>(ANY, "SAVE");
+
+    public static final EventType<MenuEvent> CONTINUE =
+            new EventType<>(ANY, "CONTINUE");
+
+    public static final EventType<MenuEvent> EXIT =
+            new EventType<>(ANY, "EXIT");
+
+    public static final EventType<MenuEvent> EXIT_TO_MAIN_MENU =
+            new EventType<>(ANY, "EXIT_TO_MAIN_MENU");
+
+    public static final EventType<MenuEvent> LOGOUT =
+            new EventType<>(ANY, "LOGOUT");
+
+    public MenuEvent(EventType<? extends Event> eventType) {
+        super(eventType);
     }
 
     @Override
     public String toString() {
-        return "SaveEvent";
+        return "MenuEvent[type=" + getEventType() + "]";
     }
 }

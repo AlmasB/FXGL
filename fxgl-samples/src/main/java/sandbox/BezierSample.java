@@ -60,28 +60,28 @@ public class BezierSample extends GameApplication {
 
 
 
-        CubicCurve c1 = new CubicCurve(225, 370, 268, 371, 324, 282, 318, 252);
+        CubicCurve c1 = new CubicCurve(50, 100, 0, 0, 750 - 100, 350 - 200, 750, 350);
         c1.setFill(null);
         c1.setStroke(Color.BLUE);
 
 
-        CubicCurve c2 = new CubicCurve(318, 252, 311, 223, 265, 205, 225, 205);
+        CubicCurve c2 = new CubicCurve(750, 350, 750 + 100, 350 + 200, 100, 200, 50, 100);
         c2.setFill(null);
         c2.setStroke(Color.RED);
 
 
+//
+//        CubicCurve c3 = new CubicCurve(225, 205, 185, 205, 139, 223, 132, 252);
+//        c3.setFill(null);
+//        c3.setStroke(Color.BROWN);
+//
+//
+//
+//        CubicCurve c4 = new CubicCurve(132, 252, 126, 281, 182, 370, 225, 370);
+//        c4.setFill(null);
+//        c4.setStroke(Color.DARKGREEN);
 
-        CubicCurve c3 = new CubicCurve(225, 205, 185, 205, 139, 223, 132, 252);
-        c3.setFill(null);
-        c3.setStroke(Color.BROWN);
-
-
-
-        CubicCurve c4 = new CubicCurve(132, 252, 126, 281, 182, 370, 225, 370);
-        c4.setFill(null);
-        c4.setStroke(Color.DARKGREEN);
-
-        getGameScene().addUINodes(c1, c2, c3, c4);
+        getGameScene().addUINodes(c1, c2);
 
 
 
@@ -116,7 +116,7 @@ public class BezierSample extends GameApplication {
             System.out.println(c.getControlX1() + " "  +c.getControlY1()
             + " " + c.getControlX2() + c.getControlY2());
 
-            getGameScene().addUINodes(c);
+            //getGameScene().addUINodes(c);
         }
 
 

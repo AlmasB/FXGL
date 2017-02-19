@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service.listener;
 
-import com.almasb.fxgl.event.AchievementEvent;
+import com.almasb.fxgl.gameplay.AchievementEvent;
 
 /**
  * Marks a service that wants to listen for achievement events.

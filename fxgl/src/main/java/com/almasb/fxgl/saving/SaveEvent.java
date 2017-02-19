@@ -23,58 +23,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.event;
 
+package com.almasb.fxgl.saving;
+
+import com.almasb.fxgl.settings.UserProfile;
 import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * An event related to menus. This event can only occur if menu is enabled.
+ * Occurs during save.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class MenuEvent extends Event {
+public class SaveEvent extends Event {
 
-    /**
-     * Common super-type for all menu event types.
-     */
-    public static final EventType<MenuEvent> ANY =
-            new EventType<>(Event.ANY, "MENU_EVENT");
+    public static final EventType<SaveEvent> ANY =
+            new EventType<>(Event.ANY, "SAVE_EVENT");
 
-    /**
-     * This event occurs when the user hit menu key in the game
-     * to open game menu.
-     */
-    public static final EventType<MenuEvent> PAUSE =
-            new EventType<>(ANY, "PAUSE");
+    private UserProfile profile;
 
-    public static final EventType<MenuEvent> RESUME =
-            new EventType<>(ANY, "RESUME");
+    public UserProfile getProfile() {
+        return profile;
+    }
 
-    public static final EventType<MenuEvent> NEW_GAME =
-            new EventType<>(ANY, "NEW_GAME");
-
-    public static final EventType<MenuEvent> SAVE =
-            new EventType<>(ANY, "SAVE");
-
-    public static final EventType<MenuEvent> CONTINUE =
-            new EventType<>(ANY, "CONTINUE");
-
-    public static final EventType<MenuEvent> EXIT =
-            new EventType<>(ANY, "EXIT");
-
-    public static final EventType<MenuEvent> EXIT_TO_MAIN_MENU =
-            new EventType<>(ANY, "EXIT_TO_MAIN_MENU");
-
-    public static final EventType<MenuEvent> LOGOUT =
-            new EventType<>(ANY, "LOGOUT");
-
-    public MenuEvent(EventType<? extends Event> eventType) {
-        super(eventType);
+    public SaveEvent(UserProfile profile) {
+        super(ANY);
+        this.profile = profile;
     }
 
     @Override
     public String toString() {
-        return "MenuEvent[type=" + getEventType() + "]";
+        return "SaveEvent";
     }
 }

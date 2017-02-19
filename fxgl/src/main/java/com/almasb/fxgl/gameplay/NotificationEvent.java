@@ -24,46 +24,37 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.event;
+package com.almasb.fxgl.gameplay;
 
-import com.almasb.fxgl.gameplay.Achievement;
 import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * Occurs on achievement unlocked.
+ * This event occurs when a notification has been shown to user.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class AchievementEvent extends Event {
+public final class NotificationEvent extends Event {
 
-    public static final EventType<AchievementEvent> ANY =
-            new EventType<>(Event.ANY, "ACHIEVEMENT_EVENT");
+    public static final EventType<NotificationEvent> ANY =
+            new EventType<>(Event.ANY, "NOTIFICATION_EVENT");
 
-    public static final EventType<AchievementEvent> ACHIEVED =
-            new EventType<>(ANY, "ACHIEVED");
-
-    private Achievement achievement;
-
-    public AchievementEvent(Achievement achievement) {
-        this(ANY, achievement);
-    }
-
-    public AchievementEvent(EventType<? extends AchievementEvent> eventType, Achievement achievement) {
-        super(eventType);
-        this.achievement = achievement;
-    }
+    private Notification notification;
 
     /**
-     * @return achievement associated with the event
+     * @return notification associated with the event
      */
-    public Achievement getAchievement() {
-        return achievement;
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public NotificationEvent(Notification notification) {
+        super(ANY);
+        this.notification = notification;
     }
 
     @Override
     public String toString() {
-        return "AchievementEvent[name=" + achievement.getName()
-                + ",description= " + achievement.getDescription() + "]";
+        return "NotificationEvent[message=" + notification.getMessage() + "]";
     }
 }

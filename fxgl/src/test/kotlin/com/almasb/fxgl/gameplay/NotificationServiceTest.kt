@@ -70,7 +70,7 @@ class NotificationServiceTest {
         var count = 0
         val notificationText = "Test"
 
-        FXGL.getEventBus().addEventHandler(com.almasb.fxgl.event.NotificationEvent.ANY, {
+        FXGL.getEventBus().addEventHandler(NotificationEvent.ANY, {
 
             assertThat(it.notification.message, `is`(notificationText))
             count++

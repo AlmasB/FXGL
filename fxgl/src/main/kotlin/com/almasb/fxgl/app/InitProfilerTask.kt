@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.event.FXGLEvent
+import com.almasb.fxgl.app.FXGLEvent
 import com.google.inject.Inject
 
 /**
