@@ -39,13 +39,17 @@ import javafx.geometry.Rectangle2D
 object AASubdivision {
 
     /**
-     * Subdivides given 2D space ([rect]) into n = [subspaces] such that
+     * Subdivides given 2D space ([rect]) into maximum of n = [maxSubspaces] such that
      * each subspace has width and height no less than [minSize].
      */
-    @JvmStatic fun divide(rect: Rectangle2D, subspaces: Int, minSize: Int): Array<Rectangle2D> {
+    @JvmStatic fun divide(rect: Rectangle2D, maxSubspaces: Int, minSize: Int): Array<Rectangle2D> {
+
+        // keeps currently being processed subspaces
         val grids = arrayListOf<Rectangle2D>(rect)
 
-        for (i in 1..subspaces -1) {
+        val result = Array<Rectangle2D>(maxSubspaces)
+
+        for (i in 1..maxSubspaces -1) {
             var grid: Rectangle2D
             var divisible: Pair<Boolean, Boolean>
 
@@ -59,6 +63,9 @@ object AASubdivision {
                 divisible = isDivisible(grid, minSize)
 
             } while (!divisible.first && !divisible.second)
+
+            // grid is about to be subdivided, so remove from result list
+            result.removeValue(grid, true)
 
             var pair: Pair<Rectangle2D, Rectangle2D>
 
@@ -74,29 +81,32 @@ object AASubdivision {
                 pair = subdivideVertical(grid, minSize)
             }
 
+            // push divided items to tmp and result list
             grids.add(pair.first)
             grids.add(pair.second)
+
+            result.addAll(pair.first, pair.second)
         }
 
-        return Array(grids)
+        return result
     }
 
     private fun isDivisible(grid: Rectangle2D, minSize: Int): Pair<Boolean, Boolean> {
-        val horizontal = grid.height / 2 >= minSize
-        val vertical = grid.width / 2 >= minSize
+        val horizontal = grid.width / 2 >= minSize
+        val vertical = grid.height / 2 >= minSize
 
         return horizontal.to(vertical)
     }
 
-    private fun subdivideHorizontal(grid: Rectangle2D, minSize: Int): Pair<Rectangle2D, Rectangle2D> {
-        val lineY = random(grid.minY.toInt() + minSize, grid.maxY.toInt() - 1).toDouble()
+    private fun subdivideVertical(grid: Rectangle2D, minSize: Int): Pair<Rectangle2D, Rectangle2D> {
+        val lineY = random(grid.minY.toInt() + minSize, grid.maxY.toInt() - minSize).toDouble()
 
         return Rectangle2D(grid.minX, grid.minY, grid.width, lineY - grid.minY)
                 .to(Rectangle2D(grid.minX, lineY, grid.width, grid.maxY - lineY))
     }
 
-    private fun subdivideVertical(grid: Rectangle2D, minSize: Int): Pair<Rectangle2D, Rectangle2D> {
-        val lineX = random(grid.minX.toInt() + minSize, grid.maxX.toInt() - 1).toDouble()
+    private fun subdivideHorizontal(grid: Rectangle2D, minSize: Int): Pair<Rectangle2D, Rectangle2D> {
+        val lineX = random(grid.minX.toInt() + minSize, grid.maxX.toInt() - minSize).toDouble()
 
         return Rectangle2D(grid.minX, grid.minY, lineX - grid.minX, grid.height)
                 .to(Rectangle2D(lineX, grid.minY, grid.maxX - lineX, grid.height))
