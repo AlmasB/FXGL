@@ -27,7 +27,7 @@
 package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.event.IntroFinishedEvent
+import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 
 /**
  * Intro animation / video played before game starts

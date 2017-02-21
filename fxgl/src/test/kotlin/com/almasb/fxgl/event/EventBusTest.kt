@@ -111,29 +111,30 @@ class EventBusTest {
 
     object validObject {
         @Handles(eventType = "ANY")
-        fun handles(event: com.almasb.fxgl.event.TestEvent) {
-
+        fun handles(event: TestEvent) {
+            // cures unused variable warnings
+            event.eventType
         }
     }
 
     object invalidObject0 {
         @Handles(eventType = "FAIL0")
-        fun handles(event: com.almasb.fxgl.event.TestEvent) {
-
+        fun handles(event: TestEvent) {
+            event.eventType
         }
     }
 
     object invalidObject1 {
         @Handles(eventType = "FAIL1")
-        fun handles(event: com.almasb.fxgl.event.TestEvent) {
-
+        fun handles(event: TestEvent) {
+            event.eventType
         }
     }
 
     object invalidObject2 {
         @Handles(eventType = "FAIL2")
-        fun handles(event: com.almasb.fxgl.event.TestEvent) {
-
+        fun handles(event: TestEvent) {
+            event.eventType
         }
     }
 
@@ -146,8 +147,8 @@ class EventBusTest {
 
     object invalidObject4 {
         @Handles(eventType = "HIDDEN")
-        fun handles(event: com.almasb.fxgl.event.TestEvent) {
-
+        fun handles(event: TestEvent) {
+            event.eventType
         }
     }
 }
