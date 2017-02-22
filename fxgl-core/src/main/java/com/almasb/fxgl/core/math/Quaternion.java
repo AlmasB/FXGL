@@ -24,9 +24,7 @@
  * SOFTWARE.
  */
 
-package sandbox;
-
-import javafx.geometry.Point3D;
+package com.almasb.fxgl.core.math;
 
 /**
  * Immutable.
@@ -77,12 +75,12 @@ public final class Quaternion {
         return new Quaternion(_x, _y, _z, _w);
     }
 
-    public Quaternion multiply(Point3D vector) {
-        double _x = (w * vector.getX()) + (y * vector.getZ()) - (z * vector.getY());
-        double _y = (w * vector.getY()) + (z * vector.getX()) - (x * vector.getZ());
-        double _z = (w * vector.getZ()) + (x * vector.getY()) - (y * vector.getX());
-        double _w = -(x * vector.getX()) - (y * vector.getY()) - (z * vector.getZ());
-
-        return new Quaternion(_x, _y, _z, _w);
-    }
+//    public Quaternion multiply(Point3D vector) {
+//        double _x = (w * vector.getX()) + (y * vector.getZ()) - (z * vector.getY());
+//        double _y = (w * vector.getY()) + (z * vector.getX()) - (x * vector.getZ());
+//        double _z = (w * vector.getZ()) + (x * vector.getY()) - (y * vector.getX());
+//        double _w = -(x * vector.getX()) - (y * vector.getY()) - (z * vector.getZ());
+//
+//        return new Quaternion(_x, _y, _z, _w);
+//    }
 }
