@@ -88,20 +88,15 @@ fun main(args: Array<String>) {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.2.9</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
 ## Gradle
 
 ```gradle
-repositories {
-    // Needed to resolve unreleased dependencies of com.github.almasb:fxgl:0.2.9
-    maven { url 'https://jitpack.io' }
-}
-
 dependencies {
-    compile 'com.github.almasb:fxgl:0.2.9'
+    compile 'com.github.almasb:fxgl:0.3.0'
 }
 ```
 
