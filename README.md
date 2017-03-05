@@ -95,6 +95,10 @@ fun main(args: Array<String>) {
 ## Gradle
 
 ```gradle
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile 'com.github.almasb:fxgl:0.3.0'
 }
