@@ -76,6 +76,7 @@
         <dokka.version>0.9.11</dokka.version>
         <maven.shade.version>2.4.3</maven.shade.version>
         <jacoco.version>0.7.8</jacoco.version>
+        <apache.http.version>4.5.3</apache.http.version>
 
         <!-- dependencies -->
         <kotlin.version>1.0.5</kotlin.version>
