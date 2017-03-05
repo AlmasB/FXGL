@@ -1,0 +1,1 @@
+This directory contains demo games built using FXGL.

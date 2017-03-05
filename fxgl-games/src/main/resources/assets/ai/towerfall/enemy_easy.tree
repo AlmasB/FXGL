@@ -1,0 +1,20 @@
+#
+# Towerfall enemy with easy difficulty
+#
+
+# Alias definitions
+
+# Conditions
+import isTargetFar? : "com.almasb.fxglgames.towerfall.ai.TargetFarCondition"
+
+# Actions
+import move : "com.almasb.fxglgames.towerfall.ai.MoveTask"
+import attack : "com.almasb.fxglgames.towerfall.ai.AttackTask"
+
+# Tree definition (note that root is optional)
+root
+    selector
+        sequence
+            isTargetFar?
+            move
+        attack

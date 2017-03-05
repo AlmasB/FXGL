@@ -1,0 +1,39 @@
+#
+# Patrol tree
+#
+
+# Alias definitions
+
+# Conditions
+import canSeePlayer? : "s08ai.CanSeePlayerCondition"
+import isTargetClose? : "s08ai.TargetCloseCondition"
+
+# Actions
+import move : "s08ai.MoveTask"
+import attack : "s08ai.AttackTask"
+import patrol : "s08ai.PatrolTask"
+
+# Tree definition (note that root is optional)
+root
+    selector
+        sequence
+            isTargetClose?
+            selector
+                sequence
+                    canSeePlayer?
+                    attack
+                patrol
+        move
+
+
+#root
+#  selector
+#    parallel
+#      care urgentProb:0.8
+#      alwaysFail
+#        com.badlogic.gdx.ai.tests.btree.dog.RestTask # fully qualified task
+#    sequence
+#      bark times:"uniform,1,3"  # the type of attribute times is a IntegerDistribution
+#      walk
+#      com.badlogic.gdx.ai.tests.btree.dog.BarkTask # fully qualified task
+#      mark

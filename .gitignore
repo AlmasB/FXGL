@@ -3,18 +3,18 @@
 # Package Files #
 *.war
 *.ear
-/bin
+bin/
 
 # Eclipse #
 .classpath
 .project
 .settings/
-/bin
-/target
+bin/
+target/
 
 # IntelliJ IDEA
 .idea/
-/out
+out/
 *.iml
 
 # maven #
@@ -22,13 +22,16 @@ dependency-reduced-pom.xml
 
 # logs #
 *.log
-/logs
+logs/
 *.lck
 
 # FXGL #
-/saves
-/profiles
-/system
+saves/
+profiles/
+system/
 
 # FXGL Tests #
-/testprofiles
+testprofiles/
+
+# SpaceInvaders #
+hiscore.dat
