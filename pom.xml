@@ -55,11 +55,11 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    
-	<issueManagement>
-		<url>https://github.com/AlmasB/FXGL/issues</url>
-		<system>GitHub Issues</system>
-	</issueManagement>
+
+    <issueManagement>
+        <url>https://github.com/AlmasB/FXGL/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -112,7 +112,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
     <build>
         <pluginManagement>
             <plugins>
