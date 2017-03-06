@@ -22,7 +22,7 @@ JavaFX Game Development Framework
 
 ## Latest Release Features
 
-The ever-growing list of features can be found in the [Wiki](wiki/Core-Features)
+The ever-growing list of features can be found in the [Wiki](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 
 ## Showcase
 
@@ -72,7 +72,7 @@ fun main(args: Array<String>) {
 
 ## Getting Started
 
-* For written tutorials check out the [Wiki](wiki)
+* For written tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki)
 * For video tutorials check out the [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) channel
 * The [Samples](fxgl-samples) folder is constantly updated to include demos of various features
 * For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames)
@@ -106,7 +106,7 @@ dependencies {
 
 ## Uber jar
 
-Latest pre-compiled uber jar can be found in [Releases](releases)
+Latest pre-compiled uber jar can be found in [Releases](https://github.com/AlmasB/FXGL/releases)
 
 ## Contribution
 
