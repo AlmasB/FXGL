@@ -3,7 +3,7 @@
 JavaFX Game Development Framework
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.almasb/fxgl.svg)]()
-[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://jitpack.io/com/github/AlmasB/FXGL/0.2.9/javadoc/index.html)
+[![Javadoc](https://img.shields.io/badge/docs-javadoc-blue.svg)](https://www.javadoc.io/doc/com.github.almasb/fxgl/)
 ![CI](https://travis-ci.org/AlmasB/FXGL.svg?branch=master)
 [![Coverage](https://api.codacy.com/project/badge/Coverage/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Coverage)
 [![Codacy](https://api.codacy.com/project/badge/Grade/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Grade)
@@ -22,7 +22,7 @@ JavaFX Game Development Framework
 
 ## Latest Release Features
 
-The ever-growing list of features can be found in the [Wiki](https://github.com/AlmasB/FXGL/wiki/Core-Features)
+The ever-growing list of features can be found in the [Wiki](wiki/Core-Features)
 
 ## Showcase
 
@@ -72,9 +72,9 @@ fun main(args: Array<String>) {
 
 ## Getting Started
 
-* For written tutorials check out the [Wiki](https://github.com/AlmasB/FXGL/wiki)
+* For written tutorials check out the [Wiki](wiki)
 * For video tutorials check out the [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp) channel
-* The [Samples](https://github.com/AlmasB/FXGL/tree/master/samples) folder is constantly updated to include demos of various features
+* The [Samples](fxgl-samples) folder is constantly updated to include demos of various features
 * For advanced examples please see [FXGLGames](https://github.com/AlmasB/FXGLGames)
 
 ## Setup Video Tutorials
@@ -106,7 +106,7 @@ dependencies {
 
 ## Uber jar
 
-Latest pre-compiled uber jar can be found in [Releases](https://github.com/AlmasB/FXGL/releases)
+Latest pre-compiled uber jar can be found in [Releases](releases)
 
 ## Contribution
 
