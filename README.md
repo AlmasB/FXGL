@@ -9,8 +9,11 @@ JavaFX Game Development Framework
 [![Codacy](https://api.codacy.com/project/badge/Grade/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Grade)
 [![Showcase](https://img.shields.io/badge/www-Showcase-green.svg)](http://almasb.github.io/FXGLGames/)
 
-[![Github Releases](https://img.shields.io/github/downloads/AlmasB/FXGL/total.svg)]()
-[![Jitpack](https://jitpack.io/v/AlmasB/FXGL/month.svg)](https://jitpack.io/#AlmasB/FXGL)
+## Downloads
+
+* GitHub Releases (uber jar): [![Github Releases](https://img.shields.io/github/downloads/AlmasB/FXGL/total.svg)]()
+* JitPack (pre 0.3.0) [![Jitpack](https://jitpack.io/v/AlmasB/FXGL/month.svg)](https://jitpack.io/#AlmasB/FXGL)
+* Maven Central: (0.2.8+) [![Maven](https://img.shields.io/badge/downloads-~53%2Fmonth-green.svg?style=flat)]
 
 ## Good for ...
 
