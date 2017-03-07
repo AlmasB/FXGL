@@ -11,9 +11,9 @@ JavaFX Game Development Framework
 
 ## Downloads
 
-* GitHub Releases (uber jar): [![Github Releases](https://img.shields.io/github/downloads/AlmasB/FXGL/total.svg)]()
-* JitPack (pre 0.3.0) [![Jitpack](https://jitpack.io/v/AlmasB/FXGL/month.svg)](https://jitpack.io/#AlmasB/FXGL)
-* Maven Central: (0.2.8+) [![Maven](https://img.shields.io/badge/downloads-~53%2Fmonth-green.svg?style=flat)]
+* GitHub Releases (uber jar): ![Github Releases](https://img.shields.io/github/downloads/AlmasB/FXGL/total.svg)
+* JitPack (pre 0.3.0) ![Jitpack](https://jitpack.io/v/AlmasB/FXGL/month.svg)
+* Maven Central: (0.2.8+) ![Maven](https://img.shields.io/badge/downloads-~53%2Fmonth-green.svg?style=flat)
 
 ## Good for ...
 
