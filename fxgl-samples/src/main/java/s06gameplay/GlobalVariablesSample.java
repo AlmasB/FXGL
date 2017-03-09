@@ -45,7 +45,7 @@ public class GlobalVariablesSample extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("BasicAppSample");
+        settings.setTitle("GlobalVariablesSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
