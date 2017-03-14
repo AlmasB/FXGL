@@ -53,14 +53,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 
 /**
- * General FXGL application that configures services for all parts to use.
+ * General FXGL application that configures services, settings and properties
+ * to be used by the framework.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class FXGLApplication extends Application {
 
     /**
-     * We use system logger because logger service is not yet ready.
+     * Use system logger because logger service is not ready yet.
      */
     private static final Logger log = SystemLogger.INSTANCE;
 
@@ -83,9 +84,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Settings for this game instance.
-     * This is an internal copy of the settings
-     * so that they will not be modified during game lifetime.
+     * Internal copy of settings, so that they are not modified during game.
      */
     private ReadOnlyGameSettings settings;
 
@@ -147,18 +146,15 @@ public abstract class FXGLApplication extends Application {
         // the root will be replaced with a relevant FXGL scene
         primaryStage.setScene(new Scene(new Pane()));
 
+        startFXGL();
+    }
+
+    private void startFXGL() {
         new Thread(() -> {
             try {
                 configureFXGL();
 
-                CountDownLatch latch = new CountDownLatch(1);
-
-                Platform.runLater(() -> {
-                    runTask(UpdaterTask.class);
-                    latch.countDown();
-                });
-
-                latch.await();
+                runUpdaterAndWait();
 
                 configureApp();
             } catch (Exception e) {
@@ -174,6 +170,17 @@ public abstract class FXGLApplication extends Application {
 
             Platform.runLater(primaryStage::show);
         }, "FXGL Launcher Thread").start();
+    }
+
+    private void runUpdaterAndWait() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Platform.runLater(() -> {
+            runTask(UpdaterTask.class);
+            latch.countDown();
+        });
+
+        latch.await();
     }
 
     @Override
@@ -200,7 +207,6 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Configures FXGL.
      * After this call all FXGL.* calls are valid.
      */
     private void configureFXGL() {
@@ -220,7 +226,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Used to configure the actual application that uses FXGL.
+     * Configure the actual application that uses FXGL.
      * Called after the FXGL has been configured.
      */
     abstract void configureApp();
@@ -330,50 +336,29 @@ public abstract class FXGLApplication extends Application {
     protected abstract void initSettings(GameSettings settings);
 
     /**
-     * Returns target width of the application. This is the
-     * width that was set using GameSettings.
-     * Note that the resulting
-     * width of the scene might be different due to end user screen, in
-     * which case transformations will be automatically scaled down
-     * to ensure identical image on all screens.
-     *
-     * @return target width
+     * @return target width as set by GameSettings
      */
     public final double getWidth() {
         return getSettings().getWidth();
     }
 
     /**
-     * Returns target height of the application. This is the
-     * height that was set using GameSettings.
-     * Note that the resulting
-     * height of the scene might be different due to end user screen, in
-     * which case transformations will be automatically scaled down
-     * to ensure identical image on all screens.
-     *
-     * @return target height
+     * @return target height as set by GameSettings
      */
     public final double getHeight() {
         return getSettings().getHeight();
     }
 
     /**
-     * Returns the visual area within the application window,
-     * excluding window borders. Note that it will return the
-     * rectangle with set target width and height, not actual
-     * screen width and height. Meaning on smaller screens
-     * the area will correctly return the GameSettings' width and height.
-     * <p>
-     * Equivalent to new Rectangle2D(0, 0, getWidth(), getHeight()).
-     *
-     * @return screen bounds
+     * @return screen bounds as set by GameSettings
+     * @apiNote equivalent to new Rectangle2D(0, 0, getWidth(), getHeight())
      */
     public final Rectangle2D getScreenBounds() {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
     }
 
     /**
-     * @return current tick
+     * @return current tick (frame)
      */
     public final long getTick() {
         return getMasterTimer().getTick();
