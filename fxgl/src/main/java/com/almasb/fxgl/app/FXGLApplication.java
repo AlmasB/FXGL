@@ -78,7 +78,7 @@ public abstract class FXGLApplication extends Application {
     /**
      * @return primary stage as set by JavaFX
      */
-    public Stage getPrimaryStage() {
+    public final Stage getPrimaryStage() {
         return primaryStage;
     }
 
@@ -112,7 +112,7 @@ public abstract class FXGLApplication extends Application {
      *
      * @param listener the listener
      */
-    public void addFXGLListener(FXGLListener listener) {
+    public final void addFXGLListener(FXGLListener listener) {
         systemListeners.add(listener);
     }
 
@@ -121,7 +121,7 @@ public abstract class FXGLApplication extends Application {
      *
      * @param listener the listener
      */
-    public void removeFXGLListener(FXGLListener listener) {
+    public final void removeFXGLListener(FXGLListener listener) {
         systemListeners.remove(listener);
     }
 
@@ -137,7 +137,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public final void start(Stage primaryStage) throws Exception {
         log.debug("Starting FXGL");
 
         this.primaryStage = primaryStage;
@@ -228,7 +228,7 @@ public abstract class FXGLApplication extends Application {
     /**
      * Pause the application.
      */
-    protected void pause() {
+    protected final void pause() {
         log.debug("Pausing main loop");
         systemListeners.forEach(FXGLListener::onPause);
         getEventBus().fireEvent(FXGLEvent.pause());
@@ -237,7 +237,7 @@ public abstract class FXGLApplication extends Application {
     /**
      * Resume the application.
      */
-    protected void resume() {
+    protected final void resume() {
         log.debug("Resuming main loop");
         systemListeners.forEach(FXGLListener::onResume);
         getEventBus().fireEvent(FXGLEvent.resume());
@@ -248,7 +248,7 @@ public abstract class FXGLApplication extends Application {
      * After notifying all interested parties (where all should do a cleanup),
      * <code>System.gc()</code> will be called.
      */
-    protected void reset() {
+    protected final void reset() {
         log.debug("Resetting FXGL application");
         systemListeners.forEach(FXGLListener::onReset);
         getEventBus().fireEvent(FXGLEvent.reset());
@@ -260,7 +260,7 @@ public abstract class FXGLApplication extends Application {
      * Exit the application.
      * Safe to call this from a paused state.
      */
-    protected void exit() {
+    protected final void exit() {
         log.debug("Exiting Normally");
         systemListeners.forEach(FXGLListener::onExit);
         getEventBus().fireEvent(FXGLEvent.exit());
