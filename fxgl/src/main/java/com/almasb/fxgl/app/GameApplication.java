@@ -55,6 +55,7 @@ import java.util.Map;
  * <li>preInit()</li>
  * <p>The following phases are NOT executed on UI thread</p>
  * <li>initAssets()</li>
+ * <li>initGameVars()</li>
  * <li>initGame() OR loadState()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
