@@ -64,10 +64,6 @@ public abstract class FXGLApplication extends Application {
      */
     private static final Logger log = SystemLogger.INSTANCE;
 
-    static {
-        Version.print();
-    }
-
     private Stage primaryStage;
 
     /**
@@ -137,6 +133,7 @@ public abstract class FXGLApplication extends Application {
     @Override
     public final void init() throws Exception {
         log.debug("Initializing FXGL");
+        Version.print();
     }
 
     @Override
