@@ -84,7 +84,7 @@
         <apache.http.version>4.5.3</apache.http.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.0.5</kotlin.version>
+        <kotlin.version>1.1.1</kotlin.version>
         <guice.version>4.0</guice.version>
         <jfxtras.version>8.0-r4</jfxtras.version>
         <controlsfx.version>8.40.12</controlsfx.version>
