@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.*;
 import javafx.geometry.Point2D;
@@ -176,6 +177,25 @@ public class GameEntity extends Entity {
      */
     public final void translate(Point2D vector) {
         position.translate(vector);
+    }
+
+    /**
+     * Translate x and y by given vector.
+     *
+     * @param vector translate vector
+     */
+    public final void translate(Vec2 vector) {
+        position.translate(vector.x, vector.y);
+    }
+
+    /**
+     * Translate x and y by given vector.
+     *
+     * @param dx vector x
+     * @param dy vector y
+     */
+    public final void translate(double dx, double dy) {
+        position.translate(dx, dy);
     }
 
     /**
@@ -367,6 +387,24 @@ public class GameEntity extends Entity {
      */
     public final void setRenderLayer(RenderLayer layer) {
         this.view.setRenderLayer(layer);
+    }
+
+    /**
+     * Set view scale X.
+     *
+     * @param scaleX x value
+     */
+    public final void setScaleX(double scaleX) {
+        view.getView().setScaleX(scaleX);
+    }
+
+    /**
+     * Set view scale Y.
+     *
+     * @param scaleY y value
+     */
+    public final void setScaleY(double scaleY) {
+        view.getView().setScaleY(scaleY);
     }
 
     // VIEW END
