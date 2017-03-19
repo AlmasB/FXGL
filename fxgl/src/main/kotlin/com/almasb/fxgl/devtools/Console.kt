@@ -29,7 +29,6 @@ package com.almasb.fxgl.devtools
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.collection.ObjectMap
-import com.almasb.fxgl.util.Splitter
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
@@ -168,7 +167,7 @@ class Console : Pane() {
     }
 
     private fun parse(input: String) {
-        val tokens = Splitter.split(input)
+        val tokens = input.split(" +".toRegex())
         val cmdName = tokens[0]
 
         val cmd = commands.get(cmdName)
