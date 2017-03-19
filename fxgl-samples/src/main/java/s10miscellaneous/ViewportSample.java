@@ -28,7 +28,11 @@ package s10miscellaneous;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.math.BezierSpline;
+import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.animation.KeyFrame;
@@ -36,7 +40,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 import javafx.util.Duration;
 
 /**
@@ -56,14 +60,9 @@ public class ViewportSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(true);
+        settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
-
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
 
     @Override
     protected void initGame() {
@@ -82,7 +81,7 @@ public class ViewportSample extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40, Color.GREEN))
                 .buildAndAttach(getGameWorld());
 
-        cinematicViewport();
+        cinematicViewportBezier();
     }
 
     private void cinematicViewport() {
@@ -114,14 +113,45 @@ public class ViewportSample extends GameApplication {
         timeline.play();
     }
 
-    @Override
-    protected void initPhysics() {}
+    private void cinematicViewportBezier() {
+        // 1. get viewport
+        Viewport viewport = getGameScene().getViewport();
 
-    @Override
-    protected void initUI() {}
+        // 2. define "waypoints"
+        Vec2[] points = {
+                new Vec2(0, 0),
+                new Vec2(800, 0),
+                new Vec2(300, 300)
+        };
 
-    @Override
-    protected void onUpdate(double tpf) {}
+        BezierSpline spline = FXGLMath.closedBezierSpline(points);
+
+        Path path = new Path();
+        path.getElements().add(new MoveTo(0, 0));
+
+        for (BezierSpline.BezierCurve c : spline.getCurves()) {
+            path.getElements().add(new CubicCurveTo(
+                    c.getControl1().x, c.getControl1().y,
+                    c.getControl2().x, c.getControl2().y,
+                    c.getEnd().x, c.getEnd().y
+            ));
+        }
+
+        // if open bezier is needed
+        //path.getElements().remove(path.getElements().size()-1);
+
+        GameEntity e = Entities.builder()
+                .build();
+
+        viewport.xProperty().bind(e.getPositionComponent().xProperty());
+        viewport.yProperty().bind(e.getPositionComponent().yProperty());
+
+        Entities.animationBuilder()
+                .duration(Duration.seconds(9))
+                .translate(e)
+                .alongPath(path)
+                .buildAndPlay();
+    }
 
     public static void main(String[] args) {
         launch(args);
