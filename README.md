@@ -116,7 +116,7 @@ Latest pre-compiled uber jar can be found in [Releases](https://github.com/Almas
 
 ## Contribution
 
-The contribution [guide](CONTRIBUTING.md)
+[Contribute](CONTRIBUTING.md) to FXGL, or support FXGL on [Gratipay](https://gratipay.com/FXGL/).
 
 ## Contact
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
