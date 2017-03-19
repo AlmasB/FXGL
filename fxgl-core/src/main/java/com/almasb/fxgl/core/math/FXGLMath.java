@@ -506,4 +506,12 @@ public final class FXGLMath {
     public static float log2(float value) {
         return log(2, value);
     }
+
+    /**
+     * @param points the spline passes through these points
+     * @return a closed bezier spline
+     */
+    public static BezierSpline closedBezierSpline(Vec2[] points) {
+        return ClosedBezierSplineFactory.newBezierSpline(points);
+    }
 }
