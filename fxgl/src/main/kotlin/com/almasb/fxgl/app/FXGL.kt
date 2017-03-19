@@ -78,6 +78,10 @@ class FXGL private constructor() {
          */
         @JvmStatic fun getApp() = internalApp
 
+        @JvmStatic fun getAppWidth() = internalApp.width
+
+        @JvmStatic fun getAppHeight() = internalApp.height
+
         @JvmStatic fun getServices() = internalAllServices
 
         /**
