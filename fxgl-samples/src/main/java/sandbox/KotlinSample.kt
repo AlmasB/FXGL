@@ -26,67 +26,67 @@
 
 package sandbox
 
-import com.almasb.fxgl.app.GameApplication
-import com.almasb.fxgl.settings.GameSettings
-import javafx.application.Application
-import kotlinx.coroutines.experimental.*
-import java.util.*
-
-typealias F = Map<String, String>
-
-/**
- *
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
- */
-class KotlinSample : GameApplication() {
-
-    private val map: F = HashMap<String, String>()
-
-    override fun initSettings(settings: GameSettings) {
-        with(settings) {
-            isIntroEnabled = false
-            isMenuEnabled = false
-            isCloseConfirmation = false
-            isProfilingEnabled = false
-        }
-    }
-
-    override fun initGame() {
-        println("initGame() ${Thread.currentThread().name}")
-
-        // start doing something
-        val deferredResult = async(CommonPool) {
-            println("async() ${Thread.currentThread().name}")
-
-            delay(3000)
-
-            println("async Done with 999")
-
-            999
-        }
-
-        kotlinx.coroutines.experimental.launch(CommonPool) {
-            val workValue = doHeavyWork()
-
-            println(workValue)
-        }
-
-        Thread.sleep(2000)
-
-        println("initGame Done")
-
-
-
-        //println("${deferredResult.getCompleted()}")
-    }
-
-    private suspend fun doHeavyWork(): Int {
-        delay(1000)
-        return 119
-    }
-}
+//import com.almasb.fxgl.app.GameApplication
+//import com.almasb.fxgl.settings.GameSettings
+//import javafx.application.Application
+//import kotlinx.coroutines.experimental.*
+//import java.util.*
+//
+//typealias F = Map<String, String>
+//
+///**
+// *
+// *
+// * @author Almas Baimagambetov (almaslvl@gmail.com)
+// */
+//class KotlinSample : GameApplication() {
+//
+//    private val map: F = HashMap<String, String>()
+//
+//    override fun initSettings(settings: GameSettings) {
+//        with(settings) {
+//            isIntroEnabled = false
+//            isMenuEnabled = false
+//            isCloseConfirmation = false
+//            isProfilingEnabled = false
+//        }
+//    }
+//
+//    override fun initGame() {
+//        println("initGame() ${Thread.currentThread().name}")
+//
+//        // start doing something
+//        val deferredResult = async(CommonPool) {
+//            println("async() ${Thread.currentThread().name}")
+//
+//            delay(3000)
+//
+//            println("async Done with 999")
+//
+//            999
+//        }
+//
+//        kotlinx.coroutines.experimental.launch(CommonPool) {
+//            val workValue = doHeavyWork()
+//
+//            println(workValue)
+//        }
+//
+//        Thread.sleep(2000)
+//
+//        println("initGame Done")
+//
+//
+//
+//        //println("${deferredResult.getCompleted()}")
+//    }
+//
+//    private suspend fun doHeavyWork(): Int {
+//        delay(1000)
+//        return 119
+//    }
+//}
 
 fun main(args: Array<String>) {
-    Application.launch(KotlinSample::class.java, *args)
+    //Application.launch(KotlinSample::class.java, *args)
 }
