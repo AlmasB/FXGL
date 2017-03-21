@@ -125,7 +125,8 @@ public class AStarLogic {
      * @return neighbors of the node
      */
     protected List<AStarNode> getValidNeighbors(AStarNode node, AStarNode[][] grid, AStarNode... busyNodes) {
-        int x = node.getX(), y = node.getY();
+        int x = node.getX();
+        int y = node.getY();
         int[] points = {
             x - 1, y,
             x + 1, y,
