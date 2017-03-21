@@ -414,6 +414,10 @@ private constructor(private val stage: Stage,
         dialog.showMessageBox(message)
     }
 
+    override fun showMessageBox(message: String, callback: Runnable) {
+        dialog.showMessageBox(message, callback)
+    }
+
     /**
      * Shows a blocking message box with YES and NO buttons. The callback is
      * invoked with the user answer as parameter.
