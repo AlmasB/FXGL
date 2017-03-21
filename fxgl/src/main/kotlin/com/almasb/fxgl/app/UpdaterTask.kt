@@ -27,6 +27,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.time.LocalTimer
+import com.almasb.fxgl.util.Version
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
@@ -98,18 +99,24 @@ internal class UpdaterTask : Runnable {
 
         FXGL.getNet()
                 .getLatestVersionTask()
-                .onSuccess(Consumer { version ->
+                .onSuccessKt { latestVersion ->
+
+                    val currentVersion = Version.getAsString()
 
                     // update offline timer
                     updateCheckTimer.capture()
 
-                    dialog.dialogPane.contentText = "Just so you know\n" +
-                            "Your version:   " + com.almasb.fxgl.util.Version.getAsString() + "\n" +
-                            "Latest version: " + version
+                    if (currentVersion == latestVersion) {
+                        dialog.close()
+                    } else {
+                        dialog.dialogPane.contentText = "Just so you know\n" +
+                                "Your version:   $currentVersion\n" +
+                                "Latest version: $latestVersion"
 
-                    button.isDisable = false
-                })
-                .onFailure(Consumer { error ->
+                        button.isDisable = false
+                    }
+                }
+                .onFailureKt { error ->
 
                     // not important, just log it
                     log.warning("Failed to find updates: $error")
@@ -117,7 +124,8 @@ internal class UpdaterTask : Runnable {
                     dialog.dialogPane.contentText = "Failed to find updates: " + error
 
                     button.isDisable = false
-                }).executeAsyncWithDialogFX(FXGL.getExecutor())
+                }
+                .executeAsyncWithDialogFX(FXGL.getExecutor())
 
         // blocking call
         dialog.showAndWait()
