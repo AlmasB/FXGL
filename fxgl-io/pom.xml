@@ -46,6 +46,12 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-runtime</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
     </dependencies>
 
     <!--<pluginRepositories>-->

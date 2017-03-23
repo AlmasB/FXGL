@@ -46,6 +46,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-runtime</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-io</artifactId>
             <version>${fxgl.version}</version>
