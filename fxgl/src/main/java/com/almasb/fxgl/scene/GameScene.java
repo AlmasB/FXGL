@@ -97,8 +97,8 @@ public final class GameScene extends FXGLScene
     private Group uiRoot = new Group();
 
     @Inject
-    protected GameScene(@Named("appWidth") double width,
-                        @Named("appHeight") double height) {
+    protected GameScene(@Named("appWidth") int width,
+                        @Named("appHeight") int height) {
         getContentRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas(width, height);

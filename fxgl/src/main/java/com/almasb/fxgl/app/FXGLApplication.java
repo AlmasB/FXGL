@@ -338,14 +338,14 @@ public abstract class FXGLApplication extends Application {
     /**
      * @return target width as set by GameSettings
      */
-    public final double getWidth() {
+    public final int getWidth() {
         return getSettings().getWidth();
     }
 
     /**
      * @return target height as set by GameSettings
      */
-    public final double getHeight() {
+    public final int getHeight() {
         return getSettings().getHeight();
     }
 

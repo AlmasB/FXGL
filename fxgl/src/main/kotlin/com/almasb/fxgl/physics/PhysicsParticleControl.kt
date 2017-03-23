@@ -60,7 +60,7 @@ class PhysicsParticleControl(private val group: ParticleGroup,
             val center = centers[i]
 
             val x = physicsWorld.toPixels(center.x - radiusMeters).toDouble()
-            val y = physicsWorld.toPixels(physicsWorld.toMeters(physicsWorld.appHeight).toDouble() - center.y.toDouble() - radiusMeters).toDouble()
+            val y = physicsWorld.toPixels(physicsWorld.toMeters(physicsWorld.appHeight.toDouble()).toDouble() - center.y.toDouble() - radiusMeters).toDouble()
 
             this.particles.add(PhysicsParticle(Point2D(x, y), radiusPixels, color))
         }

@@ -59,7 +59,7 @@ class Console : Pane() {
     private val output: TextArea
 
     init {
-        setPrefSize(FXGL.getApp().width, FXGL.getApp().height)
+        setPrefSize(FXGL.getApp().width.toDouble(), FXGL.getApp().height.toDouble())
         background = Background(BackgroundFill(Color.color(0.5, 0.5, 0.5, 0.5), null, null))
 
         output = initOutput()

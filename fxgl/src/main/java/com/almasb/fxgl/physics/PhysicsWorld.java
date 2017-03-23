@@ -81,7 +81,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private Array<CollisionPair> collisions = new Array<>(false, 128);
 
-    private double appHeight;
+    private int appHeight;
 
     private Pooler pooler = FXGL.getPooler();
 
@@ -95,7 +95,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return jboxWorld;
     }
 
-    public double getAppHeight() {
+    public int getAppHeight() {
         return appHeight;
     }
 
@@ -166,7 +166,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     @Inject
-    protected PhysicsWorld(@Named("appHeight") double appHeight,
+    protected PhysicsWorld(@Named("appHeight") int appHeight,
                            @Named("physics.ppm") double ppm) {
         this.appHeight = appHeight;
 
@@ -177,7 +177,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         initContactListener();
         initParticles();
 
-        log.debugf("Physics world initialized: appHeight=%.1f, physics.ppm=%.1f",
+        log.debugf("Physics world initialized: appHeight=%d, physics.ppm=%.1f",
                 appHeight, ppm);
     }
 
