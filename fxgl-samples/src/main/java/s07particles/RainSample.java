@@ -33,9 +33,10 @@ import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.paint.Color;
 
 /**
- *
+ * Using particles with source images and colorization.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -50,14 +51,10 @@ public class RainSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
+        settings.setCloseConfirmation(false);
+        settings.setProfilingEnabled(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
-
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
 
     @Override
     protected void initGame() {
@@ -65,24 +62,23 @@ public class RainSample extends GameApplication {
                 .viewFromTexture("underwater3.png")
                 .buildAndAttach(getGameWorld());
 
-        ParticleEmitter emitter = ParticleEmitters.newRainEmitter((int)getWidth());
-        emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").getImage());
-
-        ParticleControl control = new ParticleControl(emitter);
+        // example - multiply color with existing
+        ParticleEmitter emitter = ParticleEmitters.newRainEmitter((int)getWidth() / 2);
+        emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").multiplyColor(Color.RED).getImage());
 
         Entities.builder()
-                .with(control)
+                .with(new ParticleControl(emitter))
+                .buildAndAttach(getGameWorld());
+
+        // example - set color
+        ParticleEmitter emitter2 = ParticleEmitters.newRainEmitter((int)getWidth() / 2);
+        emitter2.setSourceImage(getAssetLoader().loadTexture("rain.png").toColor(Color.RED).getImage());
+
+        Entities.builder()
+                .at(getWidth() / 2, 0)
+                .with(new ParticleControl(emitter2))
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);
