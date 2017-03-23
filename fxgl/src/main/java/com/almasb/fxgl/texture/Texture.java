@@ -273,6 +273,76 @@ public class Texture extends ImageView implements Disposable {
     }
 
     /**
+     * Discoloring is done via setting each pixel to white but
+     * preserving opacity (alpha channel).
+     *
+     * @return texture with image discolored
+     */
+    public final Texture discolor() {
+        int w = (int)getImage().getWidth();
+        int h = (int)getImage().getHeight();
+
+        PixelReader reader = getImage().getPixelReader();
+        WritableImage image = new WritableImage(w, h);
+        PixelWriter writer = image.getPixelWriter();
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                double opacity = reader.getColor(x, y).getOpacity();
+                writer.setColor(x, y, Color.color(1, 1, 1, opacity));
+            }
+        }
+
+        return new Texture(image);
+    }
+
+    /**
+     * Multiplies this texture's pixel color with given color.
+     *
+     * @param color to use
+     * @return new colorized texture
+     */
+    public final Texture multiplyColor(Color color) {
+        int w = (int) getImage().getWidth();
+        int h = (int) getImage().getHeight();
+
+        PixelReader reader = getImage().getPixelReader();
+        WritableImage coloredImage = new WritableImage(w, h);
+        PixelWriter writer = coloredImage.getPixelWriter();
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+
+                Color c = reader.getColor(x, y);
+                c = Color.color(
+                        c.getRed() * color.getRed(),
+                        c.getGreen() * color.getGreen(),
+                        c.getBlue() * color.getBlue(),
+                        c.getOpacity() * color.getOpacity()
+                );
+
+                writer.setColor(x, y, c);
+            }
+        }
+
+        return new Texture(coloredImage);
+    }
+
+    /**
+     * Colorizes this texture's pixels with given color.
+     *
+     * @param color to use
+     * @return new colorized texture
+     */
+    public final Texture toColor(Color color) {
+        Texture discolored = discolor();
+        Texture colored = discolored.multiplyColor(color);
+        discolored.dispose();
+
+        return colored;
+    }
+
+    /**
      * Set texture data by copying it from other texture.
      *
      * @param other the texture to copy from
