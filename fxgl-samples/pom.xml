@@ -62,6 +62,12 @@
             <artifactId>httpclient</artifactId>
             <version>${apache.http.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>
