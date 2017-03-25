@@ -38,27 +38,29 @@ import java.util.HashSet;
  */
 public abstract class GoapAction {
 
-    private HashSet<Pair<String, Object>> preconditions;
-    private HashSet<Pair<String, Object>> effects;
+    private HashSet<Pair<String, Object>> preconditions = new HashSet<>();
+    private HashSet<Pair<String, Object>> effects = new HashSet<>();
 
     private boolean inRange = false;
 
     private final String name;
 
-    /* The cost of performing the action.
-         * Figure out a weight that suits the action.
-         * Changing it will affect what actions are chosen during planning.*/
+    /**
+     * The cost of performing the action.
+     * Figure out a weight that suits the action.
+     * Changing it will affect what actions are chosen during planning.
+     */
     public float cost = 1f;
 
     /**
-     * An action often has to perform on an object. This is that object. Can be null.
+     * An action often has to perform on an object.
+     * This is that object.
+     * Can be null.
      */
     public Entity target;
 
     public GoapAction(String name) {
         this.name = name;
-        preconditions = new HashSet<>();
-        effects = new HashSet<>();
     }
 
     public void doReset() {
@@ -97,7 +99,6 @@ public abstract class GoapAction {
      */
     public abstract boolean requiresInRange();
 
-
     /**
      * Are we in range of the target?
      * The MoveTo state will set this and it gets reset each time this action is performed.
@@ -110,14 +111,11 @@ public abstract class GoapAction {
         this.inRange = inRange;
     }
 
-
     public void addPrecondition(String key, Object value) {
         preconditions.add(new Pair<>(key, value));
     }
 
-
     public void removePrecondition(String key) {
-
         Pair<String, Object> remove = null;
         for (Pair<String, Object> kvp : preconditions) {
             if (kvp.getKey().equals(key)) {
@@ -127,25 +125,13 @@ public abstract class GoapAction {
 
         if (remove != null)
             preconditions.remove(remove);
-
-
-//        KeyValuePair<string, object> remove = default (KeyValuePair<string, object>);
-//        foreach(KeyValuePair < string, object > kvp in preconditions) {
-//            if (kvp.Key.Equals(key))
-//                remove = kvp;
-//        }
-//        if (! default (KeyValuePair<string, object>).Equals(remove) )
-//        preconditions.Remove(remove);
     }
-
 
     public void addEffect(String key, Object value) {
         effects.add(new Pair<>(key, value));
     }
 
-
     public void removeEffect(String key) {
-
         Pair<String, Object> remove = null;
         for (Pair<String, Object> kvp : effects) {
             if (kvp.getKey().equals(key)) {
@@ -155,16 +141,7 @@ public abstract class GoapAction {
 
         if (remove != null)
             effects.remove(remove);
-
-//        KeyValuePair<string, object> remove = default (KeyValuePair<string, object>);
-//        foreach(KeyValuePair < string, object > kvp in effects) {
-//            if (kvp.Key.Equals(key))
-//                remove = kvp;
-//        }
-//        if (! default (KeyValuePair<string, object>).Equals(remove) )
-//        effects.Remove(remove);
     }
-
 
     public HashSet<Pair<String, Object>> Preconditions() {
         return preconditions;

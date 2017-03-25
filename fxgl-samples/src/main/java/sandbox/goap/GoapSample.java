@@ -147,7 +147,8 @@ public class GoapSample extends GameApplication {
         public TripleAction() {
             super("TripleAction");
             addPrecondition("prev", true);
-            addEffect("goal", true);
+            //addEffect("goal", true);
+            addEffect("next", false);
         }
     }
 

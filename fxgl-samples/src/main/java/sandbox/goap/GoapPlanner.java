@@ -26,19 +26,17 @@
 
 package sandbox.goap;
 
-/**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
- *
- * From https://github.com/sploreg/goap
- */
-
 import com.almasb.fxgl.ecs.Entity;
 import javafx.util.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Plans what actions can be completed in order to fulfill a goal state.
+ * Adapted from https://github.com/sploreg/goap
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class GoapPlanner {
 
@@ -51,12 +49,12 @@ public class GoapPlanner {
                                   HashSet<GoapAction> availableActions,
                                   HashSet<Pair<String, Object>> worldState,
                                   HashSet<Pair<String, Object>> goal) {
+
         // reset the actions so we can start fresh with them
         availableActions.forEach(a -> a.reset());
 
-
         // check what actions can run using their checkProceduralPrecondition
-        HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
+        HashSet<GoapAction> usableActions = new HashSet<>();
         availableActions.forEach(a -> {
             if (a.checkProceduralPrecondition(agent))
                 usableActions.add(a);
@@ -64,7 +62,7 @@ public class GoapPlanner {
 
         // we now have all actions that can run, stored in usableActions
 
-        // build up the tree and record the leaf nodes that provide a solution to the goal.
+        // build up the tree and record the leaf nodes that provide a solution to the goal
         List<Node> leaves = new ArrayList<>();
 
         // build graph
@@ -78,16 +76,10 @@ public class GoapPlanner {
         }
 
         // get the cheapest leaf
-        Node cheapest = null;
-        for (Node leaf : leaves) {
-            if (cheapest == null)
-                cheapest = leaf;
-            else {
-                if (leaf.runningCost < cheapest.runningCost)
-                    cheapest = leaf;
-            }
-        }
-        
+        Node cheapest = leaves.stream()
+                .min(Comparator.comparingDouble(n -> n.runningCost))
+                .get();
+
 
         // get its node and work back through the parents
         List<GoapAction> result = new ArrayList<>();
@@ -98,20 +90,17 @@ public class GoapPlanner {
             }
             n = n.parent;
         }
+
         // we now have this action list in correct order
 
-        Queue<GoapAction> queue = new ArrayDeque<>();
-        
-        result.forEach(a -> queue.add(a));
-
         // hooray we have a plan!
-        return queue;
+        return new ArrayDeque<>(result);
     }
 
     /**
      * Returns true if at least one solution was found.
-     * The possible paths are stored in the leaves list. Each leaf has a
-     * 'runningCost' value where the lowest cost will be the best action
+     * The possible paths are stored in the leaves list.
+     * Each leaf has a 'runningCost' value where the lowest cost will be the best action
      * sequence.
      */
     private boolean buildGraph(Node parent, List<Node> leaves, 
@@ -127,7 +116,7 @@ public class GoapPlanner {
 
                 // apply the action's effects to the parent state
                 HashSet<Pair<String, Object>> currentState = populateState(parent.state, action.Effects());
-                //Debug.Log(GoapAgent.prettyPrint(currentState));
+
                 Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
 
                 if (inState(goal, currentState)) {
@@ -184,13 +173,14 @@ public class GoapPlanner {
      */
     private HashSet<Pair<String, Object>> populateState(HashSet<Pair<String, Object>> currentState,
                                                         HashSet<Pair<String, Object>> stateChange) {
-        HashSet<Pair<String, Object>> state = new HashSet<Pair<String, Object>>();
+
+        HashSet<Pair<String, Object>> state = new HashSet<>();
         // copy the KVPs over as new objects
-        for(Pair < String, Object > s : currentState) {
-            state.add(new Pair<String, Object>(s.getKey(), s.getValue()));
+        for (Pair < String, Object > s : currentState) {
+            state.add(new Pair<>(s.getKey(), s.getValue()));
         }
 
-        for(Pair < String, Object > change : stateChange) {
+        for (Pair < String, Object > change : stateChange) {
             // if the key exists in the current state, update the Value
             boolean exists = false;
 
@@ -204,16 +194,12 @@ public class GoapPlanner {
             if (exists) {
                 state.removeIf(kvp -> kvp.getKey().equals(change.getKey()));
 
-//                state.RemoveWhere((Pair < String, Object > kvp) =>{
-//                    return kvp.Key.Equals(change.Key);
-//                } );
-
-                Pair<String, Object> updated = new Pair<String, Object>(change.getKey(), change.getValue());
+                Pair<String, Object> updated = new Pair<>(change.getKey(), change.getValue());
                 state.add(updated);
             }
             // if it does not exist in the current state, add it
             else {
-                state.add(new Pair<String, Object>(change.getKey(), change.getValue()));
+                state.add(new Pair<>(change.getKey(), change.getValue()));
             }
         }
         return state;
@@ -223,19 +209,18 @@ public class GoapPlanner {
      * Used for building up the graph and holding the running costs of actions.
      */
     private class Node {
-        public Node parent;
-        public float runningCost;
-        public HashSet<Pair<String, Object>> state;
-        public GoapAction action;
+        Node parent;
+        float runningCost;
+        HashSet<Pair<String, Object>> state;
+        GoapAction action;
 
-        public Node(Node parent, float runningCost, HashSet<Pair<String, Object>> state, GoapAction action) {
+        Node(Node parent, float runningCost, HashSet<Pair<String, Object>> state, GoapAction action) {
             this.parent = parent;
             this.runningCost = runningCost;
             this.state = state;
             this.action = action;
         }
     }
-
 }
 
 
