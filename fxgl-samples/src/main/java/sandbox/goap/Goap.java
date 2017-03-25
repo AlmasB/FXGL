@@ -30,14 +30,12 @@ package sandbox.goap;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 
-import javafx.util.Pair;
-
-import java.util.HashSet;
 import java.util.Queue;
 
 /**
  * Any agent that wants to use GOAP must implement
- * this interface. It provides information to the GOAP
+ * this interface.
+ * It provides information to the GOAP
  * planner so it can plan what actions to use.
  *
  * It also provides an interface for the planner to give 
@@ -51,39 +49,39 @@ public interface Goap
      * The starting state of the Agent and the world.
      * Supply what states are needed for actions to run.
      */
-    HashSet<Pair<String, Object>> getWorldState ();
+    State getWorldState();
 
     /**
      * Give the planner a new goal so it can figure out 
      * the actions needed to fulfill it.
      */
-    HashSet<Pair<String, Object>> createGoalState ();
+    State createGoalState();
 
     /**
      * No sequence of actions could be found for the supplied goal.
      * You will need to try another goal
      */
-    void planFailed (HashSet<Pair<String, Object>> failedGoal);
+    void planFailed(State failedGoal);
 
     /**
      * A plan was found for the supplied goal.
      * These are the actions the Agent will perform, in order.
      */
-    void planFound (HashSet<Pair<String, Object>> goal, Queue<GoapAction> actions);
+    void planFound(State goal, Queue<GoapAction> actions);
 
     /**
      * All actions are complete and the goal was reached. Hooray!
      */
-    void actionsFinished ();
+    void actionsFinished();
 
     /**
      * One of the actions caused the plan to abort.
      * That action is returned.
      */
-    void planAborted (GoapAction aborter);
+    void planAborted(GoapAction aborter);
 
     /**
-     * Called during Update. Move the agent towards the target in order
+     * Called during update. Move the agent towards the target in order
      * for the next action to be able to perform.
      * Return true if the Agent is at the target and the next action can perform.
      * False if it is not there yet.

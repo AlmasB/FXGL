@@ -31,8 +31,7 @@ import com.almasb.fxgl.ecs.Entity;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface FSMState
-{
+public interface FSMState {
 
-    void Update (FSM fsm, Entity gameObject);
+    void update(FSM fsm, Entity gameObject);
 }

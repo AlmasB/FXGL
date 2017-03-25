@@ -37,18 +37,13 @@ import java.util.Stack;
  * States should push other states onto the stack
  * and pop themselves off.
  */
-
-
 public class FSM {
 
-    private Stack<FSMState> stateStack = new Stack<FSMState> ();
+    private Stack<FSMState> stateStack = new Stack<> ();
 
-    //public abstract void FSMState (FSM fsm, Entity gameObject);
-
-
-    public void Update (Entity gameObject) {
+    public void update(Entity gameObject) {
         if (stateStack.peek() != null)
-            stateStack.peek().Update (this, gameObject);
+            stateStack.peek().update(this, gameObject);
     }
 
     public void pushState(FSMState state) {

@@ -27,14 +27,13 @@
 package sandbox.goap;
 
 import com.almasb.fxgl.ecs.Entity;
-import javafx.util.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Plans what actions can be completed in order to fulfill a goal state.
  * Adapted from https://github.com/sploreg/goap
+ * Original source: C#, author: Brent Anthony Owens.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

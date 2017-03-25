@@ -29,9 +29,10 @@ package sandbox.goap;
 import com.almasb.fxgl.ecs.Entity;
 
 /**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * Adapted from https://github.com/sploreg/goap
+ * Original source: C#, author: Brent Anthony Owens.
  *
- * https://github.com/sploreg/goap
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public abstract class GoapAction {
 

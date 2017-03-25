@@ -26,20 +26,22 @@
 
 package sandbox.goap;
 
-import com.almasb.fxgl.ai.GoalAction;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Pair;
+import javafx.scene.text.Text;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Queue;
 
 /**
- * This is an example of a minimalistic FXGL game application.
+ *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -53,60 +55,153 @@ public class GoapSample extends GameApplication {
         settings.setVersion("0.1");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
+        settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
     }
+
+    private static GameEntity player, coin, weapon, agent;
+    private GoapAgent goapAgent;
 
     @Override
     protected void initGame() {
 
-        GameEntity agent = Entities.builder()
-                .at(100, 100)
-                .viewFromNode(new Rectangle(40, 40))
+        initObjects();
+        HashSet<GoapAction> actions = initActions();
+
+
+        AIAgent aiAgent = new AIAgent(agent);
+
+        goapAgent = new GoapAgent(agent, aiAgent, new ArrayList<>(actions));
+
+//        GoapPlanner planner = new GoapPlanner();
+//        Queue<GoapAction> result = planner.plan(agent, actions, aiAgent.getWorldState(), aiAgent.createGoalState());
+//
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        goapAgent.update();
+    }
+
+    private void initObjects() {
+        player = Entities.builder()
+                .at(300, 300)
+                .viewFromNode(new Text("PLAYER"))
                 .buildAndAttach(getGameWorld());
 
-        agent.setProperty("goto", true);
+        coin = Entities.builder()
+                .at(500, 100)
+                .viewFromNode(new Text("COIN"))
+                .buildAndAttach(getGameWorld());
 
+        weapon = Entities.builder()
+                .at(30, 500)
+                .viewFromNode(new Text("WEAPON"))
+                .buildAndAttach(getGameWorld());
 
+        agent = Entities.builder()
+                .at(400, 400)
+                .viewFromNode(new Text("AGENT"))
+                .buildAndAttach(getGameWorld());
+    }
 
+    private HashSet<GoapAction> initActions() {
         HashSet<GoapAction> actions = new HashSet<>();
-        actions.add(new TripleAction());
-        actions.add(new SecondAction());
-        actions.add(new TestGoapAction(true));
+        actions.add(new PickupWeapon());
+        actions.add(new KillPlayer());
+        actions.add(new PickupCoin());
+        actions.add(new WanderAction());
+        actions.add(new BlowUpAction());
+        actions.add(new WaitAction());
+        return actions;
+    }
 
-        State state = new State();
-        state.add("prev", true);
-        state.add("next", true);
+    static State worldState = null;
 
-        State goal = new State();
-        goal.add("goal", true);
+    private static class AIAgent implements Goap {
 
-        GoapPlanner planner = new GoapPlanner();
-        Queue<GoapAction> result = planner.plan(agent,
-                actions,
-                state, goal);
+        private GameEntity entity;
 
-        for (GoapAction d : result) {
-            System.out.println(d);
+        public AIAgent(GameEntity entity) {
+            this.entity = entity;
+        }
+
+        @Override
+        public State getWorldState() {
+
+            // TODO: this should be retrieved from the world itself
+
+            if (worldState == null) {
+                worldState = new State();
+                worldState.add("playerInvincible", true);
+                worldState.add("playerAlive", true);
+                worldState.add("hasCoin", false);
+                worldState.add("hasWeapon", false);
+            } else {
+                worldState.add("playerAlive", false);
+                worldState.add("playerInvincible", false);
+                worldState.add("hasCoin", true);
+                worldState.add("hasWeapon", true);
+            }
+
+            return worldState;
+        }
+
+        @Override
+        public State createGoalState() {
+            State goal = new State();
+            goal.add("playerAlive", false);
+            return goal;
+        }
+
+        @Override
+        public void planFailed(State failedGoal) {
+
+        }
+
+        @Override
+        public void planFound(State goal, Queue<GoapAction> actions) {
+            System.out.println("Plan found!");
+            for (GoapAction action : actions) {
+                System.out.println(action);
+            }
+        }
+
+        @Override
+        public void actionsFinished() {
+            System.out.println("Actions finished");
+        }
+
+        @Override
+        public void planAborted(GoapAction aborter) {
+
+        }
+
+        @Override
+        public boolean moveAgent(GoapAction nextAction) {
+
+            PositionComponent targetPosition = nextAction.target.getComponentUnsafe(PositionComponent.class);
+
+            if (entity.getPositionComponent().distance(targetPosition) > 5) {
+                entity.translate(targetPosition.getValue().subtract(entity.getPosition()).normalize().multiply(0.016 * 100));
+                return false;
+            }
+
+            nextAction.setInRange(true);
+            return true;
         }
     }
 
-    private static class TestGoapAction extends GoapAction {
+    private static class BaseGoapAction extends GoapAction {
 
         private boolean done = false;
 
-        public TestGoapAction(String name) {
+        public BaseGoapAction(String name) {
             super(name);
-        }
-
-        public TestGoapAction(boolean f) {
-            super("TestGoapAction");
-            addPrecondition("prev", true);
-            addEffect("prev", false);
         }
 
         @Override
         public void reset() {
-
         }
 
         @Override
@@ -116,39 +211,89 @@ public class GoapSample extends GameApplication {
 
         @Override
         public boolean checkProceduralPrecondition(Entity agent) {
-
             return true;
         }
 
         @Override
         public boolean perform(Entity agent) {
-
             done = true;
-
+            // pickup / kill instantly
             return true;
         }
 
         @Override
         public boolean requiresInRange() {
-            return false;
+            return true;
         }
     }
 
-    private static class SecondAction extends TestGoapAction {
-        public SecondAction() {
-            super("SeconAction");
-            addPrecondition("next", false);
-            addEffect("goal", true);
-            addEffect("next", true);
+    private static class KillPlayer extends BaseGoapAction {
+        public KillPlayer() {
+            super("KillPlayer");
+            addPrecondition("playerInvincible", false);
+            addPrecondition("playerAlive", true);
+            addPrecondition("hasWeapon", true);
+            addEffect("playerAlive", false);
+        }
+
+        @Override
+        public boolean checkProceduralPrecondition(Entity agent) {
+            target = player;
+            return true;
         }
     }
 
-    private static class TripleAction extends TestGoapAction {
-        public TripleAction() {
-            super("TripleAction");
-            addPrecondition("prev", true);
-            //addEffect("goal", true);
-            addEffect("next", false);
+    private static class PickupWeapon extends BaseGoapAction {
+        public PickupWeapon() {
+            super("PickupWeapon");
+            addPrecondition("hasWeapon", false);
+            addEffect("hasWeapon", true);
+        }
+
+        @Override
+        public boolean checkProceduralPrecondition(Entity agent) {
+            target = weapon;
+            return true;
+        }
+    }
+
+    private static class PickupCoin extends BaseGoapAction {
+        public PickupCoin() {
+            super("PickupCoin");
+            addPrecondition("hasCoin", false);
+            addEffect("hasCoin", true);
+            addEffect("playerInvincible", false);
+        }
+
+        @Override
+        public boolean checkProceduralPrecondition(Entity agent) {
+            target = coin;
+            return true;
+        }
+    }
+
+    private static class WanderAction extends BaseGoapAction {
+        public WanderAction() {
+            super("WanderAction");
+            addPrecondition("hasCoin", true);
+            addEffect("hasCoin", false);
+        }
+    }
+
+    private static class BlowUpAction extends BaseGoapAction {
+        public BlowUpAction() {
+            super("BlowUpAction");
+            addPrecondition("playerInvincible", true);
+            addPrecondition("playerAlive", true);
+            addEffect("playerAlive", false);
+            cost = 10.0f;
+        }
+    }
+
+    private static class WaitAction extends BaseGoapAction {
+        public WaitAction() {
+            super("WaitAction");
+            addPrecondition("playerAlive", false);
         }
     }
 
