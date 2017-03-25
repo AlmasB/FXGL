@@ -24,20 +24,22 @@
  * SOFTWARE.
  */
 
-package sandbox.goap;
+package sandbox;
 
+import com.almasb.fxgl.ai.goap.GoapAction;
+import com.almasb.fxgl.ai.goap.GoapAgent;
+import com.almasb.fxgl.ai.goap.GoapControl;
+import com.almasb.fxgl.ai.goap.State;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -59,8 +61,13 @@ public class GoapSample extends GameApplication {
         settings.setCloseConfirmation(false);
     }
 
-    private static GameEntity player, coin, weapon, agent;
-    private GoapAgent goapAgent;
+    private static GameEntity player, coin, weapon, agent, guard;
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("playerInvincible", true);
+        vars.put("playerAlive", true);
+    }
 
     @Override
     protected void initGame() {
@@ -68,19 +75,10 @@ public class GoapSample extends GameApplication {
         initObjects();
         HashSet<GoapAction> actions = initActions();
 
+        GoapControl goapControl = new GoapControl(new KillerAgent(), 100, actions);
+        agent.addControl(goapControl);
 
-        AIAgent aiAgent = new AIAgent(agent);
-
-        goapAgent = new GoapAgent(agent, aiAgent, new ArrayList<>(actions));
-
-//        GoapPlanner planner = new GoapPlanner();
-//        Queue<GoapAction> result = planner.plan(agent, actions, aiAgent.getWorldState(), aiAgent.createGoalState());
-//
-    }
-
-    @Override
-    protected void onUpdate(double tpf) {
-        goapAgent.update();
+        guard.addControl(new GoapControl(new GuardAgent(), 125, actions));
     }
 
     private void initObjects() {
@@ -103,6 +101,14 @@ public class GoapSample extends GameApplication {
                 .at(400, 400)
                 .viewFromNode(new Text("AGENT"))
                 .buildAndAttach(getGameWorld());
+
+        guard = Entities.builder()
+                .at(600, 50)
+                .viewFromNode(new Text("GUARD"))
+                .buildAndAttach(getGameWorld());
+
+        agent.setProperty("hasWeapon", false);
+        agent.setProperty("hasCoin", false);
     }
 
     private HashSet<GoapAction> initActions() {
@@ -110,57 +116,37 @@ public class GoapSample extends GameApplication {
         actions.add(new PickupWeapon());
         actions.add(new KillPlayer());
         actions.add(new PickupCoin());
-        actions.add(new WanderAction());
+        actions.add(new ReviveAction());
         actions.add(new BlowUpAction());
         actions.add(new WaitAction());
         return actions;
     }
 
-    static State worldState = null;
-
-    private static class AIAgent implements Goap {
-
-        private GameEntity entity;
-
-        public AIAgent(GameEntity entity) {
-            this.entity = entity;
-        }
+    private class KillerAgent implements GoapAgent {
 
         @Override
-        public State getWorldState() {
-
-            // TODO: this should be retrieved from the world itself
-
-            if (worldState == null) {
-                worldState = new State();
-                worldState.add("playerInvincible", true);
-                worldState.add("playerAlive", true);
-                worldState.add("hasCoin", false);
-                worldState.add("hasWeapon", false);
-            } else {
-                worldState.add("playerAlive", false);
-                worldState.add("playerInvincible", false);
-                worldState.add("hasCoin", true);
-                worldState.add("hasWeapon", true);
-            }
+        public State obtainWorldState(Entity entity) {
+            State worldState = new State();
+            worldState.add("playerInvincible", getGameState().getBoolean("playerInvincible"));
+            worldState.add("playerAlive", getGameState().getBoolean("playerAlive"));
+            worldState.add("hasWeapon", entity.getProperty("hasWeapon"));
+            worldState.add("hasCoin", entity.getProperty("hasCoin"));
 
             return worldState;
         }
 
         @Override
-        public State createGoalState() {
+        public State createGoalState(Entity entity) {
             State goal = new State();
             goal.add("playerAlive", false);
             return goal;
         }
 
         @Override
-        public void planFailed(State failedGoal) {
-
-        }
+        public void planFailed(Entity entity, State failedGoal) {}
 
         @Override
-        public void planFound(State goal, Queue<GoapAction> actions) {
+        public void planFound(Entity entity, State goal, Queue<GoapAction> actions) {
             System.out.println("Plan found!");
             for (GoapAction action : actions) {
                 System.out.println(action);
@@ -168,37 +154,61 @@ public class GoapSample extends GameApplication {
         }
 
         @Override
-        public void actionsFinished() {
-            System.out.println("Actions finished");
+        public void actionsFinished(Entity entity) {
+            entity.removeControl(GoapControl.class);
         }
 
         @Override
-        public void planAborted(GoapAction aborter) {
+        public void planAborted(Entity entity, GoapAction aborter) {}
+    }
 
+    private class GuardAgent implements GoapAgent {
+
+        @Override
+        public State obtainWorldState(Entity entity) {
+            State worldState = new State();
+            worldState.add("playerInvincible", getGameState().getBoolean("playerInvincible"));
+            worldState.add("playerAlive", getGameState().getBoolean("playerAlive"));
+
+            return worldState;
         }
 
         @Override
-        public boolean moveAgent(GoapAction nextAction) {
+        public State createGoalState(Entity entity) {
+            State goal = new State();
 
-            PositionComponent targetPosition = nextAction.target.getComponentUnsafe(PositionComponent.class);
-
-            if (entity.getPositionComponent().distance(targetPosition) > 5) {
-                entity.translate(targetPosition.getValue().subtract(entity.getPosition()).normalize().multiply(0.016 * 100));
-                return false;
+            if (!getGameState().getBoolean("playerAlive")) {
+                goal.add("playerAlive", true);
+            } else {
+                goal.add("wait", true);
             }
 
-            nextAction.setInRange(true);
-            return true;
+            return goal;
         }
+
+        @Override
+        public void planFailed(Entity entity, State failedGoal) {}
+
+        @Override
+        public void planFound(Entity entity, State goal, Queue<GoapAction> actions) {
+            System.out.println("Plan found! Guard");
+            for (GoapAction action : actions) {
+                System.out.println(action);
+            }
+        }
+
+        @Override
+        public void actionsFinished(Entity entity) {
+            entity.removeControl(GoapControl.class);
+        }
+
+        @Override
+        public void planAborted(Entity entity, GoapAction aborter) {}
     }
 
     private static class BaseGoapAction extends GoapAction {
 
         private boolean done = false;
-
-        public BaseGoapAction(String name) {
-            super(name);
-        }
 
         @Override
         public void reset() {
@@ -229,7 +239,6 @@ public class GoapSample extends GameApplication {
 
     private static class KillPlayer extends BaseGoapAction {
         public KillPlayer() {
-            super("KillPlayer");
             addPrecondition("playerInvincible", false);
             addPrecondition("playerAlive", true);
             addPrecondition("hasWeapon", true);
@@ -238,28 +247,38 @@ public class GoapSample extends GameApplication {
 
         @Override
         public boolean checkProceduralPrecondition(Entity agent) {
-            target = player;
+            setTarget(player);
             return true;
+        }
+
+        @Override
+        public boolean perform(Entity agent) {
+            FXGL.getApp().getGameState().setValue("playerAlive", false);
+            return super.perform(agent);
         }
     }
 
     private static class PickupWeapon extends BaseGoapAction {
         public PickupWeapon() {
-            super("PickupWeapon");
             addPrecondition("hasWeapon", false);
             addEffect("hasWeapon", true);
         }
 
         @Override
         public boolean checkProceduralPrecondition(Entity agent) {
-            target = weapon;
+            setTarget(weapon);
             return true;
+        }
+
+        @Override
+        public boolean perform(Entity agent) {
+            agent.setProperty("hasWeapon", true);
+            return super.perform(agent);
         }
     }
 
     private static class PickupCoin extends BaseGoapAction {
         public PickupCoin() {
-            super("PickupCoin");
             addPrecondition("hasCoin", false);
             addEffect("hasCoin", true);
             addEffect("playerInvincible", false);
@@ -267,33 +286,41 @@ public class GoapSample extends GameApplication {
 
         @Override
         public boolean checkProceduralPrecondition(Entity agent) {
-            target = coin;
+            setTarget(coin);
             return true;
+        }
+
+        @Override
+        public boolean perform(Entity agent) {
+            agent.setProperty("hasCoin", true);
+            FXGL.getApp().getGameState().setValue("playerInvincible", false);
+            return super.perform(agent);
         }
     }
 
-    private static class WanderAction extends BaseGoapAction {
-        public WanderAction() {
-            super("WanderAction");
-            addPrecondition("hasCoin", true);
-            addEffect("hasCoin", false);
+    private static class ReviveAction extends BaseGoapAction {
+        public ReviveAction() {
+            addPrecondition("playerAlive", false);
+            addEffect("playerAlive", true);
+        }
+
+        @Override
+        public boolean checkProceduralPrecondition(Entity agent) {
+            setTarget(player);
+            return true;
         }
     }
 
     private static class BlowUpAction extends BaseGoapAction {
         public BlowUpAction() {
-            super("BlowUpAction");
-            addPrecondition("playerInvincible", true);
-            addPrecondition("playerAlive", true);
-            addEffect("playerAlive", false);
-            cost = 10.0f;
+
+            setCost(10.0f);
         }
     }
 
     private static class WaitAction extends BaseGoapAction {
         public WaitAction() {
-            super("WaitAction");
-            addPrecondition("playerAlive", false);
+            addEffect("wait", true);
         }
     }
 

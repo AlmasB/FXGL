@@ -24,14 +24,17 @@
  * SOFTWARE.
  */
 
-package sandbox.goap;
+package com.almasb.fxgl.ai.goap
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.Entity
 
 /**
+ * Adapted from https://github.com/sploreg/goap
+ * Original source: C#, author: Brent Anthony Owens.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface FSMState {
+interface FSMState {
 
-    void update(FSM fsm, Entity gameObject);
+    fun update(fsm: FSM, entity: Entity)
 }

@@ -24,21 +24,57 @@
  * SOFTWARE.
  */
 
-package sandbox.planning
+package com.almasb.fxgl.ai.goap
+
+import java.util.*
 
 /**
+ * A lightweight version of GameState.
  *
+ * TODO: can we use full version instead?
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-enum class Ternary {
-    TRUE, FALSE, UNKNOWN;
+class State(initialData: Map<String, Any> = emptyMap()) {
 
-    fun isTrueOrUnknown() = (this == TRUE || this == UNKNOWN)
+    private val data = HashMap<String, Any>()
 
-    fun isFalseOrUnknown() = (this == FALSE || this == UNKNOWN)
+    constructor(copy: State) : this(copy.data)
 
-    fun strictEquals(other: Ternary) = (this == other)
+    init {
+        data.putAll(initialData)
+    }
 
-    fun weakEquals(other: Ternary) = (strictEquals(other) || this == UNKNOWN || other == UNKNOWN)
+    fun add(key: String, value: Any) {
+        data.put(key, value)
+    }
+
+    fun remove(key: String) {
+        data.remove(key)
+    }
+
+    /**
+     * Check that all items in [this] are in [other].
+     * If just one does not match or is not there
+     * then this returns false.
+     */
+    fun isIn(other: State): Boolean {
+        for ((k, v) in data) {
+            val otherV = other.data[k]
+            if (v != otherV) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    /**
+     * Apply the state data from [other] to [this].
+     */
+    fun update(other: State) {
+        for ((k, v) in other.data) {
+            data[k] = v
+        }
+    }
 }

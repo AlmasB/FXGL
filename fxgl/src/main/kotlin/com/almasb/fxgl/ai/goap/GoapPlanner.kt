@@ -24,20 +24,21 @@
  * SOFTWARE.
  */
 
-package sandbox.goap;
+package com.almasb.fxgl.ai.goap
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.Entity
 
-import java.util.*;
+import java.util.*
 
 /**
  * Plans what actions can be completed in order to fulfill a goal state.
+ *
  * Adapted from https://github.com/sploreg/goap
  * Original source: C#, author: Brent Anthony Owens.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class GoapPlanner {
+object GoapPlanner {
 
     /**
      * Plan what sequence of actions can fulfill the goal.
@@ -45,54 +46,44 @@ public class GoapPlanner {
      * or a list of the actions
      * that must be performed, in order, to fulfill the goal.
      */
-    public Queue<GoapAction> plan(Entity agent,
-                                  HashSet<GoapAction> availableActions,
-                                  State worldState,
-                                  State goal) {
+    fun plan(agent: Entity, availableActions: Set<GoapAction>, worldState: State, goal: State): Queue<GoapAction> {
 
         // reset the actions so we can start fresh with them
-        availableActions.forEach(a -> a.reset());
+        availableActions.forEach { it.reset() }
 
         // check what actions can run using their checkProceduralPrecondition
-        HashSet<GoapAction> usableActions = new HashSet<>();
-        availableActions.forEach(a -> {
-            if (a.checkProceduralPrecondition(agent))
-                usableActions.add(a);
-        });
+        val usableActions = availableActions.filter { it.checkProceduralPrecondition(agent) }.toSet()
 
         // we now have all actions that can run, stored in usableActions
 
         // build up the tree and record the leaf nodes that provide a solution to the goal
-        List<Node> leaves = new ArrayList<>();
+        val leaves = ArrayList<Node>()
 
         // build graph
-        Node start = new Node(null, 0, worldState, null);
-        boolean success = buildGraph(start, leaves, usableActions, goal);
+        val start = Node(null, 0f, worldState, null)
+        val success = buildGraph(start, leaves, usableActions, goal)
 
         if (!success) {
-            return new ArrayDeque<>();
+            return ArrayDeque()
         }
 
         // get the cheapest leaf
-        Node cheapest = leaves.stream()
-                .min(Comparator.comparingDouble(n -> n.runningCost))
-                .get();
-
+        val cheapest = leaves.minBy { it.runningCost }
 
         // get its node and work back through the parents
-        List<GoapAction> result = new ArrayList<>();
-        Node n = cheapest;
+        val result = ArrayList<GoapAction>()
+        var n: Node? = cheapest
         while (n != null) {
             if (n.action != null) {
-                result.add(0, n.action); // insert the action in the front
+                result.add(n.action!!)
             }
-            n = n.parent;
+            n = n.parent
         }
 
         // we now have this action list in correct order
 
         // hooray we have a plan!
-        return new ArrayDeque<>(result);
+        return ArrayDeque(result.reversed())
     }
 
     /**
@@ -101,78 +92,52 @@ public class GoapPlanner {
      * Each leaf has a 'runningCost' value where the lowest cost will be the best action
      * sequence.
      */
-    private boolean buildGraph(Node parent, List<Node> leaves, 
-                               HashSet<GoapAction> usableActions,
-                               State goal) {
-        boolean foundOne = false;
+    private fun buildGraph(parent: Node, leaves: MutableList<Node>, usableActions: Set<GoapAction>, goal: State): Boolean {
+        var foundOne = false
 
         // go through each action available at this node and see if we can use it here
-        for (GoapAction action : usableActions) {
+        for (action in usableActions) {
 
             // if the parent state has the conditions for this action's preconditions, we can use it here
-            if (action.getPreconditions().isIn(parent.state)) {
+            if (action.preconditions.isIn(parent.state)) {
 
                 // apply the action's effects to the parent state
-                State currentState = populateState(parent.state, action.getEffects());
+                val currentState = populateState(parent.state, action.effects)
 
-                Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
+                val node = Node(parent, parent.runningCost + action.cost, currentState, action)
 
                 if (goal.isIn(currentState)) {
                     // we found a solution!
-                    leaves.add(node);
-                    foundOne = true;
+                    leaves.add(node)
+                    foundOne = true
                 } else {
                     // not at a solution yet, so test all the remaining actions and branch out the tree
-                    HashSet<GoapAction> subset = actionSubset(usableActions, action);
-                    boolean found = buildGraph(node, leaves, subset, goal);
+                    val subset = usableActions.minus(action)
+
+                    val found = buildGraph(node, leaves, subset, goal)
                     if (found)
-                        foundOne = true;
+                        foundOne = true
                 }
             }
         }
 
-        return foundOne;
-    }
-
-    /**
-     * Create a subset of the actions excluding the removeMe one. Creates a new set.
-     */
-    private HashSet<GoapAction> actionSubset(HashSet<GoapAction> actions, GoapAction removeMe) {
-        HashSet<GoapAction> subset = new HashSet<>();
-        for(GoapAction a : actions) {
-            if (!a.equals(removeMe))
-                subset.add(a);
-        }
-        return subset;
+        return foundOne
     }
 
     /**
      * Apply the stateChange to the currentState.
      */
-    private State populateState(State currentState, State stateChange) {
+    private fun populateState(currentState: State, stateChange: State): State {
         // copy
-        State newState = new State(currentState);
-        newState.update(stateChange);
+        val newState = State(currentState)
+        newState.update(stateChange)
 
-        return newState;
+        return newState
     }
 
     /**
      * Used for building up the graph and holding the running costs of actions.
      */
-    private class Node {
-        Node parent;
-        float runningCost;
-        State state;
-        GoapAction action;
-
-        Node(Node parent, float runningCost, State state, GoapAction action) {
-            this.parent = parent;
-            this.runningCost = runningCost;
-            this.state = state;
-            this.action = action;
-        }
-    }
+    private class Node constructor(var parent: Node?, var runningCost: Float, var state: State, var action: GoapAction?)
 }
-
 

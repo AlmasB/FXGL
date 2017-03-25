@@ -24,9 +24,9 @@
  * SOFTWARE.
  */
 
-package sandbox.goap;
+package com.almasb.fxgl.ai.goap
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.Entity
 
 /**
  * Adapted from https://github.com/sploreg/goap
@@ -34,54 +34,52 @@ import com.almasb.fxgl.ecs.Entity;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class GoapAction {
+abstract class GoapAction {
 
-    private State preconditions = new State();
-    private State effects = new State();
+    val preconditions = State()
+    val effects = State()
 
-    private boolean inRange = false;
-
-    private final String name;
+    /**
+     * Are we in range of the target?
+     * The MoveTo state will set this and it gets reset each time this action is performed.
+     */
+    var isInRange = false
 
     /**
      * The cost of performing the action.
      * Figure out a weight that suits the action.
      * Changing it will affect what actions are chosen during planning.
      */
-    public float cost = 1f;
+    var cost = 1f
 
     /**
      * An action often has to perform on an object.
      * This is that object.
      * Can be null.
      */
-    public Entity target;
+    var target: Entity? = null
 
-    public GoapAction(String name) {
-        this.name = name;
-    }
-
-    public void doReset() {
-        inRange = false;
-        target = null;
-        reset();
+    fun doReset() {
+        isInRange = false
+        target = null
+        reset()
     }
 
     /**
      * Reset any variables that need to be reset before planning happens again.
      */
-    public abstract void reset();
+    abstract fun reset()
 
     /**
      * Is the action done?
      */
-    public abstract boolean isDone();
+    abstract val isDone: Boolean
 
     /**
      * Procedurally check if this action can run. Not all actions
      * will need this, but some might.
      */
-    public abstract boolean checkProceduralPrecondition(Entity agent);
+    abstract fun checkProceduralPrecondition(agent: Entity): Boolean
 
     /**
      * Run the action.
@@ -89,52 +87,35 @@ public abstract class GoapAction {
      * if something happened and it can no longer perform. In this case
      * the action queue should clear out and the goal cannot be reached.
      */
-    public abstract boolean perform(Entity agent);
+    abstract fun perform(agent: Entity): Boolean
 
     /**
      * Does this action need to be within range of a target game object?
      * If not then the moveTo state will not need to run for this action.
      */
-    public abstract boolean requiresInRange();
+    abstract fun requiresInRange(): Boolean
 
-    /**
-     * Are we in range of the target?
-     * The MoveTo state will set this and it gets reset each time this action is performed.
-     */
-    public boolean isInRange() {
-        return inRange;
+    fun addPrecondition(key: String, value: Any) {
+        preconditions.add(key, value)
     }
 
-    public void setInRange(boolean inRange) {
-        this.inRange = inRange;
+    fun removePrecondition(key: String) {
+        preconditions.remove(key)
     }
 
-    public void addPrecondition(String key, Object value) {
-        preconditions.add(key, value);
+    fun addEffect(key: String, value: Any) {
+        effects.add(key, value)
     }
 
-    public void removePrecondition(String key) {
-        preconditions.remove(key);
+    fun removeEffect(key: String) {
+        effects.remove(key)
     }
 
-    public void addEffect(String key, Object value) {
-        effects.add(key, value);
+    fun getName(): String {
+        return javaClass.simpleName
     }
 
-    public void removeEffect(String key) {
-        effects.remove(key);
-    }
-
-    public State getPreconditions() {
-        return preconditions;
-    }
-
-    public State getEffects() {
-        return effects;
-    }
-
-    @Override
-    public String toString() {
-        return name;
+    override fun toString(): String {
+        return getName()
     }
 }

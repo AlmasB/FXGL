@@ -24,16 +24,38 @@
  * SOFTWARE.
  */
 
-package sandbox.planning
+package com.almasb.fxgl.ai.goap
+
+import com.almasb.fxgl.ecs.Entity
+
+import java.util.ArrayDeque
 
 /**
+ * Stack-based Finite State Machine.
+ * Push and pop states to the FSM.
  *
+ * States should push other states onto the stack
+ * and pop themselves off.
+ *
+ * Adapted from https://github.com/sploreg/goap
+ * Original source: C#, author: Brent Anthony Owens.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class Op(val name: String) {
+class FSM {
 
-    abstract fun preCondition(): State
-    
-    abstract fun postCondition(): State
+    private val stateStack = ArrayDeque<FSMState>()
+
+    fun update(entity: Entity) {
+        if (stateStack.peek() != null)
+            stateStack.peek().update(this, entity)
+    }
+
+    fun pushState(state: FSMState) {
+        stateStack.push(state)
+    }
+
+    fun popState() {
+        stateStack.pop()
+    }
 }

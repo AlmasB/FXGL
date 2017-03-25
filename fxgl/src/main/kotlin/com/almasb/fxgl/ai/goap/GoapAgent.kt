@@ -24,13 +24,10 @@
  * SOFTWARE.
  */
 
-package sandbox.goap;
+package com.almasb.fxgl.ai.goap
 
-/**
- * @author Almas Baimagambetov (almaslvl@gmail.com)
- */
-
-import java.util.Queue;
+import com.almasb.fxgl.ecs.Entity
+import java.util.Queue
 
 /**
  * Any agent that wants to use GOAP must implement
@@ -38,53 +35,48 @@ import java.util.Queue;
  * It provides information to the GOAP
  * planner so it can plan what actions to use.
  *
- * It also provides an interface for the planner to give 
+ * It also provides an interface for the planner to give
  * feedback to the Agent and report success/failure.
  *
- * https://github.com/sploreg/goap
+ * Adapted from https://github.com/sploreg/goap
+ * Original source: C#, author: Brent Anthony Owens.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Goap
-{
+interface GoapAgent {
+
     /**
      * The starting state of the Agent and the world.
      * Supply what states are needed for actions to run.
      */
-    State getWorldState();
+    fun obtainWorldState(entity: Entity): State
 
     /**
-     * Give the planner a new goal so it can figure out 
+     * Give the planner a new goal so it can figure out
      * the actions needed to fulfill it.
      */
-    State createGoalState();
+    fun createGoalState(entity: Entity): State
 
     /**
      * No sequence of actions could be found for the supplied goal.
-     * You will need to try another goal
+     * You will need to try another goal.
      */
-    void planFailed(State failedGoal);
+    fun planFailed(entity: Entity, failedGoal: State)
 
     /**
      * A plan was found for the supplied goal.
      * These are the actions the Agent will perform, in order.
      */
-    void planFound(State goal, Queue<GoapAction> actions);
+    fun planFound(entity: Entity, goal: State, actions: Queue<GoapAction>)
 
     /**
-     * All actions are complete and the goal was reached. Hooray!
+     * All actions are complete and the goal was reached.
      */
-    void actionsFinished();
+    fun actionsFinished(entity: Entity)
 
     /**
      * One of the actions caused the plan to abort.
      * That action is returned.
      */
-    void planAborted(GoapAction aborter);
-
-    /**
-     * Called during update. Move the agent towards the target in order
-     * for the next action to be able to perform.
-     * Return true if the Agent is at the target and the next action can perform.
-     * False if it is not there yet.
-     */
-    boolean moveAgent(GoapAction nextAction);
+    fun planAborted(entity: Entity, aborter: GoapAction)
 }
