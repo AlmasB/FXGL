@@ -24,39 +24,27 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.service.impl.executor
 
-import com.almasb.fxgl.concurrent.Async;
-import javafx.util.Duration;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledFuture;
+import com.almasb.fxgl.concurrent.Async
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
+import java.util.concurrent.Callable
 
 /**
- * Asynchronous executor service.
- * Allows submitting tasks to be run in the background, including after a certain delay.
+ *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Executor extends java.util.concurrent.Executor {
+class Coroutine<T>(private val func: Callable<T>) : Async<T> {
 
-    /**
-     * Schedule a single action to run after delay.
-     * Unlike MasterTimer service, this is not blocked by game execution
-     * and runs even if the game is paused.
-     *
-     * @param action the action
-     * @param delay delay
-     * @return scheduled future which can be cancelled
-     */
-    ScheduledFuture<?> schedule(Runnable action, Duration delay);
+    private val deferred: Deferred<T> = async(CommonPool) {
+        func.call()
+    }
 
-    /**
-     * Instantly starts a non-blocking async task.
-     *
-     * @param func the code to run
-     * @param <T> return type of the code block
-     * @return async object
-     */
-    <T> Async<T> async(Callable<T> func);
+    override fun await() = runBlocking {
+        deferred.await()
+    }
 }

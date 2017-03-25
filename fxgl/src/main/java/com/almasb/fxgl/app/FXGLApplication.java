@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
 
 /**
  * General FXGL application that configures services, settings and properties
