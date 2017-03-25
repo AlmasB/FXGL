@@ -27,9 +27,6 @@
 package sandbox.goap;
 
 import com.almasb.fxgl.ecs.Entity;
-import javafx.util.Pair;
-
-import java.util.HashSet;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -38,8 +35,8 @@ import java.util.HashSet;
  */
 public abstract class GoapAction {
 
-    private HashSet<Pair<String, Object>> preconditions = new HashSet<>();
-    private HashSet<Pair<String, Object>> effects = new HashSet<>();
+    private State preconditions = new State();
+    private State effects = new State();
 
     private boolean inRange = false;
 
@@ -112,42 +109,26 @@ public abstract class GoapAction {
     }
 
     public void addPrecondition(String key, Object value) {
-        preconditions.add(new Pair<>(key, value));
+        preconditions.add(key, value);
     }
 
     public void removePrecondition(String key) {
-        Pair<String, Object> remove = null;
-        for (Pair<String, Object> kvp : preconditions) {
-            if (kvp.getKey().equals(key)) {
-                remove = kvp;
-            }
-        }
-
-        if (remove != null)
-            preconditions.remove(remove);
+        preconditions.remove(key);
     }
 
     public void addEffect(String key, Object value) {
-        effects.add(new Pair<>(key, value));
+        effects.add(key, value);
     }
 
     public void removeEffect(String key) {
-        Pair<String, Object> remove = null;
-        for (Pair<String, Object> kvp : effects) {
-            if (kvp.getKey().equals(key)) {
-                remove = kvp;
-            }
-        }
-
-        if (remove != null)
-            effects.remove(remove);
+        effects.remove(key);
     }
 
-    public HashSet<Pair<String, Object>> Preconditions() {
+    public State getPreconditions() {
         return preconditions;
     }
 
-    public HashSet<Pair<String, Object>> Effects() {
+    public State getEffects() {
         return effects;
     }
 

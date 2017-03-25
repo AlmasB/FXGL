@@ -73,12 +73,12 @@ public class GoapSample extends GameApplication {
         actions.add(new SecondAction());
         actions.add(new TestGoapAction(true));
 
-        HashSet<Pair<String, Object>> state = new HashSet<>();
-        state.add(new Pair<>("prev", true));
-        state.add(new Pair<>("next", true));
+        State state = new State();
+        state.add("prev", true);
+        state.add("next", true);
 
-        HashSet<Pair<String, Object>> goal = new HashSet<>();
-        goal.add(new Pair<>("goal", true));
+        State goal = new State();
+        goal.add("goal", true);
 
         GoapPlanner planner = new GoapPlanner();
         Queue<GoapAction> result = planner.plan(agent,

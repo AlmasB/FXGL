@@ -42,13 +42,14 @@ public class GoapPlanner {
 
     /**
      * Plan what sequence of actions can fulfill the goal.
-     * Returns null if a plan could not be found, or a list of the actions
+     * Returns an empty queue if a plan could not be found,
+     * or a list of the actions
      * that must be performed, in order, to fulfill the goal.
      */
     public Queue<GoapAction> plan(Entity agent,
                                   HashSet<GoapAction> availableActions,
-                                  HashSet<Pair<String, Object>> worldState,
-                                  HashSet<Pair<String, Object>> goal) {
+                                  State worldState,
+                                  State goal) {
 
         // reset the actions so we can start fresh with them
         availableActions.forEach(a -> a.reset());
@@ -70,9 +71,7 @@ public class GoapPlanner {
         boolean success = buildGraph(start, leaves, usableActions, goal);
 
         if (!success) {
-            // oh no, we didn't get a plan
-            System.out.println("NO PLAN");
-            return null;
+            return new ArrayDeque<>();
         }
 
         // get the cheapest leaf
@@ -104,22 +103,22 @@ public class GoapPlanner {
      * sequence.
      */
     private boolean buildGraph(Node parent, List<Node> leaves, 
-                               HashSet<GoapAction> usableActions, 
-                               HashSet<Pair<String, Object>> goal) {
+                               HashSet<GoapAction> usableActions,
+                               State goal) {
         boolean foundOne = false;
 
         // go through each action available at this node and see if we can use it here
         for (GoapAction action : usableActions) {
 
             // if the parent state has the conditions for this action's preconditions, we can use it here
-            if (inState(action.Preconditions(), parent.state)) {
+            if (action.getPreconditions().isIn(parent.state)) {
 
                 // apply the action's effects to the parent state
-                HashSet<Pair<String, Object>> currentState = populateState(parent.state, action.Effects());
+                State currentState = populateState(parent.state, action.getEffects());
 
                 Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
 
-                if (inState(goal, currentState)) {
+                if (goal.isIn(currentState)) {
                     // we found a solution!
                     leaves.add(node);
                     foundOne = true;
@@ -140,7 +139,7 @@ public class GoapPlanner {
      * Create a subset of the actions excluding the removeMe one. Creates a new set.
      */
     private HashSet<GoapAction> actionSubset(HashSet<GoapAction> actions, GoapAction removeMe) {
-        HashSet<GoapAction> subset = new HashSet<GoapAction>();
+        HashSet<GoapAction> subset = new HashSet<>();
         for(GoapAction a : actions) {
             if (!a.equals(removeMe))
                 subset.add(a);
@@ -149,60 +148,14 @@ public class GoapPlanner {
     }
 
     /**
-     * Check that all items in 'test' are in 'state'. If just one does not match or is not there
-     * then this returns false.
+     * Apply the stateChange to the currentState.
      */
-    private boolean inState(HashSet<Pair<String, Object>> test, HashSet<Pair<String, Object>> state) {
-        boolean allMatch = true;
-        for(Pair < String, Object > t : test) {
-            boolean match = false;
-            for(Pair < String, Object > s : state) {
-                if (s.equals(t)) {
-                    match = true;
-                    break;
-                }
-            }
-            if (!match)
-                allMatch = false;
-        }
-        return allMatch;
-    }
+    private State populateState(State currentState, State stateChange) {
+        // copy
+        State newState = new State(currentState);
+        newState.update(stateChange);
 
-    /**
-     * Apply the stateChange to the currentState
-     */
-    private HashSet<Pair<String, Object>> populateState(HashSet<Pair<String, Object>> currentState,
-                                                        HashSet<Pair<String, Object>> stateChange) {
-
-        HashSet<Pair<String, Object>> state = new HashSet<>();
-        // copy the KVPs over as new objects
-        for (Pair < String, Object > s : currentState) {
-            state.add(new Pair<>(s.getKey(), s.getValue()));
-        }
-
-        for (Pair < String, Object > change : stateChange) {
-            // if the key exists in the current state, update the Value
-            boolean exists = false;
-
-            for (Pair < String, Object > s : state) {
-                if (s.equals(change)) {
-                    exists = true;
-                    break;
-                }
-            }
-
-            if (exists) {
-                state.removeIf(kvp -> kvp.getKey().equals(change.getKey()));
-
-                Pair<String, Object> updated = new Pair<>(change.getKey(), change.getValue());
-                state.add(updated);
-            }
-            // if it does not exist in the current state, add it
-            else {
-                state.add(new Pair<>(change.getKey(), change.getValue()));
-            }
-        }
-        return state;
+        return newState;
     }
 
     /**
@@ -211,10 +164,10 @@ public class GoapPlanner {
     private class Node {
         Node parent;
         float runningCost;
-        HashSet<Pair<String, Object>> state;
+        State state;
         GoapAction action;
 
-        Node(Node parent, float runningCost, HashSet<Pair<String, Object>> state, GoapAction action) {
+        Node(Node parent, float runningCost, State state, GoapAction action) {
             this.parent = parent;
             this.runningCost = runningCost;
             this.state = state;
