@@ -38,6 +38,10 @@ import com.google.inject.Injector
 import com.google.inject.Module
 import com.google.inject.name.Named
 import com.google.inject.name.Names
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
+import org.apache.logging.log4j.core.config.Configurator
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.function.Consumer
@@ -110,6 +114,8 @@ class FXGL private constructor() {
 
             internalApp = appModule.app
 
+            val log4j = asyncInitLog4j()
+
             createRequiredDirs()
 
             val allModules = arrayListOf(*modules)
@@ -119,6 +125,8 @@ class FXGL private constructor() {
             injector = Guice.createInjector(allModules)
 
             internalAllServices = appModule.allServices
+
+            runBlocking { log4j.await() }
 
             // log that we are ready, also force logger service to init
             internalLogger = getLogger("FXGL")
@@ -193,6 +201,16 @@ class FXGL private constructor() {
             // populate with default info
             internalBundle = Bundle("FXGL")
             //internalBundle.put("version.check", LocalDate.now())
+        }
+
+        private fun asyncInitLog4j() = async(CommonPool) {
+            val resourceName = when (internalApp.settings.applicationMode) {
+                ApplicationMode.DEBUG -> "log4j2-debug.xml"
+                ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
+                ApplicationMode.RELEASE -> "log4j2-release.xml"
+            }
+
+            Configurator.initialize("FXGL", FXGL::class.java.getResource(resourceName).toExternalForm())
         }
 
         /**

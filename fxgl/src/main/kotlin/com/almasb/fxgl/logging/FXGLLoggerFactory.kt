@@ -39,14 +39,6 @@ class FXGLLoggerFactory
 @Inject constructor(mode: ApplicationMode) : LoggerFactory() {
 
     init {
-        val resourceName = when (mode) {
-            ApplicationMode.DEBUG -> "log4j2-debug.xml"
-            ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
-            ApplicationMode.RELEASE -> "log4j2-release.xml"
-        }
-
-        Configurator.initialize("FXGL", javaClass.getResource(resourceName).toExternalForm())
-
         newLogger(javaClass).debug { "Service [LoggerFactory] initialized" }
     }
 
