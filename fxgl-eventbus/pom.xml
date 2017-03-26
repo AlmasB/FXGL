@@ -41,59 +41,17 @@
     <description>Simple event bus based on JavaFX</description>
 
     <build>
-
         <plugins>
-
             <!-- Create sources.jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- Create javadoc.jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.javadoc.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration> <!-- add this to disable checking -->
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                            <!-- leave only errors and warning -->
-                            <quiet>true</quiet>
-                            <tags>
-                                <tag>
-                                    <name>defaultValue</name>
-                                    <placement>a</placement>
-                                    <head>Default Value:</head>
-                                </tag>
-                                <tag>
-                                    <name>implNote</name>
-                                    <placement>a</placement>
-                                    <head>Implementation Note:</head>
-                                </tag>
-                                <tag>
-                                    <name>warning</name>
-                                    <placement>a</placement>
-                                    <head>Warning:</head>
-                                </tag>
-                            </tags>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
