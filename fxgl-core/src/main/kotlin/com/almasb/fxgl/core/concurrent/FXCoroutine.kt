@@ -26,25 +26,30 @@
 
 package com.almasb.fxgl.core.concurrent
 
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.Job
+import javafx.application.Platform
+import java.util.concurrent.Callable
+import java.util.concurrent.CountDownLatch
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Job(private val func: Runnable) : Async<Void>() {
+class FXCoroutine<T>(private val func: Callable<T>) : Async<T>() {
 
-    private val deferred: Job = launch(CommonPool) {
-        func.run()
+    private val latch = CountDownLatch(1)
+
+    private var value: T? = null
+
+    init {
+        Platform.runLater {
+            value = func.call()
+            latch.countDown()
+        }
     }
 
-    override fun await(): Void? {
-        runBlocking {
-            deferred.join()
-        }
-
-        return null
+    override fun await(): T? {
+        latch.await()
+        return value
     }
 }

@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * General FXGL application that configures services, settings and properties
@@ -169,16 +168,8 @@ public abstract class FXGLApplication extends Application {
         }, "FXGL Launcher Thread").start();
     }
 
-    private void runUpdaterAndWait() throws Exception {
-        // TODO: this _maybe_ could run with Async.startFX()
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Platform.runLater(() -> {
-            runTask(UpdaterTask.class);
-            latch.countDown();
-        });
-
-        latch.await();
+    private void runUpdaterAndWait() {
+        Async.startFX(() -> runTask(UpdaterTask.class)).await();
     }
 
     @Override
