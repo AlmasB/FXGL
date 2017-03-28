@@ -40,6 +40,13 @@
 
     <description>A collection of utility classes commonly used in games</description>
 
+    <repositories>
+        <repository>
+            <id>kotlinx</id>
+            <url>https://kotlin.bintray.com/kotlinx/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
