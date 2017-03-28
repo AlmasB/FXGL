@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.logging.SystemLogger
+import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.service.ExceptionHandler
 import com.google.inject.Inject
 import javafx.scene.control.ButtonType
@@ -71,7 +71,7 @@ class FXGLExceptionHandler
         handledOnce = true
 
         log.fatal("Uncaught Exception:");
-        log.fatal(SystemLogger.errorTraceAsString(e));
+        log.fatal(FXGLLogger.errorTraceAsString(e));
         log.fatal("Application will now exit");
 
         val app = FXGL.getApp()

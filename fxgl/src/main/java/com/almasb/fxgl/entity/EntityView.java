@@ -26,7 +26,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;

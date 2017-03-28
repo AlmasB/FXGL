@@ -27,7 +27,7 @@
 package com.almasb.fxgl.parser;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import javafx.util.Pair;
 
 import java.lang.reflect.Field;

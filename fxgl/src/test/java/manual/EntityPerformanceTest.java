@@ -27,18 +27,17 @@
 package manual;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -95,7 +94,7 @@ public class EntityPerformanceTest extends GameApplication {
             getGameWorld().addEntity(newEntity());
         }
 
-        SystemLogger.INSTANCE.infof("Adding %d entities took:  %.3f sec", NUM_ENTITIES, (System.nanoTime() - start) / 1000000000.0);
+        FXGLLogger.getSystemLogger().infof("Adding %d entities took:  %.3f sec", NUM_ENTITIES, (System.nanoTime() - start) / 1000000000.0);
     }
 
     private void testRemove() {
@@ -106,7 +105,7 @@ public class EntityPerformanceTest extends GameApplication {
             getGameWorld().removeEntity(e);
         }
 
-        SystemLogger.INSTANCE.infof("Remove took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+        FXGLLogger.getSystemLogger().infof("Remove took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     private Entity newGameEntity() {

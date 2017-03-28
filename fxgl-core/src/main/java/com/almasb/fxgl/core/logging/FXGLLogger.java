@@ -24,43 +24,47 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.devtools.controller
-
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ui.UIController
-import javafx.fxml.FXML
-import javafx.scene.control.Slider
-import javafx.scene.effect.ColorAdjust
+package com.almasb.fxgl.core.logging;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ColorAdjustController : UIController {
+public final class FXGLLogger {
 
-    @FXML
-    private lateinit var sliderHue: Slider
-    @FXML
-    private lateinit var sliderSaturation: Slider
-    @FXML
-    private lateinit var sliderBrightness: Slider
-    @FXML
-    private lateinit var sliderContrast: Slider
+    private FXGLLogger() {}
 
-    private val colorAdjust = ColorAdjust()
+    public static void init() {
 
-    override fun init() {
-        FXGL.getApp().gameScene.effect = colorAdjust
-
-        colorAdjust.hueProperty().bindBidirectional(sliderHue.valueProperty())
-        colorAdjust.saturationProperty().bindBidirectional(sliderSaturation.valueProperty())
-        colorAdjust.brightnessProperty().bindBidirectional(sliderBrightness.valueProperty())
-        colorAdjust.contrastProperty().bindBidirectional(sliderContrast.valueProperty())
     }
 
-    fun onPrintValues() {
-        FXGL.getLogger(javaClass).infof("Hue:[%.2f], Saturation:[%.2f], Brightness:[%.2f], Contrast:[%.2f]",
-                sliderHue.value, sliderSaturation.value, sliderBrightness.value, sliderContrast.value)
+    public static Logger get(String name) {
+        return new Log4j2(name);
+    }
+
+    public static Logger get(Class<?> caller) {
+        return get(caller.getSimpleName());
+    }
+
+    /**
+     * @return System.out logger
+     */
+    public static Logger getSystemLogger() {
+        return SystemLogger.INSTANCE;
+    }
+
+    public static String errorTraceAsString(Throwable e) {
+//        val sb = StringBuilder()
+//        sb.append("\n\nException occurred: ")
+//                .append(e.javaClass.canonicalName)
+//                .append(" : ")
+//                .append("${e.message}\n")
+//
+//        val elements = e.stackTrace
+//        for (el in elements) {
+//            sb.append("E: ").append(el.toString()).append('\n')
+//        }
+//
+//        return sb.toString()
+        return e.toString();
     }
 }

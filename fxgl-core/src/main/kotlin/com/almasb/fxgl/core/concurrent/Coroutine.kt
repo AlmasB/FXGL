@@ -24,43 +24,26 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.logging
+package com.almasb.fxgl.core.concurrent
 
-import org.apache.logging.log4j.LogManager
-import java.util.function.Supplier
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
+import java.util.concurrent.Callable
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLLogger(val name: String) : Logger {
+class Coroutine<T>(private val func: Callable<T>) : Async<T>() {
 
-    constructor(caller: Class<*>) : this(caller.simpleName)
-
-    private val log: org.apache.logging.log4j.Logger
-
-    init {
-        log = LogManager.getLogger(name)
+    private val deferred: Deferred<T> = async(CommonPool) {
+        func.call()
     }
 
-    override fun info(message: String?) = log.info(message)
-
-    override fun info(messageSupplier: Supplier<String>?) = log.info(messageSupplier?.get())
-
-    override fun debug(message: String?) = log.debug(message)
-
-    override fun debug(messageSupplier: Supplier<String>?) = log.debug(messageSupplier?.get())
-
-    override fun warning(message: String?) = log.warn(message)
-
-    override fun warning(messageSupplier: Supplier<String>?) = log.warn(messageSupplier?.get())
-
-    override fun fatal(message: String?) = log.fatal(message)
-
-    override fun fatal(messageSupplier: Supplier<String>?) = log.fatal(messageSupplier?.get())
-
-    override fun close() {
-
+    override fun await() = runBlocking {
+        deferred.await()
     }
 }

@@ -35,7 +35,7 @@ import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.ui.UI;
 import com.google.inject.Inject;

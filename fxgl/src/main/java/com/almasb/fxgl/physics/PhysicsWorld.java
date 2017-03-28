@@ -36,7 +36,7 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.service.Pooler;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

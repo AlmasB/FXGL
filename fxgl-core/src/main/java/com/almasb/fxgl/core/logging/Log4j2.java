@@ -24,43 +24,65 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.devtools.controller
+package com.almasb.fxgl.core.logging;
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ui.UIController
-import javafx.fxml.FXML
-import javafx.scene.control.Slider
-import javafx.scene.effect.ColorAdjust
+import org.apache.logging.log4j.LogManager;
+
+import java.util.function.Supplier;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ColorAdjustController : UIController {
+class Log4j2 implements Logger {
 
-    @FXML
-    private lateinit var sliderHue: Slider
-    @FXML
-    private lateinit var sliderSaturation: Slider
-    @FXML
-    private lateinit var sliderBrightness: Slider
-    @FXML
-    private lateinit var sliderContrast: Slider
+    private org.apache.logging.log4j.Logger log;
 
-    private val colorAdjust = ColorAdjust()
-
-    override fun init() {
-        FXGL.getApp().gameScene.effect = colorAdjust
-
-        colorAdjust.hueProperty().bindBidirectional(sliderHue.valueProperty())
-        colorAdjust.saturationProperty().bindBidirectional(sliderSaturation.valueProperty())
-        colorAdjust.brightnessProperty().bindBidirectional(sliderBrightness.valueProperty())
-        colorAdjust.contrastProperty().bindBidirectional(sliderContrast.valueProperty())
+    Log4j2(String name) {
+        this.log = LogManager.getLogger(name);
     }
 
-    fun onPrintValues() {
-        FXGL.getLogger(javaClass).infof("Hue:[%.2f], Saturation:[%.2f], Brightness:[%.2f], Contrast:[%.2f]",
-                sliderHue.value, sliderSaturation.value, sliderBrightness.value, sliderContrast.value)
+    @Override
+    public void info(String message) {
+        log.info(message);
+    }
+
+    @Override
+    public void info(Supplier<String> messageSupplier) {
+        log.info(messageSupplier.get());
+    }
+
+    @Override
+    public void debug(String message) {
+        log.debug(message);
+    }
+
+    @Override
+    public void debug(Supplier<String> messageSupplier) {
+        log.debug(messageSupplier.get());
+    }
+
+    @Override
+    public void warning(String message) {
+        log.warn(message);
+    }
+
+    @Override
+    public void warning(Supplier<String> messageSupplier) {
+        log.warn(messageSupplier.get());
+    }
+
+    @Override
+    public void fatal(String message) {
+        log.fatal(message);
+    }
+
+    @Override
+    public void fatal(Supplier<String> messageSupplier) {
+        log.fatal(messageSupplier.get());
+    }
+
+    @Override
+    public void close() {
+        LogManager.shutdown();
     }
 }

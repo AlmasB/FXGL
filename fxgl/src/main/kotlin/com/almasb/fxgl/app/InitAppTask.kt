@@ -29,7 +29,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.annotation.SetEntityFactory
 import com.almasb.fxgl.gameplay.GameState
-import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.annotation.AddCollisionHandler
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.saving.DataFile
@@ -95,7 +94,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initialization Complete", 4)
 
-        SystemLogger.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
+        log.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
 
         return null
     }

@@ -37,6 +37,7 @@ import java.util.function.Supplier
 import java.util.logging.*
 import java.util.logging.Formatter
 import java.util.stream.Collectors
+import com.almasb.fxgl.core.logging.Logger
 
 /**
  *

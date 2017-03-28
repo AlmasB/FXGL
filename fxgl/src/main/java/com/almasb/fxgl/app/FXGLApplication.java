@@ -26,9 +26,10 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.core.logging.FXGLLogger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.listener.FXGLListener;
@@ -42,6 +43,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,9 +62,9 @@ import java.util.concurrent.CountDownLatch;
 public abstract class FXGLApplication extends Application {
 
     /**
-     * Use system logger because logger service is not ready yet.
+     * Use system logger fallback until actual logger is ready.
      */
-    private static final Logger log = SystemLogger.INSTANCE;
+    protected static Logger log = FXGLLogger.getSystemLogger();
 
     private Stage primaryStage;
 
@@ -130,14 +132,11 @@ public abstract class FXGLApplication extends Application {
 
     @Override
     public final void init() throws Exception {
-        log.debug("Initializing FXGL");
         Version.print();
     }
 
     @Override
     public final void start(Stage primaryStage) throws Exception {
-        log.debug("Starting FXGL");
-
         this.primaryStage = primaryStage;
         showPreloadingStage();
 
@@ -158,7 +157,7 @@ public abstract class FXGLApplication extends Application {
                 configureApp();
             } catch (Exception e) {
                 log.fatal("Exception during system configuration:");
-                log.fatal(SystemLogger.INSTANCE.errorTraceAsString(e));
+                log.fatal(FXGLLogger.errorTraceAsString(e));
                 log.fatal("System will now exit");
                 log.close();
 
@@ -172,6 +171,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     private void runUpdaterAndWait() throws Exception {
+        // TODO: this _maybe_ could run with Async.startFX()
         CountDownLatch latch = new CountDownLatch(1);
 
         Platform.runLater(() -> {
@@ -209,13 +209,12 @@ public abstract class FXGLApplication extends Application {
      * After this call all FXGL.* calls are valid.
      */
     private void configureFXGL() {
-        log.debug("Configuring FXGL");
-
         long start = System.nanoTime();
 
         initSystemProperties();
         initUserProperties();
         initAppSettings();
+        asyncInitLogger();
 
         FXGL.configure(new ApplicationModule((GameApplication) this));
 
@@ -281,14 +280,10 @@ public abstract class FXGLApplication extends Application {
      * Load FXGL system properties.
      */
     private void initSystemProperties() {
-        log.debug("Initializing system properties");
-
         ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
         props.keySet().forEach(key -> {
             Object value = props.getObject(key);
             FXGL.setProperty(key, value);
-
-            log.debug(key + " = " + value);
         });
     }
 
@@ -296,7 +291,7 @@ public abstract class FXGLApplication extends Application {
      * Load user defined properties to override FXGL system properties.
      */
     private void initUserProperties() {
-        log.debug("Initializing user properties");
+        //log.debug("Initializing user properties");
 
         // services are not ready yet, so load manually
         try (InputStream is = getClass().getResource("/assets/properties/system.properties").openStream()) {
@@ -305,12 +300,12 @@ public abstract class FXGLApplication extends Application {
                 Object value = props.getObject(key);
                 FXGL.setProperty(key, value);
 
-                log.debug(key + " = " + value);
+                //log.debug(key + " = " + value);
             });
         } catch (NullPointerException npe) {
-            log.info("User properties not found. Using system");
+            //log.info("User properties not found. Using system");
         } catch (IOException e) {
-            log.warning("Loading user properties failed: " + e);
+            //log.warning("Loading user properties failed: " + e);
         }
     }
 
@@ -318,13 +313,36 @@ public abstract class FXGLApplication extends Application {
      * Take app settings from user.
      */
     private void initAppSettings() {
-        log.debug("Initializing app settings");
+        //log.debug("Initializing app settings");
 
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
 
-        log.debug("Logging settings\n" + settings.toString());
+        //log.debug("Logging settings\n" + settings.toString());
+    }
+
+    private void asyncInitLogger() {
+        Async a = Async.start(() -> {
+            String resourceName = "log4j2-debug.xml";
+
+            switch (getSettings().getApplicationMode()) {
+                case DEBUG:
+                    resourceName = "log4j2-debug.xml";
+                    break;
+                case DEVELOPER:
+                    resourceName = "log4j2-devel.xml";
+                    break;
+                case RELEASE:
+                    resourceName = "log4j2-release.xml";
+                    break;
+            }
+
+            Configurator.initialize("FXGL", FXGLApplication.class.getResource(resourceName).toExternalForm());
+
+            log = FXGLLogger.get(FXGLApplication.class);
+            log.debug("Log4j2 configuration complete");
+        });
     }
 
     /**

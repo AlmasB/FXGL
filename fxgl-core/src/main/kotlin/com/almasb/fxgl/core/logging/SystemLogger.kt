@@ -24,43 +24,33 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.devtools.controller
+package com.almasb.fxgl.core.logging
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ui.UIController
-import javafx.fxml.FXML
-import javafx.scene.control.Slider
-import javafx.scene.effect.ColorAdjust
+import java.util.function.Supplier
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ColorAdjustController : UIController {
+object SystemLogger : Logger {
 
-    @FXML
-    private lateinit var sliderHue: Slider
-    @FXML
-    private lateinit var sliderSaturation: Slider
-    @FXML
-    private lateinit var sliderBrightness: Slider
-    @FXML
-    private lateinit var sliderContrast: Slider
+    override fun info(message: String) = println("INFO: $message")
 
-    private val colorAdjust = ColorAdjust()
+    override fun info(messageSupplier: Supplier<String>) = info(messageSupplier.get())
 
-    override fun init() {
-        FXGL.getApp().gameScene.effect = colorAdjust
+    override fun debug(message: String) = println("DEBUG: $message")
 
-        colorAdjust.hueProperty().bindBidirectional(sliderHue.valueProperty())
-        colorAdjust.saturationProperty().bindBidirectional(sliderSaturation.valueProperty())
-        colorAdjust.brightnessProperty().bindBidirectional(sliderBrightness.valueProperty())
-        colorAdjust.contrastProperty().bindBidirectional(sliderContrast.valueProperty())
-    }
+    override fun debug(messageSupplier: Supplier<String>) = debug(messageSupplier.get())
 
-    fun onPrintValues() {
-        FXGL.getLogger(javaClass).infof("Hue:[%.2f], Saturation:[%.2f], Brightness:[%.2f], Contrast:[%.2f]",
-                sliderHue.value, sliderSaturation.value, sliderBrightness.value, sliderContrast.value)
+    override fun warning(message: String) = println("WARN: $message")
+
+    override fun warning(messageSupplier: Supplier<String>) = warning(messageSupplier.get())
+
+    override fun fatal(message: String) = println("FATAL: $message")
+
+    override fun fatal(messageSupplier: Supplier<String>) = fatal(messageSupplier.get())
+
+    override fun close() {
     }
 }

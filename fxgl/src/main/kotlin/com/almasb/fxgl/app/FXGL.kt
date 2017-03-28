@@ -28,7 +28,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.logging.Logger
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.service.ServiceType
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
@@ -114,8 +114,6 @@ class FXGL private constructor() {
 
             internalApp = appModule.app
 
-            val log4j = asyncInitLog4j()
-
             createRequiredDirs()
 
             val allModules = arrayListOf(*modules)
@@ -125,8 +123,6 @@ class FXGL private constructor() {
             injector = Guice.createInjector(allModules)
 
             internalAllServices = appModule.allServices
-
-            runBlocking { log4j.await() }
 
             // log that we are ready, also force logger service to init
             internalLogger = getLogger("FXGL")
@@ -201,16 +197,6 @@ class FXGL private constructor() {
             // populate with default info
             internalBundle = Bundle("FXGL")
             //internalBundle.put("version.check", LocalDate.now())
-        }
-
-        private fun asyncInitLog4j() = async(CommonPool) {
-            val resourceName = when (internalApp.settings.applicationMode) {
-                ApplicationMode.DEBUG -> "log4j2-debug.xml"
-                ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
-                ApplicationMode.RELEASE -> "log4j2-release.xml"
-            }
-
-            Configurator.initialize("FXGL", FXGL::class.java.getResource(resourceName).toExternalForm())
         }
 
         /**

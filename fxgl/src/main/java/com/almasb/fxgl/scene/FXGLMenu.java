@@ -34,7 +34,7 @@ import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;

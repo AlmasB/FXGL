@@ -36,7 +36,7 @@ import com.almasb.fxgl.ecs.EntityWorld;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.gameplay.Level;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.time.UpdateEventListener;

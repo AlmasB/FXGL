@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.logging;
 
+import com.almasb.fxgl.core.logging.Logger;
+
 /**
  * Factory for producing loggers.
  *

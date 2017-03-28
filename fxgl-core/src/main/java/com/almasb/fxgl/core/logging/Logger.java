@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.logging;
+package com.almasb.fxgl.core.logging;
 
 import java.util.function.Supplier;
 

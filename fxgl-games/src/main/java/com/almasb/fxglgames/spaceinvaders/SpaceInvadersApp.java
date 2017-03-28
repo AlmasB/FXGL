@@ -41,7 +41,7 @@ import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.io.FS;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;

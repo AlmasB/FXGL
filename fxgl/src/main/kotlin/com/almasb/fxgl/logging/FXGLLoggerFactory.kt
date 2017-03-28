@@ -27,6 +27,7 @@
 package com.almasb.fxgl.logging
 
 import com.almasb.fxgl.app.ApplicationMode
+import com.almasb.fxgl.core.logging.FXGLLogger
 import com.google.inject.Inject
 import org.apache.logging.log4j.core.config.Configurator
 
@@ -42,7 +43,7 @@ class FXGLLoggerFactory
         newLogger(javaClass).debug { "Service [LoggerFactory] initialized" }
     }
 
-    override fun newLogger(caller: Class<*>) = FXGLLogger(caller)
+    override fun newLogger(caller: Class<*>) = FXGLLogger.get(caller)
 
-    override fun newLogger(name: String) = FXGLLogger(name)
+    override fun newLogger(name: String) = FXGLLogger.get(name)
 }
