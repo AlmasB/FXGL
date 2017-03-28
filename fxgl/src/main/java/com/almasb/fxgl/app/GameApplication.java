@@ -379,9 +379,6 @@ public abstract class GameApplication extends FXGLApplication {
 
     @Override
     void configureApp() {
-
-        // services are now ready, switch to normal logger
-        //log = FXGL.getLogger(GameApplication.class);
         log.debug("Configuring GameApplication");
 
         long start = System.nanoTime();

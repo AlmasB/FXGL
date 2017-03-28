@@ -43,7 +43,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -291,21 +290,17 @@ public abstract class FXGLApplication extends Application {
      * Load user defined properties to override FXGL system properties.
      */
     private void initUserProperties() {
-        //log.debug("Initializing user properties");
-
         // services are not ready yet, so load manually
         try (InputStream is = getClass().getResource("/assets/properties/system.properties").openStream()) {
             ResourceBundle props = new PropertyResourceBundle(is);
             props.keySet().forEach(key -> {
                 Object value = props.getObject(key);
                 FXGL.setProperty(key, value);
-
-                //log.debug(key + " = " + value);
             });
         } catch (NullPointerException npe) {
-            //log.info("User properties not found. Using system");
+            // User properties not found. Using system
         } catch (IOException e) {
-            //log.warning("Loading user properties failed: " + e);
+            log.warning("Loading user properties failed: " + e);
         }
     }
 
@@ -313,17 +308,13 @@ public abstract class FXGLApplication extends Application {
      * Take app settings from user.
      */
     private void initAppSettings() {
-        //log.debug("Initializing app settings");
-
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
-
-        //log.debug("Logging settings\n" + settings.toString());
     }
 
     private void asyncInitLogger() {
-        Async a = Async.start(() -> {
+        Async.start(() -> {
             String resourceName = "log4j2-debug.xml";
 
             switch (getSettings().getApplicationMode()) {
@@ -338,10 +329,11 @@ public abstract class FXGLApplication extends Application {
                     break;
             }
 
-            Configurator.initialize("FXGL", FXGLApplication.class.getResource(resourceName).toExternalForm());
+            FXGLLogger.configure(FXGLApplication.class.getResource(resourceName).toExternalForm());
 
             log = FXGLLogger.get(FXGLApplication.class);
-            log.debug("Log4j2 configuration complete");
+            log.debug("FXGLLogger configuration complete");
+            log.debug("Logging game settings\n" + settings.toString());
         });
     }
 
@@ -367,10 +359,10 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * @return screen bounds as set by GameSettings
+     * @return app bounds as set by GameSettings
      * @apiNote equivalent to new Rectangle2D(0, 0, getWidth(), getHeight())
      */
-    public final Rectangle2D getScreenBounds() {
+    public final Rectangle2D getAppBounds() {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
     }
 

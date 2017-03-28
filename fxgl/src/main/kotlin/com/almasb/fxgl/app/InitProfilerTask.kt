@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.FXGLEvent
 import com.google.inject.Inject
 
 /**
@@ -40,10 +39,10 @@ class InitProfilerTask
     private val log = FXGL.getLogger(javaClass)
 
     override fun run() {
-        if (app.getSettings().isProfilingEnabled()) {
+        if (app.settings.isProfilingEnabled) {
             val profiler = FXGL.newProfiler()
 
-            app.getEventBus().addEventHandler(FXGLEvent.EXIT, { e ->
+            app.eventBus.addEventHandler(FXGLEvent.EXIT, {
                 profiler.stop()
                 profiler.print()
             })
