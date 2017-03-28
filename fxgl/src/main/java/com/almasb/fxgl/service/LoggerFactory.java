@@ -24,27 +24,30 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service.impl.executor
+package com.almasb.fxgl.service;
 
-import com.almasb.fxgl.concurrent.Async
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
-import java.util.concurrent.Callable
+import com.almasb.fxgl.core.logging.Logger;
 
 /**
- *
+ * Factory for producing loggers.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Coroutine<T>(private val func: Callable<T>) : Async<T> {
+public abstract class LoggerFactory {
 
-    private val deferred: Deferred<T> = async(CommonPool) {
-        func.call()
-    }
+    /**
+     * Construct new logger for given class.
+     *
+     * @param caller caller class
+     * @return logger
+     */
+    public abstract Logger newLogger(Class<?> caller);
 
-    override fun await() = runBlocking {
-        deferred.await()
-    }
+    /**
+     * Construct new logger with given name.
+     *
+     * @param name logger name
+     * @return logger
+     */
+    public abstract Logger newLogger(String name);
 }

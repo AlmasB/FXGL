@@ -27,7 +27,7 @@
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.concurrent.Async;
+import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
@@ -68,6 +68,10 @@ public class AsyncSample extends GameApplication {
             Thread.sleep(300);
             System.out.println("Render Done");
             return 399.0;
+        });
+
+        Async<Void> async3 = getExecutor().async(() -> {
+            System.out.println("Running some code");
         });
 
         System.out.println("Physics thread: " + Thread.currentThread().getName());

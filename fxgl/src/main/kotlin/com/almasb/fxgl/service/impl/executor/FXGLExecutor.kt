@@ -28,12 +28,11 @@ package com.almasb.fxgl.service.impl.executor
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLEvent
-import com.almasb.fxgl.concurrent.Async
+import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.service.Executor
 import com.google.inject.Inject
 import javafx.util.Duration
-import kotlinx.coroutines.experimental.Deferred
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -69,7 +68,11 @@ private constructor(eventBus: EventBus) : Executor {
     }
 
     override fun <T : Any> async(func: Callable<T>): Async<T> {
-        return Coroutine<T>(func)
+        return Async.start(func)
+    }
+
+    override fun async(func: Runnable): Async<Void> {
+        return Async.start(func)
     }
 
     /**

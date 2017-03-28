@@ -24,12 +24,26 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.concurrent;
+package com.almasb.fxgl.service.impl.logging
+
+import com.almasb.fxgl.app.ApplicationMode
+import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.service.LoggerFactory
+import com.google.inject.Inject
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Async<T> {
+class FXGLLoggerFactory
+@Inject constructor(mode: ApplicationMode) : LoggerFactory() {
 
-    T await();
+    init {
+        newLogger(javaClass).debug { "Service [LoggerFactory] initialized" }
+    }
+
+    override fun newLogger(caller: Class<*>) = FXGLLogger.get(caller)
+
+    override fun newLogger(name: String) = FXGLLogger.get(name)
 }

@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.service;
 
-import com.almasb.fxgl.concurrent.Async;
+import com.almasb.fxgl.core.concurrent.Async;
 import javafx.util.Duration;
 
 import java.util.concurrent.Callable;
@@ -59,4 +59,12 @@ public interface Executor extends java.util.concurrent.Executor {
      * @return async object
      */
     <T> Async<T> async(Callable<T> func);
+
+    /**
+     * Instantly starts a non-blocking async task.
+     *
+     * @param func the code to run
+     * @return async object
+     */
+    Async<Void> async(Runnable func);
 }
