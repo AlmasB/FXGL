@@ -24,13 +24,10 @@
  * SOFTWARE.
  */
 
-/**
- * Origin: jbox2d
- */
-
 package com.almasb.fxgl.core.math;
 
 import com.almasb.fxgl.core.pool.Poolable;
+import javafx.geometry.Point2D;
 
 import java.io.Serializable;
 
@@ -38,7 +35,11 @@ import java.io.Serializable;
  * A 2D column vector with float precision.
  * Can be used to represent a point in 2D space.
  * Can be used instead of JavaFX Point2D to avoid object allocations.
- * This is also preferred for private fields.
+ * This is also preferred for private or scoped fields.
+ *
+ * Source: jbox2d.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class Vec2 implements Serializable, Poolable {
     private static final long serialVersionUID = 1L;
@@ -67,6 +68,10 @@ public final class Vec2 implements Serializable, Poolable {
 
     public Vec2(Vec2 toCopy) {
         this(toCopy.x, toCopy.y);
+    }
+
+    public Vec2(Point2D toCopy) {
+        this(toCopy.getX(), toCopy.getY());
     }
 
     /**
@@ -247,7 +252,10 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * Normalize this vector and return the length before normalization. Alters this vector.
+     * Normalize this vector and return the length before normalization.
+     * Alters this vector.
+     *
+     * @return length before normalization
      */
     public float normalize() {
         float length = length();
@@ -262,7 +270,8 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * Normalizes and returns this vector. Alters this vector.
+     * Normalizes and returns this vector.
+     * Alters this vector.
      *
      * @return this vector
      */
@@ -279,9 +288,7 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * Return a new vector that has positive components.
-     *
-     * @return new vector
+     * @return new vector that has positive components
      */
     public Vec2 abs() {
         return new Vec2(FXGLMath.abs(x), FXGLMath.abs(y));
@@ -323,22 +330,6 @@ public final class Vec2 implements Serializable, Poolable {
         double angle2 = Math.toDegrees(Math.atan2(otherY, otherX));
 
         return (float) (angle1 - angle2);
-
-//        final float ax = otherX;
-//        final float ay = otherY;
-//
-//        final float delta = (ax * x + ay * y) /
-//                (float)Math.sqrt((ax * ax + ay * ay) * (x * x + y * y));
-//
-//        if (delta > 1.0) {
-//            return 0;
-//        }
-//
-//        if (delta < -1.0) {
-//            return 180;
-//        }
-//
-//        return (float) Math.toDegrees(Math.acos(delta));
     }
 
     /**
@@ -355,6 +346,15 @@ public final class Vec2 implements Serializable, Poolable {
      */
     public Vec2 copy() {
         return clone();
+    }
+
+    /**
+     * Note: object allocation.
+     *
+     * @return JavaFX Point2D representation
+     */
+    public Point2D toPoint2D() {
+        return new Point2D(x, y);
     }
 
     @Override
@@ -401,7 +401,6 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     public static void crossToOutUnsafe(Vec2 a, float s, Vec2 out) {
-        assert (out != a);
         out.x = s * a.y;
         out.y = -s * a.x;
     }
@@ -417,7 +416,6 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     public static void crossToOutUnsafe(float s, Vec2 a, Vec2 out) {
-        assert (out != a);
         out.x = -s * a.y;
         out.y = s * a.x;
     }
@@ -445,9 +443,6 @@ public final class Vec2 implements Serializable, Poolable {
         out.y = a.y > b.y ? a.y : b.y;
     }
 
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -457,17 +452,17 @@ public final class Vec2 implements Serializable, Poolable {
         return result;
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Vec2 other = (Vec2) obj;
-        if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) return false;
-        if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) return false;
-        return true;
+        if (obj == this)
+            return true;
+
+        if (obj instanceof Vec2) {
+            Vec2 other = (Vec2) obj;
+            return Float.floatToIntBits(x) == Float.floatToIntBits(other.x)
+                    && Float.floatToIntBits(y) == Float.floatToIntBits(other.y);
+        }
+
+        return false;
     }
 }
