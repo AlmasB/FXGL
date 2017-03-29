@@ -28,14 +28,14 @@ package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.logging.FXGLLogger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -51,7 +51,7 @@ import java.util.*;
  */
 public class Entity {
 
-    private static final Logger log = LogManager.getLogger(Entity.class);
+    private static final Logger log = FXGLLogger.get(Entity.class);
 
     private final ObjectMap<String, Object> properties = new ObjectMap<>();
 
@@ -192,7 +192,7 @@ public class Entity {
         Control control = getControlUnsafe(type);
 
         if (control == null) {
-            log.warn("Attempted to remove control but entity doesn't have a control with type: "+ type.getSimpleName());
+            log.warning("Attempted to remove control but entity doesn't have a control with type: "+ type.getSimpleName());
         } else {
             controls.remove(control.getClass());
             removeControlImpl(control);
@@ -358,7 +358,7 @@ public class Entity {
         Component component = getComponentUnsafe(type);
 
         if (component == null) {
-            log.warn("Attempted to remove component but entity doesn't have a component with type: "+ type.getSimpleName());
+            log.warning("Attempted to remove component but entity doesn't have a component with type: "+ type.getSimpleName());
         } else {
 
             // if not cleaning, then entity is alive, whether active or not
@@ -756,7 +756,7 @@ public class Entity {
                 if (b != null)
                     ((SerializableComponent) component).read(b);
                 else
-                    log.warn("Bundle " + componentsBundle + " does not have SerializableComponent: " + component);
+                    log.warning("Bundle " + componentsBundle + " does not have SerializableComponent: " + component);
             }
         }
 
@@ -769,7 +769,7 @@ public class Entity {
                 if (b != null)
                     ((SerializableControl) control).read(b);
                 else
-                    log.warn("Bundle " + componentsBundle + " does not have SerializableControl: " + control);
+                    log.warning("Bundle " + componentsBundle + " does not have SerializableControl: " + control);
             }
         }
     }

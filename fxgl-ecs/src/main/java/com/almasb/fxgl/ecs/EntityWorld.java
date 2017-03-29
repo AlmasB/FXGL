@@ -28,8 +28,8 @@ package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.almasb.fxgl.core.logging.FXGLLogger;
+import com.almasb.fxgl.core.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class EntityWorld {
 
-    private static final Logger log = LogManager.getLogger(EntityWorld.class);
+    private static final Logger log = FXGLLogger.get(EntityWorld.class);
 
     /**
      * The update list.
@@ -170,7 +170,7 @@ public class EntityWorld {
      * </ol>
      */
     protected void reset() {
-        log.trace("Resetting entity world");
+        log.debug("Resetting entity world");
 
         for (Entity e : updateList) {
             if (e.isActive()) {
