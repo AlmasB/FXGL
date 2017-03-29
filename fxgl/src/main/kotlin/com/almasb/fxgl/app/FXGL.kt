@@ -130,7 +130,7 @@ class FXGL private constructor() {
 
             // log that we are ready, also force logger service to init
             internalLogger = getLogger("FXGL")
-            internalLogger.debug("FXGL configuration complete")
+            internalLogger.debug("FXGL logger initialized")
 
             if (firstRun)
                 loadDefaultSystemData()

@@ -173,9 +173,7 @@ public abstract class FXGLApplication extends Application {
     }
 
     @Override
-    public final void stop() {
-        log.debug("Exiting FXGL");
-    }
+    public final void stop() {}
 
     /**
      * Shows preloading stage with scene while FXGL is being configured.
@@ -257,12 +255,12 @@ public abstract class FXGLApplication extends Application {
      * Safe to call this from a paused state.
      */
     protected final void exit() {
-        log.debug("Exiting Normally");
+        log.debug("Exiting FXGL application");
         systemListeners.forEach(FXGLListener::onExit);
         getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGL.destroy();
-        stop();
+        log.debug("Closing FXGL logger and exiting JavaFX");
         log.close();
 
         Platform.exit();
