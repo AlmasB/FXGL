@@ -455,15 +455,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * @return menu content containing multiplayer options
-     */
-    protected final MenuContent createContentMultiplayer() {
-        log.debug("createContentMultiplayer()");
-
-        return new MenuContent(FXGL.getUIFactory().newText("TODO: MULTIPLAYER"));
-    }
-
-    /**
      * A generic vertical box container for menu content
      * where each element is followed by a separator.
      */
