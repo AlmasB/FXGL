@@ -204,13 +204,15 @@ public abstract class FXGLApplication extends Application {
         initSystemProperties();
         initUserProperties();
         initAppSettings();
-        asyncInitLogger();
 
         FXGL.configure(new ApplicationModule((GameApplication) this));
 
+        log = FXGLLogger.get(FXGLApplication.class);
         log.debug("FXGL configuration complete");
 
         log.infof("FXGL configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+
+        log.debug("Logging game settings\n" + settings.toString());
     }
 
     /**
@@ -302,30 +304,6 @@ public abstract class FXGLApplication extends Application {
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
-    }
-
-    private void asyncInitLogger() {
-        Async.start(() -> {
-            String resourceName = "log4j2-debug.xml";
-
-            switch (getSettings().getApplicationMode()) {
-                case DEBUG:
-                    resourceName = "log4j2-debug.xml";
-                    break;
-                case DEVELOPER:
-                    resourceName = "log4j2-devel.xml";
-                    break;
-                case RELEASE:
-                    resourceName = "log4j2-release.xml";
-                    break;
-            }
-
-            FXGLLogger.configure(FXGLApplication.class.getResource(resourceName).toExternalForm());
-
-            log = FXGLLogger.get(FXGLApplication.class);
-            log.debug("FXGLLogger configuration complete");
-            log.debug("Logging game settings\n" + settings.toString());
-        });
     }
 
     /**
