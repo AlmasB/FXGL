@@ -150,18 +150,16 @@ public class EntityView extends Parent {
     private ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.TOP);
 
     /**
-     * Set render layer for this entity. Render layer determines how an entity
-     * is rendered relative to other entities. The layer with higher index()
-     * will be rendered on top of the layer with lower index(). By default an
+     * Set render layer for this entity.
+     * Render layer determines how an entity
+     * is rendered relative to other entities.
+     * The layer with higher index()
+     * will be rendered on top of the layer with lower index().
+     * By default an
      * entity has the very top layer with highest index equal to
      * {@link Integer#MAX_VALUE}.
-     * <p>
-     * The render layer can only be set before adding entity to the scene. If
-     * the entity is already registered in the scene graph, this method will
-     * throw IllegalStateException.
      *
      * @param renderLayer the render layer
-     * @throws IllegalStateException
      */
     public void setRenderLayer(RenderLayer renderLayer) {
         this.renderLayer.set(renderLayer);

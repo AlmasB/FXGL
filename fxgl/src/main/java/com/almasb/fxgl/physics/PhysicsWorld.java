@@ -504,7 +504,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param y y component
      */
     public void setGravity(double x, double y) {
-        jboxWorld.setGravity(new Vec2().addLocal((float) x, -(float) y));
+        jboxWorld.setGravity(new Vec2(x, -y));
     }
 
     /**

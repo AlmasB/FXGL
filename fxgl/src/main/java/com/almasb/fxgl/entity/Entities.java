@@ -27,6 +27,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
@@ -51,7 +52,9 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class Entities {
+public final class Entities {
+
+    private Entities() {}
 
     /**
      * Convenient way to obtain position component.
@@ -114,7 +117,7 @@ public class Entities {
     }
 
     /**
-     * Create an entity with bouding box around the screen with given thickness.
+     * Create an entity with bounding box around the screen with given thickness.
      *
      * @param thickness thickness of hit boxes around the screen
      * @return entity with screen bounds
@@ -140,18 +143,14 @@ public class Entities {
     }
 
     /**
-     * Creates new entity builder.
-     *
-     * @return entity builder
+     * @return new entity builder
      */
     public static GameEntityBuilder builder() {
         return new GameEntityBuilder();
     }
 
     /**
-     * Creates new animation builder.
-     *
-     * @return animation builder
+     * @return new animation builder
      */
     public static AnimationBuilder animationBuilder() {
         return new AnimationBuilder();
@@ -180,6 +179,10 @@ public class Entities {
 
         public GameEntityBuilder at(Point2D position) {
             return at(position.getX(), position.getY());
+        }
+
+        public GameEntityBuilder at(Vec2 position) {
+            return at(position.x, position.y);
         }
 
         public GameEntityBuilder rotate(double angle) {

@@ -28,6 +28,7 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.parser.tiled.TiledObject
+import javafx.geometry.Point2D
 
 /**
  * Specifies data used to spawn a particular type of entity.
@@ -37,6 +38,8 @@ import com.almasb.fxgl.parser.tiled.TiledObject
 open class SpawnData(val x: Double, val y: Double) {
 
     private val data = ObjectMap<String, Any>()
+
+    constructor(position: Point2D) : this(position.x, position.y)
 
     constructor(tiledObject: TiledObject) : this(tiledObject.x.toDouble(), tiledObject.y.toDouble()) {
         put("type", tiledObject.type)
