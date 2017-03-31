@@ -321,7 +321,7 @@ public class BehaviorTreeParser<E> {
 		@Override
 		protected void startLine (int indent) {
 			if (btParser.debugLevel > BehaviorTreeParser.DEBUG_LOW)
-				GdxAI.getLogger().debug(TAG, lineNumber + ": <" + indent + ">");
+				GdxAI.getLogger().debug(TAG + lineNumber + ": <" + indent + ">");
 			this.indent = indent;
 		}
 
@@ -335,7 +335,7 @@ public class BehaviorTreeParser<E> {
 		@Override
 		protected void startStatement (String name, boolean isSubtreeReference, boolean isGuard) {
 			if (btParser.debugLevel > BehaviorTreeParser.DEBUG_LOW)
-				GdxAI.getLogger().debug(TAG, (isGuard? " guard" : " task") + " name '" + name + "'");
+				GdxAI.getLogger().debug(TAG + (isGuard? " guard" : " task") + " name '" + name + "'");
 			
 			this.isSubtreeRef = isSubtreeReference;
 			
@@ -351,7 +351,7 @@ public class BehaviorTreeParser<E> {
 		@Override
 		protected void attribute (String name, Object value) {
 			if (btParser.debugLevel > BehaviorTreeParser.DEBUG_LOW)
-				GdxAI.getLogger().debug(TAG, lineNumber + ": attribute '" + name + " : " + value + "'");
+				GdxAI.getLogger().debug(TAG + lineNumber + ": attribute '" + name + " : " + value + "'");
 			
 			boolean validAttribute = statement.attribute(this, name, value);
 			if (!validAttribute) {

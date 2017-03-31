@@ -482,7 +482,7 @@ public class MessageDispatcher implements Telegraph {
 			if (debugEnabled) {
 				float currentTime = GdxAI.getTimepiece().getTime();
 				GdxAI.getLogger().info(
-					LOG_TAG,
+					LOG_TAG +
 					"Instant telegram dispatched at time: " + currentTime + " by " + sender + " for " + receiver
 						+ ". Message code is " + msg);
 			}
@@ -504,11 +504,11 @@ public class MessageDispatcher implements Telegraph {
 			if (debugEnabled) {
 				if (added)
 					GdxAI.getLogger().info(
-						LOG_TAG,
+						LOG_TAG +
 						"Delayed telegram from " + sender + " for " + receiver + " recorded at time " + currentTime
 							+ ". Message code is " + msg);
 				else
-					GdxAI.getLogger().info(LOG_TAG,
+					GdxAI.getLogger().info(LOG_TAG +
 						"Delayed telegram from " + sender + " for " + receiver + " rejected by the queue. Message code is " + msg);
 			}
 		}
@@ -536,7 +536,7 @@ public class MessageDispatcher implements Telegraph {
 			if (telegram.getTimestamp() > currentTime) break;
 
 			if (debugEnabled) {
-				GdxAI.getLogger().info(LOG_TAG,
+				GdxAI.getLogger().info(LOG_TAG +
 					"Queued telegram ready for dispatch: Sent to " + telegram.receiver + ". Message code is " + telegram.message);
 			}
 
@@ -565,7 +565,7 @@ public class MessageDispatcher implements Telegraph {
 	}
 
 	/** This method is used by {@link #dispatchMessage(float, Telegraph, Telegraph, int, Object) dispatchMessage} for immediate
-	 * telegrams and {@link #update(float) update} for delayed telegrams. It first calls the message handling method of the
+	 * telegrams and update(float) for delayed telegrams. It first calls the message handling method of the
 	 * receiving agents with the specified telegram then returns the telegram to the pool.
 	 * @param telegram the telegram to discharge */
 	private void discharge (Telegram telegram) {
@@ -573,7 +573,7 @@ public class MessageDispatcher implements Telegraph {
 			// Dispatch the telegram to the receiver specified by the telegram itself
 			if (!telegram.receiver.handleMessage(telegram)) {
 				// Telegram could not be handled
-				if (debugEnabled) GdxAI.getLogger().info(LOG_TAG, "Message " + telegram.message + " not handled");
+				if (debugEnabled) GdxAI.getLogger().info(LOG_TAG + "Message " + telegram.message + " not handled");
 			}
 		} else {
 			// Dispatch the telegram to all the registered receivers
@@ -587,7 +587,7 @@ public class MessageDispatcher implements Telegraph {
 				}
 			}
 			// Telegram could not be handled
-			if (debugEnabled && handledCount == 0) GdxAI.getLogger().info(LOG_TAG, "Message " + telegram.message + " not handled");
+			if (debugEnabled && handledCount == 0) GdxAI.getLogger().info(LOG_TAG + "Message " + telegram.message + " not handled");
 		}
 
 		if (telegram.returnReceiptStatus == Telegram.RETURN_RECEIPT_NEEDED) {

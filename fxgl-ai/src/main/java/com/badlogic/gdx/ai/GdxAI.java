@@ -16,6 +16,9 @@
 
 package com.badlogic.gdx.ai;
 
+import com.almasb.fxgl.core.logging.FXGLLogger;
+import com.almasb.fxgl.core.logging.Logger;
+
 /** Environment class holding references to the {@link Timepiece}, {@link Logger} instances. The references
  * are held in static fields which allows static access to all sub systems.
  * <p>
@@ -42,7 +45,6 @@ public final class GdxAI {
 	}
 
 	private static Timepiece timepiece = new DefaultTimepiece();
-	private static Logger logger = new NullLogger();
 
 	/** Returns the timepiece service. */
 	public static Timepiece getTimepiece () {
@@ -54,13 +56,10 @@ public final class GdxAI {
 		GdxAI.timepiece = timepiece;
 	}
 
-	/** Returns the logger service. */
-	public static Logger getLogger () {
-		return logger;
-	}
-
-	/** Sets the logger service. */
-	public static void setLogger (Logger logger) {
-		GdxAI.logger = logger;
+	/**
+	 * @return logger service
+	 */
+	public static Logger getLogger() {
+		return FXGLLogger.get(GdxAI.class);
 	}
 }
