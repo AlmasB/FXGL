@@ -19,7 +19,6 @@
         <module>fxgl-ecs</module>
         <module>fxgl-ai</module>
         <module>fxgl-physics</module>
-        <module>fxgl-eventbus</module>
 
         <!-- Modules below show how to use FXGL, but FXGL does not depend on them -->
         <module>fxgl-samples</module>

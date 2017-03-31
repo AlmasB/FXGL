@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.eventbus;
+package com.almasb.fxgl.core.event;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;

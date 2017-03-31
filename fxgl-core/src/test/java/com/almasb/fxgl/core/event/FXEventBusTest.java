@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.eventbus;
+package com.almasb.fxgl.core.event;
 
 import org.junit.Before;
 import org.junit.Test;

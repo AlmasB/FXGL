@@ -24,28 +24,32 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.eventbus;
+package com.almasb.fxgl.core.event;
 
-import javafx.beans.NamedArg;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class TestEvent extends Event {
+public final class Subscriber {
 
-    public static final EventType<TestEvent> ANY =
-            new EventType<>(Event.ANY, "TEST_EVENT");
+    private EventBus bus;
 
-    private Object data;
+    private EventType<? extends Event> eventType;
+    private EventHandler<? super Event> eventHandler;
 
-    public TestEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Object data) {
-        super(eventType);
-        this.data = data;
+    Subscriber(EventBus bus, EventType<? extends Event> eventType, EventHandler<? super Event> eventHandler) {
+        this.bus = bus;
+        this.eventType = eventType;
+        this.eventHandler = eventHandler;
     }
 
-    public Object getData() {
-        return data;
+    /**
+     * Stop listening for events.
+     */
+    public void unsubscribe() {
+        bus.removeEventHandler(eventType, eventHandler);
     }
 }
