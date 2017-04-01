@@ -28,16 +28,18 @@ package s03entities;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Action;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.action.Action;
+import com.almasb.fxgl.ecs.action.ActionControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Rectangle;
 
 /**
- * This sample shows how to create custom controls for entities.
+ * Shows how to make entities perform actions.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -57,38 +59,45 @@ public class EntityActionSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    @Override
-    protected void initInput() {}
+    private GameEntity entity;
 
     @Override
-    protected void initAssets() {}
+    protected void initInput() {
+        getInput().addAction(new UserAction("Move Now") {
+            @Override
+            protected void onActionBegin() {
 
-    @Override
-    protected void initGame() {
-        Entity e = Entities.builder()
-                .at(400, 300)
-                .viewFromNode(new Rectangle(40, 40))
-                .buildAndAttach(getGameWorld());
+                entity.getControlUnsafe(ActionControl.class).clearActions();
 
-        e.enqueueAction(new MoveAction(10, 10));
-        e.enqueueAction(new MoveAction(410, 310));
+                entity.getControlUnsafe(ActionControl.class)
+                        .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
+            }
+        }, MouseButton.PRIMARY);
+
+        getInput().addAction(new UserAction("Queue Move Action") {
+            @Override
+            protected void onActionBegin() {
+                entity.getControlUnsafe(ActionControl.class)
+                        .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
+            }
+        }, MouseButton.SECONDARY);
     }
 
     @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
+    protected void initGame() {
+        entity = Entities.builder()
+                .at(400, 300)
+                .viewFromNode(new Rectangle(40, 40))
+                .with(new ActionControl<GameEntity>())
+                .buildAndAttach(getGameWorld());
+    }
 
     private class MoveAction extends Action<GameEntity> {
 
-        private int x, y;
+        private double x, y;
         private double speed;
 
-        public MoveAction(int x, int y) {
+        public MoveAction(double x, double y) {
             this.x = x;
             this.y = y;
         }
@@ -102,11 +111,7 @@ public class EntityActionSample extends GameApplication {
         public void onUpdate(GameEntity entity, double tpf) {
             speed = 150 * tpf;
 
-            entity.translate(
-                    new Point2D(x - entity.getX(), y - entity.getY())
-                    .normalize()
-                    .multiply(speed)
-            );
+            entity.translateTowards(new Point2D(x, y), speed);
         }
     }
 

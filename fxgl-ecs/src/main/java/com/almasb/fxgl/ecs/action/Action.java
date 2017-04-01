@@ -24,7 +24,10 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ecs;
+package com.almasb.fxgl.ecs.action;
+
+import com.almasb.fxgl.ecs.Control;
+import com.almasb.fxgl.ecs.Entity;
 
 /**
  * A single entity action.
