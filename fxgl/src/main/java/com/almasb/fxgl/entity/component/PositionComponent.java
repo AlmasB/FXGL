@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.entity.component;
 
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.devtools.DeveloperEditable;
 import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.CopyableComponent;
@@ -185,6 +186,14 @@ public class PositionComponent extends AbstractComponent
      */
     public void translate(Point2D vector) {
         translate(vector.getX(), vector.getY());
+    }
+
+    /**
+     * @param position the point to move towards
+     * @param speed the speed at which to move
+     */
+    public void translateTowards(Point2D position, double speed) {
+        translate(position.subtract(getX(), getY()).normalize().multiply(speed));
     }
 
     /**
