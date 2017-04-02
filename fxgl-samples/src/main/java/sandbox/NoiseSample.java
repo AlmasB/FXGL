@@ -57,19 +57,30 @@ public class NoiseSample extends GameApplication {
     protected void initGame() {
         setSeedAndReinitialize();
 
-        rect = new Rectangle(800, 600);
+        rect = new Rectangle(100, 100);
+        rect.setTranslateX(400);
+        rect.setTranslateY(300);
 
         getGameScene().addUINode(rect);
     }
 
+    float t = 0;
+
     @Override
     protected void onUpdate(double tpf) {
-        float v = noise1D((float)tpf * 20000);
-        v = Math.abs(v);
+        float n = noise1D(t);
+        n += 0.5f;
 
-        rect.setFill(Color.color(v, v, v));
+        // flickering rect
+        rect.setFill(Color.color(n, n, n));
 
-        System.out.println(v);
+        n -= 0.5f;
+
+        float x = getWidth() * n;
+
+        //rect.setTranslateX(400 + x);
+
+        t += tpf;
     }
 
     // from CRYtek
@@ -97,6 +108,7 @@ public class NoiseSample extends GameApplication {
         }
     }
 
+    // (-0.5, 0.5) t > 0
     private float noise1D(float x) {
         // Compute what gradients to use
         int qx0 = (int)Math.floor(x);
