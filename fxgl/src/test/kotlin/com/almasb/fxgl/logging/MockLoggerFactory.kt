@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.logging
 
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.service.LoggerFactory
 import java.util.function.Supplier
 
@@ -36,7 +37,7 @@ import java.util.function.Supplier
  */
 object MockLoggerFactory : LoggerFactory() {
 
-    object MockLogger : com.almasb.fxgl.core.logging.Logger {
+    object MockLogger : Logger {
         override fun info(message: String?) {
 
         }
@@ -74,11 +75,11 @@ object MockLoggerFactory : LoggerFactory() {
         }
     }
 
-    override fun newLogger(caller: Class<*>?): com.almasb.fxgl.core.logging.Logger? {
+    override fun newLogger(caller: Class<*>?): Logger? {
         return MockLogger
     }
 
-    override fun newLogger(name: String?): com.almasb.fxgl.core.logging.Logger? {
+    override fun newLogger(name: String?): Logger? {
         return MockLogger
     }
 }

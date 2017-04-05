@@ -74,7 +74,7 @@ public class MockGameApplication extends GameApplication {
                 return MockServiceProvider.class;
             }
         });
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.RELEASE);
     }
 
     @Override
