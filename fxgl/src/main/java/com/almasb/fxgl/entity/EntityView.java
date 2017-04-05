@@ -80,8 +80,7 @@ public class EntityView extends Parent {
 
     /**
      * Returns nodes attached to this view.
-     * Modifying the list directly is discouraged as certain events
-     * may not be properly registered.
+     * Do NOT modify the list.
      *
      * @return list of children
      */
