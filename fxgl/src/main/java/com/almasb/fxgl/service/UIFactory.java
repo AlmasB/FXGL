@@ -72,7 +72,7 @@ public interface UIFactory {
     default void centerTextY(Text text, double minY, double maxY) {
         text.setTranslateY((minY + maxY) / 2 - text.getLayoutBounds().getHeight() / 2);
     }
-    
+
     default void centerText(Text text) {
         centerText(text, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
     }
