@@ -28,7 +28,9 @@ package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
+import com.almasb.fxgl.entity.component.PositionComponent
 import com.almasb.fxgl.entity.component.ViewComponent
+import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import java.util.*
 import java.util.function.Predicate
@@ -130,89 +132,11 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
         }
     }
 
-//
-//    /**
-//     * Returns the closest entity to the given entity with given
-//     * filter. The given
-//     * entity itself is never returned.
-//     *
-//     *
-//     * If there no entities satisfying the requirement, [Optional.empty]
-//     * is returned.
-//     * Warning: object allocation.
-//
-//     * @param entity selected entity
-//     * *
-//     * @param filter requirements
-//     * *
-//     * @return closest entity to selected entity with type
-//     */
-//    fun getClosestEntity(entity: Entity, filter: Predicate<Entity>): Optional<Entity> {
-//        val array = Array<Entity>(false, 64)
-//
-//        for (e in getEntitiesByComponent(PositionComponent::class.java)) {
-//            if (filter.test(e) && e !== entity) {
-//                array.add(e)
-//            }
-//        }
-//
-//        if (array.size() == 0)
-//            return Optional.empty<Entity>()
-//
-//        array.sort { e1, e2 -> (Entities.getPosition(e1).distance(Entities.getPosition(entity)) - Entities.getPosition(e2).distance(Entities.getPosition(entity))).toInt() }
-//
-//        return Optional.of(array.get(0))
-//    }
-//
-//
+    fun getEntitiesAt(position: Point2D): List<Entity> {
+        return entities.filter {
+            val p = it.getComponentUnsafe(PositionComponent::class.java)?.value ?: return@filter false
 
-
-
-//
-//    /**
-//     * Returns an entity at given position. The position x and y
-//     * must equal to entity's position x and y.
-//     *
-//     *
-//     * Returns [Optional.empty] if no entity was found at
-//     * given position.
-//     * This query only works on entities with PositionComponent.
-//
-//     * @param position point in the world
-//     * *
-//     * @return entity at point
-//     */
-//    fun getEntityAt(position: Point2D): Optional<Entity> {
-//        for (e in getEntitiesByComponent(PositionComponent::class.java)) {
-//            if (Entities.getPosition(e).value == position) {
-//                return Optional.of(e)
-//            }
-//        }
-//
-//        return Optional.empty<Entity>()
-//    }
-//
-//    /**
-//     * Returns an entity whose IDComponent matches given name and id.
-//     *
-//     *
-//     * Returns [Optional.empty] if no entity was found with such combination.
-//     * This query only works on entities with IDComponent.
-//
-//     * @param name entity name
-//     * *
-//     * @param id entity id
-//     * *
-//     * @return entity that matches the query or [Optional.empty]
-//     */
-//    fun getEntityByID(name: String, id: Int): Optional<Entity> {
-//        for (e in getEntitiesByComponent(IDComponent::class.java)) {
-//            val idComponent = e.getComponentUnsafe(IDComponent::class.java)
-//            if (idComponent.name == name && idComponent.id == id) {
-//                return Optional.of(e)
-//            }
-//        }
-//
-//        return Optional.empty<Entity>()
-//    }
+            p == position
+        }
+    }
 }
