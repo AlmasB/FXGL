@@ -27,7 +27,9 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGL;
+import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -35,6 +37,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * Factory service for creating UI controls.
@@ -114,4 +117,60 @@ public interface UIFactory {
     CheckBox newCheckBox();
 
     <T> Spinner<T> newSpinner(ObservableList<T> items);
+
+    default FadeTransition fadeIn(Node node, Duration duration) {
+        return fadeIn(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeIn(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
+
+    default FadeTransition fadeOut(Node node, Duration duration) {
+        return fadeOut(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeOut(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
+
+    default FadeTransition fadeInOut(Node node, Duration duration) {
+        return fadeInOut(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeInOut(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.setCycleCount(2);
+        ft.setAutoReverse(true);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
+
+    default FadeTransition fadeOutIn(Node node, Duration duration) {
+        return fadeOutIn(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeOutIn(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ft.setCycleCount(2);
+        ft.setAutoReverse(true);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
 }
