@@ -43,8 +43,11 @@ class FXCoroutine<T>(private val func: Callable<T>) : Async<T>() {
 
     init {
         Platform.runLater {
-            value = func.call()
-            latch.countDown()
+            try {
+                value = func.call()
+            } finally {
+                latch.countDown()
+            }
         }
     }
 
