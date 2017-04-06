@@ -229,7 +229,6 @@ public final class GameScene extends FXGLScene
      */
     public void removeGameView(EntityView view) {
         getRenderGroup(view.getRenderLayer()).getChildren().remove(view);
-        view.removeFromScene();
     }
 
     /**

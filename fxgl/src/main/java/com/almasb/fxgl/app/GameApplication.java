@@ -118,13 +118,6 @@ public abstract class GameApplication extends FXGLApplication {
     Profiler profiler;
 
     /**
-     * The app constructor is called automatically by the JavaFX platform.
-     */
-    public GameApplication() {
-
-    }
-
-    /**
      * @return current application state
      */
     ApplicationState getState() {

@@ -37,6 +37,7 @@ import javafx.scene.shape.Circle;
 
 /**
  * Represents the visual aspect of an entity.
+ * Note that the view need not be associated with an entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -112,38 +113,11 @@ public class EntityView extends Parent {
         getChildren().remove(node);
     }
 
-    private boolean removedFromScene = false;
-
     /**
-     * Removes this view from scene and clears its children nodes.
+     * Removes all attached nodes.
      */
-    public final void removeFromScene() {
-        if (removedFromScene)
-            return;
-
+    public final void clearChildren() {
         getChildren().clear();
-
-        try {
-            if (getParent() == null) {
-                removedFromScene = true;
-                return;
-            }
-
-            // we were created by user and he set scene view manually
-            if (getParent() instanceof EntityView) {
-                ((EntityView) getParent()).removeFromScene();
-            }
-            // we were created automatically by Entity
-            else if (getParent() instanceof Group) {
-                ((Group)getParent()).getChildren().remove(this);
-            } else {
-                throw new IllegalStateException("View parent is of unknown type: " + getParent().getClass());
-            }
-
-            removedFromScene = true;
-        } catch (Exception e) {
-            log.warning("View wasn't removed from scene: " + e);
-        }
     }
 
     private ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.TOP);
