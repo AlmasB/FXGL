@@ -79,14 +79,14 @@ public class MemoryTest extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-//        text.setText(String.format("Used:  %7.1f MB"
-//                + "\nFree:  %7.1f MB"
-//                + "\nTotal: %7.1f MB"
-//                + "\nMax:   %7.1f MB",
-//                (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
-//                Runtime.getRuntime().freeMemory() / MB,
-//                Runtime.getRuntime().totalMemory() / MB,
-//                Runtime.getRuntime().maxMemory() / MB));
+        text.setText(String.format("Used:  %7.1f MB"
+                + "\nFree:  %7.1f MB"
+                + "\nTotal: %7.1f MB"
+                + "\nMax:   %7.1f MB",
+                (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
+                Runtime.getRuntime().freeMemory() / MB,
+                Runtime.getRuntime().totalMemory() / MB,
+                Runtime.getRuntime().maxMemory() / MB));
 
 
 //                "Occupied: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB
