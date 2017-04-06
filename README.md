@@ -85,7 +85,7 @@ Latest pre-compiled uber jar can be found in [Releases](https://github.com/Almas
 
 * GitHub Releases (uber jar): ![Github Releases](https://img.shields.io/github/downloads/AlmasB/FXGL/total.svg)
 * JitPack (up to 0.2.9): ![Jitpack](https://jitpack.io/v/AlmasB/FXGL/month.svg)
-* Maven Central: (0.3.0+): ![Maven](https://img.shields.io/badge/downloads-~53%2Fmonth-green.svg?style=flat)
+* Maven Central: (0.3.0+): ![Maven](https://img.shields.io/badge/downloads-~180%2Fmonth-green.svg?style=flat) as of 06.04.2017
 
 ## Contribution
 
