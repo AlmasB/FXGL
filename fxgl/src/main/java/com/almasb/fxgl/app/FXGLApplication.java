@@ -347,100 +347,58 @@ public abstract class FXGLApplication extends Application {
         return getMasterTimer().getNow();
     }
 
-    /**
-     * @return event bus
-     */
     public final EventBus getEventBus() {
         return FXGL.getEventBus();
     }
 
-    /**
-     * @return display service
-     */
     public final Display getDisplay() {
         return FXGL.getDisplay();
     }
 
-    /**
-     * @return input service
-     */
     public final Input getInput() {
         return FXGL.getInput();
     }
 
-    /**
-     * @return audio player
-     */
     public final AudioPlayer getAudioPlayer() {
         return FXGL.getAudioPlayer();
     }
 
-    /**
-     * @return asset loader
-     */
     public final AssetLoader getAssetLoader() {
         return FXGL.getAssetLoader();
     }
 
-    /**
-     * @return master timer
-     */
     public final MasterTimer getMasterTimer() {
         return FXGL.getMasterTimer();
     }
 
-    /**
-     * @return executor service
-     */
     public final Executor getExecutor() {
         return FXGL.getExecutor();
     }
 
-    /**
-     * @return notification service
-     */
     public final NotificationService getNotificationService() {
         return FXGL.getNotificationService();
     }
 
-    /**
-     * @return achievement manager
-     */
     public final AchievementManager getAchievementManager() {
         return FXGL.getAchievementManager();
     }
 
-    /**
-     * @return QTE service
-     */
     public final QTE getQTE() {
         return FXGL.getQTE();
     }
 
-    /**
-     * @return net service
-     */
     public final Net getNet() {
         return FXGL.getNet();
     }
 
-    /**
-     * @return exception handler service
-     */
     public final ExceptionHandler getExceptionHandler() {
         return FXGL.getExceptionHandler();
     }
 
-    /**
-     * @return UI factory service
-     */
     public final UIFactory getUIFactory() {
         return FXGL.getUIFactory();
     }
 
-    /**
-     * @return quest manager
-     */
     public final QuestService getQuestService() {
         return FXGL.getQuestManager();
     }
