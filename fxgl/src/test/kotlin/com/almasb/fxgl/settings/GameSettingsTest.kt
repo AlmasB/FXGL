@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.configure
 import com.almasb.fxgl.app.MockApplicationModule
-import com.almasb.fxgl.app.MockService
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems

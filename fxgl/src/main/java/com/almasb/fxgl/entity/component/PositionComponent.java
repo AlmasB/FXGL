@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.devtools.DeveloperEditable;
 import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.CopyableComponent;

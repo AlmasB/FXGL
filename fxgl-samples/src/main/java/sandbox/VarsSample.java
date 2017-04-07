@@ -29,7 +29,6 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.SceneDimension;
-import javafx.scene.shape.Rectangle;
 
 import java.util.Map;
 

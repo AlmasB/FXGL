@@ -27,7 +27,7 @@
 package com.almasb.fxgl.ai.goap
 
 import com.almasb.fxgl.ecs.Entity
-import java.util.Queue
+import java.util.*
 
 /**
  * Any agent that wants to use GOAP must implement

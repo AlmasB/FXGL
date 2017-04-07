@@ -26,14 +26,14 @@
 
 package com.almasb.fxgl.parser
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.entity.Entities
-import com.almasb.fxgl.entity.TextEntityFactory
 import com.almasb.fxgl.annotation.SpawnSymbol
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
+import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.SpawnData
+import com.almasb.fxgl.entity.TextEntityFactory
 import com.almasb.fxgl.parser.text.TextLevelParser
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`

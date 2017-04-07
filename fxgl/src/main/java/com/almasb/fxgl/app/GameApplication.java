@@ -25,9 +25,9 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.event.Subscriber;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
-import com.almasb.fxgl.core.event.Subscriber;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;

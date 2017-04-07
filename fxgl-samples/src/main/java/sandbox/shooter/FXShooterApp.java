@@ -26,6 +26,7 @@
 
 package sandbox.shooter;
 
+import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
@@ -34,7 +35,6 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;

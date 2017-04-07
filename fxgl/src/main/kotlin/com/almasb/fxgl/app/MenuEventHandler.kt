@@ -26,14 +26,13 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.FXGLEvent
 import com.almasb.fxgl.saving.LoadEvent
-import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
 import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.saving.SaveLoadManager
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
+import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
 import com.almasb.fxgl.service.impl.display.DialogPane
 import com.almasb.fxgl.settings.UserProfile
 import javafx.beans.property.ReadOnlyStringProperty

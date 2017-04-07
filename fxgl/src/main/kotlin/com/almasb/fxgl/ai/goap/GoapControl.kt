@@ -31,10 +31,7 @@ import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ecs.component.Required
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.component.PositionComponent
-
-import java.util.ArrayDeque
-import java.util.HashSet
-import java.util.Queue
+import java.util.*
 
 /**
  * Adapted from https://github.com/sploreg/goap

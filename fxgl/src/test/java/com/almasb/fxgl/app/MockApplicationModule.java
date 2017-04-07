@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.service.LoggerFactory;
 import com.almasb.fxgl.logging.MockLoggerFactory;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;

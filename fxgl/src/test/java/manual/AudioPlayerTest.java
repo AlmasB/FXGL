@@ -26,12 +26,12 @@
 
 package manual;
 
+import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;

@@ -37,7 +37,9 @@ import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A generic entity in the Entity-Component-System model.

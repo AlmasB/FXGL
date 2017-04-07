@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.service.impl.event
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.annotation.Handles
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.event.FXEventBus
 import com.almasb.fxgl.core.event.Subscriber
 import com.almasb.fxgl.service.EventBus

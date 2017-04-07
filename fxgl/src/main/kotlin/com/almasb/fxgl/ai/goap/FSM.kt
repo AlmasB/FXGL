@@ -27,8 +27,7 @@
 package com.almasb.fxgl.ai.goap
 
 import com.almasb.fxgl.ecs.Entity
-
-import java.util.ArrayDeque
+import java.util.*
 
 /**
  * Stack-based Finite State Machine.

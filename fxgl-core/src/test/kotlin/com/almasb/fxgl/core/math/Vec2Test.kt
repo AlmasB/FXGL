@@ -26,10 +26,10 @@
 
 package com.almasb.fxgl.core.math
 
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
+import org.junit.Assert.assertThat
 import org.junit.Test
-
-import org.junit.Assert.*
-import org.hamcrest.CoreMatchers.*
 
 /**
  *

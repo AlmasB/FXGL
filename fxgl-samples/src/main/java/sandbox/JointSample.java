@@ -27,7 +27,6 @@
 package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;

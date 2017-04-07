@@ -36,7 +36,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Drawing entities directly to the graphics context.
