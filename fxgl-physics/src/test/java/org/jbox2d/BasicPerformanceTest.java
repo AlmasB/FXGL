@@ -36,14 +36,14 @@ import java.util.Collections;
  * @author Daniel Murphy
  */
 public abstract class BasicPerformanceTest {
-    public static enum ResultFormat {
+    public enum ResultFormat {
         MILLISECONDS(1000000, "Milliseconds"), MICROSECONDS(1000, "Microseconds"), NANOSECONDS(1,
                 "Nanoseconds");
 
         private final int divisor;
         private final String name;
 
-        private ResultFormat(int divisor, String name) {
+        ResultFormat(int divisor, String name) {
             assert (divisor != 0);
             this.divisor = divisor;
             this.name = name;
@@ -53,7 +53,7 @@ public abstract class BasicPerformanceTest {
     private ResultFormat format = ResultFormat.MICROSECONDS;
     private final int numTests, iters, frames;
     protected final DescriptiveStatistics[] stats;
-    private ArrayList<Integer> testOrder = new ArrayList<Integer>();
+    private ArrayList<Integer> testOrder = new ArrayList<>();
 
     public BasicPerformanceTest(int numTests, int iters, int frames) {
         this.numTests = numTests;

@@ -82,7 +82,7 @@ public class AudioPlayerTest extends GameApplication {
     private Music music;
 
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
-    public void test() {
+    public void first() {
         music = getAssetLoader().loadMusic("intro.mp3");
         music.setCycleCount(2);
 
@@ -90,7 +90,7 @@ public class AudioPlayerTest extends GameApplication {
     }
 
     @OnUserAction(name = "Test", type = ActionType.ON_ACTION_BEGIN)
-    public void test2() {
+    public void second() {
         //getAudioPlayer().stopAllMusic();
 
         getAudioPlayer().pauseMusic(music);
