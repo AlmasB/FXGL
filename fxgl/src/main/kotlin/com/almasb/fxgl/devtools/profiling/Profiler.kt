@@ -27,8 +27,8 @@
 package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.math.FXGLMath
-import com.almasb.fxgl.logging.SystemLogger
 import com.almasb.fxgl.service.MasterTimer
 
 /**
@@ -156,13 +156,15 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
      * Print profiles values to SystemLogger.
      */
     fun print() {
-        SystemLogger.info("Processed Frames: $frames")
-        SystemLogger.info("Average FPS: ${getAvgFPSRounded()}")
-        SystemLogger.info("Avg Performance: ${getAvgPerformanceRounded()}")
-        SystemLogger.info("Avg Memory Usage: ${getAvgMemoryUsageRounded()} MB")
-        SystemLogger.info("Min Memory Usage: ${getMinMemoryUsageRounded()} MB")
-        SystemLogger.info("Max Memory Usage: ${getMaxMemoryUsageRounded()} MB")
-        SystemLogger.info("Estimated GC runs: $gcRuns")
+        val log = FXGLLogger.get(javaClass)
+
+        log.info("Processed Frames: $frames")
+        log.info("Average FPS: ${getAvgFPSRounded()}")
+        log.info("Avg Performance: ${getAvgPerformanceRounded()}")
+        log.info("Avg Memory Usage: ${getAvgMemoryUsageRounded()} MB")
+        log.info("Min Memory Usage: ${getMinMemoryUsageRounded()} MB")
+        log.info("Max Memory Usage: ${getMaxMemoryUsageRounded()} MB")
+        log.info("Estimated GC runs: $gcRuns")
     }
 
     // the debug data max chars is ~110, so just add a margin

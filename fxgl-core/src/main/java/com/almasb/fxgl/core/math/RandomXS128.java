@@ -198,7 +198,7 @@ public class RandomXS128 extends Random {
         return seed == 0 ? seed0 : seed1;
     }
 
-    private final static long murmurHash3(long x) {
+    private static long murmurHash3(long x) {
         x ^= x >>> 33;
         x *= 0xff51afd7ed558ccdL;
         x ^= x >>> 33;

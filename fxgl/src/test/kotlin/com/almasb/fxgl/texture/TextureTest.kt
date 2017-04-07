@@ -34,7 +34,7 @@ import javafx.geometry.VerticalDirection
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test

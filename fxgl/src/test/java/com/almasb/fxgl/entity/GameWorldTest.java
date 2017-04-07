@@ -31,7 +31,6 @@ import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.IDComponent;
-import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.time.UpdateEvent;
@@ -255,12 +254,12 @@ public class GameWorldTest {
 
     @Test
     public void testGetEntityAt() throws Exception {
-        assertThat(gameWorld.getEntityAt(new Point2D(100, 100)).get(), is(e1));
-        assertThat(gameWorld.getEntityAt(new Point2D(150, 100)).get(), is(e2));
-        assertThat(gameWorld.getEntityAt(new Point2D(200, 100)).get(), is(e3));
-        assertThat(gameWorld.getEntityAt(new Point2D(250, 100)).get(), is(e4));
+        assertThat(gameWorld.getEntitiesAt(new Point2D(100, 100)), hasItems(e1));
+        assertThat(gameWorld.getEntitiesAt(new Point2D(150, 100)), hasItems(e2));
+        assertThat(gameWorld.getEntitiesAt(new Point2D(200, 100)), hasItems(e3));
+        assertThat(gameWorld.getEntitiesAt(new Point2D(250, 100)), hasItems(e4));
 
-        assertThat(gameWorld.getEntityAt(new Point2D(100.5, 100)), is(Optional.empty()));
+        assertThat(gameWorld.getEntitiesAt(new Point2D(100.5, 100)).size(), is(0));
     }
 
     @Test

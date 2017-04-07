@@ -31,7 +31,7 @@ package com.almasb.fxgl.service;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface EventBus extends com.almasb.fxgl.eventbus.EventBus {
+public interface EventBus extends com.almasb.fxgl.core.event.EventBus {
 
     /**
      * Scan an object for public methods marked @Handles

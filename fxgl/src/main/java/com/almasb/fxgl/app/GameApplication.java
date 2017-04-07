@@ -25,16 +25,14 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.event.Subscriber;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
-import com.almasb.fxgl.scene.intro.IntroFinishedEvent;
-import com.almasb.fxgl.eventbus.Subscriber;
 import com.almasb.fxgl.gameplay.GameState;
-import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.scene.*;
+import com.almasb.fxgl.scene.intro.IntroFinishedEvent;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -55,6 +53,7 @@ import java.util.Map;
  * <li>preInit()</li>
  * <p>The following phases are NOT executed on UI thread</p>
  * <li>initAssets()</li>
+ * <li>initGameVars()</li>
  * <li>initGame() OR loadState()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
@@ -73,8 +72,6 @@ import java.util.Map;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class GameApplication extends FXGLApplication {
-
-    private Logger log = SystemLogger.INSTANCE;
 
     private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
 
@@ -119,13 +116,6 @@ public abstract class GameApplication extends FXGLApplication {
      * Main game profiler.
      */
     Profiler profiler;
-
-    /**
-     * The app constructor is called automatically by the JavaFX platform.
-     */
-    public GameApplication() {
-        log.debug("Starting JavaFX");
-    }
 
     /**
      * @return current application state
@@ -382,9 +372,6 @@ public abstract class GameApplication extends FXGLApplication {
 
     @Override
     void configureApp() {
-
-        // services are now ready, switch to normal logger
-        log = FXGL.getLogger(GameApplication.class);
         log.debug("Configuring GameApplication");
 
         long start = System.nanoTime();
@@ -403,7 +390,7 @@ public abstract class GameApplication extends FXGLApplication {
             onIntroFinished();
         }
 
-        SystemLogger.INSTANCE.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+        log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     /**

@@ -45,9 +45,6 @@ public class PistonWorld implements PerformanceTestWorld {
     public PrismaticJoint m_joint2;
     public World world;
 
-    public PistonWorld() {
-    }
-
     @Override
     public void setupWorld(World world) {
         this.world = world;

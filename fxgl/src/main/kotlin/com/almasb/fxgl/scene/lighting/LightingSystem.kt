@@ -70,15 +70,15 @@ class LightingSystem {
     fun init(lightRoot: Group, gameRoot: Group) {
         this.gameRoot = gameRoot
 
-        shadow = Rectangle(FXGL.getApp().width, FXGL.getApp().height, Color.color(0.0, 0.0, 0.0, 0.5))
+        shadow = Rectangle(FXGL.getApp().width.toDouble(), FXGL.getApp().height.toDouble(), Color.color(0.0, 0.0, 0.0, 0.5))
         shadow.blendMode = BlendMode.DARKEN
 
         lightRoot.children.addAll(walls, shadow, light)
 
         addObstacle(Point2D(0.0, 0.0),
-                Point2D(FXGL.getApp().width, 0.0),
-                Point2D(FXGL.getApp().width, FXGL.getApp().height),
-                Point2D(0.0, FXGL.getApp().height))
+                Point2D(FXGL.getApp().width.toDouble(), 0.0),
+                Point2D(FXGL.getApp().width.toDouble(), FXGL.getApp().height.toDouble()),
+                Point2D(0.0, FXGL.getApp().height.toDouble()))
     }
 
     fun addObstacle(node: Node) {

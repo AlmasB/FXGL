@@ -453,7 +453,7 @@ public class EntityTest {
     }
 
     private class HPComponent extends DoubleComponent {
-        public HPComponent(double value) {
+        HPComponent(double value) {
             super(value);
         }
     }
@@ -464,7 +464,7 @@ public class EntityTest {
     }
 
     private class GravityComponent extends BooleanComponent {
-        public GravityComponent(boolean value) {
+        GravityComponent(boolean value) {
             super(value);
         }
     }
@@ -473,7 +473,7 @@ public class EntityTest {
 
         private String data;
 
-        public CustomDataComponent(String data) {
+        CustomDataComponent(String data) {
             this.data = data;
         }
 
@@ -492,7 +492,7 @@ public class EntityTest {
 
         private String data;
 
-        public CustomDataControl(String data) {
+        CustomDataControl(String data) {
             this.data = data;
         }
 

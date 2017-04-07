@@ -188,6 +188,14 @@ public class PositionComponent extends AbstractComponent
     }
 
     /**
+     * @param position the point to move towards
+     * @param speed the speed at which to move
+     */
+    public void translateTowards(Point2D position, double speed) {
+        translate(position.subtract(getX(), getY()).normalize().multiply(speed));
+    }
+
+    /**
      * @param other the other component
      * @return distance in pixels from this position to the other
      */

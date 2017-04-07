@@ -26,12 +26,12 @@
 
 package manual;
 
+import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -82,7 +82,7 @@ public class AudioPlayerTest extends GameApplication {
     private Music music;
 
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
-    public void test() {
+    public void first() {
         music = getAssetLoader().loadMusic("intro.mp3");
         music.setCycleCount(2);
 
@@ -90,7 +90,7 @@ public class AudioPlayerTest extends GameApplication {
     }
 
     @OnUserAction(name = "Test", type = ActionType.ON_ACTION_BEGIN)
-    public void test2() {
+    public void second() {
         //getAudioPlayer().stopAllMusic();
 
         getAudioPlayer().pauseMusic(music);

@@ -128,6 +128,15 @@ public interface Display extends UserProfileSavable {
     void showMessageBox(String message);
 
     /**
+     * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
+     * button press, the message box will be dismissed and the callback function called.
+     *
+     * @param message the message to show
+     * @param callback the function to be called when dialog is dismissed
+     */
+    void showMessageBox(String message, Runnable callback);
+
+    /**
      * Shows a blocking message box with YES and NO buttons. The callback is
      * invoked with the user answer as parameter.
      *

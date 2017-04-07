@@ -26,17 +26,17 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
 
 /**
  * Represents the visual aspect of an entity.
+ * Note that the view need not be associated with an entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -80,8 +80,7 @@ public class EntityView extends Parent {
 
     /**
      * Returns nodes attached to this view.
-     * Modifying the list directly is discouraged as certain events
-     * may not be properly registered.
+     * Do NOT modify the list.
      *
      * @return list of children
      */
@@ -113,55 +112,26 @@ public class EntityView extends Parent {
         getChildren().remove(node);
     }
 
-    private boolean removedFromScene = false;
-
     /**
-     * Removes this view from scene and clears its children nodes.
+     * Removes all attached nodes.
      */
-    public final void removeFromScene() {
-        if (removedFromScene)
-            return;
-
+    public final void clearChildren() {
         getChildren().clear();
-
-        try {
-            if (getParent() == null) {
-                removedFromScene = true;
-                return;
-            }
-
-            // we were created by user and he set scene view manually
-            if (getParent() instanceof EntityView) {
-                ((EntityView) getParent()).removeFromScene();
-            }
-            // we were created automatically by Entity
-            else if (getParent() instanceof Group) {
-                ((Group)getParent()).getChildren().remove(this);
-            } else {
-                throw new IllegalStateException("View parent is of unknown type: " + getParent().getClass());
-            }
-
-            removedFromScene = true;
-        } catch (Exception e) {
-            log.warning("View wasn't removed from scene: " + e);
-        }
     }
 
     private ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.TOP);
 
     /**
-     * Set render layer for this entity. Render layer determines how an entity
-     * is rendered relative to other entities. The layer with higher index()
-     * will be rendered on top of the layer with lower index(). By default an
+     * Set render layer for this entity.
+     * Render layer determines how an entity
+     * is rendered relative to other entities.
+     * The layer with higher index()
+     * will be rendered on top of the layer with lower index().
+     * By default an
      * entity has the very top layer with highest index equal to
      * {@link Integer#MAX_VALUE}.
-     * <p>
-     * The render layer can only be set before adding entity to the scene. If
-     * the entity is already registered in the scene graph, this method will
-     * throw IllegalStateException.
      *
      * @param renderLayer the render layer
-     * @throws IllegalStateException
      */
     public void setRenderLayer(RenderLayer renderLayer) {
         this.renderLayer.set(renderLayer);

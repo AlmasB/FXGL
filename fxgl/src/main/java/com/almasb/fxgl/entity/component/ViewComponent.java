@@ -107,33 +107,40 @@ public class ViewComponent extends AbstractComponent {
      * to entity properties.
      * To alter the view - change its nodes.
      */
-    private final EntityView view;
+    private final EntityView view = new EntityView();
 
     /**
-     * Creates main view component with no graphics.
+     * Creates view component with no graphics.
      */
-    public ViewComponent() {
-        this(new EntityView());
-    }
+    public ViewComponent() {}
 
     /**
-     * Creates main view with given graphics.
+     * Creates view component with given graphics.
      *
      * @param graphics the graphics
      */
     public ViewComponent(Node graphics) {
-        this(new EntityView(graphics), RenderLayer.TOP);
+        view.addNode(graphics);
     }
 
     /**
-     * Creates main view with given graphics and given render layer.
+     * Creates view component with given render layer.
+     *
+     * @param renderLayer render layer to use for view
+     */
+    public ViewComponent(RenderLayer renderLayer) {
+        view.setRenderLayer(renderLayer);
+    }
+
+    /**
+     * Creates view component with given graphics and given render layer.
      *
      * @param graphics the graphics
      * @param renderLayer render layer to use for view
      */
     public ViewComponent(Node graphics, RenderLayer renderLayer) {
-        this.view = new EntityView(graphics);
-        this.view.setRenderLayer(renderLayer);
+        view.addNode(graphics);
+        view.setRenderLayer(renderLayer);
     }
 
     /**

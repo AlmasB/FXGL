@@ -28,14 +28,12 @@ package com.almasb.fxgl.service.impl.executor
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLEvent
+import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.service.Executor
 import com.google.inject.Inject
 import javafx.util.Duration
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -67,6 +65,14 @@ private constructor(eventBus: EventBus) : Executor {
 
     override fun schedule(action: Runnable, delay: Duration): ScheduledFuture<*> {
         return schedulerService.schedule(action, delay.toMillis().toLong(), TimeUnit.MILLISECONDS)
+    }
+
+    override fun <T : Any> async(func: Callable<T>): Async<T> {
+        return Async.start(func)
+    }
+
+    override fun async(func: Runnable): Async<Void> {
+        return Async.start(func)
     }
 
     /**

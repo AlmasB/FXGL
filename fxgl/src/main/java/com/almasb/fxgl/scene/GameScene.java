@@ -29,16 +29,14 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.ecs.*;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
-import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
-import com.almasb.fxgl.physics.PhysicsWorld;
-import com.almasb.fxgl.scene.lighting.LightingSystem;
 import com.almasb.fxgl.ui.UI;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -53,6 +51,7 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -71,8 +70,6 @@ public final class GameScene extends FXGLScene
         implements EntityWorldListener, ComponentListener, ControlListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
-
-    //private Group lightingRoot = new Group();
 
     /**
      * Root for entity views, it is affected by viewport movement.
@@ -100,8 +97,8 @@ public final class GameScene extends FXGLScene
     private Group uiRoot = new Group();
 
     @Inject
-    protected GameScene(@Named("appWidth") double width,
-                        @Named("appHeight") double height) {
+    protected GameScene(@Named("appWidth") int width,
+                        @Named("appHeight") int height) {
         getContentRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas(width, height);
@@ -137,24 +134,6 @@ public final class GameScene extends FXGLScene
         scale.yProperty().bind(viewport.zoomProperty());
         gameRoot.getTransforms().add(scale);
     }
-
-    private LightingSystem lightingSystem = null;
-
-//    /**
-//     * Note: experimental API.
-//     *
-//     * @param lightingSystem lighting system
-//     */
-//    public void setLightingSystem(LightingSystem lightingSystem) {
-//        this.lightingSystem = lightingSystem;
-//    }
-//
-//    /**
-//     * @return lighting system or null if not set
-//     */
-//    public LightingSystem getLightingSystem() {
-//        return lightingSystem;
-//    }
 
     /**
      * Converts a point on screen to a point within game scene.
@@ -193,7 +172,6 @@ public final class GameScene extends FXGLScene
      * @param node UI node to add
      */
     public void addUINode(Node node) {
-        log.debug("Adding UI node: "+ node);
         uiRoot.getChildren().add(node);
     }
 
@@ -214,7 +192,6 @@ public final class GameScene extends FXGLScene
      * @return true iff the node has been removed
      */
     public boolean removeUINode(Node n) {
-        log.debug("Removing UI node: "+ n);
         return uiRoot.getChildren().remove(n);
     }
 
@@ -252,7 +229,6 @@ public final class GameScene extends FXGLScene
      */
     public void removeGameView(EntityView view) {
         getRenderGroup(view.getRenderLayer()).getChildren().remove(view);
-        view.removeFromScene();
     }
 
     /**
@@ -304,7 +280,7 @@ public final class GameScene extends FXGLScene
         }
 
         List<Node> tmpGroups = new ArrayList<>(gameRoot.getChildren());
-        tmpGroups.sort((g1, g2) -> (int) g1.getUserData() - (int) g2.getUserData());
+        tmpGroups.sort(Comparator.comparingInt(g -> (int) g.getUserData()));
 
         gameRoot.getChildren().setAll(tmpGroups);
 
@@ -328,9 +304,6 @@ public final class GameScene extends FXGLScene
         for (ParticleControl particle : particles) {
             particle.renderParticles(particlesGC, getViewport().getOrigin());
         }
-
-        if (lightingSystem != null)
-            lightingSystem.update();
     }
 
     @Override
@@ -346,8 +319,6 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onEntityAdded(Entity entity) {
-        log.debug("Entity added to scene");
-
         entity.getComponent(ViewComponent.class)
                 .ifPresent(viewComponent -> {
                     onComponentAdded(viewComponent);
@@ -363,15 +334,10 @@ public final class GameScene extends FXGLScene
                 .ifPresent(particles::add);
         entity.getControl(PhysicsParticleControl.class)
                 .ifPresent(particles::add);
-
-        if (lightingSystem != null)
-            lightingSystem.onAddEntity(entity);
     }
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        log.debug("Entity removed from scene");
-
         entity.getComponent(ViewComponent.class)
                 .ifPresent(viewComponent -> {
                     onComponentRemoved(viewComponent);
@@ -392,8 +358,6 @@ public final class GameScene extends FXGLScene
     @Override
     public void onComponentAdded(Component component) {
         if (component instanceof ViewComponent) {
-            log.debug("Added ViewComponent");
-
             ViewComponent viewComponent = (ViewComponent) component;
 
             EntityView view = viewComponent.getView();
@@ -409,8 +373,6 @@ public final class GameScene extends FXGLScene
     @Override
     public void onComponentRemoved(Component component) {
         if (component instanceof ViewComponent) {
-            log.debug("Removed ViewComponent");
-
             ViewComponent viewComponent = (ViewComponent) component;
 
             EntityView view = viewComponent.getView();

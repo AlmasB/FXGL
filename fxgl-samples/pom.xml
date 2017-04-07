@@ -31,7 +31,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.3.0</version>
+        <version>0.3.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -62,98 +62,12 @@
             <!-- Compile java -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.version}</version>
-                <configuration>
-                    <source>${source.version}</source>
-                    <target>${source.version}</target>
-                </configuration>
             </plugin>
 
             <!-- Compile kotlin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/main/kotlin</source>
-                                <source>src/main/java</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>process-test-sources</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/test/kotlin</source>
-                                <source>src/test/java</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Create sources.jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Create javadoc.jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.javadoc.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration> <!-- add this to disable checking -->
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                            <!-- leave only errors and warning -->
-                            <quiet>true</quiet>
-                            <tags>
-                                <tag>
-                                    <name>defaultValue</name>
-                                    <placement>a</placement>
-                                    <head>Default Value:</head>
-                                </tag>
-                                <tag>
-                                    <name>implNote</name>
-                                    <placement>a</placement>
-                                    <head>Implementation Note:</head>
-                                </tag>
-                                <tag>
-                                    <name>warning</name>
-                                    <placement>a</placement>
-                                    <head>Warning:</head>
-                                </tag>
-                            </tags>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

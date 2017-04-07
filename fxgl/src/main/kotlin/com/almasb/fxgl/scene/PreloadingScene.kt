@@ -128,9 +128,7 @@ class PreloadingScene : Scene(VBox(50.0)) {
 
         val timeline = Timeline()
         timeline.getKeyFrames().add(frame)
-
-        // this will run 5 seconds, we assume FXGL is ready by then
-        timeline.setCycleCount(5)
+        timeline.setCycleCount(Int.MAX_VALUE)
         timeline.play()
 
         symbol.children.addAll(top, mid, bot, outerCircle, innerCircle, point)

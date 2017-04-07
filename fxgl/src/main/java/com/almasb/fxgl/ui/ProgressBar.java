@@ -26,7 +26,7 @@
 package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import javafx.animation.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;

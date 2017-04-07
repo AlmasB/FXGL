@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.devtools.profiling
 
-import com.almasb.fxgl.logging.SystemLogger
+import com.almasb.fxgl.core.logging.FXGLLogger
 
 /**
  *
@@ -43,6 +43,6 @@ class PerformanceProfiler {
 
     fun stop() {
         nanos = System.nanoTime() - nanos
-        SystemLogger.info("Took: %.3f sec".format(nanos / 1000000000.0))
+        FXGLLogger.get(javaClass).info("Took: %.3f sec".format(nanos / 1000000000.0))
     }
 }

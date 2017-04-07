@@ -94,8 +94,8 @@ public class PathfindingSample extends GameApplication {
                     if (e.getButton() == MouseButton.PRIMARY) {
                         List<AStarNode> nodes = grid.getPath(0, 0, x, y);
                         nodes.forEach(n -> {
-                            getGameWorld().getEntityAt(new Point2D(n.getX() * 40, n.getY() * 40))
-                                    .ifPresent(Entity::removeFromWorld);
+                            getGameWorld().getEntitiesAt(new Point2D(n.getX() * 40, n.getY() * 40))
+                                    .forEach(Entity::removeFromWorld);
                         });
                     } else {
                         grid.setNodeState(x, y, NodeState.NOT_WALKABLE);

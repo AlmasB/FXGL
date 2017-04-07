@@ -38,6 +38,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.rules.Timeout
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
@@ -64,12 +65,16 @@ class ExecutorTest {
         val id1 = Thread.currentThread().id
         var id2 = -1L
 
+        val latch = CountDownLatch(1)
+
         executor.execute {
             id2 = Thread.currentThread().id
+            latch.countDown()
         }
 
-        while (id2 == -1L) { }
+        latch.await()
 
+        assertThat(id2, `is`(not(-1L)))
         assertThat(id2, `is`(not(id1)))
     }
 
@@ -78,12 +83,16 @@ class ExecutorTest {
         val now = System.currentTimeMillis()
         var diff = -1L
 
+        val latch = CountDownLatch(1)
+
         executor.schedule({
             diff = System.currentTimeMillis() - now
+            latch.countDown()
         }, Duration.seconds(1.0))
 
-        while (diff == -1L) { }
+        latch.await()
 
+        assertThat(diff, `is`(not(-1L)))
         // allow +-200ms error
         assertTrue(diff > 800 && diff < 1200)
     }

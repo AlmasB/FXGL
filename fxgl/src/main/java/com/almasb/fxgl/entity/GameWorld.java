@@ -30,13 +30,13 @@ import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorld;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.gameplay.Level;
-import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.time.UpdateEvent;
 import com.almasb.fxgl.time.UpdateEventListener;
@@ -418,6 +418,36 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
     }
 
     /**
+     * Returns a list of entities at given position.
+     * The position x and y must equal to entity's position x and y.
+     * This query only works on entities with PositionComponent.
+     *
+     * @param position point in the world
+     * @return entities at given point
+     */
+    public List<Entity> getEntitiesAt(Point2D position) {
+        return query.getEntitiesAt(position);
+    }
+
+    /**
+     * GC-friendly version of {@link #getEntitiesAt(Point2D)}.
+     *
+     * @param result the array to collect entities
+     * @param position point in the world
+     */
+    public void getEntitiesAt(Array<Entity> result, Point2D position) {
+        for (int i = 0; i < entities.size(); i++) {
+            Entity e = entities.get(i);
+
+            PositionComponent p = Entities.getPosition(e);
+
+            if (p != null && p.getValue().equals(position)) {
+                result.add(e);
+            }
+        }
+    }
+
+    /**
      * Returns the closest entity to the given entity with given
      * filter. The given
      * entity itself is never returned.
@@ -446,27 +476,6 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
                         - Entities.getPosition(e2).distance(Entities.getPosition(entity))));
 
         return Optional.of(array.get(0));
-    }
-
-    /**
-     * Returns an entity at given position. The position x and y
-     * must equal to entity's position x and y.
-     * <p>
-     * Returns {@link Optional#empty()} if no entity was found at
-     * given position.
-     * This query only works on entities with PositionComponent.
-     *
-     * @param position point in the world
-     * @return entity at point
-     */
-    public Optional<Entity> getEntityAt(Point2D position) {
-        for (Entity e : getEntitiesByComponent(PositionComponent.class)) {
-            if (Entities.getPosition(e).getValue().equals(position)) {
-                return Optional.of(e);
-            }
-        }
-
-        return Optional.empty();
     }
 
     /**

@@ -36,5 +36,4 @@ class KotlinTest {
 }
 
 fun main(args: Array<String>) {
-
 }

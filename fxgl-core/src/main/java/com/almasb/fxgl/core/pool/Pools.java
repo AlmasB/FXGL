@@ -146,4 +146,14 @@ public final class Pools {
                 pool = null;
         }
     }
+
+    /**
+     * Frees all given objects.
+     *
+     * @param objects to free
+     */
+    public static void freeAll(Object... objects) {
+        for (Object obj : objects)
+            free(obj);
+    }
 }

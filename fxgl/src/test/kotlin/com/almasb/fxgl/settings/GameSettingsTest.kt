@@ -28,6 +28,8 @@ package com.almasb.fxgl.settings
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGL.Companion.configure
+import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
@@ -46,14 +48,14 @@ class GameSettingsTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
+            configure(MockApplicationModule.get())
         }
     }
 
     @Test
     fun `Settings are unmodifiable`() {
         val settings = FXGL.getSettings()
-        assertFalse(settings is com.almasb.fxgl.settings.GameSettings)
+        assertFalse(settings is GameSettings)
     }
 
     /**
@@ -76,7 +78,7 @@ class GameSettingsTest {
 //        settings.setMenuKey(KeyCode.ENTER)
 //        settings.setMenuStyle(MenuStyle.CCTR)
 //        settings.setCredits(Credits(Arrays.asList("TestCredit1", "TestCredit2")))
-//        settings.setApplicationMode(ApplicationMode.DEBUG)
+//        settings.setApplicationMode(ApplicationMode.RELEASE)
 
         assertThat(settings.width, `is`(500))
         assertThat(settings.height, `is`(500))
@@ -90,9 +92,11 @@ class GameSettingsTest {
         assertThat(settings.menuKey, `is`(KeyCode.ENTER))
         assertThat(settings.menuStyle, `is`(com.almasb.fxgl.scene.menu.MenuStyle.CCTR))
         assertThat(settings.credits.list, hasItems("TestCredit1", "TestCredit2"))
-        assertThat(settings.appMode, `is`(ApplicationMode.DEBUG))
+        assertThat(settings.appMode, `is`(ApplicationMode.RELEASE))
     }
 
+    // this is failing because new service providers are not registered
+    // they _are_ registered only in actual application module
 //    @Test
 //    fun `Test custom services`() {
 //        val value = FXGL.getInstance(MockService::class.java).test()

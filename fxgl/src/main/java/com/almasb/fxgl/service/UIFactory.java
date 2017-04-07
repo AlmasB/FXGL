@@ -26,7 +26,10 @@
 
 package com.almasb.fxgl.service;
 
+import com.almasb.fxgl.app.FXGL;
+import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -34,6 +37,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * Factory service for creating UI controls.
@@ -64,6 +68,46 @@ public interface UIFactory {
         return text;
     }
 
+    default void centerTextX(Text text, double minX, double maxX) {
+        text.setTranslateX((minX + maxX) / 2 - text.getLayoutBounds().getWidth() / 2);
+    }
+
+    default void centerTextY(Text text, double minY, double maxY) {
+        text.setTranslateY((minY + maxY) / 2 - text.getLayoutBounds().getHeight() / 2);
+    }
+
+    default void centerText(Text text) {
+        centerText(text, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
+    }
+
+    default void centerText(Text text, double x, double y) {
+        text.setTranslateX(x - text.getLayoutBounds().getWidth() / 2);
+        text.setTranslateY(y - text.getLayoutBounds().getHeight() / 2);
+    }
+
+    /**
+     * Binds text to application center, i.e. text stays
+     * centered regardless of content size.
+     *
+     * @param text UI object
+     */
+    default void centerTextBind(Text text) {
+        centerTextBind(text, FXGL.getAppWidth() / 2, FXGL.getAppHeight() / 2);
+    }
+
+    /**
+     * Binds text to given center point, i.e. text stays
+     * centered regardless of content size.
+     *
+     * @param text UI object
+     */
+    default void centerTextBind(Text text, double x, double y) {
+        text.layoutBoundsProperty().addListener((o, old, bounds) -> {
+            text.setTranslateX(x - bounds.getWidth() / 2);
+            text.setTranslateY(y - bounds.getHeight() / 2);
+        });
+    }
+
     Button newButton(String text);
 
     <T> ChoiceBox<T> newChoiceBox(ObservableList<T> items);
@@ -73,4 +117,60 @@ public interface UIFactory {
     CheckBox newCheckBox();
 
     <T> Spinner<T> newSpinner(ObservableList<T> items);
+
+    default FadeTransition fadeIn(Node node, Duration duration) {
+        return fadeIn(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeIn(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
+
+    default FadeTransition fadeOut(Node node, Duration duration) {
+        return fadeOut(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeOut(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
+
+    default FadeTransition fadeInOut(Node node, Duration duration) {
+        return fadeInOut(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeInOut(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.setCycleCount(2);
+        ft.setAutoReverse(true);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
+
+    default FadeTransition fadeOutIn(Node node, Duration duration) {
+        return fadeOutIn(node, duration, () -> {});
+    }
+
+    default FadeTransition fadeOutIn(Node node, Duration duration, Runnable onFinishedAction) {
+        FadeTransition ft = new FadeTransition(duration, node);
+        ft.setFromValue(1);
+        ft.setToValue(0);
+        ft.setCycleCount(2);
+        ft.setAutoReverse(true);
+        ft.setOnFinished(e -> onFinishedAction.run());
+        ft.play();
+        return ft;
+    }
 }

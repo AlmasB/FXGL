@@ -90,7 +90,7 @@ internal class InitEventHandlersTask
                 g.globalAlpha = 1.0
                 g.font = fpsFont
                 g.fill = Color.RED
-                g.fillText(app.profiler.getInfo(), 0.0, app.height - 120)
+                g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
             }
         })
     }

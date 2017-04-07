@@ -26,12 +26,12 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.devtools.Console;
 import com.almasb.fxgl.devtools.controller.ColorAdjustController;
 import com.almasb.fxgl.devtools.controller.DialogAddEntityController;
 import com.almasb.fxgl.devtools.controller.DialogEditEntityController;
 import com.almasb.fxgl.entity.component.ViewComponent;
-import com.almasb.fxgl.logging.Logger;
 import com.almasb.fxgl.ui.InGameWindow;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;

@@ -27,7 +27,7 @@
 package com.almasb.fxgl.parser;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.logging.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 import javafx.util.Pair;
 
 import java.lang.reflect.Field;
@@ -140,18 +140,21 @@ public final class KVFile {
      *
      * @param data object to convert to kv file
      * @return kv file
-     * @throws Exception
      */
-    public static KVFile from(Object data) throws Exception {
-        KVFile file = new KVFile();
+    public static KVFile from(Object data) {
+        try {
+            KVFile file = new KVFile();
 
-        for (Field f : data.getClass().getDeclaredFields()) {
-            f.setAccessible(true);
+            for (Field f : data.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
 
-            file.entries.add(new Pair<>(f.getName(), f.get(data).toString()));
+                file.entries.add(new Pair<>(f.getName(), f.get(data).toString()));
+            }
+
+            return file;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot create KVFile from: " + data + " Error: " + e);
         }
-
-        return file;
     }
 
     /**
@@ -160,15 +163,18 @@ public final class KVFile {
      *
      * @param type data structure type
      * @return instance of type
-     * @throws Exception
      */
-    public <T> T to(Class<T> type) throws Exception {
-        T instance = type.newInstance();
+    public <T> T to(Class<T> type) {
+        try {
+            T instance = type.newInstance();
 
-        for (Pair<String, String> kv : entries)
-            setKV(instance, kv.getKey(), kv.getValue());
+            for (Pair<String, String> kv : entries)
+                setKV(instance, kv.getKey(), kv.getValue());
 
-        return instance;
+            return instance;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot parse KVFile to: " + type + " Error: " + e);
+        }
     }
 
     @Override

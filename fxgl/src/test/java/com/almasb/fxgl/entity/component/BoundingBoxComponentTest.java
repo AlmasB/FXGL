@@ -50,7 +50,6 @@ public class BoundingBoxComponentTest {
 
     private PositionComponent position;
     private BoundingBoxComponent bbox;
-    private Entity entity;
 
     @BeforeClass
     public static void before() {
@@ -62,7 +61,7 @@ public class BoundingBoxComponentTest {
         position = new PositionComponent();
         bbox = new BoundingBoxComponent();
 
-        entity = new Entity();
+        Entity entity = new Entity();
         entity.addComponent(position);
         entity.addComponent(bbox);
     }
@@ -271,13 +270,13 @@ public class BoundingBoxComponentTest {
         assertTrue(bbox.isWithin(50, 50, 60, 60));
         assertTrue(bbox.isWithin(55, 55, 60, 60));
         assertTrue(bbox.isWithin(0, 0, 50, 60));
-        assertTrue(!bbox.isWithin(100, 50, 140, 60));
-        assertTrue(!bbox.isWithin(50, 120, 90, 60));
+        assertFalse(bbox.isWithin(100, 50, 140, 60));
+        assertFalse(bbox.isWithin(50, 120, 90, 60));
 
         assertTrue(bbox.isWithin(0, 0, 51, 51));
         assertTrue(bbox.isWithin(0, 0, 50, 50));
-        assertTrue(!bbox.isWithin(0, 0, 49, 49));
-        assertTrue(!bbox.isWithin(91, 0, 49, 49));
+        assertFalse(bbox.isWithin(0, 0, 49, 49));
+        assertFalse(bbox.isWithin(91, 0, 49, 49));
     }
 
     @Test

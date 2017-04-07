@@ -26,11 +26,11 @@
 
 package s06gameplay;
 
+import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.service.NotificationService;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;

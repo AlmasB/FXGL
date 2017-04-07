@@ -28,8 +28,6 @@ package com.almasb.fxgl.gameplay
 
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.gameplay.AchievementProgressEvent
-import com.almasb.fxgl.logging.Logger
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ReadOnlyBooleanProperty

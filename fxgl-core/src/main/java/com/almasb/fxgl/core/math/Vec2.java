@@ -24,13 +24,10 @@
  * SOFTWARE.
  */
 
-/**
- * Origin: jbox2d
- */
-
 package com.almasb.fxgl.core.math;
 
 import com.almasb.fxgl.core.pool.Poolable;
+import javafx.geometry.Point2D;
 
 import java.io.Serializable;
 
@@ -38,7 +35,11 @@ import java.io.Serializable;
  * A 2D column vector with float precision.
  * Can be used to represent a point in 2D space.
  * Can be used instead of JavaFX Point2D to avoid object allocations.
- * This is also preferred for private fields.
+ * This is also preferred for private or scoped fields.
+ *
+ * Source: jbox2d.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class Vec2 implements Serializable, Poolable {
     private static final long serialVersionUID = 1L;
@@ -67,6 +68,10 @@ public final class Vec2 implements Serializable, Poolable {
 
     public Vec2(Vec2 toCopy) {
         this(toCopy.x, toCopy.y);
+    }
+
+    public Vec2(Point2D toCopy) {
+        this(toCopy.getX(), toCopy.getY());
     }
 
     /**
@@ -102,12 +107,53 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
+     * Set this vector to another vector.
+     *
+     * @return this vector
+     */
+    public Vec2 set(Point2D vector) {
+        this.x = (float) vector.getX();
+        this.y = (float) vector.getY();
+        return this;
+    }
+
+    /**
+     * Set this vector from angle.
+     *
+     * @param degrees angle in degrees
+     * @return this vector
+     */
+    public Vec2 setFromAngle(double degrees) {
+        this.x = FXGLMath.cosDeg((float)degrees);
+        this.y = FXGLMath.sinDeg((float)degrees);
+        return this;
+    }
+
+    /**
      * Return the sum of this vector and another; does not alter either one.
      *
      * @return new vector
      */
     public Vec2 add(Vec2 v) {
         return new Vec2(x + v.x, y + v.y);
+    }
+
+    /**
+     * Return the sum of this vector and another; does not alter either one.
+     *
+     * @return new vector
+     */
+    public Vec2 add(Point2D vector) {
+        return add(vector.getX(), vector.getY());
+    }
+
+    /**
+     * Return the sum of this vector and another; does not alter either one.
+     *
+     * @return new vector
+     */
+    public Vec2 add(double otherX, double otherY) {
+        return new Vec2(x + otherX, y + otherY);
     }
 
     /**
@@ -120,11 +166,29 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
+     * Return the difference of this vector and another; does not alter either one.
+     *
+     * @return new vector
+     */
+    public Vec2 sub(Point2D vector) {
+        return sub(vector.getX(), vector.getY());
+    }
+
+    /**
+     * Return the difference of this vector and another; does not alter either one.
+     *
+     * @return new vector
+     */
+    public Vec2 sub(double otherX, double otherY) {
+        return new Vec2(x - otherX, y - otherY);
+    }
+
+    /**
      * Return this vector multiplied by a scalar; does not alter this vector.
      *
      * @return new vector
      */
-    public Vec2 mul(float a) {
+    public Vec2 mul(double a) {
         return new Vec2(x * a, y * a);
     }
 
@@ -164,7 +228,7 @@ public final class Vec2 implements Serializable, Poolable {
      *
      * @return this vector
      */
-    public Vec2 addLocal(float x, float y) {
+    public Vec2 addLocal(double x, double y) {
         this.x += x;
         this.y += y;
         return this;
@@ -182,11 +246,22 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
+     * Subtract another vector from this one and return result - alters this vector.
+     *
+     * @return this vector
+     */
+    public Vec2 subLocal(double x, double y) {
+        this.x -= x;
+        this.y -= y;
+        return this;
+    }
+
+    /**
      * Multiply this vector by a number and return result - alters this vector.
      *
      * @return this vector
      */
-    public Vec2 mulLocal(float a) {
+    public Vec2 mulLocal(double a) {
         x *= a;
         y *= a;
         return this;
@@ -226,28 +301,39 @@ public final class Vec2 implements Serializable, Poolable {
         return (x * x + y * y);
     }
 
-    public float distance(float otherX, float otherY) {
-        float dx = otherX - x;
-        float dy = otherY - y;
-        return (float) Math.sqrt(dx * dx + dy * dy);
+    public double distance(Vec2 other) {
+        return distance(other.x, other.y);
     }
 
-    public float distanceSquared(float otherX, float otherY) {
-        float dx = otherX - x;
-        float dy = otherY - y;
+    public double distance(Point2D other) {
+        return distance(other.getX(), other.getY());
+    }
+
+    public double distance(double otherX, double otherY) {
+        double dx = otherX - x;
+        double dy = otherY - y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public double distanceSquared(double otherX, double otherY) {
+        double dx = otherX - x;
+        double dy = otherY - y;
         return dx * dx + dy * dy;
     }
 
-    public boolean distanceLessThanOrEqual(float otherX, float otherY, float distance) {
+    public boolean distanceLessThanOrEqual(double otherX, double otherY, double distance) {
         return distanceSquared(otherX, otherY) <= distance * distance;
     }
 
-    public boolean distanceGreaterThanOrEqual(float otherX, float otherY, float distance) {
+    public boolean distanceGreaterThanOrEqual(double otherX, double otherY, double distance) {
         return distanceSquared(otherX, otherY) >= distance * distance;
     }
 
     /**
-     * Normalize this vector and return the length before normalization. Alters this vector.
+     * Normalize this vector and return the length before normalization.
+     * Alters this vector.
+     *
+     * @return length before normalization
      */
     public float normalize() {
         float length = length();
@@ -262,13 +348,28 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * Normalizes and returns this vector. Alters this vector.
+     * Normalizes and returns this vector.
+     * Alters this vector.
      *
      * @return this vector
      */
     public Vec2 normalizeLocal() {
         normalize();
         return this;
+    }
+
+    public Vec2 midpoint(Vec2 other) {
+        return new Vec2(
+                x + (other.x - x) / 2,
+                y + (other.y - y) / 2
+        );
+    }
+
+    public Vec2 midpoint(Point2D other) {
+        return new Vec2(
+                x + (other.getX() - x) / 2,
+                y + (other.getY() - y) / 2
+        );
     }
 
     /**
@@ -279,9 +380,7 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * Return a new vector that has positive components.
-     *
-     * @return new vector
+     * @return new vector that has positive components
      */
     public Vec2 abs() {
         return new Vec2(FXGLMath.abs(x), FXGLMath.abs(y));
@@ -314,31 +413,23 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
+     * @param other other vector
+     * @return angle in degrees (-180, 180] between this vector and other
+     */
+    public float angle(Point2D other) {
+        return angle(other.getX(), other.getY());
+    }
+
+    /**
      * @param otherX x component of other vector
      * @param otherY y component of other vector
      * @return angle in degrees (-180, 180] between this vector and other
      */
-    public float angle(float otherX, float otherY) {
+    public float angle(double otherX, double otherY) {
         double angle1 = Math.toDegrees(Math.atan2(y, x));
         double angle2 = Math.toDegrees(Math.atan2(otherY, otherX));
 
         return (float) (angle1 - angle2);
-
-//        final float ax = otherX;
-//        final float ay = otherY;
-//
-//        final float delta = (ax * x + ay * y) /
-//                (float)Math.sqrt((ax * ax + ay * ay) * (x * x + y * y));
-//
-//        if (delta > 1.0) {
-//            return 0;
-//        }
-//
-//        if (delta < -1.0) {
-//            return 180;
-//        }
-//
-//        return (float) Math.toDegrees(Math.acos(delta));
     }
 
     /**
@@ -355,6 +446,15 @@ public final class Vec2 implements Serializable, Poolable {
      */
     public Vec2 copy() {
         return clone();
+    }
+
+    /**
+     * Note: object allocation.
+     *
+     * @return JavaFX Point2D representation
+     */
+    public Point2D toPoint2D() {
+        return new Point2D(x, y);
     }
 
     @Override
@@ -401,7 +501,6 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     public static void crossToOutUnsafe(Vec2 a, float s, Vec2 out) {
-        assert (out != a);
         out.x = s * a.y;
         out.y = -s * a.x;
     }
@@ -417,7 +516,6 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     public static void crossToOutUnsafe(float s, Vec2 a, Vec2 out) {
-        assert (out != a);
         out.x = -s * a.y;
         out.y = s * a.x;
     }
@@ -445,9 +543,6 @@ public final class Vec2 implements Serializable, Poolable {
         out.y = a.y > b.y ? a.y : b.y;
     }
 
-    /**
-     * @see Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -457,17 +552,25 @@ public final class Vec2 implements Serializable, Poolable {
         return result;
     }
 
-    /**
-     * @see Object#equals(Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Vec2 other = (Vec2) obj;
-        if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) return false;
-        if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) return false;
-        return true;
+        if (obj == this)
+            return true;
+
+        if (obj instanceof Vec2) {
+            Vec2 other = (Vec2) obj;
+            return Float.floatToIntBits(x) == Float.floatToIntBits(other.x)
+                    && Float.floatToIntBits(y) == Float.floatToIntBits(other.y);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param p Point2D representation
+     * @return true if vector equals Point2D given default error tolerance for float comparison
+     */
+    public boolean equalsPoint2D(Point2D p) {
+        return FXGLMath.isEqual(x, (float) p.getX()) && FXGLMath.isEqual(y, (float) p.getY());
     }
 }

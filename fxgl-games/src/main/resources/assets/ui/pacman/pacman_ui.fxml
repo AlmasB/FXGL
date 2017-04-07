@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.Pane?>
 <!--
   ~ The MIT License (MIT)
   ~
@@ -29,8 +27,10 @@
   ~ SOFTWARE.
   -->
 
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
 <Pane prefWidth="200" prefHeight="840"
       xmlns="http://javafx.com/javafx/8.0.60"
       xmlns:fx="http://javafx.com/fxml/1">

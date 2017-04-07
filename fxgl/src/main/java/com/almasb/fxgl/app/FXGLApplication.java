@@ -26,9 +26,10 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.core.logging.FXGLLogger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.logging.SystemLogger;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.listener.FXGLListener;
@@ -49,24 +50,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
 
 /**
- * General FXGL application that configures services for all parts to use.
+ * General FXGL application that configures services, settings and properties
+ * to be used by the framework.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class FXGLApplication extends Application {
 
     /**
-     * We use system logger because logger service is not yet ready.
+     * Use system logger fallback until actual logger is ready.
      */
-    private static final Logger log = SystemLogger.INSTANCE;
-
-    static {
-        Version.print();
-    }
+    protected static Logger log = FXGLLogger.getSystemLogger();
 
     private Stage primaryStage;
 
@@ -82,14 +78,12 @@ public abstract class FXGLApplication extends Application {
     /**
      * @return primary stage as set by JavaFX
      */
-    public Stage getPrimaryStage() {
+    public final Stage getPrimaryStage() {
         return primaryStage;
     }
 
     /**
-     * Settings for this game instance.
-     * This is an internal copy of the settings
-     * so that they will not be modified during game lifetime.
+     * Internal copy of settings, so that they are not modified during game.
      */
     private ReadOnlyGameSettings settings;
 
@@ -116,7 +110,7 @@ public abstract class FXGLApplication extends Application {
      *
      * @param listener the listener
      */
-    public void addFXGLListener(FXGLListener listener) {
+    public final void addFXGLListener(FXGLListener listener) {
         systemListeners.add(listener);
     }
 
@@ -125,7 +119,7 @@ public abstract class FXGLApplication extends Application {
      *
      * @param listener the listener
      */
-    public void removeFXGLListener(FXGLListener listener) {
+    public final void removeFXGLListener(FXGLListener listener) {
         systemListeners.remove(listener);
     }
 
@@ -136,13 +130,11 @@ public abstract class FXGLApplication extends Application {
 
     @Override
     public final void init() throws Exception {
-        log.debug("Initializing FXGL");
+        Version.print();
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        log.debug("Starting FXGL");
-
+    public final void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         showPreloadingStage();
 
@@ -150,23 +142,20 @@ public abstract class FXGLApplication extends Application {
         // the root will be replaced with a relevant FXGL scene
         primaryStage.setScene(new Scene(new Pane()));
 
+        startFXGL();
+    }
+
+    private void startFXGL() {
         new Thread(() -> {
             try {
                 configureFXGL();
 
-                CountDownLatch latch = new CountDownLatch(1);
-
-                Platform.runLater(() -> {
-                    runTask(UpdaterTask.class);
-                    latch.countDown();
-                });
-
-                latch.await();
+                runUpdaterAndWait();
 
                 configureApp();
             } catch (Exception e) {
                 log.fatal("Exception during system configuration:");
-                log.fatal(SystemLogger.INSTANCE.errorTraceAsString(e));
+                log.fatal(FXGLLogger.errorTraceAsString(e));
                 log.fatal("System will now exit");
                 log.close();
 
@@ -179,10 +168,12 @@ public abstract class FXGLApplication extends Application {
         }, "FXGL Launcher Thread").start();
     }
 
-    @Override
-    public final void stop() {
-        log.debug("Exiting FXGL");
+    private void runUpdaterAndWait() {
+        Async.startFX(() -> runTask(UpdaterTask.class)).await();
     }
+
+    @Override
+    public final void stop() {}
 
     /**
      * Shows preloading stage with scene while FXGL is being configured.
@@ -203,12 +194,9 @@ public abstract class FXGLApplication extends Application {
     }
 
     /**
-     * Configures FXGL.
      * After this call all FXGL.* calls are valid.
      */
     private void configureFXGL() {
-        log.debug("Configuring FXGL");
-
         long start = System.nanoTime();
 
         initSystemProperties();
@@ -217,13 +205,16 @@ public abstract class FXGLApplication extends Application {
 
         FXGL.configure(new ApplicationModule((GameApplication) this));
 
+        log = FXGLLogger.get(FXGLApplication.class);
         log.debug("FXGL configuration complete");
 
         log.infof("FXGL configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+
+        log.debug("Logging game settings\n" + settings.toString());
     }
 
     /**
-     * Used to configure the actual application that uses FXGL.
+     * Configure the actual application that uses FXGL.
      * Called after the FXGL has been configured.
      */
     abstract void configureApp();
@@ -231,7 +222,7 @@ public abstract class FXGLApplication extends Application {
     /**
      * Pause the application.
      */
-    protected void pause() {
+    protected final void pause() {
         log.debug("Pausing main loop");
         systemListeners.forEach(FXGLListener::onPause);
         getEventBus().fireEvent(FXGLEvent.pause());
@@ -240,7 +231,7 @@ public abstract class FXGLApplication extends Application {
     /**
      * Resume the application.
      */
-    protected void resume() {
+    protected final void resume() {
         log.debug("Resuming main loop");
         systemListeners.forEach(FXGLListener::onResume);
         getEventBus().fireEvent(FXGLEvent.resume());
@@ -251,7 +242,7 @@ public abstract class FXGLApplication extends Application {
      * After notifying all interested parties (where all should do a cleanup),
      * <code>System.gc()</code> will be called.
      */
-    protected void reset() {
+    protected final void reset() {
         log.debug("Resetting FXGL application");
         systemListeners.forEach(FXGLListener::onReset);
         getEventBus().fireEvent(FXGLEvent.reset());
@@ -263,13 +254,13 @@ public abstract class FXGLApplication extends Application {
      * Exit the application.
      * Safe to call this from a paused state.
      */
-    protected void exit() {
-        log.debug("Exiting Normally");
+    protected final void exit() {
+        log.debug("Exiting FXGL application");
         systemListeners.forEach(FXGLListener::onExit);
         getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGL.destroy();
-        stop();
+        log.debug("Closing FXGL logger and exiting JavaFX");
         log.close();
 
         Platform.exit();
@@ -279,14 +270,10 @@ public abstract class FXGLApplication extends Application {
      * Load FXGL system properties.
      */
     private void initSystemProperties() {
-        log.debug("Initializing system properties");
-
         ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
         props.keySet().forEach(key -> {
             Object value = props.getObject(key);
             FXGL.setProperty(key, value);
-
-            log.debug(key + " = " + value);
         });
     }
 
@@ -294,19 +281,15 @@ public abstract class FXGLApplication extends Application {
      * Load user defined properties to override FXGL system properties.
      */
     private void initUserProperties() {
-        log.debug("Initializing user properties");
-
         // services are not ready yet, so load manually
         try (InputStream is = getClass().getResource("/assets/properties/system.properties").openStream()) {
             ResourceBundle props = new PropertyResourceBundle(is);
             props.keySet().forEach(key -> {
                 Object value = props.getObject(key);
                 FXGL.setProperty(key, value);
-
-                log.debug(key + " = " + value);
             });
         } catch (NullPointerException npe) {
-            log.info("User properties not found. Using system");
+            // User properties not found. Using system
         } catch (IOException e) {
             log.warning("Loading user properties failed: " + e);
         }
@@ -316,13 +299,9 @@ public abstract class FXGLApplication extends Application {
      * Take app settings from user.
      */
     private void initAppSettings() {
-        log.debug("Initializing app settings");
-
         GameSettings localSettings = new GameSettings();
         initSettings(localSettings);
         settings = localSettings.toReadOnly();
-
-        log.debug("Logging settings\n" + settings.toString());
     }
 
     /**
@@ -333,50 +312,29 @@ public abstract class FXGLApplication extends Application {
     protected abstract void initSettings(GameSettings settings);
 
     /**
-     * Returns target width of the application. This is the
-     * width that was set using GameSettings.
-     * Note that the resulting
-     * width of the scene might be different due to end user screen, in
-     * which case transformations will be automatically scaled down
-     * to ensure identical image on all screens.
-     *
-     * @return target width
+     * @return target width as set by GameSettings
      */
-    public final double getWidth() {
+    public final int getWidth() {
         return getSettings().getWidth();
     }
 
     /**
-     * Returns target height of the application. This is the
-     * height that was set using GameSettings.
-     * Note that the resulting
-     * height of the scene might be different due to end user screen, in
-     * which case transformations will be automatically scaled down
-     * to ensure identical image on all screens.
-     *
-     * @return target height
+     * @return target height as set by GameSettings
      */
-    public final double getHeight() {
+    public final int getHeight() {
         return getSettings().getHeight();
     }
 
     /**
-     * Returns the visual area within the application window,
-     * excluding window borders. Note that it will return the
-     * rectangle with set target width and height, not actual
-     * screen width and height. Meaning on smaller screens
-     * the area will correctly return the GameSettings' width and height.
-     * <p>
-     * Equivalent to new Rectangle2D(0, 0, getWidth(), getHeight()).
-     *
-     * @return screen bounds
+     * @return app bounds as set by GameSettings
+     * @apiNote equivalent to new Rectangle2D(0, 0, getWidth(), getHeight())
      */
-    public final Rectangle2D getScreenBounds() {
+    public final Rectangle2D getAppBounds() {
         return new Rectangle2D(0, 0, getWidth(), getHeight());
     }
 
     /**
-     * @return current tick
+     * @return current tick (frame)
      */
     public final long getTick() {
         return getMasterTimer().getTick();
@@ -389,100 +347,58 @@ public abstract class FXGLApplication extends Application {
         return getMasterTimer().getNow();
     }
 
-    /**
-     * @return event bus
-     */
     public final EventBus getEventBus() {
         return FXGL.getEventBus();
     }
 
-    /**
-     * @return display service
-     */
     public final Display getDisplay() {
         return FXGL.getDisplay();
     }
 
-    /**
-     * @return input service
-     */
     public final Input getInput() {
         return FXGL.getInput();
     }
 
-    /**
-     * @return audio player
-     */
     public final AudioPlayer getAudioPlayer() {
         return FXGL.getAudioPlayer();
     }
 
-    /**
-     * @return asset loader
-     */
     public final AssetLoader getAssetLoader() {
         return FXGL.getAssetLoader();
     }
 
-    /**
-     * @return master timer
-     */
     public final MasterTimer getMasterTimer() {
         return FXGL.getMasterTimer();
     }
 
-    /**
-     * @return executor service
-     */
     public final Executor getExecutor() {
         return FXGL.getExecutor();
     }
 
-    /**
-     * @return notification service
-     */
     public final NotificationService getNotificationService() {
         return FXGL.getNotificationService();
     }
 
-    /**
-     * @return achievement manager
-     */
     public final AchievementManager getAchievementManager() {
         return FXGL.getAchievementManager();
     }
 
-    /**
-     * @return QTE service
-     */
     public final QTE getQTE() {
         return FXGL.getQTE();
     }
 
-    /**
-     * @return net service
-     */
     public final Net getNet() {
         return FXGL.getNet();
     }
 
-    /**
-     * @return exception handler service
-     */
     public final ExceptionHandler getExceptionHandler() {
         return FXGL.getExceptionHandler();
     }
 
-    /**
-     * @return UI factory service
-     */
     public final UIFactory getUIFactory() {
         return FXGL.getUIFactory();
     }
 
-    /**
-     * @return quest manager
-     */
     public final QuestService getQuestService() {
         return FXGL.getQuestManager();
     }

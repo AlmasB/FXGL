@@ -168,7 +168,7 @@ public final class ParticleEmitters {
         emitter.setNumParticles(5);
         emitter.setEmissionRate(1);
         emitter.setSize(6, 7);
-        emitter.setSpawnPointFunction((i, x, y) -> new Point2D(rand()*width, -25));
+        emitter.setSpawnPointFunction((i, x, y) -> new Point2D(rand()*width + x, -25 + y));
         emitter.setVelocityFunction((i, x, y) -> new Point2D(0, (rand() * 15)));
         emitter.setGravityFunction(() -> new Point2D(0, rand() * 0.03));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(rand(1, 3)));

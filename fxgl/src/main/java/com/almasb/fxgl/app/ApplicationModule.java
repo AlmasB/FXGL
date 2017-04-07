@@ -82,8 +82,8 @@ public class ApplicationModule extends AbstractModule {
         // while this still points to old instance
         bind(Scene.class).toInstance(mainStage.getScene());
 
-        bind(Double.class).annotatedWith(Names.named("appWidth")).toInstance(app.getWidth());
-        bind(Double.class).annotatedWith(Names.named("appHeight")).toInstance(app.getHeight());
+        bind(Integer.class).annotatedWith(Names.named("appWidth")).toInstance(app.getWidth());
+        bind(Integer.class).annotatedWith(Names.named("appHeight")).toInstance(app.getHeight());
     }
 
     List<ServiceType> allServices = new ArrayList<>();
