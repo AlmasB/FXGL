@@ -30,7 +30,10 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.core.reflect.Field;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.ecs.control.FromEntity;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -179,8 +182,35 @@ public class Entity {
             ((AbstractControl) control).setEntity(this);
         }
 
+        injectFields(control);
+
         control.onAdded(this);
         notifyControlAdded(control);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void injectFields(Control control) {
+        ReflectionUtils.findFields(control, FromEntity.class).forEach(field -> {
+
+            if (Component.class.isAssignableFrom(field.getType())) {
+                Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
+                if (comp == null) {
+                    throw new IllegalArgumentException("Injection failed, entity has no component: " + field.getType());
+                }
+
+                ReflectionUtils.inject(field, control, comp);
+
+            } else if (Control.class.isAssignableFrom(field.getType())) {
+                Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
+                if (ctrl == null) {
+                    throw new IllegalArgumentException("Injection failed, entity has no control: " + field.getType());
+                }
+
+                ReflectionUtils.inject(field, control, ctrl);
+            } else {
+                throw new IllegalArgumentException("Injection failed, unknown type: " + field.getType());
+            }
+        });
     }
 
     /**

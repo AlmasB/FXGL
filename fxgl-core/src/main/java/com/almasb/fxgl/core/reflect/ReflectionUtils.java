@@ -26,8 +26,11 @@
 
 package com.almasb.fxgl.core.reflect;
 
+import com.almasb.fxgl.core.collection.Array;
+
+import java.lang.reflect.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -98,5 +101,37 @@ public final class ReflectionUtils {
 
     public static <T, R> Function<T, R> mapToFunction(Object instance, Method method) {
         return input -> call(instance, method, input);
+    }
+
+    public static <A extends java.lang.annotation.Annotation> Array<Field>
+        findFields(Object instance, Class<A> annotationClass) {
+
+        Array<Field> fields = new Array<>();
+
+        for (java.lang.reflect.Field field : instance.getClass().getDeclaredFields()) {
+            if (field.getDeclaredAnnotation(annotationClass) != null) {
+                fields.add(field);
+            }
+        }
+
+        return fields;
+    }
+
+    /**
+     * Injects field of an instance to injectionInstance.
+     *
+     * @param field the field object
+     * @param instance field's object
+     * @param injectionInstance the target value to inject
+     */
+    public static void inject(Field field, Object instance, Object injectionInstance) {
+        try {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            field.set(instance, injectionInstance);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot inject " + injectionInstance + " into " + field.getName() + " Error: " + e);
+        }
     }
 }
