@@ -30,7 +30,6 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.core.reflect.Field;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.control.FromEntity;
@@ -190,26 +189,37 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
-        ReflectionUtils.findFields(control, FromEntity.class).forEach(field -> {
 
-            if (Component.class.isAssignableFrom(field.getType())) {
-                Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
-                if (comp == null) {
-                    throw new IllegalArgumentException("Injection failed, entity has no component: " + field.getType());
-                }
 
-                ReflectionUtils.inject(field, control, comp);
 
-            } else if (Control.class.isAssignableFrom(field.getType())) {
-                Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
-                if (ctrl == null) {
-                    throw new IllegalArgumentException("Injection failed, entity has no control: " + field.getType());
-                }
 
-                ReflectionUtils.inject(field, control, ctrl);
-            } else {
-                throw new IllegalArgumentException("Injection failed, unknown type: " + field.getType());
+        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
+            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
+            if (comp == null) {
+                throw new IllegalArgumentException("Injection failed, entity has no component: " + field.getType());
             }
+
+            ReflectionUtils.inject(field, control, comp);
+
+
+
+//            if (Component.class.isAssignableFrom(field.getType())) {
+//
+//
+//            } else if (Control.class.isAssignableFrom(field.getType())) {
+//
+//            } else {
+//                throw new IllegalArgumentException("Injection failed, unknown type: " + field.getType());
+//            }
+        });
+
+        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
+            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
+            if (ctrl == null) {
+                throw new IllegalArgumentException("Injection failed, entity has no control: " + field.getType());
+            }
+
+            ReflectionUtils.inject(field, control, ctrl);
         });
     }
 

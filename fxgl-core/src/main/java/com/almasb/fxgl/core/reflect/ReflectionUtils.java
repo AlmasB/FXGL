@@ -104,12 +104,32 @@ public final class ReflectionUtils {
     }
 
     public static <A extends java.lang.annotation.Annotation> Array<Field>
-        findFields(Object instance, Class<A> annotationClass) {
+        findFieldsByAnnotation(Object instance, Class<A> annotationClass) {
 
         Array<Field> fields = new Array<>();
 
         for (java.lang.reflect.Field field : instance.getClass().getDeclaredFields()) {
             if (field.getDeclaredAnnotation(annotationClass) != null) {
+                fields.add(field);
+            }
+        }
+
+        return fields;
+    }
+
+    /**
+     * Find all fields of instance that have type / subtype of given type parameter.
+     *
+     * @param instance object whose fields to search
+     * @param type super type
+     * @return all fields that meet criteria
+     */
+    public static Array<Field> findFieldsByType(Object instance, Class<?> type) {
+
+        Array<Field> fields = new Array<>();
+
+        for (java.lang.reflect.Field field : instance.getClass().getDeclaredFields()) {
+            if (type.isAssignableFrom(field.getType())) {
                 fields.add(field);
             }
         }
