@@ -32,8 +32,6 @@ import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.ecs.serialization.SerializableComponent;
-import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -96,6 +94,8 @@ public class Entity {
         return (T) value;
     }
 
+    /* CONTROL BEGIN */
+
     /**
      * @param type control type
      * @return true iff entity has control of given type
@@ -109,7 +109,6 @@ public class Entity {
     /**
      * Returns control of given type or {@link Optional#empty()} if
      * no such type is registered on this entity.
-     * Warning: object allocation.
      *
      * @param type control type
      * @return control
@@ -121,11 +120,7 @@ public class Entity {
     }
 
     /**
-     * Returns control of given type.
-     * Unlike {@link #getControl(Class)} there is no
-     * check for control existence and return is not wrapped with Optional.
-     * Use this only if you are certain the entity has this type of control
-     * or to avoid object allocation.
+     * Returns control of given type or null if no such type is registered.
      *
      * @param type control type
      * @return control
@@ -152,7 +147,7 @@ public class Entity {
      * Adds behavior to entity.
      * Only 1 control per type is allowed.
      * Anonymous controls are not allowed.
-     * Avoid adding controls within update() of another control.
+     * Cannot add controls within update() of another control.
      *
      * @param control the behavior
      * @throws IllegalArgumentException if control with same type already registered or anonymous
@@ -209,8 +204,6 @@ public class Entity {
     }
 
     /**
-     * Remove behavior from entity of given type.
-     *
      * @param type the control type to remove
      */
     public final void removeControl(Class<? extends Control> type) {
@@ -219,7 +212,7 @@ public class Entity {
         Control control = getControlUnsafe(type);
 
         if (control == null) {
-            log.warning("Attempted to remove control but entity doesn't have a control with type: "+ type.getSimpleName());
+            log.warning("Cannot remove control " + type.getSimpleName() + ". Entity does not have one");
         } else {
             controls.remove(control.getClass());
             removeControlImpl(control);
@@ -227,7 +220,7 @@ public class Entity {
     }
 
     /**
-     * Remove all behavior controls from entity.
+     * Remove all controls from entity.
      */
     public final void removeAllControls() {
         checkValid();
@@ -251,9 +244,7 @@ public class Entity {
     private List<ControlListener> controlListeners = new ArrayList<>();
 
     /**
-     * Add control listener.
-     *
-     * @param listener the listener
+     * @param listener the listener to add
      */
     public void addControlListener(ControlListener listener) {
         checkValid();
@@ -262,9 +253,7 @@ public class Entity {
     }
 
     /**
-     * Remove control listener
-     *
-     * @param listener the listener
+     * @param listener the listener to remove
      */
     public void removeControlListener(ControlListener listener) {
         checkValid();
@@ -284,7 +273,9 @@ public class Entity {
         }
     }
 
+    /* CONTROL END */
 
+    /* COMPONENT BEGIN */
 
     /**
      * @param type component type
@@ -297,9 +288,8 @@ public class Entity {
     }
 
     /**
-     * Returns component of given type if registered. The type must be exactly
-     * the same as the type of the instance registered. If component not found, {@link Optional#empty()}
-     * is returned.
+     * Returns component of given type, or {@link Optional#empty()}
+     * if type not registered.
      *
      * @param type component type
      * @return component
@@ -311,9 +301,7 @@ public class Entity {
     }
 
     /**
-     * Returns component of given type. Unlike {@link #getComponent(Class)} there is no
-     * checking if the component exists and so bare object is returned, i.e. can be null.
-     * Use this only if you are certain that entity has this type of component.
+     * Returns component of given type, or null if type not registered.
      *
      * @param type component type
      * @return component
@@ -457,6 +445,8 @@ public class Entity {
             componentListeners.get(i).onComponentRemoved(component);
         }
     }
+
+    /* COMPONENT END */
 
     /**
      * Checks if requirements for given type are met.
