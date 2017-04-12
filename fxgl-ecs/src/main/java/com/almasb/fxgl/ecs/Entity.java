@@ -32,7 +32,6 @@ import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.ecs.control.FromEntity;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -44,12 +43,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A generic entity in the Entity-Component-System model.
+ * A generic entity in the Entity-Component-System (Control) model.
  * During update (or control update) it is not allowed to:
- * <ol>
+ * <ul>
  *     <li>Add control</li>
  *     <li>Remove control</li>
- * </ol>
+ * </ul>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -59,10 +58,14 @@ public class Entity {
 
     private final ObjectMap<String, Object> properties = new ObjectMap<>();
 
+    ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
+    ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+
+    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
+
     /**
      * Set a property specified by a key-value pair.
-     * Note: only exists for convenience and for short lived entities.
-     * Prefer {@link #addComponent(Component)} instead.
+     * Prefer {@link Component} instead.
      *
      * @param key property key
      * @param value property value
@@ -75,8 +78,7 @@ public class Entity {
 
     /**
      * Retrieve a property value by a given key.
-     * Note: only exists for convenience and for short lived entities.
-     * Prefer {@link #getComponent(Class)} instead.
+     * Prefer {@link Component} instead.
      *
      * @param key property key
      * @param <T> value type
@@ -93,8 +95,6 @@ public class Entity {
 
         return (T) value;
     }
-
-    ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
 
     /**
      * @param type control type
@@ -189,10 +189,6 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
-
-
-
-
         ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
             Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
             if (comp == null) {
@@ -200,17 +196,6 @@ public class Entity {
             }
 
             ReflectionUtils.inject(field, control, comp);
-
-
-
-//            if (Component.class.isAssignableFrom(field.getType())) {
-//
-//
-//            } else if (Control.class.isAssignableFrom(field.getType())) {
-//
-//            } else {
-//                throw new IllegalArgumentException("Injection failed, unknown type: " + field.getType());
-//            }
         });
 
         ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
@@ -299,7 +284,7 @@ public class Entity {
         }
     }
 
-    ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+
 
     /**
      * @param type component type
@@ -529,8 +514,6 @@ public class Entity {
         controlsEnabled = b;
     }
 
-    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
-
     /**
      * @return active property of this entity
      */
@@ -684,21 +667,7 @@ public class Entity {
     public Entity copy() {
         checkValid();
 
-        Entity copy = new Entity();
-
-        for (Component component : components.values()) {
-            if (component instanceof CopyableComponent) {
-                copy.addComponent(((CopyableComponent) component).copy());
-            }
-        }
-
-        for (Control control : controls.values()) {
-            if (control instanceof CopyableControl) {
-                copy.addControl(((CopyableControl) control).copy());
-            }
-        }
-
-        return copy;
+        return EntityCopier.INSTANCE.copy(this);
     }
 
     /**
@@ -710,31 +679,7 @@ public class Entity {
     public void save(Bundle bundle) {
         checkValid();
 
-        Bundle componentsBundle = new Bundle("components");
-
-        for (Component component : components.values()) {
-            if (component instanceof SerializableComponent) {
-                Bundle b = new Bundle(component.getClass().getCanonicalName());
-                ((SerializableComponent) component).write(b);
-
-                componentsBundle.put(b.getName(), b);
-            }
-        }
-
-
-        Bundle controlsBundle = new Bundle("controls");
-
-        for (Control control : controls.values()) {
-            if (control instanceof SerializableControl) {
-                Bundle b = new Bundle(control.getClass().getCanonicalName());
-                ((SerializableControl) control).write(b);
-
-                controlsBundle.put(b.getName(), b);
-            }
-        }
-
-        bundle.put("components", componentsBundle);
-        bundle.put("controls", controlsBundle);
+        EntitySerializer.INSTANCE.save(this, bundle);
     }
 
     /**
@@ -748,31 +693,7 @@ public class Entity {
     public void load(Bundle bundle) {
         checkValid();
 
-        Bundle componentsBundle = bundle.get("components");
-
-        for (Component component : components.values()) {
-            if (component instanceof SerializableComponent) {
-
-                Bundle b = componentsBundle.get(component.getClass().getCanonicalName());
-                if (b != null)
-                    ((SerializableComponent) component).read(b);
-                else
-                    log.warning("Bundle " + componentsBundle + " does not have SerializableComponent: " + component);
-            }
-        }
-
-        Bundle controlsBundle = bundle.get("controls");
-
-        for (Control control : controls.values()) {
-            if (control instanceof SerializableControl) {
-
-                Bundle b = controlsBundle.get(control.getClass().getCanonicalName());
-                if (b != null)
-                    ((SerializableControl) control).read(b);
-                else
-                    log.warning("Bundle " + componentsBundle + " does not have SerializableControl: " + control);
-            }
-        }
+        EntitySerializer.INSTANCE.load(this, bundle);
     }
 
     @Override

@@ -24,46 +24,26 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ecs;
-
-import com.almasb.fxgl.ecs.component.Required;
+package com.almasb.fxgl.ecs
 
 /**
+ *
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class AbstractEntitySystem implements EntitySystem {
+internal object EntityCopier {
 
-    private boolean isPaused = false;
+    fun copy(entity: Entity): Entity {
+        val copy = Entity()
 
-    @Override
-    public boolean isPaused() {
-        return isPaused;
-    }
+        entity.components.values()
+                .filterIsInstance<CopyableComponent<*>>()
+                .forEach { copy.addComponent(it.copy()) }
 
-    @Override
-    public void pause() {
-        isPaused = true;
-    }
+        entity.controls.values()
+                .filterIsInstance<CopyableControl<*>>()
+                .forEach { copy.addControl(it.copy()) }
 
-    @Override
-    public void resume() {
-        isPaused = false;
-    }
-
-    private Class<? extends Component>[] requred = null;
-
-    @Override
-    public Class<? extends Component>[] getRequiredComponents() {
-        if (requred == null) {
-            Required[] req = getClass().getAnnotationsByType(Required.class);
-
-            requred = new Class[req.length];
-
-            for (int i = 0; i < req.length; i++) {
-                requred[i] = req[i].value();
-            }
-        }
-
-        return requred;
+        return copy
     }
 }
