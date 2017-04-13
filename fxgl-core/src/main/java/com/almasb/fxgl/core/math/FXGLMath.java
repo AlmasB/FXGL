@@ -514,4 +514,12 @@ public final class FXGLMath {
     public static BezierSpline closedBezierSpline(Vec2[] points) {
         return ClosedBezierSplineFactory.newBezierSpline(points);
     }
+
+    /**
+     * @param t current time * frequency (lower frequency -> smoother output)
+     * @return perlin noise in 1D quality in [0..1)
+     */
+    public static float noise1D(double t) {
+        return PerlinNoiseGenerator.INSTANCE.noise1D((float) t) + 0.5f;
+    }
 }

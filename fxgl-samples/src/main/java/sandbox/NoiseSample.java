@@ -26,9 +26,15 @@
 
 package sandbox;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.control.KeepOnScreenControl;
+import com.almasb.fxgl.entity.control.RandomMoveControl;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -55,32 +61,30 @@ public class NoiseSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        setSeedAndReinitialize();
-
-        rect = new Rectangle(100, 100);
-        rect.setTranslateX(400);
-        rect.setTranslateY(300);
-
-        getGameScene().addUINode(rect);
+        Entities.builder()
+                .at(100, 100)
+                .viewFromNodeWithBBox(new Rectangle(40, 40))
+                .with(new RandomMoveControl(100), new KeepOnScreenControl(true, true))
+                .buildAndAttach(getGameWorld());
     }
 
     float t = 0;
 
     @Override
     protected void onUpdate(double tpf) {
-        float n = noise1D(t);
-        n += 0.5f;
-
-        // flickering rect
-        rect.setFill(Color.color(n, n, n));
-
-        n -= 0.5f;
-
-        float x = getWidth() * n;
-
-        //rect.setTranslateX(400 + x);
-
-        t += tpf;
+//        float n = noise1D(t);
+//        n += 0.5f;
+//
+//        // flickering rect
+//        rect.setFill(Color.color(n, n, n));
+//
+//        n -= 0.5f;
+//
+//        float x = getWidth() * n;
+//
+//        //rect.setTranslateX(400 + x);
+//
+//        t += tpf;
     }
 
     // from CRYtek
