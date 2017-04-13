@@ -186,20 +186,20 @@ public class Entity {
     private void injectFields(Control control) {
         ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
             Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
-            if (comp == null) {
-                throw new IllegalArgumentException("Injection failed, entity has no component: " + field.getType());
+            if (comp != null) {
+                ReflectionUtils.inject(field, control, comp);
+            } else {
+                log.warning("Injection failed, entity has no component: " + field.getType());
             }
-
-            ReflectionUtils.inject(field, control, comp);
         });
 
         ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
             Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
-            if (ctrl == null) {
-                throw new IllegalArgumentException("Injection failed, entity has no control: " + field.getType());
+            if (ctrl != null) {
+                ReflectionUtils.inject(field, control, ctrl);
+            } else {
+                log.warning("Injection failed, entity has no control: " + field.getType());
             }
-
-            ReflectionUtils.inject(field, control, ctrl);
         });
     }
 
