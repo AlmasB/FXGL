@@ -354,6 +354,16 @@ public final class FXGLMath {
     }
 
     /**
+     * Map value of a given range to a target range.
+     *
+     * @param value the value to map
+     * @return mapped value
+     */
+    public static double map(double value, double currentRangeStart, double currentRangeStop, double targetRangeStart, double targetRangeStop) {
+        return targetRangeStart + (targetRangeStop - targetRangeStart) * ((value - currentRangeStart) / (currentRangeStop - currentRangeStart));
+    }
+
+    /**
      * @param fromValue start value
      * @param toValue end value
      * @param progress the interpolation progress [0..1]
