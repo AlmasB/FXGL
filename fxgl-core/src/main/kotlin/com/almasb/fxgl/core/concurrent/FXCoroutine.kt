@@ -42,11 +42,19 @@ class FXCoroutine<T>(private val func: Callable<T>) : Async<T>() {
     private var value: T? = null
 
     init {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             try {
                 value = func.call()
             } finally {
                 latch.countDown()
+            }
+        } else {
+            Platform.runLater {
+                try {
+                    value = func.call()
+                } finally {
+                    latch.countDown()
+                }
             }
         }
     }
