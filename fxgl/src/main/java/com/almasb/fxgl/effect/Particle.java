@@ -37,7 +37,7 @@ import javafx.util.Duration;
 import java.util.function.Consumer;
 
 /**
- * Simple particle represented by a circle or an image.
+ * Simple particle represented by a Shape or an Image.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -83,6 +83,8 @@ public class Particle implements Poolable {
      */
     private Point2D scale;
 
+    private double initialLife;
+
     /**
      * Current life.
      * When life <= 0, the particle dies.
@@ -90,9 +92,14 @@ public class Particle implements Poolable {
     private double life;
 
     /**
-     * Color used when rendering
+     * Color used when rendering at life == initialLife.
      */
-    private Paint color;
+    private Paint startColor;
+
+    /**
+     * Color used when rendering at life == 0.
+     */
+    private Paint endColor;
 
     /**
      * Blend mode used when rendering
@@ -107,12 +114,12 @@ public class Particle implements Poolable {
 
     private Consumer<Particle> control = null;
 
-    public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
-        this(null, position, vel, gravity, radius, scale, expireTime, color, blendMode);
+    public Particle(Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode) {
+        this(null, position, vel, gravity, radius, scale, expireTime, startColor, endColor, blendMode);
     }
 
-    public Particle(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
-        init(image, position, vel, gravity, radius, scale, expireTime, color, blendMode);
+    public Particle(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode) {
+        init(image, position, vel, gravity, radius, scale, expireTime, startColor, endColor, blendMode);
     }
 
     public Particle() {
@@ -120,7 +127,7 @@ public class Particle implements Poolable {
         reset();
     }
 
-    public final void init(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint color, BlendMode blendMode) {
+    public final void init(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode) {
         this.image = image;
         this.x = position.getX();
         this.y = position.getY();
@@ -130,9 +137,11 @@ public class Particle implements Poolable {
         this.velX = vel.getX();
         this.velY = vel.getY();
         this.gravity = gravity;
-        this.color = color;
+        this.startColor = startColor;
+        this.endColor = endColor;
         this.blendMode = blendMode;
-        this.life = expireTime.toSeconds();
+        this.initialLife = expireTime.toSeconds();
+        this.life = initialLife;
     }
 
     @Override
@@ -146,8 +155,10 @@ public class Particle implements Poolable {
         velX = 0;
         velY = 0;
         gravity = Point2D.ZERO;
-        color = Color.BLACK;
+        startColor = Color.TRANSPARENT;
+        endColor = Color.TRANSPARENT;
         blendMode = BlendMode.SRC_OVER;
+        initialLife = 0;
         life = 0;
 
         control = null;
@@ -192,21 +203,20 @@ public class Particle implements Poolable {
      * @param viewportOrigin viewport origin
      */
     void render(GraphicsContext g, Point2D viewportOrigin) {
-        g.setGlobalAlpha(life);
+        double alpha = life / initialLife;
+
+        g.setGlobalAlpha(alpha);
         g.setGlobalBlendMode(blendMode);
 
-        if (image != null) {
-            g.save();
+        Image particleImage = image != null ? image : ParticleEmitter.getCachedImage((Color) startColor, (Color) endColor, (int)(alpha * 100));
 
-            g.translate(x - viewportOrigin.getX(), y - viewportOrigin.getY());
-            g.scale(radiusX * 2 / image.getWidth(), radiusY * 2 / image.getHeight());
-            g.drawImage(image, 0, 0);
+        g.save();
 
-            g.restore();
-        } else {
-            g.setFill(color);
-            g.fillOval(x - viewportOrigin.getX(), y - viewportOrigin.getY(), radiusX * 2, radiusY * 2);
-        }
+        g.translate(x - viewportOrigin.getX(), y - viewportOrigin.getY());
+        g.scale(radiusX * 2 / particleImage.getWidth(), radiusY * 2 / particleImage.getHeight());
+        g.drawImage(particleImage, 0, 0);
+
+        g.restore();
     }
 
     public double getX() {
@@ -265,12 +275,12 @@ public class Particle implements Poolable {
         this.scale = scale;
     }
 
-    public Paint getColor() {
-        return color;
+    public Paint getStartColor() {
+        return startColor;
     }
 
-    public void setColor(Paint color) {
-        this.color = color;
+    public void setStartColor(Paint startColor) {
+        this.startColor = startColor;
     }
 
     public BlendMode getBlendMode() {
