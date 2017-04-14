@@ -31,6 +31,7 @@
 package com.almasb.fxgl.core.math;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 
 import java.util.Random;
 
@@ -314,6 +315,10 @@ public final class FXGLMath {
             return Point2D.ZERO;
 
         return new Point2D(x / length, y / length);
+    }
+    
+    public static Color randomColor() {
+        return Color.color(random(), random(), random());
     }
 
     /* RANDOM END */
