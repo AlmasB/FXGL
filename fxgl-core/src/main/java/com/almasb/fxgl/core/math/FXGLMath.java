@@ -30,6 +30,8 @@
 
 package com.almasb.fxgl.core.math;
 
+import javafx.geometry.Point2D;
+
 import java.util.Random;
 
 /**
@@ -37,7 +39,8 @@ import java.util.Random;
  * Thanks to Riven on JavaGaming.org for the basis of sin/cos/floor/ceil.
  *
  * @author Nathan Sweet
- **/
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ */
 public final class FXGLMath {
 
     private FXGLMath() {}
@@ -290,6 +293,27 @@ public final class FXGLMath {
             return min + (float) Math.sqrt(u * d * (mode - min));
 
         return max - (float) Math.sqrt((1 - u) * d * (max - mode));
+    }
+
+    /**
+     * @return new random vector of unit length as Vec2
+     */
+    public static Vec2 randomVec2() {
+        return new Vec2(random(-1f, 1f), random(-1f, 1f)).normalizeLocal();
+    }
+
+    /**
+     * @return new random vector of unit length as Point2D
+     */
+    public static Point2D randomPoint2D() {
+        double x = random(-1f, 1f);
+        double y = random(-1f, 1f);
+
+        double length = Math.sqrt(x * x + y * y);
+        if (length < EPSILON)
+            return Point2D.ZERO;
+
+        return new Point2D(x / length, y / length);
     }
 
     /* RANDOM END */
