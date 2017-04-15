@@ -33,6 +33,7 @@ import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.DisplayEvent
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Display
 import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
@@ -53,6 +54,8 @@ import javafx.scene.control.Button
 import javafx.scene.control.Dialog
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.input.KeyCombination
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -180,6 +183,8 @@ private constructor(private val stage: Stage,
         }
     }
 
+    private val scenes = arrayListOf<FXGLScene>()
+
     /**
      * Register an FXGL scene to be managed by display settings.
      *
@@ -188,6 +193,12 @@ private constructor(private val stage: Stage,
     override fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
         scene.appendCSS(css)
+
+        // TODO: fix viewport from game scene
+        //scene.addEventHandler(KeyEvent.ANY, { scene.input.onKeyEvent(it) })
+        //scene.addEventHandler(MouseEvent.ANY, { scene.input.onMouseEvent(it, Viewport(getTargetWidth(), getTargetHeight()), scaleRatio.value) })
+
+        scenes.add(scene)
     }
 
     /**
@@ -196,6 +207,10 @@ private constructor(private val stage: Stage,
      * @param scene the scene
      */
     override fun setScene(scene: FXGLScene) {
+        if (!scenes.contains(scene)) {
+            registerScene(scene)
+        }
+
         getCurrentScene()?.activeProperty()?.set(false)
 
         currentScene.set(scene)

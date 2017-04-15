@@ -26,45 +26,47 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.state.*
+
 /**
  * Valid application states.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-enum class ApplicationState {
+enum class ApplicationState(val state: AppState) {
 
     /**
      * The app starts with this state.
      */
-    STARTUP,
+    STARTUP(StartupState),
 
     /**
      * This state is present when intro is being shown.
      */
-    INTRO,
+    INTRO(IntroState),
 
     /**
      * This state is active whenever a game/level is loading.
      */
-    LOADING,
+    LOADING(LoadingState),
 
     /**
      * This state is active when user is in main menu.
      */
-    MAIN_MENU,
+    MAIN_MENU(MainMenuState),
 
     /**
      * This state is active when user is in game menu.
      */
-    GAME_MENU,
+    GAME_MENU(GameMenuState),
 
     /**
      * Active when game is paused but menus are not enabled.
      */
-    PAUSED,
+    PAUSED(StartupState),
 
     /**
      * This state is active when user is playing.
      */
-    PLAYING
+    PLAYING(PlayState)
 }

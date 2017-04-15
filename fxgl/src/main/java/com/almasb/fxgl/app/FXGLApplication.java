@@ -235,6 +235,8 @@ public abstract class FXGLApplication extends Application {
         log.debug("Resuming main loop");
         systemListeners.forEach(FXGLListener::onResume);
         getEventBus().fireEvent(FXGLEvent.resume());
+
+        ((GameApplication) this).setState(ApplicationState.PLAYING);
     }
 
     /**

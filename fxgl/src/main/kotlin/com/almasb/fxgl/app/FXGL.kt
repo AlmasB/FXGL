@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.state.PlayState
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.io.FS
@@ -283,7 +284,7 @@ class FXGL private constructor() {
         private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
         @JvmStatic fun getEventBus() = _eventBus
 
-        private val _input by lazy { getService(ServiceType.INPUT) }
+        private val _input by lazy { PlayState.input() }
         @JvmStatic fun getInput() = _input
 
         private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }

@@ -57,42 +57,44 @@ internal class InitEventHandlersTask
     override fun run() {
         val bus = app.eventBus
 
-        updateEvents()
-        postUpdateEvents()
+        //updateEvents()
+        //postUpdateEvents()
 
-        scanForServiceListeners()
+        //scanForServiceListeners()
 
-        gameWorldEvents()
-        gameSceneEvents()
+        //gameWorldEvents()
+        //gameSceneEvents()
         displayEvents()
 
-        bus.scanForHandlers(app)
-
-        if (app.settings.isMenuEnabled) {
-            // services are now ready and listening, we can generate default profile
-            (app.menuListener as MenuEventHandler).generateDefaultProfile()
-        }
+//        bus.scanForHandlers(app)
+//
+//        if (app.settings.isMenuEnabled) {
+//            // services are now ready and listening, we can generate default profile
+//            (app.menuListener as MenuEventHandler).generateDefaultProfile()
+//        }
     }
 
     private fun updateEvents() {
         val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
 
-        app.masterTimer.addUpdateListener(app.input)
-        app.masterTimer.addUpdateListener(app.audioPlayer)
-        app.masterTimer.addUpdateListener(app.gameWorld)
-        app.masterTimer.addUpdateListener({ event ->
-            app.onUpdate(event.tpf())
+//        app.masterTimer.addUpdateListener(app.input)
+//        app.masterTimer.addUpdateListener(app.audioPlayer)
+//       game world ...
 
-            if (app.settings.isProfilingEnabled) {
-                val g = app.gameScene.graphicsContext
 
-                g.globalBlendMode = BlendMode.SRC_OVER
-                g.globalAlpha = 1.0
-                g.font = fpsFont
-                g.fill = Color.RED
-                g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
-            }
-        })
+//        app.masterTimer.addUpdateListener({ event ->
+//            app.onUpdate(event.tpf())
+//
+//            if (app.settings.isProfilingEnabled) {
+//                val g = app.gameScene.graphicsContext
+//
+//                g.globalBlendMode = BlendMode.SRC_OVER
+//                g.globalAlpha = 1.0
+//                g.font = fpsFont
+//                g.fill = Color.RED
+//                g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
+//            }
+//        })
     }
 
     private fun postUpdateEvents() {

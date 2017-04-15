@@ -24,40 +24,24 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.state
 
-import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.io.FXGLIO
-import com.almasb.fxgl.physics.PhysicsWorld
-import com.google.inject.Inject
+import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.LoadingScene
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PreInitTask
-@Inject constructor(private val app: GameApplication) : Runnable {
+object LoadingState : AbstractAppState(LoadingScene()) {
 
-    private val log = FXGL.getLogger(javaClass)
+    override fun onEnter() {
+    }
 
-    override fun run() {
-        FXGLIO.defaultExceptionHandler = app.exceptionHandler
-        FXGLIO.defaultExecutor = app.executor
+    override fun onExit() {
+    }
 
-        app.initAchievements()
-
-        // we call this early to process user input bindings
-        // so we can correctly display them in menus
-        // 1. register system actions
-        SystemActions.bind(app.input)
-
-        // 2. register user actions
-        app.initInput()
-
-        // 3. scan for annotated methods and register them too
-        app.input.scanForUserActions(app)
-
-        app.preInit()
+    override fun onUpdate(tpf: Double) {
     }
 }

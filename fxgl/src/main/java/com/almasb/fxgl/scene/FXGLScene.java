@@ -26,6 +26,8 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -56,6 +58,8 @@ public abstract class FXGLScene {
 
     private Group eventHandlers = new Group();
 
+    private Input input = new FXGLInput();
+
     public FXGLScene() {
         root = new Pane();
         root.setBackground(null);
@@ -66,6 +70,10 @@ public abstract class FXGLScene {
         root.getChildren().addAll(contentRoot);
 
         setCursor("fxgl_default.png", new Point2D(7, 6));
+    }
+
+    public Input getInput() {
+        return input;
     }
 
     /**

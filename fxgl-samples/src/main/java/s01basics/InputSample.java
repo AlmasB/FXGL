@@ -28,10 +28,17 @@ package s01basics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.state.PlayState;
+import com.almasb.fxgl.app.state.SubState;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.time.UpdateEvent;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Shows how to use input service and bind actions to triggers.
@@ -46,9 +53,9 @@ public class InputSample extends GameApplication {
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
         settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
+        settings.setCloseConfirmation(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -63,6 +70,63 @@ public class InputSample extends GameApplication {
             @Override
             protected void onActionBegin() {
                 System.out.println("Action Begin");
+
+                pushState(new SubState() {
+
+                    Input i = new FXGLInput();
+                    Rectangle r = new Rectangle(400 ,400);
+
+                    {
+                        r.setOnMouseClicked(e -> {
+                            popState();
+                        });
+
+                        i.addAction(new UserAction("Key") {
+                            @Override
+                            protected void onActionBegin() {
+                                System.out.println("from substate");
+                            }
+
+                            @Override
+                            protected void onAction() {
+                                System.out.println("from sub");
+                            }
+                        }, KeyCode.Y);
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getName() {
+                        return "MySubState";
+                    }
+
+                    @NotNull
+                    @Override
+                    public Node view() {
+                        return r;
+                    }
+
+                    @NotNull
+                    @Override
+                    public Input input() {
+                        return i;
+                    }
+
+                    @Override
+                    public void onEnter() {
+
+                    }
+
+                    @Override
+                    public void onExit() {
+
+                    }
+
+                    @Override
+                    public void onUpdate(double tpf) {
+
+                    }
+                });
             }
 
             @Override
@@ -80,8 +144,15 @@ public class InputSample extends GameApplication {
     @Override
     protected void initAssets() {}
 
-    @Override
-    protected void initGame() {}
+//    @Override
+//    protected void initGame() {
+//
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     protected void initPhysics() {}

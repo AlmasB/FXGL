@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.app.state.*;
 import com.almasb.fxgl.core.event.Subscriber;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
@@ -34,11 +35,20 @@ import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.scene.*;
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
+import com.almasb.fxgl.time.UpdateEvent;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -73,17 +83,9 @@ import java.util.Map;
  */
 public abstract class GameApplication extends FXGLApplication {
 
-    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>(ApplicationState.STARTUP);
-
-    /* The following fields are injected by tasks */
+    private ObjectProperty<ApplicationState> state = new SimpleObjectProperty<>();
 
     GameState gameState;
-
-    GameWorld gameWorld;
-
-    PhysicsWorld physicsWorld;
-
-    GameScene gameScene;
 
     /**
      * Intro scene, this is shown when the application started,
@@ -124,6 +126,15 @@ public abstract class GameApplication extends FXGLApplication {
         return state.get();
     }
 
+    private EventHandler<MouseEvent> mouseHandler = e -> {
+        // TODO: incorrect viewport
+        getCurrentState().input().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
+    };
+
+    private EventHandler<KeyEvent> keyHandler = e -> {
+        getCurrentState().input().onKeyEvent(e);
+    };
+
     /**
      * Set application state.
      * Setting a state will also trigger scene change associated
@@ -134,30 +145,24 @@ public abstract class GameApplication extends FXGLApplication {
     void setState(ApplicationState appState) {
         log.debug("State: " + getState() + " -> " + appState);
         state.set(appState);
+
         switch (appState) {
             case INTRO:
-                getDisplay().setScene(introScene);
-
                 introFinishedSubscriber = getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
-                introScene.startIntro();
                 break;
 
             case LOADING:
-                getDisplay().setScene(loadingScene);
                 break;
 
             case MAIN_MENU:
-                getDisplay().setScene(mainMenuScene);
-                if (!menuHandler.isProfileSelected())
-                    menuHandler.showProfileDialog();
+//                if (!menuHandler.isProfileSelected())
+//                    menuHandler.showProfileDialog();
                 break;
 
             case GAME_MENU:
-                getDisplay().setScene(gameMenuScene);
                 break;
 
             case PLAYING:
-                getDisplay().setScene(getGameScene());
                 break;
 
             case PAUSED:
@@ -168,6 +173,22 @@ public abstract class GameApplication extends FXGLApplication {
                 log.warning("Attempted to set illegal state: " + appState);
                 break;
         }
+
+        // TODO: rename
+        setState(state.get().getState());
+    }
+
+    private AppState currentState;
+
+    public void setState(AppState appState) {
+        currentState.onExit();
+        currentState.input().clearAll();
+
+        currentState = appState;
+
+        getDisplay().setScene(currentState.scene());
+
+        currentState.onEnter();
     }
 
     /**
@@ -181,21 +202,21 @@ public abstract class GameApplication extends FXGLApplication {
      * @return game world
      */
     public final GameWorld getGameWorld() {
-        return gameWorld;
+        return PlayState.INSTANCE.getGameWorld();
     }
 
     /**
      * @return physics world
      */
     public final PhysicsWorld getPhysicsWorld() {
-        return physicsWorld;
+        return PlayState.INSTANCE.getPhysicsWorld();
     }
 
     /**
      * @return game scene
      */
     public final GameScene getGameScene() {
-        return gameScene;
+        return (GameScene) PlayState.INSTANCE.scene();
     }
 
     /**
@@ -356,6 +377,8 @@ public abstract class GameApplication extends FXGLApplication {
     private Subscriber introFinishedSubscriber;
 
     private void onIntroFinished() {
+        log.info("intro finished");
+
         if (getSettings().isMenuEnabled()) {
             setState(ApplicationState.MAIN_MENU);
         } else {
@@ -377,9 +400,18 @@ public abstract class GameApplication extends FXGLApplication {
         long start = System.nanoTime();
 
         runTask(PreInitTask.class);
-        runTask(InitScenesTask.class);
+        //runTask(InitScenesTask.class);
         runTask(InitEventHandlersTask.class);
-        runTask(InitProfilerTask.class);
+        //runTask(InitProfilerTask.class);
+
+        for (ApplicationState s : ApplicationState.values()) {
+            s.getState().scene().addEventHandler(KeyEvent.ANY, keyHandler);
+            s.getState().scene().addEventHandler(MouseEvent.ANY, mouseHandler);
+        }
+
+        addFXGLListener(getMasterTimer());
+
+        currentState = StartupState.INSTANCE;
 
         // intro runs async so we have to wait with a callback
         // Stage -> (Intro) -> (Menu) -> Game
@@ -391,6 +423,37 @@ public abstract class GameApplication extends FXGLApplication {
         }
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+    }
+
+    private Deque<SubState> subStates = new ArrayDeque<>();
+
+    public final void pushState(SubState state) {
+        getCurrentState().input().clearAll();
+
+        subStates.push(state);
+        getDisplay().getCurrentScene().getRoot().getChildren().add(state.view());
+
+        state.onEnter();
+    }
+
+    public final void popState() {
+        // TODO: check empty?
+        SubState state = subStates.pop();
+
+        state.onExit();
+
+        getDisplay().getCurrentScene().getRoot().getChildren().remove(state.view());
+    }
+
+    // hack
+    public void onMasterUpdate(double tpf) {
+        State state = getCurrentState();
+        state.input().onUpdateEvent(new UpdateEvent(0, tpf));
+        state.onUpdate(tpf);
+    }
+
+    public State getCurrentState() {
+        return subStates.isEmpty() ? currentState : subStates.peek();
     }
 
     /**
@@ -406,7 +469,7 @@ public abstract class GameApplication extends FXGLApplication {
         reset();
         setState(ApplicationState.LOADING);
 
-        loadingScene.bind(initTask);
+        ((LoadingScene) LoadingState.INSTANCE.scene()).bind(initTask);
 
         getExecutor().execute(initTask);
     }

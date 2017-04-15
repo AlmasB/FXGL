@@ -43,8 +43,7 @@ import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
 
-class FXGLInput
-@Inject private constructor() : Input {
+class FXGLInput : Input {
 
     private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 

@@ -24,40 +24,48 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.state
 
-import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.io.FXGLIO
-import com.almasb.fxgl.physics.PhysicsWorld
-import com.google.inject.Inject
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.MenuEventHandler
+import com.almasb.fxgl.input.UserAction
+import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.menu.FXGLDefaultMenu
+import com.almasb.fxgl.scene.menu.MenuType
+import javafx.scene.input.KeyEvent
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class PreInitTask
-@Inject constructor(private val app: GameApplication) : Runnable {
+object GameMenuState : AbstractAppState(FXGLDefaultMenu(FXGL.getApp(), MenuType.GAME_MENU)) {
 
-    private val log = FXGL.getLogger(javaClass)
+    private var canCloseMenu = true
 
-    override fun run() {
-        FXGLIO.defaultExceptionHandler = app.exceptionHandler
-        FXGLIO.defaultExecutor = app.executor
+    init {
 
-        app.initAchievements()
+        scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+//        input().addAction(object : UserAction("Close Menu$") {
+//            override fun onActionBegin() {
+//                if (canCloseMenu) {
+//                    FXGL.getApp().setState(PlayState)
+//                    canCloseMenu = false
+//                }
+//            }
+//
+//            override fun onActionEnd() {
+//                canCloseMenu = true
+//            }
+//        }, FXGL.getSettings().menuKey)
+    }
 
-        // we call this early to process user input bindings
-        // so we can correctly display them in menus
-        // 1. register system actions
-        SystemActions.bind(app.input)
+    override fun onEnter() {
+    }
 
-        // 2. register user actions
-        app.initInput()
+    override fun onExit() {
+    }
 
-        // 3. scan for annotated methods and register them too
-        app.input.scanForUserActions(app)
-
-        app.preInit()
+    override fun onUpdate(tpf: Double) {
     }
 }

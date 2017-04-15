@@ -40,43 +40,43 @@ class InitScenesTask
     private val log = FXGL.getLogger(javaClass)
 
     override fun run() {
-        val sceneFactory = app.initSceneFactory()
-
-        val gameScene = sceneFactory.newGameScene()
-        val loadingScene = sceneFactory.newLoadingScene()
-
-        if (app.settings.isIntroEnabled) {
-            val introScene = sceneFactory.newIntro()
-
-            app.display.registerScene(introScene)
-
-            log.debug("Injecting introScene")
-            app.introScene = introScene
-        }
-
-        if (app.settings.isMenuEnabled) {
-            val menuHandler = app.menuListener
-
-            val mainMenuScene = sceneFactory.newMainMenu(app)
-            val gameMenuScene = sceneFactory.newGameMenu(app)
-
-            // add handler to respond to menu key (default ESCAPE)
-            gameScene.addEventHandler(KeyEvent.ANY, menuHandler as MenuEventHandler)
-            gameMenuScene.addEventHandler(KeyEvent.ANY, menuHandler)
-
-            app.display.registerScene(mainMenuScene)
-            app.display.registerScene(gameMenuScene)
-
-            log.debug("Injecting mainMenuScene & gameMenuScene")
-            app.mainMenuScene = mainMenuScene
-            app.gameMenuScene = gameMenuScene
-        }
-
-        app.display.registerScene(loadingScene)
-        app.display.registerScene(gameScene)
-
-        log.debug("Injecting loadingScene & gameScene")
-        app.loadingScene = loadingScene
-        app.gameScene = gameScene
+//        val sceneFactory = app.initSceneFactory()
+//
+//        val gameScene = sceneFactory.newGameScene()
+//        val loadingScene = sceneFactory.newLoadingScene()
+//
+//        if (app.settings.isIntroEnabled) {
+//            val introScene = sceneFactory.newIntro()
+//
+//            app.display.registerScene(introScene)
+//
+//            log.debug("Injecting introScene")
+//            app.introScene = introScene
+//        }
+//
+//        if (app.settings.isMenuEnabled) {
+//            val menuHandler = app.menuListener
+//
+//            val mainMenuScene = sceneFactory.newMainMenu(app)
+//            val gameMenuScene = sceneFactory.newGameMenu(app)
+//
+//            // add handler to respond to menu key (default ESCAPE)
+//            gameScene.addEventHandler(KeyEvent.ANY, menuHandler as MenuEventHandler)
+//            gameMenuScene.addEventHandler(KeyEvent.ANY, menuHandler)
+//
+//            app.display.registerScene(mainMenuScene)
+//            app.display.registerScene(gameMenuScene)
+//
+//            log.debug("Injecting mainMenuScene & gameMenuScene")
+//            app.mainMenuScene = mainMenuScene
+//            app.gameMenuScene = gameMenuScene
+//        }
+//
+//        app.display.registerScene(loadingScene)
+//        app.display.registerScene(gameScene)
+//
+//        log.debug("Injecting loadingScene & gameScene")
+//        app.loadingScene = loadingScene
+//        app.gameScene = gameScene
     }
 }
