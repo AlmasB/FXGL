@@ -25,6 +25,7 @@
  */
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Poolable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -44,44 +45,26 @@ import java.util.function.Consumer;
 public class Particle implements Poolable {
 
     /**
-     * Top-left x in game world
+     * Top-left point in game world.
      */
-    private double x;
+    private Vec2 position = new Vec2();
+
+    private Vec2 velocity = new Vec2();
 
     /**
-     * Top-left y in game world
+     * Velocity acceleration.
      */
-    private double y;
+    private Vec2 gravity = new Vec2();
 
     /**
-     * Velocity x
+     * Radius in X, Y;
      */
-    private double velX;
+    private Vec2 radius = new Vec2();
 
     /**
-     * Velocity y
+     * Radius change (acceleration).
      */
-    private double velY;
-
-    /**
-     * Velocity acceleration
-     */
-    private Point2D gravity;
-
-    /**
-     * Radius in X
-     */
-    private double radiusX;
-
-    /**
-     * Radius in Y
-     */
-    private double radiusY;
-
-    /**
-     * Radius change (acceleration)
-     */
-    private Point2D scale;
+    private Vec2 scale = new Vec2();
 
     private double initialLife;
 
@@ -108,7 +91,7 @@ public class Particle implements Poolable {
 
     /**
      * Image from which the particle is created.
-     * If the image is null, the particle is a software generated circle.
+     * If the image is null, the particle is a software generated shape.
      */
     private Image image = null;
 
@@ -129,14 +112,11 @@ public class Particle implements Poolable {
 
     public final void init(Image image, Point2D position, Point2D vel, Point2D gravity, double radius, Point2D scale, Duration expireTime, Paint startColor, Paint endColor, BlendMode blendMode) {
         this.image = image;
-        this.x = position.getX();
-        this.y = position.getY();
-        this.radiusX = radius;
-        this.radiusY = radius;
-        this.scale = scale;
-        this.velX = vel.getX();
-        this.velY = vel.getY();
-        this.gravity = gravity;
+        this.position.set(position);
+        this.radius.set((float) radius, (float) radius);
+        this.scale.set(scale);
+        this.velocity.set(vel);
+        this.gravity.set(gravity);
         this.startColor = startColor;
         this.endColor = endColor;
         this.blendMode = blendMode;
@@ -147,14 +127,11 @@ public class Particle implements Poolable {
     @Override
     public void reset() {
         image = null;
-        x = 0;
-        y = 0;
-        radiusX = 0;
-        radiusY = 0;
-        scale = Point2D.ZERO;
-        velX = 0;
-        velY = 0;
-        gravity = Point2D.ZERO;
+        position.setZero();
+        velocity.setZero();
+        gravity.setZero();
+        radius.setZero();
+        scale.setZero();
         startColor = Color.TRANSPARENT;
         endColor = Color.TRANSPARENT;
         blendMode = BlendMode.SRC_OVER;
@@ -177,21 +154,17 @@ public class Particle implements Poolable {
      * @return true if particle died
      */
     boolean update(double tpf) {
-        x += velX;
-        y += velY;
+        position.addLocal(velocity);
+        velocity.addLocal(gravity);
 
-        velX += gravity.getX();
-        velY += gravity.getY();
-
-        radiusX += scale.getX();
-        radiusY += scale.getY();
+        radius.addLocal(scale);
 
         life -= tpf;
 
         if (control != null)
             control.accept(this);
 
-        return life <= 0 || radiusX <= 0 || radiusY <= 0;
+        return life <= 0 || radius.x <= 0 || radius.y <= 0;
     }
 
     /**
@@ -212,86 +185,10 @@ public class Particle implements Poolable {
 
         g.save();
 
-        g.translate(x - viewportOrigin.getX(), y - viewportOrigin.getY());
-        g.scale(radiusX * 2 / particleImage.getWidth(), radiusY * 2 / particleImage.getHeight());
+        g.translate(position.x - viewportOrigin.getX(), position.y - viewportOrigin.getY());
+        g.scale(radius.x * 2 / particleImage.getWidth(), radius.y * 2 / particleImage.getHeight());
         g.drawImage(particleImage, 0, 0);
 
         g.restore();
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getVelX() {
-        return velX;
-    }
-
-    public void setVelX(double velX) {
-        this.velX = velX;
-    }
-
-    public double getVelY() {
-        return velY;
-    }
-
-    public void setVelY(double velY) {
-        this.velY = velY;
-    }
-
-    public Point2D getGravity() {
-        return gravity;
-    }
-
-    public void setGravity(Point2D gravity) {
-        this.gravity = gravity;
-    }
-
-    public double getRadiusX() {
-        return radiusX;
-    }
-
-    public void setRadiusX(double radiusX) {
-        this.radiusX = radiusX;
-    }
-
-    public double getRadiusY() {
-        return radiusY;
-    }
-
-    public void setRadiusY(double radiusY) {
-        this.radiusY = radiusY;
-    }
-
-    public Point2D getScale() {
-        return scale;
-    }
-
-    public void setScale(Point2D scale) {
-        this.scale = scale;
-    }
-
-    public Paint getStartColor() {
-        return startColor;
-    }
-
-    public void setStartColor(Paint startColor) {
-        this.startColor = startColor;
-    }
-
-    public BlendMode getBlendMode() {
-        return blendMode;
-    }
-
-    public void setBlendMode(BlendMode blendMode) {
-        this.blendMode = blendMode;
-    }
-
-    public double getLife() {
-        return life;
     }
 }

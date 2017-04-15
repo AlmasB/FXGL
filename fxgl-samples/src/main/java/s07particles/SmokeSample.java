@@ -27,6 +27,7 @@
 package s07particles;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ecs.AbstractControl;
@@ -36,6 +37,7 @@ import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.control.RandomMoveControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -52,13 +54,13 @@ import static java.lang.Math.*;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ParticleTextureSample2 extends GameApplication {
+public class SmokeSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("ParticleTextureSample2");
+        settings.setTitle("SmokeSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
@@ -68,7 +70,7 @@ public class ParticleTextureSample2 extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    private ParticleEmitter emitter;
+    private ParticleEmitter emitter, e;
     private GameEntity entity;
 
     @Override
@@ -77,8 +79,8 @@ public class ParticleTextureSample2 extends GameApplication {
             @Override
             protected void onActionBegin() {
                 Color randomColor = Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random());
-                emitter.setStartColor(randomColor);
-                emitter.setEndColor(Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random()));
+                e.setStartColor(randomColor);
+                e.setEndColor(Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random()));
             }
         }, MouseButton.PRIMARY);
     }
@@ -89,17 +91,21 @@ public class ParticleTextureSample2 extends GameApplication {
                 .viewFromNode(new Rectangle(getWidth(), getHeight()))
                 .buildAndAttach(getGameWorld());
 
-        ParticleEmitter e = ParticleEmitters.newFireEmitter();
+        e = ParticleEmitters.newSmokeEmitter();
         e.setBlendMode(BlendMode.SRC_OVER);
-        e.setSize(5, 15);
-        e.setColor(Color.YELLOW);
-//        e.setNumParticles(5);
-//        e.setEmissionRate(1);
-        e.setVelocityFunction((i, x, y) -> new Point2D(FXGLMath.random() - 0.5, -FXGLMath.random() * 3));
+        e.setSize(15, 30);
+        e.setNumParticles(10);
+        e.setEmissionRate(0.25);
+        e.setStartColor(Color.color(0.6, 0.55, 0.5, 0.47));
+        e.setEndColor(Color.BLACK);
+        e.setExpireFunction((i, x, y) -> Duration.seconds(16));
+        e.setVelocityFunction((i, x, y) -> new Point2D(FXGLMath.random() - 0.5, 0));
+        e.setGravityFunction(() -> new Point2D((FXGLMath.noise1D(7776 + getTick()) - 0.5) * 0.02, 0));
+        //e.setSpawnPointFunction((i, x, y) -> new Point2D(x + FXGLMath.noise1D(333 + getTick()) * 150 - 75, y + FXGLMath.noise1D(getTick()) * 150 - 75));
 
         Entities.builder()
-                .at(getWidth() / 2, getHeight() / 2)
-                .with(new ParticleControl(e))
+                .at(getWidth() / 2, getHeight() - 100)
+                .with(new ParticleControl(e), new RandomMoveControl(2))
                 .buildAndAttach(getGameWorld());
 
 
@@ -117,7 +123,7 @@ public class ParticleTextureSample2 extends GameApplication {
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter))
+                //.with(new ParticleControl(emitter))
                 .buildAndAttach(getGameWorld());
     }
 

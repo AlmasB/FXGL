@@ -105,7 +105,7 @@ public class ParticleEmitter {
                 new Stop(0, Color.BLACK.deriveColor(1, 1, 1, 0.0)),
                 new Stop(0.3, endColor),
                 new Stop(0.9, startColor),
-                new Stop(1, Color.WHITE)
+                new Stop(1, startColor)
         };
 
         Rectangle rectangle = new Rectangle(width, 1,

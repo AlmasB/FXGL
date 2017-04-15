@@ -316,7 +316,7 @@ public final class FXGLMath {
 
         return new Point2D(x / length, y / length);
     }
-    
+
     public static Color randomColor() {
         return Color.color(random(), random(), random());
     }
