@@ -46,7 +46,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * Contains convenience methods and manages timer based actions.
  * Computes time taken by each frame.
  * Keeps track of tick and global time.
-
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLMasterTimer
@@ -74,7 +74,7 @@ private constructor() : AnimationTimer(), MasterTimer {
     companion object {
         /**
          * Time per frame in seconds.
-
+         *
          * @return 0.166(6)
          */
         fun tpfSeconds() = 1.0 / 60
@@ -83,25 +83,23 @@ private constructor() : AnimationTimer(), MasterTimer {
 
         /**
          * Timer per frame in nanoseconds.
-
+         *
          * @return 16666666
          */
         fun tpfNanos() = TPF_NANOS
 
         /**
          * Converts seconds to nanoseconds.
-
+         *
          * @param seconds value in seconds
-         * *
          * @return value in nanoseconds
          */
         fun secondsToNanos(seconds: Double) = (seconds * 1000000000L).toLong()
 
         /**
          * Converts type Duration to nanoseconds.
-
+         *
          * @param duration value as Duration
-         * *
          * @return value in nanoseconds
          */
         fun toNanos(duration: Duration) = secondsToNanos(duration.toSeconds())
@@ -120,6 +118,102 @@ private constructor() : AnimationTimer(), MasterTimer {
     override fun removeUpdateListener(listener: UpdateEventListener) {
         listeners.remove(listener)
     }
+
+    /**
+     * List for all timer based actions.
+     */
+    private val timerActions = CopyOnWriteArrayList<TimerActionImpl>()
+
+    /**
+     * Holds current tick (frame)
+     */
+    private val tick = ReadOnlyLongWrapper(0)
+
+    /**
+     * @return tick
+     */
+    override fun tickProperty(): ReadOnlyLongProperty = tick.readOnlyProperty
+
+    private var playtime = ReadOnlyLongWrapper(0)
+
+    override fun playtimeProperty(): ReadOnlyLongProperty = playtime.readOnlyProperty
+
+    private var paused = true
+
+    override fun start() {
+        log.debug { "Starting master timer" }
+        super.start()
+        paused = false
+    }
+
+    override fun stop() {
+        log.debug { "Stopping master timer" }
+        paused = true
+    }
+
+    /**
+     * Resets current tick to 0 and clears scheduled actions.
+     */
+    override fun reset() {
+        log.debug("Resetting ticks and clearing all actions")
+
+        tick.set(0)
+        now = 0
+
+        timerActions.clear()
+    }
+
+    /**
+     * Time for this tick in nanoseconds.
+     */
+    private var now: Long = 0
+
+    /**
+     * Current time for this tick in nanoseconds.
+     * Also time elapsed
+     * from the start of game.
+     * This time does not change while within the same tick.
+     *
+     * @return current time in nanoseconds
+     */
+    override fun getNow(): Long {
+        return now
+    }
+
+    private var tpf = 0.0
+
+    override fun tpf() = tpf
+
+    /**
+     * Counter to compute FPS and keep fluctuations
+     * to minimum.
+     */
+    private val fpsCounter = FPSCounter()
+
+    /**
+     * Used as delta from internal JavaFX timestamp to calculate render FPS.
+     */
+    private var previousInternalTime: Long = 0
+
+    /**
+     * Average render FPS.
+     */
+    private val fps = SimpleIntegerProperty(60)
+
+    /**
+     * @return average render FPS property
+     */
+    override fun fpsProperty() = fps
+
+    /**
+     * Average performance FPS.
+     */
+    private val performanceFPS = SimpleIntegerProperty()
+
+    /**
+     * @return Average performance FPS property
+     */
+    override fun performanceFPSProperty() = performanceFPS
 
     // we cache update event to avoid alloc on each frame
     private val updateEvent = UpdateEvent(0, 0.0)
@@ -153,109 +247,12 @@ private constructor() : AnimationTimer(), MasterTimer {
         tickEnd()
     }
 
-    /**
-     * List for all timer based actions
-     */
-    private val timerActions = CopyOnWriteArrayList<TimerActionImpl>()
-
-    /**
-     * Holds current tick (frame)
-     */
-    private val tick = ReadOnlyLongWrapper(0)
-
-    /**
-     * @return tick
-     */
-    override fun tickProperty(): ReadOnlyLongProperty = tick.readOnlyProperty
-
-    private var playtime = ReadOnlyLongWrapper(0)
-
-    override fun playtimeProperty(): ReadOnlyLongProperty = playtime.readOnlyProperty
-
-    private var paused = true
-
-    override fun start() {
-        log.debug { "Starting master timer" }
-        super.start()
-        paused = false
-    }
-
-    override fun stop() {
-        log.debug { "Stopping master timer" }
-        paused = true
-        //super.stop()
-    }
-
-    /**
-     * Resets current tick to 0 and clears scheduled actions.
-     */
-    override fun reset() {
-        log.debug("Resetting ticks and clearing all actions")
-
-        tick.set(0)
-        now = 0
-
-        timerActions.clear()
-    }
-
-    /**
-     * Time for this tick in nanoseconds.
-     */
-    private var now: Long = 0
-
-    /**
-     * Current time for this tick in nanoseconds. Also time elapsed
-     * from the start of game. This time does not change while the game is paused.
-     * This time does not change while within the same tick.
-     *
-     * @return current time in nanoseconds
-     */
-    override fun getNow(): Long {
-        return now
-    }
-
-    private var tpf = 0.0
-
-    override fun tpf() = tpf
-
-    /**
-     * These are used to approximate FPS value
-     */
-    private val fpsCounter = FPSCounter()
-    //private val fpsPerformanceCounter = FPSCounter()
-
-    /**
-     * Used as delta from internal JavaFX timestamp to calculate render FPS.
-     */
-    private var previousInternalTime: Long = 0
-
-    /**
-     * Average render FPS.
-     */
-    private val fps = SimpleIntegerProperty(60)
-
-    /**
-     * @return average render FPS property
-     */
-    override fun fpsProperty() = fps
-
-    /**
-     * Average performance FPS.
-     */
-    private val performanceFPS = SimpleIntegerProperty()
-
-    /**
-     * @return Average performance FPS property
-     */
-    override fun performanceFPSProperty() = performanceFPS
-
     private var startNanos: Long = 0L
-    //private var realTPF: Long = 0L
 
     /**
      * Called at the start of a game update tick.
      * This is where tick becomes tick + 1.
-
+     *
      * @param internalTime internal JavaFX time
      */
     private fun tickStart(internalTime: Long) {
@@ -290,9 +287,6 @@ private constructor() : AnimationTimer(), MasterTimer {
     private fun tickEnd() {
         val took = System.nanoTime() - startNanos
         performanceFPS.value = took.toInt()
-        //performanceFPS.value = (secondsToNanos(1.0).toDouble() / took).toInt()
-
-        //performanceFPS.set(Math.round(fpsPerformanceCounter.count((secondsToNanos(1.0) / ()).toFloat())))
     }
 
     /**
