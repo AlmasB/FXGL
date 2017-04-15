@@ -235,8 +235,6 @@ public abstract class FXGLApplication extends Application {
         log.debug("Resuming main loop");
         systemListeners.forEach(FXGLListener::onResume);
         getEventBus().fireEvent(FXGLEvent.resume());
-
-        ((GameApplication) this).setState(ApplicationState.PLAYING);
     }
 
     /**
@@ -357,7 +355,7 @@ public abstract class FXGLApplication extends Application {
         return FXGL.getDisplay();
     }
 
-    public final Input getInput() {
+    public Input getInput() {
         return FXGL.getInput();
     }
 

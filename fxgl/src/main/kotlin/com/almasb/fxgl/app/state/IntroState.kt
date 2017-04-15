@@ -26,12 +26,12 @@
 
 package com.almasb.fxgl.app.state
 
+import com.almasb.fxgl.app.ApplicationState
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.core.event.Subscriber
 import com.almasb.fxgl.scene.IntroScene
 import com.almasb.fxgl.scene.intro.FXGLIntroScene
-import com.almasb.fxgl.scene.menu.FXGLDefaultMenu
-import com.almasb.fxgl.scene.menu.MenuType
+import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 
 /**
  *
@@ -40,12 +40,24 @@ import com.almasb.fxgl.scene.menu.MenuType
  */
 object IntroState : AbstractAppState(FXGLIntroScene()) {
 
+    private lateinit var introFinishedSubscriber: Subscriber
+
     override fun onEnter() {
+        introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, { onIntroFinished() })
+
         (scene as IntroScene).startIntro()
     }
 
     override fun onExit() {
+        introFinishedSubscriber.unsubscribe()
+    }
 
+    private fun onIntroFinished() {
+        if (FXGL.getSettings().isMenuEnabled) {
+            FXGL.getApp().setState(ApplicationState.MAIN_MENU)
+        } else {
+            FXGL.getApp().startNewGame()
+        }
     }
 
     override fun onUpdate(tpf: Double) {

@@ -26,24 +26,28 @@
 
 package com.almasb.fxgl.app.state
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MenuEventHandler
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.menu.FXGLDefaultMenu
-import com.almasb.fxgl.scene.menu.MenuType
+import com.almasb.fxgl.service.Input
+import com.almasb.fxgl.service.impl.input.FXGLInput
+import javafx.scene.Node
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object MainMenuState : AbstractAppState(FXGLDefaultMenu(FXGL.getApp(), MenuType.MAIN_MENU)) {
+class DialogSubState : SubState {
+
+    private val input = FXGLInput()
+
+    override fun view(): Node {
+        TODO("DialogPane view goes here")
+    }
+
+    override fun input(): Input {
+        return input
+    }
 
     override fun onEnter() {
-        val menuHandler = FXGL.getApp().menuListener as MenuEventHandler
-
-        if (!menuHandler.isProfileSelected())
-            menuHandler.showProfileDialog()
     }
 
     override fun onExit() {

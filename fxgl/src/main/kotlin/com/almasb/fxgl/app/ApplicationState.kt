@@ -33,40 +33,44 @@ import com.almasb.fxgl.app.state.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-enum class ApplicationState(val state: AppState) {
+enum class ApplicationState(private val stateProducer: () -> AppState) {
 
     /**
      * The app starts with this state.
      */
-    STARTUP(StartupState),
+    STARTUP({ StartupState }),
 
     /**
      * This state is present when intro is being shown.
      */
-    INTRO(IntroState),
+    INTRO({ IntroState }),
 
     /**
      * This state is active whenever a game/level is loading.
      */
-    LOADING(LoadingState),
+    LOADING({ LoadingState }),
 
     /**
      * This state is active when user is in main menu.
      */
-    MAIN_MENU(MainMenuState),
+    MAIN_MENU({ MainMenuState }),
 
     /**
      * This state is active when user is in game menu.
      */
-    GAME_MENU(GameMenuState),
+    GAME_MENU({ GameMenuState }),
 
     /**
      * Active when game is paused but menus are not enabled.
      */
-    PAUSED(StartupState),
+    PAUSED({ StartupState }),
 
     /**
      * This state is active when user is playing.
      */
-    PLAYING(PlayState)
+    PLAYING({ PlayState });
+
+    fun state(): AppState {
+        return stateProducer.invoke()
+    }
 }

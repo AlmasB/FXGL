@@ -193,11 +193,6 @@ private constructor(private val stage: Stage,
     override fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
         scene.appendCSS(css)
-
-        // TODO: fix viewport from game scene
-        //scene.addEventHandler(KeyEvent.ANY, { scene.input.onKeyEvent(it) })
-        //scene.addEventHandler(MouseEvent.ANY, { scene.input.onMouseEvent(it, Viewport(getTargetWidth(), getTargetHeight()), scaleRatio.value) })
-
         scenes.add(scene)
     }
 

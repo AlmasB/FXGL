@@ -224,17 +224,17 @@ private constructor() : AnimationTimer(), MasterTimer {
         // for the rest of the game modules to use
         tickStart(internalTime)
 
-//        if (!paused) {
-//            timerActions.forEach { action -> action.update(tpf) }
-//            timerActions.removeIf { it.isExpired }
-//
-//            updateEvent.setTick(getTick())
-//            updateEvent.setTPF(tpf)
-//
-//            // this is the master update event, use indices to avoid concurrent modification
-//            for (i in listeners.indices)
-//                listeners[i].onUpdateEvent(updateEvent)
-//        }
+        if (!paused) {
+            timerActions.forEach { action -> action.update(tpf) }
+            timerActions.removeIf { it.isExpired }
+
+            updateEvent.setTick(getTick())
+            updateEvent.setTPF(tpf)
+
+            // this is the master update event, use indices to avoid concurrent modification
+            for (i in listeners.indices)
+                listeners[i].onUpdateEvent(updateEvent)
+        }
 
         // TODO: hack
         FXGL.getApp().onMasterUpdate(tpf)

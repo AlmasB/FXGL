@@ -57,44 +57,37 @@ internal class InitEventHandlersTask
     override fun run() {
         val bus = app.eventBus
 
-        //updateEvents()
-        //postUpdateEvents()
+        updateEvents()
+        postUpdateEvents()
 
-        //scanForServiceListeners()
+        scanForServiceListeners()
 
-        //gameWorldEvents()
-        //gameSceneEvents()
         displayEvents()
 
-//        bus.scanForHandlers(app)
-//
-//        if (app.settings.isMenuEnabled) {
-//            // services are now ready and listening, we can generate default profile
-//            (app.menuListener as MenuEventHandler).generateDefaultProfile()
-//        }
+        bus.scanForHandlers(app)
+
+        if (app.settings.isMenuEnabled) {
+            // services are now ready and listening, we can generate default profile
+            (app.menuListener as MenuEventHandler).generateDefaultProfile()
+        }
     }
 
     private fun updateEvents() {
         val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
 
-//        app.masterTimer.addUpdateListener(app.input)
-//        app.masterTimer.addUpdateListener(app.audioPlayer)
-//       game world ...
+        app.masterTimer.addUpdateListener(app.audioPlayer)
 
+        app.masterTimer.addUpdateListener({
+            if (app.settings.isProfilingEnabled) {
+                val g = app.gameScene.graphicsContext
 
-//        app.masterTimer.addUpdateListener({ event ->
-//            app.onUpdate(event.tpf())
-//
-//            if (app.settings.isProfilingEnabled) {
-//                val g = app.gameScene.graphicsContext
-//
-//                g.globalBlendMode = BlendMode.SRC_OVER
-//                g.globalAlpha = 1.0
-//                g.font = fpsFont
-//                g.fill = Color.RED
-//                g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
-//            }
-//        })
+                g.globalBlendMode = BlendMode.SRC_OVER
+                g.globalAlpha = 1.0
+                g.font = fpsFont
+                g.fill = Color.RED
+                g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
+            }
+        })
     }
 
     private fun postUpdateEvents() {
@@ -171,16 +164,6 @@ internal class InitEventHandlersTask
                 }
     }
 
-    private fun gameWorldEvents() {
-        app.getGameWorld().addWorldListener(app.getPhysicsWorld())
-        app.getGameWorld().addWorldListener(app.getGameScene())
-    }
-
-    private fun gameSceneEvents() {
-        app.getGameScene().addEventHandler(MouseEvent.ANY, { app.input.onMouseEvent(it, app.getGameScene().viewport, app.display.scaleRatio) })
-        app.getGameScene().addEventHandler(KeyEvent.ANY, { app.input.onKeyEvent(it) })
-    }
-
     private fun displayEvents() {
         val bus = app.eventBus
 
@@ -190,6 +173,7 @@ internal class InitEventHandlersTask
             if (app.state === ApplicationState.INTRO || app.state === ApplicationState.LOADING)
                 return@addEventHandler
 
+            // TODO: this wont be necessary when dialogs implemented as substates
             if (!app.isMenuOpen)
                 app.pause()
 

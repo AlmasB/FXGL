@@ -26,43 +26,63 @@
 
 package com.almasb.fxgl.app.state
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MenuEventHandler
-import com.almasb.fxgl.entity.GameWorld
-import com.almasb.fxgl.physics.PhysicsWorld
-import com.almasb.fxgl.scene.GameScene
-import com.almasb.fxgl.time.UpdateEvent
-import javafx.scene.input.KeyEvent
+import com.almasb.fxgl.app.ApplicationState
+import com.almasb.fxgl.app.FXGL.Companion.getDisplay
+import java.util.*
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object PlayState : AbstractAppState(FXGL.getInstance(GameScene::class.java)) {
+class AppStateMachine {
 
-    val gameWorld = FXGL.getInstance(GameWorld::class.java)
-    val physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
+    var applicationState = ApplicationState.STARTUP
+        private set
 
-    init {
-        gameWorld.addWorldListener(physicsWorld)
-        gameWorld.addWorldListener(scene as GameScene)
+    var appState: AppState = StartupState
+        private set
 
-        if (FXGL.getSettings().isMenuEnabled)
-            scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+    private val subStates = ArrayDeque<SubState>()
+
+    /**
+     * Can only be called when no substates are present.
+     */
+    fun setState(appState: ApplicationState) {
+        if (subStates.isNotEmpty())
+            throw IllegalStateException("Cannot change states with active substates")
+
+        applicationState = appState
+
+        this.appState.onExit()
+        this.appState.input().clearAll()
+
+        this.appState = appState.state()
+
+        getDisplay().setScene(this.appState.scene())
+
+        this.appState.onEnter()
     }
 
-    override fun onEnter() {
+    fun pushState(state: SubState) {
+        getCurrentState().input().clearAll()
 
+        subStates.push(state)
+        getDisplay().getCurrentScene().getRoot().getChildren().add(state.view())
+
+        state.onEnter()
     }
 
-    override fun onExit() {
+    fun popState() {
+        // TODO: check empty?
+        val state = subStates.pop()
 
+        state.onExit()
+
+        getDisplay().getCurrentScene().getRoot().getChildren().remove(state.view())
     }
 
-    override fun onUpdate(tpf: Double) {
-        // TODO: hardcoded event
-        gameWorld.onUpdateEvent(UpdateEvent(0, tpf))
-        FXGL.getApp().update(tpf)
+    fun getCurrentState(): State {
+        return if (subStates.isEmpty()) appState else subStates.peek()
     }
 }

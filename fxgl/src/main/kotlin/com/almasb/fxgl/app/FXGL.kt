@@ -285,6 +285,8 @@ class FXGL private constructor() {
         @JvmStatic fun getEventBus() = _eventBus
 
         private val _input by lazy { PlayState.input() }
+
+        @Deprecated("Use getGameScene().getInput()")
         @JvmStatic fun getInput() = _input
 
         private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }
