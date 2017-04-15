@@ -191,11 +191,6 @@ private constructor() : AnimationTimer(), MasterTimer {
     private val fpsCounter = FPSCounter()
 
     /**
-     * Used as delta from internal JavaFX timestamp to calculate render FPS.
-     */
-    private var previousInternalTime: Long = 0
-
-    /**
      * Average render FPS.
      */
     private val fps = SimpleIntegerProperty(60)
@@ -258,11 +253,6 @@ private constructor() : AnimationTimer(), MasterTimer {
     private fun tickStart(internalTime: Long) {
         startNanos = System.nanoTime()
 
-        // guard for the first run
-        if (previousInternalTime == 0L) {
-            previousInternalTime = internalTime - tpfNanos()
-        }
-
         tick.set(tick.get() + 1)
 
         fps.value = fpsCounter.update(internalTime)
@@ -277,7 +267,6 @@ private constructor() : AnimationTimer(), MasterTimer {
         now += realTPF
         playtime.value += realTPF
 
-        previousInternalTime = internalTime
         tpf = realTPF / 1000000000.0
     }
 
