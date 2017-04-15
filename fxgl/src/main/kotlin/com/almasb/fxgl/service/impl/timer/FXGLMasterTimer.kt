@@ -35,6 +35,7 @@ import com.almasb.fxgl.time.TimerActionImpl.TimerType
 import com.google.inject.Inject
 import javafx.animation.AnimationTimer
 import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.property.ReadOnlyLongProperty
 import javafx.beans.property.ReadOnlyLongWrapper
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.util.Duration
@@ -127,22 +128,24 @@ private constructor() : AnimationTimer(), MasterTimer {
      * This is the internal FXGL update tick,
      * executed 60 times a second ~ every 0.166 (6) seconds.
      *
-     * @param internalTime - The timestamp of the current frame given in nanoseconds (from JavaFX)
+     * @param internalTime the timestamp of the current frame given in nanoseconds (from JavaFX)
      */
     override fun handle(internalTime: Long) {
         // this will set up current tick and current time
         // for the rest of the game modules to use
         tickStart(internalTime)
 
-        timerActions.forEach { action -> action.update(now) }
-        timerActions.removeIf { it.isExpired }
+        if (!paused) {
+            timerActions.forEach { action -> action.update(tpf) }
+            timerActions.removeIf { it.isExpired }
 
-        updateEvent.setTick(getTick())
-        updateEvent.setTPF(tpf)
+            updateEvent.setTick(getTick())
+            updateEvent.setTPF(tpf)
 
-        // this is the master update event, use indices to avoid concurrent modification
-        for (i in listeners.indices)
-            listeners[i].onUpdateEvent(updateEvent)
+            // this is the master update event, use indices to avoid concurrent modification
+            for (i in listeners.indices)
+                listeners[i].onUpdateEvent(updateEvent)
+        }
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
@@ -163,20 +166,24 @@ private constructor() : AnimationTimer(), MasterTimer {
     /**
      * @return tick
      */
-    override fun tickProperty() = tick.readOnlyProperty
+    override fun tickProperty(): ReadOnlyLongProperty = tick.readOnlyProperty
 
     private var playtime = ReadOnlyLongWrapper(0)
 
-    override fun playtimeProperty() = playtime.readOnlyProperty
+    override fun playtimeProperty(): ReadOnlyLongProperty = playtime.readOnlyProperty
+
+    private var paused = true
 
     override fun start() {
         log.debug { "Starting master timer" }
         super.start()
+        paused = false
     }
 
     override fun stop() {
         log.debug { "Stopping master timer" }
-        super.stop()
+        paused = true
+        //super.stop()
     }
 
     /**
@@ -215,17 +222,17 @@ private constructor() : AnimationTimer(), MasterTimer {
      * These are used to approximate FPS value
      */
     private val fpsCounter = FPSCounter()
-    private val fpsPerformanceCounter = FPSCounter()
+    //private val fpsPerformanceCounter = FPSCounter()
 
     /**
-     * Used as delta from internal JavaFX timestamp to calculate render FPS
+     * Used as delta from internal JavaFX timestamp to calculate render FPS.
      */
     private var previousInternalTime: Long = 0
 
     /**
-     * Average render FPS
+     * Average render FPS.
      */
-    private val fps = SimpleIntegerProperty()
+    private val fps = SimpleIntegerProperty(60)
 
     /**
      * @return average render FPS property
@@ -233,7 +240,7 @@ private constructor() : AnimationTimer(), MasterTimer {
     override fun fpsProperty() = fps
 
     /**
-     * Average performance FPS
+     * Average performance FPS.
      */
     private val performanceFPS = SimpleIntegerProperty()
 
@@ -242,8 +249,8 @@ private constructor() : AnimationTimer(), MasterTimer {
      */
     override fun performanceFPSProperty() = performanceFPS
 
-    private var startNanos: Long = -1
-    private var realTPF: Long = -1
+    private var startNanos: Long = 0L
+    //private var realTPF: Long = 0L
 
     /**
      * Called at the start of a game update tick.
@@ -252,14 +259,23 @@ private constructor() : AnimationTimer(), MasterTimer {
      * @param internalTime internal JavaFX time
      */
     private fun tickStart(internalTime: Long) {
+        startNanos = System.nanoTime()
+
+        // guard for the first run
+        if (previousInternalTime == 0L) {
+            previousInternalTime = internalTime - tpfNanos()
+        }
+
         tick.set(tick.get() + 1)
 
-        startNanos = System.nanoTime()
-        realTPF = internalTime - previousInternalTime
+        fps.value = fpsCounter.update(internalTime)
 
-        if (realTPF > tpfNanos()) {
-            realTPF = tpfNanos()
-        }
+        // assume that fps is at least 5 to avoid subtle bugs
+        // disregard minor fluctuations > 55 for smoother experience
+        if (fps.value < 5 || fps.value > 55)
+            fps.value = 60
+
+        val realTPF = (secondsToNanos(1.0).toDouble() / fps.value).toLong()
 
         now += realTPF
         playtime.value += realTPF
@@ -272,8 +288,11 @@ private constructor() : AnimationTimer(), MasterTimer {
      * Called at the end of a game update tick.
      */
     private fun tickEnd() {
-        performanceFPS.set(Math.round(fpsPerformanceCounter.count((secondsToNanos(1.0) / (System.nanoTime() - startNanos)).toFloat())))
-        fps.set(Math.round(fpsCounter.count((secondsToNanos(1.0) / realTPF).toFloat())))
+        val took = System.nanoTime() - startNanos
+        performanceFPS.value = took.toInt()
+        //performanceFPS.value = (secondsToNanos(1.0).toDouble() / took).toInt()
+
+        //performanceFPS.set(Math.round(fpsPerformanceCounter.count((secondsToNanos(1.0) / ()).toFloat())))
     }
 
     /**
@@ -316,7 +335,7 @@ private constructor() : AnimationTimer(), MasterTimer {
         val act = TimerActionImpl(getNow(), interval, action, TimerType.INDEFINITE)
         timerActions.add(act)
 
-        whileCondition.addListener { obs, old, isTrue ->
+        whileCondition.addListener { _, _, isTrue ->
             if (!isTrue)
                 act.expire()
         }

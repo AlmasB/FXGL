@@ -181,7 +181,7 @@ public class Particle implements Poolable {
         g.setGlobalAlpha(alpha);
         g.setGlobalBlendMode(blendMode);
 
-        Image particleImage = image != null ? image : ParticleEmitter.getCachedImage((Color) startColor, (Color) endColor, (int)(alpha * 100));
+        Image particleImage = image != null ? image : ParticleEmitter.getCachedImage((Color) startColor, (Color) endColor, (int)(alpha * 99));
 
         g.save();
 

@@ -37,6 +37,7 @@ import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.entity.control.RandomMoveControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -45,6 +46,7 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import static java.lang.Math.*;
@@ -79,6 +81,7 @@ public class SmokeSample extends GameApplication {
             @Override
             protected void onActionBegin() {
                 Color randomColor = Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random());
+                emitter.setBlendMode(BlendMode.SRC_OVER);
                 e.setStartColor(randomColor);
                 e.setEndColor(Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random()));
             }
@@ -103,10 +106,10 @@ public class SmokeSample extends GameApplication {
         e.setGravityFunction(() -> new Point2D((FXGLMath.noise1D(7776 + getTick()) - 0.5) * 0.02, 0));
         //e.setSpawnPointFunction((i, x, y) -> new Point2D(x + FXGLMath.noise1D(333 + getTick()) * 150 - 75, y + FXGLMath.noise1D(getTick()) * 150 - 75));
 
-        Entities.builder()
-                .at(getWidth() / 2, getHeight() - 100)
-                .with(new ParticleControl(e), new RandomMoveControl(2))
-                .buildAndAttach(getGameWorld());
+//        Entities.builder()
+//                .at(getWidth() / 2, getHeight() - 100)
+//                .with(new ParticleControl(e), new RandomMoveControl(2))
+//                .buildAndAttach(getGameWorld());
 
 
         emitter = ParticleEmitters.newFireEmitter();
@@ -117,18 +120,39 @@ public class SmokeSample extends GameApplication {
         emitter.setScaleFunction((i, x, y) -> new Point2D(FXGLMath.random(0, 0.01f), FXGLMath.random(-0.05f, 0.05f)));
         emitter.setStartColor(Color.YELLOW);
         emitter.setEndColor(Color.RED);
-        emitter.setBlendMode(BlendMode.SRC_OVER);
+        //emitter.setBlendMode(BlendMode.SRC_OVER);
 
         //emitter.setSourceImage(getAssetLoader().loadTexture("particleTexture2.png").toColor(Color.rgb(230, 75, 40)).getImage());
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
-                //.with(new ParticleControl(emitter))
+                .with(new ParticleControl(emitter))
                 .buildAndAttach(getGameWorld());
+
+
+
+        Entities.builder()
+                .at(250, 250)
+                .viewFromNode(new Rectangle(40, 40, Color.BLUE))
+                .with(new CircularMovementControl(10, 25))
+                .buildAndAttach(getGameWorld());
+    }
+
+    private Text debug;
+
+    @Override
+    protected void initUI() {
+        debug = getUIFactory().newText("");
+
+        getUIFactory().centerText(debug);
+
+        getGameScene().addUINode(debug);
     }
 
     @Override
     protected void onUpdate(double tpf) {
+        debug.setText(tpf + " at " + getMasterTimer().getFPS());
+
         entity.setX(getInput().getMouseXWorld() - 25);
         entity.setY(getInput().getMouseYWorld() - 25);
     }

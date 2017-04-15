@@ -38,6 +38,7 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -61,7 +62,7 @@ public class ParticleTextureSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+        settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -73,6 +74,7 @@ public class ParticleTextureSample extends GameApplication {
         getInput().addAction(new UserAction("Change Color") {
             @Override
             protected void onActionBegin() {
+                emitter.setBlendMode(emitter.getBlendMode() == BlendMode.SRC_OVER ? BlendMode.ADD : BlendMode.SRC_OVER);
                 emitter.setSourceImage(getAssetLoader().loadTexture("particleTexture2.png")
                         .multiplyColor(Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random())).getImage());
             }

@@ -52,7 +52,7 @@ class TimerActionImpl
         ONCE, INDEFINITE
     }
 
-    private val interval: Double
+    private val interval = interval.toSeconds()
 
     /**
      * @return true if the timer has expired, false if active
@@ -63,9 +63,8 @@ class TimerActionImpl
     private var isPaused = false
     override fun isPaused() = isPaused
 
-    init {
-        this.interval = FXGLMasterTimer.secondsToNanos(interval.toSeconds()).toDouble()
-    }
+    private var lastFired = 0.0
+    private var currentTime = 0.0
 
     /**
      * Updates the state of this timer action.
@@ -75,16 +74,16 @@ class TimerActionImpl
      *
      * Note: the action will not be executed if the timer
      * has expired.
-     *
-     * @param now current time in nanoseconds
      */
-    fun update(now: Long) {
+    fun update(tpf: Double) {
         if (isExpired || isPaused)
             return
 
-        if (now - time >= interval) {
+        currentTime += tpf
+
+        if (currentTime - lastFired >= interval) {
             action.run()
-            time = now
+            lastFired = currentTime
 
             if (type == TimerType.ONCE) {
                 expire()

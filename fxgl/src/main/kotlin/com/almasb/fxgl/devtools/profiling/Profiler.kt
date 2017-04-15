@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.service.MasterTimer
+import com.almasb.fxgl.time.UpdateEvent
 
 /**
  * Basic profiler.
@@ -64,7 +65,7 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
 
     fun getAvgPerformance() = performance / frames
 
-    fun getAvgPerformanceRounded() = getAvgPerformance().toInt()
+    fun getAvgPerformanceRounded() = "%.3f".format(getAvgPerformance() / 1000000000.0)
 
     private var memoryUsage = 0L
     private var memoryUsageMin = Long.MAX_VALUE
@@ -101,7 +102,7 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
 
     private var gcRuns = 0
 
-    override fun onUpdateEvent(event: com.almasb.fxgl.time.UpdateEvent) {
+    override fun onUpdateEvent(event: UpdateEvent) {
         frames++
         fps += masterTimer.fps
         performance += masterTimer.performanceFPS
@@ -160,7 +161,7 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
 
         log.info("Processed Frames: $frames")
         log.info("Average FPS: ${getAvgFPSRounded()}")
-        log.info("Avg Performance: ${getAvgPerformanceRounded()}")
+        log.info("Avg Frame Took: ${getAvgPerformanceRounded()} sec")
         log.info("Avg Memory Usage: ${getAvgMemoryUsageRounded()} MB")
         log.info("Min Memory Usage: ${getMinMemoryUsageRounded()} MB")
         log.info("Max Memory Usage: ${getMaxMemoryUsageRounded()} MB")
@@ -175,7 +176,7 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
         // first clear the contents
         sb.setLength(0)
         sb.append("FPS: ").append(masterTimer.fps)
-                .append("\nPerformance: ").append(masterTimer.performanceFPS)
+                .append("\nFrame in: ").append("%.3f s".format(masterTimer.performanceFPS / 1000000000.0))
                 .append("\nNow Mem (MB): ").append(getCurrentMemoryUsageRounded())
                 .append("\nAvg Mem (MB): ").append(getAvgMemoryUsageRounded())
                 .append("\nMin Mem (MB): ").append(getMinMemoryUsageRounded())
