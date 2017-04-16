@@ -37,9 +37,8 @@ import com.almasb.fxgl.scene.menu.MenuType
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object MainMenuState : AbstractAppState(FXGLDefaultMenu(FXGL.getApp(), MenuType.MAIN_MENU)) {
+object MainMenuState : AbstractAppState(FXGL.getApp().sceneFactory.newMainMenu(FXGL.getApp())) {
 
-    // can be STARTUP, INTRO, GAME MENU
     override fun onEnter(prevState: State) {
         when(prevState) {
             is StartupState -> {

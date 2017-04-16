@@ -32,7 +32,6 @@ import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.GameScene
-import com.almasb.fxgl.time.UpdateEvent
 import javafx.scene.input.KeyEvent
 
 /**
@@ -40,7 +39,7 @@ import javafx.scene.input.KeyEvent
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object PlayState : AbstractAppState(FXGL.getInstance(GameScene::class.java)) {
+object PlayState : AbstractAppState(FXGL.getApp().sceneFactory.newGameScene()) {
 
     val gameState = FXGL.getInstance(GameState::class.java)
     val gameWorld = FXGL.getInstance(GameWorld::class.java)
@@ -63,8 +62,7 @@ object PlayState : AbstractAppState(FXGL.getInstance(GameScene::class.java)) {
     }
 
     override fun onUpdate(tpf: Double) {
-        // TODO: hardcoded event
-        gameWorld.onUpdateEvent(UpdateEvent(0, tpf))
+        gameWorld.onUpdate(tpf)
         FXGL.getApp().update(tpf)
     }
 }

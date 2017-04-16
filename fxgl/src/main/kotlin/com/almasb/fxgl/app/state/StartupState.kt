@@ -31,6 +31,7 @@ import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.io.FXGLIO
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Input
+import com.almasb.fxgl.service.listener.FXGLListener
 
 /**
  *
@@ -71,9 +72,11 @@ object StartupState : AppState {
         if (app.settings.isProfilingEnabled) {
             val profiler = FXGL.newProfiler()
 
-            app.eventBus.addEventHandler(FXGLEvent.EXIT, {
-                profiler.stop()
-                profiler.print()
+            app.addFXGLListener(object : FXGLListener {
+                override fun onExit() {
+                    profiler.stop()
+                    profiler.print()
+                }
             })
 
             log.debug("Injecting profiler")
@@ -92,8 +95,7 @@ object StartupState : AppState {
             if (app.getSettings().isMenuEnabled()) {
                 app.setState(ApplicationState.MAIN_MENU)
             } else {
-                app.setState(ApplicationState.LOADING)
-                //app.startNewGame()
+                app.startNewGame()
             }
         }
     }

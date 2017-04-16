@@ -98,17 +98,20 @@ internal class InitEventHandlersTask
             }
         }
 
+        postUpdateTimer.start()
+
         app.addFXGLListener(object : FXGLListener {
             override fun onPause() {
-                postUpdateTimer.stop()
+                //postUpdateTimer.stop()
             }
 
             override fun onResume() {
-                postUpdateTimer.start()
+                //postUpdateTimer.start()
             }
 
             override fun onReset() {
-                //app.getGameWorld().reset()
+                app.gameWorld.reset()
+                app.masterTimer.reset()
             }
 
             override fun onExit() {
@@ -122,13 +125,6 @@ internal class InitEventHandlersTask
 
         val bus = app.eventBus
         val services = FXGL.getServices()
-
-//        services.map { it.service() }
-//                .filter { it.interfaces.contains(FXGLListener::class.java) }
-//                .forEach {
-//                    log.debug("FXGLListener: $it")
-//                    app.addFXGLListener(FXGL.getInstance(it) as FXGLListener)
-//                }
 
         services.map { it.service() }
                 .filter { it.interfaces.contains(UserProfileSavable::class.java) }

@@ -38,7 +38,7 @@ import com.almasb.fxgl.scene.intro.IntroFinishedEvent
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object IntroState : AbstractAppState(FXGLIntroScene()) {
+object IntroState : AbstractAppState(FXGL.getApp().sceneFactory.newIntro()) {
 
     private lateinit var introFinishedSubscriber: Subscriber
 

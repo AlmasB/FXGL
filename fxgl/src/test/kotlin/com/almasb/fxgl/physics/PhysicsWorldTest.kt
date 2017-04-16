@@ -115,7 +115,7 @@ class PhysicsWorldTest {
 
         gameWorld.addEntity(entity1)
         gameWorld.addEntity(entity2)
-        gameWorld.onUpdateEvent(com.almasb.fxgl.time.UpdateEvent(0, 0.016))
+        gameWorld.onUpdate(0.016)
 
         // no collision happened, entities are apart
         assertThat(hitboxCount, `is`(0))
@@ -126,7 +126,7 @@ class PhysicsWorldTest {
         // move 2nd entity closer to first, colliding with it
         entity2.translateX(-30.0)
 
-        gameWorld.onUpdateEvent(com.almasb.fxgl.time.UpdateEvent(0, 0.016))
+        gameWorld.onUpdate(0.016)
 
         // hit box and collision begin triggered, entities are now colliding
         assertThat(hitboxCount, `is`(1))
@@ -134,7 +134,7 @@ class PhysicsWorldTest {
         assertThat(collisionCount, `is`(1))
         assertThat(collisionEndCount, `is`(0))
 
-        gameWorld.onUpdateEvent(com.almasb.fxgl.time.UpdateEvent(0, 0.016))
+        gameWorld.onUpdate(0.016)
 
         // collision continues
         assertThat(hitboxCount, `is`(1))
@@ -142,7 +142,7 @@ class PhysicsWorldTest {
         assertThat(collisionCount, `is`(2))
         assertThat(collisionEndCount, `is`(0))
 
-        gameWorld.onUpdateEvent(com.almasb.fxgl.time.UpdateEvent(0, 0.016))
+        gameWorld.onUpdate(0.016)
 
         // collision continues
         assertThat(hitboxCount, `is`(1))
@@ -153,7 +153,7 @@ class PhysicsWorldTest {
         // move 2nd entity away from 1st
         entity2.translateX(30.0)
 
-        gameWorld.onUpdateEvent(com.almasb.fxgl.time.UpdateEvent(0, 0.016))
+        gameWorld.onUpdate(0.016)
 
         // collision end
         assertThat(hitboxCount, `is`(1))
@@ -166,7 +166,7 @@ class PhysicsWorldTest {
         // move 2nd entity closer to 1st, colliding with it
         entity2.translateX(-30.0)
 
-        gameWorld.onUpdateEvent(com.almasb.fxgl.time.UpdateEvent(0, 0.016))
+        gameWorld.onUpdate(0.016)
 
         // no change in collision
         assertThat(hitboxCount, `is`(1))

@@ -222,25 +222,20 @@ public abstract class FXGLApplication extends Application {
     /**
      * Pause execution of current state.
      */
-    @Deprecated
     public final void pause() {
-        log.debug("Pausing main loop");
+        log.debug("Pausing application");
 
         //pushState(PauseSubState.INSTANCE);
 
-        // TODO: move to enter state of pause
         systemListeners.forEach(FXGLListener::onPause);
-        getEventBus().fireEvent(FXGLEvent.pause());
     }
 
     /**
      * Resume execution of current state.
      */
-    @Deprecated
     public final void resume() {
-        log.debug("Resuming main loop");
+        log.debug("Resuming application");
         systemListeners.forEach(FXGLListener::onResume);
-        getEventBus().fireEvent(FXGLEvent.resume());
     }
 
     /**
@@ -251,7 +246,6 @@ public abstract class FXGLApplication extends Application {
     public final void reset() {
         log.debug("Resetting FXGL application");
         systemListeners.forEach(FXGLListener::onReset);
-        getEventBus().fireEvent(FXGLEvent.reset());
 
         System.gc();
     }
@@ -263,7 +257,6 @@ public abstract class FXGLApplication extends Application {
     protected final void exit() {
         log.debug("Exiting FXGL application");
         systemListeners.forEach(FXGLListener::onExit);
-        getEventBus().fireEvent(FXGLEvent.exit());
 
         FXGL.destroy();
         log.debug("Closing FXGL logger and exiting JavaFX");

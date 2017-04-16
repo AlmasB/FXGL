@@ -39,25 +39,10 @@ import javafx.scene.input.KeyEvent
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object GameMenuState : AbstractAppState(FXGLDefaultMenu(FXGL.getApp(), MenuType.GAME_MENU)) {
-
-    private var canCloseMenu = true
+object GameMenuState : AbstractAppState(FXGL.getApp().sceneFactory.newGameMenu(FXGL.getApp())) {
 
     init {
-
         scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
-//        input().addAction(object : UserAction("Close Menu$") {
-//            override fun onActionBegin() {
-//                if (canCloseMenu) {
-//                    FXGL.getApp().setState(PlayState)
-//                    canCloseMenu = false
-//                }
-//            }
-//
-//            override fun onActionEnd() {
-//                canCloseMenu = true
-//            }
-//        }, FXGL.getSettings().menuKey)
     }
 
     override fun onEnter(prevState: State) {

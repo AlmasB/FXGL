@@ -60,7 +60,7 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initializing Game", 1)
 
-        log.debug("Clearing previous gameState")
+        log.debug("Clearing gameState")
         app.gameState.clear()
 
         val vars = hashMapOf<String, Any>()
@@ -83,7 +83,13 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         app.initPhysics()
 
         annotationMap[AddCollisionHandler::class.java]?.let {
-            it.forEach { app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler) }
+            it.forEach {
+                val handler = FXGL.getInstance(it) as CollisionHandler
+
+                log.debug("@Add $handler")
+
+                app.physicsWorld.addCollisionHandler(handler)
+            }
         }
 
         update("Initializing UI", 3)

@@ -75,7 +75,7 @@ import java.util.Map;
  */
 public abstract class GameApplication extends FXGLApplication {
 
-    private AppStateMachine stateMachine = new AppStateMachine();
+    private AppStateMachine stateMachine;
 
     /**
      * @return current application state
@@ -103,11 +103,23 @@ public abstract class GameApplication extends FXGLApplication {
 
     /**
      * Override to provide custom intro/loading/menu scenes.
+     * Use {@link #setSceneFactory(SceneFactory)}.
      *
      * @return scene factory
      */
+    @Deprecated
     protected SceneFactory initSceneFactory() {
         return new SceneFactory();
+    }
+
+    private SceneFactory sceneFactory;
+
+    public SceneFactory getSceneFactory() {
+        return sceneFactory;
+    }
+
+    public void setSceneFactory(SceneFactory sceneFactory) {
+        this.sceneFactory = sceneFactory;
     }
 
     /**
@@ -245,25 +257,6 @@ public abstract class GameApplication extends FXGLApplication {
         // no default implementation
     }
 
-    /**
-     * @return true if any menu is open
-     */
-    public boolean isMenuOpen() {
-        return getState() == ApplicationState.GAME_MENU
-                || getState() == ApplicationState.MAIN_MENU;
-    }
-
-    /**
-     * @return true if game is paused or menu is open
-     */
-//    public boolean isPaused() {
-//        return isMenuOpen() || getState() == ApplicationState.PAUSED;
-//    }
-
-    private void onIntroFinished() {
-
-    }
-
     private EventHandler<MouseEvent> mouseHandler = e -> {
         // TODO: incorrect viewport
         stateMachine.getCurrentState().input().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
@@ -278,6 +271,10 @@ public abstract class GameApplication extends FXGLApplication {
         log.debug("Configuring GameApplication");
 
         long start = System.nanoTime();
+
+        setSceneFactory(initSceneFactory());
+
+        stateMachine = new AppStateMachine();
 
         getMasterTimer().addUpdateListener(stateMachine);
 
@@ -309,19 +306,11 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * Initialize user application.
      */
-    private void initApp(Task<?> initTask) {
+    private void initApp(InitAppTask initTask) {
         log.debug("Initializing App");
 
-        // on first start this is no-op, as for rest this ensures
-        // that even without menus and during direct calls to start*Game()
-        // the system is clean, also reset performs System.gc() to clear stuff we used in init
-//        pause();
-//        reset();
+        LoadingState.INSTANCE.setInitTask(initTask);
         setState(ApplicationState.LOADING);
-
-//        ((LoadingScene) LoadingState.INSTANCE.scene()).bind(initTask);
-//
-//        getExecutor().execute(initTask);
     }
 
     /**

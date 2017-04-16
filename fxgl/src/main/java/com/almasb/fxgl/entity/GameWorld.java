@@ -59,7 +59,7 @@ import java.util.function.Predicate;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld extends EntityWorld implements UpdateEventListener {
+public final class GameWorld extends EntityWorld {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameWorld");
 
@@ -70,17 +70,16 @@ public final class GameWorld extends EntityWorld implements UpdateEventListener 
         log.debug("Game world initialized");
     }
 
-    @Override
-    public void onUpdateEvent(UpdateEvent event) {
-        update(event.tpf());
-        updateTriggers(event);
+    public void onUpdate(double tpf) {
+        update(tpf);
+        updateTriggers(tpf);
     }
 
-    private void updateTriggers(UpdateEvent event) {
+    private void updateTriggers(double tpf) {
         for (Iterator<EventTrigger<?> > it = eventTriggers.iterator(); it.hasNext(); ) {
             EventTrigger trigger = it.next();
 
-            trigger.onUpdateEvent(event);
+            trigger.onUpdate(tpf);
 
             if (trigger.reachedLimit()) {
                 it.remove();

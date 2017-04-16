@@ -129,7 +129,7 @@ public class GameWorldTest {
         genericEntity = new Entity();
         gameWorld.addEntity(genericEntity);
 
-        gameWorld.onUpdateEvent(new UpdateEvent(1, 0.016));
+        gameWorld.onUpdate(0.016);
     }
 
     @Test

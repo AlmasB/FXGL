@@ -36,22 +36,22 @@ public interface FXGLListener {
     /**
      * Fired on main loop paused.
      */
-    void onPause();
+    default void onPause() {}
 
     /**
      * Fired on main loop resumed.
      */
-    void onResume();
+    default void onResume() {}
 
     /**
      * Fired on FXGL reset.
      * This is where all resources should be freed if they are no longer used.
      */
-    void onReset();
+    default void onReset() {}
 
     /**
      * Fired before the system is about to shut down.
      * Do NOT make any asynchronous calls as they may not complete.
      */
-    void onExit();
+    default void onExit() {}
 }

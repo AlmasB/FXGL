@@ -29,15 +29,18 @@ package com.almasb.fxgl.app.state
 import com.almasb.fxgl.app.ApplicationState
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.InitAppTask
-import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.LoadingScene
+import javafx.concurrent.Task
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object LoadingState : AbstractAppState(LoadingScene()) {
+object LoadingState : AbstractAppState(FXGL.getApp().sceneFactory.newLoadingScene()) {
+
+    lateinit var initTask: InitAppTask
 
     override fun onEnter(prevState: State) {
         when(prevState) {
@@ -51,20 +54,20 @@ object LoadingState : AbstractAppState(LoadingScene()) {
 
             is MainMenuState -> {
                 // if load or new game?
+                FXGL.getApp().reset()
             }
 
             is GameMenuState -> {
-                FXGL.getApp().reset();
+                FXGL.getApp().reset()
             }
 
             is PlayState -> {
-
+                FXGL.getApp().reset()
             }
 
             else -> throw IllegalArgumentException("Entered LoadingState from illegal state: $prevState")
         }
 
-        val initTask = InitAppTask(FXGL.getApp())
         initTask.onEndAction = Runnable {
             FXGL.getApp().setState(ApplicationState.PLAYING)
         }

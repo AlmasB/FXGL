@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.ApplicationState
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.getDisplay
 import com.almasb.fxgl.core.logging.FXGLLogger
-import com.almasb.fxgl.time.FXGLLocalTimer
 import com.almasb.fxgl.time.UpdateEvent
 import com.almasb.fxgl.time.UpdateEventListener
 import java.util.*
@@ -93,20 +92,24 @@ class AppStateMachine : UpdateEventListener {
         prevState.input().clearAll()
 
         subStates.push(state)
-        getDisplay().getCurrentScene().getRoot().getChildren().add(state.view())
+        getDisplay().currentScene.root.children.add(state.view())
 
         state.onEnter(prevState)
     }
 
     fun popState() {
-        // TODO: check empty?
+        if (subStates.isEmpty()) {
+            log.warning("Cannot pop state: Substates are empty!")
+            return
+        }
+
         val state = subStates.pop()
 
         log.debug("Pop state: $state")
 
         state.onExit()
 
-        getDisplay().getCurrentScene().getRoot().getChildren().remove(state.view())
+        getDisplay().currentScene.root.children.remove(state.view())
     }
 
     fun getCurrentState(): State {
