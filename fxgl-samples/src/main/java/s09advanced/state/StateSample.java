@@ -24,57 +24,70 @@
  * SOFTWARE.
  */
 
-package s01basics;
+package s09advanced.state;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to use input service and bind actions to triggers.
+ * Shows how to init a basic game object and attach it to the world
+ * using fluent API.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class InputSample extends GameApplication {
+public class StateSample extends GameApplication {
+
+    // 1. define types of entities in the game using Enum
+    private enum Type {
+        PLAYER
+    }
+
+    // make the field instance level
+    // but do NOT init here for properly functioning save-load system
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("InputSample");
+        settings.setTitle("StateSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
+
+    private ShopState shopState;
 
     @Override
     protected void initInput() {
-        // 1. get input service
-        Input input = getInput();
-
-        // 2. add key/mouse bound actions
-        // when app is running press F to see output to console
-        input.addAction(new UserAction("Print Line") {
+        getInput().addAction(new UserAction("Open Shop Menu") {
             @Override
             protected void onActionBegin() {
-                System.out.println("Action Begin");
-            }
-
-            @Override
-            protected void onAction() {
-                System.out.println("On Action");
-            }
-
-            @Override
-            protected void onActionEnd() {
-                System.out.println("Action End");
+                pushState(shopState);
             }
         }, KeyCode.F);
+    }
+
+    @Override
+    protected void initGame() {
+        shopState = new ShopState();
+
+        // 2. create entity and attach to world using fluent API
+        player = Entities.builder()
+                .type(Type.PLAYER)
+                .at(100, 100)
+                .viewFromNode(new Rectangle(40, 40))
+                .buildAndAttach(getGameWorld());
     }
 
     public static void main(String[] args) {
