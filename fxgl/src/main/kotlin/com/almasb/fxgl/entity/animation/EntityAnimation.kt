@@ -32,7 +32,7 @@ import javafx.animation.Animation
 import javafx.event.EventHandler
 
 /**
- *
+ * TODO: use lerp and manual animation. DO NOT rely on JavaFX timeline
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

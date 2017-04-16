@@ -26,6 +26,7 @@
 
 package com.almasb.fxglgames.drop;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.UserAction;
@@ -56,6 +57,7 @@ public class DropApp extends GameApplication {
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
