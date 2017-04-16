@@ -184,8 +184,9 @@ class FXGLInput : Input {
         bindings.filter { isTriggered(it.value, event) && !currentActions.contains(it.key) }
                 .forEach {
                     currentActions.add(it.key)
-                    // TODO: process check?
-                    it.key.fireActionBegin()
+
+                    if (processActions)
+                        it.key.fireActionBegin()
                 }
     }
 
@@ -204,8 +205,9 @@ class FXGLInput : Input {
         })
         .forEach {
             currentActions.remove(it.key)
-            // TODO: process check?
-            it.key.fireActionEnd()
+
+            if (processActions)
+                it.key.fireActionEnd()
         }
     }
 

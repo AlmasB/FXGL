@@ -106,10 +106,10 @@ private constructor(private val stage: Stage,
      * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
      * So we copy the occurred event and reroute to whichever FXGL scene is current.
      */
-    private val fxToFXGLFilter: EventHandler<Event> = EventHandler { event ->
-        val copy = event.copyFor(null, null)
-        getCurrentScene()?.fireEvent(copy)
-    }
+//    private val fxToFXGLFilter: EventHandler<Event> = EventHandler { event ->
+//        val copy = event.copyFor(null, null)
+//        getCurrentScene()?.fireEvent(copy)
+//    }
 
     init {
         settings = FXGL.getSettings()
@@ -131,7 +131,7 @@ private constructor(private val stage: Stage,
 
         initDialogBox()
 
-        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
+        //fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
 
         computeSceneSettings(settings.width.toDouble(), settings.height.toDouble())
         computeScaledSize()
@@ -351,13 +351,13 @@ private constructor(private val stage: Stage,
 
         val root = fxScene.root
         // clear listener
-        fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
+        //fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
         // clear root of previous JavaFX scene
         fxScene.root = Pane()
 
         // create and init new JavaFX scene
         fxScene = Scene(root)
-        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
+        //fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
         stage.scene = fxScene
         if (settings.isFullScreen) {
             stage.isFullScreen = true
@@ -384,7 +384,7 @@ private constructor(private val stage: Stage,
     private fun initDialogBox() {
         dialog = DialogPane(this)
 
-        // hack
+        // TODO: hack
         DialogSubState.setDialogPane(dialog)
 
         dialog.setOnShown(Runnable {

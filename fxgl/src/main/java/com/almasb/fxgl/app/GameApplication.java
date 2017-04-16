@@ -262,32 +262,48 @@ public abstract class GameApplication extends FXGLApplication {
 
         long start = System.nanoTime();
 
+        // TODO: refactor
         setSceneFactory(initSceneFactory());
 
         stateMachine = new AppStateMachine();
 
         getMasterTimer().addUpdateListener(stateMachine);
 
-        // TODO: inject states?
         playState = (PlayState) ApplicationState.PLAYING.state();
 
-        for (ApplicationState s : ApplicationState.values()) {
-            // TODO: merge
-            // TODO: intro?
-            if (!s.equals(ApplicationState.MAIN_MENU) && !s.equals(ApplicationState.GAME_MENU)) {
-                s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
-                s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
-            } else {
-                if (getSettings().isMenuEnabled()) {
-                    s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
-                    s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
-                }
-            }
-        }
+        getPrimaryStage().getScene().addEventFilter(KeyEvent.ANY, keyHandler);
+        getPrimaryStage().getScene().addEventFilter(MouseEvent.ANY, mouseHandler);
+
+//        for (ApplicationState s : ApplicationState.values()) {
+//
+//            if (getSettings().isIntroEnabled() && s == ApplicationState.INTRO
+//                    || getSettings().isMenuEnabled() && s == ApplicationState.GAME_MENU
+//                    || getSettings().isMenuEnabled() && s == ApplicationState.MAIN_MENU) {
+//
+//                attachHandlers(s);
+//            }
+//
+//            // TODO: merge
+//            // TODO: intro?
+//            if (!s.equals(ApplicationState.MAIN_MENU) && !s.equals(ApplicationState.GAME_MENU)) {
+//                s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
+//                s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
+//            } else {
+//                if (getSettings().isMenuEnabled()) {
+//                    s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
+//                    s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
+//                }
+//            }
+//        }
 
         Async.startFX(stateMachine::start);
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+    }
+
+    private void attachHandlers(ApplicationState state) {
+        state.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
+        state.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
     }
 
     public void runPreInit() {
