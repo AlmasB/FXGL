@@ -29,7 +29,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.annotation.AddCollisionHandler
 import com.almasb.fxgl.annotation.SetEntityFactory
 import com.almasb.fxgl.entity.EntityFactory
-import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.saving.DataFile
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner

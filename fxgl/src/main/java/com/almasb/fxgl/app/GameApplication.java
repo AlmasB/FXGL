@@ -83,12 +83,7 @@ public abstract class GameApplication extends FXGLApplication {
         return stateMachine.getApplicationState();
     }
 
-    /**
-     * DO NOT USE.
-     *
-     * @param state
-     */
-    public void setState(ApplicationState state) {
+    void setState(ApplicationState state) {
         stateMachine.setState(state);
     }
 
@@ -299,6 +294,18 @@ public abstract class GameApplication extends FXGLApplication {
         initAchievements();
         initInput();
         preInit();
+    }
+
+    @Override
+    public void pause() {
+        pushState(PauseSubState.INSTANCE);
+        super.pause();
+    }
+
+    @Override
+    public void resume() {
+        popState();
+        super.resume();
     }
 
     /**

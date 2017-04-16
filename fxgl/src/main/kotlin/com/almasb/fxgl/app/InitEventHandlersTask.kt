@@ -34,14 +34,11 @@ import com.almasb.fxgl.saving.SaveEvent
 import com.almasb.fxgl.scene.DisplayEvent
 import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.service.listener.AchievementListener
-import com.almasb.fxgl.app.FXGLListener
 import com.almasb.fxgl.service.listener.NotificationListener
 import com.almasb.fxgl.service.listener.UserProfileSavable
 import com.google.inject.Inject
 import javafx.animation.AnimationTimer
 import javafx.scene.effect.BlendMode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 
 /**

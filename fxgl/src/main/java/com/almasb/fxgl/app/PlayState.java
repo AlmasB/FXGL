@@ -29,7 +29,6 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.physics.PhysicsWorld;
-import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

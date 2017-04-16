@@ -221,18 +221,15 @@ public abstract class FXGLApplication extends Application {
     /**
      * Pause execution of current state.
      */
-    public final void pause() {
+    public void pause() {
         log.debug("Pausing application");
-
-        //pushState(PauseSubState.INSTANCE);
-
         systemListeners.forEach(FXGLListener::onPause);
     }
 
     /**
      * Resume execution of current state.
      */
-    public final void resume() {
+    public void resume() {
         log.debug("Resuming application");
         systemListeners.forEach(FXGLListener::onResume);
     }

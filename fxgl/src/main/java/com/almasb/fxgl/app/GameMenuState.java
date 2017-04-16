@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.scene.FXGLScene;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.scene.input.KeyEvent;

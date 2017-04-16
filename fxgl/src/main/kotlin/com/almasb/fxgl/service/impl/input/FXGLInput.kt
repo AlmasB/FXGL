@@ -113,23 +113,26 @@ class FXGLInput : Input {
      * and handle them appropriately.
      */
     private fun initActionListener() {
-        currentActions.addListener { c: ListChangeListener.Change<out UserAction> ->
-            while (c.next()) {
-                if (!processActions)
-                    continue
-
-                if (c.wasAdded()) {
-                    c.addedSubList.forEach { it.fireActionBegin() }
-                } else if (c.wasRemoved()) {
-                    c.removed.forEach { it.fireActionEnd() }
-                }
-            }
-        }
+//        currentActions.addListener { c: ListChangeListener.Change<out UserAction> ->
+//            while (c.next()) {
+//                if (!processActions)
+//                    continue
+//
+//                if (c.wasAdded()) {
+//                    c.addedSubList.forEach { it.fireActionBegin() }
+//                } else if (c.wasRemoved()) {
+//                    c.removed.forEach { it.fireActionEnd() }
+//                }
+//            }
+//        }
     }
 
     override fun onUpdateEvent(event: UpdateEvent) {
         if (processActions) {
-            currentActions.forEach { it.fireAction() }
+            //currentActions.forEach { it.fireAction() }
+            for (i in currentActions.indices) {
+                currentActions[i].fireAction()
+            }
         }
     }
 
@@ -179,7 +182,11 @@ class FXGLInput : Input {
 
     private fun handlePressed(event: InputEvent) {
         bindings.filter { isTriggered(it.value, event) && !currentActions.contains(it.key) }
-                .forEach { currentActions.add(it.key) }
+                .forEach {
+                    currentActions.add(it.key)
+                    // TODO: process check?
+                    it.key.fireActionBegin()
+                }
     }
 
     @Suppress("NON_EXHAUSTIVE_WHEN")
@@ -195,7 +202,11 @@ class FXGLInput : Input {
 
             isTriggered(binding.value, event)
         })
-        .forEach { currentActions.remove(it.key) }
+        .forEach {
+            currentActions.remove(it.key)
+            // TODO: process check?
+            it.key.fireActionEnd()
+        }
     }
 
     override fun clearAll() {
