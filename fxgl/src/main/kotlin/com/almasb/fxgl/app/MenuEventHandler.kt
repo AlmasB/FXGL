@@ -93,7 +93,8 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     override fun onResume() {
-        app.resume()
+        //app.resume()
+        app.state = ApplicationState.PLAYING
     }
 
     private fun doSave(saveFileName: String) {
@@ -172,8 +173,8 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         app.display.showConfirmationBox("Exit to Main Menu?\nUnsaved progress will be lost!", { yes ->
 
             if (yes) {
-                app.pause();
-                app.reset();
+//                app.pause();
+//                app.reset();
                 app.setState(ApplicationState.MAIN_MENU);
             }
         })
@@ -192,10 +193,11 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         if (canSwitchGameMenu) {
             if (app.getState() === ApplicationState.GAME_MENU) {
                 canSwitchGameMenu = false
-                app.resume()
+                //app.resume()
+                app.setState(ApplicationState.PLAYING)
             } else if (app.getState() === ApplicationState.PLAYING) {
                 canSwitchGameMenu = false
-                app.pause()
+                //app.pause()
                 app.setState(ApplicationState.GAME_MENU)
             } else {
                 log.warning("Menu key pressed in unknown state: " + app.getState())

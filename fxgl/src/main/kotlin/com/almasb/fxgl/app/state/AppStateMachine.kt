@@ -27,7 +27,12 @@
 package com.almasb.fxgl.app.state
 
 import com.almasb.fxgl.app.ApplicationState
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.getDisplay
+import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.time.FXGLLocalTimer
+import com.almasb.fxgl.time.UpdateEvent
+import com.almasb.fxgl.time.UpdateEventListener
 import java.util.*
 
 /**
@@ -35,7 +40,9 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AppStateMachine {
+class AppStateMachine : UpdateEventListener {
+
+    private val log = FXGLLogger.get(javaClass)
 
     var applicationState = ApplicationState.STARTUP
         private set
@@ -45,37 +52,57 @@ class AppStateMachine {
 
     private val subStates = ArrayDeque<SubState>()
 
+    fun start() {
+        log.debug("Starting AppStateMachine")
+        appState.onEnter(appState)
+
+        FXGL.getMasterTimer().startMainLoop()
+    }
+
     /**
      * Can only be called when no substates are present.
      */
-    fun setState(appState: ApplicationState) {
-        if (subStates.isNotEmpty())
-            throw IllegalStateException("Cannot change states with active substates")
+    fun setState(newState: ApplicationState) {
+        if (subStates.isNotEmpty()) {
+            log.warning("Cannot change states with active substates")
+            return
+           //throw IllegalStateException("Cannot change states with active substates")
+        }
 
-        applicationState = appState
+        log.debug("$applicationState -> $newState")
 
-        this.appState.onExit()
-        this.appState.input().clearAll()
+        applicationState = newState
 
-        this.appState = appState.state()
+        val prevState = this.appState
+        prevState.onExit()
+        prevState.input().clearAll()
+
+        // new state
+        this.appState = newState.state()
 
         getDisplay().setScene(this.appState.scene())
 
-        this.appState.onEnter()
+        this.appState.onEnter(prevState)
     }
 
     fun pushState(state: SubState) {
-        getCurrentState().input().clearAll()
+        log.debug("Push state: $state")
+
+        val prevState = getCurrentState()
+
+        prevState.input().clearAll()
 
         subStates.push(state)
         getDisplay().getCurrentScene().getRoot().getChildren().add(state.view())
 
-        state.onEnter()
+        state.onEnter(prevState)
     }
 
     fun popState() {
         // TODO: check empty?
         val state = subStates.pop()
+
+        log.debug("Pop state: $state")
 
         state.onExit()
 
@@ -84,5 +111,11 @@ class AppStateMachine {
 
     fun getCurrentState(): State {
         return if (subStates.isEmpty()) appState else subStates.peek()
+    }
+
+    override fun onUpdateEvent(event: UpdateEvent) {
+        val state = getCurrentState()
+        state.input().onUpdateEvent(event)
+        state.onUpdate(event.tpf())
     }
 }

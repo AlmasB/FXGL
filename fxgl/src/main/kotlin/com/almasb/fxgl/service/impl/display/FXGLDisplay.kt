@@ -27,6 +27,7 @@
 package com.almasb.fxgl.service.impl.display
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.state.DialogSubState
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.io.serialization.Bundle
@@ -382,14 +383,17 @@ private constructor(private val stage: Stage,
     private fun initDialogBox() {
         dialog = DialogPane(this)
 
+        // hack
+        DialogSubState.setDialogPane(dialog)
+
         dialog.setOnShown(Runnable {
-            fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
-            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
+            //fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
+            //eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
         })
 
         dialog.setOnClosed(Runnable {
-            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
-            fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
+            //eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
+            //fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
         })
     }
 

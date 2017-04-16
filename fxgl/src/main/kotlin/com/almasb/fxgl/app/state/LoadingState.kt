@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.app.state
 
+import com.almasb.fxgl.app.ApplicationState
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.InitAppTask
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.scene.LoadingScene
 
@@ -36,7 +39,39 @@ import com.almasb.fxgl.scene.LoadingScene
  */
 object LoadingState : AbstractAppState(LoadingScene()) {
 
-    override fun onEnter() {
+    override fun onEnter(prevState: State) {
+        when(prevState) {
+            is StartupState -> {
+
+            }
+
+            is IntroState -> {
+
+            }
+
+            is MainMenuState -> {
+                // if load or new game?
+            }
+
+            is GameMenuState -> {
+                FXGL.getApp().reset();
+            }
+
+            is PlayState -> {
+
+            }
+
+            else -> throw IllegalArgumentException("Entered LoadingState from illegal state: $prevState")
+        }
+
+        val initTask = InitAppTask(FXGL.getApp())
+        initTask.onEndAction = Runnable {
+            FXGL.getApp().setState(ApplicationState.PLAYING)
+        }
+
+        (scene() as LoadingScene).bind(initTask)
+
+        FXGL.getExecutor().execute(initTask)
     }
 
     override fun onExit() {

@@ -41,7 +41,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface MasterTimer extends FXGLListener, UserProfileSavable {
+public interface MasterTimer extends UserProfileSavable {
 
     /**
      * Current time for this tick in nanoseconds. Also time elapsed
@@ -154,6 +154,12 @@ public interface MasterTimer extends FXGLListener, UserProfileSavable {
      * @param delay  delay after which to execute
      */
     TimerAction runOnceAfter(Runnable action, Duration delay);
+
+    void pause();
+
+    void startMainLoop();
+
+    void resume();
 
     /**
      * Clears all registered timer based actions.

@@ -27,6 +27,7 @@
 package com.almasb.fxgl.service.impl.display
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.state.DialogSubState
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Display
 import com.almasb.fxgl.ui.FXGLButton
@@ -482,12 +483,16 @@ internal constructor(private val display: Display) : Pane() {
     private fun openInScene(scene: FXGLScene) {
         savedEffect = scene.effect
         scene.effect = bgBlur
-        scene.root.children.add(this)
+        //scene.root.children.add(this)
+
+        FXGL.getApp().pushState(DialogSubState)
     }
 
     private fun closeInScene(scene: FXGLScene) {
-        scene.root.children.remove(this)
+        //scene.root.children.remove(this)
         scene.effect = savedEffect
+
+        FXGL.getApp().popState()
     }
 
     private class DialogData internal constructor(internal var title: String, internal var contentPane: Pane)
@@ -497,19 +502,3 @@ internal constructor(private val display: Display) : Pane() {
         @JvmField val ALPHANUM = Predicate<String> { input -> input.matches("^[\\pL\\pN]+$".toRegex()) }
     }
 }
-/**
- * Shows a simple message box with OK button.
- *
- *
- * Opening more than 1 dialog box is not allowed.
-
- * @param message message to show
- */
-/**
- * Shows an error box with OK and LOG buttons.
- *
- *
- * Opening more than 1 dialog box is not allowed.
-
- * @param error error to show
- */

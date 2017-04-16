@@ -55,7 +55,7 @@ internal class UpdaterTask : Runnable {
     }
 
     /**
-     * Returns true if first run or required number of days have passed.
+     * Returns true if first start or required number of days have passed.
      *
      * @return whether we need check for updates
      */

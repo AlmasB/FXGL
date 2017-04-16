@@ -37,7 +37,7 @@ interface State {
 
     fun input(): Input
 
-    fun onEnter()
+    fun onEnter(prevState: State)
 
     fun onExit()
 

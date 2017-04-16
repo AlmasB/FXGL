@@ -61,11 +61,6 @@ enum class ApplicationState(private val stateProducer: () -> AppState) {
     GAME_MENU({ GameMenuState }),
 
     /**
-     * Active when game is paused but menus are not enabled.
-     */
-    PAUSED({ StartupState }),
-
-    /**
      * This state is active when user is playing.
      */
     PLAYING({ PlayState });

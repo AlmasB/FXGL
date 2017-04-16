@@ -39,7 +39,24 @@ import com.almasb.fxgl.scene.menu.MenuType
  */
 object MainMenuState : AbstractAppState(FXGLDefaultMenu(FXGL.getApp(), MenuType.MAIN_MENU)) {
 
-    override fun onEnter() {
+    // can be STARTUP, INTRO, GAME MENU
+    override fun onEnter(prevState: State) {
+        when(prevState) {
+            is StartupState -> {
+
+            }
+
+            is IntroState -> {
+
+            }
+
+            is GameMenuState -> {
+                //FXGL.getApp().reset();
+            }
+
+            else -> throw IllegalArgumentException("Entered MainMenu from illegal state: $prevState")
+        }
+
         val menuHandler = FXGL.getApp().menuListener as MenuEventHandler
 
         if (!menuHandler.isProfileSelected())

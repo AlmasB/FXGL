@@ -24,32 +24,43 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app.state
 
-import com.google.inject.Inject
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.service.Input
+import com.almasb.fxgl.service.impl.input.FXGLInput
+import javafx.scene.Node
+import javafx.scene.layout.Pane
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class InitProfilerTask
-@Inject constructor(private val app: GameApplication) : Runnable {
+object PauseSubState : SubState {
 
-    private val log = FXGL.getLogger(javaClass)
+    private val input = FXGLInput()
+    private val masker = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble(), Color.color(0.0, 0.0, 0.0, 0.1))
 
-    override fun run() {
-        if (app.settings.isProfilingEnabled) {
-            val profiler = FXGL.newProfiler()
+    override fun view(): Node {
+        return masker
+    }
 
-            app.eventBus.addEventHandler(FXGLEvent.EXIT, {
-                profiler.stop()
-                profiler.print()
-            })
+    override fun input(): Input {
+        return input
+    }
 
-            log.debug("Injecting profiler")
-            app.profiler = profiler
-            profiler.start()
+    override fun onEnter(prevState: State) {
+        if (prevState !is PlayState) {
+            throw IllegalArgumentException("Entered PauseState from illegal state $prevState")
         }
+    }
+
+    override fun onExit() {
+    }
+
+    override fun onUpdate(tpf: Double) {
     }
 }

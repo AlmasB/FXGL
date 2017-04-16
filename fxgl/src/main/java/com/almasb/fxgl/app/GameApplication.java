@@ -26,18 +26,15 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.app.state.*;
-import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.scene.GameScene;
-import com.almasb.fxgl.scene.LoadingScene;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.Input;
-import com.almasb.fxgl.time.UpdateEvent;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
@@ -77,17 +74,6 @@ import java.util.Map;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class GameApplication extends FXGLApplication {
-
-    /**
-     * Injected by InitAppTask.
-     */
-    GameState gameState;
-
-    /**
-     * Main game profiler.
-     * Injected.
-     */
-    Profiler profiler;
 
     private AppStateMachine stateMachine = new AppStateMachine();
 
@@ -270,25 +256,21 @@ public abstract class GameApplication extends FXGLApplication {
     /**
      * @return true if game is paused or menu is open
      */
-    public boolean isPaused() {
-        return isMenuOpen() || getState() == ApplicationState.PAUSED;
-    }
+//    public boolean isPaused() {
+//        return isMenuOpen() || getState() == ApplicationState.PAUSED;
+//    }
 
     private void onIntroFinished() {
-        if (getSettings().isMenuEnabled()) {
-            setState(ApplicationState.MAIN_MENU);
-        } else {
-            startNewGame();
-        }
+
     }
 
     private EventHandler<MouseEvent> mouseHandler = e -> {
         // TODO: incorrect viewport
-        stateMachine.getAppState().input().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
+        stateMachine.getCurrentState().input().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
     };
 
     private EventHandler<KeyEvent> keyHandler = e -> {
-        stateMachine.getAppState().input().onKeyEvent(e);
+        stateMachine.getCurrentState().input().onKeyEvent(e);
     };
 
     @Override
@@ -297,13 +279,11 @@ public abstract class GameApplication extends FXGLApplication {
 
         long start = System.nanoTime();
 
-        runTask(PreInitTask.class);
-        runTask(InitEventHandlersTask.class);
-        runTask(InitProfilerTask.class);
+        getMasterTimer().addUpdateListener(stateMachine);
 
         for (ApplicationState s : ApplicationState.values()) {
-
             // TODO: merge
+            // TODO: intro?
             if (!s.equals(ApplicationState.MAIN_MENU) && !s.equals(ApplicationState.GAME_MENU)) {
                 s.state().scene().addEventHandler(KeyEvent.ANY, keyHandler);
                 s.state().scene().addEventHandler(MouseEvent.ANY, mouseHandler);
@@ -315,23 +295,15 @@ public abstract class GameApplication extends FXGLApplication {
             }
         }
 
-        // intro runs async so we have to wait with a callback
-        // Stage -> (Intro) -> (Menu) -> Game
-        // if not enabled, call finished directly
-        if (getSettings().isIntroEnabled()) {
-            setState(ApplicationState.INTRO);
-        } else {
-            onIntroFinished();
-        }
+        stateMachine.start();
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
-    // hack
-    public void onMasterUpdate(double tpf) {
-        State state = stateMachine.getCurrentState();
-        state.input().onUpdateEvent(new UpdateEvent(0, tpf));
-        state.onUpdate(tpf);
+    public void runPreInit() {
+        initAchievements();
+        initInput();
+        preInit();
     }
 
     /**
@@ -340,16 +312,16 @@ public abstract class GameApplication extends FXGLApplication {
     private void initApp(Task<?> initTask) {
         log.debug("Initializing App");
 
-        // on first run this is no-op, as for rest this ensures
+        // on first start this is no-op, as for rest this ensures
         // that even without menus and during direct calls to start*Game()
         // the system is clean, also reset performs System.gc() to clear stuff we used in init
-        pause();
-        reset();
+//        pause();
+//        reset();
         setState(ApplicationState.LOADING);
 
-        ((LoadingScene) LoadingState.INSTANCE.scene()).bind(initTask);
-
-        getExecutor().execute(initTask);
+//        ((LoadingScene) LoadingState.INSTANCE.scene()).bind(initTask);
+//
+//        getExecutor().execute(initTask);
     }
 
     /**
@@ -394,7 +366,7 @@ public abstract class GameApplication extends FXGLApplication {
      * @return game state
      */
     public final GameState getGameState() {
-        return gameState;
+        return PlayState.INSTANCE.getGameState();
     }
 
     /**

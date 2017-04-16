@@ -133,7 +133,7 @@ public final class SaveLoadManager {
 
     /**
      * Save serializable data onto a disk file system under saves directory,
-     * which is created if necessary in the directory where the game is run from.
+     * which is created if necessary in the directory where the game is start from.
      * <p>
      * All extra directories will also be created if necessary.
      *
@@ -190,7 +190,7 @@ public final class SaveLoadManager {
     /**
      * Load serializable data from external
      * file on disk file system from saves directory which is
-     * in the directory where the game is run from.
+     * in the directory where the game is start from.
      *
      * @param saveFile save file to load
      * @return saving task

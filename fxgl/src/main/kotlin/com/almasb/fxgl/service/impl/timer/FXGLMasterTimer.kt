@@ -53,20 +53,14 @@ class FXGLMasterTimer
 @Inject
 private constructor() : AnimationTimer(), MasterTimer {
 
-    override fun onPause() {
-        stop()
+    override fun pause() {
+        log.debug { "Stopping master timer" }
+        paused = true
     }
 
-    override fun onResume() {
-        start()
-    }
-
-    override fun onReset() {
-        reset()
-    }
-
-    override fun onExit() {
-
+    override fun resume() {
+        log.debug { "Resuming master timer" }
+        paused = false
     }
 
     private val log = FXGL.getLogger(javaClass)
@@ -138,18 +132,13 @@ private constructor() : AnimationTimer(), MasterTimer {
 
     override fun playtimeProperty(): ReadOnlyLongProperty = playtime.readOnlyProperty
 
-    private var paused = true
+    override fun startMainLoop() {
+        log.debug("Starting main loop")
 
-    override fun start() {
-        log.debug { "Starting master timer" }
         super.start()
-        paused = false
     }
 
-    override fun stop() {
-        log.debug { "Stopping master timer" }
-        paused = true
-    }
+    private var paused = false
 
     /**
      * Resets current tick to 0 and clears scheduled actions.
@@ -227,17 +216,14 @@ private constructor() : AnimationTimer(), MasterTimer {
         if (!paused) {
             timerActions.forEach { action -> action.update(tpf) }
             timerActions.removeIf { it.isExpired }
-
-            updateEvent.setTick(getTick())
-            updateEvent.setTPF(tpf)
-
-            // this is the master update event, use indices to avoid concurrent modification
-            for (i in listeners.indices)
-                listeners[i].onUpdateEvent(updateEvent)
         }
 
-        // TODO: hack
-        FXGL.getApp().onMasterUpdate(tpf)
+        updateEvent.setTick(getTick())
+        updateEvent.setTPF(tpf)
+
+        // this is the master update event, use indices to avoid concurrent modification
+        for (i in listeners.indices)
+            listeners[i].onUpdateEvent(updateEvent)
 
         // this is only end for our processing tick for basic profiling
         // the actual JavaFX tick ends when our new tick begins. So
@@ -282,11 +268,11 @@ private constructor() : AnimationTimer(), MasterTimer {
     }
 
     /**
-     * The Runnable action will be scheduled to run at given interval.
-     * The action will run for the first time after given interval.
+     * The Runnable action will be scheduled to start at given interval.
+     * The action will start for the first time after given interval.
      *
      *
-     * Note: the scheduled action will not run while the game is paused.
+     * Note: the scheduled action will not start while the game is paused.
      *
      * @param action   the action
      * *
@@ -301,12 +287,12 @@ private constructor() : AnimationTimer(), MasterTimer {
     /**
      * The Runnable action will be scheduled for execution iff
      * whileCondition is initially true. If that's the case
-     * then the Runnable action will be scheduled to run at given interval.
-     * The action will run for the first time after given interval
+     * then the Runnable action will be scheduled to start at given interval.
+     * The action will start for the first time after given interval
      *
      * The action will be removed from schedule when whileCondition becomes `false`.
      *
-     * Note: the scheduled action will not run while the game is paused
+     * Note: the scheduled action will not start while the game is paused
      *
      * @param action         action to execute
      * *
@@ -333,7 +319,7 @@ private constructor() : AnimationTimer(), MasterTimer {
      * The Runnable action will be executed once after given delay
      *
      *
-     * Note: the scheduled action will not run while the game is paused
+     * Note: the scheduled action will not start while the game is paused
 
      * @param action action to execute
      * *

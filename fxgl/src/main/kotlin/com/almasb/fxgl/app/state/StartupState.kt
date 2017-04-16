@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.app.state
 
+import com.almasb.fxgl.app.*
+import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.io.FXGLIO
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Input
 
@@ -35,7 +38,64 @@ import com.almasb.fxgl.service.Input
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 object StartupState : AppState {
-    override fun onEnter() {
+
+    private val scene = lazy { object : FXGLScene() {} }
+
+    private val log = FXGLLogger.get(javaClass)
+
+    override fun onEnter(prevState: State) {
+        val app = FXGL.getApp()
+
+        FXGLIO.defaultExceptionHandler = app.exceptionHandler
+        FXGLIO.defaultExecutor = app.executor
+
+        //app.initAchievements()
+
+        // we call this early to process user input bindings
+        // so we can correctly display them in menus
+        // 1. register system actions
+        SystemActions.bind(app.input)
+
+        app.runPreInit()
+
+        // 2. register user actions
+        //app.initInput()
+
+        // 3. scan for annotated methods and register them too
+        app.input.scanForUserActions(app)
+
+        //app.preInit()
+
+        //
+
+        if (app.settings.isProfilingEnabled) {
+            val profiler = FXGL.newProfiler()
+
+            app.eventBus.addEventHandler(FXGLEvent.EXIT, {
+                profiler.stop()
+                profiler.print()
+            })
+
+            log.debug("Injecting profiler")
+            //app.profiler = profiler
+            profiler.start()
+        }
+
+        app.runTask(InitEventHandlersTask::class.java)
+
+        // intro runs async so we have to wait with a callback
+        // Stage -> (Intro) -> (Menu) -> Game
+        // if not enabled, call finished directly
+        if (app.getSettings().isIntroEnabled()) {
+            app.setState(ApplicationState.INTRO)
+        } else {
+            if (app.getSettings().isMenuEnabled()) {
+                app.setState(ApplicationState.MAIN_MENU)
+            } else {
+                app.setState(ApplicationState.LOADING)
+                //app.startNewGame()
+            }
+        }
     }
 
     override fun onExit() {
@@ -45,9 +105,7 @@ object StartupState : AppState {
     }
 
     override fun scene(): FXGLScene {
-        return object : FXGLScene() {
-
-        }
+        return scene.value
     }
 
     override fun input(): Input {

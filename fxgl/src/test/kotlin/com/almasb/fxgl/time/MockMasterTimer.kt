@@ -36,19 +36,16 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 object MockMasterTimer : MasterTimer {
-    override fun onPause() {
+    override fun pause() {
     }
 
-    override fun onResume() {
+    override fun startMainLoop() {
+    }
+
+    override fun resume() {
     }
 
     override fun save(profile: com.almasb.fxgl.settings.UserProfile?) {
-    }
-
-    override fun onReset() {
-    }
-
-    override fun onExit() {
     }
 
     override fun load(profile: com.almasb.fxgl.settings.UserProfile?) {

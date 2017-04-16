@@ -44,6 +44,8 @@ import java.util.*
  */
 class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>() {
 
+    lateinit var onEndAction: Runnable
+
     companion object {
         private val log = FXGL.getLogger(InitAppTask::class.java)
     }
@@ -58,13 +60,8 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
 
         update("Initializing Game", 1)
 
-        if (app.gameState != null) {
-            log.debug("Clearing previous gameState")
-            app.gameState.clear()
-        }
-
-        log.debug("Injecting gameState")
-        app.gameState = GameState()
+        log.debug("Clearing previous gameState")
+        app.gameState.clear()
 
         val vars = hashMapOf<String, Any>()
         app.initGameVars(vars)
@@ -105,8 +102,11 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
         updateProgress(step.toLong(), 4)
     }
 
+    // TODO: replace with setOnSucceeded
     override fun succeeded() {
-        app.resume()
+        onEndAction.run()
+
+        //app.resume()
     }
 
     override fun failed() {

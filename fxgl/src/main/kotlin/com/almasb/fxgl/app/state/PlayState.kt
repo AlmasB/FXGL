@@ -29,6 +29,7 @@ package com.almasb.fxgl.app.state
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MenuEventHandler
 import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.time.UpdateEvent
@@ -41,6 +42,7 @@ import javafx.scene.input.KeyEvent
  */
 object PlayState : AbstractAppState(FXGL.getInstance(GameScene::class.java)) {
 
+    val gameState = FXGL.getInstance(GameState::class.java)
     val gameWorld = FXGL.getInstance(GameWorld::class.java)
     val physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
 
@@ -52,7 +54,7 @@ object PlayState : AbstractAppState(FXGL.getInstance(GameScene::class.java)) {
             scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
     }
 
-    override fun onEnter() {
+    override fun onEnter(prevState: State) {
 
     }
 

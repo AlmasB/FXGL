@@ -60,7 +60,7 @@ object GameMenuState : AbstractAppState(FXGLDefaultMenu(FXGL.getApp(), MenuType.
 //        }, FXGL.getSettings().menuKey)
     }
 
-    override fun onEnter() {
+    override fun onEnter(prevState: State) {
     }
 
     override fun onExit() {

@@ -85,7 +85,8 @@ internal class InitEventHandlersTask
                 g.globalAlpha = 1.0
                 g.font = fpsFont
                 g.fill = Color.RED
-                g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
+                // TODO:
+                //g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
             }
         })
     }
@@ -100,16 +101,14 @@ internal class InitEventHandlersTask
         app.addFXGLListener(object : FXGLListener {
             override fun onPause() {
                 postUpdateTimer.stop()
-                app.state = ApplicationState.PAUSED
             }
 
             override fun onResume() {
                 postUpdateTimer.start()
-                app.state = ApplicationState.PLAYING
             }
 
             override fun onReset() {
-                app.getGameWorld().reset()
+                //app.getGameWorld().reset()
             }
 
             override fun onExit() {
@@ -124,12 +123,12 @@ internal class InitEventHandlersTask
         val bus = app.eventBus
         val services = FXGL.getServices()
 
-        services.map { it.service() }
-                .filter { it.interfaces.contains(FXGLListener::class.java) }
-                .forEach {
-                    log.debug("FXGLListener: $it")
-                    app.addFXGLListener(FXGL.getInstance(it) as FXGLListener)
-                }
+//        services.map { it.service() }
+//                .filter { it.interfaces.contains(FXGLListener::class.java) }
+//                .forEach {
+//                    log.debug("FXGLListener: $it")
+//                    app.addFXGLListener(FXGL.getInstance(it) as FXGLListener)
+//                }
 
         services.map { it.service() }
                 .filter { it.interfaces.contains(UserProfileSavable::class.java) }
@@ -165,27 +164,6 @@ internal class InitEventHandlersTask
     }
 
     private fun displayEvents() {
-        val bus = app.eventBus
-
-        bus.addEventHandler(DisplayEvent.CLOSE_REQUEST, { e -> app.exit() })
-
-        bus.addEventHandler(DisplayEvent.DIALOG_OPENED, { e ->
-            if (app.state === ApplicationState.INTRO || app.state === ApplicationState.LOADING)
-                return@addEventHandler
-
-            // TODO: this wont be necessary when dialogs implemented as substates
-            if (!app.isMenuOpen)
-                app.pause()
-
-            app.input.onReset()
-        })
-
-        bus.addEventHandler(DisplayEvent.DIALOG_CLOSED, { e ->
-            if (app.state === ApplicationState.INTRO || app.state === ApplicationState.LOADING)
-                return@addEventHandler
-
-            if (!app.isMenuOpen)
-                app.resume()
-        })
+        app.eventBus.addEventHandler(DisplayEvent.CLOSE_REQUEST, { app.exit() })
     }
 }

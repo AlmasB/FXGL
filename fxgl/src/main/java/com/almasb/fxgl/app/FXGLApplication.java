@@ -123,7 +123,7 @@ public abstract class FXGLApplication extends Application {
         systemListeners.remove(listener);
     }
 
-    void runTask(Class<? extends Runnable> type) {
+    public void runTask(Class<? extends Runnable> type) {
         log.debug("Running task: " + type.getSimpleName());
         FXGL.getInstance(type).run();
     }
@@ -220,18 +220,24 @@ public abstract class FXGLApplication extends Application {
     abstract void configureApp();
 
     /**
-     * Pause the application.
+     * Pause execution of current state.
      */
-    protected final void pause() {
+    @Deprecated
+    public final void pause() {
         log.debug("Pausing main loop");
+
+        //pushState(PauseSubState.INSTANCE);
+
+        // TODO: move to enter state of pause
         systemListeners.forEach(FXGLListener::onPause);
         getEventBus().fireEvent(FXGLEvent.pause());
     }
 
     /**
-     * Resume the application.
+     * Resume execution of current state.
      */
-    protected final void resume() {
+    @Deprecated
+    public final void resume() {
         log.debug("Resuming main loop");
         systemListeners.forEach(FXGLListener::onResume);
         getEventBus().fireEvent(FXGLEvent.resume());
@@ -242,7 +248,7 @@ public abstract class FXGLApplication extends Application {
      * After notifying all interested parties (where all should do a cleanup),
      * <code>System.gc()</code> will be called.
      */
-    protected final void reset() {
+    public final void reset() {
         log.debug("Resetting FXGL application");
         systemListeners.forEach(FXGLListener::onReset);
         getEventBus().fireEvent(FXGLEvent.reset());

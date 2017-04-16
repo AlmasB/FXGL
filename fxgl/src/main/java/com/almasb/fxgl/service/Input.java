@@ -48,27 +48,7 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Input extends UserProfileSavable, UpdateEventListener, FXGLListener {
-
-    @Override
-    default void onPause() {
-        clearAll();
-    }
-
-    @Override
-    default void onResume() {
-        clearAll();
-    }
-
-    @Override
-    default void onReset() {
-        clearAll();
-    }
-
-    @Override
-    default void onExit() {
-        // no-op
-    }
+public interface Input extends UserProfileSavable, UpdateEventListener {
 
     /**
      * Called on key event.

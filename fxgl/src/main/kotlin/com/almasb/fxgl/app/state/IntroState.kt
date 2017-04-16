@@ -42,10 +42,16 @@ object IntroState : AbstractAppState(FXGLIntroScene()) {
 
     private lateinit var introFinishedSubscriber: Subscriber
 
-    override fun onEnter() {
-        introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, { onIntroFinished() })
+    override fun onEnter(prevState: State) {
+        when(prevState) {
+            is StartupState -> {
+                introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, { onIntroFinished() })
 
-        (scene as IntroScene).startIntro()
+                (scene as IntroScene).startIntro()
+            }
+
+            else -> throw IllegalArgumentException("Entered IntroState from illegal state: $prevState")
+        }
     }
 
     override fun onExit() {

@@ -35,19 +35,25 @@ import javafx.scene.Node
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class DialogSubState : SubState {
+object DialogSubState : SubState {
 
     private val input = FXGLInput()
 
+    private lateinit var view: Node
+
+    fun setDialogPane(node: Node) {
+        view = node
+    }
+
     override fun view(): Node {
-        TODO("DialogPane view goes here")
+        return view
     }
 
     override fun input(): Input {
         return input
     }
 
-    override fun onEnter() {
+    override fun onEnter(prevState: State) {
     }
 
     override fun onExit() {
