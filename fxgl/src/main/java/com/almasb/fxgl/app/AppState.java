@@ -24,33 +24,43 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MenuEventHandler
-import com.almasb.fxgl.input.UserAction
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.menu.FXGLDefaultMenu
-import com.almasb.fxgl.scene.menu.MenuType
-import javafx.scene.input.KeyEvent
+import com.almasb.fxgl.scene.FXGLScene;
+import com.almasb.fxgl.service.Input;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object GameMenuState : AbstractAppState(FXGL.getApp().sceneFactory.newGameMenu(FXGL.getApp())) {
+abstract class AppState implements State {
 
-    init {
-        scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+    private FXGLScene scene;
+
+    public AppState(FXGLScene scene) {
+        this.scene = scene;
     }
 
-    override fun onEnter(prevState: State) {
+    public FXGLScene getScene() {
+        return scene;
     }
 
-    override fun onExit() {
+    @Override
+    public Input getInput() {
+        return scene.getInput();
     }
 
-    override fun onUpdate(tpf: Double) {
+    @Override
+    public void onEnter(State prevState) {
+        // no-op
+    }
+
+    @Override
+    public void onExit() {
+        // no-op
+    }
+
+    @Override
+    public void onUpdate(double tpf) {
+        // no-op
     }
 }

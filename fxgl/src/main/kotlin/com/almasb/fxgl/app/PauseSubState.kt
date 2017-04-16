@@ -24,41 +24,31 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.service.Input
-import com.almasb.fxgl.service.impl.input.FXGLInput
-import javafx.scene.Node
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.PlayState
+import com.almasb.fxgl.app.State
+import com.almasb.fxgl.app.SubState
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object DialogSubState : SubState {
+object PauseSubState : SubState() {
 
-    private val input = FXGLInput()
+    private val masker = Rectangle(FXGL.Companion.getAppWidth().toDouble(), FXGL.Companion.getAppHeight().toDouble(), Color.color(0.0, 0.0, 0.0, 0.1))
 
-    private lateinit var view: Node
-
-    fun setDialogPane(node: Node) {
-        view = node
-    }
-
-    override fun view(): Node {
-        return view
-    }
-
-    override fun input(): Input {
-        return input
+    init {
+        children.add(masker)
     }
 
     override fun onEnter(prevState: State) {
-    }
-
-    override fun onExit() {
-    }
-
-    override fun onUpdate(tpf: Double) {
+        if (prevState !is PlayState) {
+            throw IllegalArgumentException("Entered PauseState from illegal state $prevState")
+        }
     }
 }

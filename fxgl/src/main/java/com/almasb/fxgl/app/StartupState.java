@@ -24,93 +24,83 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.*
-import com.almasb.fxgl.core.logging.FXGLLogger
-import com.almasb.fxgl.io.FXGLIO
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.service.Input
-import com.almasb.fxgl.service.listener.FXGLListener
+import com.almasb.fxgl.core.logging.FXGLLogger;
+import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.io.FXGLIO;
+import com.almasb.fxgl.scene.FXGLScene;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object StartupState : AppState {
+@Singleton
+class StartupState extends AppState {
 
-    private val scene = lazy { object : FXGLScene() {} }
+    private static final Logger log = FXGLLogger.get(StartupState.class);
 
-    private val log = FXGLLogger.get(javaClass)
+    @Inject
+    private StartupState() {
+        super(new FXGLScene() {});
+    }
 
-    override fun onEnter(prevState: State) {
-        val app = FXGL.getApp()
+    @Override
+    public void onEnter(State prevState) {
+        GameApplication app = FXGL.getApp();
 
-        FXGLIO.defaultExceptionHandler = app.exceptionHandler
-        FXGLIO.defaultExecutor = app.executor
+        FXGLIO.INSTANCE.setDefaultExceptionHandler(app.getExceptionHandler());
+        FXGLIO.INSTANCE.setDefaultExecutor(app.getExecutor());
 
         //app.initAchievements()
 
         // we call this early to process user input bindings
         // so we can correctly display them in menus
         // 1. register system actions
-        SystemActions.bind(app.input)
+        SystemActions.INSTANCE.bind(app.getInput());
 
-        app.runPreInit()
+        app.runPreInit();
 
         // 2. register user actions
         //app.initInput()
 
         // 3. scan for annotated methods and register them too
-        app.input.scanForUserActions(app)
+        app.getInput().scanForUserActions(app);
 
         //app.preInit()
 
         //
 
-        if (app.settings.isProfilingEnabled) {
-            val profiler = FXGL.newProfiler()
+        // TODO: PROFILER
+//        if (app.settings.isProfilingEnabled) {
+//            val profiler = FXGL.newProfiler()
+//
+//            app.addFXGLListener(object : FXGLListener {
+//                override fun onExit() {
+//                    profiler.stop()
+//                    profiler.print()
+//                }
+//            })
+//
+//            log.debug("Injecting profiler")
+//            //app.profiler = profiler
+//            profiler.start();
+//        }
 
-            app.addFXGLListener(object : FXGLListener {
-                override fun onExit() {
-                    profiler.stop()
-                    profiler.print()
-                }
-            })
-
-            log.debug("Injecting profiler")
-            //app.profiler = profiler
-            profiler.start()
-        }
-
-        app.runTask(InitEventHandlersTask::class.java)
+        app.runTask(InitEventHandlersTask.class);
 
         // intro runs async so we have to wait with a callback
         // Stage -> (Intro) -> (Menu) -> Game
         // if not enabled, call finished directly
         if (app.getSettings().isIntroEnabled()) {
-            app.setState(ApplicationState.INTRO)
+            app.setState(ApplicationState.INTRO);
         } else {
             if (app.getSettings().isMenuEnabled()) {
-                app.setState(ApplicationState.MAIN_MENU)
+                app.setState(ApplicationState.MAIN_MENU);
             } else {
-                app.startNewGame()
+                app.startNewGame();
             }
         }
-    }
-
-    override fun onExit() {
-    }
-
-    override fun onUpdate(tpf: Double) {
-    }
-
-    override fun scene(): FXGLScene {
-        return scene.value
-    }
-
-    override fun input(): Input {
-        return scene().input
     }
 }

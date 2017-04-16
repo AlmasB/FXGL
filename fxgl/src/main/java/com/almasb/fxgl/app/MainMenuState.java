@@ -24,34 +24,43 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service.listener;
+package com.almasb.fxgl.app;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
- * Marks a service that wants to listen for FXGL system events.
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface FXGLListener {
+@Singleton
+class MainMenuState extends AppState {
 
-    /**
-     * Fired on main loop paused.
-     */
-    default void onPause() {}
+    @Inject
+    private MainMenuState() {
+        super(FXGL.getApp().getSceneFactory().newMainMenu(FXGL.getApp()));
+    }
 
-    /**
-     * Fired on main loop resumed.
-     */
-    default void onResume() {}
+    @Override
+    public void onEnter(State prevState) {
+//        when(prevState) {
+//            is StartupState -> {
+//
+//            }
+//
+//            is IntroState -> {
+//
+//            }
+//
+//            is GameMenuState -> {
+//
+//            }
+//
+//            else -> throw IllegalArgumentException("Entered MainMenu from illegal state: $prevState")
+//        }
 
-    /**
-     * Fired on FXGL reset.
-     * This is where all resources should be freed if they are no longer used.
-     */
-    default void onReset() {}
+        MenuEventHandler menuHandler = (MenuEventHandler) FXGL.getApp().getMenuListener();
 
-    /**
-     * Fired before the system is about to shut down.
-     * Do NOT make any asynchronous calls as they may not complete.
-     */
-    default void onExit() {}
+        if (!menuHandler.isProfileSelected())
+            menuHandler.showProfileDialog();
+    }
 }

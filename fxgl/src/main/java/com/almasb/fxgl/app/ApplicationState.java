@@ -24,48 +24,58 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.state.*
+import java.util.function.Supplier;
 
 /**
  * Valid application states.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-enum class ApplicationState(private val stateProducer: () -> AppState) {
+enum ApplicationState {
 
     /**
      * The app starts with this state.
      */
-    STARTUP({ StartupState }),
+    STARTUP(StartupState.class),
 
     /**
      * This state is present when intro is being shown.
      */
-    INTRO({ IntroState }),
+    INTRO(IntroState.class),
 
     /**
      * This state is active whenever a game/level is loading.
      */
-    LOADING({ LoadingState }),
+    LOADING(LoadingState.class),
 
     /**
      * This state is active when user is in main menu.
      */
-    MAIN_MENU({ MainMenuState }),
+    MAIN_MENU(MainMenuState.class),
 
     /**
      * This state is active when user is in game menu.
      */
-    GAME_MENU({ GameMenuState }),
+    GAME_MENU(GameMenuState.class),
 
     /**
      * This state is active when user is playing.
      */
-    PLAYING({ PlayState });
+    PLAYING(PlayState.class);
 
-    fun state(): AppState {
-        return stateProducer.invoke()
+    AppState state() {
+        if (state == null)
+            state = lazyLoader.get();
+
+        return state;
+    }
+
+    private final Supplier<AppState> lazyLoader;
+    private AppState state = null;
+
+    ApplicationState(Class<? extends AppState> type) {
+        this.lazyLoader = () -> FXGL.getInstance(type);
     }
 }

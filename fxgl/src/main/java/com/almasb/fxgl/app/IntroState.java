@@ -24,21 +24,49 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.service.Input
+import com.almasb.fxgl.core.event.Subscriber;
+import com.almasb.fxgl.scene.IntroScene;
+import com.almasb.fxgl.scene.intro.IntroFinishedEvent;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class AbstractAppState(val scene: FXGLScene) : AppState {
+@Singleton
+class IntroState extends AppState {
 
-    override fun scene() = scene
+    private Subscriber introFinishedSubscriber;
 
-    override fun input(): Input {
-        return scene.input
+    @Inject
+    private IntroState() {
+        super(FXGL.getApp().getSceneFactory().newIntro());
+    }
+
+    @Override
+    public void onEnter(State prevState) {
+        if (prevState instanceof StartupState) {
+            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
+
+            ((IntroScene)getScene()).startIntro();
+
+        } else {
+            throw new IllegalArgumentException("Entered IntroState from illegal state: " + prevState);
+        }
+    }
+
+    @Override
+    public void onExit() {
+        introFinishedSubscriber.unsubscribe();
+    }
+
+    private void onIntroFinished() {
+        if (FXGL.getSettings().isMenuEnabled()) {
+            FXGL.getApp().setState(ApplicationState.MAIN_MENU);
+        } else {
+            FXGL.getApp().startNewGame();
+        }
     }
 }

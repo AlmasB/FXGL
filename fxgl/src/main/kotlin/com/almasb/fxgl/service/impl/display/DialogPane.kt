@@ -27,7 +27,7 @@
 package com.almasb.fxgl.service.impl.display
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.state.DialogSubState
+import com.almasb.fxgl.app.DialogSubState
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Display
 import com.almasb.fxgl.ui.FXGLButton
@@ -75,7 +75,9 @@ internal constructor(private val display: Display) : Pane() {
         display.currentSceneProperty().addListener { o, oldScene, newScene ->
             // if we somehow changed scene while the dialog is showing
             if (isShowing) {
+                //if (oldScene != null)
                 closeInScene(oldScene)
+
                 openInScene(newScene)
             }
         }
@@ -117,7 +119,7 @@ internal constructor(private val display: Display) : Pane() {
     }
 
     val isShowing: Boolean
-        get() = parent != null
+        get() = parent.scene != null
 
     /**
      * Shows a simple message box with OK button.

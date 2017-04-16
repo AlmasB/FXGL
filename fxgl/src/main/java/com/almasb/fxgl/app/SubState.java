@@ -24,43 +24,52 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.service.Input
-import com.almasb.fxgl.service.impl.input.FXGLInput
-import javafx.scene.Node
-import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
+import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object PauseSubState : SubState {
+public abstract class SubState implements State {
 
-    private val input = FXGLInput()
-    private val masker = Rectangle(FXGL.getAppWidth().toDouble(), FXGL.getAppHeight().toDouble(), Color.color(0.0, 0.0, 0.0, 0.1))
+    private Pane view;
+    private Input input;
 
-    override fun view(): Node {
-        return masker
+    public SubState() {
+        view = new Pane();
+        input = new FXGLInput();
     }
 
-    override fun input(): Input {
-        return input
+    protected ObservableList<Node> getChildren() {
+        return view.getChildren();
     }
 
-    override fun onEnter(prevState: State) {
-        if (prevState !is PlayState) {
-            throw IllegalArgumentException("Entered PauseState from illegal state $prevState")
-        }
+    public Node getView() {
+        return view;
     }
 
-    override fun onExit() {
+    @Override
+    public Input getInput() {
+        return input;
     }
 
-    override fun onUpdate(tpf: Double) {
+    @Override
+    public void onEnter(State prevState) {
+        // no-op
+    }
+
+    @Override
+    public void onExit() {
+        // no-op
+    }
+
+    @Override
+    public void onUpdate(double tpf) {
+        // no-op
     }
 }

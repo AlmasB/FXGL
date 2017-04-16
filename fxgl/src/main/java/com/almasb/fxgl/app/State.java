@@ -24,62 +24,24 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.ApplicationState
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.InitAppTask
-import com.almasb.fxgl.saving.DataFile
-import com.almasb.fxgl.scene.LoadingScene
-import javafx.concurrent.Task
+import com.almasb.fxgl.service.Input;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object LoadingState : AbstractAppState(FXGL.getApp().sceneFactory.newLoadingScene()) {
+public interface State {
 
-    lateinit var initTask: InitAppTask
+    Input getInput();
 
-    override fun onEnter(prevState: State) {
-        when(prevState) {
-            is StartupState -> {
+    void onEnter(State prevState);
 
-            }
+    void onExit();
 
-            is IntroState -> {
+    void onUpdate(double tpf);
 
-            }
-
-            is MainMenuState -> {
-                // if load or new game?
-                FXGL.getApp().reset()
-            }
-
-            is GameMenuState -> {
-                FXGL.getApp().reset()
-            }
-
-            is PlayState -> {
-                FXGL.getApp().reset()
-            }
-
-            else -> throw IllegalArgumentException("Entered LoadingState from illegal state: $prevState")
-        }
-
-        initTask.onEndAction = Runnable {
-            FXGL.getApp().setState(ApplicationState.PLAYING)
-        }
-
-        (scene() as LoadingScene).bind(initTask)
-
-        FXGL.getExecutor().execute(initTask)
-    }
-
-    override fun onExit() {
-    }
-
-    override fun onUpdate(tpf: Double) {
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

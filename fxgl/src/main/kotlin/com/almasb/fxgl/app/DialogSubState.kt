@@ -24,8 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.SubState
 import javafx.scene.Node
 
 /**
@@ -33,7 +34,11 @@ import javafx.scene.Node
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface SubState : State {
+// TODO: accessibility?
+object DialogSubState : SubState() {
 
-    fun view(): Node
+    // TODO: HACK
+    fun setDialogPane(node: Node) {
+        children.add(node)
+    }
 }

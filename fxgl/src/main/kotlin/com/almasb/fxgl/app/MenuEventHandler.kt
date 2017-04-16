@@ -34,7 +34,7 @@ import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
 import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
 import com.almasb.fxgl.service.impl.display.DialogPane
-import com.almasb.fxgl.service.listener.FXGLListener
+import com.almasb.fxgl.app.FXGLListener
 import com.almasb.fxgl.settings.UserProfile
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper

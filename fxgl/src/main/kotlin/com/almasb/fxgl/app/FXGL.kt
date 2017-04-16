@@ -26,7 +26,7 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.state.PlayState
+import com.almasb.fxgl.app.PlayState
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.io.FS
@@ -284,7 +284,7 @@ class FXGL private constructor() {
         private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
         @JvmStatic fun getEventBus() = _eventBus
 
-        private val _input by lazy { PlayState.input() }
+        private val _input by lazy { FXGL.getApp().input }
 
         @Deprecated("Use getGameScene().getInput()")
         @JvmStatic fun getInput() = _input

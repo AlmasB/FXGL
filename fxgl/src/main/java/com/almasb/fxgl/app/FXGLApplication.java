@@ -32,7 +32,6 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.service.*;
-import com.almasb.fxgl.service.listener.FXGLListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.util.Version;

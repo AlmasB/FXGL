@@ -25,7 +25,7 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.app.state.*;
+import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -35,7 +35,6 @@ import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.Input;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -232,10 +231,6 @@ public abstract class GameApplication extends FXGLApplication {
         // no default implementation
     }
 
-    public void update(double tpf) {
-        onUpdate(tpf);
-    }
-
     /**
      * Main loop update phase, most of game logic.
      *
@@ -259,11 +254,11 @@ public abstract class GameApplication extends FXGLApplication {
 
     private EventHandler<MouseEvent> mouseHandler = e -> {
         // TODO: incorrect viewport
-        stateMachine.getCurrentState().input().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
+        stateMachine.getCurrentState().getInput().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
     };
 
     private EventHandler<KeyEvent> keyHandler = e -> {
-        stateMachine.getCurrentState().input().onKeyEvent(e);
+        stateMachine.getCurrentState().getInput().onKeyEvent(e);
     };
 
     @Override
@@ -278,21 +273,24 @@ public abstract class GameApplication extends FXGLApplication {
 
         getMasterTimer().addUpdateListener(stateMachine);
 
+        // TODO: inject states?
+        playState = (PlayState) ApplicationState.PLAYING.state();
+
         for (ApplicationState s : ApplicationState.values()) {
             // TODO: merge
             // TODO: intro?
             if (!s.equals(ApplicationState.MAIN_MENU) && !s.equals(ApplicationState.GAME_MENU)) {
-                s.state().scene().addEventHandler(KeyEvent.ANY, keyHandler);
-                s.state().scene().addEventHandler(MouseEvent.ANY, mouseHandler);
+                s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
+                s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
             } else {
                 if (getSettings().isMenuEnabled()) {
-                    s.state().scene().addEventHandler(KeyEvent.ANY, keyHandler);
-                    s.state().scene().addEventHandler(MouseEvent.ANY, mouseHandler);
+                    s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
+                    s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
                 }
             }
         }
 
-        stateMachine.start();
+        Async.startFX(stateMachine::start);
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
@@ -309,7 +307,7 @@ public abstract class GameApplication extends FXGLApplication {
     private void initApp(InitAppTask initTask) {
         log.debug("Initializing App");
 
-        LoadingState.INSTANCE.setInitTask(initTask);
+        FXGL.getInstance(LoadingState.class).setInitTask(initTask);
         setState(ApplicationState.LOADING);
     }
 
@@ -351,32 +349,34 @@ public abstract class GameApplication extends FXGLApplication {
         return menuHandler;
     }
 
+    private PlayState playState;
+
     /**
      * @return game state
      */
     public final GameState getGameState() {
-        return PlayState.INSTANCE.getGameState();
+        return playState.getGameState();
     }
 
     /**
      * @return game world
      */
     public final GameWorld getGameWorld() {
-        return PlayState.INSTANCE.getGameWorld();
+        return playState.getGameWorld();
     }
 
     /**
      * @return physics world
      */
     public final PhysicsWorld getPhysicsWorld() {
-        return PlayState.INSTANCE.getPhysicsWorld();
+        return playState.getPhysicsWorld();
     }
 
     /**
      * @return game scene
      */
     public final GameScene getGameScene() {
-        return (GameScene) PlayState.INSTANCE.scene();
+        return playState.getGameScene();
     }
 
     /**
@@ -384,6 +384,6 @@ public abstract class GameApplication extends FXGLApplication {
      */
     @Override
     public final Input getInput() {
-        return getGameScene().getInput();
+        return playState.getInput();
     }
 }

@@ -30,7 +30,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.service.Executor
-import com.almasb.fxgl.service.listener.FXGLListener
+import com.almasb.fxgl.app.FXGLListener
 import com.google.inject.Inject
 import javafx.util.Duration
 import java.util.concurrent.*

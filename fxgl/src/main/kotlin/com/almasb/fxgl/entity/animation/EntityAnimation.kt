@@ -27,7 +27,7 @@
 package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.service.listener.FXGLListener
+import com.almasb.fxgl.app.FXGLListener
 import javafx.animation.Animation
 import javafx.event.EventHandler
 

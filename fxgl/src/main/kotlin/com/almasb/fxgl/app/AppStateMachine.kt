@@ -24,10 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.ApplicationState
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.getDisplay
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.time.UpdateEvent
@@ -39,14 +38,14 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AppStateMachine : UpdateEventListener {
+internal class AppStateMachine : UpdateEventListener {
 
     private val log = FXGLLogger.get(javaClass)
 
     var applicationState = ApplicationState.STARTUP
         private set
 
-    var appState: AppState = StartupState
+    var appState: AppState = applicationState.state()
         private set
 
     private val subStates = ArrayDeque<SubState>()
@@ -74,12 +73,12 @@ class AppStateMachine : UpdateEventListener {
 
         val prevState = this.appState
         prevState.onExit()
-        prevState.input().clearAll()
+        prevState.input.clearAll()
 
         // new state
         this.appState = newState.state()
 
-        getDisplay().setScene(this.appState.scene())
+        getDisplay().setScene(this.appState.scene)
 
         this.appState.onEnter(prevState)
     }
@@ -89,10 +88,10 @@ class AppStateMachine : UpdateEventListener {
 
         val prevState = getCurrentState()
 
-        prevState.input().clearAll()
+        prevState.input.clearAll()
 
         subStates.push(state)
-        getDisplay().currentScene.root.children.add(state.view())
+        getDisplay().currentScene.root.children.add(state.view)
 
         state.onEnter(prevState)
     }
@@ -109,7 +108,7 @@ class AppStateMachine : UpdateEventListener {
 
         state.onExit()
 
-        getDisplay().currentScene.root.children.remove(state.view())
+        getDisplay().currentScene.root.children.remove(state.view)
     }
 
     fun getCurrentState(): State {
@@ -118,7 +117,7 @@ class AppStateMachine : UpdateEventListener {
 
     override fun onUpdateEvent(event: UpdateEvent) {
         val state = getCurrentState()
-        state.input().onUpdateEvent(event)
+        state.input.onUpdateEvent(event)
         state.onUpdate(event.tpf())
     }
 }

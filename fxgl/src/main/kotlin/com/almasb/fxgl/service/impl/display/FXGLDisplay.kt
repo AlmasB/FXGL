@@ -27,7 +27,7 @@
 package com.almasb.fxgl.service.impl.display
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.state.DialogSubState
+import com.almasb.fxgl.app.DialogSubState
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.io.serialization.Bundle
@@ -126,7 +126,8 @@ private constructor(private val stage: Stage,
         else
             FXGLAssets.UI_CSS
 
-        Platform.runLater { initStage() }
+        initStage()
+        //Platform.runLater { initStage() }
 
         initDialogBox()
 

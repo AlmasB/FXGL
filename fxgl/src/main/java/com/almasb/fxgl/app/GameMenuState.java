@@ -24,16 +24,23 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app.state
+package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.FXGLScene;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import javafx.scene.input.KeyEvent;
 
 /**
- *
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-interface AppState : State {
+@Singleton
+class GameMenuState extends AppState {
 
-    fun scene(): FXGLScene
+    @Inject
+    private GameMenuState() {
+        super(FXGL.getApp().getSceneFactory().newGameMenu(FXGL.getApp()));
+
+        getScene().addEventHandler(KeyEvent.ANY, (MenuEventHandler) FXGL.getApp().getMenuListener());
+    }
 }
