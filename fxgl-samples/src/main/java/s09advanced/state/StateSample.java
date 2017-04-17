@@ -28,6 +28,7 @@ package s09advanced.state;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
@@ -36,34 +37,30 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Shows how to init a basic game object and attach it to the world
- * using fluent API.
+ *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class StateSample extends GameApplication {
 
-    // 1. define types of entities in the game using Enum
     private enum Type {
         PLAYER
     }
 
-    // make the field instance level
-    // but do NOT init here for properly functioning save-load system
     private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(1280);
+        settings.setHeight(720);
         settings.setTitle("StateSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
-        settings.setMenuEnabled(true);
+        settings.setIntroEnabled(false);
+        settings.setMenuEnabled(false);
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     private ShopState shopState;
@@ -80,20 +77,13 @@ public class StateSample extends GameApplication {
 
     @Override
     protected void initGame() {
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         shopState = new ShopState();
 
-        // 2. create entity and attach to world using fluent API
         player = Entities.builder()
                 .type(Type.PLAYER)
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
+                .with(new DeveloperWASDControl())
                 .buildAndAttach(getGameWorld());
     }
 
