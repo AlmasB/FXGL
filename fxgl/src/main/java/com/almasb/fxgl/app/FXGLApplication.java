@@ -38,8 +38,6 @@ import com.almasb.fxgl.util.Version;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -136,11 +134,6 @@ public abstract class FXGLApplication extends Application {
     public final void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         showPreloadingStage();
-
-        // this is the only JavaFX scene in use with a placeholder root
-        // the root will be replaced with a relevant FXGL scene
-        primaryStage.setScene(new Scene(new Pane()));
-
         startFXGL();
     }
 
@@ -162,8 +155,6 @@ public abstract class FXGLApplication extends Application {
                 // so to avoid the process hanging just shut down the JVM
                 System.exit(-1);
             }
-
-            //Platform.runLater(primaryStage::show);
         }, "FXGL Launcher Thread").start();
     }
 

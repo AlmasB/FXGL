@@ -43,43 +43,12 @@ class LoadingState extends AppState {
         super(FXGL.getApp().getSceneFactory().newLoadingScene());
     }
 
-    public void setInitTask(InitAppTask initTask) {
+    void setInitTask(InitAppTask initTask) {
         this.initTask = initTask;
     }
 
     @Override
     public void onEnter(State prevState) {
-
-        if (prevState instanceof MainMenuState
-                || prevState instanceof GameMenuState
-                || prevState instanceof PlayState) {
-            //FXGL.getApp().reset();
-
-        } else {
-//            is StartupState -> {
-//
-//            }
-//
-//            is IntroState -> {
-//
-//            }
-//
-//            is MainMenuState -> {
-//                // if load or new game?
-//
-//            }
-//
-//            is GameMenuState -> {
-//                FXGL.getApp().reset()
-//            }
-//
-//            is PlayState -> {
-//                FXGL.getApp().reset()
-//            }
-//
-//            else -> throw IllegalArgumentException("Entered LoadingState from illegal state: $prevState")
-        }
-
         initTask.onEndAction = () -> {
             FXGL.getApp().setState(ApplicationState.PLAYING);
         };

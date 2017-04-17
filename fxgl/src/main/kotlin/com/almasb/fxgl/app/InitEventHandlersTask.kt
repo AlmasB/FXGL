@@ -54,11 +54,7 @@ internal class InitEventHandlersTask
     override fun run() {
         val bus = app.eventBus
 
-        updateEvents()
-
         scanForServiceListeners()
-
-        displayEvents()
 
         bus.scanForHandlers(app)
 
@@ -66,23 +62,6 @@ internal class InitEventHandlersTask
             // services are now ready and listening, we can generate default profile
             (app.menuListener as MenuEventHandler).generateDefaultProfile()
         }
-    }
-
-    private fun updateEvents() {
-//        val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
-//
-//        app.masterTimer.addUpdateListener({
-//            if (app.settings.isProfilingEnabled) {
-//                val g = app.gameScene.graphicsContext
-//
-//                g.globalBlendMode = BlendMode.SRC_OVER
-//                g.globalAlpha = 1.0
-//                g.font = fpsFont
-//                g.fill = Color.RED
-//                // TODO:
-//                //g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
-//            }
-//        })
     }
 
     private fun scanForServiceListeners() {
@@ -122,9 +101,5 @@ internal class InitEventHandlersTask
 
                     bus.addEventHandler(AchievementEvent.ANY, { instance.onAchievementEvent(it) })
                 }
-    }
-
-    private fun displayEvents() {
-        app.eventBus.addEventHandler(DisplayEvent.CLOSE_REQUEST, { app.exit() })
     }
 }

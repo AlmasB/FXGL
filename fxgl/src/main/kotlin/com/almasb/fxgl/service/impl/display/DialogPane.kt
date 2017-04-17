@@ -487,14 +487,14 @@ internal constructor(private val display: Display) : Pane() {
         scene.effect = bgBlur
         //scene.root.children.add(this)
 
-        FXGL.getApp().pushState(DialogSubState)
+        FXGL.getApp().stateMachine.pushState(DialogSubState)
     }
 
     private fun closeInScene(scene: FXGLScene) {
         //scene.root.children.remove(this)
         scene.effect = savedEffect
 
-        FXGL.getApp().popState()
+        FXGL.getApp().stateMachine.popState()
     }
 
     private class DialogData internal constructor(internal var title: String, internal var contentPane: Pane)

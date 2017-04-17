@@ -97,7 +97,6 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     override fun onResume() {
-        // TODO: encapsulate in GameApplication
         app.state = ApplicationState.PLAYING
     }
 
@@ -202,7 +201,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
                 app.state = ApplicationState.GAME_MENU
 
             } else {
-                log.warning("Menu key pressed in unknown state: " + app.state)
+                log.warning("Menu key pressed in unknown state: ${app.state}")
             }
         }
     }
@@ -213,17 +212,12 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         }
     }
 
-    /**
-     * @return profile name property (read-only)
-     */
     override fun profileNameProperty(): ReadOnlyStringProperty {
         return profileName.readOnlyProperty
     }
 
     /**
-     * Create a user profile with current settings.
-
-     * @return user profile
+     * @return user profile with current settings
      */
     fun createProfile(): UserProfile {
         log.debug("Creating default profile")
@@ -236,10 +230,6 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     /**
-     * Load from given user profile.
-
-     * @param profile the profile
-     * *
      * @return true if loaded successfully, false if couldn't load
      */
     fun loadFromProfile(profile: UserProfile): Boolean {

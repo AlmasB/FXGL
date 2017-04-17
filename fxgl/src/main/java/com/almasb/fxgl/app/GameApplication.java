@@ -25,6 +25,8 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.asset.FXGLAssets;
+import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -34,17 +36,18 @@ import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.Input;
-import com.almasb.fxgl.service.MasterTimer;
 import com.almasb.fxgl.service.impl.timer.FPSCounter;
 import com.almasb.fxgl.time.UpdateEvent;
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -81,20 +84,16 @@ public abstract class GameApplication extends SimpleFXGLApplication {
 
     private AppStateMachine stateMachine;
 
+    public final AppStateMachine getStateMachine() {
+        return stateMachine;
+    }
+
     ApplicationState getState() {
         return stateMachine.getApplicationState();
     }
 
     void setState(ApplicationState state) {
         stateMachine.setState(state);
-    }
-
-    public void pushState(SubState state) {
-        stateMachine.pushState(state);
-    }
-
-    public void popState() {
-        stateMachine.popState();
     }
 
     private SceneFactory sceneFactory;
@@ -109,14 +108,10 @@ public abstract class GameApplication extends SimpleFXGLApplication {
 
     private EventHandler<MouseEvent> mouseHandler = e -> {
         // TODO: incorrect viewport
-        //System.out.println(e);
-
         stateMachine.getCurrentState().getInput().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
     };
 
     private EventHandler<KeyEvent> keyHandler = e -> {
-        //System.out.println(e);
-
         stateMachine.getCurrentState().getInput().onKeyEvent(e);
     };
 
@@ -131,25 +126,13 @@ public abstract class GameApplication extends SimpleFXGLApplication {
 
         playState = (PlayState) ApplicationState.PLAYING.state();
 
-        getPrimaryStage().getScene().addEventFilter(KeyEvent.ANY, keyHandler);
-        getPrimaryStage().getScene().addEventFilter(MouseEvent.ANY, mouseHandler);
-        getPrimaryStage().getScene().addEventFilter(EventType.ROOT, e -> {
-            getDisplay().getCurrentScene().fireEvent(e.copyFor(null, null));
-        });
-
-        getPrimaryStage().sceneProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("NEW SCENE: " + newValue);
-
-            newValue.addEventFilter(KeyEvent.ANY, keyHandler);
-            newValue.addEventFilter(MouseEvent.ANY, mouseHandler);
-            newValue.addEventFilter(EventType.ROOT, e -> {
-                getDisplay().getCurrentScene().fireEvent(e.copyFor(null, null));
-            });
-        });
-
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
-        Platform.runLater(this::startMainLoop);
+        Async.startFX(() -> {
+            FXGL.getDisplay().addHandlers(keyHandler, mouseHandler);
+            FXGL.getDisplay().show();
+            startMainLoop();
+        });
     }
 
     private void startMainLoop() {
@@ -169,10 +152,6 @@ public abstract class GameApplication extends SimpleFXGLApplication {
             }
         }.start();
     }
-//        override fun onReset() {
-//            app.gameWorld.reset()
-//            app.masterTimer.reset()
-//        }
 
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
     private ReadOnlyIntegerWrapper fps = new ReadOnlyIntegerWrapper();
@@ -190,48 +169,36 @@ public abstract class GameApplication extends SimpleFXGLApplication {
             fps.set(60);
 
         return 1.0 / fps.get();
-
-//        val realTPF = (secondsToNanos(1.0).toDouble() / fps.value).toLong()
-//
-//        now += realTPF
-//        playtime.value += realTPF
-//
-//        tpf = realTPF / 1000000000.0
     }
 
     private void tick(double tpf) {
         stateMachine.onUpdate(tpf);
 
-        // TODO:
+        // TODO: update listeners
         getAudioPlayer().onUpdateEvent(new UpdateEvent(0, tpf));
+
+        onUpdate(tpf);
     }
+
+    private Font fpsFont;
 
     private void tickEnd(long frameTook) {
+        if (getSettings().isProfilingEnabled()) {
+            if (fpsFont == null) {
+                fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20);
+            }
 
-    }
+            GraphicsContext g = getGameScene().getGraphicsContext();
+            g.setGlobalBlendMode(BlendMode.SRC_OVER);
+            g.setGlobalAlpha(1);
+            g.setFont(fpsFont);
+            g.setFill(Color.RED);
 
+            g.fillText("FPS: " + fps.get()
+                    + String.format("\nFrame in: %.3f s", frameTook / 1_000_000_000.0), 0, getHeight() - 120);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void attachHandlers(ApplicationState state) {
-        state.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
-        state.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
+            //g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
+        }
     }
 
     public void runPreInit() {

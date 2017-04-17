@@ -80,7 +80,7 @@ public class ApplicationModule extends AbstractModule {
         // #226: scene must not be a single static instance
         // on resolution change we get rid of old scene and create new
         // while this still points to old instance
-        bind(Scene.class).toInstance(mainStage.getScene());
+        //bind(Scene.class).toInstance(mainStage.getScene());
 
         bind(Integer.class).annotatedWith(Names.named("appWidth")).toInstance(app.getWidth());
         bind(Integer.class).annotatedWith(Names.named("appHeight")).toInstance(app.getHeight());

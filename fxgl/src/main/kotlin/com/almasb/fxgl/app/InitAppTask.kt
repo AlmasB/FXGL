@@ -113,8 +113,6 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     // TODO: replace with setOnSucceeded
     override fun succeeded() {
         onEndAction.run()
-
-        //app.resume()
     }
 
     override fun failed() {

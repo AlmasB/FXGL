@@ -107,7 +107,7 @@ public class ShopState extends SubState {
             box.setTranslateY(25);
 
             Button btn = new Button("X");
-            btn.setOnAction(e -> FXGL.getApp().popState());
+            btn.setOnAction(e -> FXGL.getApp().getStateMachine().popState());
 
             getChildren().addAll(bg, lineTop, lineBot, box, btn);
         }

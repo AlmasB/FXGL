@@ -69,19 +69,25 @@ import java.util.function.Predicate
 import javax.imageio.ImageIO
 
 /**
- * Display service. Provides access to dialogs and display settings.
+ * Display service.
+ * Provides access to dialogs and display settings.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLDisplay
 @Inject
-private constructor(private val stage: Stage,
-                    /**
-                     * Underlying JavaFX scene. We only use 1 scene to avoid
-                     * problems in fullscreen mode. Switching between scenes
-                     * in FS mode will otherwise temporarily toggle FS.
-                     */
-                    private var fxScene: Scene) : Display {
+private constructor(private val stage: Stage) : Display {
+
+    override fun addHandlers(keyHandler: EventHandler<KeyEvent>, mouseHandler: EventHandler<MouseEvent>) {
+        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
+        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
+        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene().fireEvent(it.copyFor(null, null)) })
+    }
+
+    override fun show() {
+        log.debug("Opening primary window")
+        stage.show()
+    }
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -101,15 +107,7 @@ private constructor(private val stage: Stage,
 
     private val sceneDimensions = ArrayList<SceneDimension>()
 
-    /*
-     * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
-     * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
-     * So we copy the occurred event and reroute to whichever FXGL scene is current.
-     */
-//    private val fxToFXGLFilter: EventHandler<Event> = EventHandler { event ->
-//        val copy = event.copyFor(null, null)
-//        getCurrentScene()?.fireEvent(copy)
-//    }
+    private val fxScene: Scene
 
     init {
         settings = FXGL.getSettings()
@@ -126,12 +124,11 @@ private constructor(private val stage: Stage,
         else
             FXGLAssets.UI_CSS
 
-        //initStage()
-        Platform.runLater { initStage() }
+        fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
+        stage.scene = fxScene
 
+        initStage()
         initDialogBox()
-
-        //fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
 
         computeSceneSettings(settings.width.toDouble(), settings.height.toDouble())
         computeScaledSize()
@@ -349,16 +346,16 @@ private constructor(private val stage: Stage,
         targetHeight.set(h)
         computeScaledSize()
 
-        val root = fxScene.root
+        //val root = fxScene.root
         // clear listener
         //fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
         // clear root of previous JavaFX scene
-        fxScene.root = Pane()
+        //fxScene.root = Pane()
 
         // create and init new JavaFX scene
-        fxScene = Scene(root)
+        //fxScene = Scene(root)
         //fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
-        stage.scene = fxScene
+        //stage.scene = fxScene
         if (settings.isFullScreen) {
             stage.isFullScreen = true
         }

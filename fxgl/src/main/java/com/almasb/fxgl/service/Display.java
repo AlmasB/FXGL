@@ -31,10 +31,13 @@ import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.service.listener.UserProfileSavable;
 import com.almasb.fxgl.settings.SceneDimension;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -46,6 +49,20 @@ import java.util.function.Predicate;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface Display extends UserProfileSavable {
+
+    void addHandlers(EventHandler<KeyEvent> keyHandler, EventHandler<MouseEvent> mouseHandler);
+
+    void show();
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Register an FXGL scene to be managed by display settings.

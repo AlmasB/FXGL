@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.EntityWorldListener;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -56,8 +58,21 @@ class PlayState extends AppState {
 
         gameWorld.addWorldListener(physicsWorld);
         gameWorld.addWorldListener((GameScene) getScene());
+        gameWorld.addWorldListener(new EntityWorldListener() {
+            @Override
+            public void onEntityAdded(Entity entity) {}
 
-        // TODO: clear timer on game world reset?
+            @Override
+            public void onEntityRemoved(Entity entity) {}
+
+            @Override
+            public void onWorldUpdate(double tpf) {}
+
+            @Override
+            public void onWorldReset() {
+                getTimer().clear();
+            }
+        });
 
         if (FXGL.getSettings().isMenuEnabled())
             getScene().addEventHandler(KeyEvent.ANY, (MenuEventHandler) FXGL.getApp().getMenuListener());
@@ -66,9 +81,6 @@ class PlayState extends AppState {
     @Override
     public void onUpdate(double tpf) {
         gameWorld.onUpdate(tpf);
-
-        // TODO: call this in GameApp?
-        FXGL.getApp().onUpdate(tpf);
     }
 
     public GameState getGameState() {

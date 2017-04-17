@@ -35,7 +35,7 @@ import java.util.Deque;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AppStateMachine {
+public final class AppStateMachine {
 
     private static final Logger log = FXGLLogger.get(AppStateMachine.class);
 
@@ -79,14 +79,14 @@ class AppStateMachine {
         this.appState.onEnter(prevState);
     }
 
-    public void onUpdate(double tpf) {
+    void onUpdate(double tpf) {
         State state = getCurrentState();
         state.getInput().onUpdate(tpf);
         state.getTimer().onUpdate(tpf);
         state.onUpdate(tpf);
     }
 
-    void pushState(SubState state) {
+    public void pushState(SubState state) {
         log.debug("Push state: " + state);
 
         // substate, so prevState does not exit
@@ -99,7 +99,7 @@ class AppStateMachine {
         state.onEnter(prevState);
     }
 
-    void popState() {
+    public void popState() {
         if (subStates.isEmpty()) {
             log.warning("Cannot pop state: Substates are empty!");
             return;

@@ -73,7 +73,7 @@ public class StateSample extends GameApplication {
         getInput().addAction(new UserAction("Open Shop Menu") {
             @Override
             protected void onActionBegin() {
-                pushState(shopState);
+                getStateMachine().pushState(shopState);
             }
         }, KeyCode.F);
     }
