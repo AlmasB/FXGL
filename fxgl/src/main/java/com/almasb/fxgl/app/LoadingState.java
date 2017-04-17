@@ -53,7 +53,7 @@ class LoadingState extends AppState {
         if (prevState instanceof MainMenuState
                 || prevState instanceof GameMenuState
                 || prevState instanceof PlayState) {
-            FXGL.getApp().reset();
+            //FXGL.getApp().reset();
 
         } else {
 //            is StartupState -> {

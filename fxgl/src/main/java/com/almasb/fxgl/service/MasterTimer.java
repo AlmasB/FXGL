@@ -117,42 +117,7 @@ public interface MasterTimer extends UserProfileSavable {
      */
     IntegerProperty performanceFPSProperty();
 
-    /**
-     * The Runnable action will be scheduled to run at given interval.
-     * The action will run for the first time after given interval.
-     * <p>
-     * Note: the scheduled action will not run while the game is paused.
-     *
-     * @param action   the action
-     * @param interval time
-     */
-    TimerAction runAtInterval(Runnable action, Duration interval);
 
-    /**
-     * The Runnable action will be scheduled for execution iff
-     * whileCondition is initially true. If that's the case
-     * then the Runnable action will be scheduled to run at given interval.
-     * The action will run for the first time after given interval
-     * <p>
-     * The action will be removed from schedule when whileCondition becomes {@code false}.
-     * <p>
-     * Note: the scheduled action will not run while the game is paused
-     *
-     * @param action         action to execute
-     * @param interval       interval between executions
-     * @param whileCondition condition
-     */
-    TimerAction runAtIntervalWhile(Runnable action, Duration interval, ReadOnlyBooleanProperty whileCondition);
-
-    /**
-     * The Runnable action will be executed once after given delay
-     * <p>
-     * Note: the scheduled action will not run while the game is paused
-     *
-     * @param action action to execute
-     * @param delay  delay after which to execute
-     */
-    TimerAction runOnceAfter(Runnable action, Duration delay);
 
     void pause();
 

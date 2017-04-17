@@ -32,6 +32,7 @@ import com.almasb.fxgl.io.FXGLIO;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import javafx.application.Platform;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -47,7 +48,9 @@ class StartupState extends AppState {
     }
 
     @Override
-    public void onEnter(State prevState) {
+    public void onUpdate(double tpf) {
+        log.debug("Running startup state");
+
         GameApplication app = FXGL.getApp();
 
         FXGLIO.INSTANCE.setDefaultExceptionHandler(app.getExceptionHandler());
@@ -102,5 +105,12 @@ class StartupState extends AppState {
                 app.startNewGame();
             }
         }
+    }
+
+    @Override
+    public void onExit() {
+        Platform.runLater(() -> {
+            FXGL.getApp().getPrimaryStage().show();
+        });
     }
 }

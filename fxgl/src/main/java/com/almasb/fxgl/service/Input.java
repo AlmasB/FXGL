@@ -47,7 +47,9 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Input extends UserProfileSavable, UpdateEventListener {
+public interface Input extends UserProfileSavable {
+
+    void onUpdate(double tpf);
 
     /**
      * Called on key event.

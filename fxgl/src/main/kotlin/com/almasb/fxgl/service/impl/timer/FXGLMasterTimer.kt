@@ -51,7 +51,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 class FXGLMasterTimer
 @Inject
-private constructor() : AnimationTimer(), MasterTimer {
+private constructor() : MasterTimer {
 
     override fun pause() {
         log.debug { "Stopping master timer" }
@@ -113,10 +113,7 @@ private constructor() : AnimationTimer(), MasterTimer {
         listeners.remove(listener)
     }
 
-    /**
-     * List for all timer based actions.
-     */
-    private val timerActions = CopyOnWriteArrayList<TimerActionImpl>()
+
 
     /**
      * Holds current tick (frame)
@@ -133,9 +130,7 @@ private constructor() : AnimationTimer(), MasterTimer {
     override fun playtimeProperty(): ReadOnlyLongProperty = playtime.readOnlyProperty
 
     override fun startMainLoop() {
-        log.debug("Starting main loop")
-
-        super.start()
+        //log.debug("Starting main loop")
     }
 
     private var paused = false
@@ -149,7 +144,6 @@ private constructor() : AnimationTimer(), MasterTimer {
         tick.set(0)
         now = 0
 
-        timerActions.clear()
     }
 
     /**
@@ -199,137 +193,9 @@ private constructor() : AnimationTimer(), MasterTimer {
      */
     override fun performanceFPSProperty() = performanceFPS
 
-    // we cache update event to avoid alloc on each frame
-    private val updateEvent = UpdateEvent(0, 0.0)
 
-    /**
-     * This is the internal FXGL update tick,
-     * executed 60 times a second ~ every 0.166 (6) seconds.
-     *
-     * @param internalTime the timestamp of the current frame given in nanoseconds (from JavaFX)
-     */
-    override fun handle(internalTime: Long) {
-        // this will set up current tick and current time
-        // for the rest of the game modules to use
-        tickStart(internalTime)
 
-        if (!paused) {
-            timerActions.forEach { action -> action.update(tpf) }
-            timerActions.removeIf { it.isExpired }
-        }
 
-        updateEvent.setTick(getTick())
-        updateEvent.setTPF(tpf)
-
-        // this is the master update event, use indices to avoid concurrent modification
-        for (i in listeners.indices)
-            listeners[i].onUpdateEvent(updateEvent)
-
-        // this is only end for our processing tick for basic profiling
-        // the actual JavaFX tick ends when our new tick begins. So
-        // JavaFX event callbacks will properly fire within the same "our" tick.
-        tickEnd()
-    }
-
-    private var startNanos: Long = 0L
-
-    /**
-     * Called at the start of a game update tick.
-     * This is where tick becomes tick + 1.
-     *
-     * @param internalTime internal JavaFX time
-     */
-    private fun tickStart(internalTime: Long) {
-        startNanos = System.nanoTime()
-
-        tick.set(tick.get() + 1)
-
-        fps.value = fpsCounter.update(internalTime)
-
-        // assume that fps is at least 5 to avoid subtle bugs
-        // disregard minor fluctuations > 55 for smoother experience
-        if (fps.value < 5 || fps.value > 55)
-            fps.value = 60
-
-        val realTPF = (secondsToNanos(1.0).toDouble() / fps.value).toLong()
-
-        now += realTPF
-        playtime.value += realTPF
-
-        tpf = realTPF / 1000000000.0
-    }
-
-    /**
-     * Called at the end of a game update tick.
-     */
-    private fun tickEnd() {
-        val took = System.nanoTime() - startNanos
-        performanceFPS.value = took.toInt()
-    }
-
-    /**
-     * The Runnable action will be scheduled to start at given interval.
-     * The action will start for the first time after given interval.
-     *
-     *
-     * Note: the scheduled action will not start while the game is paused.
-     *
-     * @param action   the action
-     * *
-     * @param interval time
-     */
-    override fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
-        val act = TimerActionImpl(getNow(), interval, action, TimerType.INDEFINITE)
-        timerActions.add(act)
-        return act
-    }
-
-    /**
-     * The Runnable action will be scheduled for execution iff
-     * whileCondition is initially true. If that's the case
-     * then the Runnable action will be scheduled to start at given interval.
-     * The action will start for the first time after given interval
-     *
-     * The action will be removed from schedule when whileCondition becomes `false`.
-     *
-     * Note: the scheduled action will not start while the game is paused
-     *
-     * @param action         action to execute
-     * *
-     * @param interval       interval between executions
-     * *
-     * @param whileCondition condition
-     */
-    override fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
-        if (!whileCondition.get()) {
-            throw IllegalArgumentException("While condition is false")
-        }
-        val act = TimerActionImpl(getNow(), interval, action, TimerType.INDEFINITE)
-        timerActions.add(act)
-
-        whileCondition.addListener { _, _, isTrue ->
-            if (!isTrue)
-                act.expire()
-        }
-
-        return act
-    }
-
-    /**
-     * The Runnable action will be executed once after given delay
-     *
-     *
-     * Note: the scheduled action will not start while the game is paused
-
-     * @param action action to execute
-     * *
-     * @param delay  delay after which to execute
-     */
-    override fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
-        val act = TimerActionImpl(getNow(), delay, action, TimerType.ONCE)
-        timerActions.add(act)
-        return act
-    }
 
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")

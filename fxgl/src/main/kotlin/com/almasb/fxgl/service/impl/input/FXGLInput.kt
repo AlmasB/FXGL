@@ -127,7 +127,7 @@ class FXGLInput : Input {
 //        }
     }
 
-    override fun onUpdateEvent(event: UpdateEvent) {
+    override fun onUpdate(tpf: Double) {
         if (processActions) {
             //currentActions.forEach { it.fireAction() }
             for (i in currentActions.indices) {

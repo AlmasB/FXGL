@@ -54,6 +54,9 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     override fun call(): Void? {
         val start = System.nanoTime()
 
+        log.debug("Clearing game world")
+        app.gameWorld.reset()
+
         update("Initializing Assets", 0)
         app.initAssets()
 

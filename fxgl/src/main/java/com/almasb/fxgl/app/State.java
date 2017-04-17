@@ -33,6 +33,8 @@ import com.almasb.fxgl.service.Input;
  */
 public interface State {
 
+    StateTimer getTimer();
+
     Input getInput();
 
     void onEnter(State prevState);

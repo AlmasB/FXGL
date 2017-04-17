@@ -25,7 +25,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.physics.PhysicsWorld;
@@ -35,11 +34,17 @@ import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.service.MasterTimer;
+import com.almasb.fxgl.service.impl.timer.FPSCounter;
+import com.almasb.fxgl.time.UpdateEvent;
+import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-
-import java.util.Map;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -72,13 +77,10 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class GameApplication extends FXGLApplication {
+public abstract class GameApplication extends SimpleFXGLApplication {
 
     private AppStateMachine stateMachine;
 
-    /**
-     * @return current application state
-     */
     ApplicationState getState() {
         return stateMachine.getApplicationState();
     }
@@ -95,17 +97,6 @@ public abstract class GameApplication extends FXGLApplication {
         stateMachine.popState();
     }
 
-    /**
-     * Override to provide custom intro/loading/menu scenes.
-     * Use {@link #setSceneFactory(SceneFactory)}.
-     *
-     * @return scene factory
-     */
-    @Deprecated
-    protected SceneFactory initSceneFactory() {
-        return new SceneFactory();
-    }
-
     private SceneFactory sceneFactory;
 
     public SceneFactory getSceneFactory() {
@@ -116,143 +107,16 @@ public abstract class GameApplication extends FXGLApplication {
         this.sceneFactory = sceneFactory;
     }
 
-    /**
-     * Override to register your achievements.
-     *
-     * <pre>
-     * Example:
-     *
-     * AchievementManager am = getAchievementManager();
-     * am.registerAchievement(new Achievement("Score Master", "Score 20000 points"));
-     * </pre>
-     */
-    protected void initAchievements() {
-        // no default implementation
-    }
-
-    /**
-     * Initialize input, i.e. bind key presses, bind mouse buttons.
-     *
-     * <p>
-     * Note: This method is called prior to any game init to
-     * register input mappings in the menus.
-     * </p>
-     * <pre>
-     * Example:
-     *
-     * Input input = getInput();
-     * input.addAction(new UserAction("Move Left") {
-     *      protected void onAction() {
-     *          playerControl.moveLeft();
-     *      }
-     * }, KeyCode.A);
-     * </pre>
-     */
-    protected void initInput() {
-        // no default implementation
-    }
-
-    /**
-     * This is called after core services are initialized
-     * but before any game init.
-     * Called only once per application lifetime.
-     */
-    protected void preInit() {
-        // no default implementation
-    }
-
-    /**
-     * Initialize game assets, such as Texture, Sound, Music, etc.
-     */
-    protected void initAssets() {
-        // no default implementation
-    }
-
-    /**
-     * Called when MenuEvent.SAVE occurs.
-     * Note: if you enable menus, you are responsible for providing
-     * appropriate serialization of your game state.
-     * Otherwise an exception will be thrown when save is called.
-     *
-     * @return data with required info about current state
-     * @throws UnsupportedOperationException if was not overridden
-     */
-    protected DataFile saveState() {
-        log.warning("Called saveState(), but it wasn't overridden!");
-        throw new UnsupportedOperationException("Default implementation is not available");
-    }
-
-    /**
-     * Called when MenuEvent.LOAD occurs.
-     * Note: if you enable menus, you are responsible for providing
-     * appropriate deserialization of your game state.
-     * Otherwise an exception will be thrown when load is called.
-     *
-     * @param dataFile previously saved data
-     * @throws UnsupportedOperationException if was not overridden
-     */
-    protected void loadState(DataFile dataFile) {
-        log.warning("Called loadState(), but it wasn't overridden!");
-        throw new UnsupportedOperationException("Default implementation is not available");
-    }
-
-    /**
-     * Can be overridden to provide global variables.
-     *
-     * @param vars map containing CVars (global variables)
-     */
-    protected void initGameVars(Map<String, Object> vars) {
-        // no default implementation
-    }
-
-    /**
-     * Initialize game objects.
-     */
-    protected void initGame() {
-        // no default implementation
-    }
-
-    /**
-     * Initialize collision handlers, physics properties.
-     */
-    protected void initPhysics() {
-        // no default implementation
-    }
-
-    /**
-     * Initialize UI objects.
-     */
-    protected void initUI() {
-        // no default implementation
-    }
-
-    /**
-     * Main loop update phase, most of game logic.
-     *
-     * @param tpf time per frame
-     */
-    protected void onUpdate(double tpf) {
-        // no default implementation
-    }
-
-    /**
-     * Called after main loop tick has been completed.
-     * It can be used to de-register callbacks / listeners
-     * and call various methods that otherwise might interfere
-     * with main loop.
-     *
-     * @param tpf time per frame (same as main update tpf)
-     */
-    protected void onPostUpdate(double tpf) {
-        // no default implementation
-    }
-
     private EventHandler<MouseEvent> mouseHandler = e -> {
         // TODO: incorrect viewport
+        //System.out.println(e);
+
         stateMachine.getCurrentState().getInput().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
     };
 
     private EventHandler<KeyEvent> keyHandler = e -> {
+        //System.out.println(e);
+
         stateMachine.getCurrentState().getInput().onKeyEvent(e);
     };
 
@@ -262,44 +126,108 @@ public abstract class GameApplication extends FXGLApplication {
 
         long start = System.nanoTime();
 
-        // TODO: refactor
         setSceneFactory(initSceneFactory());
-
         stateMachine = new AppStateMachine();
-
-        getMasterTimer().addUpdateListener(stateMachine);
 
         playState = (PlayState) ApplicationState.PLAYING.state();
 
         getPrimaryStage().getScene().addEventFilter(KeyEvent.ANY, keyHandler);
         getPrimaryStage().getScene().addEventFilter(MouseEvent.ANY, mouseHandler);
+        getPrimaryStage().getScene().addEventFilter(EventType.ROOT, e -> {
+            getDisplay().getCurrentScene().fireEvent(e.copyFor(null, null));
+        });
 
-//        for (ApplicationState s : ApplicationState.values()) {
-//
-//            if (getSettings().isIntroEnabled() && s == ApplicationState.INTRO
-//                    || getSettings().isMenuEnabled() && s == ApplicationState.GAME_MENU
-//                    || getSettings().isMenuEnabled() && s == ApplicationState.MAIN_MENU) {
-//
-//                attachHandlers(s);
-//            }
-//
-//            // TODO: merge
-//            // TODO: intro?
-//            if (!s.equals(ApplicationState.MAIN_MENU) && !s.equals(ApplicationState.GAME_MENU)) {
-//                s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
-//                s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
-//            } else {
-//                if (getSettings().isMenuEnabled()) {
-//                    s.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
-//                    s.state().getScene().addEventHandler(MouseEvent.ANY, mouseHandler);
-//                }
-//            }
-//        }
+        getPrimaryStage().sceneProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("NEW SCENE: " + newValue);
 
-        Async.startFX(stateMachine::start);
+            newValue.addEventFilter(KeyEvent.ANY, keyHandler);
+            newValue.addEventFilter(MouseEvent.ANY, mouseHandler);
+            newValue.addEventFilter(EventType.ROOT, e -> {
+                getDisplay().getCurrentScene().fireEvent(e.copyFor(null, null));
+            });
+        });
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+
+        Platform.runLater(this::startMainLoop);
     }
+
+    private void startMainLoop() {
+        log.debug("Starting main loop");
+
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                long frameStart = System.nanoTime();
+
+                double tpf = tickStart(now);
+
+                tick(tpf);
+                onPostUpdate(tpf);
+
+                tickEnd(System.nanoTime() - frameStart);
+            }
+        }.start();
+    }
+//        override fun onReset() {
+//            app.gameWorld.reset()
+//            app.masterTimer.reset()
+//        }
+
+    private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
+    private ReadOnlyIntegerWrapper fps = new ReadOnlyIntegerWrapper();
+
+    private FPSCounter fpsCounter = new FPSCounter();
+
+    private double tickStart(long now) {
+        tick.set(tick.get() + 1);
+
+        fps.set(fpsCounter.update(now));
+
+        // assume that fps is at least 5 to avoid subtle bugs
+        // disregard minor fluctuations > 55 for smoother experience
+        if (fps.get() < 5 || fps.get() > 55)
+            fps.set(60);
+
+        return 1.0 / fps.get();
+
+//        val realTPF = (secondsToNanos(1.0).toDouble() / fps.value).toLong()
+//
+//        now += realTPF
+//        playtime.value += realTPF
+//
+//        tpf = realTPF / 1000000000.0
+    }
+
+    private void tick(double tpf) {
+        stateMachine.onUpdate(tpf);
+
+        // TODO:
+        getAudioPlayer().onUpdateEvent(new UpdateEvent(0, tpf));
+    }
+
+    private void tickEnd(long frameTook) {
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void attachHandlers(ApplicationState state) {
         state.state().getScene().addEventHandler(KeyEvent.ANY, keyHandler);
@@ -312,17 +240,17 @@ public abstract class GameApplication extends FXGLApplication {
         preInit();
     }
 
-    @Override
-    public void pause() {
-        pushState(PauseSubState.INSTANCE);
-        super.pause();
-    }
-
-    @Override
-    public void resume() {
-        popState();
-        super.resume();
-    }
+//    @Override
+//    public void pause() {
+//        pushState(PauseSubState.INSTANCE);
+//        super.pause();
+//    }
+//
+//    @Override
+//    public void resume() {
+//        popState();
+//        super.resume();
+//    }
 
     /**
      * Initialize user application.
@@ -408,5 +336,10 @@ public abstract class GameApplication extends FXGLApplication {
     @Override
     public final Input getInput() {
         return playState.getInput();
+    }
+
+    @Override
+    public StateTimer getMasterTimer() {
+        return playState.getTimer();
     }
 }

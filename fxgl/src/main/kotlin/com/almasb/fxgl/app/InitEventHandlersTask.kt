@@ -55,7 +55,6 @@ internal class InitEventHandlersTask
         val bus = app.eventBus
 
         updateEvents()
-        postUpdateEvents()
 
         scanForServiceListeners()
 
@@ -70,51 +69,20 @@ internal class InitEventHandlersTask
     }
 
     private fun updateEvents() {
-        val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
-
-        app.masterTimer.addUpdateListener(app.audioPlayer)
-
-        app.masterTimer.addUpdateListener({
-            if (app.settings.isProfilingEnabled) {
-                val g = app.gameScene.graphicsContext
-
-                g.globalBlendMode = BlendMode.SRC_OVER
-                g.globalAlpha = 1.0
-                g.font = fpsFont
-                g.fill = Color.RED
-                // TODO:
-                //g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
-            }
-        })
-    }
-
-    private fun postUpdateEvents() {
-        val postUpdateTimer = object : AnimationTimer() {
-            override fun handle(now: Long) {
-                app.onPostUpdate(app.masterTimer.tpf())
-            }
-        }
-
-        postUpdateTimer.start()
-
-        app.addFXGLListener(object : FXGLListener {
-            override fun onPause() {
-                //postUpdateTimer.stop()
-            }
-
-            override fun onResume() {
-                //postUpdateTimer.start()
-            }
-
-            override fun onReset() {
-                app.gameWorld.reset()
-                app.masterTimer.reset()
-            }
-
-            override fun onExit() {
-                // no-op
-            }
-        })
+//        val fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20.0)
+//
+//        app.masterTimer.addUpdateListener({
+//            if (app.settings.isProfilingEnabled) {
+//                val g = app.gameScene.graphicsContext
+//
+//                g.globalBlendMode = BlendMode.SRC_OVER
+//                g.globalAlpha = 1.0
+//                g.font = fpsFont
+//                g.fill = Color.RED
+//                // TODO:
+//                //g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
+//            }
+//        })
     }
 
     private fun scanForServiceListeners() {

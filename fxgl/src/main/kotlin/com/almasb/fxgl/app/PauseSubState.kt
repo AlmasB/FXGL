@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.State
+import com.almasb.fxgl.app.SubState
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 

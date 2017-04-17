@@ -332,7 +332,7 @@ class FXGL private constructor() {
          */
         @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name)
 
-        private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
+        private val _masterTimer by lazy { internalApp.masterTimer }
         @JvmStatic fun getMasterTimer() = _masterTimer
 
         /**

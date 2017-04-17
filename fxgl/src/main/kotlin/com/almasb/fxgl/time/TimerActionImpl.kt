@@ -43,8 +43,7 @@ class TimerActionImpl
              * @param action   the action
              * @param type     ONCE or INDEFINITE
              */
-            (private var time: Long,
-             interval: Duration,
+            (interval: Duration,
              private val action: Runnable,
              private val type: TimerType) : TimerAction {
 

@@ -97,6 +97,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     override fun onResume() {
+        // TODO: encapsulate in GameApplication
         app.state = ApplicationState.PLAYING
     }
 

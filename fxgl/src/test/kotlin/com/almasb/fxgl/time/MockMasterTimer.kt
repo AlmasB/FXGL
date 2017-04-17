@@ -75,25 +75,12 @@ object MockMasterTimer : MasterTimer {
         return SimpleIntegerProperty()
     }
 
-    override fun runAtInterval(action: Runnable?, interval: Duration?): com.almasb.fxgl.time.TimerAction? {
-        return null
-    }
-
-    override fun runAtIntervalWhile(action: Runnable?, interval: Duration?,
-                                    whileCondition: ReadOnlyBooleanProperty?): com.almasb.fxgl.time.TimerAction? {
-        return null
-    }
-
-    override fun runOnceAfter(action: Runnable?, delay: Duration?): com.almasb.fxgl.time.TimerAction? {
-        return null
-    }
-
     override fun reset() {
     }
 
-    override fun addUpdateListener(listener: com.almasb.fxgl.time.UpdateEventListener?) {
+    override fun addUpdateListener(listener: UpdateEventListener?) {
     }
 
-    override fun removeUpdateListener(listener: com.almasb.fxgl.time.UpdateEventListener?) {
+    override fun removeUpdateListener(listener: UpdateEventListener?) {
     }
 }

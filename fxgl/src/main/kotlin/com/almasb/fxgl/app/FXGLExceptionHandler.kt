@@ -75,7 +75,9 @@ class FXGLExceptionHandler
         log.fatal("Application will now exit");
 
         val app = FXGL.getApp()
-        app.pause()
+
+        // TODO:
+        //app.pause()
 
         val dialog = Dialog<ButtonType>()
         dialog.title = "Uncaught Exception"

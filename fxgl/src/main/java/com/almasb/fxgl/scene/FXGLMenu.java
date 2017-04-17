@@ -240,10 +240,10 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
-        return new MenuContent(new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner),
-                FXGL.getUIFactory().newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
-                    + app.getMasterTimer().getPlaytimeMinutes() + "M "
-                    + app.getMasterTimer().getPlaytimeSeconds() + "S"));
+        return new MenuContent(new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner));
+//                FXGL.getUIFactory().newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
+//                    + app.getMasterTimer().getPlaytimeMinutes() + "M "
+//                    + app.getMasterTimer().getPlaytimeSeconds() + "S"));
     }
 
     /**

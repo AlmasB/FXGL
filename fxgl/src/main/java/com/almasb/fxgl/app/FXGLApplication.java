@@ -163,7 +163,7 @@ public abstract class FXGLApplication extends Application {
                 System.exit(-1);
             }
 
-            Platform.runLater(primaryStage::show);
+            //Platform.runLater(primaryStage::show);
         }, "FXGL Launcher Thread").start();
     }
 
@@ -218,33 +218,33 @@ public abstract class FXGLApplication extends Application {
      */
     abstract void configureApp();
 
-    /**
-     * Pause execution of current state.
-     */
-    public void pause() {
-        log.debug("Pausing application");
-        systemListeners.forEach(FXGLListener::onPause);
-    }
-
-    /**
-     * Resume execution of current state.
-     */
-    public void resume() {
-        log.debug("Resuming application");
-        systemListeners.forEach(FXGLListener::onResume);
-    }
-
-    /**
-     * Reset the application.
-     * After notifying all interested parties (where all should do a cleanup),
-     * <code>System.gc()</code> will be called.
-     */
-    public final void reset() {
-        log.debug("Resetting FXGL application");
-        systemListeners.forEach(FXGLListener::onReset);
-
-        System.gc();
-    }
+//    /**
+//     * Pause execution of current state.
+//     */
+//    public void pause() {
+//        log.debug("Pausing application");
+//        systemListeners.forEach(FXGLListener::onPause);
+//    }
+//
+//    /**
+//     * Resume execution of current state.
+//     */
+//    public void resume() {
+//        log.debug("Resuming application");
+//        systemListeners.forEach(FXGLListener::onResume);
+//    }
+//
+//    /**
+//     * Reset the application.
+//     * After notifying all interested parties (where all should do a cleanup),
+//     * <code>System.gc()</code> will be called.
+//     */
+//    public final void reset() {
+//        log.debug("Resetting FXGL application");
+//        systemListeners.forEach(FXGLListener::onReset);
+//
+//        System.gc();
+//    }
 
     /**
      * Exit the application.
@@ -332,14 +332,14 @@ public abstract class FXGLApplication extends Application {
      * @return current tick (frame)
      */
     public final long getTick() {
-        return getMasterTimer().getTick();
+        return 0;
     }
 
     /**
      * @return current time since start of game in nanoseconds
      */
     public final long getNow() {
-        return getMasterTimer().getNow();
+        return 0;
     }
 
     public final EventBus getEventBus() {
@@ -362,7 +362,7 @@ public abstract class FXGLApplication extends Application {
         return FXGL.getAssetLoader();
     }
 
-    public final MasterTimer getMasterTimer() {
+    public StateTimer getMasterTimer() {
         return FXGL.getMasterTimer();
     }
 

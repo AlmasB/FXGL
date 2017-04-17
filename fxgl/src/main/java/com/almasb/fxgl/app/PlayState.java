@@ -57,6 +57,8 @@ class PlayState extends AppState {
         gameWorld.addWorldListener(physicsWorld);
         gameWorld.addWorldListener((GameScene) getScene());
 
+        // TODO: clear timer on game world reset?
+
         if (FXGL.getSettings().isMenuEnabled())
             getScene().addEventHandler(KeyEvent.ANY, (MenuEventHandler) FXGL.getApp().getMenuListener());
     }
@@ -64,6 +66,8 @@ class PlayState extends AppState {
     @Override
     public void onUpdate(double tpf) {
         gameWorld.onUpdate(tpf);
+
+        // TODO: call this in GameApp?
         FXGL.getApp().onUpdate(tpf);
     }
 

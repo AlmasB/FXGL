@@ -35,6 +35,7 @@ import com.almasb.fxgl.service.Input;
 abstract class AppState implements State {
 
     private FXGLScene scene;
+    private StateTimer timer = new StateTimerImpl();
 
     public AppState(FXGLScene scene) {
         this.scene = scene;
@@ -42,6 +43,11 @@ abstract class AppState implements State {
 
     public FXGLScene getScene() {
         return scene;
+    }
+
+    @Override
+    public StateTimer getTimer() {
+        return timer;
     }
 
     @Override

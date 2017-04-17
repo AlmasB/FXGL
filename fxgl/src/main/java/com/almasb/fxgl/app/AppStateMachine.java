@@ -28,8 +28,6 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.time.UpdateEvent;
-import com.almasb.fxgl.time.UpdateEventListener;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -37,7 +35,7 @@ import java.util.Deque;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AppStateMachine implements UpdateEventListener {
+class AppStateMachine {
 
     private static final Logger log = FXGLLogger.get(AppStateMachine.class);
 
@@ -54,13 +52,6 @@ class AppStateMachine implements UpdateEventListener {
     }
 
     private Deque<SubState> subStates = new ArrayDeque<>();
-
-    void start() {
-        log.debug("Starting AppStateMachine");
-        appState.onEnter(appState);
-
-        FXGL.getMasterTimer().startMainLoop();
-    }
 
     /**
      * Can only be called when no substates are present.
@@ -88,18 +79,18 @@ class AppStateMachine implements UpdateEventListener {
         this.appState.onEnter(prevState);
     }
 
-    @Override
-    public void onUpdateEvent(UpdateEvent event) {
+    public void onUpdate(double tpf) {
         State state = getCurrentState();
-        state.getInput().onUpdateEvent(event);
-        state.onUpdate(event.tpf());
+        state.getInput().onUpdate(tpf);
+        state.getTimer().onUpdate(tpf);
+        state.onUpdate(tpf);
     }
 
     void pushState(SubState state) {
         log.debug("Push state: " + state);
 
+        // substate, so prevState does not exit
         State prevState = getCurrentState();
-
         prevState.getInput().clearAll();
 
         subStates.push(state);

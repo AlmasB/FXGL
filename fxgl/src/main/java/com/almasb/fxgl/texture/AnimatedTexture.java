@@ -59,7 +59,7 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
 
         setAnimationChannel(initialChannel);
 
-        FXGL.getMasterTimer().addUpdateListener(this);
+        //FXGL.getMasterTimer().addUpdateListener(this);
     }
 
     /**
@@ -123,6 +123,8 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
     @Override
     public void dispose() {
         super.dispose();
-        FXGL.getMasterTimer().removeUpdateListener(this);
+
+        // TODO:
+        //FXGL.getMasterTimer().removeUpdateListener(this);
     }
 }

@@ -70,11 +70,11 @@ public class DeveloperMenuBarController implements UIController {
     }
 
     public void onPause() {
-        app.pause();
+        //app.pause();
     }
 
     public void onResume() {
-        app.resume();
+        //app.resume();
     }
 
     public void onExit() {

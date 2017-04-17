@@ -37,13 +37,9 @@ import javafx.scene.layout.Pane;
  */
 public abstract class SubState implements State {
 
-    private Pane view;
-    private Input input;
-
-    public SubState() {
-        view = new Pane();
-        input = new FXGLInput();
-    }
+    private Pane view = new Pane();
+    private Input input = new FXGLInput();
+    private StateTimer timer = new StateTimerImpl();
 
     protected ObservableList<Node> getChildren() {
         return view.getChildren();
@@ -51,6 +47,11 @@ public abstract class SubState implements State {
 
     public Node getView() {
         return view;
+    }
+
+    @Override
+    public StateTimer getTimer() {
+        return timer;
     }
 
     @Override

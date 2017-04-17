@@ -40,13 +40,13 @@ import com.almasb.fxgl.time.UpdateEvent
 class Profiler : com.almasb.fxgl.time.UpdateEventListener {
 
     companion object {
-        private val masterTimer: MasterTimer
+        private lateinit var masterTimer: MasterTimer
         private val runtime: Runtime
 
         private val MB = 1024.0f * 1024.0f
 
         init {
-            masterTimer = FXGL.getMasterTimer()
+            //masterTimer = FXGL.getMasterTimer()
             runtime = Runtime.getRuntime()
         }
     }

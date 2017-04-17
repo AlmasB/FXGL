@@ -126,8 +126,8 @@ private constructor(private val stage: Stage,
         else
             FXGLAssets.UI_CSS
 
-        initStage()
-        //Platform.runLater { initStage() }
+        //initStage()
+        Platform.runLater { initStage() }
 
         initDialogBox()
 
