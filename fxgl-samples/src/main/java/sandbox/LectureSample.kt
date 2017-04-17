@@ -86,7 +86,6 @@ class LectureSample : GameApplication() {
 
         input.addAction(object : UserAction("Exit") {
             override fun onActionBegin() {
-                pause()
                 exit()
             }
         }, KeyCode.L)

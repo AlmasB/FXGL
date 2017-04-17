@@ -50,7 +50,7 @@ public class PlayerControl extends AbstractControl {
     private BoundingBoxComponent bbox;
     private InvincibleComponent invicibility;
 
-    private MasterTimer timer;
+    //private MasterTimer timer;
 
     private double dx = 0;
     private double attackSpeed = Config.PLAYER_ATTACK_SPEED;
@@ -64,18 +64,18 @@ public class PlayerControl extends AbstractControl {
         bbox = entity.getComponentUnsafe(BoundingBoxComponent.class);
         invicibility = entity.getComponentUnsafe(InvincibleComponent.class);
 
-        timer = FXGL.getMasterTimer();
+        //timer = FXGL.getMasterTimer();
     }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
         dx = Config.PLAYER_MOVE_SPEED * tpf;
 
-        if (!canShoot) {
-            if ((timer.getNow() - lastTimeShot) / 1000000000.0 >= 1.0 / attackSpeed) {
-                canShoot = true;
-            }
-        }
+//        if (!canShoot) {
+//            if ((timer.getNow() - lastTimeShot) / 1000000000.0 >= 1.0 / attackSpeed) {
+//                canShoot = true;
+//            }
+//        }
     }
 
     public void left() {
@@ -93,7 +93,7 @@ public class PlayerControl extends AbstractControl {
             return;
 
         canShoot = false;
-        lastTimeShot = timer.getNow();
+        //lastTimeShot = timer.getNow();
 
         GameWorld world = (GameWorld) getEntity().getWorld();
         world.spawn("Laser", new SpawnData(0, 0).put("owner", getEntity()));

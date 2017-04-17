@@ -30,8 +30,6 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.State;
 import com.almasb.fxgl.app.SubState;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.service.Input;
-import com.almasb.fxgl.service.impl.input.FXGLInput;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -64,8 +62,8 @@ public class ShopState extends SubState {
     }
 
     @Override
-    public void onEnter(@NotNull State prevState) {
-
+    public void onEnter(State prevState) {
+        super.onEnter(prevState);
     }
 
     @Override

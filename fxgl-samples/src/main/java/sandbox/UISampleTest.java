@@ -78,7 +78,7 @@ public class UISampleTest extends GameApplication {
         uiText.setTranslateY(300);
 
         // 4. bind text property to some data of interest
-        uiText.textProperty().bind(getMasterTimer().tickProperty().asString("Tick: [%d]"));
+        //uiText.textProperty().bind(getMasterTimer().tickProperty().asString("Tick: [%d]"));
 
         // 5. add UI object to scene
         getGameScene().addUINode(uiText);

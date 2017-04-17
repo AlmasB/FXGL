@@ -51,7 +51,7 @@ public class RandomMoveAction extends Action {
 
     @Override
     public void action() {
-        speed = FXGL.getMasterTimer().tpf() * 60;
+        speed = 0.016 * 60;
 
         switch (moveDir) {
             case UP:

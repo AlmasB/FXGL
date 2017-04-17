@@ -134,7 +134,7 @@ public class PacmanApp extends GameApplication {
             @Override
             protected void onAction() {
                 System.out.println("Action");
-                pause();
+                //pause();
             }
         }, KeyCode.F);
 
@@ -142,7 +142,7 @@ public class PacmanApp extends GameApplication {
             @Override
             protected void onActionBegin() {
 
-                resume();
+                //resume();
 
 //                if (getGameState().getInt("teleport") > 0) {
 //                    getGameState().increment("teleport", -1);
@@ -193,7 +193,7 @@ public class PacmanApp extends GameApplication {
     @Override
     protected void initUI() {
         uiController = new PacmanUIController();
-        getMasterTimer().addUpdateListener(uiController);
+        //getMasterTimer().addUpdateListener(uiController);
 
         UI ui = getAssetLoader().loadUI("pacman/pacman_ui.fxml", uiController);
         ui.getRoot().setTranslateX(MAP_SIZE * BLOCK_SIZE);
@@ -208,7 +208,7 @@ public class PacmanApp extends GameApplication {
     protected void onPostUpdate(double tpf) {
         if (requestNewGame) {
             requestNewGame = false;
-            getMasterTimer().removeUpdateListener(uiController);
+            //getMasterTimer().removeUpdateListener(uiController);
             startNewGame();
         }
     }

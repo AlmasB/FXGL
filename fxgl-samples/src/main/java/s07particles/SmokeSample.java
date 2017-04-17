@@ -151,7 +151,7 @@ public class SmokeSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        debug.setText(tpf + " at " + getMasterTimer().getFPS());
+        //debug.setText(tpf + " at " + getMasterTimer().getFPS());
 
         entity.setX(getInput().getMouseXWorld() - 25);
         entity.setY(getInput().getMouseYWorld() - 25);

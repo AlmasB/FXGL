@@ -59,8 +59,8 @@ public class StateSample extends GameApplication {
         settings.setTitle("StateSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setIntroEnabled(true);
+        settings.setMenuEnabled(true);
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEBUG);
@@ -80,6 +80,13 @@ public class StateSample extends GameApplication {
 
     @Override
     protected void initGame() {
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         shopState = new ShopState();
 
         // 2. create entity and attach to world using fluent API
