@@ -81,7 +81,7 @@ private constructor(private val stage: Stage) : Display {
     override fun addHandlers(keyHandler: EventHandler<KeyEvent>, mouseHandler: EventHandler<MouseEvent>) {
         fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
         fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
-        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene().fireEvent(it.copyFor(null, null)) })
+        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene()?.fireEvent(it.copyFor(null, null)) })
     }
 
     override fun show() {
