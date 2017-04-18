@@ -119,7 +119,8 @@ public class MockApplicationModule extends ApplicationModule {
 
     private void mockTimer() {
         bind(MasterTimer.class).toInstance(MockMasterTimer.INSTANCE);
-        bind(LocalTimer.class).to(FXGLLocalTimer.class);
+        //bind(StateTimer.class).to(StateTimerImpl.class);
+        //bind(LocalTimer.class).to(FXGLLocalTimer.class);
     }
 
     private void mockPooler() {
