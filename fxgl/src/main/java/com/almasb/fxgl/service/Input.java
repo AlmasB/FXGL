@@ -44,6 +44,8 @@ import java.util.Map;
 /**
  * Allows input data queries as well as action bindings.
  *
+ * TODO: input should have a parent so we can track down calls
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public interface Input extends UserProfileSavable {

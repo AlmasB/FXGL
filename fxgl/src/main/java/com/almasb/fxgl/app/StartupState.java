@@ -54,10 +54,10 @@ class StartupState extends AppState {
 
         // Start -> (Intro) -> (Menu) -> Game
         if (app.getSettings().isIntroEnabled()) {
-            app.setState(ApplicationState.INTRO);
+            app.startIntro();
         } else {
             if (app.getSettings().isMenuEnabled()) {
-                app.setState(ApplicationState.MAIN_MENU);
+                app.startMainMenu();
             } else {
                 app.startNewGame();
             }

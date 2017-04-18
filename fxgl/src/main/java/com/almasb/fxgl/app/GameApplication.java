@@ -90,14 +90,6 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         return stateMachine;
     }
 
-    ApplicationState getState() {
-        return stateMachine.getApplicationState();
-    }
-
-    void setState(ApplicationState state) {
-        stateMachine.setState(state);
-    }
-
     private SceneFactory sceneFactory;
 
     public SceneFactory getSceneFactory() {
@@ -263,12 +255,33 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         log.debug("Initializing App");
 
         FXGL.getInstance(LoadingState.class).setInitTask(initTask);
-        setState(ApplicationState.LOADING);
+        stateMachine.setState(ApplicationState.LOADING);
+    }
+
+    void startIntro() {
+        stateMachine.setState(ApplicationState.INTRO);
+    }
+
+    void startGameMenu() {
+        stateMachine.setState(ApplicationState.GAME_MENU);
+    }
+
+    void startMainMenu() {
+        stateMachine.setState(ApplicationState.MAIN_MENU);
+    }
+
+    /**
+     * Set state to PLAYING.
+     */
+    void startPlay() {
+        stateMachine.setState(ApplicationState.PLAYING);
     }
 
     /**
      * (Re-)initializes the user application as new and starts the game.
      * Note: cannot be called during callbacks.
+     *
+     * TODO: visibility ...
      */
     protected void startNewGame() {
         log.debug("Starting new game");
@@ -281,7 +294,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
      *
      * @param dataFile save data to load from
      */
-    protected void startLoadedGame(DataFile dataFile) {
+    void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
         initApp(new InitAppTask(this, dataFile));
     }
@@ -343,7 +356,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
     }
 
     @Override
-    public StateTimer getMasterTimer() {
+    public final StateTimer getMasterTimer() {
         return playState.getTimer();
     }
 }

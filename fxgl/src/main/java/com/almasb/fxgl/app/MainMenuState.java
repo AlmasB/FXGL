@@ -42,25 +42,16 @@ class MainMenuState extends AppState {
 
     @Override
     public void onEnter(State prevState) {
-//        when(prevState) {
-//            is StartupState -> {
-//
-//            }
-//
-//            is IntroState -> {
-//
-//            }
-//
-//            is GameMenuState -> {
-//
-//            }
-//
-//            else -> throw IllegalArgumentException("Entered MainMenu from illegal state: $prevState")
-//        }
+        if (prevState instanceof StartupState
+                || prevState instanceof IntroState
+                || prevState instanceof GameMenuState) {
 
-        MenuEventHandler menuHandler = (MenuEventHandler) FXGL.getApp().getMenuListener();
+            MenuEventHandler menuHandler = (MenuEventHandler) FXGL.getApp().getMenuListener();
 
-        if (!menuHandler.isProfileSelected())
-            menuHandler.showProfileDialog();
+            if (!menuHandler.isProfileSelected())
+                menuHandler.showProfileDialog();
+        } else {
+            throw new IllegalArgumentException("Entered MainMenu from illegal state: " + prevState);
+        }
     }
 }

@@ -73,4 +73,9 @@ public abstract class SubState implements State {
     public void onUpdate(double tpf) {
         // no-op
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

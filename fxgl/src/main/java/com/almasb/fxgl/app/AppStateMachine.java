@@ -101,17 +101,19 @@ public final class AppStateMachine {
         state.onUpdate(tpf);
     }
 
-    public void pushState(SubState state) {
-        log.debug("Push state: " + state);
+    public void pushState(SubState newState) {
+        log.debug("Push state: " + newState);
 
         // substate, so prevState does not exit
         State prevState = getCurrentState();
         prevState.getInput().clearAll();
 
-        subStates.push(state);
-        app.getDisplay().getCurrentScene().getRoot().getChildren().add(state.getView());
+        log.debug(prevState + " -> " + newState);
 
-        state.onEnter(prevState);
+        subStates.push(newState);
+        app.getDisplay().getCurrentScene().getRoot().getChildren().add(newState.getView());
+
+        newState.onEnter(prevState);
     }
 
     public void popState() {
@@ -120,14 +122,16 @@ public final class AppStateMachine {
             return;
         }
 
-        SubState state = subStates.pop();
+        SubState prevState = subStates.pop();
 
-        log.debug("Pop state: " + state);
+        log.debug("Pop state: " + prevState);
 
-        state.onExit();
-        state.getInput().clearAll();
+        prevState.onExit();
+        prevState.getInput().clearAll();
 
-        app.getDisplay().getCurrentScene().getRoot().getChildren().remove(state.getView());
+        log.debug(getCurrentState() + " <- " + prevState);
+
+        app.getDisplay().getCurrentScene().getRoot().getChildren().remove(prevState.getView());
     }
 
     ApplicationState getApplicationState() {
@@ -172,5 +176,9 @@ public final class AppStateMachine {
      */
     public boolean isInPlay() {
         return getCurrentState() == getPlayState();
+    }
+
+    public boolean isInGameMenu() {
+        return getCurrentState() == getGameMenuState();
     }
 }

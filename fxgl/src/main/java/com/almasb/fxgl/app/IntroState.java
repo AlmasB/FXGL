@@ -64,7 +64,7 @@ class IntroState extends AppState {
 
     private void onIntroFinished() {
         if (FXGL.getSettings().isMenuEnabled()) {
-            FXGL.getApp().setState(ApplicationState.MAIN_MENU);
+            FXGL.getApp().startMainMenu();
         } else {
             FXGL.getApp().startNewGame();
         }

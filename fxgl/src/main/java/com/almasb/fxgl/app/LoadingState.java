@@ -50,7 +50,7 @@ class LoadingState extends AppState {
     @Override
     public void onEnter(State prevState) {
         initTask.onEndAction = () -> {
-            FXGL.getApp().setState(ApplicationState.PLAYING);
+            FXGL.getApp().startPlay();
         };
 
         ((LoadingScene) getScene()).bind(initTask);
