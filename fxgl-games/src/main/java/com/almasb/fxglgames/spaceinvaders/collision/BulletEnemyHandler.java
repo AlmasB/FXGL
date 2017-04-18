@@ -74,7 +74,7 @@ public class BulletEnemyHandler extends CollisionHandler {
 
         if (hp.getValue() <= 0) {
 
-            FXGL.getMasterTimer().runOnceAfter(() -> {
+            //FXGL.getMasterTimer().runOnceAfter(() -> {
                 Entity entity = new Entity();
                 entity.addComponent(new PositionComponent(Entities.getBBox(enemy).getCenterWorld()));
                 entity.addControl(new ParticleControl(new ExplosionEmitter()));
@@ -84,7 +84,7 @@ public class BulletEnemyHandler extends CollisionHandler {
                 world.spawn("Explosion", Entities.getBBox(enemy).getCenterWorld());
 
                 enemy.removeFromWorld();
-            }, Duration.seconds(0.1));
+            //}, Duration.seconds(0.1));
 
             FXGL.getAudioPlayer().playSound("explosion.wav");
             FXGL.getEventBus().fireEvent(new GameEvent(GameEvent.ENEMY_KILLED));
