@@ -27,6 +27,8 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.app.StateTimer
+import com.almasb.fxgl.time.FXGLLocalTimer
+import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.TimerAction
 import com.almasb.fxgl.time.TimerActionImpl
 import javafx.beans.property.ReadOnlyBooleanProperty
@@ -45,8 +47,19 @@ class StateTimerImpl : StateTimer {
      */
     private val timerActions = CopyOnWriteArrayList<TimerActionImpl>()
 
+    private var now = 0.0
+
+    override fun now(): Double {
+        return now
+    }
+
+    override fun newLocalTimer(): LocalTimer {
+        return FXGLLocalTimer(this)
+    }
 
     override fun onUpdate(tpf: Double) {
+        now += tpf
+
         timerActions.forEach { it.update(tpf) }
         timerActions.removeIf(TimerActionImpl::isExpired)
     }

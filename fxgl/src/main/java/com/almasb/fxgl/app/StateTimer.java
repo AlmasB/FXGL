@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxgl.time.TimerAction;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.util.Duration;
@@ -36,6 +37,13 @@ import javafx.util.Duration;
 public interface StateTimer {
 
     void onUpdate(double tpf);
+
+    LocalTimer newLocalTimer();
+
+    /**
+     * @return time in seconds accumulated in this state
+     */
+    double now();
 
     /**
      * The Runnable action will be scheduled to run at given interval.

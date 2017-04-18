@@ -26,9 +26,7 @@
 
 package com.almasb.fxgl.time
 
-import com.almasb.fxgl.service.MasterTimer
-import com.almasb.fxgl.service.impl.timer.FXGLMasterTimer
-import com.google.inject.Inject
+import com.almasb.fxgl.app.StateTimer
 import javafx.util.Duration
 
 /**
@@ -36,16 +34,14 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLLocalTimer
-@Inject
-private constructor(private val masterTimer: MasterTimer) : com.almasb.fxgl.time.LocalTimer {
-    private var time: Long = 0
+class FXGLLocalTimer(private val stateTimer: StateTimer) : LocalTimer {
+    private var time = 0.0
 
     /**
      * Captures current time.
      */
     override fun capture() {
-        time = masterTimer.now
+        time = stateTimer.now()
     }
 
     /**
@@ -57,5 +53,5 @@ private constructor(private val masterTimer: MasterTimer) : com.almasb.fxgl.time
      * @return true if elapsed, false otherwise
      */
     override fun elapsed(duration: Duration) =
-            masterTimer.now - time >= FXGLMasterTimer.toNanos(duration)
+            stateTimer.now() - time >= duration.toSeconds()
 }
