@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.SubState
 import javafx.scene.Node
 
 /**

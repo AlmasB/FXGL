@@ -32,7 +32,6 @@ import com.google.inject.Inject
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.Pos
-import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent

@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.app.StateTimer
 import com.almasb.fxgl.time.FXGLLocalTimer
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.TimerAction

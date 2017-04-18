@@ -27,8 +27,6 @@
 package com.almasb.fxgl.event
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.time.UpdateEvent
-import com.almasb.fxgl.time.UpdateEventListener
 import javafx.event.Event
 import javafx.util.Duration
 

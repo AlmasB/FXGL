@@ -31,7 +31,6 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.lang.reflect.Field;

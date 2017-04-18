@@ -38,8 +38,6 @@ import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.parser.tiled.TiledMap;
-import com.almasb.fxgl.time.UpdateEvent;
-import com.almasb.fxgl.time.UpdateEventListener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;

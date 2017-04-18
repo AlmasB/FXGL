@@ -30,17 +30,13 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.time.*
-import com.almasb.fxgl.time.TimerActionImpl.TimerType
+import com.almasb.fxgl.time.UpdateEventListener
 import com.google.inject.Inject
-import javafx.animation.AnimationTimer
-import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyLongProperty
 import javafx.beans.property.ReadOnlyLongWrapper
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.util.Duration
 import java.util.*
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Contains convenience methods and manages timer based actions.

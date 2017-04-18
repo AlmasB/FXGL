@@ -33,10 +33,7 @@ import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Input
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.time.UpdateEvent
-import com.google.inject.Inject
 import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.scene.input.*

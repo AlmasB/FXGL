@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.service.impl.display
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.DialogSubState
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Display
 import com.almasb.fxgl.ui.FXGLButton

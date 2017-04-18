@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.time
 
-import com.almasb.fxgl.service.impl.timer.FXGLMasterTimer
 import javafx.util.Duration
 
 /**

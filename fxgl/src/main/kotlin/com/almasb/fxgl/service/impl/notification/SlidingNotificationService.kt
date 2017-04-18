@@ -29,7 +29,6 @@ package com.almasb.fxgl.service.impl.notification
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.gameplay.Notification
 import com.almasb.fxgl.gameplay.NotificationEvent
-import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.service.NotificationService
 import com.almasb.fxgl.ui.Position
 import com.google.inject.Inject

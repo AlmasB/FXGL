@@ -26,20 +26,15 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.gameplay.AchievementEvent
 import com.almasb.fxgl.gameplay.NotificationEvent
 import com.almasb.fxgl.saving.LoadEvent
 import com.almasb.fxgl.saving.SaveEvent
-import com.almasb.fxgl.scene.DisplayEvent
 import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.service.listener.AchievementListener
 import com.almasb.fxgl.service.listener.NotificationListener
 import com.almasb.fxgl.service.listener.UserProfileSavable
 import com.google.inject.Inject
-import javafx.animation.AnimationTimer
-import javafx.scene.effect.BlendMode
-import javafx.scene.paint.Color
 
 /**
  * Initializes global event handlers.

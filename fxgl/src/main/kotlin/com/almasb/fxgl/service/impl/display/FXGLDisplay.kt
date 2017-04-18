@@ -26,27 +26,23 @@
 
 package com.almasb.fxgl.service.impl.display
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.DialogSubState
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.DisplayEvent
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Display
-import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
 import com.almasb.fxgl.settings.UserProfile
 import com.google.inject.Inject
-import javafx.application.Platform
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
-import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Node

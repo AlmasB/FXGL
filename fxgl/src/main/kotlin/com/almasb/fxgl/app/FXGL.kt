@@ -31,7 +31,6 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.ServiceType
-import com.almasb.fxgl.time.FXGLLocalTimer
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.AbstractModule

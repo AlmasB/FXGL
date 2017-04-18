@@ -27,12 +27,9 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.service.listener.UserProfileSavable;
-import com.almasb.fxgl.time.TimerAction;
 import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
-import javafx.util.Duration;
 
 /**
  * Represents master timer, all local timers are synchronized with this.
