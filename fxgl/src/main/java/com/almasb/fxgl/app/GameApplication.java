@@ -29,8 +29,10 @@ import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
+import com.almasb.fxgl.io.FXGLIO;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.scene.DisplayEvent;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.Viewport;
@@ -124,14 +126,43 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         setSceneFactory(initSceneFactory());
         stateMachine = new AppStateMachine();
 
+        log.debug("Initializing play state");
         playState = (PlayState) ApplicationState.PLAYING.state();
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
         Async.startFX(() -> {
             FXGL.getDisplay().initAndShow(keyHandler, mouseHandler);
+
+            // these things need to be called early before the main loop
+            // so that menus can correctly display input controls, etc.
+            // this is called once per application lifetime
+            runPreInit();
+
             startMainLoop();
         });
+    }
+
+    private void runPreInit() {
+        FXGLIO.INSTANCE.setDefaultExceptionHandler(getExceptionHandler());
+        FXGLIO.INSTANCE.setDefaultExecutor(getExecutor());
+
+        initAchievements();
+
+        // 1. register system actions
+        SystemActions.INSTANCE.bind(getInput());
+
+        // 2. register user actions
+        initInput();
+
+        // 3. scan for annotated methods and register them too
+        getInput().scanForUserActions(this);
+
+        preInit();
+
+        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
+
+        runTask(InitEventHandlersTask.class);
     }
 
     private void startMainLoop() {
@@ -186,6 +217,17 @@ public abstract class GameApplication extends SimpleFXGLApplication {
             if (fpsFont == null) {
                 fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20);
             }
+
+            //            val profiler = FXGL.newProfiler()
+//
+//            app.addFXGLListener(object : FXGLListener {
+//                override fun onExit() {
+//                    profiler.stop()
+//                    profiler.print()
+//                }
+//            })
+//
+//            profiler.start();
 
             GraphicsContext g = getGameScene().getGraphicsContext();
             g.setGlobalBlendMode(BlendMode.SRC_OVER);

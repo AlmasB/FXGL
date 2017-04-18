@@ -28,12 +28,9 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.io.FXGLIO;
-import com.almasb.fxgl.scene.DisplayEvent;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import javafx.application.Platform;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -45,6 +42,7 @@ class StartupState extends AppState {
 
     @Inject
     private StartupState() {
+        // placeholder scene, will be replaced by next state
         super(new FXGLScene() {});
     }
 
@@ -54,50 +52,7 @@ class StartupState extends AppState {
 
         GameApplication app = FXGL.getApp();
 
-        FXGLIO.INSTANCE.setDefaultExceptionHandler(app.getExceptionHandler());
-        FXGLIO.INSTANCE.setDefaultExecutor(app.getExecutor());
-
-        app.initAchievements();
-
-        // we call this early to process user input bindings
-        // so we can correctly display them in menus
-        // 1. register system actions
-        SystemActions.INSTANCE.bind(app.getInput());
-
-        // 2. register user actions
-        app.initInput();
-
-        // 3. scan for annotated methods and register them too
-        app.getInput().scanForUserActions(app);
-
-        app.preInit();
-
-        app.getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> app.exit());
-
-
-
-
-        // TODO: PROFILER
-//        if (app.settings.isProfilingEnabled) {
-//            val profiler = FXGL.newProfiler()
-//
-//            app.addFXGLListener(object : FXGLListener {
-//                override fun onExit() {
-//                    profiler.stop()
-//                    profiler.print()
-//                }
-//            })
-//
-//            log.debug("Injecting profiler")
-//            //app.profiler = profiler
-//            profiler.start();
-//        }
-
-        app.runTask(InitEventHandlersTask.class);
-
-        // intro runs async so we have to wait with a callback
-        // Stage -> (Intro) -> (Menu) -> Game
-        // if not enabled, call finished directly
+        // Start -> (Intro) -> (Menu) -> Game
         if (app.getSettings().isIntroEnabled()) {
             app.setState(ApplicationState.INTRO);
         } else {

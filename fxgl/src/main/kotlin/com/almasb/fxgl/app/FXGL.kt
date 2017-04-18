@@ -223,24 +223,6 @@ class FXGL private constructor() {
             saveSystemData()
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /**
          * Dependency injector.
          */
@@ -289,22 +271,13 @@ class FXGL private constructor() {
             }
         }
 
-        /* CONVENIENCE ACCESSORS */
-
-        @JvmStatic fun getLogger(name: String) = FXGLLogger.get(name)
-        @JvmStatic fun getLogger(caller: Class<*>) = FXGLLogger.get(caller)
-
-
-
+        /* CONVENIENCE ACCESSORS - SERVICES */
 
         private val _assetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
         private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
         @JvmStatic fun getEventBus() = _eventBus
-
-        private val _input by lazy { internalApp.input }
-        @JvmStatic fun getInput() = _input
 
         private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
@@ -338,6 +311,14 @@ class FXGL private constructor() {
 
         private val _questManager by lazy { getService(ServiceType.QUEST_MANAGER) }
         @JvmStatic fun getQuestManager() = _questManager
+
+        /* OTHER CONVENIENCE ACCESSORS */
+
+        private val _input by lazy { internalApp.input }
+        @JvmStatic fun getInput() = _input
+
+        @JvmStatic fun getLogger(name: String) = FXGLLogger.get(name)
+        @JvmStatic fun getLogger(caller: Class<*>) = FXGLLogger.get(caller)
 
         /**
          * @return new instance on each call

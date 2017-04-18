@@ -120,7 +120,7 @@ public abstract class FXGLApplication extends Application {
         systemListeners.remove(listener);
     }
 
-    public void runTask(Class<? extends Runnable> type) {
+    void runTask(Class<? extends Runnable> type) {
         log.debug("Running task: " + type.getSimpleName());
         FXGL.getInstance(type).run();
     }
