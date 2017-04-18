@@ -124,10 +124,8 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         long start = System.nanoTime();
 
         setSceneFactory(initSceneFactory());
-        stateMachine = new AppStateMachine();
-
-        log.debug("Initializing play state");
-        playState = (PlayState) ApplicationState.PLAYING.state();
+        stateMachine = new AppStateMachine(this);
+        playState = (PlayState) stateMachine.getPlayState();
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
@@ -207,7 +205,11 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         // TODO: update listeners
         getAudioPlayer().onUpdateEvent(new UpdateEvent(0, tpf));
 
-        onUpdate(tpf);
+        if (stateMachine.isInPlay()) {
+            onUpdate(tpf);
+        } else {
+            onPausedUpdate(tpf);
+        }
     }
 
     private Font fpsFont;

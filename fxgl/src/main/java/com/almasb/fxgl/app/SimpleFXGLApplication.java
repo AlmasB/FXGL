@@ -121,7 +121,7 @@ public abstract class SimpleFXGLApplication extends FXGLApplication {
     }
 
     /**
-     * Main loop update phase, most of game logic.
+     * Called every frame _only_ in Play state.
      *
      * @param tpf time per frame
      */
@@ -130,7 +130,7 @@ public abstract class SimpleFXGLApplication extends FXGLApplication {
     }
 
     /**
-     * Called after main loop tick has been completed.
+     * Called after main loop tick has been completed _only_ in Play state.
      * It can be used to de-register callbacks / listeners
      * and call various methods that otherwise might interfere
      * with main loop.
@@ -138,6 +138,15 @@ public abstract class SimpleFXGLApplication extends FXGLApplication {
      * @param tpf time per frame (same as main update tpf)
      */
     protected void onPostUpdate(double tpf) {
+        // no-op
+    }
+
+    /**
+     * Called every frame in any non-Play state.
+     *
+     * @param tpf time per frame
+     */
+    protected void onPausedUpdate(double tpf) {
         // no-op
     }
 

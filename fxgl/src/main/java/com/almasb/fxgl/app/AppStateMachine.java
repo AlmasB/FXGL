@@ -33,6 +33,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 /**
+ * Initializes application states.
+ * Manages transitions, updates of all states.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public final class AppStateMachine {
@@ -41,17 +44,31 @@ public final class AppStateMachine {
 
     private ApplicationState applicationState = ApplicationState.STARTUP;
 
-    ApplicationState getApplicationState() {
-        return applicationState;
-    }
-
-    private AppState appState = applicationState.state();
-
-    AppState getAppState() {
-        return appState;
-    }
+    private AppState appState;
 
     private Deque<SubState> subStates = new ArrayDeque<>();
+
+    private GameApplication app;
+
+    AppStateMachine(GameApplication app) {
+        this.app = app;
+
+        log.debug("Initializing application states");
+
+        // STARTUP is default
+        appState = ApplicationState.STARTUP.state();
+        ApplicationState.LOADING.state();
+        ApplicationState.PLAYING.state();
+
+        if (app.getSettings().isIntroEnabled()) {
+            ApplicationState.INTRO.state();
+        }
+
+        if (app.getSettings().isMenuEnabled()) {
+            ApplicationState.MAIN_MENU.state();
+            ApplicationState.GAME_MENU.state();
+        }
+    }
 
     /**
      * Can only be called when no substates are present.
@@ -73,10 +90,8 @@ public final class AppStateMachine {
 
         // new state
         appState = newState.state();
-
-        FXGL.getDisplay().setScene(appState.getScene());
-
-        this.appState.onEnter(prevState);
+        app.getDisplay().setScene(appState.getScene());
+        appState.onEnter(prevState);
     }
 
     void onUpdate(double tpf) {
@@ -94,7 +109,7 @@ public final class AppStateMachine {
         prevState.getInput().clearAll();
 
         subStates.push(state);
-        FXGL.getDisplay().getCurrentScene().getRoot().getChildren().add(state.getView());
+        app.getDisplay().getCurrentScene().getRoot().getChildren().add(state.getView());
 
         state.onEnter(prevState);
     }
@@ -112,10 +127,50 @@ public final class AppStateMachine {
         state.onExit();
         state.getInput().clearAll();
 
-        FXGL.getDisplay().getCurrentScene().getRoot().getChildren().remove(state.getView());
+        app.getDisplay().getCurrentScene().getRoot().getChildren().remove(state.getView());
+    }
+
+    ApplicationState getApplicationState() {
+        return applicationState;
     }
 
     State getCurrentState() {
         return (subStates.isEmpty()) ? appState : subStates.peek();
+    }
+
+    public State getIntroState() {
+        if (!app.getSettings().isIntroEnabled())
+            throw new IllegalStateException("Intro is not enabled");
+
+        return ApplicationState.INTRO.state();
+    }
+
+    public State getLoadingState() {
+        return ApplicationState.LOADING.state();
+    }
+
+    public State getMainMenuState() {
+        if (!app.getSettings().isMenuEnabled())
+            throw new IllegalStateException("Menu is not enabled");
+
+        return ApplicationState.MAIN_MENU.state();
+    }
+
+    public State getGameMenuState() {
+        if (!app.getSettings().isMenuEnabled())
+            throw new IllegalStateException("Menu is not enabled");
+
+        return ApplicationState.GAME_MENU.state();
+    }
+
+    public State getPlayState() {
+        return ApplicationState.PLAYING.state();
+    }
+
+    /**
+     * @return true if app is in play state
+     */
+    public boolean isInPlay() {
+        return getCurrentState() == getPlayState();
     }
 }
