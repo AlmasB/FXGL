@@ -50,9 +50,13 @@ import java.util.function.Predicate;
  */
 public interface Display extends UserProfileSavable {
 
-    void addHandlers(EventHandler<KeyEvent> keyHandler, EventHandler<MouseEvent> mouseHandler);
-
-    void show();
+    /**
+     * Must be called on FX thread.
+     *
+     * @param keyHandler
+     * @param mouseHandler
+     */
+    void initAndShow(EventHandler<KeyEvent> keyHandler, EventHandler<MouseEvent> mouseHandler);
 
 
 

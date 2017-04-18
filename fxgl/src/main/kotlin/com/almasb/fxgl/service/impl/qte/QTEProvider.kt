@@ -37,6 +37,7 @@ import javafx.scene.control.Button
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
+import javafx.stage.Stage
 import javafx.util.Duration
 import java.util.*
 import java.util.concurrent.ScheduledFuture
@@ -45,15 +46,15 @@ import java.util.function.Consumer
 /**
  * FXGL default QTE service provider.
  *
+ * TODO: redo as a state
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class QTEProvider
-@Inject private constructor() : QTE {
+@Inject private constructor(private val primaryStage: Stage) : QTE {
 
     private val eventHandler: EventHandler<KeyEvent>
     private lateinit var scheduledAction: ScheduledFuture<*>
-
-    private val fxScene: Scene
 
     private val closeButton = Button()
     private val keysBox = HBox(10.0)
@@ -63,8 +64,6 @@ class QTEProvider
     private lateinit var callback: Consumer<Boolean>
 
     init {
-        fxScene = FXGL.getDisplay().currentScene.root.scene
-
         closeButton.isVisible = false
 
         keysBox.alignment = Pos.CENTER
@@ -91,7 +90,7 @@ class QTEProvider
     private fun show() {
         FXGL.getDisplay().showBox("QTE!", keysBox, closeButton)
 
-        fxScene.addEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
+        primaryStage.scene.addEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
     }
 
     private fun close() {
@@ -100,7 +99,7 @@ class QTEProvider
         qteKeys.clear()
         keysBox.children.clear()
 
-        fxScene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
+        primaryStage.scene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
 
         closeButton.fire()
     }

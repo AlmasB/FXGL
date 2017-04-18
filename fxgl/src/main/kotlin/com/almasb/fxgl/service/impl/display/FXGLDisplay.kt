@@ -76,18 +76,7 @@ import javax.imageio.ImageIO
  */
 class FXGLDisplay
 @Inject
-private constructor(private val stage: Stage) : Display {
-
-    override fun addHandlers(keyHandler: EventHandler<KeyEvent>, mouseHandler: EventHandler<MouseEvent>) {
-        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
-        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
-        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene()?.fireEvent(it.copyFor(null, null)) })
-    }
-
-    override fun show() {
-        log.debug("Opening primary window")
-        stage.show()
-    }
+private constructor(private val stage: Stage, private val settings: ReadOnlyGameSettings) : Display {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -101,17 +90,11 @@ private constructor(private val stage: Stage) : Display {
 
     private val css: CSS
 
-    private val eventBus: EventBus
-
-    private val settings: ReadOnlyGameSettings
-
     private val sceneDimensions = ArrayList<SceneDimension>()
 
-    private val fxScene: Scene
+    private lateinit var fxScene: Scene
 
     init {
-        settings = FXGL.getSettings()
-
         targetWidth = SimpleDoubleProperty(settings.width.toDouble())
         targetHeight = SimpleDoubleProperty(settings.height.toDouble())
         scaledWidth = SimpleDoubleProperty()
@@ -123,20 +106,30 @@ private constructor(private val stage: Stage) : Display {
             FXGL.getAssetLoader().loadCSS(settings.menuStyle.cssFileName)
         else
             FXGLAssets.UI_CSS
+    }
 
-        fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
-        stage.scene = fxScene
-
+    /**
+     * Must be called on FX thread.
+     */
+    override fun initAndShow(keyHandler: EventHandler<KeyEvent>, mouseHandler: EventHandler<MouseEvent>) {
+        initScene(keyHandler, mouseHandler)
         initStage()
         initDialogBox()
 
         computeSceneSettings(settings.width.toDouble(), settings.height.toDouble())
         computeScaledSize()
 
-        eventBus = FXGL.getEventBus()
-
-        log.debug { "Service [Display] initialized" }
         log.debug { "Using CSS: $css" }
+        log.debug("Opening primary window")
+
+        stage.show()
+    }
+
+    private fun initScene(keyHandler: EventHandler<KeyEvent>, mouseHandler: EventHandler<MouseEvent>) {
+        fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
+        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
+        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
+        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene()?.fireEvent(it.copyFor(null, null)) })
     }
 
     /**
@@ -144,6 +137,8 @@ private constructor(private val stage: Stage) : Display {
      */
     private fun initStage() {
         with(stage) {
+            scene = fxScene
+
             title = settings.title + " " + settings.version
             isResizable = false
             setOnCloseRequest { e ->
@@ -153,11 +148,11 @@ private constructor(private val stage: Stage) : Display {
                     if (!dialog.isShowing) {
                         showConfirmationBox("Exit the game?", { yes ->
                             if (yes)
-                                eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                                FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                         })
                     }
                 } else {
-                    eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                    FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                 }
             }
 
@@ -405,11 +400,11 @@ private constructor(private val stage: Stage) : Display {
      * @param resultCallback the function to be called
      */
     override fun <T> showDialog(dialog: Dialog<T>, resultCallback: Consumer<T>) {
-        eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
+        FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
 
         dialog.initOwner(stage)
         dialog.setOnCloseRequest { e ->
-            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
+            FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
 
             resultCallback.accept(dialog.result)
         }

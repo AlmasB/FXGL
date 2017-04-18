@@ -102,34 +102,8 @@ class FXGLInput : Input {
 
     override fun isRegisterInput() = registerInput
 
-    init {
-        initActionListener()
-
-        log.debug { "Service [Input] initialized" }
-    }
-
-    /**
-     * Listen for any changes in currently active actions
-     * and handle them appropriately.
-     */
-    private fun initActionListener() {
-//        currentActions.addListener { c: ListChangeListener.Change<out UserAction> ->
-//            while (c.next()) {
-//                if (!processActions)
-//                    continue
-//
-//                if (c.wasAdded()) {
-//                    c.addedSubList.forEach { it.fireActionBegin() }
-//                } else if (c.wasRemoved()) {
-//                    c.removed.forEach { it.fireActionEnd() }
-//                }
-//            }
-//        }
-    }
-
     override fun onUpdate(tpf: Double) {
         if (processActions) {
-            //currentActions.forEach { it.fireAction() }
             for (i in currentActions.indices) {
                 currentActions[i].fireAction()
             }

@@ -50,7 +50,7 @@ class StartupState extends AppState {
 
     @Override
     public void onUpdate(double tpf) {
-        log.debug("Running startup state");
+        log.debug("STARTUP");
 
         GameApplication app = FXGL.getApp();
 

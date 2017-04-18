@@ -45,7 +45,7 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class SlidingNotificationService
-@Inject private constructor(private val gameScene: GameScene): NotificationService {
+@Inject private constructor(): NotificationService {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -107,8 +107,9 @@ class SlidingNotificationService
         log.debug { "Service [NotificationService] initialized" }
     }
 
+    // TODO: remove dep on game scene?
     private fun popNotification() {
-        val removed = gameScene.removeUINode(notificationImpl)
+        val removed = FXGL.getApp().gameScene.removeUINode(notificationImpl)
 
         // this is called asynchronously so we have to check manually
         if (!removed) {
@@ -142,7 +143,7 @@ class SlidingNotificationService
     private fun showNotification(text: String) {
         counter++
         showing = true
-        gameScene.addUINode(notificationImpl)
+        FXGL.getApp().gameScene.addUINode(notificationImpl)
 
         // controlsFX notification pane cannot show in the same tick
         // so we wait a little bit

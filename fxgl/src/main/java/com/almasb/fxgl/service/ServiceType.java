@@ -50,6 +50,10 @@ import com.google.inject.Scopes;
 
 /**
  * Marks a service type.
+ * A service is a single aspect of FXGL that is accessible globally
+ * and has a single instance per application.
+ * A service only knows about EventBus and does not know about other services
+ * or other things like game world, game scene, etc.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -96,35 +100,6 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<LocalTimer> LOCAL_TIMER = new ServiceType<LocalTimer>() {
-        @Override
-        public Class<LocalTimer> service() {
-            return LocalTimer.class;
-        }
-
-        @Override
-        public Class<? extends LocalTimer> serviceProvider() {
-            return FXGLLocalTimer.class;
-        }
-
-        @Override
-        public Scope scope() {
-            return Scopes.NO_SCOPE;
-        }
-    };
-
-    ServiceType<MasterTimer> MASTER_TIMER = new ServiceType<MasterTimer>() {
-        @Override
-        public Class<MasterTimer> service() {
-            return MasterTimer.class;
-        }
-
-        @Override
-        public Class<? extends MasterTimer> serviceProvider() {
-            return FXGLMasterTimer.class;
-        }
-    };
-
     ServiceType<EventBus> EVENT_BUS = new ServiceType<EventBus>() {
         @Override
         public Class<EventBus> service() {
@@ -134,18 +109,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends EventBus> serviceProvider() {
             return FXGLEventBus.class;
-        }
-    };
-
-    ServiceType<Input> INPUT = new ServiceType<Input>() {
-        @Override
-        public Class<Input> service() {
-            return Input.class;
-        }
-
-        @Override
-        public Class<? extends Input> serviceProvider() {
-            return FXGLInput.class;
         }
     };
 
@@ -185,18 +148,6 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<LoggerFactory> LOGGER_FACTORY = new ServiceType<LoggerFactory>() {
-        @Override
-        public Class<LoggerFactory> service() {
-            return LoggerFactory.class;
-        }
-
-        @Override
-        public Class<? extends LoggerFactory> serviceProvider() {
-            return FXGLLoggerFactory.class;
-        }
-    };
-
     ServiceType<AchievementManager> ACHIEVEMENT_MANAGER = new ServiceType<AchievementManager>() {
         @Override
         public Class<AchievementManager> service() {
@@ -206,23 +157,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends AchievementManager> serviceProvider() {
             return AchievementManager.class;
-        }
-    };
-
-    ServiceType<Profiler> PROFILER = new ServiceType<Profiler>() {
-        @Override
-        public Class<Profiler> service() {
-            return Profiler.class;
-        }
-
-        @Override
-        public Class<? extends Profiler> serviceProvider() {
-            return Profiler.class;
-        }
-
-        @Override
-        public Scope scope() {
-            return Scopes.NO_SCOPE;
         }
     };
 

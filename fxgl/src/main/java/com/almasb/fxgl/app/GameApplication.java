@@ -129,8 +129,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
         Async.startFX(() -> {
-            FXGL.getDisplay().addHandlers(keyHandler, mouseHandler);
-            FXGL.getDisplay().show();
+            FXGL.getDisplay().initAndShow(keyHandler, mouseHandler);
             startMainLoop();
         });
     }
@@ -201,12 +200,6 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         }
     }
 
-    public void runPreInit() {
-        initAchievements();
-        initInput();
-        preInit();
-    }
-
 //    @Override
 //    public void pause() {
 //        pushState(PauseSubState.INSTANCE);
@@ -233,7 +226,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
      * (Re-)initializes the user application as new and starts the game.
      * Note: cannot be called during callbacks.
      */
-    public void startNewGame() {
+    protected void startNewGame() {
         log.debug("Starting new game");
         initApp(new InitAppTask(this));
     }
