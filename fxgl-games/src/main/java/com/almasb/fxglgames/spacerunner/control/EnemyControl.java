@@ -52,9 +52,9 @@ public class EnemyControl extends AbstractControl {
 
     @Override
     public void onAdded(Entity entity) {
-        audioPlayer = FXGL.getService(ServiceType.AUDIO_PLAYER);
+        audioPlayer = FXGL.getAudioPlayer();
 
-        attackTimer = FXGL.getService(ServiceType.LOCAL_TIMER);
+        attackTimer = FXGL.newLocalTimer();
         attackTimer.capture();
 
         position = Entities.getPosition(entity);

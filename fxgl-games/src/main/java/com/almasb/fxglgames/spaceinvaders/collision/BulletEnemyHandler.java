@@ -29,11 +29,14 @@ package com.almasb.fxglgames.spaceinvaders.collision;
 import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxglgames.spaceinvaders.ExplosionEmitter;
 import com.almasb.fxglgames.spaceinvaders.SpaceInvadersType;
 import com.almasb.fxglgames.spaceinvaders.component.HPComponent;
 import com.almasb.fxglgames.spaceinvaders.component.OwnerComponent;
@@ -72,11 +75,18 @@ public class BulletEnemyHandler extends CollisionHandler {
         if (hp.getValue() <= 0) {
 
             FXGL.getMasterTimer().runOnceAfter(() -> {
+                Entity entity = new Entity();
+                entity.addComponent(new PositionComponent(Entities.getBBox(enemy).getCenterWorld()));
+                entity.addControl(new ParticleControl(new ExplosionEmitter()));
+                entity.addControl(new ExpireCleanControl(Duration.seconds(1)));
+                world.addEntity(entity);
+
                 world.spawn("Explosion", Entities.getBBox(enemy).getCenterWorld());
+
                 enemy.removeFromWorld();
             }, Duration.seconds(0.1));
 
-            FXGL.getAudioPlayer().playSound("spaceinvaders/explosion.wav");
+            FXGL.getAudioPlayer().playSound("explosion.wav");
             FXGL.getEventBus().fireEvent(new GameEvent(GameEvent.ENEMY_KILLED));
         } else {
             world.spawn("LaserHit", hitPosition);
