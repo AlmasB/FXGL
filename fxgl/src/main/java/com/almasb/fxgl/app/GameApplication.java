@@ -359,4 +359,12 @@ public abstract class GameApplication extends SimpleFXGLApplication {
     public final StateTimer getMasterTimer() {
         return playState.getTimer();
     }
+
+    public final void addPlayStateListener(StateListener listener) {
+        playState.addStateListener(listener);
+    }
+
+    public final void removePlayStateListener(StateListener listener) {
+        playState.removeStateListener(listener);
+    }
 }

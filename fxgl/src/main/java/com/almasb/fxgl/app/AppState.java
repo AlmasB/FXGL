@@ -27,51 +27,19 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.scene.FXGLScene;
-import com.almasb.fxgl.service.Input;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class AppState implements State {
+abstract class AppState extends State {
 
     private FXGLScene scene;
-    private StateTimer timer = new StateTimerImpl();
 
-    public AppState(FXGLScene scene) {
+    AppState(FXGLScene scene) {
         this.scene = scene;
     }
 
-    public FXGLScene getScene() {
+    final FXGLScene getScene() {
         return scene;
-    }
-
-    @Override
-    public StateTimer getTimer() {
-        return timer;
-    }
-
-    @Override
-    public Input getInput() {
-        return scene.getInput();
-    }
-
-    @Override
-    public void onEnter(State prevState) {
-        // no-op
-    }
-
-    @Override
-    public void onExit() {
-        // no-op
-    }
-
-    @Override
-    public void onUpdate(double tpf) {
-        // no-op
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

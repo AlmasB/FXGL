@@ -58,7 +58,7 @@ public abstract class FXGLScene {
 
     private Group eventHandlers = new Group();
 
-    private Input input = new FXGLInput();
+    //private Input input = new FXGLInput();
 
     public FXGLScene() {
         root = new Pane();
@@ -72,9 +72,9 @@ public abstract class FXGLScene {
         setCursor("fxgl_default.png", new Point2D(7, 6));
     }
 
-    public Input getInput() {
-        return input;
-    }
+//    public Input getInput() {
+//        return input;
+//    }
 
     /**
      * @return top-level root node of the scene

@@ -85,20 +85,16 @@ public final class AppStateMachine {
         applicationState = newState;
 
         AppState prevState = appState;
-        prevState.onExit();
-        prevState.getInput().clearAll();
+        prevState.exit();
 
         // new state
         appState = newState.state();
         app.getDisplay().setScene(appState.getScene());
-        appState.onEnter(prevState);
+        appState.enter(prevState);
     }
 
     void onUpdate(double tpf) {
-        State state = getCurrentState();
-        state.getInput().onUpdate(tpf);
-        state.getTimer().onUpdate(tpf);
-        state.onUpdate(tpf);
+        getCurrentState().update(tpf);
     }
 
     public void pushState(SubState newState) {
@@ -110,10 +106,10 @@ public final class AppStateMachine {
 
         log.debug(prevState + " -> " + newState);
 
+        // new state
         subStates.push(newState);
         app.getDisplay().getCurrentScene().getRoot().getChildren().add(newState.getView());
-
-        newState.onEnter(prevState);
+        newState.enter(prevState);
     }
 
     public void popState() {
@@ -126,8 +122,7 @@ public final class AppStateMachine {
 
         log.debug("Pop state: " + prevState);
 
-        prevState.onExit();
-        prevState.getInput().clearAll();
+        prevState.exit();
 
         log.debug(getCurrentState() + " <- " + prevState);
 

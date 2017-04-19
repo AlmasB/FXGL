@@ -26,22 +26,14 @@
 
 package com.almasb.fxgl.app;
 
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
-
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class SubState extends State {
+public interface StateListener {
 
-    private Pane view = new Pane();
+    default void onEnter(State prevState) {}
 
-    protected ObservableList<Node> getChildren() {
-        return view.getChildren();
-    }
+    void onUpdate(double tpf);
 
-    public Node getView() {
-        return view;
-    }
+    default void onExit() {}
 }

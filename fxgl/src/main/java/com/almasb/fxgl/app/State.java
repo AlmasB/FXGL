@@ -27,23 +27,76 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface State {
+public abstract class State {
 
-    StateTimer getTimer();
+    private Input input = new FXGLInput();
+    private StateTimer timer = new StateTimerImpl();
+    private CopyOnWriteArrayList<StateListener> listeners = new CopyOnWriteArrayList<>();
 
-    Input getInput();
+    public final StateTimer getTimer() {
+        return timer;
+    }
 
-    void onEnter(State prevState);
+    public final Input getInput() {
+        return input;
+    }
 
-    void onExit();
+    public final void addStateListener(StateListener listener) {
+        listeners.add(listener);
+    }
 
-    void onUpdate(double tpf);
+    public final void removeStateListener(StateListener listener) {
+        listeners.remove(listener);
+    }
 
-    default String getName() {
+    protected void onEnter(State prevState) {
+
+    }
+
+    protected void onExit() {
+
+    }
+
+    protected void onUpdate(double tpf) {
+
+    }
+
+    void enter(State prevState) {
+        onEnter(prevState);
+
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onEnter(prevState);
+        }
+    }
+
+    void update(double tpf) {
+        input.onUpdate(tpf);
+        timer.onUpdate(tpf);
+        onUpdate(tpf);
+
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onUpdate(tpf);
+        }
+    }
+
+    void exit() {
+        onExit();
+        input.clearAll();
+
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onExit();
+        }
+    }
+
+    @Override
+    public String toString() {
         return getClass().getSimpleName();
     }
 }
