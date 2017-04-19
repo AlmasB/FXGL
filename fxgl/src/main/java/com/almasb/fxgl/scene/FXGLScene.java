@@ -58,7 +58,7 @@ public abstract class FXGLScene {
 
     private Group eventHandlers = new Group();
 
-    //private Input input = new FXGLInput();
+    private Viewport viewport;
 
     public FXGLScene() {
         root = new Pane();
@@ -69,12 +69,11 @@ public abstract class FXGLScene {
 
         root.getChildren().addAll(contentRoot);
 
+        // should pass thru ctor params?
+        viewport = new Viewport(FXGL.getAppWidth(), FXGL.getAppHeight());
+
         setCursor("fxgl_default.png", new Point2D(7, 6));
     }
-
-//    public Input getInput() {
-//        return input;
-//    }
 
     /**
      * @return top-level root node of the scene
@@ -88,6 +87,13 @@ public abstract class FXGLScene {
      */
     public final Pane getContentRoot() {
         return contentRoot;
+    }
+
+    /**
+     * @return viewport
+     */
+    public Viewport getViewport() {
+        return viewport;
     }
 
     /**

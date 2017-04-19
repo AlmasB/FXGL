@@ -76,7 +76,8 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
 
     private val log = FXGL.getLogger(javaClass)
 
-    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
+    // init with placeholder scene
+    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>(object : FXGLScene() {})
 
     private val targetWidth: DoubleProperty
     private val targetHeight: DoubleProperty
@@ -125,7 +126,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
         fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
         fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
-        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene()?.fireEvent(it.copyFor(null, null)) })
+        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene().fireEvent(it.copyFor(null, null)) })
     }
 
     /**
@@ -196,7 +197,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
             registerScene(scene)
         }
 
-        getCurrentScene()?.activeProperty()?.set(false)
+        getCurrentScene().activeProperty().set(false)
 
         currentScene.set(scene)
         scene.activeProperty().set(true)

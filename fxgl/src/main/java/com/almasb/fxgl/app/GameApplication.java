@@ -101,8 +101,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
     }
 
     private EventHandler<MouseEvent> mouseHandler = e -> {
-        // TODO: incorrect viewport
-        stateMachine.getCurrentState().getInput().onMouseEvent(e, new Viewport(getWidth(), getHeight()), getDisplay().getScaleRatio());
+        stateMachine.getCurrentState().getInput().onMouseEvent(e, getDisplay().getCurrentScene().getViewport(), getDisplay().getScaleRatio());
     };
 
     private EventHandler<KeyEvent> keyHandler = e -> {

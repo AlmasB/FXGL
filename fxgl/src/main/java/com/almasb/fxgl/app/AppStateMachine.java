@@ -57,6 +57,7 @@ public final class AppStateMachine {
 
         // STARTUP is default
         appState = ApplicationState.STARTUP.state();
+
         ApplicationState.LOADING.state();
         ApplicationState.PLAYING.state();
 
