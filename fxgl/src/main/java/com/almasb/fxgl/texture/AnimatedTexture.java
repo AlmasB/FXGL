@@ -40,8 +40,6 @@ import javafx.util.Duration;
  * Animation channels, like WALK, RUN, IDLE, ATTACK, etc. can
  * be set dynamically to alter the animation.
  *
- * TODO: ability to reset counter?
- *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public final class AnimatedTexture extends Texture implements StateListener {
