@@ -36,8 +36,6 @@ import com.almasb.fxgl.entity.component.PositionComponent
 import javafx.util.Duration
 
 /**
- * TODO: allow selecting random number generation technique and initial seeds?
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class RandomMoveControl(var speed: Double) : AbstractControl() {

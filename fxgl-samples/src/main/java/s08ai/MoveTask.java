@@ -47,7 +47,6 @@ public class MoveTask extends GoalAction {
     @Override
     public void action() {
 
-        // TODO: fix tpf
         double speed = 0.016 * 60 * 5;
 
         Point2D vector = new Point2D(400, 300).subtract(getObject().getPosition())

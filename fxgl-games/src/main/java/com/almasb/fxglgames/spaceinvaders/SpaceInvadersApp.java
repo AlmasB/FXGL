@@ -271,7 +271,7 @@ public class SpaceInvadersApp extends GameApplication {
     private void playTutorial() {
         getInput().setRegisterInput(false);
 
-        // TODO: ideally we must obtain dynamic key codes because the keys
+        // ideally we must obtain dynamic key codes because the keys
         // may have been reassigned
         TutorialStep step1 = new TutorialStep("Press A to move left", Asset.DIALOG_MOVE_LEFT, () -> {
             getInput().mockKeyPress(KeyCode.A);

@@ -78,6 +78,7 @@ public class StateSample extends GameApplication {
 
     @Override
     protected void initGame() {
+
         shopState = new ShopState();
 
         player = Entities.builder()
@@ -87,6 +88,16 @@ public class StateSample extends GameApplication {
                 .with(new DeveloperWASDControl())
                 .buildAndAttach(getGameWorld());
     }
+
+//    @Override
+//    protected void onUpdate(double tpf) {
+//        System.out.println("onUpdate: " + tpf);
+//    }
+//
+//    @Override
+//    protected void onPausedUpdate(double tpf) {
+//        System.out.println("onPausedUpdate: " + tpf);
+//    }
 
     public static void main(String[] args) {
         launch(args);

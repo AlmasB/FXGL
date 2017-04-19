@@ -109,7 +109,6 @@ public class FractalGenerationsSample extends GameApplication {
 
         //line.getTransforms().add(r);
 
-        // TODO: impl Math map?
         line.setStrokeWidth(len / 120.0 * 6.5);
 
         getGameScene().addUINode(line);

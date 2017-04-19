@@ -91,7 +91,7 @@ public class RandomMoveAction extends Action {
 
     @Override
     public void start() {
-        // TODO: is there like init with object?
+        // fxglTODO: is there like init with object?
         if (position == null) {
             position = Entities.getPosition(getObject());
             bbox = Entities.getBBox(getObject());

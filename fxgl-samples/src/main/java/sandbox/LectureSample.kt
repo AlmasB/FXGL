@@ -268,9 +268,9 @@ class GraphNode(val nodeName: String) : StackPane() {
     }
 }
 
-// TODO: Slide data structure?
-// TODO: each view should have its own animation timeline
-// TODO: use scaling vs height hardcode?
+// Slide data structure?
+// each view should have its own animation timeline
+// use scaling vs height hardcode?
 class SlideView(val title: String, val content: Node) : StackPane() {
 
     init {

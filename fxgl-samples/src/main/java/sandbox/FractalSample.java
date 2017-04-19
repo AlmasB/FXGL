@@ -63,7 +63,6 @@ public class FractalSample extends GameApplication {
 
         Line line = new Line(x, y, x + v.x, y + v.y);
 
-        // TODO: impl Math map?
         line.setStrokeWidth(len / 60 * 4);
 
         getGameScene().addUINode(line);

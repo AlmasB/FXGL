@@ -118,7 +118,6 @@ public class ParticleEmitter {
 
         double radius = 10;
 
-        // TODO: allow adding shapes
         for (int i = 0; i < count; i++) {
 
             // get color depending on lifespan
