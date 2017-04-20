@@ -41,11 +41,8 @@ import com.almasb.fxgl.service.impl.timer.FPSCounter;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -100,14 +97,6 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         this.sceneFactory = sceneFactory;
     }
 
-    private EventHandler<MouseEvent> mouseHandler = e -> {
-        stateMachine.getCurrentState().getInput().onMouseEvent(e, getDisplay().getCurrentScene().getViewport(), getDisplay().getScaleRatio());
-    };
-
-    private EventHandler<KeyEvent> keyHandler = e -> {
-        stateMachine.getCurrentState().getInput().onKeyEvent(e);
-    };
-
     @Override
     void configureApp() {
         log.debug("Configuring GameApplication");
@@ -123,7 +112,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
         Async.startFX(() -> {
-            FXGL.getDisplay().initAndShow(keyHandler, mouseHandler);
+            FXGL.getDisplay().initAndShow();
 
             // these things need to be called early before the main loop
             // so that menus can correctly display input controls, etc.

@@ -134,7 +134,7 @@ public final class AppStateMachine {
         return applicationState;
     }
 
-    State getCurrentState() {
+    public State getCurrentState() {
         return (subStates.isEmpty()) ? appState : subStates.peek();
     }
 

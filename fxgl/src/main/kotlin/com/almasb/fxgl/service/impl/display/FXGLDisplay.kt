@@ -43,7 +43,6 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
-import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Node
 import javafx.scene.Scene
@@ -103,30 +102,43 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
             FXGL.getAssetLoader().loadCSS(settings.menuStyle.cssFileName)
         else
             FXGLAssets.UI_CSS
+
+        log.debug("Using CSS: $css")
     }
 
     /**
      * Must be called on FX thread.
      */
-    override fun initAndShow(keyHandler: EventHandler<KeyEvent>, mouseHandler: EventHandler<MouseEvent>) {
-        initScene(keyHandler, mouseHandler)
+    override fun initAndShow() {
+        initScene()
         initStage()
         initDialogBox()
 
         computeSceneSettings(settings.width.toDouble(), settings.height.toDouble())
         computeScaledSize()
 
-        log.debug { "Using CSS: $css" }
-        log.debug("Opening primary window")
+        log.debug("Opening primary stage")
 
         stage.show()
     }
 
-    private fun initScene(keyHandler: EventHandler<KeyEvent>, mouseHandler: EventHandler<MouseEvent>) {
+    private fun initScene() {
         fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
-        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
-        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
-        fxScene.addEventFilter(EventType.ROOT, { getCurrentScene().fireEvent(it.copyFor(null, null)) })
+
+        // main key event handler
+        fxScene.addEventFilter(KeyEvent.ANY, {
+            FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
+        })
+
+        // main mouse event handler
+        fxScene.addEventFilter(MouseEvent.ANY, {
+            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, getCurrentScene().viewport, getScaleRatio())
+        })
+
+        // reroute any events to current FXGL scene
+        fxScene.addEventFilter(EventType.ROOT, {
+            getCurrentScene().fireEvent(it.copyFor(null, null))
+        })
     }
 
     /**
@@ -154,7 +166,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
             }
 
             setOnShown {
-                log.debug("Showing stage")
+                log.debug("Stage shown")
                 log.debug("Root size: " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
                 log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
                 log.debug("Stage size: " + stage.width + "x" + stage.height)

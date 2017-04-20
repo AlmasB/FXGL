@@ -52,11 +52,9 @@ public interface Display extends UserProfileSavable {
 
     /**
      * Must be called on FX thread.
-     *
-     * @param keyHandler
-     * @param mouseHandler
+     * Will be called automatically by FXGL application.
      */
-    void initAndShow(EventHandler<KeyEvent> keyHandler, EventHandler<MouseEvent> mouseHandler);
+    void initAndShow();
 
     /**
      * Register an FXGL scene to be managed by display settings.
