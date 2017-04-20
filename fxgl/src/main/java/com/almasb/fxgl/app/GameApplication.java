@@ -51,6 +51,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * To use FXGL extend this class and implement necessary methods.
  * The initialization process can be seen below (irrelevant phases are omitted):
@@ -118,6 +120,8 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         stateMachine = new AppStateMachine(this);
         playState = (PlayState) stateMachine.getPlayState();
 
+        registerServicesForUpdate();
+
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
 
         Async.startFX(() -> {
@@ -130,6 +134,10 @@ public abstract class GameApplication extends SimpleFXGLApplication {
 
             startMainLoop();
         });
+    }
+
+    private void registerServicesForUpdate() {
+        addUpdateListener(getAudioPlayer());
     }
 
     private void runPreInit() {
@@ -193,8 +201,9 @@ public abstract class GameApplication extends SimpleFXGLApplication {
     private void tick(double tpf) {
         stateMachine.onUpdate(tpf);
 
-        // TODO: update listeners
-        getAudioPlayer().onUpdateEvent(new UpdateEvent(0, tpf));
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onUpdate(tpf);
+        }
 
         if (stateMachine.isInPlay()) {
             onUpdate(tpf);
@@ -314,6 +323,16 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         if (menuHandler == null)
             menuHandler = new MenuEventHandler(this);
         return menuHandler;
+    }
+
+    private CopyOnWriteArrayList<UpdateListener> listeners = new CopyOnWriteArrayList<>();
+
+    public final void addUpdateListener(UpdateListener listener) {
+        listeners.add(listener);
+    }
+
+    public final void removeUpdateListener(UpdateListener listener) {
+        listeners.remove(listener);
     }
 
     private PlayState playState;

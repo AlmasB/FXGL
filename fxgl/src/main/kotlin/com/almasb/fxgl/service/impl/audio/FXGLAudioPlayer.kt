@@ -53,7 +53,7 @@ private constructor() : AudioPlayer {
         log.debug("Service [AudioPlayer] initialized")
     }
 
-    override fun onUpdateEvent(event: UpdateEvent) {
+    override fun onUpdate(tpf: Double) {
 
         activeMusic.filter { it.reachedEnd() }
                 .forEach {

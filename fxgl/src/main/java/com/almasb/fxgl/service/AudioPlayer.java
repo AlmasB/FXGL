@@ -27,13 +27,13 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.UpdateListener;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.gameplay.NotificationEvent;
 import com.almasb.fxgl.service.listener.NotificationListener;
 import com.almasb.fxgl.service.listener.UserProfileSavable;
-import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.beans.property.DoubleProperty;
 
 /**
@@ -42,7 +42,7 @@ import javafx.beans.property.DoubleProperty;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface AudioPlayer extends UserProfileSavable, UpdateEventListener, NotificationListener {
+public interface AudioPlayer extends UserProfileSavable, UpdateListener, NotificationListener {
 
     @Override
     default void onNotificationEvent(NotificationEvent event) {
