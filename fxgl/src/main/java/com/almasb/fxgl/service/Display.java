@@ -32,7 +32,6 @@ import com.almasb.fxgl.service.listener.UserProfileSavable;
 import com.almasb.fxgl.settings.SceneDimension;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.EventHandler;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
@@ -44,7 +43,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Display service. Provides access to dialogs and display settings.
+ * Display service.
+ * Provides access to dialogs and display settings.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -57,16 +57,6 @@ public interface Display extends UserProfileSavable {
      * @param mouseHandler
      */
     void initAndShow(EventHandler<KeyEvent> keyHandler, EventHandler<MouseEvent> mouseHandler);
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Register an FXGL scene to be managed by display settings.
@@ -93,15 +83,6 @@ public interface Display extends UserProfileSavable {
     default FXGLScene getCurrentScene() {
         return currentSceneProperty().get();
     }
-
-    /**
-     * Returns available (visual) bounds of the physical display.
-     * If the game is running fullscreen then this returns maximum bounds
-     * of the physical display.
-     *
-     * @return display bounds
-     */
-    Rectangle2D getBounds();
 
     /**
      * Saves a screenshot of the current scene into a ".png" file.

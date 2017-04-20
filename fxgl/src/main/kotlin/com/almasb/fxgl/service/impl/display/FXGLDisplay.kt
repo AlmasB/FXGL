@@ -210,7 +210,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      */
     override fun currentSceneProperty() = currentScene.readOnlyProperty
 
-    override fun getBounds() = if (settings.isFullScreen) Screen.getPrimary().bounds
+    private fun getBounds() = if (settings.isFullScreen) Screen.getPrimary().bounds
                                 else Screen.getPrimary().visualBounds
 
     /**
@@ -248,7 +248,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      * @param height target (app) height
      */
     private fun computeSceneSettings(width: Double, height: Double) {
-        val bounds = bounds
+        val bounds = getBounds()
 
         val ratio = width / height
 
@@ -301,7 +301,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
     private fun computeScaledSize() {
         var newW = getTargetWidth()
         var newH = getTargetHeight()
-        val bounds = bounds
+        val bounds = getBounds()
 
         if (newW > bounds.width || newH > bounds.height) {
             log.debug("App size > screen size")
