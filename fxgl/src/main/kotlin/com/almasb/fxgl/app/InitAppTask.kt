@@ -123,24 +123,24 @@ class InitAppTask(val app: GameApplication, val dataFile: DataFile) : Task<Void>
     private fun scanForAnnotations(): Map<Class<*>, List<Class<*>>> {
         val map = hashMapOf<Class<*>, ArrayList<Class<*>>>()
 
-        // this ensures that we only scan the appropriate package,
-        // i.e. the package of the "App" and any subpackages recursively
-        // also speeds up the scanning
-        val scanner = FastClasspathScanner(app.javaClass.`package`.name)
+        if (app.javaClass.`package` != null) {
+            // only scan the appropriate package (package of the "App") and its subpackages
+            val scanner = FastClasspathScanner(app.javaClass.`package`.name)
 
-        map[SetEntityFactory::class.java] = arrayListOf()
-        scanner.matchClassesWithAnnotation(SetEntityFactory::class.java, {
-            log.debug("@SetEntityFactory: $it")
-            map[SetEntityFactory::class.java]!!.add(it)
-        })
+            map[SetEntityFactory::class.java] = arrayListOf()
+            scanner.matchClassesWithAnnotation(SetEntityFactory::class.java, {
+                log.debug("@SetEntityFactory: $it")
+                map[SetEntityFactory::class.java]!!.add(it)
+            })
 
-        map[AddCollisionHandler::class.java] = arrayListOf()
-        scanner.matchClassesWithAnnotation(AddCollisionHandler::class.java, {
-            log.debug("@AddCollisionHandler: $it")
-            map[AddCollisionHandler::class.java]!!.add(it)
-        })
+            map[AddCollisionHandler::class.java] = arrayListOf()
+            scanner.matchClassesWithAnnotation(AddCollisionHandler::class.java, {
+                log.debug("@AddCollisionHandler: $it")
+                map[AddCollisionHandler::class.java]!!.add(it)
+            })
 
-        scanner.scan()
+            scanner.scan()
+        }
 
         return map
     }
