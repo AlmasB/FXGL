@@ -28,7 +28,6 @@ package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.math.FXGLMath
-import com.almasb.fxgl.service.MasterTimer
 
 /**
  * Basic profiler.
@@ -38,7 +37,7 @@ import com.almasb.fxgl.service.MasterTimer
 class Profiler {
 
     companion object {
-        private lateinit var masterTimer: MasterTimer
+        //private lateinit var masterTimer: MasterTimer
         private val runtime: Runtime
 
         private val MB = 1024.0f * 1024.0f
@@ -102,8 +101,8 @@ class Profiler {
 
     fun onUpdateEvent() {
         frames++
-        fps += masterTimer.fps
-        performance += masterTimer.performanceFPS
+//        fps += masterTimer.fps
+//        performance += masterTimer.performanceFPS
 
         val used = runtime.totalMemory() - runtime.freeMemory()
 
@@ -173,12 +172,12 @@ class Profiler {
     fun getInfo(): String {
         // first clear the contents
         sb.setLength(0)
-        sb.append("FPS: ").append(masterTimer.fps)
-                .append("\nFrame in: ").append("%.3f s".format(masterTimer.performanceFPS / 1000000000.0))
-                .append("\nNow Mem (MB): ").append(getCurrentMemoryUsageRounded())
-                .append("\nAvg Mem (MB): ").append(getAvgMemoryUsageRounded())
-                .append("\nMin Mem (MB): ").append(getMinMemoryUsageRounded())
-                .append("\nMax Mem (MB): ").append(getMaxMemoryUsageRounded())
+//        sb.append("FPS: ").append(masterTimer.fps)
+//                .append("\nFrame in: ").append("%.3f s".format(masterTimer.performanceFPS / 1000000000.0))
+//                .append("\nNow Mem (MB): ").append(getCurrentMemoryUsageRounded())
+//                .append("\nAvg Mem (MB): ").append(getAvgMemoryUsageRounded())
+//                .append("\nMin Mem (MB): ").append(getMinMemoryUsageRounded())
+//                .append("\nMax Mem (MB): ").append(getMaxMemoryUsageRounded())
 
         return sb.toString()
     }

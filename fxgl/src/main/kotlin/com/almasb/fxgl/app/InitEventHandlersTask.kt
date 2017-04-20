@@ -30,7 +30,6 @@ import com.almasb.fxgl.gameplay.AchievementEvent
 import com.almasb.fxgl.gameplay.NotificationEvent
 import com.almasb.fxgl.saving.LoadEvent
 import com.almasb.fxgl.saving.SaveEvent
-import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.service.listener.AchievementListener
 import com.almasb.fxgl.service.listener.NotificationListener
 import com.almasb.fxgl.service.listener.UserProfileSavable
@@ -73,9 +72,9 @@ internal class InitEventHandlersTask
 
                     bus.addEventHandler(SaveEvent.ANY, { instance.save(it.profile) })
                     bus.addEventHandler(LoadEvent.ANY, {
-                        if (!(instance is MasterTimer && it.eventType == LoadEvent.RESTORE_SETTINGS)) {
+                        //if (!(instance is MasterTimer && it.eventType == LoadEvent.RESTORE_SETTINGS)) {
                             instance.load(it.profile)
-                        }
+                        //}
                     })
                 }
 
