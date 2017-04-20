@@ -130,7 +130,7 @@ public abstract class SimpleFXGLApplication extends FXGLApplication {
     }
 
     /**
-     * Called after main loop tick has been completed _only_ in Play state.
+     * Called after main loop tick has been completed in _ANY_ state.
      * It can be used to de-register callbacks / listeners
      * and call various methods that otherwise might interfere
      * with main loop.
