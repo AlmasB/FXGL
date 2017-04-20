@@ -241,7 +241,7 @@ public abstract class FXGLApplication extends Application {
      * Exit the application.
      * Safe to call this from a paused state.
      */
-    protected final void exit() {
+    protected void exit() {
         log.debug("Exiting FXGL application");
         systemListeners.forEach(FXGLListener::onExit);
 

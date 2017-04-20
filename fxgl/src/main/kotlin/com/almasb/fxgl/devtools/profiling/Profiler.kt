@@ -37,37 +37,33 @@ import com.almasb.fxgl.core.math.FXGLMath
 class Profiler {
 
     companion object {
-        //private lateinit var masterTimer: MasterTimer
-        private val runtime: Runtime
+        private val runtime = Runtime.getRuntime()
 
         private val MB = 1024.0f * 1024.0f
-
-        init {
-            //masterTimer = FXGL.getMasterTimer()
-            runtime = Runtime.getRuntime()
-        }
     }
 
     // set to 1 to avoid div by 0
     var frames = 1
         private set
 
-    private var fps = 0.0
+    private var fps = 0
+    private var currentFPS = 0
 
     fun getAvgFPS() = fps / frames
 
-    fun getAvgFPSRounded() = getAvgFPS().toInt()
+    private var timeTook = 0L
 
-    private var performance = 0.0
+    /**
+     * @return time took in nanoseconds
+     */
+    fun getAvgTimeTook() = timeTook / frames
 
-    fun getAvgPerformance() = performance / frames
-
-    fun getAvgPerformanceRounded() = "%.3f".format(getAvgPerformance() / 1000000000.0)
+    fun getAvgTimeTookRounded() = "%.3f".format(getAvgTimeTook() / 1_000_000_000.0)
 
     private var memoryUsage = 0L
     private var memoryUsageMin = Long.MAX_VALUE
     private var memoryUsageMax = 0L
-    private var memoryUsageCurrent = 0L;
+    private var memoryUsageCurrent = 0L
 
     /**
      * @return average memory usage in MB
@@ -99,12 +95,19 @@ class Profiler {
 
     private var gcRuns = 0
 
-    fun onUpdateEvent() {
+    fun update(fps: Int, timeTook: Long) {
         frames++
-//        fps += masterTimer.fps
-//        performance += masterTimer.performanceFPS
+
+        currentFPS = fps
+
+        this.fps += fps
+        this.timeTook += timeTook
 
         val used = runtime.totalMemory() - runtime.freeMemory()
+
+        // ignore incorrect readings
+        if (used < 0)
+            return
 
         if (used < memoryUsageCurrent) {
             gcRuns++
@@ -120,45 +123,12 @@ class Profiler {
             memoryUsageMin = memoryUsageCurrent
     }
 
-    /**
-     * Starts profiling FPS values.
-     */
-    fun start() {
-        //masterTimer.addUpdateListener(this)
-    }
-
-    /**
-     * Stops profiling FPS values.
-     */
-    fun stop() {
-        //masterTimer.removeUpdateListener(this)
-    }
-
-    /**
-     * Resets values to default.
-     */
-    fun reset() {
-        frames = 1
-        fps = 0.0
-        performance = 0.0
-
-        memoryUsage = 0L
-        memoryUsageMin = Long.MAX_VALUE
-        memoryUsageMax = 0L
-        memoryUsageCurrent = 0L
-
-        gcRuns = 0
-    }
-
-    /**
-     * Print profiles values to SystemLogger.
-     */
     fun print() {
         val log = FXGLLogger.get(javaClass)
 
         log.info("Processed Frames: $frames")
-        log.info("Average FPS: ${getAvgFPSRounded()}")
-        log.info("Avg Frame Took: ${getAvgPerformanceRounded()} sec")
+        log.info("Average FPS: ${getAvgFPS()}")
+        log.info("Avg Frame Took: ${getAvgTimeTookRounded()} sec")
         log.info("Avg Memory Usage: ${getAvgMemoryUsageRounded()} MB")
         log.info("Min Memory Usage: ${getMinMemoryUsageRounded()} MB")
         log.info("Max Memory Usage: ${getMaxMemoryUsageRounded()} MB")
@@ -172,12 +142,12 @@ class Profiler {
     fun getInfo(): String {
         // first clear the contents
         sb.setLength(0)
-//        sb.append("FPS: ").append(masterTimer.fps)
-//                .append("\nFrame in: ").append("%.3f s".format(masterTimer.performanceFPS / 1000000000.0))
-//                .append("\nNow Mem (MB): ").append(getCurrentMemoryUsageRounded())
-//                .append("\nAvg Mem (MB): ").append(getAvgMemoryUsageRounded())
-//                .append("\nMin Mem (MB): ").append(getMinMemoryUsageRounded())
-//                .append("\nMax Mem (MB): ").append(getMaxMemoryUsageRounded())
+        sb.append("FPS: ").append(currentFPS)
+            .append("\nFrame (sec): ").append(getAvgTimeTookRounded())
+            .append("\nNow Mem (MB): ").append(getCurrentMemoryUsageRounded())
+            .append("\nAvg Mem (MB): ").append(getAvgMemoryUsageRounded())
+            .append("\nMin Mem (MB): ").append(getMinMemoryUsageRounded())
+            .append("\nMax Mem (MB): ").append(getMaxMemoryUsageRounded())
 
         return sb.toString()
     }

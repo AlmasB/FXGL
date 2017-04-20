@@ -27,6 +27,7 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.io.FXGLIO;
@@ -128,6 +129,11 @@ public abstract class GameApplication extends SimpleFXGLApplication {
     }
 
     private void runPreInit() {
+        if (getSettings().isProfilingEnabled()) {
+            profiler = new Profiler();
+            profilerFont = FXGLAssets.UI_MONO_FONT.newFont(20);
+        }
+
         FXGLIO.INSTANCE.setDefaultExceptionHandler(getExceptionHandler());
         FXGLIO.INSTANCE.setDefaultExecutor(getExecutor());
 
@@ -212,39 +218,33 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         }
     }
 
-    private Font fpsFont;
+    private Font profilerFont;
+    private Profiler profiler;
 
     private void tickEnd(long frameTook) {
         if (getSettings().isProfilingEnabled()) {
-            if (fpsFont == null) {
-                fpsFont = FXGLAssets.UI_MONO_FONT.newFont(20);
-            }
-
-            //            val profiler = FXGL.newProfiler()
-//
-//            app.addFXGLListener(object : FXGLListener {
-//                override fun onExit() {
-//                    profiler.stop()
-//                    profiler.print()
-//                }
-//            })
-//
-//            profiler.start();
+            profiler.update(fps.get(), frameTook);
 
             GraphicsContext g = getGameScene().getGraphicsContext();
             g.setGlobalBlendMode(BlendMode.SRC_OVER);
             g.setGlobalAlpha(1);
-            g.setFont(fpsFont);
+            g.setFont(profilerFont);
             g.setFill(Color.RED);
 
-            g.fillText("FPS: " + fps.get()
-                    + String.format("\nFrame in: %.3f s", frameTook / 1_000_000_000.0), 0, getHeight() - 120);
-
-            //g.fillText(app.profiler.getInfo(), 0.0, app.height - 120.0)
+            g.fillText(profiler.getInfo(), 0, getHeight() - 120.0);
         }
     }
 
-//    @Override
+    @Override
+    protected final void exit() {
+        if (getSettings().isProfilingEnabled()) {
+            profiler.print();
+        }
+
+        super.exit();
+    }
+
+    //    @Override
 //    public void pause() {
 //        pushState(PauseSubState.INSTANCE);
 //        super.pause();
