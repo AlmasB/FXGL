@@ -160,10 +160,12 @@ public abstract class GameApplication extends SimpleFXGLApplication {
         runTask(InitEventHandlersTask.class);
     }
 
+    private AnimationTimer mainLoop;
+
     private void startMainLoop() {
         log.debug("Starting main loop");
 
-        new AnimationTimer() {
+        mainLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 long frameStart = System.nanoTime();
@@ -175,7 +177,18 @@ public abstract class GameApplication extends SimpleFXGLApplication {
 
                 tickEnd(System.nanoTime() - frameStart);
             }
-        }.start();
+        };
+        mainLoop.start();
+    }
+
+    /**
+     * Only called in exceptional cases, e.g. uncaught (unchecked) exception.
+     */
+    void stopMainLoop() {
+        log.debug("Stopping main loop");
+
+        if (mainLoop != null)
+            mainLoop.stop();
     }
 
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
@@ -286,8 +299,6 @@ public abstract class GameApplication extends SimpleFXGLApplication {
     /**
      * (Re-)initializes the user application as new and starts the game.
      * Note: cannot be called during callbacks.
-     *
-     * TODO: visibility ...
      */
     protected void startNewGame() {
         log.debug("Starting new game");

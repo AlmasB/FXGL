@@ -75,6 +75,11 @@ public class ExceptionHandlingTest extends GameApplication {
         //throw new RuntimeException("Exception in onUpdate()");
     }
 
+    @Override
+    protected void onPostUpdate(double tpf) {
+        //throw new RuntimeException("Exception in onPostUpdate()");
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

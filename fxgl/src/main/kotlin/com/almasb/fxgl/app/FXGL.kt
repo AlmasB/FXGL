@@ -322,7 +322,6 @@ class FXGL private constructor() {
         /**
          * @return new instance on each call
          */
-        // TODO: better way?
         @JvmStatic fun newLocalTimer() = ApplicationState.PLAYING.state().timer.newLocalTimer()
 
         /**
