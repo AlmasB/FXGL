@@ -77,10 +77,4 @@ object MockMasterTimer : MasterTimer {
 
     override fun reset() {
     }
-
-    override fun addUpdateListener(listener: UpdateEventListener?) {
-    }
-
-    override fun removeUpdateListener(listener: UpdateEventListener?) {
-    }
 }

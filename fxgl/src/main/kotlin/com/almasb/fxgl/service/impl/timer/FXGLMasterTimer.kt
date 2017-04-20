@@ -30,7 +30,6 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.MasterTimer
 import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.time.UpdateEventListener
 import com.google.inject.Inject
 import javafx.beans.property.ReadOnlyLongProperty
 import javafx.beans.property.ReadOnlyLongWrapper
@@ -98,17 +97,6 @@ private constructor() : MasterTimer {
     init {
         log.debug("Service [MasterTimer] initialized")
     }
-
-    private val listeners = ArrayList<UpdateEventListener>()
-
-    override fun addUpdateListener(listener: UpdateEventListener) {
-        listeners.add(listener)
-    }
-
-    override fun removeUpdateListener(listener: UpdateEventListener) {
-        listeners.remove(listener)
-    }
-
 
 
     /**

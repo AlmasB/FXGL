@@ -29,14 +29,13 @@ package com.almasb.fxgl.devtools.profiling
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.service.MasterTimer
-import com.almasb.fxgl.time.UpdateEvent
 
 /**
  * Basic profiler.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Profiler : com.almasb.fxgl.time.UpdateEventListener {
+class Profiler {
 
     companion object {
         private lateinit var masterTimer: MasterTimer
@@ -101,7 +100,7 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
 
     private var gcRuns = 0
 
-    override fun onUpdateEvent(event: UpdateEvent) {
+    fun onUpdateEvent() {
         frames++
         fps += masterTimer.fps
         performance += masterTimer.performanceFPS
@@ -126,14 +125,14 @@ class Profiler : com.almasb.fxgl.time.UpdateEventListener {
      * Starts profiling FPS values.
      */
     fun start() {
-        masterTimer.addUpdateListener(this)
+        //masterTimer.addUpdateListener(this)
     }
 
     /**
      * Stops profiling FPS values.
      */
     fun stop() {
-        masterTimer.removeUpdateListener(this)
+        //masterTimer.removeUpdateListener(this)
     }
 
     /**

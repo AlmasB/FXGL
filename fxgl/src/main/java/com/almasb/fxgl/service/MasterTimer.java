@@ -27,7 +27,6 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.service.listener.UserProfileSavable;
-import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyLongProperty;
 
@@ -126,20 +125,4 @@ public interface MasterTimer extends UserProfileSavable {
      * Clears all registered timer based actions.
      */
     void reset();
-
-    /**
-     * Adds update event listener.
-     * Note: cannot be used during callbacks.
-     *
-     * @param listener the listener to add
-     */
-    void addUpdateListener(UpdateEventListener listener);
-
-    /**
-     * Removes update event listener.
-     * Note: cannot be used during callbacks.
-     *
-     * @param listener the listener to remove
-     */
-    void removeUpdateListener(UpdateEventListener listener);
 }
