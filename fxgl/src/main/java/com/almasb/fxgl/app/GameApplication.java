@@ -270,10 +270,10 @@ public abstract class GameApplication extends SimpleFXGLApplication {
     /**
      * Initialize user application.
      */
-    private void initApp(InitAppTask initTask) {
+    private void initApp(DataFile dataFile) {
         log.debug("Initializing App");
 
-        FXGL.getInstance(LoadingState.class).setInitTask(initTask);
+        FXGL.getInstance(LoadingState.class).setDataFile(dataFile);
         stateMachine.setState(ApplicationState.LOADING);
     }
 
@@ -302,7 +302,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
      */
     protected void startNewGame() {
         log.debug("Starting new game");
-        initApp(new InitAppTask(this));
+        initApp(DataFile.getEMPTY());
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class GameApplication extends SimpleFXGLApplication {
      */
     void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
-        initApp(new InitAppTask(this, dataFile));
+        initApp(dataFile);
     }
 
     /**
