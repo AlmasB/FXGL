@@ -41,7 +41,7 @@ class FXGLLocalTimer(private val stateTimer: StateTimer) : LocalTimer {
      * Captures current time.
      */
     override fun capture() {
-        time = stateTimer.now()
+        time = stateTimer.now
     }
 
     /**
@@ -53,5 +53,5 @@ class FXGLLocalTimer(private val stateTimer: StateTimer) : LocalTimer {
      * @return true if elapsed, false otherwise
      */
     override fun elapsed(duration: Duration) =
-            stateTimer.now() - time >= duration.toSeconds()
+            stateTimer.now - time >= duration.toSeconds()
 }

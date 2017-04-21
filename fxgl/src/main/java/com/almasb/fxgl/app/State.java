@@ -37,7 +37,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class State {
 
     private Input input = new FXGLInput();
-    private StateTimer timer = new StateTimerImpl();
+    private StateTimer timer = new StateTimer();
     private CopyOnWriteArrayList<StateListener> listeners = new CopyOnWriteArrayList<>();
 
     public final StateTimer getTimer() {
@@ -78,7 +78,7 @@ public abstract class State {
 
     void update(double tpf) {
         input.onUpdate(tpf);
-        timer.onUpdate(tpf);
+        timer.update(tpf);
         onUpdate(tpf);
 
         for (int i = 0; i < listeners.size(); i++) {

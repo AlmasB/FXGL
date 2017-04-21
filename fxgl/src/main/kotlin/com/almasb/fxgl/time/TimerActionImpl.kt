@@ -37,7 +37,6 @@ import javafx.util.Duration
  */
 class TimerActionImpl
             /**
-             * @param now      current time in nanoseconds
              * @param interval interval duration
              * @param action   the action
              * @param type     ONCE or INDEFINITE

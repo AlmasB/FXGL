@@ -35,28 +35,24 @@ import javafx.util.Duration
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- *
+ * Timer that runs in and belongs to a single state.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class StateTimerImpl : StateTimer {
+class StateTimer {
 
     /**
      * List for all timer based actions.
      */
     private val timerActions = CopyOnWriteArrayList<TimerActionImpl>()
 
-    private var now = 0.0
+    /**
+     * @return time in seconds accumulated in this state
+     */
+    var now = 0.0
+        private set
 
-    override fun now(): Double {
-        return now
-    }
-
-    override fun newLocalTimer(): LocalTimer {
-        return FXGLLocalTimer(this)
-    }
-
-    override fun onUpdate(tpf: Double) {
+    fun update(tpf: Double) {
         now += tpf
 
         timerActions.forEach { it.update(tpf) }
@@ -67,14 +63,12 @@ class StateTimerImpl : StateTimer {
      * The Runnable action will be scheduled to start at given interval.
      * The action will start for the first time after given interval.
      *
-     *
      * Note: the scheduled action will not start while the game is paused.
      *
      * @param action   the action
-     * *
      * @param interval time
      */
-    override fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
+    fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
         val act = TimerActionImpl(interval, action, TimerActionImpl.TimerType.INDEFINITE)
         timerActions.add(act)
         return act
@@ -91,12 +85,10 @@ class StateTimerImpl : StateTimer {
      * Note: the scheduled action will not start while the game is paused
      *
      * @param action         action to execute
-     * *
      * @param interval       interval between executions
-     * *
      * @param whileCondition condition
      */
-    override fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
+    fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
         if (!whileCondition.get()) {
             throw IllegalArgumentException("While condition is false")
         }
@@ -116,18 +108,28 @@ class StateTimerImpl : StateTimer {
      *
      *
      * Note: the scheduled action will not start while the game is paused
-
+     *
      * @param action action to execute
-     * *
      * @param delay  delay after which to execute
      */
-    override fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
+    fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
         val act = TimerActionImpl(delay, action, TimerActionImpl.TimerType.ONCE)
         timerActions.add(act)
         return act
     }
 
-    override fun clear() {
+    fun runOnceAfter(action: () -> Unit, delay: Duration): TimerAction {
+        return runOnceAfter(Runnable(action), delay)
+    }
+
+    /**
+     * Remove all actions.
+     */
+    fun clear() {
         timerActions.clear()
+    }
+
+    fun newLocalTimer(): LocalTimer {
+        return FXGLLocalTimer(this)
     }
 }
