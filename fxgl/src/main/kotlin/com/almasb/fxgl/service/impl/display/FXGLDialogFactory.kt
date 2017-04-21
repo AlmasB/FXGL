@@ -253,7 +253,7 @@ private constructor(): DialogFactory {
         val vbox = VBox(50.0, text, content, hbox)
         vbox.setAlignment(Pos.CENTER)
         vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 200.0),
-                text.layoutBounds.height * 3 + (50 * 2).toDouble() + content.layoutBounds.height))
+                text.layoutBounds.height * 3 + 50 * 2))
 
         return wrap(vbox)
     }
