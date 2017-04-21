@@ -153,6 +153,8 @@ internal class LoadingState
                 })
 
                 scanner.scan()
+            } else {
+                log.warning("${app.javaClass.simpleName} has no package. Disabling annotations processing")
             }
 
             return map
