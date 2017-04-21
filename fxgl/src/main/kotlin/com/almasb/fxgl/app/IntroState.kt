@@ -41,10 +41,13 @@ internal class IntroState
 private constructor() : AppState(FXGL.getApp().sceneFactory.newIntro()) {
 
     private var introFinishedSubscriber: Subscriber? = null
+    private var introFinished = false
 
     override fun onEnter(prevState: State) {
         if (prevState is StartupState) {
-            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, { onIntroFinished() })
+            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, {
+                introFinished = true
+            })
 
             (scene as IntroScene).startIntro()
 
@@ -53,16 +56,18 @@ private constructor() : AppState(FXGL.getApp().sceneFactory.newIntro()) {
         }
     }
 
+    override fun onUpdate(tpf: Double) {
+        if (introFinished) {
+            if (FXGL.getSettings().isMenuEnabled) {
+                FXGL.getApp().startMainMenu()
+            } else {
+                FXGL.getApp().startNewGame()
+            }
+        }
+    }
+
     override fun onExit() {
         introFinishedSubscriber!!.unsubscribe()
         introFinishedSubscriber = null
-    }
-
-    private fun onIntroFinished() {
-        if (FXGL.getSettings().isMenuEnabled) {
-            FXGL.getApp().startMainMenu()
-        } else {
-            FXGL.getApp().startNewGame()
-        }
     }
 }

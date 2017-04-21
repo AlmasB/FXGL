@@ -50,9 +50,14 @@ internal class LoadingState
 
     var dataFile = DataFile.EMPTY
 
+    private var loadingFinished = false
+
     override fun onEnter(prevState: State) {
 
         val initTask = InitAppTask(FXGL.getApp(), dataFile)
+        initTask.setOnSucceeded {
+            loadingFinished = true
+        }
 
         dataFile = DataFile.EMPTY
 
@@ -61,9 +66,18 @@ internal class LoadingState
         FXGL.getExecutor().execute(initTask)
     }
 
+    override fun onUpdate(tpf: Double) {
+        if (loadingFinished) {
+            FXGL.getApp().startPlay()
+            loadingFinished = false
+        }
+    }
+
     private class InitAppTask(private val app: GameApplication, private val dataFile: DataFile) : Task<Void>() {
 
-        private val log = FXGL.getLogger(javaClass)
+        companion object {
+            private val log = FXGL.getLogger(InitAppTask::class.java)
+        }
 
         override fun call(): Void? {
             val start = System.nanoTime()
@@ -122,10 +136,6 @@ internal class LoadingState
             log.debug(message)
             updateMessage(message)
             updateProgress(step.toLong(), 4)
-        }
-
-        override fun succeeded() {
-            FXGL.getApp().startPlay()
         }
 
         override fun failed() {

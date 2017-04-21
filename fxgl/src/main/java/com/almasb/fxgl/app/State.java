@@ -32,6 +32,10 @@ import com.almasb.fxgl.service.impl.input.FXGLInput;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ * A single state in which an application can be.
+ * State change should only be requested within {@link #onUpdate(double)}
+ * and not any other callbacks.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public abstract class State {
