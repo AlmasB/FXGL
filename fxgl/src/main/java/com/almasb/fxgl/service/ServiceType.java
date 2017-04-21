@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
+import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDisplay;
 import com.almasb.fxgl.service.impl.event.FXGLEventBus;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
@@ -41,6 +42,7 @@ import com.almasb.fxgl.service.impl.quest.FXGLQuestServiceProvider;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
+import javafx.scene.control.Dialog;
 
 /**
  * Marks a service type.
@@ -223,6 +225,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends FXGLQuestServiceProvider> serviceProvider() {
             return FXGLQuestServiceProvider.class;
+        }
+    };
+
+    ServiceType<DialogFactory> DIALOG_FACTORY = new ServiceType<DialogFactory>() {
+        @Override
+        public Class<DialogFactory> service() {
+            return DialogFactory.class;
+        }
+
+        @Override
+        public Class<? extends DialogFactory> serviceProvider() {
+            return FXGLDialogFactory.class;
         }
     };
 }

@@ -30,6 +30,7 @@ import com.almasb.fxgl.io.UIDialogHandler;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.service.listener.UserProfileSavable;
 import com.almasb.fxgl.settings.SceneDimension;
+import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -125,7 +126,9 @@ public interface Display extends UserProfileSavable {
      *
      * @param message the message to show
      */
-    void showMessageBox(String message);
+    default void showMessageBox(String message) {
+        showMessageBox(message, EmptyRunnable.INSTANCE);
+    }
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
@@ -152,7 +155,9 @@ public interface Display extends UserProfileSavable {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    void showInputBox(String message, Consumer<String> resultCallback);
+    default void showInputBox(String message, Consumer<String> resultCallback) {
+        showInputBox(message, s -> true, resultCallback);
+    }
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback

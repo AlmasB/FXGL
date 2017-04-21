@@ -34,6 +34,7 @@ import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
 import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
 import com.almasb.fxgl.service.impl.display.DialogPane
+import com.almasb.fxgl.service.impl.display.InputPredicates
 import com.almasb.fxgl.settings.UserProfile
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
@@ -110,7 +111,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     override fun onSave() {
-        app.display.showInputBoxWithCancel("Enter save file name", DialogPane.ALPHANUM, Consumer { saveFileName ->
+        app.display.showInputBoxWithCancel("Enter save file name", InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
                 return@Consumer
@@ -192,6 +193,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         }
 
         if (canSwitchGameMenu) {
+            // we only care if menu key was pressed in one of these states
             if (app.stateMachine.isInGameMenu()) {
                 canSwitchGameMenu = false
                 onResume()
@@ -200,8 +202,6 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
                 canSwitchGameMenu = false
                 app.startGameMenu()
 
-            } else {
-                log.warning("Menu key pressed in unknown state: ${app.stateMachine.currentState}")
             }
         }
     }
@@ -297,7 +297,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
         btnNew.setOnAction {
-            app.display.showInputBox("New Profile", DialogPane.ALPHANUM, Consumer { name ->
+            app.display.showInputBox("New Profile", InputPredicates.ALPHANUM, Consumer { name ->
                 profileName.set(name)
                 saveLoadManager = SaveLoadManager(name)
 

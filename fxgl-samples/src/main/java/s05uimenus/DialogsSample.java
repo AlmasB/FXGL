@@ -30,6 +30,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.service.impl.display.DialogPane;
+import com.almasb.fxgl.service.impl.display.InputPredicates;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
@@ -61,7 +62,7 @@ public class DialogsSample extends GameApplication {
             protected void onActionBegin() {
                 // 1. get display service and use one of the show* methods
                 // this shows a dialog that only takes alphanumerical characters as input
-                getDisplay().showInputBox("Simple Dialog", DialogPane.ALPHANUM, System.out::println);
+                getDisplay().showInputBox("Simple Dialog", InputPredicates.ALPHANUM, System.out::println);
             }
         }, KeyCode.F);
     }

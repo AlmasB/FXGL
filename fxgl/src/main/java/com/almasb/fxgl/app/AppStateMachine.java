@@ -61,6 +61,9 @@ public final class AppStateMachine {
         ApplicationState.LOADING.state();
         ApplicationState.PLAYING.state();
 
+        // init dialog sub state?
+        DialogSubState.INSTANCE.getView();
+
         if (app.getSettings().isIntroEnabled()) {
             ApplicationState.INTRO.state();
         }
@@ -176,5 +179,14 @@ public final class AppStateMachine {
 
     public boolean isInGameMenu() {
         return getCurrentState() == getGameMenuState();
+    }
+
+    /**
+     * @return true if can show close dialog
+     */
+    public boolean canShowCloseDialog() {
+        return getCurrentState() != DialogSubState.INSTANCE
+                && getCurrentState() != getLoadingState()
+                && getCurrentState() != getIntroState();
     }
 }

@@ -48,7 +48,6 @@ import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Dialog
-import javafx.scene.control.ProgressIndicator
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
@@ -154,7 +153,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
                 e.consume()
 
                 if (settings.isCloseConfirmation) {
-                    if (!dialog.isShowing) {
+                    if (FXGL.getApp().stateMachine.canShowCloseDialog()) {
                         showConfirmationBox("Exit the game?", { yes ->
                             if (yes)
                                 FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
@@ -380,23 +379,13 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         }
     }
 
-    private lateinit var dialog: DialogPane
+    //private lateinit var dialog: DialogPane
+
+    private lateinit var dialogState: DialogSubState
 
     private fun initDialogBox() {
-        dialog = DialogPane(this)
-
-        // TODO: hack
-        DialogSubState.setDialogPane(dialog)
-
-        dialog.setOnShown(Runnable {
-            //fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
-            //eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
-        })
-
-        dialog.setOnClosed(Runnable {
-            //eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
-            //fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
-        })
+        //dialog = DialogPane(this)
+        dialogState = DialogSubState
     }
 
     /**
@@ -420,18 +409,8 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         dialog.show()
     }
 
-    /**
-     * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
-     * button press, the message box will be dismissed.
-     *
-     * @param message the message to show
-     */
-    override fun showMessageBox(message: String) {
-        dialog.showMessageBox(message)
-    }
-
     override fun showMessageBox(message: String, callback: Runnable) {
-        dialog.showMessageBox(message, callback)
+        dialogState.showMessageBox(message, callback)
     }
 
     /**
@@ -443,19 +422,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      * @param resultCallback the function to be called
      */
     override fun showConfirmationBox(message: String, resultCallback: Consumer<Boolean>) {
-        dialog.showConfirmationBox(message, resultCallback)
-    }
-
-    /**
-     * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
-     * is invoked with the field text as parameter.
-     *
-     * @param message        message to show
-     *
-     * @param resultCallback the function to be called
-     */
-    override fun showInputBox(message: String, resultCallback: Consumer<String>) {
-        dialog.showInputBox(message, resultCallback)
+        dialogState.showConfirmationBox(message, resultCallback)
     }
 
     /**
@@ -469,11 +436,11 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      * @param resultCallback the function to be called
      */
     override fun showInputBox(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
-        dialog.showInputBox(message, filter, resultCallback)
+        dialogState.showInputBox(message, filter, resultCallback)
     }
 
     override fun showInputBoxWithCancel(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
-        dialog.showInputBoxWithCancel(message, filter, resultCallback)
+        dialogState.showInputBoxWithCancel(message, filter, resultCallback)
     }
 
     /**
@@ -482,7 +449,9 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      * @param error the error to show
      */
     override fun showErrorBox(error: Throwable) {
-        dialog.showErrorBox(error)
+        // TODO: add callback?
+
+        dialogState.showErrorBox(error)
     }
 
     /**
@@ -493,7 +462,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      * @param callback the function to be called when dialog is dismissed
      */
     override fun showErrorBox(errorMessage: String, callback: Runnable) {
-        dialog.showErrorBox(errorMessage, callback)
+        dialogState.showErrorBox(errorMessage, callback)
     }
 
     /**
@@ -506,27 +475,11 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      * @param buttons buttons present
      */
     override fun showBox(message: String, content: Node, vararg buttons: Button) {
-        dialog.showBox(message, content, *buttons)
+        dialogState.showBox(message, content, *buttons)
     }
 
     override fun showProgressBox(message: String): UIDialogHandler {
-        val progress = ProgressIndicator()
-        progress.setPrefSize(200.0, 200.0)
-
-        val btn = Button()
-        btn.isVisible = false
-
-        showBox(message, progress, btn)
-
-        return object : UIDialogHandler {
-            override fun show() {
-                // no-op as we show our own box
-            }
-
-            override fun dismiss() {
-                btn.fire()
-            }
-        }
+        return dialogState.showProgressBox(message)
     }
 
     override fun save(profile: UserProfile) {
