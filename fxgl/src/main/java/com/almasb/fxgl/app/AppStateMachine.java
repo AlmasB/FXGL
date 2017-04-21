@@ -185,8 +185,12 @@ public final class AppStateMachine {
      * @return true if can show close dialog
      */
     public boolean canShowCloseDialog() {
+        // do not allow close dialog if
+        // 1. a dialog is shown
+        // 2. we are loading a game
+        // 3. we are showing intro
         return getCurrentState() != DialogSubState.INSTANCE
                 && getCurrentState() != getLoadingState()
-                && getCurrentState() != getIntroState();
+                && (!FXGL.getApp().getSettings().isIntroEnabled() || getCurrentState() != getIntroState());
     }
 }

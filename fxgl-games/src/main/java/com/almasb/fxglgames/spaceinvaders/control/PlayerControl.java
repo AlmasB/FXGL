@@ -71,7 +71,7 @@ public class PlayerControl extends AbstractControl {
         dx = Config.PLAYER_MOVE_SPEED * tpf;
 
         if (!canShoot) {
-            if ((FXGL.getMasterTimer().now() - lastTimeShot) >= 1.0 / attackSpeed) {
+            if ((FXGL.getMasterTimer().getNow() - lastTimeShot) >= 1.0 / attackSpeed) {
                 canShoot = true;
             }
         }
@@ -96,7 +96,7 @@ public class PlayerControl extends AbstractControl {
             return;
 
         canShoot = false;
-        lastTimeShot = FXGL.getMasterTimer().now();
+        lastTimeShot = FXGL.getMasterTimer().getNow();
 
         GameWorld world = (GameWorld) getEntity().getWorld();
         world.spawn("Laser", new SpawnData(0, 0).put("owner", getEntity()));
