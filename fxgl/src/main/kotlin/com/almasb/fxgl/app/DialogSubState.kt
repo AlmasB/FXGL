@@ -52,7 +52,6 @@ import java.util.function.Predicate
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-// TODO: accessibility?
 object DialogSubState : SubState() {
 
     private val window = Window()

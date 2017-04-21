@@ -106,7 +106,6 @@ class SlidingNotificationService
         log.debug { "Service [NotificationService] initialized" }
     }
 
-    // TODO: remove dep on game scene?
     private fun popNotification() {
         val removed = FXGL.getApp().gameScene.removeUINode(notificationImpl)
 

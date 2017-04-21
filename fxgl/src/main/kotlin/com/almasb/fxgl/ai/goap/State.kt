@@ -31,8 +31,6 @@ import java.util.*
 /**
  * A lightweight version of GameState.
  *
- * TODO: can we use full version instead?
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class State(initialData: Map<String, Any> = emptyMap()) {

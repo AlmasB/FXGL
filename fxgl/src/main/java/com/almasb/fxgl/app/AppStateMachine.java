@@ -170,6 +170,10 @@ public final class AppStateMachine {
         return ApplicationState.PLAYING.state();
     }
 
+    public State getDialogState() {
+        return DialogSubState.INSTANCE;
+    }
+
     /**
      * @return true if app is in play state
      */

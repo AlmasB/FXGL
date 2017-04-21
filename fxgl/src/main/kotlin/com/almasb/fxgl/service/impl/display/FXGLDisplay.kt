@@ -449,8 +449,6 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      * @param error the error to show
      */
     override fun showErrorBox(error: Throwable) {
-        // TODO: add callback?
-
         dialogState.showErrorBox(error)
     }
 
