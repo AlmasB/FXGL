@@ -63,7 +63,7 @@ private constructor(val gameState: GameState,
         })
 
         if (FXGL.getSettings().isMenuEnabled)
-            scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+            input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
     }
 
     override fun onUpdate(tpf: Double) {

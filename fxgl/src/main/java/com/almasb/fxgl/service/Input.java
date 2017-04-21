@@ -33,6 +33,9 @@ import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.service.listener.UserProfileSavable;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -65,6 +68,31 @@ public interface Input extends UserProfileSavable {
      * @param scaleRatio scale ratio of the display where the event occurred
      */
     void onMouseEvent(MouseEvent event, Viewport viewport, double scaleRatio);
+
+    /**
+     * Add JavaFX event handler to handle events manually.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler handler for events
+     */
+    <T extends Event> void addEventHandler(EventType<T> eventType,
+                                                        EventHandler<? super T> eventHandler);
+
+    /**
+     * Remove JavaFX event handler.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler handler for events
+     */
+    <T extends Event> void removeEventHandler(EventType<T> eventType,
+                                                           EventHandler<? super T> eventHandler);
+
+    /**
+     * Fire JavaFX event.
+     *
+     * @param event the JavaFX event
+     */
+    void fireEvent(Event event);
 
     /**
      * Setting to false will disable capturing of input events.

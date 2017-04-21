@@ -34,8 +34,11 @@ import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Input
 import com.almasb.fxgl.settings.UserProfile
 import javafx.collections.FXCollections
+import javafx.event.Event
+import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.geometry.Point2D
+import javafx.scene.Group
 import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
@@ -98,6 +101,41 @@ class FXGLInput : Input {
     }
 
     override fun isRegisterInput() = registerInput
+
+    private val eventHandlers = Group()
+
+    /**
+     * Add event handler.
+
+     * @param eventType type of events to listen
+     * *
+     * @param eventHandler handler for events
+     */
+    override fun <T : Event> addEventHandler(eventType: EventType<T>,
+                                    eventHandler: EventHandler<in T>) {
+        eventHandlers.addEventHandler(eventType, eventHandler)
+    }
+
+    /**
+     * Remove event handler.
+
+     * @param eventType type of events to listen
+     * *
+     * @param eventHandler handler for events
+     */
+    override fun <T : Event> removeEventHandler(eventType: EventType<T>,
+                                       eventHandler: EventHandler<in T>) {
+        eventHandlers.removeEventHandler(eventType, eventHandler)
+    }
+
+    /**
+     * Fire JavaFX event on this FXGL scene.
+
+     * @param event the JavaFX event
+     */
+    override fun fireEvent(event: Event) {
+        eventHandlers.fireEvent(event)
+    }
 
     override fun onUpdate(tpf: Double) {
         if (processActions) {

@@ -27,47 +27,33 @@
 package com.almasb.fxgl.service.impl.qte
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.SubState
 import com.almasb.fxgl.service.QTE
 import com.google.inject.Inject
-import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.Pos
-import javafx.scene.control.Button
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
-import javafx.stage.Stage
 import javafx.util.Duration
 import java.util.*
-import java.util.concurrent.ScheduledFuture
 import java.util.function.Consumer
 
 /**
  * FXGL default QTE service provider.
  *
- * TODO: redo as a state
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class QTEProvider
-@Inject private constructor(private val primaryStage: Stage) : QTE {
+@Inject private constructor() : QTE {
 
-    private val eventHandler: EventHandler<KeyEvent>
-    private lateinit var scheduledAction: ScheduledFuture<*>
-
-    private val closeButton = Button()
-    private val keysBox = HBox(10.0)
-
+    private val qteState = QTEState()
     private val qteKeys = ArrayDeque<QTEKey>()
 
     private lateinit var callback: Consumer<Boolean>
 
     init {
-        closeButton.isVisible = false
-
-        keysBox.alignment = Pos.CENTER
-
-        eventHandler = EventHandler<KeyEvent> {
+        val eventHandler = EventHandler<KeyEvent> {
 
             val qteKey = qteKeys.poll()
 
@@ -84,23 +70,18 @@ class QTEProvider
                 callback.accept(false)
             }
         }
+
+        qteState.input.addEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
     }
 
     private fun show() {
-        FXGL.getDisplay().showBox("QTE!", keysBox, closeButton)
-
-        primaryStage.scene.addEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
+        FXGL.getApp().stateMachine.pushState(qteState)
     }
 
     private fun close() {
-        scheduledAction.cancel(true)
-
         qteKeys.clear()
-        keysBox.children.clear()
 
-        primaryStage.scene.removeEventHandler(KeyEvent.KEY_PRESSED, eventHandler)
-
-        closeButton.fire()
+        FXGL.getApp().stateMachine.popState()
     }
 
     override fun start(callback: Consumer<Boolean>, duration: Duration, vararg keys: KeyCode) {
@@ -112,22 +93,40 @@ class QTEProvider
 
         this.callback = callback
 
-        qteKeys.addAll(keys.map { QTEKey(it) })
+        qteKeys.addAll(keys.map(::QTEKey))
 
-        keysBox.children.setAll(qteKeys)
+        qteState.setKeys(qteKeys)
 
         show()
 
-        // timer
-        scheduledAction = FXGL.getExecutor().schedule({
+        qteState.timer.runOnceAfter({
 
             if (qteKeys.isNotEmpty()) {
-                Platform.runLater {
-
-                    close()
-                    callback.accept(false)
-                }
+                close()
+                callback.accept(false)
             }
         }, duration)
+    }
+
+    private class QTEState : SubState() {
+
+        private val keysBox = HBox(10.0)
+
+        init {
+            keysBox.alignment = Pos.CENTER
+
+            children.add(keysBox)
+        }
+
+        fun setKeys(keys: Deque<QTEKey>) {
+            keysBox.children.setAll(keys)
+
+            view.translateX = FXGL.getAppWidth() / 2 - keysBox.children.size * 82 / 2.0
+            view.translateY = FXGL.getAppHeight() / 2 - 72 / 2.0
+        }
+
+        override fun onExit() {
+            timer.clear()
+        }
     }
 }

@@ -134,9 +134,9 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
             FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, getCurrentScene().viewport, getScaleRatio())
         })
 
-        // reroute any events to current FXGL scene
+        // reroute any events to current state input
         fxScene.addEventFilter(EventType.ROOT, {
-            getCurrentScene().fireEvent(it.copyFor(null, null))
+            FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
         })
     }
 

@@ -56,7 +56,6 @@ public abstract class FXGLScene {
      */
     private Pane contentRoot;
 
-    private Group eventHandlers = new Group();
 
     private Viewport viewport;
 
@@ -131,37 +130,6 @@ public abstract class FXGLScene {
      */
     public final void clearEffect() {
         setEffect(null);
-    }
-
-    /**
-     * Add event handler.
-     *
-     * @param eventType type of events to listen
-     * @param eventHandler handler for events
-     */
-    public final <T extends Event> void addEventHandler(EventType<T> eventType,
-                                                  EventHandler<? super T> eventHandler) {
-        eventHandlers.addEventHandler(eventType, eventHandler);
-    }
-
-    /**
-     * Remove event handler.
-     *
-     * @param eventType type of events to listen
-     * @param eventHandler handler for events
-     */
-    public final <T extends Event> void removeEventHandler(EventType<T> eventType,
-                                                     EventHandler<? super T> eventHandler) {
-        eventHandlers.removeEventHandler(eventType, eventHandler);
-    }
-
-    /**
-     * Fire JavaFX event on this FXGL scene.
-     *
-     * @param event the JavaFX event
-     */
-    public final void fireEvent(Event event) {
-        eventHandlers.fireEvent(event);
     }
 
     /**

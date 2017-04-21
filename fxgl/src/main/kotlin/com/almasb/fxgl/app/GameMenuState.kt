@@ -39,6 +39,6 @@ internal class GameMenuState
 private constructor() : AppState(FXGL.getApp().sceneFactory.newGameMenu(FXGL.getApp())) {
 
     init {
-        scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+        input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
     }
 }

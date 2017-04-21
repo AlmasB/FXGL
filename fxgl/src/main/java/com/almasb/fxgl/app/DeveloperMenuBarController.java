@@ -143,9 +143,9 @@ public class DeveloperMenuBarController implements UIController {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
 
         if (item.isSelected()) {
-            app.getGameScene().addEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
+            //app.getGameScene().addEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
         } else {
-            app.getGameScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
+            //app.getGameScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
         }
     }
 
