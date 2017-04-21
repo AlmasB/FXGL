@@ -24,22 +24,21 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.app
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import javafx.scene.input.KeyEvent;
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import javafx.scene.input.KeyEvent
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
-class GameMenuState extends AppState {
+internal class GameMenuState
+@Inject
+private constructor() : AppState(FXGL.getApp().sceneFactory.newGameMenu(FXGL.getApp())) {
 
-    @Inject
-    private GameMenuState() {
-        super(FXGL.getApp().getSceneFactory().newGameMenu(FXGL.getApp()));
-
-        getScene().addEventHandler(KeyEvent.ANY, (MenuEventHandler) FXGL.getApp().getMenuListener());
+    init {
+        scene.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
     }
 }

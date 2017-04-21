@@ -24,43 +24,30 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.logging.FXGLLogger;
-import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.scene.FXGLScene;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.google.inject.Inject
+import com.google.inject.Singleton
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
-class StartupState extends AppState {
+internal class MainMenuState
+@Inject
+private constructor() : AppState(FXGL.getApp().sceneFactory.newMainMenu(FXGL.getApp())) {
 
-    private static final Logger log = FXGLLogger.get(StartupState.class);
+    override fun onEnter(prevState: State) {
+        if (prevState is StartupState
+                || prevState is IntroState
+                || prevState is GameMenuState) {
 
-    @Inject
-    private StartupState() {
-        // placeholder scene, will be replaced by next state
-        super(new FXGLScene() {});
-    }
+            val menuHandler = FXGL.getApp().menuListener as MenuEventHandler
 
-    @Override
-    public void onUpdate(double tpf) {
-        log.debug("STARTUP");
-
-        GameApplication app = FXGL.getApp();
-
-        // Start -> (Intro) -> (Menu) -> Game
-        if (app.getSettings().isIntroEnabled()) {
-            app.startIntro();
+            if (!menuHandler.isProfileSelected())
+                menuHandler.showProfileDialog()
         } else {
-            if (app.getSettings().isMenuEnabled()) {
-                app.startMainMenu();
-            } else {
-                app.startNewGame();
-            }
+            throw IllegalArgumentException("Entered MainMenu from illegal state: " + prevState)
         }
     }
 }

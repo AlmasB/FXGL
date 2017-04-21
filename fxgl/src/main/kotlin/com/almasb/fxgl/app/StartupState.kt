@@ -24,49 +24,38 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.event.Subscriber;
-import com.almasb.fxgl.scene.IntroScene;
-import com.almasb.fxgl.scene.intro.IntroFinishedEvent;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.scene.FXGLScene
+import com.google.inject.Inject
+import com.google.inject.Singleton
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
-class IntroState extends AppState {
+internal class StartupState
+@Inject
+// placeholder scene, will be replaced by next state
+private constructor() : AppState(object : FXGLScene() {}) {
 
-    private Subscriber introFinishedSubscriber;
+    private val log = FXGLLogger.get(StartupState::class.java)
 
-    @Inject
-    private IntroState() {
-        super(FXGL.getApp().getSceneFactory().newIntro());
-    }
+    override fun onUpdate(tpf: Double) {
+        log.debug("STARTUP")
 
-    @Override
-    public void onEnter(State prevState) {
-        if (prevState instanceof StartupState) {
-            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, e -> onIntroFinished());
+        val app = FXGL.getApp()
 
-            ((IntroScene)getScene()).startIntro();
-
+        // Start -> (Intro) -> (Menu) -> Game
+        if (app.settings.isIntroEnabled) {
+            app.startIntro()
         } else {
-            throw new IllegalArgumentException("Entered IntroState from illegal state: " + prevState);
-        }
-    }
-
-    @Override
-    public void onExit() {
-        introFinishedSubscriber.unsubscribe();
-    }
-
-    private void onIntroFinished() {
-        if (FXGL.getSettings().isMenuEnabled()) {
-            FXGL.getApp().startMainMenu();
-        } else {
-            FXGL.getApp().startNewGame();
+            if (app.settings.isMenuEnabled) {
+                app.startMainMenu()
+            } else {
+                app.startNewGame()
+            }
         }
     }
 }

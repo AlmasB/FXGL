@@ -24,34 +24,45 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.app
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.almasb.fxgl.core.event.Subscriber
+import com.almasb.fxgl.scene.IntroScene
+import com.almasb.fxgl.scene.intro.IntroFinishedEvent
+import com.google.inject.Inject
+import com.google.inject.Singleton
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
-class MainMenuState extends AppState {
+internal class IntroState
+@Inject
+private constructor() : AppState(FXGL.getApp().sceneFactory.newIntro()) {
 
-    @Inject
-    private MainMenuState() {
-        super(FXGL.getApp().getSceneFactory().newMainMenu(FXGL.getApp()));
+    private var introFinishedSubscriber: Subscriber? = null
+
+    override fun onEnter(prevState: State) {
+        if (prevState is StartupState) {
+            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, { onIntroFinished() })
+
+            (scene as IntroScene).startIntro()
+
+        } else {
+            throw IllegalArgumentException("Entered IntroState from illegal state: " + prevState)
+        }
     }
 
-    @Override
-    public void onEnter(State prevState) {
-        if (prevState instanceof StartupState
-                || prevState instanceof IntroState
-                || prevState instanceof GameMenuState) {
+    override fun onExit() {
+        introFinishedSubscriber!!.unsubscribe()
+        introFinishedSubscriber = null
+    }
 
-            MenuEventHandler menuHandler = (MenuEventHandler) FXGL.getApp().getMenuListener();
-
-            if (!menuHandler.isProfileSelected())
-                menuHandler.showProfileDialog();
+    private fun onIntroFinished() {
+        if (FXGL.getSettings().isMenuEnabled) {
+            FXGL.getApp().startMainMenu()
         } else {
-            throw new IllegalArgumentException("Entered MainMenu from illegal state: " + prevState);
+            FXGL.getApp().startNewGame()
         }
     }
 }
