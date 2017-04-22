@@ -27,7 +27,6 @@
 package com.almasb.fxgl.service.impl.executor
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGLListener
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.service.Executor
@@ -51,12 +50,10 @@ private constructor(eventBus: EventBus) : Executor {
     private val schedulerService = Executors.newScheduledThreadPool(2)
 
     init {
-        FXGL.getApp().addFXGLListener(object : FXGLListener {
-            override fun onExit() {
-                service.shutdownNow()
-                schedulerService.shutdownNow()
-            }
-        })
+        FXGL.getApp().addExitListener {
+            service.shutdownNow()
+            schedulerService.shutdownNow()
+        }
 
         log.debug { "Service [Executor] initialized" }
     }

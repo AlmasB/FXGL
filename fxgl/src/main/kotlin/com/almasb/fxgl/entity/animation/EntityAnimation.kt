@@ -27,7 +27,6 @@
 package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGLListener
 import javafx.animation.Animation
 import javafx.event.EventHandler
 
@@ -44,24 +43,24 @@ abstract class EntityAnimation(protected val animationBuilder: AnimationBuilder)
     protected lateinit var animation: Animation
     private var state = AnimationState.INIT
 
-    private val listener = object : FXGLListener {
-        override fun onPause() {
-            if (state == AnimationState.PLAYING)
-                pause()
-        }
-
-        override fun onResume() {
-            if (state == AnimationState.PAUSED)
-                play()
-        }
-    }
+//    private val listener = object : FXGLListener {
+//        override fun onPause() {
+//            if (state == AnimationState.PLAYING)
+//                pause()
+//        }
+//
+//        override fun onResume() {
+//            if (state == AnimationState.PAUSED)
+//                play()
+//        }
+//    }
 
     protected fun initAnimation() {
         animation = buildAnimation()
         animation.cycleCount = animationBuilder.times
         animation.delay = animationBuilder.delay
 
-        FXGL.getApp().addFXGLListener(listener)
+        //FXGL.getApp().addFXGLListener(listener)
 
         bindProperties()
 
@@ -69,7 +68,7 @@ abstract class EntityAnimation(protected val animationBuilder: AnimationBuilder)
 
             state = AnimationState.FINISHED
 
-            FXGL.getApp().removeFXGLListener(listener)
+            //FXGL.getApp().removeFXGLListener(listener)
 
             unbindProperties()
         }

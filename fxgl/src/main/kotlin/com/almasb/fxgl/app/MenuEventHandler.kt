@@ -72,11 +72,9 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     fun isProfileSelected() = profileName.value.isNotEmpty()
 
     init {
-        app.addFXGLListener(object : FXGLListener {
-            override fun onExit() {
-                saveProfile()
-            }
-        })
+        app.addExitListener {
+            saveProfile()
+        }
     }
 
     internal fun generateDefaultProfile() {

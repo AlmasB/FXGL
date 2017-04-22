@@ -27,31 +27,13 @@
 package com.almasb.fxgl.app;
 
 /**
- * Marks a service that wants to listen for FXGL system events.
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface FXGLListener {
+public interface ExitListener {
 
     /**
-     * Fired on main loop paused.
-     */
-    default void onPause() {}
-
-    /**
-     * Fired on main loop resumed.
-     */
-    default void onResume() {}
-
-    /**
-     * Fired on FXGL reset.
-     * This is where all resources should be freed if they are no longer used.
-     */
-    default void onReset() {}
-
-    /**
-     * Fired before the system is about to shut down.
+     * Called just before FXGL application exits.
      * Do NOT make any asynchronous calls as they may not complete.
      */
-    default void onExit() {}
+    void onExit();
 }

@@ -42,7 +42,6 @@ import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.service.Input;
-import com.almasb.fxgl.app.FXGLListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.ui.UI;
@@ -103,26 +102,8 @@ public class PongApp extends GameApplication {
             });
         });
 
-        addFXGLListener(new FXGLListener() {
-            @Override
-            public void onPause() {
-
-            }
-
-            @Override
-            public void onResume() {
-
-            }
-
-            @Override
-            public void onReset() {
-
-            }
-
-            @Override
-            public void onExit() {
-                getNet().getConnection().ifPresent(conn -> conn.close());
-            }
+        addExitListener(() -> {
+            getNet().getConnection().ifPresent(conn -> conn.close());
         });
     }
 

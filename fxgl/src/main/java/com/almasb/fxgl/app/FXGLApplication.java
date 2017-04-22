@@ -100,15 +100,15 @@ public abstract class FXGLApplication extends Application {
         return settings;
     }
 
-    private List<FXGLListener> systemListeners = new ArrayList<>();
+    private List<ExitListener> exitListeners = new ArrayList<>();
 
     /**
-     * Add listener for core FXGL callbacks.
+     * Add listener the exit callback.
      *
      * @param listener the listener
      */
-    public final void addFXGLListener(FXGLListener listener) {
-        systemListeners.add(listener);
+    public final void addExitListener(ExitListener listener) {
+        exitListeners.add(listener);
     }
 
     /**
@@ -116,8 +116,8 @@ public abstract class FXGLApplication extends Application {
      *
      * @param listener the listener
      */
-    public final void removeFXGLListener(FXGLListener listener) {
-        systemListeners.remove(listener);
+    public final void removeExitListener(ExitListener listener) {
+        exitListeners.remove(listener);
     }
 
     void runTask(Class<? extends Runnable> type) {
@@ -209,41 +209,13 @@ public abstract class FXGLApplication extends Application {
      */
     abstract void configureApp();
 
-//    /**
-//     * Pause execution of current state.
-//     */
-//    public void pause() {
-//        log.debug("Pausing application");
-//        systemListeners.forEach(FXGLListener::onPause);
-//    }
-//
-//    /**
-//     * Resume execution of current state.
-//     */
-//    public void resume() {
-//        log.debug("Resuming application");
-//        systemListeners.forEach(FXGLListener::onResume);
-//    }
-//
-//    /**
-//     * Reset the application.
-//     * After notifying all interested parties (where all should do a cleanup),
-//     * <code>System.gc()</code> will be called.
-//     */
-//    public final void reset() {
-//        log.debug("Resetting FXGL application");
-//        systemListeners.forEach(FXGLListener::onReset);
-//
-//        System.gc();
-//    }
-
     /**
      * Exit the application.
      * Safe to call this from a paused state.
      */
     protected void exit() {
         log.debug("Exiting FXGL application");
-        systemListeners.forEach(FXGLListener::onExit);
+        exitListeners.forEach(ExitListener::onExit);
 
         FXGL.destroy();
         log.debug("Closing FXGL logger and exiting JavaFX");
