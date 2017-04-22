@@ -40,7 +40,7 @@ import javafx.collections.ObservableList
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class FXGLQuestServiceProvider
-@Inject private constructor() : QuestService, UserProfileSavable {
+@Inject private constructor() : QuestService {
 
     private val quests = FXCollections.observableArrayList<Quest>()
 

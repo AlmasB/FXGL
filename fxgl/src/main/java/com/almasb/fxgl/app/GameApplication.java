@@ -25,17 +25,17 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
-import com.almasb.fxgl.gameplay.AchievementManager;
-import com.almasb.fxgl.gameplay.GameState;
+import com.almasb.fxgl.gameplay.*;
 import com.almasb.fxgl.io.FXGLIO;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.saving.LoadEvent;
+import com.almasb.fxgl.saving.SaveEvent;
 import com.almasb.fxgl.scene.DisplayEvent;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.PreloadingScene;
@@ -52,10 +52,6 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -140,6 +136,8 @@ public abstract class GameApplication extends Application {
                 runUpdaterAndWait();
 
                 configureApp();
+
+                launchGame();
             } catch (Exception e) {
                 log.fatal("Exception during system configuration:");
                 log.fatal(FXGLLogger.errorTraceAsString(e));
@@ -151,15 +149,6 @@ public abstract class GameApplication extends Application {
                 System.exit(-1);
             }
         }, "FXGL Launcher Thread").start();
-    }
-
-    private void runTask(Class<? extends Runnable> type) {
-        log.debug("Running task: " + type.getSimpleName());
-        FXGL.getInstance(type).run();
-    }
-
-    private void runUpdaterAndWait() {
-        Async.startFX(() -> runTask(UpdaterTask.class)).await();
     }
 
     /**
@@ -221,6 +210,12 @@ public abstract class GameApplication extends Application {
         settings = localSettings.toReadOnly();
     }
 
+    private void runUpdaterAndWait() {
+        Async.startFX(() -> {
+            new UpdaterTask().run();
+        }).await();
+    }
+
     private void configureApp() {
         log.debug("Configuring GameApplication");
 
@@ -232,8 +227,42 @@ public abstract class GameApplication extends Application {
 
         registerServicesForUpdate();
 
-        log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+        if (getSettings().isMenuEnabled()) {
+            // services are now ready and listening, we can generate default profile
+            menuHandler.generateDefaultProfile();
+        }
 
+        log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+    }
+
+    private void registerServicesForUpdate() {
+        addUpdateListener(getAudioPlayer());
+
+        getEventBus().addEventHandler(NotificationEvent.ANY, e -> getAudioPlayer().onNotificationEvent(e));
+        getEventBus().addEventHandler(AchievementEvent.ANY, e -> getNotificationService().onAchievementEvent(e));
+
+        getEventBus().addEventHandler(SaveEvent.ANY, e -> {
+            getAudioPlayer().save(e.getProfile());
+            getDisplay().save(e.getProfile());
+            getInput().save(e.getProfile());
+            getAchievementManager().save(e.getProfile());
+            getQuestService().save(e.getProfile());
+        });
+
+        getEventBus().addEventHandler(LoadEvent.ANY, e -> {
+            getAudioPlayer().load(e.getProfile());
+            getDisplay().load(e.getProfile());
+            getInput().load(e.getProfile());
+            getAchievementManager().load(e.getProfile());
+            getQuestService().load(e.getProfile());
+        });
+
+        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
+
+        getEventBus().scanForHandlers(this);
+    }
+
+    private void launchGame() {
         Async.startFX(() -> {
             FXGL.getDisplay().initAndShow();
 
@@ -246,14 +275,9 @@ public abstract class GameApplication extends Application {
         });
     }
 
-    private void registerServicesForUpdate() {
-        addUpdateListener(getAudioPlayer());
-    }
-
     private void runPreInit() {
         if (getSettings().isProfilingEnabled()) {
             profiler = new Profiler();
-            profilerFont = FXGLAssets.UI_MONO_FONT.newFont(20);
         }
 
         FXGLIO.INSTANCE.setDefaultExceptionHandler(getExceptionHandler());
@@ -272,9 +296,8 @@ public abstract class GameApplication extends Application {
 
         preInit();
 
-        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
-
-        runTask(InitEventHandlersTask.class);
+        // attempt to clean any garbage we generated before main loop
+        System.gc();
     }
 
     private AnimationTimer mainLoop;
@@ -287,7 +310,7 @@ public abstract class GameApplication extends Application {
             public void handle(long now) {
                 long frameStart = System.nanoTime();
 
-                double tpf = tickStart(now);
+                tpf = tickStart(now);
 
                 tick(tpf);
                 onPostUpdate(tpf);
@@ -310,6 +333,8 @@ public abstract class GameApplication extends Application {
 
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
     private ReadOnlyIntegerWrapper fps = new ReadOnlyIntegerWrapper();
+
+    private double tpf;
 
     private FPSCounter fpsCounter = new FPSCounter();
 
@@ -340,20 +365,12 @@ public abstract class GameApplication extends Application {
         }
     }
 
-    private Font profilerFont;
     private Profiler profiler;
 
     private void tickEnd(long frameTook) {
         if (getSettings().isProfilingEnabled()) {
             profiler.update(fps.get(), frameTook);
-
-            GraphicsContext g = getGameScene().getGraphicsContext();
-            g.setGlobalBlendMode(BlendMode.SRC_OVER);
-            g.setGlobalAlpha(1);
-            g.setFont(profilerFont);
-            g.setFill(Color.RED);
-
-            g.fillText(profiler.getInfo(), 0, getHeight() - 120.0);
+            profiler.render(getGameScene().getGraphicsContext());
         }
     }
 
@@ -433,7 +450,7 @@ public abstract class GameApplication extends Application {
      * @return menu event handler associated with this game
      * @throws IllegalStateException if menus are not enabled
      */
-    public MenuEventListener getMenuListener() {
+    public final MenuEventListener getMenuListener() {
         if (!getSettings().isMenuEnabled())
             throw new IllegalStateException("Menus are not enabled");
 
@@ -454,20 +471,10 @@ public abstract class GameApplication extends Application {
 
     private List<ExitListener> exitListeners = new ArrayList<>();
 
-    /**
-     * Add listener the exit callback.
-     *
-     * @param listener the listener
-     */
     public final void addExitListener(ExitListener listener) {
         exitListeners.add(listener);
     }
 
-    /**
-     * Remove previously added listener.
-     *
-     * @param listener the listener
-     */
     public final void removeExitListener(ExitListener listener) {
         exitListeners.remove(listener);
     }
@@ -645,6 +652,13 @@ public abstract class GameApplication extends Application {
 
     /* GETTERS */
 
+    /**
+     * @return time per frame for current frame
+     */
+    public final double tpf() {
+        return tpf;
+    }
+
     public final AppStateMachine getStateMachine() {
         return stateMachine;
     }
@@ -736,14 +750,7 @@ public abstract class GameApplication extends Application {
      * @return current tick (frame)
      */
     public final long getTick() {
-        return 0;
-    }
-
-    /**
-     * @return current time since start of game in nanoseconds
-     */
-    public final long getNow() {
-        return 0;
+        return tick.get();
     }
 
     public final EventBus getEventBus() {

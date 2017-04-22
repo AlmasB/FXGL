@@ -77,7 +77,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         }
     }
 
-    internal fun generateDefaultProfile() {
+    fun generateDefaultProfile() {
         log.debug("generateDefaultProfile()")
 
         defaultProfile = createProfile()

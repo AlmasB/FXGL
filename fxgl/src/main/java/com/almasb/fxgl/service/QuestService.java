@@ -27,12 +27,13 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.gameplay.rpg.quest.Quest;
+import com.almasb.fxgl.service.listener.UserProfileSavable;
 import javafx.collections.ObservableList;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface QuestService {
+public interface QuestService extends UserProfileSavable {
 
     /**
      * @return unmodifiable list of currently managed quests

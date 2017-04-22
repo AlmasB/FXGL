@@ -26,8 +26,13 @@
 
 package com.almasb.fxgl.devtools.profiling
 
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.math.FXGLMath
+import javafx.scene.canvas.GraphicsContext
+import javafx.scene.effect.BlendMode
+import javafx.scene.paint.Color
 
 /**
  * Basic profiler.
@@ -121,6 +126,17 @@ class Profiler {
 
         if (memoryUsageCurrent < memoryUsageMin)
             memoryUsageMin = memoryUsageCurrent
+    }
+
+    private val profilerFont = FXGLAssets.UI_MONO_FONT.newFont(20.0);
+
+    fun render(g: GraphicsContext) {
+        g.globalBlendMode = BlendMode.SRC_OVER
+        g.globalAlpha = 1.0
+        g.font = profilerFont
+        g.fill = Color.RED
+
+        g.fillText(getInfo(), 0.0, FXGL.getAppHeight() - 120.0)
     }
 
     fun print() {
