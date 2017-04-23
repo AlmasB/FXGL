@@ -27,7 +27,7 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.UpdateListener;
+import com.almasb.fxgl.app.listener.UpdateListener;
 import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;

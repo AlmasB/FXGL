@@ -27,7 +27,7 @@
 package com.almasb.fxgl.texture;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.StateListener;
+import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.scene.image.Image;
 import javafx.util.Duration;

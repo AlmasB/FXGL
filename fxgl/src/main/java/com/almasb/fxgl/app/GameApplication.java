@@ -25,6 +25,9 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.app.listener.ExitListener;
+import com.almasb.fxgl.app.listener.StateListener;
+import com.almasb.fxgl.app.listener.UpdateListener;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;

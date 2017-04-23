@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.app.listener;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

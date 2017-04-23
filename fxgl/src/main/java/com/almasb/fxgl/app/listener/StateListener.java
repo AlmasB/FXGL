@@ -24,7 +24,9 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app;
+package com.almasb.fxgl.app.listener;
+
+import com.almasb.fxgl.app.State;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

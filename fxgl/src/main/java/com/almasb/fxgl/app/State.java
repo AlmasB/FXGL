@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.service.impl.input.FXGLInput;
 
