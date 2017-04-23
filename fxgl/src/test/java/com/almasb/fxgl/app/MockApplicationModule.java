@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.logging.MockLoggerFactory;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.event.FXGLEventBus;
@@ -126,7 +125,7 @@ public class MockApplicationModule extends ApplicationModule {
     }
 
     private void mockLoggerFactory() {
-        bind(LoggerFactory.class).toInstance(MockLoggerFactory.INSTANCE);
+        //bind(LoggerFactory.class).toInstance(MockLoggerFactory.INSTANCE);
     }
 
     private void mockInput() {
