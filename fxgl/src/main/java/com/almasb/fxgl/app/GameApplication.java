@@ -494,9 +494,7 @@ public abstract class GameApplication extends Application {
     }
 
     /* CALLBACKS BEGIN */
-
-    // TODO: is there a reason we have to keep GameApplication extends Application,
-    // maybe hide it?
+    
     @Override
     public final void init() {}
 
@@ -656,7 +654,6 @@ public abstract class GameApplication extends Application {
         return sceneFactory;
     }
 
-    // TODO: we shouldn't expose primary stage anywhere within the framework
     /**
      * @return primary stage as set by JavaFX
      */
