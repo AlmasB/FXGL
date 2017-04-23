@@ -29,6 +29,7 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.service.impl.input.FXGLInput;
+import com.almasb.fxgl.time.Timer;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -42,10 +43,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class State {
 
     private Input input = new FXGLInput();
-    private StateTimer timer = new StateTimer();
+    private Timer timer = new Timer();
     private CopyOnWriteArrayList<StateListener> listeners = new CopyOnWriteArrayList<>();
 
-    public final StateTimer getTimer() {
+    public final Timer getTimer() {
         return timer;
     }
 

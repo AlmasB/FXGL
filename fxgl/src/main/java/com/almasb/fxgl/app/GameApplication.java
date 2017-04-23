@@ -48,6 +48,7 @@ import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.timer.FPSCounter;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -716,7 +717,7 @@ public abstract class GameApplication extends Application {
     /**
      * @return play state timer
      */
-    public final StateTimer getMasterTimer() {
+    public final Timer getMasterTimer() {
         return playState.getTimer();
     }
 

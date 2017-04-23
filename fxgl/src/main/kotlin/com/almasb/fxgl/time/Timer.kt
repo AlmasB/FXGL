@@ -24,27 +24,24 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.app
+package com.almasb.fxgl.time
 
-import com.almasb.fxgl.time.FXGLLocalTimer
-import com.almasb.fxgl.time.LocalTimer
-import com.almasb.fxgl.time.TimerAction
-import com.almasb.fxgl.time.TimerActionImpl
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.util.Duration
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Timer that runs in and belongs to a single state.
+ * Timer that supports running actions at an interval and with a delay.
+ * Runs on the same thread that created the timer.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class StateTimer {
+class Timer {
 
     /**
      * List for all timer based actions.
      */
-    private val timerActions = CopyOnWriteArrayList<TimerActionImpl>()
+    private val timerActions = CopyOnWriteArrayList<TimerAction>()
 
     /**
      * @return time in seconds accumulated in this state
@@ -56,7 +53,7 @@ class StateTimer {
         now += tpf
 
         timerActions.forEach { it.update(tpf) }
-        timerActions.removeIf(TimerActionImpl::isExpired)
+        timerActions.removeIf(TimerAction::isExpired)
     }
 
     /**
@@ -69,7 +66,7 @@ class StateTimer {
      * @param interval time
      */
     fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
-        val act = TimerActionImpl(interval, action, TimerActionImpl.TimerType.INDEFINITE)
+        val act = TimerAction(interval, action, TimerAction.TimerType.INDEFINITE)
         timerActions.add(act)
         return act
     }
@@ -92,7 +89,7 @@ class StateTimer {
         if (!whileCondition.get()) {
             throw IllegalArgumentException("While condition is false")
         }
-        val act = TimerActionImpl(interval, action, TimerActionImpl.TimerType.INDEFINITE)
+        val act = TimerAction(interval, action, TimerAction.TimerType.INDEFINITE)
         timerActions.add(act)
 
         whileCondition.addListener { _, _, isTrue ->
@@ -113,7 +110,7 @@ class StateTimer {
      * @param delay  delay after which to execute
      */
     fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
-        val act = TimerActionImpl(delay, action, TimerActionImpl.TimerType.ONCE)
+        val act = TimerAction(delay, action, TimerAction.TimerType.ONCE)
         timerActions.add(act)
         return act
     }
@@ -129,7 +126,27 @@ class StateTimer {
         timerActions.clear()
     }
 
-    fun newLocalTimer(): LocalTimer {
-        return FXGLLocalTimer(this)
+    /**
+     * Simple timer to capture current time and check if certain time has passed.
+     */
+    fun newLocalTimer(): LocalTimer = object : LocalTimer {
+        private var time = 0.0
+
+        /**
+         * Captures current time.
+         */
+        override fun capture() {
+            time = now
+        }
+
+        /**
+         * Returns true if difference between captured time
+         * and now is greater or equal to given duration.
+         *
+         * @param duration time duration to check
+         * @return true if elapsed, false otherwise
+         */
+        override fun elapsed(duration: Duration) =
+                now - time >= duration.toSeconds()
     }
 }

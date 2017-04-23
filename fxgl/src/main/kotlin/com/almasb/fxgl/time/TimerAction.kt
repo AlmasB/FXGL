@@ -35,15 +35,23 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class TimerActionImpl
-            /**
-             * @param interval interval duration
-             * @param action   the action
-             * @param type     ONCE or INDEFINITE
-             */
-            (interval: Duration,
-             private val action: Runnable,
-             private val type: TimerType) : TimerAction {
+class TimerAction
+internal constructor(
+
+        /**
+         * @param interval interval duration
+         */
+        interval: Duration,
+
+        /**
+         * @param action the action
+         */
+        private val action: Runnable,
+
+        /**
+         * @param type ONCE or INDEFINITE
+         */
+        private val type: TimerType) {
 
     enum class TimerType {
         ONCE, INDEFINITE
@@ -54,11 +62,11 @@ class TimerActionImpl
     /**
      * @return true if the timer has expired, false if active
      */
-    private var isExpired = false
-    override fun isExpired() = isExpired
+    var isExpired = false
+        private set
 
-    private var isPaused = false
-    override fun isPaused() = isPaused
+    var isPaused = false
+        private set
 
     private var lastFired = 0.0
     private var currentTime = 0.0
@@ -88,11 +96,11 @@ class TimerActionImpl
         }
     }
 
-    override fun pause() {
+    fun pause() {
         isPaused = true
     }
 
-    override fun resume() {
+    fun resume() {
         isPaused = false
     }
 
@@ -100,7 +108,7 @@ class TimerActionImpl
      * Set the timer as expired. The action will no longer
      * be executed.
      */
-    override fun expire() {
+    fun expire() {
         isExpired = true
     }
 }

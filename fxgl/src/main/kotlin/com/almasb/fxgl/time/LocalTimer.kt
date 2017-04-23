@@ -26,32 +26,25 @@
 
 package com.almasb.fxgl.time
 
-import com.almasb.fxgl.app.StateTimer
 import javafx.util.Duration
 
 /**
- * Simple timer to capture current time and check if certain time has passed.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLLocalTimer(private val stateTimer: StateTimer) : LocalTimer {
-    private var time = 0.0
-
+interface LocalTimer {
     /**
      * Captures current time.
      */
-    override fun capture() {
-        time = stateTimer.now
-    }
+    fun capture()
 
     /**
      * Returns true if difference between captured time
      * and now is greater or equal to given duration.
-
+     *
      * @param duration time duration to check
-     * *
      * @return true if elapsed, false otherwise
      */
-    override fun elapsed(duration: Duration) =
-            stateTimer.now - time >= duration.toSeconds()
+    fun elapsed(duration: Duration): Boolean
 }
