@@ -62,19 +62,19 @@ private constructor(): DialogFactory {
         return FXGL.getUIFactory().newText(message)
     }
 
+    /**
+     * Creates a rectangular wrapper around the content node.
+     */
     private fun wrap(n: Node): Pane {
         val size = n.userData as Point2D
 
-        // cache that too as part of root node
         val box = Rectangle()
-
-        //box.widthProperty().bind(Bindings.max(size.x + 200, window.widthProperty()))
-
-        // TODO: proper calculation
-        box.widthProperty().bind(Bindings.max(size.x + 200, SimpleDoubleProperty(600.0)))
-        box.height = size.y + 100
-        box.translateY = 3.0
-        box.stroke = Color.AZURE
+        with(box) {
+            width = maxOf(size.x + 200, 600.0)
+            height = size.y + 100
+            translateY = 3.0
+            stroke = Color.AZURE
+        }
 
         return StackPane(box, n)
     }
@@ -222,16 +222,6 @@ private constructor(): DialogFactory {
         btn.isVisible = false
 
         return customDialog(message, progress, callback, btn)
-
-//        return object : UIDialogHandler {
-//            override fun show() {
-//                // no-op as we show our own box
-//            }
-//
-//            override fun dismiss() {
-//                btn.fire()
-//            }
-//        }
     }
 
     override fun customDialog(message: String, content: Node, callback: Runnable, vararg buttons: Button): Pane {
