@@ -28,6 +28,7 @@ package com.almasb.fxgl.scene.menu;
 
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.saving.SaveLoadManager;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 
 /**
@@ -58,6 +59,8 @@ public interface MenuEventListener {
     void onExitToMainMenu();
 
     ReadOnlyStringProperty profileNameProperty();
+
+    ReadOnlyBooleanProperty hasSavesProperty();
 
     void restoreDefaultSettings();
 

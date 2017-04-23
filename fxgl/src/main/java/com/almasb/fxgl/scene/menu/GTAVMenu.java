@@ -156,9 +156,7 @@ public class GTAVMenu extends FXGLMenu {
         Button btnLogout = createActionButton("LOGOUT", this::fireLogout);
         Button btnExit = createActionButton("EXIT", this::fireExit);
 
-        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
-            btnContinue.setDisable(!event.hasSaves());
-        });
+        btnContinue.disableProperty().bind(listener.hasSavesProperty().not());
 
         return new VBox(10, btnContinue, btnNew, btnLoad, btnLogout, btnExit);
     }

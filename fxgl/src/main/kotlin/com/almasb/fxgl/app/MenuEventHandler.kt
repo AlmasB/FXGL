@@ -32,9 +32,10 @@ import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.saving.SaveLoadManager
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
-import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
 import com.almasb.fxgl.util.InputPredicates
 import com.almasb.fxgl.saving.UserProfile
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.property.ReadOnlyBooleanWrapper
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
@@ -69,6 +70,12 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     private val profileName = ReadOnlyStringWrapper("")
 
     fun isProfileSelected() = profileName.value.isNotEmpty()
+
+    private val hasSaves = ReadOnlyBooleanWrapper(false)
+
+    override fun hasSavesProperty(): ReadOnlyBooleanProperty {
+        return hasSaves.readOnlyProperty
+    }
 
     init {
         app.addExitListener {
@@ -296,9 +303,8 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         btnNew.setOnAction {
             app.display.showInputBox("New Profile", InputPredicates.ALPHANUM, Consumer { name ->
                 profileName.set(name)
+                hasSaves.value = false
                 saveLoadManager = SaveLoadManager(name)
-
-                app.eventBus.fireEvent(ProfileSelectedEvent(name, false))
 
                 saveProfile()
             })
@@ -319,8 +325,8 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
                             profileName.set(name)
 
                             saveLoadManager.loadLastModifiedSaveFileTask()
-                                    .onSuccessKt { file -> app.eventBus.fireEvent(ProfileSelectedEvent(name, true)) }
-                                    .onFailureKt { error -> app.eventBus.fireEvent(ProfileSelectedEvent(name, false)) }
+                                    .onSuccessKt { hasSaves.value = true }
+                                    .onFailureKt { hasSaves.value = false }
                                     .executeAsyncWithDialogFX(ProgressDialog("Loading last save file"))
                         }
                     }
