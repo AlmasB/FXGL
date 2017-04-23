@@ -52,7 +52,7 @@ class FXGLPooler
             }
         })
 
-        log.debug("Service [Pooler] initialized with default size = $initialSize")
+        log.debug("Default pool size for objects = $initialSize")
     }
 
     override fun <T : Any> get(type: Class<T>): T {

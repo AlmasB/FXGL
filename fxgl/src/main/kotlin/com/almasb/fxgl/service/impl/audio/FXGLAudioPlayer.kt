@@ -48,10 +48,6 @@ private constructor() : AudioPlayer {
 
     private val log = FXGL.getLogger(javaClass)
 
-    init {
-        log.debug("Service [AudioPlayer] initialized")
-    }
-
     override fun onUpdate(tpf: Double) {
 
         activeMusic.filter { it.reachedEnd() }

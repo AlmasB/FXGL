@@ -94,16 +94,9 @@ class SlidingNotificationService
         val pane = Pane()
         pane.setPrefSize(FXGL.getSettings().width.toDouble(), 50.0)
 
-        //gameScene.addUINode(notificationImpl)
-
-        //notificationImpl.getStylesheets().add(FXGL.getAssetLoader().loadCSS("test.css").externalForm)
-        //notificationImpl.getStyleClass().add("fxgl")
-
         notificationImpl.styleClass.add(NotificationPane.STYLE_CLASS_DARK)
         notificationImpl.content = pane
         notificationImpl.setOnHidden { popNotification() }
-
-        log.debug { "Service [NotificationService] initialized" }
     }
 
     private fun popNotification() {

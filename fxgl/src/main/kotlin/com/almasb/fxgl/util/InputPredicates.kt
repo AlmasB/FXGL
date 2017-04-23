@@ -24,42 +24,19 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service.impl.timer
+package com.almasb.fxgl.util
+
+import java.util.function.Predicate
 
 /**
- * Convenience class that buffers FPS values and calculates
- * average FPS.
  *
- * Adapted from http://wecode4fun.blogspot.co.uk/2015/07/particles.html (Roland C.)
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class FPSCounter {
+class InputPredicates {
 
     companion object {
-        private val MAX_SAMPLES = 100
-    }
 
-    private val frameTimes = LongArray(MAX_SAMPLES)
-    private var index = 0
-    private var arrayFilled = false
-    private var frameRate = 0
-
-    fun update(now: Long): Int {
-        val oldFrameTime = frameTimes[index]
-        frameTimes[index] = now
-        index = (index + 1) % frameTimes.size
-
-        if (index == 0) {
-            arrayFilled = true
-        }
-
-        if (arrayFilled) {
-            val elapsedNanos = now - oldFrameTime
-            val elapsedNanosPerFrame = elapsedNanos / frameTimes.size
-            frameRate = (1_000_000_000.0 / elapsedNanosPerFrame).toInt()
-        }
-
-        return frameRate
+        @JvmField val ALPHANUM = Predicate<String> { input -> input.matches("^[\\pL\\pN]+$".toRegex()) }
     }
 }

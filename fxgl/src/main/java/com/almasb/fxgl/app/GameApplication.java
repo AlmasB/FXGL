@@ -45,7 +45,7 @@ import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.*;
-import com.almasb.fxgl.service.impl.timer.FPSCounter;
+import com.almasb.fxgl.time.FPSCounter;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.Timer;

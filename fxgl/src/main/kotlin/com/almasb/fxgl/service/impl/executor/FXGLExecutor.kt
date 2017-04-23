@@ -42,9 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class FXGLExecutor
 @Inject
-private constructor(eventBus: EventBus) : Executor {
-
-    private val log = FXGL.getLogger(javaClass)
+private constructor() : Executor {
 
     private val service = Executors.newCachedThreadPool(FXGLThreadFactory)
     private val schedulerService = Executors.newScheduledThreadPool(2)
@@ -54,8 +52,6 @@ private constructor(eventBus: EventBus) : Executor {
             service.shutdownNow()
             schedulerService.shutdownNow()
         }
-
-        log.debug { "Service [Executor] initialized" }
     }
 
     override fun execute(task: Runnable) {

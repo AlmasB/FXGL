@@ -33,8 +33,7 @@ import com.almasb.fxgl.saving.SaveLoadManager
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
 import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
-import com.almasb.fxgl.service.impl.display.DialogPane
-import com.almasb.fxgl.service.impl.display.InputPredicates
+import com.almasb.fxgl.util.InputPredicates
 import com.almasb.fxgl.saving.UserProfile
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
