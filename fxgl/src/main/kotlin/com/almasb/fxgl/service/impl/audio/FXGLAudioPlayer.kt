@@ -31,7 +31,7 @@ import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.AudioPlayer
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.saving.UserProfile
 import com.google.inject.Inject
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty

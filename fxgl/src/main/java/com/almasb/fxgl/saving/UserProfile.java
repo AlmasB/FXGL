@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.almasb.fxgl.settings;
+package com.almasb.fxgl.saving;
 
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.io.serialization.Bundle;

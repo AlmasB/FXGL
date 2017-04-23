@@ -24,9 +24,7 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service.listener;
-
-import com.almasb.fxgl.settings.UserProfile;
+package com.almasb.fxgl.saving;
 
 /**
  * Allows services to save/load their state using a user profile.

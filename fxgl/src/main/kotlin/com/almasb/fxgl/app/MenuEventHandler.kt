@@ -35,7 +35,7 @@ import com.almasb.fxgl.scene.menu.MenuEventListener
 import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
 import com.almasb.fxgl.service.impl.display.DialogPane
 import com.almasb.fxgl.service.impl.display.InputPredicates
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.saving.UserProfile
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections

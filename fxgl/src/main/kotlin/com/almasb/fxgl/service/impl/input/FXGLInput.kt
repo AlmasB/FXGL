@@ -32,7 +32,7 @@ import com.almasb.fxgl.input.*
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Input
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.saving.UserProfile
 import javafx.collections.FXCollections
 import javafx.event.Event
 import javafx.event.EventHandler

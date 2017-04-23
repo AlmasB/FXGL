@@ -27,7 +27,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.saving.UserProfile
 import javafx.util.Duration
 
 /**

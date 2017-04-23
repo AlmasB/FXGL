@@ -27,7 +27,7 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.gameplay.rpg.quest.Quest;
-import com.almasb.fxgl.service.listener.UserProfileSavable;
+import com.almasb.fxgl.saving.UserProfileSavable;
 import javafx.collections.ObservableList;
 
 /**

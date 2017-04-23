@@ -28,7 +28,7 @@ package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.gameplay.AchievementEvent;
 import com.almasb.fxgl.gameplay.AchievementProgressEvent;
-import com.almasb.fxgl.service.listener.AchievementListener;
+import com.almasb.fxgl.gameplay.AchievementListener;
 import com.almasb.fxgl.ui.Position;
 import javafx.scene.paint.Color;
 

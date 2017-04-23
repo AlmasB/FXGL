@@ -32,8 +32,8 @@ import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.gameplay.NotificationEvent;
-import com.almasb.fxgl.service.listener.NotificationListener;
-import com.almasb.fxgl.service.listener.UserProfileSavable;
+import com.almasb.fxgl.gameplay.NotificationListener;
+import com.almasb.fxgl.saving.UserProfileSavable;
 import javafx.beans.property.DoubleProperty;
 
 /**

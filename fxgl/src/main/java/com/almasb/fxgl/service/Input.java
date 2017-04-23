@@ -32,7 +32,7 @@ import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.scene.Viewport;
-import com.almasb.fxgl.service.listener.UserProfileSavable;
+import com.almasb.fxgl.saving.UserProfileSavable;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
