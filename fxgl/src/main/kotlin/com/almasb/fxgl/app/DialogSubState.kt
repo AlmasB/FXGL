@@ -181,7 +181,7 @@ object DialogSubState : SubState() {
     }
 
     internal fun showInputBoxWithCancel(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
-        val dialog = dialogFactory.inputDialog(message, filter, Consumer {
+        val dialog = dialogFactory.inputDialogWithCancel(message, filter, Consumer {
             close()
             resultCallback.accept(it)
         })

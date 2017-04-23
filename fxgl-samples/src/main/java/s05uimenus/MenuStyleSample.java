@@ -49,7 +49,7 @@ public class MenuStyleSample extends GameApplication {
         settings.setMenuEnabled(true);
 
         // 2. set menu style
-        settings.setMenuStyle(MenuStyle.WARCRAFT3);
+        settings.setMenuStyle(MenuStyle.GTA5);
 
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);

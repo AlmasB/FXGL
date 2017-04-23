@@ -51,8 +51,6 @@ class FXGLExceptionHandler
 
     init {
         Thread.setDefaultUncaughtExceptionHandler({ _, e -> handleFatal(e) })
-
-        log.debug("Service [ExceptionHandler] initialized")
     }
 
     override fun handle(e: Throwable) {

@@ -46,10 +46,6 @@ class AchievementManager
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
 
-    init {
-        log.debug { "Service [AchievementManager] initialized" }
-    }
-
     /**
      * Registers achievement in the system.
      * Note: this method can only be called from initAchievements() to function
