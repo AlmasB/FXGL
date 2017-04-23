@@ -225,7 +225,7 @@ public abstract class GameApplication extends Application {
 
         long start = System.nanoTime();
 
-        setSceneFactory(initSceneFactory());
+        sceneFactory = FXGL.getService(ServiceType.SCENE_FACTORY);
         stateMachine = new AppStateMachine(this);
         playState = (PlayState) stateMachine.getPlayState();
 
@@ -615,21 +615,6 @@ public abstract class GameApplication extends Application {
     protected void loadState(DataFile dataFile) {
         log.warning("Called loadState(), but it wasn't overridden!");
         throw new UnsupportedOperationException("Default implementation is not available");
-    }
-
-    /**
-     * Override to provide custom intro/loading/menu scenes.
-     *
-     * @return scene factory
-     */
-    @Deprecated
-    protected SceneFactory initSceneFactory() {
-        return new SceneFactory();
-    }
-
-    // TODO: choose either set or init ...
-    public void setSceneFactory(SceneFactory sceneFactory) {
-        this.sceneFactory = sceneFactory;
     }
 
     /* CALLBACKS END */

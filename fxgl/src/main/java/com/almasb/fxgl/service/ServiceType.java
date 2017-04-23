@@ -28,6 +28,7 @@ package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.gameplay.AchievementManager;
+import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
@@ -237,6 +238,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends DialogFactory> serviceProvider() {
             return FXGLDialogFactory.class;
+        }
+    };
+
+    ServiceType<SceneFactory> SCENE_FACTORY = new ServiceType<SceneFactory>() {
+        @Override
+        public Class<SceneFactory> service() {
+            return SceneFactory.class;
+        }
+
+        @Override
+        public Class<? extends SceneFactory> serviceProvider() {
+            return SceneFactory.class;
         }
     };
 }

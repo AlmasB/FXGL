@@ -30,8 +30,8 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.LoadingScene;
 import com.almasb.fxgl.scene.SceneFactory;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -51,17 +51,25 @@ public class LongLoading extends GameApplication {
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+        settings.addServiceType(new ServiceType<SceneFactory>() {
+            @Override
+            public Class<SceneFactory> service() {
+                return SceneFactory.class;
+            }
+
+            @Override
+            public Class<? extends SceneFactory> serviceProvider() {
+                return MySceneFactory.class;
+            }
+        });
     }
 
-    @Override
-    protected SceneFactory initSceneFactory() {
-        return new SceneFactory() {
-            @NotNull
-            @Override
-            public LoadingScene newLoadingScene() {
-                return new TestLoadingScene();
-            }
-        };
+    public static class MySceneFactory extends SceneFactory {
+        @Override
+        public LoadingScene newLoadingScene() {
+            return new TestLoadingScene();
+        }
     }
 
     @Override
