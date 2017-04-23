@@ -494,7 +494,7 @@ public abstract class GameApplication extends Application {
     }
 
     /* CALLBACKS BEGIN */
-    
+
     @Override
     public final void init() {}
 

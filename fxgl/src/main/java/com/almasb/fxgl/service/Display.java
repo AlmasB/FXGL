@@ -108,16 +108,6 @@ public interface Display extends UserProfileSavable {
     /* DIALOG ACCESS */
 
     /**
-     * Shows given dialog and blocks execution of the game until the dialog is
-     * dismissed. The provided callback will be called with the dialog result as
-     * parameter when the dialog closes.
-     *
-     * @param dialog         JavaFX dialog
-     * @param resultCallback the function to be called
-     */
-    <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback);
-
-    /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
      * button press, the message box will be dismissed.
      *

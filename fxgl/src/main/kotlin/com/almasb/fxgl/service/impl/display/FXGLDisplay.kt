@@ -47,7 +47,6 @@ import javafx.event.EventType
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.Dialog
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
@@ -379,34 +378,10 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         }
     }
 
-    //private lateinit var dialog: DialogPane
-
     private lateinit var dialogState: DialogSubState
 
     private fun initDialogBox() {
-        //dialog = DialogPane(this)
         dialogState = DialogSubState
-    }
-
-    /**
-     * Shows given dialog and blocks execution of the game until the dialog is
-     * dismissed. The provided callback will be called with the dialog result as
-     * parameter when the dialog closes.
-     *
-     * @param dialog         JavaFX dialog
-     *
-     * @param resultCallback the function to be called
-     */
-    override fun <T> showDialog(dialog: Dialog<T>, resultCallback: Consumer<T>) {
-        FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
-
-        dialog.initOwner(stage)
-        dialog.setOnCloseRequest { e ->
-            FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
-
-            resultCallback.accept(dialog.result)
-        }
-        dialog.show()
     }
 
     override fun showMessageBox(message: String, callback: Runnable) {
