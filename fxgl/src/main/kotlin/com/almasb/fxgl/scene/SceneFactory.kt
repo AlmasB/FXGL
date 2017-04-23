@@ -57,7 +57,7 @@ open class SceneFactory {
      *
      * @return game scene
      */
-    open fun newGameScene(): GameScene = FXGL.getInstance(GameScene::class.java)
+    fun newGameScene(): GameScene = FXGL.getInstance(GameScene::class.java)
 
     /**
      * Called to construct main menu.
