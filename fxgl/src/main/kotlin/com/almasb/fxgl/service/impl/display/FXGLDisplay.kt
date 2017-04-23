@@ -43,6 +43,8 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.embed.swing.SwingFXUtils
+import javafx.event.Event
+import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Node
 import javafx.scene.Scene
@@ -120,23 +122,29 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         stage.show()
     }
 
+    private val keyHandler = EventHandler<KeyEvent> {
+        FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
+    }
+
+    private val mouseHandler = EventHandler<MouseEvent> {
+        FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, getCurrentScene().viewport, getScaleRatio())
+    }
+
+    private val genericHandler = EventHandler<Event> {
+        FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
+    }
+
     private fun initScene() {
         fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
 
         // main key event handler
-        fxScene.addEventFilter(KeyEvent.ANY, {
-            FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
-        })
+        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
 
         // main mouse event handler
-        fxScene.addEventFilter(MouseEvent.ANY, {
-            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, getCurrentScene().viewport, getScaleRatio())
-        })
+        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
 
         // reroute any events to current state input
-        fxScene.addEventFilter(EventType.ROOT, {
-            FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
-        })
+        fxScene.addEventFilter(EventType.ROOT, genericHandler)
     }
 
     /**
@@ -338,6 +346,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
     /**
      * Performs actual change of output resolution.
      * It will create a new underlying JavaFX scene.
+     * fxglTODO: impl is incorrect
      *
      * @param w new width
      *
@@ -348,16 +357,34 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         targetHeight.set(h)
         computeScaledSize()
 
-        //val root = fxScene.root
+        val root = fxScene.root
+
         // clear listener
-        //fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
+        // main key event handler
+        fxScene.removeEventFilter(KeyEvent.ANY, keyHandler)
+
+        // main mouse event handler
+        fxScene.removeEventFilter(MouseEvent.ANY, mouseHandler)
+
+        // reroute any events to current state input
+        fxScene.removeEventFilter(EventType.ROOT, genericHandler)
+
         // clear root of previous JavaFX scene
-        //fxScene.root = Pane()
+        fxScene.root = Pane()
 
         // create and init new JavaFX scene
-        //fxScene = Scene(root)
-        //fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
-        //stage.scene = fxScene
+        fxScene = Scene(root)
+
+        // main key event handler
+        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
+
+        // main mouse event handler
+        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
+
+        // reroute any events to current state input
+        fxScene.addEventFilter(EventType.ROOT, genericHandler)
+
+        stage.scene = fxScene
         if (settings.isFullScreen) {
             stage.isFullScreen = true
         }
