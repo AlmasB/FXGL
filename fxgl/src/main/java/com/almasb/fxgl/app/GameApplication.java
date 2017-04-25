@@ -317,7 +317,6 @@ public abstract class GameApplication extends Application {
                 tpf = tickStart(now);
 
                 tick(tpf);
-                onPostUpdate(tpf);
 
                 tickEnd(System.nanoTime() - frameStart);
             }
@@ -364,6 +363,7 @@ public abstract class GameApplication extends Application {
 
         if (stateMachine.isInPlay()) {
             onUpdate(tpf);
+            onPostUpdate(tpf);
         } else {
             onPausedUpdate(tpf);
         }
@@ -577,7 +577,7 @@ public abstract class GameApplication extends Application {
     protected void onUpdate(double tpf) {}
 
     /**
-     * Called after main loop tick has been completed in _ANY_ state.
+     * Called after main loop tick has been completed in Play state.
      * It can be used to de-register callbacks / listeners
      * and call various methods that otherwise might interfere
      * with main loop.
