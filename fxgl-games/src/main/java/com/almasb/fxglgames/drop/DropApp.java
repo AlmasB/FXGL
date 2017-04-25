@@ -57,7 +57,7 @@ public class DropApp extends GameApplication {
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEBUG);
+        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
