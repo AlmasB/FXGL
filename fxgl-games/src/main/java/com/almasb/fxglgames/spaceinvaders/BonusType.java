@@ -30,7 +30,7 @@ package com.almasb.fxglgames.spaceinvaders;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public enum BonusType {
-    ATTACK_RATE("spaceinvaders/powerup_atk_rate.png"), LIFE("spaceinvaders/life.png");
+    ATTACK_RATE("powerup_atk_rate.png"), LIFE("life.png");
 
     final String textureName;
 

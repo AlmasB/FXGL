@@ -55,9 +55,13 @@ open class LoadingScene : FXGLScene() {
         with(text) {
             font = FXGL.getUIFactory().newFont(24.0)
             fill = Color.WHITE
-            translateX = (settings.width / 2 - 100).toDouble()
-            translateY = (settings.height * 4 / 5).toDouble()
         }
+
+        FXGL.getUIFactory().centerTextBind(
+                text,
+                settings.width / 2.0,
+                settings.height * 4 / 5.0
+        )
 
         contentRoot.children.addAll(
                 Rectangle(settings.width.toDouble(),

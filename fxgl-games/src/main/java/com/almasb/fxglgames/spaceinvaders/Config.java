@@ -47,7 +47,9 @@ public final class Config {
 
     public static final int START_LIVES = 3;
 
-    public static final int ENEMIES_PER_LEVEL = 1;
+    public static final int ENEMIES_PER_ROW = 8;
+    public static final int ENEMY_ROWS = 4;
+    public static final int ENEMIES_PER_LEVEL = ENEMIES_PER_ROW * ENEMY_ROWS;
 
     public static final double BONUS_SPAWN_CHANCE = 0.25;
     public static final int BONUS_MOVE_SPEED = 150;
@@ -66,13 +68,13 @@ public final class Config {
     public static final int ACHIEVEMENT_MASTER_SCORER = 1000;
 
     public static final class Asset {
-        public static final String SOUND_LOSE_LIFE = "spaceinvaders/lose_life.wav";
-        public static final String SOUND_NEW_LEVEL = "spaceinvaders/level.wav";
+        public static final String SOUND_LOSE_LIFE = "lose_life.wav";
+        public static final String SOUND_NEW_LEVEL = "level.wav";
 
-        public static final String DIALOG_MOVE_LEFT = "spaceinvaders/move_left.mp3";
-        public static final String DIALOG_MOVE_RIGHT = "spaceinvaders/move_right.mp3";
-        public static final String DIALOG_SHOOT = "spaceinvaders/shoot.mp3";
+        public static final String DIALOG_MOVE_LEFT = "move_left.mp3";
+        public static final String DIALOG_MOVE_RIGHT = "move_right.mp3";
+        public static final String DIALOG_SHOOT = "shoot.mp3";
 
-        public static final String FXML_MAIN_UI = "spaceinvaders/main.fxml";
+        public static final String FXML_MAIN_UI = "main.fxml";
     }
 }

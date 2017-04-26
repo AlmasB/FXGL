@@ -37,6 +37,7 @@ import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.service.AssetLoader;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxglgames.spaceinvaders.component.HPComponent;
@@ -50,9 +51,14 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 import java.util.Random;
+
+import static com.almasb.fxglgames.spaceinvaders.Config.LEVEL_START_DELAY;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -68,7 +74,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
     @Spawns("Background")
     public Entity newBackground(SpawnData data) {
         return Entities.builder()
-                .viewFromNode(assetLoader.loadTexture("spaceinvaders/background/background.png", Config.WIDTH, Config.HEIGHT))
+                .viewFromNode(assetLoader.loadTexture("background/background.png", Config.WIDTH, Config.HEIGHT))
                 .renderLayer(RenderLayer.BACKGROUND)
                 .build();
     }
@@ -103,7 +109,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
         GameEntity meteor = new GameEntity();
         meteor.getPositionComponent().setValue(x, y);
 
-        String textureName = "spaceinvaders/background/meteor" + (random.nextInt(4) + 1) + ".png";
+        String textureName = "background/meteor" + (random.nextInt(4) + 1) + ".png";
 
         meteor.getViewComponent().setTexture(textureName);
         meteor.getViewComponent().setRenderLayer(new RenderLayer() {
@@ -131,7 +137,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("Player")
     public GameEntity newPlayer(SpawnData data) {
-        Texture texture = assetLoader.loadTexture("spaceinvaders/player2.png");
+        Texture texture = assetLoader.loadTexture("player2.png");
         texture.setPreserveRatio(true);
         texture.setFitHeight(40);
 
@@ -150,7 +156,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
                 .from(data)
                 .type(SpaceInvadersType.ENEMY)
                 .viewFromNodeWithBBox(assetLoader
-                        .loadTexture("spaceinvaders/enemy" + ((int)(Math.random() * 3) + 1) + ".png")
+                        .loadTexture("enemy" + ((int)(Math.random() * 3) + 1) + ".png")
                         .toAnimatedTexture(2, Duration.seconds(2)))
                 .with(new CollidableComponent(true), new HPComponent(2))
                 .with(new EnemyControl())
@@ -171,7 +177,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
         bullet.getPositionComponent().setValue(center);
 
         bullet.addComponent(new CollidableComponent(true));
-        bullet.getViewComponent().setView(new EntityView(assetLoader.loadTexture("spaceinvaders/tank_bullet.png")), true);
+        bullet.getViewComponent().setView(new EntityView(assetLoader.loadTexture("tank_bullet.png")), true);
         bullet.addControl(new ProjectileControl(new Point2D(0, owner.isType(SpaceInvadersType.PLAYER) ? -1 : 1), 10 * 60));
         bullet.addComponent(new OwnerComponent(Entities.getType(owner).getValue()));
         bullet.addControl(new OffscreenCleanControl());
@@ -204,9 +210,9 @@ public final class SpaceInvadersFactory implements EntityFactory {
         shadow.setInput(new Glow(0.8));
 
         EntityView view = new EntityView();
-        view.addNode(assetLoader.loadTexture("spaceinvaders/laser1.png"));
+        view.addNode(assetLoader.loadTexture("laser1.png"));
 
-        Texture t = assetLoader.loadTexture("spaceinvaders/laser2.png");
+        Texture t = assetLoader.loadTexture("laser2.png");
         t.relocate(-2, -20);
 
         view.addNode(t);
@@ -221,7 +227,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
     public Entity newLaserHit(SpawnData data) {
         return Entities.builder()
                 .at(data.getX() - 15, data.getY() - 15)
-                .viewFromNode(assetLoader.loadTexture("spaceinvaders/laser_hit.png", 15, 15))
+                .viewFromNode(assetLoader.loadTexture("laser_hit.png", 15, 15))
                 .with(new LaserHitControl())
                 .build();
     }
@@ -231,7 +237,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
         return Entities.builder()
                 .from(data)
                 .type(SpaceInvadersType.WALL)
-                .viewFromTextureWithBBox("spaceinvaders/wall.png")
+                .viewFromTextureWithBBox("wall.png")
                 .with(new CollidableComponent(true), new HPComponent(7))
                 .build();
     }
@@ -255,7 +261,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
                 .at(data.getX() - 40, data.getY() - 40)
                 // texture is 256x256, we want smaller, 80x80
                 // it has 48 frames, hence 80 * 48
-                .viewFromNode(assetLoader.loadTexture("spaceinvaders/explosion.png", 80 * 48, 80).toAnimatedTexture(48, Duration.seconds(2)))
+                .viewFromNode(assetLoader.loadTexture("explosion.png", 80 * 48, 80).toAnimatedTexture(48, Duration.seconds(2)))
                 .with(new ExpireCleanControl(Duration.seconds(1.8)))
                 .build();
 
@@ -263,5 +269,38 @@ public final class SpaceInvadersFactory implements EntityFactory {
         explosion.getView().setBlendMode(BlendMode.ADD);
 
         return explosion;
+    }
+
+    @Spawns("LevelInfo")
+    public Entity newLevelInfo(SpawnData data) {
+        Text levelText = FXGL.getUIFactory().newText("Level " + FXGL.getApp().getGameState().getInt("level"), Color.AQUAMARINE, 44);
+
+        PhysicsComponent pComponent = new PhysicsComponent();
+        pComponent.setBodyType(BodyType.DYNAMIC);
+        pComponent.setOnPhysicsInitialized(() -> pComponent.setLinearVelocity(0, 5));
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.setDensity(0.05f);
+        fixtureDef.setRestitution(0.3f);
+
+        pComponent.setFixtureDef(fixtureDef);
+
+        GameEntity levelInfo = Entities.builder()
+                .at(FXGL.getAppWidth() / 2 - levelText.getLayoutBounds().getWidth() / 2, 0)
+                .viewFromNodeWithBBox(levelText)
+                .with(pComponent)
+                .with(new ExpireCleanControl(Duration.seconds(LEVEL_START_DELAY)))
+                .build();
+
+        levelInfo.setOnActive(() -> {
+            Entities.builder()
+                    .at(0, FXGL.getAppHeight() / 2)
+                    .bbox(new HitBox("ground", BoundingShape.box(FXGL.getAppWidth(), 100)))
+                    .with(new PhysicsComponent())
+                    .with(new ExpireCleanControl(Duration.seconds(LEVEL_START_DELAY)))
+                    .buildAndAttach(FXGL.getApp().getGameWorld());
+        });
+
+        return levelInfo;
     }
 }

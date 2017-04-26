@@ -32,9 +32,10 @@ import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.scene.Viewport;
-import com.almasb.fxgl.service.listener.FXGLListener;
-import com.almasb.fxgl.service.listener.UserProfileSavable;
-import com.almasb.fxgl.time.UpdateEventListener;
+import com.almasb.fxgl.saving.UserProfileSavable;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -48,27 +49,9 @@ import java.util.Map;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface Input extends UserProfileSavable, UpdateEventListener, FXGLListener {
+public interface Input extends UserProfileSavable {
 
-    @Override
-    default void onPause() {
-        clearAll();
-    }
-
-    @Override
-    default void onResume() {
-        clearAll();
-    }
-
-    @Override
-    default void onReset() {
-        clearAll();
-    }
-
-    @Override
-    default void onExit() {
-        // no-op
-    }
+    void onUpdate(double tpf);
 
     /**
      * Called on key event.
@@ -85,6 +68,31 @@ public interface Input extends UserProfileSavable, UpdateEventListener, FXGLList
      * @param scaleRatio scale ratio of the display where the event occurred
      */
     void onMouseEvent(MouseEvent event, Viewport viewport, double scaleRatio);
+
+    /**
+     * Add JavaFX event handler to handle events manually.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler handler for events
+     */
+    <T extends Event> void addEventHandler(EventType<T> eventType,
+                                                        EventHandler<? super T> eventHandler);
+
+    /**
+     * Remove JavaFX event handler.
+     *
+     * @param eventType type of events to listen
+     * @param eventHandler handler for events
+     */
+    <T extends Event> void removeEventHandler(EventType<T> eventType,
+                                                           EventHandler<? super T> eventHandler);
+
+    /**
+     * Fire JavaFX event.
+     *
+     * @param event the JavaFX event
+     */
+    void fireEvent(Event event);
 
     /**
      * Setting to false will disable capturing of input events.

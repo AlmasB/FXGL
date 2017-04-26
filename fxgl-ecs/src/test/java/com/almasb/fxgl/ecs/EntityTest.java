@@ -469,9 +469,9 @@ public class EntityTest {
         }
     }
 
-    private class CustomDataComponent extends AbstractComponent implements SerializableComponent {
+    public static class CustomDataComponent extends AbstractComponent implements SerializableComponent {
 
-        private String data;
+        public String data;
 
         CustomDataComponent(String data) {
             this.data = data;
@@ -488,9 +488,9 @@ public class EntityTest {
         }
     }
 
-    private class CustomDataControl extends AbstractControl implements SerializableControl {
+    public static class CustomDataControl extends AbstractControl implements SerializableControl {
 
-        private String data;
+        public String data;
 
         CustomDataControl(String data) {
             this.data = data;

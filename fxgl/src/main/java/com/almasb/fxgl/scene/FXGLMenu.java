@@ -35,7 +35,6 @@ import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.SaveFile;
-import com.almasb.fxgl.scene.menu.MenuEvent;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.settings.SceneDimension;
@@ -240,10 +239,10 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
-        return new MenuContent(new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner),
-                FXGL.getUIFactory().newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
-                    + app.getMasterTimer().getPlaytimeMinutes() + "M "
-                    + app.getMasterTimer().getPlaytimeSeconds() + "S"));
+        return new MenuContent(new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner));
+//                FXGL.getUIFactory().newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
+//                    + app.getMasterTimer().getPlaytimeMinutes() + "M "
+//                    + app.getMasterTimer().getPlaytimeSeconds() + "S"));
     }
 
     /**
@@ -531,12 +530,7 @@ public abstract class FXGLMenu extends FXGLScene {
         getContentRoot().getChildren().add(node);
     }
 
-    private void fireMenuEvent(Event event) {
-        app.getEventBus().fireEvent(event);
-    }
-
     /**
-     * Fires {@link MenuEvent#NEW_GAME} event.
      * Can only be fired from main menu.
      * Starts new game.
      */
@@ -544,18 +538,15 @@ public abstract class FXGLMenu extends FXGLScene {
         log.debug("fireNewGame()");
 
         listener.onNewGame();
-        fireMenuEvent(new MenuEvent(MenuEvent.NEW_GAME));
     }
 
     /**
-     * Fires {@link MenuEvent#CONTINUE} event.
-     * Lads the game state from last modified save file.
+     * Loads the game state from last modified save file.
      */
     protected final void fireContinue() {
         log.debug("fireContinue()");
 
         listener.onContinue();
-        fireMenuEvent(new MenuEvent(MenuEvent.CONTINUE));
     }
 
     /**
@@ -577,7 +568,6 @@ public abstract class FXGLMenu extends FXGLScene {
         log.debug("fireSave()");
 
         listener.onSave();
-        fireMenuEvent(new MenuEvent(MenuEvent.SAVE));
     }
 
     /**
@@ -590,7 +580,6 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Fires {@link MenuEvent#RESUME} event.
      * Can only be fired from game menu.
      * Will close the menu and unpause the game.
      */
@@ -598,11 +587,9 @@ public abstract class FXGLMenu extends FXGLScene {
         log.debug("fireResume()");
 
         listener.onResume();
-        fireMenuEvent(new MenuEvent(MenuEvent.RESUME));
     }
 
     /**
-     * Fires {@link MenuEvent#LOGOUT} event.
      * Can only be fired from main menu.
      * Logs out the user profile.
      */
@@ -612,7 +599,6 @@ public abstract class FXGLMenu extends FXGLScene {
         switchMenuContentTo(EMPTY);
 
         listener.onLogout();
-        fireMenuEvent(new MenuEvent(MenuEvent.LOGOUT));
     }
 
     /**
@@ -626,24 +612,20 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * Fire {@link MenuEvent#EXIT} event.
      * App will clean up the world/the scene and exit.
      */
     protected final void fireExit() {
         log.debug("fireExit()");
 
         listener.onExit();
-        fireMenuEvent(new MenuEvent(MenuEvent.EXIT));
     }
 
     /**
-     * Fire {@link MenuEvent#EXIT_TO_MAIN_MENU} event.
      * App will clean up the world/the scene and enter main menu.
      */
     protected final void fireExitToMainMenu() {
         log.debug("fireExitToMainMenu()");
 
         listener.onExitToMainMenu();
-        fireMenuEvent(new MenuEvent(MenuEvent.EXIT_TO_MAIN_MENU));
     }
 }

@@ -27,6 +27,7 @@
 package com.almasb.fxglgames.pong;
 
 import com.almasb.fxgl.annotation.OnUserAction;
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.Vec2;
@@ -41,7 +42,6 @@ import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.service.Input;
-import com.almasb.fxgl.service.listener.FXGLListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.ui.UI;
@@ -72,6 +72,7 @@ public class PongApp extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.ONLINE));
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -101,26 +102,8 @@ public class PongApp extends GameApplication {
             });
         });
 
-        addFXGLListener(new FXGLListener() {
-            @Override
-            public void onPause() {
-
-            }
-
-            @Override
-            public void onResume() {
-
-            }
-
-            @Override
-            public void onReset() {
-
-            }
-
-            @Override
-            public void onExit() {
-                getNet().getConnection().ifPresent(conn -> conn.close());
-            }
+        addExitListener(() -> {
+            getNet().getConnection().ifPresent(conn -> conn.close());
         });
     }
 

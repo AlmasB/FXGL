@@ -39,7 +39,7 @@ import javafx.scene.shape.Rectangle
  */
 internal class QTEKey(val keyCode: KeyCode) : StackPane() {
 
-    private val background = Rectangle(72.0, 72.0, Color.BLACK)
+    private val background = Rectangle(64.0, 64.0, Color.BLACK)
     private val text = FXGL.getUIFactory().newText(keyCode.getName(), Color.WHITE, 72.0)
 
     init {
@@ -57,6 +57,7 @@ internal class QTEKey(val keyCode: KeyCode) : StackPane() {
 
     fun lightUp() {
         background.fill = Color.YELLOW
+        background.stroke = Color.YELLOW
         text.fill = Color.BLACK
     }
 }

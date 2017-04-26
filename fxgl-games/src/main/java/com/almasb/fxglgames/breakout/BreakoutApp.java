@@ -137,7 +137,6 @@ public class BreakoutApp extends GameApplication {
 
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setSourceImage(getAssetLoader().loadTexture("breakout/bubble.png").getImage());
-        emitter.setBlendFunction((i, x, y) -> BlendMode.SRC_OVER);
         emitter.setEmissionRate(0.25);
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(3));
         emitter.setVelocityFunction((i, x, y) -> new Point2D(0, -FXGLMath.random(2f, 4f)));

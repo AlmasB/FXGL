@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.logging.MockLoggerFactory;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.event.FXGLEventBus;
@@ -35,9 +34,6 @@ import com.almasb.fxgl.service.impl.input.FXGLInput;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.time.FXGLLocalTimer;
-import com.almasb.fxgl.time.LocalTimer;
-import com.almasb.fxgl.time.MockMasterTimer;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.google.inject.name.Names;
 import javafx.application.Application;
@@ -118,8 +114,9 @@ public class MockApplicationModule extends ApplicationModule {
     }
 
     private void mockTimer() {
-        bind(MasterTimer.class).toInstance(MockMasterTimer.INSTANCE);
-        bind(LocalTimer.class).to(FXGLLocalTimer.class);
+        //bind(MasterTimer.class).toInstance(MockMasterTimer.INSTANCE);
+        //bind(StateTimer.class).to(StateTimerImpl.class);
+        //bind(LocalTimer.class).to(FXGLLocalTimer.class);
     }
 
     private void mockPooler() {
@@ -128,7 +125,7 @@ public class MockApplicationModule extends ApplicationModule {
     }
 
     private void mockLoggerFactory() {
-        bind(LoggerFactory.class).toInstance(MockLoggerFactory.INSTANCE);
+        //bind(LoggerFactory.class).toInstance(MockLoggerFactory.INSTANCE);
     }
 
     private void mockInput() {

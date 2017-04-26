@@ -72,7 +72,8 @@ public class PlayerControl extends AbstractControl {
     // then simply query velocity magnitude
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        if (oldX == position.getX()) {
+        //if (oldX == position.getX()) {
+        if (Math.abs(physics.getVelocityX()) == 0) {
             if (!isStatic) {
                 view.getView().removeNode(animatedTexture);
                 view.getView().addNode(staticTexture);
@@ -81,6 +82,9 @@ public class PlayerControl extends AbstractControl {
         }
 
         oldX = position.getX();
+
+        if (Math.abs(physics.getVelocityX()) < 140)
+            physics.setVelocityX(0);
     }
 
     public void left() {

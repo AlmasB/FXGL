@@ -31,6 +31,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.IntroScene;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.intro.VideoIntroScene;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,17 +55,26 @@ public class VideoIntroSample extends GameApplication {
         settings.setMenuEnabled(true);
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+        settings.addServiceType(new ServiceType<SceneFactory>() {
+            @Override
+            public Class<SceneFactory> service() {
+                return SceneFactory.class;
+            }
+
+            @Override
+            public Class<? extends SceneFactory> serviceProvider() {
+                return MySceneFactory.class;
+            }
+        });
     }
 
-    @Override
-    protected SceneFactory initSceneFactory() {
-        return new SceneFactory() {
-            @NotNull
-            @Override
-            public IntroScene newIntro() {
-                return new VideoIntroScene("testvideo.mp4");
-            }
-        };
+    public static class MySceneFactory extends SceneFactory {
+        @NotNull
+        @Override
+        public IntroScene newIntro() {
+            return new VideoIntroScene("testvideo.mp4");
+        }
     }
 
     @Override

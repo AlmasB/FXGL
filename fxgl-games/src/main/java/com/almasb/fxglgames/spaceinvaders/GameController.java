@@ -87,7 +87,7 @@ public class GameController implements UIController {
     public void addLife() {
         int numLives = lives.size();
 
-        Texture texture = FXGL.getAssetLoader().loadTexture("spaceinvaders/life.png", 16, 16);
+        Texture texture = FXGL.getAssetLoader().loadTexture("life.png", 16, 16);
         texture.setTranslateX(livesX + 32 * numLives);
         texture.setTranslateY(livesY);
 

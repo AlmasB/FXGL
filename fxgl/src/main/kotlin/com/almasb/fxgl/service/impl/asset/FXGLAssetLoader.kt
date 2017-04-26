@@ -58,7 +58,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
 /**
- * FXGL provider for asset loader service
+ * FXGL provider for asset loader service.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -88,7 +88,7 @@ class FXGLAssetLoader
     private val cachedAssets = AssetCache(cacheSize)
 
     init {
-        log.debugf("Service [AssetLoader] initialized: cacheSize=%d", cacheSize)
+        log.debugf("Asset cacheSize=%d", cacheSize)
     }
 
     /**

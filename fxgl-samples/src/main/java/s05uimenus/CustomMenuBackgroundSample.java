@@ -27,11 +27,13 @@
 package s05uimenus;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.FXGLDefaultMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
@@ -53,49 +55,55 @@ public class CustomMenuBackgroundSample extends GameApplication {
         settings.setMenuEnabled(true);
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+        settings.addServiceType(new ServiceType<SceneFactory>() {
+            @Override
+            public Class<SceneFactory> service() {
+                return SceneFactory.class;
+            }
+
+            @Override
+            public Class<? extends SceneFactory> serviceProvider() {
+                return MySceneFactory.class;
+            }
+        });
     }
 
-    // 1. override scene factory
-    @Override
-    protected SceneFactory initSceneFactory() {
-        return new SceneFactory() {
+    public static class MySceneFactory extends SceneFactory {
 
-            // 2. override main menu and things you need
+        @NotNull
+        @Override
+        public FXGLMenu newMainMenu(@NotNull GameApplication app) {
+            return new FXGLDefaultMenu(app, MenuType.MAIN_MENU) {
+                @Override
+                protected Node createBackground(double width, double height) {
+                    return FXGL.getAssetLoader().loadTexture("custom_bg.png");
+                }
 
-            @NotNull
-            @Override
-            public FXGLMenu newMainMenu(@NotNull GameApplication app) {
-                return new FXGLDefaultMenu(app, MenuType.MAIN_MENU) {
-                    @Override
-                    protected Node createBackground(double width, double height) {
-                        return getAssetLoader().loadTexture("custom_bg.png");
-                    }
+                @Override
+                protected Node createTitleView(String title) {
+                    return new Text("");
+                }
+            };
+        }
 
-                    @Override
-                    protected Node createTitleView(String title) {
-                        return new Text("");
-                    }
-                };
-            }
+        // 4. override game menu
 
-            // 4. override game menu
+        @NotNull
+        @Override
+        public FXGLMenu newGameMenu(@NotNull GameApplication app) {
+            return new FXGLDefaultMenu(app, MenuType.GAME_MENU) {
+                @Override
+                protected Node createBackground(double width, double height) {
+                    return FXGL.getAssetLoader().loadTexture("custom_bg.png");
+                }
 
-            @NotNull
-            @Override
-            public FXGLMenu newGameMenu(@NotNull GameApplication app) {
-                return new FXGLDefaultMenu(app, MenuType.GAME_MENU) {
-                    @Override
-                    protected Node createBackground(double width, double height) {
-                        return getAssetLoader().loadTexture("custom_bg.png");
-                    }
-
-                    @Override
-                    protected Node createTitleView(String title) {
-                        return new Text("");
-                    }
-                };
-            }
-        };
+                @Override
+                protected Node createTitleView(String title) {
+                    return new Text("");
+                }
+            };
+        }
     }
 
     @Override

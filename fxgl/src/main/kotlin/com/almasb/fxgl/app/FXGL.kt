@@ -63,7 +63,7 @@ class FXGL private constructor() {
 
         private lateinit var internalBundle: Bundle
 
-        private lateinit var internalLogger: Logger
+        private lateinit var log: Logger
 
         /**
          * Temporarily holds k-v pairs from system.properties.
@@ -128,24 +128,16 @@ class FXGL private constructor() {
 
             runBlocking { loggerInit.await() }
 
-            // log that we are ready, also force logger service to init
-            internalLogger = getLogger("FXGL")
-            internalLogger.debug("FXGL logger initialized")
+            // log that we are ready
+            log = getLogger("FXGL")
+            log.debug("FXGL logger initialized")
+
+            initServices()
 
             if (firstRun)
                 loadDefaultSystemData()
             else
                 loadSystemData()
-        }
-
-        /**
-         * Destructs FXGL.
-         */
-        @JvmStatic protected fun destroy() {
-            if (!configured)
-                throw IllegalStateException("FXGL has not been configured")
-
-            saveSystemData()
         }
 
         private var firstRun = false
@@ -173,15 +165,15 @@ class FXGL private constructor() {
         }
 
         private fun saveSystemData() {
-            internalLogger.debug("Saving FXGL system data")
+            log.debug("Saving FXGL system data")
 
             FS.writeDataTask(internalBundle, "system/fxgl.bundle")
-                    .onFailure(Consumer { internalLogger.warning("Failed to save: $it") })
+                    .onFailure(Consumer { log.warning("Failed to save: $it") })
                     .execute()
         }
 
         private fun loadSystemData() {
-            internalLogger.debug("Loading FXGL system data")
+            log.debug("Loading FXGL system data")
 
             FS.readDataTask<Bundle>("system/fxgl.bundle")
                     .onSuccess(Consumer {
@@ -189,14 +181,14 @@ class FXGL private constructor() {
                         internalBundle.log()
                     })
                     .onFailure(Consumer {
-                        internalLogger.warning("Failed to load: $it")
+                        log.warning("Failed to load: $it")
                         loadDefaultSystemData()
                     })
                     .execute()
         }
 
         private fun loadDefaultSystemData() {
-            internalLogger.debug("Loading default FXGL system data")
+            log.debug("Loading default FXGL system data")
 
             // populate with default info
             internalBundle = Bundle("FXGL")
@@ -211,6 +203,23 @@ class FXGL private constructor() {
             }
 
             FXGLLogger.configure(FXGL::class.java.getResource(resourceName).toExternalForm())
+        }
+
+        private fun initServices() {
+            internalAllServices.forEach {
+                getInstance(it.service())
+                log.debug("Service <<${it.service().simpleName}>> initialized")
+            }
+        }
+
+        /**
+         * Destructs FXGL.
+         */
+        @JvmStatic protected fun destroy() {
+            if (!configured)
+                throw IllegalStateException("FXGL has not been configured")
+
+            saveSystemData()
         }
 
         /**
@@ -261,30 +270,13 @@ class FXGL private constructor() {
             }
         }
 
-//        @JvmStatic fun configure(mockingModule: Module) {
-//            if (configured)
-//                return
-//
-//            injector = Guice.createInjector(mockingModule)
-//            internalApp = injector.getInstance(GameApplication::class.java)
-//
-//            configured = true
-//        }
-
-        /* CONVENIENCE ACCESSORS */
-
-        private val _loggerFactory by lazy { getService(ServiceType.LOGGER_FACTORY) }
-        @JvmStatic fun getLogger(name: String) = _loggerFactory.newLogger(name)
-        @JvmStatic fun getLogger(caller: Class<*>) = _loggerFactory.newLogger(caller)
+        /* CONVENIENCE ACCESSORS - SERVICES */
 
         private val _assetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
         private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
         @JvmStatic fun getEventBus() = _eventBus
-
-        private val _input by lazy { getService(ServiceType.INPUT) }
-        @JvmStatic fun getInput() = _input
 
         private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
@@ -319,10 +311,18 @@ class FXGL private constructor() {
         private val _questManager by lazy { getService(ServiceType.QUEST_MANAGER) }
         @JvmStatic fun getQuestManager() = _questManager
 
+        /* OTHER CONVENIENCE ACCESSORS */
+
+        private val _input by lazy { internalApp.input }
+        @JvmStatic fun getInput() = _input
+
+        @JvmStatic fun getLogger(name: String) = FXGLLogger.get(name)
+        @JvmStatic fun getLogger(caller: Class<*>) = FXGLLogger.get(caller)
+
         /**
          * @return new instance on each call
          */
-        @JvmStatic fun newLocalTimer() = getService(ServiceType.LOCAL_TIMER)
+        @JvmStatic fun newLocalTimer() = internalApp.stateMachine.playState.timer.newLocalTimer()
 
         /**
          * @param name unique name for timer
@@ -330,13 +330,8 @@ class FXGL private constructor() {
          */
         @JvmStatic fun newOfflineTimer(name: String): LocalTimer = OfflineTimer(name)
 
-        private val _masterTimer by lazy { getService(ServiceType.MASTER_TIMER) }
+        private val _masterTimer by lazy { internalApp.masterTimer }
         @JvmStatic fun getMasterTimer() = _masterTimer
-
-        /**
-         * @return new instance on each call
-         */
-        @JvmStatic fun newProfiler() = getService(ServiceType.PROFILER)
 
         /**
          * Get value of an int property.

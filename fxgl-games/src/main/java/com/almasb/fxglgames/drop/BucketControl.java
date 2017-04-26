@@ -29,6 +29,7 @@ package com.almasb.fxglgames.drop;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.ecs.control.FromEntity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 
 /**
@@ -42,11 +43,6 @@ public class BucketControl extends AbstractControl {
     private PositionComponent position;
 
     private double speed;
-
-    @Override
-    public void onAdded(Entity entity) {
-        position = entity.getComponentUnsafe(PositionComponent.class);
-    }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {

@@ -32,7 +32,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.3.1</version>
+        <version>0.3.2</version>
     </parent>
 
     <artifactId>fxgl-ecs</artifactId>
@@ -41,6 +41,12 @@
     <description>Simple entity component system (control) framework</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl-io</artifactId>
@@ -56,6 +62,17 @@
 
     <build>
         <plugins>
+            <!-- Compile java -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <!-- Compile kotlin -->
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+            </plugin>
+
             <!-- Create sources.jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

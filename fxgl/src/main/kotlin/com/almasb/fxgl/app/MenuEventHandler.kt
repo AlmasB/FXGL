@@ -32,9 +32,10 @@ import com.almasb.fxgl.saving.SaveFile
 import com.almasb.fxgl.saving.SaveLoadManager
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
-import com.almasb.fxgl.scene.menu.ProfileSelectedEvent
-import com.almasb.fxgl.service.impl.display.DialogPane
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.util.InputPredicates
+import com.almasb.fxgl.saving.UserProfile
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.property.ReadOnlyBooleanWrapper
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
@@ -70,11 +71,19 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
 
     fun isProfileSelected() = profileName.value.isNotEmpty()
 
-    init {
-        app.eventBus.addEventHandler(FXGLEvent.EXIT, { saveProfile() })
+    private val hasSaves = ReadOnlyBooleanWrapper(false)
+
+    override fun hasSavesProperty(): ReadOnlyBooleanProperty {
+        return hasSaves.readOnlyProperty
     }
 
-    internal fun generateDefaultProfile() {
+    init {
+        app.addExitListener {
+            saveProfile()
+        }
+    }
+
+    fun generateDefaultProfile() {
         log.debug("generateDefaultProfile()")
 
         defaultProfile = createProfile()
@@ -93,7 +102,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     override fun onResume() {
-        app.resume()
+        app.stateMachine.startPlay()
     }
 
     private fun doSave(saveFileName: String) {
@@ -106,21 +115,21 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     override fun onSave() {
-        app.display.showInputBoxWithCancel("Enter save file name", DialogPane.ALPHANUM, Consumer { saveFileName ->
+        app.display.showInputBoxWithCancel("Enter save file name", InputPredicates.ALPHANUM, Consumer { saveFileName ->
 
             if (saveFileName.isEmpty())
-                return@Consumer;
+                return@Consumer
 
             if (saveLoadManager.saveFileExists(saveFileName)) {
                 app.display.showConfirmationBox("Overwrite save [$saveFileName]?", { yes ->
 
                     if (yes)
-                        doSave(saveFileName);
-                });
+                        doSave(saveFileName)
+                })
             } else {
-                doSave(saveFileName);
+                doSave(saveFileName)
             }
-        });
+        })
     }
 
     override fun onLoad(saveFile: SaveFile) {
@@ -130,9 +139,9 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
                 saveLoadManager
                         .loadTask(saveFile)
                         .onSuccessKt { app.startLoadedGame(it) }
-                        .executeAsyncWithDialogFX(ProgressDialog("Loading: ${saveFile.name}"));
+                        .executeAsyncWithDialogFX(ProgressDialog("Loading: ${saveFile.name}"))
             }
-        });
+        })
     }
 
     override fun onDelete(saveFile: SaveFile) {
@@ -141,40 +150,38 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
             if (yes) {
                 saveLoadManager
                         .deleteSaveFileTask(saveFile)
-                        .executeAsyncWithDialogFX(ProgressDialog("Deleting: ${saveFile.name}"));
+                        .executeAsyncWithDialogFX(ProgressDialog("Deleting: ${saveFile.name}"))
             }
-        });
+        })
     }
 
     override fun onLogout() {
         app.display.showConfirmationBox("Log out?", { yes ->
 
             if (yes) {
-                saveProfile();
-                showProfileDialog();
+                saveProfile()
+                showProfileDialog()
             }
-        });
+        })
     }
 
     override fun onMultiplayer() {
-        showMultiplayerDialog();
+        showMultiplayerDialog()
     }
 
     override fun onExit() {
         app.display.showConfirmationBox("Exit the game?", { yes ->
 
             if (yes)
-                app.exit();
-        });
+                app.exit()
+        })
     }
 
     override fun onExitToMainMenu() {
         app.display.showConfirmationBox("Exit to Main Menu?\nUnsaved progress will be lost!", { yes ->
 
             if (yes) {
-                app.pause();
-                app.reset();
-                app.setState(ApplicationState.MAIN_MENU);
+                app.stateMachine.startMainMenu()
             }
         })
     }
@@ -190,41 +197,36 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         }
 
         if (canSwitchGameMenu) {
-            if (app.getState() === ApplicationState.GAME_MENU) {
+            // we only care if menu key was pressed in one of these states
+            if (app.stateMachine.isInGameMenu()) {
                 canSwitchGameMenu = false
-                app.resume()
-            } else if (app.getState() === ApplicationState.PLAYING) {
+                onResume()
+
+            } else if (app.stateMachine.isInPlay()) {
                 canSwitchGameMenu = false
-                app.pause()
-                app.setState(ApplicationState.GAME_MENU)
-            } else {
-                log.warning("Menu key pressed in unknown state: " + app.getState())
+                app.stateMachine.startGameMenu()
+
             }
         }
     }
 
     override fun handle(event: KeyEvent) {
-        if (event.getCode() == FXGL.getSettings().getMenuKey()) {
-            onMenuKey(event.getEventType() == KeyEvent.KEY_PRESSED)
+        if (event.code == FXGL.getSettings().menuKey) {
+            onMenuKey(event.eventType == KeyEvent.KEY_PRESSED)
         }
     }
 
-    /**
-     * @return profile name property (read-only)
-     */
     override fun profileNameProperty(): ReadOnlyStringProperty {
         return profileName.readOnlyProperty
     }
 
     /**
-     * Create a user profile with current settings.
-
-     * @return user profile
+     * @return user profile with current settings
      */
     fun createProfile(): UserProfile {
         log.debug("Creating default profile")
 
-        val profile = UserProfile(app.settings.getTitle(), app.settings.getVersion())
+        val profile = UserProfile(app.settings.title, app.settings.version)
 
         app.eventBus.fireEvent(SaveEvent(profile))
 
@@ -232,14 +234,10 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     /**
-     * Load from given user profile.
-
-     * @param profile the profile
-     * *
      * @return true if loaded successfully, false if couldn't load
      */
     fun loadFromProfile(profile: UserProfile): Boolean {
-        if (!profile.isCompatible(app.settings.getTitle(), app.settings.getVersion()))
+        if (!profile.isCompatible(app.settings.title, app.settings.version))
             return false
 
         app.eventBus.fireEvent(LoadEvent(LoadEvent.LOAD_PROFILE, profile))
@@ -303,11 +301,10 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
         btnDelete.disableProperty().bind(profilesBox.valueProperty().isNull)
 
         btnNew.setOnAction {
-            app.display.showInputBox("New Profile", DialogPane.ALPHANUM, Consumer { name ->
+            app.display.showInputBox("New Profile", InputPredicates.ALPHANUM, Consumer { name ->
                 profileName.set(name)
+                hasSaves.value = false
                 saveLoadManager = SaveLoadManager(name)
-
-                app.eventBus.fireEvent(ProfileSelectedEvent(name, false))
 
                 saveProfile()
             })
@@ -328,8 +325,8 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
                             profileName.set(name)
 
                             saveLoadManager.loadLastModifiedSaveFileTask()
-                                    .onSuccessKt { file -> app.eventBus.fireEvent(ProfileSelectedEvent(name, true)) }
-                                    .onFailureKt { error -> app.eventBus.fireEvent(ProfileSelectedEvent(name, false)) }
+                                    .onSuccessKt { hasSaves.value = true }
+                                    .onFailureKt { hasSaves.value = false }
                                     .executeAsyncWithDialogFX(ProgressDialog("Loading last save file"))
                         }
                     }

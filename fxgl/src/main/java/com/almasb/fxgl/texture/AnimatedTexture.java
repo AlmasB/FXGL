@@ -27,9 +27,8 @@
 package com.almasb.fxgl.texture;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.time.LocalTimer;
-import com.almasb.fxgl.time.UpdateEvent;
-import com.almasb.fxgl.time.UpdateEventListener;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
@@ -40,7 +39,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public final class AnimatedTexture extends Texture implements UpdateEventListener {
+public final class AnimatedTexture extends Texture implements StateListener {
 
     private AnimationChannel defaultChannel;
     private AnimationChannel currentChannel;
@@ -59,7 +58,7 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
 
         setAnimationChannel(initialChannel);
 
-        FXGL.getMasterTimer().addUpdateListener(this);
+        FXGL.getApp().addPlayStateListener(this);
     }
 
     /**
@@ -102,7 +101,7 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
     }
 
     @Override
-    public void onUpdateEvent(UpdateEvent event) {
+    public void onUpdate(double tpf) {
         if (animationTimer.elapsed(Duration.seconds(timePerAnimationFrame))) {
 
             currentFrame++;
@@ -123,6 +122,7 @@ public final class AnimatedTexture extends Texture implements UpdateEventListene
     @Override
     public void dispose() {
         super.dispose();
-        FXGL.getMasterTimer().removeUpdateListener(this);
+
+        FXGL.getApp().removePlayStateListener(this);
     }
 }

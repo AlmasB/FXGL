@@ -80,7 +80,7 @@ public class MoveAction extends GoalAction {
 
     @Override
     public void action() {
-        speed = FXGL.getMasterTimer().tpf() * 60 * 5;
+        speed = 0.016 * 60 * 5;
 
         AStarNode next = path.get(0);
 

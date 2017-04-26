@@ -26,12 +26,11 @@
 
 package com.almasb.fxgl.time
 
-import java.util.*
-
 /**
  * Convenience class that buffers FPS values and calculates
- * the arithmetic mean to approximate FPS value as it
- * varies from frame to frame.
+ * average FPS.
+ *
+ * Adapted from http://wecode4fun.blogspot.co.uk/2015/07/particles.html (Roland C.)
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -41,28 +40,26 @@ internal class FPSCounter {
         private val MAX_SAMPLES = 100
     }
 
-    private val values = FloatArray(MAX_SAMPLES)
-    private var sum = 0.0f
+    private val frameTimes = LongArray(MAX_SAMPLES)
     private var index = 0
+    private var arrayFilled = false
+    private var frameRate = 0
 
-    init {
-        Arrays.fill(values, 0.0f)
-    }
+    fun update(now: Long): Int {
+        val oldFrameTime = frameTimes[index]
+        frameTimes[index] = now
+        index = (index + 1) % frameTimes.size
 
-    /**
-     * Calculates average FPS and buffers given value
-     * for future corrections to the FPS value.
-     *
-     * @param timeTookLastFrame how long it took to compute last frame
-     * @return average FPS
-     */
-    fun count(timeTookLastFrame: Float): Float {
-        sum -= values[index]
-        sum += timeTookLastFrame
-        values[index] = timeTookLastFrame
-        if (++index == values.size)
-            index = 0
+        if (index == 0) {
+            arrayFilled = true
+        }
 
-        return sum / values.size
+        if (arrayFilled) {
+            val elapsedNanos = now - oldFrameTime
+            val elapsedNanosPerFrame = elapsedNanos / frameTimes.size
+            frameRate = (1_000_000_000.0 / elapsedNanosPerFrame).toInt()
+        }
+
+        return frameRate
     }
 }

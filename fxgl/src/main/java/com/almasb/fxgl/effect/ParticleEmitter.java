@@ -27,13 +27,20 @@ package com.almasb.fxgl.effect;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.util.TriFunction;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.Random;
@@ -57,7 +64,106 @@ public class ParticleEmitter {
         });
     }
 
-    private Random random = new Random();
+    /**
+     * Caches baked images in the form: startColor -> endColor -> [Image, 0..99]
+     */
+    private static final ObjectMap<Color, ObjectMap<Color, Image[]> > IMAGE_CACHE = new ObjectMap<>();
+
+    /**
+     * Adapted from http://wecode4fun.blogspot.co.uk/2015/07/particles.html (Roland C.)
+     *
+     * Snapshot an image out of a node, consider transparency.
+     */
+    private static Image createImage(Node node) {
+        SnapshotParameters parameters = new SnapshotParameters();
+        parameters.setFill(Color.TRANSPARENT);
+
+        int imageWidth = (int) node.getBoundsInLocal().getWidth();
+        int imageHeight = (int) node.getBoundsInLocal().getHeight();
+
+        WritableImage image = new WritableImage(imageWidth, imageHeight);
+
+        Async.startFX(() -> {
+            node.snapshot(parameters, image);
+        }).await();
+
+        return image;
+    }
+
+    /**
+     * Adapted from http://wecode4fun.blogspot.co.uk/2015/07/particles.html (Roland C.)
+     *
+     * Pre-create images with various gradient colors and sizes.
+     */
+    private static Image[] preCreateImages(Color startColor, Color endColor) {
+        // get number of images
+        int count = 100;
+
+        // create linear gradient lookup image: lifespan 0 -> lifespan max
+        double width = count;
+        Stop[] stops = new Stop[] {
+                new Stop(0, Color.BLACK.deriveColor(1, 1, 1, 0.0)),
+                new Stop(0.3, endColor),
+                new Stop(0.9, startColor),
+                new Stop(1, startColor)
+        };
+
+        Rectangle rectangle = new Rectangle(width, 1,
+                new LinearGradient(0, 0, width, 0, false, CycleMethod.NO_CYCLE, stops)
+        );
+
+        Image lookupImage = createImage(rectangle);
+
+        Image[] list = new Image[count];
+
+        double radius = 10;
+
+        for (int i = 0; i < count; i++) {
+
+            // get color depending on lifespan
+            Color color = lookupImage.getPixelReader().getColor(i, 0);
+
+            // create gradient image with given color
+            Circle ball = new Circle(radius);
+            //Line ball = new Line(0, 0, 0, radius);
+
+            RadialGradient gradient1 = new RadialGradient(0, 0, 0, 0,
+                    radius, false, CycleMethod.NO_CYCLE,
+                    new Stop(0, color.deriveColor(1, 1, 1, 1)),
+                    new Stop(1, color.deriveColor(1, 1, 1, 0))
+            );
+
+            //ball.setStroke(gradient1);
+            ball.setFill(gradient1);
+
+            list[i] = createImage(ball);
+        }
+
+        return list;
+    }
+
+    /**
+     * @param index in range [0..99]
+     * @return cached image based on start, end colors and interpolation value
+     */
+    static Image getCachedImage(Color startColor, Color endColor, int index) {
+
+        ObjectMap<Color, Image[]> map = IMAGE_CACHE.get(startColor);
+        if (map == null) {
+            map = new ObjectMap<>();
+            IMAGE_CACHE.put(startColor, map);
+        }
+
+        Image[] images = map.get(endColor);
+        if (images == null) {
+            images = preCreateImages(startColor, endColor);
+            map.put(endColor, images);
+        }
+
+        return images[index];
+    }
+
+    private Random random = FXGLMath.getRandom();
     private int numParticles = 25;
     private double emissionRate = 1.0;
 
@@ -98,24 +204,32 @@ public class ParticleEmitter {
         sizeMax = max;
     }
 
-    private Supplier<Paint> colorFunction = () -> Color.TRANSPARENT;
+    private Paint startColor = Color.TRANSPARENT;
+    private Paint endColor = Color.TRANSPARENT;
 
-    /**
-     * @return particles color function
-     */
-    public final Supplier<Paint> getColorFunction() {
-        return colorFunction;
+    public Paint getStartColor() {
+        return startColor;
     }
 
-    /**
-     * Set color function to particles created by this emitter.
-     * The supplier function will be invoked every time a new
-     * particle is emitted.
-     *
-     * @param colorFunction particles color function.
-     */
-    public final void setColorFunction(Supplier<Paint> colorFunction) {
-        this.colorFunction = colorFunction;
+    public void setStartColor(Paint startColor) {
+        this.startColor = startColor;
+    }
+
+    public Paint getEndColor() {
+        return endColor;
+    }
+
+    public void setEndColor(Paint endColor) {
+        this.endColor = endColor;
+    }
+
+    public Paint getColor() {
+        return startColor;
+    }
+
+    public void setColor(Paint startColor) {
+        this.startColor = startColor;
+        this.endColor = startColor;
     }
 
     private Supplier<Point2D> gravityFunction = () -> Point2D.ZERO;
@@ -188,15 +302,19 @@ public class ParticleEmitter {
         this.expireFunction = expireFunction;
     }
 
-    private TriFunction<Integer, Double, Double, BlendMode> blendFunction = (i, x, y) -> BlendMode.ADD;
+    private BlendMode blendMode =  BlendMode.SRC_OVER;
+
+    public BlendMode getBlendMode() {
+        return blendMode;
+    }
 
     /**
      * Blend function is used to obtain blend mode for particles.
      *
-     * @param blendFunction blend supplier function
+     * @param blendMode blend supplier function
      */
-    public final void setBlendFunction(TriFunction<Integer, Double, Double, BlendMode> blendFunction) {
-        this.blendFunction = blendFunction;
+    public void setBlendMode(BlendMode blendMode) {
+        this.blendMode = blendMode;
     }
 
     private Image sourceImage = null;
@@ -314,8 +432,9 @@ public class ParticleEmitter {
                 getRandomSize(),
                 scaleFunction.apply(i, x, y),
                 expireFunction.apply(i, x, y),
-                colorFunction.get(),
-                blendFunction.apply(i, x, y));
+                getStartColor(),
+                getEndColor(),
+                blendMode);
 
         return particle;
     }

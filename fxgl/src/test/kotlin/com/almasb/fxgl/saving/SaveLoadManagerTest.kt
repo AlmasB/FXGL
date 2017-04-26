@@ -29,7 +29,7 @@ package com.almasb.fxgl.saving
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.io.FS
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.saving.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.AfterClass

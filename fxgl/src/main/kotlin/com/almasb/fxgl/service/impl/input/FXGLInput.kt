@@ -32,19 +32,18 @@ import com.almasb.fxgl.input.*
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Input
-import com.almasb.fxgl.settings.UserProfile
-import com.almasb.fxgl.time.UpdateEvent
-import com.google.inject.Inject
+import com.almasb.fxgl.saving.UserProfile
 import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
+import javafx.event.Event
+import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.geometry.Point2D
+import javafx.scene.Group
 import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
 
-class FXGLInput
-@Inject private constructor() : Input {
+class FXGLInput : Input {
 
     private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 
@@ -103,34 +102,46 @@ class FXGLInput
 
     override fun isRegisterInput() = registerInput
 
-    init {
-        initActionListener()
+    private val eventHandlers = Group()
 
-        log.debug { "Service [Input] initialized" }
+    /**
+     * Add event handler.
+
+     * @param eventType type of events to listen
+     * *
+     * @param eventHandler handler for events
+     */
+    override fun <T : Event> addEventHandler(eventType: EventType<T>,
+                                    eventHandler: EventHandler<in T>) {
+        eventHandlers.addEventHandler(eventType, eventHandler)
     }
 
     /**
-     * Listen for any changes in currently active actions
-     * and handle them appropriately.
-     */
-    private fun initActionListener() {
-        currentActions.addListener { c: ListChangeListener.Change<out UserAction> ->
-            while (c.next()) {
-                if (!processActions)
-                    continue
+     * Remove event handler.
 
-                if (c.wasAdded()) {
-                    c.addedSubList.forEach { it.fireActionBegin() }
-                } else if (c.wasRemoved()) {
-                    c.removed.forEach { it.fireActionEnd() }
-                }
-            }
-        }
+     * @param eventType type of events to listen
+     * *
+     * @param eventHandler handler for events
+     */
+    override fun <T : Event> removeEventHandler(eventType: EventType<T>,
+                                       eventHandler: EventHandler<in T>) {
+        eventHandlers.removeEventHandler(eventType, eventHandler)
     }
 
-    override fun onUpdateEvent(event: UpdateEvent) {
+    /**
+     * Fire JavaFX event on this FXGL scene.
+
+     * @param event the JavaFX event
+     */
+    override fun fireEvent(event: Event) {
+        eventHandlers.fireEvent(event)
+    }
+
+    override fun onUpdate(tpf: Double) {
         if (processActions) {
-            currentActions.forEach { it.fireAction() }
+            for (i in currentActions.indices) {
+                currentActions[i].fireAction()
+            }
         }
     }
 
@@ -180,7 +191,12 @@ class FXGLInput
 
     private fun handlePressed(event: InputEvent) {
         bindings.filter { isTriggered(it.value, event) && !currentActions.contains(it.key) }
-                .forEach { currentActions.add(it.key) }
+                .forEach {
+                    currentActions.add(it.key)
+
+                    if (processActions)
+                        it.key.fireActionBegin()
+                }
     }
 
     @Suppress("NON_EXHAUSTIVE_WHEN")
@@ -196,7 +212,12 @@ class FXGLInput
 
             isTriggered(binding.value, event)
         })
-        .forEach { currentActions.remove(it.key) }
+        .forEach {
+            currentActions.remove(it.key)
+
+            if (processActions)
+                it.key.fireActionEnd()
+        }
     }
 
     override fun clearAll() {

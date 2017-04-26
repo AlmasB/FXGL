@@ -27,12 +27,10 @@
 package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGLEvent
 import javafx.animation.Animation
 import javafx.event.EventHandler
 
 /**
- *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -45,20 +43,24 @@ abstract class EntityAnimation(protected val animationBuilder: AnimationBuilder)
     protected lateinit var animation: Animation
     private var state = AnimationState.INIT
 
+//    private val listener = object : FXGLListener {
+//        override fun onPause() {
+//            if (state == AnimationState.PLAYING)
+//                pause()
+//        }
+//
+//        override fun onResume() {
+//            if (state == AnimationState.PAUSED)
+//                play()
+//        }
+//    }
+
     protected fun initAnimation() {
         animation = buildAnimation()
         animation.cycleCount = animationBuilder.times
         animation.delay = animationBuilder.delay
 
-        val subscriberPause = FXGL.getEventBus().addEventHandler(FXGLEvent.PAUSE, { e ->
-            if (state == AnimationState.PLAYING)
-                pause()
-        })
-
-        val subscriberResume = FXGL.getEventBus().addEventHandler(FXGLEvent.RESUME, { e ->
-            if (state == AnimationState.PAUSED)
-                play()
-        })
+        //FXGL.getApp().addFXGLListener(listener)
 
         bindProperties()
 
@@ -66,8 +68,7 @@ abstract class EntityAnimation(protected val animationBuilder: AnimationBuilder)
 
             state = AnimationState.FINISHED
 
-            subscriberPause.unsubscribe()
-            subscriberResume.unsubscribe()
+            //FXGL.getApp().removeFXGLListener(listener)
 
             unbindProperties()
         }

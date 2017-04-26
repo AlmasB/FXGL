@@ -45,6 +45,7 @@ public class BasicAppSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setCloseConfirmation(false);
+        settings.setProfilingEnabled(false);
     }
 
     public static void main(String[] args) {

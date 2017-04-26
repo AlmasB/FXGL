@@ -70,11 +70,11 @@ public class DeveloperMenuBarController implements UIController {
     }
 
     public void onPause() {
-        app.pause();
+        //app.pause();
     }
 
     public void onResume() {
-        app.resume();
+        //app.resume();
     }
 
     public void onExit() {
@@ -143,9 +143,9 @@ public class DeveloperMenuBarController implements UIController {
         CheckMenuItem item = (CheckMenuItem) event.getSource();
 
         if (item.isSelected()) {
-            app.getGameScene().addEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
+            //app.getGameScene().addEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
         } else {
-            app.getGameScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
+            //app.getGameScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, clickTracker);
         }
     }
 

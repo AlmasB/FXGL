@@ -28,6 +28,8 @@ package com.almasb.fxgl.input
 
 import com.almasb.fxgl.annotation.OnUserAction
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGL.Companion.configure
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.service.Input
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
@@ -48,7 +50,7 @@ class InputTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
+            configure(MockApplicationModule.get())
         }
     }
 
@@ -63,7 +65,7 @@ class InputTest {
 
         var calls = 0
 
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Test") {
+        input.addAction(object : UserAction("Test") {
             override fun onActionBegin() {
                 calls = 1
             }
@@ -95,7 +97,7 @@ class InputTest {
 
         var calls = 0
 
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Test") {
+        input.addAction(object : UserAction("Test") {
             override fun onActionBegin() {
                 calls = 1
             }
@@ -179,7 +181,7 @@ class InputTest {
 
     @Test
     fun testKeyBinding() {
-        val action = object : com.almasb.fxgl.input.UserAction("Action1") {}
+        val action = object : UserAction("Action1") {}
 
         input.addAction(action, KeyCode.A)
 
@@ -193,7 +195,7 @@ class InputTest {
 
     @Test
     fun testMouseBinding() {
-        val action = object : com.almasb.fxgl.input.UserAction("Action1") {}
+        val action = object : UserAction("Action1") {}
 
         input.addAction(action, MouseButton.PRIMARY)
 
@@ -207,43 +209,43 @@ class InputTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `Do not allow UserActions with same name`() {
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action1") {}, KeyCode.A)
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action1") {}, KeyCode.B)
+        input.addAction(object : UserAction("Action1") {}, KeyCode.A)
+        input.addAction(object : UserAction("Action1") {}, KeyCode.B)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Do not allow bindings to same key`() {
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action1") {}, KeyCode.A)
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action2") {}, KeyCode.A)
+        input.addAction(object : UserAction("Action1") {}, KeyCode.A)
+        input.addAction(object : UserAction("Action2") {}, KeyCode.A)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Do not allow bindings to same button`() {
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action1") {}, MouseButton.PRIMARY)
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action2") {}, MouseButton.PRIMARY)
+        input.addAction(object : UserAction("Action1") {}, MouseButton.PRIMARY)
+        input.addAction(object : UserAction("Action2") {}, MouseButton.PRIMARY)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Do not allow binding to Ctrl`() {
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Test") {}, KeyCode.CONTROL)
+        input.addAction(object : UserAction("Test") {}, KeyCode.CONTROL)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Do not allow binding to Shift`() {
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Test") {}, KeyCode.SHIFT)
+        input.addAction(object : UserAction("Test") {}, KeyCode.SHIFT)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Do not allow binding to Alt`() {
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Test") {}, KeyCode.ALT)
+        input.addAction(object : UserAction("Test") {}, KeyCode.ALT)
     }
 
     @Test
     fun `Test rebind key`() {
-        val action = object : com.almasb.fxgl.input.UserAction("Action1") {}
+        val action = object : UserAction("Action1") {}
 
         input.addAction(action, KeyCode.A)
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action2") {}, KeyCode.B)
+        input.addAction(object : UserAction("Action2") {}, KeyCode.B)
 
         // binding to existing key must not succeed
         var ok = input.rebind(action, KeyCode.B)
@@ -260,10 +262,10 @@ class InputTest {
 
     @Test
     fun `Test rebind mouse button`() {
-        val action = object : com.almasb.fxgl.input.UserAction("Action1") {}
+        val action = object : UserAction("Action1") {}
 
         input.addAction(action, MouseButton.PRIMARY)
-        input.addAction(object : com.almasb.fxgl.input.UserAction("Action2") {}, MouseButton.SECONDARY)
+        input.addAction(object : UserAction("Action2") {}, MouseButton.SECONDARY)
 
         // binding to existing button must not succeed
         var ok = input.rebind(action, MouseButton.SECONDARY)

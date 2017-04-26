@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.saving;
 
-import com.almasb.fxgl.settings.UserProfile;
 import javafx.event.Event;
 import javafx.event.EventType;
 

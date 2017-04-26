@@ -156,9 +156,7 @@ public class GTAVMenu extends FXGLMenu {
         Button btnLogout = createActionButton("LOGOUT", this::fireLogout);
         Button btnExit = createActionButton("EXIT", this::fireExit);
 
-        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
-            btnContinue.setDisable(!event.hasSaves());
-        });
+        btnContinue.disableProperty().bind(listener.hasSavesProperty().not());
 
         return new VBox(10, btnContinue, btnNew, btnLoad, btnLogout, btnExit);
     }
@@ -167,12 +165,7 @@ public class GTAVMenu extends FXGLMenu {
         Button btnResume = createActionButton("RESUME", this::fireResume);
         Button btnSave = createActionButton("SAVE", this::fireSave);
         Button btnLoad = createContentButton("LOAD", this::createContentLoad);
-        Button btnExit = createActionButton("EXIT", () -> {
-            app.getDisplay().showConfirmationBox("Exit to Main Menu?\nAll unsaved progress will be lost!", yes -> {
-                if (yes)
-                    fireExitToMainMenu();
-            });
-        });
+        Button btnExit = createActionButton("EXIT", this::fireExitToMainMenu);
 
         return new VBox(10, btnResume, btnSave, btnLoad, btnExit);
     }

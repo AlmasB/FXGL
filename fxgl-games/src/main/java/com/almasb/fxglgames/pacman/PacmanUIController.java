@@ -27,8 +27,6 @@
 package com.almasb.fxglgames.pacman;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.time.UpdateEvent;
-import com.almasb.fxgl.time.UpdateEventListener;
 import com.almasb.fxgl.ui.UIController;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -42,7 +40,7 @@ import javafx.scene.text.TextAlignment;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PacmanUIController implements UIController, UpdateEventListener {
+public class PacmanUIController implements UIController {
 
     @FXML
     private Label labelTitle;
@@ -81,15 +79,4 @@ public class PacmanUIController implements UIController, UpdateEventListener {
     }
 
     private double y = 50;
-
-    @Override
-    public void onUpdateEvent(UpdateEvent event) {
-//        y += event.tpf() * 60;
-//
-//        if (y >= 300)
-//            y = 50;
-//
-//        g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-//        g.fillOval(50, y, 3, 3);
-    }
 }

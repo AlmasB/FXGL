@@ -27,8 +27,6 @@
 package com.almasb.fxgl.event
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.time.UpdateEvent
-import com.almasb.fxgl.time.UpdateEventListener
 import javafx.event.Event
 import javafx.util.Duration
 
@@ -61,7 +59,7 @@ class EventTrigger<out T : Event>
          * Delay between triggering events.
          * Default is zero.
          */
-        val interval: Duration = Duration.ZERO) : UpdateEventListener {
+        val interval: Duration = Duration.ZERO) {
 
     private var timesFired = 0
     private val timer = FXGL.newLocalTimer()
@@ -83,7 +81,7 @@ class EventTrigger<out T : Event>
         }
     }
 
-    override fun onUpdateEvent(event: UpdateEvent) {
+    fun onUpdate(tpf: Double) {
         if (eventCondition.isTrue() && (timer.elapsed(interval) || timesFired == 0)) {
             fire()
             timer.capture()

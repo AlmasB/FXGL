@@ -29,7 +29,6 @@ package com.almasb.fxgl.service.impl.notification
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.gameplay.Notification
 import com.almasb.fxgl.gameplay.NotificationEvent
-import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.service.NotificationService
 import com.almasb.fxgl.ui.Position
 import com.google.inject.Inject
@@ -45,7 +44,7 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class SlidingNotificationService
-@Inject private constructor(private val gameScene: GameScene): NotificationService {
+@Inject private constructor(): NotificationService {
 
     private val log = FXGL.getLogger(javaClass)
 
@@ -95,20 +94,13 @@ class SlidingNotificationService
         val pane = Pane()
         pane.setPrefSize(FXGL.getSettings().width.toDouble(), 50.0)
 
-        //gameScene.addUINode(notificationImpl)
-
-        //notificationImpl.getStylesheets().add(FXGL.getAssetLoader().loadCSS("test.css").externalForm)
-        //notificationImpl.getStyleClass().add("fxgl")
-
         notificationImpl.styleClass.add(NotificationPane.STYLE_CLASS_DARK)
         notificationImpl.content = pane
         notificationImpl.setOnHidden { popNotification() }
-
-        log.debug { "Service [NotificationService] initialized" }
     }
 
     private fun popNotification() {
-        val removed = gameScene.removeUINode(notificationImpl)
+        val removed = FXGL.getApp().gameScene.removeUINode(notificationImpl)
 
         // this is called asynchronously so we have to check manually
         if (!removed) {
@@ -142,7 +134,7 @@ class SlidingNotificationService
     private fun showNotification(text: String) {
         counter++
         showing = true
-        gameScene.addUINode(notificationImpl)
+        FXGL.getApp().gameScene.addUINode(notificationImpl)
 
         // controlsFX notification pane cannot show in the same tick
         // so we wait a little bit

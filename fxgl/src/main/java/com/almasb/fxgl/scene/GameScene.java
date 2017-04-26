@@ -113,17 +113,8 @@ public final class GameScene extends FXGLScene
         particlesCanvas.setMouseTransparent(true);
     }
 
-    private Viewport viewport;
-
-    /**
-     * @return viewport
-     */
-    public Viewport getViewport() {
-        return viewport;
-    }
-
     private void initViewport(double w, double h) {
-        viewport = new Viewport(w, h);
+        Viewport viewport = getViewport();
         gameRoot.layoutXProperty().bind(viewport.xProperty().negate());
         gameRoot.layoutYProperty().bind(viewport.yProperty().negate());
 
@@ -135,29 +126,29 @@ public final class GameScene extends FXGLScene
         gameRoot.getTransforms().add(scale);
     }
 
-    /**
-     * Converts a point on screen to a point within game scene.
-     *
-     * @param screenPoint point in UI coordinates
-     * @return point in game coordinates
-     */
-    public Point2D screenToGame(Point2D screenPoint) {
-        return screenPoint
-                .multiply(1.0 / FXGL.getDisplay().getScaleRatio())
-                .add(viewport.getOrigin());
-    }
-
-    /**
-     * Converts a point in game world to a point within screen (viewport).
-     *
-     * @param gamePoint point in game world coordinates
-     * @return point in UI coordinates
-     */
-    public Point2D gameToScreen(Point2D gamePoint) {
-        return gamePoint
-                .subtract(viewport.getOrigin())
-                .multiply(FXGL.getDisplay().getScaleRatio());
-    }
+//    /**
+//     * Converts a point on screen to a point within game scene.
+//     *
+//     * @param screenPoint point in UI coordinates
+//     * @return point in game coordinates
+//     */
+//    public Point2D screenToGame(Point2D screenPoint) {
+//        return screenPoint
+//                .multiply(1.0 / FXGL.getDisplay().getScaleRatio())
+//                .add(getViewport().getOrigin());
+//    }
+//
+//    /**
+//     * Converts a point in game world to a point within screen (viewport).
+//     *
+//     * @param gamePoint point in game world coordinates
+//     * @return point in UI coordinates
+//     */
+//    public Point2D gameToScreen(Point2D gamePoint) {
+//        return gamePoint
+//                .subtract(getViewport().getOrigin())
+//                .multiply(FXGL.getDisplay().getScaleRatio());
+//    }
 
     /**
      * @return unmodifiable list of UI nodes

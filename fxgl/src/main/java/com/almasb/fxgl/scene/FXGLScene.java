@@ -26,6 +26,8 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.service.impl.input.FXGLInput;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -54,7 +56,8 @@ public abstract class FXGLScene {
      */
     private Pane contentRoot;
 
-    private Group eventHandlers = new Group();
+
+    private Viewport viewport;
 
     public FXGLScene() {
         root = new Pane();
@@ -64,6 +67,9 @@ public abstract class FXGLScene {
         contentRoot.setBackground(null);
 
         root.getChildren().addAll(contentRoot);
+
+        // should pass thru ctor params?
+        viewport = new Viewport(FXGL.getAppWidth(), FXGL.getAppHeight());
 
         setCursor("fxgl_default.png", new Point2D(7, 6));
     }
@@ -80,6 +86,13 @@ public abstract class FXGLScene {
      */
     public final Pane getContentRoot() {
         return contentRoot;
+    }
+
+    /**
+     * @return viewport
+     */
+    public Viewport getViewport() {
+        return viewport;
     }
 
     /**
@@ -117,37 +130,6 @@ public abstract class FXGLScene {
      */
     public final void clearEffect() {
         setEffect(null);
-    }
-
-    /**
-     * Add event handler.
-     *
-     * @param eventType type of events to listen
-     * @param eventHandler handler for events
-     */
-    public final <T extends Event> void addEventHandler(EventType<T> eventType,
-                                                  EventHandler<? super T> eventHandler) {
-        eventHandlers.addEventHandler(eventType, eventHandler);
-    }
-
-    /**
-     * Remove event handler.
-     *
-     * @param eventType type of events to listen
-     * @param eventHandler handler for events
-     */
-    public final <T extends Event> void removeEventHandler(EventType<T> eventType,
-                                                     EventHandler<? super T> eventHandler) {
-        eventHandlers.removeEventHandler(eventType, eventHandler);
-    }
-
-    /**
-     * Fire JavaFX event on this FXGL scene.
-     *
-     * @param event the JavaFX event
-     */
-    public final void fireEvent(Event event) {
-        eventHandlers.fireEvent(event);
     }
 
     /**

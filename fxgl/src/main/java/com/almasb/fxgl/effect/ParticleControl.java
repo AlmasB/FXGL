@@ -31,7 +31,6 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -60,11 +59,6 @@ public class ParticleControl extends AbstractControl {
     }
 
     protected ParticleControl() {}
-
-    @Override
-    public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-    }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
@@ -97,5 +91,12 @@ public class ParticleControl extends AbstractControl {
         for (Particle p : particles) {
             p.render(g, viewportOrigin);
         }
+    }
+
+    /**
+     * @return particle emitter attached to control
+     */
+    public ParticleEmitter getEmitter() {
+        return emitter;
     }
 }

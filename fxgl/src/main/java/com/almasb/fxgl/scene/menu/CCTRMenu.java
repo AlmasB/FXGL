@@ -141,9 +141,7 @@ public class CCTRMenu extends FXGLMenu {
             i++;
         }
 
-        app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
-            btnContinue.setDisable(!event.hasSaves());
-        });
+        btnContinue.disableProperty().bind(listener.hasSavesProperty().not());
 
         return group;
     }

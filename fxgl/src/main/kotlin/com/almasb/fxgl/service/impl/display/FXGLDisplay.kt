@@ -26,20 +26,18 @@
 
 package com.almasb.fxgl.service.impl.display
 
+import com.almasb.fxgl.app.DialogSubState
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.CSS
-import com.almasb.fxgl.scene.DisplayEvent
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Display
-import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.saving.UserProfile
 import com.google.inject.Inject
-import javafx.application.Platform
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
@@ -50,9 +48,9 @@ import javafx.event.EventType
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.Dialog
-import javafx.scene.control.ProgressIndicator
 import javafx.scene.input.KeyCombination
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -65,23 +63,19 @@ import java.util.function.Predicate
 import javax.imageio.ImageIO
 
 /**
- * Display service. Provides access to dialogs and display settings.
+ * Display service.
+ * Provides access to dialogs and display settings.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 class FXGLDisplay
 @Inject
-private constructor(private val stage: Stage,
-                    /**
-                     * Underlying JavaFX scene. We only use 1 scene to avoid
-                     * problems in fullscreen mode. Switching between scenes
-                     * in FS mode will otherwise temporarily toggle FS.
-                     */
-                    private var fxScene: Scene) : Display {
+private constructor(private val stage: Stage, private val settings: ReadOnlyGameSettings) : Display {
 
     private val log = FXGL.getLogger(javaClass)
 
-    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
+    // init with placeholder scene
+    private val currentScene = ReadOnlyObjectWrapper<FXGLScene>(object : FXGLScene() {})
 
     private val targetWidth: DoubleProperty
     private val targetHeight: DoubleProperty
@@ -91,25 +85,11 @@ private constructor(private val stage: Stage,
 
     private val css: CSS
 
-    private val eventBus: EventBus
-
-    private val settings: ReadOnlyGameSettings
-
     private val sceneDimensions = ArrayList<SceneDimension>()
 
-    /*
-     * Since FXGL scenes are not JavaFX nodes they don't get notified of events.
-     * This is a desired behavior because we only have 1 JavaFX scene for all FXGL scenes.
-     * So we copy the occurred event and reroute to whichever FXGL scene is current.
-     */
-    private val fxToFXGLFilter: EventHandler<Event> = EventHandler { event ->
-        val copy = event.copyFor(null, null)
-        getCurrentScene()?.fireEvent(copy)
-    }
+    private lateinit var fxScene: Scene
 
     init {
-        settings = FXGL.getSettings()
-
         targetWidth = SimpleDoubleProperty(settings.width.toDouble())
         targetHeight = SimpleDoubleProperty(settings.height.toDouble())
         scaledWidth = SimpleDoubleProperty()
@@ -122,19 +102,48 @@ private constructor(private val stage: Stage,
         else
             FXGLAssets.UI_CSS
 
-        Platform.runLater { initStage() }
+        log.debug("Using CSS: $css")
+    }
 
+    /**
+     * Must be called on FX thread.
+     */
+    override fun initAndShow() {
+        initScene()
+        initStage()
         initDialogBox()
-
-        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
 
         computeSceneSettings(settings.width.toDouble(), settings.height.toDouble())
         computeScaledSize()
 
-        eventBus = FXGL.getEventBus()
+        log.debug("Opening primary stage")
 
-        log.debug { "Service [Display] initialized" }
-        log.debug { "Using CSS: $css" }
+        stage.show()
+    }
+
+    private val keyHandler = EventHandler<KeyEvent> {
+        FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
+    }
+
+    private val mouseHandler = EventHandler<MouseEvent> {
+        FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, getCurrentScene().viewport, getScaleRatio())
+    }
+
+    private val genericHandler = EventHandler<Event> {
+        FXGL.getApp().stateMachine.currentState.input.fireEvent(it.copyFor(null, null))
+    }
+
+    private fun initScene() {
+        fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
+
+        // main key event handler
+        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
+
+        // main mouse event handler
+        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
+
+        // reroute any events to current state input
+        fxScene.addEventFilter(EventType.ROOT, genericHandler)
     }
 
     /**
@@ -142,25 +151,27 @@ private constructor(private val stage: Stage,
      */
     private fun initStage() {
         with(stage) {
+            scene = fxScene
+
             title = settings.title + " " + settings.version
             isResizable = false
             setOnCloseRequest { e ->
                 e.consume()
 
                 if (settings.isCloseConfirmation) {
-                    if (!dialog.isShowing) {
+                    if (FXGL.getApp().stateMachine.canShowCloseDialog()) {
                         showConfirmationBox("Exit the game?", { yes ->
                             if (yes)
-                                eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                                FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                         })
                     }
                 } else {
-                    eventBus.fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
+                    FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                 }
             }
 
             setOnShown {
-                log.debug("Showing stage")
+                log.debug("Stage shown")
                 log.debug("Root size: " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
                 log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
                 log.debug("Stage size: " + stage.width + "x" + stage.height)
@@ -180,6 +191,8 @@ private constructor(private val stage: Stage,
         }
     }
 
+    private val scenes = arrayListOf<FXGLScene>()
+
     /**
      * Register an FXGL scene to be managed by display settings.
      *
@@ -188,6 +201,7 @@ private constructor(private val stage: Stage,
     override fun registerScene(scene: FXGLScene) {
         scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
         scene.appendCSS(css)
+        scenes.add(scene)
     }
 
     /**
@@ -196,7 +210,11 @@ private constructor(private val stage: Stage,
      * @param scene the scene
      */
     override fun setScene(scene: FXGLScene) {
-        getCurrentScene()?.activeProperty()?.set(false)
+        if (!scenes.contains(scene)) {
+            registerScene(scene)
+        }
+
+        getCurrentScene().activeProperty().set(false)
 
         currentScene.set(scene)
         scene.activeProperty().set(true)
@@ -209,7 +227,7 @@ private constructor(private val stage: Stage,
      */
     override fun currentSceneProperty() = currentScene.readOnlyProperty
 
-    override fun getBounds() = if (settings.isFullScreen) Screen.getPrimary().bounds
+    private fun getBounds() = if (settings.isFullScreen) Screen.getPrimary().bounds
                                 else Screen.getPrimary().visualBounds
 
     /**
@@ -247,7 +265,7 @@ private constructor(private val stage: Stage,
      * @param height target (app) height
      */
     private fun computeSceneSettings(width: Double, height: Double) {
-        val bounds = bounds
+        val bounds = getBounds()
 
         val ratio = width / height
 
@@ -300,7 +318,7 @@ private constructor(private val stage: Stage,
     private fun computeScaledSize() {
         var newW = getTargetWidth()
         var newH = getTargetHeight()
-        val bounds = bounds
+        val bounds = getBounds()
 
         if (newW > bounds.width || newH > bounds.height) {
             log.debug("App size > screen size")
@@ -327,6 +345,7 @@ private constructor(private val stage: Stage,
     /**
      * Performs actual change of output resolution.
      * It will create a new underlying JavaFX scene.
+     * fxglTODO: impl is incorrect
      *
      * @param w new width
      *
@@ -338,14 +357,32 @@ private constructor(private val stage: Stage,
         computeScaledSize()
 
         val root = fxScene.root
+
         // clear listener
-        fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
+        // main key event handler
+        fxScene.removeEventFilter(KeyEvent.ANY, keyHandler)
+
+        // main mouse event handler
+        fxScene.removeEventFilter(MouseEvent.ANY, mouseHandler)
+
+        // reroute any events to current state input
+        fxScene.removeEventFilter(EventType.ROOT, genericHandler)
+
         // clear root of previous JavaFX scene
         fxScene.root = Pane()
 
         // create and init new JavaFX scene
         fxScene = Scene(root)
-        fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
+
+        // main key event handler
+        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
+
+        // main mouse event handler
+        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
+
+        // reroute any events to current state input
+        fxScene.addEventFilter(EventType.ROOT, genericHandler)
+
         stage.scene = fxScene
         if (settings.isFullScreen) {
             stage.isFullScreen = true
@@ -367,55 +404,14 @@ private constructor(private val stage: Stage,
         }
     }
 
-    private lateinit var dialog: DialogPane
+    private lateinit var dialogState: DialogSubState
 
     private fun initDialogBox() {
-        dialog = DialogPane(this)
-
-        dialog.setOnShown(Runnable {
-            fxScene.removeEventFilter(EventType.ROOT, fxToFXGLFilter)
-            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
-        })
-
-        dialog.setOnClosed(Runnable {
-            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
-            fxScene.addEventFilter(EventType.ROOT, fxToFXGLFilter)
-        })
-    }
-
-    /**
-     * Shows given dialog and blocks execution of the game until the dialog is
-     * dismissed. The provided callback will be called with the dialog result as
-     * parameter when the dialog closes.
-     *
-     * @param dialog         JavaFX dialog
-     *
-     * @param resultCallback the function to be called
-     */
-    override fun <T> showDialog(dialog: Dialog<T>, resultCallback: Consumer<T>) {
-        eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_OPENED))
-
-        dialog.initOwner(stage)
-        dialog.setOnCloseRequest { e ->
-            eventBus.fireEvent(DisplayEvent(DisplayEvent.DIALOG_CLOSED))
-
-            resultCallback.accept(dialog.result)
-        }
-        dialog.show()
-    }
-
-    /**
-     * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
-     * button press, the message box will be dismissed.
-     *
-     * @param message the message to show
-     */
-    override fun showMessageBox(message: String) {
-        dialog.showMessageBox(message)
+        dialogState = DialogSubState
     }
 
     override fun showMessageBox(message: String, callback: Runnable) {
-        dialog.showMessageBox(message, callback)
+        dialogState.showMessageBox(message, callback)
     }
 
     /**
@@ -427,19 +423,7 @@ private constructor(private val stage: Stage,
      * @param resultCallback the function to be called
      */
     override fun showConfirmationBox(message: String, resultCallback: Consumer<Boolean>) {
-        dialog.showConfirmationBox(message, resultCallback)
-    }
-
-    /**
-     * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback
-     * is invoked with the field text as parameter.
-     *
-     * @param message        message to show
-     *
-     * @param resultCallback the function to be called
-     */
-    override fun showInputBox(message: String, resultCallback: Consumer<String>) {
-        dialog.showInputBox(message, resultCallback)
+        dialogState.showConfirmationBox(message, resultCallback)
     }
 
     /**
@@ -453,11 +437,11 @@ private constructor(private val stage: Stage,
      * @param resultCallback the function to be called
      */
     override fun showInputBox(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
-        dialog.showInputBox(message, filter, resultCallback)
+        dialogState.showInputBox(message, filter, resultCallback)
     }
 
     override fun showInputBoxWithCancel(message: String, filter: Predicate<String>, resultCallback: Consumer<String>) {
-        dialog.showInputBoxWithCancel(message, filter, resultCallback)
+        dialogState.showInputBoxWithCancel(message, filter, resultCallback)
     }
 
     /**
@@ -466,7 +450,7 @@ private constructor(private val stage: Stage,
      * @param error the error to show
      */
     override fun showErrorBox(error: Throwable) {
-        dialog.showErrorBox(error)
+        dialogState.showErrorBox(error)
     }
 
     /**
@@ -477,7 +461,7 @@ private constructor(private val stage: Stage,
      * @param callback the function to be called when dialog is dismissed
      */
     override fun showErrorBox(errorMessage: String, callback: Runnable) {
-        dialog.showErrorBox(errorMessage, callback)
+        dialogState.showErrorBox(errorMessage, callback)
     }
 
     /**
@@ -490,27 +474,11 @@ private constructor(private val stage: Stage,
      * @param buttons buttons present
      */
     override fun showBox(message: String, content: Node, vararg buttons: Button) {
-        dialog.showBox(message, content, *buttons)
+        dialogState.showBox(message, content, *buttons)
     }
 
     override fun showProgressBox(message: String): UIDialogHandler {
-        val progress = ProgressIndicator()
-        progress.setPrefSize(200.0, 200.0)
-
-        val btn = Button()
-        btn.isVisible = false
-
-        showBox(message, progress, btn)
-
-        return object : UIDialogHandler {
-            override fun show() {
-                // no-op as we show our own box
-            }
-
-            override fun dismiss() {
-                btn.fire()
-            }
-        }
+        return dialogState.showProgressBox(message)
     }
 
     override fun save(profile: UserProfile) {

@@ -48,10 +48,6 @@ private constructor() : EventBus {
 
     private val log = FXGL.getLogger(javaClass)
 
-    init {
-        log.debug { "Service [EventBus] initialized" }
-    }
-
     private val bus = FXEventBus()
 
     override fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber {

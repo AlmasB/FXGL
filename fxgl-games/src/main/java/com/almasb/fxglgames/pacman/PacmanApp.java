@@ -29,6 +29,7 @@ import com.almasb.fxgl.ai.pathfinding.AStarGrid;
 import com.almasb.fxgl.ai.pathfinding.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.PauseSubState;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.gameplay.Level;
@@ -84,8 +85,8 @@ public class PacmanApp extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setProfilingEnabled(true);
+        settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
     @Override
@@ -122,12 +123,33 @@ public class PacmanApp extends GameApplication {
             @Override
             protected void onActionBegin() {
 
-                if (getGameState().getInt("teleport") > 0) {
-                    getGameState().increment("teleport", -1);
-                    playerControl.teleport();
-                }
+                //pause();
+
+//                if (getGameState().getInt("teleport") > 0) {
+//                    getGameState().increment("teleport", -1);
+//                    playerControl.teleport();
+//                }
+            }
+
+            @Override
+            protected void onAction() {
+                System.out.println("Action");
+                //pause();
             }
         }, KeyCode.F);
+
+        PauseSubState.INSTANCE.getInput().addAction(new UserAction("Resume") {
+            @Override
+            protected void onActionBegin() {
+
+                //resume();
+
+//                if (getGameState().getInt("teleport") > 0) {
+//                    getGameState().increment("teleport", -1);
+//                    playerControl.teleport();
+//                }
+            }
+        }, KeyCode.G);
     }
 
     @Override
@@ -171,7 +193,7 @@ public class PacmanApp extends GameApplication {
     @Override
     protected void initUI() {
         uiController = new PacmanUIController();
-        getMasterTimer().addUpdateListener(uiController);
+        //getMasterTimer().addUpdateListener(uiController);
 
         UI ui = getAssetLoader().loadUI("pacman/pacman_ui.fxml", uiController);
         ui.getRoot().setTranslateX(MAP_SIZE * BLOCK_SIZE);
@@ -186,7 +208,7 @@ public class PacmanApp extends GameApplication {
     protected void onPostUpdate(double tpf) {
         if (requestNewGame) {
             requestNewGame = false;
-            getMasterTimer().removeUpdateListener(uiController);
+            //getMasterTimer().removeUpdateListener(uiController);
             startNewGame();
         }
     }

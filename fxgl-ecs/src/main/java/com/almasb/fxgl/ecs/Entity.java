@@ -30,9 +30,8 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.ecs.serialization.SerializableComponent;
-import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -42,12 +41,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A generic entity in the Entity-Component-System model.
+ * A generic entity in the Entity-Component-System (Control) model.
  * During update (or control update) it is not allowed to:
- * <ol>
+ * <ul>
  *     <li>Add control</li>
  *     <li>Remove control</li>
- * </ol>
+ * </ul>
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -57,10 +56,14 @@ public class Entity {
 
     private final ObjectMap<String, Object> properties = new ObjectMap<>();
 
+    ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
+    ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+
+    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
+
     /**
      * Set a property specified by a key-value pair.
-     * Note: only exists for convenience and for short lived entities.
-     * Prefer {@link #addComponent(Component)} instead.
+     * Prefer {@link Component} instead.
      *
      * @param key property key
      * @param value property value
@@ -73,8 +76,7 @@ public class Entity {
 
     /**
      * Retrieve a property value by a given key.
-     * Note: only exists for convenience and for short lived entities.
-     * Prefer {@link #getComponent(Class)} instead.
+     * Prefer {@link Component} instead.
      *
      * @param key property key
      * @param <T> value type
@@ -92,7 +94,7 @@ public class Entity {
         return (T) value;
     }
 
-    ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
+    /* CONTROL BEGIN */
 
     /**
      * @param type control type
@@ -107,7 +109,6 @@ public class Entity {
     /**
      * Returns control of given type or {@link Optional#empty()} if
      * no such type is registered on this entity.
-     * Warning: object allocation.
      *
      * @param type control type
      * @return control
@@ -119,11 +120,7 @@ public class Entity {
     }
 
     /**
-     * Returns control of given type.
-     * Unlike {@link #getControl(Class)} there is no
-     * check for control existence and return is not wrapped with Optional.
-     * Use this only if you are certain the entity has this type of control
-     * or to avoid object allocation.
+     * Returns control of given type or null if no such type is registered.
      *
      * @param type control type
      * @return control
@@ -150,7 +147,7 @@ public class Entity {
      * Adds behavior to entity.
      * Only 1 control per type is allowed.
      * Anonymous controls are not allowed.
-     * Avoid adding controls within update() of another control.
+     * Cannot add controls within update() of another control.
      *
      * @param control the behavior
      * @throws IllegalArgumentException if control with same type already registered or anonymous
@@ -179,13 +176,34 @@ public class Entity {
             ((AbstractControl) control).setEntity(this);
         }
 
+        injectFields(control);
+
         control.onAdded(this);
         notifyControlAdded(control);
     }
 
+    @SuppressWarnings("unchecked")
+    private void injectFields(Control control) {
+        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
+            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
+            if (comp != null) {
+                ReflectionUtils.inject(field, control, comp);
+            } else {
+                log.warning("Injection failed, entity has no component: " + field.getType());
+            }
+        });
+
+        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
+            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
+            if (ctrl != null) {
+                ReflectionUtils.inject(field, control, ctrl);
+            } else {
+                log.warning("Injection failed, entity has no control: " + field.getType());
+            }
+        });
+    }
+
     /**
-     * Remove behavior from entity of given type.
-     *
      * @param type the control type to remove
      */
     public final void removeControl(Class<? extends Control> type) {
@@ -194,7 +212,7 @@ public class Entity {
         Control control = getControlUnsafe(type);
 
         if (control == null) {
-            log.warning("Attempted to remove control but entity doesn't have a control with type: "+ type.getSimpleName());
+            log.warning("Cannot remove control " + type.getSimpleName() + ". Entity does not have one");
         } else {
             controls.remove(control.getClass());
             removeControlImpl(control);
@@ -202,7 +220,7 @@ public class Entity {
     }
 
     /**
-     * Remove all behavior controls from entity.
+     * Remove all controls from entity.
      */
     public final void removeAllControls() {
         checkValid();
@@ -226,9 +244,7 @@ public class Entity {
     private List<ControlListener> controlListeners = new ArrayList<>();
 
     /**
-     * Add control listener.
-     *
-     * @param listener the listener
+     * @param listener the listener to add
      */
     public void addControlListener(ControlListener listener) {
         checkValid();
@@ -237,9 +253,7 @@ public class Entity {
     }
 
     /**
-     * Remove control listener
-     *
-     * @param listener the listener
+     * @param listener the listener to remove
      */
     public void removeControlListener(ControlListener listener) {
         checkValid();
@@ -259,7 +273,9 @@ public class Entity {
         }
     }
 
-    ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+    /* CONTROL END */
+
+    /* COMPONENT BEGIN */
 
     /**
      * @param type component type
@@ -272,9 +288,8 @@ public class Entity {
     }
 
     /**
-     * Returns component of given type if registered. The type must be exactly
-     * the same as the type of the instance registered. If component not found, {@link Optional#empty()}
-     * is returned.
+     * Returns component of given type, or {@link Optional#empty()}
+     * if type not registered.
      *
      * @param type component type
      * @return component
@@ -286,9 +301,7 @@ public class Entity {
     }
 
     /**
-     * Returns component of given type. Unlike {@link #getComponent(Class)} there is no
-     * checking if the component exists and so bare object is returned, i.e. can be null.
-     * Use this only if you are certain that entity has this type of component.
+     * Returns component of given type, or null if type not registered.
      *
      * @param type component type
      * @return component
@@ -433,6 +446,8 @@ public class Entity {
         }
     }
 
+    /* COMPONENT END */
+
     /**
      * Checks if requirements for given type are met.
      *
@@ -488,8 +503,6 @@ public class Entity {
     public final void setControlsEnabled(boolean b) {
         controlsEnabled = b;
     }
-
-    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
     /**
      * @return active property of this entity
@@ -644,21 +657,7 @@ public class Entity {
     public Entity copy() {
         checkValid();
 
-        Entity copy = new Entity();
-
-        for (Component component : components.values()) {
-            if (component instanceof CopyableComponent) {
-                copy.addComponent(((CopyableComponent) component).copy());
-            }
-        }
-
-        for (Control control : controls.values()) {
-            if (control instanceof CopyableControl) {
-                copy.addControl(((CopyableControl) control).copy());
-            }
-        }
-
-        return copy;
+        return EntityCopier.INSTANCE.copy(this);
     }
 
     /**
@@ -670,31 +669,7 @@ public class Entity {
     public void save(Bundle bundle) {
         checkValid();
 
-        Bundle componentsBundle = new Bundle("components");
-
-        for (Component component : components.values()) {
-            if (component instanceof SerializableComponent) {
-                Bundle b = new Bundle(component.getClass().getCanonicalName());
-                ((SerializableComponent) component).write(b);
-
-                componentsBundle.put(b.getName(), b);
-            }
-        }
-
-
-        Bundle controlsBundle = new Bundle("controls");
-
-        for (Control control : controls.values()) {
-            if (control instanceof SerializableControl) {
-                Bundle b = new Bundle(control.getClass().getCanonicalName());
-                ((SerializableControl) control).write(b);
-
-                controlsBundle.put(b.getName(), b);
-            }
-        }
-
-        bundle.put("components", componentsBundle);
-        bundle.put("controls", controlsBundle);
+        EntitySerializer.INSTANCE.save(this, bundle);
     }
 
     /**
@@ -708,31 +683,7 @@ public class Entity {
     public void load(Bundle bundle) {
         checkValid();
 
-        Bundle componentsBundle = bundle.get("components");
-
-        for (Component component : components.values()) {
-            if (component instanceof SerializableComponent) {
-
-                Bundle b = componentsBundle.get(component.getClass().getCanonicalName());
-                if (b != null)
-                    ((SerializableComponent) component).read(b);
-                else
-                    log.warning("Bundle " + componentsBundle + " does not have SerializableComponent: " + component);
-            }
-        }
-
-        Bundle controlsBundle = bundle.get("controls");
-
-        for (Control control : controls.values()) {
-            if (control instanceof SerializableControl) {
-
-                Bundle b = controlsBundle.get(control.getClass().getCanonicalName());
-                if (b != null)
-                    ((SerializableControl) control).read(b);
-                else
-                    log.warning("Bundle " + componentsBundle + " does not have SerializableControl: " + control);
-            }
-        }
+        EntitySerializer.INSTANCE.load(this, bundle);
     }
 
     @Override

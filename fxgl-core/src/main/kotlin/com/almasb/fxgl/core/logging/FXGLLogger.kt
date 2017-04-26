@@ -52,7 +52,7 @@ private constructor() {
         @JvmStatic fun configure(fileName: String) {
             cleanOldLogs()
             Configurator.initialize("FXGL", fileName)
-            logSystemInfo()
+            //logSystemInfo()
         }
 
         @JvmStatic fun get(name: String): Logger {

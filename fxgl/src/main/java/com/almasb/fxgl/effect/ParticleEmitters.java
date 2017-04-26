@@ -69,13 +69,13 @@ public final class ParticleEmitters {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(15);
         emitter.setEmissionRate(0.5);
-        emitter.setColorFunction(() -> Color.rgb(230, 75, 40));
+        emitter.setColor(Color.rgb(230, 75, 40));
         emitter.setSize(9, 12);
         emitter.setVelocityFunction((i, x, y) -> new Point2D(rand(-0.5, 0.5) * 0.25, rand() * -1));
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y).add(new Point2D(i * (rand() - 0.5), (rand() - 1))));
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand(-0.01, 0.01) * 10, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(1));
-        emitter.setBlendFunction((i, x, y) -> i < emitter.getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_DODGE);
+        emitter.setBlendMode(BlendMode.ADD);
 
         return emitter;
     }
@@ -92,8 +92,8 @@ public final class ParticleEmitters {
         emitter.setVelocityFunction((i, x, y) -> new Point2D(Math.cos(i), Math.sin(i)).multiply(0.75));
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand() * -0.1, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(0.5));
-        emitter.setColorFunction(() -> Color.rgb((int) rand(200, 255), 30, 20));
-        emitter.setBlendFunction((i, x, y) -> i < emitter.getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_BURN);
+        emitter.setColor(Color.rgb((int) rand(200, 255), 30, 20));
+        emitter.setBlendMode(BlendMode.ADD);
 
         return emitter;
     }
@@ -118,8 +118,8 @@ public final class ParticleEmitters {
         });
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand() * -0.1, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(0.5));
-        emitter.setColorFunction(() -> Color.rgb((int) rand(200, 255), 30, 20));
-        emitter.setBlendFunction((i, x, y) -> i < emitter.getNumParticles() / 2 ? BlendMode.ADD : BlendMode.COLOR_DODGE);
+        emitter.setColor(Color.rgb((int) rand(200, 255), 30, 20));
+        emitter.setBlendMode(BlendMode.ADD);
 
         return emitter;
     }
@@ -136,7 +136,7 @@ public final class ParticleEmitters {
         emitter.setVelocityFunction((i, x, y) -> new Point2D(rand(-1, 1), rand(-6, -5)).multiply(0.1));
         emitter.setGravityFunction(() -> new Point2D(0, rand(0.01, 0.015)));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(2));
-        emitter.setColorFunction(() -> Color.rgb(30, 35, (int) rand(200, 255)));
+        emitter.setColor(Color.rgb(30, 35, (int) rand(200, 255)));
 
         return emitter;
     }
@@ -153,7 +153,7 @@ public final class ParticleEmitters {
         emitter.setVelocityFunction((i, x, y) -> new Point2D((rand() * 0.1), 0));
         emitter.setGravityFunction(() -> new Point2D(0, rand() * -0.03));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(rand(1, 3)));
-        emitter.setColorFunction(() -> Color.rgb(230, 230, 230));
+        emitter.setColor(Color.rgb(230, 230, 230));
         emitter.setScaleFunction((i, x, y) -> new Point2D(-0.01, -0.05));
 
         return emitter;
@@ -168,12 +168,12 @@ public final class ParticleEmitters {
         emitter.setNumParticles(5);
         emitter.setEmissionRate(1);
         emitter.setSize(6, 7);
+        emitter.setColor(Color.AQUA);
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(rand()*width + x, -25 + y));
         emitter.setVelocityFunction((i, x, y) -> new Point2D(0, (rand() * 15)));
         emitter.setGravityFunction(() -> new Point2D(0, rand() * 0.03));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(rand(1, 3)));
         emitter.setScaleFunction((i, x, y) -> new Point2D(-0.02, 0));
-        emitter.setBlendFunction((i, x, y) -> BlendMode.SRC_OVER);
 
         return emitter;
     }

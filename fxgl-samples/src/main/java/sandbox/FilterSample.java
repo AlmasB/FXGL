@@ -110,35 +110,35 @@ public class FilterSample extends GameApplication {
     @Override
     protected void initGame() {
 
-        double spread = 0.1;
-
-        getGameWorld().addEntity(Entities.builder().viewFromNode(new Rectangle(W, H)).build());
-
-
-
-
-        ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
-        //emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x + t * 10 * spread, y + FXGLMath.sin(t * 10) * spread));
-        emitter.setSpawnPointFunction((i, x, y) -> curveFunction().add(x, y));
-        emitter.setColorFunction(() -> Color.color(abs(sin(t)), abs(cos(t)), abs(cos(t))));
-        //emitter.setGravityFunction(() -> new Point2D(spread * cos(t), spread * pow(t, 0.55)));
-
-        ParticleEmitter emitter2 = ParticleEmitters.newSparkEmitter();
-        emitter2.setSpawnPointFunction((i, x, y) -> new Point2D(x + FXGLMath.cos(t * 10) * spread, y + pow(t, 0.55)));
-        emitter2.setColorFunction(() -> Color.color(abs(sin(t)), 0.75, 1.0));
-        emitter2.setEmissionRate(0.33);
-
-
-
-        Entities.builder()
-                .at(400, 300)
-                .with(new ParticleControl(emitter))
-                .buildAndAttach(getGameWorld());
-
-        Entities.builder()
-                .at(200, 300)
-                //.with(new ParticleControl(emitter2))
-                .buildAndAttach(getGameWorld());
+//        double spread = 0.1;
+//
+//        getGameWorld().addEntity(Entities.builder().viewFromNode(new Rectangle(W, H)).build());
+//
+//
+//
+//
+//        ParticleEmitter emitter = ParticleEmitters.newFireEmitter();
+//        //emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x + t * 10 * spread, y + FXGLMath.sin(t * 10) * spread));
+//        emitter.setSpawnPointFunction((i, x, y) -> curveFunction().add(x, y));
+//        emitter.setColorFunction(() -> Color.color(abs(sin(t)), abs(cos(t)), abs(cos(t))));
+//        //emitter.setGravityFunction(() -> new Point2D(spread * cos(t), spread * pow(t, 0.55)));
+//
+//        ParticleEmitter emitter2 = ParticleEmitters.newSparkEmitter();
+//        emitter2.setSpawnPointFunction((i, x, y) -> new Point2D(x + FXGLMath.cos(t * 10) * spread, y + pow(t, 0.55)));
+//        emitter2.setColorFunction(() -> Color.color(abs(sin(t)), 0.75, 1.0));
+//        emitter2.setEmissionRate(0.33);
+//
+//
+//
+//        Entities.builder()
+//                .at(400, 300)
+//                .with(new ParticleControl(emitter))
+//                .buildAndAttach(getGameWorld());
+//
+//        Entities.builder()
+//                .at(200, 300)
+//                //.with(new ParticleControl(emitter2))
+//                .buildAndAttach(getGameWorld());
     }
 
     private Point2D curveFunction() {

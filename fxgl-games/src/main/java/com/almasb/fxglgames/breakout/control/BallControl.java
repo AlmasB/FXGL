@@ -38,10 +38,10 @@ public class BallControl extends AbstractControl {
 
     private PhysicsComponent physics;
 
-    @Override
-    public void onAdded(Entity entity) {
-        physics = entity.getComponentUnsafe(PhysicsComponent.class);
-    }
+//    @Override
+//    public void onAdded(Entity entity) {
+//        physics = entity.getComponentUnsafe(PhysicsComponent.class);
+//    }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {

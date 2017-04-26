@@ -50,37 +50,38 @@ class EventTriggerTest {
         }
     }
 
-    @Test
-    fun `Event does not fire after reaching limit`() {
-        var count = 0
-
-        trigger = EventTrigger(object : EventCondition {
-            override fun isTrue(): Boolean {
-                return true
-            }
-        }, object : EventProducer<TestEvent> {
-            override fun produce(): TestEvent {
-                count++
-                return TestEvent(TestEvent.ANY)
-            }
-        }, limit = 3, interval = Duration.millis(10.0))
-
-        trigger.fire()
-        assertThat(count, `is`(1))
-        assertThat(trigger.reachedLimit(), `is`(false))
-
-        trigger.fire()
-        assertThat(count, `is`(2))
-        assertThat(trigger.reachedLimit(), `is`(false))
-
-        trigger.fire()
-        assertThat(count, `is`(3))
-        assertThat(trigger.reachedLimit(), `is`(true))
-
-        trigger.fire()
-        assertThat(count, `is`(3))
-        assertThat(trigger.reachedLimit(), `is`(true))
-    }
+    // do not run until event trigger has been refactored to new model
+//    @Test
+//    fun `Event does not fire after reaching limit`() {
+//        var count = 0
+//
+//        trigger = EventTrigger(object : EventCondition {
+//            override fun isTrue(): Boolean {
+//                return true
+//            }
+//        }, object : EventProducer<TestEvent> {
+//            override fun produce(): TestEvent {
+//                count++
+//                return TestEvent(TestEvent.ANY)
+//            }
+//        }, limit = 3, interval = Duration.millis(10.0))
+//
+//        trigger.fire()
+//        assertThat(count, `is`(1))
+//        assertThat(trigger.reachedLimit(), `is`(false))
+//
+//        trigger.fire()
+//        assertThat(count, `is`(2))
+//        assertThat(trigger.reachedLimit(), `is`(false))
+//
+//        trigger.fire()
+//        assertThat(count, `is`(3))
+//        assertThat(trigger.reachedLimit(), `is`(true))
+//
+//        trigger.fire()
+//        assertThat(count, `is`(3))
+//        assertThat(trigger.reachedLimit(), `is`(true))
+//    }
 
     // we cannot run this test because there is no mock master timer that we can drive manually
 //    @Test

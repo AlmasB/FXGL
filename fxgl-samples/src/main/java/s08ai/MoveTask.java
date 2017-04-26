@@ -47,7 +47,7 @@ public class MoveTask extends GoalAction {
     @Override
     public void action() {
 
-        double speed = FXGL.getMasterTimer().tpf() * 60 * 5;
+        double speed = 0.016 * 60 * 5;
 
         Point2D vector = new Point2D(400, 300).subtract(getObject().getPosition())
                 .normalize()

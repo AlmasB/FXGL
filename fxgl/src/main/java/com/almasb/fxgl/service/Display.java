@@ -28,10 +28,10 @@ package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.io.UIDialogHandler;
 import com.almasb.fxgl.scene.FXGLScene;
-import com.almasb.fxgl.service.listener.UserProfileSavable;
+import com.almasb.fxgl.saving.UserProfileSavable;
 import com.almasb.fxgl.settings.SceneDimension;
+import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
@@ -41,11 +41,18 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Display service. Provides access to dialogs and display settings.
+ * Display service.
+ * Provides access to dialogs and display settings.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public interface Display extends UserProfileSavable {
+
+    /**
+     * Must be called on FX thread.
+     * Will be called automatically by FXGL application.
+     */
+    void initAndShow();
 
     /**
      * Register an FXGL scene to be managed by display settings.
@@ -72,15 +79,6 @@ public interface Display extends UserProfileSavable {
     default FXGLScene getCurrentScene() {
         return currentSceneProperty().get();
     }
-
-    /**
-     * Returns available (visual) bounds of the physical display.
-     * If the game is running fullscreen then this returns maximum bounds
-     * of the physical display.
-     *
-     * @return display bounds
-     */
-    Rectangle2D getBounds();
 
     /**
      * Saves a screenshot of the current scene into a ".png" file.
@@ -110,22 +108,14 @@ public interface Display extends UserProfileSavable {
     /* DIALOG ACCESS */
 
     /**
-     * Shows given dialog and blocks execution of the game until the dialog is
-     * dismissed. The provided callback will be called with the dialog result as
-     * parameter when the dialog closes.
-     *
-     * @param dialog         JavaFX dialog
-     * @param resultCallback the function to be called
-     */
-    <T> void showDialog(Dialog<T> dialog, Consumer<T> resultCallback);
-
-    /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
      * button press, the message box will be dismissed.
      *
      * @param message the message to show
      */
-    void showMessageBox(String message);
+    default void showMessageBox(String message) {
+        showMessageBox(message, EmptyRunnable.INSTANCE);
+    }
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On
@@ -152,7 +142,9 @@ public interface Display extends UserProfileSavable {
      * @param message        message to show
      * @param resultCallback the function to be called
      */
-    void showInputBox(String message, Consumer<String> resultCallback);
+    default void showInputBox(String message, Consumer<String> resultCallback) {
+        showInputBox(message, s -> true, resultCallback);
+    }
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button and input field. The callback

@@ -50,9 +50,7 @@ class FXGLExceptionHandler
     private val log = FXGL.getLogger(javaClass)
 
     init {
-        Thread.setDefaultUncaughtExceptionHandler({ thread, e -> handleFatal(e) })
-
-        log.debug("Service [ExceptionHandler] initialized")
+        Thread.setDefaultUncaughtExceptionHandler({ _, e -> handleFatal(e) })
     }
 
     override fun handle(e: Throwable) {
@@ -75,18 +73,17 @@ class FXGLExceptionHandler
         log.fatal("Application will now exit");
 
         val app = FXGL.getApp()
-        app.pause()
 
-        val dialog = Dialog<ButtonType>()
-        dialog.title = "Uncaught Exception"
+        // stop main loop from running as we cannot continue
+        app.stopMainLoop()
 
-        val dialogPane = dialog.dialogPane
-        dialogPane.contentText = "Exception details:"
-        dialogPane.buttonTypes.addAll(ButtonType.OK)
+        // block with error dialog so that user can read the error
+        newErrorDialog(e).showAndWait()
 
-        dialogPane.contentText = e.toString()
-        dialog.initModality(Modality.APPLICATION_MODAL)
+        app.exit()
+    }
 
+    private fun newErrorDialog(e: Throwable): Dialog<*> {
         val label = Label("Exception stacktrace:")
         val sw = StringWriter()
         val pw = PrintWriter(sw)
@@ -109,9 +106,15 @@ class FXGLExceptionHandler
         root.add(label, 0, 0)
         root.add(textArea, 0, 1)
 
-        dialogPane.expandableContent = root
-        dialog.showAndWait()
+        val dialog = Dialog<ButtonType>()
+        dialog.title = "Uncaught Exception"
+        dialog.initModality(Modality.APPLICATION_MODAL)
 
-        app.exit()
+        val dialogPane = dialog.dialogPane
+        dialogPane.buttonTypes.addAll(ButtonType.OK)
+        dialogPane.contentText = e.toString()
+        dialogPane.expandableContent = root
+
+        return dialog
     }
 }

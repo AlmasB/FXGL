@@ -35,10 +35,10 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
+
+import java.util.Map;
 
 /**
  * Shows how to register and unlock achievements.
@@ -69,13 +69,15 @@ public class AchievementsSample extends GameApplication {
 
         achievement = new Achievement("Move", "Move 500 pixels");
 
-        // might be a JavaFX bug, but sometimes certain parts of the screen are not updated when screen is empty
         Achievement a = new Achievement("World Traveller", "Get to the other side of the screen.");
         getAchievementManager().registerAchievement(a);
         getAchievementManager().registerAchievement(achievement);
     }
 
-    private IntegerProperty moved = new SimpleIntegerProperty(0);
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("moved", 0);
+    }
 
     @Override
     protected void initInput() {
@@ -92,7 +94,7 @@ public class AchievementsSample extends GameApplication {
             @Override
             protected void onAction() {
                 playerControl.right();
-                moved.set(moved.get() + (int)(5 * 60 * 0.01667));
+                getGameState().increment("moved", (int) (300 * tpf()));
             }
         }, KeyCode.D);
 
@@ -128,7 +130,7 @@ public class AchievementsSample extends GameApplication {
         getAchievementManager().getAchievementByName("World Traveller")
                 .bind(player.getComponentUnsafe(PositionComponent.class).xProperty().greaterThan(600));
 
-        achievement.bind(moved, 500);
+        achievement.bind(getGameState().intProperty("moved"), 500);
     }
 
     @Override

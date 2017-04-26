@@ -29,8 +29,8 @@ package com.almasb.fxgl.gameplay
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.gameplay.AchievementEvent
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.service.listener.UserProfileSavable
-import com.almasb.fxgl.settings.UserProfile
+import com.almasb.fxgl.saving.UserProfileSavable
+import com.almasb.fxgl.saving.UserProfile
 import com.google.inject.Inject
 import javafx.collections.FXCollections
 
@@ -45,10 +45,6 @@ class AchievementManager
     private val log = FXGL.getLogger(javaClass)
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
-
-    init {
-        log.debug { "Service [AchievementManager] initialized" }
-    }
 
     /**
      * Registers achievement in the system.

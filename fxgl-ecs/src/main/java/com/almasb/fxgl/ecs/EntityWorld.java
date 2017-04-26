@@ -100,7 +100,6 @@ public class EntityWorld {
     }
 
     /**
-     *
      * @param entitiesToAdd the entities to add to world
      */
     public final void addEntities(Entity... entitiesToAdd) {

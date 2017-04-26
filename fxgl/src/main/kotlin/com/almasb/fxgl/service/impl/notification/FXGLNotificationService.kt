@@ -83,10 +83,6 @@ private constructor(private val gameScene: GameScene) : NotificationService {
 
     private var showing = false
 
-    init {
-        log.debug { "Service [NotificationService] initialized" }
-    }
-
     private fun popNotification(notificationView: NotificationView) {
         val removed = gameScene.removeUINode(notificationView)
 
