@@ -41,7 +41,6 @@ import com.almasb.fxgl.saving.LoadEvent;
 import com.almasb.fxgl.saving.SaveEvent;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.PreloadingScene;
-import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.display.DisplayEvent;
@@ -72,16 +71,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * <li>Instance fields of YOUR subclass of GameApplication</li>
  * <li>initSettings()</li>
  * <li>Services configuration (after this you can safely call any FXGL.* methods)</li>
+ * <p>Executed on JavaFX UI thread:</p>
  * <li>initAchievements()</li>
  * <li>initInput()</li>
  * <li>preInit()</li>
- * <p>The following phases are NOT executed on UI thread</p>
+ * <p>NOT executed on JavaFX UI thread:</p>
  * <li>initAssets()</li>
  * <li>initGameVars()</li>
  * <li>initGame() OR loadState()</li>
  * <li>initPhysics()</li>
  * <li>initUI()</li>
- * <p>Start of main game loop execution on UI thread</p>
+ * <p>Start of main game loop execution on JavaFX UI thread</p>
  * </ol>
  * <p>
  * Unless explicitly stated, methods are not thread-safe and must be
@@ -100,7 +100,6 @@ public abstract class GameApplication extends Application {
     private Stage primaryStage;
     private ReadOnlyGameSettings settings;
     private AppStateMachine stateMachine;
-    private SceneFactory sceneFactory;
 
     /**
      * This is the main entry point as run by the JavaFX platform.
@@ -225,18 +224,16 @@ public abstract class GameApplication extends Application {
 
         long start = System.nanoTime();
 
-        sceneFactory = FXGL.getService(ServiceType.SCENE_FACTORY);
-        stateMachine = new AppStateMachine(this);
-        playState = (PlayState) stateMachine.getPlayState();
-
+        initStateMachine();
         registerServicesForUpdate();
-
-        if (getSettings().isMenuEnabled()) {
-            // services are now ready and listening, we can generate default profile
-            menuHandler.generateDefaultProfile();
-        }
+        generateDefaultProfile();
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+    }
+
+    private void initStateMachine() {
+        stateMachine = new AppStateMachine(this);
+        playState = (PlayState) stateMachine.getPlayState();
     }
 
     private void registerServicesForUpdate() {
@@ -266,6 +263,12 @@ public abstract class GameApplication extends Application {
         getEventBus().scanForHandlers(this);
     }
 
+    private void generateDefaultProfile() {
+        if (getSettings().isMenuEnabled()) {
+            menuHandler.generateDefaultProfile();
+        }
+    }
+
     private void launchGame() {
         Async.startFX(() -> {
             FXGL.getDisplay().initAndShow();
@@ -280,6 +283,8 @@ public abstract class GameApplication extends Application {
     }
 
     private void runPreInit() {
+        log.debug("Running preInit()");
+
         if (getSettings().isProfilingEnabled()) {
             profiler = new Profiler();
         }
@@ -379,52 +384,21 @@ public abstract class GameApplication extends Application {
     }
 
     /**
-     * Initialize user application.
-     */
-    private void initApp(DataFile dataFile) {
-        log.debug("Initializing App");
-
-        FXGL.getInstance(LoadingState.class).setDataFile(dataFile);
-        stateMachine.setState(ApplicationState.LOADING);
-    }
-
-    void startIntro() {
-        stateMachine.setState(ApplicationState.INTRO);
-    }
-
-    void startGameMenu() {
-        stateMachine.setState(ApplicationState.GAME_MENU);
-    }
-
-    void startMainMenu() {
-        stateMachine.setState(ApplicationState.MAIN_MENU);
-    }
-
-    /**
-     * Set state to PLAYING.
-     */
-    void startPlay() {
-        stateMachine.setState(ApplicationState.PLAYING);
-    }
-
-    /**
      * (Re-)initializes the user application as new and starts the game.
-     * Note: cannot be called during callbacks.
      */
     protected void startNewGame() {
         log.debug("Starting new game");
-        initApp(DataFile.getEMPTY());
+        stateMachine.startLoad(DataFile.getEMPTY());
     }
 
     /**
      * (Re-)initializes the user application from the given data file and starts the game.
-     * Note: cannot be called during callbacks.
      *
      * @param dataFile save data to load from
      */
     void startLoadedGame(DataFile dataFile) {
         log.debug("Starting loaded game");
-        initApp(dataFile);
+        stateMachine.startLoad(dataFile);
     }
 
     /**
@@ -648,10 +622,6 @@ public abstract class GameApplication extends Application {
 
     public final AppStateMachine getStateMachine() {
         return stateMachine;
-    }
-
-    public final SceneFactory getSceneFactory() {
-        return sceneFactory;
     }
 
     /**

@@ -32,6 +32,7 @@ import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.GameScene
+import com.almasb.fxgl.scene.SceneFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.scene.input.KeyEvent
@@ -44,7 +45,8 @@ internal class PlayState
 @Inject
 private constructor(val gameState: GameState,
                     val gameWorld: GameWorld,
-                    val physicsWorld: PhysicsWorld) : AppState(FXGL.getApp().sceneFactory.newGameScene()) {
+                    val physicsWorld: PhysicsWorld,
+                    sceneFactory: SceneFactory) : AppState(sceneFactory.newGameScene()) {
 
     init {
         gameWorld.addWorldListener(physicsWorld)

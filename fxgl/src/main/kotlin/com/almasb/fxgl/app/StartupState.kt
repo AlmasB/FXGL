@@ -28,6 +28,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.scene.FXGLScene
+import com.almasb.fxgl.scene.SceneFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -38,21 +39,19 @@ import com.google.inject.Singleton
 internal class StartupState
 @Inject
 // placeholder scene, will be replaced by next state
-private constructor() : AppState(object : FXGLScene() {}) {
+private constructor(private val app: GameApplication) : AppState(object : FXGLScene() {}) {
 
     private val log = FXGLLogger.get(StartupState::class.java)
 
     override fun onUpdate(tpf: Double) {
         log.debug("STARTUP")
 
-        val app = FXGL.getApp()
-
         // Start -> (Intro) -> (Menu) -> Game
         if (app.settings.isIntroEnabled) {
-            app.startIntro()
+            app.stateMachine.startIntro()
         } else {
             if (app.settings.isMenuEnabled) {
-                app.startMainMenu()
+                app.stateMachine.startMainMenu()
             } else {
                 app.startNewGame()
             }

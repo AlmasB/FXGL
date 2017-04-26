@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.scene.SceneFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.scene.input.KeyEvent
@@ -36,7 +37,7 @@ import javafx.scene.input.KeyEvent
 @Singleton
 internal class GameMenuState
 @Inject
-private constructor() : AppState(FXGL.getApp().sceneFactory.newGameMenu(FXGL.getApp())) {
+private constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGameMenu(FXGL.getApp())) {
 
     init {
         input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)

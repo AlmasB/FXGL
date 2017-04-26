@@ -28,6 +28,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.event.Subscriber
 import com.almasb.fxgl.scene.IntroScene
+import com.almasb.fxgl.scene.SceneFactory
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -38,7 +39,8 @@ import com.google.inject.Singleton
 @Singleton
 internal class IntroState
 @Inject
-private constructor() : AppState(FXGL.getApp().sceneFactory.newIntro()) {
+private constructor(private val app: GameApplication,
+                    sceneFactory: SceneFactory) : AppState(sceneFactory.newIntro()) {
 
     private var introFinishedSubscriber: Subscriber? = null
     private var introFinished = false
@@ -59,7 +61,7 @@ private constructor() : AppState(FXGL.getApp().sceneFactory.newIntro()) {
     override fun onUpdate(tpf: Double) {
         if (introFinished) {
             if (FXGL.getSettings().isMenuEnabled) {
-                FXGL.getApp().startMainMenu()
+                app.stateMachine.startMainMenu()
             } else {
                 FXGL.getApp().startNewGame()
             }

@@ -28,6 +28,7 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.saving.DataFile;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -42,7 +43,13 @@ public final class AppStateMachine {
 
     private static final Logger log = FXGLLogger.get(AppStateMachine.class);
 
-    private ApplicationState applicationState = ApplicationState.STARTUP;
+    private final AppState loading;
+    private final AppState play;
+
+    // These 3 states are optional
+    private final AppState intro;
+    private final AppState mainMenu;
+    private final AppState gameMenu;
 
     private AppState appState;
 
@@ -56,43 +63,37 @@ public final class AppStateMachine {
         log.debug("Initializing application states");
 
         // STARTUP is default
-        appState = ApplicationState.STARTUP.state();
+        appState = FXGL.getInstance(StartupState.class);
 
-        ApplicationState.LOADING.state();
-        ApplicationState.PLAYING.state();
+        loading = FXGL.getInstance(LoadingState.class);
+        play = FXGL.getInstance(PlayState.class);
 
-        // init dialog sub state?
+        // fxglTODO: init dialog sub state here?
         DialogSubState.INSTANCE.getView();
 
-        if (app.getSettings().isIntroEnabled()) {
-            ApplicationState.INTRO.state();
-        }
-
-        if (app.getSettings().isMenuEnabled()) {
-            ApplicationState.MAIN_MENU.state();
-            ApplicationState.GAME_MENU.state();
-        }
+        intro = app.getSettings().isIntroEnabled() ? FXGL.getInstance(IntroState.class) : null;
+        mainMenu = app.getSettings().isMenuEnabled() ? FXGL.getInstance(MainMenuState.class) : null;
+        gameMenu = app.getSettings().isMenuEnabled() ? FXGL.getInstance(GameMenuState.class) : null;
     }
 
     /**
      * Can only be called when no substates are present.
+     * Can only be called by internal FXGL API.
      */
-    void setState(ApplicationState newState) {
+    void setState(AppState newState) {
         if (!subStates.isEmpty()) {
             log.warning("Cannot change states with active substates");
             return;
             //throw IllegalStateException("Cannot change states with active substates")
         }
 
-        log.debug(applicationState + " -> " + newState);
-
-        applicationState = newState;
-
         AppState prevState = appState;
         prevState.exit();
 
+        log.debug(prevState + " -> " + newState);
+
         // new state
-        appState = newState.state();
+        appState = newState;
         app.getDisplay().setScene(appState.getScene());
         appState.enter(prevState);
     }
@@ -133,45 +134,65 @@ public final class AppStateMachine {
         app.getDisplay().getCurrentScene().getRoot().getChildren().remove(prevState.getView());
     }
 
-    ApplicationState getApplicationState() {
-        return applicationState;
-    }
-
     public State getCurrentState() {
         return (subStates.isEmpty()) ? appState : subStates.peek();
     }
 
     public State getIntroState() {
-        if (!app.getSettings().isIntroEnabled())
+        if (intro == null)
             throw new IllegalStateException("Intro is not enabled");
 
-        return ApplicationState.INTRO.state();
+        return intro;
     }
 
     public State getLoadingState() {
-        return ApplicationState.LOADING.state();
+        return loading;
     }
 
     public State getMainMenuState() {
-        if (!app.getSettings().isMenuEnabled())
+        if (mainMenu == null)
             throw new IllegalStateException("Menu is not enabled");
 
-        return ApplicationState.MAIN_MENU.state();
+        return mainMenu;
     }
 
     public State getGameMenuState() {
-        if (!app.getSettings().isMenuEnabled())
+        if (gameMenu == null)
             throw new IllegalStateException("Menu is not enabled");
 
-        return ApplicationState.GAME_MENU.state();
+        return gameMenu;
     }
 
     public State getPlayState() {
-        return ApplicationState.PLAYING.state();
+        return play;
     }
 
     public State getDialogState() {
         return DialogSubState.INSTANCE;
+    }
+
+    void startIntro() {
+        setState(intro);
+    }
+
+    void startLoad(DataFile dataFile) {
+        ((LoadingState) loading).setDataFile(dataFile);
+        setState(loading);
+    }
+
+    void startGameMenu() {
+        setState(gameMenu);
+    }
+
+    void startMainMenu() {
+        setState(mainMenu);
+    }
+
+    /**
+     * Set state to PLAYING.
+     */
+    void startPlay() {
+        setState(play);
     }
 
     /**

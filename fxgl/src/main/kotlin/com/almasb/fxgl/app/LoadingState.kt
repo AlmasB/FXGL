@@ -32,6 +32,7 @@ import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.LoadingScene
+import com.almasb.fxgl.scene.SceneFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
@@ -46,7 +47,8 @@ import java.util.*
  */
 @Singleton
 internal class LoadingState
-@Inject private constructor() : AppState(FXGL.getApp().getSceneFactory().newLoadingScene()) {
+@Inject private constructor(private val app: GameApplication,
+                            sceneFactory: SceneFactory) : AppState(sceneFactory.newLoadingScene()) {
 
     var dataFile = DataFile.EMPTY
 
@@ -68,7 +70,7 @@ internal class LoadingState
 
     override fun onUpdate(tpf: Double) {
         if (loadingFinished) {
-            FXGL.getApp().startPlay()
+            app.stateMachine.startPlay()
             loadingFinished = false
         }
     }

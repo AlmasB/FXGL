@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.scene.SceneFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -35,7 +36,7 @@ import com.google.inject.Singleton
 @Singleton
 internal class MainMenuState
 @Inject
-private constructor() : AppState(FXGL.getApp().sceneFactory.newMainMenu(FXGL.getApp())) {
+private constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newMainMenu(FXGL.getApp())) {
 
     override fun onEnter(prevState: State) {
         if (prevState is StartupState
