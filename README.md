@@ -10,7 +10,7 @@ JavaFX Game Development Framework
 
 ## Why?
 
-* No native libraries, 0 setup required
+* No native libraries, no setup required
 * Simple and clean API
 * Brings real-world game development techniques to JavaFX
 
@@ -61,7 +61,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
 </dependency>
 ```
 
@@ -73,7 +73,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.3.1'
+    compile 'com.github.almasb:fxgl:0.3.2'
 }
 ```
 
