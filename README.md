@@ -54,6 +54,7 @@ public class BasicGameApp extends GameApplication {
 * Video tutorials - [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 * The [Samples](fxgl-samples) module is constantly updated with feature demos
 * Advanced examples - [FXGLGames](https://github.com/AlmasB/FXGLGames)
+* Pre-built game demos (standalone .jar) - [Games](https://github.com/AlmasB/FXGLGames/tree/master/binaries)
 
 ## Maven
 
