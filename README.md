@@ -28,7 +28,9 @@ JavaFX Game Development Framework
 ## Features
 
 * The list of features can be found in the [Wiki](https://github.com/AlmasB/FXGL/wiki/Core-Features)
-* [Showcase](http://almasb.github.io/FXGLGames/) 
+* [Showcase](http://almasb.github.io/FXGLGames/)
+
+![promo](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_promo.jpg)
 
 ## Minimal Example
 
