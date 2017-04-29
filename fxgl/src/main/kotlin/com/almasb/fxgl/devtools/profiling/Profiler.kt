@@ -53,6 +53,7 @@ class Profiler {
 
     private var fps = 0
     private var currentFPS = 0
+    private var currentTimeTook = 0L
 
     fun getAvgFPS() = fps / frames
 
@@ -63,7 +64,10 @@ class Profiler {
      */
     fun getAvgTimeTook() = timeTook / frames
 
-    fun getAvgTimeTookRounded() = "%.3f".format(getAvgTimeTook() / 1_000_000_000.0)
+    /**
+     * @return time took in milliseconds
+     */
+    fun getAvgTimeTookRounded() = "%.2f".format(getAvgTimeTook() / 1_000_000.0)
 
     private var memoryUsage = 0L
     private var memoryUsageMin = Long.MAX_VALUE
@@ -104,6 +108,7 @@ class Profiler {
         frames++
 
         currentFPS = fps
+        currentTimeTook = timeTook
 
         this.fps += fps
         this.timeTook += timeTook
@@ -144,7 +149,7 @@ class Profiler {
 
         log.info("Processed Frames: $frames")
         log.info("Average FPS: ${getAvgFPS()}")
-        log.info("Avg Frame Took: ${getAvgTimeTookRounded()} sec")
+        log.info("Avg Frame Took: ${getAvgTimeTookRounded()} ms")
         log.info("Avg Memory Usage: ${getAvgMemoryUsageRounded()} MB")
         log.info("Min Memory Usage: ${getMinMemoryUsageRounded()} MB")
         log.info("Max Memory Usage: ${getMaxMemoryUsageRounded()} MB")
@@ -159,7 +164,7 @@ class Profiler {
         // first clear the contents
         sb.setLength(0)
         sb.append("FPS: ").append(currentFPS)
-            .append("\nFrame (sec): ").append(getAvgTimeTookRounded())
+            .append("\nLast Frame (ms): ").append("%.0f".format(currentTimeTook / 1_000_000.0))
             .append("\nNow Mem (MB): ").append(getCurrentMemoryUsageRounded())
             .append("\nAvg Mem (MB): ").append(getAvgMemoryUsageRounded())
             .append("\nMin Mem (MB): ").append(getMinMemoryUsageRounded())
