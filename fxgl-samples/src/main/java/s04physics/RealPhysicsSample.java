@@ -63,6 +63,7 @@ public class RealPhysicsSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(false);
+        settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -103,32 +104,15 @@ public class RealPhysicsSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         getGameWorld().addEntity(Entities.makeScreenBounds(50));
     }
 
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
-
     private GameEntity createPhysicsEntity() {
         // 1. create and configure physics component
         PhysicsComponent physics = new PhysicsComponent();
-
         physics.setBodyType(BodyType.DYNAMIC);
-
-        FixtureDef fd = new FixtureDef();
-        fd.setDensity(0.7f);
-        fd.setRestitution(0.3f);
-        physics.setFixtureDef(fd);
+        physics.setFixtureDef(new FixtureDef().density(0.7f).restitution(0.3f));
 
         return Entities.builder()
                 .at(getInput().getMousePositionWorld())
