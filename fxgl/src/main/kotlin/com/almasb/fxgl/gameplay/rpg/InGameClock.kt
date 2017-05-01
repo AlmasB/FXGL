@@ -115,14 +115,17 @@ class InGameClock
 
     private var started = false
 
-    /**
-     * Start the clock.
-     * Repeated calls are no-op.
-     */
     fun start() {
         if (!started) {
-            started = true
             FXGL.getApp().addPlayStateListener(this)
+            started = true
+        }
+    }
+
+    fun stop() {
+        if (started) {
+            FXGL.getApp().removePlayStateListener(this)
+            started = false
         }
     }
 
