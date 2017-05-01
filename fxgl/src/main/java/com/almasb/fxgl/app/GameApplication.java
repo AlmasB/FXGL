@@ -631,32 +631,24 @@ public abstract class GameApplication extends Application {
         return primaryStage;
     }
 
-    /**
-     * @return game state
-     */
     public final GameState getGameState() {
         return playState.getGameState();
     }
 
-    /**
-     * @return game world
-     */
     public final GameWorld getGameWorld() {
         return playState.getGameWorld();
     }
 
-    /**
-     * @return physics world
-     */
     public final PhysicsWorld getPhysicsWorld() {
         return playState.getPhysicsWorld();
     }
 
-    /**
-     * @return game scene
-     */
     public final GameScene getGameScene() {
         return playState.getGameScene();
+    }
+
+    public final Gameplay getGameplay() {
+        return FXGL.getGameplay();
     }
 
     /**

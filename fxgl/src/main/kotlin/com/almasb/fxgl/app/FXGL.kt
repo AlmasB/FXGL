@@ -311,6 +311,9 @@ class FXGL private constructor() {
         private val _questManager by lazy { getService(ServiceType.QUEST_MANAGER) }
         @JvmStatic fun getQuestManager() = _questManager
 
+        private val _gameplay by lazy { getService(ServiceType.GAMEPLAY) }
+        @JvmStatic fun getGameplay() = _gameplay
+
         /* OTHER CONVENIENCE ACCESSORS */
 
         private val _input by lazy { internalApp.input }

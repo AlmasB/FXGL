@@ -28,6 +28,7 @@ package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.gameplay.AchievementManager;
+import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
@@ -178,6 +179,18 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends QTE> serviceProvider() {
             return QTEProvider.class;
+        }
+    };
+
+    ServiceType<Gameplay> GAMEPLAY = new ServiceType<Gameplay>() {
+        @Override
+        public Class<Gameplay> service() {
+            return Gameplay.class;
+        }
+
+        @Override
+        public Class<? extends Gameplay> serviceProvider() {
+            return Gameplay.class;
         }
     };
 
