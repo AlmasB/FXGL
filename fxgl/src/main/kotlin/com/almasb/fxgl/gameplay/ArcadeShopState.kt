@@ -24,48 +24,54 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.ui
+package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.service.UIFactory
-import javafx.collections.ObservableList
-import javafx.scene.control.*
-import javafx.scene.text.Font
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.SubState
+import javafx.collections.FXCollections
+import javafx.scene.Node
+import javafx.scene.control.Button
+import javafx.scene.control.ListCell
+import javafx.scene.layout.HBox
+import javafx.util.Callback
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-object MockUIFactory : UIFactory {
-    override fun <T : Any?> newListView(items: ObservableList<T>?): ListView<T> {
-        return ListView()
+class ArcadeShopState : SubState() {
+
+    private val items = FXCollections.observableArrayList<ArcadeShopItem>()
+
+    init {
+        val listView = FXGL.getUIFactory().newListView<ArcadeShopItem>(items)
+        listView.cellFactory = Callback {
+
+            val cell = object : ListCell<ArcadeShopItem>() {
+                override fun updateItem(item: ArcadeShopItem?, empty: Boolean) {
+                    super.updateItem(item, empty)
+
+                    if (empty || item == null) {
+                        text = null
+                        graphic = null
+                    } else {
+
+                        val hbox = HBox(10.0, item.view, Button("++"))
+                        graphic = hbox
+                    }
+                }
+            }
+
+            return@Callback cell
+        }
+
+        children.add(listView)
+        view.translateX = 150.0
+        view.translateY = 150.0
     }
 
-    override fun <T : Any?> newListView(): ListView<T> {
-        return ListView()
-    }
-
-    override fun newFont(size: Double): Font {
-        return Font.font(size)
-    }
-
-    override fun newButton(text: String?): Button {
-        return Button(text)
-    }
-
-    override fun <T : Any?> newChoiceBox(items: ObservableList<T>?): ChoiceBox<T> {
-        return ChoiceBox(items)
-    }
-
-    override fun <T : Any?> newChoiceBox(): ChoiceBox<T> {
-        return ChoiceBox()
-    }
-
-    override fun newCheckBox(): CheckBox {
-        return CheckBox()
-    }
-
-    override fun <T : Any?> newSpinner(items: ObservableList<T>?): Spinner<T> {
-        return Spinner(items)
+    fun addItem(item: ArcadeShopItem) {
+        items.add(item)
     }
 }

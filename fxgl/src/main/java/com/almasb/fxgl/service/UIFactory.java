@@ -30,10 +30,7 @@ import com.almasb.fxgl.app.FXGL;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Spinner;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -117,6 +114,10 @@ public interface UIFactory {
     CheckBox newCheckBox();
 
     <T> Spinner<T> newSpinner(ObservableList<T> items);
+
+    <T> ListView<T> newListView(ObservableList<T> items);
+
+    <T> ListView<T> newListView();
 
     default FadeTransition fadeIn(Node node, Duration duration) {
         return fadeIn(node, duration, () -> {});

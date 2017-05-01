@@ -34,10 +34,7 @@ import com.almasb.fxgl.ui.FXGLChoiceBox
 import com.almasb.fxgl.ui.FXGLSpinner
 import com.google.inject.Inject
 import javafx.collections.ObservableList
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.Spinner
+import javafx.scene.control.*
 import javafx.scene.text.Font
 
 /**
@@ -71,5 +68,13 @@ private constructor() : UIFactory {
 
     override fun <T> newSpinner(items: ObservableList<T>): Spinner<T> {
         return FXGLSpinner(items)
+    }
+
+    override fun <T : Any> newListView(items: ObservableList<T>): ListView<T> {
+        return ListView(items)
+    }
+
+    override fun <T : Any> newListView(): ListView<T> {
+        return ListView<T>()
     }
 }
