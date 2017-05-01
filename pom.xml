@@ -13,7 +13,6 @@
 
     <modules>
         <module>fxgl</module>
-        <module>fxgl-net</module>
         <module>fxgl-core</module>
         <module>fxgl-io</module>
         <module>fxgl-ecs</module>
