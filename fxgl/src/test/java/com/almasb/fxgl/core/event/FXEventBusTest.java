@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.core.event;
 
+import com.almasb.fxgl.event.TestEvent;
 import org.junit.Before;
 import org.junit.Test;
 
