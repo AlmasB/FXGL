@@ -34,8 +34,8 @@ import com.almasb.fxgl.physics.*;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.jbox2d.particle.ParticleGroupDef;
-import org.jbox2d.particle.ParticleType;
+import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
+import com.almasb.fxgl.physics.box2d.particle.ParticleType;
 
 import java.util.EnumSet;
 

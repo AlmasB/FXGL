@@ -47,7 +47,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import org.jbox2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 
 /**
  * Arrow sprite from https://www.spriters-resource.com/game_boy_advance/justiceleagueheroestheflash/sheet/18563/

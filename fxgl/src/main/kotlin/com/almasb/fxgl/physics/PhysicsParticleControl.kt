@@ -30,7 +30,7 @@ import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.effect.ParticleControl
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
-import org.jbox2d.particle.ParticleGroup
+import com.almasb.fxgl.physics.box2d.particle.ParticleGroup
 
 /**
  * The difference between physics and normal particle entity is that

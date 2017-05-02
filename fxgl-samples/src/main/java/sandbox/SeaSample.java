@@ -36,7 +36,7 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.jbox2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 
 /**
  * This is an example of a basic self-contained FXGL game application.

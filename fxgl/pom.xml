@@ -59,18 +59,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-physics</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-core</artifactId>
-            <version>${fxgl.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>${guice.version}</version>
@@ -98,6 +86,13 @@
             <groupId>io.github.lukehutch</groupId>
             <artifactId>fast-classpath-scanner</artifactId>
             <version>${classpath.scanner.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.5</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

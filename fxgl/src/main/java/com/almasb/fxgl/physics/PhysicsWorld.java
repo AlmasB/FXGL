@@ -44,14 +44,14 @@ import com.google.inject.name.Named;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import org.jbox2d.callbacks.ContactImpulse;
-import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.collision.Manifold;
-import org.jbox2d.collision.shapes.*;
-import org.jbox2d.dynamics.*;
-import org.jbox2d.dynamics.contacts.Contact;
-import org.jbox2d.particle.ParticleGroup;
-import org.jbox2d.particle.ParticleGroupDef;
+import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
+import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
+import com.almasb.fxgl.physics.box2d.collision.Manifold;
+import com.almasb.fxgl.physics.box2d.collision.shapes.*;
+import com.almasb.fxgl.physics.box2d.dynamics.*;
+import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
+import com.almasb.fxgl.physics.box2d.particle.ParticleGroup;
+import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
 
 import java.util.Iterator;
 

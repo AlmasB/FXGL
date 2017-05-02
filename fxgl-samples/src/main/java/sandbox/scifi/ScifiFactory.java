@@ -39,7 +39,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import org.jbox2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

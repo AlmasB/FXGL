@@ -13,8 +13,6 @@
 
     <modules>
         <module>fxgl</module>
-        <module>fxgl-core</module>
-        <module>fxgl-physics</module>
 
         <!-- Modules below show how to use FXGL, but FXGL does not depend on them -->
         <module>fxgl-samples</module>

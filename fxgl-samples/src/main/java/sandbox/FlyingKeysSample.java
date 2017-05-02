@@ -40,8 +40,8 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 
 /**
  *

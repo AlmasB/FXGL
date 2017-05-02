@@ -31,7 +31,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
-import org.jbox2d.collision.shapes.ShapeType;
+import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 
 import java.io.IOException;
 import java.io.Serializable;
