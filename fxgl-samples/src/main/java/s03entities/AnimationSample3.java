@@ -31,6 +31,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.animation.EntityAnimation;
+import com.almasb.fxgl.entity.animation.control.RotationControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -86,29 +87,31 @@ public class AnimationSample3 extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
 
-        Entities.animationBuilder()
-                .duration(Duration.seconds(3))
-                .repeat(2)
-                .rotate(player)
-                .rotateTo(360)
-                .buildAndPlay();
+//        Entities.animationBuilder()
+//                .duration(Duration.seconds(3))
+//                .repeat(1)
+//                .rotate(player)
+//                .rotateTo(360)
+//                .buildAndPlay();
 
-        Entities.animationBuilder()
-                .duration(Duration.seconds(3))
-                .repeat(1)
-                .scale(player)
-                .to(new Point2D(2, 2))
-                .buildAndPlay();
+        player.addControl(new RotationControl(Duration.seconds(0), Duration.seconds(3), 1, 0, 360));
 
-        EntityAnimation anim = Entities.animationBuilder()
-                .duration(Duration.seconds(3))
-                .repeat(2)
-                .delay(Duration.millis(3002))
-                .translate(player)
-                .alongPath(new QuadCurve(33, 33, 150, 144, 350, 344))
-                .build();
-
-        anim.play();
+//        Entities.animationBuilder()
+//                .duration(Duration.seconds(3))
+//                .repeat(1)
+//                .scale(player)
+//                .to(new Point2D(2, 2))
+//                .buildAndPlay();
+//
+//        EntityAnimation anim = Entities.animationBuilder()
+//                .duration(Duration.seconds(3))
+//                .repeat(2)
+//                .delay(Duration.millis(3002))
+//                .translate(player)
+//                .alongPath(new QuadCurve(33, 33, 150, 144, 350, 344))
+//                .build();
+//
+//        anim.play();
     }
 
     @Override
