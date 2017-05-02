@@ -29,8 +29,8 @@ package sandbox.rts;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
-import com.badlogic.gdx.ai.fsm.State;
-import com.badlogic.gdx.ai.msg.Telegram;
+import com.almasb.fxgl.ai.fsm.State;
+import com.almasb.fxgl.ai.msg.Telegram;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
