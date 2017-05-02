@@ -24,54 +24,32 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service.impl.ui
+package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.asset.FXGLAssets
-import com.almasb.fxgl.service.UIFactory
-import com.almasb.fxgl.ui.*
-import com.google.inject.Inject
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.scene.control.*
-import javafx.scene.text.Font
+import javafx.scene.control.ListCell
+import javafx.scene.control.ListView
+import javafx.util.Callback
 
 /**
- * FXGL provider of UI factory service.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLUIFactory
-@Inject
-private constructor() : UIFactory {
+class FXGLListView<T>(items: ObservableList<T>) : ListView<T>(items) {
 
-    override fun newFont(size: Double): Font {
-        return FXGLAssets.UI_FONT.newFont(size)
+    constructor() : this(FXCollections.observableArrayList<T>())
+
+    init {
+        styleClass.add("fxgl-list-view")
+
+        //cellFactory = Callback { FXGLListCell<T>() }
     }
 
-    override fun newButton(text: String): Button {
-        return FXGLButton(text)
-    }
-
-    override fun <T> newChoiceBox(items: ObservableList<T>): ChoiceBox<T> {
-        return FXGLChoiceBox(items)
-    }
-
-    override fun <T> newChoiceBox(): ChoiceBox<T> {
-        return FXGLChoiceBox()
-    }
-
-    override fun newCheckBox(): CheckBox {
-        return FXGLCheckBox()
-    }
-
-    override fun <T> newSpinner(items: ObservableList<T>): Spinner<T> {
-        return FXGLSpinner(items)
-    }
-
-    override fun <T : Any> newListView(items: ObservableList<T>): ListView<T> {
-        return FXGLListView(items)
-    }
-
-    override fun <T : Any> newListView(): ListView<T> {
-        return FXGLListView<T>()
-    }
+//    private class FXGLListCell<T> : ListCell<T>() {
+//        init {
+//            styleClass.add("fxgl-list-cell")
+//        }
+//    }
 }

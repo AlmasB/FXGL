@@ -195,7 +195,7 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentLoad() {
         log.debug("createContentLoad()");
 
-        ListView<SaveFile> list = new ListView<>();
+        ListView<SaveFile> list = FXGL.getUIFactory().newListView();
 
         list.setItems(listener.getSaveLoadManager().saveFiles());
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));

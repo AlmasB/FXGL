@@ -64,15 +64,16 @@
 }
 
 /**
- * ListView
+ * FXGLListView
  */
-.list-view {
+.fxgl-list-view {
     -fx-background-insets: 0;
     -fx-padding: 0;
     -fx-accent: white;
 }
 
-.list-cell { 
+/* this is a workaround (overrides native javafx css) as fxgl-list-cell doesn't work for some reason */
+.list-cell {
     -fx-background: black;
     -fx-font-size: 18px;
 
