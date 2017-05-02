@@ -398,7 +398,7 @@ public final class FXGLMath {
      * @param progress the interpolation progress [0..1]
      * @return linearly interpolated value between fromValue to toValue based on progress position
      */
-    public static float lerp(float fromValue, float toValue, float progress) {
+    public static double lerp(double fromValue, double toValue, double progress) {
         return fromValue + (toValue - fromValue) * progress;
     }
 
