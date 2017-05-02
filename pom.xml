@@ -14,8 +14,6 @@
     <modules>
         <module>fxgl</module>
         <module>fxgl-core</module>
-        <module>fxgl-io</module>
-        <module>fxgl-ecs</module>
         <module>fxgl-physics</module>
 
         <!-- Modules below show how to use FXGL, but FXGL does not depend on them -->
