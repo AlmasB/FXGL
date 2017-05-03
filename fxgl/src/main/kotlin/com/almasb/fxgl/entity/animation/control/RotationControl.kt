@@ -26,9 +26,8 @@
 
 package com.almasb.fxgl.entity.animation.control
 
-import com.almasb.fxgl.core.math.FXGLMath
-import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.RotationComponent
+import javafx.animation.Interpolator
 import javafx.util.Duration
 
 /**
@@ -36,28 +35,21 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RotationControl(val delay: Duration, val duration: Duration,
-                      val cycleCount: Int,
-                      val startAngle: Double, val endAngle: Double) : AnimationControl() {
+class RotationControl(delay: Duration, duration: Duration,
+                      cycleCount: Int, val interpolator: Interpolator,
+                      val startAngle: Double, val endAngle: Double) : AnimationControl(delay, duration, cycleCount) {
 
     private lateinit var rotation: RotationComponent
 
-    private var time = 0.0
-    private var endTime = duration.toSeconds()
-
-    override fun onAdded(entity: Entity) {
+    override fun onCycleStarted() {
         rotation.value = startAngle
     }
 
-    override fun onUpdate(entity: Entity, tpf: Double) {
-        time += tpf
+    override fun onProgress(progress: Double) {
+        rotation.value = interpolator.interpolate(startAngle, endAngle, progress)
+    }
 
-        if (time >= endTime) {
-            rotation.value = endAngle
-            entity.removeControl(RotationControl::class.java)
-            return
-        }
-
-        rotation.value = FXGLMath.lerp(startAngle, endAngle, time / endTime)
+    override fun onCycleFinished() {
+        rotation.value = endAngle
     }
 }

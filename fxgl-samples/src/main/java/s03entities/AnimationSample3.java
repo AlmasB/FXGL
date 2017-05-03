@@ -30,10 +30,10 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.animation.EntityAnimation;
-import com.almasb.fxgl.entity.animation.control.RotationControl;
+import com.almasb.fxgl.entity.animation.control.AnimationControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.QuadCurve;
@@ -87,14 +87,12 @@ public class AnimationSample3 extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
 
-//        Entities.animationBuilder()
-//                .duration(Duration.seconds(3))
-//                .repeat(1)
-//                .rotate(player)
-//                .rotateTo(360)
-//                .buildAndPlay();
-
-        player.addControl(new RotationControl(Duration.seconds(0), Duration.seconds(3), 1, 0, 360));
+        Entities.animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeat(1)
+                .rotate(player)
+                .rotateTo(360)
+                .buildAndPlay();
 
 //        Entities.animationBuilder()
 //                .duration(Duration.seconds(3))
@@ -103,15 +101,18 @@ public class AnimationSample3 extends GameApplication {
 //                .to(new Point2D(2, 2))
 //                .buildAndPlay();
 //
-//        EntityAnimation anim = Entities.animationBuilder()
-//                .duration(Duration.seconds(3))
-//                .repeat(2)
-//                .delay(Duration.millis(3002))
-//                .translate(player)
-//                .alongPath(new QuadCurve(33, 33, 150, 144, 350, 344))
-//                .build();
-//
-//        anim.play();
+        AnimationControl anim = Entities.animationBuilder()
+                .duration(Duration.seconds(3))
+                .repeat(2)
+                .delay(Duration.millis(3002))
+                .interpolator(Interpolator.EASE_OUT)
+                .translate(player)
+                .from(new Point2D(100, 100))
+                .to(new Point2D(400, 90))
+                //.alongPath(new QuadCurve(33, 33, 150, 144, 350, 344))
+                .build();
+
+        player.addControl(anim);
     }
 
     @Override

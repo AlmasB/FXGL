@@ -27,12 +27,71 @@
 package com.almasb.fxgl.entity.animation.control
 
 import com.almasb.fxgl.ecs.AbstractControl
+import com.almasb.fxgl.ecs.Entity
+import javafx.util.Duration
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class AnimationControl : AbstractControl() {
+abstract class AnimationControl(val delay: Duration,
+                                val duration: Duration,
+                                val cycleCount: Int) : AbstractControl() {
 
+    private var time = 0.0
+    private var endTime = duration.toSeconds()
+
+    private var count = 0
+
+    private var checkDelay = true
+
+    override fun onUpdate(entity: Entity, tpf: Double) {
+        if (checkDelay) {
+            time += tpf
+
+            if (time >= delay.toSeconds()) {
+                checkDelay = false
+                time = 0.0
+            } else {
+                return
+            }
+        }
+
+        if (time == 0.0) {
+            onCycleStarted()
+            time += tpf
+            return
+        }
+
+        time += tpf
+
+        if (time >= endTime) {
+            onCycleFinished()
+
+            count++
+
+            if (count >= cycleCount) {
+                onFinished()
+                entity.removeControl(javaClass)
+            } else {
+                time = 0.0
+            }
+
+            return
+        }
+
+        onProgress(time / endTime)
+    }
+
+    /**
+     * @param progress value in [0..1]
+     */
+    protected abstract fun onProgress(progress: Double)
+
+    protected open fun onCycleStarted() {}
+
+    protected open fun onCycleFinished() {}
+
+    protected open fun onFinished() {}
 }

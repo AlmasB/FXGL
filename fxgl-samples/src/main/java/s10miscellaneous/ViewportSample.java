@@ -201,7 +201,7 @@ public class ViewportSample extends GameApplication {
         Entities.animationBuilder()
                 .duration(Duration.seconds(24))
                 .translate(camera)
-                .alongPath(path)
+                //.alongPath(path)
                 .buildAndPlay();
     }
 

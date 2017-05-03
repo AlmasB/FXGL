@@ -24,51 +24,34 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity.animation
+package com.almasb.fxgl.entity.animation.control
 
-import javafx.animation.Animation
-import javafx.animation.ScaleTransition
+import com.almasb.fxgl.core.math.FXGLMath
+import com.almasb.fxgl.entity.component.PositionComponent
+import javafx.animation.Interpolator
 import javafx.geometry.Point2D
-import javafx.scene.Node
-import javafx.scene.shape.Rectangle
+import javafx.util.Duration
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ScaleAnimation(animationBuilder: AnimationBuilder,
-                     val startScale: Point2D, val endScale: Point2D) : EntityAnimation(animationBuilder) {
+class TranslationControl(delay: Duration, duration: Duration,
+                         cycleCount: Int, val interpolator: Interpolator,
+                         val startPosition: Point2D, val endPosition: Point2D) : AnimationControl(delay, duration, cycleCount) {
 
-    private lateinit var node: Node
+    private lateinit var position: PositionComponent
 
-    init {
-        initAnimation()
+    override fun onCycleStarted() {
+        position.value = startPosition
     }
 
-    override fun buildAnimation(): Animation {
-        node = Rectangle()
-
-        val anim = ScaleTransition(animationBuilder.duration, node)
-        anim.fromX = startScale.x
-        anim.fromY = startScale.y
-        anim.toX = endScale.x
-        anim.toY = endScale.y
-
-        return anim
+    override fun onProgress(progress: Double) {
+        position.value = FXGLMath.interpolate(startPosition, endPosition, progress, interpolator)
     }
 
-    override fun bindProperties() {
-        animationBuilder.entities.map { it.viewComponent }.forEach {
-            it.view.scaleXProperty().bind(node.scaleXProperty())
-            it.view.scaleYProperty().bind(node.scaleYProperty())
-        }
-    }
-
-    override fun unbindProperties() {
-        animationBuilder.entities.map { it.viewComponent }.forEach {
-            it.view.scaleXProperty().unbind()
-            it.view.scaleYProperty().unbind()
-        }
+    override fun onCycleFinished() {
+        position.value = endPosition
     }
 }

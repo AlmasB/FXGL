@@ -24,13 +24,39 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity.animation
+package com.almasb.fxgl.entity.animation.control
+
+import com.almasb.fxgl.core.math.FXGLMath
+import com.almasb.fxgl.entity.component.ViewComponent
+import javafx.animation.Interpolator
+import javafx.geometry.Point2D
+import javafx.util.Duration
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-enum class AnimationState {
-    INIT, PLAYING, PAUSED, FINISHED
+class ScaleControl(delay: Duration, duration: Duration,
+                   cycleCount: Int, val interpolator: Interpolator,
+                   val startScale: Point2D, val endScale: Point2D) : AnimationControl(delay, duration, cycleCount) {
+
+    private lateinit var view: ViewComponent
+
+    override fun onCycleStarted() {
+        view.view.scaleX = startScale.x
+        view.view.scaleY = startScale.y
+    }
+
+    override fun onProgress(progress: Double) {
+        val i = FXGLMath.interpolate(startScale, endScale, progress, interpolator)
+
+        view.view.scaleX = i.x
+        view.view.scaleY = i.y
+    }
+
+    override fun onCycleFinished() {
+        view.view.scaleX = endScale.x
+        view.view.scaleY = endScale.y
+    }
 }
