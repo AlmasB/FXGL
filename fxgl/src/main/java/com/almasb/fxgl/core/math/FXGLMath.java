@@ -30,6 +30,8 @@
 
 package com.almasb.fxgl.core.math;
 
+import javafx.animation.Interpolatable;
+import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
@@ -399,7 +401,22 @@ public final class FXGLMath {
      * @return linearly interpolated value between fromValue to toValue based on progress position
      */
     public static double lerp(double fromValue, double toValue, double progress) {
-        return fromValue + (toValue - fromValue) * progress;
+        return Interpolator.LINEAR.interpolate(fromValue, toValue, progress);
+    }
+
+    public static Point2D lerp(double fromX, double fromY, double toX, double toY, double progress) {
+        return new Point2D(lerp(fromX, toX, progress), lerp(fromY, toY, progress));
+    }
+
+    public static double interpolate(double fromValue, double toValue, double progress, Interpolator interpolator) {
+        return interpolator.interpolate(fromValue, toValue, progress);
+    }
+
+    public static Point2D interpolate(Point2D fromValue, Point2D toValue, double progress, Interpolator interpolator) {
+        double x = interpolate(fromValue.getX(), toValue.getX(), progress, interpolator);
+        double y = interpolate(fromValue.getY(), toValue.getY(), progress, interpolator);
+
+        return new Point2D(x, y);
     }
 
     /**
