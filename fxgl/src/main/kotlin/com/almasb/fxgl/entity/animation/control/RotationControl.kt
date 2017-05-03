@@ -41,15 +41,7 @@ class RotationControl(delay: Duration, duration: Duration,
 
     private lateinit var rotation: RotationComponent
 
-    override fun onCycleStarted() {
-        rotation.value = startAngle
-    }
-
     override fun onProgress(progress: Double) {
         rotation.value = interpolator.interpolate(startAngle, endAngle, progress)
-    }
-
-    override fun onCycleFinished() {
-        rotation.value = endAngle
     }
 }

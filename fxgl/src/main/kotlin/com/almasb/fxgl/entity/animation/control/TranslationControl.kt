@@ -30,6 +30,9 @@ import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.entity.component.PositionComponent
 import javafx.animation.Interpolator
 import javafx.geometry.Point2D
+import javafx.scene.shape.CubicCurve
+import javafx.scene.shape.QuadCurve
+import javafx.scene.shape.Shape
 import javafx.util.Duration
 
 /**
@@ -39,19 +42,34 @@ import javafx.util.Duration
  */
 class TranslationControl(delay: Duration, duration: Duration,
                          cycleCount: Int, val interpolator: Interpolator,
+                         val path: Shape?,
                          val startPosition: Point2D, val endPosition: Point2D) : AnimationControl(delay, duration, cycleCount) {
 
     private lateinit var position: PositionComponent
 
-    override fun onCycleStarted() {
-        position.value = startPosition
-    }
-
     override fun onProgress(progress: Double) {
-        position.value = FXGLMath.interpolate(startPosition, endPosition, progress, interpolator)
+        position.value = interpolate(progress)
     }
 
-    override fun onCycleFinished() {
-        position.value = endPosition
+    private fun interpolate(progress: Double): Point2D {
+        if (path != null) {
+            when (path) {
+                is QuadCurve -> {
+                    return FXGLMath.bezier(Point2D(path.startX, path.startY), Point2D(path.controlX, path.controlY),
+                            Point2D(path.endX, path.endY), progress)
+                }
+
+                is CubicCurve -> {
+                    return FXGLMath.bezier(Point2D(path.startX, path.startY), Point2D(path.controlX1, path.controlY1),
+                            Point2D(path.controlX2, path.controlY2), Point2D(path.endX, path.endY), progress)
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Unsupported path: $path")
+                }
+            }
+        } else {
+            return FXGLMath.interpolate(startPosition, endPosition, progress, interpolator)
+        }
     }
 }

@@ -31,6 +31,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.animation.control.AnimationControl;
+import com.almasb.fxgl.entity.animation.control.ScaleControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.animation.Interpolator;
@@ -67,18 +68,17 @@ public class AnimationSample3 extends GameApplication {
         getInput().addAction(new UserAction("Grow") {
             @Override
             protected void onActionBegin() {
-                Entities.animationBuilder()
-                        .duration(Duration.seconds(3))
-                        .scale(player)
-                        .from(new Point2D(2, 2))
-                        .to(new Point2D(1, 1))
-                        .buildAndPlay();
+                if (!player.hasControl(ScaleControl.class)) {
+                    Entities.animationBuilder()
+                            .duration(Duration.seconds(3))
+                            .scale(player)
+                            .from(new Point2D(2, 2))
+                            .to(new Point2D(1, 1))
+                            .buildAndPlay();
+                }
             }
         }, KeyCode.F);
     }
-
-    @Override
-    protected void initAssets() {}
 
     @Override
     protected void initGame() {
@@ -88,41 +88,23 @@ public class AnimationSample3 extends GameApplication {
                 .buildAndAttach(getGameWorld());
 
         Entities.animationBuilder()
-                .duration(Duration.seconds(3))
+                .duration(Duration.seconds(1))
                 .repeat(1)
                 .rotate(player)
                 .rotateTo(360)
                 .buildAndPlay();
 
-//        Entities.animationBuilder()
-//                .duration(Duration.seconds(3))
-//                .repeat(1)
-//                .scale(player)
-//                .to(new Point2D(2, 2))
-//                .buildAndPlay();
-//
         AnimationControl anim = Entities.animationBuilder()
                 .duration(Duration.seconds(3))
                 .repeat(2)
-                .delay(Duration.millis(3002))
+                .delay(Duration.millis(1002))
                 .interpolator(Interpolator.EASE_OUT)
                 .translate(player)
-                .from(new Point2D(100, 100))
-                .to(new Point2D(400, 90))
-                //.alongPath(new QuadCurve(33, 33, 150, 144, 350, 344))
+                .alongPath(new QuadCurve(33, 33, 450, 544, 750, 4))
                 .build();
 
         player.addControl(anim);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

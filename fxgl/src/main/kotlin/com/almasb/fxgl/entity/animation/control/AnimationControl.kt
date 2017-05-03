@@ -60,6 +60,9 @@ abstract class AnimationControl(val delay: Duration,
 
         if (time == 0.0) {
             onCycleStarted()
+
+            onProgress(0.0)
+
             time += tpf
             return
         }
@@ -68,6 +71,8 @@ abstract class AnimationControl(val delay: Duration,
 
         if (time >= endTime) {
             onCycleFinished()
+
+            onProgress(1.0)
 
             count++
 

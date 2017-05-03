@@ -29,6 +29,8 @@ package com.almasb.fxgl.entity.animation
 import com.almasb.fxgl.entity.animation.control.AnimationControl
 import com.almasb.fxgl.entity.animation.control.TranslationControl
 import javafx.geometry.Point2D
+import javafx.scene.shape.CubicCurve
+import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Shape
 
 /**
@@ -38,14 +40,14 @@ import javafx.scene.shape.Shape
  */
 class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
 
-    //private var path: Shape? = null
+    private var path: Shape? = null
     private var fromPoint = Point2D.ZERO
     private var toPoint = Point2D.ZERO
 
-//    fun alongPath(path: Shape): TranslationAnimationBuilder {
-//        this.path = path
-//        return this
-//    }
+    fun alongPath(path: Shape): TranslationAnimationBuilder {
+        this.path = path
+        return this
+    }
 
     fun from(start: Point2D): TranslationAnimationBuilder {
         fromPoint = start
@@ -59,7 +61,7 @@ class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder
 
     fun build(): AnimationControl {
         return TranslationControl(animationBuilder.delay, animationBuilder.duration,
-                animationBuilder.times, animationBuilder.interpolator,
+                animationBuilder.times, animationBuilder.interpolator, path,
                 fromPoint, toPoint)
     }
 

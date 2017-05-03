@@ -563,6 +563,20 @@ public final class FXGLMath {
         return log(2, value);
     }
 
+    public static Point2D bezier(Point2D p1, Point2D p2, Point2D p3, double t) {
+        double x = (1 - t) * (1 - t) * p1.getX() + 2 * (1 - t) * t * p2.getX() + t * t * p3.getX();
+        double y = (1 - t) * (1 - t) * p1.getY() + 2 * (1 - t) * t * p2.getY() + t * t * p3.getY();
+
+        return new Point2D(x, y);
+    }
+
+    public static Point2D bezier(Point2D p1, Point2D p2, Point2D p3, Point2D p4, double t) {
+        double x = Math.pow(1 - t, 3) * p1.getX() + 3 * t * Math.pow(1 - t, 2) * p2.getX() + 3 * t*t * (1 - t) * p3.getX() + t*t*t*p4.getX();
+        double y = Math.pow(1 - t, 3) * p1.getY() + 3 * t * Math.pow(1 - t, 2) * p2.getY() + 3 * t*t * (1 - t) * p3.getY() + t*t*t*p4.getY();
+
+        return new Point2D(x, y);
+    }
+
     /**
      * @param points the spline passes through these points
      * @return a closed bezier spline

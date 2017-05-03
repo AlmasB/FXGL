@@ -43,20 +43,10 @@ class ScaleControl(delay: Duration, duration: Duration,
 
     private lateinit var view: ViewComponent
 
-    override fun onCycleStarted() {
-        view.view.scaleX = startScale.x
-        view.view.scaleY = startScale.y
-    }
-
     override fun onProgress(progress: Double) {
         val i = FXGLMath.interpolate(startScale, endScale, progress, interpolator)
 
         view.view.scaleX = i.x
         view.view.scaleY = i.y
-    }
-
-    override fun onCycleFinished() {
-        view.view.scaleX = endScale.x
-        view.view.scaleY = endScale.y
     }
 }
