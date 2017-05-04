@@ -137,13 +137,13 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         fxScene = Scene(Pane(), targetWidth.value, targetHeight.value)
 
         // main key event handler
-        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
+        fxScene.addEventHandler(KeyEvent.ANY, keyHandler)
 
         // main mouse event handler
-        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
+        fxScene.addEventHandler(MouseEvent.ANY, mouseHandler)
 
         // reroute any events to current state input
-        fxScene.addEventFilter(EventType.ROOT, genericHandler)
+        fxScene.addEventHandler(EventType.ROOT, genericHandler)
     }
 
     /**
@@ -360,13 +360,13 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
 
         // clear listener
         // main key event handler
-        fxScene.removeEventFilter(KeyEvent.ANY, keyHandler)
+        fxScene.removeEventHandler(KeyEvent.ANY, keyHandler)
 
         // main mouse event handler
-        fxScene.removeEventFilter(MouseEvent.ANY, mouseHandler)
+        fxScene.removeEventHandler(MouseEvent.ANY, mouseHandler)
 
         // reroute any events to current state input
-        fxScene.removeEventFilter(EventType.ROOT, genericHandler)
+        fxScene.removeEventHandler(EventType.ROOT, genericHandler)
 
         // clear root of previous JavaFX scene
         fxScene.root = Pane()
@@ -375,13 +375,13 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         fxScene = Scene(root)
 
         // main key event handler
-        fxScene.addEventFilter(KeyEvent.ANY, keyHandler)
+        fxScene.addEventHandler(KeyEvent.ANY, keyHandler)
 
         // main mouse event handler
-        fxScene.addEventFilter(MouseEvent.ANY, mouseHandler)
+        fxScene.addEventHandler(MouseEvent.ANY, mouseHandler)
 
         // reroute any events to current state input
-        fxScene.addEventFilter(EventType.ROOT, genericHandler)
+        fxScene.addEventHandler(EventType.ROOT, genericHandler)
 
         stage.scene = fxScene
         if (settings.isFullScreen) {
