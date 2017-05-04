@@ -34,6 +34,9 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.texture.AnimatedTexture;
+import com.almasb.fxgl.texture.AnimationObj;
+import com.almasb.fxgl.texture.AnimationTexture;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
 
@@ -50,11 +53,18 @@ public class PlayerControl extends AbstractControl {
     private boolean isStatic = true;
 
     private Texture staticTexture;
-    private Texture animatedTexture;
+    private AnimationTexture animatedTexture;
 
-    public PlayerControl(Texture staticTexture, Texture animatedTexture) {
+    private AnimationObj animStand, animWalk;
+
+    public PlayerControl(Texture staticTexture, AnimationTexture animatedTexture) {
         this.staticTexture = staticTexture;
         this.animatedTexture = animatedTexture;
+
+        animStand = new AnimationObj(15, 1, 1);
+        animWalk = new AnimationObj(15, 0, 3);
+
+        this.animatedTexture.anim = animStand;
     }
 
     @Override
@@ -64,7 +74,8 @@ public class PlayerControl extends AbstractControl {
         view = Entities.getView(entity);
 
         oldX = position.getX();
-        view.getView().addNode(staticTexture);
+        view.getView().addNode(animatedTexture);
+        //view.getView().addNode(staticTexture);
     }
 
     // not the most elegant solution for static checks
@@ -74,39 +85,57 @@ public class PlayerControl extends AbstractControl {
     public void onUpdate(Entity entity, double tpf) {
         //if (oldX == position.getX()) {
         if (Math.abs(physics.getVelocityX()) == 0) {
-            if (!isStatic) {
-                view.getView().removeNode(animatedTexture);
-                view.getView().addNode(staticTexture);
-                isStatic = true;
-            }
+            //if (!isStatic) {
+                stopAnimate();
+            //}
+        } else {
+            animate();
         }
-
-        oldX = position.getX();
 
         if (Math.abs(physics.getVelocityX()) < 140)
             physics.setVelocityX(0);
+
+
+        animatedTexture.update();
     }
 
     public void left() {
         view.getView().setScaleX(-1);
         physics.setVelocityX(-150);
 
-        if (isStatic) {
-            view.getView().removeNode(staticTexture);
-            view.getView().addNode(animatedTexture);
-            isStatic = false;
-        }
+//        if (isStatic) {
+//            animate();
+//        }
     }
 
     public void right() {
         view.getView().setScaleX(1);
         physics.setVelocityX(150);
 
-        if (isStatic) {
-            view.getView().removeNode(staticTexture);
-            view.getView().addNode(animatedTexture);
-            isStatic = false;
-        }
+//        if (isStatic) {
+//            animate();
+//        }
+    }
+
+    private void animate() {
+        System.out.println("animate");
+        //animatedTexture.reset();
+        //animatedTexture.resetTimer();
+        //view.getView().removeNode(staticTexture);
+        //view.getView().addNode(animatedTexture);
+
+        //animWalk.reset();
+        animatedTexture.anim = animWalk;
+        isStatic = false;
+    }
+
+    private void stopAnimate() {
+        System.out.println("stop");
+        //view.getView().removeNode(animatedTexture);
+        //view.getView().addNode(staticTexture);
+        animWalk.reset();
+        animatedTexture.anim = animStand;
+        isStatic = true;
     }
 
     public void jump() {

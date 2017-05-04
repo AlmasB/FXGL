@@ -27,6 +27,7 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.tiled.TiledMap;
@@ -93,6 +94,8 @@ public class ScifiSample extends GameApplication {
 
         player = (GameEntity) getGameWorld().spawn("player", 100, 100);
         playerControl = player.getControlUnsafe(PlayerControl.class);
+
+        getGameWorld().addEntities(Entities.makeScreenBounds(40));
     }
 
     public static void main(String[] args) {

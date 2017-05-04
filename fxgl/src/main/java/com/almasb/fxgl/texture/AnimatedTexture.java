@@ -102,6 +102,10 @@ public final class AnimatedTexture extends Texture implements StateListener {
 
     @Override
     public void onUpdate(double tpf) {
+        //System.out.println(currentFrame);
+        if (getScene() == null)
+            return;
+
         if (animationTimer.elapsed(Duration.seconds(timePerAnimationFrame))) {
 
             currentFrame++;
@@ -117,6 +121,14 @@ public final class AnimatedTexture extends Texture implements StateListener {
 
             animationTimer.capture();
         }
+    }
+
+    public void reset() {
+        currentFrame = 0;
+    }
+
+    public void resetTimer() {
+        animationTimer.capture();
     }
 
     @Override
