@@ -220,7 +220,7 @@ class Console : Pane() {
             }
 
         } else {
-            pushMessage("Property with $varName does not exist!")
+            pushMessage("Property with name $varName does not exist!")
         }
     }
 
