@@ -28,6 +28,8 @@ package com.almasb.fxgl.ecs.action;
 
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -39,6 +41,8 @@ import java.util.Optional;
 public class ActionControl<T extends Entity> extends AbstractControl {
 
     private Deque<Action<T>> actions = new ArrayDeque<>();
+    private ObservableList<Action<T>> actionsObservable = FXCollections.observableArrayList();
+
     private Action<T> currentAction = null;
     private T thisEntity = null;
 
@@ -77,6 +81,10 @@ public class ActionControl<T extends Entity> extends AbstractControl {
         }
     }
 
+    public ObservableList<Action<T>> actionsProperty() {
+        return FXCollections.unmodifiableObservableList(actionsObservable);
+    }
+
     /**
      * @return true if there are more actions in the queue
      */
@@ -94,6 +102,7 @@ public class ActionControl<T extends Entity> extends AbstractControl {
     @SuppressWarnings("unchecked")
     public void addAction(Action action) {
         actions.add(action);
+        actionsObservable.add(action);
     }
 
     /**
@@ -102,6 +111,8 @@ public class ActionControl<T extends Entity> extends AbstractControl {
      */
     public void removeCurrentAction() {
         if (currentAction != null) {
+            actionsObservable.remove(currentAction);
+
             currentAction.setEntity(null);
             currentAction = null;
         }
@@ -111,7 +122,19 @@ public class ActionControl<T extends Entity> extends AbstractControl {
      * Remove last added action.
      */
     public void removeLastAction() {
-        actions.pollLast();
+        Action<T> a = actions.pollLast();
+        if (a != null) {
+            actionsObservable.remove(a);
+        }
+    }
+
+    public void removeAction(Action action) {
+        if (action == currentAction) {
+            removeCurrentAction();
+        } else {
+            actions.remove(action);
+            actionsObservable.remove(action);
+        }
     }
 
     /**
@@ -120,6 +143,7 @@ public class ActionControl<T extends Entity> extends AbstractControl {
     public void clearActions() {
         removeCurrentAction();
         actions.clear();
+        actionsObservable.clear();
     }
 
     public Optional<Action<T>> getCurrentAction() {

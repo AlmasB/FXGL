@@ -35,6 +35,8 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
+import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Rectangle;
 
@@ -81,6 +83,16 @@ public class EntityActionSample extends GameApplication {
                         .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
             }
         }, MouseButton.SECONDARY);
+
+        getInput().addAction(new UserAction("Remove Current Action") {
+            @Override
+            protected void onActionBegin() {
+                Action<?> a = actionsView.getSelectionModel().getSelectedItem();
+                if (a != null) {
+                    entity.getControlUnsafe(ActionControl.class).removeAction(a);
+                }
+            }
+        }, KeyCode.F);
     }
 
     @Override
@@ -90,6 +102,22 @@ public class EntityActionSample extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40))
                 .with(new ActionControl<GameEntity>())
                 .buildAndAttach(getGameWorld());
+    }
+
+    private ListView<Action<GameEntity>> actionsView;
+
+    @Override
+    protected void initUI() {
+        actionsView = getUIFactory().newListView(entity.getControlUnsafe(ActionControl.class)
+                .actionsProperty());
+
+//        actionsView.getSelectionModel().selectedItemProperty().addListener((o, old, newValue) -> {
+//            if (newValue != null) {
+//                entity.getControlUnsafe(ActionControl.class).removeAction(newValue);
+//            }
+//        });
+
+        getGameScene().addUINode(actionsView);
     }
 
     private class MoveAction extends Action<GameEntity> {
@@ -112,6 +140,11 @@ public class EntityActionSample extends GameApplication {
             speed = 150 * tpf;
 
             entity.translateTowards(new Point2D(x, y), speed);
+        }
+
+        @Override
+        public String toString() {
+            return "Move(" + x + "," + y + ")";
         }
     }
 
