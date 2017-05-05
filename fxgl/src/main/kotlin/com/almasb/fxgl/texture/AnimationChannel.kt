@@ -28,6 +28,7 @@ package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.app.FXGL
 import javafx.scene.image.Image
+import javafx.util.Duration
 
 /**
  * Animation Channel
@@ -38,15 +39,20 @@ class AnimationChannel(assetName: String,
                        val framesPerRow: Int,
                        val frameWidth: Int,
                        val frameHeight: Int,
-                       val frameSpeed: Int,
+                       channelDuration: Duration,
                        startFrame: Int,
                        endFrame: Int){
 
     internal val image: Image
     internal val sequence = arrayListOf<Int>()
 
+    // seconds
+    internal val frameDuration: Double
+
     init {
         sequence += startFrame..endFrame
+        frameDuration = channelDuration.toSeconds() / sequence.size
+
         image = FXGL.getAssetLoader().loadTexture(assetName).image
     }
 }

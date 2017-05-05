@@ -39,6 +39,7 @@ import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.AnimationTexture;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
+import javafx.util.Duration;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -61,8 +62,8 @@ public class PlayerControl extends AbstractControl {
         this.staticTexture = staticTexture;
         this.animatedTexture = animatedTexture;
 
-        animStand = new AnimationChannel("dude.png", 4, 32, 42, 15, 1, 1);
-        animWalk = new AnimationChannel("dude.png", 4, 32, 42, 15, 0, 3);
+        animStand = new AnimationChannel("dude.png", 4, 32, 42, Duration.seconds(1), 1, 1);
+        animWalk = new AnimationChannel("dude.png", 4, 32, 42, Duration.seconds(0.5), 0, 3);
 
         //animStand = new AnimationChannel("dude.png", 6, 128, 133, 5, 0, 0);
         //animWalk = new AnimationChannel("dude.png", 6, 128, 133, 5, 0, 5);

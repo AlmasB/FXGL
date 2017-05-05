@@ -39,7 +39,7 @@ import javafx.scene.image.Image
 class AnimationTexture(image: Image) : Texture(image), StateListener {
 
     private var currentFrame = 0
-    private var counter = 0
+    private var counter = 0.0
 
     var animationChannel: AnimationChannel? = null
         set(value) {
@@ -77,12 +77,12 @@ class AnimationTexture(image: Image) : Texture(image), StateListener {
     override fun onUpdate(tpf: Double) {
         animationChannel?.let {
 
-            // update to the next frame if it is time
-            if (counter == (it.frameSpeed - 1))
+            if (counter >= it.frameDuration) {
                 currentFrame = (currentFrame + 1) % it.sequence.size
+                counter = 0.0
+            }
 
-            // update the counter
-            counter = (counter + 1) % it.frameSpeed
+            counter += tpf
 
             val framesPerRow = it.framesPerRow
 
@@ -102,6 +102,6 @@ class AnimationTexture(image: Image) : Texture(image), StateListener {
 
     private fun reset() {
         currentFrame = 0
-        counter = 0
+        counter = 0.0
     }
 }
