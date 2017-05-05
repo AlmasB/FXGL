@@ -61,11 +61,12 @@ public class ScifiSample extends GameApplication {
         getInput().addAction(new UserAction("Use") {
             @Override
             protected void onActionBegin() {
-                getGameWorld().getCollidingEntities(player)
-                        .stream()
-                        .filter(e -> e.hasControl(UsableControl.class))
-                        .map(e -> e.getControlUnsafe(UsableControl.class))
-                        .forEach(UsableControl::use);
+                playerControl.punch();
+//                getGameWorld().getCollidingEntities(player)
+//                        .stream()
+//                        .filter(e -> e.hasControl(UsableControl.class))
+//                        .map(e -> e.getControlUnsafe(UsableControl.class))
+//                        .forEach(UsableControl::use);
             }
         }, KeyCode.F);
 
@@ -82,6 +83,13 @@ public class ScifiSample extends GameApplication {
                 playerControl.right();
             }
         }, KeyCode.D);
+
+        getInput().addAction(new UserAction("Jump") {
+            @Override
+            protected void onActionBegin() {
+                playerControl.jump();
+            }
+        }, KeyCode.W);
     }
 
     @Override

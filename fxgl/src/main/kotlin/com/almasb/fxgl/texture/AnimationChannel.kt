@@ -31,19 +31,27 @@ import javafx.scene.image.Image
 import javafx.util.Duration
 
 /**
- * Animation Channel
+ * Represents a single animation channel (cycle) from a sprite sheet.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimationChannel(assetName: String,
+class AnimationChannel(val image: Image,
                        val framesPerRow: Int,
                        val frameWidth: Int,
                        val frameHeight: Int,
                        channelDuration: Duration,
                        startFrame: Int,
-                       endFrame: Int){
+                       endFrame: Int) {
 
-    internal val image: Image
+    constructor(assetName: String,
+                framesPerRow: Int,
+                frameWidth: Int,
+                frameHeight: Int,
+                channelDuration: Duration,
+                startFrame: Int,
+                endFrame: Int) : this(FXGL.getAssetLoader().loadTexture(assetName).image,
+                    framesPerRow, frameWidth, frameHeight, channelDuration, startFrame, endFrame)
+
     internal val sequence = arrayListOf<Int>()
 
     // seconds
@@ -52,7 +60,5 @@ class AnimationChannel(assetName: String,
     init {
         sequence += startFrame..endFrame
         frameDuration = channelDuration.toSeconds() / sequence.size
-
-        image = FXGL.getAssetLoader().loadTexture(assetName).image
     }
 }

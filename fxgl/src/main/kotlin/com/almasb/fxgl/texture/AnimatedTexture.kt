@@ -29,25 +29,40 @@ package com.almasb.fxgl.texture
 import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.listener.StateListener
 import javafx.geometry.Rectangle2D
-import javafx.scene.image.Image
 
 /**
+ * Represents an animated texture.
+ * Animation channels, like WALK, RUN, IDLE, ATTACK, etc. can
+ * be set dynamically to alter the animation.
  *
- * TODO: initial image?
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimationTexture(image: Image) : Texture(image), StateListener {
+class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel.image), StateListener {
 
     private var currentFrame = 0
     private var counter = 0.0
 
+    private var playingChannel = false
+
     var animationChannel: AnimationChannel? = null
         set(value) {
-            if (field !== value) {
+            if (field !== value && !playingChannel) {
                 reset()
                 field = value
             }
         }
+
+    init {
+        animationChannel = defaultChannel
+
+        // force channel to apply settings to this texture
+        onUpdate(0.0)
+    }
+
+    fun playAnimationChannel(channel: AnimationChannel) {
+        animationChannel = channel
+        playingChannel = true
+    }
 
     private lateinit var state: State
 
@@ -78,6 +93,16 @@ class AnimationTexture(image: Image) : Texture(image), StateListener {
         animationChannel?.let {
 
             if (counter >= it.frameDuration) {
+
+                // frame done
+
+                if (currentFrame == it.sequence.size-1) {
+                    // channel done
+                    if (playingChannel) {
+                        playingChannel = false
+                    }
+                }
+
                 currentFrame = (currentFrame + 1) % it.sequence.size
                 counter = 0.0
             }
@@ -92,7 +117,7 @@ class AnimationTexture(image: Image) : Texture(image), StateListener {
             val row = it.sequence[currentFrame] / framesPerRow
             val col = it.sequence[currentFrame] % framesPerRow
 
-            //image = it.image
+            image = it.image
             fitWidth = frameWidth
             fitHeight = frameHeight
             viewport = Rectangle2D(col * frameWidth, row * frameHeight,

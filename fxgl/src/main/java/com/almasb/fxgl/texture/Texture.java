@@ -53,34 +53,20 @@ public class Texture extends ImageView implements Disposable {
     }
 
     /**
-     * Converts the texture to animated texture.
+     * Converts the texture to animated texture using
+     * the whole texture as a single animation channel.
+     * Must be in 1 row.
      *
      * @param frames   number of frames in sprite sheet
      * @param duration overall duration (for all frames) of the animation
      * @return new AnimatedTexture
      */
     public final AnimatedTexture toAnimatedTexture(int frames, Duration duration) {
-        return toAnimatedTexture(new AnimationChannelOLD() {
-            @Override
-            public Rectangle2D area() {
-                return new Rectangle2D(0, 0, getImage().getWidth(), getImage().getHeight());
-            }
-
-            @Override
-            public int frames() {
-                return frames;
-            }
-
-            @Override
-            public Duration duration() {
-                return duration;
-            }
-
-            @Override
-            public String name() {
-                return "MAIN";
-            }
-        });
+        return toAnimatedTexture(new AnimationChannel(
+                getImage(),
+                frames, (int) getImage().getWidth() / frames, (int) getImage().getHeight(),
+                duration, 0, frames-1)
+        );
     }
 
     /**
@@ -89,8 +75,8 @@ public class Texture extends ImageView implements Disposable {
      * @param defaultChannel the default channel
      * @return new AnimatedTexture
      */
-    public final AnimatedTexture toAnimatedTexture(AnimationChannelOLD defaultChannel) {
-        return new AnimatedTexture(getImage(), defaultChannel);
+    public final AnimatedTexture toAnimatedTexture(AnimationChannel defaultChannel) {
+        return new AnimatedTexture(defaultChannel);
     }
 
     /**
@@ -101,7 +87,7 @@ public class Texture extends ImageView implements Disposable {
      * <p>
      * Do NOT invoke on instances of StaticAnimatedTexture or
      * AnimatedTexture, use {@link #toAnimatedTexture(int, Duration)}
-     * or {@link #toAnimatedTexture(AnimationChannelOLD)} instead.
+     * or {@link #toAnimatedTexture(AnimationChannel)} instead.
      *
      * @return new Texture with same image
      */

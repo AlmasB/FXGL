@@ -34,7 +34,6 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationChannelOLD;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
@@ -50,34 +49,34 @@ import javafx.util.Duration;
  */
 public class AnimationSample extends GameApplication {
 
-    private enum AnimChannelOLD implements AnimationChannelOLD {
-        IDLE(new Rectangle2D(0, 0, 290 * 10, 500)),
-        RUN(new Rectangle2D(0, 500, 376 * 10, 520)),
-        ATTACK(new Rectangle2D(0, 500 + 520, 524 * 10, 565)),
-        JUMP(new Rectangle2D(0, 500 + 520 + 565, 399 * 10, 543)),
-        THROW(new Rectangle2D(0, 500 + 520 + 565 + 543, 383 * 10, 514));
-
-        private Rectangle2D area;
-
-        AnimChannelOLD(Rectangle2D area) {
-            this.area = area;
-        }
-
-        @Override
-        public Rectangle2D area() {
-            return area;
-        }
-
-        @Override
-        public int frames() {
-            return 10;
-        }
-
-        @Override
-        public Duration duration() {
-            return Duration.seconds(0.33);
-        }
-    }
+//    private enum AnimChannelOLD implements AnimationChannelOLD {
+//        IDLE(new Rectangle2D(0, 0, 290 * 10, 500)),
+//        RUN(new Rectangle2D(0, 500, 376 * 10, 520)),
+//        ATTACK(new Rectangle2D(0, 500 + 520, 524 * 10, 565)),
+//        JUMP(new Rectangle2D(0, 500 + 520 + 565, 399 * 10, 543)),
+//        THROW(new Rectangle2D(0, 500 + 520 + 565 + 543, 383 * 10, 514));
+//
+//        private Rectangle2D area;
+//
+//        AnimChannelOLD(Rectangle2D area) {
+//            this.area = area;
+//        }
+//
+//        @Override
+//        public Rectangle2D area() {
+//            return area;
+//        }
+//
+//        @Override
+//        public int frames() {
+//            return 10;
+//        }
+//
+//        @Override
+//        public Duration duration() {
+//            return Duration.seconds(0.33);
+//        }
+//    }
 
     private GameEntity player;
 
@@ -106,7 +105,7 @@ public class AnimationSample extends GameApplication {
 
             @Override
             protected void onActionBegin() {
-                playerSprite.setAnimationChannel(AnimChannelOLD.ATTACK, () -> System.out.println("Animation End"));
+                //playerSprite.setAnimationChannel(AnimChannelOLD.ATTACK, () -> System.out.println("Animation End"));
             }
 
             @Override
@@ -142,7 +141,7 @@ public class AnimationSample extends GameApplication {
                 .at(300, 300)
                 .buildAndAttach(getGameWorld());
 
-        playerSprite = buildSpriteSheet();
+        //playerSprite = buildSpriteSheet();
         player.getViewComponent().setView(playerSprite);
 
     }
@@ -150,40 +149,40 @@ public class AnimationSample extends GameApplication {
     private Texture spriteAttack, spriteRun, spriteIdle,
             spriteJump, spriteThrow, spriteFull;
 
-    private AnimatedTexture buildSpriteSheet() {
-        spriteAttack = getAssetLoader().loadTexture("Attack__000.png");
-        for (int i = 1; i <= 9; i++) {
-            spriteAttack = spriteAttack.superTexture(getAssetLoader().loadTexture("Attack__00" + i + ".png"), HorizontalDirection.RIGHT);
-        }
-
-        spriteRun = getAssetLoader().loadTexture("Run__000.png");
-        for (int i = 1; i <= 9; i++) {
-            spriteRun = spriteRun.superTexture(getAssetLoader().loadTexture("Run__00" + i + ".png"), HorizontalDirection.RIGHT);
-        }
-
-        spriteIdle = getAssetLoader().loadTexture("Idle__000.png");
-        for (int i = 1; i <= 9; i++) {
-            spriteIdle = spriteIdle.superTexture(getAssetLoader().loadTexture("Idle__00" + i + ".png"), HorizontalDirection.RIGHT);
-        }
-
-        spriteJump = getAssetLoader().loadTexture("Jump__000.png");
-        for (int i = 1; i <= 9; i++) {
-            spriteJump = spriteJump.superTexture(getAssetLoader().loadTexture("Jump__00" + i + ".png"), HorizontalDirection.RIGHT);
-        }
-
-        spriteThrow = getAssetLoader().loadTexture("Throw__000.png");
-        for (int i = 1; i <= 9; i++) {
-            spriteThrow = spriteThrow.superTexture(getAssetLoader().loadTexture("Throw__00" + i + ".png"), HorizontalDirection.RIGHT);
-        }
-
-        spriteFull = spriteIdle
-                .superTexture(spriteRun, VerticalDirection.DOWN)
-                .superTexture(spriteAttack, VerticalDirection.DOWN)
-                .superTexture(spriteJump, VerticalDirection.DOWN)
-                .superTexture(spriteThrow, VerticalDirection.DOWN);
-
-        return spriteFull.toAnimatedTexture(AnimChannelOLD.IDLE);
-    }
+//    private AnimatedTexture buildSpriteSheet() {
+//        spriteAttack = getAssetLoader().loadTexture("Attack__000.png");
+//        for (int i = 1; i <= 9; i++) {
+//            spriteAttack = spriteAttack.superTexture(getAssetLoader().loadTexture("Attack__00" + i + ".png"), HorizontalDirection.RIGHT);
+//        }
+//
+//        spriteRun = getAssetLoader().loadTexture("Run__000.png");
+//        for (int i = 1; i <= 9; i++) {
+//            spriteRun = spriteRun.superTexture(getAssetLoader().loadTexture("Run__00" + i + ".png"), HorizontalDirection.RIGHT);
+//        }
+//
+//        spriteIdle = getAssetLoader().loadTexture("Idle__000.png");
+//        for (int i = 1; i <= 9; i++) {
+//            spriteIdle = spriteIdle.superTexture(getAssetLoader().loadTexture("Idle__00" + i + ".png"), HorizontalDirection.RIGHT);
+//        }
+//
+//        spriteJump = getAssetLoader().loadTexture("Jump__000.png");
+//        for (int i = 1; i <= 9; i++) {
+//            spriteJump = spriteJump.superTexture(getAssetLoader().loadTexture("Jump__00" + i + ".png"), HorizontalDirection.RIGHT);
+//        }
+//
+//        spriteThrow = getAssetLoader().loadTexture("Throw__000.png");
+//        for (int i = 1; i <= 9; i++) {
+//            spriteThrow = spriteThrow.superTexture(getAssetLoader().loadTexture("Throw__00" + i + ".png"), HorizontalDirection.RIGHT);
+//        }
+//
+//        spriteFull = spriteIdle
+//                .superTexture(spriteRun, VerticalDirection.DOWN)
+//                .superTexture(spriteAttack, VerticalDirection.DOWN)
+//                .superTexture(spriteJump, VerticalDirection.DOWN)
+//                .superTexture(spriteThrow, VerticalDirection.DOWN);
+//
+//        return spriteFull.toAnimatedTexture(AnimChannelOLD.IDLE);
+//    }
 
     public static void main(String[] args) {
         launch(args);

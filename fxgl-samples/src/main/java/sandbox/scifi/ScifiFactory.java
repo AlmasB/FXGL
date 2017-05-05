@@ -34,14 +34,8 @@ import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationTexture;
-import com.almasb.fxgl.texture.Texture;
-import javafx.geometry.HorizontalDirection;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 
 /**
@@ -85,26 +79,12 @@ public class ScifiFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
-        Texture staticTexture = FXGL.getAssetLoader()
-                .loadTexture("dude.png")
-                .subTexture(new Rectangle2D(0, 0, 32, 42));
-
-        AnimatedTexture animatedTexture = FXGL.getAssetLoader()
-                .loadTexture("dude.png")
-                .subTexture(new Rectangle2D(32, 0, 32*3, 42))
-                .superTexture(staticTexture, HorizontalDirection.RIGHT)
-                .toAnimatedTexture(4, Duration.seconds(1));
-
         return Entities.builder()
                 .at(data.getX(), data.getY())
                 .type(ScifiType.PLAYER)
                 .bbox(new HitBox("main", BoundingShape.circle(19)))
                 .with(physics)
-                //.with(new PlayerControl(staticTexture, animatedTexture))
-                .with(new PlayerControl(staticTexture, new AnimationTexture(
-                        animatedTexture.getImage()
-                        //FXGL.getAssetLoader().loadTexture("cat.png").getImage()
-                )))
+                .with(new PlayerControl())
                 .build();
     }
 

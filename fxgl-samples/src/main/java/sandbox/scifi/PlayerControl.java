@@ -35,10 +35,12 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
-import com.almasb.fxgl.texture.AnimationTexture;
 import com.almasb.fxgl.texture.Texture;
+import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.util.Duration;
 
 /**
@@ -50,23 +52,30 @@ public class PlayerControl extends AbstractControl {
     private ViewComponent view;
     private PhysicsComponent physics;
 
-    private double oldX = 0;
-    private boolean isStatic = true;
 
-    private Texture staticTexture;
-    private AnimationTexture animatedTexture;
+    private AnimatedTexture animatedTexture;
 
-    private AnimationChannel animStand, animWalk;
+    private AnimationChannel animStand, animWalk, animJump, animPunch;
 
-    public PlayerControl(Texture staticTexture, AnimationTexture animatedTexture) {
-        this.staticTexture = staticTexture;
-        this.animatedTexture = animatedTexture;
+    public PlayerControl() {
+        Texture staticTexture = FXGL.getAssetLoader()
+                .loadTexture("dude.png")
+                .subTexture(new Rectangle2D(0, 0, 32, 42));
 
-        animStand = new AnimationChannel("dude.png", 4, 32, 42, Duration.seconds(1), 1, 1);
-        animWalk = new AnimationChannel("dude.png", 4, 32, 42, Duration.seconds(0.5), 0, 3);
+        animatedTexture = FXGL.getAssetLoader()
+                .loadTexture("dude.png")
+                .subTexture(new Rectangle2D(32, 0, 32*3, 42))
+                .superTexture(staticTexture, HorizontalDirection.RIGHT)
+                .toAnimatedTexture(4, Duration.seconds(0.5));
 
-        //animStand = new AnimationChannel("dude.png", 6, 128, 133, 5, 0, 0);
-        //animWalk = new AnimationChannel("dude.png", 6, 128, 133, 5, 0, 5);
+        animWalk = animatedTexture.getAnimationChannel();
+        animStand = new AnimationChannel(animatedTexture.getImage(), 4, 32, 42, Duration.seconds(1), 1, 1);
+        //animWalk = new AnimationChannel("dude.png", 4, 32, 42, Duration.seconds(0.5), 0, 3);
+
+//        animStand = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1), 0, 11);
+//        animWalk = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1), 12*2, 12*2 + 11);
+//        animJump = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1.2), 12*4, 12*4 + 11);
+//        animPunch = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1 / 8.0), 12*6, 12*6 + 11);
 
         this.animatedTexture.setAnimationChannel(animStand);
         this.animatedTexture.start(FXGL.getApp().getStateMachine().getPlayState());
@@ -78,13 +87,9 @@ public class PlayerControl extends AbstractControl {
         physics = Entities.getPhysics(entity);
         view = Entities.getView(entity);
 
-        oldX = position.getX();
         view.getView().addNode(animatedTexture);
     }
 
-    // not the most elegant solution for static checks
-    // will replace when physics API allows us to check if body is ready
-    // then simply query velocity magnitude
     @Override
     public void onUpdate(Entity entity, double tpf) {
 
@@ -96,45 +101,41 @@ public class PlayerControl extends AbstractControl {
 
         if (Math.abs(physics.getVelocityX()) < 140)
             physics.setVelocityX(0);
+
+        if (Math.abs(physics.getVelocityY()) < 1)
+            canJump = true;
     }
+
+    private boolean canJump = true;
 
     public void left() {
         view.getView().setScaleX(-1);
         physics.setVelocityX(-150);
-
-//        if (isStatic) {
-//            animate();
-//        }
     }
 
     public void right() {
         view.getView().setScaleX(1);
         physics.setVelocityX(150);
-
-//        if (isStatic) {
-//            animate();
-//        }
     }
 
     private void animate() {
-       // System.out.println("animate");
-
-
-        //animWalk.reset();
         animatedTexture.setAnimationChannel(animWalk);
-        isStatic = false;
     }
 
     private void stopAnimate() {
-        //System.out.println("stop");
-
-        //animWalk.reset();
         animatedTexture.setAnimationChannel(animStand);
-        isStatic = true;
     }
 
     public void jump() {
-        physics.setVelocityY(-350);
+        if (canJump) {
+            physics.setVelocityY(-250);
+            animatedTexture.playAnimationChannel(animJump);
+            canJump = false;
+        }
+    }
+
+    public void punch() {
+        animatedTexture.playAnimationChannel(animPunch);
     }
 
     public void stop() {
