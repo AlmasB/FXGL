@@ -26,6 +26,8 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.app.State
+import com.almasb.fxgl.app.listener.StateListener
 import javafx.geometry.Rectangle2D
 import javafx.scene.image.Image
 
@@ -34,7 +36,7 @@ import javafx.scene.image.Image
  * TODO: initial image?
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimationTexture(image: Image) : Texture(image) {
+class AnimationTexture(image: Image) : Texture(image), StateListener {
 
     private var currentFrame = 0
     private var counter = 0
@@ -47,7 +49,32 @@ class AnimationTexture(image: Image) : Texture(image) {
             }
         }
 
-    fun update() {
+    private lateinit var state: State
+
+    var started = false
+        private set
+
+    fun start(state: State) {
+        if (started) {
+            return
+        }
+
+        this.state = state
+        state.addStateListener(this)
+        started = true
+    }
+
+    fun stop() {
+        if (!started) {
+            return
+        }
+
+        state.removeStateListener(this)
+        reset()
+        started = false
+    }
+
+    override fun onUpdate(tpf: Double) {
         animationChannel?.let {
 
             // update to the next frame if it is time
@@ -66,6 +93,8 @@ class AnimationTexture(image: Image) : Texture(image) {
             val col = it.sequence[currentFrame] % framesPerRow
 
             //image = it.image
+            fitWidth = frameWidth
+            fitHeight = frameHeight
             viewport = Rectangle2D(col * frameWidth, row * frameHeight,
                     frameWidth, frameHeight)
         }

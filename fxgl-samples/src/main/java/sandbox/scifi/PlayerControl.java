@@ -26,6 +26,7 @@
 
 package sandbox.scifi;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
@@ -67,6 +68,7 @@ public class PlayerControl extends AbstractControl {
         //animWalk = new AnimationChannel("dude.png", 6, 128, 133, 5, 0, 5);
 
         this.animatedTexture.setAnimationChannel(animStand);
+        this.animatedTexture.start(FXGL.getApp().getStateMachine().getPlayState());
     }
 
     @Override
@@ -77,7 +79,6 @@ public class PlayerControl extends AbstractControl {
 
         oldX = position.getX();
         view.getView().addNode(animatedTexture);
-        //view.getView().addNode(staticTexture);
     }
 
     // not the most elegant solution for static checks
@@ -85,20 +86,15 @@ public class PlayerControl extends AbstractControl {
     // then simply query velocity magnitude
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        //if (oldX == position.getX()) {
+
         if (Math.abs(physics.getVelocityX()) == 0) {
-            //if (!isStatic) {
-                stopAnimate();
-            //}
+            stopAnimate();
         } else {
             animate();
         }
 
         if (Math.abs(physics.getVelocityX()) < 140)
             physics.setVelocityX(0);
-
-
-        animatedTexture.update();
     }
 
     public void left() {
