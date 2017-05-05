@@ -34,7 +34,7 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationChannel;
+import com.almasb.fxgl.texture.AnimationChannelOLD;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Rectangle2D;
@@ -50,7 +50,7 @@ import javafx.util.Duration;
  */
 public class AnimationSample extends GameApplication {
 
-    private enum AnimChannel implements AnimationChannel {
+    private enum AnimChannelOLD implements AnimationChannelOLD {
         IDLE(new Rectangle2D(0, 0, 290 * 10, 500)),
         RUN(new Rectangle2D(0, 500, 376 * 10, 520)),
         ATTACK(new Rectangle2D(0, 500 + 520, 524 * 10, 565)),
@@ -59,7 +59,7 @@ public class AnimationSample extends GameApplication {
 
         private Rectangle2D area;
 
-        AnimChannel(Rectangle2D area) {
+        AnimChannelOLD(Rectangle2D area) {
             this.area = area;
         }
 
@@ -101,17 +101,17 @@ public class AnimationSample extends GameApplication {
         input.addAction(new UserAction("Attack") {
             @Override
             protected void onAction() {
-                //playerSprite.setAnimationChannel(AnimChannel.ATTACK);
+                //playerSprite.setAnimationChannel(AnimChannelOLD.ATTACK);
             }
 
             @Override
             protected void onActionBegin() {
-                playerSprite.setAnimationChannel(AnimChannel.ATTACK, () -> System.out.println("Animation End"));
+                playerSprite.setAnimationChannel(AnimChannelOLD.ATTACK, () -> System.out.println("Animation End"));
             }
 
             @Override
             protected void onActionEnd() {
-                //playerSprite.setAnimationChannel(AnimChannel.IDLE);
+                //playerSprite.setAnimationChannel(AnimChannelOLD.IDLE);
             }
         }, MouseButton.PRIMARY);
     }
@@ -182,7 +182,7 @@ public class AnimationSample extends GameApplication {
                 .superTexture(spriteJump, VerticalDirection.DOWN)
                 .superTexture(spriteThrow, VerticalDirection.DOWN);
 
-        return spriteFull.toAnimatedTexture(AnimChannel.IDLE);
+        return spriteFull.toAnimatedTexture(AnimChannelOLD.IDLE);
     }
 
     public static void main(String[] args) {

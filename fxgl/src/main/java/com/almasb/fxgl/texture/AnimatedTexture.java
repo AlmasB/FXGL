@@ -41,8 +41,8 @@ import javafx.util.Duration;
  */
 public final class AnimatedTexture extends Texture implements StateListener {
 
-    private AnimationChannel defaultChannel;
-    private AnimationChannel currentChannel;
+    private AnimationChannelOLD defaultChannel;
+    private AnimationChannelOLD currentChannel;
 
     private int currentFrame = 0;
     private double timePerAnimationFrame = 0;
@@ -50,7 +50,7 @@ public final class AnimatedTexture extends Texture implements StateListener {
 
     private Runnable onAnimationEnd;
 
-    AnimatedTexture(Image image, AnimationChannel initialChannel) {
+    AnimatedTexture(Image image, AnimationChannelOLD initialChannel) {
         super(image);
         this.defaultChannel = initialChannel;
 
@@ -66,7 +66,7 @@ public final class AnimatedTexture extends Texture implements StateListener {
      *
      * @param channel animation channel
      */
-    public void setAnimationChannel(AnimationChannel channel) {
+    public void setAnimationChannel(AnimationChannelOLD channel) {
         setAnimationChannel(channel, () -> {});
     }
 
@@ -76,7 +76,7 @@ public final class AnimatedTexture extends Texture implements StateListener {
      * @param channel animation channel
      * @param onAnimationEnd callback run when animation channel ends
      */
-    public void setAnimationChannel(AnimationChannel channel, Runnable onAnimationEnd) {
+    public void setAnimationChannel(AnimationChannelOLD channel, Runnable onAnimationEnd) {
         if (currentChannel == channel && channel != defaultChannel)
             return;
 
@@ -96,7 +96,7 @@ public final class AnimatedTexture extends Texture implements StateListener {
     /**
      * @return current channel
      */
-    public AnimationChannel getCurrentChannel() {
+    public AnimationChannelOLD getCurrentChannel() {
         return currentChannel;
     }
 

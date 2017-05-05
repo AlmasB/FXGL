@@ -34,7 +34,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface AnimationChannel {
+public interface AnimationChannelOLD {
 
     /**
      * Area to be used to select a sub-texture from a sprite sheet.

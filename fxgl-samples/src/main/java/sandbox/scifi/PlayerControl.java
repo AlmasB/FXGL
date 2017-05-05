@@ -34,8 +34,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationObj;
+import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.AnimationTexture;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
@@ -55,16 +54,19 @@ public class PlayerControl extends AbstractControl {
     private Texture staticTexture;
     private AnimationTexture animatedTexture;
 
-    private AnimationObj animStand, animWalk;
+    private AnimationChannel animStand, animWalk;
 
     public PlayerControl(Texture staticTexture, AnimationTexture animatedTexture) {
         this.staticTexture = staticTexture;
         this.animatedTexture = animatedTexture;
 
-        animStand = new AnimationObj(15, 1, 1);
-        animWalk = new AnimationObj(15, 0, 3);
+        animStand = new AnimationChannel("dude.png", 4, 32, 42, 15, 1, 1);
+        animWalk = new AnimationChannel("dude.png", 4, 32, 42, 15, 0, 3);
 
-        this.animatedTexture.anim = animStand;
+        //animStand = new AnimationChannel("dude.png", 6, 128, 133, 5, 0, 0);
+        //animWalk = new AnimationChannel("dude.png", 6, 128, 133, 5, 0, 5);
+
+        this.animatedTexture.setAnimationChannel(animStand);
     }
 
     @Override
@@ -118,23 +120,19 @@ public class PlayerControl extends AbstractControl {
     }
 
     private void animate() {
-        System.out.println("animate");
-        //animatedTexture.reset();
-        //animatedTexture.resetTimer();
-        //view.getView().removeNode(staticTexture);
-        //view.getView().addNode(animatedTexture);
+       // System.out.println("animate");
+
 
         //animWalk.reset();
-        animatedTexture.anim = animWalk;
+        animatedTexture.setAnimationChannel(animWalk);
         isStatic = false;
     }
 
     private void stopAnimate() {
-        System.out.println("stop");
-        //view.getView().removeNode(animatedTexture);
-        //view.getView().addNode(staticTexture);
-        animWalk.reset();
-        animatedTexture.anim = animStand;
+        //System.out.println("stop");
+
+        //animWalk.reset();
+        animatedTexture.setAnimationChannel(animStand);
         isStatic = true;
     }
 

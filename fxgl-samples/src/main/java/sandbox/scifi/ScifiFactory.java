@@ -103,6 +103,7 @@ public class ScifiFactory implements EntityFactory {
                 //.with(new PlayerControl(staticTexture, animatedTexture))
                 .with(new PlayerControl(staticTexture, new AnimationTexture(
                         animatedTexture.getImage()
+                        //FXGL.getAssetLoader().loadTexture("cat.png").getImage()
                 )))
                 .build();
     }

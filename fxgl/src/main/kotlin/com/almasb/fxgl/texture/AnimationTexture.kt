@@ -26,33 +26,53 @@
 
 package com.almasb.fxgl.texture
 
-import com.almasb.fxgl.app.FXGL
-import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.scene.image.Image
 
 /**
  *
- *
+ * TODO: initial image?
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class AnimationTexture(image: Image) : Texture(image) {
 
-    lateinit var anim: AnimationObj
+    private var currentFrame = 0
+    private var counter = 0
 
+    var animationChannel: AnimationChannel? = null
+        set(value) {
+            if (field !== value) {
+                reset()
+                field = value
+            }
+        }
 
     fun update() {
-        anim.update()
+        animationChannel?.let {
 
-        val framesPerRow = 4
+            // update to the next frame if it is time
+            if (counter == (it.frameSpeed - 1))
+                currentFrame = (currentFrame + 1) % it.sequence.size
 
-        val frameWidth = 32.0
-        val frameHeight = 42.0
+            // update the counter
+            counter = (counter + 1) % it.frameSpeed
 
-        var row = anim.sequence[anim.currentFrame] / framesPerRow
-        var col = anim.sequence[anim.currentFrame] % framesPerRow
+            val framesPerRow = it.framesPerRow
 
-        viewport = Rectangle2D(col * frameWidth, row * frameHeight,
-                frameWidth, frameHeight)
+            val frameWidth = it.frameWidth.toDouble()
+            val frameHeight = it.frameHeight.toDouble()
+
+            val row = it.sequence[currentFrame] / framesPerRow
+            val col = it.sequence[currentFrame] % framesPerRow
+
+            //image = it.image
+            viewport = Rectangle2D(col * frameWidth, row * frameHeight,
+                    frameWidth, frameHeight)
+        }
+    }
+
+    private fun reset() {
+        currentFrame = 0
+        counter = 0
     }
 }

@@ -27,48 +27,26 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.app.FXGL
-import javafx.geometry.Rectangle2D
+import javafx.scene.image.Image
 
 /**
- *
+ * Animation Channel
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AnimationObj(val frameSpeed: Int,
-                       val startFrame: Int, val endFrame: Int){
+class AnimationChannel(assetName: String,
+                       val framesPerRow: Int,
+                       val frameWidth: Int,
+                       val frameHeight: Int,
+                       val frameSpeed: Int,
+                       startFrame: Int,
+                       endFrame: Int){
 
-    val sequence = arrayListOf<Int>()
-    var currentFrame = 0
-    var counter = 0
+    internal val image: Image
+    internal val sequence = arrayListOf<Int>()
 
     init {
         sequence += startFrame..endFrame
+        image = FXGL.getAssetLoader().loadTexture(assetName).image
     }
-
-    fun update() {
-        // update to the next frame if it is time
-        if (counter == (frameSpeed - 1))
-            currentFrame = (currentFrame + 1) % sequence.size
-
-        // update the counter
-        counter = (counter + 1) % frameSpeed
-    }
-
-    fun reset() {
-        currentFrame = 0
-        counter = 0
-    }
-
-//    fun draw() {
-//        val framesPerRow = 4
-//
-//        val frameWidth = 32.0
-//        val frameHeight = 42.0
-//
-//        var row = sequence[currentFrame] / framesPerRow
-//        var col = sequence[currentFrame] % framesPerRow
-//
-//        viewport = Rectangle2D(col * frameWidth, row * frameHeight,
-//                frameWidth, frameHeight)
-//    }
 }

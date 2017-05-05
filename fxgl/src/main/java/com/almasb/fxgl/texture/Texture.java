@@ -60,7 +60,7 @@ public class Texture extends ImageView implements Disposable {
      * @return new AnimatedTexture
      */
     public final AnimatedTexture toAnimatedTexture(int frames, Duration duration) {
-        return toAnimatedTexture(new AnimationChannel() {
+        return toAnimatedTexture(new AnimationChannelOLD() {
             @Override
             public Rectangle2D area() {
                 return new Rectangle2D(0, 0, getImage().getWidth(), getImage().getHeight());
@@ -89,7 +89,7 @@ public class Texture extends ImageView implements Disposable {
      * @param defaultChannel the default channel
      * @return new AnimatedTexture
      */
-    public final AnimatedTexture toAnimatedTexture(AnimationChannel defaultChannel) {
+    public final AnimatedTexture toAnimatedTexture(AnimationChannelOLD defaultChannel) {
         return new AnimatedTexture(getImage(), defaultChannel);
     }
 
@@ -101,7 +101,7 @@ public class Texture extends ImageView implements Disposable {
      * <p>
      * Do NOT invoke on instances of StaticAnimatedTexture or
      * AnimatedTexture, use {@link #toAnimatedTexture(int, Duration)}
-     * or {@link #toAnimatedTexture(AnimationChannel)} instead.
+     * or {@link #toAnimatedTexture(AnimationChannelOLD)} instead.
      *
      * @return new Texture with same image
      */
