@@ -303,9 +303,9 @@ public abstract class GameApplication extends Application {
         // 3. scan for annotated methods and register them too
         getInput().scanForUserActions(this);
 
-        preInit();
-
         generateDefaultProfile();
+
+        preInit();
 
         // attempt to clean any garbage we generated before main loop
         System.gc();
