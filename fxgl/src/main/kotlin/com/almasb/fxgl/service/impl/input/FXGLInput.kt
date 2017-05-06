@@ -33,6 +33,8 @@ import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.service.Input
 import com.almasb.fxgl.saving.UserProfile
+import javafx.beans.property.ReadOnlyStringProperty
+import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -74,6 +76,12 @@ class FXGLInput : Input {
     private val bindings = LinkedHashMap<UserAction, Trigger>()
 
     override fun getBindings() = bindings
+
+    private val triggerNames = hashMapOf<UserAction, ReadOnlyStringWrapper>()
+
+    override fun triggerNameProperty(action: UserAction): ReadOnlyStringProperty {
+        return triggerNames[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
+    }
 
     /**
      * Currently active actions.
@@ -260,12 +268,22 @@ class FXGLInput : Input {
             throw IllegalArgumentException("Trigger $trigger is already bound")
 
         bindings[action] = trigger
+
+        if (!triggerNames.containsKey(action)) {
+            triggerNames[action] = ReadOnlyStringWrapper("")
+        }
+
+        triggerNames[action]?.value = trigger.toString()
+
         log.debug { "Registered new binding: $action - $trigger" }
     }
 
     override fun rebind(action: UserAction, key: KeyCode, modifier: InputModifier): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key, modifier))) {
-            bindings[action] = KeyTrigger(key, modifier)
+            val newTrigger = KeyTrigger(key, modifier)
+
+            bindings[action] = newTrigger
+            triggerNames[action]?.value = newTrigger.toString()
             return true
         }
 
@@ -274,7 +292,10 @@ class FXGLInput : Input {
 
     override fun rebind(action: UserAction, button: MouseButton, modifier: InputModifier): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button, modifier))) {
-            bindings[action] = MouseTrigger(button, modifier)
+            val newTrigger = MouseTrigger(button, modifier)
+
+            bindings[action] = newTrigger
+            triggerNames[action]?.value = newTrigger.toString()
             return true
         }
 

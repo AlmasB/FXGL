@@ -33,6 +33,7 @@ import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.scene.Viewport;
 import com.almasb.fxgl.saving.UserProfileSavable;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -138,6 +139,8 @@ public interface Input extends UserProfileSavable {
      * @return registered action bindings
      */
     Map<UserAction, Trigger> getBindings();
+
+    ReadOnlyStringProperty triggerNameProperty(UserAction action);
 
     /**
      * Bind given action to a keyboard key.
