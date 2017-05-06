@@ -36,7 +36,7 @@ import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import common.PlayerControl;
 import javafx.scene.input.KeyCode;

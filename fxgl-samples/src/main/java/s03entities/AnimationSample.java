@@ -31,15 +31,11 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.Texture;
-import javafx.geometry.HorizontalDirection;
-import javafx.geometry.Rectangle2D;
-import javafx.geometry.VerticalDirection;
 import javafx.scene.input.MouseButton;
-import javafx.util.Duration;
 
 /**
  * Shows how to use sprite sheet animations and how to build sprite sheets

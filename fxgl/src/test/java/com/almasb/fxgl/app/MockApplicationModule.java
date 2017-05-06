@@ -26,11 +26,11 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.event.FXGLEventBus;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
-import com.almasb.fxgl.service.impl.input.FXGLInput;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.almasb.fxgl.settings.GameSettings;
@@ -129,7 +129,7 @@ public class MockApplicationModule extends ApplicationModule {
     }
 
     private void mockInput() {
-        bind(Input.class).to(FXGLInput.class);
+        //bind(Input.class).to(Input.class);
     }
 
     private void mockExecutor() {

@@ -75,13 +75,13 @@ class Console : Pane() {
     fun isOpen() = scene != null
 
     fun open() {
-        FXGL.getApp().input.isRegisterInput = false
+        FXGL.getApp().input.registerInput = false
         FXGL.getApp().gameScene.addUINode(this)
     }
 
     fun close() {
         FXGL.getApp().gameScene.removeUINode(this)
-        FXGL.getApp().input.isRegisterInput = true
+        FXGL.getApp().input.registerInput = true
     }
 
     private fun initOutput(): TextArea {

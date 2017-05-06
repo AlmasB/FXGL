@@ -24,15 +24,14 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service.impl.input
+package com.almasb.fxgl.input
 
 import com.almasb.fxgl.annotation.OnUserAction
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.input.*
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.scene.Viewport
-import com.almasb.fxgl.service.Input
 import com.almasb.fxgl.saving.UserProfile
+import com.almasb.fxgl.saving.UserProfileSavable
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
@@ -45,7 +44,7 @@ import javafx.scene.input.*
 import java.lang.reflect.Method
 import java.util.*
 
-class FXGLInput : Input {
+class Input : UserProfileSavable {
 
     private val ILLEGAL_KEYS = arrayOf(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.ALT)
 
@@ -54,34 +53,55 @@ class FXGLInput : Input {
     /**
      * Cursor point in game coordinate space.
      */
-
     private var gameX = 0.0
     private var gameY = 0.0
 
-    override fun getMousePositionWorld() = Point2D(gameX, gameY)
+    fun getMousePositionWorld() = Point2D(gameX, gameY)
 
     /**
      * Cursor point in screen coordinate space.
      * Useful for UI manipulation.
      */
-
     private var sceneX = 0.0
     private var sceneY = 0.0
 
-    override fun getMousePositionUI() = Point2D(sceneX, sceneY)
+    fun getMousePositionUI() = Point2D(sceneX, sceneY)
+
+    fun getMouseXWorld() = getMousePositionWorld().x
+    fun getMouseYWorld() = getMousePositionWorld().y
+
+    fun getMouseXUI() = getMousePositionUI().x
+    fun getMouseYUI() = getMousePositionUI().y
 
     /**
-     * Action bindings.
+     * @param gamePosition point in game world
+     * @return vector from given point to mouse cursor point
      */
-    private val bindings = LinkedHashMap<UserAction, Trigger>()
+    fun getVectorToMouse(gamePosition: Point2D): Point2D = getMousePositionWorld().subtract(gamePosition)
 
-    override fun getBindings() = bindings
+    /**
+     * @param gamePosition point in game world
+     * @return vector from mouse cursor point to given point
+     */
+    fun getVectorFromMouse(gamePosition: Point2D): Point2D = getVectorToMouse(gamePosition).multiply(-1.0)
+
+    /**
+     * @return registered action bindings
+     */
+    val bindings = LinkedHashMap<UserAction, Trigger>()
 
     private val triggerNames = hashMapOf<UserAction, ReadOnlyStringWrapper>()
 
-    override fun triggerNameProperty(action: UserAction): ReadOnlyStringProperty {
+    fun triggerNameProperty(action: UserAction): ReadOnlyStringProperty {
         return triggerNames[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
     }
+
+    fun getTriggerName(action: UserAction): String = triggerNameProperty(action).value
+
+    fun getTriggerByActionName(actionName: String): String = getTriggerName(getActionByName(actionName))
+
+    fun getActionByName(actionName: String): UserAction = bindings.keys.find { it.name == actionName }
+            ?: throw IllegalArgumentException("Action $actionName not found")
 
     /**
      * Currently active actions.
@@ -91,69 +111,58 @@ class FXGLInput : Input {
     /**
      * If action events should be processed.
      */
-    private var processActions = true
-
-    override fun setProcessInput(process: Boolean) {
-        processActions = process
-    }
-
-    override fun isProcessInput() = processActions
+    var processInput = true
 
     /**
      * If input should be registered.
      */
-    private var registerInput = true
-
-    override fun setRegisterInput(register: Boolean) {
-        registerInput = register
-    }
-
-    override fun isRegisterInput() = registerInput
+    var registerInput = true
 
     private val eventHandlers = Group()
 
     /**
-     * Add event handler.
-
+     * Add JavaFX event handler.
+     *
      * @param eventType type of events to listen
-     * *
      * @param eventHandler handler for events
      */
-    override fun <T : Event> addEventHandler(eventType: EventType<T>,
+    fun <T : Event> addEventHandler(eventType: EventType<T>,
                                     eventHandler: EventHandler<in T>) {
         eventHandlers.addEventHandler(eventType, eventHandler)
     }
 
     /**
-     * Remove event handler.
-
+     * Remove JavaFX event handler.
+     *
      * @param eventType type of events to listen
-     * *
      * @param eventHandler handler for events
      */
-    override fun <T : Event> removeEventHandler(eventType: EventType<T>,
+    fun <T : Event> removeEventHandler(eventType: EventType<T>,
                                        eventHandler: EventHandler<in T>) {
         eventHandlers.removeEventHandler(eventType, eventHandler)
     }
 
     /**
-     * Fire JavaFX event on this FXGL scene.
-
+     * Fire JavaFX event.
+     *
      * @param event the JavaFX event
      */
-    override fun fireEvent(event: Event) {
+    fun fireEvent(event: Event) {
         eventHandlers.fireEvent(event)
     }
 
-    override fun onUpdate(tpf: Double) {
-        if (processActions) {
+    fun update(tpf: Double) {
+        if (processInput) {
             for (i in currentActions.indices) {
                 currentActions[i].fireAction()
             }
         }
     }
 
-    override fun onKeyEvent(keyEvent: KeyEvent) {
+    /**
+     * Called on key event.
+     */
+    fun onKeyEvent(keyEvent: KeyEvent) {
         if (!registerInput)
             return
 
@@ -166,7 +175,14 @@ class FXGLInput : Input {
         }
     }
 
-    override fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport, scaleRatio: Double) {
+    /**
+     * Called on mouse event.
+     *
+     * @param event mouse event
+     * @param viewport current viewport where the even occurred
+     * @param scaleRatio scale ratio of the display where the event occurred
+     */
+    fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport, scaleRatio: Double) {
         if (!registerInput)
             return
 
@@ -202,7 +218,7 @@ class FXGLInput : Input {
                 .forEach {
                     currentActions.add(it.key)
 
-                    if (processActions)
+                    if (processInput)
                         it.key.fireActionBegin()
                 }
     }
@@ -223,12 +239,16 @@ class FXGLInput : Input {
         .forEach {
             currentActions.remove(it.key)
 
-            if (processActions)
+            if (processInput)
                 it.key.fireActionEnd()
         }
     }
 
-    override fun clearAll() {
+    /**
+     * Clears all active actions.
+     * Releases all key presses and mouse clicks for a single frame.
+     */
+    fun clearAll() {
         log.debug { "Clearing active input actions" }
 
         currentActions.clear()
@@ -241,19 +261,38 @@ class FXGLInput : Input {
      */
     private val keys = HashMap<KeyCode, Boolean>()
 
-    override fun isHeld(key: KeyCode) = keys.getOrDefault(key, false)
+    /**
+     * @param key the key to check
+     * @return true iff key is currently (physically) held; mocking does not trigger this
+     */
+    fun isHeld(key: KeyCode): Boolean = keys.getOrDefault(key, false)
 
     /**
      * Currently held buttons.
      */
     private val buttons = HashMap<MouseButton, Boolean>()
 
-    override fun isHeld(button: MouseButton) = buttons.getOrDefault(button, false)
+    /**
+     * @param button the button to check
+     * @return true iff button is currently (physically) held; mocking does not trigger this
+     */
+    fun isHeld(button: MouseButton): Boolean = buttons.getOrDefault(button, false)
 
-    override fun addAction(action: UserAction, button: MouseButton, modifier: InputModifier) =
+    /**
+     * Bind given action to a mouse button with special modifier key.
+     */
+    @JvmOverloads fun addAction(action: UserAction, button: MouseButton, modifier: InputModifier = InputModifier.NONE) =
             addBinding(action, MouseTrigger(button, modifier))
 
-    override fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier) {
+    /**
+     * Bind given action to a keyboard key with special modifier key.
+     *
+     * @param action the action to bind
+     * @param key the key
+     * @param modifier the key modifier
+     * @throws IllegalArgumentException if action with same name exists or key is in use
+     */
+    @JvmOverloads fun addAction(action: UserAction, key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
         if (ILLEGAL_KEYS.contains(key))
             throw IllegalArgumentException("Cannot bind to illegal key: $key")
 
@@ -278,7 +317,10 @@ class FXGLInput : Input {
         log.debug { "Registered new binding: $action - $trigger" }
     }
 
-    override fun rebind(action: UserAction, key: KeyCode, modifier: InputModifier): Boolean {
+    /**
+     * @return true if rebound, false if action not found or there is another action bound to key
+     */
+    @JvmOverloads fun rebind(action: UserAction, key: KeyCode, modifier: InputModifier = InputModifier.NONE): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(KeyTrigger(key, modifier))) {
             val newTrigger = KeyTrigger(key, modifier)
 
@@ -290,7 +332,10 @@ class FXGLInput : Input {
         return false
     }
 
-    override fun rebind(action: UserAction, button: MouseButton, modifier: InputModifier): Boolean {
+    /**
+     * @return true if rebound, false if action not found or there is another action bound to mouse button
+     */
+    @JvmOverloads fun rebind(action: UserAction, button: MouseButton, modifier: InputModifier = InputModifier.NONE): Boolean {
         if (bindings.containsKey(action) && !bindings.containsValue(MouseTrigger(button, modifier))) {
             val newTrigger = MouseTrigger(button, modifier)
 
@@ -313,18 +358,28 @@ class FXGLInput : Input {
 
     /**
      * Mocks key press event. The behavior is equivalent to
-     * user pressing and holding the [key] and [modifier].
+     * user pressing and holding the key with the modifier.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     *
+     * @param key the key to mock
+     * @param modifier key modifier
      */
-    override fun mockKeyPress(key: KeyCode, modifier: InputModifier) {
+    @JvmOverloads fun mockKeyPress(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
         log.debug { "Mocking key press: ${KeyTrigger(key, modifier)}" }
         handlePressed(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
     }
 
     /**
-     * Mocks key release event.
-     * The behavior is equivalent to user releasing the [key] and [modifier].
+     * Mocks key release event. The behavior is equivalent to
+     * user releasing the key and the modifier.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     *
+     * @param key the key to mock
+     * @param modifier the modifier
      */
-    override fun mockKeyRelease(key: KeyCode, modifier: InputModifier) {
+    @JvmOverloads fun mockKeyRelease(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
         log.debug { "Mocking key release: ${KeyTrigger(key, modifier)}" }
         handleReleased(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
     }
@@ -338,10 +393,18 @@ class FXGLInput : Input {
                 false, false, false, false, false, false, false, null)
 
     /**
-     * Mocks mouse button press event.
-     * Same as user pressing and holding the [button] + [modifier] at [gameX], [gameY].
+     * Mocks button press event. The behavior is equivalent to
+     * user pressing and holding the button and the modifier at x, y.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     * This does not affect mouse UI coordinates but affects game world coordinates.
+     *
+     * @param button the button to mock
+     * @param gameX x in game world
+     * @param gameY y in game world
+     * @param modifier the modifier
      */
-    override fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
+    @JvmOverloads fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier = InputModifier.NONE) {
         log.debug { "Mocking button press: ${MouseTrigger(button, modifier)} at $gameX, $gameY" }
 
         this.gameX = gameX
@@ -349,7 +412,18 @@ class FXGLInput : Input {
         handlePressed(makeMouseEvent(button, MouseEvent.MOUSE_PRESSED, gameX, gameY, modifier))
     }
 
-    override fun mockButtonRelease(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier) {
+    /**
+     * Mocks button release event. The behavior is equivalent to
+     * user releasing the button.
+     * Note: the event will be processed directly even if register input is false.
+     * The event will NOT be processed if process input is false.
+     * This does not affect mouse UI coordinates but affects game world coordinates.
+     *
+     * @param button the button to mock
+     * @param gameX x in game world
+     * @param gameY y in game world
+     */
+    @JvmOverloads fun mockButtonRelease(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier = InputModifier.NONE) {
         log.debug { "Mocking button release: ${MouseTrigger(button, modifier)} at $gameX, $gameY" }
 
         this.gameX = gameX
@@ -357,11 +431,21 @@ class FXGLInput : Input {
         handleReleased(makeMouseEvent(button, MouseEvent.MOUSE_RELEASED, gameX, gameY, modifier))
     }
 
+    @JvmOverloads fun mockButtonRelease(button: MouseButton, inputModifier: InputModifier = InputModifier.NONE) {
+        mockButtonRelease(button, getMouseXWorld(), getMouseYWorld(), inputModifier)
+    }
+
     /* INPUT MAPPINGS */
 
     private val inputMappings = HashMap<String, InputMapping>()
 
-    override fun addInputMapping(inputMapping: InputMapping) {
+    /**
+     * Add input mapping. The actual implementation needs to be specified by
+     * {@link OnUserAction} annotation.
+     *
+     * @param mapping the mapping
+     */
+    fun addInputMapping(inputMapping: InputMapping) {
         inputMappings.put(inputMapping.actionName, inputMapping)
     }
 
@@ -371,7 +455,7 @@ class FXGLInput : Input {
      *
      * @param instance the class instance to scan
      */
-    override fun scanForUserActions(instance: Any) {
+    fun scanForUserActions(instance: Any) {
         val map = HashMap<String, HashMap<ActionType, Method> >()
 
         for (method in instance.javaClass.declaredMethods) {

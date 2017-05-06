@@ -34,7 +34,7 @@ import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;

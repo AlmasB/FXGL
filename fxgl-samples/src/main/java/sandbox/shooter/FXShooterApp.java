@@ -36,7 +36,7 @@ import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;

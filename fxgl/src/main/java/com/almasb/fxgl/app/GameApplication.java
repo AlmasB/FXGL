@@ -34,6 +34,7 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.gameplay.*;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.io.FXGLIO;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
