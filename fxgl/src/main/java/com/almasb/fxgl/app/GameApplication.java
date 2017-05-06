@@ -226,7 +226,7 @@ public abstract class GameApplication extends Application {
 
         initStateMachine();
         registerServicesForUpdate();
-        generateDefaultProfile();
+
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
@@ -304,6 +304,8 @@ public abstract class GameApplication extends Application {
         getInput().scanForUserActions(this);
 
         preInit();
+
+        generateDefaultProfile();
 
         // attempt to clean any garbage we generated before main loop
         System.gc();
