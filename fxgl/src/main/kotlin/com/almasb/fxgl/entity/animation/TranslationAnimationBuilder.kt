@@ -26,8 +26,10 @@
 
 package com.almasb.fxgl.entity.animation
 
-import com.almasb.fxgl.entity.animation.control.AnimationControl
-import com.almasb.fxgl.entity.animation.control.TranslationControl
+import com.almasb.fxgl.animation.AnimatedCubicBezierPoint2D
+import com.almasb.fxgl.animation.AnimatedQuadBezierPoint2D
+import com.almasb.fxgl.animation.AnimatedValue
+import com.almasb.fxgl.animation.Animation
 import javafx.geometry.Point2D
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
@@ -59,15 +61,32 @@ class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder
         return this
     }
 
-    fun build(): AnimationControl {
-        return TranslationControl(animationBuilder.delay, animationBuilder.duration,
-                animationBuilder.times, animationBuilder.interpolator, path,
-                fromPoint, toPoint)
+    fun build(): Animation<*> {
+
+        path?.let { curve ->
+            when (curve) {
+                is QuadCurve -> return makeAnim(AnimatedQuadBezierPoint2D(curve))
+                is CubicCurve -> return makeAnim(AnimatedCubicBezierPoint2D(curve))
+                else -> throw IllegalArgumentException("Unsupported path: $curve")
+            }
+        }
+
+        return makeAnim(AnimatedValue<Point2D>(fromPoint, toPoint, animationBuilder.interpolator))
     }
 
-    fun buildAndPlay(): AnimationControl {
+    private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
+        return object : Animation<Point2D>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
+                animValue) {
+
+            override fun onProgress(value: Point2D) {
+                animationBuilder.entities.forEach { it.position = value }
+            }
+        }
+    }
+
+    fun buildAndPlay(): Animation<*> {
         val anim = build()
-        animationBuilder.entities.forEach { it.addControl(anim) }
+        anim.startInPlayState()
         return anim
     }
 }

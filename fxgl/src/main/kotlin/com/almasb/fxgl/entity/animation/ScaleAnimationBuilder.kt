@@ -26,8 +26,9 @@
 
 package com.almasb.fxgl.entity.animation
 
-import com.almasb.fxgl.entity.animation.control.AnimationControl
-import com.almasb.fxgl.entity.animation.control.ScaleControl
+import com.almasb.fxgl.animation.AnimatedPoint2D
+import com.almasb.fxgl.animation.AnimatedValue
+import com.almasb.fxgl.animation.Animation
 import javafx.geometry.Point2D
 
 /**
@@ -50,15 +51,22 @@ class ScaleAnimationBuilder(private val animationBuilder: AnimationBuilder) {
         return this
     }
 
-    fun build(): AnimationControl {
-        return ScaleControl(animationBuilder.delay, animationBuilder.duration,
-                animationBuilder.times, animationBuilder.interpolator,
-                startScale, endScale)
+    fun build(): Animation<*> {
+        return object : Animation<Point2D>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
+                AnimatedPoint2D(startScale, endScale, animationBuilder.interpolator)) {
+
+            override fun onProgress(value: Point2D) {
+                animationBuilder.entities.forEach {
+                    it.setScaleX(value.x)
+                    it.setScaleY(value.y)
+                }
+            }
+        }
     }
 
-    fun buildAndPlay(): AnimationControl {
+    fun buildAndPlay(): Animation<*> {
         val anim = build()
-        animationBuilder.entities.forEach { it.addControl(anim) }
+        anim.startInPlayState()
         return anim
     }
 }

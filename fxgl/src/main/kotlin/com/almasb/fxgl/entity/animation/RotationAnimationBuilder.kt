@@ -52,7 +52,7 @@ class RotationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
 
     fun build(): Animation<*> {
         return object : Animation<Double>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
-                AnimatedValue<Double>(startAngle, endAngle)) {
+                AnimatedValue<Double>(startAngle, endAngle, animationBuilder.interpolator)) {
 
             override fun onProgress(value: Double) {
                 animationBuilder.entities.forEach { it.rotation = value }
