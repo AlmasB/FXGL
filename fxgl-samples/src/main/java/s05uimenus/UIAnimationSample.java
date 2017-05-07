@@ -70,7 +70,7 @@ public class UIAnimationSample extends GameApplication {
 
         uiText.setOpacity(0);
 
-        getUIFactory().fadeIn(uiText, Duration.seconds(1), Duration.seconds(2)).startInPlayState();
+        getUIFactory().fadeOut(uiText, Duration.seconds(0), Duration.seconds(2)).startInPlayState();
     }
 
     public static void main(String[] args) {

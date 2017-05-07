@@ -100,7 +100,7 @@ internal object PauseMenuSubState : SubState() {
     }
 
     private fun requestHide() {
-        if (animation.animating)
+        if (animation.isAnimating)
             return
 
         if (canSwitchGameMenu) {

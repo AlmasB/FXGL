@@ -83,7 +83,7 @@ public class UISampleTest extends GameApplication {
         // 5. add UI object to scene
         getGameScene().addUINode(uiText);
 
-        getUIFactory().fadeInOut(uiText, Duration.seconds(1), () -> getGameScene().removeUINode(uiText));
+        getUIFactory().fadeInOut(uiText, Duration.seconds(1), () -> getGameScene().removeUINode(uiText)).startInPlayState();
     }
 
     @Override

@@ -31,7 +31,6 @@ import com.almasb.fxgl.animation.AnimatedValue;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.util.EmptyRunnable;
-import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -124,62 +123,6 @@ public interface UIFactory {
 
     <T> ListView<T> newListView();
 
-//    default FadeTransition fadeIn(Node node, Duration duration) {
-//        return fadeIn(node, duration, () -> {});
-//    }
-//
-//    default FadeTransition fadeIn(Node node, Duration duration, Runnable onFinishedAction) {
-//        FadeTransition ft = new FadeTransition(duration, node);
-//        ft.setFromValue(0);
-//        ft.setToValue(1);
-//        ft.setOnFinished(e -> onFinishedAction.run());
-//        ft.play();
-//        return ft;
-//    }
-
-    default FadeTransition fadeOut(Node node, Duration duration) {
-        return fadeOut(node, duration, () -> {});
-    }
-
-    default FadeTransition fadeOut(Node node, Duration duration, Runnable onFinishedAction) {
-        FadeTransition ft = new FadeTransition(duration, node);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-        ft.setOnFinished(e -> onFinishedAction.run());
-        ft.play();
-        return ft;
-    }
-
-    default FadeTransition fadeInOut(Node node, Duration duration) {
-        return fadeInOut(node, duration, () -> {});
-    }
-
-    default FadeTransition fadeInOut(Node node, Duration duration, Runnable onFinishedAction) {
-        FadeTransition ft = new FadeTransition(duration, node);
-        ft.setFromValue(0);
-        ft.setToValue(1);
-        ft.setCycleCount(2);
-        ft.setAutoReverse(true);
-        ft.setOnFinished(e -> onFinishedAction.run());
-        ft.play();
-        return ft;
-    }
-
-    default FadeTransition fadeOutIn(Node node, Duration duration) {
-        return fadeOutIn(node, duration, () -> {});
-    }
-
-    default FadeTransition fadeOutIn(Node node, Duration duration, Runnable onFinishedAction) {
-        FadeTransition ft = new FadeTransition(duration, node);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-        ft.setCycleCount(2);
-        ft.setAutoReverse(true);
-        ft.setOnFinished(e -> onFinishedAction.run());
-        ft.play();
-        return ft;
-    }
-
     default Animation<?> translate(Node node, Point2D from, Point2D to, Duration duration) {
         return translate(node, from, to, Duration.ZERO, duration);
     }
@@ -215,6 +158,41 @@ public interface UIFactory {
             }
         };
         anim.setOnFinished(onFinishedAction);
+        return anim;
+    }
+
+    default Animation<?> fadeOut(Node node, Duration duration) {
+        return fadeOut(node, duration, EmptyRunnable.INSTANCE);
+    }
+
+    default Animation<?> fadeOut(Node node, Duration duration, Runnable onFinishedAction) {
+        return fadeOut(node, Duration.ZERO, duration, onFinishedAction);
+    }
+
+    default Animation<?> fadeOut(Node node, Duration delay, Duration duration) {
+        return fadeOut(node, delay, duration, EmptyRunnable.INSTANCE);
+    }
+
+    default Animation<?> fadeOut(Node node, Duration delay, Duration duration, Runnable onFinishedAction) {
+        Animation<?> anim = fadeIn(node, delay, duration, onFinishedAction);
+
+        // fade out is reverse fade in
+        anim.setReverse(true);
+        return anim;
+    }
+
+    default Animation<?> fadeInOut(Node node, Duration duration, Runnable onFinishedAction) {
+        return fadeInOut(node, Duration.ZERO, duration, onFinishedAction);
+    }
+
+    default Animation<?> fadeInOut(Node node, Duration delay, Duration duration) {
+        return fadeInOut(node, delay, duration, EmptyRunnable.INSTANCE);
+    }
+
+    default Animation<?> fadeInOut(Node node, Duration delay, Duration duration, Runnable onFinishedAction) {
+        Animation<?> anim = fadeIn(node, delay, duration, onFinishedAction);
+        anim.setCycleCount(2);
+        anim.setAutoReverse(true);
         return anim;
     }
 }

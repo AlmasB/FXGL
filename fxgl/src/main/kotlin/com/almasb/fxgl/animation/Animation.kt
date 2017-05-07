@@ -43,7 +43,7 @@ abstract class Animation<T>
                           var cycleCount: Int = 1,
                           val animatedValue: AnimatedValue<T>): StateListener {
 
-    var autoReverse = false
+    var isAutoReverse = false
     var onFinished: Runnable = EmptyRunnable
 
     private var time = 0.0
@@ -53,13 +53,12 @@ abstract class Animation<T>
 
     private var count = 0
 
-    var reverse = false
+    var isReverse = false
+
+    var isPaused = false
         private set
 
-    var paused = false
-        private set
-
-    var animating = false
+    var isAnimating = false
         private set
 
     private var checkDelay = true
@@ -74,37 +73,37 @@ abstract class Animation<T>
     }
 
     fun startReverse(state: State) {
-        if (!animating) {
-            reverse = true
+        if (!isAnimating) {
+            isReverse = true
             start(state)
         }
     }
 
     fun start(state: State) {
-        if (!animating) {
+        if (!isAnimating) {
             this.state = state
-            animating = true
+            isAnimating = true
             state.addStateListener(this)
         }
     }
 
     fun stop() {
-        if (animating) {
-            animating = false
+        if (isAnimating) {
+            isAnimating = false
             state.removeStateListener(this)
             time = 0.0
             count = 0
-            reverse = false
+            isReverse = false
             checkDelay = true
         }
     }
 
     fun pause() {
-        paused = true
+        isPaused = true
     }
 
     fun resume() {
-        paused = false
+        isPaused = false
     }
 
     override fun onUpdate(tpf: Double) {
@@ -113,7 +112,7 @@ abstract class Animation<T>
 
     // TODO: use states?
     fun updateManual(tpf: Double) {
-        if (paused)
+        if (isPaused)
             return
 
         if (checkDelay) {
@@ -127,10 +126,10 @@ abstract class Animation<T>
             }
         }
 
-        if ((reverse && time == endTime) || (!reverse && time == 0.0)) {
+        if ((isReverse && time == endTime) || (!isReverse && time == 0.0)) {
             //onCycleStarted()
 
-            onProgress(animatedValue.getValue(if (reverse) 1.0 else 0.0))
+            onProgress(animatedValue.getValue(if (isReverse) 1.0 else 0.0))
 
             updateTime(tpf)
             return
@@ -138,10 +137,10 @@ abstract class Animation<T>
 
         updateTime(tpf)
 
-        if ((!reverse && time >= endTime) || (reverse && time <= 0.0)) {
+        if ((!isReverse && time >= endTime) || (isReverse && time <= 0.0)) {
             //onCycleFinished()
 
-            onProgress(animatedValue.getValue(if (reverse) 0.0 else 1.0))
+            onProgress(animatedValue.getValue(if (isReverse) 0.0 else 1.0))
 
             count++
 
@@ -149,8 +148,8 @@ abstract class Animation<T>
                 onFinished.run()
                 stop()
             } else {
-                if (autoReverse) {
-                    reverse = !reverse
+                if (isAutoReverse) {
+                    isReverse = !isReverse
                 }
 
                 resetTime()
@@ -163,11 +162,11 @@ abstract class Animation<T>
     }
 
     private fun updateTime(tpf: Double) {
-        time += if (reverse) -tpf else tpf
+        time += if (isReverse) -tpf else tpf
     }
 
     private fun resetTime() {
-        time = if (reverse) endTime else 0.0
+        time = if (isReverse) endTime else 0.0
     }
 
     abstract fun onProgress(value: T)
