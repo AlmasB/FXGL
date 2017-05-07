@@ -24,45 +24,35 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.entity.animation
+package com.almasb.fxgl.animation
 
-import com.almasb.fxgl.animation.AnimatedValue
-import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.util.EmptyRunnable
+import com.almasb.fxgl.core.math.FXGLMath
+import javafx.animation.Interpolator
+import javafx.geometry.Point2D
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RotationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
+open class AnimatedValue<T>
+@JvmOverloads constructor(val from: T, val to: T, val interpolator: Interpolator = Interpolator.LINEAR) {
 
-    private var startAngle = 0.0
-    private var endAngle = 0.0
-
-    fun rotateFrom(startAngle: Double): RotationAnimationBuilder {
-        this.startAngle = startAngle
-        return this
+    fun getValue(progress: Double): T {
+        return animate(from, to, progress, interpolator)
     }
 
-    fun rotateTo(endAngle: Double): RotationAnimationBuilder {
-        this.endAngle = endAngle
-        return this
+    @Suppress("UNCHECKED_CAST")
+    open fun animate(val1: T, val2: T, progress: Double, interpolator: Interpolator): T {
+        return interpolator.interpolate(val1, val2, progress) as T
     }
+}
 
-    fun build(): Animation<*> {
-        return object : Animation<Double>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
-                AnimatedValue<Double>(startAngle, endAngle)) {
+class AnimatedPoint2D
+@JvmOverloads constructor(from: Point2D, to: Point2D, interpolator: Interpolator = Interpolator.LINEAR)
+    : AnimatedValue<Point2D>(from, to, interpolator) {
 
-            override fun onProgress(value: Double) {
-                animationBuilder.entities.forEach { it.rotation = value }
-            }
-        }
-    }
-
-    fun buildAndPlay(): Animation<*> {
-        val anim = build()
-        anim.startInPlayState()
-        return anim
+    override fun animate(val1: Point2D, val2: Point2D, progress: Double, interpolator: Interpolator): Point2D {
+        return FXGLMath.interpolate(val1, val2, progress, interpolator)
     }
 }

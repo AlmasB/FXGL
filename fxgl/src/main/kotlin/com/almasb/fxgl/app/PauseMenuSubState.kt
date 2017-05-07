@@ -26,9 +26,10 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.texture.Texture
-import com.almasb.fxgl.ui.animation.TranslateAnimation
+import com.almasb.fxgl.util.EmptyRunnable
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -55,8 +56,7 @@ internal object PauseMenuSubState : SubState() {
 
     private var canSwitchGameMenu = true
 
-    private val animationIn: TranslateAnimation
-    private val animationOut: TranslateAnimation
+    private val animation: Animation<*>
 
     init {
         input.addAction(object : UserAction("Resume") {
@@ -77,17 +77,10 @@ internal object PauseMenuSubState : SubState() {
 
         children.addAll(masker, content)
 
-        animationIn = TranslateAnimation(content, Duration.seconds(0.32),
+        animation = FXGL.getUIFactory().translate(content,
                 Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0),
-                Point2D(FXGL.getAppWidth() / 2.0 - 125, FXGL.getAppHeight() / 2.0 - 200))
-
-        animationOut = TranslateAnimation(content, Duration.seconds(0.32),
                 Point2D(FXGL.getAppWidth() / 2.0 - 125, FXGL.getAppHeight() / 2.0 - 200),
-                Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0))
-
-        animationOut.onFinished = Runnable {
-            FXGL.getApp().stateMachine.popState()
-        }
+                Duration.seconds(0.33))
     }
 
     override fun onEnter(prevState: State) {
@@ -95,7 +88,8 @@ internal object PauseMenuSubState : SubState() {
             throw IllegalArgumentException("Entered PauseState from illegal state $prevState")
         }
 
-        animationIn.start(this)
+        animation.onFinished = EmptyRunnable
+        animation.start(this)
     }
 
     internal fun requestShow() {
@@ -106,12 +100,16 @@ internal object PauseMenuSubState : SubState() {
     }
 
     private fun requestHide() {
-        if (animationIn.animating || animationOut.animating)
+        if (animation.animating)
             return
 
         if (canSwitchGameMenu) {
             canSwitchGameMenu = false
-            animationOut.start(this)
+
+            animation.onFinished = Runnable {
+                FXGL.getApp().stateMachine.popState()
+            }
+            animation.startReverse(this)
         }
     }
 

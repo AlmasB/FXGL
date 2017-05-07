@@ -26,9 +26,13 @@
 
 package com.almasb.fxgl.service;
 
+import com.almasb.fxgl.animation.AnimatedPoint2D;
+import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.animation.FadeTransition;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
@@ -173,5 +177,20 @@ public interface UIFactory {
         ft.setOnFinished(e -> onFinishedAction.run());
         ft.play();
         return ft;
+    }
+
+    default Animation<?> translate(Node node, Point2D from, Point2D to, Duration duration) {
+        return translate(node, from, to, Duration.ZERO, duration);
+    }
+
+    default Animation<?> translate(Node node, Point2D from, Point2D to, Duration delay, Duration duration) {
+        return new Animation<Point2D>(delay, duration, 1, new AnimatedPoint2D(from, to)) {
+
+            @Override
+            public void onProgress(Point2D value) {
+                node.setTranslateX(value.getX());
+                node.setTranslateY(value.getY());
+            }
+        };
     }
 }

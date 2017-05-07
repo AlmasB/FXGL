@@ -26,6 +26,7 @@
 
 package s03entities;
 
+import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
@@ -87,23 +88,27 @@ public class AnimationSample3 extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
 
-        Entities.animationBuilder()
+        Animation<?> animation = Entities.animationBuilder()
                 .duration(Duration.seconds(1))
                 .repeat(1)
                 .rotate(player)
                 .rotateTo(360)
-                .buildAndPlay();
-
-        AnimationControl anim = Entities.animationBuilder()
-                .duration(Duration.seconds(3))
-                .repeat(2)
-                .delay(Duration.millis(1002))
-                .interpolator(Interpolator.EASE_OUT)
-                .translate(player)
-                .alongPath(new QuadCurve(33, 33, 450, 544, 750, 4))
                 .build();
 
-        player.addControl(anim);
+        animation.setCycleCount(2);
+        animation.setAutoReverse(true);
+        animation.startInPlayState();
+
+//        AnimationControl anim = Entities.animationBuilder()
+//                .duration(Duration.seconds(3))
+//                .repeat(2)
+//                .delay(Duration.millis(1002))
+//                .interpolator(Interpolator.EASE_OUT)
+//                .translate(player)
+//                .alongPath(new QuadCurve(33, 33, 450, 544, 750, 4))
+//                .build();
+//
+//        player.addControl(anim);
     }
 
     public static void main(String[] args) {
