@@ -27,6 +27,7 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.animation.AnimatedPoint2D;
+import com.almasb.fxgl.animation.AnimatedValue;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.util.EmptyRunnable;
@@ -123,18 +124,18 @@ public interface UIFactory {
 
     <T> ListView<T> newListView();
 
-    default FadeTransition fadeIn(Node node, Duration duration) {
-        return fadeIn(node, duration, () -> {});
-    }
-
-    default FadeTransition fadeIn(Node node, Duration duration, Runnable onFinishedAction) {
-        FadeTransition ft = new FadeTransition(duration, node);
-        ft.setFromValue(0);
-        ft.setToValue(1);
-        ft.setOnFinished(e -> onFinishedAction.run());
-        ft.play();
-        return ft;
-    }
+//    default FadeTransition fadeIn(Node node, Duration duration) {
+//        return fadeIn(node, duration, () -> {});
+//    }
+//
+//    default FadeTransition fadeIn(Node node, Duration duration, Runnable onFinishedAction) {
+//        FadeTransition ft = new FadeTransition(duration, node);
+//        ft.setFromValue(0);
+//        ft.setToValue(1);
+//        ft.setOnFinished(e -> onFinishedAction.run());
+//        ft.play();
+//        return ft;
+//    }
 
     default FadeTransition fadeOut(Node node, Duration duration) {
         return fadeOut(node, duration, () -> {});
@@ -192,5 +193,28 @@ public interface UIFactory {
                 node.setTranslateY(value.getY());
             }
         };
+    }
+
+    default Animation<?> fadeIn(Node node, Duration duration) {
+        return fadeIn(node, duration, EmptyRunnable.INSTANCE);
+    }
+
+    default Animation<?> fadeIn(Node node, Duration duration, Runnable onFinishedAction) {
+        return fadeIn(node, Duration.ZERO, duration, onFinishedAction);
+    }
+
+    default Animation<?> fadeIn(Node node, Duration delay, Duration duration) {
+        return fadeIn(node, delay, duration, EmptyRunnable.INSTANCE);
+    }
+
+    default Animation<?> fadeIn(Node node, Duration delay, Duration duration, Runnable onFinishedAction) {
+        Animation<?> anim = new Animation<Double>(delay, duration, 1, new AnimatedValue<>(0.0, 1.0)) {
+            @Override
+            public void onProgress(Double value) {
+                node.setOpacity(value);
+            }
+        };
+        anim.setOnFinished(onFinishedAction);
+        return anim;
     }
 }
