@@ -161,7 +161,7 @@ public class TowerfallApp extends GameApplication {
                 ))
         );
 
-        quests.forEach(getQuestService()::addQuest);
+        quests.forEach(getGameplay().getQuestManager()::addQuest);
     }
 
     public static void main(String[] args) {
