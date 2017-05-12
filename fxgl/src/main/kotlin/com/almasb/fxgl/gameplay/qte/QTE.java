@@ -24,40 +24,33 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.service.impl.qte
+package com.almasb.fxgl.gameplay.qte;
 
-import com.almasb.fxgl.app.FXGL
-import javafx.scene.input.KeyCode
-import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
+import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
+
+import java.util.function.Consumer;
 
 /**
- * Represents a single QTE key visible on the screen.
+ * Quick Time Events.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class QTEKey(val keyCode: KeyCode) : StackPane() {
+public interface QTE {
 
-    private val background = Rectangle(64.0, 64.0, Color.BLACK)
-    private val text = FXGL.getUIFactory().newText(keyCode.getName(), Color.WHITE, 72.0)
-
-    init {
-        background.stroke = Color.BLACK
-        background.strokeWidth = 4.0
-
-        val border = Rectangle(72.0, 72.0, null)
-        border.arcWidth = 25.0
-        border.arcHeight = 25.0
-        border.stroke = Color.GRAY
-        border.strokeWidth = 6.0
-
-        children.addAll(background, border, text)
-    }
-
-    fun lightUp() {
-        background.fill = Color.YELLOW
-        background.stroke = Color.YELLOW
-        text.fill = Color.BLACK
-    }
+    /**
+     * Starts quick time event.
+     * Game execution is blocked during the event.
+     * The event can be finishes if one of the following conditions is met:
+     * <ul>
+     *     <li>User runs out of time (fail)</li>
+     *     <li>User presses the wrong key (fail)</li>
+     *     <li>User correctly presses all keys (success)</li>
+     * </ul>
+     *
+     * @param callback called with true if user succeeds in the event, false otherwise
+     * @param duration how long the event should last
+     * @param keys what keys need to be pressed
+     */
+    void start(Consumer<Boolean> callback, Duration duration, KeyCode... keys);
 }

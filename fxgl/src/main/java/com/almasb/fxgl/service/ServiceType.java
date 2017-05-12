@@ -39,12 +39,10 @@ import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
-import com.almasb.fxgl.service.impl.qte.QTEProvider;
 import com.almasb.fxgl.service.impl.quest.FXGLQuestServiceProvider;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
-import javafx.scene.control.Dialog;
 
 /**
  * Marks a service type.
@@ -167,18 +165,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Net> serviceProvider() {
             return FXGLNet.class;
-        }
-    };
-
-    ServiceType<QTE> QTE = new ServiceType<QTE>() {
-        @Override
-        public Class<QTE> service() {
-            return QTE.class;
-        }
-
-        @Override
-        public Class<? extends QTE> serviceProvider() {
-            return QTEProvider.class;
         }
     };
 

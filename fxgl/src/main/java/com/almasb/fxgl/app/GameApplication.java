@@ -732,10 +732,6 @@ public abstract class GameApplication extends Application {
         return FXGL.getAchievementManager();
     }
 
-    public final QTE getQTE() {
-        return FXGL.getQTE();
-    }
-
     public final Net getNet() {
         return FXGL.getNet();
     }

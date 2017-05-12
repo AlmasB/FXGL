@@ -27,6 +27,8 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.gameplay.qte.QTE
+import com.almasb.fxgl.gameplay.qte.QTEProvider
 import com.almasb.fxgl.gameplay.rpg.InGameClock
 import com.google.inject.Inject
 
@@ -43,4 +45,6 @@ private constructor() {
     val stats = GameplayStats()
 
     val clock = FXGL.getInstance(InGameClock::class.java)
+
+    val QTE: QTE = QTEProvider()
 }

@@ -293,9 +293,6 @@ class FXGL private constructor() {
         private val _achievement by lazy { getService(ServiceType.ACHIEVEMENT_MANAGER) }
         @JvmStatic fun getAchievementManager() = _achievement
 
-        private val _qte by lazy { getService(ServiceType.QTE) }
-        @JvmStatic fun getQTE() = _qte
-
         private val _net by lazy { getService(ServiceType.NET) }
         @JvmStatic fun getNet() = _net
 
