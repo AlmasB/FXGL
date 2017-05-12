@@ -42,7 +42,7 @@ class QuestObjectiveView(val questObjective: QuestObjective) : HBox(10.0) {
     init {
         val factory = FXGL.getUIFactory()
 
-        val text = factory.newText("", Color.WHITE, 18.0)
+        val text = factory.newText("", Color.BLACK, 18.0)
         if (questObjective.times != 1) {
             text.textProperty().bind(questObjective.valueProperty.asString("%d/${questObjective.times}"))
         }
@@ -55,6 +55,6 @@ class QuestObjectiveView(val questObjective: QuestObjective) : HBox(10.0) {
 
         HBox.setHgrow(hbox, Priority.ALWAYS)
 
-        children.addAll(factory.newText(questObjective.description, Color.WHITE, 18.0), text, hbox)
+        children.addAll(factory.newText(questObjective.description, Color.BLACK, 18.0), text, hbox)
     }
 }

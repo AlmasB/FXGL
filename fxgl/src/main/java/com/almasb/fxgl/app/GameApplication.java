@@ -248,7 +248,7 @@ public abstract class GameApplication extends Application {
             getDisplay().save(e.getProfile());
             getInput().save(e.getProfile());
             getAchievementManager().save(e.getProfile());
-            getQuestService().save(e.getProfile());
+            getGameplay().getQuestManager().save(e.getProfile());
         });
 
         getEventBus().addEventHandler(LoadEvent.ANY, e -> {
@@ -256,7 +256,7 @@ public abstract class GameApplication extends Application {
             getDisplay().load(e.getProfile());
             getInput().load(e.getProfile());
             getAchievementManager().load(e.getProfile());
-            getQuestService().load(e.getProfile());
+            getGameplay().getQuestManager().load(e.getProfile());
         });
 
         getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
@@ -742,9 +742,5 @@ public abstract class GameApplication extends Application {
 
     public final UIFactory getUIFactory() {
         return FXGL.getUIFactory();
-    }
-
-    public final QuestService getQuestService() {
-        return FXGL.getQuestManager();
     }
 }

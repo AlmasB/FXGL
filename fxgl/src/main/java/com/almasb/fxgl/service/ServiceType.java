@@ -39,7 +39,6 @@ import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
-import com.almasb.fxgl.service.impl.quest.FXGLQuestServiceProvider;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
@@ -213,18 +212,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends UIFactory> serviceProvider() {
             return FXGLUIFactory.class;
-        }
-    };
-
-    ServiceType<FXGLQuestServiceProvider> QUEST_MANAGER = new ServiceType<FXGLQuestServiceProvider>() {
-        @Override
-        public Class<FXGLQuestServiceProvider> service() {
-            return FXGLQuestServiceProvider.class;
-        }
-
-        @Override
-        public Class<? extends FXGLQuestServiceProvider> serviceProvider() {
-            return FXGLQuestServiceProvider.class;
         }
     };
 

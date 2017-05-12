@@ -24,31 +24,32 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay
+package com.almasb.fxgl.gameplay.rpg.quest
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.gameplay.qte.QTE
-import com.almasb.fxgl.gameplay.qte.QTEProvider
-import com.almasb.fxgl.gameplay.rpg.InGameClock
-import com.almasb.fxgl.gameplay.rpg.quest.QuestManager
-import com.almasb.fxgl.gameplay.rpg.quest.QuestManagerProvider
-import com.google.inject.Inject
+import com.almasb.fxgl.saving.UserProfileSavable
+import javafx.collections.ObservableList
 
 /**
- * Contains access to various gameplay related managers / services
- * and data.
- *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Gameplay
-@Inject
-private constructor() {
+interface QuestManager : UserProfileSavable {
 
-    val stats = GameplayStats()
+    /**
+     * @return unmodifiable list of currently managed quests
+     */
+    fun questsProperty(): ObservableList<Quest>
 
-    val clock = FXGL.getInstance(InGameClock::class.java)
+    /**
+     * Add given quest to service.
+     *
+     * @param quest the quest to add
+     */
+    fun addQuest(quest: Quest)
 
-    val QTE: QTE by lazy { QTEProvider() }
-
-    val questManager: QuestManager by lazy { QuestManagerProvider() }
+    /**
+     * Remove the quest from service.
+     *
+     * @param quest the quest to remove
+     */
+    fun removeQuest(quest: Quest)
 }

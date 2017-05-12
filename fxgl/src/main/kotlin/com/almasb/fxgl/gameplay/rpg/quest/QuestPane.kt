@@ -41,9 +41,9 @@ class QuestPane(width: Double, height: Double) : VBox() {
         prefWidth = width
         prefHeight = height
 
-        children.addAll(FXGL.getQuestManager().questsProperty().map { QuestView(it, prefWidth) })
+        children.addAll(FXGL.getApp().gameplay.questManager.questsProperty().map { QuestView(it, prefWidth) })
 
-        FXGL.getQuestManager().questsProperty().addListener(ListChangeListener { c ->
+        FXGL.getApp().gameplay.questManager.questsProperty().addListener(ListChangeListener { c ->
             while (c.next()) {
 
                 if (c.wasAdded()) {

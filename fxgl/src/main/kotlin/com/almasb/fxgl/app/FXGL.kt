@@ -305,9 +305,6 @@ class FXGL private constructor() {
         private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
         @JvmStatic fun getUIFactory() = _uiFactory
 
-        private val _questManager by lazy { getService(ServiceType.QUEST_MANAGER) }
-        @JvmStatic fun getQuestManager() = _questManager
-
         private val _gameplay by lazy { getService(ServiceType.GAMEPLAY) }
         @JvmStatic fun getGameplay() = _gameplay
 

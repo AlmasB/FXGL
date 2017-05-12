@@ -24,33 +24,31 @@
  * SOFTWARE.
  */
 
-package com.almasb.fxgl.gameplay.qte;
+package com.almasb.fxgl.gameplay.qte
 
-import javafx.scene.input.KeyCode;
-import javafx.util.Duration;
-
-import java.util.function.Consumer;
+import javafx.scene.input.KeyCode
+import javafx.util.Duration
+import java.util.function.Consumer
 
 /**
  * Quick Time Events.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public interface QTE {
+interface QTE {
 
     /**
      * Starts quick time event.
      * Game execution is blocked during the event.
      * The event can be finishes if one of the following conditions is met:
-     * <ul>
-     *     <li>User runs out of time (fail)</li>
-     *     <li>User presses the wrong key (fail)</li>
-     *     <li>User correctly presses all keys (success)</li>
-     * </ul>
+     *
+     *  * User runs out of time (fail)
+     *  * User presses the wrong key (fail)
+     *  * User correctly presses all keys (success)
      *
      * @param callback called with true if user succeeds in the event, false otherwise
      * @param duration how long the event should last
      * @param keys what keys need to be pressed
      */
-    void start(Consumer<Boolean> callback, Duration duration, KeyCode... keys);
+    fun start(callback: Consumer<Boolean>, duration: Duration, vararg keys: KeyCode)
 }
