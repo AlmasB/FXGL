@@ -55,18 +55,18 @@ class FXGLAssets {
         @JvmField val UI_ICON: Image
 
         init {
-            val loader = FXGL.getAssetLoader();
+            val loader = FXGL.getAssetLoader()
 
-            SOUND_NOTIFICATION = loader.loadSound(getString("sound.notification"));
-            SOUND_MENU_SELECT = loader.loadSound(getString("sound.menu.select"));
-            SOUND_MENU_BACK = loader.loadSound(getString("sound.menu.back"));
-            SOUND_MENU_PRESS = loader.loadSound(getString("sound.menu.press"));
+            SOUND_NOTIFICATION = loader.loadSound(getString("sound.notification"))
+            SOUND_MENU_SELECT = loader.loadSound(getString("sound.menu.select"))
+            SOUND_MENU_BACK = loader.loadSound(getString("sound.menu.back"))
+            SOUND_MENU_PRESS = loader.loadSound(getString("sound.menu.press"))
 
-            UI_FONT = loader.loadFont(getString("ui.font"));
+            UI_FONT = loader.loadFont(getString("ui.font"))
             UI_MONO_FONT = loader.loadFont(getString("ui.mono.font"))
-            UI_CSS = loader.loadCSS(getString("ui.css"));
-            UI_ICON_NAME = getString("ui.icon.name");
-            UI_ICON = loader.loadAppIcon(UI_ICON_NAME);
+            UI_CSS = loader.loadCSS(getString("ui.css"))
+            UI_ICON_NAME = getString("ui.icon.name")
+            UI_ICON = loader.loadAppIcon(UI_ICON_NAME)
         }
     }
 }
