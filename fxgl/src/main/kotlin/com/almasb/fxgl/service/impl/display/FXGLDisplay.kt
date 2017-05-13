@@ -96,11 +96,7 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         scaledHeight = SimpleDoubleProperty()
         scaleRatio = SimpleDoubleProperty()
 
-        // if default css then use menu css, else use specified
-        css = if (FXGLAssets.UI_CSS.isDefault())
-            FXGL.getAssetLoader().loadCSS(settings.menuStyle.cssFileName)
-        else
-            FXGLAssets.UI_CSS
+        css = FXGLAssets.UI_CSS
 
         log.debug("Using CSS: $css")
     }

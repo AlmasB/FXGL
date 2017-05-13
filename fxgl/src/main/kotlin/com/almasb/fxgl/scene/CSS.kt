@@ -31,10 +31,4 @@ package com.almasb.fxgl.scene
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-data class CSS(val externalForm: String) {
-
-    /**
-     * @return true iff this CSS file represents the default FXGL CSS
-     */
-    fun isDefault() = externalForm.endsWith("fxgl.css")
-}
+data class CSS(val externalForm: String)
