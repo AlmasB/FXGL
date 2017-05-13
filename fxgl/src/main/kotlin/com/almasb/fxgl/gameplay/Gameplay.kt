@@ -51,4 +51,6 @@ private constructor() {
     val QTE: QTE by lazy { QTEProvider() }
 
     val questManager: QuestManager by lazy { QuestManagerProvider() }
+
+    val achievementManager: AchievementManager by lazy { AchievementManager() }
 }

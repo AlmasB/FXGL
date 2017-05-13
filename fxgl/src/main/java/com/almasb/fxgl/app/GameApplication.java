@@ -247,7 +247,7 @@ public abstract class GameApplication extends Application {
             getAudioPlayer().save(e.getProfile());
             getDisplay().save(e.getProfile());
             getInput().save(e.getProfile());
-            getAchievementManager().save(e.getProfile());
+            getGameplay().getAchievementManager().save(e.getProfile());
             getGameplay().getQuestManager().save(e.getProfile());
         });
 
@@ -255,7 +255,7 @@ public abstract class GameApplication extends Application {
             getAudioPlayer().load(e.getProfile());
             getDisplay().load(e.getProfile());
             getInput().load(e.getProfile());
-            getAchievementManager().load(e.getProfile());
+            getGameplay().getAchievementManager().load(e.getProfile());
             getGameplay().getQuestManager().load(e.getProfile());
         });
 
@@ -726,10 +726,6 @@ public abstract class GameApplication extends Application {
 
     public final NotificationService getNotificationService() {
         return FXGL.getNotificationService();
-    }
-
-    public final AchievementManager getAchievementManager() {
-        return FXGL.getAchievementManager();
     }
 
     public final Net getNet() {

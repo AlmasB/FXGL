@@ -143,18 +143,6 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<AchievementManager> ACHIEVEMENT_MANAGER = new ServiceType<AchievementManager>() {
-        @Override
-        public Class<AchievementManager> service() {
-            return AchievementManager.class;
-        }
-
-        @Override
-        public Class<? extends AchievementManager> serviceProvider() {
-            return AchievementManager.class;
-        }
-    };
-
     ServiceType<Net> NET = new ServiceType<Net>() {
         @Override
         public Class<Net> service() {

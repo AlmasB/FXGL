@@ -39,8 +39,7 @@ import javafx.collections.FXCollections
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class AchievementManager
-@Inject private constructor(): UserProfileSavable {
+class AchievementManager : UserProfileSavable {
 
     private val log = FXGL.getLogger(javaClass)
 

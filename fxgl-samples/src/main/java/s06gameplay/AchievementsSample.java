@@ -70,8 +70,8 @@ public class AchievementsSample extends GameApplication {
         achievement = new Achievement("Move", "Move 500 pixels");
 
         Achievement a = new Achievement("World Traveller", "Get to the other side of the screen.");
-        getAchievementManager().registerAchievement(a);
-        getAchievementManager().registerAchievement(achievement);
+        getGameplay().getAchievementManager().registerAchievement(a);
+        getGameplay().getAchievementManager().registerAchievement(achievement);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class AchievementsSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
 
         // 2. bind achievement to the condition
-        getAchievementManager().getAchievementByName("World Traveller")
+        getGameplay().getAchievementManager().getAchievementByName("World Traveller")
                 .bind(player.getComponentUnsafe(PositionComponent.class).xProperty().greaterThan(600));
 
         achievement.bind(getGameState().intProperty("moved"), 500);

@@ -432,7 +432,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         MenuContent content = new MenuContent();
 
-        for (Achievement a : app.getAchievementManager().getAchievements()) {
+        for (Achievement a : app.getGameplay().getAchievementManager().getAchievements()) {
             CheckBox checkBox = new CheckBox();
             checkBox.setDisable(true);
             checkBox.selectedProperty().bind(a.achievedProperty());

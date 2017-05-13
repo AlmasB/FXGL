@@ -81,7 +81,7 @@ public class SpaceInvadersApp extends GameApplication {
 
     @Override
     protected void initAchievements() {
-        AchievementManager am = getAchievementManager();
+        AchievementManager am = getGameplay().getAchievementManager();
 
         am.registerAchievement(new Achievement("Hitman", "Destroy " + ACHIEVEMENT_ENEMIES_KILLED + " enemies"));
         am.registerAchievement(new Achievement("Master Scorer", "Score " + ACHIEVEMENT_MASTER_SCORER + " points"));
@@ -154,9 +154,9 @@ public class SpaceInvadersApp extends GameApplication {
         highScoreName = data.getName();
         highScore = data.getHighScore();
 
-        getAchievementManager().getAchievementByName("Hitman")
+        getGameplay().getAchievementManager().getAchievementByName("Hitman")
                 .bind(getGameState().intProperty("enemiesKilled").greaterThanOrEqualTo(ACHIEVEMENT_ENEMIES_KILLED));
-        getAchievementManager().getAchievementByName("Master Scorer")
+        getGameplay().getAchievementManager().getAchievementByName("Master Scorer")
                 .bind(getGameState().intProperty("score").greaterThanOrEqualTo(ACHIEVEMENT_MASTER_SCORER));
 
         spawnBackground();
