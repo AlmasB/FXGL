@@ -26,10 +26,7 @@
 
 package com.almasb.fxgl.entity.animation
 
-import com.almasb.fxgl.animation.AnimatedCubicBezierPoint2D
-import com.almasb.fxgl.animation.AnimatedQuadBezierPoint2D
-import com.almasb.fxgl.animation.AnimatedValue
-import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.animation.*
 import javafx.geometry.Point2D
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
@@ -71,7 +68,7 @@ class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder
             }
         }
 
-        return makeAnim(AnimatedValue<Point2D>(fromPoint, toPoint, animationBuilder.interpolator))
+        return makeAnim(AnimatedPoint2D(fromPoint, toPoint, animationBuilder.interpolator))
     }
 
     private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
