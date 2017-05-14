@@ -35,8 +35,11 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -82,7 +85,7 @@ public class UnoSample extends GameApplication {
             GameEntity cardEntity = spawn(card, i*130, 450);
 
             player.addCard(cardEntity);
-            //enemy.addCard(deck.drawCard());
+            enemy.addCard(spawn(deck.drawCard(), 0, -150));
         }
 
         currentCard = spawn(deck.drawCard(), 400 - 50, 300 - 75);
@@ -92,6 +95,13 @@ public class UnoSample extends GameApplication {
 
     @Override
     protected void initUI() {
+
+        Text text = getUIFactory().newText("", Color.BLACK, 18);
+        text.setTranslateY(50);
+        text.textProperty().bind(Bindings.size(enemy.cardsProperty()).asString("Enemy Cards: %d"));
+
+        getGameScene().addUINode(text);
+
 //        getGameScene().addUINode(new HandView(enemy));
 //
 //        HandView playerView = new HandView(player);
@@ -143,8 +153,6 @@ public class UnoSample extends GameApplication {
                     player.removeCard(cardEntity);
                     playerHandChanged = true;
 
-                    // AI move
-
                     currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
 
                     currentCard = cardEntity;
@@ -163,12 +171,60 @@ public class UnoSample extends GameApplication {
 
                         default:
                     }
+
+                    aiMove();
                 });
                 animation.startInPlayState();
             }
         });
 
         return cardEntity;
+    }
+
+    private void aiMove() {
+
+        GameEntity chosenCard = null;
+
+        for (GameEntity card : enemy.cardsProperty()) {
+
+            // can we avoid calls like this?
+            if (card.getComponentUnsafe(CardComponent.class).getValue().canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+                currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
+
+                enemy.removeCard(card);
+                card.setPosition(new Point2D(350, 225));
+
+                currentCard = card;
+                currentCard.setRenderLayer(RenderLayer.BACKGROUND);
+
+                // apply special effect
+
+                chosenCard = card;
+                break;
+            }
+        }
+
+        if (chosenCard == null) {
+            while (deck.hasCards()) {
+                GameEntity draw = spawn(deck.drawCard(), 0, -150);
+
+                if (draw.getComponentUnsafe(CardComponent.class).getValue().canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+                    currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
+
+                    draw.setPosition(new Point2D(350, 225));
+
+                    currentCard = draw;
+                    currentCard.setRenderLayer(RenderLayer.BACKGROUND);
+
+                    // apply special effect
+
+
+                    break;
+                } else {
+                    enemy.addCard(draw);
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
