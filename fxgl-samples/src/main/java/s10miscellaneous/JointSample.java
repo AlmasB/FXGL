@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package s10miscellaneous;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;

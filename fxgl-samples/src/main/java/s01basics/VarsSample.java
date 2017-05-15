@@ -24,63 +24,49 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package s01basics;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.SceneDimension;
+
+import java.util.Map;
 
 /**
- * This is an example of using async tasks.
+ * Shows how to use global property variables.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class AsyncSample extends GameApplication {
+public class VarsSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("AsyncSample");
+        settings.setTitle("VarsSample");
         settings.setVersion("0.1");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("test", -1);
+        vars.put("dim", new SceneDimension(100, 50));
+    }
+
+    @Override
     protected void initGame() {
+        getGameState().<SceneDimension>addListener("dim", ((prev, now) -> System.out.println(prev + " " + now)));
 
-        // arbitrary example
+        System.out.println(getGameState().getInt("test"));
 
-        Async<Integer> async = getExecutor().async(() -> {
-            System.out.println("AI thread: " + Thread.currentThread().getName());
-            System.out.println("AI tick");
-            Thread.sleep(2000);
-            System.out.println("AI Done");
-            return 999;
-        });
+        System.out.println(getGameState().<SceneDimension>getObject("dim").getWidth());
 
-        Async<Double> async2 = getExecutor().async(() -> {
-            System.out.println("Render thread: " + Thread.currentThread().getName());
-            System.out.println("Render tick");
-            Thread.sleep(300);
-            System.out.println("Render Done");
-            return 399.0;
-        });
+        System.out.println(getGameState().<SceneDimension>objectProperty("dim").get().getWidth());
 
-        Async<Void> async3 = getExecutor().async(() -> {
-            System.out.println("Running some code");
-        });
-
-        System.out.println("Physics thread: " + Thread.currentThread().getName());
-        System.out.println("Physics tick Done. Waiting for AI & Render");
-
-        int value = async.await();
-        double value2 = async2.await();
-
-        System.out.println("Values: " + value + " " + value2);
+        getGameState().setValue("dim", new SceneDimension(300, 300));
     }
 
     public static void main(String[] args) {

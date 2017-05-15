@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package s08ai;
 
 import com.almasb.fxgl.ai.goap.GoapAction;
 import com.almasb.fxgl.ai.goap.GoapAgent;

@@ -24,70 +24,64 @@
  * SOFTWARE.
  */
 
-package sandbox;
+package s09advanced;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 /**
- * Shows how to use JavaFX UI within FXGL.
+ * This is an example of using async tasks.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class UISampleTest extends GameApplication {
-
-    // 1. declare JavaFX or FXGL UI object
-    private Text uiText;
+public class AsyncSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
-        settings.setTitle("UISampleTest");
+        settings.setTitle("AsyncSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
-    protected void initInput() {}
+    protected void initGame() {
 
-    @Override
-    protected void initAssets() {}
+        // arbitrary example
 
-    @Override
-    protected void initGame() {}
+        Async<Integer> async = getExecutor().async(() -> {
+            System.out.println("AI thread: " + Thread.currentThread().getName());
+            System.out.println("AI tick");
+            Thread.sleep(2000);
+            System.out.println("AI Done");
+            return 999;
+        });
 
-    @Override
-    protected void initPhysics() {}
+        Async<Double> async2 = getExecutor().async(() -> {
+            System.out.println("Render thread: " + Thread.currentThread().getName());
+            System.out.println("Render tick");
+            Thread.sleep(300);
+            System.out.println("Render Done");
+            return 399.0;
+        });
 
-    @Override
-    protected void initUI() {
-        // 2. initialize the object
-        uiText = new Text();
-        uiText.setFont(Font.font(18));
+        Async<Void> async3 = getExecutor().async(() -> {
+            System.out.println("Running some code");
+        });
 
-        // 3. position the object
-        uiText.setTranslateX(400);
-        uiText.setTranslateY(300);
+        System.out.println("Physics thread: " + Thread.currentThread().getName());
+        System.out.println("Physics tick Done. Waiting for AI & Render");
 
-        // 4. bind text property to some data of interest
-        //uiText.textProperty().bind(getMasterTimer().tickProperty().asString("Tick: [%d]"));
+        int value = async.await();
+        double value2 = async2.await();
 
-        // 5. add UI object to scene
-        getGameScene().addUINode(uiText);
-
-        getUIFactory().fadeInOut(uiText, Duration.seconds(1), () -> getGameScene().removeUINode(uiText)).startInPlayState();
+        System.out.println("Values: " + value + " " + value2);
     }
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);
