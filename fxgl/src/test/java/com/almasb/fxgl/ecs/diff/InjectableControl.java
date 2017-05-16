@@ -29,17 +29,14 @@ package com.almasb.fxgl.ecs.diff;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityTest;
-import com.almasb.fxgl.ecs.control.FromEntity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class InjectableControl extends AbstractControl {
 
-    @FromEntity
     private EntityTest.CustomDataComponent component;
 
-    @FromEntity
     private EntityTest.CustomDataControl control;
 
     @Override
