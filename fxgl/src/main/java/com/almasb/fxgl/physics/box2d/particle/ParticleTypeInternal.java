@@ -5,7 +5,7 @@ package com.almasb.fxgl.physics.box2d.particle;
  *
  * @author dmurph
  */
-public class ParticleTypeInternal {
+class ParticleTypeInternal {
     public static final int b2_waterParticle = 0;
     /**
      * removed after next step
