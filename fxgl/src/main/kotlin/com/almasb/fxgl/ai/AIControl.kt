@@ -26,12 +26,12 @@
 
 package com.almasb.fxgl.ai
 
+import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ecs.AbstractControl
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.GameEntity
-import com.almasb.fxgl.ai.btree.BehaviorTree
 import java.util.*
 
 /**

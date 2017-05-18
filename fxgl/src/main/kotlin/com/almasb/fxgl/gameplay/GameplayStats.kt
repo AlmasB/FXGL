@@ -26,10 +26,6 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.saving.UserProfile
-import javafx.util.Duration
-
 /**
  * fxglTODO: to be implemented.
  * Data structure containing various gameplay related statistics,

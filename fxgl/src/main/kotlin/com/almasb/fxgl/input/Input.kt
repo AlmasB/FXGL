@@ -29,9 +29,9 @@ package com.almasb.fxgl.input
 import com.almasb.fxgl.annotation.OnUserAction
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.scene.Viewport
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
+import com.almasb.fxgl.scene.Viewport
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections

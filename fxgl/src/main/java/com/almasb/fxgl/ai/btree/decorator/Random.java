@@ -16,7 +16,6 @@
 
 package com.almasb.fxgl.ai.btree.decorator;
 
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ai.btree.Decorator;
 import com.almasb.fxgl.ai.btree.Task;
 import com.almasb.fxgl.ai.btree.annotation.TaskAttribute;
@@ -25,6 +24,7 @@ import com.almasb.fxgl.ai.btree.leaf.Failure;
 import com.almasb.fxgl.ai.btree.leaf.Success;
 import com.almasb.fxgl.ai.utils.random.ConstantFloatDistribution;
 import com.almasb.fxgl.ai.utils.random.FloatDistribution;
+import com.almasb.fxgl.core.math.FXGLMath;
 
 /** The {@code Random} decorator succeeds with the specified probability, regardless of whether the wrapped task fails or succeeds.
  * Also, the wrapped task is optional, meaning that this decorator can act like a leaf task.

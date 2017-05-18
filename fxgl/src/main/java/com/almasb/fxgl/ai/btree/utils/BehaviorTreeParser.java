@@ -16,13 +16,6 @@
 
 package com.almasb.fxgl.ai.btree.utils;
 
-import com.almasb.fxgl.core.collection.Array;
-import com.almasb.fxgl.core.collection.ObjectMap;
-import com.almasb.fxgl.core.collection.ObjectSet;
-import com.almasb.fxgl.core.reflect.Annotation;
-import com.almasb.fxgl.core.reflect.ClassReflection;
-import com.almasb.fxgl.core.reflect.Field;
-import com.almasb.fxgl.core.reflect.ReflectionException;
 import com.almasb.fxgl.ai.GdxAI;
 import com.almasb.fxgl.ai.btree.BehaviorTree;
 import com.almasb.fxgl.ai.btree.Task;
@@ -34,6 +27,13 @@ import com.almasb.fxgl.ai.btree.leaf.Failure;
 import com.almasb.fxgl.ai.btree.leaf.Success;
 import com.almasb.fxgl.ai.btree.leaf.Wait;
 import com.almasb.fxgl.ai.utils.random.Distribution;
+import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.collection.ObjectSet;
+import com.almasb.fxgl.core.reflect.Annotation;
+import com.almasb.fxgl.core.reflect.ClassReflection;
+import com.almasb.fxgl.core.reflect.Field;
+import com.almasb.fxgl.core.reflect.ReflectionException;
 
 import java.io.InputStream;
 import java.io.Reader;

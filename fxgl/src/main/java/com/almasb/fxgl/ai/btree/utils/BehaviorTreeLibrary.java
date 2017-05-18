@@ -16,10 +16,10 @@
 
 package com.almasb.fxgl.ai.btree.utils;
 
-import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.ai.btree.BehaviorTree;
 import com.almasb.fxgl.ai.btree.Task;
 import com.almasb.fxgl.ai.btree.TaskCloneException;
+import com.almasb.fxgl.core.collection.ObjectMap;
 
 /** A {@code BehaviorTreeLibrary} is a repository of behavior tree archetypes. Behavior tree archetypes never run. Indeed, they are
  * only cloned to create behavior tree instances that can run.

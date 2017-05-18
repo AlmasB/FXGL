@@ -29,7 +29,6 @@ package com.almasb.fxgl.gameplay
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.SubState
 import javafx.collections.FXCollections
-import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.ListCell
 import javafx.scene.layout.HBox

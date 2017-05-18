@@ -31,12 +31,12 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.service.Display
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import com.almasb.fxgl.settings.SceneDimension
-import com.almasb.fxgl.saving.UserProfile
 import com.google.inject.Inject
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper

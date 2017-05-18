@@ -16,9 +16,9 @@
 
 package com.almasb.fxgl.ai.btree.branch;
 
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ai.btree.BranchTask;
 import com.almasb.fxgl.ai.btree.Task;
+import com.almasb.fxgl.core.collection.Array;
 
 /** A {@code DynamicGuardSelector} is a branch task that executes the first child whose guard is evaluated to {@code true}. At
  * every AI cycle, the children's guards are re-evaluated, so if the guard of the running child is evaluated to {@code false}, it

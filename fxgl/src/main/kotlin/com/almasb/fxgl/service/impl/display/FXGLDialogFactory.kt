@@ -30,9 +30,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.service.DialogFactory
 import com.almasb.fxgl.ui.FXGLButton
 import com.google.inject.Inject
-import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Node

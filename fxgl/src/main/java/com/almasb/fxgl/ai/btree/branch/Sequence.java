@@ -16,9 +16,9 @@
 
 package com.almasb.fxgl.ai.btree.branch;
 
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ai.btree.SingleRunningChildBranch;
 import com.almasb.fxgl.ai.btree.Task;
+import com.almasb.fxgl.core.collection.Array;
 
 /** A {@code Sequence} is a branch task that runs every children until one of them fails. If a child task succeeds, the selector
  * will start and run the next child task.

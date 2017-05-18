@@ -28,9 +28,9 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.effect.ParticleControl
+import com.almasb.fxgl.physics.box2d.particle.ParticleGroup
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
-import com.almasb.fxgl.physics.box2d.particle.ParticleGroup
 
 /**
  * The difference between physics and normal particle entity is that

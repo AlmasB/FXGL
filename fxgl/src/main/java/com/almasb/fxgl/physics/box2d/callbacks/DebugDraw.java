@@ -29,10 +29,10 @@
 package com.almasb.fxgl.physics.box2d.callbacks;
 
 import com.almasb.fxgl.core.math.Vec2;
-import javafx.scene.paint.Color;
 import com.almasb.fxgl.physics.box2d.common.IViewportTransform;
 import com.almasb.fxgl.physics.box2d.common.Transform;
 import com.almasb.fxgl.physics.box2d.particle.ParticleColor;
+import javafx.scene.paint.Color;
 
 /**
  * Implement this abstract class to allow JBox2d to automatically draw your physics for debugging

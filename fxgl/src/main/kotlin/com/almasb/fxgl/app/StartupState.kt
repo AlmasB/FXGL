@@ -28,7 +28,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.scene.SceneFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
 

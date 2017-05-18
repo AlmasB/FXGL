@@ -16,10 +16,10 @@
 
 package com.almasb.fxgl.ai.btree.branch;
 
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ai.btree.BranchTask;
 import com.almasb.fxgl.ai.btree.Task;
 import com.almasb.fxgl.ai.btree.annotation.TaskAttribute;
+import com.almasb.fxgl.core.collection.Array;
 
 /** A {@code Parallel} is a special branch task that starts or resumes all children every single time. The actual behavior of
  * parallel task depends on its {@link #policy}:

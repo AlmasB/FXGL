@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.event.FXGLEventBus;

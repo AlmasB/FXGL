@@ -28,11 +28,7 @@ package com.almasb.fxgl.event
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
-import javafx.util.Duration
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
 import org.junit.BeforeClass
-import org.junit.Test
 
 /**
  *

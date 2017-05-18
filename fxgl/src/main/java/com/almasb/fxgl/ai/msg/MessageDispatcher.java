@@ -16,12 +16,12 @@
 
 package com.almasb.fxgl.ai.msg;
 
+import com.almasb.fxgl.ai.GdxAI;
+import com.almasb.fxgl.ai.Timepiece;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.IntMap;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.reflect.ClassReflection;
-import com.almasb.fxgl.ai.GdxAI;
-import com.almasb.fxgl.ai.Timepiece;
 
 /**
  * A {@code MessageDispatcher} is in charge of the creation, dispatch, and management of telegrams.

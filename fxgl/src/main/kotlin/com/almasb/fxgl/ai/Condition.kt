@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.ai
 
-import com.almasb.fxgl.entity.GameEntity
 import com.almasb.fxgl.ai.btree.LeafTask
 import com.almasb.fxgl.ai.btree.Task
+import com.almasb.fxgl.entity.GameEntity
 
 /**
  * Represents a single conditional statement of a behavior tree.

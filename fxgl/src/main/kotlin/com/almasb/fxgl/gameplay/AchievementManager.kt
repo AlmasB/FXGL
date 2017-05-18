@@ -29,9 +29,8 @@ package com.almasb.fxgl.gameplay
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.gameplay.AchievementEvent
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.saving.UserProfile
-import com.google.inject.Inject
+import com.almasb.fxgl.saving.UserProfileSavable
 import javafx.collections.FXCollections
 
 /**

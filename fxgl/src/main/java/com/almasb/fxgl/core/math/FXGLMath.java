@@ -30,7 +30,6 @@
 
 package com.almasb.fxgl.core.math;
 
-import javafx.animation.Interpolatable;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;

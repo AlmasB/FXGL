@@ -16,8 +16,8 @@
 
 package com.almasb.fxgl.ai.btree.branch;
 
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ai.btree.Task;
+import com.almasb.fxgl.core.collection.Array;
 
 /** A {@code RandomSequence} is a sequence task's variant that runs its children in a random order.
  * 

@@ -28,9 +28,7 @@ package com.almasb.fxgl.ui
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
-import javafx.util.Callback
 
 /**
  *

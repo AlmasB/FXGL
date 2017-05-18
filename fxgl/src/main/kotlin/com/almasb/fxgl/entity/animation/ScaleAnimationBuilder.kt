@@ -27,7 +27,6 @@
 package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.animation.AnimatedPoint2D
-import com.almasb.fxgl.animation.AnimatedValue
 import com.almasb.fxgl.animation.Animation
 import javafx.geometry.Point2D
 

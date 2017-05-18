@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.physics.box2d;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
 import java.util.Collections;

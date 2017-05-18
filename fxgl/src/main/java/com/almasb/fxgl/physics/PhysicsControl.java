@@ -35,8 +35,8 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
-import javafx.geometry.Point2D;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
+import javafx.geometry.Point2D;
 
 /**
  * This control updates position and rotation components of entities

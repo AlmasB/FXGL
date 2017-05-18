@@ -16,9 +16,9 @@
 
 package com.almasb.fxgl.ai.btree.branch;
 
-import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ai.btree.SingleRunningChildBranch;
 import com.almasb.fxgl.ai.btree.Task;
+import com.almasb.fxgl.core.collection.Array;
 
 /** A {@code Selector} is a branch task that runs every children until one of them succeeds. If a child task fails, the selector
  * will start and run the next child task.

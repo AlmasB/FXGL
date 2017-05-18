@@ -37,13 +37,6 @@ import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
-import com.almasb.fxgl.service.Pooler;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactImpulse;
 import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
@@ -52,6 +45,13 @@ import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroup;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
+import com.almasb.fxgl.service.Pooler;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 
 import java.util.Iterator;
 

@@ -16,8 +16,8 @@
 
 package com.almasb.fxgl.ai.btree.utils;
 
-import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.ai.utils.random.*;
+import com.almasb.fxgl.core.collection.ObjectMap;
 
 import java.util.StringTokenizer;
 

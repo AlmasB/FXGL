@@ -27,7 +27,6 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
-import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;

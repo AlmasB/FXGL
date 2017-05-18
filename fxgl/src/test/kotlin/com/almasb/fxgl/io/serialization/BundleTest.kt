@@ -26,9 +26,6 @@
 
 package com.almasb.fxgl.io.serialization
 
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert
-import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

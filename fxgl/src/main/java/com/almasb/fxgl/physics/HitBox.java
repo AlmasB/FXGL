@@ -25,13 +25,13 @@
  */
 package com.almasb.fxgl.physics;
 
+import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
-import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 
 import java.io.IOException;
 import java.io.Serializable;

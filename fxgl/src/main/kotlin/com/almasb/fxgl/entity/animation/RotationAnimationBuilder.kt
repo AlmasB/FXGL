@@ -28,7 +28,6 @@ package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.animation.AnimatedValue
 import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.util.EmptyRunnable
 
 /**
  *

@@ -27,7 +27,6 @@
 package com.almasb.fxgl.physics.box2d.dynamics;
 
 import com.almasb.fxgl.core.math.Vec2;
-import javafx.scene.paint.Color;
 import com.almasb.fxgl.physics.box2d.callbacks.DebugDraw;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.shapes.ChainShape;
@@ -42,6 +41,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.joints.PulleyJoint;
 import com.almasb.fxgl.physics.box2d.particle.ParticleColor;
 import com.almasb.fxgl.physics.box2d.particle.ParticleSystem;
 import com.almasb.fxgl.physics.box2d.pooling.arrays.Vec2Array;
+import javafx.scene.paint.Color;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
