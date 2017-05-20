@@ -26,8 +26,8 @@
 
 package com.almasb.fxgl.ai
 
-import com.badlogic.gdx.ai.btree.LeafTask
-import com.badlogic.gdx.ai.btree.Task
+import com.almasb.fxgl.ai.btree.LeafTask
+import com.almasb.fxgl.ai.btree.Task
 
 /**
  *

@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.service;
 
+import com.almasb.fxgl.ai.btree.BehaviorTree;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.parser.KVFile;
@@ -34,7 +35,6 @@ import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
-import com.badlogic.gdx.ai.btree.BehaviorTree;
 import javafx.scene.image.Image;
 
 import java.io.InputStream;

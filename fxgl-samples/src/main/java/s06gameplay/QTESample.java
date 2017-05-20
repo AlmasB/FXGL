@@ -27,7 +27,7 @@ package s06gameplay;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.service.QTE;
+import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -64,8 +64,8 @@ public class QTESample extends GameApplication {
         // when app runs, every 5 seconds a QTE event will occur
         getMasterTimer().runAtInterval(() -> {
 
-            // 1. get QTE service
-            QTE qte = getQTE();
+            // 1. get QTE access
+            QTE qte = getGameplay().getQTE();
 
             // 2. start event with duration and keys to be pressed
             qte.start(yes -> {

@@ -170,8 +170,8 @@ class LightingSystem {
 
         val rays = arrayListOf<Shape>()
 
-        val mx = FXGL.getInput().mouseXUI
-        val my = FXGL.getInput().mouseYUI
+        val mx = FXGL.getInput().getMouseXUI()
+        val my = FXGL.getInput().getMouseYUI()
 
         for (i in 0..7) {
             val beam = renderRay(Point2D(mx + Math.cos(i / 8.0 * (Math.PI * 2.0)) * 7.0,

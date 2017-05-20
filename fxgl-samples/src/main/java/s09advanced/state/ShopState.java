@@ -106,7 +106,7 @@ public class ShopState extends SubState {
                     "Wooden Bow"
             );
 
-            listView = new ListView<>(items);
+            listView = FXGL.getUIFactory().newListView(items);
             listView.setTranslateX(10);
             listView.setTranslateY(25);
             listView.setPrefSize(width - 20, height - 50);

@@ -39,7 +39,7 @@ import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.AchievementManager;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.io.FS;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxglgames.spaceinvaders.control.PlayerControl;
@@ -81,7 +81,7 @@ public class SpaceInvadersApp extends GameApplication {
 
     @Override
     protected void initAchievements() {
-        AchievementManager am = getAchievementManager();
+        AchievementManager am = getGameplay().getAchievementManager();
 
         am.registerAchievement(new Achievement("Hitman", "Destroy " + ACHIEVEMENT_ENEMIES_KILLED + " enemies"));
         am.registerAchievement(new Achievement("Master Scorer", "Score " + ACHIEVEMENT_MASTER_SCORER + " points"));
@@ -154,9 +154,9 @@ public class SpaceInvadersApp extends GameApplication {
         highScoreName = data.getName();
         highScore = data.getHighScore();
 
-        getAchievementManager().getAchievementByName("Hitman")
+        getGameplay().getAchievementManager().getAchievementByName("Hitman")
                 .bind(getGameState().intProperty("enemiesKilled").greaterThanOrEqualTo(ACHIEVEMENT_ENEMIES_KILLED));
-        getAchievementManager().getAchievementByName("Master Scorer")
+        getGameplay().getAchievementManager().getAchievementByName("Master Scorer")
                 .bind(getGameState().intProperty("score").greaterThanOrEqualTo(ACHIEVEMENT_MASTER_SCORER));
 
         spawnBackground();
@@ -273,7 +273,7 @@ public class SpaceInvadersApp extends GameApplication {
 
         // ideally we must obtain dynamic key codes because the keys
         // may have been reassigned
-        TutorialStep step1 = new TutorialStep("Press A to move left", Asset.DIALOG_MOVE_LEFT, () -> {
+        TutorialStep step1 = new TutorialStep("Press " + getInput().getTriggerByActionName("Move Left") + " to move left", Asset.DIALOG_MOVE_LEFT, () -> {
             getInput().mockKeyPress(KeyCode.A);
         });
 

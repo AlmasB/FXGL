@@ -27,7 +27,7 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
-import com.almasb.fxgl.gameplay.AchievementManager;
+import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
@@ -38,12 +38,9 @@ import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
-import com.almasb.fxgl.service.impl.qte.QTEProvider;
-import com.almasb.fxgl.service.impl.quest.FXGLQuestServiceProvider;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
-import javafx.scene.control.Dialog;
 
 /**
  * Marks a service type.
@@ -145,18 +142,6 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<AchievementManager> ACHIEVEMENT_MANAGER = new ServiceType<AchievementManager>() {
-        @Override
-        public Class<AchievementManager> service() {
-            return AchievementManager.class;
-        }
-
-        @Override
-        public Class<? extends AchievementManager> serviceProvider() {
-            return AchievementManager.class;
-        }
-    };
-
     ServiceType<Net> NET = new ServiceType<Net>() {
         @Override
         public Class<Net> service() {
@@ -169,15 +154,15 @@ public interface ServiceType<T> {
         }
     };
 
-    ServiceType<QTE> QTE = new ServiceType<QTE>() {
+    ServiceType<Gameplay> GAMEPLAY = new ServiceType<Gameplay>() {
         @Override
-        public Class<QTE> service() {
-            return QTE.class;
+        public Class<Gameplay> service() {
+            return Gameplay.class;
         }
 
         @Override
-        public Class<? extends QTE> serviceProvider() {
-            return QTEProvider.class;
+        public Class<? extends Gameplay> serviceProvider() {
+            return Gameplay.class;
         }
     };
 
@@ -214,18 +199,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends UIFactory> serviceProvider() {
             return FXGLUIFactory.class;
-        }
-    };
-
-    ServiceType<FXGLQuestServiceProvider> QUEST_MANAGER = new ServiceType<FXGLQuestServiceProvider>() {
-        @Override
-        public Class<FXGLQuestServiceProvider> service() {
-            return FXGLQuestServiceProvider.class;
-        }
-
-        @Override
-        public Class<? extends FXGLQuestServiceProvider> serviceProvider() {
-            return FXGLQuestServiceProvider.class;
         }
     };
 

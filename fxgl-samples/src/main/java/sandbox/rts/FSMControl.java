@@ -28,8 +28,8 @@ package sandbox.rts;
 
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
-import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.ai.fsm.State;
+import com.almasb.fxgl.ai.fsm.DefaultStateMachine;
+import com.almasb.fxgl.ai.fsm.State;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

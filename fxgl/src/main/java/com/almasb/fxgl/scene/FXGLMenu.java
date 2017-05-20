@@ -32,7 +32,6 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.InputModifier;
-import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
@@ -41,7 +40,6 @@ import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
-import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -195,7 +193,7 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentLoad() {
         log.debug("createContentLoad()");
 
-        ListView<SaveFile> list = new ListView<>();
+        ListView<SaveFile> list = FXGL.getUIFactory().newListView();
 
         list.setItems(listener.getSaveLoadManager().saveFiles());
         list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
@@ -258,7 +256,7 @@ public abstract class FXGLMenu extends FXGLScene {
         // row 0
         grid.setUserData(0);
 
-        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
+        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, grid));
 
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -271,9 +269,11 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
-    private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
+    private void addNewInputBinding(UserAction action, GridPane grid) {
         Text actionName = FXGL.getUIFactory().newText(action.getName());
-        Button triggerName = FXGL.getUIFactory().newButton(trigger.toString());
+        Button triggerName = FXGL.getUIFactory().newButton("");
+
+        triggerName.textProperty().bind(app.getInput().triggerNameProperty(action));
 
         triggerName.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
@@ -296,21 +296,15 @@ public abstract class FXGLMenu extends FXGLScene {
 
                 boolean rebound = app.getInput().rebind(action, e.getCode(), InputModifier.from(e));
 
-                if (!rebound)
-                    return;
-
-                triggerName.setText(app.getInput().getBindings().get(action).toString());
-                stage.close();
+                if (rebound)
+                    stage.close();
             });
             scene.setOnMouseClicked(e -> {
 
                 boolean rebound = app.getInput().rebind(action, e.getButton(), InputModifier.from(e));
 
-                if (!rebound)
-                    return;
-
-                triggerName.setText(app.getInput().getBindings().get(action).toString());
-                stage.close();
+                if (rebound)
+                    stage.close();
             });
 
             stage.setScene(scene);
@@ -436,7 +430,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         MenuContent content = new MenuContent();
 
-        for (Achievement a : app.getAchievementManager().getAchievements()) {
+        for (Achievement a : app.getGameplay().getAchievementManager().getAchievements()) {
             CheckBox checkBox = new CheckBox();
             checkBox.setDisable(true);
             checkBox.selectedProperty().bind(a.achievedProperty());

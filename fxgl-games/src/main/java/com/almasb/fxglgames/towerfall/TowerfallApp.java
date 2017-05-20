@@ -36,7 +36,7 @@ import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestWindow;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.text.TextLevelParser;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
@@ -161,7 +161,7 @@ public class TowerfallApp extends GameApplication {
                 ))
         );
 
-        quests.forEach(getQuestService()::addQuest);
+        quests.forEach(getGameplay().getQuestManager()::addQuest);
     }
 
     public static void main(String[] args) {

@@ -28,7 +28,6 @@ package com.almasb.fxgl.service.impl.executor
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.service.EventBus
 import com.almasb.fxgl.service.Executor
 import com.google.inject.Inject
 import javafx.util.Duration

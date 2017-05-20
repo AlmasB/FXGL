@@ -290,12 +290,6 @@ class FXGL private constructor() {
         private val _executor by lazy { getService(ServiceType.EXECUTOR) }
         @JvmStatic fun getExecutor() = _executor
 
-        private val _achievement by lazy { getService(ServiceType.ACHIEVEMENT_MANAGER) }
-        @JvmStatic fun getAchievementManager() = _achievement
-
-        private val _qte by lazy { getService(ServiceType.QTE) }
-        @JvmStatic fun getQTE() = _qte
-
         private val _net by lazy { getService(ServiceType.NET) }
         @JvmStatic fun getNet() = _net
 
@@ -308,8 +302,8 @@ class FXGL private constructor() {
         private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
         @JvmStatic fun getUIFactory() = _uiFactory
 
-        private val _questManager by lazy { getService(ServiceType.QUEST_MANAGER) }
-        @JvmStatic fun getQuestManager() = _questManager
+        private val _gameplay by lazy { getService(ServiceType.GAMEPLAY) }
+        @JvmStatic fun getGameplay() = _gameplay
 
         /* OTHER CONVENIENCE ACCESSORS */
 

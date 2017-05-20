@@ -26,13 +26,14 @@
 
 package s03entities;
 
+import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.animation.EntityAnimation;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.QuadCurve;
@@ -77,48 +78,32 @@ public class AnimationSample3 extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         player = Entities.builder()
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
 
-        Entities.animationBuilder()
-                .duration(Duration.seconds(3))
-                .repeat(2)
+        Animation<?> animation = Entities.animationBuilder()
+                .duration(Duration.seconds(1))
+                .repeat(1)
                 .rotate(player)
                 .rotateTo(360)
-                .buildAndPlay();
+                .build();
+
+        animation.setCycleCount(2);
+        animation.setAutoReverse(true);
+        animation.startInPlayState();
 
         Entities.animationBuilder()
                 .duration(Duration.seconds(3))
-                .repeat(1)
-                .scale(player)
-                .to(new Point2D(2, 2))
-                .buildAndPlay();
-
-        EntityAnimation anim = Entities.animationBuilder()
-                .duration(Duration.seconds(3))
                 .repeat(2)
-                .delay(Duration.millis(3002))
+                .delay(Duration.millis(1002))
+                .interpolator(Interpolator.EASE_OUT)
                 .translate(player)
-                .alongPath(new QuadCurve(33, 33, 150, 144, 350, 344))
-                .build();
-
-        anim.play();
+                .alongPath(new QuadCurve(33, 33, 450, 544, 750, 4))
+                .buildAndPlay();
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

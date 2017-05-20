@@ -34,15 +34,15 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 
 /**
  * Sample that shows basic usage of the JBox2D physics engine
@@ -63,6 +63,7 @@ public class RealPhysicsSample extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(false);
+        settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -103,32 +104,15 @@ public class RealPhysicsSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         getGameWorld().addEntity(Entities.makeScreenBounds(50));
     }
 
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
-
     private GameEntity createPhysicsEntity() {
         // 1. create and configure physics component
         PhysicsComponent physics = new PhysicsComponent();
-
         physics.setBodyType(BodyType.DYNAMIC);
-
-        FixtureDef fd = new FixtureDef();
-        fd.setDensity(0.7f);
-        fd.setRestitution(0.3f);
-        physics.setFixtureDef(fd);
+        physics.setFixtureDef(new FixtureDef().density(0.7f).restitution(0.3f));
 
         return Entities.builder()
                 .at(getInput().getMousePositionWorld())

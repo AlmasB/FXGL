@@ -27,6 +27,7 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.tiled.TiledMap;
@@ -60,11 +61,12 @@ public class ScifiSample extends GameApplication {
         getInput().addAction(new UserAction("Use") {
             @Override
             protected void onActionBegin() {
-                getGameWorld().getCollidingEntities(player)
-                        .stream()
-                        .filter(e -> e.hasControl(UsableControl.class))
-                        .map(e -> e.getControlUnsafe(UsableControl.class))
-                        .forEach(UsableControl::use);
+                playerControl.punch();
+//                getGameWorld().getCollidingEntities(player)
+//                        .stream()
+//                        .filter(e -> e.hasControl(UsableControl.class))
+//                        .map(e -> e.getControlUnsafe(UsableControl.class))
+//                        .forEach(UsableControl::use);
             }
         }, KeyCode.F);
 
@@ -81,6 +83,13 @@ public class ScifiSample extends GameApplication {
                 playerControl.right();
             }
         }, KeyCode.D);
+
+        getInput().addAction(new UserAction("Jump") {
+            @Override
+            protected void onActionBegin() {
+                playerControl.jump();
+            }
+        }, KeyCode.W);
     }
 
     @Override
@@ -93,6 +102,8 @@ public class ScifiSample extends GameApplication {
 
         player = (GameEntity) getGameWorld().spawn("player", 100, 100);
         playerControl = player.getControlUnsafe(PlayerControl.class);
+
+        getGameWorld().addEntities(Entities.makeScreenBounds(40));
     }
 
     public static void main(String[] args) {

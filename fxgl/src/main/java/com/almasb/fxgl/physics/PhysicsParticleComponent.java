@@ -30,8 +30,8 @@ import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
 import javafx.scene.paint.Color;
-import org.jbox2d.particle.ParticleGroupDef;
 
 /**
  * Adds physics particle properties to an entity.

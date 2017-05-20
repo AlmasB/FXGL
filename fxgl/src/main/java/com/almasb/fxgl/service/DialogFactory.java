@@ -26,7 +26,6 @@
 
 package com.almasb.fxgl.service;
 
-import com.almasb.fxgl.io.UIDialogHandler;
 import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;

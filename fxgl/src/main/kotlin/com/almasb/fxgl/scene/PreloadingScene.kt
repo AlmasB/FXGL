@@ -34,6 +34,7 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
@@ -53,6 +54,9 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class PreloadingScene : Scene(VBox(50.0)) {
+
+    // seconds
+    private val WAIT_TIME = 10
 
     init {
         createContent()
@@ -127,11 +131,29 @@ class PreloadingScene : Scene(VBox(50.0)) {
                 KeyValue(innerCircle.fillProperty(), Color.GREEN))
 
         val timeline = Timeline()
-        timeline.getKeyFrames().add(frame)
-        timeline.setCycleCount(Int.MAX_VALUE)
-        timeline.play()
+        with(timeline) {
+            keyFrames.add(frame)
+            cycleCount = WAIT_TIME
+            setOnFinished {
+                showExit()
+            }
+            play()
+        }
 
         symbol.children.addAll(top, mid, bot, outerCircle, innerCircle, point)
         return symbol
+    }
+
+    private fun showExit() {
+        val text = Text("Taking longer than usual...")
+        text.fill = Color.WHITE
+
+        val exitBtn = Button("EXIT")
+        exitBtn.setOnAction {
+            println("User requested exit")
+            System.exit(0)
+        }
+
+        (root as VBox).children.addAll(text, exitBtn)
     }
 }

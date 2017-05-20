@@ -34,12 +34,9 @@ import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.texture.Texture;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
-import org.jbox2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -82,20 +79,12 @@ public class ScifiFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
-        Texture staticTexture = FXGL.getAssetLoader()
-                .loadTexture("dude.png")
-                .subTexture(new Rectangle2D(0, 0, 32, 42));
-
-        Texture animatedTexture = FXGL.getAssetLoader()
-                .loadTexture("dude.png")
-                .toAnimatedTexture(4, Duration.seconds(1));
-
         return Entities.builder()
                 .at(data.getX(), data.getY())
                 .type(ScifiType.PLAYER)
                 .bbox(new HitBox("main", BoundingShape.circle(19)))
                 .with(physics)
-                .with(new PlayerControl(staticTexture, animatedTexture))
+                .with(new PlayerControl())
                 .build();
     }
 

@@ -27,6 +27,7 @@
 package com.almasb.fxgl.entity.animation;
 
 import com.almasb.fxgl.entity.GameEntity;
+import javafx.animation.Interpolator;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class AnimationBuilder {
 
     private Duration duration = Duration.seconds(1);
     private Duration delay = Duration.ZERO;
+    private Interpolator interpolator = Interpolator.LINEAR;
     private int times = 1;
     private List<GameEntity> entities = new ArrayList<>();
 
@@ -56,6 +58,10 @@ public class AnimationBuilder {
 
     int getTimes() {
         return times;
+    }
+
+    Interpolator getInterpolator() {
+        return interpolator;
     }
 
     List<GameEntity> getEntities() {
@@ -74,6 +80,11 @@ public class AnimationBuilder {
 
     public AnimationBuilder repeat(int times) {
         this.times = times;
+        return this;
+    }
+
+    public AnimationBuilder interpolator(Interpolator interpolator) {
+        this.interpolator = interpolator;
         return this;
     }
 

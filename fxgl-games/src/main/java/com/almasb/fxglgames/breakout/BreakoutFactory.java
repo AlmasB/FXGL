@@ -39,8 +39,8 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxglgames.breakout.control.BallControl;
 import com.almasb.fxglgames.breakout.control.BatControl;
 import com.almasb.fxglgames.breakout.control.BrickControl;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

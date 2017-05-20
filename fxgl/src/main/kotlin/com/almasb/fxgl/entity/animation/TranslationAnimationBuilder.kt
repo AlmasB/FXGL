@@ -26,9 +26,11 @@
 
 package com.almasb.fxgl.entity.animation
 
+import com.almasb.fxgl.animation.*
 import javafx.geometry.Point2D
+import javafx.scene.shape.CubicCurve
+import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Shape
-
 
 /**
  *
@@ -56,13 +58,32 @@ class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder
         return this
     }
 
-    fun build(): TranslationAnimation {
-        return TranslationAnimation(animationBuilder, path, fromPoint, toPoint)
+    fun build(): Animation<*> {
+
+        path?.let { curve ->
+            when (curve) {
+                is QuadCurve -> return makeAnim(AnimatedQuadBezierPoint2D(curve))
+                is CubicCurve -> return makeAnim(AnimatedCubicBezierPoint2D(curve))
+                else -> throw IllegalArgumentException("Unsupported path: $curve")
+            }
+        }
+
+        return makeAnim(AnimatedPoint2D(fromPoint, toPoint, animationBuilder.interpolator))
     }
 
-    fun buildAndPlay(): TranslationAnimation {
+    private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
+        return object : Animation<Point2D>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
+                animValue) {
+
+            override fun onProgress(value: Point2D) {
+                animationBuilder.entities.forEach { it.position = value }
+            }
+        }
+    }
+
+    fun buildAndPlay(): Animation<*> {
         val anim = build()
-        anim.play()
+        anim.startInPlayState()
         return anim
     }
 }

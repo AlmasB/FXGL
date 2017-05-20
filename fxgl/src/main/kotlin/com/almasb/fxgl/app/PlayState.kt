@@ -30,6 +30,7 @@ import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ecs.EntityWorldListener
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.gameplay.GameState
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.scene.SceneFactory
@@ -64,8 +65,19 @@ private constructor(val gameState: GameState,
             }
         })
 
-        if (FXGL.getSettings().isMenuEnabled)
+        if (FXGL.getSettings().isMenuEnabled) {
             input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+        } else {
+            input.addAction(object : UserAction("Pause") {
+                override fun onActionBegin() {
+                    PauseMenuSubState.requestShow()
+                }
+
+                override fun onActionEnd() {
+                    PauseMenuSubState.unlockSwitch()
+                }
+            }, FXGL.getSettings().menuKey)
+        }
     }
 
     override fun onUpdate(tpf: Double) {

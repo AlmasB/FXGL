@@ -34,7 +34,7 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
-import com.almasb.fxgl.service.Input;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.WheelMenu;
 import com.almasb.fxglgames.geowars.component.GraphicsComponent;

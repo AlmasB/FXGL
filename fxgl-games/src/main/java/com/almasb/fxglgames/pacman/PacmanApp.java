@@ -29,7 +29,6 @@ import com.almasb.fxgl.ai.pathfinding.AStarGrid;
 import com.almasb.fxgl.ai.pathfinding.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.PauseSubState;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.gameplay.Level;
@@ -137,19 +136,6 @@ public class PacmanApp extends GameApplication {
                 //pause();
             }
         }, KeyCode.F);
-
-        PauseSubState.INSTANCE.getInput().addAction(new UserAction("Resume") {
-            @Override
-            protected void onActionBegin() {
-
-                //resume();
-
-//                if (getGameState().getInt("teleport") > 0) {
-//                    getGameState().increment("teleport", -1);
-//                    playerControl.teleport();
-//                }
-            }
-        }, KeyCode.G);
     }
 
     @Override

@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.physics;
 
+import com.almasb.fxgl.physics.box2d.collision.shapes.ShapeType;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
-import org.jbox2d.collision.shapes.ShapeType;
 
 import java.util.stream.Stream;
 

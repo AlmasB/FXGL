@@ -33,7 +33,11 @@ import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
-import com.almasb.fxgl.gameplay.*;
+import com.almasb.fxgl.gameplay.AchievementEvent;
+import com.almasb.fxgl.gameplay.GameState;
+import com.almasb.fxgl.gameplay.Gameplay;
+import com.almasb.fxgl.gameplay.NotificationEvent;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.io.FXGLIO;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
@@ -44,9 +48,9 @@ import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.display.DisplayEvent;
-import com.almasb.fxgl.time.FPSCounter;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
+import com.almasb.fxgl.time.FPSCounter;
 import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
@@ -226,7 +230,7 @@ public abstract class GameApplication extends Application {
 
         initStateMachine();
         registerServicesForUpdate();
-        generateDefaultProfile();
+
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
@@ -246,16 +250,16 @@ public abstract class GameApplication extends Application {
             getAudioPlayer().save(e.getProfile());
             getDisplay().save(e.getProfile());
             getInput().save(e.getProfile());
-            getAchievementManager().save(e.getProfile());
-            getQuestService().save(e.getProfile());
+            getGameplay().getAchievementManager().save(e.getProfile());
+            getGameplay().getQuestManager().save(e.getProfile());
         });
 
         getEventBus().addEventHandler(LoadEvent.ANY, e -> {
             getAudioPlayer().load(e.getProfile());
             getDisplay().load(e.getProfile());
             getInput().load(e.getProfile());
-            getAchievementManager().load(e.getProfile());
-            getQuestService().load(e.getProfile());
+            getGameplay().getAchievementManager().load(e.getProfile());
+            getGameplay().getQuestManager().load(e.getProfile());
         });
 
         getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
@@ -302,6 +306,8 @@ public abstract class GameApplication extends Application {
 
         // 3. scan for annotated methods and register them too
         getInput().scanForUserActions(this);
+
+        generateDefaultProfile();
 
         preInit();
 
@@ -631,32 +637,24 @@ public abstract class GameApplication extends Application {
         return primaryStage;
     }
 
-    /**
-     * @return game state
-     */
     public final GameState getGameState() {
         return playState.getGameState();
     }
 
-    /**
-     * @return game world
-     */
     public final GameWorld getGameWorld() {
         return playState.getGameWorld();
     }
 
-    /**
-     * @return physics world
-     */
     public final PhysicsWorld getPhysicsWorld() {
         return playState.getPhysicsWorld();
     }
 
-    /**
-     * @return game scene
-     */
     public final GameScene getGameScene() {
         return playState.getGameScene();
+    }
+
+    public final Gameplay getGameplay() {
+        return FXGL.getGameplay();
     }
 
     /**
@@ -733,14 +731,6 @@ public abstract class GameApplication extends Application {
         return FXGL.getNotificationService();
     }
 
-    public final AchievementManager getAchievementManager() {
-        return FXGL.getAchievementManager();
-    }
-
-    public final QTE getQTE() {
-        return FXGL.getQTE();
-    }
-
     public final Net getNet() {
         return FXGL.getNet();
     }
@@ -751,9 +741,5 @@ public abstract class GameApplication extends Application {
 
     public final UIFactory getUIFactory() {
         return FXGL.getUIFactory();
-    }
-
-    public final QuestService getQuestService() {
-        return FXGL.getQuestManager();
     }
 }

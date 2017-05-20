@@ -26,6 +26,9 @@
 
 package com.almasb.fxgl.entity.animation
 
+import com.almasb.fxgl.animation.AnimatedValue
+import com.almasb.fxgl.animation.Animation
+
 /**
  *
  *
@@ -46,13 +49,19 @@ class RotationAnimationBuilder(private val animationBuilder: AnimationBuilder) {
         return this
     }
 
-    fun build(): RotationAnimation {
-        return RotationAnimation(animationBuilder, startAngle, endAngle)
+    fun build(): Animation<*> {
+        return object : Animation<Double>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
+                AnimatedValue<Double>(startAngle, endAngle, animationBuilder.interpolator)) {
+
+            override fun onProgress(value: Double) {
+                animationBuilder.entities.forEach { it.rotation = value }
+            }
+        }
     }
 
-    fun buildAndPlay(): RotationAnimation {
+    fun buildAndPlay(): Animation<*> {
         val anim = build()
-        anim.play()
+        anim.startInPlayState()
         return anim
     }
 }

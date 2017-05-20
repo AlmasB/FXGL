@@ -26,8 +26,6 @@
 
 package com.almasb.fxgl.gameplay;
 
-import com.almasb.fxgl.gameplay.NotificationEvent;
-
 /**
  * Marks a service that wants to listen for notification events.
  *

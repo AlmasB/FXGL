@@ -67,6 +67,8 @@ public class ExpireCleanControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        // we use master timer to schedule removal
+        if (timerAction == null) {
+            timerAction = FXGL.getMasterTimer().runOnceAfter(entity::removeFromWorld, expire);
+        }
     }
 }

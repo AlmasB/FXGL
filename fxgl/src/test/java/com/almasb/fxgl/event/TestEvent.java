@@ -43,7 +43,14 @@ public class TestEvent extends Event {
 
     public final int FAIL1 = 1;
 
-    public TestEvent(@NamedArg("eventType") EventType<? extends Event> eventType) {
+    private Object data;
+
+    public TestEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Object data) {
         super(eventType);
+        this.data = data;
+    }
+
+    public Object getData() {
+        return data;
     }
 }

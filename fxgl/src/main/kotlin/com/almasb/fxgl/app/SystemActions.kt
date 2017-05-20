@@ -26,9 +26,9 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.UserAction
-import com.almasb.fxgl.service.Input
 import com.almasb.fxgl.ui.UI
 import javafx.scene.input.KeyCode
 

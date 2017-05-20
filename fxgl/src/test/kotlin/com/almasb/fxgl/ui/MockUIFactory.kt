@@ -28,10 +28,7 @@ package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.service.UIFactory
 import javafx.collections.ObservableList
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.Spinner
+import javafx.scene.control.*
 import javafx.scene.text.Font
 
 /**
@@ -40,6 +37,13 @@ import javafx.scene.text.Font
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 object MockUIFactory : UIFactory {
+    override fun <T : Any?> newListView(items: ObservableList<T>?): ListView<T> {
+        return ListView()
+    }
+
+    override fun <T : Any?> newListView(): ListView<T> {
+        return ListView()
+    }
 
     override fun newFont(size: Double): Font {
         return Font.font(size)
