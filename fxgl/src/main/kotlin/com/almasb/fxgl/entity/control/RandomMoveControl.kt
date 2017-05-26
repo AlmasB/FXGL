@@ -33,19 +33,23 @@ import com.almasb.fxgl.ecs.AbstractControl
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.entity.component.PositionComponent
+import javafx.geometry.Rectangle2D
 import javafx.util.Duration
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class RandomMoveControl(var speed: Double) : AbstractControl() {
+class RandomMoveControl
+@JvmOverloads constructor(
+        var speed: Double,
+        var xSeed: Double = FXGLMath.random(100f, 10000f).toDouble(),
+        var ySeed: Double = FXGLMath.random(10000f, 100000f).toDouble(),
+        var bounds: Rectangle2D = FXGL.getApp().appBounds) : AbstractControl() {
 
     private lateinit var position: PositionComponent
     private var bbox: BoundingBoxComponent? = null
 
     private val nextPosition = Vec2()
-    private var xSeed = FXGLMath.random(100f, 10000f).toDouble()
-    private var ySeed = FXGLMath.random(10000f, 100000f).toDouble()
 
     private val timer = FXGL.newLocalTimer()
     private val delay = Duration.seconds(1500 / speed)
@@ -72,9 +76,12 @@ class RandomMoveControl(var speed: Double) : AbstractControl() {
     }
 
     private fun updateNextPosition() {
-        val rangeX = FXGL.getAppWidth() - (bbox?.width?.toFloat() ?: 0.0f)
-        val rangeY = FXGL.getAppHeight() - (bbox?.height?.toFloat() ?: 0.0f)
+        val maxX = bounds.maxX - (bbox?.width ?: 0.0)
+        val maxY = bounds.maxY - (bbox?.height ?: 0.0)
 
-        nextPosition.set(FXGLMath.noise1D(xSeed) * rangeX, FXGLMath.noise1D(ySeed) * rangeY)
+        val x = FXGLMath.map(FXGLMath.noise1D(xSeed) * 1.0, 0.0, 1.0, bounds.minX, maxX).toFloat()
+        val y = FXGLMath.map(FXGLMath.noise1D(ySeed) * 1.0, 0.0, 1.0, bounds.minY, maxY).toFloat()
+
+        nextPosition.set(x, y)
     }
 }
