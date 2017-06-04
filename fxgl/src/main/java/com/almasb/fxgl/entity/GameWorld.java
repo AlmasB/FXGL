@@ -106,7 +106,7 @@ public final class GameWorld extends EntityWorld {
      * @param trigger the event trigger
      */
     public void removeEventTrigger(EventTrigger<?> trigger) {
-        eventTriggers.removeValue(trigger, true);
+        eventTriggers.removeValueByIdentity(trigger);
     }
 
     private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();

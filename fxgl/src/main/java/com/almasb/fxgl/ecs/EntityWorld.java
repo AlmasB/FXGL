@@ -209,7 +209,7 @@ public class EntityWorld {
      * @param listener the listener
      */
     public final void removeWorldListener(EntityWorldListener listener) {
-        worldListeners.removeValue(listener, true);
+        worldListeners.removeValueByIdentity(listener);
     }
 
     private void notifyEntityAdded(Entity e) {
@@ -253,7 +253,7 @@ public class EntityWorld {
         // assert array exists because entity was added first
         Array<Entity> array = componentMap.get(type);
 
-        array.removeValue(e, true);
+        array.removeValueByIdentity(e);
     }
 
     /**

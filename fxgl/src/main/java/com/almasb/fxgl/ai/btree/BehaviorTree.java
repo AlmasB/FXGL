@@ -151,7 +151,7 @@ public class BehaviorTree<E> extends Task<E> {
 	}
 
 	public void removeListener (Listener<E> listener) {
-		if (listeners != null) listeners.removeValue(listener, true);
+		if (listeners != null) listeners.removeValueByIdentity(listener);
 	}
 
 	public void removeListeners () {

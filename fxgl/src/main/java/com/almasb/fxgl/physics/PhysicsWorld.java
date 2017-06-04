@@ -238,7 +238,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entities.removeValue(entity, true);
+        entities.removeValueByIdentity(entity);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
             onPhysicsEntityRemoved(entity);
@@ -494,7 +494,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param handler collision handler to remove
      */
     public void removeCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.removeValue(handler, true);
+        collisionHandlers.removeValueByIdentity(handler);
     }
 
     /**

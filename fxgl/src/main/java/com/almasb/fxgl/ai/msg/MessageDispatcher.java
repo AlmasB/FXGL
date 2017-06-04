@@ -148,7 +148,7 @@ public class MessageDispatcher implements Telegraph {
     public void removeListener(Telegraph listener, int msg) {
         Array<Telegraph> listeners = msgListeners.get(msg);
         if (listeners != null) {
-            listeners.removeValue(listener, true);
+            listeners.removeValueByIdentity(listener);
         }
     }
 

@@ -334,15 +334,15 @@ public final class GameScene extends FXGLScene
                 });
 
         entity.getComponent(DrawableComponent.class)
-                .ifPresent(c -> drawables.removeValue(entity, true));
+                .ifPresent(c -> drawables.removeValueByIdentity(entity));
 
         entity.removeComponentListener(this);
         entity.removeControlListener(this);
 
         entity.getControl(ParticleControl.class)
-                .ifPresent(p -> particles.removeValue(p, true));
+                .ifPresent(p -> particles.removeValueByIdentity(p));
         entity.getControl(PhysicsParticleControl.class)
-                .ifPresent(p -> particles.removeValue(p, true));
+                .ifPresent(p -> particles.removeValueByIdentity(p));
     }
 
     @Override
@@ -381,7 +381,7 @@ public final class GameScene extends FXGLScene
     @Override
     public void onControlRemoved(Control control) {
         if (control instanceof PhysicsParticleControl) {
-            particles.removeValue((PhysicsParticleControl) control, true);
+            particles.removeValueByIdentity((PhysicsParticleControl) control);
         }
     }
 }

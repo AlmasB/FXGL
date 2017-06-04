@@ -65,7 +65,7 @@ object AASubdivision {
             } while (!divisible.first && !divisible.second)
 
             // grid is about to be subdivided, so remove from result list
-            result.removeValue(grid, true)
+            result.removeValueByIdentity(grid)
 
             var pair: Pair<Rectangle2D, Rectangle2D>
 
