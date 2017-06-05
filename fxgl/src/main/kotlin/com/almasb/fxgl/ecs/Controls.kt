@@ -64,6 +64,8 @@ internal class Controls(private val parent: Entity) {
 
     fun getRaw() = controls.values()
 
+    fun types() = controls.keys()
+
     fun addControl(control: Control) {
         val type = control.javaClass
 
@@ -184,35 +186,6 @@ internal class Controls(private val parent: Entity) {
         for (r in required) {
             if (!parent.hasComponent(r.value.java)) {
                 throw IllegalStateException("Required component: [" + r.value.java.getSimpleName() + "] for: " + type.simpleName + " is missing")
-            }
-        }
-    }
-
-    /**
-     * Checks if given type is not required by any other type.
-
-     * @param type the type to check
-     * *
-     * @throws IllegalArgumentException if the type is required by any other type
-     */
-    fun checkNotRequiredByAny(type: Class<out Component>) {
-        // check for components
-        for (t in parent.components.keys()) {
-
-            for (required in t.getAnnotationsByType(Required::class.java)) {
-                if (required.value.java == type) {
-                    throw IllegalArgumentException("Required component: [" + required.value.java.getSimpleName() + "] by: " + t.getSimpleName())
-                }
-            }
-        }
-
-        // check for controls
-        for (t in controls.keys()) {
-
-            for (required in t.getAnnotationsByType(Required::class.java)) {
-                if (required.value.java == type) {
-                    throw IllegalArgumentException("Required component: [" + required.value.java.getSimpleName() + "] by: " + t.simpleName)
-                }
             }
         }
     }

@@ -30,14 +30,11 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -57,8 +54,7 @@ public class Entity {
     private final ObjectMap<String, Object> properties = new ObjectMap<>();
 
     private Controls controls = new Controls(this);
-
-    ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+    private Components components = new Components(this);
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
@@ -194,7 +190,9 @@ public class Entity {
         controls.removeControlListener(listener);
     }
 
-    /* COMPONENT BEGIN */
+    public ObjectMap.Keys<Class<? extends Component> > getComponentTypes() {
+        return components.types();
+    }
 
     /**
      * @param type component type
@@ -203,7 +201,7 @@ public class Entity {
     public final boolean hasComponent(Class<? extends Component> type) {
         checkValid();
 
-        return components.containsKey(type);
+        return components.hasComponent(type);
     }
 
     /**
@@ -228,7 +226,7 @@ public class Entity {
     public final <T extends Component> T getComponentUnsafe(Class<T> type) {
         checkValid();
 
-        return type.cast(components.get(type));
+        return components.getComponentUnsafe(type);
     }
 
     /**
@@ -240,7 +238,7 @@ public class Entity {
     public final Array<Component> getComponents() {
         checkValid();
 
-        return components.values().toArray();
+        return components.get();
     }
 
     /**
@@ -255,29 +253,7 @@ public class Entity {
     public final void addComponent(Component component) {
         checkValid();
 
-        Class<? extends Component> type = component.getClass();
-        if (type.getCanonicalName() == null) {
-            throw new IllegalArgumentException("Anonymous components are not allowed! - " + type.getName());
-        }
-
-        if (hasComponent(type)) {
-            throw new IllegalArgumentException("Entity already has a component with type: " + type.getCanonicalName());
-        }
-
-        if (component instanceof AbstractComponent) {
-            AbstractComponent c = (AbstractComponent) component;
-            c.setEntity(this);
-        }
-
-        checkRequirementsMet(component.getClass());
-
-        components.put(component.getClass(), component);
-        component.onAdded(this);
-
-        if (isActive())
-            world.onComponentAdded(component, this);
-
-        notifyComponentAdded(component);
+        components.addComponent(component);
     }
 
     /**
@@ -298,15 +274,33 @@ public class Entity {
             // if not cleaning, then entity is alive, whether active or not
             // hence we cannot allow removal if component is required by other components / controls
             if (!cleaning) {
-                controls.checkNotRequiredByAny(type);
+                checkNotRequiredByAny(type);
             }
 
-            components.remove(component.getClass());
+            components.removeComponent(type);
+        }
+    }
 
-            if (isActive())
-                world.onComponentRemoved(component, this);
+    private void checkNotRequiredByAny(Class<? extends Component> type) {
+        // check components
+        for (Class<?> t : components.types()) {
+            checkNotRequiredBy(t, type);
+        }
 
-            removeComponentImpl(component);
+        // check controls
+        for (Class<?> t : controls.types()) {
+            checkNotRequiredBy(t, type);
+        }
+    }
+
+    /**
+     * Fails with IAE if [requiringType] has a dependency on [type].
+     */
+    private void checkNotRequiredBy(Class<?> requiringType, Class<? extends Component> type) {
+        for (Required required : requiringType.getAnnotationsByType(Required.class)) {
+            if (required.value().equals(type)) {
+                throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + requiringType.getSimpleName());
+            }
         }
     }
 
@@ -316,24 +310,8 @@ public class Entity {
     public final void removeAllComponents() {
         checkValid();
 
-        for (Component component : components.values()) {
-            removeComponentImpl(component);
-        }
-
-        components.clear();
+        components.removeAllComponents();
     }
-
-    private void removeComponentImpl(Component component) {
-        notifyComponentRemoved(component);
-        component.onRemoved(this);
-
-        if (component instanceof AbstractComponent) {
-            AbstractComponent c = (AbstractComponent) component;
-            c.setEntity(null);
-        }
-    }
-
-    private List<ComponentListener> componentListeners = new ArrayList<>();
 
     /**
      * Register a component listener on this entity.
@@ -341,7 +319,7 @@ public class Entity {
      * @param listener the listener
      */
     public void addComponentListener(ComponentListener listener) {
-        componentListeners.add(listener);
+        components.addComponentListener(listener);
     }
 
     /**
@@ -350,37 +328,7 @@ public class Entity {
      * @param listener the listener
      */
     public void removeComponentListener(ComponentListener listener) {
-        componentListeners.remove(listener);
-    }
-
-    private void notifyComponentAdded(Component component) {
-        for (int i = 0; i < componentListeners.size(); i++) {
-            componentListeners.get(i).onComponentAdded(component);
-        }
-    }
-
-    private void notifyComponentRemoved(Component component) {
-        for (int i = 0; i < componentListeners.size(); i++) {
-            componentListeners.get(i).onComponentRemoved(component);
-        }
-    }
-
-    /* COMPONENT END */
-
-    /**
-     * Checks if requirements for given type are met.
-     *
-     * @param type the type whose requirements to check
-     * @throws IllegalStateException if the type requirements are not met
-     */
-    private void checkRequirementsMet(Class<?> type) {
-        Required[] required = type.getAnnotationsByType(Required.class);
-
-        for (Required r : required) {
-            if (!hasComponent(r.value())) {
-                throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
-            }
-        }
+        components.removeComponentListener(listener);
     }
 
     private boolean controlsEnabled = true;
@@ -506,9 +454,7 @@ public class Entity {
         active.set(false);
 
         controls.clean();
-
-        removeAllComponents();
-        componentListeners.clear();
+        components.clean();
 
         properties.clear();
 
@@ -579,7 +525,7 @@ public class Entity {
     @Override
     public String toString() {
         return "Entity("
-                + String.join("\n", "components=" + components.values(), "controls=" + controls.getRaw())
+                + String.join("\n", "components=" + components.getRaw(), "controls=" + controls.getRaw())
                 + ")";
     }
 }

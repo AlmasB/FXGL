@@ -36,7 +36,7 @@ internal object EntityCopier {
     fun copy(entity: Entity): Entity {
         val copy = Entity()
 
-        entity.components.values()
+        entity.components
                 .filterIsInstance<CopyableComponent<*>>()
                 .forEach { copy.addComponent(it.copy()) }
 

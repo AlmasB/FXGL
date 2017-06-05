@@ -91,7 +91,7 @@ public class EntityWorld {
         waitingList.add(entity);
         entities.add(entity);
 
-        for (Class<? extends Component> type : entity.components.keys()) {
+        for (Class<? extends Component> type : entity.getComponentTypes()) {
             addComponentMap(type, entity);
         }
 
@@ -118,7 +118,7 @@ public class EntityWorld {
 
         entities.remove(entity);
 
-        for (Class<? extends Component> type : entity.components.keys()) {
+        for (Class<? extends Component> type : entity.getComponentTypes()) {
             removeComponentMap(type, entity);
         }
 

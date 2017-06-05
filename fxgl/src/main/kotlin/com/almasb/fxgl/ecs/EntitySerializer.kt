@@ -49,7 +49,7 @@ internal object EntitySerializer {
     fun save(entity: Entity, bundle: Bundle) {
         val componentsBundle = Bundle("components")
 
-        entity.components.values()
+        entity.components
                 .filterIsInstance<SerializableComponent>()
                 .forEach {
                     val b = Bundle(it.javaClass.canonicalName)
@@ -86,7 +86,7 @@ internal object EntitySerializer {
     fun load(entity: Entity, bundle: Bundle) {
         val componentsBundle = bundle.get<Bundle>("components")
 
-        for (component in entity.components.values()) {
+        for (component in entity.components) {
             if (component is SerializableComponent) {
 
                 val b = componentsBundle.get<Bundle>(component.javaClass.canonicalName)
