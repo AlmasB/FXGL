@@ -320,10 +320,10 @@ public class EntityTest {
     }
 
     @Test
-    public void testAddControlListener() {
+    public void testControlListener() {
         HPControl control = new HPControl();
 
-        entity.addControlListener(new ControlListener() {
+        ControlListener listener = new ControlListener() {
             @Override
             public void onControlAdded(Control control) {
                 assertEquals(HPControl.class, control.getClass());
@@ -337,14 +337,20 @@ public class EntityTest {
 
                 ((HPControl)control).value = 20;
             }
-        });
+        };
 
+        entity.addControlListener(listener);
         entity.addComponent(new HPComponent(33));
 
         entity.addControl(control);
         assertEquals(10, control.value, 0);
 
         entity.removeControl(HPControl.class);
+        assertEquals(20, control.value, 0);
+
+        entity.removeControlListener(listener);
+
+        entity.addControl(control);
         assertEquals(20, control.value, 0);
     }
 
