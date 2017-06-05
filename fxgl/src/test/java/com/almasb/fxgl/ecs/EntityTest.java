@@ -464,6 +464,16 @@ public class EntityTest {
         assertThat(world.getEntities(), not(hasItems(entity)));
     }
 
+    @Test
+    public void testCopy() {
+        entity.addComponent(new HPComponent(33));
+
+        Entity e2 = entity.copy();
+
+        assertThat(e2.hasComponent(HPComponent.class), is(true));
+        assertThat(e2.getComponentUnsafe(HPComponent.class).getValue(), is(33.0));
+    }
+
     private class TestControl extends AbstractControl {
         @Override
         public void onUpdate(Entity entity, double tpf) {}
@@ -494,9 +504,14 @@ public class EntityTest {
     private class TestComponent extends AbstractComponent {
     }
 
-    private class HPComponent extends DoubleComponent {
+    private class HPComponent extends DoubleComponent implements CopyableComponent<HPComponent> {
         HPComponent(double value) {
             super(value);
+        }
+
+        @Override
+        public HPComponent copy() {
+            return new HPComponent(getValue());
         }
     }
 
