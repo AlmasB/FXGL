@@ -38,7 +38,9 @@ import org.junit.Test;
 
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
 /**
@@ -72,6 +74,9 @@ public class EntityTest {
 
         entity.removeAllControls();
         assertFalse(entity.getControl(TestControl.class).isPresent());
+
+        // removing non-existent control, normal behaviour is to log, but not throw
+        entity.removeControl(TestControl.class);
     }
 
     @Test
@@ -81,6 +86,19 @@ public class EntityTest {
 
         assertEquals(control, entity.getControl(TestControl.class).get());
         assertEquals(control, entity.getControlUnsafe(TestControl.class));
+    }
+
+    @Test
+    public void testGetControls() {
+        TestControl control = new TestControl();
+        ControlAddingControl control2 = new ControlAddingControl();
+        ControlRemovingControl control3 = new ControlRemovingControl();
+
+        entity.addControl(control);
+        entity.addControl(control2);
+        entity.addControl(control3);
+
+        assertThat(entity.getControls(), hasItems(control, control2, control3));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -389,6 +407,13 @@ public class EntityTest {
 
         world.removeEntity(entity);
         assertThat(hp.value, is(-50.0));
+
+        entity.setOnNotActive(() -> hp.value = -33.0);
+        assertThat(hp.value, is(-33.0));
+
+        world.addEntity(entity);
+        entity.setOnActive(() -> hp.value = 99.0);
+        assertThat(hp.value, is(99.0));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -420,6 +445,17 @@ public class EntityTest {
         }
 
         assertThat(count, is(2));
+    }
+
+    @Test
+    public void testRemoveFromWorld() {
+        EntityWorld world = new EntityWorld();
+
+        world.addEntity(entity);
+        assertThat(world.getEntities(), hasItems(entity));
+
+        entity.removeFromWorld();
+        assertThat(world.getEntities(), not(hasItems(entity)));
     }
 
     private class TestControl extends AbstractControl {
