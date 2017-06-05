@@ -26,6 +26,7 @@
 
 package com.almasb.fxgl.ecs
 
+import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
@@ -56,6 +57,12 @@ internal class Controls(private val parent: Entity) {
     fun <T : Control> getControlUnsafe(type: Class<out T>): T? {
         return type.cast(controls.get(type))
     }
+
+    fun get(): Array<Control> {
+        return controls.values().toArray()
+    }
+
+    fun getRaw() = controls.values()
 
     fun addControl(control: Control) {
         val type = control.javaClass
@@ -138,6 +145,11 @@ internal class Controls(private val parent: Entity) {
         }
     }
 
+    fun clean() {
+        removeAllControls()
+        controlListeners.clear()
+    }
+
     private val controlListeners = ArrayList<ControlListener>()
 
     /**
@@ -183,12 +195,12 @@ internal class Controls(private val parent: Entity) {
      * *
      * @throws IllegalArgumentException if the type is required by any other type
      */
-    private fun checkNotRequiredByAny(type: Class<out Component>) {
+    fun checkNotRequiredByAny(type: Class<out Component>) {
         // check for components
         for (t in parent.components.keys()) {
 
             for (required in t.getAnnotationsByType(Required::class.java)) {
-                if (required.value == type) {
+                if (required.value.java == type) {
                     throw IllegalArgumentException("Required component: [" + required.value.java.getSimpleName() + "] by: " + t.getSimpleName())
                 }
             }
@@ -198,7 +210,7 @@ internal class Controls(private val parent: Entity) {
         for (t in controls.keys()) {
 
             for (required in t.getAnnotationsByType(Required::class.java)) {
-                if (required.value == type) {
+                if (required.value.java == type) {
                     throw IllegalArgumentException("Required component: [" + required.value.java.getSimpleName() + "] by: " + t.simpleName)
                 }
             }

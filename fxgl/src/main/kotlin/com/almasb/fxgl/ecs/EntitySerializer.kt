@@ -61,7 +61,7 @@ internal object EntitySerializer {
 
         val controlsBundle = Bundle("controls")
 
-        entity.controls.values()
+        entity.controls
                 .filterIsInstance<SerializableControl>()
                 .forEach {
                     val b = Bundle(it.javaClass.canonicalName)
@@ -99,7 +99,7 @@ internal object EntitySerializer {
 
         val controlsBundle = bundle.get<Bundle>("controls")
 
-        for (control in entity.controls.values()) {
+        for (control in entity.controls) {
             if (control is SerializableControl) {
 
                 val b = controlsBundle.get<Bundle>(control.javaClass.canonicalName)

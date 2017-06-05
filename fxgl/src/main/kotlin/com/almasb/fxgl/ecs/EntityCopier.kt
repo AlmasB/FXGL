@@ -40,7 +40,7 @@ internal object EntityCopier {
                 .filterIsInstance<CopyableComponent<*>>()
                 .forEach { copy.addComponent(it.copy()) }
 
-        entity.controls.values()
+        entity.controls
                 .filterIsInstance<CopyableControl<*>>()
                 .forEach { copy.addControl(it.copy()) }
 

@@ -56,7 +56,8 @@ public class Entity {
 
     private final ObjectMap<String, Object> properties = new ObjectMap<>();
 
-    ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
+    private Controls controls = new Controls(this);
+
     ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
@@ -94,8 +95,6 @@ public class Entity {
         return (T) value;
     }
 
-    /* CONTROL BEGIN */
-
     /**
      * @param type control type
      * @return true iff entity has control of given type
@@ -103,7 +102,7 @@ public class Entity {
     public final boolean hasControl(Class<? extends Control> type) {
         checkValid();
 
-        return controls.containsKey(type);
+        return controls.hasControl(type);
     }
 
     /**
@@ -128,7 +127,7 @@ public class Entity {
     public final <T extends Control> T getControlUnsafe(Class<T> type) {
         checkValid();
 
-        return type.cast(controls.get(type));
+        return controls.getControlUnsafe(type);
     }
 
     /**
@@ -140,7 +139,7 @@ public class Entity {
     public final Array<Control> getControls() {
         checkValid();
 
-        return controls.values().toArray();
+        return controls.get();
     }
 
     /**
@@ -156,51 +155,7 @@ public class Entity {
     public final void addControl(Control control) {
         checkValid();
 
-        Class<? extends Control> type = control.getClass();
-
-        if (type.getCanonicalName() == null) {
-            log.fatal("Adding anonymous control: " + type.getName());
-            throw new IllegalArgumentException("Anonymous controls are not allowed! - " + type.getName());
-        }
-
-        if (hasControl(type)) {
-            log.fatal("Entity already has a control with type: " + type.getCanonicalName());
-            throw new IllegalArgumentException("Entity already has a control with type: " + type.getCanonicalName());
-        }
-
-        checkRequirementsMet(control.getClass());
-
-        controls.put(control.getClass(), control);
-
-        if (control instanceof AbstractControl) {
-            ((AbstractControl) control).setEntity(this);
-        }
-
-        injectFields(control);
-
-        control.onAdded(this);
-        notifyControlAdded(control);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void injectFields(Control control) {
-        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
-            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
-            if (comp != null) {
-                ReflectionUtils.inject(field, control, comp);
-            } else {
-                log.warning("Injection failed, entity has no component: " + field.getType());
-            }
-        });
-
-        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
-            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
-            if (ctrl != null) {
-                ReflectionUtils.inject(field, control, ctrl);
-            } else {
-                log.warning("Injection failed, entity has no control: " + field.getType());
-            }
-        });
+        controls.addControl(control);
     }
 
     /**
@@ -209,14 +164,7 @@ public class Entity {
     public final void removeControl(Class<? extends Control> type) {
         checkValid();
 
-        Control control = getControlUnsafe(type);
-
-        if (control == null) {
-            log.warning("Cannot remove control " + type.getSimpleName() + ". Entity does not have one");
-        } else {
-            controls.remove(control.getClass());
-            removeControlImpl(control);
-        }
+        controls.removeControl(type);
     }
 
     /**
@@ -225,23 +173,8 @@ public class Entity {
     public final void removeAllControls() {
         checkValid();
 
-        for (Control control : controls.values()) {
-            removeControlImpl(control);
-        }
-
-        controls.clear();
+        controls.removeAllControls();
     }
-
-    private void removeControlImpl(Control control) {
-        notifyControlRemoved(control);
-        control.onRemoved(this);
-
-        if (control instanceof AbstractControl) {
-            ((AbstractControl) control).setEntity(null);
-        }
-    }
-
-    private List<ControlListener> controlListeners = new ArrayList<>();
 
     /**
      * @param listener the listener to add
@@ -249,7 +182,7 @@ public class Entity {
     public void addControlListener(ControlListener listener) {
         checkValid();
 
-        controlListeners.add(listener);
+        controls.addControlListener(listener);
     }
 
     /**
@@ -258,22 +191,8 @@ public class Entity {
     public void removeControlListener(ControlListener listener) {
         checkValid();
 
-        controlListeners.remove(listener);
+        controls.removeControlListener(listener);
     }
-
-    private void notifyControlAdded(Control control) {
-        for (int i = 0; i < controlListeners.size(); i++) {
-            controlListeners.get(i).onControlAdded(control);
-        }
-    }
-
-    private void notifyControlRemoved(Control control) {
-        for (int i = 0; i < controlListeners.size(); i++) {
-            controlListeners.get(i).onControlRemoved(control);
-        }
-    }
-
-    /* CONTROL END */
 
     /* COMPONENT BEGIN */
 
@@ -379,7 +298,7 @@ public class Entity {
             // if not cleaning, then entity is alive, whether active or not
             // hence we cannot allow removal if component is required by other components / controls
             if (!cleaning) {
-                checkNotRequiredByAny(type);
+                controls.checkNotRequiredByAny(type);
             }
 
             components.remove(component.getClass());
@@ -460,34 +379,6 @@ public class Entity {
         for (Required r : required) {
             if (!hasComponent(r.value())) {
                 throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
-            }
-        }
-    }
-
-    /**
-     * Checks if given type is not required by any other type.
-     *
-     * @param type the type to check
-     * @throws IllegalArgumentException if the type is required by any other type
-     */
-    private void checkNotRequiredByAny(Class<? extends Component> type) {
-        // check for components
-        for (Class<?> t : components.keys()) {
-
-            for (Required required : t.getAnnotationsByType(Required.class)) {
-                if (required.value().equals(type)) {
-                    throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + t.getSimpleName());
-                }
-            }
-        }
-
-        // check for controls
-        for (Class<?> t : controls.keys()) {
-
-            for (Required required : t.getAnnotationsByType(Required.class)) {
-                if (required.value().equals(type)) {
-                    throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + t.getSimpleName());
-                }
             }
         }
     }
@@ -588,7 +479,7 @@ public class Entity {
         updating = true;
 
         if (controlsEnabled) {
-            for (Control c : controls.values()) {
+            for (Control c : controls.getRaw()) {
                 if (!c.isPaused()) {
                     c.onUpdate(this, tpf);
                 }
@@ -614,10 +505,9 @@ public class Entity {
             onNotActive.run();
         active.set(false);
 
-        removeAllControls();
-        removeAllComponents();
+        controls.clean();
 
-        controlListeners.clear();
+        removeAllComponents();
         componentListeners.clear();
 
         properties.clear();
@@ -689,7 +579,7 @@ public class Entity {
     @Override
     public String toString() {
         return "Entity("
-                + String.join("\n", "components=" + components.values(), "controls=" + controls.values())
+                + String.join("\n", "components=" + components.values(), "controls=" + controls.getRaw())
                 + ")";
     }
 }
