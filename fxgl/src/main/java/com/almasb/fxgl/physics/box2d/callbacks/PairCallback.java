@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-ackage com.almasb.fxgl.physics.box2d.callbacks;
+package com.almasb.fxgl.physics.box2d.callbacks;
 
 public interface PairCallback {
     void addPair(Object userDataA, Object userDataB);
