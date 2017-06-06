@@ -271,10 +271,10 @@ public class EntityTest {
     }
 
     @Test
-    public void testAddComponentListener() {
+    public void testComponentListener() {
         HPComponent hp = new HPComponent(20);
 
-        entity.addComponentListener(new ComponentListener() {
+        ComponentListener listener = new ComponentListener() {
             @Override
             public void onComponentAdded(Component component) {
                 assertEquals(HPComponent.class, component.getClass());
@@ -288,13 +288,20 @@ public class EntityTest {
 
                 ((HPComponent)component).setValue(0);
             }
-        });
+        };
+
+        entity.addComponentListener(listener);
 
         entity.addComponent(hp);
-        Assert.assertEquals(10, hp.getValue(), 0);
+        assertThat(hp.getValue(), is(10.0));
 
         entity.removeComponent(HPComponent.class);
-        Assert.assertEquals(0, hp.getValue(), 0);
+        assertThat(hp.getValue(), is(0.0));
+
+        entity.removeComponentListener(listener);
+
+        entity.addComponentListener(listener);
+        assertThat(hp.getValue(), is(0.0));
     }
 
     @Test
