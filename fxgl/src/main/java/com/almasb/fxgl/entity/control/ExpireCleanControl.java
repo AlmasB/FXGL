@@ -9,6 +9,7 @@ package com.almasb.fxgl.entity.control;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.time.TimerAction;
 import javafx.util.Duration;
 
@@ -21,6 +22,8 @@ import javafx.util.Duration;
 public class ExpireCleanControl extends AbstractControl {
 
     private Duration expire;
+
+    private boolean animate = false;
 
     /**
      * The expire duration timer starts when the entity is attached to the world,
@@ -49,6 +52,31 @@ public class ExpireCleanControl extends AbstractControl {
     public void onUpdate(Entity entity, double tpf) {
         if (timerAction == null) {
             timerAction = FXGL.getMasterTimer().runOnceAfter(entity::removeFromWorld, expire);
+        } else {
+
+            if (animate && view != null) {
+                updateOpacity(tpf);
+            }
         }
+    }
+
+    private double time = 0;
+
+    private ViewComponent view;
+
+    private void updateOpacity(double tpf) {
+        time += tpf;
+
+        view.getView().setOpacity(time >= expire.toSeconds() ? 0 : 1 - time / expire.toSeconds());
+    }
+
+    /**
+     * Enables diminishing opacity over time.
+     *
+     * @return this control
+     */
+    public ExpireCleanControl animateOpacity() {
+        animate = true;
+        return this;
     }
 }
