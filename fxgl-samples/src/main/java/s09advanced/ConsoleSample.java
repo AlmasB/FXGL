@@ -39,12 +39,6 @@ public class ConsoleSample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("score", 0);
     }
@@ -58,9 +52,6 @@ public class ConsoleSample extends GameApplication {
     }
 
     @Override
-    protected void initPhysics() {}
-
-    @Override
     protected void initUI() {
         Text scoreText = getUIFactory().newText("", Color.BLACK, 14);
         scoreText.setTranslateX(300);
@@ -69,9 +60,6 @@ public class ConsoleSample extends GameApplication {
 
         getGameScene().addUINode(scoreText);
     }
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

@@ -57,21 +57,9 @@ public class OfflineTimerSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         timer = FXGL.newOfflineTimer("MOTDCheck");
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

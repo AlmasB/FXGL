@@ -101,9 +101,6 @@ public class ViewportZoomSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         e1 = Entities.builder()
                 .at(0, 0)
@@ -123,15 +120,6 @@ public class ViewportZoomSample extends GameApplication {
         // 1. bind viewport so it can fit those entities at any time
         getGameScene().getViewport().bindToFit(40, 100, e1, e2, e3);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

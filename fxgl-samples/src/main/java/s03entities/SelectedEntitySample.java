@@ -65,9 +65,6 @@ public class SelectedEntitySample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         player = Entities.builder()
                 .type(Type.PLAYER)
@@ -90,15 +87,6 @@ public class SelectedEntitySample extends GameApplication {
             System.out.println(newEntity);
         });
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

@@ -59,21 +59,6 @@ public class NotificationSample extends GameApplication {
         getInput().addInputMapping(new InputMapping("Show Notification", KeyCode.F));
     }
 
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
-
     @OnUserAction(name = "Show Notification", type = ActionType.ON_ACTION_BEGIN)
     public void showNotification() {
         // 1. get notification service and push a message

@@ -84,9 +84,6 @@ public class PhysicsSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         playerControl = new PlayerControl();
 
@@ -145,12 +142,6 @@ public class PhysicsSample extends GameApplication {
             }
         });
     }
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

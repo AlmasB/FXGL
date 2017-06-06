@@ -61,9 +61,6 @@ public class ScrollingBackgroundSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         player = Entities.builder()
                 .buildAndAttach(getGameWorld());
@@ -74,15 +71,6 @@ public class ScrollingBackgroundSample extends GameApplication {
         getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_wrap.png", 1066, 600),
                 Orientation.HORIZONTAL));
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

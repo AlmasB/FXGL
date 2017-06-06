@@ -35,18 +35,6 @@ public class UISample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
     protected void initUI() {
         // 2. initialize the object
         uiText = new Text();
@@ -62,9 +50,6 @@ public class UISample extends GameApplication {
         // 5. add UI object to scene
         getGameScene().addUINode(uiText);
     }
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

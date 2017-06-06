@@ -41,10 +41,6 @@ class LevelParsingSampleKt : GameApplication() {
         }
     }
 
-    override fun initInput() { }
-
-    override fun initAssets() { }
-
     override fun initGame() {
         val parser = TextLevelParser('0', BLOCK_SIZE.toInt(), BLOCK_SIZE.toInt())
 
@@ -62,12 +58,6 @@ class LevelParsingSampleKt : GameApplication() {
 
         gameWorld.setLevel(level)
     }
-
-    override fun initPhysics() { }
-
-    override fun initUI() { }
-
-    override fun onUpdate(tpf: Double) { }
 }
 
 fun main(args: Array<String>) {

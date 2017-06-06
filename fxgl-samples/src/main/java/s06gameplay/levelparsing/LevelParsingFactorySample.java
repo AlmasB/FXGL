@@ -33,12 +33,6 @@ public class LevelParsingFactorySample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
 
         // 1. create a parser and set it up with a factory
@@ -50,15 +44,6 @@ public class LevelParsingFactorySample extends GameApplication {
 
         getGameWorld().setLevel(level);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

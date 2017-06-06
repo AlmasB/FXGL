@@ -44,23 +44,6 @@ public class InGameWindowSample extends GameApplication {
         input.addInputMapping(new InputMapping("Open", KeyCode.O));
     }
 
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {
-
-    }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
-
     @OnUserAction(name = "Open", type = ActionType.ON_ACTION_BEGIN)
     public void openWindow() {
         // 1. create in-game window

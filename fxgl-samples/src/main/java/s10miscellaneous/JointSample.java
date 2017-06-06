@@ -148,9 +148,6 @@ public class JointSample extends GameApplication {
     }
 
     @Override
-    protected void initPhysics() {}
-
-    @Override
     protected void onUpdate(double tpf) {
         if (joint != null && FXGLMath.isEqual(FXGLMath.abs(joint.getJointAngle()), FXGLMath.degreesToRadians * 180.0f, 0.05f)) {
             joint.setMotorSpeed(-joint.getMotorSpeed());

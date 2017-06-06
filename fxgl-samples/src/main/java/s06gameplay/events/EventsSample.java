@@ -93,9 +93,6 @@ public class EventsSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         playerControl = new PlayerControl();
 
@@ -130,15 +127,6 @@ public class EventsSample extends GameApplication {
             System.out.println("Code handler: " + event);
         });
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     // 3. add event handler using annotation
     // specify where event type object is located

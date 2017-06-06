@@ -36,12 +36,6 @@ public class RenderLayerSample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         Entities.builder()
                 .at(100, 100)
@@ -72,15 +66,6 @@ public class RenderLayerSample extends GameApplication {
                 .viewFromNode(view)
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

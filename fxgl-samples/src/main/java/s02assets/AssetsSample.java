@@ -33,9 +33,6 @@ public class AssetsSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    @Override
-    protected void initInput() {}
-
     // 1. define Texture object
     private Texture brickTexture;
 
@@ -55,15 +52,6 @@ public class AssetsSample extends GameApplication {
 
         getGameWorld().addEntity(player);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

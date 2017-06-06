@@ -35,12 +35,6 @@ public class AssetsSampleSuperEasy extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         // 1. use fluent API viewFromTexture with texture name
         player = Entities.builder()
@@ -48,15 +42,6 @@ public class AssetsSampleSuperEasy extends GameApplication {
                 .viewFromTexture("brick.png")
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

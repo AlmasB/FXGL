@@ -35,12 +35,6 @@ public class JavaScriptSample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
 
         Entities.builder()
@@ -57,15 +51,6 @@ public class JavaScriptSample extends GameApplication {
 
         JavaScriptParser parser = new JavaScriptParser("sample.js");
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

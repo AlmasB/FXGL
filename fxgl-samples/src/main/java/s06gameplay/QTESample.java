@@ -33,12 +33,6 @@ public class QTESample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
 
         // when app runs, every 5 seconds a QTE event will occur
@@ -58,18 +52,12 @@ public class QTESample extends GameApplication {
     }
 
     @Override
-    protected void initPhysics() {}
-
-    @Override
     protected void initUI() {
         Text text = getUIFactory().newText("Prepare! QTE runs every 5 seconds", Color.BLACK, 16.0);
         text.setTranslateY(50);
 
         getGameScene().addUINode(text);
     }
-
-    @Override
-    public void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

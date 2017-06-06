@@ -99,9 +99,6 @@ public class PhysicsSample2 extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         playerControl = new PlayerControl();
 

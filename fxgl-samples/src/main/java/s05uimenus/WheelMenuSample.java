@@ -50,15 +50,6 @@ public class WheelMenuSample extends GameApplication {
         }, MouseButton.SECONDARY);
     }
 
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
     private WheelMenu menu;
 
     @Override
@@ -70,9 +61,6 @@ public class WheelMenuSample extends GameApplication {
 
         getGameScene().addUINode(menu);
     }
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

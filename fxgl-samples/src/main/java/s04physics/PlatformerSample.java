@@ -85,22 +85,10 @@ public class PlatformerSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         createPlatforms();
         player = createPlayer(100, 100, 40, 60);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     private void createPlatforms() {
         Entities.builder()

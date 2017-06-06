@@ -33,12 +33,6 @@ public class AssetsSampleEasy extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         player = new GameEntity();
         player.getPositionComponent().setValue(400, 300);
@@ -48,15 +42,6 @@ public class AssetsSampleEasy extends GameApplication {
 
         getGameWorld().addEntity(player);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

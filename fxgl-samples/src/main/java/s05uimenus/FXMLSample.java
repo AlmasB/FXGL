@@ -36,21 +36,12 @@ public class FXMLSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
     private IntegerProperty count;
 
     @Override
     protected void initGame() {
         count = new SimpleIntegerProperty(0);
     }
-
-    @Override
-    protected void initPhysics() {}
 
     @Override
     protected void initUI() {

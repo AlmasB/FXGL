@@ -42,12 +42,6 @@ public class PathfindingSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
     // 1. Define A* grid
     private AStarGrid grid;
 
@@ -89,15 +83,6 @@ public class PathfindingSample extends GameApplication {
             }
         }
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

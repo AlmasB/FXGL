@@ -31,21 +31,6 @@ public class InputSample3 extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
     public void onUpdate(double tpf) {
 
         // 1. you can check if a key is held anytime

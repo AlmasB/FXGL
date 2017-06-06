@@ -48,15 +48,6 @@ public class InGamePanelSample extends GameApplication {
         }, KeyCode.TAB);
     }
 
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
     private InGamePanel panel;
 
     @Override
@@ -70,9 +61,6 @@ public class InGamePanelSample extends GameApplication {
 
         getGameScene().addUINode(panel);
     }
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

@@ -43,21 +43,6 @@ public class InputSample2 extends GameApplication {
         input.addInputMapping(new InputMapping("Print Line", KeyCode.F));
     }
 
-    @Override
-    protected void initAssets() {}
-
-    @Override
-    protected void initGame() {}
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    public void onUpdate(double tpf) {}
-
     // 3. specify which method to call on each action
 
     @OnUserAction(name = "Print Line", type = ActionType.ON_ACTION_BEGIN)

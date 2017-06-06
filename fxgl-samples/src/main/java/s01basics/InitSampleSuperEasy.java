@@ -45,12 +45,6 @@ public class InitSampleSuperEasy extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         // 2. create entity and attach to world using fluent API
         player = Entities.builder()
@@ -59,15 +53,6 @@ public class InitSampleSuperEasy extends GameApplication {
                 .viewFromNode(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

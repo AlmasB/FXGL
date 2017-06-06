@@ -39,12 +39,6 @@ public class TimerControlSample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         Entities.builder()
                 .at(100, 100)
@@ -52,15 +46,6 @@ public class TimerControlSample extends GameApplication {
                 .with(new LiftControl())
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     private class LiftControl extends AbstractControl {
 

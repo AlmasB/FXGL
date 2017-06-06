@@ -49,12 +49,6 @@ public class InitSample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         // 2. create entity and add necessary components
         player = new Entity();
@@ -77,15 +71,6 @@ public class InitSample extends GameApplication {
         // 3. add entity to game world
         getGameWorld().addEntity(player);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

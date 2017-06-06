@@ -32,12 +32,6 @@ public class RaycastSample extends GameApplication {
         settings.setProfilingEnabled(false);
     }
 
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
     private Line laser = new Line();
 
     @Override
@@ -56,12 +50,6 @@ public class RaycastSample extends GameApplication {
 
         getGameScene().addGameView(new EntityView(laser));
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
 
     private double endY = -300;
 

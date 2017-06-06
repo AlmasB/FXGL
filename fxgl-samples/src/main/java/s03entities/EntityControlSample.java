@@ -35,12 +35,6 @@ public class EntityControlSample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         Entities.builder()
                 .at(400, 300)
@@ -49,15 +43,6 @@ public class EntityControlSample extends GameApplication {
                 .with(new RotatingControl())
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     // 1. create class that implements Control
     private class RotatingControl extends AbstractControl {

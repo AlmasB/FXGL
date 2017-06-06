@@ -27,15 +27,10 @@ public class DifferentSizeTextureSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
+        settings.setCloseConfirmation(false);
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
-
-    @Override
-    protected void initInput() {}
-
-    @Override
-    protected void initAssets() {}
 
     @Override
     protected void initGame() {
@@ -46,18 +41,9 @@ public class DifferentSizeTextureSample extends GameApplication {
 
         Entities.builder()
                 .at(300, 300)
-                .viewFromNode(getAssetLoader().loadTexture("bg.jpg", 128, 128))
+                .viewFromNode(getAssetLoader().loadTexture("bg.jpg", 256, 128))
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

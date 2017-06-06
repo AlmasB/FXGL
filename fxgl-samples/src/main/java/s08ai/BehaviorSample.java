@@ -76,9 +76,6 @@ public class BehaviorSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         player = Entities.builder()
                 .at(100, 100)
@@ -100,15 +97,6 @@ public class BehaviorSample extends GameApplication {
                 .with(new AIControl("patrol.tree"))
                 .buildAndAttach(getGameWorld());
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

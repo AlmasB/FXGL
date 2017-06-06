@@ -56,24 +56,12 @@ public class TimerActionSample extends GameApplication {
         }, KeyCode.E);
     }
 
-    @Override
-    protected void initAssets() {}
-
     private TimerAction timerAction;
 
     @Override
     protected void initGame() {
         timerAction = getMasterTimer().runAtInterval(() -> System.out.println("Tick: " + getTick()), Duration.seconds(0.5));
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);

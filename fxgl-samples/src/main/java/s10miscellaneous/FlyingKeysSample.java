@@ -71,9 +71,6 @@ public class FlyingKeysSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         getGameWorld().addEntity(Entities.makeScreenBounds(50));
     }
@@ -85,12 +82,6 @@ public class FlyingKeysSample extends GameApplication {
             getPhysicsWorld().setGravity(FXGLMath.random(-10, 10), FXGLMath.random(-10, 10));
         }, Duration.seconds(2.5));
     }
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    protected void onUpdate(double tpf) {}
 
     private GameEntity createPhysicsEntity() {
         // 1. create and configure physics component

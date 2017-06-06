@@ -94,9 +94,6 @@ public class AchievementsSample extends GameApplication {
     }
 
     @Override
-    protected void initAssets() {}
-
-    @Override
     protected void initGame() {
         playerControl = new PlayerControl();
         
@@ -112,15 +109,6 @@ public class AchievementsSample extends GameApplication {
 
         achievement.bind(getGameState().intProperty("moved"), 500);
     }
-
-    @Override
-    protected void initPhysics() {}
-
-    @Override
-    protected void initUI() {}
-
-    @Override
-    public void onUpdate(double tpf) {}
 
     public static void main(String[] args) {
         launch(args);
