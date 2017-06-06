@@ -525,7 +525,7 @@ public class Entity {
     @Override
     public String toString() {
         return "Entity("
-                + String.join("\n", "components=" + components.getRaw(), "controls=" + controls.getRaw())
+                + String.join("\n", "components=" + components, "controls=" + controls)
                 + ")";
     }
 }

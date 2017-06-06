@@ -189,4 +189,6 @@ internal class Controls(private val parent: Entity) {
             }
         }
     }
+
+    override fun toString() = controls.toString()
 }

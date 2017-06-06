@@ -38,9 +38,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -472,6 +470,20 @@ public class EntityTest {
 
         assertThat(e2.hasComponent(HPComponent.class), is(true));
         assertThat(e2.getComponentUnsafe(HPComponent.class).getValue(), is(33.0));
+    }
+
+    @Test
+    public void testToString() {
+        HPComponent component = new HPComponent(33);
+        HPControl control = new HPControl();
+
+        entity.addComponent(component);
+        entity.addControl(control);
+
+        String toString = entity.toString();
+
+        assertThat(toString, containsString(component.toString()));
+        assertThat(toString, containsString(control.toString()));
     }
 
     private class TestControl extends AbstractControl {

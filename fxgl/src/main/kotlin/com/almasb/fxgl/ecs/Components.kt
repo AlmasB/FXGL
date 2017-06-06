@@ -209,4 +209,6 @@ internal class Components(private val parent: Entity) {
             }
         }
     }
+
+    override fun toString() = components.toString()
 }
