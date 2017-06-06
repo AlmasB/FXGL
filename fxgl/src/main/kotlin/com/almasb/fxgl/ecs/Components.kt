@@ -8,7 +8,6 @@ package com.almasb.fxgl.ecs
 
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.ObjectMap
-import com.almasb.fxgl.ecs.component.Required
 import java.util.*
 
 /**

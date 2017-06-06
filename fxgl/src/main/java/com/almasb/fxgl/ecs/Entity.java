@@ -8,8 +8,6 @@ package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
-import com.almasb.fxgl.core.logging.FXGLLogger;
-import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -29,8 +27,6 @@ import java.util.Optional;
  */
 public class Entity {
 
-    private static final Logger log = FXGLLogger.get(Entity.class);
-
     private final ObjectMap<String, Object> properties = new ObjectMap<>();
 
     private Controls controls = new Controls(this);
@@ -38,10 +34,147 @@ public class Entity {
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
+    private EntityWorld world;
+
+    private boolean updating = false;
+    private boolean delayedRemove = false;
+    private boolean cleaning = false;
+    private boolean controlsEnabled = true;
+
+    private Runnable onActive = null;
+    private Runnable onNotActive = null;
+
     /**
-     * Set a property specified by a key-value pair.
-     * Prefer {@link Component} instead.
+     * @return the world this entity is attached to
+     */
+    public EntityWorld getWorld() {
+        return world;
+    }
+
+    /**
+     * Initializes this entity.
      *
+     * @param world the world to which entity is being attached
+     */
+    void init(EntityWorld world) {
+        this.world = world;
+        if (onActive != null)
+            onActive.run();
+        active.set(true);
+    }
+
+    public final void removeFromWorld() {
+        checkValid();
+
+        if (updating) {
+            delayedRemove = true;
+        } else {
+            world.removeEntity(this);
+        }
+    }
+
+    /**
+     * @return active property of this entity
+     */
+    public final ReadOnlyBooleanProperty activeProperty() {
+        return active.getReadOnlyProperty();
+    }
+
+    /**
+     * Entity is "active" from the moment it is registered in the world
+     * and until it is removed from the world.
+     *
+     * @return true if entity is active, else false
+     */
+    public final boolean isActive() {
+        return active.get();
+    }
+
+    /**
+     * Set a callback for when entity is added to world.
+     * The callback will be executed immediately if entity is already in the world.
+     *
+     * @param action callback
+     */
+    public final void setOnActive(Runnable action) {
+        if (isActive()) {
+            action.run();
+            return;
+        }
+
+        onActive = action;
+    }
+
+    /**
+     * Set a callback for when entity is removed from world.
+     * The callback will be executed immediately if entity is already removed from the world.
+     *
+     * @param action callback
+     */
+    public final void setOnNotActive(Runnable action) {
+        if (!isActive()) {
+            action.run();
+            return;
+        }
+
+        onNotActive = action;
+    }
+
+    /**
+     * Setting this to false will disable each control's update until this has
+     * been set back to true.
+     *
+     * @param b controls enabled flag
+     */
+    public final void setControlsEnabled(boolean b) {
+        controlsEnabled = b;
+    }
+
+    /**
+     * Update tick for this entity.
+     *
+     * @param tpf time per frame
+     */
+    void update(double tpf) {
+        updating = true;
+
+        if (controlsEnabled) {
+            for (Control c : controls.getRaw()) {
+                if (!c.isPaused()) {
+                    c.onUpdate(this, tpf);
+                }
+            }
+        }
+
+        updating = false;
+
+        if (delayedRemove)
+            removeFromWorld();
+    }
+
+    /**
+     * Cleans entity.
+     * Removes all controls and components.
+     * After this the entity cannot be used.
+     */
+    void clean() {
+        cleaning = true;
+        if (onNotActive != null)
+            onNotActive.run();
+        active.set(false);
+
+        controls.clean();
+        components.clean();
+
+        properties.clear();
+
+        controlsEnabled = true;
+        world = null;
+        onActive = null;
+        onNotActive = null;
+    }
+
+    /**
      * @param key property key
      * @param value property value
      */
@@ -52,11 +185,7 @@ public class Entity {
     }
 
     /**
-     * Retrieve a property value by a given key.
-     * Prefer {@link Component} instead.
-     *
      * @param key property key
-     * @param <T> value type
      * @return property value
      * @throws IllegalArgumentException if key doesn't exist
      */
@@ -120,8 +249,6 @@ public class Entity {
 
     /**
      * Adds behavior to entity.
-     * Only 1 control per type is allowed.
-     * Anonymous controls are not allowed.
      * Cannot add controls within update() of another control.
      *
      * @param control the behavior
@@ -146,31 +273,10 @@ public class Entity {
         return controls.removeControl(type);
     }
 
-    /**
-     * Remove all controls from entity.
-     */
     public final void removeAllControls() {
         checkValid();
 
         controls.removeAllControls();
-    }
-
-    /**
-     * @param listener the listener to add
-     */
-    public void addControlListener(ControlListener listener) {
-        checkValid();
-
-        controls.addControlListener(listener);
-    }
-
-    /**
-     * @param listener the listener to remove
-     */
-    public void removeControlListener(ControlListener listener) {
-        checkValid();
-
-        controls.removeControlListener(listener);
     }
 
     public ObjectMap.Keys<Class<? extends Component> > getComponentTypes() {
@@ -226,8 +332,6 @@ public class Entity {
 
     /**
      * Adds given component to this entity.
-     * Only 1 component with the same type can be registered.
-     * Anonymous components are NOT allowed.
      *
      * @param component the component
      * @throws IllegalArgumentException if a component with same type already registered or anonymous
@@ -264,6 +368,34 @@ public class Entity {
         components.removeComponent(type);
         return true;
     }
+
+    public final void removeAllComponents() {
+        checkValid();
+
+        components.removeAllComponents();
+    }
+
+    public void addControlListener(ControlListener listener) {
+        controls.addControlListener(listener);
+    }
+
+    public void removeControlListener(ControlListener listener) {
+        controls.removeControlListener(listener);
+    }
+
+    public void addComponentListener(ComponentListener listener) {
+        components.addComponentListener(listener);
+    }
+
+    public void removeComponentListener(ComponentListener listener) {
+        components.removeComponentListener(listener);
+    }
+
+    private void checkValid() {
+        if (cleaning && world == null)
+            throw new IllegalStateException("Attempted access a cleaned entity!");
+    }
+
 
     private void checkNotAnonymous(Class<?> type) {
         if (type.isAnonymousClass()) {
@@ -313,184 +445,6 @@ public class Entity {
             if (required.value().equals(type)) {
                 throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + requiringType.getSimpleName());
             }
-        }
-    }
-
-    /**
-     * Removes all components from this entity.
-     */
-    public final void removeAllComponents() {
-        checkValid();
-
-        components.removeAllComponents();
-    }
-
-    /**
-     * Register a component listener on this entity.
-     *
-     * @param listener the listener
-     */
-    public void addComponentListener(ComponentListener listener) {
-        components.addComponentListener(listener);
-    }
-
-    /**
-     * Removed a component listener.
-     *
-     * @param listener the listener
-     */
-    public void removeComponentListener(ComponentListener listener) {
-        components.removeComponentListener(listener);
-    }
-
-    private boolean controlsEnabled = true;
-
-    /**
-     * Setting this to false will disable each control's update until this has
-     * been set back to true.
-     *
-     * @param b controls enabled flag
-     */
-    public final void setControlsEnabled(boolean b) {
-        controlsEnabled = b;
-    }
-
-    /**
-     * @return active property of this entity
-     */
-    public final ReadOnlyBooleanProperty activeProperty() {
-        return active.getReadOnlyProperty();
-    }
-
-    /**
-     * Entity is "active" from the moment it is registered in the world
-     * and until it is removed from the world.
-     *
-     * @return true if entity is active, else false
-     */
-    public final boolean isActive() {
-        return active.get();
-    }
-
-    private Runnable onActive = null;
-
-    /**
-     * Set a callback for when entity is added to world.
-     * The callback will be executed immediately if entity is already in the world.
-     *
-     * @param action callback
-     */
-    public final void setOnActive(Runnable action) {
-        if (isActive()) {
-            action.run();
-            return;
-        }
-
-        onActive = action;
-    }
-
-    private Runnable onNotActive = null;
-
-    /**
-     * Set a callback for when entity is removed from world.
-     * The callback will be executed immediately if entity is already removed from the world.
-     *
-     * @param action callback
-     */
-    public final void setOnNotActive(Runnable action) {
-        if (!isActive()) {
-            action.run();
-            return;
-        }
-
-        onNotActive = action;
-    }
-
-    private EntityWorld world;
-
-    /**
-     * @return the world that entity is attached to
-     */
-    public EntityWorld getWorld() {
-        return world;
-    }
-
-    /**
-     * Initializes this entity.
-     *
-     * @param world the world to which entity is being attached
-     */
-    void init(EntityWorld world) {
-        this.world = world;
-        if (onActive != null)
-            onActive.run();
-        active.set(true);
-    }
-
-    private boolean updating = false;
-    private boolean delayedRemove = false;
-
-    /**
-     * Update tick for this entity.
-     *
-     * @param tpf time per frame
-     */
-    void update(double tpf) {
-        updating = true;
-
-        if (controlsEnabled) {
-            for (Control c : controls.getRaw()) {
-                if (!c.isPaused()) {
-                    c.onUpdate(this, tpf);
-                }
-            }
-        }
-
-        updating = false;
-
-        if (delayedRemove)
-            removeFromWorld();
-    }
-
-    private boolean cleaning = false;
-
-    /**
-     * Cleans entity.
-     * Removes all controls and components.
-     * After this the entity cannot be used.
-     */
-    void clean() {
-        cleaning = true;
-        if (onNotActive != null)
-            onNotActive.run();
-        active.set(false);
-
-        controls.clean();
-        components.clean();
-
-        properties.clear();
-
-        controlsEnabled = true;
-        world = null;
-        onActive = null;
-        onNotActive = null;
-    }
-
-    private void checkValid() {
-        if (cleaning && world == null)
-            throw new IllegalStateException("Attempted access a cleaned entity!");
-    }
-
-    /**
-     * Remove entity from world.
-     */
-    public final void removeFromWorld() {
-        checkValid();
-
-        if (updating) {
-            delayedRemove = true;
-        } else {
-            world.removeEntity(this);
         }
     }
 
