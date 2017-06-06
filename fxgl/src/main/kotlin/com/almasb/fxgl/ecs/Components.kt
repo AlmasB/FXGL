@@ -78,22 +78,12 @@ internal class Components(private val parent: Entity) {
      * @throws IllegalStateException if components required by the given component are missing
      */
     fun addComponent(component: Component) {
-        val type = component.javaClass
-        if (type.canonicalName == null) {
-            throw IllegalArgumentException("Anonymous components are not allowed! - " + type.name)
-        }
-
-        if (hasComponent(type)) {
-            throw IllegalArgumentException("Entity already has a component with type: " + type.canonicalName)
-        }
+        components.put(component.javaClass, component)
 
         if (component is AbstractComponent) {
-            component.setEntity(parent)
+            component.entity = parent
         }
 
-        checkRequirementsMet(component.javaClass)
-
-        components.put(component.javaClass, component)
         component.onAdded(parent)
 
         if (parent.isActive())
@@ -110,25 +100,14 @@ internal class Components(private val parent: Entity) {
      * @throws IllegalArgumentException if the component is required by other components / controls
      */
     fun removeComponent(type: Class<out Component>) {
-        val component = getComponentUnsafe<Component>(type)
+        val component = getComponentUnsafe<Component>(type)!!
 
-        if (component == null) {
-            //log.warning("Attempted to remove component but entity doesn't have a component with type: " + type.simpleName)
-        } else {
+        components.remove(component.javaClass)
 
-            // if not cleaning, then entity is alive, whether active or not
-            // hence we cannot allow removal if component is required by other components / controls
-//            if (!cleaning) {
-//                controls.checkNotRequiredByAny(type)
-//            }
+        if (parent.isActive())
+            parent.world.onComponentRemoved(component, parent)
 
-            components.remove(component.javaClass)
-
-            if (parent.isActive())
-                parent.world.onComponentRemoved(component, parent)
-
-            removeComponentImpl(component)
-        }
+        removeComponentImpl(component)
     }
 
     fun removeAllComponents() {
@@ -177,16 +156,6 @@ internal class Components(private val parent: Entity) {
     private fun notifyComponentRemoved(component: Component) {
         for (i in componentListeners.indices) {
             componentListeners[i].onComponentRemoved(component)
-        }
-    }
-
-    private fun checkRequirementsMet(type: Class<*>) {
-        val required = type.getAnnotationsByType(Required::class.java)
-
-        for (r in required) {
-            if (!hasComponent(r.value.java)) {
-                throw IllegalStateException("Required component: [" + r.value.java.getSimpleName() + "] for: " + type.simpleName + " is missing")
-            }
         }
     }
 

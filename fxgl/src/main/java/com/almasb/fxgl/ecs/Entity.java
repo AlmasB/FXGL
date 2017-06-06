@@ -131,29 +131,9 @@ public class Entity {
     public final void addControl(Control control) {
         checkValid();
 
-        Class<? extends Control> type = control.getClass();
-
-        if (type.getCanonicalName() == null) {
-            throw new IllegalArgumentException("Anonymous controls are not allowed: " + type.getName());
-        }
-
-        if (hasControl(type)) {
-            throw new IllegalArgumentException("Entity already has a control with type: " + type.getCanonicalName());
-        }
-
-        checkRequirementsMet(type);
+        checkRequirementsMet(control.getClass());
 
         controls.addControl(control);
-    }
-
-    private void checkRequirementsMet(Class<? extends Control> type) {
-        Required[] required = type.getAnnotationsByType(Required.class);
-
-        for (Required r : required) {
-            if (!hasComponent(r.value())) {
-                throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
-            }
-        }
     }
 
     /**
@@ -256,6 +236,8 @@ public class Entity {
     public final void addComponent(Component component) {
         checkValid();
 
+        checkRequirementsMet(component.getClass());
+
         components.addComponent(component);
     }
 
@@ -264,23 +246,50 @@ public class Entity {
      *
      * @param type type of the component to remove
      * @throws IllegalArgumentException if the component is required by other components / controls
+     * @return true if removed, false if not found
      */
-    public final void removeComponent(Class<? extends Component> type) {
+    public final boolean removeComponent(Class<? extends Component> type) {
         checkValid();
 
-        Component component = getComponentUnsafe(type);
+        if (!hasComponent(type)) {
+            return false;
+        }
 
-        if (component == null) {
-            log.warning("Attempted to remove component but entity doesn't have a component with type: "+ type.getSimpleName());
-        } else {
+        // if not cleaning, then entity is alive, whether active or not
+        // hence we cannot allow removal if component is required by other components / controls
+        if (!cleaning) {
+            checkNotRequiredByAny(type);
+        }
 
-            // if not cleaning, then entity is alive, whether active or not
-            // hence we cannot allow removal if component is required by other components / controls
-            if (!cleaning) {
-                checkNotRequiredByAny(type);
+        components.removeComponent(type);
+        return true;
+    }
+
+    private void checkNotAnonymous(Class<?> type) {
+        if (type.isAnonymousClass()) {
+            throw new IllegalArgumentException("Anonymous types are not allowed: " + type.getName());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void checkNotDuplicate(Class<?> type) {
+        if ((Component.class.isAssignableFrom(type) && hasComponent((Class<? extends Component>) type))
+                || (Control.class.isAssignableFrom(type) && hasControl((Class<? extends Control>) type))) {
+            throw new IllegalArgumentException("Entity already has type: " + type.getCanonicalName());
+        }
+    }
+
+    private void checkRequirementsMet(Class<?> type) {
+        checkNotAnonymous(type);
+
+        checkNotDuplicate(type);
+
+        Required[] required = type.getAnnotationsByType(Required.class);
+
+        for (Required r : required) {
+            if (!hasComponent(r.value())) {
+                throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
             }
-
-            components.removeComponent(type);
         }
     }
 
