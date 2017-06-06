@@ -42,8 +42,9 @@ public class EntityTest {
         assertTrue(maybe.isPresent());
         assertEquals(control, maybe.get());
 
-        entity.removeControl(TestControl.class);
+        boolean result = entity.removeControl(TestControl.class);
         assertFalse(entity.getControl(TestControl.class).isPresent());
+        assertTrue(result);
 
         entity.addControl(control);
         maybe = entity.getControl(TestControl.class);
@@ -53,8 +54,8 @@ public class EntityTest {
         entity.removeAllControls();
         assertFalse(entity.getControl(TestControl.class).isPresent());
 
-        // removing non-existent control, normal behaviour is to log, but not throw
-        entity.removeControl(TestControl.class);
+        result = entity.removeControl(TestControl.class);
+        assertFalse(result);
     }
 
     @Test

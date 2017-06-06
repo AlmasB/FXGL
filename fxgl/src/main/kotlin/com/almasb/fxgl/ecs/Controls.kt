@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.ecs.component.Required
 import java.util.*
 
 /**
@@ -47,20 +46,6 @@ internal class Controls(private val parent: Entity) {
     fun types() = controls.keys()
 
     fun addControl(control: Control) {
-        val type = control.javaClass
-
-        if (type.canonicalName == null) {
-            log.fatal("Adding anonymous control: " + type.name)
-            throw IllegalArgumentException("Anonymous controls are not allowed! - " + type.name)
-        }
-
-        if (hasControl(type)) {
-            log.fatal("Entity already has a control with type: " + type.canonicalName)
-            throw IllegalArgumentException("Entity already has a control with type: " + type.canonicalName)
-        }
-
-        checkRequirementsMet(control.javaClass)
-
         controls.put(control.javaClass, control)
 
         if (control is AbstractControl) {
@@ -95,16 +80,14 @@ internal class Controls(private val parent: Entity) {
 
     /**
      * @param type the control type to remove
+     * @return true if removed, false if not found
      */
-    fun removeControl(type: Class<out Control>) {
-        val control = getControlUnsafe<Control>(type)
+    fun removeControl(type: Class<out Control>): Boolean {
+        val control = getControlUnsafe<Control>(type) ?: return false
 
-        if (control == null) {
-            log.warning("Cannot remove control " + type.simpleName + ". Entity does not have one")
-        } else {
-            controls.remove(control.javaClass)
-            removeControlImpl(control)
-        }
+        controls.remove(control.javaClass)
+        removeControlImpl(control)
+        return true
     }
 
     /**
@@ -157,16 +140,6 @@ internal class Controls(private val parent: Entity) {
     private fun notifyControlRemoved(control: Control) {
         for (i in controlListeners.indices) {
             controlListeners[i].onControlRemoved(control)
-        }
-    }
-
-    private fun checkRequirementsMet(type: Class<*>) {
-        val required = type.getAnnotationsByType(Required::class.java)
-
-        for (r in required) {
-            if (!parent.hasComponent(r.value.java)) {
-                throw IllegalStateException("Required component: [" + r.value.java.getSimpleName() + "] for: " + type.simpleName + " is missing")
-            }
         }
     }
 

@@ -131,16 +131,39 @@ public class Entity {
     public final void addControl(Control control) {
         checkValid();
 
+        Class<? extends Control> type = control.getClass();
+
+        if (type.getCanonicalName() == null) {
+            throw new IllegalArgumentException("Anonymous controls are not allowed: " + type.getName());
+        }
+
+        if (hasControl(type)) {
+            throw new IllegalArgumentException("Entity already has a control with type: " + type.getCanonicalName());
+        }
+
+        checkRequirementsMet(type);
+
         controls.addControl(control);
+    }
+
+    private void checkRequirementsMet(Class<? extends Control> type) {
+        Required[] required = type.getAnnotationsByType(Required.class);
+
+        for (Required r : required) {
+            if (!hasComponent(r.value())) {
+                throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
+            }
+        }
     }
 
     /**
      * @param type the control type to remove
+     * @return true if removed, false if not found
      */
-    public final void removeControl(Class<? extends Control> type) {
+    public final boolean removeControl(Class<? extends Control> type) {
         checkValid();
 
-        controls.removeControl(type);
+        return controls.removeControl(type);
     }
 
     /**
