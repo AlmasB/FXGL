@@ -11,6 +11,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.parser.tiled.Layer;

@@ -9,7 +9,7 @@ package com.almasb.fxglgames.geowars.grid;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.GameWorld;
+import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxglgames.geowars.component.GraphicsComponent;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;

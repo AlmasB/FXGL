@@ -9,6 +9,7 @@ package com.almasb.fxglgames.spaceinvaders.control;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.AbstractControl;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;

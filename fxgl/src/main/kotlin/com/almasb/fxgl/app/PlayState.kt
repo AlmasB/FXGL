@@ -8,7 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ecs.EntityWorldListener
-import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.PhysicsWorld

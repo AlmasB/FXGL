@@ -4,16 +4,16 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.EntityWorld;
+import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.gameplay.Level;
@@ -25,6 +25,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -34,19 +35,288 @@ import java.util.function.Predicate;
  * Represents pure logical state of game.
  * Manages all entities and their state.
  *
+ * Manages entities and allows queries.
+ * Can be extended to provide specific functionality.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld extends EntityWorld {
+public final class GameWorld {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameWorld");
 
     private Array<EventTrigger<?> > eventTriggers = new Array<>(false, 32);
 
+    /**
+     * The update list.
+     */
+    private Array<Entity> updateList;
+
+    /**
+     * List of entities added to the update list in the next tick.
+     */
+    private Array<Entity> waitingList;
+
+    /**
+     * List of entities in the world.
+     */
+    protected List<Entity> entities;
+
+    /**
+     * Constructs the world with initial entity capacity = 32.
+     */
     @Inject
     protected GameWorld() {
+        this(32);
+    }
+
+    /**
+     * Constructs the world with given initial entity capacity.
+     *
+     * @param initialCapacity initial entity capacity
+     */
+    public GameWorld(int initialCapacity) {
+        updateList = new Array<>(true, initialCapacity);
+        waitingList = new Array<>(false, initialCapacity);
+        entities = new ArrayList<>(initialCapacity);
+
+        query = new GameWorldQuery(entities);
+
         log.debug("Game world initialized");
     }
+
+    /**
+     * Adds entity to this world.
+     * The entity will be added to update list in the next tick.
+     *
+     * @param entity the entity to add to world
+     */
+    public void addEntity(Entity entity) {
+        if (entity.isActive())
+            throw new IllegalArgumentException("Entity is already attached to world");
+
+        waitingList.add(entity);
+        entities.add(entity);
+
+        for (Class<? extends Component> type : entity.getComponentTypes()) {
+            addComponentMap(type, entity);
+        }
+
+        entity.init(this);
+        notifyEntityAdded(entity);
+    }
+
+    /**
+     * @param entitiesToAdd the entities to add to world
+     */
+    public void addEntities(Entity... entitiesToAdd) {
+        for (Entity e : entitiesToAdd) {
+            addEntity(e);
+        }
+    }
+
+    /**
+     *
+     * @param entity the entity to remove from world
+     */
+    public void removeEntity(Entity entity) {
+        if (entity.getWorld() != this)
+            throw new IllegalArgumentException("Attempted to remove entity not attached to this world");
+
+        entities.remove(entity);
+
+        for (Class<? extends Component> type : entity.getComponentTypes()) {
+            removeComponentMap(type, entity);
+        }
+
+        notifyEntityRemoved(entity);
+        entity.clean();
+    }
+
+    /**
+     *
+     * @param entitiesToRemove the entity to remove from world
+     */
+    public final void removeEntities(Entity... entitiesToRemove) {
+        for (Entity e : entitiesToRemove) {
+            removeEntity(e);
+        }
+    }
+
+    /**
+     * Performs a single world update tick.
+     * <p>
+     * <ol>
+     * </ol>
+     *
+     * @param tpf time per frame
+     */
+    protected void update(double tpf) {
+        updateList.addAll(waitingList);
+        waitingList.clear();
+
+        for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+
+            if (e.isActive()) {
+                e.update(tpf);
+            } else {
+                it.remove();
+            }
+        }
+
+        notifyWorldUpdated(tpf);
+    }
+
+    /**
+     * Resets the world to its initial state.
+     * Does NOT clear state listeners.
+     * <p>
+     * <ol>
+     * </ol>
+     */
+    public void reset() {
+        log.debug("Resetting game world");
+
+        for (Entity e : updateList) {
+            if (e.isActive()) {
+                notifyEntityRemoved(e);
+                e.clean();
+            }
+        }
+
+        for (Entity e : waitingList) {
+            notifyEntityRemoved(e);
+            e.clean();
+        }
+
+        waitingList.clear();
+        updateList.clear();
+        entities.clear();
+
+        componentMap.clear();
+
+        notifyWorldReset();
+    }
+
+    private Array<EntityWorldListener> worldListeners = new Array<>(true, 16);
+
+    /**
+     * Add world listener to be notified of events.
+     *
+     * @param listener the listener
+     */
+    public final void addWorldListener(EntityWorldListener listener) {
+        worldListeners.add(listener);
+    }
+
+    /**
+     * Remove world listener.
+     *
+     * @param listener the listener
+     */
+    public final void removeWorldListener(EntityWorldListener listener) {
+        worldListeners.removeValueByIdentity(listener);
+    }
+
+    private void notifyEntityAdded(Entity e) {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onEntityAdded(e);
+        }
+    }
+
+    private void notifyEntityRemoved(Entity e) {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onEntityRemoved(e);
+        }
+    }
+
+    private void notifyWorldUpdated(double tpf) {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onWorldUpdate(tpf);
+        }
+    }
+
+    private void notifyWorldReset() {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onWorldReset();
+        }
+    }
+
+    private ObjectMap<Class<? extends Component>, Array<Entity> > componentMap = new ObjectMap<>();
+
+    private void addComponentMap(Class<? extends Component> type, Entity e) {
+        Array<Entity> array = componentMap.get(type);
+
+        if (array == null) {
+            array = new Array<>(false, 128);
+            componentMap.put(type, array);
+        }
+
+        array.add(e);
+    }
+
+    private void removeComponentMap(Class<? extends Component> type, Entity e) {
+        // assert array exists because entity was added first
+        Array<Entity> array = componentMap.get(type);
+
+        array.removeValueByIdentity(e);
+    }
+
+    /**
+     * @return direct list of entities in the world (do NOT modify)
+     */
+    public final List<Entity> getEntities() {
+        return entities;
+    }
+
+    /**
+     * Returns entities currently registered in the world.
+     *
+     * @return shallow copy of the entities list (new list)
+     */
+    public final List<Entity> getEntitiesCopy() {
+        return new ArrayList<>(entities);
+    }
+
+    /**
+     * @param type component type
+     * @return array of entities that have given component (do NOT modify)
+     */
+    public final Array<Entity> getEntitiesByComponent(Class<? extends Component> type) {
+        return componentMap.get(type, Array.empty());
+    }
+
+    void onComponentAdded(Component component, Entity e) {
+        addComponentMap(component.getClass(), e);
+    }
+
+    void onComponentRemoved(Component component, Entity e) {
+        removeComponentMap(component.getClass(), e);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void onUpdate(double tpf) {
         update(tpf);
@@ -63,12 +333,6 @@ public final class GameWorld extends EntityWorld {
                 it.remove();
             }
         }
-    }
-
-    @Override
-    public void reset() {
-        log.debug("Resetting game world");
-        super.reset();
     }
 
     /**
@@ -223,7 +487,7 @@ public final class GameWorld extends EntityWorld {
 
     /* QUERIES */
 
-    private GameWorldQuery query = new GameWorldQuery(entities);
+    private GameWorldQuery query;
 
     /**
      * Returns a list of entities which are filtered by

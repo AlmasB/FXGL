@@ -11,7 +11,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameWorld;
+import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;

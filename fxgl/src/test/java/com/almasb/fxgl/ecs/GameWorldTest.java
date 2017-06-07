@@ -4,12 +4,16 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.GameWorld;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.IDComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;

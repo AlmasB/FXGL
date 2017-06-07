@@ -34,7 +34,7 @@ public class Entity {
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
-    private EntityWorld world;
+    private GameWorld world;
 
     private boolean updating = false;
     private boolean delayedRemove = false;
@@ -47,7 +47,7 @@ public class Entity {
     /**
      * @return the world this entity is attached to
      */
-    public EntityWorld getWorld() {
+    public GameWorld getWorld() {
         return world;
     }
 
@@ -56,7 +56,7 @@ public class Entity {
      *
      * @param world the world to which entity is being attached
      */
-    void init(EntityWorld world) {
+    void init(GameWorld world) {
         this.world = world;
         if (onActive != null)
             onActive.run();

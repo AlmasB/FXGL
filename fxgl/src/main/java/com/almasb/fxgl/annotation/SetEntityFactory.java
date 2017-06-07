@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.annotation;
 
+import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.entity.EntityFactory;
 
 import java.lang.annotation.ElementType;
@@ -16,7 +17,7 @@ import java.lang.annotation.Target;
 /**
  * Indicates that a class will be used as the main entity factory.
  * The class will be automatically instantiated and attached
- * to the game world using {@link com.almasb.fxgl.entity.GameWorld#setEntityFactory(EntityFactory)}.
+ * to the game world using {@link GameWorld#setEntityFactory(EntityFactory)}.
  * Note: if it is important that only a single instance of the factory
  * is created, then you need to annotate it with {@link com.google.inject.Singleton}.
  *

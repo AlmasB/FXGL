@@ -390,7 +390,7 @@ public class EntityTest {
         entity.setOnActive(() -> hp.value = 30.0);
         assertThat(hp.value, is(0.0));
 
-        EntityWorld world = new EntityWorld();
+        GameWorld world = new GameWorld();
         world.addEntity(entity);
         assertThat(hp.value, is(30.0));
 
@@ -417,7 +417,7 @@ public class EntityTest {
     public void testIntegrity() {
         int count = 0;
 
-        EntityWorld world = new EntityWorld();
+        GameWorld world = new GameWorld();
 
         world.addEntity(entity);
         world.removeEntity(entity);
@@ -441,7 +441,7 @@ public class EntityTest {
 
     @Test
     public void testRemoveFromWorld() {
-        EntityWorld world = new EntityWorld();
+        GameWorld world = new GameWorld();
 
         world.addEntity(entity);
         assertThat(world.getEntities(), hasItems(entity));
