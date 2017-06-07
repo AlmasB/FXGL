@@ -7,7 +7,6 @@
 package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.annotation.Spawns;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.FXGLLogger;
@@ -32,24 +31,18 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * Represents pure logical state of game.
- * Manages all entities and their state.
- *
- * Manages entities and allows queries.
- * Can be extended to provide specific functionality.
+ * Represents pure logical state of the game.
+ * Manages all entities and allows queries.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld {
+public class GameWorld {
 
-    private static final Logger log = FXGL.getLogger("FXGL.GameWorld");
+    private static Logger log = FXGLLogger.get("FXGL.GameWorld");
 
     private Array<EventTrigger<?> > eventTriggers = new Array<>(false, 32);
-
-    /**
-     * The update list.
-     */
+    
     private Array<Entity> updateList;
 
     /**
@@ -62,6 +55,8 @@ public final class GameWorld {
      */
     protected List<Entity> entities;
 
+    private GameWorldQuery query;
+
     /**
      * Constructs the world with initial entity capacity = 32.
      */
@@ -71,8 +66,6 @@ public final class GameWorld {
     }
 
     /**
-     * Constructs the world with given initial entity capacity.
-     *
      * @param initialCapacity initial entity capacity
      */
     public GameWorld(int initialCapacity) {
@@ -86,7 +79,6 @@ public final class GameWorld {
     }
 
     /**
-     * Adds entity to this world.
      * The entity will be added to update list in the next tick.
      *
      * @param entity the entity to add to world
@@ -106,19 +98,12 @@ public final class GameWorld {
         notifyEntityAdded(entity);
     }
 
-    /**
-     * @param entitiesToAdd the entities to add to world
-     */
     public void addEntities(Entity... entitiesToAdd) {
         for (Entity e : entitiesToAdd) {
             addEntity(e);
         }
     }
 
-    /**
-     *
-     * @param entity the entity to remove from world
-     */
     public void removeEntity(Entity entity) {
         if (entity.getWorld() != this)
             throw new IllegalArgumentException("Attempted to remove entity not attached to this world");
@@ -133,11 +118,7 @@ public final class GameWorld {
         entity.clean();
     }
 
-    /**
-     *
-     * @param entitiesToRemove the entity to remove from world
-     */
-    public final void removeEntities(Entity... entitiesToRemove) {
+    public void removeEntities(Entity... entitiesToRemove) {
         for (Entity e : entitiesToRemove) {
             removeEntity(e);
         }
@@ -145,9 +126,6 @@ public final class GameWorld {
 
     /**
      * Performs a single world update tick.
-     * <p>
-     * <ol>
-     * </ol>
      *
      * @param tpf time per frame
      */
@@ -171,9 +149,6 @@ public final class GameWorld {
     /**
      * Resets the world to its initial state.
      * Does NOT clear state listeners.
-     * <p>
-     * <ol>
-     * </ol>
      */
     public void reset() {
         log.debug("Resetting game world");
@@ -201,21 +176,11 @@ public final class GameWorld {
 
     private Array<EntityWorldListener> worldListeners = new Array<>(true, 16);
 
-    /**
-     * Add world listener to be notified of events.
-     *
-     * @param listener the listener
-     */
-    public final void addWorldListener(EntityWorldListener listener) {
+    public void addWorldListener(EntityWorldListener listener) {
         worldListeners.add(listener);
     }
 
-    /**
-     * Remove world listener.
-     *
-     * @param listener the listener
-     */
-    public final void removeWorldListener(EntityWorldListener listener) {
+    public void removeWorldListener(EntityWorldListener listener) {
         worldListeners.removeValueByIdentity(listener);
     }
 
@@ -266,16 +231,14 @@ public final class GameWorld {
     /**
      * @return direct list of entities in the world (do NOT modify)
      */
-    public final List<Entity> getEntities() {
+    public List<Entity> getEntities() {
         return entities;
     }
 
     /**
-     * Returns entities currently registered in the world.
-     *
      * @return shallow copy of the entities list (new list)
      */
-    public final List<Entity> getEntitiesCopy() {
+    public List<Entity> getEntitiesCopy() {
         return new ArrayList<>(entities);
     }
 
@@ -283,7 +246,7 @@ public final class GameWorld {
      * @param type component type
      * @return array of entities that have given component (do NOT modify)
      */
-    public final Array<Entity> getEntitiesByComponent(Class<? extends Component> type) {
+    public Array<Entity> getEntitiesByComponent(Class<? extends Component> type) {
         return componentMap.get(type, Array.empty());
     }
 
@@ -294,29 +257,6 @@ public final class GameWorld {
     void onComponentRemoved(Component component, Entity e) {
         removeComponentMap(component.getClass(), e);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void onUpdate(double tpf) {
         update(tpf);
@@ -335,20 +275,10 @@ public final class GameWorld {
         }
     }
 
-    /**
-     * Add event trigger to the world.
-     *
-     * @param trigger the event trigger
-     */
     public void addEventTrigger(EventTrigger<?> trigger) {
         eventTriggers.add(trigger);
     }
 
-    /**
-     * Remove event trigger from the world.
-     *
-     * @param trigger the event trigger
-     */
     public void removeEventTrigger(EventTrigger<?> trigger) {
         eventTriggers.removeValueByIdentity(trigger);
     }
@@ -356,9 +286,7 @@ public final class GameWorld {
     private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();
 
     /**
-     * Returns last selected (clicked on by mouse) entity.
-     *
-     * @return selected entity
+     * @return last selected (clicked on by mouse) entity
      */
     public Optional<Entity> getSelectedEntity() {
         return Optional.ofNullable(selectedEntity.get());
@@ -486,8 +414,6 @@ public final class GameWorld {
     }
 
     /* QUERIES */
-
-    private GameWorldQuery query;
 
     /**
      * Returns a list of entities which are filtered by
