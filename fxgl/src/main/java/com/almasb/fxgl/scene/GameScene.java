@@ -46,7 +46,7 @@ import java.util.List;
  */
 @Singleton
 public final class GameScene extends FXGLScene
-        implements EntityWorldListener, ComponentListener, ControlListener {
+        implements EntityWorldListener, ComponentListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
@@ -287,18 +287,35 @@ public final class GameScene extends FXGLScene
         uiRoot.getChildren().clear();
     }
 
+    private ControlListener controlListener = new ControlListener() {
+        @Override
+        public void onAdded(Control control) {
+            if (control instanceof PhysicsParticleControl) {
+                PhysicsParticleControl particleControl = (PhysicsParticleControl) control;
+                particles.add(particleControl);
+            }
+        }
+
+        @Override
+        public void onRemoved(Control control) {
+            if (control instanceof PhysicsParticleControl) {
+                particles.removeValueByIdentity((PhysicsParticleControl) control);
+            }
+        }
+    };
+
     @Override
     public void onEntityAdded(Entity entity) {
         entity.getComponent(ViewComponent.class)
                 .ifPresent(viewComponent -> {
-                    onComponentAdded(viewComponent);
+                    onAdded(viewComponent);
                 });
 
         entity.getComponent(DrawableComponent.class)
                 .ifPresent(c -> drawables.add(entity));
 
         entity.addComponentListener(this);
-        entity.addControlListener(this);
+        entity.addControlListener(controlListener);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::add);
@@ -310,14 +327,14 @@ public final class GameScene extends FXGLScene
     public void onEntityRemoved(Entity entity) {
         entity.getComponent(ViewComponent.class)
                 .ifPresent(viewComponent -> {
-                    onComponentRemoved(viewComponent);
+                    onRemoved(viewComponent);
                 });
 
         entity.getComponent(DrawableComponent.class)
                 .ifPresent(c -> drawables.removeValueByIdentity(entity));
 
         entity.removeComponentListener(this);
-        entity.removeControlListener(this);
+        entity.removeControlListener(controlListener);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(p -> particles.removeValueByIdentity(p));
@@ -326,7 +343,7 @@ public final class GameScene extends FXGLScene
     }
 
     @Override
-    public void onComponentAdded(Component component) {
+    public void onAdded(Component component) {
         if (component instanceof ViewComponent) {
             ViewComponent viewComponent = (ViewComponent) component;
 
@@ -341,27 +358,12 @@ public final class GameScene extends FXGLScene
     }
 
     @Override
-    public void onComponentRemoved(Component component) {
+    public void onRemoved(Component component) {
         if (component instanceof ViewComponent) {
             ViewComponent viewComponent = (ViewComponent) component;
 
             EntityView view = viewComponent.getView();
             removeGameView(view);
-        }
-    }
-
-    @Override
-    public void onControlAdded(Control control) {
-        if (control instanceof PhysicsParticleControl) {
-            PhysicsParticleControl particleControl = (PhysicsParticleControl) control;
-            particles.add(particleControl);
-        }
-    }
-
-    @Override
-    public void onControlRemoved(Control control) {
-        if (control instanceof PhysicsParticleControl) {
-            particles.removeValueByIdentity((PhysicsParticleControl) control);
         }
     }
 }

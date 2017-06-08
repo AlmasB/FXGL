@@ -8,11 +8,14 @@ package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,8 +32,8 @@ public class Entity {
 
     private final ObjectMap<String, Object> properties = new ObjectMap<>();
 
-    private Controls controls = new Controls(this);
-    private Components components = new Components(this);
+    private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
+    private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
@@ -43,6 +46,150 @@ public class Entity {
 
     private Runnable onActive = null;
     private Runnable onNotActive = null;
+
+    private List<ComponentListener> componentListeners = new ArrayList<>();
+    private List<ControlListener> controlListeners = new ArrayList<>();
+
+    /**
+     * Maps class types to either Component or Control instances.
+     */
+    private ObjectMap<Class<? extends Module>, Module> modules = new ObjectMap<>();
+
+    private void addModuleListener(ModuleListener<? extends Module> listener) {
+        if (listener instanceof ComponentListener) {
+            componentListeners.add((ComponentListener) listener);
+        } else {
+            controlListeners.add((ControlListener) listener);
+        }
+    }
+
+    private void removeModuleListener(ModuleListener<? extends Module> listener) {
+        if (listener instanceof ComponentListener) {
+            componentListeners.remove((ComponentListener) listener);
+        } else {
+            controlListeners.remove((ControlListener) listener);
+        }
+    }
+
+    private <T extends Module> void notifyModuleAdded(T module) {
+        if (module.isComponent()) {
+            Component c = (Component) module;
+            for (int i = 0; i < componentListeners.size(); i++) {
+                componentListeners.get(i).onAdded(c);
+            }
+        } else {
+            Control c = (Control) module;
+            for (int i = 0; i < controlListeners.size(); i++) {
+                controlListeners.get(i).onAdded(c);
+            }
+        }
+    }
+
+    private <T extends Module> void notifyModuleRemoved(T module) {
+        if (module.isComponent()) {
+            Component c = (Component) module;
+            for (int i = 0; i < componentListeners.size(); i++) {
+                componentListeners.get(i).onRemoved(c);
+            }
+        } else {
+            Control c = (Control) module;
+            for (int i = 0; i < controlListeners.size(); i++) {
+                controlListeners.get(i).onRemoved(c);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public final void addModule(Module module) {
+        checkValid();
+
+        checkRequirementsMet(module.getClass());
+
+        if (module.isComponent()) {
+            components.put((Class<? extends Component>) module.getClass(), (Component) module);
+        } else {
+            controls.put((Class<? extends Control>)module.getClass(), (Control) module);
+        }
+
+        modules.put(module.getClass(), module);
+
+        module.setEntity(this);
+
+        if (module.isControl())
+            injectFields((Control) module);
+
+        module.onAdded(this);
+
+        if (module.isComponent() && isActive())
+            world.onComponentAdded((Component) module, this);
+
+        notifyModuleAdded(module);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void injectFields(Control control) {
+        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
+            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
+            if (comp != null) {
+                ReflectionUtils.inject(field, control, comp);
+            } else {
+                //log.warning("Injection failed, entity has no component: " + field.getType());
+            }
+        });
+
+        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
+            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
+            if (ctrl != null) {
+                ReflectionUtils.inject(field, control, ctrl);
+            } else {
+                //log.warning("Injection failed, entity has no control: " + field.getType());
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    public final boolean removeModule(Class<? extends Module> type) {
+        checkValid();
+
+        if (!hasModule(type)) {
+            return false;
+        }
+
+        // if not cleaning, then entity is alive, whether active or not
+        // hence we cannot allow removal if component is required by other components / controls
+        if (!cleaning && Component.class.isAssignableFrom(type)) {
+            checkNotRequiredByAny((Class<? extends Component>) type);
+        }
+
+        Module module = getModule(type);
+
+        notifyModuleRemoved(module);
+
+        modules.remove(type);
+
+        if (module.isComponent()) {
+            components.remove((Class<? extends Component>) type);
+        } else {
+            controls.remove((Class<? extends Control>)type);
+        }
+
+        if (module.isComponent() && isActive())
+            world.onComponentRemoved((Component) module, this);
+
+        module.onRemoved(this);
+        module.setEntity(null);
+
+        return true;
+    }
+
+    public final boolean hasModule(Class<? extends Module> type) {
+        return modules.containsKey(type);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final <T extends Module> T getModule(Class<T> type) {
+        return type.cast(modules.get(type));
+    }
 
     /**
      * @return the world this entity is attached to
@@ -139,7 +286,7 @@ public class Entity {
         updating = true;
 
         if (controlsEnabled) {
-            for (Control c : controls.getRaw()) {
+            for (Control c : controls.values()) {
                 if (!c.isPaused()) {
                     c.onUpdate(this, tpf);
                 }
@@ -163,10 +310,15 @@ public class Entity {
             onNotActive.run();
         active.set(false);
 
-        controls.clean();
-        components.clean();
+        removeAllControls();
+        removeAllComponents();
+
+        modules.clear();
 
         properties.clear();
+
+        controlListeners.clear();
+        componentListeners.clear();
 
         controlsEnabled = true;
         world = null;
@@ -204,10 +356,9 @@ public class Entity {
      * @param type control type
      * @return true iff entity has control of given type
      */
+    @Deprecated
     public final boolean hasControl(Class<? extends Control> type) {
-        checkValid();
-
-        return controls.hasControl(type);
+        return hasModule(type);
     }
 
     /**
@@ -217,10 +368,9 @@ public class Entity {
      * @param type control type
      * @return control
      */
+    @Deprecated
     public final <T extends Control> Optional<T> getControl(Class<T> type) {
-        checkValid();
-
-        return Optional.ofNullable(getControlUnsafe(type));
+        return Optional.ofNullable(getModule(type));
     }
 
     /**
@@ -229,10 +379,9 @@ public class Entity {
      * @param type control type
      * @return control
      */
+    @Deprecated
     public final <T extends Control> T getControlUnsafe(Class<T> type) {
-        checkValid();
-
-        return controls.getControlUnsafe(type);
+        return getModule(type);
     }
 
     /**
@@ -242,9 +391,7 @@ public class Entity {
      * @return array of controls
      */
     public final Array<Control> getControls() {
-        checkValid();
-
-        return controls.get();
+        return controls.values().toArray();
     }
 
     /**
@@ -255,42 +402,43 @@ public class Entity {
      * @throws IllegalArgumentException if control with same type already registered or anonymous
      * @throws IllegalStateException if components required by the given control are missing
      */
+    @Deprecated
     public final void addControl(Control control) {
-        checkValid();
-
-        checkRequirementsMet(control.getClass());
-
-        controls.addControl(control);
+        addModule(control);
     }
 
     /**
      * @param type the control type to remove
      * @return true if removed, false if not found
      */
+    @Deprecated
     public final boolean removeControl(Class<? extends Control> type) {
-        checkValid();
-
-        return controls.removeControl(type);
+        return removeModule(type);
     }
 
     public final void removeAllControls() {
-        checkValid();
+        for (Control c : controls.values()) {
 
-        controls.removeAllControls();
+            modules.remove(c.getClass());
+
+            c.onRemoved(this);
+            c.setEntity(null);
+        }
+
+        controls.clear();
     }
 
     public ObjectMap.Keys<Class<? extends Component> > getComponentTypes() {
-        return components.types();
+        return components.keys();
     }
 
     /**
      * @param type component type
      * @return true iff entity has a component of given type
      */
+    @Deprecated
     public final boolean hasComponent(Class<? extends Component> type) {
-        checkValid();
-
-        return components.hasComponent(type);
+        return hasModule(type);
     }
 
     /**
@@ -300,10 +448,9 @@ public class Entity {
      * @param type component type
      * @return component
      */
+    @Deprecated
     public final <T extends Component> Optional<T> getComponent(Class<T> type) {
-        checkValid();
-
-        return Optional.ofNullable(getComponentUnsafe(type));
+        return Optional.ofNullable(getModule(type));
     }
 
     /**
@@ -312,10 +459,9 @@ public class Entity {
      * @param type component type
      * @return component
      */
+    @Deprecated
     public final <T extends Component> T getComponentUnsafe(Class<T> type) {
-        checkValid();
-
-        return components.getComponentUnsafe(type);
+        return getModule(type);
     }
 
     /**
@@ -325,9 +471,7 @@ public class Entity {
      * @return array of components
      */
     public final Array<Component> getComponents() {
-        checkValid();
-
-        return components.get();
+        return components.values().toArray();
     }
 
     /**
@@ -337,12 +481,9 @@ public class Entity {
      * @throws IllegalArgumentException if a component with same type already registered or anonymous
      * @throws IllegalStateException if components required by the given component are missing
      */
+    @Deprecated
     public final void addComponent(Component component) {
-        checkValid();
-
-        checkRequirementsMet(component.getClass());
-
-        components.addComponent(component);
+        addModule(component);
     }
 
     /**
@@ -352,43 +493,37 @@ public class Entity {
      * @throws IllegalArgumentException if the component is required by other components / controls
      * @return true if removed, false if not found
      */
+    @Deprecated
     public final boolean removeComponent(Class<? extends Component> type) {
-        checkValid();
-
-        if (!hasComponent(type)) {
-            return false;
-        }
-
-        // if not cleaning, then entity is alive, whether active or not
-        // hence we cannot allow removal if component is required by other components / controls
-        if (!cleaning) {
-            checkNotRequiredByAny(type);
-        }
-
-        components.removeComponent(type);
-        return true;
+        return removeModule(type);
     }
 
     public final void removeAllComponents() {
-        checkValid();
+        for (Component c : components.values()) {
 
-        components.removeAllComponents();
+            modules.remove(c.getClass());
+
+            c.onRemoved(this);
+            c.setEntity(null);
+        }
+
+        components.clear();
     }
 
     public void addControlListener(ControlListener listener) {
-        controls.addControlListener(listener);
+        addModuleListener(listener);
     }
 
     public void removeControlListener(ControlListener listener) {
-        controls.removeControlListener(listener);
+        removeModuleListener(listener);
     }
 
     public void addComponentListener(ComponentListener listener) {
-        components.addComponentListener(listener);
+        addModuleListener(listener);
     }
 
     public void removeComponentListener(ComponentListener listener) {
-        components.removeComponentListener(listener);
+        removeModuleListener(listener);
     }
 
     private void checkValid() {
@@ -427,12 +562,12 @@ public class Entity {
 
     private void checkNotRequiredByAny(Class<? extends Component> type) {
         // check components
-        for (Class<?> t : components.types()) {
+        for (Class<?> t : components.keys()) {
             checkNotRequiredBy(t, type);
         }
 
         // check controls
-        for (Class<?> t : controls.types()) {
+        for (Class<?> t : controls.keys()) {
             checkNotRequiredBy(t, type);
         }
     }

@@ -65,14 +65,14 @@ public class ViewComponent extends Component {
         } else {
             getEntity().addComponentListener(new ComponentListener() {
                 @Override
-                public void onComponentAdded(Component component) {
+                public void onAdded(Component component) {
                     if (component instanceof BoundingBoxComponent) {
                         addDebugBBox();
                     }
                 }
 
                 @Override
-                public void onComponentRemoved(Component component) {
+                public void onRemoved(Component component) {
                     if (component instanceof BoundingBoxComponent) {
                         removeDebugBBox();
                     }

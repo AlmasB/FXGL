@@ -13,21 +13,19 @@ package com.almasb.fxgl.ecs
  */
 sealed class Module {
 
+    // TODO: internal set does not work
     var entity: Entity? = null
-        internal set
 
-    open fun onAdded(entity: Entity) {
+    open fun onAdded(entity: Entity) {}
 
-    }
+    open fun onRemoved(entity: Entity) {}
 
-    open fun onRemoved(entity: Entity) {
+    fun isComponent() = this is Component
 
-    }
+    fun isControl() = this is Control
 }
 
-abstract class Component : Module() {
-
-}
+abstract class Component : Module()
 
 abstract class Control : Module() {
 
@@ -47,3 +45,14 @@ abstract class Control : Module() {
         isPaused = false
     }
 }
+
+interface ModuleListener<in T : Module> {
+
+    fun onAdded(module: T) {}
+
+    fun onRemoved(module: T) {}
+}
+
+interface ComponentListener : ModuleListener<Component>
+
+interface ControlListener : ModuleListener<Control>

@@ -261,14 +261,14 @@ public class EntityTest {
 
         ComponentListener listener = new ComponentListener() {
             @Override
-            public void onComponentAdded(Component component) {
+            public void onAdded(Component component) {
                 assertEquals(HPComponent.class, component.getClass());
 
                 ((HPComponent)component).setValue(10);
             }
 
             @Override
-            public void onComponentRemoved(Component component) {
+            public void onRemoved(Component component) {
                 assertEquals(HPComponent.class, component.getClass());
 
                 ((HPComponent)component).setValue(0);
@@ -295,14 +295,14 @@ public class EntityTest {
 
         ControlListener listener = new ControlListener() {
             @Override
-            public void onControlAdded(Control control) {
+            public void onAdded(Control control) {
                 assertEquals(HPControl.class, control.getClass());
 
                 ((HPControl)control).value = 10;
             }
 
             @Override
-            public void onControlRemoved(Control control) {
+            public void onRemoved(Control control) {
                 assertEquals(HPControl.class, control.getClass());
 
                 ((HPControl)control).value = 20;
