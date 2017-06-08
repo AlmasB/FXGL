@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -21,7 +21,7 @@ import javafx.scene.paint.Color;
  */
 @Required(PositionComponent.class)
 @Required(BoundingBoxComponent.class)
-public class PhysicsParticleComponent extends AbstractComponent {
+public class PhysicsParticleComponent extends Component {
     private ParticleGroupDef definition = new ParticleGroupDef();
     private Color color = Color.BLACK;
 

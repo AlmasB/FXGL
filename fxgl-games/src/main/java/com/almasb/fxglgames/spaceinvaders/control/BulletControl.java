@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.spaceinvaders.control;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -17,7 +17,7 @@ import com.almasb.fxglgames.spaceinvaders.component.OwnerComponent;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(OwnerComponent.class)
-public class BulletControl extends AbstractControl {
+public class BulletControl extends Control {
 
     private PositionComponent position;
     private OwnerComponent owner;

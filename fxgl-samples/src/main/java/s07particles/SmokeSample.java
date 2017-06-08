@@ -7,18 +7,14 @@
 package s07particles;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.ecs.AbstractControl;
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.control.CircularMovementControl;
-import com.almasb.fxgl.entity.control.RandomMoveControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -28,8 +24,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import static java.lang.Math.*;
 
 /**
  * Using particles with source images and colorization.

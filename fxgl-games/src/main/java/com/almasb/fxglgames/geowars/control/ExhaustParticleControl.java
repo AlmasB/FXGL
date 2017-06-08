@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.texture.Texture;
@@ -22,7 +22,7 @@ import static java.lang.Math.min;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ExhaustParticleControl extends AbstractControl {
+public class ExhaustParticleControl extends Control {
 
     private static final Image PARTICLE_IMAGE;
     public static final ObjectMap<Color, Image> coloredImages = new ObjectMap<>();

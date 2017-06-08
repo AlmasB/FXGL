@@ -6,7 +6,7 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import javafx.geometry.Point2D;
@@ -14,7 +14,7 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class EnemyControl extends AbstractControl {
+public class EnemyControl extends Control {
 
     private Point2D target;
 

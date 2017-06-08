@@ -6,7 +6,7 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ai.fsm.DefaultStateMachine;
 import com.almasb.fxgl.ai.fsm.State;
@@ -14,7 +14,7 @@ import com.almasb.fxgl.ai.fsm.State;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class FSMControl<T extends Entity> extends AbstractControl {
+public class FSMControl<T extends Entity> extends Control {
 
     private DefaultStateMachine<T, State<T>> fsm;
 

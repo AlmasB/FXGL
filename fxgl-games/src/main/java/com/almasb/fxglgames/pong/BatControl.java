@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.pong;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -15,7 +15,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class BatControl extends AbstractControl {
+public class BatControl extends Control {
 
     protected PositionComponent position;
     protected PhysicsComponent bat;

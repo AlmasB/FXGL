@@ -7,14 +7,14 @@
 package com.almasb.fxglgames.breakout.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.ViewComponent;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class BrickControl extends AbstractControl {
+public class BrickControl extends Control {
 
     private int lives = 2;
 

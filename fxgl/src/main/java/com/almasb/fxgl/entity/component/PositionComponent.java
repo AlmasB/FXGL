@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.devtools.DeveloperEditable;
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.CopyableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class PositionComponent extends AbstractComponent
+public class PositionComponent extends Component
         implements SerializableComponent, CopyableComponent<PositionComponent> {
 
     private final DoubleProperty x;

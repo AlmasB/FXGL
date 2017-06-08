@@ -6,14 +6,14 @@
 
 package com.almasb.fxgl.ecs.diff;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityTest;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class InjectableControl extends AbstractControl {
+public class InjectableControl extends Control {
 
     private EntityTest.CustomDataComponent component;
 

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.Entity;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class DrawableComponent extends AbstractComponent {
+public class DrawableComponent extends Component {
 
     private BiConsumer<GraphicsContext, Entity> drawingFunction;
 

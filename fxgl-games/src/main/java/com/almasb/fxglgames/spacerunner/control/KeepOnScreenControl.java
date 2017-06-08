@@ -7,7 +7,7 @@
 package com.almasb.fxglgames.spacerunner.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -23,7 +23,7 @@ import com.almasb.fxgl.scene.Viewport;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-public class KeepOnScreenControl extends AbstractControl {
+public class KeepOnScreenControl extends Control {
 
     private PositionComponent position;
     private BoundingBoxComponent bbox = null;

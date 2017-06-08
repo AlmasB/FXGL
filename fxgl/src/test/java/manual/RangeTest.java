@@ -7,7 +7,7 @@
 package manual;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -164,7 +164,7 @@ public class RangeTest extends GameApplication {
     }
 
     @Required(PositionComponent.class)
-    public class PlayerControl extends AbstractControl {
+    public class PlayerControl extends Control {
 
         private PositionComponent position;
 

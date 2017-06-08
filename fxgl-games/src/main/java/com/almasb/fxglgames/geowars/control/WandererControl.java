@@ -9,7 +9,7 @@ package com.almasb.fxglgames.geowars.control;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.GameEntity;
 import javafx.geometry.Point2D;
@@ -17,7 +17,7 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class WandererControl extends AbstractControl {
+public class WandererControl extends Control {
 
     // from CRYtek
     private static final int NOISE_TABLE_SIZE = 256;

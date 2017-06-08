@@ -6,14 +6,14 @@
 
 package com.almasb.fxgl.ecs.component;
 
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class ObjectComponent<T> extends AbstractComponent {
+public abstract class ObjectComponent<T> extends Component {
     private ObjectProperty<T> property;
 
     /**

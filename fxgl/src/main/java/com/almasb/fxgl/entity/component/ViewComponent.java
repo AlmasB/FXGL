@@ -7,7 +7,6 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.ComponentListener;
 import com.almasb.fxgl.ecs.Entity;
@@ -34,7 +33,7 @@ import javafx.scene.shape.Shape;
  */
 @Required(PositionComponent.class)
 @Required(RotationComponent.class)
-public class ViewComponent extends AbstractComponent {
+public class ViewComponent extends Component {
 
     private static Color showBBoxColor = Color.RED;
 

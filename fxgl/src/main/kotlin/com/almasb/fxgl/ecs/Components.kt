@@ -79,7 +79,7 @@ internal class Components(private val parent: Entity) {
     fun addComponent(component: Component) {
         components.put(component.javaClass, component)
 
-        if (component is AbstractComponent) {
+        if (component is Component) {
             component.entity = parent
         }
 
@@ -121,7 +121,7 @@ internal class Components(private val parent: Entity) {
         notifyComponentRemoved(component)
         component.onRemoved(parent)
 
-        if (component is AbstractComponent) {
+        if (component is Component) {
             component.entity = null
         }
     }

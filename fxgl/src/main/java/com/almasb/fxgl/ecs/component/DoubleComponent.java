@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.ecs.component;
 
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.DoubleProperty;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public abstract class DoubleComponent extends AbstractComponent implements SerializableComponent {
+public abstract class DoubleComponent extends Component implements SerializableComponent {
     private DoubleProperty property;
 
     /**

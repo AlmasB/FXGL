@@ -8,14 +8,14 @@ package com.almasb.fxglgames.tictactoe.control.enemy;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.event.Subscriber;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxglgames.tictactoe.event.AIEvent;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public abstract class EnemyControl extends AbstractControl {
+public abstract class EnemyControl extends Control {
 
     private Subscriber eventListener;
 

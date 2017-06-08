@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -22,7 +22,7 @@ import javafx.geometry.Point2D;
  */
 @Required(PositionComponent.class)
 @Required(RotationComponent.class)
-public class ProjectileControl extends AbstractControl {
+public class ProjectileControl extends Control {
 
     private Point2D velocity;
     private double speed;

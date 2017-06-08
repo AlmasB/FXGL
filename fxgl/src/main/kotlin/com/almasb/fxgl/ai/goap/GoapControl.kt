@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.ai.goap
 
-import com.almasb.fxgl.ecs.AbstractControl
+import com.almasb.fxgl.ecs.Control
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ecs.component.Required
 import com.almasb.fxgl.entity.Entities
@@ -22,7 +22,7 @@ import java.util.*
 @Required(PositionComponent::class)
 class GoapControl(private val agent: GoapAgent // this is the implementing class that provides our world data and listens to feedback on planning
                   , private val moveSpeed: Double,
-                  actions: Set<GoapAction>) : AbstractControl() {
+                  actions: Set<GoapAction>) : Control() {
 
     private val stateMachine = FSM()
 

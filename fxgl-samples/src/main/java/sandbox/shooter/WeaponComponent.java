@@ -6,12 +6,12 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class WeaponComponent extends AbstractComponent {
+public class WeaponComponent extends Component {
 
     private int damage;
     private double fireRate;

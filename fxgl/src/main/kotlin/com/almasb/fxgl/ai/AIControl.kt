@@ -9,7 +9,7 @@ package com.almasb.fxgl.ai
 import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ecs.AbstractControl
+import com.almasb.fxgl.ecs.Control
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.GameEntity
 import java.util.*
@@ -20,7 +20,7 @@ import java.util.*
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class AIControl
-private constructor() : AbstractControl() {
+private constructor() : Control() {
 
     private lateinit var behaviorTree: BehaviorTree<GameEntity>
 

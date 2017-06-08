@@ -6,14 +6,14 @@
 
 package com.almasb.fxglgames.pong;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.physics.PhysicsComponent;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class BallControl extends AbstractControl {
+public class BallControl extends Control {
 
     private PhysicsComponent ball;
 

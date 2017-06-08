@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.parser.JavaScriptParser;
 
@@ -15,7 +15,7 @@ import com.almasb.fxgl.parser.JavaScriptParser;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class JSControl extends AbstractControl {
+public class JSControl extends Control {
 
     private JavaScriptParser parser;
 

@@ -7,7 +7,7 @@
 package com.almasb.fxglgames.spacerunner.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -19,7 +19,7 @@ import com.almasb.fxglgames.spacerunner.SpaceRunnerType;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-public class PlayerControl extends AbstractControl {
+public class PlayerControl extends Control {
 
     private PositionComponent position;
 

@@ -7,14 +7,14 @@
 package com.almasb.fxglgames.breakout.control;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.physics.PhysicsComponent;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class BallControl extends AbstractControl {
+public class BallControl extends Control {
 
     private PhysicsComponent physics;
 

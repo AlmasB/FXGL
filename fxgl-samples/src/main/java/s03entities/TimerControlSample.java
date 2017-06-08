@@ -9,7 +9,7 @@ package s03entities;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -47,7 +47,7 @@ public class TimerControlSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
     }
 
-    private class LiftControl extends AbstractControl {
+    private class LiftControl extends Control {
 
         private LocalTimer timer = FXGL.newLocalTimer();
         private boolean goingUp = false;

@@ -9,7 +9,7 @@ package s07particles;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
@@ -79,7 +79,7 @@ public class ParticleTextureSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
     }
 
-    private class ButterflyControl extends AbstractControl {
+    private class ButterflyControl extends Control {
 
         private double t = 0;
 

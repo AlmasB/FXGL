@@ -12,7 +12,6 @@ import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -91,21 +90,6 @@ public class EntityTest {
 
             @Override
             public void onRemoved(Entity entity) {}
-
-            @Override
-            public boolean isPaused() {
-                return false;
-            }
-
-            @Override
-            public void pause() {
-
-            }
-
-            @Override
-            public void resume() {
-
-            }
         });
     }
 
@@ -474,19 +458,19 @@ public class EntityTest {
         assertThat(toString, containsString(control.toString()));
     }
 
-    private class TestControl extends AbstractControl {
+    private class TestControl extends Control {
         @Override
         public void onUpdate(Entity entity, double tpf) {}
     }
 
-    private class ControlAddingControl extends AbstractControl {
+    private class ControlAddingControl extends Control {
         @Override
         public void onUpdate(Entity entity, double tpf) {
             entity.addControl(new TestControl());
         }
     }
 
-    private class ControlRemovingControl extends AbstractControl {
+    private class ControlRemovingControl extends Control {
         @Override
         public void onUpdate(Entity entity, double tpf) {
             entity.removeAllControls();
@@ -494,14 +478,14 @@ public class EntityTest {
     }
 
     @Required(HPComponent.class)
-    private class HPControl extends AbstractControl {
+    private class HPControl extends Control {
         private double value = 0;
 
         @Override
         public void onUpdate(Entity entity, double tpf) {}
     }
 
-    private class TestComponent extends AbstractComponent {
+    private class TestComponent extends Component {
     }
 
     private class HPComponent extends DoubleComponent implements CopyableComponent<HPComponent> {
@@ -517,7 +501,7 @@ public class EntityTest {
 
     @Required(TestComponent.class)
     @Required(HPComponent.class)
-    private class ArmorComponent extends AbstractComponent {
+    private class ArmorComponent extends Component {
     }
 
     private class GravityComponent extends BooleanComponent {
@@ -526,7 +510,7 @@ public class EntityTest {
         }
     }
 
-    public static class CustomDataComponent extends AbstractComponent implements SerializableComponent {
+    public static class CustomDataComponent extends Component implements SerializableComponent {
 
         public String data;
 
@@ -545,7 +529,7 @@ public class EntityTest {
         }
     }
 
-    public static class CustomDataControl extends AbstractControl implements SerializableControl {
+    public static class CustomDataControl extends Control implements SerializableControl {
 
         public String data;
 

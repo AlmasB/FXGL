@@ -10,7 +10,7 @@ package com.almasb.fxglgames.pacman.control;
 import com.almasb.fxgl.ai.pathfinding.AStarGrid;
 import com.almasb.fxgl.ai.pathfinding.NodeState;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
@@ -26,7 +26,7 @@ import java.util.Random;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerControl extends AbstractControl {
+public class PlayerControl extends Control {
     private PositionComponent position;
     private BoundingBoxComponent bbox;
     private ViewComponent view;

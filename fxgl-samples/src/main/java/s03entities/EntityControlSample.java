@@ -7,7 +7,7 @@ package s03entities;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.RotationComponent;
@@ -45,7 +45,7 @@ public class EntityControlSample extends GameApplication {
     }
 
     // 1. create class that implements Control
-    private class RotatingControl extends AbstractControl {
+    private class RotatingControl extends Control {
 
         @Override
         public void onUpdate(Entity entity, double tpf) {

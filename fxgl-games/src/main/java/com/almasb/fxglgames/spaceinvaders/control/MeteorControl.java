@@ -7,7 +7,7 @@
 package com.almasb.fxglgames.spaceinvaders.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
@@ -16,7 +16,7 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class MeteorControl extends AbstractControl {
+public class MeteorControl extends Control {
 
     private RotationComponent rotation;
     private PositionComponent position;

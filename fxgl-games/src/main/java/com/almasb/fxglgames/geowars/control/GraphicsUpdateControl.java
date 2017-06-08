@@ -6,14 +6,14 @@
 
 package com.almasb.fxglgames.geowars.control;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxglgames.geowars.component.GraphicsComponent;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class GraphicsUpdateControl extends AbstractControl {
+public class GraphicsUpdateControl extends Control {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {

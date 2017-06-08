@@ -7,7 +7,7 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.ecs.GameWorld;
@@ -26,7 +26,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerControl extends AbstractControl {
+public class PlayerControl extends Control {
 
     private PositionComponent position;
     private ViewComponent view;

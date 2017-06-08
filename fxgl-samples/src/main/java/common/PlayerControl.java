@@ -6,7 +6,7 @@
 
 package common;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -16,7 +16,7 @@ import com.almasb.fxgl.entity.component.PositionComponent;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-public class PlayerControl extends AbstractControl {
+public class PlayerControl extends Control {
 
     private PositionComponent position;
 

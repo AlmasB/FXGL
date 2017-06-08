@@ -48,8 +48,8 @@ internal class Controls(private val parent: Entity) {
     fun addControl(control: Control) {
         controls.put(control.javaClass, control)
 
-        if (control is AbstractControl) {
-            control.setEntity(parent)
+        if (control is Control) {
+            control.entity = parent
         }
 
         injectFields(control)
@@ -105,7 +105,7 @@ internal class Controls(private val parent: Entity) {
         notifyControlRemoved(control)
         control.onRemoved(parent)
 
-        if (control is AbstractControl) {
+        if (control is Control) {
             control.entity = null
         }
     }

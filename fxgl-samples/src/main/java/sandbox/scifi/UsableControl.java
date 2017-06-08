@@ -6,13 +6,13 @@
 
 package sandbox.scifi;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class UsableControl extends AbstractControl {
+public class UsableControl extends Control {
 
     private Runnable action;
 

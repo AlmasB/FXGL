@@ -8,7 +8,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -27,7 +27,7 @@ import javafx.geometry.Point2D;
 @Required(PositionComponent.class)
 @Required(RotationComponent.class)
 @Required(BoundingBoxComponent.class)
-public class PhysicsComponent extends AbstractComponent {
+public class PhysicsComponent extends Component {
 
     FixtureDef fixtureDef = new FixtureDef();
     BodyDef bodyDef = new BodyDef();

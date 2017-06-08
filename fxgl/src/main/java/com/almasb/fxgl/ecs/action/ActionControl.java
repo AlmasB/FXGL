@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.ecs.action;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class ActionControl<T extends Entity> extends AbstractControl {
+public class ActionControl<T extends Entity> extends Control {
 
     private Deque<Action<T>> actions = new ArrayDeque<>();
     private ObservableList<Action<T>> actionsObservable = FXCollections.observableArrayList();

@@ -7,7 +7,7 @@
 package com.almasb.fxgl.entity.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.time.TimerAction;
@@ -19,7 +19,7 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class ExpireCleanControl extends AbstractControl {
+public class ExpireCleanControl extends Control {
 
     private Duration expire;
 

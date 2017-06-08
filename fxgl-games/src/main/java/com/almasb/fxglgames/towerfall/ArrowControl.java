@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.towerfall;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import javafx.geometry.Point2D;
@@ -14,7 +14,7 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class ArrowControl extends AbstractControl {
+public class ArrowControl extends Control {
 
     private Point2D velocity;
 

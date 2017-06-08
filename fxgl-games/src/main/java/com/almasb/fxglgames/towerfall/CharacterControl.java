@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.towerfall;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.ecs.GameWorld;
@@ -18,7 +18,7 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class CharacterControl extends AbstractControl {
+public class CharacterControl extends Control {
 
     private PositionComponent position;
     private PhysicsComponent physics;

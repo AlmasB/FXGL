@@ -6,7 +6,7 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
@@ -21,7 +21,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class PlayerControl extends AbstractControl {
+public class PlayerControl extends Control {
     @Override
     public void onUpdate(Entity entity, double tpf) {
 

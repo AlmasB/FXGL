@@ -7,7 +7,7 @@
 package com.almasb.fxglgames.geowars.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.time.LocalTimer;
@@ -17,7 +17,7 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class SeekerControl extends AbstractControl {
+public class SeekerControl extends Control {
 
     // in seconds
     private static double seekerAdjustDelay = 5;

@@ -8,7 +8,7 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.pool.Pool;
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.CopyableComponent;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-public class BoundingBoxComponent extends AbstractComponent
+public class BoundingBoxComponent extends Component
         implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {
 
     private static final Pooler pooler = FXGL.getPooler();

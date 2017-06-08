@@ -7,7 +7,7 @@
 package com.almasb.fxglgames.geowars.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -20,7 +20,7 @@ import javafx.geometry.Point2D;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Required(BoundingBoxComponent.class)
-public class RicochetControl extends AbstractControl {
+public class RicochetControl extends Control {
 
     private BoundingBoxComponent bbox;
 

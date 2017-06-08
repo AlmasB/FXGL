@@ -8,7 +8,7 @@ package com.almasb.fxglgames.flappy;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
@@ -16,7 +16,7 @@ import com.almasb.fxgl.entity.component.PositionComponent;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PlayerControl extends AbstractControl {
+public class PlayerControl extends Control {
 
     private Vec2 acceleration = new Vec2(6, 0);
 

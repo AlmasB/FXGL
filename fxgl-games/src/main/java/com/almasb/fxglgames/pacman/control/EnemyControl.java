@@ -9,7 +9,7 @@ package com.almasb.fxglgames.pacman.control;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
@@ -24,7 +24,7 @@ import java.util.Random;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class EnemyControl extends AbstractControl {
+public class EnemyControl extends Control {
 
     protected PositionComponent position;
     private BoundingBoxComponent bbox;

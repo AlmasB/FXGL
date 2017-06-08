@@ -8,7 +8,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -25,7 +25,7 @@ import javafx.geometry.Point2D;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PhysicsComponent.class)
-public class PhysicsControl extends AbstractControl {
+public class PhysicsControl extends Control {
 
     private Body body;
 

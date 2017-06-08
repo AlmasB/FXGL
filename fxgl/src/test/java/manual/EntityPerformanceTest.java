@@ -9,7 +9,7 @@ package manual;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.ecs.AbstractControl;
+import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.control.CircularMovementControl;
@@ -102,7 +102,7 @@ public class EntityPerformanceTest extends GameApplication {
         return e;
     }
 
-    private static class TestControl extends AbstractControl {
+    private static class TestControl extends Control {
 
         private int i = 0;
 

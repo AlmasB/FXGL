@@ -9,7 +9,7 @@ package com.almasb.fxgl.entity.control
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.ecs.AbstractControl
+import com.almasb.fxgl.ecs.Control
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.entity.component.PositionComponent
@@ -24,7 +24,7 @@ class RandomMoveControl
         var speed: Double,
         var xSeed: Double = FXGLMath.random(100f, 10000f).toDouble(),
         var ySeed: Double = FXGLMath.random(10000f, 100000f).toDouble(),
-        var bounds: Rectangle2D = FXGL.getApp().appBounds) : AbstractControl() {
+        var bounds: Rectangle2D = FXGL.getApp().appBounds) : Control() {
 
     private lateinit var position: PositionComponent
     private var bbox: BoundingBoxComponent? = null
