@@ -122,7 +122,7 @@ public class GameWorld {
      *
      * @param tpf time per frame
      */
-    protected void update(double tpf) {
+    private void update(double tpf) {
         updateList.addAll(waitingList);
         waitingList.clear();
 
