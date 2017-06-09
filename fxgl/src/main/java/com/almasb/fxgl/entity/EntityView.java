@@ -6,6 +6,7 @@
 package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.Disposable;
 import com.almasb.fxgl.core.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -20,7 +21,7 @@ import javafx.scene.shape.Circle;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class EntityView extends Parent {
+public class EntityView extends Parent implements Disposable {
 
     protected static final Logger log = FXGL.getLogger("FXGL.EntityView");
 
@@ -129,5 +130,16 @@ public class EntityView extends Parent {
      */
     public ObjectProperty<RenderLayer> renderLayerProperty() {
         return renderLayer;
+    }
+
+    @Override
+    public void dispose() {
+        // we only call dispose to let children to do manual cleanup
+        // but we do not remove them from the parent
+        // which would have been done by now by JavaFX
+        getChildren().stream()
+                .filter(n -> n instanceof Disposable)
+                .map(n -> (Disposable)n)
+                .forEach(Disposable::dispose);
     }
 }

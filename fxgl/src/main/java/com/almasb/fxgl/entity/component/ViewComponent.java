@@ -218,7 +218,7 @@ public class ViewComponent extends Component {
 
     @Override
     public void onRemoved(Entity entity) {
-        // no-op
+        view.dispose();
     }
 
     private void bindView() {

@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.texture
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.listener.StateListener
 import javafx.geometry.Rectangle2D
@@ -37,6 +38,8 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
 
         // force channel to apply settings to this texture
         onUpdate(0.0)
+
+        start(FXGL.getApp().stateMachine.playState)
     }
 
     fun playAnimationChannel(channel: AnimationChannel) {
@@ -108,5 +111,10 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
     private fun reset() {
         currentFrame = 0
         counter = 0.0
+    }
+
+    override fun dispose() {
+        stop()
+        super.dispose()
     }
 }
