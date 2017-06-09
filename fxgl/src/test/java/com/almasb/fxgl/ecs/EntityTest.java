@@ -12,6 +12,7 @@ import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -108,7 +109,8 @@ public class EntityTest {
         assertTrue(maybe.isPresent());
         assertEquals(hp, maybe.get());
 
-        entity.removeComponent(HPComponent.class);
+        boolean result = entity.removeComponent(HPComponent.class);
+        assertTrue(result);
         assertFalse(entity.getComponent(HPComponent.class).isPresent());
 
         entity.addComponent(hp);
@@ -118,6 +120,9 @@ public class EntityTest {
 
         entity.removeAllComponents();
         assertFalse(entity.getComponent(HPComponent.class).isPresent());
+
+        result = entity.removeComponent(HPComponent.class);
+        assertFalse(result);
     }
 
     @Test
@@ -432,6 +437,14 @@ public class EntityTest {
 
         entity.removeFromWorld();
         assertThat(world.getEntities(), not(hasItems(entity)));
+
+        Entity ee = new Entity();
+        ee.addControl(new EntityRemovingControl());
+
+        world.addEntity(ee);
+        world.onUpdate(0);
+
+        assertThat(world.getEntities(), not(hasItems(ee)));
     }
 
     @Test
@@ -474,6 +487,13 @@ public class EntityTest {
         @Override
         public void onUpdate(Entity entity, double tpf) {
             entity.removeAllControls();
+        }
+    }
+
+    private class EntityRemovingControl extends Control {
+        @Override
+        public void onUpdate(@NotNull Entity entity, double tpf) {
+            entity.removeFromWorld();
         }
     }
 
