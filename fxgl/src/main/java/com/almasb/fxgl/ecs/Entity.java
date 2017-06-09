@@ -30,14 +30,17 @@ import java.util.Optional;
  */
 public class Entity {
 
-    private final ObjectMap<String, Object> properties = new ObjectMap<>();
+    private ObjectMap<String, Object> properties = new ObjectMap<>();
 
     private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
     private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
 
-    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
+    private List<ComponentListener> componentListeners = new ArrayList<>();
+    private List<ControlListener> controlListeners = new ArrayList<>();
 
     private GameWorld world;
+
+    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
     private boolean updating = false;
     private boolean delayedRemove = false;
@@ -46,150 +49,6 @@ public class Entity {
 
     private Runnable onActive = null;
     private Runnable onNotActive = null;
-
-    private List<ComponentListener> componentListeners = new ArrayList<>();
-    private List<ControlListener> controlListeners = new ArrayList<>();
-
-    /**
-     * Maps class types to either Component or Control instances.
-     */
-    private ObjectMap<Class<? extends Module>, Module> modules = new ObjectMap<>();
-
-    private void addModuleListener(ModuleListener<? extends Module> listener) {
-        if (listener instanceof ComponentListener) {
-            componentListeners.add((ComponentListener) listener);
-        } else {
-            controlListeners.add((ControlListener) listener);
-        }
-    }
-
-    private void removeModuleListener(ModuleListener<? extends Module> listener) {
-        if (listener instanceof ComponentListener) {
-            componentListeners.remove((ComponentListener) listener);
-        } else {
-            controlListeners.remove((ControlListener) listener);
-        }
-    }
-
-    private <T extends Module> void notifyModuleAdded(T module) {
-        if (module.isComponent()) {
-            Component c = (Component) module;
-            for (int i = 0; i < componentListeners.size(); i++) {
-                componentListeners.get(i).onAdded(c);
-            }
-        } else {
-            Control c = (Control) module;
-            for (int i = 0; i < controlListeners.size(); i++) {
-                controlListeners.get(i).onAdded(c);
-            }
-        }
-    }
-
-    private <T extends Module> void notifyModuleRemoved(T module) {
-        if (module.isComponent()) {
-            Component c = (Component) module;
-            for (int i = 0; i < componentListeners.size(); i++) {
-                componentListeners.get(i).onRemoved(c);
-            }
-        } else {
-            Control c = (Control) module;
-            for (int i = 0; i < controlListeners.size(); i++) {
-                controlListeners.get(i).onRemoved(c);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public final void addModule(Module module) {
-        checkValid();
-
-        checkRequirementsMet(module.getClass());
-
-        if (module.isComponent()) {
-            components.put((Class<? extends Component>) module.getClass(), (Component) module);
-        } else {
-            controls.put((Class<? extends Control>)module.getClass(), (Control) module);
-        }
-
-        modules.put(module.getClass(), module);
-
-        module.setEntity(this);
-
-        if (module.isControl())
-            injectFields((Control) module);
-
-        module.onAdded(this);
-
-        if (module.isComponent() && isActive())
-            world.onComponentAdded((Component) module, this);
-
-        notifyModuleAdded(module);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void injectFields(Control control) {
-        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
-            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
-            if (comp != null) {
-                ReflectionUtils.inject(field, control, comp);
-            } else {
-                //log.warning("Injection failed, entity has no component: " + field.getType());
-            }
-        });
-
-        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
-            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
-            if (ctrl != null) {
-                ReflectionUtils.inject(field, control, ctrl);
-            } else {
-                //log.warning("Injection failed, entity has no control: " + field.getType());
-            }
-        });
-    }
-
-    @SuppressWarnings("unchecked")
-    public final boolean removeModule(Class<? extends Module> type) {
-        checkValid();
-
-        if (!hasModule(type)) {
-            return false;
-        }
-
-        // if not cleaning, then entity is alive, whether active or not
-        // hence we cannot allow removal if component is required by other components / controls
-        if (!cleaning && Component.class.isAssignableFrom(type)) {
-            checkNotRequiredByAny((Class<? extends Component>) type);
-        }
-
-        Module module = getModule(type);
-
-        notifyModuleRemoved(module);
-
-        modules.remove(type);
-
-        if (module.isComponent()) {
-            components.remove((Class<? extends Component>) type);
-        } else {
-            controls.remove((Class<? extends Control>)type);
-        }
-
-        if (module.isComponent() && isActive())
-            world.onComponentRemoved((Component) module, this);
-
-        module.onRemoved(this);
-        module.setEntity(null);
-
-        return true;
-    }
-
-    public final boolean hasModule(Class<? extends Module> type) {
-        return modules.containsKey(type);
-    }
-
-    @SuppressWarnings("unchecked")
-    public final <T extends Module> T getModule(Class<T> type) {
-        return type.cast(modules.get(type));
-    }
 
     /**
      * @return the world this entity is attached to
@@ -313,8 +172,6 @@ public class Entity {
         removeAllControls();
         removeAllComponents();
 
-        modules.clear();
-
         properties.clear();
 
         controlListeners.clear();
@@ -356,9 +213,8 @@ public class Entity {
      * @param type control type
      * @return true iff entity has control of given type
      */
-    @Deprecated
     public final boolean hasControl(Class<? extends Control> type) {
-        return hasModule(type);
+        return controls.containsKey(type);
     }
 
     /**
@@ -368,9 +224,8 @@ public class Entity {
      * @param type control type
      * @return control
      */
-    @Deprecated
     public final <T extends Control> Optional<T> getControl(Class<T> type) {
-        return Optional.ofNullable(getModule(type));
+        return Optional.ofNullable(getControlUnsafe(type));
     }
 
     /**
@@ -379,9 +234,8 @@ public class Entity {
      * @param type control type
      * @return control
      */
-    @Deprecated
     public final <T extends Control> T getControlUnsafe(Class<T> type) {
-        return getModule(type);
+        return type.cast(controls.get(type));
     }
 
     /**
@@ -402,43 +256,41 @@ public class Entity {
      * @throws IllegalArgumentException if control with same type already registered or anonymous
      * @throws IllegalStateException if components required by the given control are missing
      */
-    @Deprecated
     public final void addControl(Control control) {
         addModule(control);
+
+        controls.put(control.getClass(), control);
     }
 
     /**
      * @param type the control type to remove
      * @return true if removed, false if not found
      */
-    @Deprecated
     public final boolean removeControl(Class<? extends Control> type) {
-        return removeModule(type);
+        if (!hasControl(type))
+            return false;
+
+        removeModule(getControlUnsafe(type));
+
+        controls.remove(type);
+
+        return true;
     }
 
     public final void removeAllControls() {
-        for (Control c : controls.values()) {
-
-            modules.remove(c.getClass());
-
-            c.onRemoved(this);
-            c.setEntity(null);
+        for (Control control : controls.values()) {
+            removeModule(control);
         }
 
         controls.clear();
-    }
-
-    public ObjectMap.Keys<Class<? extends Component> > getComponentTypes() {
-        return components.keys();
     }
 
     /**
      * @param type component type
      * @return true iff entity has a component of given type
      */
-    @Deprecated
     public final boolean hasComponent(Class<? extends Component> type) {
-        return hasModule(type);
+        return components.containsKey(type);
     }
 
     /**
@@ -448,9 +300,8 @@ public class Entity {
      * @param type component type
      * @return component
      */
-    @Deprecated
     public final <T extends Component> Optional<T> getComponent(Class<T> type) {
-        return Optional.ofNullable(getModule(type));
+        return Optional.ofNullable(getComponentUnsafe(type));
     }
 
     /**
@@ -459,9 +310,8 @@ public class Entity {
      * @param type component type
      * @return component
      */
-    @Deprecated
     public final <T extends Component> T getComponentUnsafe(Class<T> type) {
-        return getModule(type);
+        return type.cast(components.get(type));
     }
 
     /**
@@ -481,9 +331,10 @@ public class Entity {
      * @throws IllegalArgumentException if a component with same type already registered or anonymous
      * @throws IllegalStateException if components required by the given component are missing
      */
-    @Deprecated
     public final void addComponent(Component component) {
         addModule(component);
+
+        components.put(component.getClass(), component);
     }
 
     /**
@@ -493,37 +344,117 @@ public class Entity {
      * @throws IllegalArgumentException if the component is required by other components / controls
      * @return true if removed, false if not found
      */
-    @Deprecated
     public final boolean removeComponent(Class<? extends Component> type) {
-        return removeModule(type);
+        if (!hasComponent(type))
+            return false;
+
+        // if not cleaning, then entity is alive, whether active or not
+        // hence we cannot allow removal if component is required by other components / controls
+        if (!cleaning) {
+            checkNotRequiredByAny(type);
+        }
+
+        removeModule(getComponentUnsafe(type));
+
+        components.remove(type);
+
+        return true;
     }
 
     public final void removeAllComponents() {
-        for (Component c : components.values()) {
+        for (Component comp : components.values()) {
+            if (!cleaning) {
+                checkNotRequiredByAny(comp.getClass());
+            }
 
-            modules.remove(c.getClass());
-
-            c.onRemoved(this);
-            c.setEntity(null);
+            removeModule(comp);
         }
 
         components.clear();
     }
 
     public void addControlListener(ControlListener listener) {
-        addModuleListener(listener);
+        controlListeners.add(listener);
     }
 
     public void removeControlListener(ControlListener listener) {
-        removeModuleListener(listener);
+        controlListeners.remove(listener);
     }
 
     public void addComponentListener(ComponentListener listener) {
-        addModuleListener(listener);
+        componentListeners.add(listener);
     }
 
     public void removeComponentListener(ComponentListener listener) {
-        removeModuleListener(listener);
+        componentListeners.remove(listener);
+    }
+
+    private void addModule(Module module) {
+        checkValid();
+
+        checkRequirementsMet(module.getClass());
+
+        module.setEntity(this);
+
+        if (module.isControl())
+            injectFields((Control) module);
+
+        module.onAdded(this);
+        notifyModuleAdded(module);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void injectFields(Control control) {
+        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
+            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
+            if (comp != null) {
+                ReflectionUtils.inject(field, control, comp);
+            }
+        });
+
+        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
+            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
+            if (ctrl != null) {
+                ReflectionUtils.inject(field, control, ctrl);
+            }
+        });
+    }
+
+    private void removeModule(Module module) {
+        checkValid();
+
+        notifyModuleRemoved(module);
+
+        module.onRemoved(this);
+        module.setEntity(null);
+    }
+
+    private <T extends Module> void notifyModuleAdded(T module) {
+        if (module.isComponent()) {
+            Component c = (Component) module;
+            for (int i = 0; i < componentListeners.size(); i++) {
+                componentListeners.get(i).onAdded(c);
+            }
+        } else {
+            Control c = (Control) module;
+            for (int i = 0; i < controlListeners.size(); i++) {
+                controlListeners.get(i).onAdded(c);
+            }
+        }
+    }
+
+    private <T extends Module> void notifyModuleRemoved(T module) {
+        if (module.isComponent()) {
+            Component c = (Component) module;
+            for (int i = 0; i < componentListeners.size(); i++) {
+                componentListeners.get(i).onRemoved(c);
+            }
+        } else {
+            Control c = (Control) module;
+            for (int i = 0; i < controlListeners.size(); i++) {
+                controlListeners.get(i).onRemoved(c);
+            }
+        }
     }
 
     private void checkValid() {

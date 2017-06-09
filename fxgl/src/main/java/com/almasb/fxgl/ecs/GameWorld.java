@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Represents pure logical state of the game.
@@ -90,10 +91,6 @@ public class GameWorld {
         waitingList.add(entity);
         entities.add(entity);
 
-        for (Class<? extends Component> type : entity.getComponentTypes()) {
-            addComponentMap(type, entity);
-        }
-
         entity.init(this);
         notifyEntityAdded(entity);
     }
@@ -109,10 +106,6 @@ public class GameWorld {
             throw new IllegalArgumentException("Attempted to remove entity not attached to this world");
 
         entities.remove(entity);
-
-        for (Class<? extends Component> type : entity.getComponentTypes()) {
-            removeComponentMap(type, entity);
-        }
 
         notifyEntityRemoved(entity);
         entity.clean();
@@ -169,8 +162,6 @@ public class GameWorld {
         updateList.clear();
         entities.clear();
 
-        componentMap.clear();
-
         notifyWorldReset();
     }
 
@@ -208,26 +199,6 @@ public class GameWorld {
         }
     }
 
-    private ObjectMap<Class<? extends Component>, Array<Entity> > componentMap = new ObjectMap<>();
-
-    private void addComponentMap(Class<? extends Component> type, Entity e) {
-        Array<Entity> array = componentMap.get(type);
-
-        if (array == null) {
-            array = new Array<>(false, 128);
-            componentMap.put(type, array);
-        }
-
-        array.add(e);
-    }
-
-    private void removeComponentMap(Class<? extends Component> type, Entity e) {
-        // assert array exists because entity was added first
-        Array<Entity> array = componentMap.get(type);
-
-        array.removeValueByIdentity(e);
-    }
-
     /**
      * @return direct list of entities in the world (do NOT modify)
      */
@@ -240,22 +211,6 @@ public class GameWorld {
      */
     public List<Entity> getEntitiesCopy() {
         return new ArrayList<>(entities);
-    }
-
-    /**
-     * @param type component type
-     * @return array of entities that have given component (do NOT modify)
-     */
-    public Array<Entity> getEntitiesByComponent(Class<? extends Component> type) {
-        return componentMap.get(type, Array.empty());
-    }
-
-    void onComponentAdded(Component component, Entity e) {
-        addComponentMap(component.getClass(), e);
-    }
-
-    void onComponentRemoved(Component component, Entity e) {
-        removeComponentMap(component.getClass(), e);
     }
 
     public void onUpdate(double tpf) {
@@ -414,6 +369,16 @@ public class GameWorld {
     }
 
     /* QUERIES */
+
+    /**
+     * @param type component type
+     * @return array of entities that have given component (do NOT modify)
+     */
+    public List<Entity> getEntitiesByComponent(Class<? extends Component> type) {
+        return entities.stream()
+                .filter(e -> e.hasComponent(type))
+                .collect(Collectors.toList());
+    }
 
     /**
      * Returns a list of entities which are filtered by
