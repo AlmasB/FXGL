@@ -35,8 +35,7 @@ public class Entity {
     private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
     private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
 
-    private List<ComponentListener> componentListeners = new ArrayList<>();
-    private List<ControlListener> controlListeners = new ArrayList<>();
+    private List<ModuleListener> moduleListeners = new ArrayList<>();
 
     private GameWorld world;
 
@@ -174,8 +173,7 @@ public class Entity {
 
         properties.clear();
 
-        controlListeners.clear();
-        componentListeners.clear();
+        moduleListeners.clear();
 
         controlsEnabled = true;
         world = null;
@@ -373,20 +371,12 @@ public class Entity {
         components.clear();
     }
 
-    public void addControlListener(ControlListener listener) {
-        controlListeners.add(listener);
+    public void addModuleListener(ModuleListener listener) {
+        moduleListeners.add(listener);
     }
 
-    public void removeControlListener(ControlListener listener) {
-        controlListeners.remove(listener);
-    }
-
-    public void addComponentListener(ComponentListener listener) {
-        componentListeners.add(listener);
-    }
-
-    public void removeComponentListener(ComponentListener listener) {
-        componentListeners.remove(listener);
+    public void removeModuleListener(ModuleListener listener) {
+        moduleListeners.remove(listener);
     }
 
     private void addModule(Module module) {
@@ -396,7 +386,7 @@ public class Entity {
 
         module.setEntity(this);
 
-        if (module.isControl())
+        if (module instanceof Control)
             injectFields((Control) module);
 
         module.onAdded(this);
@@ -430,29 +420,29 @@ public class Entity {
     }
 
     private <T extends Module> void notifyModuleAdded(T module) {
-        if (module.isComponent()) {
+        if (module instanceof Component) {
             Component c = (Component) module;
-            for (int i = 0; i < componentListeners.size(); i++) {
-                componentListeners.get(i).onAdded(c);
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onAdded(c);
             }
         } else {
             Control c = (Control) module;
-            for (int i = 0; i < controlListeners.size(); i++) {
-                controlListeners.get(i).onAdded(c);
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onAdded(c);
             }
         }
     }
 
     private <T extends Module> void notifyModuleRemoved(T module) {
-        if (module.isComponent()) {
+        if (module instanceof Component) {
             Component c = (Component) module;
-            for (int i = 0; i < componentListeners.size(); i++) {
-                componentListeners.get(i).onRemoved(c);
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onRemoved(c);
             }
         } else {
             Control c = (Control) module;
-            for (int i = 0; i < controlListeners.size(); i++) {
-                controlListeners.get(i).onRemoved(c);
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onRemoved(c);
             }
         }
     }

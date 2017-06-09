@@ -8,7 +8,7 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.ComponentListener;
+import com.almasb.fxgl.ecs.ModuleListener;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -63,7 +63,7 @@ public class ViewComponent extends Component {
         if (getEntity().hasComponent(BoundingBoxComponent.class)) {
             addDebugBBox();
         } else {
-            getEntity().addComponentListener(new ComponentListener() {
+            getEntity().addModuleListener(new ModuleListener() {
                 @Override
                 public void onAdded(Component component) {
                     if (component instanceof BoundingBoxComponent) {

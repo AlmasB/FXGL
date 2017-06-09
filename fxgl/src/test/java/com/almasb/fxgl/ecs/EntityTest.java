@@ -12,7 +12,6 @@ import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -264,7 +263,7 @@ public class EntityTest {
     public void testComponentListener() {
         HPComponent hp = new HPComponent(20);
 
-        ComponentListener listener = new ComponentListener() {
+        ModuleListener listener = new ModuleListener() {
             @Override
             public void onAdded(Component component) {
                 assertEquals(HPComponent.class, component.getClass());
@@ -280,7 +279,7 @@ public class EntityTest {
             }
         };
 
-        entity.addComponentListener(listener);
+        entity.addModuleListener(listener);
 
         entity.addComponent(hp);
         assertThat(hp.getValue(), is(10.0));
@@ -288,9 +287,9 @@ public class EntityTest {
         entity.removeComponent(HPComponent.class);
         assertThat(hp.getValue(), is(0.0));
 
-        entity.removeComponentListener(listener);
+        entity.removeModuleListener(listener);
 
-        entity.addComponentListener(listener);
+        entity.addModuleListener(listener);
         assertThat(hp.getValue(), is(0.0));
     }
 
@@ -298,7 +297,7 @@ public class EntityTest {
     public void testControlListener() {
         HPControl control = new HPControl();
 
-        ControlListener listener = new ControlListener() {
+        ModuleListener listener = new ModuleListener() {
             @Override
             public void onAdded(Control control) {
                 assertEquals(HPControl.class, control.getClass());
@@ -314,7 +313,7 @@ public class EntityTest {
             }
         };
 
-        entity.addControlListener(listener);
+        entity.addModuleListener(listener);
         entity.addComponent(new HPComponent(33));
 
         entity.addControl(control);
@@ -323,7 +322,7 @@ public class EntityTest {
         entity.removeControl(HPControl.class);
         assertEquals(20, control.value, 0);
 
-        entity.removeControlListener(listener);
+        entity.removeModuleListener(listener);
 
         entity.addControl(control);
         assertEquals(20, control.value, 0);
@@ -376,18 +375,22 @@ public class EntityTest {
     public void testActiveCallbacks() {
         HPControl hp = new HPControl();
 
+        assertFalse(entity.activeProperty().get());
+
         entity.setOnActive(() -> hp.value = 30.0);
         assertThat(hp.value, is(0.0));
 
         GameWorld world = new GameWorld();
         world.addEntity(entity);
         assertThat(hp.value, is(30.0));
+        assertTrue(entity.activeProperty().get());
 
         entity.setOnNotActive(() -> hp.value = -50.0);
         assertThat(hp.value, is(30.0));
 
         world.removeEntity(entity);
         assertThat(hp.value, is(-50.0));
+        assertFalse(entity.activeProperty().get());
 
         entity.setOnNotActive(() -> hp.value = -33.0);
         assertThat(hp.value, is(-33.0));
@@ -492,7 +495,7 @@ public class EntityTest {
 
     private class EntityRemovingControl extends Control {
         @Override
-        public void onUpdate(@NotNull Entity entity, double tpf) {
+        public void onUpdate(Entity entity, double tpf) {
             entity.removeFromWorld();
         }
     }

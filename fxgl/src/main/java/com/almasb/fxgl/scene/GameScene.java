@@ -46,7 +46,7 @@ import java.util.List;
  */
 @Singleton
 public final class GameScene extends FXGLScene
-        implements EntityWorldListener, ComponentListener {
+        implements EntityWorldListener, ModuleListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
@@ -287,7 +287,7 @@ public final class GameScene extends FXGLScene
         uiRoot.getChildren().clear();
     }
 
-    private ControlListener controlListener = new ControlListener() {
+    private ModuleListener controlListener = new ModuleListener() {
         @Override
         public void onAdded(Control control) {
             if (control instanceof PhysicsParticleControl) {
@@ -314,8 +314,8 @@ public final class GameScene extends FXGLScene
         entity.getComponent(DrawableComponent.class)
                 .ifPresent(c -> drawables.add(entity));
 
-        entity.addComponentListener(this);
-        entity.addControlListener(controlListener);
+        entity.addModuleListener(this);
+        entity.addModuleListener(controlListener);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::add);
@@ -333,8 +333,8 @@ public final class GameScene extends FXGLScene
         entity.getComponent(DrawableComponent.class)
                 .ifPresent(c -> drawables.removeValueByIdentity(entity));
 
-        entity.removeComponentListener(this);
-        entity.removeControlListener(controlListener);
+        entity.removeModuleListener(this);
+        entity.removeModuleListener(controlListener);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(p -> particles.removeValueByIdentity(p));
