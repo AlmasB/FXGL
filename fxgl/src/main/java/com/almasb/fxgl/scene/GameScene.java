@@ -287,23 +287,6 @@ public final class GameScene extends FXGLScene
         uiRoot.getChildren().clear();
     }
 
-    private ModuleListener controlListener = new ModuleListener() {
-        @Override
-        public void onAdded(Control control) {
-            if (control instanceof PhysicsParticleControl) {
-                PhysicsParticleControl particleControl = (PhysicsParticleControl) control;
-                particles.add(particleControl);
-            }
-        }
-
-        @Override
-        public void onRemoved(Control control) {
-            if (control instanceof PhysicsParticleControl) {
-                particles.removeValueByIdentity((PhysicsParticleControl) control);
-            }
-        }
-    };
-
     @Override
     public void onEntityAdded(Entity entity) {
         entity.getComponent(ViewComponent.class)
@@ -315,7 +298,6 @@ public final class GameScene extends FXGLScene
                 .ifPresent(c -> drawables.add(entity));
 
         entity.addModuleListener(this);
-        entity.addModuleListener(controlListener);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(particles::add);
@@ -334,7 +316,6 @@ public final class GameScene extends FXGLScene
                 .ifPresent(c -> drawables.removeValueByIdentity(entity));
 
         entity.removeModuleListener(this);
-        entity.removeModuleListener(controlListener);
 
         entity.getControl(ParticleControl.class)
                 .ifPresent(p -> particles.removeValueByIdentity(p));
@@ -364,6 +345,21 @@ public final class GameScene extends FXGLScene
 
             EntityView view = viewComponent.getView();
             removeGameView(view);
+        }
+    }
+
+    @Override
+    public void onAdded(Control control) {
+        if (control instanceof PhysicsParticleControl) {
+            PhysicsParticleControl particleControl = (PhysicsParticleControl) control;
+            particles.add(particleControl);
+        }
+    }
+
+    @Override
+    public void onRemoved(Control control) {
+        if (control instanceof PhysicsParticleControl) {
+            particles.removeValueByIdentity((PhysicsParticleControl) control);
         }
     }
 }
