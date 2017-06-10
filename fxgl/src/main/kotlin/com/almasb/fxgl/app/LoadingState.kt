@@ -84,16 +84,32 @@ internal class LoadingState
         override fun call(): Void? {
             val start = System.nanoTime()
 
-            log.debug("Clearing game world")
-            app.gameWorld.reset()
+            clearPreviousGame()
 
+            initAssets()
+            initGame()
+            initPhysics()
+            initUI()
+            initComplete()
+
+            log.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
+
+            return null
+        }
+
+        private fun clearPreviousGame() {
+            log.debug("Clearing previous game")
+            app.gameWorld.reset()
+            app.gameState.clear()
+        }
+
+        private fun initAssets() {
             update("Initializing Assets", 0)
             app.initAssets()
+        }
 
+        private fun initGame() {
             update("Initializing Game", 1)
-
-            log.debug("Clearing game state")
-            app.gameState.clear()
 
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
@@ -108,28 +124,26 @@ internal class LoadingState
                 app.initGame()
             else
                 app.loadState(dataFile)
+        }
 
+        private fun initPhysics() {
             update("Initializing Physics", 2)
             app.initPhysics()
 
             annotationMap[AddCollisionHandler::class.java]?.let {
                 it.forEach {
-                    val handler = FXGL.getInstance(it) as CollisionHandler
-
-                    log.debug("@Add $handler")
-
-                    app.physicsWorld.addCollisionHandler(handler)
+                    app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)
                 }
             }
+        }
 
+        private fun initUI() {
             update("Initializing UI", 3)
             app.initUI()
+        }
 
+        private fun initComplete() {
             update("Initialization Complete", 4)
-
-            log.infof("Game initialization took: %.3f sec", (System.nanoTime() - start) / 1000000000.0)
-
-            return null
         }
 
         private fun update(message: String, step: Int) {
