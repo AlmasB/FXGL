@@ -10,7 +10,6 @@
 
 package com.almasb.fxgl.core.collection;
 
-import com.almasb.fxgl.core.StringBuilder;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.reflect.ArrayReflection;
 
