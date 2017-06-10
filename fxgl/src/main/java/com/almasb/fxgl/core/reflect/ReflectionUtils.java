@@ -7,11 +7,16 @@
 package com.almasb.fxgl.core.reflect;
 
 import com.almasb.fxgl.core.collection.Array;
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
+import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -23,6 +28,24 @@ import java.util.function.Function;
 public final class ReflectionUtils {
 
     private ReflectionUtils() {}
+
+    /**
+     * @return mapping from annotation class to list of classes with that annotation (on the classpath)
+     */
+    public static Map<Class<?>, List<Class<?>>> findClasses(String packageName, Class<? extends java.lang.annotation.Annotation>... annotations) {
+        Map<Class<?>, List<Class<?>>> map = new HashMap<>();
+
+        FastClasspathScanner scanner = new FastClasspathScanner(packageName);
+
+        for (Class<? extends Annotation> annotationClass : annotations) {
+            map.put(annotationClass, new ArrayList<>());
+            scanner.matchClassesWithAnnotation(annotationClass, map.get(annotationClass)::add);
+        }
+
+        scanner.scan();
+
+        return map;
+    }
 
     public static <A extends java.lang.annotation.Annotation> Map<A, Method>
         findMethods(Object instance, Class<A> annotationClass) {

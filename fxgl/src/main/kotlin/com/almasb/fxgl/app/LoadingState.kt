@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.annotation.AddCollisionHandler
 import com.almasb.fxgl.annotation.SetEntityFactory
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.saving.DataFile
@@ -15,9 +16,7 @@ import com.almasb.fxgl.scene.LoadingScene
 import com.almasb.fxgl.scene.SceneFactory
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner
 import javafx.concurrent.Task
-import java.util.*
 
 /**
  * Initializes game aspects: assets, game, physics, UI, etc.
@@ -36,7 +35,7 @@ internal class LoadingState
 
     override fun onEnter(prevState: State) {
 
-        val initTask = InitAppTask(FXGL.getApp(), dataFile)
+        val initTask = InitAppTask(app, dataFile)
         initTask.setOnSucceeded {
             loadingFinished = true
         }
@@ -59,6 +58,27 @@ internal class LoadingState
 
         companion object {
             private val log = FXGL.getLogger(InitAppTask::class.java)
+
+            private val annotationMap: Map<Class<*>, List<Class<*>>>
+
+            init {
+                val app = FXGL.getApp()
+
+                annotationMap = if (app.javaClass.`package` != null) {
+
+                    // only scan the appropriate package (package of the "App") and its subpackages
+                    ReflectionUtils.findClasses(app.javaClass.`package`.name,
+                            SetEntityFactory::class.java, AddCollisionHandler::class.java)
+                } else {
+                    log.warning("${app.javaClass.simpleName} has no package. Disabling annotations processing")
+
+                    hashMapOf()
+                }
+
+                annotationMap.forEach { annotationClass, list ->
+                    log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
+                }
+            }
         }
 
         override fun call(): Void? {
@@ -78,8 +98,6 @@ internal class LoadingState
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
             vars.forEach { name, value -> app.gameState.put(name, value) }
-
-            val annotationMap = scanForAnnotations()
 
             annotationMap[SetEntityFactory::class.java]?.let {
                 if (it.isNotEmpty())
@@ -123,33 +141,6 @@ internal class LoadingState
         override fun failed() {
             Thread.getDefaultUncaughtExceptionHandler()
                     .uncaughtException(Thread.currentThread(), exception ?: RuntimeException("Initialization failed"))
-        }
-
-        private fun scanForAnnotations(): Map<Class<*>, List<Class<*>>> {
-            val map = hashMapOf<Class<*>, ArrayList<Class<*>>>()
-
-            if (app.javaClass.`package` != null) {
-                // only scan the appropriate package (package of the "App") and its subpackages
-                val scanner = FastClasspathScanner(app.javaClass.`package`.name)
-
-                map[SetEntityFactory::class.java] = arrayListOf()
-                scanner.matchClassesWithAnnotation(SetEntityFactory::class.java, {
-                    log.debug("@SetEntityFactory: $it")
-                    map[SetEntityFactory::class.java]!!.add(it)
-                })
-
-                map[AddCollisionHandler::class.java] = arrayListOf()
-                scanner.matchClassesWithAnnotation(AddCollisionHandler::class.java, {
-                    log.debug("@AddCollisionHandler: $it")
-                    map[AddCollisionHandler::class.java]!!.add(it)
-                })
-
-                scanner.scan()
-            } else {
-                log.warning("${app.javaClass.simpleName} has no package. Disabling annotations processing")
-            }
-
-            return map
         }
     }
 }
