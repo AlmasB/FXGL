@@ -336,11 +336,11 @@ class GameWorldTest {
         var e = gameWorld.spawn("enemy", 33.0, 40.0)
 
         assertTrue(e.hasComponent(PositionComponent::class.java))
-        assertThat(e.getComponentUnsafe(PositionComponent::class.java).value, `is`(Point2D(33.0, 40.0)))
+        assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(33.0, 40.0)))
 
         e = gameWorld.spawn("enemy")
 
-        assertThat(e.getComponentUnsafe(PositionComponent::class.java).value, `is`(Point2D(0.0, 0.0)))
+        assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(0.0, 0.0)))
     }
 
     //    @Test

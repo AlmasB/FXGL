@@ -622,7 +622,7 @@ public class GameWorld {
      */
     public Optional<Entity> getEntityByID(String name, int id) {
         for (Entity e : getEntitiesByComponent(IDComponent.class)) {
-            IDComponent idComponent = e.getComponentUnsafe(IDComponent.class);
+            IDComponent idComponent = e.getComponent(IDComponent.class);
             if (idComponent.getName().equals(name) && idComponent.getID() == id) {
                 return Optional.of(e);
             }

@@ -19,7 +19,7 @@ public class BallControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        ball = entity.getComponentUnsafe(PhysicsComponent.class);
+        ball = entity.getComponent(PhysicsComponent.class);
     }
 
     @Override

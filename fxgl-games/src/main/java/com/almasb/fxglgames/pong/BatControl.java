@@ -23,9 +23,9 @@ public class BatControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        bat = entity.getComponentUnsafe(PhysicsComponent.class);
-        position = entity.getComponentUnsafe(PositionComponent.class);
-        bbox = entity.getComponentUnsafe(BoundingBoxComponent.class);
+        bat = entity.getComponent(PhysicsComponent.class);
+        position = entity.getComponent(PositionComponent.class);
+        bbox = entity.getComponent(BoundingBoxComponent.class);
     }
 
     @Override

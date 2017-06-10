@@ -30,7 +30,7 @@ public class PlayerControl extends Control {
     public void shoot(Point2D direction) {
         GameEntity bullet = new GameEntity();
         bullet.getTypeComponent().setValue(FXShooterApp.EntityType.BULLET);
-        bullet.getPositionComponent().setValue(getEntity().getComponentUnsafe(PositionComponent.class).getValue().add(20, 20));
+        bullet.getPositionComponent().setValue(getEntity().getComponent(PositionComponent.class).getValue().add(20, 20));
         bullet.getViewComponent().setView(new EntityView(new Rectangle(10, 2, Color.BLACK)), true);
 
         bullet.addComponent(new CollidableComponent(true));

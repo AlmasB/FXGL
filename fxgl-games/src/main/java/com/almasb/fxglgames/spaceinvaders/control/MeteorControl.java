@@ -25,8 +25,8 @@ public class MeteorControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        rotation = entity.getComponentUnsafe(RotationComponent.class);
-        position = entity.getComponentUnsafe(PositionComponent.class);
+        rotation = entity.getComponent(RotationComponent.class);
+        position = entity.getComponent(PositionComponent.class);
 
         double w = FXGL.getSettings().getWidth();
         double h = FXGL.getSettings().getHeight();

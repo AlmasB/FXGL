@@ -25,12 +25,12 @@ public class BulletWallHandler extends CollisionHandler {
 
     @Override
     protected void onCollisionBegin(Entity bullet, Entity wall) {
-        Object owner = bullet.getComponentUnsafe(OwnerComponent.class).getValue();
+        Object owner = bullet.getComponent(OwnerComponent.class).getValue();
 
         if (owner == SpaceInvadersType.ENEMY) {
             bullet.removeFromWorld();
 
-            HPComponent hp = wall.getComponentUnsafe(HPComponent.class);
+            HPComponent hp = wall.getComponent(HPComponent.class);
             hp.setValue(hp.getValue() - 1);
             if (hp.getValue() == 0)
                 wall.removeFromWorld();

@@ -26,7 +26,7 @@ public class LineControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        g = entity.getComponentUnsafe(GraphicsComponent.class).getValue();
+        g = entity.getComponent(GraphicsComponent.class).getValue();
     }
 
     @Override

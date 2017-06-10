@@ -72,11 +72,11 @@ public class PongApp extends GameApplication {
             Platform.runLater(() -> {
                 if (bat2 != null) {
                     if (message.up) {
-                        bat2.getControlUnsafe(BatControl.class).up();
+                        bat2.getControl(BatControl.class).up();
                     } else if (message.down) {
-                        bat2.getControlUnsafe(BatControl.class).down();
+                        bat2.getControl(BatControl.class).down();
                     } else {
-                        bat2.getControlUnsafe(BatControl.class).stop();
+                        bat2.getControl(BatControl.class).stop();
                     }
                 }
             });
@@ -183,7 +183,7 @@ public class PongApp extends GameApplication {
         bat1 = factory.newBat(getWidth() / 4, getHeight() / 2 - 30, true);
         getGameWorld().addEntity(bat1);
 
-        playerBat = bat1.getControlUnsafe(BatControl.class);
+        playerBat = bat1.getControl(BatControl.class);
     }
 
     private void initEnemyBat() {

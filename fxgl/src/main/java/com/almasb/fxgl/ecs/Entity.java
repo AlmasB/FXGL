@@ -222,8 +222,8 @@ public class Entity {
      * @param type control type
      * @return control
      */
-    public final <T extends Control> Optional<T> getControl(Class<T> type) {
-        return Optional.ofNullable(getControlUnsafe(type));
+    public final <T extends Control> Optional<T> getControlOptional(Class<T> type) {
+        return Optional.ofNullable(getControl(type));
     }
 
     /**
@@ -232,7 +232,7 @@ public class Entity {
      * @param type control type
      * @return control
      */
-    public final <T extends Control> T getControlUnsafe(Class<T> type) {
+    public final <T extends Control> T getControl(Class<T> type) {
         return type.cast(controls.get(type));
     }
 
@@ -268,7 +268,7 @@ public class Entity {
         if (!hasControl(type))
             return false;
 
-        removeModule(getControlUnsafe(type));
+        removeModule(getControl(type));
 
         controls.remove(type);
 
@@ -298,8 +298,8 @@ public class Entity {
      * @param type component type
      * @return component
      */
-    public final <T extends Component> Optional<T> getComponent(Class<T> type) {
-        return Optional.ofNullable(getComponentUnsafe(type));
+    public final <T extends Component> Optional<T> getComponentOptional(Class<T> type) {
+        return Optional.ofNullable(getComponent(type));
     }
 
     /**
@@ -308,7 +308,7 @@ public class Entity {
      * @param type component type
      * @return component
      */
-    public final <T extends Component> T getComponentUnsafe(Class<T> type) {
+    public final <T extends Component> T getComponent(Class<T> type) {
         return type.cast(components.get(type));
     }
 
@@ -352,7 +352,7 @@ public class Entity {
             checkNotRequiredByAny(type);
         }
 
-        removeModule(getComponentUnsafe(type));
+        removeModule(getComponent(type));
 
         components.remove(type);
 
@@ -396,14 +396,14 @@ public class Entity {
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
         ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
-            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
+            Component comp = getComponent((Class<? extends Component>) field.getType());
             if (comp != null) {
                 ReflectionUtils.inject(field, control, comp);
             }
         });
 
         ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
-            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
+            Control ctrl = getControl((Class<? extends Control>) field.getType());
             if (ctrl != null) {
                 ReflectionUtils.inject(field, control, ctrl);
             }

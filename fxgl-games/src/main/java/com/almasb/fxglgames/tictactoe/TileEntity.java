@@ -26,10 +26,10 @@ public class TileEntity extends GameEntity {
     }
 
     public TileValue getValue() {
-        return getComponentUnsafe(TileValueComponent.class).getValue();
+        return getComponent(TileValueComponent.class).getValue();
     }
 
     public TileControl getControl() {
-        return getControlUnsafe(TileControl.class);
+        return getControl(TileControl.class);
     }
 }

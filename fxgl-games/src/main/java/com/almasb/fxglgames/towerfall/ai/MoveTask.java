@@ -21,7 +21,7 @@ public class MoveTask extends Action {
     @Override
     public void action() {
         if (control == null) {
-            control = getObject().getControlUnsafe(CharacterControl.class);
+            control = getObject().getControl(CharacterControl.class);
         }
 
         if (getObject().getY() - FXGL.<TowerfallApp>getAppCast().getPlayer().getY() > 0) {

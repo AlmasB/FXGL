@@ -27,11 +27,11 @@ public class BulletPlayerHandler extends CollisionHandler {
 
     @Override
     protected void onCollisionBegin(Entity bullet, Entity player) {
-        Object owner = bullet.getComponentUnsafe(OwnerComponent.class).getValue();
+        Object owner = bullet.getComponent(OwnerComponent.class).getValue();
 
         // player shot that bullet so no need to handle collision
         if (owner == SpaceInvadersType.PLAYER
-                || player.getComponentUnsafe(InvincibleComponent.class).getValue()) {
+                || player.getComponent(InvincibleComponent.class).getValue()) {
             return;
         }
 

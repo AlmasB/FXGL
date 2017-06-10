@@ -20,7 +20,7 @@ public class LaserHitControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        view = entity.getComponentUnsafe(ViewComponent.class).getView();
+        view = entity.getComponent(ViewComponent.class).getView();
     }
 
     @Override

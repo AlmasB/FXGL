@@ -83,7 +83,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (!e.isActive())
             return false;
 
-        CollidableComponent collidable = e.getComponentUnsafe(CollidableComponent.class);
+        CollidableComponent collidable = e.getComponent(CollidableComponent.class);
 
         return collidable != null && collidable.getValue();
     }
@@ -94,11 +94,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private boolean needManualCheck(Entity e1, Entity e2) {
         // if no physics -> check manually
-        PhysicsComponent p1 = e1.getComponentUnsafe(PhysicsComponent.class);
+        PhysicsComponent p1 = e1.getComponent(PhysicsComponent.class);
         if (p1 == null)
             return true;
 
-        PhysicsComponent p2 = e2.getComponentUnsafe(PhysicsComponent.class);
+        PhysicsComponent p2 = e2.getComponent(PhysicsComponent.class);
         if (p2 == null)
             return true;
 
@@ -116,8 +116,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (!e1.isActive() || !e2.isActive())
             return null;
 
-        Object type1 = e1.getComponentUnsafe(TypeComponent.class).getValue();
-        Object type2 = e2.getComponentUnsafe(TypeComponent.class).getValue();
+        Object type1 = e1.getComponent(TypeComponent.class).getValue();
+        Object type2 = e2.getComponent(TypeComponent.class).getValue();
 
         for (CollisionHandler handler : collisionHandlers) {
             if (handler.equal(type1, type2)) {
@@ -598,7 +598,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         double width = Entities.getBBox(e).getWidth();
         double height = Entities.getBBox(e).getHeight();
 
-        ParticleGroupDef def = e.getComponentUnsafe(PhysicsParticleComponent.class).getDefinition();
+        ParticleGroupDef def = e.getComponent(PhysicsParticleComponent.class).getDefinition();
         def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
 
         Shape shape = null;
@@ -629,7 +629,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         ParticleGroup particleGroup = jboxWorld.createParticleGroup(def);
 
-        Color color = e.getComponentUnsafe(PhysicsParticleComponent.class).getColor();
+        Color color = e.getComponent(PhysicsParticleComponent.class).getColor();
         e.addControl(new PhysicsParticleControl(particleGroup, color, this));
     }
 

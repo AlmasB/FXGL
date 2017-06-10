@@ -49,9 +49,9 @@ public class EntityActionSample extends GameApplication {
             @Override
             protected void onActionBegin() {
 
-                entity.getControlUnsafe(ActionControl.class).clearActions();
+                entity.getControl(ActionControl.class).clearActions();
 
-                entity.getControlUnsafe(ActionControl.class)
+                entity.getControl(ActionControl.class)
                         .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
             }
         }, MouseButton.PRIMARY);
@@ -59,7 +59,7 @@ public class EntityActionSample extends GameApplication {
         getInput().addAction(new UserAction("Queue Move Action") {
             @Override
             protected void onActionBegin() {
-                entity.getControlUnsafe(ActionControl.class)
+                entity.getControl(ActionControl.class)
                         .addAction(new MoveAction(getInput().getMouseXWorld(), getInput().getMouseYWorld()));
             }
         }, MouseButton.SECONDARY);
@@ -69,7 +69,7 @@ public class EntityActionSample extends GameApplication {
             protected void onActionBegin() {
                 Action<?> a = actionsView.getSelectionModel().getSelectedItem();
                 if (a != null) {
-                    entity.getControlUnsafe(ActionControl.class).removeAction(a);
+                    entity.getControl(ActionControl.class).removeAction(a);
                 }
             }
         }, KeyCode.F);
@@ -88,12 +88,12 @@ public class EntityActionSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        actionsView = getUIFactory().newListView(entity.getControlUnsafe(ActionControl.class)
+        actionsView = getUIFactory().newListView(entity.getControl(ActionControl.class)
                 .actionsProperty());
 
 //        actionsView.getSelectionModel().selectedItemProperty().addListener((o, old, newValue) -> {
 //            if (newValue != null) {
-//                entity.getControlUnsafe(ActionControl.class).removeAction(newValue);
+//                entity.getControl(ActionControl.class).removeAction(newValue);
 //            }
 //        });
 

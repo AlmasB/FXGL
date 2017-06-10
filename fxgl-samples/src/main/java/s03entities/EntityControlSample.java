@@ -50,7 +50,7 @@ public class EntityControlSample extends GameApplication {
         @Override
         public void onUpdate(Entity entity, double tpf) {
             // 2. specify behavior of the entity enforced by this control
-            entity.getComponentUnsafe(RotationComponent.class).rotateBy(tpf * 45);
+            entity.getComponent(RotationComponent.class).rotateBy(tpf * 45);
         }
     }
 

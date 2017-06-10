@@ -43,8 +43,8 @@ public class BulletControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        velocity = entity.getControlUnsafe(ProjectileControl.class).getVelocity();
-        bbox = entity.getComponentUnsafe(BoundingBoxComponent.class);
+        velocity = entity.getControl(ProjectileControl.class).getVelocity();
+        bbox = entity.getComponent(BoundingBoxComponent.class);
     }
 
     @Override

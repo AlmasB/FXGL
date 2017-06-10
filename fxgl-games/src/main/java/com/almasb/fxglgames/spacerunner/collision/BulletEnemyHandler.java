@@ -29,7 +29,7 @@ public class BulletEnemyHandler extends CollisionHandler {
 
     @Override
     protected void onCollisionBegin(Entity bullet, Entity enemy) {
-        SpaceRunnerType ownerType = (SpaceRunnerType) bullet.getComponentUnsafe(UserDataComponent.class).getValue();
+        SpaceRunnerType ownerType = (SpaceRunnerType) bullet.getComponent(UserDataComponent.class).getValue();
 
         if (!Entities.getType(enemy).isType(ownerType)) {
             PositionComponent position = Entities.getPosition(enemy);

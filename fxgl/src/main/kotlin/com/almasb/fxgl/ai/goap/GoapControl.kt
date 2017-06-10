@@ -89,7 +89,7 @@ class GoapControl(private val agent: GoapAgent // this is the implementing class
             throw IllegalArgumentException("GoapAction: $nextAction has no target")
         }
 
-        val targetPosition = nextAction.target!!.getComponentUnsafe(PositionComponent::class.java)
+        val targetPosition = nextAction.target!!.getComponent(PositionComponent::class.java)
                 ?: throw IllegalArgumentException("GoapAction: $nextAction has target without PositionComponent")
 
         val moveDistance = moveSpeed * tpf

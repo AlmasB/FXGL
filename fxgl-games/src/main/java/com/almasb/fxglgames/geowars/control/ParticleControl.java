@@ -16,7 +16,7 @@ import com.almasb.fxgl.entity.control.ProjectileControl;
 public class ParticleControl extends Control {
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        ProjectileControl control = entity.getControlUnsafe(ProjectileControl.class);
+        ProjectileControl control = entity.getControl(ProjectileControl.class);
         control.setSpeed(control.getSpeed() * (1 - 3*tpf));
     }
 }

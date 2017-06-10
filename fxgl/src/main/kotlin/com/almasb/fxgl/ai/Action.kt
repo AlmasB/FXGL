@@ -22,7 +22,7 @@ abstract class Action(val name: String) : LeafTask<GameEntity>() {
     abstract fun action()
 
     override final fun execute(): Status {
-        `object`.getControlUnsafe(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
+        `object`.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
         action()
 
         return Status.SUCCEEDED

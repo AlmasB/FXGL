@@ -17,6 +17,6 @@ import com.almasb.fxglgames.spaceinvaders.Config;
 public class BonusControl extends Control {
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        getEntity().getComponentUnsafe(PositionComponent.class).translateY(tpf * Config.BONUS_MOVE_SPEED);
+        getEntity().getComponent(PositionComponent.class).translateY(tpf * Config.BONUS_MOVE_SPEED);
     }
 }

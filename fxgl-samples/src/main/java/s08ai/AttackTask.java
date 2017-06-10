@@ -22,9 +22,9 @@ public class AttackTask extends Action {
         GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
 
         if (player.distance(getObject()) < 100) {
-            getObject().getControlUnsafe(AIControl.class).setBubbleMessage("Attack");
+            getObject().getControl(AIControl.class).setBubbleMessage("Attack");
         } else {
-            getObject().getControlUnsafe(AIControl.class).setBubbleMessage("Chase");
+            getObject().getControl(AIControl.class).setBubbleMessage("Chase");
             double speed = 0.017 * 60 * 5;
 
             Point2D vector = player.getPosition()

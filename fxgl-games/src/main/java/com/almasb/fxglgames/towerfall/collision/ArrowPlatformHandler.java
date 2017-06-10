@@ -44,7 +44,7 @@ public class ArrowPlatformHandler extends CollisionHandler {
     protected void onCollisionBegin(Entity arrow, Entity platform) {
         // necessary since we can collide with two platforms in the same frame
         if (arrow.hasControl(ArrowControl.class)) {
-            arrow.getComponentUnsafe(CollidableComponent.class).setValue(false);
+            arrow.getComponent(CollidableComponent.class).setValue(false);
             arrow.removeControl(ArrowControl.class);
 
             GameEntity block = (GameEntity) platform;

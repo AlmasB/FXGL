@@ -25,7 +25,7 @@ public class ArrowEnemyHandler extends CollisionHandler {
 
     @Override
     protected void onCollisionBegin(Entity arrow, Entity enemy) {
-        if (arrow.getComponentUnsafe(UserDataComponent.class).getValue() == enemy)
+        if (arrow.getComponent(UserDataComponent.class).getValue() == enemy)
             return;
 
         arrow.removeFromWorld();

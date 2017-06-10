@@ -30,7 +30,7 @@ public class Spring {
         lengthAtRest = end1.getPosition().distance(end2.getPosition().x, end2.getPosition().y) * 0.95f;
 
         if (visible) {
-            gridEntity.getControlUnsafe(GridControl.class).addControl(new LineControl(end1, end2));
+            gridEntity.getControl(GridControl.class).addControl(new LineControl(end1, end2));
         }
     }
 

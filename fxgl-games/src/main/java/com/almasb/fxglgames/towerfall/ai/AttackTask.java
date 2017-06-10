@@ -24,7 +24,7 @@ public class AttackTask extends Action {
     @Override
     public void action() {
         if (control == null) {
-            control = getObject().getControlUnsafe(CharacterControl.class);
+            control = getObject().getControl(CharacterControl.class);
         }
 
         if (attackTimer.elapsed(Duration.seconds(0.5))) {

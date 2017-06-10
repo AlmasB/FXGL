@@ -136,7 +136,7 @@ public class PacmanApp extends GameApplication {
 
         // get references to player and his control
         player = (GameEntity) getGameWorld().getEntitiesByType(PacmanType.PLAYER).get(0);
-        playerControl = player.getControlUnsafe(PlayerControl.class);
+        playerControl = player.getControl(PlayerControl.class);
 
         // init the A* underlying grid and mark nodes where blocks are as not walkable
         grid = new AStarGrid(MAP_SIZE, MAP_SIZE);

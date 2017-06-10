@@ -24,7 +24,7 @@ final class CollisionPair extends Pair<Entity> implements Poolable {
         // when triggering collision between A and B
         // this ensures that client gets back entities in the same order
         // he registered the handler with
-        if (a.getComponentUnsafe(TypeComponent.class).getValue().equals(handler.getA())) {
+        if (a.getComponent(TypeComponent.class).getValue().equals(handler.getA())) {
             setA(a);
             setB(b);
         } else {

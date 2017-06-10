@@ -63,7 +63,7 @@ public class DropApp extends GameApplication {
     protected void initGame() {
         Entity bucket = getGameWorld().spawn("Bucket", getWidth() / 2, getHeight() - 200);
 
-        bucketControl = bucket.getControlUnsafe(BucketControl.class);
+        bucketControl = bucket.getControl(BucketControl.class);
 
         getMasterTimer().runAtInterval(() -> {
             getGameWorld().spawn("Droplet", Math.random() * (getWidth() - 64), 0);

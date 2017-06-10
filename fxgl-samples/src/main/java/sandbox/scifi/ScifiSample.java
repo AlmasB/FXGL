@@ -45,7 +45,7 @@ public class ScifiSample extends GameApplication {
 //                getGameWorld().getCollidingEntities(player)
 //                        .stream()
 //                        .filter(e -> e.hasControl(UsableControl.class))
-//                        .map(e -> e.getControlUnsafe(UsableControl.class))
+//                        .map(e -> e.getControl(UsableControl.class))
 //                        .forEach(UsableControl::use);
             }
         }, KeyCode.F);
@@ -81,7 +81,7 @@ public class ScifiSample extends GameApplication {
         getGameWorld().spawn("button", 30, 340);
 
         player = (GameEntity) getGameWorld().spawn("player", 100, 100);
-        playerControl = player.getControlUnsafe(PlayerControl.class);
+        playerControl = player.getControl(PlayerControl.class);
 
         getGameWorld().addEntities(Entities.makeScreenBounds(40));
     }

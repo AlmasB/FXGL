@@ -26,7 +26,7 @@ public class TileControl extends Control {
      * @return true if marking succeeded
      */
     public boolean mark(TileValue value) {
-        TileValueComponent valueComponent = getEntity().getComponentUnsafe(TileValueComponent.class);
+        TileValueComponent valueComponent = getEntity().getComponent(TileValueComponent.class);
 
         if (valueComponent.getValue() != TileValue.NONE)
             return false;

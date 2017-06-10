@@ -8,7 +8,6 @@ package sandbox.uno;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
@@ -120,7 +119,7 @@ public class UnoSample extends GameApplication {
         GameEntity cardEntity = (GameEntity) getGameWorld().spawn("Card", new SpawnData(x, y).put("card", card));
 
         cardEntity.getView().setOnMouseClicked(e -> {
-            if (card.canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+            if (card.canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
                 Animation<?> animation = Entities.animationBuilder()
                         .duration(Duration.seconds(0.35))
                         .translate(cardEntity)
@@ -168,7 +167,7 @@ public class UnoSample extends GameApplication {
         for (GameEntity card : enemy.cardsProperty()) {
 
             // can we avoid calls like this?
-            if (card.getComponentUnsafe(CardComponent.class).getValue().canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+            if (card.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
                 currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
 
                 enemy.removeCard(card);
@@ -188,7 +187,7 @@ public class UnoSample extends GameApplication {
             while (deck.hasCards()) {
                 GameEntity draw = spawn(deck.drawCard(), 0, -150);
 
-                if (draw.getComponentUnsafe(CardComponent.class).getValue().canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+                if (draw.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
                     currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
 
                     draw.setPosition(new Point2D(350, 225));

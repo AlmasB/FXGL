@@ -27,7 +27,7 @@ public class BonusPlayerHandler extends CollisionHandler {
 
     @Override
     protected void onCollisionBegin(Entity bonus, Entity player) {
-        BonusType type = (BonusType) bonus.getComponentUnsafe(SubTypeComponent.class).getValue();
+        BonusType type = (BonusType) bonus.getComponent(SubTypeComponent.class).getValue();
         bonus.removeFromWorld();
 
         FXGL.getEventBus().fireEvent(new BonusPickupEvent(BonusPickupEvent.ANY, type));

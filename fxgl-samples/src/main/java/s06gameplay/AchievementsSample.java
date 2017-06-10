@@ -105,7 +105,7 @@ public class AchievementsSample extends GameApplication {
 
         // 2. bind achievement to the condition
         getGameplay().getAchievementManager().getAchievementByName("World Traveller")
-                .bind(player.getComponentUnsafe(PositionComponent.class).xProperty().greaterThan(600));
+                .bind(player.getComponent(PositionComponent.class).xProperty().greaterThan(600));
 
         achievement.bind(getGameState().intProperty("moved"), 500);
     }

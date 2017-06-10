@@ -30,8 +30,8 @@ public class BulletControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        owner = entity.getComponentUnsafe(OwnerComponent.class);
-        position = entity.getComponentUnsafe(PositionComponent.class);
+        owner = entity.getComponent(OwnerComponent.class);
+        position = entity.getComponent(PositionComponent.class);
     }
 
     @Override

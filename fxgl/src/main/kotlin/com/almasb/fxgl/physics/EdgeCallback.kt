@@ -29,7 +29,7 @@ class EdgeCallback : RayCastCallback {
 
     override fun reportFixture(fixture: Fixture, point: Vec2, normal: Vec2?, fraction: Float): Float {
         val e = fixture.getBody().userData as Entity
-        if (e.getComponentUnsafe(PhysicsComponent::class.java).isRaycastIgnored)
+        if (e.getComponent(PhysicsComponent::class.java).isRaycastIgnored)
             return 1.0f
 
         if (fraction < bestFraction) {

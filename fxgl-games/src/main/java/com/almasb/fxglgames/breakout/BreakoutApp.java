@@ -45,11 +45,11 @@ import javafx.util.Duration;
 public class BreakoutApp extends GameApplication {
 
     private BatControl getBatControl() {
-        return getGameWorld().getEntitiesByType(BreakoutType.BAT).get(0).getControlUnsafe(BatControl.class);
+        return getGameWorld().getEntitiesByType(BreakoutType.BAT).get(0).getControl(BatControl.class);
     }
 
     private BallControl getBallControl() {
-        return getGameWorld().getEntitiesByType(BreakoutType.BALL).get(0).getControlUnsafe(BallControl.class);
+        return getGameWorld().getEntitiesByType(BreakoutType.BALL).get(0).getControl(BallControl.class);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class BreakoutApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(BreakoutType.BALL, BreakoutType.BRICK) {
             @Override
             protected void onCollisionBegin(Entity ball, Entity brick) {
-                brick.getControlUnsafe(BrickControl.class).onHit();
+                brick.getControl(BrickControl.class).onHit();
             }
         });
     }

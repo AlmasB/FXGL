@@ -17,7 +17,7 @@ public class GraphicsUpdateControl extends Control {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        entity.getComponentUnsafe(GraphicsComponent.class).getValue()
+        entity.getComponent(GraphicsComponent.class).getValue()
                 .clearRect(0, 0, 1280, 720);
     }
 }

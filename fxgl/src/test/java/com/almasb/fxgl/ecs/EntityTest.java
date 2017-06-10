@@ -37,21 +37,21 @@ public class EntityTest {
         TestControl control = new TestControl();
         entity.addControl(control);
 
-        Optional<TestControl> maybe = entity.getControl(TestControl.class);
+        Optional<TestControl> maybe = entity.getControlOptional(TestControl.class);
         assertTrue(maybe.isPresent());
         assertEquals(control, maybe.get());
 
         boolean result = entity.removeControl(TestControl.class);
-        assertFalse(entity.getControl(TestControl.class).isPresent());
+        assertFalse(entity.getControlOptional(TestControl.class).isPresent());
         assertTrue(result);
 
         entity.addControl(control);
-        maybe = entity.getControl(TestControl.class);
+        maybe = entity.getControlOptional(TestControl.class);
         assertTrue(maybe.isPresent());
         assertEquals(control, maybe.get());
 
         entity.removeAllControls();
-        assertFalse(entity.getControl(TestControl.class).isPresent());
+        assertFalse(entity.getControlOptional(TestControl.class).isPresent());
 
         result = entity.removeControl(TestControl.class);
         assertFalse(result);
@@ -62,8 +62,8 @@ public class EntityTest {
         TestControl control = new TestControl();
         entity.addControl(control);
 
-        assertEquals(control, entity.getControl(TestControl.class).get());
-        assertEquals(control, entity.getControlUnsafe(TestControl.class));
+        assertEquals(control, entity.getControlOptional(TestControl.class).get());
+        assertEquals(control, entity.getControl(TestControl.class));
     }
 
     @Test
@@ -104,21 +104,21 @@ public class EntityTest {
         HPComponent hp = new HPComponent(100);
         entity.addComponent(hp);
 
-        Optional<HPComponent> maybe = entity.getComponent(HPComponent.class);
+        Optional<HPComponent> maybe = entity.getComponentOptional(HPComponent.class);
         assertTrue(maybe.isPresent());
         assertEquals(hp, maybe.get());
 
         boolean result = entity.removeComponent(HPComponent.class);
         assertTrue(result);
-        assertFalse(entity.getComponent(HPComponent.class).isPresent());
+        assertFalse(entity.getComponentOptional(HPComponent.class).isPresent());
 
         entity.addComponent(hp);
-        maybe = entity.getComponent(HPComponent.class);
+        maybe = entity.getComponentOptional(HPComponent.class);
         assertTrue(maybe.isPresent());
         assertEquals(hp, maybe.get());
 
         entity.removeAllComponents();
-        assertFalse(entity.getComponent(HPComponent.class).isPresent());
+        assertFalse(entity.getComponentOptional(HPComponent.class).isPresent());
 
         result = entity.removeComponent(HPComponent.class);
         assertFalse(result);
@@ -129,8 +129,8 @@ public class EntityTest {
         TestComponent component = new TestComponent();
         entity.addComponent(component);
 
-        assertEquals(component, entity.getComponent(TestComponent.class).get());
-        assertEquals(component, entity.getComponentUnsafe(TestComponent.class));
+        assertEquals(component, entity.getComponentOptional(TestComponent.class).get());
+        assertEquals(component, entity.getComponent(TestComponent.class));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -344,9 +344,9 @@ public class EntityTest {
 
         entity2.load(bundle);
 
-        assertThat(entity2.getControlUnsafe(CustomDataControl.class).data, is("SerializableControl"));
-        assertThat(entity2.getComponentUnsafe(CustomDataComponent.class).data, is("SerializationData"));
-        assertThat(entity2.getComponentUnsafe(GravityComponent.class).getValue(), is(true));
+        assertThat(entity2.getControl(CustomDataControl.class).data, is("SerializableControl"));
+        assertThat(entity2.getComponent(CustomDataComponent.class).data, is("SerializationData"));
+        assertThat(entity2.getComponent(GravityComponent.class).getValue(), is(true));
     }
 
     @Test
@@ -457,7 +457,7 @@ public class EntityTest {
         Entity e2 = entity.copy();
 
         assertThat(e2.hasComponent(HPComponent.class), is(true));
-        assertThat(e2.getComponentUnsafe(HPComponent.class).getValue(), is(33.0));
+        assertThat(e2.getComponent(HPComponent.class).getValue(), is(33.0));
     }
 
     @Test

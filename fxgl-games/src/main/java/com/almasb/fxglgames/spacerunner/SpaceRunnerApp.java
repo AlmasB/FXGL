@@ -68,7 +68,7 @@ public class SpaceRunnerApp extends GameApplication {
 
         Entity player = getGameWorld().spawn("Player", 50, getHeight() / 2);
 
-        playerControl = player.getControlUnsafe(PlayerControl.class);
+        playerControl = player.getControl(PlayerControl.class);
 
         getGameScene().getViewport().setBounds(0, 0, Integer.MAX_VALUE, (int) getHeight());
         getGameScene().getViewport().bindToEntity(player, 50, getHeight() / 2);
@@ -81,7 +81,7 @@ public class SpaceRunnerApp extends GameApplication {
 //        getPhysicsWorld().addCollisionHandler(new CollisionHandler(SpaceRunnerType.BULLET, SpaceRunnerType.ENEMY) {
 //            @Override
 //            protected void onCollisionBegin(Entity bullet, Entity enemy) {
-//                SpaceRunnerType ownerType = (SpaceRunnerType) bullet.getComponentUnsafe(UserDataComponent.class).getValue();
+//                SpaceRunnerType ownerType = (SpaceRunnerType) bullet.getComponent(UserDataComponent.class).getValue();
 //
 //                if (!Entities.getType(enemy).isType(ownerType)) {
 //                    PositionComponent position = Entities.getPosition(enemy);

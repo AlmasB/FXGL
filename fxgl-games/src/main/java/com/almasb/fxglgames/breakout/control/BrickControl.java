@@ -29,7 +29,7 @@ public class BrickControl extends Control {
         lives--;
 
         if (lives == 1) {
-            ViewComponent view = getEntity().getComponentUnsafe(ViewComponent.class);
+            ViewComponent view = getEntity().getComponent(ViewComponent.class);
             view.setView(FXGL.getAssetLoader().loadTexture("breakout/brick_blue_cracked.png", 232 / 3, 104 / 3));
         } else if (lives == 0) {
             getEntity().removeFromWorld();

@@ -138,7 +138,7 @@ public class GeoWarsApp extends GameApplication {
 
         initBackground();
         player = (GameEntity) getGameWorld().spawn("Player");
-        playerControl = player.getControlUnsafe(PlayerControl.class);
+        playerControl = player.getControl(PlayerControl.class);
 
         getMasterTimer().runAtInterval(() -> getGameWorld().spawn("Wanderer"), Duration.seconds(1));
         getMasterTimer().runAtInterval(() -> getGameWorld().spawn("Seeker"), Duration.seconds(2));
@@ -157,7 +157,7 @@ public class GeoWarsApp extends GameApplication {
             protected void onCollisionBegin(Entity bullet, Entity enemy) {
                 bullet.removeFromWorld();
 
-                HPComponent hp = enemy.getComponentUnsafe(HPComponent.class);
+                HPComponent hp = enemy.getComponent(HPComponent.class);
                 hp.setValue(hp.getValue() - 1);
 
                 if (hp.getValue() == 0) {
@@ -261,7 +261,7 @@ public class GeoWarsApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        player.getComponentUnsafe(OldPositionComponent.class)
+        player.getComponent(OldPositionComponent.class)
                 .setValue(Entities.getPosition(player).getValue());
 
         grid.update();

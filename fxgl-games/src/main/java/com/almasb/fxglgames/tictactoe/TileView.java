@@ -49,7 +49,7 @@ public class TileView extends StackPane {
 
         getChildren().addAll(bg, bg2, arc, line1, line2);
 
-        tile.getComponentUnsafe(TileValueComponent.class).valueProperty().addListener((observable, oldValue, newValue) -> {
+        tile.getComponent(TileValueComponent.class).valueProperty().addListener((observable, oldValue, newValue) -> {
             animate(newValue);
         });
 

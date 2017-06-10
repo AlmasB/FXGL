@@ -20,7 +20,7 @@ public class BallControl extends Control {
 
 //    @Override
 //    public void onAdded(Entity entity) {
-//        physics = entity.getComponentUnsafe(PhysicsComponent.class);
+//        physics = entity.getComponent(PhysicsComponent.class);
 //    }
 
     @Override

@@ -156,7 +156,7 @@ public class SpaceInvadersApp extends GameApplication {
 
     private void spawnPlayer() {
         player = (GameEntity) getGameWorld().spawn("Player", getWidth() / 2 - 20, getHeight() - 40);
-        playerControl = player.getControlUnsafe(PlayerControl.class);
+        playerControl = player.getControl(PlayerControl.class);
     }
 
     private void spawnWall(double x, double y) {

@@ -42,9 +42,9 @@ public class PlayerControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = entity.getComponentUnsafe(PositionComponent.class);
-        bbox = entity.getComponentUnsafe(BoundingBoxComponent.class);
-        invicibility = entity.getComponentUnsafe(InvincibleComponent.class);
+        position = entity.getComponent(PositionComponent.class);
+        bbox = entity.getComponent(BoundingBoxComponent.class);
+        invicibility = entity.getComponent(InvincibleComponent.class);
     }
 
     @Override

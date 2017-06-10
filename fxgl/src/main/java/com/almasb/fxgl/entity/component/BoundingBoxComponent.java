@@ -64,7 +64,7 @@ public class BoundingBoxComponent extends Component
 
     @Override
     public void onAdded(Entity entity) {
-        position = entity.getComponentUnsafe(PositionComponent.class);
+        position = entity.getComponent(PositionComponent.class);
 
         minXWorld.bind(minXLocal.add(position.xProperty()));
         minYWorld.bind(minYLocal.add(position.yProperty()));
@@ -395,8 +395,8 @@ public class BoundingBoxComponent extends Component
                 boolean collision;
 
                 if (checkRotation) {
-                    double angle1 = getEntity().getComponentUnsafe(RotationComponent.class).getValue();
-                    double angle2 = other.getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+                    double angle1 = getEntity().getComponent(RotationComponent.class).getValue();
+                    double angle2 = other.getEntity().getComponent(RotationComponent.class).getValue();
 
                     if (angle1 == 0 && angle2 == 0) {
                         collision = checkCollision(box1, box2);
@@ -439,8 +439,8 @@ public class BoundingBoxComponent extends Component
                 boolean collision;
 
                 if (checkRotation) {
-                    double angle1 = getEntity().getComponentUnsafe(RotationComponent.class).getValue();
-                    double angle2 = other.getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+                    double angle1 = getEntity().getComponent(RotationComponent.class).getValue();
+                    double angle2 = other.getEntity().getComponent(RotationComponent.class).getValue();
 
                     if (angle1 == 0 && angle2 == 0) {
                         collision = checkCollision(box1, box2);

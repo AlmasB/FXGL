@@ -71,7 +71,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      * @return list of entities in the range (do NOT modify)
      */
     fun getEntitiesInRange(selection: Rectangle2D): List<Entity> {
-        return entities.filter { it.getComponentUnsafe(BoundingBoxComponent::class.java)?.isWithin(selection) ?: false }
+        return entities.filter { it.getComponent(BoundingBoxComponent::class.java)?.isWithin(selection) ?: false }
     }
 
 
@@ -89,7 +89,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
     fun getCollidingEntities(entity: Entity): List<Entity> {
         val bbox = Entities.getBBox(entity)
 
-        return entities.filter { it.getComponentUnsafe(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
+        return entities.filter { it.getComponent(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
     }
 
     /**
@@ -102,7 +102,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      */
     fun getEntitiesByLayer(layer: RenderLayer): List<Entity> {
         return entities.filter {
-            val view = it.getComponentUnsafe(ViewComponent::class.java)
+            val view = it.getComponent(ViewComponent::class.java)
 
             if (view != null) {
                 return@filter view.renderLayer.index() == layer.index()
@@ -114,7 +114,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
 
     fun getEntitiesAt(position: Point2D): List<Entity> {
         return entities.filter {
-            val p = it.getComponentUnsafe(PositionComponent::class.java)?.value ?: return@filter false
+            val p = it.getComponent(PositionComponent::class.java)?.value ?: return@filter false
 
             p == position
         }

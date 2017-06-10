@@ -51,23 +51,23 @@ public class PlatformerSample extends GameApplication {
         input.addAction(new UserAction("Left") {
             @Override
             protected void onActionBegin() {
-                player.getComponentUnsafe(PhysicsComponent.class).setLinearVelocity(new Point2D(-200, 0));
+                player.getComponent(PhysicsComponent.class).setLinearVelocity(new Point2D(-200, 0));
             }
         }, KeyCode.A);
 
         input.addAction(new UserAction("Right") {
             @Override
             protected void onActionBegin() {
-                player.getComponentUnsafe(PhysicsComponent.class).setLinearVelocity(new Point2D(200, 0));
+                player.getComponent(PhysicsComponent.class).setLinearVelocity(new Point2D(200, 0));
             }
         }, KeyCode.D);
 
         input.addAction(new UserAction("Jump") {
             @Override
             protected void onActionBegin() {
-                double dx = player.getComponentUnsafe(PhysicsComponent.class).getLinearVelocity().getX();
+                double dx = player.getComponent(PhysicsComponent.class).getLinearVelocity().getX();
 
-                player.getComponentUnsafe(PhysicsComponent.class).setLinearVelocity(new Point2D(dx, -100));
+                player.getComponent(PhysicsComponent.class).setLinearVelocity(new Point2D(dx, -100));
             }
         }, KeyCode.W);
 

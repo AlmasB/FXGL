@@ -264,7 +264,7 @@ public final class GameScene extends FXGLScene
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
         for (Entity e : drawables) {
-            DrawableComponent drawable = e.getComponentUnsafe(DrawableComponent.class);
+            DrawableComponent drawable = e.getComponent(DrawableComponent.class);
 
             if (drawable != null) {
                 drawable.draw(particlesGC);
@@ -289,37 +289,37 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onEntityAdded(Entity entity) {
-        entity.getComponent(ViewComponent.class)
+        entity.getComponentOptional(ViewComponent.class)
                 .ifPresent(viewComponent -> {
                     onAdded(viewComponent);
                 });
 
-        entity.getComponent(DrawableComponent.class)
+        entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.add(entity));
 
         entity.addModuleListener(this);
 
-        entity.getControl(ParticleControl.class)
+        entity.getControlOptional(ParticleControl.class)
                 .ifPresent(particles::add);
-        entity.getControl(PhysicsParticleControl.class)
+        entity.getControlOptional(PhysicsParticleControl.class)
                 .ifPresent(particles::add);
     }
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entity.getComponent(ViewComponent.class)
+        entity.getComponentOptional(ViewComponent.class)
                 .ifPresent(viewComponent -> {
                     onRemoved(viewComponent);
                 });
 
-        entity.getComponent(DrawableComponent.class)
+        entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.removeValueByIdentity(entity));
 
         entity.removeModuleListener(this);
 
-        entity.getControl(ParticleControl.class)
+        entity.getControlOptional(ParticleControl.class)
                 .ifPresent(p -> particles.removeValueByIdentity(p));
-        entity.getControl(PhysicsParticleControl.class)
+        entity.getControlOptional(PhysicsParticleControl.class)
                 .ifPresent(p -> particles.removeValueByIdentity(p));
     }
 

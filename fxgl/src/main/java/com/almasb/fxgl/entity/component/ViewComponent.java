@@ -222,9 +222,9 @@ public class ViewComponent extends Component {
     }
 
     private void bindView() {
-        getView().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
-        getView().translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
-        getView().rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
+        getView().translateXProperty().bind(getEntity().getComponent(PositionComponent.class).xProperty());
+        getView().translateYProperty().bind(getEntity().getComponent(PositionComponent.class).yProperty());
+        getView().rotateProperty().bind(getEntity().getComponent(RotationComponent.class).valueProperty());
     }
 
     private void generateBBox() {

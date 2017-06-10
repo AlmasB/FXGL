@@ -191,7 +191,7 @@ public class PositionComponent extends Component
      * @return x position of the entity in the grid
      */
     public int getGridX(int cellSize) {
-        double centerX = getEntity().getComponent(BoundingBoxComponent.class)
+        double centerX = getEntity().getComponentOptional(BoundingBoxComponent.class)
                 .map(bbox -> bbox.getMinXWorld() + bbox.getWidth() / 2)
                 .orElseGet(this::getX);
 
@@ -206,7 +206,7 @@ public class PositionComponent extends Component
      * @return y position of the entity in the grid
      */
     public int getGridY(int cellSize) {
-        double centerY = getEntity().getComponent(BoundingBoxComponent.class)
+        double centerY = getEntity().getComponentOptional(BoundingBoxComponent.class)
                 .map(bbox -> bbox.getMinYWorld() + bbox.getHeight() / 2)
                 .orElseGet(this::getY);
 

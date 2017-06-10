@@ -40,7 +40,7 @@ public class RicochetControl extends Control {
                     .getCenter()
                     .subtract(bbox.getCenterWorld());
 
-            entity.getControlUnsafe(ProjectileControl.class).setDirection(direction);
+            entity.getControl(ProjectileControl.class).setDirection(direction);
         }
     }
 }

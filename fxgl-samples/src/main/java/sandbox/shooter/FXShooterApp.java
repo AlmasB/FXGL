@@ -69,12 +69,12 @@ public class FXShooterApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.BULLET, EntityType.ENEMY) {
             @Override
             protected void onCollisionBegin(Entity bullet, Entity enemy) {
-                BulletComponent bulletData = bullet.getComponentUnsafe(BulletComponent.class);
+                BulletComponent bulletData = bullet.getComponent(BulletComponent.class);
 
                 bulletData.setHp(bulletData.getHp() - 1);
 
-                HPComponent hp = enemy.getComponentUnsafe(HPComponent.class);
-                hp.decrement(bulletData.getDamage() + player.getComponentUnsafe(WeaponComponent.class).getDamage());
+                HPComponent hp = enemy.getComponent(HPComponent.class);
+                hp.decrement(bulletData.getDamage() + player.getComponent(WeaponComponent.class).getDamage());
                 if (hp.getValue() <= 0)
                     enemy.removeFromWorld();
 

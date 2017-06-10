@@ -108,7 +108,7 @@ public class TowerfallApp extends GameApplication {
         getGameWorld().setLevel(level);
 
         player = (GameEntity) getGameWorld().getEntitiesByType(EntityType.PLAYER).get(0);
-        playerControl = player.getControlUnsafe(CharacterControl.class);
+        playerControl = player.getControl(CharacterControl.class);
     }
 
     @Override

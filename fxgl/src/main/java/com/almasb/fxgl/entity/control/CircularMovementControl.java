@@ -31,7 +31,7 @@ public final class CircularMovementControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = entity.getComponentUnsafe(PositionComponent.class);
+        position = entity.getComponent(PositionComponent.class);
     }
 
     @Override

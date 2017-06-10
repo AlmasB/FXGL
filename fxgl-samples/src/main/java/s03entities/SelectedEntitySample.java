@@ -50,7 +50,7 @@ public class SelectedEntitySample extends GameApplication {
         getInput().addAction(new UserAction("Make unselectable") {
             @Override
             protected void onActionBegin() {
-                player.getComponentUnsafe(SelectableComponent.class)
+                player.getComponent(SelectableComponent.class)
                         .setValue(false);
             }
         }, KeyCode.F);
@@ -58,7 +58,7 @@ public class SelectedEntitySample extends GameApplication {
         getInput().addAction(new UserAction("Make selectable") {
             @Override
             protected void onActionBegin() {
-                player.getComponentUnsafe(SelectableComponent.class)
+                player.getComponent(SelectableComponent.class)
                         .setValue(true);
             }
         }, KeyCode.G);

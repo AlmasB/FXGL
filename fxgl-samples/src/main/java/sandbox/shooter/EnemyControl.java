@@ -24,8 +24,8 @@ public class EnemyControl extends Control {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        Point2D position = entity.getComponentUnsafe(PositionComponent.class).getValue();
+        Point2D position = entity.getComponent(PositionComponent.class).getValue();
 
-        entity.getComponentUnsafe(PositionComponent.class).translate(target.subtract(position).normalize().multiply(60 * tpf));
+        entity.getComponent(PositionComponent.class).translate(target.subtract(position).normalize().multiply(60 * tpf));
     }
 }

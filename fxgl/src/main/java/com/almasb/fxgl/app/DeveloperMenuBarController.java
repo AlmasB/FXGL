@@ -106,7 +106,7 @@ public class DeveloperMenuBarController implements UIController {
         app.getGameWorld()
                 .getEntitiesByComponent(ViewComponent.class)
                 .forEach(e -> {
-                    e.getComponentUnsafe(ViewComponent.class).turnOnDebugBBox(item.isSelected());
+                    e.getComponent(ViewComponent.class).turnOnDebugBBox(item.isSelected());
                 });
     }
 

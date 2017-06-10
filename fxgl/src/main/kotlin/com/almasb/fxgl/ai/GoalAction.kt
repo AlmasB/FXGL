@@ -30,7 +30,7 @@ abstract class GoalAction(val name: String) : LeafTask<GameEntity>() {
         if (reachedGoal())
             return Status.SUCCEEDED
 
-        `object`.getControlUnsafe(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
+        `object`.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
         action()
         return if (reachedGoal()) Status.SUCCEEDED else Status.RUNNING
     }

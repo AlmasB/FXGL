@@ -72,11 +72,11 @@ public class Grid {
 
                 // add additional lines
                 if (x > 0 && y > 0) {
-                    gridEntity.getControlUnsafe(GridControl.class).addControl(new AdditionalLineControl(
+                    gridEntity.getControl(GridControl.class).addControl(new AdditionalLineControl(
                             points[x - 1][y], points[x][y],
                             points[x - 1][y - 1], points[x][y - 1]));
 
-                    gridEntity.getControlUnsafe(GridControl.class).addControl(new AdditionalLineControl(
+                    gridEntity.getControl(GridControl.class).addControl(new AdditionalLineControl(
                             points[x][y - 1], points[x][y],
                             points[x - 1][y - 1], points[x - 1][y]));
                 }

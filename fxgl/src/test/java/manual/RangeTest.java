@@ -128,7 +128,7 @@ public class RangeTest extends GameApplication {
             if (e == markers)
                 return;
 
-            EntityView view = e.getComponentUnsafe(ViewComponent.class).getView();
+            EntityView view = e.getComponent(ViewComponent.class).getView();
             view.getNodes()
                     .stream()
                     .map(n -> (Rectangle)n)
@@ -139,7 +139,7 @@ public class RangeTest extends GameApplication {
         list2.removeAll(list);
 
         list2.forEach(e -> {
-            EntityView view = e.getComponentUnsafe(ViewComponent.class).getView();
+            EntityView view = e.getComponent(ViewComponent.class).getView();
             view.getNodes()
                     .stream()
                     .map(n -> (Rectangle)n)

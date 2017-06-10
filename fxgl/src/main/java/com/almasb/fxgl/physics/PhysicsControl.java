@@ -48,7 +48,7 @@ public class PhysicsControl extends Control {
         rotation = Entities.getRotation(entity);
         bbox = Entities.getBBox(entity);
 
-        body = entity.getComponentUnsafe(PhysicsComponent.class).body;
+        body = entity.getComponent(PhysicsComponent.class).body;
     }
 
     @Override

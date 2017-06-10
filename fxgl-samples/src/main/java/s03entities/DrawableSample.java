@@ -39,7 +39,7 @@ public class DrawableSample extends GameApplication {
     @Override
     protected void initGame() {
         BiConsumer<GraphicsContext, Entity> drawing = (g, entity) -> {
-            Point2D pos = entity.getComponentUnsafe(PositionComponent.class).getValue();
+            Point2D pos = entity.getComponent(PositionComponent.class).getValue();
 
             g.setFill(Color.BLUE);
             g.fillRect(pos.getX(), pos.getY(), 40, 40);

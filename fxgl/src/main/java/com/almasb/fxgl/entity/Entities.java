@@ -44,7 +44,7 @@ public final class Entities {
      * @return position component
      */
     public static PositionComponent getPosition(Entity e) {
-        return e.getComponentUnsafe(PositionComponent.class);
+        return e.getComponent(PositionComponent.class);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class Entities {
      * @return rotation component
      */
     public static RotationComponent getRotation(Entity e) {
-        return e.getComponentUnsafe(RotationComponent.class);
+        return e.getComponent(RotationComponent.class);
     }
 
     /**
@@ -64,7 +64,7 @@ public final class Entities {
      * @return bbox component
      */
     public static BoundingBoxComponent getBBox(Entity e) {
-        return e.getComponentUnsafe(BoundingBoxComponent.class);
+        return e.getComponent(BoundingBoxComponent.class);
     }
 
     /**
@@ -74,7 +74,7 @@ public final class Entities {
      * @return physics component
      */
     public static PhysicsComponent getPhysics(Entity e) {
-        return e.getComponentUnsafe(PhysicsComponent.class);
+        return e.getComponent(PhysicsComponent.class);
     }
 
     /**
@@ -84,7 +84,7 @@ public final class Entities {
      * @return main view component
      */
     public static ViewComponent getView(Entity e) {
-        return e.getComponentUnsafe(ViewComponent.class);
+        return e.getComponent(ViewComponent.class);
     }
 
     /**
@@ -94,7 +94,7 @@ public final class Entities {
      * @return type component
      */
     public static TypeComponent getType(Entity e) {
-        return e.getComponentUnsafe(TypeComponent.class);
+        return e.getComponent(TypeComponent.class);
     }
 
     /**

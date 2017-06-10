@@ -24,7 +24,7 @@ public enum WorkerState implements State<GameEntity> {
                     .getGameWorld()
                     .getClosestEntity(entity, e -> {
                         return Entities.getType(e).isType(RTSSampleType.GOLD_MINE) &&
-                                !e.getComponentUnsafe(GoldMineComponent.class).getValue().isFull();
+                                !e.getComponent(GoldMineComponent.class).getValue().isFull();
                     })
                     .ifPresent(goldMine -> {
                         entity.setProperty("target", goldMine);
@@ -45,7 +45,7 @@ public enum WorkerState implements State<GameEntity> {
             );
 
             if (entity.isColliding(target)) {
-                if (target.isType(RTSSampleType.GOLD_MINE) && entity.getComponentUnsafe(BackpackComponent.class).getValue().getGold() < 150) {
+                if (target.isType(RTSSampleType.GOLD_MINE) && entity.getComponent(BackpackComponent.class).getValue().getGold() < 150) {
                     changeState(entity, GATHER_GOLD);
                 }
 
@@ -60,7 +60,7 @@ public enum WorkerState implements State<GameEntity> {
         @Override
         public void enter(GameEntity entity) {
             GameEntity target = entity.getProperty("target");
-            GoldMine mine = target.getComponentUnsafe(GoldMineComponent.class).getValue();
+            GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
 
             if (mine.isFull()) {
                 System.out.println("Mine is Full");
@@ -73,14 +73,14 @@ public enum WorkerState implements State<GameEntity> {
 
         @Override
         public void update(GameEntity entity) {
-            Backpack backpack = entity.getComponentUnsafe(BackpackComponent.class).getValue();
+            Backpack backpack = entity.getComponent(BackpackComponent.class).getValue();
 
             backpack.addGold(1);
 
             if (backpack.getGold() == 150) {
                 entity.getView().setVisible(true);
                 GameEntity target = entity.getProperty("target");
-                GoldMine mine = target.getComponentUnsafe(GoldMineComponent.class).getValue();
+                GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
                 mine.onEndGathering();
 
                 entity.setProperty("target", FXGL.getApp().getGameWorld().getEntitiesByType(RTSSampleType.TOWN_HALL).get(0));
@@ -92,7 +92,7 @@ public enum WorkerState implements State<GameEntity> {
     DEPOSIT_GOLD() {
         @Override
         public void update(GameEntity entity) {
-            Backpack backpack = entity.getComponentUnsafe(BackpackComponent.class).getValue();
+            Backpack backpack = entity.getComponent(BackpackComponent.class).getValue();
 
             FXGL.getApp().getGameState().increment("gold", backpack.getGold());
 
@@ -103,7 +103,7 @@ public enum WorkerState implements State<GameEntity> {
     };
 
     void changeState(GameEntity entity, WorkerState state) {
-        entity.getControlUnsafe(FSMControl.class).changeState(state);
+        entity.getControl(FSMControl.class).changeState(state);
     }
 
     @Override
