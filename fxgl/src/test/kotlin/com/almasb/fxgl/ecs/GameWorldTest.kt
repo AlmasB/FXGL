@@ -22,8 +22,7 @@ import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -112,6 +111,11 @@ class GameWorldTest {
         gameWorld.addEntity(genericEntity)
 
         gameWorld.onUpdate(0.016)
+    }
+
+    @Test
+    fun `getEntitiesCopy() returns a copy`() {
+        assertFalse(gameWorld.entities === gameWorld.entitiesCopy)
     }
 
     @Test
@@ -341,6 +345,12 @@ class GameWorldTest {
         e = gameWorld.spawn("enemy")
 
         assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(0.0, 0.0)))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Throw if factory has no such spawn method`() {
+        gameWorld.setEntityFactory(TestEntityFactory())
+        gameWorld.spawn("bla-bla")
     }
 
     //    @Test
