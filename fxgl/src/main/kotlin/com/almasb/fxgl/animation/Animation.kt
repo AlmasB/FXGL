@@ -87,11 +87,6 @@ abstract class Animation<T>
     }
 
     override fun onUpdate(tpf: Double) {
-        updateManual(tpf)
-    }
-
-    // TODO: use states?
-    fun updateManual(tpf: Double) {
         if (isPaused)
             return
 
@@ -107,8 +102,6 @@ abstract class Animation<T>
         }
 
         if ((isReverse && time == endTime) || (!isReverse && time == 0.0)) {
-            //onCycleStarted()
-
             onProgress(animatedValue.getValue(if (isReverse) 1.0 else 0.0))
 
             updateTime(tpf)
@@ -118,8 +111,6 @@ abstract class Animation<T>
         updateTime(tpf)
 
         if ((!isReverse && time >= endTime) || (isReverse && time <= 0.0)) {
-            //onCycleFinished()
-
             onProgress(animatedValue.getValue(if (isReverse) 0.0 else 1.0))
 
             count++
