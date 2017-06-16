@@ -53,7 +53,7 @@ public class BasicGameApp extends GameApplication {
 ## Getting Started
 
 * Written tutorials - [Wiki](https://github.com/AlmasB/FXGL/wiki)
-* Video tutorials - [YouTube](https://www.youtube.com/watch?v=mPE8p8p_YjQ&list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
+* Video tutorials - [YouTube](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
 * The [Samples](fxgl-samples) module is constantly updated with feature demos
 * Advanced examples - [FXGLGames](https://github.com/AlmasB/FXGLGames)
 * Pre-built game demos (standalone .jar) - [Games](https://github.com/AlmasB/FXGLGames/tree/master/binaries)
@@ -64,7 +64,7 @@ public class BasicGameApp extends GameApplication {
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.3.3</version>
+    <version>0.3.4</version>
 </dependency>
 ```
 
@@ -76,18 +76,13 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.3.3'
+    compile 'com.github.almasb:fxgl:0.3.4'
 }
 ```
 
 ## Uber jar
 
 Latest pre-compiled uber jar can be found in [Releases](https://github.com/AlmasB/FXGL/releases)
-
-## Download Count
-
-* GitHub Releases (uber jar): ![Github Releases](https://img.shields.io/github/downloads/AlmasB/FXGL/total.svg)
-* Maven Central: 16.05.2017 ![Maven](https://img.shields.io/badge/downloads-~170%2Fmonth-green.svg?style=flat)
 
 ## Contribution
 
@@ -97,6 +92,5 @@ Alternatively star the repo to show interest.
 ## Contact
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
-[![Google+](https://img.shields.io/badge/Google+-AlmasB-red.svg)](https://plus.google.com/+AlmasB0/about)
 [![Survey](https://img.shields.io/badge/Feedback-SurveyMonkey-red.svg)](https://www.surveymonkey.com/r/BH6LLPM)
 [![Survey2](https://img.shields.io/badge/Feedback-Google%20Forms-red.svg)](https://goo.gl/forms/6wrMnOBxTE1fEpOy2)
