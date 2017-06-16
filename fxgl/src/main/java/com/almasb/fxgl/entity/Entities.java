@@ -1,27 +1,7 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxgl.entity;
@@ -31,6 +11,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.parser.tiled.Layer;
@@ -63,7 +44,7 @@ public final class Entities {
      * @return position component
      */
     public static PositionComponent getPosition(Entity e) {
-        return e.getComponentUnsafe(PositionComponent.class);
+        return e.getComponent(PositionComponent.class);
     }
 
     /**
@@ -73,7 +54,7 @@ public final class Entities {
      * @return rotation component
      */
     public static RotationComponent getRotation(Entity e) {
-        return e.getComponentUnsafe(RotationComponent.class);
+        return e.getComponent(RotationComponent.class);
     }
 
     /**
@@ -83,7 +64,7 @@ public final class Entities {
      * @return bbox component
      */
     public static BoundingBoxComponent getBBox(Entity e) {
-        return e.getComponentUnsafe(BoundingBoxComponent.class);
+        return e.getComponent(BoundingBoxComponent.class);
     }
 
     /**
@@ -93,7 +74,7 @@ public final class Entities {
      * @return physics component
      */
     public static PhysicsComponent getPhysics(Entity e) {
-        return e.getComponentUnsafe(PhysicsComponent.class);
+        return e.getComponent(PhysicsComponent.class);
     }
 
     /**
@@ -103,7 +84,7 @@ public final class Entities {
      * @return main view component
      */
     public static ViewComponent getView(Entity e) {
-        return e.getComponentUnsafe(ViewComponent.class);
+        return e.getComponent(ViewComponent.class);
     }
 
     /**
@@ -113,7 +94,7 @@ public final class Entities {
      * @return type component
      */
     public static TypeComponent getType(Entity e) {
-        return e.getComponentUnsafe(TypeComponent.class);
+        return e.getComponent(TypeComponent.class);
     }
 
     /**

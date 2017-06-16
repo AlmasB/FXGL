@@ -1,34 +1,13 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package sandbox.uno;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
@@ -140,7 +119,7 @@ public class UnoSample extends GameApplication {
         GameEntity cardEntity = (GameEntity) getGameWorld().spawn("Card", new SpawnData(x, y).put("card", card));
 
         cardEntity.getView().setOnMouseClicked(e -> {
-            if (card.canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+            if (card.canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
                 Animation<?> animation = Entities.animationBuilder()
                         .duration(Duration.seconds(0.35))
                         .translate(cardEntity)
@@ -188,7 +167,7 @@ public class UnoSample extends GameApplication {
         for (GameEntity card : enemy.cardsProperty()) {
 
             // can we avoid calls like this?
-            if (card.getComponentUnsafe(CardComponent.class).getValue().canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+            if (card.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
                 currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
 
                 enemy.removeCard(card);
@@ -208,7 +187,7 @@ public class UnoSample extends GameApplication {
             while (deck.hasCards()) {
                 GameEntity draw = spawn(deck.drawCard(), 0, -150);
 
-                if (draw.getComponentUnsafe(CardComponent.class).getValue().canUseOn(currentCard.getComponentUnsafe(CardComponent.class).getValue())) {
+                if (draw.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
                     currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));
 
                     draw.setPosition(new Point2D(350, 225));

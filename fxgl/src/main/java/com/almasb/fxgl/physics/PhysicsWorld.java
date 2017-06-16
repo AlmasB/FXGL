@@ -1,27 +1,7 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 package com.almasb.fxgl.physics;
 
@@ -103,7 +83,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (!e.isActive())
             return false;
 
-        CollidableComponent collidable = e.getComponentUnsafe(CollidableComponent.class);
+        CollidableComponent collidable = e.getComponent(CollidableComponent.class);
 
         return collidable != null && collidable.getValue();
     }
@@ -114,11 +94,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private boolean needManualCheck(Entity e1, Entity e2) {
         // if no physics -> check manually
-        PhysicsComponent p1 = e1.getComponentUnsafe(PhysicsComponent.class);
+        PhysicsComponent p1 = e1.getComponent(PhysicsComponent.class);
         if (p1 == null)
             return true;
 
-        PhysicsComponent p2 = e2.getComponentUnsafe(PhysicsComponent.class);
+        PhysicsComponent p2 = e2.getComponent(PhysicsComponent.class);
         if (p2 == null)
             return true;
 
@@ -136,8 +116,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (!e1.isActive() || !e2.isActive())
             return null;
 
-        Object type1 = e1.getComponentUnsafe(TypeComponent.class).getValue();
-        Object type2 = e2.getComponentUnsafe(TypeComponent.class).getValue();
+        Object type1 = e1.getComponent(TypeComponent.class).getValue();
+        Object type2 = e2.getComponent(TypeComponent.class).getValue();
 
         for (CollisionHandler handler : collisionHandlers) {
             if (handler.equal(type1, type2)) {
@@ -238,7 +218,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entities.removeValue(entity, true);
+        entities.removeValueByIdentity(entity);
 
         if (entity.hasComponent(PhysicsComponent.class)) {
             onPhysicsEntityRemoved(entity);
@@ -494,7 +474,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param handler collision handler to remove
      */
     public void removeCollisionHandler(CollisionHandler handler) {
-        collisionHandlers.removeValue(handler, true);
+        collisionHandlers.removeValueByIdentity(handler);
     }
 
     /**
@@ -618,7 +598,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         double width = Entities.getBBox(e).getWidth();
         double height = Entities.getBBox(e).getHeight();
 
-        ParticleGroupDef def = e.getComponentUnsafe(PhysicsParticleComponent.class).getDefinition();
+        ParticleGroupDef def = e.getComponent(PhysicsParticleComponent.class).getDefinition();
         def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
 
         Shape shape = null;
@@ -649,7 +629,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         ParticleGroup particleGroup = jboxWorld.createParticleGroup(def);
 
-        Color color = e.getComponentUnsafe(PhysicsParticleComponent.class).getColor();
+        Color color = e.getComponent(PhysicsParticleComponent.class).getColor();
         e.addControl(new PhysicsParticleControl(particleGroup, color, this));
     }
 

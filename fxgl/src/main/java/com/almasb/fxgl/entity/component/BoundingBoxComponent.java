@@ -1,34 +1,14 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.pool.Pool;
-import com.almasb.fxgl.ecs.AbstractComponent;
+import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.CopyableComponent;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
@@ -56,7 +36,7 @@ import java.util.ArrayList;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Required(PositionComponent.class)
-public class BoundingBoxComponent extends AbstractComponent
+public class BoundingBoxComponent extends Component
         implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {
 
     private static final Pooler pooler = FXGL.getPooler();
@@ -84,7 +64,7 @@ public class BoundingBoxComponent extends AbstractComponent
 
     @Override
     public void onAdded(Entity entity) {
-        position = entity.getComponentUnsafe(PositionComponent.class);
+        position = entity.getComponent(PositionComponent.class);
 
         minXWorld.bind(minXLocal.add(position.xProperty()));
         minYWorld.bind(minYLocal.add(position.yProperty()));
@@ -415,8 +395,8 @@ public class BoundingBoxComponent extends AbstractComponent
                 boolean collision;
 
                 if (checkRotation) {
-                    double angle1 = getEntity().getComponentUnsafe(RotationComponent.class).getValue();
-                    double angle2 = other.getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+                    double angle1 = getEntity().getComponent(RotationComponent.class).getValue();
+                    double angle2 = other.getEntity().getComponent(RotationComponent.class).getValue();
 
                     if (angle1 == 0 && angle2 == 0) {
                         collision = checkCollision(box1, box2);
@@ -459,8 +439,8 @@ public class BoundingBoxComponent extends AbstractComponent
                 boolean collision;
 
                 if (checkRotation) {
-                    double angle1 = getEntity().getComponentUnsafe(RotationComponent.class).getValue();
-                    double angle2 = other.getEntity().getComponentUnsafe(RotationComponent.class).getValue();
+                    double angle1 = getEntity().getComponent(RotationComponent.class).getValue();
+                    double angle2 = other.getEntity().getComponent(RotationComponent.class).getValue();
 
                     if (angle1 == 0 && angle2 == 0) {
                         collision = checkCollision(box1, box2);

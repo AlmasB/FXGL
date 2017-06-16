@@ -1,32 +1,11 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.core.StringBuilder;
 import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.util.Credits;
@@ -154,19 +133,17 @@ public class ReadOnlyGameSettings {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Title: ").append(title).append('\n')
-                .append("Version: ").append(version).append('\n')
-                .append("Width: ").append(width).append('\n')
-                .append("Height: ").append(height).append('\n')
-                .append("Fullscreen: ").append(fullScreen).append('\n')
-                .append("Intro: ").append(introEnabled).append('\n')
-                .append("Menus: ").append(menuEnabled).append('\n')
-                .append("Profiling: ").append(profilingEnabled).append('\n')
-                .append("App Mode: ").append(appMode).append('\n')
-                .append("Menu Style: ").append(menuStyle).append('\n')
-                .append("Menu Key: ").append(menuKey).append('\n')
-                .append("Services: ").append(services);
-
-        return sb.toString();
+        return "Title: " + title + '\n' +
+                "Version: " + version + '\n' +
+                "Width: " + width + '\n' +
+                "Height: " + height + '\n' +
+                "Fullscreen: " + fullScreen + '\n' +
+                "Intro: " + introEnabled + '\n' +
+                "Menus: " + menuEnabled + '\n' +
+                "Profiling: " + profilingEnabled + '\n' +
+                "App Mode: " + appMode + '\n' +
+                "Menu Style: " + menuStyle + '\n' +
+                "Menu Key: " + menuKey + '\n' +
+                "Services: " + services;
     }
 }

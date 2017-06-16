@@ -1,27 +1,7 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxglgames.pong;
@@ -92,11 +72,11 @@ public class PongApp extends GameApplication {
             Platform.runLater(() -> {
                 if (bat2 != null) {
                     if (message.up) {
-                        bat2.getControlUnsafe(BatControl.class).up();
+                        bat2.getControl(BatControl.class).up();
                     } else if (message.down) {
-                        bat2.getControlUnsafe(BatControl.class).down();
+                        bat2.getControl(BatControl.class).down();
                     } else {
-                        bat2.getControlUnsafe(BatControl.class).stop();
+                        bat2.getControl(BatControl.class).stop();
                     }
                 }
             });
@@ -203,7 +183,7 @@ public class PongApp extends GameApplication {
         bat1 = factory.newBat(getWidth() / 4, getHeight() / 2 - 30, true);
         getGameWorld().addEntity(bat1);
 
-        playerBat = bat1.getControlUnsafe(BatControl.class);
+        playerBat = bat1.getControl(BatControl.class);
     }
 
     private void initEnemyBat() {

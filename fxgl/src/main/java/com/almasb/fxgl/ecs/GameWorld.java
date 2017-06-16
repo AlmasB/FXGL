@@ -1,39 +1,18 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity;
+package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.annotation.Spawns;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.EntityWorld;
+import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.gameplay.Level;
@@ -45,27 +24,193 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
- * Represents pure logical state of game.
- * Manages all entities and their state.
+ * Represents pure logical state of the game.
+ * Manages all entities and allows queries.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public final class GameWorld extends EntityWorld {
+public class GameWorld {
 
-    private static final Logger log = FXGL.getLogger("FXGL.GameWorld");
+    private static Logger log = FXGLLogger.get("FXGL.GameWorld");
 
     private Array<EventTrigger<?> > eventTriggers = new Array<>(false, 32);
+    
+    private Array<Entity> updateList;
 
+    /**
+     * List of entities added to the update list in the next tick.
+     */
+    private Array<Entity> waitingList;
+
+    /**
+     * List of entities in the world.
+     */
+    protected List<Entity> entities;
+
+    private GameWorldQuery query;
+
+    /**
+     * Constructs the world with initial entity capacity = 32.
+     */
     @Inject
     protected GameWorld() {
+        this(32);
+    }
+
+    /**
+     * @param initialCapacity initial entity capacity
+     */
+    public GameWorld(int initialCapacity) {
+        updateList = new Array<>(true, initialCapacity);
+        waitingList = new Array<>(false, initialCapacity);
+        entities = new ArrayList<>(initialCapacity);
+
+        query = new GameWorldQuery(entities);
+
         log.debug("Game world initialized");
+    }
+
+    /**
+     * The entity will be added to update list in the next tick.
+     *
+     * @param entity the entity to add to world
+     */
+    public void addEntity(Entity entity) {
+        if (entity.isActive())
+            throw new IllegalArgumentException("Entity is already attached to world");
+
+        waitingList.add(entity);
+        entities.add(entity);
+
+        entity.init(this);
+        notifyEntityAdded(entity);
+    }
+
+    public void addEntities(Entity... entitiesToAdd) {
+        for (Entity e : entitiesToAdd) {
+            addEntity(e);
+        }
+    }
+
+    public void removeEntity(Entity entity) {
+        if (entity.getWorld() != this)
+            throw new IllegalArgumentException("Attempted to remove entity not attached to this world");
+
+        entities.remove(entity);
+
+        notifyEntityRemoved(entity);
+        entity.clean();
+    }
+
+    public void removeEntities(Entity... entitiesToRemove) {
+        for (Entity e : entitiesToRemove) {
+            removeEntity(e);
+        }
+    }
+
+    /**
+     * Performs a single world update tick.
+     *
+     * @param tpf time per frame
+     */
+    private void update(double tpf) {
+        updateList.addAll(waitingList);
+        waitingList.clear();
+
+        for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+
+            if (e.isActive()) {
+                e.update(tpf);
+            } else {
+                it.remove();
+            }
+        }
+
+        notifyWorldUpdated(tpf);
+    }
+
+    /**
+     * Resets the world to its initial state.
+     * Does NOT clear state listeners.
+     */
+    public void reset() {
+        log.debug("Resetting game world");
+
+        for (Entity e : updateList) {
+            if (e.isActive()) {
+                notifyEntityRemoved(e);
+                e.clean();
+            }
+        }
+
+        for (Entity e : waitingList) {
+            notifyEntityRemoved(e);
+            e.clean();
+        }
+
+        waitingList.clear();
+        updateList.clear();
+        entities.clear();
+
+        notifyWorldReset();
+    }
+
+    private Array<EntityWorldListener> worldListeners = new Array<>(true, 16);
+
+    public void addWorldListener(EntityWorldListener listener) {
+        worldListeners.add(listener);
+    }
+
+    public void removeWorldListener(EntityWorldListener listener) {
+        worldListeners.removeValueByIdentity(listener);
+    }
+
+    private void notifyEntityAdded(Entity e) {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onEntityAdded(e);
+        }
+    }
+
+    private void notifyEntityRemoved(Entity e) {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onEntityRemoved(e);
+        }
+    }
+
+    private void notifyWorldUpdated(double tpf) {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onWorldUpdate(tpf);
+        }
+    }
+
+    private void notifyWorldReset() {
+        for (int i = 0; i < worldListeners.size(); i++) {
+            worldListeners.get(i).onWorldReset();
+        }
+    }
+
+    /**
+     * @return direct list of entities in the world (do NOT modify)
+     */
+    public List<Entity> getEntities() {
+        return entities;
+    }
+
+    /**
+     * @return shallow copy of the entities list (new list)
+     */
+    public List<Entity> getEntitiesCopy() {
+        return new ArrayList<>(entities);
     }
 
     public void onUpdate(double tpf) {
@@ -85,36 +230,18 @@ public final class GameWorld extends EntityWorld {
         }
     }
 
-    @Override
-    public void reset() {
-        log.debug("Resetting game world");
-        super.reset();
-    }
-
-    /**
-     * Add event trigger to the world.
-     *
-     * @param trigger the event trigger
-     */
     public void addEventTrigger(EventTrigger<?> trigger) {
         eventTriggers.add(trigger);
     }
 
-    /**
-     * Remove event trigger from the world.
-     *
-     * @param trigger the event trigger
-     */
     public void removeEventTrigger(EventTrigger<?> trigger) {
-        eventTriggers.removeValue(trigger, true);
+        eventTriggers.removeValueByIdentity(trigger);
     }
 
     private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();
 
     /**
-     * Returns last selected (clicked on by mouse) entity.
-     *
-     * @return selected entity
+     * @return last selected (clicked on by mouse) entity
      */
     public Optional<Entity> getSelectedEntity() {
         return Optional.ofNullable(selectedEntity.get());
@@ -243,7 +370,15 @@ public final class GameWorld extends EntityWorld {
 
     /* QUERIES */
 
-    private GameWorldQuery query = new GameWorldQuery(entities);
+    /**
+     * @param type component type
+     * @return array of entities that have given component (do NOT modify)
+     */
+    public List<Entity> getEntitiesByComponent(Class<? extends Component> type) {
+        return entities.stream()
+                .filter(e -> e.hasComponent(type))
+                .collect(Collectors.toList());
+    }
 
     /**
      * Returns a list of entities which are filtered by
@@ -487,7 +622,7 @@ public final class GameWorld extends EntityWorld {
      */
     public Optional<Entity> getEntityByID(String name, int id) {
         for (Entity e : getEntitiesByComponent(IDComponent.class)) {
-            IDComponent idComponent = e.getComponentUnsafe(IDComponent.class);
+            IDComponent idComponent = e.getComponent(IDComponent.class);
             if (idComponent.getName().equals(name) && idComponent.getID() == id) {
                 return Optional.of(e);
             }

@@ -1,27 +1,7 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxgl.entity
@@ -91,7 +71,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      * @return list of entities in the range (do NOT modify)
      */
     fun getEntitiesInRange(selection: Rectangle2D): List<Entity> {
-        return entities.filter { it.getComponentUnsafe(BoundingBoxComponent::class.java)?.isWithin(selection) ?: false }
+        return entities.filter { it.getComponent(BoundingBoxComponent::class.java)?.isWithin(selection) ?: false }
     }
 
 
@@ -109,7 +89,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
     fun getCollidingEntities(entity: Entity): List<Entity> {
         val bbox = Entities.getBBox(entity)
 
-        return entities.filter { it.getComponentUnsafe(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
+        return entities.filter { it.getComponent(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
     }
 
     /**
@@ -122,7 +102,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      */
     fun getEntitiesByLayer(layer: RenderLayer): List<Entity> {
         return entities.filter {
-            val view = it.getComponentUnsafe(ViewComponent::class.java)
+            val view = it.getComponent(ViewComponent::class.java)
 
             if (view != null) {
                 return@filter view.renderLayer.index() == layer.index()
@@ -134,7 +114,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
 
     fun getEntitiesAt(position: Point2D): List<Entity> {
         return entities.filter {
-            val p = it.getComponentUnsafe(PositionComponent::class.java)?.value ?: return@filter false
+            val p = it.getComponent(PositionComponent::class.java)?.value ?: return@filter false
 
             p == position
         }

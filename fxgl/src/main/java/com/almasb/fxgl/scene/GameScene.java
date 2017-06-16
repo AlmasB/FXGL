@@ -1,27 +1,7 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxgl.scene;
@@ -66,7 +46,7 @@ import java.util.List;
  */
 @Singleton
 public final class GameScene extends FXGLScene
-        implements EntityWorldListener, ComponentListener, ControlListener {
+        implements EntityWorldListener, ModuleListener {
 
     private static final Logger log = FXGL.getLogger("FXGL.GameScene");
 
@@ -284,7 +264,7 @@ public final class GameScene extends FXGLScene
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
 
         for (Entity e : drawables) {
-            DrawableComponent drawable = e.getComponentUnsafe(DrawableComponent.class);
+            DrawableComponent drawable = e.getComponent(DrawableComponent.class);
 
             if (drawable != null) {
                 drawable.draw(particlesGC);
@@ -309,44 +289,42 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onEntityAdded(Entity entity) {
-        entity.getComponent(ViewComponent.class)
+        entity.getComponentOptional(ViewComponent.class)
                 .ifPresent(viewComponent -> {
-                    onComponentAdded(viewComponent);
+                    onAdded(viewComponent);
                 });
 
-        entity.getComponent(DrawableComponent.class)
+        entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.add(entity));
 
-        entity.addComponentListener(this);
-        entity.addControlListener(this);
+        entity.addModuleListener(this);
 
-        entity.getControl(ParticleControl.class)
+        entity.getControlOptional(ParticleControl.class)
                 .ifPresent(particles::add);
-        entity.getControl(PhysicsParticleControl.class)
+        entity.getControlOptional(PhysicsParticleControl.class)
                 .ifPresent(particles::add);
     }
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entity.getComponent(ViewComponent.class)
+        entity.getComponentOptional(ViewComponent.class)
                 .ifPresent(viewComponent -> {
-                    onComponentRemoved(viewComponent);
+                    onRemoved(viewComponent);
                 });
 
-        entity.getComponent(DrawableComponent.class)
-                .ifPresent(c -> drawables.removeValue(entity, true));
+        entity.getComponentOptional(DrawableComponent.class)
+                .ifPresent(c -> drawables.removeValueByIdentity(entity));
 
-        entity.removeComponentListener(this);
-        entity.removeControlListener(this);
+        entity.removeModuleListener(this);
 
-        entity.getControl(ParticleControl.class)
-                .ifPresent(p -> particles.removeValue(p, true));
-        entity.getControl(PhysicsParticleControl.class)
-                .ifPresent(p -> particles.removeValue(p, true));
+        entity.getControlOptional(ParticleControl.class)
+                .ifPresent(p -> particles.removeValueByIdentity(p));
+        entity.getControlOptional(PhysicsParticleControl.class)
+                .ifPresent(p -> particles.removeValueByIdentity(p));
     }
 
     @Override
-    public void onComponentAdded(Component component) {
+    public void onAdded(Component component) {
         if (component instanceof ViewComponent) {
             ViewComponent viewComponent = (ViewComponent) component;
 
@@ -361,7 +339,7 @@ public final class GameScene extends FXGLScene
     }
 
     @Override
-    public void onComponentRemoved(Component component) {
+    public void onRemoved(Component component) {
         if (component instanceof ViewComponent) {
             ViewComponent viewComponent = (ViewComponent) component;
 
@@ -371,7 +349,7 @@ public final class GameScene extends FXGLScene
     }
 
     @Override
-    public void onControlAdded(Control control) {
+    public void onAdded(Control control) {
         if (control instanceof PhysicsParticleControl) {
             PhysicsParticleControl particleControl = (PhysicsParticleControl) control;
             particles.add(particleControl);
@@ -379,9 +357,9 @@ public final class GameScene extends FXGLScene
     }
 
     @Override
-    public void onControlRemoved(Control control) {
+    public void onRemoved(Control control) {
         if (control instanceof PhysicsParticleControl) {
-            particles.removeValue((PhysicsParticleControl) control, true);
+            particles.removeValueByIdentity((PhysicsParticleControl) control);
         }
     }
 }

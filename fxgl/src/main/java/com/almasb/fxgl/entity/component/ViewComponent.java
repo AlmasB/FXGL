@@ -1,35 +1,14 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.AbstractComponent;
 import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.ComponentListener;
+import com.almasb.fxgl.ecs.ModuleListener;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
@@ -54,7 +33,7 @@ import javafx.scene.shape.Shape;
  */
 @Required(PositionComponent.class)
 @Required(RotationComponent.class)
-public class ViewComponent extends AbstractComponent {
+public class ViewComponent extends Component {
 
     private static Color showBBoxColor = Color.RED;
 
@@ -84,16 +63,16 @@ public class ViewComponent extends AbstractComponent {
         if (getEntity().hasComponent(BoundingBoxComponent.class)) {
             addDebugBBox();
         } else {
-            getEntity().addComponentListener(new ComponentListener() {
+            getEntity().addModuleListener(new ModuleListener() {
                 @Override
-                public void onComponentAdded(Component component) {
+                public void onAdded(Component component) {
                     if (component instanceof BoundingBoxComponent) {
                         addDebugBBox();
                     }
                 }
 
                 @Override
-                public void onComponentRemoved(Component component) {
+                public void onRemoved(Component component) {
                     if (component instanceof BoundingBoxComponent) {
                         removeDebugBBox();
                     }
@@ -239,13 +218,13 @@ public class ViewComponent extends AbstractComponent {
 
     @Override
     public void onRemoved(Entity entity) {
-        // no-op
+        view.dispose();
     }
 
     private void bindView() {
-        getView().translateXProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).xProperty());
-        getView().translateYProperty().bind(getEntity().getComponentUnsafe(PositionComponent.class).yProperty());
-        getView().rotateProperty().bind(getEntity().getComponentUnsafe(RotationComponent.class).valueProperty());
+        getView().translateXProperty().bind(getEntity().getComponent(PositionComponent.class).xProperty());
+        getView().translateYProperty().bind(getEntity().getComponent(PositionComponent.class).yProperty());
+        getView().rotateProperty().bind(getEntity().getComponent(RotationComponent.class).valueProperty());
     }
 
     private void generateBBox() {

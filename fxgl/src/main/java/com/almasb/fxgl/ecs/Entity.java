@@ -1,35 +1,13 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
-import com.almasb.fxgl.core.logging.FXGLLogger;
-import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -52,456 +30,52 @@ import java.util.Optional;
  */
 public class Entity {
 
-    private static final Logger log = FXGLLogger.get(Entity.class);
+    private ObjectMap<String, Object> properties = new ObjectMap<>();
 
-    private final ObjectMap<String, Object> properties = new ObjectMap<>();
+    private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
+    private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
 
-    ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
-    ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+    private List<ModuleListener> moduleListeners = new ArrayList<>();
+
+    private GameWorld world;
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
-    /**
-     * Set a property specified by a key-value pair.
-     * Prefer {@link Component} instead.
-     *
-     * @param key property key
-     * @param value property value
-     */
-    public final void setProperty(String key, Object value) {
-        checkValid();
-
-        properties.put(key, value);
-    }
-
-    /**
-     * Retrieve a property value by a given key.
-     * Prefer {@link Component} instead.
-     *
-     * @param key property key
-     * @param <T> value type
-     * @return property value
-     * @throws IllegalArgumentException if key doesn't exist
-     */
-    @SuppressWarnings("unchecked")
-    public final <T> T getProperty(String key) {
-        checkValid();
-
-        Object value = properties.get(key, null);
-        if (value == null)
-            throw new IllegalArgumentException("No property with key: " + key);
-
-        return (T) value;
-    }
-
-    /* CONTROL BEGIN */
-
-    /**
-     * @param type control type
-     * @return true iff entity has control of given type
-     */
-    public final boolean hasControl(Class<? extends Control> type) {
-        checkValid();
-
-        return controls.containsKey(type);
-    }
-
-    /**
-     * Returns control of given type or {@link Optional#empty()} if
-     * no such type is registered on this entity.
-     *
-     * @param type control type
-     * @return control
-     */
-    public final <T extends Control> Optional<T> getControl(Class<T> type) {
-        checkValid();
-
-        return Optional.ofNullable(getControlUnsafe(type));
-    }
-
-    /**
-     * Returns control of given type or null if no such type is registered.
-     *
-     * @param type control type
-     * @return control
-     */
-    public final <T extends Control> T getControlUnsafe(Class<T> type) {
-        checkValid();
-
-        return type.cast(controls.get(type));
-    }
-
-    /**
-     * Warning: object allocation.
-     * Cannot be called during update.
-     *
-     * @return array of controls
-     */
-    public final Array<Control> getControls() {
-        checkValid();
-
-        return controls.values().toArray();
-    }
-
-    /**
-     * Adds behavior to entity.
-     * Only 1 control per type is allowed.
-     * Anonymous controls are not allowed.
-     * Cannot add controls within update() of another control.
-     *
-     * @param control the behavior
-     * @throws IllegalArgumentException if control with same type already registered or anonymous
-     * @throws IllegalStateException if components required by the given control are missing
-     */
-    public final void addControl(Control control) {
-        checkValid();
-
-        Class<? extends Control> type = control.getClass();
-
-        if (type.getCanonicalName() == null) {
-            log.fatal("Adding anonymous control: " + type.getName());
-            throw new IllegalArgumentException("Anonymous controls are not allowed! - " + type.getName());
-        }
-
-        if (hasControl(type)) {
-            log.fatal("Entity already has a control with type: " + type.getCanonicalName());
-            throw new IllegalArgumentException("Entity already has a control with type: " + type.getCanonicalName());
-        }
-
-        checkRequirementsMet(control.getClass());
-
-        controls.put(control.getClass(), control);
-
-        if (control instanceof AbstractControl) {
-            ((AbstractControl) control).setEntity(this);
-        }
-
-        injectFields(control);
-
-        control.onAdded(this);
-        notifyControlAdded(control);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void injectFields(Control control) {
-        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
-            Component comp = getComponentUnsafe((Class<? extends Component>) field.getType());
-            if (comp != null) {
-                ReflectionUtils.inject(field, control, comp);
-            } else {
-                log.warning("Injection failed, entity has no component: " + field.getType());
-            }
-        });
-
-        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
-            Control ctrl = getControlUnsafe((Class<? extends Control>) field.getType());
-            if (ctrl != null) {
-                ReflectionUtils.inject(field, control, ctrl);
-            } else {
-                log.warning("Injection failed, entity has no control: " + field.getType());
-            }
-        });
-    }
-
-    /**
-     * @param type the control type to remove
-     */
-    public final void removeControl(Class<? extends Control> type) {
-        checkValid();
-
-        Control control = getControlUnsafe(type);
-
-        if (control == null) {
-            log.warning("Cannot remove control " + type.getSimpleName() + ". Entity does not have one");
-        } else {
-            controls.remove(control.getClass());
-            removeControlImpl(control);
-        }
-    }
-
-    /**
-     * Remove all controls from entity.
-     */
-    public final void removeAllControls() {
-        checkValid();
-
-        for (Control control : controls.values()) {
-            removeControlImpl(control);
-        }
-
-        controls.clear();
-    }
-
-    private void removeControlImpl(Control control) {
-        notifyControlRemoved(control);
-        control.onRemoved(this);
-
-        if (control instanceof AbstractControl) {
-            ((AbstractControl) control).setEntity(null);
-        }
-    }
-
-    private List<ControlListener> controlListeners = new ArrayList<>();
-
-    /**
-     * @param listener the listener to add
-     */
-    public void addControlListener(ControlListener listener) {
-        checkValid();
-
-        controlListeners.add(listener);
-    }
-
-    /**
-     * @param listener the listener to remove
-     */
-    public void removeControlListener(ControlListener listener) {
-        checkValid();
-
-        controlListeners.remove(listener);
-    }
-
-    private void notifyControlAdded(Control control) {
-        for (int i = 0; i < controlListeners.size(); i++) {
-            controlListeners.get(i).onControlAdded(control);
-        }
-    }
-
-    private void notifyControlRemoved(Control control) {
-        for (int i = 0; i < controlListeners.size(); i++) {
-            controlListeners.get(i).onControlRemoved(control);
-        }
-    }
-
-    /* CONTROL END */
-
-    /* COMPONENT BEGIN */
-
-    /**
-     * @param type component type
-     * @return true iff entity has a component of given type
-     */
-    public final boolean hasComponent(Class<? extends Component> type) {
-        checkValid();
-
-        return components.containsKey(type);
-    }
-
-    /**
-     * Returns component of given type, or {@link Optional#empty()}
-     * if type not registered.
-     *
-     * @param type component type
-     * @return component
-     */
-    public final <T extends Component> Optional<T> getComponent(Class<T> type) {
-        checkValid();
-
-        return Optional.ofNullable(getComponentUnsafe(type));
-    }
-
-    /**
-     * Returns component of given type, or null if type not registered.
-     *
-     * @param type component type
-     * @return component
-     */
-    public final <T extends Component> T getComponentUnsafe(Class<T> type) {
-        checkValid();
-
-        return type.cast(components.get(type));
-    }
-
-    /**
-     * Warning: object allocation.
-     * Cannot be called during update.
-     *
-     * @return array of components
-     */
-    public final Array<Component> getComponents() {
-        checkValid();
-
-        return components.values().toArray();
-    }
-
-    /**
-     * Adds given component to this entity.
-     * Only 1 component with the same type can be registered.
-     * Anonymous components are NOT allowed.
-     *
-     * @param component the component
-     * @throws IllegalArgumentException if a component with same type already registered or anonymous
-     * @throws IllegalStateException if components required by the given component are missing
-     */
-    public final void addComponent(Component component) {
-        checkValid();
-
-        Class<? extends Component> type = component.getClass();
-        if (type.getCanonicalName() == null) {
-            throw new IllegalArgumentException("Anonymous components are not allowed! - " + type.getName());
-        }
-
-        if (hasComponent(type)) {
-            throw new IllegalArgumentException("Entity already has a component with type: " + type.getCanonicalName());
-        }
-
-        if (component instanceof AbstractComponent) {
-            AbstractComponent c = (AbstractComponent) component;
-            c.setEntity(this);
-        }
-
-        checkRequirementsMet(component.getClass());
-
-        components.put(component.getClass(), component);
-        component.onAdded(this);
-
-        if (isActive())
-            world.onComponentAdded(component, this);
-
-        notifyComponentAdded(component);
-    }
-
-    /**
-     * Remove a component with given type from this entity.
-     *
-     * @param type type of the component to remove
-     * @throws IllegalArgumentException if the component is required by other components / controls
-     */
-    public final void removeComponent(Class<? extends Component> type) {
-        checkValid();
-
-        Component component = getComponentUnsafe(type);
-
-        if (component == null) {
-            log.warning("Attempted to remove component but entity doesn't have a component with type: "+ type.getSimpleName());
-        } else {
-
-            // if not cleaning, then entity is alive, whether active or not
-            // hence we cannot allow removal if component is required by other components / controls
-            if (!cleaning) {
-                checkNotRequiredByAny(type);
-            }
-
-            components.remove(component.getClass());
-
-            if (isActive())
-                world.onComponentRemoved(component, this);
-
-            removeComponentImpl(component);
-        }
-    }
-
-    /**
-     * Removes all components from this entity.
-     */
-    public final void removeAllComponents() {
-        checkValid();
-
-        for (Component component : components.values()) {
-            removeComponentImpl(component);
-        }
-
-        components.clear();
-    }
-
-    private void removeComponentImpl(Component component) {
-        notifyComponentRemoved(component);
-        component.onRemoved(this);
-
-        if (component instanceof AbstractComponent) {
-            AbstractComponent c = (AbstractComponent) component;
-            c.setEntity(null);
-        }
-    }
-
-    private List<ComponentListener> componentListeners = new ArrayList<>();
-
-    /**
-     * Register a component listener on this entity.
-     *
-     * @param listener the listener
-     */
-    public void addComponentListener(ComponentListener listener) {
-        componentListeners.add(listener);
-    }
-
-    /**
-     * Removed a component listener.
-     *
-     * @param listener the listener
-     */
-    public void removeComponentListener(ComponentListener listener) {
-        componentListeners.remove(listener);
-    }
-
-    private void notifyComponentAdded(Component component) {
-        for (int i = 0; i < componentListeners.size(); i++) {
-            componentListeners.get(i).onComponentAdded(component);
-        }
-    }
-
-    private void notifyComponentRemoved(Component component) {
-        for (int i = 0; i < componentListeners.size(); i++) {
-            componentListeners.get(i).onComponentRemoved(component);
-        }
-    }
-
-    /* COMPONENT END */
-
-    /**
-     * Checks if requirements for given type are met.
-     *
-     * @param type the type whose requirements to check
-     * @throws IllegalStateException if the type requirements are not met
-     */
-    private void checkRequirementsMet(Class<?> type) {
-        Required[] required = type.getAnnotationsByType(Required.class);
-
-        for (Required r : required) {
-            if (!hasComponent(r.value())) {
-                throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
-            }
-        }
-    }
-
-    /**
-     * Checks if given type is not required by any other type.
-     *
-     * @param type the type to check
-     * @throws IllegalArgumentException if the type is required by any other type
-     */
-    private void checkNotRequiredByAny(Class<? extends Component> type) {
-        // check for components
-        for (Class<?> t : components.keys()) {
-
-            for (Required required : t.getAnnotationsByType(Required.class)) {
-                if (required.value().equals(type)) {
-                    throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + t.getSimpleName());
-                }
-            }
-        }
-
-        // check for controls
-        for (Class<?> t : controls.keys()) {
-
-            for (Required required : t.getAnnotationsByType(Required.class)) {
-                if (required.value().equals(type)) {
-                    throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + t.getSimpleName());
-                }
-            }
-        }
-    }
-
+    private boolean updating = false;
+    private boolean delayedRemove = false;
+    private boolean cleaning = false;
     private boolean controlsEnabled = true;
 
+    private Runnable onActive = null;
+    private Runnable onNotActive = null;
+
     /**
-     * Setting this to false will disable each control's update until this has
-     * been set back to true.
-     *
-     * @param b controls enabled flag
+     * @return the world this entity is attached to
      */
-    public final void setControlsEnabled(boolean b) {
-        controlsEnabled = b;
+    public GameWorld getWorld() {
+        return world;
+    }
+
+    /**
+     * Initializes this entity.
+     *
+     * @param world the world to which entity is being attached
+     */
+    void init(GameWorld world) {
+        this.world = world;
+        if (onActive != null)
+            onActive.run();
+        active.set(true);
+    }
+
+    public final void removeFromWorld() {
+        checkValid();
+
+        if (updating) {
+            delayedRemove = true;
+        } else {
+            world.removeEntity(this);
+        }
     }
 
     /**
@@ -521,8 +95,6 @@ public class Entity {
         return active.get();
     }
 
-    private Runnable onActive = null;
-
     /**
      * Set a callback for when entity is added to world.
      * The callback will be executed immediately if entity is already in the world.
@@ -537,8 +109,6 @@ public class Entity {
 
         onActive = action;
     }
-
-    private Runnable onNotActive = null;
 
     /**
      * Set a callback for when entity is removed from world.
@@ -555,29 +125,15 @@ public class Entity {
         onNotActive = action;
     }
 
-    private EntityWorld world;
-
     /**
-     * @return the world that entity is attached to
-     */
-    public EntityWorld getWorld() {
-        return world;
-    }
-
-    /**
-     * Initializes this entity.
+     * Setting this to false will disable each control's update until this has
+     * been set back to true.
      *
-     * @param world the world to which entity is being attached
+     * @param b controls enabled flag
      */
-    void init(EntityWorld world) {
-        this.world = world;
-        if (onActive != null)
-            onActive.run();
-        active.set(true);
+    public final void setControlsEnabled(boolean b) {
+        controlsEnabled = b;
     }
-
-    private boolean updating = false;
-    private boolean delayedRemove = false;
 
     /**
      * Update tick for this entity.
@@ -601,8 +157,6 @@ public class Entity {
             removeFromWorld();
     }
 
-    private boolean cleaning = false;
-
     /**
      * Cleans entity.
      * Removes all controls and components.
@@ -617,10 +171,9 @@ public class Entity {
         removeAllControls();
         removeAllComponents();
 
-        controlListeners.clear();
-        componentListeners.clear();
-
         properties.clear();
+
+        moduleListeners.clear();
 
         controlsEnabled = true;
         world = null;
@@ -628,21 +181,326 @@ public class Entity {
         onNotActive = null;
     }
 
+    /**
+     * @param key property key
+     * @param value property value
+     */
+    public final void setProperty(String key, Object value) {
+        checkValid();
+
+        properties.put(key, value);
+    }
+
+    /**
+     * @param key property key
+     * @return property value
+     * @throws IllegalArgumentException if key doesn't exist
+     */
+    @SuppressWarnings("unchecked")
+    public final <T> T getProperty(String key) {
+        checkValid();
+
+        Object value = properties.get(key, null);
+        if (value == null)
+            throw new IllegalArgumentException("No property with key: " + key);
+
+        return (T) value;
+    }
+
+    /**
+     * @param type control type
+     * @return true iff entity has control of given type
+     */
+    public final boolean hasControl(Class<? extends Control> type) {
+        return controls.containsKey(type);
+    }
+
+    /**
+     * Returns control of given type or {@link Optional#empty()} if
+     * no such type is registered on this entity.
+     *
+     * @param type control type
+     * @return control
+     */
+    public final <T extends Control> Optional<T> getControlOptional(Class<T> type) {
+        return Optional.ofNullable(getControl(type));
+    }
+
+    /**
+     * Returns control of given type or null if no such type is registered.
+     *
+     * @param type control type
+     * @return control
+     */
+    public final <T extends Control> T getControl(Class<T> type) {
+        return type.cast(controls.get(type));
+    }
+
+    /**
+     * Warning: object allocation.
+     * Cannot be called during update.
+     *
+     * @return array of controls
+     */
+    public final Array<Control> getControls() {
+        return controls.values().toArray();
+    }
+
+    /**
+     * Adds behavior to entity.
+     * Cannot add controls within update() of another control.
+     *
+     * @param control the behavior
+     * @throws IllegalArgumentException if control with same type already registered or anonymous
+     * @throws IllegalStateException if components required by the given control are missing
+     */
+    public final void addControl(Control control) {
+        addModule(control);
+
+        controls.put(control.getClass(), control);
+    }
+
+    /**
+     * @param type the control type to remove
+     * @return true if removed, false if not found
+     */
+    public final boolean removeControl(Class<? extends Control> type) {
+        if (!hasControl(type))
+            return false;
+
+        removeModule(getControl(type));
+
+        controls.remove(type);
+
+        return true;
+    }
+
+    public final void removeAllControls() {
+        for (Control control : controls.values()) {
+            removeModule(control);
+        }
+
+        controls.clear();
+    }
+
+    /**
+     * @param type component type
+     * @return true iff entity has a component of given type
+     */
+    public final boolean hasComponent(Class<? extends Component> type) {
+        return components.containsKey(type);
+    }
+
+    /**
+     * Returns component of given type, or {@link Optional#empty()}
+     * if type not registered.
+     *
+     * @param type component type
+     * @return component
+     */
+    public final <T extends Component> Optional<T> getComponentOptional(Class<T> type) {
+        return Optional.ofNullable(getComponent(type));
+    }
+
+    /**
+     * Returns component of given type, or null if type not registered.
+     *
+     * @param type component type
+     * @return component
+     */
+    public final <T extends Component> T getComponent(Class<T> type) {
+        return type.cast(components.get(type));
+    }
+
+    /**
+     * Warning: object allocation.
+     * Cannot be called during update.
+     *
+     * @return array of components
+     */
+    public final Array<Component> getComponents() {
+        return components.values().toArray();
+    }
+
+    /**
+     * Adds given component to this entity.
+     *
+     * @param component the component
+     * @throws IllegalArgumentException if a component with same type already registered or anonymous
+     * @throws IllegalStateException if components required by the given component are missing
+     */
+    public final void addComponent(Component component) {
+        addModule(component);
+
+        components.put(component.getClass(), component);
+    }
+
+    /**
+     * Remove a component with given type from this entity.
+     *
+     * @param type type of the component to remove
+     * @throws IllegalArgumentException if the component is required by other components / controls
+     * @return true if removed, false if not found
+     */
+    public final boolean removeComponent(Class<? extends Component> type) {
+        if (!hasComponent(type))
+            return false;
+
+        // if not cleaning, then entity is alive, whether active or not
+        // hence we cannot allow removal if component is required by other components / controls
+        if (!cleaning) {
+            checkNotRequiredByAny(type);
+        }
+
+        removeModule(getComponent(type));
+
+        components.remove(type);
+
+        return true;
+    }
+
+    public final void removeAllComponents() {
+        for (Component comp : components.values()) {
+            if (!cleaning) {
+                checkNotRequiredByAny(comp.getClass());
+            }
+
+            removeModule(comp);
+        }
+
+        components.clear();
+    }
+
+    public void addModuleListener(ModuleListener listener) {
+        moduleListeners.add(listener);
+    }
+
+    public void removeModuleListener(ModuleListener listener) {
+        moduleListeners.remove(listener);
+    }
+
+    private void addModule(Module module) {
+        checkValid();
+
+        checkRequirementsMet(module.getClass());
+
+        module.setEntity(this);
+
+        if (module instanceof Control)
+            injectFields((Control) module);
+
+        module.onAdded(this);
+        notifyModuleAdded(module);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void injectFields(Control control) {
+        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
+            Component comp = getComponent((Class<? extends Component>) field.getType());
+            if (comp != null) {
+                ReflectionUtils.inject(field, control, comp);
+            }
+        });
+
+        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
+            Control ctrl = getControl((Class<? extends Control>) field.getType());
+            if (ctrl != null) {
+                ReflectionUtils.inject(field, control, ctrl);
+            }
+        });
+    }
+
+    private void removeModule(Module module) {
+        checkValid();
+
+        notifyModuleRemoved(module);
+
+        module.onRemoved(this);
+        module.setEntity(null);
+    }
+
+    private <T extends Module> void notifyModuleAdded(T module) {
+        if (module instanceof Component) {
+            Component c = (Component) module;
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onAdded(c);
+            }
+        } else {
+            Control c = (Control) module;
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onAdded(c);
+            }
+        }
+    }
+
+    private <T extends Module> void notifyModuleRemoved(T module) {
+        if (module instanceof Component) {
+            Component c = (Component) module;
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onRemoved(c);
+            }
+        } else {
+            Control c = (Control) module;
+            for (int i = 0; i < moduleListeners.size(); i++) {
+                moduleListeners.get(i).onRemoved(c);
+            }
+        }
+    }
+
     private void checkValid() {
         if (cleaning && world == null)
             throw new IllegalStateException("Attempted access a cleaned entity!");
     }
 
-    /**
-     * Remove entity from world.
-     */
-    public final void removeFromWorld() {
-        checkValid();
 
-        if (updating) {
-            delayedRemove = true;
-        } else {
-            world.removeEntity(this);
+    private void checkNotAnonymous(Class<?> type) {
+        if (type.isAnonymousClass()) {
+            throw new IllegalArgumentException("Anonymous types are not allowed: " + type.getName());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void checkNotDuplicate(Class<?> type) {
+        if ((Component.class.isAssignableFrom(type) && hasComponent((Class<? extends Component>) type))
+                || (Control.class.isAssignableFrom(type) && hasControl((Class<? extends Control>) type))) {
+            throw new IllegalArgumentException("Entity already has type: " + type.getCanonicalName());
+        }
+    }
+
+    private void checkRequirementsMet(Class<?> type) {
+        checkNotAnonymous(type);
+
+        checkNotDuplicate(type);
+
+        Required[] required = type.getAnnotationsByType(Required.class);
+
+        for (Required r : required) {
+            if (!hasComponent(r.value())) {
+                throw new IllegalStateException("Required component: [" + r.value().getSimpleName() + "] for: " + type.getSimpleName() + " is missing");
+            }
+        }
+    }
+
+    private void checkNotRequiredByAny(Class<? extends Component> type) {
+        // check components
+        for (Class<?> t : components.keys()) {
+            checkNotRequiredBy(t, type);
+        }
+
+        // check controls
+        for (Class<?> t : controls.keys()) {
+            checkNotRequiredBy(t, type);
+        }
+    }
+
+    /**
+     * Fails with IAE if [requiringType] has a dependency on [type].
+     */
+    private void checkNotRequiredBy(Class<?> requiringType, Class<? extends Component> type) {
+        for (Required required : requiringType.getAnnotationsByType(Required.class)) {
+            if (required.value().equals(type)) {
+                throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + requiringType.getSimpleName());
+            }
         }
     }
 
@@ -689,7 +547,7 @@ public class Entity {
     @Override
     public String toString() {
         return "Entity("
-                + String.join("\n", "components=" + components.values(), "controls=" + controls.values())
+                + String.join("\n", "components=" + components, "controls=" + controls)
                 + ")";
     }
 }

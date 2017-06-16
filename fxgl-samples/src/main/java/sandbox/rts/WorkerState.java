@@ -1,27 +1,7 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package sandbox.rts;
@@ -44,7 +24,7 @@ public enum WorkerState implements State<GameEntity> {
                     .getGameWorld()
                     .getClosestEntity(entity, e -> {
                         return Entities.getType(e).isType(RTSSampleType.GOLD_MINE) &&
-                                !e.getComponentUnsafe(GoldMineComponent.class).getValue().isFull();
+                                !e.getComponent(GoldMineComponent.class).getValue().isFull();
                     })
                     .ifPresent(goldMine -> {
                         entity.setProperty("target", goldMine);
@@ -65,7 +45,7 @@ public enum WorkerState implements State<GameEntity> {
             );
 
             if (entity.isColliding(target)) {
-                if (target.isType(RTSSampleType.GOLD_MINE) && entity.getComponentUnsafe(BackpackComponent.class).getValue().getGold() < 150) {
+                if (target.isType(RTSSampleType.GOLD_MINE) && entity.getComponent(BackpackComponent.class).getValue().getGold() < 150) {
                     changeState(entity, GATHER_GOLD);
                 }
 
@@ -80,7 +60,7 @@ public enum WorkerState implements State<GameEntity> {
         @Override
         public void enter(GameEntity entity) {
             GameEntity target = entity.getProperty("target");
-            GoldMine mine = target.getComponentUnsafe(GoldMineComponent.class).getValue();
+            GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
 
             if (mine.isFull()) {
                 System.out.println("Mine is Full");
@@ -93,14 +73,14 @@ public enum WorkerState implements State<GameEntity> {
 
         @Override
         public void update(GameEntity entity) {
-            Backpack backpack = entity.getComponentUnsafe(BackpackComponent.class).getValue();
+            Backpack backpack = entity.getComponent(BackpackComponent.class).getValue();
 
             backpack.addGold(1);
 
             if (backpack.getGold() == 150) {
                 entity.getView().setVisible(true);
                 GameEntity target = entity.getProperty("target");
-                GoldMine mine = target.getComponentUnsafe(GoldMineComponent.class).getValue();
+                GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
                 mine.onEndGathering();
 
                 entity.setProperty("target", FXGL.getApp().getGameWorld().getEntitiesByType(RTSSampleType.TOWN_HALL).get(0));
@@ -112,7 +92,7 @@ public enum WorkerState implements State<GameEntity> {
     DEPOSIT_GOLD() {
         @Override
         public void update(GameEntity entity) {
-            Backpack backpack = entity.getComponentUnsafe(BackpackComponent.class).getValue();
+            Backpack backpack = entity.getComponent(BackpackComponent.class).getValue();
 
             FXGL.getApp().getGameState().increment("gold", backpack.getGold());
 
@@ -123,7 +103,7 @@ public enum WorkerState implements State<GameEntity> {
     };
 
     void changeState(GameEntity entity, WorkerState state) {
-        entity.getControlUnsafe(FSMControl.class).changeState(state);
+        entity.getControl(FSMControl.class).changeState(state);
     }
 
     @Override

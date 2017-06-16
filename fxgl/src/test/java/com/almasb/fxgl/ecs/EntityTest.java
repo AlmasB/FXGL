@@ -1,27 +1,7 @@
 /*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015-2017 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
  */
 
 package com.almasb.fxgl.ecs;
@@ -32,13 +12,12 @@ import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.ecs.serialization.SerializableComponent;
 import com.almasb.fxgl.ecs.serialization.SerializableControl;
 import com.almasb.fxgl.io.serialization.Bundle;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -58,20 +37,24 @@ public class EntityTest {
         TestControl control = new TestControl();
         entity.addControl(control);
 
-        Optional<TestControl> maybe = entity.getControl(TestControl.class);
+        Optional<TestControl> maybe = entity.getControlOptional(TestControl.class);
         assertTrue(maybe.isPresent());
         assertEquals(control, maybe.get());
 
-        entity.removeControl(TestControl.class);
-        assertFalse(entity.getControl(TestControl.class).isPresent());
+        boolean result = entity.removeControl(TestControl.class);
+        assertFalse(entity.getControlOptional(TestControl.class).isPresent());
+        assertTrue(result);
 
         entity.addControl(control);
-        maybe = entity.getControl(TestControl.class);
+        maybe = entity.getControlOptional(TestControl.class);
         assertTrue(maybe.isPresent());
         assertEquals(control, maybe.get());
 
         entity.removeAllControls();
-        assertFalse(entity.getControl(TestControl.class).isPresent());
+        assertFalse(entity.getControlOptional(TestControl.class).isPresent());
+
+        result = entity.removeControl(TestControl.class);
+        assertFalse(result);
     }
 
     @Test
@@ -79,8 +62,21 @@ public class EntityTest {
         TestControl control = new TestControl();
         entity.addControl(control);
 
-        assertEquals(control, entity.getControl(TestControl.class).get());
-        assertEquals(control, entity.getControlUnsafe(TestControl.class));
+        assertEquals(control, entity.getControlOptional(TestControl.class).get());
+        assertEquals(control, entity.getControl(TestControl.class));
+    }
+
+    @Test
+    public void testGetControls() {
+        TestControl control = new TestControl();
+        ControlAddingControl control2 = new ControlAddingControl();
+        ControlRemovingControl control3 = new ControlRemovingControl();
+
+        entity.addControl(control);
+        entity.addControl(control2);
+        entity.addControl(control3);
+
+        assertThat(entity.getControls(), hasItems(control, control2, control3));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -94,21 +90,6 @@ public class EntityTest {
 
             @Override
             public void onRemoved(Entity entity) {}
-
-            @Override
-            public boolean isPaused() {
-                return false;
-            }
-
-            @Override
-            public void pause() {
-
-            }
-
-            @Override
-            public void resume() {
-
-            }
         });
     }
 
@@ -123,20 +104,24 @@ public class EntityTest {
         HPComponent hp = new HPComponent(100);
         entity.addComponent(hp);
 
-        Optional<HPComponent> maybe = entity.getComponent(HPComponent.class);
+        Optional<HPComponent> maybe = entity.getComponentOptional(HPComponent.class);
         assertTrue(maybe.isPresent());
         assertEquals(hp, maybe.get());
 
-        entity.removeComponent(HPComponent.class);
-        assertFalse(entity.getComponent(HPComponent.class).isPresent());
+        boolean result = entity.removeComponent(HPComponent.class);
+        assertTrue(result);
+        assertFalse(entity.getComponentOptional(HPComponent.class).isPresent());
 
         entity.addComponent(hp);
-        maybe = entity.getComponent(HPComponent.class);
+        maybe = entity.getComponentOptional(HPComponent.class);
         assertTrue(maybe.isPresent());
         assertEquals(hp, maybe.get());
 
         entity.removeAllComponents();
-        assertFalse(entity.getComponent(HPComponent.class).isPresent());
+        assertFalse(entity.getComponentOptional(HPComponent.class).isPresent());
+
+        result = entity.removeComponent(HPComponent.class);
+        assertFalse(result);
     }
 
     @Test
@@ -144,8 +129,8 @@ public class EntityTest {
         TestComponent component = new TestComponent();
         entity.addComponent(component);
 
-        assertEquals(component, entity.getComponent(TestComponent.class).get());
-        assertEquals(component, entity.getComponentUnsafe(TestComponent.class));
+        assertEquals(component, entity.getComponentOptional(TestComponent.class).get());
+        assertEquals(component, entity.getComponent(TestComponent.class));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -275,58 +260,71 @@ public class EntityTest {
     }
 
     @Test
-    public void testAddComponentListener() {
+    public void testComponentListener() {
         HPComponent hp = new HPComponent(20);
 
-        entity.addComponentListener(new ComponentListener() {
+        ModuleListener listener = new ModuleListener() {
             @Override
-            public void onComponentAdded(Component component) {
+            public void onAdded(Component component) {
                 assertEquals(HPComponent.class, component.getClass());
 
                 ((HPComponent)component).setValue(10);
             }
 
             @Override
-            public void onComponentRemoved(Component component) {
+            public void onRemoved(Component component) {
                 assertEquals(HPComponent.class, component.getClass());
 
                 ((HPComponent)component).setValue(0);
             }
-        });
+        };
+
+        entity.addModuleListener(listener);
 
         entity.addComponent(hp);
-        Assert.assertEquals(10, hp.getValue(), 0);
+        assertThat(hp.getValue(), is(10.0));
 
         entity.removeComponent(HPComponent.class);
-        Assert.assertEquals(0, hp.getValue(), 0);
+        assertThat(hp.getValue(), is(0.0));
+
+        entity.removeModuleListener(listener);
+
+        entity.addModuleListener(listener);
+        assertThat(hp.getValue(), is(0.0));
     }
 
     @Test
-    public void testAddControlListener() {
+    public void testControlListener() {
         HPControl control = new HPControl();
 
-        entity.addControlListener(new ControlListener() {
+        ModuleListener listener = new ModuleListener() {
             @Override
-            public void onControlAdded(Control control) {
+            public void onAdded(Control control) {
                 assertEquals(HPControl.class, control.getClass());
 
                 ((HPControl)control).value = 10;
             }
 
             @Override
-            public void onControlRemoved(Control control) {
+            public void onRemoved(Control control) {
                 assertEquals(HPControl.class, control.getClass());
 
                 ((HPControl)control).value = 20;
             }
-        });
+        };
 
+        entity.addModuleListener(listener);
         entity.addComponent(new HPComponent(33));
 
         entity.addControl(control);
         assertEquals(10, control.value, 0);
 
         entity.removeControl(HPControl.class);
+        assertEquals(20, control.value, 0);
+
+        entity.removeModuleListener(listener);
+
+        entity.addControl(control);
         assertEquals(20, control.value, 0);
     }
 
@@ -346,9 +344,9 @@ public class EntityTest {
 
         entity2.load(bundle);
 
-        assertThat(entity2.getControlUnsafe(CustomDataControl.class).data, is("SerializableControl"));
-        assertThat(entity2.getComponentUnsafe(CustomDataComponent.class).data, is("SerializationData"));
-        assertThat(entity2.getComponentUnsafe(GravityComponent.class).getValue(), is(true));
+        assertThat(entity2.getControl(CustomDataControl.class).data, is("SerializableControl"));
+        assertThat(entity2.getComponent(CustomDataComponent.class).data, is("SerializationData"));
+        assertThat(entity2.getComponent(GravityComponent.class).getValue(), is(true));
     }
 
     @Test
@@ -377,18 +375,29 @@ public class EntityTest {
     public void testActiveCallbacks() {
         HPControl hp = new HPControl();
 
+        assertFalse(entity.activeProperty().get());
+
         entity.setOnActive(() -> hp.value = 30.0);
         assertThat(hp.value, is(0.0));
 
-        EntityWorld world = new EntityWorld();
+        GameWorld world = new GameWorld();
         world.addEntity(entity);
         assertThat(hp.value, is(30.0));
+        assertTrue(entity.activeProperty().get());
 
         entity.setOnNotActive(() -> hp.value = -50.0);
         assertThat(hp.value, is(30.0));
 
         world.removeEntity(entity);
         assertThat(hp.value, is(-50.0));
+        assertFalse(entity.activeProperty().get());
+
+        entity.setOnNotActive(() -> hp.value = -33.0);
+        assertThat(hp.value, is(-33.0));
+
+        world.addEntity(entity);
+        entity.setOnActive(() -> hp.value = 99.0);
+        assertThat(hp.value, is(99.0));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -400,7 +409,7 @@ public class EntityTest {
     public void testIntegrity() {
         int count = 0;
 
-        EntityWorld world = new EntityWorld();
+        GameWorld world = new GameWorld();
 
         world.addEntity(entity);
         world.removeEntity(entity);
@@ -422,45 +431,100 @@ public class EntityTest {
         assertThat(count, is(2));
     }
 
-    private class TestControl extends AbstractControl {
+    @Test
+    public void testRemoveFromWorld() {
+        GameWorld world = new GameWorld();
+
+        world.addEntity(entity);
+        assertThat(world.getEntities(), hasItems(entity));
+
+        entity.removeFromWorld();
+        assertThat(world.getEntities(), not(hasItems(entity)));
+
+        Entity ee = new Entity();
+        ee.addControl(new EntityRemovingControl());
+
+        world.addEntity(ee);
+        world.onUpdate(0);
+
+        assertThat(world.getEntities(), not(hasItems(ee)));
+    }
+
+    @Test
+    public void testCopy() {
+        entity.addComponent(new HPComponent(33));
+
+        Entity e2 = entity.copy();
+
+        assertThat(e2.hasComponent(HPComponent.class), is(true));
+        assertThat(e2.getComponent(HPComponent.class).getValue(), is(33.0));
+    }
+
+    @Test
+    public void testToString() {
+        HPComponent component = new HPComponent(33);
+        HPControl control = new HPControl();
+
+        entity.addComponent(component);
+        entity.addControl(control);
+
+        String toString = entity.toString();
+
+        assertThat(toString, containsString(component.toString()));
+        assertThat(toString, containsString(control.toString()));
+    }
+
+    private class TestControl extends Control {
         @Override
         public void onUpdate(Entity entity, double tpf) {}
     }
 
-    private class ControlAddingControl extends AbstractControl {
+    private class ControlAddingControl extends Control {
         @Override
         public void onUpdate(Entity entity, double tpf) {
             entity.addControl(new TestControl());
         }
     }
 
-    private class ControlRemovingControl extends AbstractControl {
+    private class ControlRemovingControl extends Control {
         @Override
         public void onUpdate(Entity entity, double tpf) {
             entity.removeAllControls();
         }
     }
 
+    private class EntityRemovingControl extends Control {
+        @Override
+        public void onUpdate(Entity entity, double tpf) {
+            entity.removeFromWorld();
+        }
+    }
+
     @Required(HPComponent.class)
-    private class HPControl extends AbstractControl {
+    private class HPControl extends Control {
         private double value = 0;
 
         @Override
         public void onUpdate(Entity entity, double tpf) {}
     }
 
-    private class TestComponent extends AbstractComponent {
+    private class TestComponent extends Component {
     }
 
-    private class HPComponent extends DoubleComponent {
+    private class HPComponent extends DoubleComponent implements CopyableComponent<HPComponent> {
         HPComponent(double value) {
             super(value);
+        }
+
+        @Override
+        public HPComponent copy() {
+            return new HPComponent(getValue());
         }
     }
 
     @Required(TestComponent.class)
     @Required(HPComponent.class)
-    private class ArmorComponent extends AbstractComponent {
+    private class ArmorComponent extends Component {
     }
 
     private class GravityComponent extends BooleanComponent {
@@ -469,7 +533,7 @@ public class EntityTest {
         }
     }
 
-    public static class CustomDataComponent extends AbstractComponent implements SerializableComponent {
+    public static class CustomDataComponent extends Component implements SerializableComponent {
 
         public String data;
 
@@ -488,7 +552,7 @@ public class EntityTest {
         }
     }
 
-    public static class CustomDataControl extends AbstractControl implements SerializableControl {
+    public static class CustomDataControl extends Control implements SerializableControl {
 
         public String data;
 
