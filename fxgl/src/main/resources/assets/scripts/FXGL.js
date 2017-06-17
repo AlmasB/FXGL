@@ -35,3 +35,34 @@ function notify(message) {
 function sound(filename) {
     FXGL.getAudioPlayer().playSound(filename);
 }
+
+function int(varName) {
+    return FXGL.getApp().getGameState().getInt(varName);
+}
+
+function double(varName) {
+    return FXGL.getApp().getGameState().getDouble(varName);
+}
+
+function boolean(varName) {
+    return FXGL.getApp().getGameState().getBoolean(varName);
+}
+
+function string(varName) {
+    return FXGL.getApp().getGameState().getString(varName);
+}
+
+function println(obj) {
+    java.lang.System.out.println(obj);
+}
+
+function list() {
+}
+
+function playerLinesWrap() {
+    return Java.to(playerLines())
+}
+
+function npcLinesWrap() {
+    return Java.to(npcLines())
+}
