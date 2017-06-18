@@ -8,15 +8,21 @@ package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.JSControl;
 import com.almasb.fxgl.gameplay.cutscene.CutsceneState;
+import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.JavaScriptParser;
+import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.util.Map;
@@ -27,6 +33,10 @@ import java.util.Map;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ScriptSample extends GameApplication {
+
+    private enum EntityType {
+        PC, NPC, COIN
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -42,19 +52,19 @@ public class ScriptSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    @Override
-    protected void initInput() {
-        getInput().addAction(new UserAction("Trigger Cutscene") {
-            @Override
-            protected void onActionBegin() {
-                getStateMachine().pushState(new CutsceneState("cutscene.js"));
-            }
-        }, KeyCode.ENTER);
-    }
+//    @Override
+//    protected void initInput() {
+//        getInput().addAction(new UserAction("Trigger Cutscene") {
+//            @Override
+//            protected void onActionBegin() {
+//                getStateMachine().pushState(new CutsceneState("cutscene.js"));
+//            }
+//        }, KeyCode.ENTER);
+//    }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("crystals", 4);
+        vars.put("coins", 0);
         vars.put("alive", true);
         vars.put("name", "MainCharacter");
         vars.put("armor", 10.5);
@@ -63,17 +73,51 @@ public class ScriptSample extends GameApplication {
     @Override
     protected void initGame() {
         Entities.builder()
+                .type(EntityType.PC)
                 .at(300, 300)
-                .viewFromNode(new Rectangle(40, 40, Color.BLUE))
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
+                .with(new CollidableComponent(true))
                 .with(new DeveloperWASDControl())
                 .buildAndAttach(getGameWorld());
 
-//        JavaScriptParser parser = new JavaScriptParser("cutscene.js");
-//        System.out.println("Parsing");
-//
-//        parser.callFunction("doStuff");
+        Entities.builder()
+                .type(EntityType.NPC)
+                .at(400, 300)
+                .viewFromNodeWithBBox(new Rectangle(40, 40, Color.RED))
+                .with(new CollidableComponent(true))
+                .buildAndAttach(getGameWorld());
 
+        for (int i = 0; i < 3; i++) {
+            Entities.builder()
+                    .type(EntityType.COIN)
+                    .at(FXGLMath.random(100, 450), 500)
+                    .viewFromNodeWithBBox(new Circle(20, Color.GOLD))
+                    .with(new CollidableComponent(true))
+                    .buildAndAttach(getGameWorld());
+        }
+    }
 
+    @Override
+    protected void initPhysics() {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PC, EntityType.NPC) {
+            @Override
+            protected void onCollisionBegin(Entity pc, Entity npc) {
+                getStateMachine().pushState(new CutsceneState("cutscene.js"));
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PC, EntityType.COIN) {
+            @Override
+            protected void onCollisionBegin(Entity pc, Entity coin) {
+                getGameState().increment("coins", +1);
+                coin.removeFromWorld();
+            }
+        });
+    }
+
+    @Override
+    protected void initUI() {
+        getGameScene().addUINode(new QuestPane(300, 300));
     }
 
     public static void main(String[] args) {

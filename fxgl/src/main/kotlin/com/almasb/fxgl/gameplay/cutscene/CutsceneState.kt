@@ -6,13 +6,21 @@
 
 package com.almasb.fxgl.gameplay.cutscene
 
+import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.PauseMenuSubState
+import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.SubState
 import com.almasb.fxgl.parser.JavaScriptParser
+import com.almasb.fxgl.util.EmptyRunnable
+import javafx.beans.binding.Bindings
+import javafx.geometry.Point2D
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
-import jdk.nashorn.api.scripting.ScriptUtils
+import javafx.scene.text.Text
+import javafx.util.Duration
 import java.util.function.Supplier
 
 /**
@@ -22,6 +30,7 @@ import java.util.function.Supplier
  */
 class CutsceneState(scriptName: String) : SubState() {
 
+    private val textNPC = Text()
     private val boxPlayerLines = VBox(3.0)
     private val uiIDtoDialogID = hashMapOf<Int, Int>()
 
@@ -32,6 +41,9 @@ class CutsceneState(scriptName: String) : SubState() {
     private val preconditions = hashMapOf<Int, Supplier<Boolean>>()
 
     private val parser: JavaScriptParser
+
+    private val animation: Animation<*>
+    private val animation2: Animation<*>
 
     init {
         parser = JavaScriptParser(scriptName)
@@ -53,24 +65,34 @@ class CutsceneState(scriptName: String) : SubState() {
             npcLines.add(DialogLine(id, data))
         }
 
-        parser.callFunction<Void>("mapLines", mapLines)
-//        parser.callFunction<Void>("mapPreconditions", preconditions)
-//
-//        for ((id, func) in preconditions) {
-//            playerLines[id-1].precondition = func
-//        }
-
-
         val topLine = Rectangle(FXGL.getAppWidth().toDouble(), 150.0)
+        topLine.translateY = -150.0
+
         val botLine = Rectangle(FXGL.getAppWidth().toDouble(), 200.0)
-        botLine.translateY = FXGL.getAppHeight() - 200.0
+        botLine.translateY = FXGL.getAppHeight().toDouble()
 
         boxPlayerLines.translateX = 10.0
-        boxPlayerLines.translateY = botLine.translateY + 10
+        boxPlayerLines.translateYProperty().bind(botLine.translateYProperty().add(10))
+        boxPlayerLines.isVisible = false
 
-        children.addAll(topLine, botLine, boxPlayerLines)
+        textNPC.fill = Color.WHITE
+        textNPC.font = Font.font(18.0)
+        FXGL.getUIFactory().centerTextBind(textNPC, FXGL.getAppWidth() / 2.0, 75.0)
+
+        children.addAll(topLine, botLine, textNPC, boxPlayerLines)
 
         populatePlayerLines()
+
+        animation = FXGL.getUIFactory().translate(topLine, Point2D.ZERO, Duration.seconds(0.5))
+        animation2 = FXGL.getUIFactory().translate(botLine, Point2D(0.0, FXGL.getAppHeight() - 200.0), Duration.seconds(0.5))
+    }
+
+    override fun onEnter(prevState: State?) {
+        animation.onFinished = Runnable {
+            boxPlayerLines.isVisible = true
+        }
+        animation.start(this)
+        animation2.start(this)
     }
 
     private fun populatePlayerLines() {
@@ -80,18 +102,22 @@ class CutsceneState(scriptName: String) : SubState() {
         for (line in playerLines) {
 
             if (!parser.callFunction<Boolean>("precond", line.id)) {
-            //if (!line.precondition.get()) {
                 continue
             }
 
             val text = FXGL.getUIFactory().newText("$idUI. ${line.data}", 18.0)
             text.font = Font.font(18.0)
+            text.fillProperty().bind(
+                    Bindings.`when`(text.hoverProperty())
+                            .then(Color.YELLOW)
+                            .otherwise(Color.WHITE)
+            )
 
             val id = idUI
 
             text.setOnMouseClicked {
                 selectLine(id)
-                FXGL.getApp().stateMachine.popState()
+
             }
 
             boxPlayerLines.children.add(text)
@@ -103,10 +129,25 @@ class CutsceneState(scriptName: String) : SubState() {
     }
 
     private fun selectLine(idUI: Int) {
-        println("Selected: $idUI")
+        val playerLineID = uiIDtoDialogID[idUI]
 
-        uiIDtoDialogID[idUI]?.let {
-            println(it)
+        val npcLineID = parser.callFunction<Int>("mapLines", playerLineID)
+
+        println("$playerLineID $npcLineID")
+
+        npcLines.forEach { println(it.id) }
+
+        if (npcLineID == 0) {
+            boxPlayerLines.isVisible = false
+            animation.onFinished = Runnable {
+                FXGL.getApp().stateMachine.popState()
+            }
+            animation.startReverse(this)
+            animation2.startReverse(this)
+        } else {
+            textNPC.text = npcLines.find { it.id == npcLineID }?.data
+
+            parser.callFunction<Void>("npcActions", npcLineID)
         }
     }
 }
