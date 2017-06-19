@@ -102,7 +102,9 @@ public class ScriptSample extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PC, EntityType.NPC) {
             @Override
             protected void onCollisionBegin(Entity pc, Entity npc) {
-                getStateMachine().pushState(new CutsceneState("cutscene.js"));
+                getGameplay().getCutsceneManager().startCutscene("cutscene.js");
+
+                //getStateMachine().pushState(new CutsceneState("cutscene.js"));
             }
         });
 

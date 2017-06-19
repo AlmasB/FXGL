@@ -18,10 +18,19 @@ data class DialogLine(
         val id: Int,
         val data: String) {
 
-    var used = false
-    var reusable: Boolean = false
-    //var closing: Boolean = false
+    //var used = false
+    //var reusable: Boolean = false
 
     var precondition: Supplier<Boolean> = Supplier { true }
     var postAction: Runnable = EmptyRunnable
+
+    fun isAvailable(): Boolean {
+        return precondition.get()
+    }
+
+    fun isEnd() = id == 0
+
+    companion object {
+        val END = DialogLine(0, "")
+    }
 }

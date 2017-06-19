@@ -7,6 +7,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.gameplay.cutscene.CutsceneManager
 import com.almasb.fxgl.gameplay.qte.QTE
 import com.almasb.fxgl.gameplay.qte.QTEProvider
 import com.almasb.fxgl.gameplay.rpg.InGameClock
@@ -33,4 +34,6 @@ private constructor() {
     val questManager: QuestManager by lazy { QuestManagerProvider() }
 
     val achievementManager: AchievementManager by lazy { AchievementManager() }
+
+    val cutsceneManager: CutsceneManager by lazy { CutsceneManager() }
 }
