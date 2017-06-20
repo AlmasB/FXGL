@@ -70,9 +70,14 @@ public class BasicGameApp extends GameApplication {
 
 ## Gradle
 
+* [Gradle](https://github.com/AlmasB/FXGL-Gradle) project if you use Java
+* [Gradle](https://github.com/AlmasB/FXGL-GradleKt) project if you use Kotlin
+
+Already have `build.gradle`? Then add:
+
 ```gradle
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
