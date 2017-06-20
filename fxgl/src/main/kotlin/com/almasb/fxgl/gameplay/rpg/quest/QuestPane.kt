@@ -17,22 +17,24 @@ import javafx.scene.layout.VBox
  */
 class QuestPane(width: Double, height: Double) : VBox() {
 
+    private val changeListener = ListChangeListener<Quest> { c ->
+        while (c.next()) {
+
+            if (c.wasAdded()) {
+                c.addedSubList.forEach { children.add(QuestView(it, prefWidth)) }
+            } else if (c.wasRemoved()) {
+                c.removed.map { getView(it) }.forEach { children.remove(it) }
+            }
+        }
+    }
+
     init {
         prefWidth = width
         prefHeight = height
 
         children.addAll(FXGL.getApp().gameplay.questManager.questsProperty().map { QuestView(it, prefWidth) })
 
-        FXGL.getApp().gameplay.questManager.questsProperty().addListener(ListChangeListener { c ->
-            while (c.next()) {
-
-                if (c.wasAdded()) {
-                    c.addedSubList.forEach { children.add(QuestView(it, prefWidth)) }
-                } else if (c.wasRemoved()) {
-                    c.removed.map { getView(it) }.forEach { children.remove(it) }
-                }
-            }
-        })
+        FXGL.getApp().gameplay.questManager.questsProperty().addListener(changeListener)
     }
 
     private fun getView(quest: Quest) = children.map { it as QuestView }.filter { it.quest === quest }.firstOrNull()
