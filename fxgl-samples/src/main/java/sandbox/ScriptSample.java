@@ -13,14 +13,9 @@ import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-import com.almasb.fxgl.entity.control.JSControl;
-import com.almasb.fxgl.gameplay.cutscene.CutsceneState;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
-import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.parser.JavaScriptParser;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -51,16 +46,6 @@ public class ScriptSample extends GameApplication {
         settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
-
-//    @Override
-//    protected void initInput() {
-//        getInput().addAction(new UserAction("Trigger Cutscene") {
-//            @Override
-//            protected void onActionBegin() {
-//                getStateMachine().pushState(new CutsceneState("cutscene.js"));
-//            }
-//        }, KeyCode.ENTER);
-//    }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
@@ -103,8 +88,6 @@ public class ScriptSample extends GameApplication {
             @Override
             protected void onCollisionBegin(Entity pc, Entity npc) {
                 getGameplay().getCutsceneManager().startCutscene("cutscene.js");
-
-                //getStateMachine().pushState(new CutsceneState("cutscene.js"));
             }
         });
 
