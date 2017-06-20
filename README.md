@@ -60,6 +60,11 @@ public class BasicGameApp extends GameApplication {
 
 ## Maven
 
+* [Maven](https://github.com/AlmasB/FXGL-Maven) project if you use Java
+* [Maven](https://github.com/AlmasB/FXGL-MavenKt) project if you use Kotlin
+
+Already have `pom.xml`? Then add:
+
 ```maven
 <dependency>
     <groupId>com.github.almasb</groupId>
