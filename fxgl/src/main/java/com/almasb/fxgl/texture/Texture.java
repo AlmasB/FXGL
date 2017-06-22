@@ -309,6 +309,33 @@ public class Texture extends ImageView implements Disposable {
     }
 
     /**
+     * @param color transparent color
+     * @return new texture whose pixels with given color are set to transparent
+     */
+    public final Texture transparentColor(Color color) {
+        int w = (int) getImage().getWidth();
+        int h = (int) getImage().getHeight();
+
+        PixelReader reader = getImage().getPixelReader();
+        WritableImage newImage = new WritableImage(w, h);
+        PixelWriter writer = newImage.getPixelWriter();
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+
+                Color c = reader.getColor(x, y);
+                if (c.equals(color)) {
+                    writer.setColor(x, y, Color.TRANSPARENT);
+                } else {
+                    writer.setColor(x, y, c);
+                }
+            }
+        }
+
+        return new Texture(newImage);
+    }
+
+    /**
      * Set texture data by copying it from other texture.
      *
      * @param other the texture to copy from

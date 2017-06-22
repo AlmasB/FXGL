@@ -27,6 +27,7 @@ import javafx.scene.Parent
 import javafx.scene.image.Image
 import javafx.scene.media.AudioClip
 import javafx.scene.media.Media
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.*
 import java.net.URL
@@ -146,6 +147,30 @@ class FXGLAssetLoader
                 val texture = Texture(Image(it, width, height, false, true))
                 cachedAssets.put(cacheKey, texture.image)
                 return texture
+            }
+        } catch (e: Exception) {
+            throw loadFailed(name, e)
+        }
+    }
+
+    override fun loadTexture(name: String, transparency: Color): Texture {
+        val cacheKey = TEXTURES_DIR + name + "T" + transparency
+
+        val asset = getAssetFromCache(cacheKey)
+        if (asset != null) {
+            return Texture(Image::class.java.cast(asset))
+        }
+
+        try {
+            getStream(TEXTURES_DIR + name).use {
+                val texture = Texture(Image(it))
+
+                val newTexture = texture.transparentColor(transparency)
+                texture.dispose()
+
+                cachedAssets.put(cacheKey, newTexture.image)
+
+                return newTexture
             }
         } catch (e: Exception) {
             throw loadFailed(name, e)

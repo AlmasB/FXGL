@@ -287,7 +287,7 @@ public class GameWorld {
                     // need name from layer
 
                     l.getObjects().forEach(obj -> {
-                        spawn(obj.getName(), new SpawnData(obj));
+                        spawn(obj.getType(), new SpawnData(obj));
                     });
                 });
     }

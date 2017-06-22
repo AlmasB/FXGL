@@ -25,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 
 import java.util.List;
 
@@ -259,13 +260,12 @@ public final class Entities {
                 int w = tileset.getTilewidth();
                 int h = tileset.getTileheight();
 
-                String imageName = tileset.getImage();
-                imageName = imageName.substring(imageName.lastIndexOf("/") + 1);
-
-                Image sourceImage = FXGL.getAssetLoader().loadTexture(imageName).getImage();
+                Image sourceImage = loadTilesetImage(tileset);
 
                 buffer.getPixelWriter().setPixels(x * w, y * h,
-                        w, h, sourceImage.getPixelReader(), tilex * w, tiley * h);
+                        w, h, sourceImage.getPixelReader(),
+                        tilex * w + tileset.getMargin() + tilex * tileset.getSpacing(),
+                        tiley * h + tileset.getMargin() + + tiley * tileset.getSpacing());
             }
 
             return new ImageView(buffer);
@@ -317,5 +317,15 @@ public final class Entities {
                         gid >= tileset.getFirstgid() && gid < tileset.getFirstgid() + tileset.getTilecount())
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Tileset for gid=" + gid + " not found"));
+    }
+
+    private static Image loadTilesetImage(Tileset tileset) {
+        String imageName = tileset.getImage();
+        imageName = imageName.substring(imageName.lastIndexOf("/") + 1);
+
+        return tileset.getTransparentcolor().isEmpty()
+                ? FXGL.getAssetLoader().loadTexture(imageName).getImage()
+                : FXGL.getAssetLoader().loadTexture(imageName,
+                Color.web(tileset.getTransparentcolor())).getImage();
     }
 }
