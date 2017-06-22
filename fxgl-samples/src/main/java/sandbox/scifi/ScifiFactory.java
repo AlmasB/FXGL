@@ -11,6 +11,7 @@ import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -33,7 +34,7 @@ public class ScifiFactory implements EntityFactory {
                 .at(data.getX(), data.getY())
                 .type(ScifiType.PLATFORM)
                 .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
-                .with(new PhysicsComponent())
+                .with(new PhysicsComponent(), new CollidableComponent(true))
                 .build();
     }
 
@@ -72,8 +73,9 @@ public class ScifiFactory implements EntityFactory {
         return Entities.builder()
                 .at(data.getX(), data.getY())
                 .type(ScifiType.PLAYER)
-                .bbox(new HitBox("main", BoundingShape.circle(19)))
-                .with(physics)
+                .bbox(new HitBox("main", BoundingShape.circle(15)))
+                .bbox(new HitBox("lower", new Point2D(15 - 5, 30), BoundingShape.box(10, 10)))
+                .with(physics, new CollidableComponent(true))
                 .with(new PlayerControl())
                 .build();
     }

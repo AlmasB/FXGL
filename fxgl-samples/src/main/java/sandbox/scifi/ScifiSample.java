@@ -8,19 +8,17 @@ package sandbox.scifi;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.tiled.TiledMap;
-import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.box2d.dynamics.Fixture;
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;
-
-import java.util.List;
 
 /**
  *
@@ -37,7 +35,7 @@ public class ScifiSample extends GameApplication {
         settings.setVersion("0.1");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
+        settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
@@ -125,6 +123,21 @@ public class ScifiSample extends GameApplication {
                 return 990;
             }
         }));
+    }
+
+    @Override
+    protected void initPhysics() {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(ScifiType.PLAYER, ScifiType.PLATFORM) {
+            @Override
+            protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
+                System.out.println(boxA.getName() + " " + boxB.getName());
+
+                if (boxA.getName().equals("lower")) {
+                    playerControl.canJump = true;
+                    //System.out.println("lower");
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {

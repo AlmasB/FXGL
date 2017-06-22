@@ -18,6 +18,7 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
+import com.almasb.fxgl.time.LocalTimer;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -32,6 +33,7 @@ public class PlayerControl extends Control {
     private ViewComponent view;
     private PhysicsComponent physics;
 
+    private LocalTimer jumpTimer;
 
     private AnimatedTexture animatedTexture;
 
@@ -50,7 +52,7 @@ public class PlayerControl extends Control {
 
         animWalk = animatedTexture.getAnimationChannel();
         animStand = new AnimationChannel(animatedTexture.getImage(), 4, 32, 42, Duration.seconds(1), 1, 1);
-        animJump = animStand;
+        animJump = new AnimationChannel(animatedTexture.getImage(), 4, 32, 42, Duration.seconds(0.75), 1, 1);;
         //animWalk = new AnimationChannel("dude.png", 4, 32, 42, Duration.seconds(0.5), 0, 3);
 
 //        animStand = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1), 0, 11);
@@ -60,6 +62,8 @@ public class PlayerControl extends Control {
 
         this.animatedTexture.setAnimationChannel(animStand);
         this.animatedTexture.start(FXGL.getApp().getStateMachine().getPlayState());
+
+        jumpTimer = FXGL.newLocalTimer();
     }
 
     @Override
@@ -83,11 +87,11 @@ public class PlayerControl extends Control {
         if (Math.abs(physics.getVelocityX()) < 140)
             physics.setVelocityX(0);
 
-        if (Math.abs(physics.getVelocityY()) < 1)
-            canJump = true;
+//        if (Math.abs(physics.getVelocityY()) < 1)
+//            canJump = true;
     }
 
-    private boolean canJump = true;
+    boolean canJump = true;
 
     public void left() {
         view.getView().setScaleX(-1);
@@ -108,10 +112,14 @@ public class PlayerControl extends Control {
     }
 
     public void jump() {
-        if (canJump) {
-            physics.setVelocityY(-250);
-            animatedTexture.playAnimationChannel(animJump);
-            canJump = false;
+        if (jumpTimer.elapsed(Duration.seconds(0.25))) {
+
+            if (canJump) {
+                physics.setVelocityY(-250);
+                animatedTexture.playAnimationChannel(animJump);
+                canJump = false;
+                jumpTimer.capture();
+            }
         }
     }
 
