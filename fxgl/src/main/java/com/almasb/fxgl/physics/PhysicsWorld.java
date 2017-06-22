@@ -546,7 +546,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
                     CircleShape circleShape = new CircleShape();
                     circleShape.setRadius(toMeters(w / 2));
-                    circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY()));
+                    circleShape.m_p.set(toMeters(boundsCenterLocal.getX()), -toMeters(boundsCenterLocal.getY()));
 
                     b2Shape = circleShape;
                     break;
@@ -554,7 +554,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                 case POLYGON:
                     PolygonShape polygonShape = new PolygonShape();
                     polygonShape.setAsBox(toMeters(w / 2), toMeters(h / 2),
-                            new Vec2(toMeters(boundsCenterLocal.getX()), toMeters(boundsCenterLocal.getY())), 0);
+                            new Vec2(toMeters(boundsCenterLocal.getX()), -toMeters(boundsCenterLocal.getY())), 0);
                     b2Shape = polygonShape;
                     break;
 
