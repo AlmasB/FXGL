@@ -16,6 +16,7 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.handler.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
 import javafx.scene.input.KeyCode;
@@ -95,17 +96,7 @@ public class ScifiSample extends GameApplication {
 
         getGameWorld().setLevelFromMap(map);
 
-        //getGameWorld().spawn("button", 30, 340);
-
         player = (GameEntity) getGameWorld().spawn("player", 100, 100);
-//        player.getComponent(PhysicsComponent.class).setOnPhysicsInitialized(() -> {
-//            List<Fixture> fixtures = player.getComponent(PhysicsComponent.class).getBody().getFixtures();
-//            fixtures.get(0).setFriction(0);
-//            fixtures.get(0).setDensity(0.25f);
-//
-//            fixtures.get(1).setFriction(0);
-//            fixtures.get(1).setDensity(0.25f);
-//        });
         playerControl = player.getControl(PlayerControl.class);
 
         getGameScene().getViewport().setBounds(0, 0, 1920, 768);
@@ -130,14 +121,13 @@ public class ScifiSample extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(ScifiType.PLAYER, ScifiType.PLATFORM) {
             @Override
             protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
-                System.out.println(boxA.getName() + " " + boxB.getName());
-
                 if (boxA.getName().equals("lower")) {
                     playerControl.canJump = true;
-                    //System.out.println("lower");
                 }
             }
         });
+
+        getPhysicsWorld().addCollisionHandler(new CollectibleHandler(ScifiType.PLAYER, ScifiType.COIN, "drop.wav"));
     }
 
     public static void main(String[] args) {

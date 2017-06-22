@@ -38,23 +38,13 @@ public class ScifiFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("block")
+    @Spawns("coin")
     public Entity newBlock(SpawnData data) {
         return Entities.builder()
                 .at(data.getX(), data.getY())
-                .type(ScifiType.PLATFORM)
-                .viewFromNodeWithBBox(new EntityView(new Rectangle(640 - 512, 64, Color.DARKCYAN), new RenderLayer() {
-                    @Override
-                    public String name() {
-                        return "Block";
-                    }
-
-                    @Override
-                    public int index() {
-                        return 10000;
-                    }
-                }))
-                .with(new PhysicsComponent())
+                .type(ScifiType.COIN)
+                .viewFromTextureWithBBox("coin.png")
+                .with(new CollidableComponent(true))
                 .build();
     }
 
@@ -87,6 +77,13 @@ public class ScifiFactory implements EntityFactory {
                 .type(ScifiType.BUTTON)
                 .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("push_button.png", 33, 22))
                 .with(new UsableControl(() -> FXGL.getApp().getGameWorld().spawn("block", 256, 352)))
+                .build();
+    }
+
+    @Spawns("portal")
+    public Entity newButton2(SpawnData data) {
+        return Entities.builder()
+                .at(data.getX(), data.getY())
                 .build();
     }
 }
