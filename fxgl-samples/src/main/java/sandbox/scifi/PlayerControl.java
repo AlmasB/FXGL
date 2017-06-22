@@ -50,6 +50,7 @@ public class PlayerControl extends Control {
 
         animWalk = animatedTexture.getAnimationChannel();
         animStand = new AnimationChannel(animatedTexture.getImage(), 4, 32, 42, Duration.seconds(1), 1, 1);
+        animJump = animStand;
         //animWalk = new AnimationChannel("dude.png", 4, 32, 42, Duration.seconds(0.5), 0, 3);
 
 //        animStand = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1), 0, 11);
