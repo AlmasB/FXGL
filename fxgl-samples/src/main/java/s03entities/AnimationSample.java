@@ -25,6 +25,13 @@ import javafx.scene.input.MouseButton;
  */
 public class AnimationSample extends GameApplication {
 
+
+
+    //        animStand = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1), 0, 11);
+//        animWalk = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1), 12*2, 12*2 + 11);
+//        animJump = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1.2), 12*4, 12*4 + 11);
+//        animPunch = new AnimationChannel("animation.png", 12, 77, 96, Duration.seconds(1 / 8.0), 12*6, 12*6 + 11);
+
 //    private enum AnimChannelOLD implements AnimationChannelOLD {
 //        IDLE(new Rectangle2D(0, 0, 290 * 10, 500)),
 //        RUN(new Rectangle2D(0, 500, 376 * 10, 520)),

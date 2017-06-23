@@ -39,7 +39,7 @@ public class ScifiFactory implements EntityFactory {
     }
 
     @Spawns("coin")
-    public Entity newBlock(SpawnData data) {
+    public Entity newCoin(SpawnData data) {
         return Entities.builder()
                 .at(data.getX(), data.getY())
                 .type(ScifiType.COIN)
@@ -51,7 +51,6 @@ public class ScifiFactory implements EntityFactory {
     @Spawns("player")
     public Entity newPlayer(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
-
         physics.setFixtureDef(new FixtureDef().friction(0).density(0.25f));
 
         BodyDef bd = new BodyDef();
@@ -70,18 +69,8 @@ public class ScifiFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("button")
-    public Entity newButton(SpawnData data) {
-        return Entities.builder()
-                .at(data.getX(), data.getY())
-                .type(ScifiType.BUTTON)
-                .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("push_button.png", 33, 22))
-                .with(new UsableControl(() -> FXGL.getApp().getGameWorld().spawn("block", 256, 352)))
-                .build();
-    }
-
     @Spawns("portal")
-    public Entity newButton2(SpawnData data) {
+    public Entity newPortal(SpawnData data) {
         return Entities.builder()
                 .at(data.getX(), data.getY())
                 .build();

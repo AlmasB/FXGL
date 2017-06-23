@@ -46,18 +46,6 @@ public class ScifiSample extends GameApplication {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Use") {
-            @Override
-            protected void onActionBegin() {
-                playerControl.punch();
-//                getGameWorld().getCollidingEntities(player)
-//                        .stream()
-//                        .filter(e -> e.hasControl(UsableControl.class))
-//                        .map(e -> e.getControl(UsableControl.class))
-//                        .forEach(UsableControl::use);
-            }
-        }, KeyCode.F);
-
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
