@@ -7,6 +7,7 @@
 package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.annotation.Spawns;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.FXGLLogger;
@@ -266,6 +267,13 @@ public class GameWorld {
 
         log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
+    }
+
+    /**
+     * @param mapFileName name of the .json file
+     */
+    public void setLevelFromMap(String mapFileName) {
+        setLevelFromMap(FXGL.getAssetLoader().loadJSON(mapFileName, TiledMap.class));
     }
 
     public void setLevelFromMap(TiledMap map) {

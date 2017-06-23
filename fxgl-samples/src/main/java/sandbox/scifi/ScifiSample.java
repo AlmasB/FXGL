@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.handler.CollectibleHandler;
@@ -97,43 +96,13 @@ public class ScifiSample extends GameApplication {
     };
 
     private void nextLevel() {
-        TiledMap map = getAssetLoader().loadJSON("mario" + level + ".json", TiledMap.class);
-
-        getGameWorld().setLevelFromMap(map);
+        getGameWorld().setLevelFromMap("mario" + level + ".json");
 
         Entity player = getGameWorld().getEntitiesByType(ScifiType.PLAYER).get(0);
         playerControl = player.getControl(PlayerControl.class);
 
         getGameScene().getViewport().setBounds(0, 0, 3000, 768);
         getGameScene().getViewport().bindToEntity(player, 500, 0);
-
-//        EntityView bg = new EntityView(BG);
-//
-//        bg.addNode(getAssetLoader().loadTexture("bg_10.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_9.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_8.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_7.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_6.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_5.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_4.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_3.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_2.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_1.png", 1280, 768));
-//        bg.addNode(getAssetLoader().loadTexture("bg_0.png", 1280, 768));
-//
-//        getGameScene().addGameView(bg);
-
-//        getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_10.png", 1280, 768), Orientation.HORIZONTAL, 1.0, BG));
-//        //getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_9.png", 1280, 768), Orientation.HORIZONTAL, 1.0, BG));
-//        //getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_8.png", 1280, 768), Orientation.HORIZONTAL, 1.0, BG));
-//        getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_7.png", 1280, 768), Orientation.HORIZONTAL, 0.3, BG));
-//        //getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_6.png", 1280, 768), Orientation.HORIZONTAL, 1.0, BG));
-//        getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_5.png", 1280, 768), Orientation.HORIZONTAL, 0.5, BG));
-//        //getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_4.png", 1280, 768), Orientation.HORIZONTAL, 1.0, BG));
-//        getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_3.png", 1280, 768), Orientation.HORIZONTAL, 0.7, BG));
-//        //getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_2.png", 1280, 768), Orientation.HORIZONTAL, 1.0, BG));
-//        getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_1.png", 1280, 768), Orientation.HORIZONTAL, 0.8, BG));
-//        getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("bg_0.png", 1280, 768), Orientation.HORIZONTAL, 0.85, BG));
 
         // assets from https://raventale.itch.io/parallax-background
         getGameScene().addGameView(new ParallaxBackgroundView(Arrays.asList(
