@@ -120,7 +120,7 @@ public class ScifiSample extends GameApplication {
         ), Orientation.HORIZONTAL, BG));
 
         level++;
-        if (level == 3)
+        if (level == 4)
             level = 1;
     }
 

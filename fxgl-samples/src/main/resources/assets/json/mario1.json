@@ -13,7 +13,6 @@
         }, 
         {
          "draworder":"topdown",
-         "height":0,
          "name":"Interactive",
          "objects":[
                 {
@@ -184,13 +183,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":0,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":0,
          "name":"Collidables",
          "objects":[
                 {
@@ -339,13 +336,13 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":0,
          "x":0,
          "y":0
         }],
  "nextobjectid":33,
  "orientation":"orthogonal",
  "renderorder":"right-down",
+ "tiledversion":"1.0.1",
  "tileheight":32,
  "tilesets":[
         {
@@ -363,6 +360,7 @@
          "transparentcolor":"#000000"
         }],
  "tilewidth":32,
+ "type":"map",
  "version":1,
  "width":60
 }
