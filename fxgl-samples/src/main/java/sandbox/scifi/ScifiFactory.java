@@ -31,7 +31,7 @@ public class ScifiFactory implements EntityFactory {
     @Spawns("platform")
     public Entity newPlatform(SpawnData data) {
         return Entities.builder()
-                .at(data.getX(), data.getY())
+                .from(data)
                 .type(ScifiType.PLATFORM)
                 .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent(), new CollidableComponent(true))
@@ -41,7 +41,7 @@ public class ScifiFactory implements EntityFactory {
     @Spawns("coin")
     public Entity newCoin(SpawnData data) {
         return Entities.builder()
-                .at(data.getX(), data.getY())
+                .from(data)
                 .type(ScifiType.COIN)
                 .viewFromTextureWithBBox("coin.png")
                 .with(new CollidableComponent(true))
@@ -60,7 +60,7 @@ public class ScifiFactory implements EntityFactory {
         physics.setBodyType(BodyType.DYNAMIC);
 
         return Entities.builder()
-                .at(data.getX(), data.getY())
+                .from(data)
                 .type(ScifiType.PLAYER)
                 .bbox(new HitBox("main", BoundingShape.circle(15)))
                 .bbox(new HitBox("lower", new Point2D(15 - 5, 30), BoundingShape.box(10, 10)))
@@ -72,7 +72,10 @@ public class ScifiFactory implements EntityFactory {
     @Spawns("portal")
     public Entity newPortal(SpawnData data) {
         return Entities.builder()
-                .at(data.getX(), data.getY())
+                .type(ScifiType.PORTAL)
+                .from(data)
+                .viewFromTextureWithBBox("finish.png")
+                .with(new CollidableComponent(true))
                 .build();
     }
 }

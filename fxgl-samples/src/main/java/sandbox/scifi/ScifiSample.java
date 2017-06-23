@@ -9,7 +9,6 @@ package sandbox.scifi;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
@@ -41,7 +40,6 @@ public class ScifiSample extends GameApplication {
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
-    private GameEntity player;
     private PlayerControl playerControl;
 
     @Override
@@ -80,11 +78,17 @@ public class ScifiSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        TiledMap map = getAssetLoader().loadJSON("mario.json", TiledMap.class);
+        nextLevel();
+    }
+
+    private int level = 1;
+
+    private void nextLevel() {
+        TiledMap map = getAssetLoader().loadJSON("mario" + level + ".json", TiledMap.class);
 
         getGameWorld().setLevelFromMap(map);
 
-        player = (GameEntity) getGameWorld().spawn("player", 100, 100);
+        Entity player = getGameWorld().getEntitiesByType(ScifiType.PLAYER).get(0);
         playerControl = player.getControl(PlayerControl.class);
 
         getGameScene().getViewport().setBounds(0, 0, 1920, 768);
@@ -102,6 +106,10 @@ public class ScifiSample extends GameApplication {
                 return 990;
             }
         }));
+
+        level++;
+        if (level == 3)
+            level = 1;
     }
 
     @Override
@@ -112,6 +120,13 @@ public class ScifiSample extends GameApplication {
                 if (boxA.getName().equals("lower")) {
                     playerControl.canJump = true;
                 }
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(ScifiType.PLAYER, ScifiType.PORTAL) {
+            @Override
+            protected void onCollisionBegin(Entity a, Entity b) {
+                nextLevel();
             }
         });
 
