@@ -8,6 +8,7 @@ package com.almasb.fxgl.parser.tiled
 
 /**
  * JSON map format from the Tiled map editor.
+ * Tiled version: 1.0.1
  * Specification: https://github.com/bjorn/tiled/wiki/JSON-Map-Format
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -22,7 +23,9 @@ class TiledMap(var width: Int = 0,
                var backgroundcolor: String = "",
                var renderorder: String = "",
                var nextobjectid: Int = 0,
-               var version: Int = 0) {
+               var version: Int = 0,
+               var tiledversion: String = "",
+               var type: String = "") {
 
     fun getLayerByName(name: String) = layers.filter { it.name == name }.firstOrNull()
             ?: throw IllegalArgumentException("Layer with name=$name not found")
