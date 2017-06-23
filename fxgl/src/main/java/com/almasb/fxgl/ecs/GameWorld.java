@@ -291,13 +291,8 @@ public class GameWorld {
         map.getLayers()
                 .stream()
                 .filter(l -> l.getType().equals("objectgroup"))
-                .forEach(l -> {
-                    // need name from layer
-
-                    l.getObjects().forEach(obj -> {
-                        spawn(obj.getType(), new SpawnData(obj));
-                    });
-                });
+                .flatMap(l -> l.getObjects().stream())
+                .forEach(obj -> spawn(obj.getType(), new SpawnData(obj)));
     }
 
     private EntityFactory entityFactory = null;
