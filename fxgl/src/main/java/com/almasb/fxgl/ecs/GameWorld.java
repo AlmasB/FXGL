@@ -374,6 +374,31 @@ public class GameWorld {
     /* QUERIES */
 
     /**
+     * Useful for singleton type entities, e.g. Player.
+     * 
+     * @return first occurrence matching given type
+     */
+    public Entity getSingleton(Enum<?> type) {
+        return getSingleton(e ->
+                e.hasComponent(TypeComponent.class) && e.getComponent(TypeComponent.class).isType(type)
+        );
+    }
+
+    /**
+     * @return first occurrence matching given predicate
+     */
+    public Entity getSingleton(Predicate<Entity> predicate) {
+        for (int i = 0; i < entities.size(); i++) {
+            Entity e = entities.get(i);
+            if (predicate.test(e)) {
+                return e;
+            }
+        }
+
+        throw new IllegalArgumentException("No entity exists matching predicate");
+    }
+
+    /**
      * @param type component type
      * @return array of entities that have given component (do NOT modify)
      */
