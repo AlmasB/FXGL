@@ -221,7 +221,9 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
         // Push keys until an empty bucket is found.
         int evictedKey;
         V evictedValue;
-        int i = 0, pushIterations = this.pushIterations;
+        int i = 0;
+        int pushIterations = this.pushIterations;
+
         do {
             // Replace the key and value for one of the hashes.
             switch (FXGLMath.random(2)) {
@@ -703,7 +705,7 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
         }
     }
 
-    static private class MapIterator<V> {
+    private static class MapIterator<V> {
         static final int INDEX_ILLEGAL = -2;
         static final int INDEX_ZERO = -1;
 
@@ -713,7 +715,7 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
         int nextIndex, currentIndex;
         boolean valid = true;
 
-        public MapIterator (IntMap<V> map) {
+        MapIterator (IntMap<V> map) {
             this.map = map;
             reset();
         }
