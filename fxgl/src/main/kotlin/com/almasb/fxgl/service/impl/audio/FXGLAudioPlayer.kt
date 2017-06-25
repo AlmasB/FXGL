@@ -15,6 +15,7 @@ import com.almasb.fxgl.service.AudioPlayer
 import com.google.inject.Inject
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.geometry.Point2D
 import java.util.*
 
 /**
@@ -78,6 +79,18 @@ private constructor() : AudioPlayer {
             activeSounds.add(sound)
         sound.clip.volumeProperty().bind(globalSoundVolumeProperty())
         sound.clip.play()
+    }
+
+    override fun playPositionalSound(sound: Sound, soundPosition: Point2D, earPosition: Point2D, maxDistance: Double) {
+        val rawBalance = earPosition.distance(soundPosition) / maxDistance
+
+        sound.balance = if (soundPosition.x > earPosition.x) {
+            rawBalance
+        } else {
+            -rawBalance
+        }
+
+        playSound(sound)
     }
 
     /**

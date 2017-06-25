@@ -15,6 +15,7 @@ import com.almasb.fxgl.gameplay.NotificationEvent;
 import com.almasb.fxgl.gameplay.NotificationListener;
 import com.almasb.fxgl.saving.UserProfileSavable;
 import javafx.beans.property.DoubleProperty;
+import javafx.geometry.Point2D;
 
 /**
  * General audio player service that supports playback of sound and music objects.
@@ -81,6 +82,26 @@ public interface AudioPlayer extends UserProfileSavable, UpdateListener, Notific
     default void playSound(String assetName) {
         playSound(FXGL.getAssetLoader().loadSound(assetName));
     }
+
+    /**
+     * @param assetName sound file name
+     * @param soundPosition where sound is playing
+     * @param earPosition where sound is heard
+     * @param maxDistance how far the sound can be heard before it's "full" right or "full" left,
+     *                    i.e. if dist > maxDistance then sound balance is set to max (1.0) in that direction
+     */
+    default void playPositionalSound(String assetName, Point2D soundPosition, Point2D earPosition, double maxDistance) {
+        playPositionalSound(FXGL.getAssetLoader().loadSound(assetName), soundPosition, earPosition, maxDistance);
+    }
+
+    /**
+     * @param sound sound
+     * @param soundPosition where sound is playing
+     * @param earPosition where sound is heard
+     * @param maxDistance how far the sound can be heard before it's "full" right or "full" left,
+     *                    i.e. if dist > maxDistance then sound balance is set to max (1.0) in that direction
+     */
+    void playPositionalSound(Sound sound, Point2D soundPosition, Point2D earPosition, double maxDistance);
 
     /**
      * Convenience method to play the music given its filename.

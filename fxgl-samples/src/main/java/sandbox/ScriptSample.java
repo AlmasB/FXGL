@@ -12,13 +12,16 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import java.util.Map;
 
@@ -57,7 +60,7 @@ public class ScriptSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        Entities.builder()
+        GameEntity e = Entities.builder()
                 .type(EntityType.PC)
                 .at(300, 300)
                 .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))
@@ -80,6 +83,10 @@ public class ScriptSample extends GameApplication {
                     .with(new CollidableComponent(true))
                     .buildAndAttach(getGameWorld());
         }
+
+        getMasterTimer().runAtInterval(() -> {
+            getAudioPlayer().playPositionalSound("drop.wav", new Point2D(400, 300), e.getCenter(), 600);
+        }, Duration.seconds(2));
     }
 
     @Override
