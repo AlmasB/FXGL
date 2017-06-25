@@ -11,6 +11,7 @@
 package com.almasb.fxgl.core.pool;
 
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 
 /**
  * A pool of objects that can be reused to avoid allocation.
@@ -55,7 +56,7 @@ public abstract class Pool<T> {
      * @param max the maximum number of free objects to store in this pool
      */
     public Pool(int initialCapacity, int max) {
-        freeObjects = new Array<>(false, initialCapacity);
+        freeObjects = new UnorderedArray<>(initialCapacity);
         this.max = max;
     }
 

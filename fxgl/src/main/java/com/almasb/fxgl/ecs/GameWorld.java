@@ -10,6 +10,7 @@ import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
@@ -43,7 +44,7 @@ public class GameWorld {
 
     private static Logger log = FXGLLogger.get("FXGL.GameWorld");
 
-    private Array<EventTrigger<?> > eventTriggers = new Array<>(false, 32);
+    private Array<EventTrigger<?> > eventTriggers = new UnorderedArray<>(32);
     
     private Array<Entity> updateList;
 
@@ -71,8 +72,8 @@ public class GameWorld {
      * @param initialCapacity initial entity capacity
      */
     public GameWorld(int initialCapacity) {
-        updateList = new Array<>(true, initialCapacity);
-        waitingList = new Array<>(false, initialCapacity);
+        updateList = new Array<>(initialCapacity);
+        waitingList = new UnorderedArray<>(initialCapacity);
         entities = new ArrayList<>(initialCapacity);
 
         query = new GameWorldQuery(entities);
@@ -166,7 +167,7 @@ public class GameWorld {
         notifyWorldReset();
     }
 
-    private Array<EntityWorldListener> worldListeners = new Array<>(true, 16);
+    private Array<EntityWorldListener> worldListeners = new Array<>();
 
     public void addWorldListener(EntityWorldListener listener) {
         worldListeners.add(listener);
@@ -621,7 +622,7 @@ public class GameWorld {
      * @return closest entity to selected entity with type
      */
     public Optional<Entity> getClosestEntity(Entity entity, Predicate<Entity> filter) {
-        Array<Entity> array = new Array<>(false, 64);
+        Array<Entity> array = new UnorderedArray<>(64);
 
         for (Entity e : getEntitiesByComponent(PositionComponent.class)) {
             if (filter.test(e) && e != entity) {

@@ -8,6 +8,7 @@ package com.almasb.fxgl.effect;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
@@ -25,7 +26,7 @@ public class ParticleControl extends Control {
 
     private ParticleEmitter emitter;
 
-    protected Array<Particle> particles = new Array<>(false, 256);
+    protected Array<Particle> particles = new UnorderedArray<>(256);
 
     private PositionComponent position;
 

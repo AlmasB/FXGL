@@ -8,6 +8,7 @@ package com.almasb.fxgl.effect;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pool;
@@ -366,7 +367,7 @@ public class ParticleEmitter {
         return rand() * (max - min) + min;
     }
 
-    private Array<Particle> emissionParticles = new Array<>(false, numParticles);
+    private Array<Particle> emissionParticles = new UnorderedArray<>(numParticles);
 
     /**
      * Emits {@link #numParticles} particles at x, y. This is

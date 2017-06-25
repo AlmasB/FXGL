@@ -20,6 +20,7 @@ import com.almasb.fxgl.ai.GdxAI;
 import com.almasb.fxgl.ai.Timepiece;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.IntMap;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.reflect.ClassReflection;
 
@@ -81,7 +82,7 @@ public class MessageDispatcher implements Telegraph {
         Array<Telegraph> listeners = msgListeners.get(msg);
         if (listeners == null) {
             // Associate an empty unordered array with the message code
-            listeners = new Array<>(false, 16);
+            listeners = new UnorderedArray<>();
             msgListeners.put(msg, listeners);
         }
         listeners.add(listener);
@@ -122,7 +123,7 @@ public class MessageDispatcher implements Telegraph {
         Array<TelegramProvider> providers = msgProviders.get(msg);
         if (providers == null) {
             // Associate an empty unordered array with the message code
-            providers = new Array<>(false, 16);
+            providers = new UnorderedArray<>();
             msgProviders.put(msg, providers);
         }
         providers.add(provider);

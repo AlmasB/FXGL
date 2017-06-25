@@ -56,7 +56,7 @@ public class Array<T> implements Iterable<T> {
     /** @param ordered If false, methods that remove elements may change the order of other elements in the array, which avoids a
      *           memory copy.
      * @param capacity Any elements added beyond this will cause the backing array to be grown. */
-    public Array(boolean ordered, int capacity) {
+    Array(boolean ordered, int capacity) {
         this.ordered = ordered;
         items = (T[]) new Object[capacity];
     }
@@ -65,7 +65,7 @@ public class Array<T> implements Iterable<T> {
      * @param ordered If false, methods that remove elements may change the order of other elements in the array, which avoids a
      *           memory copy.
      * @param capacity Any elements added beyond this will cause the backing array to be grown. */
-    public Array(boolean ordered, int capacity, Class arrayType) {
+    Array(boolean ordered, int capacity, Class arrayType) {
         this.ordered = ordered;
         items = (T[]) ArrayReflection.newInstance(arrayType, capacity);
     }
@@ -95,7 +95,7 @@ public class Array<T> implements Iterable<T> {
      * The capacity is set to the number of elements, so any subsequent elements added will cause the backing array to be grown.
      * @param ordered If false, methods that remove elements may change the order of other elements in the array, which avoids a
      *           memory copy. */
-    public Array(boolean ordered, T[] array, int start, int count) {
+    Array(boolean ordered, T[] array, int start, int count) {
         this(ordered, count, (Class) array.getClass().getComponentType());
         size = count;
         System.arraycopy(array, start, items, 0, size);

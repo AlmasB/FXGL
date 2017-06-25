@@ -7,6 +7,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pool;
@@ -55,11 +56,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private World jboxWorld = new World(new Vec2(0, -10));
 
-    private Array<Entity> entities = new Array<>(false, 128);
+    private Array<Entity> entities = new UnorderedArray<>(128);
 
-    private Array<CollisionHandler> collisionHandlers = new Array<>(false, 16);
+    private Array<CollisionHandler> collisionHandlers = new UnorderedArray<>(16);
 
-    private Array<CollisionPair> collisions = new Array<>(false, 128);
+    private Array<CollisionPair> collisions = new UnorderedArray<>(128);
 
     private int appHeight;
 
@@ -185,9 +186,9 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         jboxWorld.setParticleRadius(toMeters(1));    // 0.5 for super realistic effect, but slow
     }
 
-    private Array<Entity> delayedBodiesAdd = new Array<>(false, 16);
-    private Array<Entity> delayedParticlesAdd = new Array<>(false, 16);
-    private Array<Body> delayedBodiesRemove = new Array<>(false, 16);
+    private Array<Entity> delayedBodiesAdd = new UnorderedArray<>();
+    private Array<Entity> delayedParticlesAdd = new UnorderedArray<>();
+    private Array<Body> delayedBodiesRemove = new UnorderedArray<>();
 
     @Override
     public void onEntityAdded(Entity entity) {
@@ -342,7 +343,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         // no default implementation
     }
 
-    private Array<Entity> collidables = new Array<>(false, 128);
+    private Array<Entity> collidables = new UnorderedArray<>(128);
 
     /**
      * Perform collision detection for all entities that have
