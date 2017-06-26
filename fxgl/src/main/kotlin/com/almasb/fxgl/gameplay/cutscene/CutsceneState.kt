@@ -10,27 +10,32 @@ import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.SubState
+import com.almasb.fxgl.input.UserAction
 import javafx.beans.binding.Bindings
 import javafx.geometry.Point2D
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.util.Duration
+import java.util.*
 
 /**
- *
+ * TODO: redesign
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 internal class CutsceneState : SubState() {
 
     private val textNPC = Text()
+    private val textRPG = Text()
     private val boxPlayerLines = VBox(3.0)
     private val uiIDtoDialogLine = hashMapOf<Int, DialogLine>()
 
     private lateinit var cutscene: Cutscene
+    private lateinit var rpgCutscene: RPGCutscene
 
     private val animation: Animation<*>
     private val animation2: Animation<*>
@@ -48,12 +53,29 @@ internal class CutsceneState : SubState() {
 
         textNPC.fill = Color.WHITE
         textNPC.font = Font.font(18.0)
+        textNPC.wrappingWidth = FXGL.getAppWidth() - 100.0
         FXGL.getUIFactory().centerTextBind(textNPC, FXGL.getAppWidth() / 2.0, 75.0)
 
-        children.addAll(topLine, botLine, textNPC, boxPlayerLines)
+        textRPG.fill = Color.WHITE
+        textRPG.font = Font.font(18.0)
+        textRPG.wrappingWidth = FXGL.getAppWidth().toDouble() - 50.0
+        textRPG.translateX = 50.0
+        textRPG.translateY = FXGL.getAppHeight() - 100.0
+
+        FXGL.getUIFactory().centerTextBind(textRPG, FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() - 100.0)
+
+        children.addAll(topLine, botLine, textNPC, boxPlayerLines, textRPG)
 
         animation = FXGL.getUIFactory().translate(topLine, Point2D.ZERO, Duration.seconds(0.5))
         animation2 = FXGL.getUIFactory().translate(botLine, Point2D(0.0, FXGL.getAppHeight() - 200.0), Duration.seconds(0.5))
+
+        // input
+
+        input.addAction(object : UserAction("Next RPG Line") {
+            override fun onActionBegin() {
+                nextRPGLine()
+            }
+        }, KeyCode.ENTER)
     }
 
     override fun onEnter(prevState: State?) {
@@ -62,6 +84,12 @@ internal class CutsceneState : SubState() {
         }
         animation.start(this)
         animation2.start(this)
+    }
+
+    internal fun start(cutscene: Cutscene) {
+        this.cutscene = cutscene
+
+        populatePlayerLines()
     }
 
     private fun populatePlayerLines() {
@@ -110,10 +138,32 @@ internal class CutsceneState : SubState() {
         }
     }
 
-    internal fun start(cutscene: Cutscene) {
-        this.cutscene = cutscene
+    internal fun start(cutscene: RPGCutscene) {
+        this.rpgCutscene = cutscene
 
-        populatePlayerLines()
+        nextRPGLine()
+    }
+
+    private var currentLine = 0
+    private lateinit var dialogLine: RPGDialogLine
+    private val message = ArrayDeque<Char>()
+
+    private fun nextRPGLine() {
+        if (currentLine < rpgCutscene.lines.size) {
+            textRPG.text = ""
+
+            dialogLine = rpgCutscene.lines[currentLine]
+            dialogLine.data.forEach { message.addLast(it) }
+            currentLine++
+        } else {
+            // allow to close this
+        }
+    }
+
+    override fun onUpdate(tpf: Double) {
+        if (message.isNotEmpty()) {
+            textRPG.text += message.poll()
+        }
     }
 
     private fun endCutscene() {

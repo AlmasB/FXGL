@@ -30,4 +30,11 @@ class CutsceneManager {
 
         FXGL.getApp().stateMachine.pushState(state)
     }
+
+    fun startRPGCutscene() {
+        // TODO: hardcoded
+        state.start(RPGCutscene())
+
+        FXGL.getApp().stateMachine.pushState(state)
+    }
 }
