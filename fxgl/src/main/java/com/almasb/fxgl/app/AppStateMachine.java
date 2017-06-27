@@ -48,7 +48,7 @@ public final class AppStateMachine {
         loading = FXGL.getInstance(LoadingState.class);
         play = FXGL.getInstance(PlayState.class);
 
-        // fxglTODO: init dialog sub state here?
+        // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.INSTANCE.getView();
 
         intro = app.getSettings().isIntroEnabled() ? FXGL.getInstance(IntroState.class) : null;
@@ -64,7 +64,6 @@ public final class AppStateMachine {
         if (!subStates.isEmpty()) {
             log.warning("Cannot change states with active substates");
             return;
-            //throw IllegalStateException("Cannot change states with active substates")
         }
 
         AppState prevState = appState;
