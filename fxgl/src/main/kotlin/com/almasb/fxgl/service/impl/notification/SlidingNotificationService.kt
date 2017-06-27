@@ -26,8 +26,6 @@ import java.util.*
 class SlidingNotificationService
 @Inject private constructor(): NotificationService {
 
-    private val log = FXGL.getLogger(javaClass)
-
     private val queue = ArrayDeque<String>()
 
     private var position = Position.TOP
