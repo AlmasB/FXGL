@@ -102,6 +102,7 @@ internal class LoadingState
             app.gameWorld.reset()
             app.gameState.clear()
             app.physicsWorld.clearCollisionHandlers()
+            app.masterTimer.clear()
         }
 
         private fun initAssets() {

@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.ecs.EntityWorldListener
 import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
@@ -32,18 +30,6 @@ private constructor(val gameState: GameState,
     init {
         gameWorld.addWorldListener(physicsWorld)
         gameWorld.addWorldListener(gameScene)
-
-        gameWorld.addWorldListener(object : EntityWorldListener {
-            override fun onEntityAdded(entity: Entity) {}
-
-            override fun onEntityRemoved(entity: Entity) {}
-
-            override fun onWorldUpdate(tpf: Double) {}
-
-            override fun onWorldReset() {
-                timer.clear()
-            }
-        })
 
         if (FXGL.getSettings().isMenuEnabled) {
             input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
