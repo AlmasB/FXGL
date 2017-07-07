@@ -6,19 +6,31 @@
 
 package com.almasb.fxgl.gameplay.cutscene
 
+import com.almasb.fxgl.util.EmptyRunnable
+import java.util.function.Supplier
+
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 data class RPGDialogLine(
+        val id: Int,
+        val data: String) {
 
-        /**
-         * Who says this line.
-         */
-        val owner: String,
+    //var used = false
+    //var reusable: Boolean = false
 
-        /**
-         * The line text.
-         */
-        val data: String)
+    var precondition: Supplier<Boolean> = Supplier { true }
+    var postAction: Runnable = EmptyRunnable
+
+    fun isAvailable(): Boolean {
+        return precondition.get()
+    }
+
+    fun isEnd() = id == 0
+
+    companion object {
+        val END = RPGDialogLine(0, "")
+    }
+}

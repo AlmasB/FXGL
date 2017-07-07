@@ -6,29 +6,45 @@
 
 package com.almasb.fxgl.gameplay.cutscene
 
-import java.util.*
+import com.almasb.fxgl.parser.JavaScriptParser
+import java.util.function.Supplier
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class RPGCutscene {
+internal class RPGCutscene(val scriptName: String) {
 
-    internal val lines: List<RPGDialogLine>
+    private val js: JavaScriptParser = JavaScriptParser(scriptName)
+
+    val playerLines: List<RPGDialogLine>
+    val npcLines: List<RPGDialogLine>
 
     init {
-        // TODO: hardcoded
+        playerLines = loadLines("playerLinesWrap").plus(RPGDialogLine(999, "Bye!"))
 
-        val dialogLines = Arrays.asList(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                "and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,",
-                "when an unknown printer took a galley of type and scrambled it to make a type",
-                "specimen book. It has survived not only five centuries, but also the leap into ",
-                "electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages"
-        )
+        npcLines = loadLines("npcLinesWrap")
+    }
 
-        lines = dialogLines.map { RPGDialogLine("NPC", it) }
+    private fun loadLines(funcName: String): List<RPGDialogLine> {
+        return js.callFunction<Array<Any>>(funcName)
+                .map { "$it" }
+                .map {
+                    val id = it.toCharArray()[0].toString().toInt()
+                    val data = it.substring(2)
+
+                    val line = RPGDialogLine(id, data)
+                    line.precondition = Supplier<Boolean> { js.callFunction<Boolean>("precond", line.id) }
+                    line.postAction = Runnable { js.callFunction<Void>("npcActions", line.id) }
+
+                    line
+                }
+    }
+
+    internal fun playerSelected(line: RPGDialogLine): RPGDialogLine {
+        val npcLineID = js.callFunction<Int>("mapLines", line.id)
+
+        return npcLines.find { it.id == npcLineID } ?: RPGDialogLine.END
     }
 }

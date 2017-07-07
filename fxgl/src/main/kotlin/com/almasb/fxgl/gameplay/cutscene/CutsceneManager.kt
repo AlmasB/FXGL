@@ -7,6 +7,7 @@
 package com.almasb.fxgl.gameplay.cutscene
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.FXGLLogger
 
 /**
  *
@@ -15,26 +16,42 @@ import com.almasb.fxgl.app.FXGL
  */
 class CutsceneManager {
 
-    private val cachedScripts = hashMapOf<String, Cutscene>()
+    private val log = FXGLLogger.get(javaClass)
 
-    private val state = CutsceneState()
+    private val cachedScripts = hashMapOf<String, RPGCutscene>()
 
+    private val rpgState = RPGCutsceneState()
+    private val jrpgState = JRPGCutsceneState()
+
+    /**
+     * Supports .js and .txt
+     */
     fun startCutscene(scriptName: String) {
-        startCutscene(cachedScripts[scriptName] ?: Cutscene(scriptName))
+        if (FXGL.getApp().stateMachine.currentState is CutsceneState) {
+            log.warning("Cannot start more than 1 cutscene")
+            return
+        }
+
+        if (scriptName.endsWith(".js")) {
+            startRPG(cachedScripts[scriptName] ?: RPGCutscene(scriptName))
+        } else if (scriptName.endsWith(".txt")) {
+            startJRPG(JRPGCutscene(scriptName))
+        } else {
+            throw IllegalArgumentException("Unsupported cutscene format")
+        }
     }
 
-    private fun startCutscene(cutscene: Cutscene) {
+    private fun startRPG(cutscene: RPGCutscene) {
         cachedScripts[cutscene.scriptName] = cutscene
 
-        state.start(cutscene)
+        rpgState.start(cutscene)
 
-        FXGL.getApp().stateMachine.pushState(state)
+        FXGL.getApp().stateMachine.pushState(rpgState)
     }
 
-    fun startRPGCutscene() {
-        // TODO: hardcoded
-        state.start(RPGCutscene())
+    private fun startJRPG(cutscene: JRPGCutscene) {
+        jrpgState.start(cutscene)
 
-        FXGL.getApp().stateMachine.pushState(state)
+        FXGL.getApp().stateMachine.pushState(jrpgState)
     }
 }
