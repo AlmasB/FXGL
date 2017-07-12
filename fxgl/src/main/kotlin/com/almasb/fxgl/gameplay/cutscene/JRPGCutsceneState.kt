@@ -15,13 +15,15 @@ import javafx.scene.text.Text
 import java.util.*
 
 /**
+ * TODO: reveal full text
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 internal class JRPGCutsceneState : CutsceneState() {
 
     private val textRPG = Text()
 
-    private lateinit var JRPGCutscene: JRPGCutscene
+    private lateinit var cutscene: JRPGCutscene
 
     init {
         textRPG.fill = Color.WHITE
@@ -46,11 +48,12 @@ internal class JRPGCutsceneState : CutsceneState() {
     }
 
     override fun onClose() {
-
+        currentLine = 0
+        message.clear()
     }
 
     internal fun start(cutscene: JRPGCutscene) {
-        this.JRPGCutscene = cutscene
+        this.cutscene = cutscene
 
         nextRPGLine()
     }
@@ -60,14 +63,14 @@ internal class JRPGCutsceneState : CutsceneState() {
     private val message = ArrayDeque<Char>()
 
     private fun nextRPGLine() {
-        if (currentLine < JRPGCutscene.lines.size) {
-            textRPG.text = ""
-
-            dialogLine = JRPGCutscene.lines[currentLine]
+        if (currentLine < cutscene.lines.size) {
+            dialogLine = cutscene.lines[currentLine]
             dialogLine.data.forEach { message.addLast(it) }
+
+            textRPG.text = dialogLine.owner + ": "
             currentLine++
         } else {
-            // allow to close this
+            endCutscene()
         }
     }
 

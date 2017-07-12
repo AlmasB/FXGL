@@ -83,7 +83,7 @@ public class ScriptSample2 extends GameApplication {
     }
 
     private void triggerDialog() {
-        getGameplay().getCutsceneManager().startCutscene("test.txt");
+        getGameplay().getCutsceneManager().startCutscene("jrpg_cutscene.txt");
     }
 
     public static void main(String[] args) {

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.gameplay.cutscene
 
-import java.util.*
+import com.almasb.fxgl.app.FXGL
 
 /**
  *
@@ -18,17 +18,13 @@ internal class JRPGCutscene(val scriptName: String) {
     internal val lines: List<JRPGDialogLine>
 
     init {
-        // TODO: hardcoded
+        lines = FXGL.getAssetLoader().loadText(scriptName).map {
+            val index = it.indexOf(":")
 
-        val dialogLines = Arrays.asList(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                "and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,",
-                "when an unknown printer took a galley of type and scrambled it to make a type",
-                "specimen book. It has survived not only five centuries, but also the leap into ",
-                "electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages"
-        )
+            val owner = it.substring(0, index).trim()
+            val text = it.substring(index + 1).trim()
 
-        lines = dialogLines.map { JRPGDialogLine("NPC", it) }
+            JRPGDialogLine(owner, text)
+        }
     }
 }
