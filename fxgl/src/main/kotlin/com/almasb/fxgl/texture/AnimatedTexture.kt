@@ -42,6 +42,11 @@ class AnimatedTexture(defaultChannel: AnimationChannel) : Texture(defaultChannel
         start(FXGL.getApp().stateMachine.playState)
     }
 
+    /**
+     * Plays given animation channel from start to end.
+     * The channel cannot be reset while playing, but
+     * you can call this method instead to reset the channel.
+     */
     fun playAnimationChannel(channel: AnimationChannel) {
         animationChannel = channel
         playingChannel = true

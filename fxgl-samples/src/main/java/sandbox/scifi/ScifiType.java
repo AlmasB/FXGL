@@ -10,5 +10,5 @@ package sandbox.scifi;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public enum ScifiType {
-    PLAYER, PLATFORM, BUTTON
+    PLAYER, PLATFORM, BUTTON, COIN, PORTAL
 }

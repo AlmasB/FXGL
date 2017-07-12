@@ -28,8 +28,6 @@ class FXGLNotificationService
 @Inject
 private constructor(private val gameScene: GameScene) : NotificationService {
 
-    private val log = FXGL.getLogger(javaClass)
-
     private val queue = ArrayDeque<NotificationView>()
 
     private var position = Position.TOP

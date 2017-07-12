@@ -27,6 +27,7 @@ import javafx.scene.Parent
 import javafx.scene.image.Image
 import javafx.scene.media.AudioClip
 import javafx.scene.media.Media
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.*
 import java.net.URL
@@ -75,7 +76,6 @@ class FXGLAssetLoader
      * Loads texture with given name from /assets/textures/.
      * Either returns a valid texture or throws an exception in case of errors.
      *
-     *
      * Supported image formats are:
      *
      *  * [BMP](http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx)
@@ -83,12 +83,8 @@ class FXGLAssetLoader
      *  * [JPEG](http://www.ijg.org)
      *  * [PNG](http://www.libpng.org/pub/png/spec/)
      *
-     *
-
      * @param name texture name without the /assets/textures/, e.g. "player.png"
-     * *
      * @return texture
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadTexture(name: String): Texture {
@@ -113,7 +109,6 @@ class FXGLAssetLoader
      * Then resizes it to given width and height without preserving aspect ratio.
      * Either returns a valid texture or throws an exception in case of errors.
      *
-     *
      * Supported image formats are:
      *
      *  * [BMP](http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx)
@@ -121,16 +116,10 @@ class FXGLAssetLoader
      *  * [JPEG](http://www.ijg.org)
      *  * [PNG](http://www.libpng.org/pub/png/spec/)
      *
-     *
-
      * @param name texture name without the /assets/textures/, e.g. "player.png"
-     * *
      * @param width requested width
-     * *
      * @param height requested height
-     * *
      * @return texture
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadTexture(name: String, width: Double, height: Double): Texture {
@@ -152,18 +141,39 @@ class FXGLAssetLoader
         }
     }
 
+    override fun loadTexture(name: String, transparency: Color): Texture {
+        val cacheKey = TEXTURES_DIR + name + "T" + transparency
+
+        val asset = getAssetFromCache(cacheKey)
+        if (asset != null) {
+            return Texture(Image::class.java.cast(asset))
+        }
+
+        try {
+            getStream(TEXTURES_DIR + name).use {
+                val texture = Texture(Image(it))
+
+                val newTexture = texture.transparentColor(transparency)
+                texture.dispose()
+
+                cachedAssets.put(cacheKey, newTexture.image)
+
+                return newTexture
+            }
+        } catch (e: Exception) {
+            throw loadFailed(name, e)
+        }
+    }
+
     /**
      * Loads sound with given name from /assets/sounds/.
      * Either returns a valid sound or throws an exception in case of errors.
      *
-     *
      * Supported sound format:
      *  * WAV
-
+     *
      * @param name sound name without the /assets/sounds/, e.g. "explosion.wav"
-     * *
      * @return sound
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadSound(name: String): Sound {
@@ -185,14 +195,11 @@ class FXGLAssetLoader
      * Loads sound with given name from /assets/music/.
      * Either returns a valid sound or throws an exception in case of errors.
      *
-     *
      * Supported music format:
      *  * MP3
-
+     *
      * @param name music name without the /assets/music/, e.g. "background_music.mp3"
-     * *
      * @return music
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadMusic(name: String): Music {
@@ -215,11 +222,9 @@ class FXGLAssetLoader
      * into List where each element represents a line
      * in the file. Either returns a valid list with lines read from the file
      * or throws an exception in case of errors.
-
+     *
      * @param name text file name without the /assets/text/, e.g. "level_0.txt"
-     * *
      * @return list of lines from file
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     @Suppress("UNCHECKED_CAST")
@@ -237,11 +242,9 @@ class FXGLAssetLoader
     /**
      * Loads KVFile with given name from /assets/kv/.
      * Either returns a valid KVFile or throws exception in case of errors.
-
+     *
      * @param name KVFile name without the /assets/kv/, .e.g "settings.kv"
-     * *
      * @return kv file
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadKV(name: String): KVFile {
@@ -263,11 +266,9 @@ class FXGLAssetLoader
     /**
      * Loads script with given name from /assets/scripts/ as a single string.
      * Either returns loaded string or throws exception in case of errors.
-
+     *
      * @param name script file without the /assets/scripts/, e.g. "skill_heal.js"
-     * *
      * @return script as a String
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadScript(name: String): String {
@@ -276,11 +277,9 @@ class FXGLAssetLoader
 
     /**
      * Loads resource bundle with given name from "/assets/properties/".
-
+     *
      * @param name must be under "/assets/properties/", e.g. system.properties, game.properties
-     * *
      * @return resource bundle
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadResourceBundle(name: String): ResourceBundle {
@@ -294,11 +293,9 @@ class FXGLAssetLoader
     /**
      * Loads cursor image with given name from /assets/ui/cursors/.
      * Either returns a valid image or throws exception in case of errors.
-
+     *
      * @param name image name without the /assets/ui/cursors/, e.g. "attack_cursor.png"
-     * *
      * @return cursor image
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadCursorImage(name: String): Image {
@@ -312,13 +309,10 @@ class FXGLAssetLoader
     /**
      * Loads an FXML (.fxml) file from /assets/ui/.
      * Either returns a valid parsed UI or throws an exception in case of errors.
-
+     *
      * @param name FXML file name
-     * *
      * @param controller the controller object
-     * *
      * @return a UI object parsed from .fxml
-     * *
      * @throws IllegalArgumentException if asset not found or loading/parsing error
      */
     override fun loadUI(name: String, controller: UIController): UI {
@@ -360,18 +354,13 @@ class FXGLAssetLoader
      * with different sizes without accessing the font file.
      * Either returns a valid font factory or throws exception in case of errors.
      *
-     *
      * Supported font formats are:
      *
      *  * TTF
      *  * OTF
      *
-     *
-
      * @param name font file name without the /assets/ui/fonts/, e.g. "quest_font.ttf"
-     * *
      * @return font factory
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadFont(name: String): FontFactory {
@@ -397,11 +386,9 @@ class FXGLAssetLoader
     /**
      * Loads an app icon from /assets/ui/icons/.
      * Either returns a valid image or throws an exception in case of errors.
-
+     *
      * @param name image name without the /assets/ui/icons/, e.g. "app_icon.png"
-     * *
      * @return app icon image
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun loadAppIcon(name: String): Image {
@@ -415,13 +402,10 @@ class FXGLAssetLoader
     /**
      * Loads a behavior tree from /assets/ai/.
      * Either returns a valid behavior tree or throws an exception in case of errors.
-
+     *
      * @param name tree name without the /assets/ai/, e.g. "patrol.tree"
-     * *
      * @param  tree type
-     * *
      * @return loaded and parsed behavior tree
-     * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
     override fun <T> loadBehaviorTree(name: String): BehaviorTree<T> {
@@ -443,9 +427,8 @@ class FXGLAssetLoader
 
     /**
      * Returns a valid URL to resource or throws [IllegalArgumentException].
-
+     *
      * @param name resource name
-     * *
      * @return URL to resource
      */
     private fun getURL(name: String): URL {
@@ -464,9 +447,7 @@ class FXGLAssetLoader
      * The resource name must always begin with "/", e.g. "/assets/textures/player.png".
 
      * @param name resource name
-     * *
      * @return resource stream
-     * *
      * @throws IllegalArgumentException if any error occurs or stream is null
      */
     override fun getStream(name: String): InputStream {
@@ -479,9 +460,8 @@ class FXGLAssetLoader
 
     /**
      * Load an asset from cache.
-
+     *
      * @param name asset name
-     * *
      * @return asset object or null if not found
      */
     private fun getAssetFromCache(name: String): Any? {
@@ -497,9 +477,8 @@ class FXGLAssetLoader
     /**
      * Read all lines from a file. Bytes from the file are decoded into characters
      * using the [UTF-8][java.nio.charset.StandardCharsets.UTF_8] [charset][java.nio.charset.Charset].
-
+     *
      * @param name resource name
-     * *
      * @return the lines from the file as a `List`
      */
     private fun readAllLines(name: String): List<String> {
@@ -547,11 +526,9 @@ class FXGLAssetLoader
      * Loads file names from a directory.
      * Note: directory name must be in the format "/assets/...".
      * Returned file names are relativized to the given directory name.
-
+     *
      * @param directory name of directory
-     * *
      * @return list of file names
-     * *
      * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
      */
     override fun loadFileNames(directory: String): List<String> {
@@ -583,9 +560,8 @@ class FXGLAssetLoader
     /**
      * Loads file names from a directory when running within a jar.
      * If it contains other folders they'll be searched too.
-
+     *
      * @param folderName folder files of which need to be retrieved
-     * *
      * @return list of file names
      */
     private fun loadFileNamesJar(folderName: String): List<String> {
@@ -623,11 +599,9 @@ class FXGLAssetLoader
     /**
      * Constructs new IllegalArgumentException with "load failed" message
      * and with relevant information about the asset.
-
+     *
      * @param assetName name of the asset load of which failed
-     * *
      * @param error the error that occurred
-     * *
      * @return instance of IAE to be thrown
      */
     private fun loadFailed(assetName: String, error: Throwable): IllegalArgumentException {

@@ -16,6 +16,7 @@ import com.almasb.fxgl.ui.FontFactory;
 import com.almasb.fxgl.ui.UI;
 import com.almasb.fxgl.ui.UIController;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 import java.io.InputStream;
 import java.util.List;
@@ -93,6 +94,14 @@ public interface AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     Texture loadTexture(String name, double width, double height);
+
+    /**
+     *
+     * @param name texture name
+     * @param transparency replaces this color with Color.TRANSPARENT
+     * @return texture
+     */
+    Texture loadTexture(String name, Color transparency);
 
     /**
      * Loads sound with given name from /assets/sounds/.

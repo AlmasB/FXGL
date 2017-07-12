@@ -8,6 +8,7 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.math.Vec2;
 
 /**
@@ -20,11 +21,11 @@ public final class SAT {
     private SAT() {}
 
     // there can be only 2 axes per angle, hence 2 * 2 = 4
-    private static final Array<Vec2> axes = new Array<>(false, 4);
+    private static final Array<Vec2> axes = new UnorderedArray<>(4);
 
     // each hit box has 4 corners
-    private static final Array<Vec2> corners1 = new Array<>(false, 4);
-    private static final Array<Vec2> corners2 = new Array<>(false, 4);
+    private static final Array<Vec2> corners1 = new UnorderedArray<>(4);
+    private static final Array<Vec2> corners2 = new UnorderedArray<>(4);
 
     /**
      * Note: NOT thread-safe but GC-friendly.

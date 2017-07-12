@@ -16,7 +16,7 @@ import com.almasb.fxgl.ecs.Entity;
 public class GridControl extends Control {
 
     // TODO: calculate capacity
-    private Array<Control> controls = new Array<>(true, 2000);
+    private Array<Control> controls = new Array<>(2000);
 
     @Override
     public void onUpdate(Entity entity, double tpf) {

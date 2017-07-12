@@ -18,8 +18,9 @@ import javafx.collections.ObservableList
 internal class QuestManagerProvider : QuestManager {
 
     private val quests = FXCollections.observableArrayList<Quest>()
+    private val unmodifiableQuests = FXCollections.unmodifiableObservableList(quests)
 
-    override fun questsProperty(): ObservableList<Quest> = FXCollections.unmodifiableObservableList(quests)
+    override fun questsProperty(): ObservableList<Quest> = unmodifiableQuests
 
     override fun addQuest(quest: Quest) {
         quests.add(quest)

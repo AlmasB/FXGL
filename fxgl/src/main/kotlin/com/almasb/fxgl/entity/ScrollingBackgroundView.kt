@@ -11,7 +11,6 @@ import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Orientation
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.image.Image
 
 /**
  * EntityView for scrollable backgrounds.
@@ -23,42 +22,41 @@ import javafx.scene.image.Image
 class ScrollingBackgroundView
 @JvmOverloads constructor(texture: Texture,
                           val orientation: Orientation = Orientation.HORIZONTAL,
+                          val speed: Double = 1.0,
                           renderLayer: RenderLayer = RenderLayer.BACKGROUND) : EntityView(renderLayer) {
 
     private val canvas: Canvas
     private val g: GraphicsContext
 
-    private val image: Image
+    private val image = texture.image
 
     private var sx = 0.0
     private var sy = 0.0
 
     init {
-        image = texture.image
-
         val viewport = FXGL.getApp().gameScene.viewport
 
         canvas = Canvas(viewport.width, viewport.height)
         g = canvas.graphicsContext2D
 
         if (orientation == Orientation.HORIZONTAL) {
-            translateXProperty().addListener { obs, old, x ->
+            translateXProperty().addListener { _, _, x ->
 
                 if (x.toInt() < 0)
                     throw IllegalStateException("Background x cannot be < 0")
 
-                sx = x.toDouble() % image.width
+                sx = (x.toDouble() * speed) % image.width
                 redraw()
             }
 
             translateXProperty().bind(viewport.xProperty())
         } else {
-            translateYProperty().addListener { obs, old, y ->
+            translateYProperty().addListener { _, _, y ->
 
                 if (y.toInt() < 0)
                     throw IllegalStateException("Background y cannot be < 0")
 
-                sy = y.toDouble() % image.height
+                sy = (y.toDouble() * speed) % image.height
                 redraw()
             }
 

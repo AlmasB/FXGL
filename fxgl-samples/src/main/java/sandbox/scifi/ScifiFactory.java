@@ -11,9 +11,13 @@ import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
@@ -27,54 +31,51 @@ public class ScifiFactory implements EntityFactory {
     @Spawns("platform")
     public Entity newPlatform(SpawnData data) {
         return Entities.builder()
-                .at(data.getX(), data.getY())
+                .from(data)
                 .type(ScifiType.PLATFORM)
                 .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
-                .with(new PhysicsComponent())
+                .with(new PhysicsComponent(), new CollidableComponent(true))
                 .build();
     }
 
-    @Spawns("block")
-    public Entity newBlock(SpawnData data) {
+    @Spawns("coin")
+    public Entity newCoin(SpawnData data) {
         return Entities.builder()
-                .at(data.getX(), data.getY())
-                .type(ScifiType.PLATFORM)
-                .viewFromNodeWithBBox(new EntityView(new Rectangle(640 - 512, 64, Color.DARKCYAN), new RenderLayer() {
-                    @Override
-                    public String name() {
-                        return "Block";
-                    }
-
-                    @Override
-                    public int index() {
-                        return 10000;
-                    }
-                }))
-                .with(new PhysicsComponent())
+                .from(data)
+                .type(ScifiType.COIN)
+                .viewFromTextureWithBBox("coin.png")
+                .with(new CollidableComponent(true))
                 .build();
     }
 
     @Spawns("player")
     public Entity newPlayer(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
+        physics.setFixtureDef(new FixtureDef().friction(0).density(0.25f));
+
+        BodyDef bd = new BodyDef();
+        bd.setFixedRotation(true);
+
+        physics.setBodyDef(bd);
         physics.setBodyType(BodyType.DYNAMIC);
 
         return Entities.builder()
-                .at(data.getX(), data.getY())
+                .from(data)
                 .type(ScifiType.PLAYER)
-                .bbox(new HitBox("main", BoundingShape.circle(19)))
-                .with(physics)
+                .bbox(new HitBox("main", BoundingShape.circle(15)))
+                .bbox(new HitBox("lower", new Point2D(15 - 5, 30), BoundingShape.box(10, 10)))
+                .with(physics, new CollidableComponent(true))
                 .with(new PlayerControl())
                 .build();
     }
 
-    @Spawns("button")
-    public Entity newButton(SpawnData data) {
+    @Spawns("portal")
+    public Entity newPortal(SpawnData data) {
         return Entities.builder()
-                .at(data.getX(), data.getY())
-                .type(ScifiType.BUTTON)
-                .viewFromNodeWithBBox(FXGL.getAssetLoader().loadTexture("push_button.png", 33, 22))
-                .with(new UsableControl(() -> FXGL.getApp().getGameWorld().spawn("block", 256, 352)))
+                .type(ScifiType.PORTAL)
+                .from(data)
+                .viewFromTextureWithBBox("finish.png")
+                .with(new CollidableComponent(true))
                 .build();
     }
 }

@@ -21,5 +21,6 @@ class Tileset(var firstgid: Int = 0,
               var margin: Int = 0,
               var spacing: Int = 0,
               var columns: Int = 0,
-              var tilecount: Int = 0) {
+              var tilecount: Int = 0,
+              var transparentcolor: String = "") {
 }

@@ -35,3 +35,48 @@ function notify(message) {
 function sound(filename) {
     FXGL.getAudioPlayer().playSound(filename);
 }
+
+function int(varName) {
+    return FXGL.getApp().getGameState().getInt(varName);
+}
+
+function intP(varName) {
+    return FXGL.getApp().getGameState().intProperty(varName);
+}
+
+function double(varName) {
+    return FXGL.getApp().getGameState().getDouble(varName);
+}
+
+function boolean(varName) {
+    return FXGL.getApp().getGameState().getBoolean(varName);
+}
+
+function string(varName) {
+    return FXGL.getApp().getGameState().getString(varName);
+}
+
+function println(obj) {
+    java.lang.System.out.println(obj);
+}
+
+function addQuest(questName, varName, varNum) {
+    var Quest = Java.type("com.almasb.fxgl.gameplay.rpg.quest.Quest")
+    var QuestObjective = Java.type("com.almasb.fxgl.gameplay.rpg.quest.QuestObjective")
+
+    FXGL.getApp().getGameplay().getQuestManager().addQuest(new Quest(questName, java.util.Arrays.asList(
+            new QuestObjective(questName, intP(varName), varNum)
+    )));
+}
+
+function hasQuests() {
+    return FXGL.getApp().getGameplay().getQuestManager().questsProperty().size() > 0;
+}
+
+function playerLinesWrap() {
+    return Java.to(playerLines())
+}
+
+function npcLinesWrap() {
+    return Java.to(npcLines())
+}

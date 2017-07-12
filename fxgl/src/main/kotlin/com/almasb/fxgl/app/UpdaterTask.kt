@@ -69,10 +69,10 @@ internal class UpdaterTask : Runnable {
         with(button) {
             isDisable = true
             text = "Open GitHub"
-            setOnAction { e ->
+            setOnAction {
                 FXGL.getNet()
                         .openBrowserTask(FXGL.getString("url.github"))
-                        .onFailure(Consumer { error -> log.warning("Error opening browser: $error") })
+                        .onFailureKt { log.warning("Error opening browser: $it") }
                         .execute()
             }
         }

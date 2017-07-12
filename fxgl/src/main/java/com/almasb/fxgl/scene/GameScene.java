@@ -9,6 +9,7 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.collection.Array;
+import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.ecs.*;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -65,9 +66,9 @@ public final class GameScene extends FXGLScene
      */
     private GraphicsContext particlesGC = particlesCanvas.getGraphicsContext2D();
 
-    private Array<ParticleControl> particles = new Array<>(false, 16);
+    private Array<ParticleControl> particles = new UnorderedArray<>(16);
 
-    private Array<Entity> drawables = new Array<>(false, 128);
+    private Array<Entity> drawables = new UnorderedArray<>(128);
 
     /**
      * The overlay root above {@link #gameRoot}. Contains UI elements, native JavaFX nodes.

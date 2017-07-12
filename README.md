@@ -60,23 +60,33 @@ public class BasicGameApp extends GameApplication {
 
 ## Maven
 
+* [Maven](https://github.com/AlmasB/FXGL-Maven) project if you use Java
+* [Maven](https://github.com/AlmasB/FXGL-MavenKt) project if you use Kotlin
+
+Already have `pom.xml`? Then add:
+
 ```maven
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.3.4</version>
+    <version>0.3.5</version>
 </dependency>
 ```
 
 ## Gradle
 
+* [Gradle](https://github.com/AlmasB/FXGL-Gradle) project if you use Java
+* [Gradle](https://github.com/AlmasB/FXGL-GradleKt) project if you use Kotlin
+
+Already have `build.gradle`? Then add:
+
 ```gradle
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.3.4'
+    compile 'com.github.almasb:fxgl:0.3.5'
 }
 ```
 

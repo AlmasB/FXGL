@@ -90,10 +90,10 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
     /** Returns the old value associated with the specified key, or null. */
     public V put(K key, V value) {
         if (key == null) throw new IllegalArgumentException("key cannot be null.");
-        return put_internal(key, value);
+        return putInternal(key, value);
     }
 
-    private V put_internal(K key, V value) {
+    private V putInternal(K key, V value) {
         K[] keyTable = this.keyTable;
 
         // Check for existing keys.
@@ -205,7 +205,9 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         // Push keys until an empty bucket is found.
         K evictedKey;
         V evictedValue;
-        int i = 0, pushIterations = this.pushIterations;
+        int i = 0;
+        int pushIterations = this.pushIterations;
+
         do {
             // Replace the key and value for one of the hashes.
             switch (FXGLMath.random(2)) {
@@ -271,7 +273,7 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         if (stashSize == stashCapacity) {
             // Too many pushes occurred and the stash is full, increase the table size.
             resize(capacity << 1);
-            put_internal(key, value);
+            putInternal(key, value);
             return;
         }
         // Store key in the stash.
@@ -664,14 +666,14 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         }
     }
 
-    static private abstract class MapIterator<K, V, I> implements Iterable<I>, Iterator<I> {
+    private static abstract class MapIterator<K, V, I> implements Iterable<I>, Iterator<I> {
         public boolean hasNext;
 
         final ObjectMap<K, V> map;
         int nextIndex, currentIndex;
         boolean valid = true;
 
-        public MapIterator(ObjectMap<K, V> map) {
+        MapIterator(ObjectMap<K, V> map) {
             this.map = map;
             reset();
         }
