@@ -7,7 +7,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.3.5</version>
+        <version>0.3.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
