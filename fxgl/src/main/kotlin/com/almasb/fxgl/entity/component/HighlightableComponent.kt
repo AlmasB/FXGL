@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.component
 
 import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.animation.SequentialAnimation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ecs.Component
 import com.almasb.fxgl.ecs.Entity
@@ -27,7 +28,7 @@ import jfxtras.util.NodeUtil
 class HighlightableComponent : Component() {
 
     companion object {
-        private val SIZE = 15.0
+        private val SIZE = 2.0
 
         private class HighlightView : Parent() {
 
@@ -44,8 +45,25 @@ class HighlightableComponent : Component() {
                     strokeWidth = 2.0
                 }
 
+                val particle = makeParticle(0.0, 0.0)
 
-                children.add(light)
+                children.addAll(light, particle)
+
+                val speed = 240.0
+
+                val dist1 = Point2D(-SIZE, -SIZE).distance(Point2D(view.layoutBounds.maxX, (-SIZE)))
+                val dist2 = Point2D(view.layoutBounds.maxX, (-SIZE)).distance(Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY))
+                val dist3 = Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY).distance(Point2D((-SIZE), view.layoutBounds.maxY))
+                val dist4 = Point2D((-SIZE), view.layoutBounds.maxY).distance(Point2D(-SIZE, -SIZE))
+
+                SequentialAnimation(
+                        arrayListOf(
+                                FXGL.getUIFactory().translate(particle, Point2D(-SIZE, -SIZE), Point2D(view.layoutBounds.maxX, (-SIZE)), Duration.seconds(dist1 / speed)),
+                                FXGL.getUIFactory().translate(particle, Point2D(view.layoutBounds.maxX, (-SIZE)), Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Duration.seconds(dist2 / speed)),
+                                FXGL.getUIFactory().translate(particle, Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Point2D((-SIZE), view.layoutBounds.maxY), Duration.seconds(dist3 / speed)),
+                                FXGL.getUIFactory().translate(particle, Point2D((-SIZE), view.layoutBounds.maxY), Point2D(-SIZE, -SIZE), Duration.seconds(dist4 / speed))
+                                )
+                ).startInPlayState()
 
 //                animations.forEach { it.stop() }
 //                animations.clear()
@@ -70,7 +88,8 @@ class HighlightableComponent : Component() {
             }
 
             private fun makeParticle(x: Double, y: Double): Node {
-                val particle = FXGL.getAssetLoader().loadTexture("highlight_particle.png", SIZE, SIZE).multiplyColor(Color.DARKRED)
+                //val particle = FXGL.getAssetLoader().loadTexture("highlight_particle.png", SIZE, SIZE).multiplyColor(Color.DARKRED)
+                val particle = Rectangle(SIZE, SIZE, Color.color(0.7, 0.5, 0.3, 0.75))
                 particle.translateX = x
                 particle.translateY = y
                 return particle

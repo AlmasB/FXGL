@@ -38,6 +38,10 @@ abstract class Animation<T>
     var isPaused = false
         private set
 
+    /**
+     * True between start and stop.
+     * Pauses have no effect on this flag.
+     */
     var isAnimating = false
         private set
 

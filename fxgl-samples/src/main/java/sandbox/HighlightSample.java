@@ -17,8 +17,10 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -67,6 +69,19 @@ public class HighlightSample extends GameApplication {
                 .viewFromNode(new Rectangle(200, 40, Color.BLUE))
                 .with(new HighlightableComponent())
                 .buildAndAttach(getGameWorld());
+    }
+
+    @Override
+    protected void initUI() {
+        Text text = getUIFactory().newText("Level 1", Color.WHITESMOKE, 46.0);
+
+        DropShadow ds = new DropShadow(25, 0, 0, Color.BLACK);
+
+        text.setEffect(ds);
+
+        getUIFactory().centerText(text);
+
+        getGameScene().addUINode(text);
     }
 
     public static void main(String[] args) {
