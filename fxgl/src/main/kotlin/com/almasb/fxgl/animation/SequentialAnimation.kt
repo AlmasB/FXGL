@@ -14,11 +14,30 @@ import com.almasb.fxgl.util.EmptyRunnable
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class SequentialAnimation(val animations: List<Animation<*>>,
-                          var cycleCount: Int = 1) : StateListener {
+class SequentialAnimation
+@JvmOverloads constructor(var cycleCount: Int = 1, vararg animations: Animation<*>) : StateListener {
+
+    private val animations: List<Animation<*>> = animations.toList()
 
     var isAutoReverse = false
     var onFinished: Runnable = EmptyRunnable
+
+    private var count = 0
+
+    var isReverse = false
+        private set
+
+    var isPaused = false
+        private set
+
+    /**
+     * True between start and stop.
+     * Pauses have no effect on this flag.
+     */
+    var isAnimating = false
+        private set
+
+    private var checkDelay = true
 
     private var animationIndex = 0
 
@@ -37,43 +56,86 @@ class SequentialAnimation(val animations: List<Animation<*>>,
     }
 
     fun startReverse(state: State) {
-//        if (!isAnimating) {
-//            isReverse = true
-//            start(state)
-//        }
+        if (!isAnimating) {
+            isReverse = true
+            start(state)
+        }
     }
 
     fun start(state: State) {
-//        if (!isAnimating) {
+        if (!isAnimating) {
             this.state = state
-            //isAnimating = true
+            isAnimating = true
             state.addStateListener(this)
-        animations[0].start(state)
-//        }
+
+            animationIndex = if (isReverse) animations.size-1 else 0
+
+            // reset animations, then start
+            if (isReverse) {
+                animations.forEach { (it as Animation<Any>).onProgress(it.animatedValue.getValue(1.0)) }
+                animations[animationIndex].startReverse(state)
+            } else {
+                animations.forEach { (it as Animation<Any>).onProgress(it.animatedValue.getValue(0.0)) }
+                animations[animationIndex].start(state)
+            }
+        }
     }
 
     fun stop() {
-//        if (isAnimating) {
-//            isAnimating = false
-//            state.removeStateListener(this)
-//            time = 0.0
-//            count = 0
-//            isReverse = false
-//            checkDelay = true
-//        }
+        if (isAnimating) {
+            isAnimating = false
+            state.removeStateListener(this)
+            count = 0
+            isReverse = false
+            checkDelay = true
+        }
+    }
+
+    fun pause() {
+        isPaused = true
+    }
+
+    fun resume() {
+        isPaused = false
     }
 
     override fun onUpdate(tpf: Double) {
+        if (isPaused)
+            return
+
         val anim = animations[animationIndex]
-        //anim.onUpdate(tpf)
 
         if (!anim.isAnimating) {
-            animationIndex++
-            if (animationIndex == animations.size) {
-                animationIndex = 0
+            animationIndex += if (isReverse) -1 else 1
+
+            if ((!isReverse && animationIndex == animations.size) || (isReverse && animationIndex == -1)) {
+
+                count++
+
+                if (count >= cycleCount) {
+                    onFinished.run()
+                    stop()
+                    return
+                } else {
+                    if (isAutoReverse) {
+                        isReverse = !isReverse
+                    }
+                }
+
+                animationIndex = if (isReverse) animations.size-1 else 0
+
+                if (isReverse) {
+                    animations.forEach { (it as Animation<Any>).onProgress(it.animatedValue.getValue(1.0)) }
+                } else {
+                    animations.forEach { (it as Animation<Any>).onProgress(it.animatedValue.getValue(0.0)) }
+                }
             }
 
-            animations[animationIndex].start(state)
+            if (isReverse) {
+                animations[animationIndex].startReverse(state)
+            } else {
+                animations[animationIndex].start(state)
+            }
         }
     }
 }

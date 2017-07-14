@@ -56,13 +56,12 @@ class HighlightableComponent : Component() {
                 val dist3 = Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY).distance(Point2D((-SIZE), view.layoutBounds.maxY))
                 val dist4 = Point2D((-SIZE), view.layoutBounds.maxY).distance(Point2D(-SIZE, -SIZE))
 
-                SequentialAnimation(
-                        arrayListOf(
+                SequentialAnimation(1,
                                 FXGL.getUIFactory().translate(particle, Point2D(-SIZE, -SIZE), Point2D(view.layoutBounds.maxX, (-SIZE)), Duration.seconds(dist1 / speed)),
                                 FXGL.getUIFactory().translate(particle, Point2D(view.layoutBounds.maxX, (-SIZE)), Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Duration.seconds(dist2 / speed)),
                                 FXGL.getUIFactory().translate(particle, Point2D(view.layoutBounds.maxX, view.layoutBounds.maxY), Point2D((-SIZE), view.layoutBounds.maxY), Duration.seconds(dist3 / speed)),
                                 FXGL.getUIFactory().translate(particle, Point2D((-SIZE), view.layoutBounds.maxY), Point2D(-SIZE, -SIZE), Duration.seconds(dist4 / speed))
-                                )
+
                 ).startInPlayState()
 
 //                animations.forEach { it.stop() }
