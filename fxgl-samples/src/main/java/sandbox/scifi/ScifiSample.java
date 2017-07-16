@@ -15,8 +15,12 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.handler.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.ui.LevelText;
 import javafx.geometry.Orientation;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import java.util.Arrays;
 
@@ -74,6 +78,18 @@ public class ScifiSample extends GameApplication {
                 playerControl.jump();
             }
         }, KeyCode.W);
+
+        getInput().addAction(new UserAction("Animate Level Text") {
+            @Override
+            protected void onActionBegin() {
+                levelText.animateIn();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                levelText.animateOut();
+            }
+        }, KeyCode.ENTER);
     }
 
     @Override
@@ -143,6 +159,22 @@ public class ScifiSample extends GameApplication {
         });
 
         getPhysicsWorld().addCollisionHandler(new CollectibleHandler(ScifiType.PLAYER, ScifiType.COIN, "drop.wav"));
+    }
+
+    private LevelText levelText;
+
+    @Override
+    protected void initUI() {
+//        Text text = getUIFactory().newText("Level 1", Color.WHITESMOKE, 46.0);
+//
+//        DropShadow ds = new DropShadow(25, 0, 0, Color.BLACK);
+//
+//        text.setEffect(ds);
+//
+//        getUIFactory().centerText(text);
+
+        levelText = new LevelText("Level 1");
+        getGameScene().addUINode(levelText);
     }
 
     public static void main(String[] args) {

@@ -14,8 +14,9 @@ import com.almasb.fxgl.util.EmptyRunnable
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ParallelAnimation
-@JvmOverloads constructor(var cycleCount: Int = 1, vararg animations: Animation<*>) : StateListener {
+class ParallelAnimation(var cycleCount: Int = 1, vararg animations: Animation<*>) : StateListener {
+
+    constructor(vararg animations: Animation<*>) : this(1, *animations)
 
     private val animations: List<Animation<*>> = animations.toList()
 
