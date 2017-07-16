@@ -6,8 +6,11 @@
 package com.almasb.fxglgames.geowars;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.component.TimeComponent;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
@@ -36,6 +39,10 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.Map;
+
+import static com.almasb.fxgl.app.DSLKt.getd;
+import static com.almasb.fxgl.app.DSLKt.geti;
+import static com.almasb.fxgl.app.DSLKt.set;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -120,6 +127,13 @@ public class GeoWarsApp extends GameApplication {
                 openWeaponMenu();
             }
         }, MouseButton.SECONDARY);
+
+        input.addAction(new UserAction("Time") {
+            @Override
+            protected void onActionBegin() {
+                set("timeRatio", getd("timeRatio") == 1.0 ? 0.05 : 1.0);
+            }
+        }, KeyCode.G);
     }
 
     @Override
@@ -128,8 +142,11 @@ public class GeoWarsApp extends GameApplication {
         vars.put("multiplier", 1);
         vars.put("kills", 0);
         vars.put("time", 180);
+        vars.put("timeRatio", 1.0);
         vars.put("weaponType", WeaponType.NORMAL);
     }
+
+    private Music music;
 
     @Override
     protected void initGame() {
@@ -145,7 +162,16 @@ public class GeoWarsApp extends GameApplication {
         getMasterTimer().runAtInterval(() -> getGameWorld().spawn("Crystal", getRandomPoint()), Duration.seconds(4));
         getMasterTimer().runAtInterval(() -> getGameState().increment("time", -1), Duration.seconds(1));
 
-        getAudioPlayer().playMusic("bgm.mp3");
+        music = getAssetLoader().loadMusic("bgm.mp3");
+
+        getGameState().<Double>addListener("timeRatio", (prev, now) -> {
+            if (now != 1.0) {
+                now = 0.85;
+            }
+            music.setRate(now);
+        });
+
+        getAudioPlayer().playMusic(music);
     }
 
     @Override

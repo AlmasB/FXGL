@@ -14,6 +14,7 @@ import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.ecs.component.TimeComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.event.EventTrigger;
@@ -132,7 +133,11 @@ public class GameWorld {
             Entity e = it.next();
 
             if (e.isActive()) {
-                e.update(tpf);
+                TimeComponent time = e.getComponent(TimeComponent.class);
+
+                double tpfRatio = time == null ? 1.0 : time.getValue();
+
+                e.update(tpf * tpfRatio);
             } else {
                 it.remove();
             }

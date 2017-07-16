@@ -10,6 +10,7 @@ import com.almasb.fxgl.annotation.SetEntityFactory;
 import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.ecs.component.TimeComponent;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.GameEntity;
@@ -77,11 +78,14 @@ public class GeoWarsFactory implements EntityFactory {
     public GameEntity spawnBullet(SpawnData data) {
         FXGL.getAudioPlayer().playSound("shoot" + (int) (Math.random() * 8 + 1) + ".wav");
 
+        TimeComponent time = new TimeComponent();
+        time.valueProperty().bind(FXGL.getApp().getGameState().doubleProperty("timeRatio"));
+
         return Entities.builder()
                 .type(GeoWarsType.BULLET)
                 .from(data)
                 .viewFromTextureWithBBox("Bullet.png")
-                .with(new CollidableComponent(true))
+                .with(new CollidableComponent(true), time)
                 .with(new ProjectileControl(data.get("direction"), 600),
                         new BulletControl(FXGL.<GeoWarsApp>getAppCast().getGrid()),
                         new OffscreenCleanControl())
@@ -95,12 +99,15 @@ public class GeoWarsFactory implements EntityFactory {
         int moveSpeed = red ? config.getRedEnemyMoveSpeed()
                 : FXGLMath.random(100, config.getWandererMaxMoveSpeed());
 
+        TimeComponent time = new TimeComponent();
+        time.valueProperty().bind(FXGL.getApp().getGameState().doubleProperty("timeRatio"));
+
         return Entities.builder()
                 .type(GeoWarsType.WANDERER)
                 .at(getRandomSpawnPoint())
                 .viewFromTextureWithBBox(red ? "RedWanderer.png" : "Wanderer.png")
                 .with(new HPComponent(red ? config.getRedEnemyHealth() : config.getEnemyHealth()),
-                        new CollidableComponent(true))
+                        new CollidableComponent(true), time)
                 .with(new WandererControl(moveSpeed))
                 .build();
     }
@@ -112,12 +119,15 @@ public class GeoWarsFactory implements EntityFactory {
         int moveSpeed = red ? config.getRedEnemyMoveSpeed()
                 : FXGLMath.random(150, config.getSeekerMaxMoveSpeed());
 
+        TimeComponent time = new TimeComponent();
+        time.valueProperty().bind(FXGL.getApp().getGameState().doubleProperty("timeRatio"));
+
         return Entities.builder()
                 .type(GeoWarsType.SEEKER)
                 .at(getRandomSpawnPoint())
                 .viewFromTextureWithBBox(red ? "RedSeeker.png" : "Seeker.png")
                 .with(new HPComponent(red ? config.getRedEnemyHealth() : config.getEnemyHealth()),
-                        new CollidableComponent(true))
+                        new CollidableComponent(true), time)
                 .with(new SeekerControl(FXGL.<GeoWarsApp>getAppCast().getPlayer(), moveSpeed))
                 .build();
     }
