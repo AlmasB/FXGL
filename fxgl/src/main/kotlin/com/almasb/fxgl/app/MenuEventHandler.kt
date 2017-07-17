@@ -87,6 +87,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
 
         saveLoadManager
                 .saveTask(dataFile, saveFile)
+                .onSuccessKt { hasSaves.value = true }
                 .executeAsyncWithDialogFX(ProgressDialog("Saving data: $saveFileName"))
     }
 
