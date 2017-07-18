@@ -14,9 +14,8 @@
     <modules>
         <module>fxgl</module>
 
-        <!-- Modules below show how to use FXGL, but FXGL does not depend on them -->
+        <!-- This module shows how to use FXGL, but FXGL does not depend on it -->
         <module>fxgl-samples</module>
-        <module>fxgl-games</module>
     </modules>
 
     <licenses>

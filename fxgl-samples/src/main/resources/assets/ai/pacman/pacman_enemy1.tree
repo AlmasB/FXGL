@@ -1,0 +1,21 @@
+#
+# Pacman enemy 1
+#
+
+# Alias definitions
+
+# Conditions
+import nearPlayer? : "com.almasb.fxglgames.pacman.ai.PlayerCloseCondition"
+
+# Actions
+import move : "com.almasb.fxglgames.pacman.ai.MoveAction"
+import randomMove : "com.almasb.fxglgames.pacman.ai.RandomMoveAction"
+
+# Tree definition (note that root is optional)
+root
+    selector
+        sequence
+            invert
+                nearPlayer?
+            move
+        randomMove
