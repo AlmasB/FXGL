@@ -1,0 +1,8 @@
+Player: Oh... Hi!
+Seer: I'm a seer! I can see...
+Player: I see.
+Seer: No, you don't!
+Player: I didn't mean... Nevermind.
+Seer: It's starting to rain.
+Player: Don't need to be a seer to see that.
+Seer: Watch your tongue! Cool off with that <Water Ball>
