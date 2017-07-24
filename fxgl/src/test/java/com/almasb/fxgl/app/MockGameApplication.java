@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.Credits;
@@ -41,7 +40,6 @@ public class MockGameApplication extends GameApplication {
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
         settings.setMenuKey(KeyCode.ENTER);
-        settings.setMenuStyle(MenuStyle.CCTR);
         settings.setCredits(new Credits(Arrays.asList("TestCredit1", "TestCredit2")));
         settings.addServiceType(new ServiceType<MockService>() {
             @Override

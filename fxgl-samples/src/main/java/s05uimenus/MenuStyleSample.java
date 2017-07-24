@@ -8,15 +8,19 @@ package s05uimenus;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.scene.FXGLMenu;
+import com.almasb.fxgl.scene.SceneFactory;
+import com.almasb.fxgl.scene.menu.GTAVMenu;
+import com.almasb.fxgl.scene.menu.MenuType;
+import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Shows how to set different menu styles.
  */
 public class MenuStyleSample extends GameApplication {
 
-    @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
@@ -24,16 +28,36 @@ public class MenuStyleSample extends GameApplication {
         settings.setVersion("0.1");
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
-
-        // 1. set menu enabled to true
         settings.setMenuEnabled(true);
-
-        // 2. set menu style
-        settings.setMenuStyle(MenuStyle.GTA5);
-
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
+        settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+        settings.addServiceType(new ServiceType<SceneFactory>() {
+            @Override
+            public Class<SceneFactory> service() {
+                return SceneFactory.class;
+            }
+
+            @Override
+            public Class<? extends SceneFactory> serviceProvider() {
+                return MySceneFactory.class;
+            }
+        });
+    }
+
+    public static class MySceneFactory extends SceneFactory {
+
+        @NotNull
+        @Override
+        public FXGLMenu newMainMenu(@NotNull GameApplication app) {
+            return new GTAVMenu(app, MenuType.MAIN_MENU);
+        }
+
+        @NotNull
+        @Override
+        public FXGLMenu newGameMenu(@NotNull GameApplication app) {
+            return new GTAVMenu(app, MenuType.GAME_MENU);
+        }
     }
 
     public static void main(String[] args) {
