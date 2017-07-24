@@ -12,7 +12,11 @@
     <url>http://almasb.github.io/FXGL/</url>
 
     <modules>
+        <!-- Main framework module -->
         <module>fxgl</module>
+
+        <!-- Extra functionality module (on top of the main module) -->
+        <module>fxgl-extra</module>
 
         <!-- This module shows how to use FXGL, but FXGL does not depend on it -->
         <module>fxgl-samples</module>
