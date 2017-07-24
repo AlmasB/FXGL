@@ -1,3 +1,5 @@
+![promo](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_promo.jpg)
+
 ## What?
 
 JavaFX Game Development Framework
@@ -30,8 +32,6 @@ JavaFX Game Development Framework
 * The list of features can be found in the [Wiki](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 * [Showcase](http://almasb.github.io/FXGLGames/)
 
-![promo](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_promo.jpg)
-
 ## Minimal Example
 
 ```java
@@ -52,11 +52,11 @@ public class BasicGameApp extends GameApplication {
 
 ## Getting Started
 
-* Written tutorials - [Wiki](https://github.com/AlmasB/FXGL/wiki)
-* Video tutorials - [YouTube](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
-* The [Samples](fxgl-samples) module is constantly updated with feature demos
-* Advanced examples - [FXGLGames](https://github.com/AlmasB/FXGLGames)
-* Pre-built game demos (standalone .jar) - [Games](https://github.com/AlmasB/FXGLGames/tree/master/binaries)
+* [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
+* [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
+* [Feature demos](fxgl-samples)
+* [Game demos](https://github.com/AlmasB/FXGLGames) (src)
+* [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
 
 ## Maven
 
