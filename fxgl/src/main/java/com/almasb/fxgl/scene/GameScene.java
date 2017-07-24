@@ -203,6 +203,13 @@ public final class GameScene extends FXGLScene
     }
 
     /**
+     * Removes all nodes from the UI overlay.
+     */
+    public void clearUINodes() {
+        uiRoot.getChildren().clear();
+    }
+
+    /**
      * Set true if UI elements should forward mouse events
      * to the game layer.
      *
