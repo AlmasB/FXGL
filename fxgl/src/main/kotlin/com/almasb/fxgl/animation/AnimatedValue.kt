@@ -9,6 +9,7 @@ package com.almasb.fxgl.animation
 import com.almasb.fxgl.core.math.FXGLMath
 import javafx.animation.Interpolator
 import javafx.geometry.Point2D
+import javafx.scene.paint.Color
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 
@@ -63,6 +64,20 @@ class AnimatedCubicBezierPoint2D
                 Point2D(path.controlX2, path.controlY2),
                 Point2D(path.endX, path.endY),
                 progress
+        )
+    }
+}
+
+class AnimatedColor
+@JvmOverloads constructor(from: Color, to: Color, interpolator: Interpolator = Interpolator.LINEAR)
+    : AnimatedValue<Color>(from, to, interpolator) {
+
+    override fun animate(val1: Color, val2: Color, progress: Double, interpolator: Interpolator): Color {
+        return Color.color(
+                FXGLMath.interpolate(val1.red, val2.red, progress, interpolator),
+                FXGLMath.interpolate(val1.green, val2.green, progress, interpolator),
+                FXGLMath.interpolate(val1.blue, val2.blue, progress, interpolator),
+                FXGLMath.interpolate(val1.opacity, val2.opacity, progress, interpolator)
         )
     }
 }

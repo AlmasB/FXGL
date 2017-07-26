@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.animation;
 
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.component.ColorComponent;
 import javafx.animation.Interpolator;
 import javafx.util.Duration;
 
@@ -20,7 +21,7 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class AnimationBuilder {
+public final class AnimationBuilder {
 
     private Duration duration = Duration.seconds(1);
     private Duration delay = Duration.ZERO;
@@ -87,5 +88,17 @@ public class AnimationBuilder {
         Collections.addAll(this.entities, entities);
 
         return new ScaleAnimationBuilder(this);
+    }
+
+    public ColorAnimationBuilder color(GameEntity... entities) {
+        Collections.addAll(this.entities, entities);
+
+        boolean dontHaveColor = this.entities.stream().anyMatch(e -> !e.hasComponent(ColorComponent.class));
+
+        if (dontHaveColor) {
+            throw new IllegalArgumentException("All entities must have ColorComponent");
+        }
+
+        return new ColorAnimationBuilder(this);
     }
 }
