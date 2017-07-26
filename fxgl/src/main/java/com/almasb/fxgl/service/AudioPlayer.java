@@ -104,6 +104,15 @@ public interface AudioPlayer extends UserProfileSavable, UpdateListener, Notific
     void playPositionalSound(Sound sound, Point2D soundPosition, Point2D earPosition, double maxDistance);
 
     /**
+     * @param bgmName name of the background music file to loop
+     */
+    default void loopBGM(String bgmName) {
+        Music music = FXGL.getAssetLoader().loadMusic(bgmName);
+        music.setCycleCount(Integer.MAX_VALUE);
+        playMusic(music);
+    }
+
+    /**
      * Convenience method to play the music given its filename.
      *
      * @param assetName name of the music file
