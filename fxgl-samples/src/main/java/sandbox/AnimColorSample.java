@@ -42,7 +42,7 @@ public class AnimColorSample extends GameApplication {
                 .at(100, 100)
                 .viewFromNode(playerView)
                 .with(new ColorComponent())
-                .buildAndAttach(getGameWorld());
+                .buildAndAttach();
 
         playerView.fillProperty().bind(player.getComponent(ColorComponent.class).valueProperty());
 
