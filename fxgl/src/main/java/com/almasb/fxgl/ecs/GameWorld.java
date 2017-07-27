@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @Singleton
-public class GameWorld {
+public final class GameWorld {
 
     private static Logger log = FXGLLogger.get("FXGL.GameWorld");
 
