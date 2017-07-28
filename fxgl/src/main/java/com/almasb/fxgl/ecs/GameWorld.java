@@ -94,8 +94,7 @@ public final class GameWorld {
         waitingList.add(entity);
         entities.add(entity);
 
-        entity.init(this);
-        notifyEntityAdded(entity);
+        add(entity);
     }
 
     public void addEntities(Entity... entitiesToAdd) {
@@ -110,8 +109,7 @@ public final class GameWorld {
 
         entities.remove(entity);
 
-        notifyEntityRemoved(entity);
-        entity.clean();
+        entity.markForRemoval();
     }
 
     public void removeEntities(Entity... entitiesToRemove) {
@@ -132,14 +130,15 @@ public final class GameWorld {
         for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            if (e.isActive()) {
+            if (e.isMarkedForRemoval()) {
+                remove(e);
+                it.remove();
+            } else {
                 TimeComponent time = e.getComponent(TimeComponent.class);
 
                 double tpfRatio = time == null ? 1.0 : time.getValue();
 
                 e.update(tpf * tpfRatio);
-            } else {
-                it.remove();
             }
         }
 
@@ -153,23 +152,33 @@ public final class GameWorld {
     public void reset() {
         log.debug("Resetting game world");
 
-        for (Entity e : updateList) {
-            if (e.isActive()) {
-                notifyEntityRemoved(e);
-                e.clean();
-            }
+        for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+
+            remove(e);
+            it.remove();
         }
 
-        for (Entity e : waitingList) {
-            notifyEntityRemoved(e);
-            e.clean();
+        for (Iterator<Entity> it = waitingList.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+
+            remove(e);
+            it.remove();
         }
 
-        waitingList.clear();
-        updateList.clear();
         entities.clear();
 
         notifyWorldReset();
+    }
+
+    private void add(Entity entity) {
+        entity.init(this);
+        notifyEntityAdded(entity);
+    }
+
+    private void remove(Entity entity) {
+        notifyEntityRemoved(entity);
+        entity.clean();
     }
 
     private Array<EntityWorldListener> worldListeners = new Array<>();

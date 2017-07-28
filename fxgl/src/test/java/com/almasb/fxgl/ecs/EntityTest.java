@@ -389,6 +389,7 @@ public class EntityTest {
         assertThat(hp.value, is(30.0));
 
         world.removeEntity(entity);
+        world.onUpdate(0);
         assertThat(hp.value, is(-50.0));
         assertFalse(entity.activeProperty().get());
 
@@ -413,6 +414,7 @@ public class EntityTest {
 
         world.addEntity(entity);
         world.removeEntity(entity);
+        world.onUpdate(0);
 
         try {
             entity.addComponent(new HPComponent(23));

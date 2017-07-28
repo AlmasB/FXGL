@@ -41,10 +41,10 @@ public class Entity {
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
-    private boolean updating = false;
-    private boolean delayedRemove = false;
     private boolean cleaning = false;
     private boolean controlsEnabled = true;
+
+    private boolean isMarkedForRemoval = false;
 
     private Runnable onActive = null;
     private Runnable onNotActive = null;
@@ -71,11 +71,7 @@ public class Entity {
     public final void removeFromWorld() {
         checkValid();
 
-        if (updating) {
-            delayedRemove = true;
-        } else {
-            world.removeEntity(this);
-        }
+        world.removeEntity(this);
     }
 
     /**
@@ -125,6 +121,14 @@ public class Entity {
         onNotActive = action;
     }
 
+    boolean isMarkedForRemoval() {
+        return isMarkedForRemoval;
+    }
+
+    void markForRemoval() {
+        isMarkedForRemoval = true;
+    }
+
     /**
      * Setting this to false will disable each control's update until this has
      * been set back to true.
@@ -141,8 +145,6 @@ public class Entity {
      * @param tpf time per frame
      */
     void update(double tpf) {
-        updating = true;
-
         if (controlsEnabled) {
             for (Control c : controls.values()) {
                 if (!c.isPaused()) {
@@ -150,11 +152,6 @@ public class Entity {
                 }
             }
         }
-
-        updating = false;
-
-        if (delayedRemove)
-            removeFromWorld();
     }
 
     /**
