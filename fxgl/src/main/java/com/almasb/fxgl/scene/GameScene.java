@@ -267,6 +267,8 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onWorldUpdate(double tpf) {
+        getViewport().onUpdate(tpf);
+
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
