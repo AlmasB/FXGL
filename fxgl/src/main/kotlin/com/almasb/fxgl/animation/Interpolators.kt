@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.animation
 
-import com.almasb.fxgl.core.math.FXGLMath
 import javafx.animation.Interpolator
 
 /**
@@ -18,10 +17,16 @@ class Interpolators
 private constructor() {
 
     companion object {
-        @JvmField val Bounce = BounceInterpolator
-        @JvmField val Exponential = ExponentialInterpolator
-        @JvmField val Elastic = ElasticInterpolator
-        @JvmField val Sine = SineInterpolator
+        @JvmField val BOUNCE = BounceInterpolator
+        @JvmField val EXPONENTIAL = ExponentialInterpolator
+        @JvmField val ELASTIC = ElasticInterpolator
+        @JvmField val SINE = SineInterpolator
+        @JvmField val BACK = BackInterpolator
+        @JvmField val CIRCULAR = CircularInterpolator
+        @JvmField val QUADRATIC = QuadraticInterpolator
+        @JvmField val CUBIC = CubicInterpolator
+        @JvmField val QUARTIC = QuarticInterpolator
+        @JvmField val QUINTIC = QuinticInterpolator
     }
 }
 
@@ -46,7 +51,7 @@ abstract class EasingInterpolator : Interpolator() {
     }
 
     override fun curve(t: Double): Double {
-        return BounceInterpolator.easeOut(t)
+        return easeOut(t)
     }
 
     abstract fun easeIn(ratio: Double): Double
@@ -62,16 +67,16 @@ object BounceInterpolator : EasingInterpolator() {
 
     override fun easeOut(ratio: Double): Double {
         if (ratio < 1/2.75) {
-            return 7.5625*ratio*ratio;
+            return 7.5625*ratio*ratio
         } else if (ratio < 2/2.75) {
             val r = ratio - 1.5/2.75
-            return 7.5625*r*r+0.75;
+            return 7.5625*r*r+0.75
         } else if (ratio < 2.5/2.75) {
             val r = ratio-2.25/2.75
-            return 7.5625*r*r+0.9375;
+            return 7.5625*r*r+0.9375
         } else {
             val r = ratio - 2.625/2.75
-            return 7.5625*r*r+0.984375;
+            return 7.5625*r*r+0.984375
         }
     }
 
@@ -103,9 +108,8 @@ object ExponentialInterpolator : EasingInterpolator() {
         if (r < 0)
             return 0.5*Math.pow(2.0, 10*r)
 
-        return 1 - 0.5*Math.pow(2.0, -10*r);
+        return 1 - 0.5*Math.pow(2.0, -10*r)
     }
-
 }
 
 object ElasticInterpolator : EasingInterpolator() {
@@ -156,5 +160,134 @@ object SineInterpolator : EasingInterpolator() {
 
     override fun easeInOut(ratio: Double): Double {
         return -0.5 * (Math.cos(ratio * Math.PI) - 1)
+    }
+}
+
+object BackInterpolator : EasingInterpolator() {
+
+    private val s = 1.70158
+
+    override fun easeIn(ratio: Double): Double {
+        return ratio * ratio * ((s+1) * ratio - s)
+    }
+
+    override fun easeOut(ratio: Double): Double {
+        val r = ratio - 1
+
+        return r * r * ((s+1) * r + s) + 1
+    }
+
+    override fun easeInOut(ratio: Double): Double {
+        val r = ratio * 2
+        val r2 = r - 2
+
+        return if (r < 1)
+            0.5*(r*r*((s*1.525+1)*r-s*1.525))
+        else
+            0.5*(r2 * r2 * ((s*1.525 + 1) * r2 + s*1.525)+2)
+    }
+}
+
+object CircularInterpolator : EasingInterpolator() {
+
+    override fun easeIn(ratio: Double): Double {
+        return -(Math.sqrt(1 - ratio*ratio) - 1)
+    }
+
+    override fun easeOut(ratio: Double): Double {
+        return Math.sqrt(1 - (ratio - 1) * (ratio - 1))
+    }
+
+    override fun easeInOut(ratio: Double): Double {
+        val r = ratio * 2
+        val r2 = r - 2
+
+        return if (r < 1)
+            -0.5 * (Math.sqrt(1 - r * r) - 1)
+        else
+            0.5 * (Math.sqrt(1 - r2 * r2) + 1)
+    }
+}
+
+object QuadraticInterpolator : EasingInterpolator() {
+
+    override fun easeIn(ratio: Double): Double {
+        return ratio*ratio
+    }
+
+    override fun easeOut(ratio: Double): Double {
+        return -ratio*(ratio-2)
+    }
+
+    override fun easeInOut(ratio: Double): Double {
+        return if (ratio < 0.5)
+            2*ratio*ratio
+        else
+            -2*ratio*(ratio-2)-1
+    }
+}
+
+object CubicInterpolator : EasingInterpolator() {
+
+    override fun easeIn(ratio: Double): Double {
+        return ratio*ratio*ratio
+    }
+
+    override fun easeOut(ratio: Double): Double {
+        val r = ratio - 1
+        return r*r*r+1
+    }
+
+    override fun easeInOut(ratio: Double): Double {
+        val r = ratio - 1
+
+        return if (ratio < 0.5)
+            4*ratio*ratio*ratio
+        else
+            4*r*r*r+1
+    }
+}
+
+object QuarticInterpolator : EasingInterpolator() {
+
+    override fun easeIn(ratio: Double): Double {
+        return ratio*ratio*ratio*ratio
+    }
+
+    override fun easeOut(ratio: Double): Double {
+        val r = ratio - 1
+
+        return 1-r*r*r*r
+    }
+
+    override fun easeInOut(ratio: Double): Double {
+        val r = ratio - 1
+
+        return if (ratio < 0.5)
+            8*ratio*ratio*ratio*ratio
+        else
+            -8*r*r*r*r+1
+    }
+}
+
+object QuinticInterpolator : EasingInterpolator() {
+
+    override fun easeIn(ratio: Double): Double {
+        return ratio*ratio*ratio*ratio*ratio
+    }
+
+    override fun easeOut(ratio: Double): Double {
+        val r = ratio - 1
+
+        return 1 + r*r*r*r*r
+    }
+
+    override fun easeInOut(ratio: Double): Double {
+        val r = ratio - 1
+
+        return if (ratio < 0.5)
+            16*ratio*ratio*ratio*ratio*ratio
+        else
+            16 * r*r*r*r*r + 1
     }
 }

@@ -6,7 +6,7 @@
 
 package sandbox;
 
-import com.almasb.fxgl.animation.BounceInterpolator;
+import com.almasb.fxgl.animation.EasingInterpolator;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
@@ -17,25 +17,23 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.LevelText;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.util.*;
+
 /**
- * Shows how to init a basic game object and attach it to the world
- * using fluent API.
+ *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class InterpolatorSample extends GameApplication {
 
-    // 1. define types of entities in the game using Enum
-    private enum Type {
-        PLAYER
-    }
-
-    // make the field instance level
-    // but do NOT init here for properly functioning save-load system
     private GameEntity player;
 
     @Override
@@ -53,33 +51,76 @@ public class InterpolatorSample extends GameApplication {
     }
 
     @Override
-    protected void initInput() {
-        getInput().addAction(new UserAction("Play animation") {
-            @Override
-            protected void onActionBegin() {
-
-                Entities.animationBuilder()
-                        .interpolator(Interpolators.Bounce.EASE_OUT())
-                        .duration(Duration.seconds(2.3))
-                        .translate(player)
-                        .from(new Point2D(0, -250))
-                        .to(new Point2D(0, 300))
-                        .buildAndPlay();
-            }
-        }, KeyCode.F);
-    }
-
-    @Override
     protected void initGame() {
         LevelText text = new LevelText("Level 1");
         text.animateIn();
 
-        // 2. create entity and attach to world using fluent API
         player = Entities.builder()
-                .type(Type.PLAYER)
-                //.at(400, 100)
                 .viewFromNode(text)
                 .buildAndAttach(getGameWorld());
+    }
+
+    private ToggleGroup group = new ToggleGroup();
+
+    @Override
+    protected void initUI() {
+        VBox vbox = new VBox(5);
+
+        Map<EasingInterpolator, String> map = new LinkedHashMap<>();
+        map.put(Interpolators.BOUNCE, "BOUNCE");
+        map.put(Interpolators.ELASTIC, "ELASTIC");
+        map.put(Interpolators.EXPONENTIAL, "EXPONENTIAL");
+        map.put(Interpolators.SINE, "SINE");
+        map.put(Interpolators.BACK, "BACK");
+        map.put(Interpolators.CIRCULAR, "CIRCULAR");
+        map.put(Interpolators.QUADRATIC, "QUADRATIC");
+        map.put(Interpolators.CUBIC, "CUBIC");
+        map.put(Interpolators.QUARTIC, "QUARTIC");
+        map.put(Interpolators.QUINTIC, "QUINTIC");
+
+        map.forEach((interpolator, name) -> {
+            Button btn = new Button(name);
+            btn.setOnAction(e -> playAnimation(interpolator));
+
+            vbox.getChildren().add(btn);
+        });
+
+        RadioButton btn1 = new RadioButton("Ease In");
+        RadioButton btn2 = new RadioButton("Ease Out");
+        RadioButton btn3 = new RadioButton("Ease In Out");
+        btn1.setToggleGroup(group);
+        btn2.setToggleGroup(group);
+        btn3.setToggleGroup(group);
+        btn2.setSelected(true);
+
+        vbox.getChildren().addAll(btn1, btn2, btn3);
+
+        vbox.setTranslateX(600);
+        getGameScene().addUINode(vbox);
+    }
+
+    private void playAnimation(EasingInterpolator interpolator) {
+        Interpolator ease = getEase(interpolator);
+
+        Entities.animationBuilder()
+                .interpolator(ease)
+                .duration(Duration.seconds(2.3))
+                .translate(player)
+                .from(new Point2D(0, -250))
+                .to(new Point2D(0, 300))
+                .buildAndPlay();
+    }
+
+    private Interpolator getEase(EasingInterpolator interpolator) {
+        String name = ((RadioButton) group.getSelectedToggle()).getText();
+
+        if (name.equals("Ease In")) {
+            return interpolator.EASE_IN();
+        } else if (name.equals("Ease Out")) {
+            return interpolator.EASE_OUT();
+        } else {
+            return interpolator.EASE_IN_OUT();
+        }
     }
 
     public static void main(String[] args) {
