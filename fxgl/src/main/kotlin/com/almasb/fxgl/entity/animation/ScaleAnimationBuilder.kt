@@ -31,8 +31,7 @@ class ScaleAnimationBuilder(private val animationBuilder: AnimationBuilder) {
     }
 
     fun build(): Animation<*> {
-        return object : Animation<Point2D>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
-                AnimatedPoint2D(startScale, endScale, animationBuilder.interpolator)) {
+        return object : Animation<Point2D>(animationBuilder, AnimatedPoint2D(startScale, endScale, animationBuilder.interpolator)) {
 
             override fun onProgress(value: Point2D) {
                 animationBuilder.entities.forEach {

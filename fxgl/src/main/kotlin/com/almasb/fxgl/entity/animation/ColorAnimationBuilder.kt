@@ -30,13 +30,12 @@ class ColorAnimationBuilder(private val animationBuilder: AnimationBuilder) {
     }
 
     fun build(): Animation<*> {
-        return object : Animation<Color>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
-                AnimatedColor(startColor, endColor, animationBuilder.interpolator)) {
+        return object : Animation<Color>(animationBuilder, AnimatedColor(startColor, endColor, animationBuilder.interpolator)) {
 
-            override fun onProgress(color: Color) {
+            override fun onProgress(value: Color) {
                 animationBuilder.entities
                         .map { it.getComponent(ColorComponent::class.java) }
-                        .forEach { it.value = color }
+                        .forEach { it.value = value }
             }
         }
     }

@@ -52,8 +52,7 @@ class TranslationAnimationBuilder(private val animationBuilder: AnimationBuilder
     }
 
     private fun makeAnim(animValue: AnimatedValue<Point2D>): Animation<Point2D> {
-        return object : Animation<Point2D>(animationBuilder.delay, animationBuilder.duration, animationBuilder.times,
-                animValue) {
+        return object : Animation<Point2D>(animationBuilder, animValue) {
 
             override fun onProgress(value: Point2D) {
                 animationBuilder.entities.forEach { it.position = value }

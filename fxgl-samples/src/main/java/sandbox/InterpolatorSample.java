@@ -27,6 +27,8 @@ import javafx.util.Duration;
 
 import java.util.*;
 
+import static com.almasb.fxgl.app.DSLKt.set;
+
 /**
  *
  *
@@ -48,6 +50,11 @@ public class InterpolatorSample extends GameApplication {
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
+    }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("canPlay", true);
     }
 
     @Override
@@ -80,6 +87,7 @@ public class InterpolatorSample extends GameApplication {
 
         map.forEach((interpolator, name) -> {
             Button btn = new Button(name);
+            btn.disableProperty().bind(getGameState().booleanProperty("canPlay").not());
             btn.setOnAction(e -> playAnimation(interpolator));
 
             vbox.getChildren().add(btn);
@@ -100,11 +108,14 @@ public class InterpolatorSample extends GameApplication {
     }
 
     private void playAnimation(EasingInterpolator interpolator) {
+        set("canPlay", false);
+
         Interpolator ease = getEase(interpolator);
 
         Entities.animationBuilder()
                 .interpolator(ease)
                 .duration(Duration.seconds(2.3))
+                .onFinished(() -> set("canPlay", true))
                 .translate(player)
                 .from(new Point2D(0, -250))
                 .to(new Point2D(0, 300))
