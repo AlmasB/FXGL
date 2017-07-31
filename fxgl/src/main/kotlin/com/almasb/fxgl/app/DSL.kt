@@ -11,10 +11,17 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.app.FXGL.Companion.getApp
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
+import com.almasb.fxgl.core.math.FXGLMath.*
+import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.physics.CollisionHandler
 import javafx.beans.property.*
+import javafx.geometry.Point2D
+import java.util.function.BiConsumer
 
 /**
  * This API is experimental.
+ * Using this API results in more concise but less readable code.
+ * Use with care.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -71,3 +78,42 @@ fun play(assetName: String) {
     }
 }
 
+/* GAME WORLD */
+
+fun spawn(entityName: String): Entity = getApp().gameWorld.spawn(entityName)
+
+fun spawn(entityName: String, x: Double, y: Double): Entity = getApp().gameWorld.spawn(entityName, x, y)
+
+fun spawn(entityName: String, position: Point2D): Entity = getApp().gameWorld.spawn(entityName, position)
+
+/* PHYSICS */
+
+fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
+    getApp().physicsWorld.addCollisionHandler(object : CollisionHandler(typeA, typeB) {
+        override fun onCollisionBegin(a: Entity, b: Entity) {
+            action.accept(a, b)
+        }
+    })
+}
+
+fun onCollision(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
+    getApp().physicsWorld.addCollisionHandler(object : CollisionHandler(typeA, typeB) {
+        override fun onCollision(a: Entity, b: Entity) {
+            action.accept(a, b)
+        }
+    })
+}
+
+fun onCollisionEnd(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
+    getApp().physicsWorld.addCollisionHandler(object : CollisionHandler(typeA, typeB) {
+        override fun onCollisionEnd(a: Entity, b: Entity) {
+            action.accept(a, b)
+        }
+    })
+}
+
+/* MATH */
+
+fun rand() = random()
+
+fun rand(min: Int, max: Int) = random(min, max)

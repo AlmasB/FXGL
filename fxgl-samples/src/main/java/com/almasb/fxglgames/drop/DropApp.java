@@ -7,6 +7,7 @@
 package com.almasb.fxglgames.drop;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.Input;
@@ -16,6 +17,10 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
+
+import static com.almasb.fxgl.app.DSLKt.onCollision;
+import static com.almasb.fxgl.app.DSLKt.onCollisionBegin;
+import static com.almasb.fxgl.app.DSLKt.play;
 
 /**
  * This is an FXGL version of the libGDX simple game tutorial which can be found
@@ -72,16 +77,21 @@ public class DropApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        PhysicsWorld physicsWorld = getPhysicsWorld();
-
-        physicsWorld.addCollisionHandler(new CollisionHandler(DropType.DROPLET, DropType.BUCKET) {
-            @Override
-            protected void onCollisionBegin(Entity droplet, Entity bucket) {
-                droplet.removeFromWorld();
-
-                getAudioPlayer().playSound("drop/drop.wav");
-            }
+        onCollisionBegin(DropType.DROPLET, DropType.BUCKET, (droplet, bucket) -> {
+            droplet.removeFromWorld();
+            play("drop/drop.wav");
         });
+
+//        PhysicsWorld physicsWorld = getPhysicsWorld();
+//
+//        physicsWorld.addCollisionHandler(new CollisionHandler(DropType.DROPLET, DropType.BUCKET) {
+//            @Override
+//            protected void onCollisionBegin(Entity droplet, Entity bucket) {
+//                droplet.removeFromWorld();
+//
+//                getAudioPlayer().playSound("drop/drop.wav");
+//            }
+//        });
     }
 
     public static void main(String[] args) {
