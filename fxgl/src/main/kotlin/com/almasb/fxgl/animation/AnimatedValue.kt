@@ -20,7 +20,7 @@ import javafx.scene.shape.QuadCurve
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 open class AnimatedValue<T>
-@JvmOverloads constructor(val from: T, val to: T, val interpolator: Interpolator = Interpolator.LINEAR) {
+@JvmOverloads constructor(val from: T, val to: T, var interpolator: Interpolator = Interpolator.LINEAR) {
 
     fun getValue(progress: Double): T {
         return animate(from, to, progress, interpolator)

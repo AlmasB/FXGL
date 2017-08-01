@@ -7,6 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.animation.Interpolators
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.util.EmptyRunnable
@@ -60,7 +61,8 @@ internal object PauseMenuSubState : SubState() {
         animation = FXGL.getUIFactory().translate(content,
                 Point2D(FXGL.getAppWidth() / 2.0 - 125, -400.0),
                 Point2D(FXGL.getAppWidth() / 2.0 - 125, FXGL.getAppHeight() / 2.0 - 200),
-                Duration.seconds(0.33))
+                Duration.seconds(0.5))
+        animation.animatedValue.interpolator = Interpolators.BACK.EASE_OUT()
     }
 
     override fun onEnter(prevState: State) {
