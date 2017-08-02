@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package sandbox;
+package s03entities;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.ParallelAnimation;
