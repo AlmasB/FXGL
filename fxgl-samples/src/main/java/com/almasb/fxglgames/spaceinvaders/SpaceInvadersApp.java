@@ -9,6 +9,7 @@ package com.almasb.fxglgames.spaceinvaders;
 import com.almasb.fxgl.annotation.Handles;
 import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.logging.Logger;
@@ -36,6 +37,7 @@ import javafx.util.Duration;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static com.almasb.fxgl.app.DSLKt.*;
 import static com.almasb.fxglgames.spaceinvaders.Config.*;
 
 /**
@@ -291,6 +293,8 @@ public class SpaceInvadersApp extends GameApplication {
 
     @Handles(eventType = "PLAYER_GOT_HIT")
     public void onPlayerGotHit(GameEvent event) {
+        getGameScene().getViewport().shake(12);
+
         getGameState().increment("lives", -1);
         uiController.loseLife();
 
@@ -337,6 +341,19 @@ public class SpaceInvadersApp extends GameApplication {
             showGameOver();
 
         if (getGameState().getInt("enemiesKilled") == ENEMIES_PER_LEVEL)
+            nextLevel();
+    }
+
+    public void onEnemyReachedEndDSL(GameEvent event) {
+        inc("enemiesKilled", +1);
+
+        inc("lives", -1);
+        uiController.loseLife();
+
+        if (geti("lives") == 0)
+            showGameOver();
+
+        if (geti("enemiesKilled") == ENEMIES_PER_LEVEL)
             nextLevel();
     }
 

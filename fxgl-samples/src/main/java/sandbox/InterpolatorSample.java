@@ -103,7 +103,7 @@ public class InterpolatorSample extends GameApplication {
 
         vbox.getChildren().addAll(btn1, btn2, btn3);
 
-        vbox.setTranslateX(600);
+        vbox.setTranslateX(650);
         getGameScene().addUINode(vbox);
     }
 
@@ -117,7 +117,7 @@ public class InterpolatorSample extends GameApplication {
                 .duration(Duration.seconds(2.3))
                 .onFinished(() -> set("canPlay", true))
                 .translate(player)
-                .from(new Point2D(0, -250))
+                .from(new Point2D(0, -150))
                 .to(new Point2D(0, 300))
                 .buildAndPlay();
     }

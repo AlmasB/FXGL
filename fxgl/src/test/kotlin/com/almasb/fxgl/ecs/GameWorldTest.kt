@@ -10,6 +10,7 @@ import com.almasb.fxgl.annotation.Spawns
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.core.collection.Array
+import com.almasb.fxgl.ecs.component.IrremovableComponent
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.entity.component.IDComponent
 import com.almasb.fxgl.entity.component.PositionComponent
@@ -293,6 +294,17 @@ class GameWorldTest {
     }
 
     @Test
+    fun `Do not remove if entity has IrremovableComponent`() {
+        val e = Entity()
+        e.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        assertThat(gameWorld.entities, hasItems(e))
+    }
+
+    @Test
     fun `Remove multiple entities`() {
         assertThat(gameWorld.entities, hasItems(e1, e2))
 
@@ -304,9 +316,20 @@ class GameWorldTest {
     fun `Reset`() {
         assertThat(gameWorld.entities.size, `is`(not(0)))
 
-        gameWorld.reset()
+        gameWorld.clear()
 
         assertThat(gameWorld.entities.size, `is`(0))
+    }
+
+    @Test
+    fun `Reset does not remove if entity has IrremovableComponent`() {
+        val e = Entity()
+        e.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e)
+        gameWorld.clear()
+
+        assertThat(gameWorld.entities, hasItems(e))
     }
 
     @Test

@@ -14,6 +14,7 @@ import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
+import com.almasb.fxgl.ecs.component.IrremovableComponent;
 import com.almasb.fxgl.ecs.component.TimeComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
@@ -104,6 +105,9 @@ public final class GameWorld {
     }
 
     public void removeEntity(Entity entity) {
+        if (!canRemove(entity))
+            return;
+
         if (entity.getWorld() != this)
             throw new IllegalArgumentException("Attempted to remove entity not attached to this world");
 
@@ -146,29 +150,30 @@ public final class GameWorld {
     }
 
     /**
-     * Resets the world to its initial state.
      * Does NOT clear state listeners.
      */
-    public void reset() {
-        log.debug("Resetting game world");
+    public void clear() {
+        log.debug("Clearing game world");
 
         for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            remove(e);
-            it.remove();
+            if (canRemove(e)) {
+                remove(e);
+                it.remove();
+            }
         }
 
         for (Iterator<Entity> it = waitingList.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            remove(e);
-            it.remove();
+            if (canRemove(e)) {
+                remove(e);
+                it.remove();
+            }
         }
 
-        entities.clear();
-
-        notifyWorldReset();
+        entities.removeIf(this::canRemove);
     }
 
     private void add(Entity entity) {
@@ -179,6 +184,10 @@ public final class GameWorld {
     private void remove(Entity entity) {
         notifyEntityRemoved(entity);
         entity.clean();
+    }
+
+    private boolean canRemove(Entity entity) {
+        return !entity.hasComponent(IrremovableComponent.class);
     }
 
     private Array<EntityWorldListener> worldListeners = new Array<>();
@@ -206,12 +215,6 @@ public final class GameWorld {
     private void notifyWorldUpdated(double tpf) {
         for (int i = 0; i < worldListeners.size(); i++) {
             worldListeners.get(i).onWorldUpdate(tpf);
-        }
-    }
-
-    private void notifyWorldReset() {
-        for (int i = 0; i < worldListeners.size(); i++) {
-            worldListeners.get(i).onWorldReset();
         }
     }
 
@@ -278,7 +281,7 @@ public final class GameWorld {
      * @param level the level
      */
     public void setLevel(Level level) {
-        reset();
+        clear();
 
         log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
@@ -292,7 +295,7 @@ public final class GameWorld {
     }
 
     public void setLevelFromMap(TiledMap map) {
-        reset();
+        clear();
 
         log.debug("Setting level from map");
 

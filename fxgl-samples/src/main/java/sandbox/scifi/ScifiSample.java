@@ -135,13 +135,29 @@ public class ScifiSample extends GameApplication {
 
     @Override
     protected void initGame() {
+
+        // assets from https://raventale.itch.io/parallax-background
+        getGameScene().addGameView(new ParallaxBackgroundView(Arrays.asList(
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_10.png", getWidth(), getHeight()), 1.0),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_9.png", getWidth(), getHeight()), 0.05),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_8.png", getWidth(), getHeight()), 0.1),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_7.png", getWidth(), getHeight()), 0.3),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_6.png", getWidth(), getHeight()), 0.45),
+                //new ParallaxTexture(getAssetLoader().loadTexture("bg_5.png", getWidth(), getHeight()), 0.45),
+                //new ParallaxTexture(getAssetLoader().loadTexture("bg_4.png", getWidth(), getHeight()), 0.6),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_3.png", getWidth(), getHeight()), 0.5),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_2.png", getWidth(), getHeight()), 0.7),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_1.png", getWidth(), getHeight()), 0.8),
+                new ParallaxTexture(getAssetLoader().loadTexture("bg_0.png", getWidth(), getHeight()), 0.9)
+        ), Orientation.HORIZONTAL, BG));
+
         nextLevel();
 
         getGameplay().getAchievementManager()
                 .getAchievementByName("Collector")
                 .bind(getGameState().intProperty("coins"), 10);
 
-        getMasterTimer().runOnceAfter(this::seerCutscene, Duration.seconds(7));
+        //getMasterTimer().runOnceAfter(this::seerCutscene, Duration.seconds(7));
     }
 
     private int level = 1;
@@ -166,21 +182,6 @@ public class ScifiSample extends GameApplication {
 
         getGameScene().getViewport().setBounds(0, 0, 3000, getHeight());
         getGameScene().getViewport().bindToEntity(player, 500, 0);
-
-        // assets from https://raventale.itch.io/parallax-background
-        getGameScene().addGameView(new ParallaxBackgroundView(Arrays.asList(
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_10.png", getWidth(), getHeight()), 1.0),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_9.png", getWidth(), getHeight()), 0.05),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_8.png", getWidth(), getHeight()), 0.1),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_7.png", getWidth(), getHeight()), 0.3),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_6.png", getWidth(), getHeight()), 0.45),
-                //new ParallaxTexture(getAssetLoader().loadTexture("bg_5.png", getWidth(), getHeight()), 0.45),
-                //new ParallaxTexture(getAssetLoader().loadTexture("bg_4.png", getWidth(), getHeight()), 0.6),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_3.png", getWidth(), getHeight()), 0.5),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_2.png", getWidth(), getHeight()), 0.7),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_1.png", getWidth(), getHeight()), 0.8),
-                new ParallaxTexture(getAssetLoader().loadTexture("bg_0.png", getWidth(), getHeight()), 0.9)
-        ), Orientation.HORIZONTAL, BG));
 
         level++;
         if (level == 4)

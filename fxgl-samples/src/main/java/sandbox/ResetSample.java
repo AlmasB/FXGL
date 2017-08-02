@@ -8,6 +8,7 @@ package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.ecs.component.IrremovableComponent;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
@@ -51,9 +52,10 @@ public class ResetSample extends GameApplication {
                 .type(Type.PLAYER)
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
+                .with(new IrremovableComponent())
                 .buildAndAttach(getGameWorld());
 
-        getGameWorld().reset();
+        getGameWorld().clear();
 
         System.out.println(getGameWorld().getEntities().size());
     }

@@ -261,12 +261,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     /**
-     * Resets physics world.
+     * Clears collidable entities and active collisions.
      * Does not clear collision handlers.
      */
-    @Override
-    public void onWorldReset() {
-        log.debug("Resetting physics world");
+    public void clear() {
+        log.debug("Clearing physics world");
 
         entities.clear();
         collisions.clear();
