@@ -11,11 +11,14 @@ import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.app.FXGL.Companion.getApp
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
+import com.almasb.fxgl.app.FXGL.Companion.getInput
 import com.almasb.fxgl.core.math.FXGLMath.*
 import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import javafx.beans.property.*
 import javafx.geometry.Point2D
+import javafx.scene.input.KeyCode
 import java.util.function.BiConsumer
 
 /**
@@ -76,6 +79,32 @@ fun play(assetName: String) {
     } else {
         throw IllegalArgumentException("Unsupported audio format: $assetName")
     }
+}
+
+/* INPUT */
+
+fun onKeyDown(key: KeyCode, actionName: String, action: Runnable) {
+    getInput().addAction(object : UserAction(actionName) {
+        override fun onActionBegin() {
+            action.run()
+        }
+    }, key)
+}
+
+fun onKey(key: KeyCode, actionName: String, action: Runnable) {
+    getInput().addAction(object : UserAction(actionName) {
+        override fun onAction() {
+            action.run()
+        }
+    }, key)
+}
+
+fun onKeyUp(key: KeyCode, actionName: String, action: Runnable) {
+    getInput().addAction(object : UserAction(actionName) {
+        override fun onActionEnd() {
+            action.run()
+        }
+    }, key)
 }
 
 /* GAME WORLD */
