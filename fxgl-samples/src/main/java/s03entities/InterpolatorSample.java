@@ -73,25 +73,13 @@ public class InterpolatorSample extends GameApplication {
     protected void initUI() {
         VBox vbox = new VBox(5);
 
-        Map<EasingInterpolator, String> map = new LinkedHashMap<>();
-        map.put(Interpolators.BOUNCE, "BOUNCE");
-        map.put(Interpolators.ELASTIC, "ELASTIC");
-        map.put(Interpolators.EXPONENTIAL, "EXPONENTIAL");
-        map.put(Interpolators.SINE, "SINE");
-        map.put(Interpolators.BACK, "BACK");
-        map.put(Interpolators.CIRCULAR, "CIRCULAR");
-        map.put(Interpolators.QUADRATIC, "QUADRATIC");
-        map.put(Interpolators.CUBIC, "CUBIC");
-        map.put(Interpolators.QUARTIC, "QUARTIC");
-        map.put(Interpolators.QUINTIC, "QUINTIC");
-
-        map.forEach((interpolator, name) -> {
-            Button btn = new Button(name);
+        for (EasingInterpolator interpolator : Interpolators.values()) {
+            Button btn = new Button(interpolator.toString());
             btn.disableProperty().bind(getGameState().booleanProperty("canPlay").not());
             btn.setOnAction(e -> playAnimation(interpolator));
 
             vbox.getChildren().add(btn);
-        });
+        }
 
         RadioButton btn1 = new RadioButton("Ease In");
         RadioButton btn2 = new RadioButton("Ease Out");
