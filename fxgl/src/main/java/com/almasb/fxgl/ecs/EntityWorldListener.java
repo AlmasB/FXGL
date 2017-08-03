@@ -36,9 +36,4 @@ public interface EntityWorldListener {
      * @param tpf time per frame
      */
     void onWorldUpdate(double tpf);
-
-    /**
-     * Called after the world has been reset.
-     */
-    void onWorldReset();
 }

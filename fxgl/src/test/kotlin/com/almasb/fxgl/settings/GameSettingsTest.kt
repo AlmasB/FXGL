@@ -70,7 +70,6 @@ class GameSettingsTest {
         assertThat(settings.profilingEnabled, `is`(false))
         assertThat(settings.closeConfirmation, `is`(false))
         assertThat(settings.menuKey, `is`(KeyCode.ENTER))
-        assertThat(settings.menuStyle, `is`(com.almasb.fxgl.scene.menu.MenuStyle.CCTR))
         assertThat(settings.credits.list, hasItems("TestCredit1", "TestCredit2"))
         assertThat(settings.appMode, `is`(ApplicationMode.RELEASE))
     }

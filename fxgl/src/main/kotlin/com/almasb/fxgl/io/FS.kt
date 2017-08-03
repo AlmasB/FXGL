@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.io
 
-import org.apache.logging.log4j.LogManager
+import com.almasb.fxgl.core.logging.FXGLLogger
 import java.io.*
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
@@ -17,15 +17,15 @@ import java.util.stream.Collectors
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FS {
+class FS
+private constructor() {
 
     companion object {
 
-        private val log = LogManager.getLogger(FS::class.java)
+        private val log = FXGLLogger.get(FS::class.java)
 
         private fun errorIfAbsent(path: Path) {
             if (!Files.exists(path)) {
-                log.warn ( "Path $path does not exist" )
                 throw FileNotFoundException("Path $path does not exist")
             }
         }
@@ -43,12 +43,12 @@ class FS {
 
             // if file.parent is null we will use current dir, which exists
             if (file.parent != null && !Files.exists(file.parent)) {
-                log.debug ( "Creating directories to: ${file.parent}" )
+                log.debug("Creating directories to: ${file.parent}")
                 Files.createDirectories(file.parent)
             }
 
             ObjectOutputStream(Files.newOutputStream(file)).use {
-                log.debug ( "Writing to: $file" )
+                log.debug("Writing to: $file")
                 it.writeObject(data)
             }
         })
@@ -68,7 +68,7 @@ class FS {
             errorIfAbsent(file)
 
             ObjectInputStream(Files.newInputStream(file)).use {
-                log.debug ( "Reading from: $file" )
+                log.debug("Reading from: $file")
                 return@taskOf it.readObject() as T
             }
         }
@@ -172,7 +172,7 @@ class FS {
 
             errorIfAbsent(file)
 
-            log.debug ( "Deleting file: $file" )
+            log.debug("Deleting file: $file")
 
             Files.delete(file)
         }
@@ -191,17 +191,17 @@ class FS {
 
             Files.walkFileTree(dir, object : SimpleFileVisitor<Path>() {
                 override fun visitFile(file: Path, p1: BasicFileAttributes): FileVisitResult {
-                    log.debug ( "Deleting file: $file" )
+                    log.debug("Deleting file: $file")
 
                     Files.delete(file)
                     return FileVisitResult.CONTINUE
                 }
 
-                override fun postVisitDirectory(dir: Path, e: IOException?): FileVisitResult {
+                override fun postVisitDirectory(directory: Path, e: IOException?): FileVisitResult {
                     if (e == null) {
-                        log.debug ( "Deleting directory: $dir" )
+                        log.debug("Deleting directory: $directory")
 
-                        Files.delete(dir)
+                        Files.delete(directory)
                         return FileVisitResult.CONTINUE
                     } else {
                         throw e

@@ -5,7 +5,7 @@ Please see the list below on how you can contribute to the project.
 Once you've decided what you would like to do, let me know about it first.
 This is just to make sure that the issue you want hasn't already been implemented,
 fixed or being worked on in newer versions.
-Any new API or changes to existing API should be discussed first to avoid inconsistency.
+Any new API or changes to existing API should be discussed to avoid inconsistency.
 
 * Proof read public documentation for errors, ambiguities and typos.
 * Crash test features for bugs or write a unit test for one.
@@ -24,13 +24,12 @@ You can build FXGL from sources using [Maven](https://maven.apache.org/):
 mvn clean package
 ```
 
-This will compile and package all FXGL modules, as well as
-create FXGL-x.y.z.jar, including sources, javadoc and uber-jar in the "fxgl/target/" directory.
+This will create FXGL-x.y.z.jar, sources.jar, javadoc.jar and uber-jar in the "fxgl/target/" directory.
 
 ## Workflow
 
 Typically there are 2 branches: `master` and `x.y.z`.
-The `master` branch is always *clean* and deployable, i.e. only for releases.
+The `master` branch is for releases only.
 All the work goes to and stems from the `x.y.z` branch.
 Hence, after cloning you should always branch away from `x.y.z` and once
 your work is complete, pull a request back to `x.y.z`.
@@ -56,10 +55,9 @@ The project uses the following guidelines (the list is likely to grow over time)
 
 * Tabs set to 4 spaces & consistent indentation.
 * Consistent naming conventions (no [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation)).
-* Javadoc on all public and protected API.
+* Javadoc on public and protected API (where appropriate).
 * Keep access to fields and methods as restricted as you can.
-* [License](LICENSE) header in each new file.
+* Short license header in each new file and `@author`.
 
 Code quality reports are available from [Codacy](https://www.codacy.com/app/AlmasB/FXGL/dashboard).
 If in doubt, skim through the existing source code to get a feel for it.
-If a pull request violates too many guidelines it is unlikely to be merged.

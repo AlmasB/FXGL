@@ -9,6 +9,7 @@ package com.almasb.fxgl.animation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.State
 import com.almasb.fxgl.app.listener.StateListener
+import com.almasb.fxgl.entity.animation.AnimationBuilder
 import com.almasb.fxgl.util.EmptyRunnable
 import javafx.util.Duration
 
@@ -22,6 +23,14 @@ abstract class Animation<T>
                           val duration: Duration,
                           var cycleCount: Int = 1,
                           val animatedValue: AnimatedValue<T>): StateListener {
+
+    constructor(animationBuilder: AnimationBuilder, animatedValue: AnimatedValue<T>) : this(animationBuilder.delay,
+            animationBuilder.duration,
+            animationBuilder.times,
+            animatedValue) {
+        onFinished = animationBuilder.onFinished
+        isAutoReverse = animationBuilder.isAutoReverse
+    }
 
     var isAutoReverse = false
     var onFinished: Runnable = EmptyRunnable
@@ -38,6 +47,10 @@ abstract class Animation<T>
     var isPaused = false
         private set
 
+    /**
+     * True between start and stop.
+     * Pauses have no effect on this flag.
+     */
     var isAnimating = false
         private set
 

@@ -114,10 +114,6 @@ public class FXGLDefaultMenu extends FXGLMenu {
             box.add(itemContinue);
 
             itemContinue.disableProperty().bind(listener.hasSavesProperty().not());
-
-//            app.getEventBus().addEventHandler(ProfileSelectedEvent.ANY, event -> {
-//                itemContinue.setDisable(!event.hasSaves());
-//            });
         }
 
         MenuButton itemNewGame = new MenuButton("NEW GAME");

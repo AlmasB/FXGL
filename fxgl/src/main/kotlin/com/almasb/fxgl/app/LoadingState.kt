@@ -99,9 +99,11 @@ internal class LoadingState
 
         private fun clearPreviousGame() {
             log.debug("Clearing previous game")
-            app.gameWorld.reset()
-            app.gameState.clear()
+            app.gameWorld.clear()
+            app.physicsWorld.clear()
             app.physicsWorld.clearCollisionHandlers()
+            app.gameScene.clear()
+            app.gameState.clear()
             app.masterTimer.clear()
         }
 

@@ -38,7 +38,7 @@ import java.util.List;
  * Represents the scene that shows game objects on the screen during "play" mode.
  * Contains 3 layers. From bottom to top:
  * <ol>
- *     <li>Entities and their render layers</li>
+ *     <li>Entities and their render layers (game view)</li>
  *     <li>Particles</li>
  *     <li>UI Overlay</li>
  * </ol>
@@ -203,6 +203,20 @@ public final class GameScene extends FXGLScene
     }
 
     /**
+     * Removes all nodes from the game view layer.
+     */
+    public void clearGameViews() {
+        gameRoot.getChildren().clear();
+    }
+
+    /**
+     * Removes all nodes from the UI overlay.
+     */
+    public void clearUINodes() {
+        uiRoot.getChildren().clear();
+    }
+
+    /**
      * Set true if UI elements should forward mouse events
      * to the game layer.
      *
@@ -260,6 +274,8 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onWorldUpdate(double tpf) {
+        getViewport().onUpdate(tpf);
+
         particlesGC.setGlobalAlpha(1);
         particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
         particlesGC.clearRect(0, 0, getWidth(), getHeight());
@@ -277,9 +293,8 @@ public final class GameScene extends FXGLScene
         }
     }
 
-    @Override
-    public void onWorldReset() {
-        log.debug("Resetting game scene");
+    public void clear() {
+        log.debug("Clearing game scene");
 
         getViewport().unbind();
         drawables.clear();

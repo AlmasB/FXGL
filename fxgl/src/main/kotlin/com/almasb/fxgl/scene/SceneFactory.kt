@@ -47,12 +47,7 @@ open class SceneFactory {
      * @return main menu
      */
     open fun newMainMenu(app: GameApplication): FXGLMenu {
-        when (app.settings.menuStyle) {
-            MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.MAIN_MENU)
-            MenuStyle.CCTR -> return CCTRMenu(app, MenuType.MAIN_MENU)
-            MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.MAIN_MENU)
-            else -> return FXGLDefaultMenu(app, MenuType.MAIN_MENU)
-        }
+        return FXGLDefaultMenu(app, MenuType.MAIN_MENU)
     }
 
     /**
@@ -63,11 +58,6 @@ open class SceneFactory {
      * @return game menu
      */
     open fun newGameMenu(app: GameApplication): FXGLMenu {
-        when (app.settings.menuStyle) {
-            MenuStyle.GTA5 -> return GTAVMenu(app, MenuType.GAME_MENU)
-            MenuStyle.CCTR -> return CCTRMenu(app, MenuType.GAME_MENU)
-            MenuStyle.WARCRAFT3 -> return Warcraft3Menu(app, MenuType.GAME_MENU)
-            else -> return FXGLDefaultMenu(app, MenuType.GAME_MENU)
-        }
+        return FXGLDefaultMenu(app, MenuType.GAME_MENU)
     }
 }

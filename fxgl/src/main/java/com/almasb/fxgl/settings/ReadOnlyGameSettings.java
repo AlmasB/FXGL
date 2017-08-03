@@ -6,7 +6,6 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.scene.menu.MenuStyle;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
@@ -33,7 +32,6 @@ public class ReadOnlyGameSettings {
     protected boolean profilingEnabled = true;
     protected boolean closeConfirmation = true;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
-    protected MenuStyle menuStyle = MenuStyle.FXGL_DEFAULT;
     protected KeyCode menuKey = KeyCode.ESCAPE;
     protected Credits credits = new Credits(Collections.emptyList());
     protected List<ServiceType<?> > services = new ArrayList<>();
@@ -64,7 +62,6 @@ public class ReadOnlyGameSettings {
         this.profilingEnabled = copy.profilingEnabled;
         this.closeConfirmation = copy.closeConfirmation;
         this.appMode = copy.appMode;
-        this.menuStyle = copy.menuStyle;
         this.menuKey = copy.menuKey;
         this.credits = new Credits(copy.credits);
         this.services = copy.services;
@@ -111,10 +108,6 @@ public class ReadOnlyGameSettings {
         return appMode;
     }
 
-    public final MenuStyle getMenuStyle() {
-        return menuStyle;
-    }
-
     public final KeyCode getMenuKey() {
         return menuKey;
     }
@@ -142,7 +135,6 @@ public class ReadOnlyGameSettings {
                 "Menus: " + menuEnabled + '\n' +
                 "Profiling: " + profilingEnabled + '\n' +
                 "App Mode: " + appMode + '\n' +
-                "Menu Style: " + menuStyle + '\n' +
                 "Menu Key: " + menuKey + '\n' +
                 "Services: " + services;
     }

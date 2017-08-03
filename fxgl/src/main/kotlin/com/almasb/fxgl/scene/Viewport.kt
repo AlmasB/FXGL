@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.core.math.FXGLMath
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.entity.component.PositionComponent
@@ -16,7 +18,7 @@ import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 
 /**
- * Game scene viewport.
+ * Scene viewport.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -169,5 +171,41 @@ class Viewport
         this.minY.set(minY)
         this.maxX.set(maxX)
         this.maxY.set(maxY)
+    }
+
+    // adapted from https://gamedev.stackexchange.com/questions/1828/realistic-camera-screen-shake-from-explosion
+    private var shakePower = 0.0f
+    private var shakeAngle = 0.0f
+    private val originBeforeShake = Vec2()
+    private val offset = Vec2()
+    private var shake = false
+
+    fun shake(power: Double) {
+        shakePower = power.toFloat()
+        shakeAngle = FXGLMath.random() * FXGLMath.PI2
+
+        // only record origin if not shaking, so that we don't record 'false' origin
+        if (!shake)
+            originBeforeShake.set(x.floatValue(), y.floatValue())
+
+        shake = true
+    }
+
+    fun onUpdate(tpf: Double) {
+        if (!shake)
+            return
+
+        shakePower *= 0.9f * 60 * tpf.toFloat()
+        shakeAngle += 180 + FXGLMath.random() * FXGLMath.PI2 / 6
+        offset.set(shakePower * FXGLMath.cos(shakeAngle), shakePower * FXGLMath.sin(shakeAngle))
+
+        setX(offset.x + originBeforeShake.x.toDouble())
+        setY(offset.y + originBeforeShake.y.toDouble())
+
+        if (FXGLMath.abs(offset.x) < 0.5 && FXGLMath.abs(offset.y) < 0.5) {
+            setX(originBeforeShake.x.toDouble())
+            setY(originBeforeShake.y.toDouble())
+            shake = false
+        }
     }
 }

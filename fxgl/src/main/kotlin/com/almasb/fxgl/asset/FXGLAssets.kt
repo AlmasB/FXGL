@@ -44,22 +44,9 @@ class FXGLAssets {
 
             UI_FONT = loader.loadFont(getString("ui.font"))
             UI_MONO_FONT = loader.loadFont(getString("ui.mono.font"))
-            UI_CSS = loadCSS()
+            UI_CSS = loader.loadCSS(getString("ui.css"))
             UI_ICON_NAME = getString("ui.icon.name")
             UI_ICON = loader.loadAppIcon(UI_ICON_NAME)
-        }
-
-        private fun loadCSS(): CSS {
-            val cssExternalForm = getString("ui.css")
-
-            return FXGL.getAssetLoader().loadCSS(
-
-                    // if default css, then use menu style css
-                    if (cssExternalForm.endsWith("fxgl.css"))
-                        FXGL.getSettings().menuStyle.cssFileName
-                    else
-                        cssExternalForm
-            )
         }
     }
 }

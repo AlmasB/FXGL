@@ -7,12 +7,12 @@
 package com.almasb.fxgl.entity.animation;
 
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.component.ColorComponent;
+import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.animation.Interpolator;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,28 +20,41 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class AnimationBuilder {
+public final class AnimationBuilder {
 
     private Duration duration = Duration.seconds(1);
     private Duration delay = Duration.ZERO;
     private Interpolator interpolator = Interpolator.LINEAR;
     private int times = 1;
-    private List<GameEntity> entities = new ArrayList<>();
+    private Runnable onFinished = EmptyRunnable.INSTANCE;
+    private boolean autoReverse = false;
 
-    Duration getDelay() {
+    // guaranteed to be initialized before access by specific animation builder
+    // see rotate(), scale(), translate(), etc. below
+    private List<GameEntity> entities;
+
+    public Duration getDelay() {
         return delay;
     }
 
-    Duration getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
-    int getTimes() {
+    public int getTimes() {
         return times;
     }
 
-    Interpolator getInterpolator() {
+    public Interpolator getInterpolator() {
         return interpolator;
+    }
+
+    public Runnable getOnFinished() {
+        return onFinished;
+    }
+
+    public boolean isAutoReverse() {
+        return autoReverse;
     }
 
     List<GameEntity> getEntities() {
@@ -63,8 +76,18 @@ public class AnimationBuilder {
         return this;
     }
 
+    public AnimationBuilder onFinished(Runnable onFinished) {
+        this.onFinished = onFinished;
+        return this;
+    }
+
     public AnimationBuilder interpolator(Interpolator interpolator) {
         this.interpolator = interpolator;
+        return this;
+    }
+
+    public AnimationBuilder autoReverse(boolean autoReverse) {
+        this.autoReverse = autoReverse;
         return this;
     }
 
@@ -73,19 +96,41 @@ public class AnimationBuilder {
     }
 
     public RotationAnimationBuilder rotate(List<GameEntity> entities) {
-        this.entities.addAll(entities);
+        this.entities = entities;
         return new RotationAnimationBuilder(this);
     }
 
     public TranslationAnimationBuilder translate(GameEntity... entities) {
-        Collections.addAll(this.entities, entities);
+        return translate(Arrays.asList(entities));
+    }
 
+    public TranslationAnimationBuilder translate(List<GameEntity> entities) {
+        this.entities = entities;
         return new TranslationAnimationBuilder(this);
     }
 
     public ScaleAnimationBuilder scale(GameEntity... entities) {
-        Collections.addAll(this.entities, entities);
+        return scale(Arrays.asList(entities));
+    }
 
+    public ScaleAnimationBuilder scale(List<GameEntity> entities) {
+        this.entities = entities;
         return new ScaleAnimationBuilder(this);
+    }
+
+    public ColorAnimationBuilder color(GameEntity... entities) {
+        return color(Arrays.asList(entities));
+    }
+
+    public ColorAnimationBuilder color(List<GameEntity> entities) {
+        this.entities = entities;
+
+        boolean dontHaveColor = this.entities.stream().anyMatch(e -> !e.hasComponent(ColorComponent.class));
+
+        if (dontHaveColor) {
+            throw new IllegalArgumentException("All entities must have ColorComponent");
+        }
+
+        return new ColorAnimationBuilder(this);
     }
 }

@@ -98,6 +98,4 @@ class DeveloperPane : VBox(25.0), EntityWorldListener {
     }
 
     override fun onWorldUpdate(tpf: Double) { }
-
-    override fun onWorldReset() { }
 }

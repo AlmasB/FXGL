@@ -293,6 +293,15 @@ public final class Entities {
         }
 
         /**
+         * Finishes building the entity and attaches it to default game world.
+         *
+         * @return entity
+         */
+        public GameEntity buildAndAttach() {
+            return buildAndAttach(FXGL.getApp().getGameWorld());
+        }
+
+        /**
          * Finishes building the entity and attaches it to given world.
          *
          * @param world the world to attach entity to
