@@ -195,7 +195,7 @@ class Viewport
         if (!shake)
             return
 
-        shakePower *= 0.9f * 60 * tpf.toFloat()
+        shakePower *= 0.9f
         shakeAngle += 180 + FXGLMath.random() * FXGLMath.PI2 / 6
         offset.set(shakePower * FXGLMath.cos(shakeAngle), shakePower * FXGLMath.sin(shakeAngle))
 
