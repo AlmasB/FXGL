@@ -69,7 +69,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.3.5</version>
+    <version>0.3.6</version>
 </dependency>
 ```
 
@@ -86,7 +86,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.3.5'
+    compile 'com.github.almasb:fxgl:0.3.6'
 }
 ```
 
