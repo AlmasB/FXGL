@@ -10,8 +10,7 @@ Any new API or changes to existing API should be discussed to avoid inconsistenc
 * Proof read public documentation for errors, ambiguities and typos.
 * Crash test features for bugs or write a unit test for one.
 * Create an issue or suggest a feature backed up by a use case.
-* Provide or suggest an implementation of a feature from [New Features](https://github.com/AlmasB/FXGL/wiki/New-Features).
-* Fix / implement / close an open issue.
+* Provide or suggest an implementation of an issue from [GitHub Issues](https://github.com/AlmasB/FXGL/issues).
 * Suggest an API change if you think some calls can be made more concise.
 * [Samples](fxgl-samples) might get outdated quite quickly, see if you can find something weird / not working.
 * Share details about your project based on FXGL (this will go to the showcase section).
@@ -51,7 +50,7 @@ You now should see something like this:
 
 ## Coding Standards
 
-The project uses the following guidelines (the list is likely to grow over time):
+The project uses the following guidelines:
 
 * Tabs set to 4 spaces & consistent indentation.
 * Consistent naming conventions (no [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation)).
