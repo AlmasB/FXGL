@@ -62,21 +62,33 @@ internal class LoadingState
             private val annotationMap: Map<Class<*>, List<Class<*>>>
 
             init {
+                annotationMap = scanForAnnotations()
+
+                annotationMap.forEach { annotationClass, list ->
+                    log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
+                }
+            }
+
+            private fun scanForAnnotations(): Map<Class<*>, List<Class<*>>> {
                 val app = FXGL.getApp()
 
-                annotationMap = if (app.javaClass.`package` != null) {
+                if (app.javaClass.`package` != null) {
+
+                    val name = app.javaClass.`package`.name
+
+                    if (name.contains("[A-Z]".toRegex())) {
+                        log.warning("${app.javaClass.simpleName} package ($name) contains uppercase letters. Disabling annotations processing")
+
+                        return hashMapOf()
+                    }
 
                     // only scan the appropriate package (package of the "App") and its subpackages
-                    ReflectionUtils.findClasses(app.javaClass.`package`.name,
+                    return ReflectionUtils.findClasses(app.javaClass.`package`.name,
                             SetEntityFactory::class.java, AddCollisionHandler::class.java)
                 } else {
                     log.warning("${app.javaClass.simpleName} has no package. Disabling annotations processing")
 
-                    hashMapOf()
-                }
-
-                annotationMap.forEach { annotationClass, list ->
-                    log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
+                    return hashMapOf()
                 }
             }
         }
