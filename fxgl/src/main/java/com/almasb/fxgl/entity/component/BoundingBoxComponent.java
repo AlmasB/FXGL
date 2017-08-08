@@ -64,8 +64,6 @@ public class BoundingBoxComponent extends Component
 
     @Override
     public void onAdded(Entity entity) {
-        position = entity.getComponent(PositionComponent.class);
-
         minXWorld.bind(minXLocal.add(position.xProperty()));
         minYWorld.bind(minYLocal.add(position.yProperty()));
 

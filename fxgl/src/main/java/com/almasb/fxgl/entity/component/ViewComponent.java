@@ -8,8 +8,8 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.ModuleListener;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.ModuleListener;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
@@ -207,6 +207,9 @@ public class ViewComponent extends Component {
         setView(view, generateBoundingBox);
     }
 
+    private PositionComponent position;
+    private RotationComponent rotation;
+
     @Override
     public void onAdded(Entity entity) {
         bindView();
@@ -222,9 +225,9 @@ public class ViewComponent extends Component {
     }
 
     private void bindView() {
-        getView().translateXProperty().bind(getEntity().getComponent(PositionComponent.class).xProperty());
-        getView().translateYProperty().bind(getEntity().getComponent(PositionComponent.class).yProperty());
-        getView().rotateProperty().bind(getEntity().getComponent(RotationComponent.class).valueProperty());
+        getView().translateXProperty().bind(position.xProperty());
+        getView().translateYProperty().bind(position.yProperty());
+        getView().rotateProperty().bind(rotation.valueProperty());
     }
 
     private void generateBBox() {

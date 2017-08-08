@@ -385,9 +385,21 @@ public class Entity {
 
         if (module instanceof Control)
             injectFields((Control) module);
+        else if (module instanceof Component)
+            injectFields((Component) module);
 
         module.onAdded(this);
         notifyModuleAdded(module);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void injectFields(Component component) {
+        ReflectionUtils.findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
+            Component comp = getComponent((Class<? extends Component>) field.getType());
+            if (comp != null) {
+                ReflectionUtils.inject(field, component, comp);
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
