@@ -7,8 +7,11 @@
 package com.almasb.fxgl.ecs
 
 import com.almasb.fxgl.ecs.diff.InjectableControl
+import com.almasb.fxgl.ecs.diff.SubTypeInjectableControl
 import org.hamcrest.core.Is
+import org.hamcrest.core.Is.`is`
 import org.junit.Assert
+import org.junit.Assert.assertThat
 import org.junit.Test
 
 /**
@@ -25,7 +28,17 @@ class InjectionTest {
         entity.addControl(EntityTest.CustomDataControl("InjectControl"))
         entity.addControl(InjectableControl())
 
-        Assert.assertThat(entity.hasControl(InjectableControl::class.java), Is.`is`(true))
+        assertThat(entity.hasControl(InjectableControl::class.java), `is`(true))
+    }
+
+    @Test
+    fun `Subtype fields are injected`() {
+        val entity = Entity()
+        entity.addComponent(EntityTest.CustomDataComponent("Inject"))
+        entity.addControl(EntityTest.CustomDataControl("InjectControl"))
+        entity.addControl(SubTypeInjectableControl())
+
+        assertThat(entity.hasControl(SubTypeInjectableControl::class.java), `is`(true))
     }
 
     @Test(expected = RuntimeException::class)

@@ -121,13 +121,13 @@ public final class ReflectionUtils {
     }
 
     /**
-     * Find all fields of instance that have type / subtype of given type parameter.
+     * Find declared fields of "instance" that have type / subtype of given "type" parameter.
      *
      * @param instance object whose fields to search
      * @param type super type
-     * @return all fields that meet criteria
+     * @return declared fields that meet criteria
      */
-    public static Array<Field> findFieldsByType(Object instance, Class<?> type) {
+    public static Array<Field> findDeclaredFieldsByType(Object instance, Class<?> type) {
 
         Array<Field> fields = new Array<>();
 
@@ -138,6 +138,39 @@ public final class ReflectionUtils {
         }
 
         return fields;
+    }
+
+    /**
+     * Find all fields of "instance" that have type / subtype of given "type" parameter.
+     * Note: this will recursively search all matching fields in supertypes of "instance".
+     *
+     * @param instance object whose fields to search
+     * @param type super type
+     * @return all fields that meet criteria
+     */
+    public static Array<Field> findFieldsByTypeRecursive(Object instance, Class<?> type) {
+
+        Array<Field> fields = new Array<>();
+
+        for (Field field : getAllFieldsRecursive(instance)) {
+            if (type.isAssignableFrom(field.getType())) {
+                fields.add(field);
+            }
+        }
+
+        return fields;
+    }
+
+    private static Array<Field> getAllFieldsRecursive(Object instance) {
+        Array<Field> result = new Array<>();
+
+        Class<?> typeClass = instance.getClass();
+        while (typeClass != null && typeClass != Object.class) {
+            result.addAll(typeClass.getDeclaredFields());
+            typeClass = typeClass.getSuperclass();
+        }
+
+        return result;
     }
 
     /**

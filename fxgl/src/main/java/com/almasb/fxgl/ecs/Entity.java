@@ -392,14 +392,14 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
-        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
+        ReflectionUtils.findFieldsByTypeRecursive(control, Component.class).forEach(field -> {
             Component comp = getComponent((Class<? extends Component>) field.getType());
             if (comp != null) {
                 ReflectionUtils.inject(field, control, comp);
             }
         });
 
-        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
+        ReflectionUtils.findFieldsByTypeRecursive(control, Control.class).forEach(field -> {
             Control ctrl = getControl((Class<? extends Control>) field.getType());
             if (ctrl != null) {
                 ReflectionUtils.inject(field, control, ctrl);
