@@ -58,7 +58,7 @@ public final class GameWorld {
     /**
      * List of entities in the world.
      */
-    protected List<Entity> entities;
+    private List<Entity> entities;
 
     private GameWorldQuery query;
 
