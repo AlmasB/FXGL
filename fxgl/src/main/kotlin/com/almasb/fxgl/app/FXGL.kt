@@ -8,6 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.ServiceType
@@ -255,7 +256,7 @@ class FXGL private constructor() {
         private val _assetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
-        private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
+        private val _eventBus by lazy { EventBus() }
         @JvmStatic fun getEventBus() = _eventBus
 
         private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }

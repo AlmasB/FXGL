@@ -4,47 +4,69 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.event
+package com.almasb.fxgl.event
 
 import com.almasb.fxgl.annotation.Handles
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.core.event.FXEventBus
-import com.almasb.fxgl.core.event.Subscriber
-import com.almasb.fxgl.service.EventBus
-import com.google.inject.Inject
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.scene.Group
 import java.lang.reflect.Modifier
 
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
+ * Event dispatching, listening and handling.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLEventBus
-@Inject
-private constructor() : EventBus {
+class EventBus {
 
     private val log = FXGL.getLogger(javaClass)
 
-    private val bus = FXEventBus()
+    private val eventHandlers = Group()
 
-    override fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber {
-        return bus.addEventHandler(eventType, eventHandler)
+    /**
+     * Register event handler for event type.
+     */
+    fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>): Subscriber {
+        eventHandlers.addEventHandler(eventType, eventHandler)
+        return Subscriber(this, eventType, eventHandler as EventHandler<in Event>)
     }
 
-    override fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
-        bus.removeEventHandler(eventType, eventHandler)
+    /**
+     * Remove event handler for event type.
+     */
+    fun <T : Event> removeEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
+        eventHandlers.removeEventHandler(eventType, eventHandler)
     }
 
-    override fun fireEvent(event: Event) {
+    /**
+     * Post (fire) given event. All listening parties will be notified.
+     * Events will be handled on the same thread that fired the event,
+     * i.e. synchronous.
+     *
+     * <p>
+     *     Note: according to JavaFX doc this must be called on JavaFX Application Thread.
+     *     In reality this doesn't seem to be true.
+     * </p>
+     *
+     * @param event the event
+     */
+    fun fireEvent(event: Event) {
         log.debug { "Firing event: $event" }
 
-        bus.fireEvent(event)
+        eventHandlers.fireEvent(event)
     }
 
-    override fun scanForHandlers(instance: Any) {
+    /**
+     * Scan an object for public methods marked @Handles
+     * and add them to the event bus.
+     *
+     * @param instance object to scan
+     * @throws IllegalArgumentException if syntax error during scan
+     */
+    fun scanForHandlers(instance: Any) {
         for (method in instance.javaClass.declaredMethods) {
             val annotation = method.getDeclaredAnnotation(Handles::class.java)
 
@@ -70,7 +92,7 @@ private constructor() : EventBus {
                         // ensure that it's EventType
                         as? EventType<*> ?: throw IllegalArgumentException("<${annotation.eventType}> is not of type EventType<*> in ${eventClass}")
 
-                addEventHandler(eventTypeObject, { method.invoke(instance, it) })
+                addEventHandler(eventTypeObject, EventHandler { method.invoke(instance, it) })
             }
         }
     }

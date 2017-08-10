@@ -8,7 +8,7 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.service.impl.event.FXGLEventBus;
+import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
@@ -77,7 +77,6 @@ public class MockApplicationModule extends ApplicationModule {
         mockLoggerFactory();
         mockInput();
         mockExecutor();
-        mockEventBus();
         mockNotificationService();
         mockUIFactory();
         mockAssetLoader();
@@ -113,10 +112,6 @@ public class MockApplicationModule extends ApplicationModule {
 
     private void mockExecutor() {
         bind(Executor.class).to(FXGLExecutor.class);
-    }
-
-    private void mockEventBus() {
-        bind(EventBus.class).to(FXGLEventBus.class);
     }
 
     private void mockNotificationService() {

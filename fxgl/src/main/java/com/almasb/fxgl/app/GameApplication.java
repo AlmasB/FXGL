@@ -13,6 +13,7 @@ import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.ecs.GameWorld;
+import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.gameplay.AchievementEvent;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.gameplay.Gameplay;

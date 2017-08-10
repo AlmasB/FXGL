@@ -13,7 +13,7 @@ import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
 import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDisplay;
-import com.almasb.fxgl.service.impl.event.FXGLEventBus;
+import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
@@ -71,18 +71,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends AssetLoader> serviceProvider() {
             return FXGLAssetLoader.class;
-        }
-    };
-
-    ServiceType<EventBus> EVENT_BUS = new ServiceType<EventBus>() {
-        @Override
-        public Class<EventBus> service() {
-            return EventBus.class;
-        }
-
-        @Override
-        public Class<? extends EventBus> serviceProvider() {
-            return FXGLEventBus.class;
         }
     };
 

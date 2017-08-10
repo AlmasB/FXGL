@@ -7,7 +7,7 @@
 package com.almasb.fxglgames.tictactoe.control.enemy;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.core.event.Subscriber;
+import com.almasb.fxgl.event.Subscriber;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxglgames.tictactoe.event.AIEvent;

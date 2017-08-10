@@ -8,7 +8,6 @@ package com.almasb.fxgl.event
 
 import com.almasb.fxgl.annotation.Handles
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.service.EventBus
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertThat

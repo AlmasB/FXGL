@@ -6,12 +6,13 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.event.Subscriber
+import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.scene.IntroScene
 import com.almasb.fxgl.scene.SceneFactory
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import javafx.event.EventHandler
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -27,7 +28,7 @@ private constructor(private val app: GameApplication,
 
     override fun onEnter(prevState: State) {
         if (prevState is StartupState) {
-            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, {
+            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, EventHandler {
                 introFinished = true
             })
 
