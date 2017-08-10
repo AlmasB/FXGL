@@ -234,8 +234,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
     }
 
-    @Override
-    public void onWorldUpdate(double tpf) {
+    public void onUpdate(double tpf) {
         jboxWorld.step((float) tpf, 8, 3);
         postStep();
 

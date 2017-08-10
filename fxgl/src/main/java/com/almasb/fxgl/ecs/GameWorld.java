@@ -142,8 +142,6 @@ public final class GameWorld {
                 e.update(tpf * tpfRatio);
             }
         }
-
-        notifyWorldUpdated(tpf);
     }
 
     /**
@@ -206,12 +204,6 @@ public final class GameWorld {
     private void notifyEntityRemoved(Entity e) {
         for (int i = 0; i < worldListeners.size(); i++) {
             worldListeners.get(i).onEntityRemoved(e);
-        }
-    }
-
-    private void notifyWorldUpdated(double tpf) {
-        for (int i = 0; i < worldListeners.size(); i++) {
-            worldListeners.get(i).onWorldUpdate(tpf);
         }
     }
 

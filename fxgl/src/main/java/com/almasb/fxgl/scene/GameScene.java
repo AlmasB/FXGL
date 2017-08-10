@@ -272,8 +272,7 @@ public final class GameScene extends FXGLScene
         return group;
     }
 
-    @Override
-    public void onWorldUpdate(double tpf) {
+    public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
 
         particlesGC.setGlobalAlpha(1);

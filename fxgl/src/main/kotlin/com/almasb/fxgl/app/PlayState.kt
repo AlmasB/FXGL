@@ -48,6 +48,8 @@ private constructor(val gameState: GameState,
 
     override fun onUpdate(tpf: Double) {
         gameWorld.onUpdate(tpf)
+        physicsWorld.onUpdate(tpf)
+        gameScene.onUpdate(tpf)
     }
 
     val gameScene: GameScene

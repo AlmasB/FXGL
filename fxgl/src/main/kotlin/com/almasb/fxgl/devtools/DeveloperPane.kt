@@ -96,6 +96,4 @@ class DeveloperPane : VBox(25.0), EntityWorldListener {
     override fun onEntityRemoved(entity: Entity) {
         cbEntity.items.remove(entity)
     }
-
-    override fun onWorldUpdate(tpf: Double) { }
 }
