@@ -7,8 +7,6 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.service.*;
-import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
@@ -124,7 +122,6 @@ public class MockApplicationModule extends ApplicationModule {
 
     private void mockAssetLoader() {
         bind(Integer.class).annotatedWith(Names.named("asset.cache.size")).toInstance(35);
-        bind(AssetLoader.class).to(FXGLAssetLoader.class);
     }
 
     private void mockPhysics() {

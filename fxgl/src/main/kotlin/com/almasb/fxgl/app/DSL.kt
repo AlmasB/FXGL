@@ -65,7 +65,7 @@ fun texture(assetName: String, width: Double, height: Double): Texture = getAsse
 
 fun text(assetName: String) = getAssetLoader().loadText(assetName)
 
-fun <T> jsonAs(name: String, type: Class<T>): T = getAssetLoader().loadJSON(name, type)
+fun <T : Any> jsonAs(name: String, type: Class<T>): T = getAssetLoader().loadJSON(name, type)
 
 /* AUDIO */
 

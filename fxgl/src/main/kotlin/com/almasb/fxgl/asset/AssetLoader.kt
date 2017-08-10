@@ -4,17 +4,15 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.asset
+package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.ai.btree.utils.BehaviorTreeParser
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.asset.AssetCache
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.scene.CSS
-import com.almasb.fxgl.service.AssetLoader
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
@@ -39,12 +37,37 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
 /**
- * FXGL provider for asset loader service.
+ * Handles all resource (asset) loading operations.
+ * <p>
+ * The "assets" directory must be located in source folder ("src" by default).
+ * If you are using the Maven directory structure then under "src/main/resources/".
+ * <p>
+ * Resources (assets) will be searched for in these specified directories:
+ * <ul>
+ * <li>Texture - /assets/textures/</li>
+ * <li>Sound - /assets/sounds/</li>
+ * <li>Music - /assets/music/</li>
+ * <li>Text (List&lt;String&gt;) - /assets/text/</li>
+ * <li>KVFile - /assets/kv/</li>
+ * <li>Data - /assets/data/</li>
+ * <li>Scripts - /assets/scripts/</li>
+ * <li>Behavior Tree - /assets/ai/</li>
+ * <li>FXML - /assets/ui/</li>
+ * <li>CSS - /assets/ui/css/</li>
+ * <li>Font - /assets/ui/fonts/</li>
+ * <li>App icons - /assets/ui/icons/</li>
+ * <li>Cursors - /assets/ui/cursors/</li>
+ * <li>Resource bundles - /assets/properties/</li>
+ * </ul>
  *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
+ * If you need to access the "raw" JavaFX objects (e.g. Image), you can use
+ * {@link AssetLoader#getStream(String)} to obtain an InputStream and then
+ * parse into whatever resource you need.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLAssetLoader
-@Inject private constructor(@Named("asset.cache.size") cacheSize: Int): AssetLoader {
+class AssetLoader
+@Inject private constructor(@Named("asset.cache.size") cacheSize: Int) {
 
     private val ASSETS_DIR = "/assets/"
     private val TEXTURES_DIR = ASSETS_DIR + "textures/"
@@ -87,7 +110,7 @@ class FXGLAssetLoader
      * @return texture
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadTexture(name: String): Texture {
+    fun loadTexture(name: String): Texture {
         val asset = getAssetFromCache(TEXTURES_DIR + name)
         if (asset != null) {
             return Texture(Image::class.java.cast(asset))
@@ -122,7 +145,7 @@ class FXGLAssetLoader
      * @return texture
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadTexture(name: String, width: Double, height: Double): Texture {
+    fun loadTexture(name: String, width: Double, height: Double): Texture {
         val cacheKey = TEXTURES_DIR + name + "@" + width + "x" + height
 
         val asset = getAssetFromCache(cacheKey)
@@ -141,7 +164,13 @@ class FXGLAssetLoader
         }
     }
 
-    override fun loadTexture(name: String, transparency: Color): Texture {
+    /**
+     *
+     * @param name texture name
+     * @param transparency replaces this color with Color.TRANSPARENT
+     * @return texture
+     */
+    fun loadTexture(name: String, transparency: Color): Texture {
         val cacheKey = TEXTURES_DIR + name + "T" + transparency
 
         val asset = getAssetFromCache(cacheKey)
@@ -176,7 +205,7 @@ class FXGLAssetLoader
      * @return sound
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadSound(name: String): Sound {
+    fun loadSound(name: String): Sound {
         val asset = getAssetFromCache(SOUNDS_DIR + name)
         if (asset != null) {
             return Sound::class.java.cast(asset)
@@ -202,7 +231,7 @@ class FXGLAssetLoader
      * @return music
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadMusic(name: String): Music {
+    fun loadMusic(name: String): Music {
         val asset = getAssetFromCache(MUSIC_DIR + name)
         if (asset != null) {
             return Music::class.java.cast(asset)
@@ -228,7 +257,7 @@ class FXGLAssetLoader
      * @throws IllegalArgumentException if asset not found or loading error
      */
     @Suppress("UNCHECKED_CAST")
-    override fun loadText(name: String): List<String> {
+    fun loadText(name: String): List<String> {
         val asset = getAssetFromCache(TEXT_DIR + name)
         if (asset != null) {
             return asset as List<String>
@@ -247,17 +276,17 @@ class FXGLAssetLoader
      * @return kv file
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadKV(name: String): KVFile {
+    fun loadKV(name: String): KVFile {
         return KVFile(readAllLines(KV_DIR + name))
     }
 
-    override fun loadJSON(name: String): List<String> {
+    fun loadJSON(name: String): List<String> {
         return readAllLines(JSON_DIR + name)
     }
 
     private val jsonMapper by lazy { ObjectMapper() }
 
-    override fun <T : Any> loadJSON(name: String, type: Class<T>): T {
+    fun <T : Any> loadJSON(name: String, type: Class<T>): T {
         getStream(JSON_DIR + name).use {
             return jsonMapper.readValue(it, type)
         }
@@ -271,7 +300,7 @@ class FXGLAssetLoader
      * @return script as a String
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadScript(name: String): String {
+    fun loadScript(name: String): String {
         return readAllLines(SCRIPTS_DIR + name).joinToString("\n", "", "\n")
     }
 
@@ -282,7 +311,7 @@ class FXGLAssetLoader
      * @return resource bundle
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadResourceBundle(name: String): ResourceBundle {
+    fun loadResourceBundle(name: String): ResourceBundle {
         try {
             getStream(PROPERTIES_DIR + name).use { return PropertyResourceBundle(it) }
         } catch (e: Exception) {
@@ -298,7 +327,7 @@ class FXGLAssetLoader
      * @return cursor image
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadCursorImage(name: String): Image {
+    fun loadCursorImage(name: String): Image {
         try {
             getStream(CURSORS_DIR + name).use { return Image(it) }
         } catch (e: Exception) {
@@ -315,7 +344,7 @@ class FXGLAssetLoader
      * @return a UI object parsed from .fxml
      * @throws IllegalArgumentException if asset not found or loading/parsing error
      */
-    override fun loadUI(name: String, controller: UIController): UI {
+    fun loadUI(name: String, controller: UIController): UI {
         try {
             getStream(UI_DIR + name).use {
                 val loader = FXMLLoader()
@@ -340,7 +369,7 @@ class FXGLAssetLoader
      * *
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadCSS(name: String): CSS {
+    fun loadCSS(name: String): CSS {
         try {
             return CSS(getURL(CSS_DIR + name).toExternalForm())
         } catch (e: Exception) {
@@ -363,7 +392,7 @@ class FXGLAssetLoader
      * @return font factory
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadFont(name: String): FontFactory {
+    fun loadFont(name: String): FontFactory {
         val asset = getAssetFromCache(FONTS_DIR + name)
         if (asset != null) {
             return FontFactory::class.java.cast(asset)
@@ -391,7 +420,7 @@ class FXGLAssetLoader
      * @return app icon image
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun loadAppIcon(name: String): Image {
+    fun loadAppIcon(name: String): Image {
         try {
             getStream(ICON_DIR + name).use { return Image(it) }
         } catch (e: Exception) {
@@ -408,7 +437,7 @@ class FXGLAssetLoader
      * @return loaded and parsed behavior tree
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    override fun <T> loadBehaviorTree(name: String): BehaviorTree<T> {
+    fun <T> loadBehaviorTree(name: String): BehaviorTree<T> {
         try {
             getStream(AI_DIR + name).use { return BehaviorTreeParser<T>().parse(it, null) }
         } catch (e: Exception) {
@@ -450,7 +479,7 @@ class FXGLAssetLoader
      * @return resource stream
      * @throws IllegalArgumentException if any error occurs or stream is null
      */
-    override fun getStream(name: String): InputStream {
+    fun getStream(name: String): InputStream {
         try {
             return getURL(name).openStream() ?: throw IOException("Input stream to \"$name\" is null!")
         } catch (e: IOException) {
@@ -501,7 +530,7 @@ class FXGLAssetLoader
      * Pre-loads all textures / sounds / music / text / fonts and binary data
      * from their respective folders.
      */
-    override fun cache() {
+    fun cache() {
         log.debug("Caching assets")
 
         loadFileNames(TEXTURES_DIR).forEach { loadTexture(it) }
@@ -517,7 +546,7 @@ class FXGLAssetLoader
     /**
      * Release all cached assets.
      */
-    override fun clearCache() {
+    fun clearCache() {
         log.debug("Clearing assets cache")
         cachedAssets.clear()
     }
@@ -531,7 +560,7 @@ class FXGLAssetLoader
      * @return list of file names
      * @throws IllegalArgumentException if directory does not start with "/assets/" or was not found
      */
-    override fun loadFileNames(directory: String): List<String> {
+    fun loadFileNames(directory: String): List<String> {
         if (!directory.startsWith(ASSETS_DIR))
             throw IllegalArgumentException("Directory must start with: $ASSETS_DIR Provided: $directory")
 

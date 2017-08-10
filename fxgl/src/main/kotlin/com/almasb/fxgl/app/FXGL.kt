@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.event.EventBus
@@ -253,7 +254,7 @@ class FXGL private constructor() {
 
         /* CONVENIENCE ACCESSORS - SERVICES */
 
-        private val _assetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
+        private val _assetLoader by lazy { getInstance(AssetLoader::class.java) }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
         private val _eventBus by lazy { EventBus() }
