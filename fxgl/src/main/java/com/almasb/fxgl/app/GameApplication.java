@@ -349,6 +349,8 @@ public abstract class GameApplication extends Application {
     private void tick(double tpf) {
         stateMachine.onUpdate(tpf);
 
+        getEventBus().onUpdate(tpf);
+
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).onUpdate(tpf);
         }
