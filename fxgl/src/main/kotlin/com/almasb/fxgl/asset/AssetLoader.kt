@@ -280,12 +280,29 @@ class AssetLoader
         return KVFile(readAllLines(KV_DIR + name))
     }
 
+    /**
+     * Loads JSON file with given name from /assets/json/.
+     * Either returns a valid JSON content or throws exception in case of errors.
+     *
+     * @param name JSON file name, e.g. level_data.json
+     * @return JSON content as String
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
     fun loadJSON(name: String): List<String> {
         return readAllLines(JSON_DIR + name)
     }
 
     private val jsonMapper by lazy { ObjectMapper() }
 
+    /**
+     * Loads JSON file with given name from /assets/json/ and parses into an object of type T.
+     * Either returns a valid parsed object or throws exception in case of errors.
+     *
+     * @param name JSON file name, e.g. level_data.json
+     * @param type object type to parse to
+     * @return parsed object
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
     fun <T : Any> loadJSON(name: String, type: Class<T>): T {
         getStream(JSON_DIR + name).use {
             return jsonMapper.readValue(it, type)
