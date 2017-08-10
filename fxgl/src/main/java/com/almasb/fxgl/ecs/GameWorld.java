@@ -18,7 +18,6 @@ import com.almasb.fxgl.ecs.component.IrremovableComponent;
 import com.almasb.fxgl.ecs.component.TimeComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
-import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.google.inject.Inject;
@@ -45,8 +44,6 @@ import java.util.stream.Collectors;
 public final class GameWorld {
 
     private static Logger log = FXGLLogger.get("FXGL.GameWorld");
-
-    private Array<EventTrigger<?> > eventTriggers = new UnorderedArray<>(32);
     
     private Array<Entity> updateList;
 
@@ -234,27 +231,6 @@ public final class GameWorld {
 
     public void onUpdate(double tpf) {
         update(tpf);
-        updateTriggers(tpf);
-    }
-
-    private void updateTriggers(double tpf) {
-        for (Iterator<EventTrigger<?> > it = eventTriggers.iterator(); it.hasNext(); ) {
-            EventTrigger trigger = it.next();
-
-            trigger.onUpdate(tpf);
-
-            if (trigger.reachedLimit()) {
-                it.remove();
-            }
-        }
-    }
-
-    public void addEventTrigger(EventTrigger<?> trigger) {
-        eventTriggers.add(trigger);
-    }
-
-    public void removeEventTrigger(EventTrigger<?> trigger) {
-        eventTriggers.removeValueByIdentity(trigger);
     }
 
     private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();

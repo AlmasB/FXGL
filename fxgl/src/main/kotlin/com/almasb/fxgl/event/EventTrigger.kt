@@ -61,7 +61,7 @@ class EventTrigger<out T : Event>
         }
     }
 
-    fun onUpdate(tpf: Double) {
+    internal fun onUpdate(tpf: Double) {
         if (eventCondition.isTrue() && (timer.elapsed(interval) || timesFired == 0)) {
             fire()
             timer.capture()

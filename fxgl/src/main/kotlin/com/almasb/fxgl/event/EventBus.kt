@@ -8,6 +8,7 @@ package com.almasb.fxgl.event
 
 import com.almasb.fxgl.annotation.Handles
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.collection.UnorderedArray
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -16,7 +17,7 @@ import java.lang.reflect.Modifier
 
 /**
  * FXGL event dispatcher that uses JavaFX event system to delegate method calls.
- * Event dispatching, listening and handling.
+ * Manages event dispatching, listening and handling.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -24,7 +25,34 @@ class EventBus {
 
     private val log = FXGL.getLogger(javaClass)
 
+    private val eventTriggers = UnorderedArray<EventTrigger<*>>(32)
+
     private val eventHandlers = Group()
+
+    fun onUpdate(tpf: Double) {
+        updateTriggers(tpf)
+    }
+
+    private fun updateTriggers(tpf: Double) {
+        val it = eventTriggers.iterator()
+        while (it.hasNext()) {
+            val trigger = it.next()
+
+            trigger.onUpdate(tpf)
+
+            if (trigger.reachedLimit()) {
+                it.remove()
+            }
+        }
+    }
+
+    fun addEventTrigger(trigger: EventTrigger<*>) {
+        eventTriggers.add(trigger)
+    }
+
+    fun removeEventTrigger(trigger: EventTrigger<*>) {
+        eventTriggers.removeValueByIdentity(trigger)
+    }
 
     /**
      * Register event handler for event type.
