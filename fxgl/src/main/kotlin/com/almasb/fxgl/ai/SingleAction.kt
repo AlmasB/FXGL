@@ -8,6 +8,7 @@ package com.almasb.fxgl.ai
 
 import com.almasb.fxgl.ai.btree.LeafTask
 import com.almasb.fxgl.ai.btree.Task
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.GameEntity
 
 /**
@@ -15,15 +16,17 @@ import com.almasb.fxgl.entity.GameEntity
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class Action(val name: String) : LeafTask<GameEntity>() {
+abstract class SingleAction
+@JvmOverloads constructor(val name: String = "") : LeafTask<GameEntity>() {
 
-    constructor() : this("")
-
-    abstract fun action()
-
+    /**
+     * Executed every frame when action is active.
+     */
+    abstract fun onUpdate(tpf: Double)
+    
     override final fun execute(): Status {
         `object`.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
-        action()
+        onUpdate(FXGL.getApp().tpf())
 
         return Status.SUCCEEDED
     }

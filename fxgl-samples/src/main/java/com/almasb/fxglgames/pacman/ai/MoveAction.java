@@ -59,8 +59,8 @@ public class MoveAction extends GoalAction {
     }
 
     @Override
-    public void action() {
-        speed = 0.016 * 60 * 5;
+    public void onUpdate(double tpf) {
+        speed = tpf * 60 * 5;
 
         AStarNode next = path.get(0);
 

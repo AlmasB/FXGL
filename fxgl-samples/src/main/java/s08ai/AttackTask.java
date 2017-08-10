@@ -7,7 +7,7 @@
 package s08ai;
 
 import com.almasb.fxgl.ai.AIControl;
-import com.almasb.fxgl.ai.Action;
+import com.almasb.fxgl.ai.SingleAction;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.GameEntity;
 import javafx.geometry.Point2D;
@@ -15,17 +15,17 @@ import javafx.geometry.Point2D;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class AttackTask extends Action {
+public class AttackTask extends SingleAction {
 
     @Override
-    public void action() {
+    public void onUpdate(double tpf) {
         GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
 
         if (player.distance(getObject()) < 100) {
             getObject().getControl(AIControl.class).setBubbleMessage("Attack");
         } else {
             getObject().getControl(AIControl.class).setBubbleMessage("Chase");
-            double speed = 0.017 * 60 * 5;
+            double speed = tpf * 60 * 5;
 
             Point2D vector = player.getPosition()
                     .subtract(getObject().getPosition())

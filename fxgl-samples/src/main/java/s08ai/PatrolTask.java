@@ -6,14 +6,14 @@
 
 package s08ai;
 
-import com.almasb.fxgl.ai.Action;
+import com.almasb.fxgl.ai.SingleAction;
 import com.almasb.fxgl.core.math.FXGLMath;
 import javafx.geometry.Point2D;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class PatrolTask extends Action {
+public class PatrolTask extends SingleAction {
 
     private static final Point2D[] POINTS = new Point2D[] {
             new Point2D(300, 300),
@@ -28,11 +28,11 @@ public class PatrolTask extends Action {
     }
 
     @Override
-    public void action() {
-        getObject().translateTowards(selectedPoint, 1);
+    public void onUpdate(double tpf) {
+        getObject().translateTowards(selectedPoint, 60 * tpf);
 
         if (getObject().getPosition().distance(selectedPoint) < 5) {
-            selectedPoint = POINTS[FXGLMath.random(0, 2)];
+            selectedPoint = FXGLMath.random(POINTS);
         }
     }
 }
