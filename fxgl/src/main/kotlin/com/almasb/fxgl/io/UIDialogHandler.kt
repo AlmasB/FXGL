@@ -17,3 +17,13 @@ interface UIDialogHandler {
 
     fun dismiss()
 }
+
+val NONE = object : UIDialogHandler {
+    override fun show() {
+
+    }
+
+    override fun dismiss() {
+
+    }
+}

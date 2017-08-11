@@ -20,7 +20,6 @@ import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.gameplay.NotificationEvent;
 import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.io.FXGLIO;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.saving.LoadEvent;
@@ -274,9 +273,6 @@ public abstract class GameApplication extends Application {
         if (getSettings().isProfilingEnabled()) {
             profiler = new Profiler();
         }
-
-        FXGLIO.INSTANCE.setDefaultExceptionHandler(getExceptionHandler());
-        FXGLIO.INSTANCE.setDefaultExecutor(getExecutor());
 
         initAchievements();
 

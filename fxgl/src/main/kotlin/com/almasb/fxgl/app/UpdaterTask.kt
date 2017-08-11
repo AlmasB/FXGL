@@ -12,7 +12,6 @@ import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
 import javafx.util.Duration
-import java.util.function.Consumer
 
 /**
  * Handles everything related to FXGL update.
@@ -105,7 +104,7 @@ internal class UpdaterTask : Runnable {
 
                     button.isDisable = false
                 }
-                .executeAsyncWithDialogFX(FXGL.getExecutor())
+                .executeAsyncWithDialogFX()
 
         // blocking call
         dialog.showAndWait()

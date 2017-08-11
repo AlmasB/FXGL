@@ -75,6 +75,7 @@ public class MockApplicationModule extends ApplicationModule {
         mockLoggerFactory();
         mockInput();
         mockExecutor();
+        mockExceptionHandler();
         mockNotificationService();
         mockUIFactory();
         mockAssetLoader();
@@ -98,6 +99,10 @@ public class MockApplicationModule extends ApplicationModule {
     private void mockPooler() {
         bind(Integer.class).annotatedWith(Names.named("pooling.initialSize")).toInstance(128);
         bind(Pooler.class).to(FXGLPooler.class);
+    }
+
+    private void mockExceptionHandler() {
+        bind(ExceptionHandler.class).toInstance(MockExceptionHandler.INSTANCE);
     }
 
     private void mockLoggerFactory() {
