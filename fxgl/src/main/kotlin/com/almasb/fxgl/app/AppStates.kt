@@ -8,21 +8,103 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.annotation.AddCollisionHandler
 import com.almasb.fxgl.annotation.SetEntityFactory
+import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
+import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.EntityFactory
+import com.almasb.fxgl.event.Subscriber
+import com.almasb.fxgl.gameplay.GameState
+import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
+import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.DataFile
-import com.almasb.fxgl.scene.LoadingScene
-import com.almasb.fxgl.scene.SceneFactory
+import com.almasb.fxgl.scene.*
+import com.almasb.fxgl.scene.intro.IntroFinishedEvent
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import javafx.concurrent.Task
+import javafx.event.EventHandler
+import javafx.scene.input.KeyEvent
+
+/**
+ * All app states.
+ *
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
+ */
+
+/**
+ * The first state.
+ * Active only once.
+ */
+@Singleton
+internal class StartupState
+@Inject
+// placeholder scene, will be replaced by next state
+private constructor(private val app: GameApplication) : AppState(object : FXGLScene() {}) {
+
+    private val log = FXGLLogger.get(StartupState::class.java)
+
+    override fun onUpdate(tpf: Double) {
+        log.debug("STARTUP")
+
+        // Start -> (Intro) -> (Menu) -> Game
+        if (app.settings.isIntroEnabled) {
+            app.stateMachine.startIntro()
+        } else {
+            if (app.settings.isMenuEnabled) {
+                app.stateMachine.startMainMenu()
+            } else {
+                app.startNewGame()
+            }
+        }
+    }
+}
+
+/**
+ * Plays intro animation.
+ * State is active only once.
+ */
+@Singleton
+internal class IntroState
+@Inject
+private constructor(private val app: GameApplication,
+                    sceneFactory: SceneFactory) : AppState(sceneFactory.newIntro()) {
+
+    private var introFinishedSubscriber: Subscriber? = null
+    private var introFinished = false
+
+    override fun onEnter(prevState: State) {
+        if (prevState is StartupState) {
+            introFinishedSubscriber = FXGL.getEventBus().addEventHandler(IntroFinishedEvent.ANY, EventHandler {
+                introFinished = true
+            })
+
+            (scene as IntroScene).startIntro()
+
+        } else {
+            throw IllegalArgumentException("Entered IntroState from illegal state: " + prevState)
+        }
+    }
+
+    override fun onUpdate(tpf: Double) {
+        if (introFinished) {
+            if (FXGL.getSettings().isMenuEnabled) {
+                app.stateMachine.startMainMenu()
+            } else {
+                FXGL.getApp().startNewGame()
+            }
+        }
+    }
+
+    override fun onExit() {
+        introFinishedSubscriber!!.unsubscribe()
+        introFinishedSubscriber = null
+    }
+}
 
 /**
  * Initializes game aspects: assets, game, physics, UI, etc.
  * This task is rerun every time the game application is restarted.
- *
- * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Singleton
 internal class LoadingState
@@ -172,5 +254,82 @@ internal class LoadingState
             Thread.getDefaultUncaughtExceptionHandler()
                     .uncaughtException(Thread.currentThread(), exception ?: RuntimeException("Initialization failed"))
         }
+    }
+}
+
+/**
+ * State is active when the game is being played.
+ * The state in which the player will spend most of the time.
+ */
+@Singleton
+internal class PlayState
+@Inject
+private constructor(val gameState: GameState,
+                    val gameWorld: GameWorld,
+                    val physicsWorld: PhysicsWorld,
+                    sceneFactory: SceneFactory) : AppState(sceneFactory.newGameScene()) {
+
+    init {
+        gameWorld.addWorldListener(physicsWorld)
+        gameWorld.addWorldListener(gameScene)
+
+        if (FXGL.getSettings().isMenuEnabled) {
+            input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
+        } else {
+            input.addAction(object : UserAction("Pause") {
+                override fun onActionBegin() {
+                    PauseMenuSubState.requestShow()
+                }
+
+                override fun onActionEnd() {
+                    PauseMenuSubState.unlockSwitch()
+                }
+            }, FXGL.getSettings().menuKey)
+        }
+    }
+
+    override fun onUpdate(tpf: Double) {
+        gameWorld.onUpdate(tpf)
+        physicsWorld.onUpdate(tpf)
+        gameScene.onUpdate(tpf)
+    }
+
+    val gameScene: GameScene
+        get() = scene as GameScene
+}
+
+/**
+ * State is active when the game is in main menu.
+ */
+@Singleton
+internal class MainMenuState
+@Inject
+private constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newMainMenu(FXGL.getApp())) {
+
+    override fun onEnter(prevState: State) {
+        if (prevState is StartupState
+                || prevState is IntroState
+                || prevState is GameMenuState) {
+
+            val menuHandler = FXGL.getApp().menuListener as MenuEventHandler
+
+            if (!menuHandler.isProfileSelected())
+                menuHandler.showProfileDialog()
+        } else {
+            throw IllegalArgumentException("Entered MainMenu from illegal state: " + prevState)
+        }
+    }
+}
+
+/**
+ * State is active when the game is in game menu.
+ */
+@Singleton
+internal class GameMenuState
+@Inject
+private constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGameMenu(FXGL.getApp())) {
+
+    init {
+        input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
     }
 }
