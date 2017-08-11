@@ -9,7 +9,7 @@ package com.almasb.fxgl.service;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
+import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDisplay;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
@@ -47,18 +47,6 @@ public interface ServiceType<T> {
     default Scope scope() {
         return Scopes.SINGLETON;
     }
-
-    ServiceType<AudioPlayer> AUDIO_PLAYER = new ServiceType<AudioPlayer>() {
-        @Override
-        public Class<AudioPlayer> service() {
-            return AudioPlayer.class;
-        }
-
-        @Override
-        public Class<? extends AudioPlayer> serviceProvider() {
-            return FXGLAudioPlayer.class;
-        }
-    };
 
     ServiceType<Display> DISPLAY = new ServiceType<Display>() {
         @Override

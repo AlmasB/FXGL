@@ -4,14 +4,13 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.audio
+package com.almasb.fxgl.audio
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.audio.Music
-import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.asset.FXGLAssets
+import com.almasb.fxgl.gameplay.NotificationEvent
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
-import com.almasb.fxgl.service.AudioPlayer
 import com.google.inject.Inject
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
@@ -19,17 +18,18 @@ import javafx.geometry.Point2D
 import java.util.*
 
 /**
- * FXGL provider of audio service.
+ * General audio player service that supports playback of sound and music objects.
+ * It can also control volume of both.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLAudioPlayer
+class AudioPlayer
 @Inject
-private constructor() : AudioPlayer {
+private constructor() {
 
     private val log = FXGL.getLogger(javaClass)
 
-    override fun onUpdate(tpf: Double) {
+    fun onUpdate(tpf: Double) {
 
         activeMusic.filter { it.reachedEnd() }
                 .forEach {
@@ -56,7 +56,7 @@ private constructor() : AudioPlayer {
     /**
      * @return global music volume property
      */
-    override fun globalMusicVolumeProperty(): DoubleProperty {
+    fun globalMusicVolumeProperty(): DoubleProperty {
         return globalMusicVolume
     }
 
@@ -65,23 +65,91 @@ private constructor() : AudioPlayer {
     /**
      * @return global sound volume property
      */
-    override fun globalSoundVolumeProperty(): DoubleProperty {
+    fun globalSoundVolumeProperty(): DoubleProperty {
         return globalSoundVolume
     }
 
+    fun onNotificationEvent(event: NotificationEvent) {
+        playSound(FXGLAssets.SOUND_NOTIFICATION)
+    }
+
+    /**
+     * @return global music volume
+     */
+    fun getGlobalMusicVolume(): Double {
+        return globalMusicVolumeProperty().get()
+    }
+
+    /**
+     * Set global music volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%.
+
+     * @param volume music volume
+     */
+    fun setGlobalMusicVolume(volume: Double) {
+        globalMusicVolumeProperty().set(volume)
+    }
+
+    /**
+     * @return global sound volume
+     */
+    fun getGlobalSoundVolume(): Double {
+        return globalSoundVolumeProperty().get()
+    }
+
+    /**
+     * Set global sound volume in the range [0..1],
+     * where 0 = 0%, 1 = 100%.
+
+     * @param volume sound volume
+     */
+    fun setGlobalSoundVolume(volume: Double) {
+        globalSoundVolumeProperty().set(volume)
+    }
+
+    /**
+     * Convenience method to play the sound given its filename.
+
+     * @param assetName name of the sound file
+     */
+    fun playSound(assetName: String) {
+        playSound(FXGL.getAssetLoader().loadSound(assetName))
+    }
+
+    /**
+     * @param assetName sound file name
+     * *
+     * @param soundPosition where sound is playing
+     * *
+     * @param earPosition where sound is heard
+     * *
+     * @param maxDistance how far the sound can be heard before it's "full" right or "full" left,
+     * *                    i.e. if dist > maxDistance then sound balance is set to max (1.0) in that direction
+     */
+    fun playPositionalSound(assetName: String, soundPosition: Point2D, earPosition: Point2D, maxDistance: Double) {
+        playPositionalSound(FXGL.getAssetLoader().loadSound(assetName), soundPosition, earPosition, maxDistance)
+    }
+    
     /**
      * Plays given sound based on its properties.
-
+     * 
      * @param sound sound to play
      */
-    override fun playSound(sound: Sound) {
+    fun playSound(sound: Sound) {
         if (!activeSounds.contains(sound))
             activeSounds.add(sound)
         sound.clip.volumeProperty().bind(globalSoundVolumeProperty())
         sound.clip.play()
     }
 
-    override fun playPositionalSound(sound: Sound, soundPosition: Point2D, earPosition: Point2D, maxDistance: Double) {
+    /**
+     * @param sound sound
+     * @param soundPosition where sound is playing
+     * @param earPosition where sound is heard
+     * @param maxDistance how far the sound can be heard before it's "full" right or "full" left,
+     *                    i.e. if dist > maxDistance then sound balance is set to max (1.0) in that direction
+     */
+    fun playPositionalSound(sound: Sound, soundPosition: Point2D, earPosition: Point2D, maxDistance: Double) {
         val rawBalance = earPosition.distance(soundPosition) / maxDistance
 
         sound.balance = if (soundPosition.x > earPosition.x) {
@@ -95,10 +163,10 @@ private constructor() : AudioPlayer {
 
     /**
      * Stops playing given sound.
-
+     * 
      * @param sound sound to stop
      */
-    override fun stopSound(sound: Sound) {
+    fun stopSound(sound: Sound) {
         activeSounds.remove(sound)
         sound.clip.stop()
     }
@@ -106,7 +174,7 @@ private constructor() : AudioPlayer {
     /**
      * Stops playing all sounds.
      */
-    override fun stopAllSounds() {
+    fun stopAllSounds() {
         log.debug("Stopping all sounds")
 
         val it = activeSounds.iterator()
@@ -117,11 +185,20 @@ private constructor() : AudioPlayer {
     }
 
     /**
+     * @param bgmName name of the background music file to loop
+     */
+    fun loopBGM(bgmName: String) {
+        val music = FXGL.getAssetLoader().loadMusic(bgmName)
+        music.cycleCount = Integer.MAX_VALUE
+        playMusic(music)
+    }
+
+    /**
      * Plays given music based on its properties.
      *
      * @param music music to play
      */
-    override fun playMusic(music: Music) {
+    fun playMusic(music: Music) {
         log.debug("Playing music $music")
 
         if (!activeMusic.contains(music)) {
@@ -135,12 +212,21 @@ private constructor() : AudioPlayer {
     }
 
     /**
+     * Convenience method to play the music given its filename.
+     *
+     * @param assetName name of the music file
+     */
+    fun playMusic(assetName: String) {
+        playMusic(FXGL.getAssetLoader().loadMusic(assetName))
+    }
+
+    /**
      * Pauses given music if it was previously started with [.playSound].
      * It can then be restarted by [.resumeMusic].
 
      * @param music music to pause
      */
-    override fun pauseMusic(music: Music) {
+    fun pauseMusic(music: Music) {
         log.debug("Pausing music $music")
 
         if (activeMusic.contains(music))
@@ -154,7 +240,7 @@ private constructor() : AudioPlayer {
 
      * @param music music to resume
      */
-    override fun resumeMusic(music: Music) {
+    fun resumeMusic(music: Music) {
         log.debug("Resuming music $music")
 
         if (activeMusic.contains(music))
@@ -170,7 +256,7 @@ private constructor() : AudioPlayer {
 
      * @param music music to stop
      */
-    override fun stopMusic(music: Music) {
+    fun stopMusic(music: Music) {
         log.debug("Stopping music $music")
 
         if (activeMusic.contains(music)) {
@@ -185,7 +271,7 @@ private constructor() : AudioPlayer {
      * Pauses all currently playing music.
      * These can be resumed using [.resumeAllMusic].
      */
-    override fun pauseAllMusic() {
+    fun pauseAllMusic() {
         log.debug("Pausing all music")
 
         activeMusic.forEach { it.pause() }
@@ -194,7 +280,7 @@ private constructor() : AudioPlayer {
     /**
      * Resumes all currently paused music.
      */
-    override fun resumeAllMusic() {
+    fun resumeAllMusic() {
         log.debug("Resuming all music")
 
         activeMusic.forEach { it.resume() }
@@ -205,13 +291,13 @@ private constructor() : AudioPlayer {
      * by calling [.resumeAllMusic]. Each music object will need
      * to be started by [.playMusic].
      */
-    override fun stopAllMusic() {
+    fun stopAllMusic() {
         log.debug("Stopping all music. Active music size: ${activeMusic.size}")
 
         activeMusic.forEach { it.stop() }
     }
 
-    override fun save(profile: UserProfile) {
+    fun save(profile: UserProfile) {
         log.debug("Saving data to profile")
 
         val bundle = Bundle("audio")
@@ -222,7 +308,7 @@ private constructor() : AudioPlayer {
         profile.putBundle(bundle)
     }
 
-    override fun load(profile: UserProfile) {
+    fun load(profile: UserProfile) {
         log.debug("Loading data from profile")
         val bundle = profile.getBundle("audio")
         bundle.log()

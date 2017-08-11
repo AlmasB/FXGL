@@ -7,6 +7,7 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.AssetLoader
+import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.event.EventBus
@@ -260,7 +261,7 @@ class FXGL private constructor() {
         private val _eventBus by lazy { EventBus() }
         @JvmStatic fun getEventBus() = _eventBus
 
-        private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }
+        private val _audioPlayer by lazy { getInstance(AudioPlayer::class.java) }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
 
         private val _display by lazy { getService(ServiceType.DISPLAY) }

@@ -9,6 +9,7 @@ import com.almasb.fxgl.app.listener.ExitListener;
 import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.app.listener.UpdateListener;
 import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
@@ -222,8 +223,6 @@ public abstract class GameApplication extends Application {
     }
 
     private void registerServicesForUpdate() {
-        addUpdateListener(getAudioPlayer());
-
         getEventBus().addEventHandler(NotificationEvent.ANY, e -> getAudioPlayer().onNotificationEvent(e));
         getEventBus().addEventHandler(AchievementEvent.ANY, e -> getNotificationService().onAchievementEvent(e));
 
@@ -347,10 +346,11 @@ public abstract class GameApplication extends Application {
         stateMachine.onUpdate(tpf);
 
         getEventBus().onUpdate(tpf);
+        getAudioPlayer().onUpdate(tpf);
 
-        for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).onUpdate(tpf);
-        }
+//        for (int i = 0; i < listeners.size(); i++) {
+//            listeners.get(i).onUpdate(tpf);
+//        }
 
         if (stateMachine.isInPlay()) {
             onUpdate(tpf);
