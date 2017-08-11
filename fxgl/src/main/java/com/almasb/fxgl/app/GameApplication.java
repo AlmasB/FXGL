@@ -7,7 +7,6 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.app.listener.ExitListener;
 import com.almasb.fxgl.app.listener.StateListener;
-import com.almasb.fxgl.app.listener.UpdateListener;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
@@ -47,7 +46,6 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -345,12 +343,9 @@ public abstract class GameApplication extends Application {
     private void tick(double tpf) {
         stateMachine.onUpdate(tpf);
 
+        // TODO: should event bus be updated in play state?
         getEventBus().onUpdate(tpf);
         getAudioPlayer().onUpdate(tpf);
-
-//        for (int i = 0; i < listeners.size(); i++) {
-//            listeners.get(i).onUpdate(tpf);
-//        }
 
         if (stateMachine.isInPlay()) {
             onUpdate(tpf);
@@ -421,16 +416,6 @@ public abstract class GameApplication extends Application {
         if (menuHandler == null)
             menuHandler = new MenuEventHandler(this);
         return menuHandler;
-    }
-
-    private CopyOnWriteArrayList<UpdateListener> listeners = new CopyOnWriteArrayList<>();
-
-    public final void addUpdateListener(UpdateListener listener) {
-        listeners.add(listener);
-    }
-
-    public final void removeUpdateListener(UpdateListener listener) {
-        listeners.remove(listener);
     }
 
     private List<ExitListener> exitListeners = new ArrayList<>();

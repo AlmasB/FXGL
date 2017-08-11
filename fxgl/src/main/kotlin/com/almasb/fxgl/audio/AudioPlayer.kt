@@ -83,7 +83,7 @@ private constructor() {
     /**
      * Set global music volume in the range [0..1],
      * where 0 = 0%, 1 = 100%.
-
+     *
      * @param volume music volume
      */
     fun setGlobalMusicVolume(volume: Double) {
@@ -100,7 +100,7 @@ private constructor() {
     /**
      * Set global sound volume in the range [0..1],
      * where 0 = 0%, 1 = 100%.
-
+     *
      * @param volume sound volume
      */
     fun setGlobalSoundVolume(volume: Double) {
@@ -109,7 +109,7 @@ private constructor() {
 
     /**
      * Convenience method to play the sound given its filename.
-
+     *
      * @param assetName name of the sound file
      */
     fun playSound(assetName: String) {
@@ -237,7 +237,7 @@ private constructor() {
 
     /**
      * Resumes previously paused [.pauseMusic] music.
-
+     *
      * @param music music to resume
      */
     fun resumeMusic(music: Music) {
