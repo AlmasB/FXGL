@@ -11,6 +11,7 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.logging.FXGLLogger
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.event.EventBus
+import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.ServiceType
@@ -282,7 +283,7 @@ class FXGL private constructor() {
         private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
         @JvmStatic fun getUIFactory() = _uiFactory
 
-        private val _gameplay by lazy { getService(ServiceType.GAMEPLAY) }
+        private val _gameplay by lazy { getInstance(Gameplay::class.java) }
         @JvmStatic fun getGameplay() = _gameplay
 
         /* OTHER CONVENIENCE ACCESSORS */

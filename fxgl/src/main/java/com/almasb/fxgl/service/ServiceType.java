@@ -7,7 +7,6 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
-import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDisplay;
@@ -91,18 +90,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Net> serviceProvider() {
             return FXGLNet.class;
-        }
-    };
-
-    ServiceType<Gameplay> GAMEPLAY = new ServiceType<Gameplay>() {
-        @Override
-        public Class<Gameplay> service() {
-            return Gameplay.class;
-        }
-
-        @Override
-        public Class<? extends Gameplay> serviceProvider() {
-            return Gameplay.class;
         }
     };
 
