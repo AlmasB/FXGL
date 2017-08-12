@@ -8,9 +8,7 @@ package com.almasb.fxgl.ecs
 
 import com.almasb.fxgl.ecs.diff.InjectableControl
 import com.almasb.fxgl.ecs.diff.SubTypeInjectableControl
-import org.hamcrest.core.Is
 import org.hamcrest.core.Is.`is`
-import org.junit.Assert
 import org.junit.Assert.assertThat
 import org.junit.Test
 

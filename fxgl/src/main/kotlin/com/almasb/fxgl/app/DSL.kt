@@ -6,16 +6,15 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.texture.Texture
-
 import com.almasb.fxgl.app.FXGL.Companion.getApp
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
 import com.almasb.fxgl.app.FXGL.Companion.getInput
-import com.almasb.fxgl.core.math.FXGLMath.*
+import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
+import com.almasb.fxgl.texture.Texture
 import javafx.beans.property.*
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode

@@ -1,11 +1,7 @@
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.hasItems
 import org.junit.AfterClass
-import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test

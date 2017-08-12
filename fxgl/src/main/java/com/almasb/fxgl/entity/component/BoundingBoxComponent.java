@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.ecs.Component;

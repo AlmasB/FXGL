@@ -9,7 +9,6 @@ package com.almasb.fxgl.core.reflect;
 import com.almasb.fxgl.core.collection.Array;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
-import java.lang.annotation.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
