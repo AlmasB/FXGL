@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
 import com.almasb.fxgl.app.FXGL.Companion.getInput
 import com.almasb.fxgl.core.math.FXGLMath.random
+import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
@@ -145,3 +146,9 @@ fun onCollisionEnd(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, En
 fun rand() = random()
 
 fun rand(min: Int, max: Int) = random(min, max)
+
+/* POOLING */
+
+fun <T> obtain(type: Class<T>): T = Pools.obtain(type)
+
+fun free(instance: Any) = Pools.free(instance)
