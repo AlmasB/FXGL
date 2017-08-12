@@ -10,7 +10,10 @@ import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.core.logging.ConsoleOutput;
+import com.almasb.fxgl.core.logging.FileOutput;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.core.logging.LoggerLevel;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.event.EventBus;
@@ -75,10 +78,7 @@ import java.util.*;
  */
 public abstract class GameApplication extends Application {
 
-    /**
-     * Use system logger until actual logger is ready.
-     */
-    private static Logger log = Logger.getSystemLogger();
+    private static final Logger log = Logger.get(GameApplication.class);
 
     private Stage primaryStage;
     private ReadOnlyGameSettings settings;
@@ -91,9 +91,28 @@ public abstract class GameApplication extends Application {
     public final void start(Stage stage) {
         primaryStage = stage;
 
-        Version.print();
+        initAppSettings();
+        initLogger();
+
         showPreloadingStage();
         startFXGL();
+    }
+
+    /**
+     * Take app settings from user.
+     */
+    private void initAppSettings() {
+        GameSettings localSettings = new GameSettings();
+        initSettings(localSettings);
+        settings = localSettings.toReadOnly();
+    }
+
+    private void initLogger() {
+        // we write all logs to file but adjust console log level based on app mode
+        Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
+        Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());
+
+        log.debug("Logger initialized");
     }
 
     /**
@@ -115,6 +134,9 @@ public abstract class GameApplication extends Application {
     }
 
     private void startFXGL() {
+        log.debug("Starting FXGL");
+        Version.print();
+
         new Thread(() -> {
             try {
                 configureFXGL();
@@ -125,9 +147,11 @@ public abstract class GameApplication extends Application {
 
                 launchGame();
             } catch (Exception e) {
-                log.fatal("Exception during system configuration:");
+                log.fatal("Exception during FXGL configuration:");
                 log.fatal(Logger.errorTraceAsString(e));
-                log.fatal("System will now exit");
+                log.fatal("FXGL will now exit");
+
+                Logger.close();
 
                 // we don't know what exactly has been initialized
                 // so to avoid the process hanging just shut down the JVM
@@ -144,12 +168,9 @@ public abstract class GameApplication extends Application {
 
         initSystemProperties();
         initUserProperties();
-        initAppSettings();
 
         FXGL.configure(new ApplicationModule(this));
 
-        // actual logger is ready
-        log = Logger.get(GameApplication.class);
         log.debug("FXGL configuration complete");
 
         log.infof("FXGL configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
@@ -184,15 +205,6 @@ public abstract class GameApplication extends Application {
         } catch (IOException e) {
             log.warning("Loading user properties failed: " + e);
         }
-    }
-
-    /**
-     * Take app settings from user.
-     */
-    private void initAppSettings() {
-        GameSettings localSettings = new GameSettings();
-        initSettings(localSettings);
-        settings = localSettings.toReadOnly();
     }
 
     private void runUpdaterAndWait() {
@@ -373,17 +385,17 @@ public abstract class GameApplication extends Application {
      * Exit the application.
      */
     protected final void exit() {
-        log.debug("Exiting FXGL application");
+        log.debug("Exiting game application");
         exitListeners.forEach(ExitListener::onExit);
 
         if (getSettings().isProfilingEnabled()) {
             profiler.print();
         }
 
+        log.debug("Exiting FXGL");
         FXGL.destroy();
 
-        // TODO: move to FXGL, where configured
-        log.debug("Closing FXGL logger and exiting JavaFX");
+        log.debug("Closing logger and exiting JavaFX");
         Logger.close();
 
         Platform.exit();

@@ -45,7 +45,7 @@ class FXGL private constructor() {
 
         private lateinit var internalBundle: Bundle
 
-        private lateinit var log: Logger
+        private val log = Logger.get("FXGL")
 
         /**
          * Temporarily holds k-v pairs from system.properties.
@@ -96,8 +96,6 @@ class FXGL private constructor() {
 
             internalApp = appModule.app
 
-            initLogger()
-
             createRequiredDirs()
 
             val allModules = arrayListOf(*modules)
@@ -107,12 +105,6 @@ class FXGL private constructor() {
             injector = Guice.createInjector(allModules)
 
             internalAllServices = appModule.allServices
-
-            //runBlocking { loggerInit.await() }
-
-            // log that we are ready
-            log = getLogger("FXGL")
-            log.debug("FXGL logger initialized")
 
             initServices()
 
@@ -176,27 +168,6 @@ class FXGL private constructor() {
             internalBundle = Bundle("FXGL")
             //internalBundle.put("version.check", LocalDate.now())
         }
-
-        private fun initLogger() {
-            // TODO: update
-            Logger.configure(LoggerLevel.INFO)
-
-            Logger.addOutput(ConsoleOutput(), LoggerLevel.DEBUG)
-
-//            Logger.configure(when (internalApp.settings.applicationMode) {
-//                ApplicationMode.DEBUG ->
-//            })
-        }
-
-//        private fun asyncInitLogger() = async(CommonPool) {
-//            val resourceName = when (internalApp.settings.applicationMode) {
-//                ApplicationMode.DEBUG -> "log4j2-debug.xml"
-//                ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
-//                ApplicationMode.RELEASE -> "log4j2-release.xml"
-//            }
-//
-//            Logger.configure(FXGL::class.java.getResource(resourceName).toExternalForm())
-//        }
 
         private fun initServices() {
             internalAllServices.forEach {

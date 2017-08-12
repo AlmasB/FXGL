@@ -26,16 +26,20 @@ private constructor(private val name: String) {
 
         private val MAX_LOGS = 10
 
-        //private lateinit var level: LoggerLevel
-
-        private val data = arrayListOf<String>()
+        private val outputs = Array<LoggerOutput>()
 
         private val debug = Array<LoggerOutput>()
         private val info = Array<LoggerOutput>()
         private val warning = Array<LoggerOutput>()
         private val fatal = Array<LoggerOutput>()
 
+        init {
+            cleanOldLogs()
+        }
+
         @JvmStatic fun addOutput(loggerOutput: LoggerOutput, level: LoggerLevel) {
+            outputs.add(loggerOutput)
+
             when(level) {
                 LoggerLevel.DEBUG -> {
                     debug.add(loggerOutput)
@@ -89,15 +93,6 @@ private constructor(private val name: String) {
             return "%s [%-25s] %-5s %-20s - %s".format(time, threadName, "$level", loggerName, loggerMessage)
         }
 
-        /**
-         * Can only be configured once per application.
-         */
-        @JvmStatic fun configure(level: LoggerLevel) {
-            cleanOldLogs()
-            //this.level = level
-            //logSystemInfo()
-        }
-
         @JvmStatic fun get(name: String): Logger {
             return Logger(name)
         }
@@ -114,9 +109,7 @@ private constructor(private val name: String) {
         }
 
         @JvmStatic fun close() {
-            // TODO: write to file
-
-
+            outputs.forEach(LoggerOutput::close)
         }
 
         @JvmStatic fun errorTraceAsString(e: Throwable): String {
@@ -178,6 +171,7 @@ private constructor(private val name: String) {
 
     /**
      * Log an info level message.
+     *
      * @param message the message
      */
     fun info(message: String) {
@@ -186,9 +180,8 @@ private constructor(private val name: String) {
 
     /**
      * Log an info level message with given format and arguments.
-
+     *
      * @param format message format
-     * *
      * @param args arguments
      */
     fun infof(format: String, vararg args: Any) {
@@ -197,7 +190,7 @@ private constructor(private val name: String) {
 
     /**
      * Log a debug level message.
-
+     *
      * @param message the message
      */
     fun debug(message: String) {
@@ -206,9 +199,8 @@ private constructor(private val name: String) {
 
     /**
      * Log a debug level message with given format and arguments.
-
+     *
      * @param format message format
-     * *
      * @param args arguments
      */
     fun debugf(format: String, vararg args: Any) {
@@ -217,7 +209,7 @@ private constructor(private val name: String) {
 
     /**
      * Log a warning level message.
-
+     *
      * @param message the message
      */
     fun warning(message: String) {
@@ -226,9 +218,8 @@ private constructor(private val name: String) {
 
     /**
      * Log a warning level message with given format and arguments.
-
+     *
      * @param format message format
-     * *
      * @param args arguments
      */
     fun warningf(format: String, vararg args: Any) {
@@ -237,7 +228,7 @@ private constructor(private val name: String) {
 
     /**
      * Log a fatal level message.
-
+     *
      * @param message the message
      */
     fun fatal(message: String) {
@@ -246,9 +237,8 @@ private constructor(private val name: String) {
 
     /**
      * Log a fatal level message with given format and arguments.
-
+     *
      * @param format message format
-     * *
      * @param args arguments
      */
     fun fatalf(format: String, vararg args: Any) {

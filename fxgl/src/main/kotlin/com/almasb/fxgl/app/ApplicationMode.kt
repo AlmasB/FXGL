@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.logging.LoggerLevel
+
 /**
  * Runtime mode of the application.
  * Primarily affects how logging and exception reporting are handled.
@@ -13,21 +15,21 @@ package com.almasb.fxgl.app
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-enum class ApplicationMode {
+enum class ApplicationMode(val loggerLevel: LoggerLevel) {
 
     /**
      * All logging levels and full exception stacktrace.
      */
-    DEBUG,
+    DEBUG(LoggerLevel.DEBUG),
 
     /**
      * Info / Warning / Fatal logging levels and full exception stacktrace.
      */
-    DEVELOPER,
+    DEVELOPER(LoggerLevel.INFO),
 
     /**
      * Fatal logging level and only exception message.
      * Services and the framework must attempt to maximize performance in this mode.
      */
-    RELEASE
+    RELEASE(LoggerLevel.FATAL)
 }

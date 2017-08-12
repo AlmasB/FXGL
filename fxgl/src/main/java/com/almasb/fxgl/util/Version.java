@@ -10,7 +10,7 @@ import com.almasb.fxgl.core.logging.Logger;
 import java.util.ResourceBundle;
 
 /**
- * Holds version info about various frameworks used in FXGL.
+ * Holds FXGL version info.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -18,7 +18,7 @@ public final class Version {
 
     private Version() {}
 
-    private static final Logger log = Logger.getSystemLogger();
+    private static final Logger log = Logger.get(Version.class);
 
     private static final String FXGL_VERSION;
 
