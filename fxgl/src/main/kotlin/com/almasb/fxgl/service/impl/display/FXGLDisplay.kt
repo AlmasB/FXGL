@@ -95,6 +95,10 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
         log.debug("Opening primary stage")
 
         stage.show()
+
+        log.debug("Root size: " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
+        log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
+        log.debug("Stage size: " + stage.width + "x" + stage.height)
     }
 
     private val keyHandler = EventHandler<KeyEvent> {
@@ -144,13 +148,6 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
                 } else {
                     FXGL.getEventBus().fireEvent(DisplayEvent(DisplayEvent.CLOSE_REQUEST))
                 }
-            }
-
-            setOnShown {
-                log.debug("Stage shown")
-                log.debug("Root size: " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
-                log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
-                log.debug("Stage size: " + stage.width + "x" + stage.height)
             }
 
             icons.add(FXGLAssets.UI_ICON)

@@ -124,12 +124,12 @@ public abstract class GameApplication extends Application {
         preloadingStage.setScene(new PreloadingScene());
         preloadingStage.show();
 
-        // when main stage is ready to show
-        primaryStage.setOnShowing(e -> {
+        // when main stage has opened
+        primaryStage.setOnShown(e -> {
             // close our preloader
             preloadingStage.close();
             // clean the reference to lambda + preloader
-            primaryStage.setOnShowing(null);
+            primaryStage.setOnShown(null);
         });
     }
 
