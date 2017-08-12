@@ -9,7 +9,6 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
-import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.google.inject.name.Names;
@@ -71,7 +70,6 @@ public class MockApplicationModule extends ApplicationModule {
     protected void bindServices() {
         mockProperties();
         mockTimer();
-        mockPooler();
         mockLoggerFactory();
         mockInput();
         mockExecutor();
@@ -94,11 +92,6 @@ public class MockApplicationModule extends ApplicationModule {
         //bind(MasterTimer.class).toInstance(MockMasterTimer.INSTANCE);
         //bind(StateTimer.class).to(StateTimerImpl.class);
         //bind(LocalTimer.class).to(FXGLLocalTimer.class);
-    }
-
-    private void mockPooler() {
-        bind(Integer.class).annotatedWith(Names.named("pooling.initialSize")).toInstance(128);
-        bind(Pooler.class).to(FXGLPooler.class);
     }
 
     private void mockExceptionHandler() {

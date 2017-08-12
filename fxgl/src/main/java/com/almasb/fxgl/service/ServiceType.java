@@ -9,13 +9,11 @@ package com.almasb.fxgl.service;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDisplay;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
-import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
@@ -105,18 +103,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Gameplay> serviceProvider() {
             return Gameplay.class;
-        }
-    };
-
-    ServiceType<Pooler> POOLER = new ServiceType<Pooler>() {
-        @Override
-        public Class<Pooler> service() {
-            return Pooler.class;
-        }
-
-        @Override
-        public Class<? extends Pooler> serviceProvider() {
-            return FXGLPooler.class;
         }
     };
 

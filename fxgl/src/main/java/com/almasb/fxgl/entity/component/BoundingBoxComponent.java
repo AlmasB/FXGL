@@ -8,6 +8,7 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.pool.Pool;
+import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.ecs.Component;
 import com.almasb.fxgl.ecs.CopyableComponent;
 import com.almasb.fxgl.ecs.Entity;
@@ -17,7 +18,6 @@ import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.SAT;
-import com.almasb.fxgl.service.Pooler;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.collections.FXCollections;
@@ -39,10 +39,8 @@ import java.util.ArrayList;
 public class BoundingBoxComponent extends Component
         implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {
 
-    private static final Pooler pooler = FXGL.getPooler();
-
     static {
-        pooler.registerPool(CollisionResult.class, new Pool<CollisionResult>() {
+        Pools.set(CollisionResult.class, new Pool<CollisionResult>() {
             @Override
             protected CollisionResult newObject() {
                 return new CollisionResult();
@@ -407,7 +405,7 @@ public class BoundingBoxComponent extends Component
 
                 if (collision) {
 
-                    CollisionResult result = pooler.get(CollisionResult.class);
+                    CollisionResult result = Pools.obtain(CollisionResult.class);
                     result.init(box1, box2);
 
                     return result;
