@@ -16,7 +16,6 @@
 
 package com.almasb.fxgl.ai;
 
-import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 
 /** Environment class holding references to the {@link Timepiece}, {@link Logger} instances. The references
@@ -60,6 +59,6 @@ public final class GdxAI {
 	 * @return logger service
 	 */
 	public static Logger getLogger() {
-		return FXGLLogger.get(GdxAI.class);
+		return Logger.get(GdxAI.class);
 	}
 }

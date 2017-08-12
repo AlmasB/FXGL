@@ -8,7 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.annotation.AddCollisionHandler
 import com.almasb.fxgl.annotation.SetEntityFactory
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.EntityFactory
@@ -42,7 +42,7 @@ internal class StartupState
 // placeholder scene, will be replaced by next state
 private constructor(private val app: GameApplication) : AppState(object : FXGLScene() {}) {
 
-    private val log = FXGLLogger.get(StartupState::class.java)
+    private val log = Logger.get(StartupState::class.java)
 
     override fun onUpdate(tpf: Double) {
         log.debug("STARTUP")

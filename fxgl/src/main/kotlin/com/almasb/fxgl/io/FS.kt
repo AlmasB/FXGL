@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.io
 
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.core.logging.Logger
 import java.io.*
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
@@ -22,7 +22,7 @@ private constructor() {
 
     companion object {
 
-        private val log = FXGLLogger.get(FS::class.java)
+        private val log = Logger.get(FS::class.java)
 
         private fun errorIfAbsent(path: Path) {
             if (!Files.exists(path)) {

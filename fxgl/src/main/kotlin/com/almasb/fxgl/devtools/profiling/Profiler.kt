@@ -8,7 +8,7 @@ package com.almasb.fxgl.devtools.profiling
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.math.FXGLMath
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.effect.BlendMode
@@ -125,7 +125,7 @@ class Profiler {
     }
 
     fun print() {
-        val log = FXGLLogger.get(javaClass)
+        val log = Logger.get(javaClass)
 
         log.info("Processed Frames: $frames")
         log.info("Average FPS: ${getAvgFPS()}")

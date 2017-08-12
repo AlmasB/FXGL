@@ -10,7 +10,6 @@ import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
-import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.ecs.GameWorld;
@@ -79,7 +78,7 @@ public abstract class GameApplication extends Application {
     /**
      * Use system logger until actual logger is ready.
      */
-    private static Logger log = FXGLLogger.getSystemLogger();
+    private static Logger log = Logger.getSystemLogger();
 
     private Stage primaryStage;
     private ReadOnlyGameSettings settings;
@@ -127,9 +126,8 @@ public abstract class GameApplication extends Application {
                 launchGame();
             } catch (Exception e) {
                 log.fatal("Exception during system configuration:");
-                log.fatal(FXGLLogger.errorTraceAsString(e));
+                log.fatal(Logger.errorTraceAsString(e));
                 log.fatal("System will now exit");
-                log.close();
 
                 // we don't know what exactly has been initialized
                 // so to avoid the process hanging just shut down the JVM
@@ -151,7 +149,7 @@ public abstract class GameApplication extends Application {
         FXGL.configure(new ApplicationModule(this));
 
         // actual logger is ready
-        log = FXGLLogger.get(GameApplication.class);
+        log = Logger.get(GameApplication.class);
         log.debug("FXGL configuration complete");
 
         log.infof("FXGL configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
@@ -383,8 +381,10 @@ public abstract class GameApplication extends Application {
         }
 
         FXGL.destroy();
+
+        // TODO: move to FXGL, where configured
         log.debug("Closing FXGL logger and exiting JavaFX");
-        log.close();
+        Logger.close();
 
         Platform.exit();
     }

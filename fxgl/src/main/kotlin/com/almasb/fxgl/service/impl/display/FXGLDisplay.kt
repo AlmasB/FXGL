@@ -373,10 +373,10 @@ private constructor(private val stage: Stage, private val settings: ReadOnlyGame
      */
     override fun setSceneDimension(dimension: SceneDimension) {
         if (sceneDimensions.contains(dimension)) {
-            log.debug { "Setting scene dimension: $dimension" }
+            log.debug("Setting scene dimension: $dimension")
             setNewResolution(dimension.width, dimension.height)
         } else {
-            log.warning { "$dimension is not supported!" }
+            log.warning("$dimension is not supported!")
         }
     }
 

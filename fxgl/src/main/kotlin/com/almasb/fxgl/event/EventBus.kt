@@ -82,7 +82,7 @@ class EventBus {
      * @param event the event
      */
     fun fireEvent(event: Event) {
-        log.debug { "Firing event: $event" }
+        log.debug("Firing event: $event")
 
         eventHandlers.fireEvent(event)
     }

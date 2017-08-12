@@ -8,8 +8,9 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.core.logging.ConsoleOutput
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.core.logging.LoggerLevel
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS
@@ -23,9 +24,6 @@ import com.google.inject.Injector
 import com.google.inject.Module
 import com.google.inject.name.Named
 import com.google.inject.name.Names
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.function.Consumer
@@ -98,7 +96,7 @@ class FXGL private constructor() {
 
             internalApp = appModule.app
 
-            val loggerInit = asyncInitLogger()
+            initLogger()
 
             createRequiredDirs()
 
@@ -110,7 +108,7 @@ class FXGL private constructor() {
 
             internalAllServices = appModule.allServices
 
-            runBlocking { loggerInit.await() }
+            //runBlocking { loggerInit.await() }
 
             // log that we are ready
             log = getLogger("FXGL")
@@ -179,15 +177,26 @@ class FXGL private constructor() {
             //internalBundle.put("version.check", LocalDate.now())
         }
 
-        private fun asyncInitLogger() = async(CommonPool) {
-            val resourceName = when (internalApp.settings.applicationMode) {
-                ApplicationMode.DEBUG -> "log4j2-debug.xml"
-                ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
-                ApplicationMode.RELEASE -> "log4j2-release.xml"
-            }
+        private fun initLogger() {
+            // TODO: update
+            Logger.configure(LoggerLevel.INFO)
 
-            FXGLLogger.configure(FXGL::class.java.getResource(resourceName).toExternalForm())
+            Logger.addOutput(ConsoleOutput(), LoggerLevel.DEBUG)
+
+//            Logger.configure(when (internalApp.settings.applicationMode) {
+//                ApplicationMode.DEBUG ->
+//            })
         }
+
+//        private fun asyncInitLogger() = async(CommonPool) {
+//            val resourceName = when (internalApp.settings.applicationMode) {
+//                ApplicationMode.DEBUG -> "log4j2-debug.xml"
+//                ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
+//                ApplicationMode.RELEASE -> "log4j2-release.xml"
+//            }
+//
+//            Logger.configure(FXGL::class.java.getResource(resourceName).toExternalForm())
+//        }
 
         private fun initServices() {
             internalAllServices.forEach {
@@ -291,8 +300,8 @@ class FXGL private constructor() {
         private val _input by lazy { internalApp.input }
         @JvmStatic fun getInput() = _input
 
-        @JvmStatic fun getLogger(name: String) = FXGLLogger.get(name)
-        @JvmStatic fun getLogger(caller: Class<*>) = FXGLLogger.get(caller)
+        @JvmStatic fun getLogger(name: String) = Logger.get(name)
+        @JvmStatic fun getLogger(caller: Class<*>) = Logger.get(caller)
 
         /**
          * @return new instance on each call

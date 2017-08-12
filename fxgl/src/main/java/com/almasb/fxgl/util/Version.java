@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.util;
 
-import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 
 import java.util.ResourceBundle;
@@ -19,7 +18,7 @@ public final class Version {
 
     private Version() {}
 
-    private static final Logger log = FXGLLogger.getSystemLogger();
+    private static final Logger log = Logger.getSystemLogger();
 
     private static final String FXGL_VERSION;
 

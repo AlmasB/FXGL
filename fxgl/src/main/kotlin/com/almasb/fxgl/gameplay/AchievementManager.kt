@@ -40,7 +40,7 @@ class AchievementManager : UserProfileSavable {
 
         a.setOnAchieved(Runnable { FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a)) })
         achievements.add(a)
-        log.debug { "Registered new achievement \"${a.name}\"" }
+        log.debug("Registered new achievement \"${a.name}\"")
     }
 
     /**

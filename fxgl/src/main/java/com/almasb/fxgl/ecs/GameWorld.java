@@ -11,7 +11,6 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.UnorderedArray;
-import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.IrremovableComponent;
@@ -43,7 +42,7 @@ import java.util.stream.Collectors;
 @Singleton
 public final class GameWorld {
 
-    private static Logger log = FXGLLogger.get("FXGL.GameWorld");
+    private static Logger log = Logger.get("FXGL.GameWorld");
     
     private Array<Entity> updateList;
 

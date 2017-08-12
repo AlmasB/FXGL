@@ -7,7 +7,7 @@
 package manual;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.logging.FXGLLogger;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
@@ -74,7 +74,7 @@ public class EntityPerformanceTest extends GameApplication {
             getGameWorld().addEntity(newEntity());
         }
 
-        FXGLLogger.getSystemLogger().infof("Adding %d entities took:  %.3f sec", NUM_ENTITIES, (System.nanoTime() - start) / 1000000000.0);
+        Logger.getSystemLogger().infof("Adding %d entities took:  %.3f sec", NUM_ENTITIES, (System.nanoTime() - start) / 1000000000.0);
     }
 
     private void testRemove() {
@@ -85,7 +85,7 @@ public class EntityPerformanceTest extends GameApplication {
             getGameWorld().removeEntity(e);
         }
 
-        FXGLLogger.getSystemLogger().infof("Remove took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+        Logger.getSystemLogger().infof("Remove took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     private Entity newGameEntity() {

@@ -41,13 +41,13 @@ public final class SaveLoadManager {
     private static final String DATA_FILE_EXT = FXGL.getString("fs.datafile.ext");
 
     static {
-        log.debug(() -> "Checking profiles dir: " + PROFILES_DIR);
+        log.debug("Checking profiles dir: " + PROFILES_DIR);
 
         try {
             Path dir = Paths.get("./" + PROFILES_DIR);
 
             if (!Files.exists(dir)) {
-                log.debug(() -> "Creating non-existent profiles dir");
+                log.debug("Creating non-existent profiles dir");
                 Files.createDirectories(dir);
 
                 Path readmeFile = Paths.get("./" + PROFILES_DIR + "Readme.txt");
@@ -57,7 +57,7 @@ public final class SaveLoadManager {
                 ));
             }
         } catch (Exception e) {
-            log.warning(() -> "Failed to create profiles dir: " + e);
+            log.warning("Failed to create profiles dir: " + e);
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
         }
     }
@@ -121,7 +121,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public IOTask<Void> saveTask(DataFile dataFile, SaveFile saveFile) {
-        log.debug(() -> "Saving data: " + saveFile.getName());
+        log.debug("Saving data: " + saveFile.getName());
 
         return FS.writeDataTask(saveFile, saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.writeDataTask(dataFile, saveDir() + saveFile.getName() + DATA_FILE_EXT))
@@ -141,7 +141,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public IOTask<Void> saveProfileTask(UserProfile profile) {
-        log.debug(() -> "Saving profile: " + profileName);
+        log.debug("Saving profile: " + profileName);
         return FS.writeDataTask(profile, profileDir() + PROFILE_FILE_NAME)
                 .then(n -> new IOTask<Void>("checkSavesDir(" + saveDir() + ")") {
 
@@ -151,7 +151,7 @@ public final class SaveLoadManager {
                         Path dir = Paths.get(saveDir());
 
                         if (!Files.exists(dir)) {
-                            log.debug(() -> "Creating non-existent saves dir");
+                            log.debug("Creating non-existent saves dir");
                             Files.createDirectory(dir);
 
                             Path readmeFile = Paths.get(saveDir() + "Readme.txt");
@@ -175,7 +175,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public IOTask<DataFile> loadTask(SaveFile saveFile) {
-        log.debug(() -> "Loading data: " + saveFile.getName());
+        log.debug("Loading data: " + saveFile.getName());
         return FS.<DataFile>readDataTask(saveDir() + saveFile.getName() + DATA_FILE_EXT);
     }
 
@@ -185,7 +185,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public IOTask<UserProfile> loadProfileTask() {
-        log.debug(() -> "Loading profile: " + profileName);
+        log.debug("Loading profile: " + profileName);
         return FS.<UserProfile>readDataTask(profileDir() + PROFILE_FILE_NAME);
     }
 
@@ -194,7 +194,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public IOTask<Void> deleteSaveFileTask(SaveFile saveFile) {
-        log.debug(() -> "Deleting save file: " + saveFile.getName());
+        log.debug("Deleting save file: " + saveFile.getName());
 
         return FS.deleteFileTask(saveDir() + saveFile.getName() + SAVE_FILE_EXT)
                 .then(n -> FS.deleteFileTask(saveDir() + saveFile.getName() + DATA_FILE_EXT))
@@ -208,7 +208,7 @@ public final class SaveLoadManager {
      * @return true iff file exists
      */
     public boolean saveFileExists(String saveFileName) {
-        log.debug(() -> "Checking if save file exists: " + saveFileName);
+        log.debug("Checking if save file exists: " + saveFileName);
 
         try {
             return Files.exists(Paths.get(saveDir() + saveFileName + SAVE_FILE_EXT));
@@ -224,7 +224,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public static IOTask<List<String> > loadProfileNamesTask() {
-        log.debug(() -> "Loading profile names");
+        log.debug("Loading profile names");
         return FS.loadDirectoryNamesTask("./" + PROFILES_DIR, false);
     }
 
@@ -235,7 +235,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public static IOTask<Void> deleteProfileTask(String profileName) {
-        log.debug(() -> "Deleting profile: " + profileName);
+        log.debug("Deleting profile: " + profileName);
         return FS.deleteDirectoryTask("./" + PROFILES_DIR + profileName);
     }
 
@@ -245,7 +245,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public IOTask<List<SaveFile> > loadSaveFilesTask() {
-        log.debug(() -> "Loading save files");
+        log.debug("Loading save files");
 
         return FS.loadFileNamesTask(saveDir(), true, Collections.singletonList(new FileExtension(SAVE_FILE_EXT)))
                 .then(fileNames -> IOTask.of("readSaveFiles", () -> {
@@ -262,7 +262,7 @@ public final class SaveLoadManager {
      * @return saving task
      */
     public IOTask<SaveFile> loadLastModifiedSaveFileTask() {
-        log.debug(() -> "Loading last modified save file");
+        log.debug("Loading last modified save file");
 
         return loadSaveFilesTask().then(files -> IOTask.of("findLastSave", () -> {
             if (files.isEmpty()) {

@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.saving.DataFile;
 
@@ -21,7 +20,7 @@ import java.util.Deque;
  */
 public final class AppStateMachine {
 
-    private static final Logger log = FXGLLogger.get(AppStateMachine.class);
+    private static final Logger log = Logger.get(AppStateMachine.class);
 
     private final AppState loading;
     private final AppState play;

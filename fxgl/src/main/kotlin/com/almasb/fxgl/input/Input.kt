@@ -229,7 +229,7 @@ class Input : UserProfileSavable {
      * Releases all key presses and mouse clicks for a single frame.
      */
     fun clearAll() {
-        log.debug { "Clearing active input actions" }
+        log.debug("Clearing active input actions")
 
         currentActions.clear()
         keys.clear()
@@ -294,7 +294,7 @@ class Input : UserProfileSavable {
 
         triggerNames[action]?.value = trigger.toString()
 
-        log.debug { "Registered new binding: $action - $trigger" }
+        log.debug("Registered new binding: $action - $trigger")
     }
 
     /**
@@ -346,7 +346,7 @@ class Input : UserProfileSavable {
      * @param modifier key modifier
      */
     @JvmOverloads fun mockKeyPress(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        log.debug { "Mocking key press: ${KeyTrigger(key, modifier)}" }
+        log.debug("Mocking key press: ${KeyTrigger(key, modifier)}")
         handlePressed(makeKeyEvent(key, KeyEvent.KEY_PRESSED, modifier))
     }
 
@@ -360,7 +360,7 @@ class Input : UserProfileSavable {
      * @param modifier the modifier
      */
     @JvmOverloads fun mockKeyRelease(key: KeyCode, modifier: InputModifier = InputModifier.NONE) {
-        log.debug { "Mocking key release: ${KeyTrigger(key, modifier)}" }
+        log.debug("Mocking key release: ${KeyTrigger(key, modifier)}")
         handleReleased(makeKeyEvent(key, KeyEvent.KEY_RELEASED, modifier))
     }
 
@@ -385,7 +385,7 @@ class Input : UserProfileSavable {
      * @param modifier the modifier
      */
     @JvmOverloads fun mockButtonPress(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier = InputModifier.NONE) {
-        log.debug { "Mocking button press: ${MouseTrigger(button, modifier)} at $gameX, $gameY" }
+        log.debug("Mocking button press: ${MouseTrigger(button, modifier)} at $gameX, $gameY")
 
         this.gameX = gameX
         this.gameY = gameY
@@ -404,7 +404,7 @@ class Input : UserProfileSavable {
      * @param gameY y in game world
      */
     @JvmOverloads fun mockButtonRelease(button: MouseButton, gameX: Double, gameY: Double, modifier: InputModifier = InputModifier.NONE) {
-        log.debug { "Mocking button release: ${MouseTrigger(button, modifier)} at $gameX, $gameY" }
+        log.debug("Mocking button release: ${MouseTrigger(button, modifier)} at $gameX, $gameY")
 
         this.gameX = gameX
         this.gameY = gameY

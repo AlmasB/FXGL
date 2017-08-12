@@ -7,7 +7,7 @@
 package com.almasb.fxgl.io
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.core.logging.Logger
 import javafx.concurrent.Task
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
@@ -24,7 +24,7 @@ abstract class IOTask<T>
 @JvmOverloads constructor(val name: String = "NoName") {
 
     companion object {
-        private val log = FXGLLogger.get(IOTask::class.java)
+        private val log = Logger.get(IOTask::class.java)
 
         /* Convenient way of creating small tasks in Java */
 
