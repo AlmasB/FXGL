@@ -292,6 +292,12 @@ private constructor(val gameState: GameState,
         gameWorld.onUpdate(tpf)
         physicsWorld.onUpdate(tpf)
         gameScene.onUpdate(tpf)
+
+        FXGL.getEventBus().onUpdate(tpf)
+        FXGL.getAudioPlayer().onUpdate(tpf)
+
+        FXGL.getApp().onUpdate(tpf)
+        FXGL.getApp().onPostUpdate(tpf)
     }
 
     val gameScene: GameScene

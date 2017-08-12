@@ -209,8 +209,7 @@ public abstract class GameApplication extends Application {
         long start = System.nanoTime();
 
         initStateMachine();
-        registerServicesForUpdate();
-
+        attachEventHandlers();
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
@@ -220,7 +219,7 @@ public abstract class GameApplication extends Application {
         playState = (PlayState) stateMachine.getPlayState();
     }
 
-    private void registerServicesForUpdate() {
+    private void attachEventHandlers() {
         getEventBus().addEventHandler(NotificationEvent.ANY, e -> getAudioPlayer().onNotificationEvent(e));
         getEventBus().addEventHandler(AchievementEvent.ANY, e -> getNotificationService().onAchievementEvent(e));
 
@@ -245,12 +244,6 @@ public abstract class GameApplication extends Application {
         getEventBus().scanForHandlers(this);
     }
 
-    private void generateDefaultProfile() {
-        if (getSettings().isMenuEnabled()) {
-            menuHandler.generateDefaultProfile();
-        }
-    }
-
     private void launchGame() {
         Async.startFX(() -> {
             FXGL.getDisplay().initAndShow();
@@ -259,6 +252,9 @@ public abstract class GameApplication extends Application {
             // so that menus can correctly display input controls, etc.
             // this is called once per application lifetime
             runPreInit();
+
+            // attempt to clean any garbage we generated before main loop
+            System.gc();
 
             startMainLoop();
         });
@@ -285,9 +281,12 @@ public abstract class GameApplication extends Application {
         generateDefaultProfile();
 
         preInit();
+    }
 
-        // attempt to clean any garbage we generated before main loop
-        System.gc();
+    private void generateDefaultProfile() {
+        if (getSettings().isMenuEnabled()) {
+            menuHandler.generateDefaultProfile();
+        }
     }
 
     private AnimationTimer mainLoop;
@@ -310,6 +309,7 @@ public abstract class GameApplication extends Application {
         mainLoop.start();
     }
 
+    // TODO: move call from FXGL exception handler to this class and make private
     /**
      * Only called in exceptional cases, e.g. uncaught (unchecked) exception.
      */
@@ -342,17 +342,6 @@ public abstract class GameApplication extends Application {
 
     private void tick(double tpf) {
         stateMachine.onUpdate(tpf);
-
-        // TODO: should event bus be updated in play state?
-        getEventBus().onUpdate(tpf);
-        getAudioPlayer().onUpdate(tpf);
-
-        if (stateMachine.isInPlay()) {
-            onUpdate(tpf);
-            onPostUpdate(tpf);
-        } else {
-            onPausedUpdate(tpf);
-        }
     }
 
     private Profiler profiler;
@@ -530,13 +519,6 @@ public abstract class GameApplication extends Application {
      * @param tpf time per frame (same as main update tpf)
      */
     protected void onPostUpdate(double tpf) {}
-
-    /**
-     * Called every frame in any non-Play state.
-     *
-     * @param tpf time per frame
-     */
-    protected void onPausedUpdate(double tpf) {}
 
     /**
      * Called when MenuEvent.SAVE occurs.
