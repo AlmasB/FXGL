@@ -101,13 +101,6 @@ private constructor(private val name: String) {
             return get(caller.simpleName)
         }
 
-        /**
-         * @return System.out logger
-         */
-        @JvmStatic fun getSystemLogger(): Logger {
-            return get("SYS_LOGGER")
-        }
-
         @JvmStatic fun close() {
             outputs.forEach(LoggerOutput::close)
         }

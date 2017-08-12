@@ -74,7 +74,7 @@ public class EntityPerformanceTest extends GameApplication {
             getGameWorld().addEntity(newEntity());
         }
 
-        Logger.getSystemLogger().infof("Adding %d entities took:  %.3f sec", NUM_ENTITIES, (System.nanoTime() - start) / 1000000000.0);
+        Logger.get("EPT").infof("Adding %d entities took:  %.3f sec", NUM_ENTITIES, (System.nanoTime() - start) / 1000000000.0);
     }
 
     private void testRemove() {
@@ -85,7 +85,7 @@ public class EntityPerformanceTest extends GameApplication {
             getGameWorld().removeEntity(e);
         }
 
-        Logger.getSystemLogger().infof("Remove took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+        Logger.get("EPT").infof("Remove took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
 
     private Entity newGameEntity() {
