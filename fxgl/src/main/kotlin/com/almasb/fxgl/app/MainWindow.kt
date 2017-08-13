@@ -25,20 +25,16 @@ import java.time.LocalDateTime
 import javax.imageio.ImageIO
 
 /**
+ * A wrapper around JavaFX primary stage.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MainWindow(
-
-        /**
-         * Primary stage.
-         */
-        val stage: Stage, private val settings: ReadOnlyGameSettings) {
+internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSettings) {
 
     private val log = Logger.get(javaClass)
 
     private val fxScene = Scene(Pane(), settings.width.toDouble(), settings.height.toDouble())
 
-    // init with placeholder scene
     private val currentScene = ReadOnlyObjectWrapper<FXGLScene>()
 
     private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
@@ -50,7 +46,7 @@ internal class MainWindow(
     }
 
     private val mouseHandler = EventHandler<MouseEvent> {
-        FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, currentScene.value.viewport, scaleRatio.value)
+        FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, getCurrentScene().viewport, scaleRatio.value)
     }
 
     private val genericHandler = EventHandler<Event> {
@@ -60,10 +56,6 @@ internal class MainWindow(
     var onShown: Runnable? = null
 
     init {
-        initScene()
-    }
-
-    private fun initScene() {
         // main key event handler
         fxScene.addEventHandler(KeyEvent.ANY, keyHandler)
 
@@ -75,13 +67,26 @@ internal class MainWindow(
     }
 
     /**
+     * Must be called on FX thread.
+     */
+    fun initAndShow() {
+        // we call this late so that all scenes have been initialized
+        // and computed their width / height
+        initStage()
+
+        computeScaledSize()
+
+        show()
+    }
+
+    /**
      * Configure main stage based on user settings.
      */
     private fun initStage() {
         with(stage) {
             scene = fxScene
 
-            title = settings.title + " " + settings.version
+            title = "${settings.title} ${settings.version}"
             isResizable = false
 
             setOnCloseRequest { e ->
@@ -118,23 +123,6 @@ internal class MainWindow(
     }
 
     /**
-     * Must be called on FX thread.
-     */
-    fun initAndShow() {
-        initStage()
-
-        computeScaledSize()
-
-        log.debug("Opening primary stage")
-
-        stage.show()
-
-        log.debug("Root size: " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
-        log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
-        log.debug("Stage size: " + stage.width + "x" + stage.height)
-    }
-
-    /**
      * Computes scaled size of the output based on screen and target
      * resolutions.
      */
@@ -161,25 +149,25 @@ internal class MainWindow(
         scaledHeight.set(newH)
         scaleRatio.set(newW / settings.width)
 
-        log.debug("Target size: ${settings.width} x ${settings.height} @ 1.0")
-        log.debug("New size:    $newW x $newH @ $scaleRatio")
+        log.debug("Target size: ${settings.width.toDouble()} x ${settings.height.toDouble()} @ 1.0")
+        log.debug("New size:    $newW x $newH @ ${scaleRatio.value}")
+    }
+
+    private fun show() {
+        log.debug("Opening main window")
+
+        stage.show()
+
+        log.debug("Root size:  " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
+        log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
+        log.debug("Stage size: " + stage.width + "x" + stage.height)
     }
 
     private val scenes = arrayListOf<FXGLScene>()
 
     /**
-     * Register an FXGL scene to be managed by display settings.
-     *
-     * @param scene the scene
-     */
-    fun registerScene(scene: FXGLScene) {
-        scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
-        scene.appendCSS(FXGLAssets.UI_CSS)
-        scenes.add(scene)
-    }
-
-    /**
-     * Set current FXGL scene. The scene will be immediately displayed.
+     * Set current FXGL scene.
+     * The scene will be immediately displayed.
      *
      * @param scene the scene
      */
@@ -196,30 +184,41 @@ internal class MainWindow(
         fxScene.root = scene.root
     }
 
+    /**
+     * Register an FXGL scene to be managed by display settings.
+     *
+     * @param scene the scene
+     */
+    fun registerScene(scene: FXGLScene) {
+        scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
+        scene.appendCSS(FXGLAssets.UI_CSS)
+        scenes.add(scene)
+    }
+
     fun getCurrentScene(): FXGLScene {
         return currentScene.value
     }
 
-//    /**
-//     * Saves a screenshot of the current scene into a ".png" file.
-//
-//     * @return true if the screenshot was saved successfully, false otherwise
-//     */
-//    fun saveScreenshot(): Boolean {
-//        val fxImage = fxScene.snapshot(null)
-//
-//        var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
-//        fileName = fileName.replace(":", "_")
-//
-//        val img = SwingFXUtils.fromFXImage(fxImage, null)
-//
-//        try {
-//            Files.newOutputStream(Paths.get(fileName + ".png")).use {
-//                return ImageIO.write(img, "png", it)
-//            }
-//        } catch (e: Exception) {
-//            log.warning("saveScreenshot() failed: $e")
-//            return false
-//        }
-//    }
+    /**
+     * Saves a screenshot of the current scene into a ".png" file.
+     *
+     * @return true if the screenshot was saved successfully, false otherwise
+     */
+    fun saveScreenshot(): Boolean {
+        val fxImage = fxScene.snapshot(null)
+
+        var fileName = "./" + settings.title + settings.version + LocalDateTime.now()
+        fileName = fileName.replace(":", "_")
+
+        val img = SwingFXUtils.fromFXImage(fxImage, null)
+
+        try {
+            Files.newOutputStream(Paths.get(fileName + ".png")).use {
+                return ImageIO.write(img, "png", it)
+            }
+        } catch (e: Exception) {
+            log.warning("saveScreenshot() failed: $e")
+            return false
+        }
+    }
 }

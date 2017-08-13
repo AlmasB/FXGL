@@ -89,8 +89,6 @@ public abstract class GameApplication extends Application {
      */
     @Override
     public final void start(Stage stage) {
-        //primaryStage = stage;
-
         initAppSettings();
         initLogger();
 
@@ -119,7 +117,6 @@ public abstract class GameApplication extends Application {
 
     private void initMainWindow(Stage stage) {
         mainWindow = new MainWindow(stage, settings);
-
     }
 
     /**
@@ -428,6 +425,10 @@ public abstract class GameApplication extends Application {
 
     void setScene(FXGLScene scene) {
         mainWindow.setScene(scene);
+    }
+
+    boolean saveScreenshot() {
+        return mainWindow.saveScreenshot();
     }
 
     private List<ExitListener> exitListeners = new ArrayList<>();
