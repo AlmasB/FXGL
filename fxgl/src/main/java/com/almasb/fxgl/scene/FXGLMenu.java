@@ -16,7 +16,6 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;
-import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;

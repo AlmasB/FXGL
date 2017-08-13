@@ -7,15 +7,10 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.io.UIDialogHandler;
-import com.almasb.fxgl.saving.UserProfileSavable;
-import com.almasb.fxgl.scene.FXGLScene;
-import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.util.EmptyRunnable;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
