@@ -11,7 +11,6 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
-import javafx.stage.Stage;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,12 +26,10 @@ import java.util.stream.Collectors;
 public class ApplicationModule extends AbstractModule {
 
     private GameApplication app;
-    private Stage mainStage;
     private ReadOnlyGameSettings settings;
 
     ApplicationModule(GameApplication app) {
         this.app = app;
-        mainStage = app.getPrimaryStage();
         settings = app.getSettings();
     }
 
@@ -53,8 +50,6 @@ public class ApplicationModule extends AbstractModule {
         bind(GameApplication.class).toInstance(app);
         bind(ReadOnlyGameSettings.class).toInstance(settings);
         bind(ApplicationMode.class).toInstance(settings.getApplicationMode());
-
-        bind(Stage.class).toInstance(mainStage);
 
         bind(Integer.class).annotatedWith(Names.named("appWidth")).toInstance(app.getWidth());
         bind(Integer.class).annotatedWith(Names.named("appHeight")).toInstance(app.getHeight());

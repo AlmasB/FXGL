@@ -305,16 +305,17 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentVideo() {
         log.debug("createContentVideo()");
 
-        Spinner<SceneDimension> spinner =
-                new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
+        // TODO: refactor
+//        Spinner<SceneDimension> spinner =
+//                new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
+//
+//        Button btnApply = FXGL.getUIFactory().newButton("Apply");
+//        btnApply.setOnAction(e -> {
+//            SceneDimension dimension = spinner.getValue();
+//            app.getDisplay().setSceneDimension(dimension);
+//        });
 
-        Button btnApply = FXGL.getUIFactory().newButton("Apply");
-        btnApply.setOnAction(e -> {
-            SceneDimension dimension = spinner.getValue();
-            app.getDisplay().setSceneDimension(dimension);
-        });
-
-        return new MenuContent(new HBox(50, FXGL.getUIFactory().newText("Resolution"), spinner), btnApply);
+        return new MenuContent();
     }
 
     /**

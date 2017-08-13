@@ -21,70 +21,11 @@ import java.util.function.Predicate;
 
 /**
  * Display service.
- * Provides access to dialogs and display settings.
+ * Provides access to dialogs.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public interface Display extends UserProfileSavable {
-
-    /**
-     * Must be called on FX thread.
-     * Will be called automatically by FXGL application.
-     */
-    void initAndShow();
-
-    /**
-     * Register an FXGL scene to be managed by display settings.
-     *
-     * @param scene the scene
-     */
-    void registerScene(FXGLScene scene);
-
-    /**
-     * Set current FXGL scene. The scene will be immediately displayed.
-     *
-     * @param scene the scene
-     */
-    void setScene(FXGLScene scene);
-
-    /**
-     * @return current scene property
-     */
-    ReadOnlyObjectProperty<FXGLScene> currentSceneProperty();
-
-    /**
-     * @return current FXGL scene
-     */
-    default FXGLScene getCurrentScene() {
-        return currentSceneProperty().get();
-    }
-
-    /**
-     * Saves a screenshot of the current scene into a ".png" file.
-     *
-     * @return true if the screenshot was saved successfully, false otherwise
-     */
-    boolean saveScreenshot();
-
-    /**
-     * @return a list of supported scene dimensions with 360, 480, 720 and 1080 heights
-     */
-    List<SceneDimension> getSceneDimensions();
-
-    /**
-     * Set new scene dimension. This will change the video output
-     * resolution and adapt all subsystems.
-     *
-     * @param dimension scene dimension
-     */
-    void setSceneDimension(SceneDimension dimension);
-
-    /**
-     * @return scale ratio of the current size vs target size
-     */
-    double getScaleRatio();
-
-    /* DIALOG ACCESS */
+public interface Display {
 
     /**
      * Shows a blocking (stops game execution, method returns normally) message box with OK button. On

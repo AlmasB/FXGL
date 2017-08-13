@@ -34,13 +34,11 @@ public class MockApplicationModule extends ApplicationModule {
 
     public static MockApplicationModule get() {
         if (instance == null) {
-            Stage stage = mockStage();
             GameSettings settings = new GameSettings();
 
             GameApplication app = new MockGameApplication();
             app.initSettings(settings);
 
-            app.injectStage(stage);
             app.injectSettings(settings.toReadOnly());
 
             instance = new MockApplicationModule(app);

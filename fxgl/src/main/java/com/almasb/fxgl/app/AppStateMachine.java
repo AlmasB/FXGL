@@ -72,7 +72,7 @@ public final class AppStateMachine {
 
         // new state
         appState = newState;
-        app.getDisplay().setScene(appState.getScene());
+        app.setScene(appState.getScene());
         appState.enter(prevState);
     }
 
@@ -91,7 +91,7 @@ public final class AppStateMachine {
 
         // new state
         subStates.push(newState);
-        app.getDisplay().getCurrentScene().getRoot().getChildren().add(newState.getView());
+        app.mainWindow.getCurrentScene().getRoot().getChildren().add(newState.getView());
         newState.enter(prevState);
     }
 
@@ -109,7 +109,7 @@ public final class AppStateMachine {
 
         log.debug(getCurrentState() + " <- " + prevState);
 
-        app.getDisplay().getCurrentScene().getRoot().getChildren().remove(prevState.getView());
+        app.mainWindow.getCurrentScene().getRoot().getChildren().remove(prevState.getView());
     }
 
     public State getCurrentState() {

@@ -26,11 +26,11 @@ import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.saving.LoadEvent;
 import com.almasb.fxgl.saving.SaveEvent;
+import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.*;
-import com.almasb.fxgl.service.impl.display.DisplayEvent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.FPSCounter;
@@ -80,7 +80,8 @@ public abstract class GameApplication extends Application {
 
     private static final Logger log = Logger.get(GameApplication.class);
 
-    private Stage primaryStage;
+    // TODO: hide
+    public MainWindow mainWindow;
     private ReadOnlyGameSettings settings;
     private AppStateMachine stateMachine;
 
@@ -89,10 +90,12 @@ public abstract class GameApplication extends Application {
      */
     @Override
     public final void start(Stage stage) {
-        primaryStage = stage;
+        //primaryStage = stage;
 
         initAppSettings();
         initLogger();
+
+        initMainWindow(stage);
 
         showPreloadingStage();
         startFXGL();
@@ -115,21 +118,26 @@ public abstract class GameApplication extends Application {
         log.debug("Logger initialized");
     }
 
+    private void initMainWindow(Stage stage) {
+        mainWindow = new MainWindow(stage, settings);
+
+    }
+
     /**
      * Shows preloading stage with scene while FXGL is being configured.
      */
     private void showPreloadingStage() {
         Stage preloadingStage = new Stage(StageStyle.UNDECORATED);
-        preloadingStage.initOwner(primaryStage);
+        preloadingStage.initOwner(mainWindow.getStage());
         preloadingStage.setScene(new PreloadingScene());
         preloadingStage.show();
 
         // when main stage has opened
-        primaryStage.setOnShown(e -> {
+        mainWindow.setOnShown(() -> {
             // close our preloader
             preloadingStage.close();
             // clean the reference to lambda + preloader
-            primaryStage.setOnShown(null);
+            mainWindow.setOnShown(null);
         });
     }
 
@@ -235,7 +243,6 @@ public abstract class GameApplication extends Application {
 
         getEventBus().addEventHandler(SaveEvent.ANY, e -> {
             getAudioPlayer().save(e.getProfile());
-            getDisplay().save(e.getProfile());
             getInput().save(e.getProfile());
             getGameplay().getAchievementManager().save(e.getProfile());
             getGameplay().getQuestManager().save(e.getProfile());
@@ -243,20 +250,17 @@ public abstract class GameApplication extends Application {
 
         getEventBus().addEventHandler(LoadEvent.ANY, e -> {
             getAudioPlayer().load(e.getProfile());
-            getDisplay().load(e.getProfile());
             getInput().load(e.getProfile());
             getGameplay().getAchievementManager().load(e.getProfile());
             getGameplay().getQuestManager().load(e.getProfile());
         });
-
-        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
 
         getEventBus().scanForHandlers(this);
     }
 
     private void launchGame() {
         Async.startFX(() -> {
-            FXGL.getDisplay().initAndShow();
+            mainWindow.initAndShow();
 
             // these things need to be called early before the main loop
             // so that menus can correctly display input controls, etc.
@@ -419,6 +423,10 @@ public abstract class GameApplication extends Application {
         return menuHandler;
     }
 
+    void setScene(FXGLScene scene) {
+        mainWindow.setScene(scene);
+    }
+
     private List<ExitListener> exitListeners = new ArrayList<>();
 
     public final void addExitListener(ExitListener listener) {
@@ -561,15 +569,6 @@ public abstract class GameApplication extends Application {
     /**
      * Used by mocking.
      *
-     * @param stage mock stage
-     */
-    void injectStage(Stage stage) {
-        primaryStage = stage;
-    }
-
-    /**
-     * Used by mocking.
-     *
      * @param settings mock settings
      */
     void injectSettings(ReadOnlyGameSettings settings) {
@@ -587,13 +586,6 @@ public abstract class GameApplication extends Application {
 
     public final AppStateMachine getStateMachine() {
         return stateMachine;
-    }
-
-    /**
-     * @return primary stage as set by JavaFX
-     */
-    final Stage getPrimaryStage() {
-        return primaryStage;
     }
 
     public final GameState getGameState() {
