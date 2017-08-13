@@ -34,6 +34,8 @@ public class MockApplicationModule extends ApplicationModule {
 
     public static MockApplicationModule get() {
         if (instance == null) {
+            mockStage();
+
             GameSettings settings = new GameSettings();
 
             GameApplication app = new MockGameApplication();
