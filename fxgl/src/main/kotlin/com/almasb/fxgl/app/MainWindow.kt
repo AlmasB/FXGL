@@ -45,8 +45,10 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
     }
 
-    private val mouseHandler = EventHandler<MouseEvent> {
-        FXGL.getApp().stateMachine.currentState.input.onMouseEvent(it, getCurrentScene().viewport, scaleRatio.value)
+    private val mouseHandler = EventHandler<MouseEvent> { e ->
+        currentScene.value?.let {
+            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(e, it.viewport, scaleRatio.value)
+        }
     }
 
     private val genericHandler = EventHandler<Event> {
