@@ -101,7 +101,7 @@ object DialogSubState : SubState() {
 
     private fun show() {
         if (!isShowing) {
-            openInScene(FXGL.getApp().mainWindow.getCurrentScene())
+            openInScene(FXGL.getApp().scene)
 
             view.requestFocus()
         }
@@ -109,7 +109,7 @@ object DialogSubState : SubState() {
 
     private fun close() {
         if (states.isEmpty()) {
-            closeInScene(FXGL.getApp().mainWindow.getCurrentScene())
+            closeInScene(FXGL.getApp().scene)
         } else {
             val data = states.pop()
             window.title = data.title

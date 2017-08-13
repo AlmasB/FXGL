@@ -80,8 +80,7 @@ public abstract class GameApplication extends Application {
 
     private static final Logger log = Logger.get(GameApplication.class);
 
-    // TODO: hide
-    public MainWindow mainWindow;
+    private MainWindow mainWindow;
     private ReadOnlyGameSettings settings;
     private AppStateMachine stateMachine;
 
@@ -421,6 +420,10 @@ public abstract class GameApplication extends Application {
         if (menuHandler == null)
             menuHandler = new MenuEventHandler(this);
         return menuHandler;
+    }
+
+    FXGLScene getScene() {
+        return mainWindow.getCurrentScene();
     }
 
     void setScene(FXGLScene scene) {

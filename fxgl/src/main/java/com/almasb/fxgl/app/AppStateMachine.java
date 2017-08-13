@@ -91,7 +91,7 @@ public final class AppStateMachine {
 
         // new state
         subStates.push(newState);
-        app.mainWindow.getCurrentScene().getRoot().getChildren().add(newState.getView());
+        app.getScene().getRoot().getChildren().add(newState.getView());
         newState.enter(prevState);
     }
 
@@ -109,7 +109,7 @@ public final class AppStateMachine {
 
         log.debug(getCurrentState() + " <- " + prevState);
 
-        app.mainWindow.getCurrentScene().getRoot().getChildren().remove(prevState.getView());
+        app.getScene().getRoot().getChildren().remove(prevState.getView());
     }
 
     public State getCurrentState() {
