@@ -7,9 +7,9 @@
 package com.almasb.fxgl.app
 
 import com.almasb.fxgl.annotation.AddCollisionHandler
+import com.almasb.fxgl.annotation.AnnotationParser
 import com.almasb.fxgl.annotation.SetEntityFactory
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.event.Subscriber
@@ -141,37 +141,13 @@ internal class LoadingState
         companion object {
             private val log = FXGL.getLogger(InitAppTask::class.java)
 
-            private val annotationMap: Map<Class<*>, List<Class<*>>>
+            private val annotationParser = AnnotationParser(FXGL.getApp().javaClass)
 
             init {
-                annotationMap = scanForAnnotations()
-
-                annotationMap.forEach { annotationClass, list ->
-                    log.debug("@${annotationClass.simpleName}: ${list.map { it.simpleName }}")
-                }
-            }
-
-            private fun scanForAnnotations(): Map<Class<*>, List<Class<*>>> {
-                val app = FXGL.getApp()
-
-                if (app.javaClass.`package` != null) {
-
-                    val name = app.javaClass.`package`.name
-
-                    if (name.contains("[A-Z]".toRegex())) {
-                        log.warning("${app.javaClass.simpleName} package ($name) contains uppercase letters. Disabling annotations processing")
-
-                        return hashMapOf()
-                    }
-
-                    // only scan the appropriate package (package of the "App") and its subpackages
-                    return ReflectionUtils.findClasses(app.javaClass.`package`.name,
-                            SetEntityFactory::class.java, AddCollisionHandler::class.java)
-                } else {
-                    log.warning("${app.javaClass.simpleName} has no package. Disabling annotations processing")
-
-                    return hashMapOf()
-                }
+                annotationParser.parse(
+                        SetEntityFactory::class.java,
+                        AddCollisionHandler::class.java
+                )
             }
         }
 
@@ -213,9 +189,8 @@ internal class LoadingState
             app.initGameVars(vars)
             vars.forEach { name, value -> app.gameState.put(name, value) }
 
-            annotationMap[SetEntityFactory::class.java]?.let {
-                if (it.isNotEmpty())
-                    app.gameWorld.setEntityFactory(FXGL.getInstance(it[0]) as EntityFactory)
+            annotationParser.getClasses(SetEntityFactory::class.java).firstOrNull()?.let {
+                app.gameWorld.setEntityFactory(FXGL.getInstance(it) as EntityFactory)
             }
 
             if (dataFile === DataFile.EMPTY)
@@ -228,10 +203,8 @@ internal class LoadingState
             update("Initializing Physics", 2)
             app.initPhysics()
 
-            annotationMap[AddCollisionHandler::class.java]?.let {
-                it.forEach {
-                    app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)
-                }
+            annotationParser.getClasses(AddCollisionHandler::class.java).forEach {
+                app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)
             }
         }
 
