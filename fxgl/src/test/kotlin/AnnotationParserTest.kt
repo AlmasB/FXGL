@@ -47,6 +47,12 @@ class AnnotationParserTest {
         val parser = AnnotationParser(NoPackageSample::class.java)
 
         assertTrue(parser.isDisabled)
+
+        assertThat(parser.getClasses(SetEntityFactory::class.java).size, `is`(0))
+        
+        parser.parse(SetEntityFactory::class.java, AddCollisionHandler::class.java)
+
+        assertThat(parser.getClasses(SetEntityFactory::class.java).size, `is`(0))
     }
 
     @Test
