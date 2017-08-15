@@ -7,12 +7,7 @@
 package com.almasb.fxgl.core.logging
 
 import com.almasb.fxgl.core.collection.Array
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.stream.Collectors
 
 /**
  *
@@ -24,8 +19,6 @@ private constructor(private val name: String) {
 
     companion object {
 
-        private val MAX_LOGS = 10
-
         private val outputs = Array<LoggerOutput>()
 
         private val debug = Array<LoggerOutput>()
@@ -33,8 +26,16 @@ private constructor(private val name: String) {
         private val warning = Array<LoggerOutput>()
         private val fatal = Array<LoggerOutput>()
 
-        init {
-            cleanOldLogs()
+        private var config = LoggerConfig()
+        private var configured = false
+        private var closed = false
+
+        @JvmStatic fun configure(config: LoggerConfig) {
+            if (configured)
+                throw IllegalStateException("Logger already configured")
+
+            this.config = config.copy()
+            configured = true
         }
 
         @JvmStatic fun addOutput(loggerOutput: LoggerOutput, level: LoggerLevel) {
@@ -88,9 +89,9 @@ private constructor(private val name: String) {
         }
 
         private fun makeMessage(loggerName: String, loggerMessage: String, level: LoggerLevel): String {
-            val time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"))
+            val time = LocalTime.now().format(config.dateTimeFormatter)
             val threadName = Thread.currentThread().name
-            return "%s [%-25s] %-5s %-20s - %s".format(time, threadName, "$level", loggerName, loggerMessage)
+            return config.messageFormatter.makeMessage(time, threadName, "$level", loggerName, loggerMessage)
         }
 
         @JvmStatic fun get(name: String): Logger {
@@ -102,7 +103,11 @@ private constructor(private val name: String) {
         }
 
         @JvmStatic fun close() {
+            if (closed)
+                throw IllegalStateException("Logger already closed")
+
             outputs.forEach(LoggerOutput::close)
+            closed = true
         }
 
         @JvmStatic fun errorTraceAsString(e: Throwable): String {
@@ -118,47 +123,6 @@ private constructor(private val name: String) {
             }
 
             return sb.toString()
-        }
-
-        private fun cleanOldLogs() {
-            val logDir = Paths.get("logs/")
-            if (!Files.exists(logDir)) {
-                Files.createDirectory(logDir)
-
-                val readmeFile = Paths.get("logs/Readme.txt")
-
-                Files.write(readmeFile, "This directory contains FXGL log files.".lines())
-            }
-
-            val logs = Files.walk(logDir, 1)
-                    .filter { Files.isRegularFile(it) }
-                    .sorted { file1, file2 -> Files.getLastModifiedTime(file1).compareTo(Files.getLastModifiedTime(file2)) }
-                    .collect(Collectors.toList<Path>())
-
-            val logSize = logs.size
-            if (logSize >= MAX_LOGS) {
-                for (i in 0..logSize + 1 - MAX_LOGS - 1) {
-                    Files.delete(logs[i])
-                }
-            }
-        }
-
-        private fun logSystemInfo() {
-            val logger = get("FXGLLogger")
-
-            logger.debug("Logging System Info")
-
-            val rt = Runtime.getRuntime()
-
-            val MB = (1024 * 1024).toDouble()
-
-            logger.debug("CPU cores: " + rt.availableProcessors())
-            logger.debug(String.format("Free Memory: %.0fMB", rt.freeMemory() / MB))
-            logger.debug(String.format("Max Memory: %.0fMB", rt.maxMemory() / MB))
-            logger.debug(String.format("Total Memory: %.0fMB", rt.totalMemory() / MB))
-
-            logger.debug("System Properties:")
-            System.getProperties().forEach { k, v -> logger.debug("$k=$v") }
         }
     }
 

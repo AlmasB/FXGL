@@ -10,10 +10,7 @@ import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
-import com.almasb.fxgl.core.logging.ConsoleOutput;
-import com.almasb.fxgl.core.logging.FileOutput;
-import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.core.logging.LoggerLevel;
+import com.almasb.fxgl.core.logging.*;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.event.EventBus;
@@ -108,6 +105,7 @@ public abstract class GameApplication extends Application {
     }
 
     private void initLogger() {
+        Logger.configure(new LoggerConfig());
         // we write all logs to file but adjust console log level based on app mode
         Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
         Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());
