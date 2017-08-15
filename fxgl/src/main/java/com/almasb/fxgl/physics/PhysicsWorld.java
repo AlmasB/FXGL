@@ -145,7 +145,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     @Inject
-    protected PhysicsWorld(@Named("appHeight") int appHeight,
+    public PhysicsWorld(@Named("appHeight") int appHeight,
                            @Named("physics.ppm") double ppm) {
         this.appHeight = appHeight;
 
