@@ -9,6 +9,7 @@ package com.almasb.fxgl.event
 import com.almasb.fxgl.annotation.Handles
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.UnorderedArray
+import com.almasb.fxgl.core.logging.Logger
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -23,7 +24,7 @@ import java.lang.reflect.Modifier
  */
 class EventBus {
 
-    private val log = FXGL.getLogger(javaClass)
+    private val log = Logger.get(javaClass)
 
     private val eventTriggers = UnorderedArray<EventTrigger<*>>(32)
 

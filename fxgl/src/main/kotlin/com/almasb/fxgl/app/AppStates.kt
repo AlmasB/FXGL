@@ -139,7 +139,7 @@ internal class LoadingState
     private class InitAppTask(private val app: GameApplication, private val dataFile: DataFile) : Task<Void>() {
 
         companion object {
-            private val log = FXGL.getLogger(InitAppTask::class.java)
+            private val log = Logger.get(InitAppTask::class.java)
 
             private val annotationParser = AnnotationParser(FXGL.getApp().javaClass)
 

@@ -49,7 +49,7 @@ import java.util.List;
 public final class GameScene extends FXGLScene
         implements EntityWorldListener, ModuleListener {
 
-    private static final Logger log = FXGL.getLogger("FXGL.GameScene");
+    private static final Logger log = Logger.get("FXGL.GameScene");
 
     /**
      * Root for entity views, it is affected by viewport movement.

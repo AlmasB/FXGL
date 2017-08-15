@@ -8,6 +8,7 @@ package com.almasb.fxgl.gameplay
 
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.Logger
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ReadOnlyBooleanProperty
@@ -36,7 +37,7 @@ class Achievement(
         val description: String) {
 
     companion object {
-        private val log = FXGL.getLogger("FXGL.Achievement")
+        private val log = Logger.get("FXGL.Achievement")
     }
 
     private var onAchieved: Runnable? = null

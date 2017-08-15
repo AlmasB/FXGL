@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 public final class SaveLoadManager {
 
-    private static final Logger log = FXGL.getLogger("FXGL.SaveLoadManager");
+    private static final Logger log = Logger.get("FXGL.SaveLoadManager");
 
     private static final String PROFILE_FILE_NAME = FXGL.getString("fs.profilename");
     private static final String PROFILES_DIR = FXGL.getString("fs.profiledir");

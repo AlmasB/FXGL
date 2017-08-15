@@ -7,6 +7,7 @@
 package com.almasb.fxgl.devtools.controller
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.ui.UIController
 import javafx.fxml.FXML
 import javafx.scene.control.Slider
@@ -40,7 +41,7 @@ class ColorAdjustController : UIController {
     }
 
     fun onPrintValues() {
-        FXGL.getLogger(javaClass).infof("Hue:[%.2f], Saturation:[%.2f], Brightness:[%.2f], Contrast:[%.2f]",
+        Logger.get(javaClass).infof("Hue:[%.2f], Saturation:[%.2f], Brightness:[%.2f], Contrast:[%.2f]",
                 sliderHue.value, sliderSaturation.value, sliderBrightness.value, sliderContrast.value)
     }
 }

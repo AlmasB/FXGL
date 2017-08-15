@@ -64,7 +64,7 @@ public abstract class FXGLMenu extends FXGLScene {
     /**
      * The logger.
      */
-    protected static final Logger log = FXGL.getLogger("FXGL.Menu");
+    protected static final Logger log = Logger.get("FXGL.Menu");
 
     protected final GameApplication app;
 

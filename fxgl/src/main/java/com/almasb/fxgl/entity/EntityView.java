@@ -23,7 +23,7 @@ import javafx.scene.shape.Circle;
  */
 public class EntityView extends Parent implements Disposable {
 
-    protected static final Logger log = FXGL.getLogger("FXGL.EntityView");
+    protected static final Logger log = Logger.get("FXGL.EntityView");
 
     /**
      * Constructs a view with no content.

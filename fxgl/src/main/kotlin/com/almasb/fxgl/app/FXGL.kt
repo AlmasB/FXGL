@@ -271,9 +271,6 @@ class FXGL private constructor() {
         private val _input by lazy { internalApp.input }
         @JvmStatic fun getInput() = _input
 
-        @JvmStatic fun getLogger(name: String) = Logger.get(name)
-        @JvmStatic fun getLogger(caller: Class<*>) = Logger.get(caller)
-
         /**
          * @return new instance on each call
          */

@@ -49,7 +49,7 @@ import java.util.Iterator;
 @Singleton
 public final class PhysicsWorld implements EntityWorldListener, ContactListener {
 
-    private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
+    private static final Logger log = Logger.get("FXGL.PhysicsWorld");
 
     private final double PIXELS_PER_METER;
     private final double METERS_PER_PIXELS;

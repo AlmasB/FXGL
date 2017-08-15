@@ -27,7 +27,7 @@ import java.io.StringWriter
 class FXGLExceptionHandler
 @Inject private constructor() : ExceptionHandler {
 
-    private val log = FXGL.getLogger(javaClass)
+    private val log = Logger.get(javaClass)
 
     init {
         Thread.setDefaultUncaughtExceptionHandler({ _, e -> handleFatal(e) })

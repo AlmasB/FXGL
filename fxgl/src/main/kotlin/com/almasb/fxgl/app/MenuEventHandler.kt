@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
@@ -27,7 +28,7 @@ import java.util.function.Consumer
  */
 internal class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
 
-    private val log = FXGL.getLogger(javaClass)
+    private val log = Logger.get(javaClass)
 
     private lateinit var saveLoadManager: SaveLoadManager
 
