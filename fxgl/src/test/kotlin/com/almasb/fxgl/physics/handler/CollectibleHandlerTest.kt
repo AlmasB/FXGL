@@ -37,7 +37,7 @@ class CollectibleHandlerTest {
         var count = 0
 
         gameWorld.addWorldListener(physicsWorld)
-        
+
         val collector = Entity()
         collector.addComponent(TypeComponent(Type.COLLECTOR))
         collector.addComponent(PositionComponent(100.0, 100.0))
