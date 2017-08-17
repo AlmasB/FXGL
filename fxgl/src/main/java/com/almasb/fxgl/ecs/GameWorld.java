@@ -101,6 +101,11 @@ public final class GameWorld {
     }
 
     public void removeEntity(Entity entity) {
+        if (!entity.isActive()) {
+            log.warning("Attempted to remove entity which is not active");
+            return;
+        }
+
         if (!canRemove(entity))
             return;
 
@@ -110,6 +115,7 @@ public final class GameWorld {
         entities.remove(entity);
 
         entity.markForRemoval();
+        notifyEntityRemoved(entity);
     }
 
     public void removeEntities(Entity... entitiesToRemove) {
@@ -130,7 +136,7 @@ public final class GameWorld {
         for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            if (e.isMarkedForRemoval()) {
+            if (!e.isActive()) {
                 remove(e);
                 it.remove();
             } else {
@@ -176,7 +182,6 @@ public final class GameWorld {
     }
 
     private void remove(Entity entity) {
-        notifyEntityRemoved(entity);
         entity.clean();
     }
 
@@ -357,6 +362,12 @@ public final class GameWorld {
     }
 
     /* QUERIES */
+
+    public <T extends Entity> EntityGroup<T> getGroup(Enum<?>... types) {
+        EntityGroup<T> group = new EntityGroup<T>((List<? extends T>) getEntitiesByType(types), types);
+        addWorldListener(group);
+        return group;
+    }
 
     /**
      * Useful for singleton type entities, e.g. Player.

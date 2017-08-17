@@ -423,14 +423,6 @@ public class EntityTest {
         }
 
         assertThat(count, is(1));
-
-        try {
-            entity.removeFromWorld();
-        } catch (IllegalStateException e) {
-            count++;
-        }
-
-        assertThat(count, is(2));
     }
 
     @Test
