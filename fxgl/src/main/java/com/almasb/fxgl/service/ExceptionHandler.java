@@ -33,12 +33,4 @@ public interface ExceptionHandler extends Consumer<Throwable> {
      * @param e exception
      */
     void handle(Throwable e);
-
-    /**
-     * Handles unchecked fatal exception.
-     * The system is likely to shutdown after the exception was logged / displayed.
-     *
-     * @param e exception
-     */
-    void handleFatal(Throwable e);
 }

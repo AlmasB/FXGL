@@ -30,6 +30,8 @@ private constructor(private val name: String) {
         private var configured = false
         private var closed = false
 
+        @JvmStatic fun isConfigured(): Boolean = configured
+
         @JvmStatic fun configure(config: LoggerConfig) {
             if (configured)
                 throw IllegalStateException("Logger already configured")

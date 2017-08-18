@@ -32,6 +32,7 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.FPSCounter;
 import com.almasb.fxgl.time.Timer;
+import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -86,13 +87,17 @@ public abstract class GameApplication extends Application {
      */
     @Override
     public final void start(Stage stage) {
-        initAppSettings();
-        initLogger();
+        try {
+            initAppSettings();
+            initLogger();
 
-        initMainWindow(stage);
+            initMainWindow(stage);
 
-        showPreloadingStage();
-        startFXGL();
+            showPreloadingStage();
+            startFXGL();
+        } catch (Exception e) {
+            handleFatalErrorBeforeLaunch(e);
+        }
     }
 
     /**
@@ -143,21 +148,15 @@ public abstract class GameApplication extends Application {
             try {
                 configureFXGL();
 
+                initFatalExceptionHandler();
+
                 runUpdaterAndWait();
 
                 configureApp();
 
                 launchGame();
             } catch (Exception e) {
-                log.fatal("Exception during FXGL configuration:");
-                log.fatal(Logger.errorTraceAsString(e));
-                log.fatal("FXGL will now exit");
-
-                Logger.close();
-
-                // we don't know what exactly has been initialized
-                // so to avoid the process hanging just shut down the JVM
-                System.exit(-1);
+                handleFatalErrorBeforeLaunch(e);
             }
         }, "FXGL Launcher Thread").start();
     }
@@ -207,6 +206,59 @@ public abstract class GameApplication extends Application {
         } catch (IOException e) {
             log.warning("Loading user properties failed: " + e);
         }
+    }
+
+    private void initFatalExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler((t, error) -> handleFatalErrorAfterLaunch(error));
+    }
+
+    private void handleFatalErrorBeforeLaunch(Throwable error) {
+        if (Logger.isConfigured()) {
+            log.fatal("Exception during FXGL configuration:");
+            log.fatal(Logger.errorTraceAsString(error));
+            log.fatal("FXGL will now exit");
+
+            Logger.close();
+        } else {
+            System.out.println("Exception during FXGL configuration:");
+            error.printStackTrace();
+            System.out.println("FXGL will now exit");
+        }
+
+        // we can't assume we are running on JavaFX Application thread
+        Async.startFX(() -> {
+            // block with error dialog so that user can read the error
+            new ErrorDialog(error).showAndWait();
+        }).await();
+
+        // we don't know what exactly has been initialized
+        // so to avoid the process hanging just shut down the JVM
+        System.exit(-1);
+    }
+
+    private boolean handledOnce = false;
+
+    private void handleFatalErrorAfterLaunch(Throwable error) {
+        if (handledOnce) {
+            // just ignore to avoid spamming dialogs
+            return;
+        }
+
+        handledOnce = true;
+
+        log.fatal("Uncaught Exception:");
+        log.fatal(Logger.errorTraceAsString(error));
+        log.fatal("Application will now exit");
+
+        // stop main loop from running as we cannot continue
+        stopMainLoop();
+
+        // assume we are running on JavaFX Application thread
+        // block with error dialog so that user can read the error
+        new ErrorDialog(error).showAndWait();
+
+        // exit normally
+        exit();
     }
 
     private void runUpdaterAndWait() {
@@ -317,15 +369,14 @@ public abstract class GameApplication extends Application {
         mainLoop.start();
     }
 
-    // TODO: move call from FXGL exception handler to this class and make private
     /**
      * Only called in exceptional cases, e.g. uncaught (unchecked) exception.
      */
-    void stopMainLoop() {
-        log.debug("Stopping main loop");
-
-        if (mainLoop != null)
+    private void stopMainLoop() {
+        if (mainLoop != null) {
+            log.debug("Stopping main loop");
             mainLoop.stop();
+        }
     }
 
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();

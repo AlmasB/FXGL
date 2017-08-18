@@ -10,8 +10,4 @@ object MockExceptionHandler : ExceptionHandler {
     override fun handle(e: Throwable?) {
 
     }
-
-    override fun handleFatal(e: Throwable?) {
-
-    }
 }
