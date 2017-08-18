@@ -6,10 +6,10 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.math.Vec2;
+import com.almasb.fxgl.core.pool.Pools;
 
 /**
  * Separating Axis Theorem based check for collision.
@@ -135,13 +135,12 @@ public final class SAT {
     }
 
     private static Vec2 newVec(double x, double y) {
-        return FXGL.getPooler()
-                .get(Vec2.class)
+        return Pools.obtain(Vec2.class)
                 .set((float)x, (float)y);
     }
 
     private static void freeVec(Vec2 vec) {
-        FXGL.getPooler().put(vec);
+        Pools.free(vec);
     }
 
     private static double cos(double angle) {

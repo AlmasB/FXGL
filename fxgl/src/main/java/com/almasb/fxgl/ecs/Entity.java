@@ -44,8 +44,6 @@ public class Entity {
     private boolean cleaning = false;
     private boolean controlsEnabled = true;
 
-    private boolean isMarkedForRemoval = false;
-
     private Runnable onActive = null;
     private Runnable onNotActive = null;
 
@@ -68,10 +66,12 @@ public class Entity {
         active.set(true);
     }
 
+    /**
+     * Equivalent to world.removeEntity(this);
+     */
     public final void removeFromWorld() {
-        checkValid();
-
-        world.removeEntity(this);
+        if (world != null)
+            world.removeEntity(this);
     }
 
     /**
@@ -82,7 +82,7 @@ public class Entity {
     }
 
     /**
-     * Entity is "active" from the moment it is registered in the world
+     * Entity is "active" from the moment it is added to the world
      * and until it is removed from the world.
      *
      * @return true if entity is active, else false
@@ -121,12 +121,10 @@ public class Entity {
         onNotActive = action;
     }
 
-    boolean isMarkedForRemoval() {
-        return isMarkedForRemoval;
-    }
-
     void markForRemoval() {
-        isMarkedForRemoval = true;
+        if (onNotActive != null)
+            onNotActive.run();
+        active.set(false);
     }
 
     /**
@@ -155,15 +153,11 @@ public class Entity {
     }
 
     /**
-     * Cleans entity.
      * Removes all controls and components.
      * After this the entity cannot be used.
      */
     void clean() {
         cleaning = true;
-        if (onNotActive != null)
-            onNotActive.run();
-        active.set(false);
 
         removeAllControls();
         removeAllComponents();
@@ -172,7 +166,6 @@ public class Entity {
 
         moduleListeners.clear();
 
-        controlsEnabled = true;
         world = null;
         onActive = null;
         onNotActive = null;
@@ -385,21 +378,33 @@ public class Entity {
 
         if (module instanceof Control)
             injectFields((Control) module);
+        else if (module instanceof Component)
+            injectFields((Component) module);
 
         module.onAdded(this);
         notifyModuleAdded(module);
     }
 
     @SuppressWarnings("unchecked")
+    private void injectFields(Component component) {
+        ReflectionUtils.findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
+            Component comp = getComponent((Class<? extends Component>) field.getType());
+            if (comp != null) {
+                ReflectionUtils.inject(field, component, comp);
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
-        ReflectionUtils.findFieldsByType(control, Component.class).forEach(field -> {
+        ReflectionUtils.findFieldsByTypeRecursive(control, Component.class).forEach(field -> {
             Component comp = getComponent((Class<? extends Component>) field.getType());
             if (comp != null) {
                 ReflectionUtils.inject(field, control, comp);
             }
         });
 
-        ReflectionUtils.findFieldsByType(control, Control.class).forEach(field -> {
+        ReflectionUtils.findFieldsByTypeRecursive(control, Control.class).forEach(field -> {
             Control ctrl = getControl((Class<? extends Control>) field.getType());
             if (ctrl != null) {
                 ReflectionUtils.inject(field, control, ctrl);

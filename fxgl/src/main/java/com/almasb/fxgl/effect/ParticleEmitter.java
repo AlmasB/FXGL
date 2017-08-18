@@ -5,13 +5,13 @@
  */
 package com.almasb.fxgl.effect;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pool;
+import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.util.TriFunction;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 public class ParticleEmitter {
 
     static {
-        FXGL.getPooler().registerPool(Particle.class, new Pool<Particle>(256) {
+        Pools.set(Particle.class, new Pool<Particle>(256) {
             @Override
             protected Particle newObject() {
                 return new Particle();
@@ -406,7 +406,7 @@ public class ParticleEmitter {
      * @return particle
      */
     private Particle emit(int i, double x, double y) {
-        Particle particle = FXGL.getPooler().get(Particle.class);
+        Particle particle = Pools.obtain(Particle.class);
         particle.init(sourceImage, spawnPointFunction.apply(i, x, y),
                 velocityFunction.apply(i, x, y),
                 gravityFunction.get(),

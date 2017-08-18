@@ -6,8 +6,9 @@
 
 package com.almasb.fxgl.io
 
+import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.Logger
 import javafx.concurrent.Task
-import org.apache.logging.log4j.LogManager
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.function.Consumer
@@ -19,12 +20,13 @@ import java.util.function.Consumer
  * @param T type of the result of this task
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-abstract class IOTask<T>(val name: String) {
+abstract class IOTask<T>
+@JvmOverloads constructor(val name: String = "NoName") {
 
     companion object {
-        private val log = LogManager.getLogger(IOTask::class.java)
+        private val log = Logger.get(IOTask::class.java)
 
-        /* Convenient way of creating small tasks */
+        /* Convenient way of creating small tasks in Java */
 
         @JvmStatic fun <R> of(func: Callable<R>) = of("NoName", func)
 
@@ -46,8 +48,6 @@ abstract class IOTask<T>(val name: String) {
 
     private var onSuccess: ((T) -> Unit)? = null
     private var onFailure: ((Throwable) -> Unit)? = null
-
-    constructor() : this("NoName")
 
     @Throws(Exception::class)
     protected abstract fun onExecute(): T
@@ -96,9 +96,10 @@ abstract class IOTask<T>(val name: String) {
     }
 
     open protected fun fail(error: Throwable) {
-        log.warn("Task failed: $name Error: $error")
+        log.warning("Task failed: $name Error: $error")
         if (onFailure == null) {
-            FXGLIO.defaultExceptionHandler.accept(error)
+            // TODO: low-level shouldn't call high-level
+            FXGL.getExceptionHandler().handle(error)
         } else {
             onFailure!!.invoke(error)
         }
@@ -148,7 +149,7 @@ abstract class IOTask<T>(val name: String) {
      *
      * @param executor executor to use for async
      */
-    @JvmOverloads fun executeAsync(executor: Executor = FXGLIO.defaultExecutor) {
+    @JvmOverloads fun executeAsync(executor: Executor = FXGL.getExecutor()) {
         executor.execute({ execute() })
     }
 
@@ -160,60 +161,7 @@ abstract class IOTask<T>(val name: String) {
      * @param executor executor to use for async
      * @param dialog dialog to use while task is being executed
      */
-    @JvmOverloads fun executeAsyncWithDialog(executor: Executor = FXGLIO.defaultExecutor,
-                                             dialog: UIDialogHandler = FXGLIO.defaultUIDialogSupplier.get()) {
-        log.debug("Showing dialog")
-        dialog.show()
-
-        val task = object : IOTask<T>(name) {
-            override fun onExecute(): T {
-                log.debug("Executing task: $name")
-                return this@IOTask.onExecute()
-            }
-
-            override fun succeed(value: T) {
-                log.debug("succeed(): Dismissing dialog")
-                dialog.dismiss()
-                this@IOTask.succeed(value)
-            }
-
-            override fun fail(error: Throwable) {
-                log.debug("fail(): Dismissing dialog")
-                dialog.dismiss()
-                this@IOTask.fail(error)
-            }
-        }
-
-        task.executeAsync(executor)
-    }
-
-    /**
-     * Executes this task asynchronously with default executor and shows dialog.
-     * The dialog will be dismissed after task is completed, whether succeeded or failed.
-     * Note: it is up to the caller to ensure that executor is actually async.
-     * Unlike [executeAsyncWithDialog], this function hooks into the JavaFX concurrent model
-     * with its Task as the primitive execution unit.
-     * Hence, onSuccess and onFailure are executed from the JavaFX App thread.
-     *
-     * @param dialog dialog to use while task is being executed
-     */
-    fun executeAsyncWithDialogFX(dialog: UIDialogHandler) {
-        executeAsyncWithDialogFX(FXGLIO.defaultExecutor, dialog)
-    }
-
-    /**
-     * Executes this task asynchronously with given executor and shows dialog.
-     * The dialog will be dismissed after task is completed, whether succeeded or failed.
-     * Note: it is up to the caller to ensure that executor is actually async.
-     * Unlike [executeAsyncWithDialog], this function hooks into the JavaFX concurrent model
-     * with its Task as the primitive execution unit.
-     * Hence, onSuccess and onFailure are executed from the JavaFX App thread.
-     *
-     * @param executor executor to use for async
-     * @param dialog dialog to use while task is being executed
-     */
-    @JvmOverloads fun executeAsyncWithDialogFX(executor: Executor = FXGLIO.defaultExecutor,
-                                               dialog: UIDialogHandler = FXGLIO.defaultUIDialogSupplier.get()) {
+    @JvmOverloads fun executeAsyncWithDialogFX(dialog: UIDialogHandler = NONE, executor: Executor = FXGL.getExecutor()) {
         log.debug("Showing dialog")
         dialog.show()
 

@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.ui;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.logging.Logger;
 import javafx.animation.*;
 import javafx.beans.binding.DoubleBinding;
@@ -46,7 +45,7 @@ import javafx.util.Duration;
  */
 public final class ProgressBar extends Parent {
 
-    private static final Logger log = FXGL.getLogger("FXGL.ProgressBar");
+    private static final Logger log = Logger.get("FXGL.ProgressBar");
 
     private DoubleProperty minValue = new SimpleDoubleProperty(0.0);
     private DoubleProperty currentValue = new SimpleDoubleProperty(0.0);

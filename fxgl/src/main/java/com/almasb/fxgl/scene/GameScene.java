@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.scene;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
@@ -49,7 +48,7 @@ import java.util.List;
 public final class GameScene extends FXGLScene
         implements EntityWorldListener, ModuleListener {
 
-    private static final Logger log = FXGL.getLogger("FXGL.GameScene");
+    private static final Logger log = Logger.get("FXGL.GameScene");
 
     /**
      * Root for entity views, it is affected by viewport movement.
@@ -272,8 +271,7 @@ public final class GameScene extends FXGLScene
         return group;
     }
 
-    @Override
-    public void onWorldUpdate(double tpf) {
+    public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
 
         particlesGC.setGlobalAlpha(1);

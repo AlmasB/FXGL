@@ -29,11 +29,4 @@ public interface EntityWorldListener {
      * @param entity the entity
      */
     void onEntityRemoved(Entity entity);
-
-    /**
-     * Called after the world updated itself.
-     *
-     * @param tpf time per frame
-     */
-    void onWorldUpdate(double tpf);
 }

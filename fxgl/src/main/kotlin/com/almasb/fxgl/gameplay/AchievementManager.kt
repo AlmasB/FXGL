@@ -7,6 +7,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.gameplay.AchievementEvent
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
@@ -20,7 +21,7 @@ import javafx.collections.FXCollections
  */
 class AchievementManager : UserProfileSavable {
 
-    private val log = FXGL.getLogger(javaClass)
+    private val log = Logger.get(javaClass)
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
 
@@ -40,7 +41,7 @@ class AchievementManager : UserProfileSavable {
 
         a.setOnAchieved(Runnable { FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a)) })
         achievements.add(a)
-        log.debug { "Registered new achievement \"${a.name}\"" }
+        log.debug("Registered new achievement \"${a.name}\"")
     }
 
     /**

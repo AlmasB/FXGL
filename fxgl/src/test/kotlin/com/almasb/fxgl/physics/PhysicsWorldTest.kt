@@ -7,8 +7,11 @@
 package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ecs.GameWorld
+import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.component.CollidableComponent
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
@@ -25,7 +28,7 @@ class PhysicsWorldTest {
     companion object {
         @BeforeClass
         @JvmStatic fun before() {
-            FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
+            FXGL.configure(MockApplicationModule.get())
         }
     }
 
@@ -33,22 +36,22 @@ class PhysicsWorldTest {
         TYPE1, TYPE2
     }
 
-    private val physicsWorld = FXGL.getInstance(com.almasb.fxgl.physics.PhysicsWorld::class.java)
+    private val physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
 
     @Test
     fun `Collision notification`() {
-        val entity1 = com.almasb.fxgl.entity.Entities.builder()
+        val entity1 = Entities.builder()
                 .type(EntityType.TYPE1)
                 .at(100.0, 100.0)
-                .bbox(com.almasb.fxgl.physics.HitBox("Test1", com.almasb.fxgl.physics.BoundingShape.box(40.0, 40.0)))
-                .with(com.almasb.fxgl.entity.component.CollidableComponent(true))
+                .bbox(HitBox("Test1", BoundingShape.box(40.0, 40.0)))
+                .with(CollidableComponent(true))
                 .build()
 
-        val entity2 = com.almasb.fxgl.entity.Entities.builder()
+        val entity2 = Entities.builder()
                 .type(EntityType.TYPE2)
                 .at(150.0, 100.0)
-                .bbox(com.almasb.fxgl.physics.HitBox("Test2", com.almasb.fxgl.physics.BoundingShape.box(40.0, 40.0)))
-                .with(com.almasb.fxgl.entity.component.CollidableComponent(true))
+                .bbox(HitBox("Test2", BoundingShape.box(40.0, 40.0)))
+                .with(CollidableComponent(true))
                 .build()
 
         var hitboxCount = 0
@@ -56,9 +59,9 @@ class PhysicsWorldTest {
         var collisionCount = 0
         var collisionEndCount = 0
 
-        val handler = object : com.almasb.fxgl.physics.CollisionHandler(EntityType.TYPE1, EntityType.TYPE2) {
+        val handler = object : CollisionHandler(EntityType.TYPE1, EntityType.TYPE2) {
 
-            override fun onHitBoxTrigger(a: Entity, b: Entity, boxA: com.almasb.fxgl.physics.HitBox, boxB: com.almasb.fxgl.physics.HitBox) {
+            override fun onHitBoxTrigger(a: Entity, b: Entity, boxA: HitBox, boxB: HitBox) {
                 assertTrue(a === entity1)
                 assertTrue(b === entity2)
 
@@ -89,6 +92,8 @@ class PhysicsWorldTest {
 
         physicsWorld.addCollisionHandler(handler)
 
+        // TODO: we don't need game world, test physics world only
+        
         // create game world and add listener
         val gameWorld = FXGL.getInstance(GameWorld::class.java)
         gameWorld.addWorldListener(physicsWorld)
@@ -107,6 +112,7 @@ class PhysicsWorldTest {
         entity2.translateX(-30.0)
 
         gameWorld.onUpdate(0.016)
+        physicsWorld.onUpdate(0.016)
 
         // hit box and collision begin triggered, entities are now colliding
         assertThat(hitboxCount, `is`(1))
@@ -115,6 +121,7 @@ class PhysicsWorldTest {
         assertThat(collisionEndCount, `is`(0))
 
         gameWorld.onUpdate(0.016)
+        physicsWorld.onUpdate(0.016)
 
         // collision continues
         assertThat(hitboxCount, `is`(1))
@@ -123,6 +130,7 @@ class PhysicsWorldTest {
         assertThat(collisionEndCount, `is`(0))
 
         gameWorld.onUpdate(0.016)
+        physicsWorld.onUpdate(0.016)
 
         // collision continues
         assertThat(hitboxCount, `is`(1))
@@ -134,6 +142,7 @@ class PhysicsWorldTest {
         entity2.translateX(30.0)
 
         gameWorld.onUpdate(0.016)
+        physicsWorld.onUpdate(0.016)
 
         // collision end
         assertThat(hitboxCount, `is`(1))
@@ -147,6 +156,7 @@ class PhysicsWorldTest {
         entity2.translateX(-30.0)
 
         gameWorld.onUpdate(0.016)
+        physicsWorld.onUpdate(0.016)
 
         // no change in collision
         assertThat(hitboxCount, `is`(1))

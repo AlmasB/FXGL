@@ -25,9 +25,9 @@ public class MoveTask extends GoalAction {
     }
 
     @Override
-    public void action() {
+    public void onUpdate(double tpf) {
 
-        double speed = 0.016 * 60 * 5;
+        double speed = tpf * 60 * 5;
 
         Point2D vector = new Point2D(400, 300).subtract(getObject().getPosition())
                 .normalize()

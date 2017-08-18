@@ -7,31 +7,32 @@ package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.app.listener.ExitListener;
 import com.almasb.fxgl.app.listener.StateListener;
-import com.almasb.fxgl.app.listener.UpdateListener;
+import com.almasb.fxgl.asset.AssetLoader;
+import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
-import com.almasb.fxgl.core.logging.FXGLLogger;
-import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.core.logging.*;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.ecs.GameWorld;
+import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.gameplay.AchievementEvent;
 import com.almasb.fxgl.gameplay.GameState;
 import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.gameplay.NotificationEvent;
 import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.io.FXGLIO;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.saving.LoadEvent;
 import com.almasb.fxgl.saving.SaveEvent;
+import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.service.*;
-import com.almasb.fxgl.service.impl.display.DisplayEvent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.FPSCounter;
 import com.almasb.fxgl.time.Timer;
+import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -45,7 +46,6 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * To use FXGL extend this class and implement necessary methods.
@@ -76,12 +76,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class GameApplication extends Application {
 
-    /**
-     * Use system logger until actual logger is ready.
-     */
-    private static Logger log = FXGLLogger.getSystemLogger();
+    private static final Logger log = Logger.get(GameApplication.class);
 
-    private Stage primaryStage;
+    private MainWindow mainWindow;
     private ReadOnlyGameSettings settings;
     private AppStateMachine stateMachine;
 
@@ -90,11 +87,39 @@ public abstract class GameApplication extends Application {
      */
     @Override
     public final void start(Stage stage) {
-        primaryStage = stage;
+        try {
+            initAppSettings();
+            initLogger();
 
-        Version.print();
-        showPreloadingStage();
-        startFXGL();
+            initMainWindow(stage);
+
+            showPreloadingStage();
+            startFXGL();
+        } catch (Exception e) {
+            handleFatalErrorBeforeLaunch(e);
+        }
+    }
+
+    /**
+     * Take app settings from user.
+     */
+    private void initAppSettings() {
+        GameSettings localSettings = new GameSettings();
+        initSettings(localSettings);
+        settings = localSettings.toReadOnly();
+    }
+
+    private void initLogger() {
+        Logger.configure(new LoggerConfig());
+        // we write all logs to file but adjust console log level based on app mode
+        Logger.addOutput(new FileOutput("FXGL"), LoggerLevel.DEBUG);
+        Logger.addOutput(new ConsoleOutput(), settings.getApplicationMode().getLoggerLevel());
+
+        log.debug("Logger initialized");
+    }
+
+    private void initMainWindow(Stage stage) {
+        mainWindow = new MainWindow(stage, settings);
     }
 
     /**
@@ -102,23 +127,28 @@ public abstract class GameApplication extends Application {
      */
     private void showPreloadingStage() {
         Stage preloadingStage = new Stage(StageStyle.UNDECORATED);
-        preloadingStage.initOwner(primaryStage);
+        preloadingStage.initOwner(mainWindow.getStage());
         preloadingStage.setScene(new PreloadingScene());
         preloadingStage.show();
 
-        // when main stage is ready to show
-        primaryStage.setOnShowing(e -> {
+        // when main stage has opened
+        mainWindow.setOnShown(() -> {
             // close our preloader
             preloadingStage.close();
             // clean the reference to lambda + preloader
-            primaryStage.setOnShowing(null);
+            mainWindow.setOnShown(null);
         });
     }
 
     private void startFXGL() {
+        log.debug("Starting FXGL");
+        Version.print();
+
         new Thread(() -> {
             try {
                 configureFXGL();
+
+                initFatalExceptionHandler();
 
                 runUpdaterAndWait();
 
@@ -126,14 +156,7 @@ public abstract class GameApplication extends Application {
 
                 launchGame();
             } catch (Exception e) {
-                log.fatal("Exception during system configuration:");
-                log.fatal(FXGLLogger.errorTraceAsString(e));
-                log.fatal("System will now exit");
-                log.close();
-
-                // we don't know what exactly has been initialized
-                // so to avoid the process hanging just shut down the JVM
-                System.exit(-1);
+                handleFatalErrorBeforeLaunch(e);
             }
         }, "FXGL Launcher Thread").start();
     }
@@ -146,12 +169,9 @@ public abstract class GameApplication extends Application {
 
         initSystemProperties();
         initUserProperties();
-        initAppSettings();
 
         FXGL.configure(new ApplicationModule(this));
 
-        // actual logger is ready
-        log = FXGLLogger.get(GameApplication.class);
         log.debug("FXGL configuration complete");
 
         log.infof("FXGL configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
@@ -188,13 +208,57 @@ public abstract class GameApplication extends Application {
         }
     }
 
-    /**
-     * Take app settings from user.
-     */
-    private void initAppSettings() {
-        GameSettings localSettings = new GameSettings();
-        initSettings(localSettings);
-        settings = localSettings.toReadOnly();
+    private void initFatalExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler((t, error) -> handleFatalErrorAfterLaunch(error));
+    }
+
+    private void handleFatalErrorBeforeLaunch(Throwable error) {
+        if (Logger.isConfigured()) {
+            log.fatal("Exception during FXGL configuration:");
+            log.fatal(Logger.errorTraceAsString(error));
+            log.fatal("FXGL will now exit");
+
+            Logger.close();
+        } else {
+            System.out.println("Exception during FXGL configuration:");
+            error.printStackTrace();
+            System.out.println("FXGL will now exit");
+        }
+
+        // we can't assume we are running on JavaFX Application thread
+        Async.startFX(() -> {
+            // block with error dialog so that user can read the error
+            new ErrorDialog(error).showAndWait();
+        }).await();
+
+        // we don't know what exactly has been initialized
+        // so to avoid the process hanging just shut down the JVM
+        System.exit(-1);
+    }
+
+    private boolean handledOnce = false;
+
+    private void handleFatalErrorAfterLaunch(Throwable error) {
+        if (handledOnce) {
+            // just ignore to avoid spamming dialogs
+            return;
+        }
+
+        handledOnce = true;
+
+        log.fatal("Uncaught Exception:");
+        log.fatal(Logger.errorTraceAsString(error));
+        log.fatal("Application will now exit");
+
+        // stop main loop from running as we cannot continue
+        stopMainLoop();
+
+        // assume we are running on JavaFX Application thread
+        // block with error dialog so that user can read the error
+        new ErrorDialog(error).showAndWait();
+
+        // exit normally
+        exit();
     }
 
     private void runUpdaterAndWait() {
@@ -209,8 +273,7 @@ public abstract class GameApplication extends Application {
         long start = System.nanoTime();
 
         initStateMachine();
-        registerServicesForUpdate();
-
+        attachEventHandlers();
 
         log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
     }
@@ -220,15 +283,12 @@ public abstract class GameApplication extends Application {
         playState = (PlayState) stateMachine.getPlayState();
     }
 
-    private void registerServicesForUpdate() {
-        addUpdateListener(getAudioPlayer());
-
+    private void attachEventHandlers() {
         getEventBus().addEventHandler(NotificationEvent.ANY, e -> getAudioPlayer().onNotificationEvent(e));
         getEventBus().addEventHandler(AchievementEvent.ANY, e -> getNotificationService().onAchievementEvent(e));
 
         getEventBus().addEventHandler(SaveEvent.ANY, e -> {
             getAudioPlayer().save(e.getProfile());
-            getDisplay().save(e.getProfile());
             getInput().save(e.getProfile());
             getGameplay().getAchievementManager().save(e.getProfile());
             getGameplay().getQuestManager().save(e.getProfile());
@@ -236,31 +296,25 @@ public abstract class GameApplication extends Application {
 
         getEventBus().addEventHandler(LoadEvent.ANY, e -> {
             getAudioPlayer().load(e.getProfile());
-            getDisplay().load(e.getProfile());
             getInput().load(e.getProfile());
             getGameplay().getAchievementManager().load(e.getProfile());
             getGameplay().getQuestManager().load(e.getProfile());
         });
 
-        getEventBus().addEventHandler(DisplayEvent.CLOSE_REQUEST, e -> exit());
-
         getEventBus().scanForHandlers(this);
-    }
-
-    private void generateDefaultProfile() {
-        if (getSettings().isMenuEnabled()) {
-            menuHandler.generateDefaultProfile();
-        }
     }
 
     private void launchGame() {
         Async.startFX(() -> {
-            FXGL.getDisplay().initAndShow();
+            mainWindow.initAndShow();
 
             // these things need to be called early before the main loop
             // so that menus can correctly display input controls, etc.
             // this is called once per application lifetime
             runPreInit();
+
+            // attempt to clean any garbage we generated before main loop
+            System.gc();
 
             startMainLoop();
         });
@@ -272,9 +326,6 @@ public abstract class GameApplication extends Application {
         if (getSettings().isProfilingEnabled()) {
             profiler = new Profiler();
         }
-
-        FXGLIO.INSTANCE.setDefaultExceptionHandler(getExceptionHandler());
-        FXGLIO.INSTANCE.setDefaultExecutor(getExecutor());
 
         initAchievements();
 
@@ -290,9 +341,12 @@ public abstract class GameApplication extends Application {
         generateDefaultProfile();
 
         preInit();
+    }
 
-        // attempt to clean any garbage we generated before main loop
-        System.gc();
+    private void generateDefaultProfile() {
+        if (getSettings().isMenuEnabled()) {
+            menuHandler.generateDefaultProfile();
+        }
     }
 
     private AnimationTimer mainLoop;
@@ -318,11 +372,11 @@ public abstract class GameApplication extends Application {
     /**
      * Only called in exceptional cases, e.g. uncaught (unchecked) exception.
      */
-    void stopMainLoop() {
-        log.debug("Stopping main loop");
-
-        if (mainLoop != null)
+    private void stopMainLoop() {
+        if (mainLoop != null) {
+            log.debug("Stopping main loop");
             mainLoop.stop();
+        }
     }
 
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
@@ -347,17 +401,6 @@ public abstract class GameApplication extends Application {
 
     private void tick(double tpf) {
         stateMachine.onUpdate(tpf);
-
-        for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).onUpdate(tpf);
-        }
-
-        if (stateMachine.isInPlay()) {
-            onUpdate(tpf);
-            onPostUpdate(tpf);
-        } else {
-            onPausedUpdate(tpf);
-        }
     }
 
     private Profiler profiler;
@@ -391,16 +434,18 @@ public abstract class GameApplication extends Application {
      * Exit the application.
      */
     protected final void exit() {
-        log.debug("Exiting FXGL application");
+        log.debug("Exiting game application");
         exitListeners.forEach(ExitListener::onExit);
 
         if (getSettings().isProfilingEnabled()) {
             profiler.print();
         }
 
+        log.debug("Exiting FXGL");
         FXGL.destroy();
-        log.debug("Closing FXGL logger and exiting JavaFX");
-        log.close();
+
+        log.debug("Closing logger and exiting JavaFX");
+        Logger.close();
 
         Platform.exit();
     }
@@ -423,14 +468,16 @@ public abstract class GameApplication extends Application {
         return menuHandler;
     }
 
-    private CopyOnWriteArrayList<UpdateListener> listeners = new CopyOnWriteArrayList<>();
-
-    public final void addUpdateListener(UpdateListener listener) {
-        listeners.add(listener);
+    FXGLScene getScene() {
+        return mainWindow.getCurrentScene();
     }
 
-    public final void removeUpdateListener(UpdateListener listener) {
-        listeners.remove(listener);
+    void setScene(FXGLScene scene) {
+        mainWindow.setScene(scene);
+    }
+
+    boolean saveScreenshot() {
+        return mainWindow.saveScreenshot();
     }
 
     private List<ExitListener> exitListeners = new ArrayList<>();
@@ -547,13 +594,6 @@ public abstract class GameApplication extends Application {
     protected void onPostUpdate(double tpf) {}
 
     /**
-     * Called every frame in any non-Play state.
-     *
-     * @param tpf time per frame
-     */
-    protected void onPausedUpdate(double tpf) {}
-
-    /**
      * Called when MenuEvent.SAVE occurs.
      *
      * @return data with required info about current state
@@ -582,15 +622,6 @@ public abstract class GameApplication extends Application {
     /**
      * Used by mocking.
      *
-     * @param stage mock stage
-     */
-    void injectStage(Stage stage) {
-        primaryStage = stage;
-    }
-
-    /**
-     * Used by mocking.
-     *
      * @param settings mock settings
      */
     void injectSettings(ReadOnlyGameSettings settings) {
@@ -608,13 +639,6 @@ public abstract class GameApplication extends Application {
 
     public final AppStateMachine getStateMachine() {
         return stateMachine;
-    }
-
-    /**
-     * @return primary stage as set by JavaFX
-     */
-    final Stage getPrimaryStage() {
-        return primaryStage;
     }
 
     public final GameState getGameState() {

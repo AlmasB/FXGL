@@ -6,7 +6,6 @@
 package com.almasb.fxgl.parser;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.service.AssetLoader;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -31,7 +30,7 @@ public final class JavaScriptParser {
 
     /**
      * Constructs new javascript parser for given .js file or source string.
-     * The file will be loaded with {@link AssetLoader#loadScript(String)}
+     * The file will be loaded with AssetLoader.
      *
      * @param scriptFileName name of script file under "/assets/scripts/" or source string
      * @throws IllegalArgumentException if syntax error

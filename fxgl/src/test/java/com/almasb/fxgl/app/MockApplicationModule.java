@@ -6,12 +6,12 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.service.*;
-import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.service.impl.event.FXGLEventBus;
+import com.almasb.fxgl.service.ExceptionHandler;
+import com.almasb.fxgl.service.Executor;
+import com.almasb.fxgl.service.NotificationService;
+import com.almasb.fxgl.service.UIFactory;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
-import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.google.inject.name.Names;
@@ -34,13 +34,13 @@ public class MockApplicationModule extends ApplicationModule {
 
     public static MockApplicationModule get() {
         if (instance == null) {
-            Stage stage = mockStage();
+            mockStage();
+
             GameSettings settings = new GameSettings();
 
             GameApplication app = new MockGameApplication();
             app.initSettings(settings);
 
-            app.injectStage(stage);
             app.injectSettings(settings.toReadOnly());
 
             instance = new MockApplicationModule(app);
@@ -73,11 +73,10 @@ public class MockApplicationModule extends ApplicationModule {
     protected void bindServices() {
         mockProperties();
         mockTimer();
-        mockPooler();
         mockLoggerFactory();
         mockInput();
         mockExecutor();
-        mockEventBus();
+        mockExceptionHandler();
         mockNotificationService();
         mockUIFactory();
         mockAssetLoader();
@@ -98,9 +97,8 @@ public class MockApplicationModule extends ApplicationModule {
         //bind(LocalTimer.class).to(FXGLLocalTimer.class);
     }
 
-    private void mockPooler() {
-        bind(Integer.class).annotatedWith(Names.named("pooling.initialSize")).toInstance(128);
-        bind(Pooler.class).to(FXGLPooler.class);
+    private void mockExceptionHandler() {
+        bind(ExceptionHandler.class).toInstance(MockExceptionHandler.INSTANCE);
     }
 
     private void mockLoggerFactory() {
@@ -115,10 +113,6 @@ public class MockApplicationModule extends ApplicationModule {
         bind(Executor.class).to(FXGLExecutor.class);
     }
 
-    private void mockEventBus() {
-        bind(EventBus.class).to(FXGLEventBus.class);
-    }
-
     private void mockNotificationService() {
         bind(NotificationService.class).to(FXGLNotificationService.class);
     }
@@ -129,7 +123,6 @@ public class MockApplicationModule extends ApplicationModule {
 
     private void mockAssetLoader() {
         bind(Integer.class).annotatedWith(Names.named("asset.cache.size")).toInstance(35);
-        bind(AssetLoader.class).to(FXGLAssetLoader.class);
     }
 
     private void mockPhysics() {

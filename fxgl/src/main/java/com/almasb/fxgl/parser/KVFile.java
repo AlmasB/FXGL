@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.parser;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.logging.Logger;
 import javafx.util.Pair;
 
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  */
 public final class KVFile {
 
-    private static final Logger log = FXGL.getLogger("FXGL.KVFile");
+    private static final Logger log = Logger.get("FXGL.KVFile");
 
     private List<Pair<String, String>> entries = new ArrayList<>();
 

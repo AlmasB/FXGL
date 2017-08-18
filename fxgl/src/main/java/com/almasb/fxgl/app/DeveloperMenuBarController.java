@@ -30,7 +30,7 @@ import jfxtras.scene.control.window.Window;
  */
 public class DeveloperMenuBarController implements UIController {
 
-    private static final Logger log = FXGL.getLogger(DeveloperMenuBarController.class);
+    private static final Logger log = Logger.get(DeveloperMenuBarController.class);
 
     private GameApplication app;
 

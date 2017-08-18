@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.Disposable;
 import com.almasb.fxgl.core.logging.Logger;
 import javafx.beans.property.ObjectProperty;
@@ -23,7 +22,7 @@ import javafx.scene.shape.Circle;
  */
 public class EntityView extends Parent implements Disposable {
 
-    protected static final Logger log = FXGL.getLogger("FXGL.EntityView");
+    protected static final Logger log = Logger.get("FXGL.EntityView");
 
     /**
      * Constructs a view with no content.

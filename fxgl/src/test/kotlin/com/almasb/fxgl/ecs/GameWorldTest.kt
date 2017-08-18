@@ -14,6 +14,7 @@ import com.almasb.fxgl.ecs.component.IrremovableComponent
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.entity.component.IDComponent
 import com.almasb.fxgl.entity.component.PositionComponent
+import com.almasb.fxgl.entity.component.TypeComponent
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
@@ -112,6 +113,32 @@ class GameWorldTest {
         gameWorld.addEntity(genericEntity)
 
         gameWorld.onUpdate(0.016)
+    }
+
+    @Test
+    fun `Add and remove entity`() {
+        val e = Entity()
+        assertThat(gameWorld.entities, not(hasItems(e)))
+        assertFalse(e.isActive)
+
+        gameWorld.addEntity(e)
+        assertThat(gameWorld.entities, hasItems(e))
+        assertTrue(e.isActive)
+
+        gameWorld.removeEntity(e)
+        assertThat(gameWorld.entities, not(hasItems(e)))
+        assertFalse(e.isActive)
+    }
+
+    @Test
+    fun `Double remove entities in same frame does nothing`() {
+        assertThat(gameWorld.entities, hasItem(e1))
+
+        e1.removeFromWorld()
+        assertFalse(e1.isActive)
+
+        e1.removeFromWorld()
+        assertFalse(e1.isActive)
     }
 
     @Test
@@ -290,6 +317,9 @@ class GameWorldTest {
     fun `Throw when removing entity not attached to this world`() {
         val e = Entity()
 
+        val newWorld = GameWorld()
+        newWorld.addEntity(e)
+
         gameWorld.removeEntity(e)
     }
 
@@ -374,6 +404,36 @@ class GameWorldTest {
     fun `Throw if factory has no such spawn method`() {
         gameWorld.setEntityFactory(TestEntityFactory())
         gameWorld.spawn("bla-bla")
+    }
+
+    @Test
+    fun `Listeners notified in the same frame`() {
+        val e = Entity()
+        e.addComponent(PositionComponent(100.0, 100.0))
+
+        var count = 0
+
+        gameWorld.addWorldListener(object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {
+                count++
+                assertThat(entity, `is`(e))
+                assertThat(entity.hasComponent(PositionComponent::class.java), `is`(true))
+                assertThat(entity.getComponent(PositionComponent::class.java).value, `is`(Point2D(100.0, 100.0)))
+            }
+
+            override fun onEntityRemoved(entity: Entity) {
+                count++
+                assertThat(entity, `is`(e))
+                assertThat(entity.hasComponent(PositionComponent::class.java), `is`(true))
+                assertThat(entity.getComponent(PositionComponent::class.java).value, `is`(Point2D(100.0, 100.0)))
+            }
+        })
+
+        gameWorld.addEntity(e)
+        assertThat(count, `is`(1))
+
+        gameWorld.removeEntity(e)
+        assertThat(count, `is`(2))
     }
 
     //    @Test

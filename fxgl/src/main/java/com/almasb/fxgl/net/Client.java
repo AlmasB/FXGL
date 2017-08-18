@@ -6,8 +6,7 @@
 
 package com.almasb.fxgl.net;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.almasb.fxgl.core.logging.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -41,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Client extends NetworkConnection {
 
-    private static final Logger log = LogManager.getLogger(Client.class);
+    private static final Logger log = Logger.get(Client.class);
 
     private TCPConnectionThread tcpThread = new TCPConnectionThread();
     private UDPConnectionThread udpThread = new UDPConnectionThread();
@@ -173,7 +172,7 @@ public final class Client extends NetworkConnection {
                     }).parse((Serializable) data);
                 }
             } catch (Exception e) {
-                log.warn("Exception during TCP connection execution: " + e.getMessage());
+                log.warning("Exception during TCP connection execution: " + e.getMessage());
                 running = false;
                 onConnectionClosed();
                 return;
@@ -219,7 +218,7 @@ public final class Client extends NetworkConnection {
                     }
                 }
             } catch (Exception e) {
-                log.warn("Exception during UDP connection execution: " + e.getMessage());
+                log.warning("Exception during UDP connection execution: " + e.getMessage());
                 running = false;
                 return;
             }

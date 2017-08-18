@@ -7,17 +7,12 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
-import com.almasb.fxgl.gameplay.Gameplay;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.impl.asset.FXGLAssetLoader;
-import com.almasb.fxgl.service.impl.audio.FXGLAudioPlayer;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDisplay;
-import com.almasb.fxgl.service.impl.event.FXGLEventBus;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
-import com.almasb.fxgl.service.impl.pooler.FXGLPooler;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
@@ -49,42 +44,6 @@ public interface ServiceType<T> {
     default Scope scope() {
         return Scopes.SINGLETON;
     }
-
-    ServiceType<AudioPlayer> AUDIO_PLAYER = new ServiceType<AudioPlayer>() {
-        @Override
-        public Class<AudioPlayer> service() {
-            return AudioPlayer.class;
-        }
-
-        @Override
-        public Class<? extends AudioPlayer> serviceProvider() {
-            return FXGLAudioPlayer.class;
-        }
-    };
-
-    ServiceType<AssetLoader> ASSET_LOADER = new ServiceType<AssetLoader>() {
-        @Override
-        public Class<AssetLoader> service() {
-            return AssetLoader.class;
-        }
-
-        @Override
-        public Class<? extends AssetLoader> serviceProvider() {
-            return FXGLAssetLoader.class;
-        }
-    };
-
-    ServiceType<EventBus> EVENT_BUS = new ServiceType<EventBus>() {
-        @Override
-        public Class<EventBus> service() {
-            return EventBus.class;
-        }
-
-        @Override
-        public Class<? extends EventBus> serviceProvider() {
-            return FXGLEventBus.class;
-        }
-    };
 
     ServiceType<Display> DISPLAY = new ServiceType<Display>() {
         @Override
@@ -131,30 +90,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Net> serviceProvider() {
             return FXGLNet.class;
-        }
-    };
-
-    ServiceType<Gameplay> GAMEPLAY = new ServiceType<Gameplay>() {
-        @Override
-        public Class<Gameplay> service() {
-            return Gameplay.class;
-        }
-
-        @Override
-        public Class<? extends Gameplay> serviceProvider() {
-            return Gameplay.class;
-        }
-    };
-
-    ServiceType<Pooler> POOLER = new ServiceType<Pooler>() {
-        @Override
-        public Class<Pooler> service() {
-            return Pooler.class;
-        }
-
-        @Override
-        public Class<? extends Pooler> serviceProvider() {
-            return FXGLPooler.class;
         }
     };
 

@@ -16,7 +16,6 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;
-import com.almasb.fxgl.settings.SceneDimension;
 import com.almasb.fxgl.ui.FXGLSpinner;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -65,7 +64,7 @@ public abstract class FXGLMenu extends FXGLScene {
     /**
      * The logger.
      */
-    protected static final Logger log = FXGL.getLogger("FXGL.Menu");
+    protected static final Logger log = Logger.get("FXGL.Menu");
 
     protected final GameApplication app;
 
@@ -305,16 +304,17 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentVideo() {
         log.debug("createContentVideo()");
 
-        Spinner<SceneDimension> spinner =
-                new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
+        // TODO: refactor
+//        Spinner<SceneDimension> spinner =
+//                new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
+//
+//        Button btnApply = FXGL.getUIFactory().newButton("Apply");
+//        btnApply.setOnAction(e -> {
+//            SceneDimension dimension = spinner.getValue();
+//            app.getDisplay().setSceneDimension(dimension);
+//        });
 
-        Button btnApply = FXGL.getUIFactory().newButton("Apply");
-        btnApply.setOnAction(e -> {
-            SceneDimension dimension = spinner.getValue();
-            app.getDisplay().setSceneDimension(dimension);
-        });
-
-        return new MenuContent(new HBox(50, FXGL.getUIFactory().newText("Resolution"), spinner), btnApply);
+        return new MenuContent();
     }
 
     /**

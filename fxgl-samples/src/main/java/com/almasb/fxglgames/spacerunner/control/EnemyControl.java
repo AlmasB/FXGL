@@ -11,7 +11,6 @@ import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.service.AudioPlayer;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxglgames.spacerunner.SpaceRunnerFactory;
 import com.almasb.fxglgames.spacerunner.SpaceRunnerType;
@@ -25,13 +24,10 @@ public class EnemyControl extends Control {
     private LocalTimer attackTimer;
     private Duration nextAttack = Duration.seconds(2);
 
-    private AudioPlayer audioPlayer;
-
     private PositionComponent position;
 
     @Override
     public void onAdded(Entity entity) {
-        audioPlayer = FXGL.getAudioPlayer();
 
         attackTimer = FXGL.newLocalTimer();
         attackTimer.capture();

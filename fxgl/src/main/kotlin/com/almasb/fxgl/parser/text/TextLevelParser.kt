@@ -8,6 +8,7 @@ package com.almasb.fxgl.parser.text
 
 import com.almasb.fxgl.annotation.SpawnSymbol
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.EntitySpawner
@@ -33,7 +34,7 @@ class TextLevelParser(val entityFactory: TextEntityFactory) : LevelParser {
     })
 
     companion object {
-        private val log = FXGL.getLogger("FXGL.TextLevelParser")
+        private val log = Logger.get("FXGL.TextLevelParser")
     }
 
     private val producers = HashMap<Char, EntitySpawner>()

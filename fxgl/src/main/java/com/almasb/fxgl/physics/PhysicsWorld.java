@@ -5,12 +5,12 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pool;
+import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.EntityWorldListener;
 import com.almasb.fxgl.entity.Entities;
@@ -26,7 +26,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroup;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
-import com.almasb.fxgl.service.Pooler;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -49,7 +48,7 @@ import java.util.Iterator;
 @Singleton
 public final class PhysicsWorld implements EntityWorldListener, ContactListener {
 
-    private static final Logger log = FXGL.getLogger("FXGL.PhysicsWorld");
+    private static final Logger log = Logger.get("FXGL.PhysicsWorld");
 
     private final double PIXELS_PER_METER;
     private final double METERS_PER_PIXELS;
@@ -63,8 +62,6 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     private Array<CollisionPair> collisions = new UnorderedArray<>(128);
 
     private int appHeight;
-
-    private Pooler pooler = FXGL.getPooler();
 
     /**
      * Note: certain modifications to the jbox2d world directly may not be
@@ -147,7 +144,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     @Inject
-    protected PhysicsWorld(@Named("appHeight") int appHeight,
+    public PhysicsWorld(@Named("appHeight") int appHeight,
                            @Named("physics.ppm") double ppm) {
         this.appHeight = appHeight;
 
@@ -163,7 +160,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private void initCollisionPool() {
-        pooler.registerPool(CollisionPair.class, new Pool<CollisionPair>() {
+        Pools.set(CollisionPair.class, new Pool<CollisionPair>() {
             @Override
             protected CollisionPair newObject() {
                 return new CollisionPair();
@@ -234,8 +231,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
     }
 
-    @Override
-    public void onWorldUpdate(double tpf) {
+    public void onUpdate(double tpf) {
         jboxWorld.step((float) tpf, 8, 3);
         postStep();
 
@@ -290,7 +286,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
             // no collision registered, so add the pair
             if (pair == null) {
-                pair = pooler.get(CollisionPair.class);
+                pair = Pools.obtain(CollisionPair.class);
                 pair.init(e1, e2, handler);
 
                 // add pair to list of collisions so we still use it
@@ -327,7 +323,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
                 collisions.removeIndex(pairIndex);
                 pair.collisionEnd();
-                pooler.put(pair);
+                Pools.free(pair);
             }
         }
     }
@@ -382,7 +378,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                     collisionBeginFor(handler, e1, e2, result.getBoxA(), result.getBoxB());
 
                     // put result back to pool only if collided
-                    pooler.put(result);
+                    Pools.free(result);
                 } else {
                     collisionEndFor(e1, e2);
                 }
@@ -398,7 +394,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         // null means e1 and e2 were not colliding before
         // if not null, then ignore because e1 and e2 are still colliding
         if (pair == null) {
-            pair = pooler.get(CollisionPair.class);
+            pair = Pools.obtain(CollisionPair.class);
             pair.init(e1, e2, handler);
 
             // add pair to list of collisions so we still use it
@@ -420,7 +416,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
             collisions.removeIndex(pairIndex);
             pair.collisionEnd();
-            pooler.put(pair);
+            Pools.free(pair);
         }
     }
 
@@ -436,7 +432,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                     || !isCollidable(pair.getA()) || !isCollidable(pair.getB())) {
 
                 it.remove();
-                pooler.put(pair);
+                Pools.free(pair);
                 continue;
             }
 

@@ -6,10 +6,9 @@
 
 package com.almasb.fxgl.net;
 
+import com.almasb.fxgl.core.logging.Logger;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutput;
@@ -26,7 +25,7 @@ import java.util.function.Consumer;
  */
 public abstract class NetworkConnection {
 
-    private static final Logger log = LogManager.getLogger(NetworkConnection.class);
+    private static final Logger log = Logger.get(NetworkConnection.class);
 
     protected Map<Class<?>, DataParser<? super Serializable>> parsers = new HashMap<>();
 
@@ -95,13 +94,13 @@ public abstract class NetworkConnection {
         try {
             send(ConnectionMessage.CLOSING, NetworkProtocol.TCP);
         } catch (Exception e) {
-            log.warn("TCP already disconnected or error: " + e.getMessage());
+            log.warning("TCP already disconnected or error: " + e.getMessage());
         }
 
         try {
             send(ConnectionMessage.CLOSING, NetworkProtocol.UDP);
         } catch (Exception e) {
-            log.warn("UDP already disconnected or error: " + e.getMessage());
+            log.warning("UDP already disconnected or error: " + e.getMessage());
         }
     }
 

@@ -7,7 +7,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.3.6</version>
+        <version>0.3.7</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
@@ -61,13 +61,6 @@
             <groupId>io.github.lukehutch</groupId>
             <artifactId>fast-classpath-scanner</artifactId>
             <version>${classpath.scanner.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.5</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

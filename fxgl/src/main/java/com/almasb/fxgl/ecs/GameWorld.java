@@ -11,18 +11,14 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.UnorderedArray;
-import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.IrremovableComponent;
 import com.almasb.fxgl.ecs.component.TimeComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
-import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.parser.tiled.TiledMap;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
@@ -41,12 +37,9 @@ import java.util.stream.Collectors;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 public final class GameWorld {
 
-    private static Logger log = FXGLLogger.get("FXGL.GameWorld");
-
-    private Array<EventTrigger<?> > eventTriggers = new UnorderedArray<>(32);
+    private static Logger log = Logger.get("FXGL.GameWorld");
     
     private Array<Entity> updateList;
 
@@ -58,15 +51,14 @@ public final class GameWorld {
     /**
      * List of entities in the world.
      */
-    protected List<Entity> entities;
+    private List<Entity> entities;
 
     private GameWorldQuery query;
 
     /**
      * Constructs the world with initial entity capacity = 32.
      */
-    @Inject
-    protected GameWorld() {
+    public GameWorld() {
         this(32);
     }
 
@@ -105,6 +97,11 @@ public final class GameWorld {
     }
 
     public void removeEntity(Entity entity) {
+        if (!entity.isActive()) {
+            log.warning("Attempted to remove entity which is not active");
+            return;
+        }
+
         if (!canRemove(entity))
             return;
 
@@ -114,6 +111,7 @@ public final class GameWorld {
         entities.remove(entity);
 
         entity.markForRemoval();
+        notifyEntityRemoved(entity);
     }
 
     public void removeEntities(Entity... entitiesToRemove) {
@@ -134,7 +132,7 @@ public final class GameWorld {
         for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            if (e.isMarkedForRemoval()) {
+            if (!e.isActive()) {
                 remove(e);
                 it.remove();
             } else {
@@ -145,8 +143,6 @@ public final class GameWorld {
                 e.update(tpf * tpfRatio);
             }
         }
-
-        notifyWorldUpdated(tpf);
     }
 
     /**
@@ -182,7 +178,6 @@ public final class GameWorld {
     }
 
     private void remove(Entity entity) {
-        notifyEntityRemoved(entity);
         entity.clean();
     }
 
@@ -212,12 +207,6 @@ public final class GameWorld {
         }
     }
 
-    private void notifyWorldUpdated(double tpf) {
-        for (int i = 0; i < worldListeners.size(); i++) {
-            worldListeners.get(i).onWorldUpdate(tpf);
-        }
-    }
-
     /**
      * @return direct list of entities in the world (do NOT modify)
      */
@@ -234,27 +223,6 @@ public final class GameWorld {
 
     public void onUpdate(double tpf) {
         update(tpf);
-        updateTriggers(tpf);
-    }
-
-    private void updateTriggers(double tpf) {
-        for (Iterator<EventTrigger<?> > it = eventTriggers.iterator(); it.hasNext(); ) {
-            EventTrigger trigger = it.next();
-
-            trigger.onUpdate(tpf);
-
-            if (trigger.reachedLimit()) {
-                it.remove();
-            }
-        }
-    }
-
-    public void addEventTrigger(EventTrigger<?> trigger) {
-        eventTriggers.add(trigger);
-    }
-
-    public void removeEventTrigger(EventTrigger<?> trigger) {
-        eventTriggers.removeValueByIdentity(trigger);
     }
 
     private ObjectProperty<Entity> selectedEntity = new SimpleObjectProperty<>();
@@ -390,6 +358,12 @@ public final class GameWorld {
     }
 
     /* QUERIES */
+
+    public <T extends Entity> EntityGroup<T> getGroup(Enum<?>... types) {
+        EntityGroup<T> group = new EntityGroup<T>((List<? extends T>) getEntitiesByType(types), types);
+        addWorldListener(group);
+        return group;
+    }
 
     /**
      * Useful for singleton type entities, e.g. Player.

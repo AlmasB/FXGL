@@ -6,8 +6,11 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.asset.AssetLoader
+import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.event.EventBus
+import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.ServiceType
@@ -19,9 +22,6 @@ import com.google.inject.Injector
 import com.google.inject.Module
 import com.google.inject.name.Named
 import com.google.inject.name.Names
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.function.Consumer
@@ -43,7 +43,7 @@ class FXGL private constructor() {
 
         private lateinit var internalBundle: Bundle
 
-        private lateinit var log: Logger
+        private val log = Logger.get("FXGL")
 
         /**
          * Temporarily holds k-v pairs from system.properties.
@@ -94,8 +94,6 @@ class FXGL private constructor() {
 
             internalApp = appModule.app
 
-            val loggerInit = asyncInitLogger()
-
             createRequiredDirs()
 
             val allModules = arrayListOf(*modules)
@@ -105,12 +103,6 @@ class FXGL private constructor() {
             injector = Guice.createInjector(allModules)
 
             internalAllServices = appModule.allServices
-
-            runBlocking { loggerInit.await() }
-
-            // log that we are ready
-            log = getLogger("FXGL")
-            log.debug("FXGL logger initialized")
 
             initServices()
 
@@ -173,16 +165,6 @@ class FXGL private constructor() {
             // populate with default info
             internalBundle = Bundle("FXGL")
             //internalBundle.put("version.check", LocalDate.now())
-        }
-
-        private fun asyncInitLogger() = async(CommonPool) {
-            val resourceName = when (internalApp.settings.applicationMode) {
-                ApplicationMode.DEBUG -> "log4j2-debug.xml"
-                ApplicationMode.DEVELOPER -> "log4j2-devel.xml"
-                ApplicationMode.RELEASE -> "log4j2-release.xml"
-            }
-
-            FXGLLogger.configure(FXGL::class.java.getResource(resourceName).toExternalForm())
         }
 
         private fun initServices() {
@@ -252,13 +234,13 @@ class FXGL private constructor() {
 
         /* CONVENIENCE ACCESSORS - SERVICES */
 
-        private val _assetLoader by lazy { getService(ServiceType.ASSET_LOADER) }
+        private val _assetLoader by lazy { getInstance(AssetLoader::class.java) }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
-        private val _eventBus by lazy { getService(ServiceType.EVENT_BUS) }
+        private val _eventBus by lazy { EventBus() }
         @JvmStatic fun getEventBus() = _eventBus
 
-        private val _audioPlayer by lazy { getService(ServiceType.AUDIO_PLAYER) }
+        private val _audioPlayer by lazy { getInstance(AudioPlayer::class.java) }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
 
         private val _display by lazy { getService(ServiceType.DISPLAY) }
@@ -273,25 +255,19 @@ class FXGL private constructor() {
         private val _net by lazy { getService(ServiceType.NET) }
         @JvmStatic fun getNet() = _net
 
-        private val _pooler by lazy { getService(ServiceType.POOLER) }
-        @JvmStatic fun getPooler() = _pooler
-
         private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
         @JvmStatic fun getExceptionHandler() = _exceptionHandler
 
         private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
         @JvmStatic fun getUIFactory() = _uiFactory
 
-        private val _gameplay by lazy { getService(ServiceType.GAMEPLAY) }
+        private val _gameplay by lazy { getInstance(Gameplay::class.java) }
         @JvmStatic fun getGameplay() = _gameplay
 
         /* OTHER CONVENIENCE ACCESSORS */
 
         private val _input by lazy { internalApp.input }
         @JvmStatic fun getInput() = _input
-
-        @JvmStatic fun getLogger(name: String) = FXGLLogger.get(name)
-        @JvmStatic fun getLogger(caller: Class<*>) = FXGLLogger.get(caller)
 
         /**
          * @return new instance on each call

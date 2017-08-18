@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.io.serialization
 
-import org.apache.logging.log4j.LogManager
+import com.almasb.fxgl.core.logging.Logger
 import java.io.Serializable
 import java.util.*
 
@@ -20,7 +20,7 @@ class Bundle(val name: String) : Serializable {
     companion object {
         private val serialVersionUID = 1L
 
-        private val log = LogManager.getLogger(Bundle::class.java)
+        private val log = Logger.get(Bundle::class.java)
     }
 
     private val data = HashMap<String, Any>()

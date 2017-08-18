@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.effect;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
+import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
@@ -52,7 +52,7 @@ public class ParticleControl extends Control {
             Particle p = it.next();
             if (p.update(tpf)) {
                 it.remove();
-                FXGL.getPooler().put(p);
+                Pools.free(p);
             }
         }
     }

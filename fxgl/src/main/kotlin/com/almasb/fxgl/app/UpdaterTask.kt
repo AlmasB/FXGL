@@ -6,13 +6,13 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.util.Version
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
 import javafx.util.Duration
-import java.util.function.Consumer
 
 /**
  * Handles everything related to FXGL update.
@@ -22,7 +22,7 @@ import java.util.function.Consumer
  */
 internal class UpdaterTask : Runnable {
 
-    private val log = FXGL.getLogger(javaClass)
+    private val log = Logger.get(javaClass)
     private lateinit var updateCheckTimer: LocalTimer
 
     /**
@@ -105,7 +105,7 @@ internal class UpdaterTask : Runnable {
 
                     button.isDisable = false
                 }
-                .executeAsyncWithDialogFX(FXGL.getExecutor())
+                .executeAsyncWithDialogFX()
 
         // blocking call
         dialog.showAndWait()

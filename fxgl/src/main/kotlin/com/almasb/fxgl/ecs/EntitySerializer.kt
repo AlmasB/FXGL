@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.ecs
 
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.ecs.serialization.SerializableComponent
 import com.almasb.fxgl.ecs.serialization.SerializableControl
 import com.almasb.fxgl.io.serialization.Bundle
@@ -18,7 +18,7 @@ import com.almasb.fxgl.io.serialization.Bundle
  */
 internal object EntitySerializer {
 
-    private val log = FXGLLogger.get(javaClass)
+    private val log = Logger.get(javaClass)
 
     /**
      * Save entity state into bundle.

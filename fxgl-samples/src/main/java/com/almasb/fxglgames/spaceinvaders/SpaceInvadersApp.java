@@ -119,7 +119,7 @@ public class SpaceInvadersApp extends GameApplication {
 
     @Override
     protected void initGame() {
-        log = FXGL.getLogger("SpaceInvaders");
+        log = Logger.get("SpaceInvaders");
 
         // we have to use file system directly, since we are running without menus
         FS.<SaveData>readDataTask(SAVE_DATA_NAME)

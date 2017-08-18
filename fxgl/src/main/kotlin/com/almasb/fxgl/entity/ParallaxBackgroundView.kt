@@ -7,7 +7,6 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Orientation
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext

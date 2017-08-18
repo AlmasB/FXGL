@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.towerfall.ai;
 
-import com.almasb.fxgl.ai.Action;
+import com.almasb.fxgl.ai.SingleAction;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.time.LocalTimer;
 import com.almasb.fxglgames.towerfall.CharacterControl;
@@ -16,13 +16,13 @@ import javafx.util.Duration;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class AttackTask extends Action {
+public class AttackTask extends SingleAction {
 
     private CharacterControl control;
     private LocalTimer attackTimer = FXGL.newLocalTimer();
 
     @Override
-    public void action() {
+    public void onUpdate(double tpf) {
         if (control == null) {
             control = getObject().getControl(CharacterControl.class);
         }

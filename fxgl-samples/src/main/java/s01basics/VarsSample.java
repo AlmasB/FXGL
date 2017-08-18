@@ -7,8 +7,8 @@
 package s01basics;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.settings.SceneDimension;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
@@ -35,7 +35,7 @@ public class VarsSample extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("test", -1);
-        vars.put("dim", new SceneDimension(100, 50));
+        vars.put("vector", new Vec2(1, 1));
 
         vars.put("score", 0);
         vars.put("lives", 3);
@@ -43,15 +43,15 @@ public class VarsSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        getGameState().<SceneDimension>addListener("dim", ((prev, now) -> System.out.println(prev + " " + now)));
+        getGameState().<Vec2>addListener("vector", ((prev, now) -> System.out.println(prev + " " + now)));
 
         System.out.println(getGameState().getInt("test"));
 
-        System.out.println(getGameState().<SceneDimension>getObject("dim").getWidth());
+        System.out.println(getGameState().<Vec2>getObject("vector").x);
 
-        System.out.println(getGameState().<SceneDimension>objectProperty("dim").get().getWidth());
+        System.out.println(getGameState().<Vec2>objectProperty("vector").get().y);
 
-        getGameState().setValue("dim", new SceneDimension(300, 300));
+        getGameState().setValue("vector", new Vec2(300, 300));
     }
 
     @Override

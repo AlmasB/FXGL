@@ -29,7 +29,7 @@ object SystemActions {
 
     private fun screenshot() = object : UserAction("Screenshot") {
         override fun onActionBegin() {
-            val ok = FXGL.getDisplay().saveScreenshot()
+            val ok = FXGL.getApp().saveScreenshot()
 
             FXGL.getNotificationService().pushNotification(if (ok) "Screenshot saved" else "Screenshot failed")
         }

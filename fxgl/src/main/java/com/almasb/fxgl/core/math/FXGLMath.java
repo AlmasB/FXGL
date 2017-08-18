@@ -14,6 +14,7 @@ import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -300,6 +301,20 @@ public final class FXGLMath {
 
     public static Color randomColor() {
         return Color.color(random(), random(), random());
+    }
+
+    /**
+     * @return random element of the given array
+     */
+    public static <T> T random(T[] array) {
+        return array[random(0, array.length - 1)];
+    }
+
+    /**
+     * @return random element of the given list
+     */
+    public static <T> T random(List<T> list) {
+        return list.get(random(0, list.size() - 1));
     }
 
     /* RANDOM END */

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.devtools
 
-import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.logging.Logger
 import javafx.scene.Node
 import javafx.scene.Parent
 import jfxtras.util.NodeUtil
@@ -18,7 +18,7 @@ import org.controlsfx.tools.Utils
  */
 object DeveloperTools {
 
-    private val log = FXGL.getLogger("FXGLDeveloperTools")
+    private val log = Logger.get("FXGLDeveloperTools")
 
     /**
      * Recursively counts number of children of [node].

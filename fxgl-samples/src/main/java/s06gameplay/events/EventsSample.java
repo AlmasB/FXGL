@@ -114,7 +114,7 @@ public class EventsSample extends GameApplication {
 
         // 1. add event trigger and specify when and what to fire
         // you can use a custom event or pre-defined event / with custom event type
-        getGameWorld().addEventTrigger(new EventTrigger<EntityEvent>(
+        getEventBus().addEventTrigger(new EventTrigger<EntityEvent>(
                 () -> player.getRightX() > enemy.getX(),
                 () -> new EntityEvent(Events.PASSED, player, enemy)
                 // by default the triggers fire once only

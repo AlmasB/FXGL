@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.core.logging.FXGLLogger;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.saving.DataFile;
+import com.almasb.fxgl.scene.SceneFactory;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -21,7 +21,7 @@ import java.util.Deque;
  */
 public final class AppStateMachine {
 
-    private static final Logger log = FXGLLogger.get(AppStateMachine.class);
+    private static final Logger log = Logger.get(AppStateMachine.class);
 
     private final AppState loading;
     private final AppState play;
@@ -42,18 +42,20 @@ public final class AppStateMachine {
 
         log.debug("Initializing application states");
 
-        // STARTUP is default
-        appState = FXGL.getInstance(StartupState.class);
+        SceneFactory sceneFactory = FXGL.getInstance(SceneFactory.class);
 
-        loading = FXGL.getInstance(LoadingState.class);
-        play = FXGL.getInstance(PlayState.class);
+        // STARTUP is default
+        appState = new StartupState(app);
+
+        loading = new LoadingState(app, sceneFactory);
+        play = new PlayState(sceneFactory);
 
         // reasonable hack to trigger dialog state init before intro and menus
         DialogSubState.INSTANCE.getView();
 
-        intro = app.getSettings().isIntroEnabled() ? FXGL.getInstance(IntroState.class) : null;
-        mainMenu = app.getSettings().isMenuEnabled() ? FXGL.getInstance(MainMenuState.class) : null;
-        gameMenu = app.getSettings().isMenuEnabled() ? FXGL.getInstance(GameMenuState.class) : null;
+        intro = app.getSettings().isIntroEnabled() ? new IntroState(app, sceneFactory) : null;
+        mainMenu = app.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : null;
+        gameMenu = app.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : null;
     }
 
     /**
@@ -73,7 +75,7 @@ public final class AppStateMachine {
 
         // new state
         appState = newState;
-        app.getDisplay().setScene(appState.getScene());
+        app.setScene(appState.getScene());
         appState.enter(prevState);
     }
 
@@ -92,7 +94,7 @@ public final class AppStateMachine {
 
         // new state
         subStates.push(newState);
-        app.getDisplay().getCurrentScene().getRoot().getChildren().add(newState.getView());
+        app.getScene().getRoot().getChildren().add(newState.getView());
         newState.enter(prevState);
     }
 
@@ -110,7 +112,7 @@ public final class AppStateMachine {
 
         log.debug(getCurrentState() + " <- " + prevState);
 
-        app.getDisplay().getCurrentScene().getRoot().getChildren().remove(prevState.getView());
+        app.getScene().getRoot().getChildren().remove(prevState.getView());
     }
 
     public State getCurrentState() {

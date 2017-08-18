@@ -7,7 +7,7 @@
 package com.almasb.fxgl.gameplay.cutscene
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.core.logging.FXGLLogger
+import com.almasb.fxgl.core.logging.Logger
 
 /**
  *
@@ -16,7 +16,7 @@ import com.almasb.fxgl.core.logging.FXGLLogger
  */
 class CutsceneManager {
 
-    private val log = FXGLLogger.get(javaClass)
+    private val log = Logger.get(javaClass)
 
     private val cachedScripts = hashMapOf<String, RPGCutscene>()
 
