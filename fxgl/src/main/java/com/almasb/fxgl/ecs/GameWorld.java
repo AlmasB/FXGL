@@ -19,8 +19,6 @@ import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.parser.tiled.TiledMap;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
@@ -39,7 +37,6 @@ import java.util.stream.Collectors;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 public final class GameWorld {
 
     private static Logger log = Logger.get("FXGL.GameWorld");
@@ -61,8 +58,7 @@ public final class GameWorld {
     /**
      * Constructs the world with initial entity capacity = 32.
      */
-    @Inject
-    protected GameWorld() {
+    public GameWorld() {
         this(32);
     }
 

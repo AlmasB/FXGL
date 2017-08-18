@@ -20,8 +20,6 @@ import com.almasb.fxgl.physics.PhysicsWorld
 import com.almasb.fxgl.saving.DataFile
 import com.almasb.fxgl.scene.*
 import com.almasb.fxgl.scene.intro.IntroFinishedEvent
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.input.KeyEvent
@@ -36,11 +34,8 @@ import javafx.scene.input.KeyEvent
  * The first state.
  * Active only once.
  */
-@Singleton
 internal class StartupState
-@Inject
-// placeholder scene, will be replaced by next state
-private constructor(private val app: GameApplication) : AppState(object : FXGLScene() {}) {
+internal constructor(private val app: GameApplication) : AppState(/* placeholder scene */ object : FXGLScene() {}) {
 
     private val log = Logger.get(StartupState::class.java)
 
@@ -64,10 +59,8 @@ private constructor(private val app: GameApplication) : AppState(object : FXGLSc
  * Plays intro animation.
  * State is active only once.
  */
-@Singleton
 internal class IntroState
-@Inject
-private constructor(private val app: GameApplication,
+internal constructor(private val app: GameApplication,
                     sceneFactory: SceneFactory) : AppState(sceneFactory.newIntro()) {
 
     private var introFinishedSubscriber: Subscriber? = null
@@ -106,9 +99,8 @@ private constructor(private val app: GameApplication,
  * Initializes game aspects: assets, game, physics, UI, etc.
  * This task is rerun every time the game application is restarted.
  */
-@Singleton
 internal class LoadingState
-@Inject private constructor(private val app: GameApplication,
+internal constructor(private val app: GameApplication,
                             sceneFactory: SceneFactory) : AppState(sceneFactory.newLoadingScene()) {
 
     var dataFile = DataFile.EMPTY
@@ -234,15 +226,21 @@ internal class LoadingState
  * State is active when the game is being played.
  * The state in which the player will spend most of the time.
  */
-@Singleton
 internal class PlayState
-@Inject
-private constructor(val gameState: GameState,
-                    val gameWorld: GameWorld,
-                    val physicsWorld: PhysicsWorld,
-                    sceneFactory: SceneFactory) : AppState(sceneFactory.newGameScene()) {
+internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGameScene()) {
+
+    val gameState: GameState
+    val gameWorld: GameWorld
+    val physicsWorld: PhysicsWorld
+
+    val gameScene: GameScene
+        get() = scene as GameScene
 
     init {
+        gameState = GameState()
+        gameWorld = GameWorld()
+        physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
+
         gameWorld.addWorldListener(physicsWorld)
         gameWorld.addWorldListener(gameScene)
 
@@ -272,18 +270,13 @@ private constructor(val gameState: GameState,
         FXGL.getApp().onUpdate(tpf)
         FXGL.getApp().onPostUpdate(tpf)
     }
-
-    val gameScene: GameScene
-        get() = scene as GameScene
 }
 
 /**
  * State is active when the game is in main menu.
  */
-@Singleton
 internal class MainMenuState
-@Inject
-private constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newMainMenu(FXGL.getApp())) {
+internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newMainMenu(FXGL.getApp())) {
 
     override fun onEnter(prevState: State) {
         if (prevState is StartupState
@@ -303,10 +296,8 @@ private constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newMainM
 /**
  * State is active when the game is in game menu.
  */
-@Singleton
 internal class GameMenuState
-@Inject
-private constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGameMenu(FXGL.getApp())) {
+internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGameMenu(FXGL.getApp())) {
 
     init {
         input.addEventHandler(KeyEvent.ANY, FXGL.getApp().menuListener as MenuEventHandler)
