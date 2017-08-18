@@ -29,7 +29,7 @@ JavaFX Game Development Framework
 
 ## Features
 
-* The list of features can be found in the [Wiki](https://github.com/AlmasB/FXGL/wiki/Core-Features)
+* [List of features](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 * [Showcase](http://almasb.github.io/FXGLGames/)
 
 ## Minimal Example
@@ -92,7 +92,7 @@ dependencies {
 
 ## Uber jar
 
-Latest pre-compiled uber jar can be found in [Releases](https://github.com/AlmasB/FXGL/releases)
+Download latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases)
 
 ## Contribution
 
