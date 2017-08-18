@@ -8,9 +8,7 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
-import com.almasb.fxgl.core.logging.ConsoleOutput
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.core.logging.LoggerLevel
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS

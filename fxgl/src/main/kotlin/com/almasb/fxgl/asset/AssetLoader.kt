@@ -8,7 +8,6 @@ package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.ai.btree.utils.BehaviorTreeParser
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.logging.Logger

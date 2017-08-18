@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.Disposable;
 import com.almasb.fxgl.core.logging.Logger;
 import javafx.beans.property.ObjectProperty;

@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;

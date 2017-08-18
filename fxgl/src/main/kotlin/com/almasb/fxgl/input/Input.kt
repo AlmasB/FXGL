@@ -7,7 +7,6 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.annotation.OnUserAction
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile

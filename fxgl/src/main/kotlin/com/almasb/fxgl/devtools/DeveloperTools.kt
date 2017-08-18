@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.devtools
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.logging.Logger
 import javafx.scene.Node
 import javafx.scene.Parent

@@ -2,7 +2,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import javafx.beans.property.DoubleProperty
