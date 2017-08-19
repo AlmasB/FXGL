@@ -12,12 +12,10 @@ import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.control.ExpireCleanControl;
-import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
-import javafx.util.Duration;
 
 /**
  * Example of using particles.
@@ -34,7 +32,8 @@ public class ParticlesSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
+        settings.setProfilingEnabled(false);
+        settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -50,17 +49,17 @@ public class ParticlesSample extends GameApplication {
                 explosion.addComponent(new PositionComponent(input.getMousePositionWorld()));
 
                 // 2. create and configure emitter + control
-                ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter();
+                ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter(400);
                 ParticleControl control = new ParticleControl(emitter);
+
+                // we also want the entity to destroy itself when particle control is done
+                control.setOnFinished(explosion::removeFromWorld);
 
                 // 3. add control to entity
                 explosion.addControl(control);
 
-                // we also want the entity to destroy itself after 3 seconds
-                explosion.addControl(new ExpireCleanControl(Duration.seconds(3)));
-
                 // 4. add entity to game world
-                getGameWorld().addEntities(explosion);
+                getGameWorld().addEntity(explosion);
             }
         }, MouseButton.PRIMARY);
     }

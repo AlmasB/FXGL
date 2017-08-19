@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.animation.Interpolators;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
@@ -63,17 +64,19 @@ public final class ParticleEmitters {
     /**
      * @return new emitter with explosion configuration
      */
-    public static ParticleEmitter newExplosionEmitter() {
+    public static ParticleEmitter newExplosionEmitter(int explosionRadius) {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(100);
         emitter.setEmissionRate(0.0166);
+        emitter.setMaxEmissions(1);
         emitter.setSize(5, 20);
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y));
-        emitter.setVelocityFunction((i, x, y) -> new Point2D(Math.cos(i), Math.sin(i)).multiply(0.75 * 60));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D(Math.cos(i), Math.sin(i)).multiply(explosionRadius));
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand() * -0.1, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(0.5));
         emitter.setColor(Color.rgb((int) rand(200, 255), 30, 20));
         emitter.setBlendMode(BlendMode.ADD);
+        emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
 
         return emitter;
     }

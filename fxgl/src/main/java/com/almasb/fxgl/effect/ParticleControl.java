@@ -13,6 +13,7 @@ import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -29,6 +30,8 @@ public class ParticleControl extends Control {
     protected Array<Particle> particles = new UnorderedArray<>(256);
 
     private PositionComponent position;
+
+    private Runnable onFinished = EmptyRunnable.INSTANCE;
 
     /**
      * Constructs particle control with specified emitter.
@@ -55,6 +58,10 @@ public class ParticleControl extends Control {
                 Pools.free(p);
             }
         }
+
+        if (particles.isEmpty() && emitter.isFinished()) {
+            onFinished.run();
+        }
     }
 
     @Override
@@ -68,7 +75,7 @@ public class ParticleControl extends Control {
      * @param g graphics context
      * @param viewportOrigin viewport origin
      */
-    public void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
+    public final void renderParticles(GraphicsContext g, Point2D viewportOrigin) {
         for (Particle p : particles) {
             p.render(g, viewportOrigin);
         }
@@ -77,7 +84,11 @@ public class ParticleControl extends Control {
     /**
      * @return particle emitter attached to control
      */
-    public ParticleEmitter getEmitter() {
+    public final ParticleEmitter getEmitter() {
         return emitter;
+    }
+
+    public final void setOnFinished(Runnable onFinished) {
+        this.onFinished = onFinished;
     }
 }

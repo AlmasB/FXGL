@@ -71,9 +71,10 @@ public class ParticleTextureSample extends GameApplication {
                 .viewFromNode(new Rectangle(getWidth(), getHeight()))
                 .buildAndAttach(getGameWorld());
 
-        emitter = ParticleEmitters.newExplosionEmitter();
+        emitter = ParticleEmitters.newExplosionEmitter(100);
         emitter.setSize(5, 20);
         emitter.setNumParticles(24);
+        emitter.setMaxEmissions(Integer.MAX_VALUE);
         emitter.setEmissionRate(0.1);
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(FXGLMath.random(2, 2)));
         emitter.setVelocityFunction((i, x, y) -> Vec2.fromAngle(360 / 24 *i).toPoint2D().multiply(100));

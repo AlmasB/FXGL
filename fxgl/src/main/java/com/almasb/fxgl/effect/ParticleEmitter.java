@@ -188,6 +188,20 @@ public class ParticleEmitter {
         this.emissionRate.set(emissionRate);
     }
 
+    private int maxEmissions = Integer.MAX_VALUE;
+
+    public final int getMaxEmissions() {
+        return maxEmissions;
+    }
+
+    public final void setMaxEmissions(int maxEmissions) {
+        this.maxEmissions = maxEmissions;
+    }
+
+    public boolean isFinished() {
+        return emissions == maxEmissions;
+    }
+
     private DoubleProperty minSize = new SimpleDoubleProperty(9.0);
 
     /**
@@ -394,6 +408,11 @@ public class ParticleEmitter {
     private double rateAC = 1.0;
 
     /**
+     * Number of times particles have been emitted.
+     */
+    private int emissions = 0;
+
+    /**
      * Returns a value in [0..1).
      *
      * @return random value between 0 (incl) and 1 (excl)
@@ -430,11 +449,12 @@ public class ParticleEmitter {
         double rate = getEmissionRate();
 
         rateAC += rate;
-        if (rateAC < 1 || rate == 0) {
+        if (rateAC < 1 || rate == 0 || isFinished()) {
             return Array.empty();
         }
 
         rateAC = 0;
+        emissions++;
         emissionParticles.clear();
 
         int num = getNumParticles();
