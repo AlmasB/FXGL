@@ -72,19 +72,19 @@ public class ParticleTextureSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
 
         emitter = ParticleEmitters.newExplosionEmitter();
-        emitter.setSize(5, 10);
+        emitter.setSize(5, 20);
         emitter.setNumParticles(24);
-        emitter.setEmissionRate(0.5);
+        emitter.setEmissionRate(0.1);
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(FXGLMath.random(2, 2)));
         emitter.setVelocityFunction((i, x, y) -> Vec2.fromAngle(360 / 24 *i).toPoint2D().multiply(100));
-        //emitter.setAccelerationFunction(() -> new Point2D(0, 30));
+        emitter.setAccelerationFunction(() -> new Point2D(0, 30));
         emitter.setSourceImage(getAssetLoader().loadTexture("particleTexture2.png").multiplyColor(Color.rgb(230, 75, 40)).getImage());
-        emitter.setInterpolator(Interpolators.BOUNCE.EASE_OUT());
+        emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
                 .with(new ParticleControl(emitter))
-                .with(new ButterflyControl())
+                //.with(new ButterflyControl())
                 .buildAndAttach();
 
 //        Entities.builder()

@@ -10,10 +10,10 @@ import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.util.TriFunction;
 import javafx.animation.Interpolator;
+import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -36,15 +36,6 @@ import java.util.function.Supplier;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ParticleEmitter {
-
-    static {
-        Pools.set(Particle.class, new Pool<Particle>(256) {
-            @Override
-            protected Particle newObject() {
-                return new Particle();
-            }
-        });
-    }
 
     /**
      * Caches baked images in the form: startColor -> endColor -> [Image, 0..99]
@@ -146,31 +137,89 @@ public class ParticleEmitter {
     }
 
     private Random random = FXGLMath.getRandom();
-    private int numParticles = 25;
-    private double emissionRate = 1.0;
 
-    private double sizeMin = 9;
-    private double sizeMax = 12;
+    /* CONFIGURATORS */
+
+    private IntegerProperty numParticles = new SimpleIntegerProperty(25);
+
+    public IntegerProperty numParticlesProperty() {
+        return numParticles;
+    }
+
+    /**
+     * @return number of particles being spawned per emission
+     */
+    public final int getNumParticles() {
+        return numParticles.get();
+    }
+
+    /**
+     * @param numParticles number of particles being spawned per emission
+     */
+    public final void setNumParticles(int numParticles) {
+        this.numParticles.set(numParticles);
+    }
+
+    private DoubleProperty emissionRate = new SimpleDoubleProperty(1.0);
+
+    public final DoubleProperty emissionRateProperty() {
+        return emissionRate;
+    }
+
+    /**
+     * @return emission rate effective value in [0..1]
+     */
+    public final double getEmissionRate() {
+        return emissionRate.get();
+    }
+
+    /**
+     * Set the emission rate. The value will be effectively
+     * clamped to [0..1].
+     * <li> 1.0 - emission will occur every frame </li>
+     * <li> 0.5 - emission will occur every 2nd frame </li>
+     * <li> 0.33 - emission will occur every 3rd frame </li>
+     * <li> 0.0 - emission will never occur </li>
+     * etc.
+     *
+     * @param emissionRate emission rate
+     */
+    public final void setEmissionRate(double emissionRate) {
+        this.emissionRate.set(emissionRate);
+    }
+
+    private DoubleProperty minSize = new SimpleDoubleProperty(9.0);
 
     /**
      * @return minimum particle size
      */
-    public final double getSizeMin() {
-        return sizeMin;
+    public final double getMinSize() {
+        return minSize.get();
     }
+
+    public final DoubleProperty minSizeProperty() {
+        return minSize;
+    }
+
+    public final void setMinSize(double minSize) {
+        this.minSize.set(minSize);
+    }
+
+    private DoubleProperty maxSize = new SimpleDoubleProperty(12.0);
 
     /**
      * @return maximum particle size
      */
-    public final double getSizeMax() {
-        return sizeMax;
+    public final double getMaxSize() {
+        return maxSize.get();
     }
 
-    /**
-     * @return random size between min and max size
-     */
-    protected final double getRandomSize() {
-        return rand(getSizeMin(), getSizeMax());
+    public final DoubleProperty maxSizeProperty() {
+        return maxSize;
+    }
+
+    public final void setMaxSize(double maxSize) {
+        this.maxSize.set(maxSize);
     }
 
     /**
@@ -182,37 +231,79 @@ public class ParticleEmitter {
      * @param max maximum size
      */
     public final void setSize(double min, double max) {
-        sizeMin = min;
-        sizeMax = max;
+        setMinSize(min);
+        setMaxSize(max);
     }
 
-    private Paint startColor = Color.TRANSPARENT;
-    private Paint endColor = Color.TRANSPARENT;
+    /**
+     * @return random size between min and max size
+     */
+    private double getRandomSize() {
+        return rand(getMinSize(), getMaxSize());
+    }
 
-    public Paint getStartColor() {
+    private ObjectProperty<Paint> startColor = new SimpleObjectProperty<>(Color.TRANSPARENT);
+
+    private ObjectProperty<Paint> endColor = new SimpleObjectProperty<>(Color.TRANSPARENT);
+
+    public final Paint getStartColor() {
+        return startColor.get();
+    }
+
+    public final ObjectProperty<Paint> startColorProperty() {
         return startColor;
     }
 
-    public void setStartColor(Paint startColor) {
-        this.startColor = startColor;
+    public final void setStartColor(Paint startColor) {
+        this.startColor.set(startColor);
     }
 
-    public Paint getEndColor() {
+    public final Paint getEndColor() {
+        return endColor.get();
+    }
+
+    public final ObjectProperty<Paint> endColorProperty() {
         return endColor;
     }
 
-    public void setEndColor(Paint endColor) {
-        this.endColor = endColor;
+    public final void setEndColor(Paint endColor) {
+        this.endColor.set(endColor);
     }
 
-    public Paint getColor() {
-        return startColor;
+    public final void setColor(Paint color) {
+        setStartColor(color);
+        setEndColor(color);
     }
 
-    public void setColor(Paint startColor) {
-        this.startColor = startColor;
-        this.endColor = startColor;
+    private ObjectProperty<BlendMode> blendMode = new SimpleObjectProperty<>(BlendMode.SRC_OVER);
+
+    public final BlendMode getBlendMode() {
+        return blendMode.get();
     }
+
+    public final ObjectProperty<BlendMode> blendModeProperty() {
+        return blendMode;
+    }
+
+    public final void setBlendMode(BlendMode blendMode) {
+        this.blendMode.set(blendMode);
+    }
+
+    private ObjectProperty<Interpolator> interpolator = new SimpleObjectProperty<>(Interpolator.LINEAR);
+
+    public final Interpolator getInterpolator() {
+        return interpolator.get();
+    }
+
+    public final ObjectProperty<Interpolator> interpolatorProperty() {
+        return interpolator;
+    }
+
+    public final void setInterpolator(Interpolator interpolator) {
+        this.interpolator.set(interpolator);
+    }
+
+    /* FUNCTION CONFIGURATORS */
 
     private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
 
@@ -284,27 +375,6 @@ public class ParticleEmitter {
         this.expireFunction = expireFunction;
     }
 
-    private BlendMode blendMode =  BlendMode.SRC_OVER;
-
-    public BlendMode getBlendMode() {
-        return blendMode;
-    }
-
-    /**
-     * Blend function is used to obtain blend mode for particles.
-     *
-     * @param blendMode blend supplier function
-     */
-    public void setBlendMode(BlendMode blendMode) {
-        this.blendMode = blendMode;
-    }
-
-    private Interpolator interpolator = Interpolator.LINEAR;
-
-    public void setInterpolator(Interpolator interpolator) {
-        this.interpolator = interpolator;
-    }
-
     private Image sourceImage = null;
 
     /**
@@ -322,37 +392,6 @@ public class ParticleEmitter {
      * so that when emitter starts working, it will emit in the same frame
      */
     private double rateAC = 1.0;
-
-    /**
-     * @return number of particles being spawned per emission
-     */
-    public final int getNumParticles() {
-        return numParticles;
-    }
-
-    /**
-     * Set number of particles being spawned per emission.
-     *
-     * @param numParticles number of particles
-     */
-    public final void setNumParticles(int numParticles) {
-        this.numParticles = numParticles;
-    }
-
-    /**
-     * Set the emission rate. The value will be effectively
-     * clamped to [0..1].
-     * <li> 1.0 - emission will occur every frame </li>
-     * <li> 0.5 - emission will occur every 2nd frame </li>
-     * <li> 0.33 - emission will occur every 3rd frame </li>
-     * <li> 0.0 - emission will never occur </li>
-     * etc.
-     *
-     * @param emissionRate emission rate
-     */
-    public final void setEmissionRate(double emissionRate) {
-        this.emissionRate = emissionRate;
-    }
 
     /**
      * Returns a value in [0..1).
@@ -374,7 +413,7 @@ public class ParticleEmitter {
         return rand() * (max - min) + min;
     }
 
-    private Array<Particle> emissionParticles = new UnorderedArray<>(numParticles);
+    private Array<Particle> emissionParticles = new UnorderedArray<>(getNumParticles());
 
     /**
      * Emits {@link #numParticles} particles at x, y. This is
@@ -388,15 +427,19 @@ public class ParticleEmitter {
      * @implNote cached array is used, do not obtain ownership
      */
     final Array<Particle> emit(double x, double y) {
-        rateAC += emissionRate;
-        if (rateAC < 1 || emissionRate == 0) {
+        double rate = getEmissionRate();
+
+        rateAC += rate;
+        if (rateAC < 1 || rate == 0) {
             return Array.empty();
         }
 
         rateAC = 0;
         emissionParticles.clear();
 
-        for (int i = 0; i < numParticles; i++) {
+        int num = getNumParticles();
+
+        for (int i = 0; i < num; i++) {
             emissionParticles.add(emit(i, x, y));
         }
 
@@ -424,8 +467,8 @@ public class ParticleEmitter {
                 expireFunction.apply(i, x, y),
                 getStartColor(),
                 getEndColor(),
-                blendMode,
-                interpolator);
+                getBlendMode(),
+                getInterpolator());
 
         return particle;
     }
