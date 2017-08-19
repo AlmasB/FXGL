@@ -77,7 +77,7 @@ public class SmokeSample extends GameApplication {
         e.setEndColor(Color.BLACK);
         e.setExpireFunction((i, x, y) -> Duration.seconds(16));
         e.setVelocityFunction((i, x, y) -> new Point2D(FXGLMath.random() - 0.5, 0));
-        e.setGravityFunction(() -> new Point2D((FXGLMath.noise1D(7776 + getTick()) - 0.5) * 0.02, 0));
+        e.setAccelerationFunction(() -> new Point2D((FXGLMath.noise1D(7776 + getTick()) - 0.5) * 0.02, 0));
         //e.setSpawnPointFunction((i, x, y) -> new Point2D(x + FXGLMath.noise1D(333 + getTick()) * 150 - 75, y + FXGLMath.noise1D(getTick()) * 150 - 75));
 
 //        Entities.builder()
@@ -89,7 +89,7 @@ public class SmokeSample extends GameApplication {
         emitter = ParticleEmitters.newFireEmitter();
         emitter.setSize(5, 15);
         emitter.setVelocityFunction((i, x, y) -> new Point2D(FXGLMath.random() - 0.5, -FXGLMath.random() * 3));
-        emitter.setGravityFunction(() -> new Point2D(0, 0.05));
+        emitter.setAccelerationFunction(() -> new Point2D(0, 0.05));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(3));
         emitter.setScaleFunction((i, x, y) -> new Point2D(FXGLMath.random(0, 0.01f), FXGLMath.random(-0.05f, 0.05f)));
         emitter.setStartColor(Color.YELLOW);

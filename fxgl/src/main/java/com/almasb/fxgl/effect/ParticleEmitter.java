@@ -13,6 +13,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.util.TriFunction;
+import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -213,14 +214,14 @@ public class ParticleEmitter {
         this.endColor = startColor;
     }
 
-    private Supplier<Point2D> gravityFunction = () -> Point2D.ZERO;
+    private Supplier<Point2D> accelerationFunction = () -> Point2D.ZERO;
 
     /**
      *
      * @return gravity function
      */
-    public final Supplier<Point2D> getGravityFunction() {
-        return gravityFunction;
+    public final Supplier<Point2D> getAccelerationFunction() {
+        return accelerationFunction;
     }
 
     /**
@@ -234,8 +235,8 @@ public class ParticleEmitter {
      * @param gravityFunction gravity vector supplier function
      * @defaultValue (0, 0)
      */
-    public final void setGravityFunction(Supplier<Point2D> gravityFunction) {
-        this.gravityFunction = gravityFunction;
+    public final void setAccelerationFunction(Supplier<Point2D> gravityFunction) {
+        this.accelerationFunction = gravityFunction;
     }
 
     private TriFunction<Integer, Double, Double, Point2D> velocityFunction = (i, x, y) -> Point2D.ZERO;
@@ -296,6 +297,12 @@ public class ParticleEmitter {
      */
     public void setBlendMode(BlendMode blendMode) {
         this.blendMode = blendMode;
+    }
+
+    private Interpolator interpolator = Interpolator.LINEAR;
+
+    public void setInterpolator(Interpolator interpolator) {
+        this.interpolator = interpolator;
     }
 
     private Image sourceImage = null;
@@ -407,15 +414,18 @@ public class ParticleEmitter {
      */
     private Particle emit(int i, double x, double y) {
         Particle particle = Pools.obtain(Particle.class);
-        particle.init(sourceImage, spawnPointFunction.apply(i, x, y),
+
+        particle.init(sourceImage,
+                spawnPointFunction.apply(i, x, y),
                 velocityFunction.apply(i, x, y),
-                gravityFunction.get(),
+                accelerationFunction.get(),
                 getRandomSize(),
                 scaleFunction.apply(i, x, y),
                 expireFunction.apply(i, x, y),
                 getStartColor(),
                 getEndColor(),
-                blendMode);
+                blendMode,
+                interpolator);
 
         return particle;
     }
