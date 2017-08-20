@@ -268,6 +268,28 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
+     * @return new vector counter clockwise perpendicular to this
+     */
+    public Vec2 perpendicularCCW() {
+        return new Vec2(y, -x);
+    }
+
+    /**
+     * @return new vector clockwise perpendicular to this
+     */
+    public Vec2 perpendicularCW() {
+        return new Vec2(-y, x);
+    }
+
+    /**
+     * @param length new length
+     * @return this vector
+     */
+    public Vec2 setLength(double length) {
+        return normalizeLocal().mulLocal(length);
+    }
+
+    /**
      * @return the length of this vector
      */
     public float length() {
