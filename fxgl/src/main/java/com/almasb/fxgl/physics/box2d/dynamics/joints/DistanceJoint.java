@@ -310,7 +310,7 @@ public class DistanceJoint extends Joint {
         u.set(cB).addLocal(rB).subLocal(cA).subLocal(rA);
 
 
-        float length = u.normalize();
+        float length = u.getLengthAndNormalize();
         float C = length - m_length;
         C = JBoxUtils.clamp(C, -JBoxSettings.maxLinearCorrection, JBoxSettings.maxLinearCorrection);
 

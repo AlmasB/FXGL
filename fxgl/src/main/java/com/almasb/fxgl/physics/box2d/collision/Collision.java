@@ -349,7 +349,7 @@ public class Collision {
             manifold.localNormal.x = cLocalx - v1.x;
             manifold.localNormal.y = cLocaly - v1.y;
             // end inline
-            manifold.localNormal.normalize();
+            manifold.localNormal.getLengthAndNormalize();
             manifold.localPoint.set(v1);
             manifold.points[0].localPoint.set(circlep);
             manifold.points[0].id.zero();
@@ -369,7 +369,7 @@ public class Collision {
             manifold.localNormal.x = cLocalx - v2.x;
             manifold.localNormal.y = cLocaly - v2.y;
             // end inline
-            manifold.localNormal.normalize();
+            manifold.localNormal.getLengthAndNormalize();
             manifold.localPoint.set(v2);
             manifold.points[0].localPoint.set(circlep);
             manifold.points[0].id.zero();
@@ -609,7 +609,7 @@ public class Collision {
         v12.set(vertices1[iv2]);
         localTangent.x = v12.x - v11.x;
         localTangent.y = v12.y - v11.y;
-        localTangent.normalize();
+        localTangent.getLengthAndNormalize();
 
         // Vec2 localNormal = Vec2.cross(dv, 1.0f);
         localNormal.x = 1f * localTangent.y;
@@ -813,7 +813,7 @@ public class Collision {
         if (Vec2.dot(n, temp.set(Q).subLocal(A)) < 0.0f) {
             n.set(-n.x, -n.y);
         }
-        n.normalize();
+        n.getLengthAndNormalize();
 
         cf.indexA = 0;
         cf.typeA = (byte) ContactID.Type.FACE.ordinal();
@@ -997,7 +997,7 @@ public class Collision {
             boolean hasVertex3 = edgeA.m_hasVertex3;
 
             edge1.set(m_v2).subLocal(m_v1);
-            edge1.normalize();
+            edge1.getLengthAndNormalize();
             m_normal1.set(edge1.y, -edge1.x);
             float offset1 = Vec2.dot(m_normal1, temp.set(m_centroidB).subLocal(m_v1));
             float offset0 = 0.0f, offset2 = 0.0f;
@@ -1006,7 +1006,7 @@ public class Collision {
             // Is there a preceding edge?
             if (hasVertex0) {
                 edge0.set(m_v1).subLocal(m_v0);
-                edge0.normalize();
+                edge0.getLengthAndNormalize();
                 m_normal0.set(edge0.y, -edge0.x);
                 convex1 = Vec2.cross(edge0, edge1) >= 0.0f;
                 offset0 = Vec2.dot(m_normal0, temp.set(m_centroidB).subLocal(m_v0));
@@ -1015,7 +1015,7 @@ public class Collision {
             // Is there a following edge?
             if (hasVertex3) {
                 edge2.set(m_v3).subLocal(m_v2);
-                edge2.normalize();
+                edge2.getLengthAndNormalize();
                 m_normal2.set(edge2.y, -edge2.x);
                 convex2 = Vec2.cross(edge1, edge2) > 0.0f;
                 offset2 = Vec2.dot(m_normal2, temp.set(m_centroidB).subLocal(m_v2));

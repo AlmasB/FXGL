@@ -243,7 +243,7 @@ public class FrictionJoint extends Joint {
             float maxImpulse = h * m_maxForce;
 
             if (m_linearImpulse.lengthSquared() > maxImpulse * maxImpulse) {
-                m_linearImpulse.normalize();
+                m_linearImpulse.getLengthAndNormalize();
                 m_linearImpulse.mulLocal(maxImpulse);
             }
 

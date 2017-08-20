@@ -123,7 +123,7 @@ public class PrismaticJoint extends Joint {
         m_localAnchorA = new Vec2(def.localAnchorA);
         m_localAnchorB = new Vec2(def.localAnchorB);
         m_localXAxisA = new Vec2(def.localAxisA);
-        m_localXAxisA.normalize();
+        m_localXAxisA.getLengthAndNormalize();
         m_localYAxisA = new Vec2();
         Vec2.crossToOutUnsafe(1f, m_localXAxisA, m_localYAxisA);
         m_referenceAngle = def.referenceAngle;

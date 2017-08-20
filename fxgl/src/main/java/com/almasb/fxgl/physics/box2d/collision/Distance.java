@@ -735,7 +735,7 @@ public class Distance {
                 // Move the witness points to the outer surface.
                 output.distance -= rA + rB;
                 normal.set(output.pointB).subLocal(output.pointA);
-                normal.normalize();
+                normal.getLengthAndNormalize();
                 temp.set(normal).mulLocal(rA);
                 output.pointA.addLocal(temp);
                 temp.set(normal).mulLocal(rB);

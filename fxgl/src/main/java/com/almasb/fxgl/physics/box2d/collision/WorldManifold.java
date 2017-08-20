@@ -69,7 +69,7 @@ public class WorldManifold {
                 if (JBoxUtils.distanceSquared(pointA, pointB) > JBoxSettings.EPSILON * JBoxSettings.EPSILON) {
                     normal.x = pointB.x - pointA.x;
                     normal.y = pointB.y - pointA.y;
-                    normal.normalize();
+                    normal.getLengthAndNormalize();
                 }
 
                 final float cAx = normal.x * radiusA + pointA.x;

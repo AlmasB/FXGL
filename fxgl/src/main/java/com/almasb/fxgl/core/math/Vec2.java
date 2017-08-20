@@ -312,7 +312,7 @@ public final class Vec2 implements Serializable, Poolable {
     /**
      * @return new normalized vector
      */
-    public Vec2 normalizeVec() {
+    public Vec2 normalize() {
         float length = length();
         if (length < FXGLMath.EPSILON) {
             return new Vec2();
@@ -328,7 +328,7 @@ public final class Vec2 implements Serializable, Poolable {
      *
      * @return length before normalization
      */
-    public float normalize() {
+    public float getLengthAndNormalize() {
         float length = length();
         if (length < FXGLMath.EPSILON) {
             return 0f;
@@ -347,7 +347,7 @@ public final class Vec2 implements Serializable, Poolable {
      * @return this vector
      */
     public Vec2 normalizeLocal() {
-        normalize();
+        getLengthAndNormalize();
         return this;
     }
 

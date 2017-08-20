@@ -212,7 +212,7 @@ public class PolygonShape extends Shape {
 
             assert (edge.lengthSquared() > JBoxSettings.EPSILON * JBoxSettings.EPSILON);
             Vec2.crossToOutUnsafe(edge, 1f, m_normals[i]);
-            m_normals[i].normalize();
+            m_normals[i].getLengthAndNormalize();
         }
 
         // Compute the polygon centroid.
@@ -402,7 +402,7 @@ public class PolygonShape extends Shape {
             distance = JBoxUtils.sqrt(minDistance2);
             normalOut.x = xfqc * minDistanceX - xfqs * minDistanceY;
             normalOut.y = xfqs * minDistanceX + xfqc * minDistanceY;
-            normalOut.normalize();
+            normalOut.getLengthAndNormalize();
         } else {
             distance = maxDistance;
             normalOut.x = xfqc * normalForMaxDistanceX - xfqs * normalForMaxDistanceY;

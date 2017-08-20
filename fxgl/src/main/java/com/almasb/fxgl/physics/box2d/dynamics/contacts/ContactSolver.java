@@ -1013,7 +1013,7 @@ class PositionSolverManifold {
                 final float pointBy = (xfBq.s * pLocalPoints0.x + xfBq.c * pLocalPoints0.y) + xfB.p.y;
                 normal.x = pointBx - pointAx;
                 normal.y = pointBy - pointAy;
-                normal.normalize();
+                normal.getLengthAndNormalize();
 
                 point.x = (pointAx + pointBx) * .5f;
                 point.y = (pointAy + pointBy) * .5f;
