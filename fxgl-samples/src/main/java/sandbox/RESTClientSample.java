@@ -51,65 +51,6 @@ public class RESTClientSample extends GameApplication {
         });
     }
 
-    private void getTop() {
-//        try {
-//            HttpClient httpClient = HttpClientBuilder.create().build();
-//
-//            HttpGet getRequest = new HttpGet("http://fxgl-top.herokuapp.com/top?gameName=test1");
-//            getRequest.addHeader("accept", "application/json");
-//
-//            HttpResponse response = httpClient.execute(getRequest);
-//
-//            int successCode = 200;
-//
-//            if (response.getStatusLine().getStatusCode() != successCode) {
-//                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
-//            }
-//
-//            ObjectMapper mapper = new ObjectMapper();
-//            mapper.registerModule(new KotlinModule());
-//
-//            Class<?> clz = ScoreData.class;
-//            JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clz);
-//
-//            List<ScoreData> data = mapper.readValue(response.getEntity().getContent(), type);
-//
-//            data.forEach(entry -> {
-//                System.out.println(entry.getName() + " " + entry.getScore());
-//            });
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    private void putNewScore() {
-//        try {
-//            HttpClient httpClient = HttpClientBuilder.create().build();
-//
-//            HttpPut getRequest = new HttpPut("http://fxgl-top.herokuapp.com/newscore?gameName=test1&name=Almas&score=1000");
-//            getRequest.addHeader("accept", "application/json");
-//
-//            HttpResponse response = httpClient.execute(getRequest);
-//
-//            int successCode = 200;
-//
-//            if (response.getStatusLine().getStatusCode() != successCode) {
-//                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
-//            }
-//
-//            ObjectMapper mapper = new ObjectMapper();
-//            mapper.registerModule(new KotlinModule());
-//
-//            ScoreData entry = mapper.readValue(response.getEntity().getContent(), ScoreData.class);
-//
-//            System.out.println(entry.getName() + " " + entry.getScore());
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-    }
-
     public static void main(String[] args) {
         launch(args);
     }
