@@ -79,6 +79,7 @@
         <jfxtras.version>8.0-r5</jfxtras.version>
         <controlsfx.version>8.40.12</controlsfx.version>
         <jackson.version>2.8.5</jackson.version>
+        <apache.http.version>4.5.3</apache.http.version>
         <classpath.scanner.version>2.4.5</classpath.scanner.version>
 
         <!-- test dependencies -->
