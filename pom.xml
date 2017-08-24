@@ -73,7 +73,7 @@
         <jacoco.version>0.7.9</jacoco.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.1.4</kotlin.version>
+        <kotlin.version>1.1.4-2</kotlin.version>
         <kotlinx.version>0.17</kotlinx.version>
         <guice.version>4.1.0</guice.version>
         <jfxtras.version>8.0-r5</jfxtras.version>
