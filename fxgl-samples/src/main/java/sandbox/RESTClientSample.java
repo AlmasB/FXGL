@@ -7,20 +7,10 @@
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.concurrent.Async;
+import com.almasb.fxgl.gameplay.ScoreData;
+import com.almasb.fxgl.scene.ProgressDialog;
 import com.almasb.fxgl.settings.GameSettings;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.input.KeyCode;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.HttpClientBuilder;
-
-import java.util.List;
 
 import static com.almasb.fxgl.app.DSLKt.onKeyDown;
 
@@ -44,88 +34,80 @@ public class RESTClientSample extends GameApplication {
 
     @Override
     protected void initInput() {
+        // TODO: we shouldn't allow closing game during progress dialog operations?
+
         onKeyDown(KeyCode.Q, "Get Top", () -> {
-            Async.start(this::getTop);
+            getGameplay().getLeaderboard()
+                    .loadTopTask(5)
+                    .onSuccess(scores -> scores.forEach(System.out::println))
+                    .executeAsyncWithDialogFX(new ProgressDialog("Connecting to FXGL server"));
         });
 
         onKeyDown(KeyCode.E, "Put New Score", () -> {
-            Async.start(this::putNewScore);
+            getGameplay().getLeaderboard()
+                    .postNewScoreTask(new ScoreData("AlmasB", 1500))
+                    .onSuccess(n -> System.out.println("Success put"))
+                    .executeAsyncWithDialogFX(new ProgressDialog("Uploading to FXGL server"));
         });
     }
 
     private void getTop() {
-        try {
-            HttpClient httpClient = HttpClientBuilder.create().build();
-
-            HttpGet getRequest = new HttpGet("http://fxgl-top.herokuapp.com/top?gameName=test");
-            getRequest.addHeader("accept", "application/json");
-
-            HttpResponse response = httpClient.execute(getRequest);
-
-            int successCode = 200;
-
-            if (response.getStatusLine().getStatusCode() != successCode) {
-                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-            Class<?> clz = ScoreData.class;
-            JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clz);
-
-            List<ScoreData> data = mapper.readValue(response.getEntity().getContent(), type);
-
-            data.forEach(entry -> {
-                System.out.println(entry.getName() + " " + entry.getScore());
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            HttpClient httpClient = HttpClientBuilder.create().build();
+//
+//            HttpGet getRequest = new HttpGet("http://fxgl-top.herokuapp.com/top?gameName=test1");
+//            getRequest.addHeader("accept", "application/json");
+//
+//            HttpResponse response = httpClient.execute(getRequest);
+//
+//            int successCode = 200;
+//
+//            if (response.getStatusLine().getStatusCode() != successCode) {
+//                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+//            }
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            mapper.registerModule(new KotlinModule());
+//
+//            Class<?> clz = ScoreData.class;
+//            JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clz);
+//
+//            List<ScoreData> data = mapper.readValue(response.getEntity().getContent(), type);
+//
+//            data.forEach(entry -> {
+//                System.out.println(entry.getName() + " " + entry.getScore());
+//            });
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void putNewScore() {
-        try {
-            HttpClient httpClient = HttpClientBuilder.create().build();
-
-            HttpPut getRequest = new HttpPut("http://fxgl-top.herokuapp.com/newscore?gameName=test&name=Almas&score=1000");
-            getRequest.addHeader("accept", "application/json");
-
-            HttpResponse response = httpClient.execute(getRequest);
-
-            int successCode = 200;
-
-            if (response.getStatusLine().getStatusCode() != successCode) {
-                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-            ScoreData entry = mapper.readValue(response.getEntity().getContent(), ScoreData.class);
-
-            System.out.println(entry.getName() + " " + entry.getScore());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static class ScoreData {
-
-        private final String name;
-        private final int score;
-
-        @JsonCreator
-        public ScoreData(@JsonProperty("name") String name, @JsonProperty("score") int score) {
-            this.name = name;
-            this.score = score;
-        }
-
-        public int getScore() {
-            return score;
-        }
-
-        public String getName() {
-            return name;
-        }
+//        try {
+//            HttpClient httpClient = HttpClientBuilder.create().build();
+//
+//            HttpPut getRequest = new HttpPut("http://fxgl-top.herokuapp.com/newscore?gameName=test1&name=Almas&score=1000");
+//            getRequest.addHeader("accept", "application/json");
+//
+//            HttpResponse response = httpClient.execute(getRequest);
+//
+//            int successCode = 200;
+//
+//            if (response.getStatusLine().getStatusCode() != successCode) {
+//                throw new RuntimeException("Failed : HTTP error code : " + response.getStatusLine().getStatusCode());
+//            }
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            mapper.registerModule(new KotlinModule());
+//
+//            ScoreData entry = mapper.readValue(response.getEntity().getContent(), ScoreData.class);
+//
+//            System.out.println(entry.getName() + " " + entry.getScore());
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static void main(String[] args) {

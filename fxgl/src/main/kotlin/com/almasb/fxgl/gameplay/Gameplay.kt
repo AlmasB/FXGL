@@ -36,4 +36,6 @@ private constructor() {
     val achievementManager: AchievementManager by lazy { AchievementManager() }
 
     val cutsceneManager: CutsceneManager by lazy { CutsceneManager() }
+
+    val leaderboard: Leaderboard by lazy { Leaderboard() }
 }
