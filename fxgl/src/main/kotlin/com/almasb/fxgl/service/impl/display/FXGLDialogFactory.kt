@@ -220,21 +220,11 @@ private constructor(): DialogFactory {
 
         val vbox = VBox(50.0, text, content, hbox)
         vbox.setAlignment(Pos.CENTER)
+
+        // TODO: find a way to properly compute size
         vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 200.0),
                 text.layoutBounds.height * 3 + 50 * 2))
 
         return wrap(vbox)
-    }
-
-    override fun customDialog(view: Node, callback: Runnable): Pane {
-        TODO("Figure out size of view")
-//        val vbox = VBox(50.0, view)
-//        vbox.setAlignment(Pos.CENTER)
-//        vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 200.0),
-//                text.layoutBounds.height * 3 + (50 * 2).toDouble() + content.layoutBounds.height))
-//
-//        wrap(vbox)
-//
-//        return root
     }
 }
