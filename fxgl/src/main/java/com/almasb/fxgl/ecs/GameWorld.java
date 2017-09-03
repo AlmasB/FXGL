@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.IrremovableComponent;
 import com.almasb.fxgl.ecs.component.TimeComponent;
@@ -388,6 +389,14 @@ public final class GameWorld {
         }
 
         throw new IllegalArgumentException("No entity exists matching predicate");
+    }
+
+    /**
+     * @param type entity type
+     * @return a random entity with given type
+     */
+    public Entity getRandom(Enum<?> type) {
+        return FXGLMath.random(getEntitiesByType(type));
     }
 
     /**
