@@ -53,7 +53,7 @@ class EntityGroup<T : Entity>(private val world: GameWorld, initialEntities: Lis
 
     private fun update() {
         entities.addAll(addList)
-        entities.removeAll(removeList, true)
+        entities.removeAllByIdentity(removeList)
         addList.clear()
         removeList.clear()
     }

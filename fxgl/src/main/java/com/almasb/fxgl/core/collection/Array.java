@@ -363,13 +363,33 @@ public class Array<T> implements Iterable<T> {
     }
 
     /**
+     * Removes from this array all of elements contained in the specified array using == to check.
+     *
+     * @param array given array
+     * @return true if this array was modified
+     */
+    public boolean removeAllByIdentity(Array<? extends T> array) {
+        return removeAll(array, true);
+    }
+
+    /**
+     * Removes from this array all of elements contained in the specified array using .equals() to check.
+     *
+     * @param array given array
+     * @return true if this array was modified
+     */
+    public boolean removeAllByEquality(Array<? extends T> array) {
+        return removeAll(array, false);
+    }
+
+    /**
      * Removes from this array all of elements contained in the specified array.
      *
      * @param array given array
      * @param identity True to use ==, false to use .equals()
      * @return true if this array was modified
      */
-    public boolean removeAll(Array<? extends T> array, boolean identity) {
+    private boolean removeAll(Array<? extends T> array, boolean identity) {
         int size = this.size;
         int startSize = size;
         T[] items = this.items;
