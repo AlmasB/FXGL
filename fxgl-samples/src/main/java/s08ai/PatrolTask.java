@@ -32,7 +32,7 @@ public class PatrolTask extends SingleAction {
         getObject().translateTowards(selectedPoint, 60 * tpf);
 
         if (getObject().getPosition().distance(selectedPoint) < 5) {
-            selectedPoint = FXGLMath.random(POINTS);
+            selectedPoint = FXGLMath.random(POINTS).get();
         }
     }
 }

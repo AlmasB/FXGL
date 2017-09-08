@@ -369,7 +369,7 @@ public final class GameWorld {
      * 
      * @return first occurrence matching given type
      */
-    public Entity getSingleton(Enum<?> type) {
+    public Optional<Entity> getSingleton(Enum<?> type) {
         return getSingleton(e ->
                 e.hasComponent(TypeComponent.class) && e.getComponent(TypeComponent.class).isType(type)
         );
@@ -378,23 +378,27 @@ public final class GameWorld {
     /**
      * @return first occurrence matching given predicate
      */
-    public Entity getSingleton(Predicate<Entity> predicate) {
+    public Optional<Entity> getSingleton(Predicate<Entity> predicate) {
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
             if (predicate.test(e)) {
-                return e;
+                return Optional.of(e);
             }
         }
 
-        throw new IllegalArgumentException("No entity exists matching predicate");
+        return Optional.empty();
     }
 
     /**
      * @param type entity type
      * @return a random entity with given type
      */
-    public Entity getRandom(Enum<?> type) {
+    public Optional<Entity> getRandom(Enum<?> type) {
         return FXGLMath.random(getEntitiesByType(type));
+    }
+
+    public Optional<Entity> getRandom(Predicate<Entity> predicate) {
+        return FXGLMath.random(getEntitiesFiltered(predicate));
     }
 
     /**

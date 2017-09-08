@@ -24,7 +24,7 @@ class FXGLMathTest {
         val array = Array<Entity>(0, { Entity() })
 
         val element = FXGLMath.random(array)
-        assertTrue(element == null)
+        assertFalse(element.isPresent)
     }
 
     @Test
@@ -33,7 +33,7 @@ class FXGLMathTest {
         val array = Array<Entity>(1, { e })
 
         val element = FXGLMath.random(array)
-        assertThat(element, `is`(e))
+        assertThat(element.get(), `is`(e))
     }
 
     @Test
@@ -41,7 +41,7 @@ class FXGLMathTest {
         val list = listOf<Entity>()
 
         val element = FXGLMath.random(list)
-        assertTrue(element == null)
+        assertFalse(element.isPresent)
     }
 
     @Test
@@ -50,6 +50,6 @@ class FXGLMathTest {
         val list = listOf<Entity>(e)
 
         val element = FXGLMath.random(list)
-        assertThat(element, `is`(e))
+        assertThat(element.get(), `is`(e))
     }
 }
