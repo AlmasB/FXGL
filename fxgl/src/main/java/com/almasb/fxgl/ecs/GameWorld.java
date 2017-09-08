@@ -361,9 +361,7 @@ public final class GameWorld {
     /* QUERIES */
 
     public <T extends Entity> EntityGroup<T> getGroup(Enum<?>... types) {
-        EntityGroup<T> group = new EntityGroup<T>((List<? extends T>) getEntitiesByType(types), types);
-        addWorldListener(group);
-        return group;
+        return new EntityGroup<T>(this, (List<? extends T>) getEntitiesByType(types), types);
     }
 
     /**
