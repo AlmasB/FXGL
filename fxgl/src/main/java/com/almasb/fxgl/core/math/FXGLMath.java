@@ -304,16 +304,22 @@ public final class FXGLMath {
     }
 
     /**
-     * @return random element of the given array
+     * @return random element of the given array or null if empty
      */
     public static <T> T random(T[] array) {
+        if (array.length == 0)
+            return null;
+
         return array[random(0, array.length - 1)];
     }
 
     /**
-     * @return random element of the given list
+     * @return random element of the given list or null if empty
      */
     public static <T> T random(List<T> list) {
+        if (list.isEmpty())
+            return null;
+
         return list.get(random(0, list.size() - 1));
     }
 
