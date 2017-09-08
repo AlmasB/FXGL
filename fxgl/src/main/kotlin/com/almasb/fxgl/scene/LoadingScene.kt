@@ -21,7 +21,7 @@ import javafx.scene.text.Text
 open class LoadingScene : FXGLScene() {
 
     private val progress = ProgressBar()
-    val text = Text()
+    protected val text = Text()
 
     init {
         val settings = FXGL.getSettings()
