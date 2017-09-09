@@ -8,6 +8,7 @@ package com.almasb.fxgl.settings;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.DialogFactory;
+import com.almasb.fxgl.service.NotificationService;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.service.UIFactory;
 import com.almasb.fxgl.util.Credits;
@@ -189,6 +190,13 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setUIFactory(UIFactory uiFactory) {
         this.uiFactory = uiFactory;
+    }
+
+    /**
+     * Provide a custom notification service.
+     */
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     /**

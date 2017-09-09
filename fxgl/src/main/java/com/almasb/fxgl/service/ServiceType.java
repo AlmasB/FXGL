@@ -7,13 +7,9 @@
 package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.app.FXGLExceptionHandler;
-import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDisplay;
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
 import com.almasb.fxgl.service.impl.net.FXGLNet;
-import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
-import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.google.inject.Scope;
 import com.google.inject.Scopes;
 
@@ -66,18 +62,6 @@ public interface ServiceType<T> {
         @Override
         public Class<? extends Executor> serviceProvider() {
             return FXGLExecutor.class;
-        }
-    };
-
-    ServiceType<NotificationService> NOTIFICATION_SERVICE = new ServiceType<NotificationService>() {
-        @Override
-        public Class<NotificationService> service() {
-            return NotificationService.class;
-        }
-
-        @Override
-        public Class<? extends NotificationService> serviceProvider() {
-            return SlidingNotificationService.class;
         }
     };
 

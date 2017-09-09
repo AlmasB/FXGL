@@ -38,18 +38,7 @@ public class NotificationSample extends GameApplication {
 
         // 2. by default SlidingNotificationService is used
         // but you can provide your own or use another built-in provider, e.g. FXGLNotificationService
-        settings.addServiceType(new ServiceType<NotificationService>() {
-
-            @Override
-            public Class<NotificationService> service() {
-                return NotificationService.class;
-            }
-
-            @Override
-            public Class<? extends NotificationService> serviceProvider() {
-                return FXGLNotificationService.class;
-            }
-        });
+        settings.setNotificationService(new FXGLNotificationService());
 
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }

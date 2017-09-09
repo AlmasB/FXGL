@@ -13,7 +13,6 @@ import com.almasb.fxgl.gameplay.NotificationView
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.service.NotificationService
 import com.almasb.fxgl.ui.Position
-import com.google.inject.Inject
 import javafx.animation.ScaleTransition
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -24,9 +23,9 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLNotificationService
-@Inject
-private constructor(private val gameScene: GameScene) : NotificationService {
+class FXGLNotificationService : NotificationService {
+
+    private lateinit var gameScene: GameScene
 
     private val queue = ArrayDeque<NotificationView>()
 
@@ -85,6 +84,7 @@ private constructor(private val gameScene: GameScene) : NotificationService {
      * @param text the text to show
      */
     override fun pushNotification(text: String) {
+        gameScene = FXGL.getApp().gameScene
         val notificationView = createNotificationView(text)
 
         if (showing)

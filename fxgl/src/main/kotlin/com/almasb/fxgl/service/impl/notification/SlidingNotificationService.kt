@@ -11,7 +11,6 @@ import com.almasb.fxgl.gameplay.Notification
 import com.almasb.fxgl.gameplay.NotificationEvent
 import com.almasb.fxgl.service.NotificationService
 import com.almasb.fxgl.ui.Position
-import com.google.inject.Inject
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -23,8 +22,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class SlidingNotificationService
-@Inject private constructor(): NotificationService {
+class SlidingNotificationService : NotificationService {
 
     private val queue = ArrayDeque<String>()
 
@@ -66,12 +64,10 @@ class SlidingNotificationService
 
     private var showing = false
 
+    private val pane = Pane()
     private val notificationImpl = NotificationPane()
 
     init {
-        val pane = Pane()
-        pane.setPrefSize(FXGL.getSettings().width.toDouble(), 50.0)
-
         notificationImpl.styleClass.add(NotificationPane.STYLE_CLASS_DARK)
         notificationImpl.content = pane
         notificationImpl.setOnHidden { popNotification() }
@@ -101,6 +97,8 @@ class SlidingNotificationService
      * @param text the text to show
      */
     override fun pushNotification(text: String) {
+        pane.setPrefSize(FXGL.getSettings().width.toDouble(), 50.0)
+
         if (showing)
             queue.add(text)
         else

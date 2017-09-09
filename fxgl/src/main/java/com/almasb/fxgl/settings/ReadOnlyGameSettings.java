@@ -8,9 +8,11 @@ package com.almasb.fxgl.settings;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.DialogFactory;
+import com.almasb.fxgl.service.NotificationService;
 import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.service.UIFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
+import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
@@ -42,11 +44,12 @@ public class ReadOnlyGameSettings {
     protected List<ServiceType<?> > services = new ArrayList<>();
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
 
-    /* CUSTOMIZABLE FACTORIES BELOW */
+    /* CUSTOMIZABLE SERVICES BELOW */
 
     protected SceneFactory sceneFactory = new SceneFactory();
     protected DialogFactory dialogFactory = new FXGLDialogFactory();
     protected UIFactory uiFactory = new FXGLUIFactory();
+    protected NotificationService notificationService = new SlidingNotificationService();
 
     // when adding extra fields, remember to add them to copy constructor
 
@@ -81,6 +84,7 @@ public class ReadOnlyGameSettings {
         this.sceneFactory = copy.sceneFactory;
         this.dialogFactory = copy.dialogFactory;
         this.uiFactory = copy.uiFactory;
+        this.notificationService = copy.notificationService;
     }
 
     public final String getTitle() {
@@ -151,6 +155,10 @@ public class ReadOnlyGameSettings {
         return uiFactory;
     }
 
+    public final NotificationService getNotificationService() {
+        return notificationService;
+    }
+
     @Override
     public String toString() {
         return "Title: " + title + '\n' +
@@ -166,6 +174,7 @@ public class ReadOnlyGameSettings {
                 "Scene Factory: " + sceneFactory.getClass() + '\n' +
                 "Dialog Factory: " + dialogFactory.getClass() + '\n' +
                 "UI Factory: " + uiFactory.getClass() + '\n' +
+                "Notification Service: " + notificationService.getClass() + '\n' +
                 "Services: " + services;
     }
 }

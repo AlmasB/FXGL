@@ -246,8 +246,7 @@ class FXGL private constructor() {
         private val _display by lazy { getService(ServiceType.DISPLAY) }
         @JvmStatic fun getDisplay() = _display
 
-        private val _notification by lazy { getService(ServiceType.NOTIFICATION_SERVICE) }
-        @JvmStatic fun getNotificationService() = _notification
+        @JvmStatic fun getNotificationService() = getSettings().notificationService
 
         private val _executor by lazy { getService(ServiceType.EXECUTOR) }
         @JvmStatic fun getExecutor() = _executor
@@ -258,8 +257,7 @@ class FXGL private constructor() {
         private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
         @JvmStatic fun getExceptionHandler() = _exceptionHandler
 
-        private val _uiFactory by lazy { getSettings().uiFactory }
-        @JvmStatic fun getUIFactory() = _uiFactory
+        @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
         private val _gameplay by lazy { getInstance(Gameplay::class.java) }
         @JvmStatic fun getGameplay() = _gameplay
