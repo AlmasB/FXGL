@@ -8,17 +8,18 @@ package com.almasb.fxgl.settings;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.*;
+import com.almasb.fxgl.service.DialogFactory;
+import com.almasb.fxgl.service.ExceptionHandler;
+import com.almasb.fxgl.service.NotificationService;
+import com.almasb.fxgl.service.UIFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * A copy of GameSettings with public getters only.

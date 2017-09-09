@@ -7,7 +7,10 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.*;
+import com.almasb.fxgl.service.DialogFactory;
+import com.almasb.fxgl.service.ExceptionHandler;
+import com.almasb.fxgl.service.NotificationService;
+import com.almasb.fxgl.service.UIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 

@@ -6,14 +6,7 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.service.ExceptionHandler;
-import com.almasb.fxgl.service.Executor;
-import com.almasb.fxgl.service.NotificationService;
-import com.almasb.fxgl.service.UIFactory;
-import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
-import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.ui.MockUIFactory;
 import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.stage.Stage;

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.Pane?>
 <!--
   ~ FXGL - JavaFX Game Library. The MIT License (MIT).
   ~ Copyright (c) AlmasB (almaslvl@gmail.com).
   ~ See LICENSE for details.
   -->
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
 <Pane prefWidth="800" prefHeight="600" xmlns="http://javafx.com/javafx/8.0.60"
       xmlns:fx="http://javafx.com/fxml/1">
 
