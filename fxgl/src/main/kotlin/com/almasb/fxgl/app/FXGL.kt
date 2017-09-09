@@ -258,7 +258,7 @@ class FXGL private constructor() {
         private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
         @JvmStatic fun getExceptionHandler() = _exceptionHandler
 
-        private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
+        private val _uiFactory by lazy { getSettings().uiFactory }
         @JvmStatic fun getUIFactory() = _uiFactory
 
         private val _gameplay by lazy { getInstance(Gameplay::class.java) }

@@ -9,7 +9,6 @@ package com.almasb.fxgl.service.impl.display
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.service.DialogFactory
 import com.almasb.fxgl.ui.FXGLButton
-import com.google.inject.Inject
 import javafx.beans.property.DoubleProperty
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
@@ -32,9 +31,7 @@ import java.util.function.Predicate
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLDialogFactory
-@Inject
-private constructor(): DialogFactory {
+class FXGLDialogFactory : DialogFactory {
 
     private fun createMessage(message: String): Text {
         return FXGL.getUIFactory().newText(message)

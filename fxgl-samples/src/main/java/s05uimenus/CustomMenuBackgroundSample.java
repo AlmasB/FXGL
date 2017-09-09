@@ -36,17 +36,7 @@ public class CustomMenuBackgroundSample extends GameApplication {
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
-        settings.addServiceType(new ServiceType<SceneFactory>() {
-            @Override
-            public Class<SceneFactory> service() {
-                return SceneFactory.class;
-            }
-
-            @Override
-            public Class<? extends SceneFactory> serviceProvider() {
-                return MySceneFactory.class;
-            }
-        });
+        settings.setSceneFactory(new MySceneFactory());
     }
 
     public static class MySceneFactory extends SceneFactory {

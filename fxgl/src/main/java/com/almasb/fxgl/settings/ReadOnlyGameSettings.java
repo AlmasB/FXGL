@@ -6,7 +6,12 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.scene.SceneFactory;
+import com.almasb.fxgl.service.DialogFactory;
 import com.almasb.fxgl.service.ServiceType;
+import com.almasb.fxgl.service.UIFactory;
+import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
+import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
@@ -37,6 +42,12 @@ public class ReadOnlyGameSettings {
     protected List<ServiceType<?> > services = new ArrayList<>();
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
 
+    /* CUSTOMIZABLE FACTORIES BELOW */
+
+    protected SceneFactory sceneFactory = new SceneFactory();
+    protected DialogFactory dialogFactory = new FXGLDialogFactory();
+    protected UIFactory uiFactory = new FXGLUIFactory();
+
     // when adding extra fields, remember to add them to copy constructor
 
     /**
@@ -66,6 +77,10 @@ public class ReadOnlyGameSettings {
         this.credits = new Credits(copy.credits);
         this.services = copy.services;
         this.enabledMenuItems = copy.enabledMenuItems;
+
+        this.sceneFactory = copy.sceneFactory;
+        this.dialogFactory = copy.dialogFactory;
+        this.uiFactory = copy.uiFactory;
     }
 
     public final String getTitle() {
@@ -124,6 +139,18 @@ public class ReadOnlyGameSettings {
         return enabledMenuItems;
     }
 
+    public final SceneFactory getSceneFactory() {
+        return sceneFactory;
+    }
+
+    public final DialogFactory getDialogFactory() {
+        return dialogFactory;
+    }
+
+    public final UIFactory getUIFactory() {
+        return uiFactory;
+    }
+
     @Override
     public String toString() {
         return "Title: " + title + '\n' +
@@ -136,6 +163,9 @@ public class ReadOnlyGameSettings {
                 "Profiling: " + profilingEnabled + '\n' +
                 "App Mode: " + appMode + '\n' +
                 "Menu Key: " + menuKey + '\n' +
+                "Scene Factory: " + sceneFactory.getClass() + '\n' +
+                "Dialog Factory: " + dialogFactory.getClass() + '\n' +
+                "UI Factory: " + uiFactory.getClass() + '\n' +
                 "Services: " + services;
     }
 }

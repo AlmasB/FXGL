@@ -6,7 +6,10 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.scene.SceneFactory;
+import com.almasb.fxgl.service.DialogFactory;
 import com.almasb.fxgl.service.ServiceType;
+import com.almasb.fxgl.service.UIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
@@ -165,6 +168,27 @@ public final class GameSettings extends ReadOnlyGameSettings {
 
     public void setEnabledMenuItems(EnumSet<MenuItem> items) {
         this.enabledMenuItems = items;
+    }
+
+    /**
+     * Provide a custom scene factory.
+     */
+    public void setSceneFactory(SceneFactory sceneFactory) {
+        this.sceneFactory = sceneFactory;
+    }
+
+    /**
+     * Provide a custom dialog factory.
+     */
+    public void setDialogFactory(DialogFactory dialogFactory) {
+        this.dialogFactory = dialogFactory;
+    }
+
+    /**
+     * Provide a custom UI factory.
+     */
+    public void setUIFactory(UIFactory uiFactory) {
+        this.uiFactory = uiFactory;
     }
 
     /**

@@ -104,40 +104,4 @@ public interface ServiceType<T> {
             return FXGLExceptionHandler.class;
         }
     };
-
-    ServiceType<UIFactory> UI_FACTORY = new ServiceType<UIFactory>() {
-        @Override
-        public Class<UIFactory> service() {
-            return UIFactory.class;
-        }
-
-        @Override
-        public Class<? extends UIFactory> serviceProvider() {
-            return FXGLUIFactory.class;
-        }
-    };
-
-    ServiceType<DialogFactory> DIALOG_FACTORY = new ServiceType<DialogFactory>() {
-        @Override
-        public Class<DialogFactory> service() {
-            return DialogFactory.class;
-        }
-
-        @Override
-        public Class<? extends DialogFactory> serviceProvider() {
-            return FXGLDialogFactory.class;
-        }
-    };
-
-    ServiceType<SceneFactory> SCENE_FACTORY = new ServiceType<SceneFactory>() {
-        @Override
-        public Class<SceneFactory> service() {
-            return SceneFactory.class;
-        }
-
-        @Override
-        public Class<? extends SceneFactory> serviceProvider() {
-            return SceneFactory.class;
-        }
-    };
 }

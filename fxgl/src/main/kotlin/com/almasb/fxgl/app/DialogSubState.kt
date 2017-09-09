@@ -35,7 +35,7 @@ import java.util.function.Predicate
 object DialogSubState : SubState() {
 
     private val window = Window()
-    private val dialogFactory = FXGL.getService(ServiceType.DIALOG_FACTORY)
+    private val dialogFactory = FXGL.getSettings().dialogFactory
 
     private val states = ArrayDeque<DialogData>()
 
