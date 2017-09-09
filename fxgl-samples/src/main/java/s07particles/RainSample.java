@@ -14,8 +14,6 @@ import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.animation.Interpolator;
-import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
 /**

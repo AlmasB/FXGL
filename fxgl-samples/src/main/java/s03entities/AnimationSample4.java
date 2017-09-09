@@ -8,15 +8,12 @@ package s03entities;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.ParallelAnimation;
-import com.almasb.fxgl.animation.SequentialAnimation;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**

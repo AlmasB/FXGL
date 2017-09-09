@@ -11,7 +11,8 @@ import com.almasb.fxgl.settings.GameSettings;
 
 import java.util.Map;
 
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.geti;
+import static com.almasb.fxgl.app.DSLKt.set;
 
 /**
  * This is an example of a FXGL app using DSL.

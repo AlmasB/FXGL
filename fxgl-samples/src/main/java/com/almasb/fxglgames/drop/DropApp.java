@@ -7,18 +7,14 @@
 package com.almasb.fxglgames.drop;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.onCollision;
 import static com.almasb.fxgl.app.DSLKt.onCollisionBegin;
 import static com.almasb.fxgl.app.DSLKt.play;
 

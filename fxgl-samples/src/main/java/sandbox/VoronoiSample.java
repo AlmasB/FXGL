@@ -7,13 +7,7 @@
 package sandbox;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.particle.VoronoiDiagram;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 //import sandbox.voronoi.Voronoi;
 
 /**

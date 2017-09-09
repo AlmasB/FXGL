@@ -11,11 +11,9 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.FXGLButton;
-import com.almasb.fxgl.util.InputPredicates;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 /**
  * Shows an example of FXGL dialogs.

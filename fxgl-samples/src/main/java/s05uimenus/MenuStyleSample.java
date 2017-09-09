@@ -12,7 +12,6 @@ import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.GTAVMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
-import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 import org.jetbrains.annotations.NotNull;
 
