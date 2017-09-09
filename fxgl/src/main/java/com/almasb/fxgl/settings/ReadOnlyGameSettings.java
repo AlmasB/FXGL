@@ -39,7 +39,6 @@ public class ReadOnlyGameSettings {
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected KeyCode menuKey = KeyCode.ESCAPE;
     protected Credits credits = new Credits(Collections.emptyList());
-    protected List<ServiceType<?> > services = new ArrayList<>();
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
 
     /* CUSTOMIZABLE SERVICES BELOW */
@@ -78,7 +77,6 @@ public class ReadOnlyGameSettings {
         this.appMode = copy.appMode;
         this.menuKey = copy.menuKey;
         this.credits = new Credits(copy.credits);
-        this.services = copy.services;
         this.enabledMenuItems = copy.enabledMenuItems;
 
         this.sceneFactory = copy.sceneFactory;
@@ -136,10 +134,6 @@ public class ReadOnlyGameSettings {
         return credits;
     }
 
-    public final List<ServiceType<?>> getServices() {
-        return services;
-    }
-
     public final EnumSet<MenuItem> getEnabledMenuItems() {
         return enabledMenuItems;
     }
@@ -180,7 +174,6 @@ public class ReadOnlyGameSettings {
                 "Dialog Factory: " + dialogFactory.getClass() + '\n' +
                 "UI Factory: " + uiFactory.getClass() + '\n' +
                 "Notification Service: " + notificationService.getClass() + '\n' +
-                "Exception Handler: " + exceptionHandler.getClass() + '\n' +
-                "Services: " + services;
+                "Exception Handler: " + exceptionHandler.getClass();
     }
 }

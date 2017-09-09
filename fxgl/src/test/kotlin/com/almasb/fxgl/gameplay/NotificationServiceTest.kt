@@ -36,7 +36,7 @@ class NotificationServiceTest {
 
     @Before
     fun setUp() {
-        notificationService = FXGL.getInstance(NotificationService::class.java)
+        notificationService = FXGL.getNotificationService()
     }
 
     @Test

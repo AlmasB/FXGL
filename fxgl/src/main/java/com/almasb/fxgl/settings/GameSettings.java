@@ -155,15 +155,6 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.credits = credits;
     }
 
-    /**
-     * Register a custom service with FXGL.
-     *
-     * @param serviceType type of service
-     */
-    public void addServiceType(ServiceType<?> serviceType) {
-        services.add(serviceType);
-    }
-
     public void setEnabledMenuItems(EnumSet<MenuItem> items) {
         this.enabledMenuItems = items;
     }

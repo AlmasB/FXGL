@@ -5,8 +5,9 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.service.ServiceType;
+import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.ui.MockUIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
@@ -41,18 +42,12 @@ public class MockGameApplication extends GameApplication {
         settings.setCloseConfirmation(false);
         settings.setMenuKey(KeyCode.ENTER);
         settings.setCredits(new Credits(Arrays.asList("TestCredit1", "TestCredit2")));
-        settings.addServiceType(new ServiceType<MockService>() {
-            @Override
-            public Class<MockService> service() {
-                return MockService.class;
-            }
-
-            @Override
-            public Class<? extends MockService> serviceProvider() {
-                return MockServiceProvider.class;
-            }
-        });
         settings.setApplicationMode(ApplicationMode.RELEASE);
+
+        // mock
+        settings.setNotificationService(new FXGLNotificationService());
+        settings.setExceptionHandler(MockExceptionHandler.INSTANCE);
+        settings.setUIFactory(MockUIFactory.INSTANCE);
     }
 
     @Override

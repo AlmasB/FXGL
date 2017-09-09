@@ -13,7 +13,6 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.service.ServiceType
 import com.almasb.fxgl.service.impl.display.FXGLDisplay
 import com.almasb.fxgl.service.impl.executor.FXGLExecutor
 import com.almasb.fxgl.service.impl.net.FXGLNet
@@ -42,8 +41,6 @@ class FXGL private constructor() {
     companion object {
         private lateinit var internalApp: GameApplication
 
-        private lateinit var internalAllServices: List<ServiceType<*>>
-
         private lateinit var internalBundle: Bundle
 
         private val log = Logger.get("FXGL")
@@ -68,8 +65,6 @@ class FXGL private constructor() {
         @JvmStatic fun getAppWidth() = internalApp.width
 
         @JvmStatic fun getAppHeight() = internalApp.height
-
-        @JvmStatic fun getServices() = internalAllServices
 
         /**
          * @return instance of the running game application cast to the actual type
@@ -104,10 +99,6 @@ class FXGL private constructor() {
             allModules.add(appModule)
 
             injector = Guice.createInjector(allModules)
-
-            internalAllServices = appModule.allServices
-
-            initServices()
 
             if (firstRun)
                 loadDefaultSystemData()
@@ -170,13 +161,6 @@ class FXGL private constructor() {
             //internalBundle.put("version.check", LocalDate.now())
         }
 
-        private fun initServices() {
-            internalAllServices.forEach {
-                getInstance(it.service())
-                log.debug("Service <<${it.service().simpleName}>> initialized")
-            }
-        }
-
         /**
          * Destructs FXGL.
          */
@@ -191,17 +175,6 @@ class FXGL private constructor() {
          * Dependency injector.
          */
         private lateinit var injector: Injector
-
-        /**
-         * Obtain an instance of a service.
-         * It may be expensive to use this in a loop.
-         * Store a reference to the instance instead.
-         *
-         * @param serviceType service type
-         *
-         * @return service
-         */
-        @JvmStatic fun <T> getService(serviceType: ServiceType<T>) = injector.getInstance(serviceType.service())
 
         /**
          * Obtain an instance of a type.

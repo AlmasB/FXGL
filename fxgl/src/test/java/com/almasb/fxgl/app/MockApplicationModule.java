@@ -72,13 +72,6 @@ public class MockApplicationModule extends ApplicationModule {
     @Override
     protected void bindServices() {
         mockProperties();
-        mockTimer();
-        mockLoggerFactory();
-        mockInput();
-        mockExecutor();
-        mockExceptionHandler();
-        mockNotificationService();
-        mockUIFactory();
         mockAssetLoader();
         mockPhysics();
     }
@@ -89,36 +82,6 @@ public class MockApplicationModule extends ApplicationModule {
      */
     private void mockProperties() {
         FXGL.setProperty("dev.showbbox", false);
-    }
-
-    private void mockTimer() {
-        //bind(MasterTimer.class).toInstance(MockMasterTimer.INSTANCE);
-        //bind(StateTimer.class).to(StateTimerImpl.class);
-        //bind(LocalTimer.class).to(FXGLLocalTimer.class);
-    }
-
-    private void mockExceptionHandler() {
-        bind(ExceptionHandler.class).toInstance(MockExceptionHandler.INSTANCE);
-    }
-
-    private void mockLoggerFactory() {
-        //bind(LoggerFactory.class).toInstance(MockLoggerFactory.INSTANCE);
-    }
-
-    private void mockInput() {
-        //bind(Input.class).to(Input.class);
-    }
-
-    private void mockExecutor() {
-        bind(Executor.class).to(FXGLExecutor.class);
-    }
-
-    private void mockNotificationService() {
-        bind(NotificationService.class).to(FXGLNotificationService.class);
-    }
-
-    private void mockUIFactory() {
-        bind(UIFactory.class).toInstance(MockUIFactory.INSTANCE);
     }
 
     private void mockAssetLoader() {

@@ -8,7 +8,6 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.service.ServiceType
 import com.almasb.fxgl.util.EmptyRunnable
 import com.sun.javafx.scene.traversal.Algorithm
 import com.sun.javafx.scene.traversal.Direction
