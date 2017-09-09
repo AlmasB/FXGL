@@ -9,7 +9,6 @@ package com.almasb.fxgl.service.impl.executor
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.service.Executor
-import com.google.inject.Inject
 import javafx.util.Duration
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -19,9 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLExecutor
-@Inject
-private constructor() : Executor {
+class FXGLExecutor : Executor {
 
     private val service = Executors.newCachedThreadPool(FXGLThreadFactory)
     private val schedulerService = Executors.newScheduledThreadPool(2)

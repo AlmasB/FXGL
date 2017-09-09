@@ -41,39 +41,5 @@ public interface ServiceType<T> {
         return Scopes.SINGLETON;
     }
 
-    ServiceType<Display> DISPLAY = new ServiceType<Display>() {
-        @Override
-        public Class<Display> service() {
-            return Display.class;
-        }
 
-        @Override
-        public Class<? extends Display> serviceProvider() {
-            return FXGLDisplay.class;
-        }
-    };
-
-    ServiceType<Executor> EXECUTOR = new ServiceType<Executor>() {
-        @Override
-        public Class<Executor> service() {
-            return Executor.class;
-        }
-
-        @Override
-        public Class<? extends Executor> serviceProvider() {
-            return FXGLExecutor.class;
-        }
-    };
-
-    ServiceType<Net> NET = new ServiceType<Net>() {
-        @Override
-        public Class<Net> service() {
-            return Net.class;
-        }
-
-        @Override
-        public Class<? extends Net> serviceProvider() {
-            return FXGLNet.class;
-        }
-    };
 }

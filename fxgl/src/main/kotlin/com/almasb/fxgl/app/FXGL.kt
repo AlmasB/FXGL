@@ -14,6 +14,9 @@ import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.service.ServiceType
+import com.almasb.fxgl.service.impl.display.FXGLDisplay
+import com.almasb.fxgl.service.impl.executor.FXGLExecutor
+import com.almasb.fxgl.service.impl.net.FXGLNet
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.AbstractModule
@@ -243,15 +246,15 @@ class FXGL private constructor() {
         private val _audioPlayer by lazy { getInstance(AudioPlayer::class.java) }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
 
-        private val _display by lazy { getService(ServiceType.DISPLAY) }
+        private val _display by lazy { FXGLDisplay() }
         @JvmStatic fun getDisplay() = _display
 
         @JvmStatic fun getNotificationService() = getSettings().notificationService
 
-        private val _executor by lazy { getService(ServiceType.EXECUTOR) }
+        private val _executor by lazy { FXGLExecutor() }
         @JvmStatic fun getExecutor() = _executor
 
-        private val _net by lazy { getService(ServiceType.NET) }
+        private val _net by lazy { FXGLNet() }
         @JvmStatic fun getNet() = _net
 
         @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler

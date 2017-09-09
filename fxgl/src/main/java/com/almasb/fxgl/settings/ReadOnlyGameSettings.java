@@ -44,6 +44,7 @@ public class ReadOnlyGameSettings {
 
     /* CUSTOMIZABLE SERVICES BELOW */
 
+    // TODO: make these lazy
     protected SceneFactory sceneFactory = new SceneFactory();
     protected DialogFactory dialogFactory = new FXGLDialogFactory();
     protected UIFactory uiFactory = new FXGLUIFactory();

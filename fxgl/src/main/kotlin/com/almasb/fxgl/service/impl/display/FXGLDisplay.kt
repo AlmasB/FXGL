@@ -9,7 +9,6 @@ package com.almasb.fxgl.service.impl.display
 import com.almasb.fxgl.app.DialogSubState
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.service.Display
-import com.google.inject.Inject
 import javafx.scene.Node
 import javafx.scene.control.Button
 import java.util.function.Consumer
@@ -21,9 +20,7 @@ import java.util.function.Predicate
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLDisplay
-@Inject
-private constructor() : Display {
+class FXGLDisplay : Display {
 
     private val dialogState = DialogSubState
 
