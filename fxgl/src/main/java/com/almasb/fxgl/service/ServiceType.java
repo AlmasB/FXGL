@@ -76,16 +76,4 @@ public interface ServiceType<T> {
             return FXGLNet.class;
         }
     };
-
-    ServiceType<ExceptionHandler> EXCEPTION_HANDLER = new ServiceType<ExceptionHandler>() {
-        @Override
-        public Class<ExceptionHandler> service() {
-            return ExceptionHandler.class;
-        }
-
-        @Override
-        public Class<? extends ExceptionHandler> serviceProvider() {
-            return FXGLExceptionHandler.class;
-        }
-    };
 }

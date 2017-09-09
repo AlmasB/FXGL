@@ -7,10 +7,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.DialogFactory;
-import com.almasb.fxgl.service.NotificationService;
-import com.almasb.fxgl.service.ServiceType;
-import com.almasb.fxgl.service.UIFactory;
+import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
@@ -197,6 +194,13 @@ public final class GameSettings extends ReadOnlyGameSettings {
      */
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
+    }
+
+    /**
+     * Provide a custom exception handler.
+     */
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**

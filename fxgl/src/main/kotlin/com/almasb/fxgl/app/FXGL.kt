@@ -254,8 +254,7 @@ class FXGL private constructor() {
         private val _net by lazy { getService(ServiceType.NET) }
         @JvmStatic fun getNet() = _net
 
-        private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
-        @JvmStatic fun getExceptionHandler() = _exceptionHandler
+        @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
 
         @JvmStatic fun getUIFactory() = getSettings().uiFactory
 

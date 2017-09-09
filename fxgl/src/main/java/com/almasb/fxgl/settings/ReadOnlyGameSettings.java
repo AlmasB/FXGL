@@ -6,11 +6,9 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.DialogFactory;
-import com.almasb.fxgl.service.NotificationService;
-import com.almasb.fxgl.service.ServiceType;
-import com.almasb.fxgl.service.UIFactory;
+import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
 import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
@@ -50,6 +48,7 @@ public class ReadOnlyGameSettings {
     protected DialogFactory dialogFactory = new FXGLDialogFactory();
     protected UIFactory uiFactory = new FXGLUIFactory();
     protected NotificationService notificationService = new SlidingNotificationService();
+    protected ExceptionHandler exceptionHandler = new FXGLExceptionHandler();
 
     // when adding extra fields, remember to add them to copy constructor
 
@@ -85,6 +84,7 @@ public class ReadOnlyGameSettings {
         this.dialogFactory = copy.dialogFactory;
         this.uiFactory = copy.uiFactory;
         this.notificationService = copy.notificationService;
+        this.exceptionHandler = copy.exceptionHandler;
     }
 
     public final String getTitle() {
@@ -159,6 +159,10 @@ public class ReadOnlyGameSettings {
         return notificationService;
     }
 
+    public final ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
+
     @Override
     public String toString() {
         return "Title: " + title + '\n' +
@@ -175,6 +179,7 @@ public class ReadOnlyGameSettings {
                 "Dialog Factory: " + dialogFactory.getClass() + '\n' +
                 "UI Factory: " + uiFactory.getClass() + '\n' +
                 "Notification Service: " + notificationService.getClass() + '\n' +
+                "Exception Handler: " + exceptionHandler.getClass() + '\n' +
                 "Services: " + services;
     }
 }
