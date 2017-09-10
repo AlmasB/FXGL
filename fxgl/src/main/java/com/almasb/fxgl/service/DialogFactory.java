@@ -50,7 +50,7 @@ public interface DialogFactory {
         return messageDialog("Error occurred: " + errorMessage, callback);
     }
 
-    Pane progressDialog(DoubleProperty observable, Runnable callback);
+    Pane progressDialog(String message, DoubleProperty observable, Runnable callback);
 
     Pane progressDialogIndeterminate(String message, Runnable callback);
 

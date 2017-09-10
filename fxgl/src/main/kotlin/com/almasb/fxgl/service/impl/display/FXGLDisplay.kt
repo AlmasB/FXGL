@@ -9,6 +9,7 @@ package com.almasb.fxgl.service.impl.display
 import com.almasb.fxgl.app.DialogSubState
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.service.Display
+import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
 import java.util.function.Consumer
@@ -93,5 +94,9 @@ class FXGLDisplay : Display {
 
     override fun showProgressBox(message: String): UIDialogHandler {
         return dialogState.showProgressBox(message)
+    }
+
+    override fun showProgressBox(message: String, progress: DoubleProperty, callback: Runnable) {
+        dialogState.showProgressBox(message, progress, callback)
     }
 }

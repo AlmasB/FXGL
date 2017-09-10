@@ -7,13 +7,18 @@
 package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.FXGLButton;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+
+import static com.almasb.fxgl.app.DSLKt.onKey;
 
 /**
  * Shows an example of FXGL dialogs.
@@ -36,6 +41,8 @@ public class DialogsSample2 extends GameApplication {
         settings.setCloseConfirmation(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
+
+    private DoubleProperty someValue;
 
     @Override
     protected void initInput() {
@@ -67,6 +74,32 @@ public class DialogsSample2 extends GameApplication {
                 getDisplay().showBox("Dialog Message", content, new FXGLButton("Close"));
             }
         }, KeyCode.G);
+
+        getStateMachine().getDialogState().getInput().addAction(new UserAction("decrease") {
+            @Override
+            protected void onAction() {
+                someValue.set(someValue.get() - 0.01);
+            }
+        }, KeyCode.DIGIT2);
+
+        getStateMachine().getDialogState().getInput().addAction(new UserAction("increase") {
+            @Override
+            protected void onAction() {
+                someValue.set(someValue.get() + 0.01);
+            }
+        }, KeyCode.DIGIT3);
+
+        getInput().addAction(new UserAction("Dialog 3") {
+            @Override
+            protected void onActionBegin() {
+                getDisplay().showProgressBox("Progress Dialog", someValue, () -> System.out.println("Finished"));
+            }
+        }, KeyCode.H);
+    }
+
+    @Override
+    protected void initGame() {
+        someValue = new SimpleDoubleProperty(0);
     }
 
     public static void main(String[] args) {

@@ -10,10 +10,12 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.service.DialogFactory
 import com.almasb.fxgl.ui.FXGLButton
 import javafx.beans.property.DoubleProperty
+import javafx.beans.value.ChangeListener
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Button
+import javafx.scene.control.ProgressBar
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
@@ -185,8 +187,31 @@ class FXGLDialogFactory : DialogFactory {
         return wrap(vbox)
     }
 
-    override fun progressDialog(observable: DoubleProperty, callback: Runnable): Pane {
-        TODO()
+    override fun progressDialog(message: String, observable: DoubleProperty, callback: Runnable): Pane {
+        val progress = ProgressBar()
+        progress.setPrefSize(200.0, 50.0)
+        progress.progressProperty().bind(observable)
+
+        var listener: ChangeListener<Number>? = null
+
+        listener = ChangeListener { _, _, value ->
+            if (value.toDouble() >= 1) {
+                progress.progressProperty().unbind()
+                progress.progressProperty().removeListener(listener)
+                listener = null
+                callback.run()
+            }
+        }
+
+        progress.progressProperty().addListener(listener)
+
+        val text = createMessage(message)
+
+        val vbox = VBox(50.0, text, progress)
+        vbox.alignment = Pos.CENTER
+        vbox.userData = Point2D(Math.max(text.layoutBounds.width, 400.0), text.layoutBounds.height * 2 + 50)
+
+        return wrap(vbox)
     }
 
     override fun progressDialogIndeterminate(message: String, callback: Runnable): Pane {
