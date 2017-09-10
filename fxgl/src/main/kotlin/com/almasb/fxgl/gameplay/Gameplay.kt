@@ -13,6 +13,8 @@ import com.almasb.fxgl.gameplay.qte.QTEProvider
 import com.almasb.fxgl.gameplay.rpg.InGameClock
 import com.almasb.fxgl.gameplay.rpg.quest.QuestManager
 import com.almasb.fxgl.gameplay.rpg.quest.QuestManagerProvider
+import com.almasb.fxgl.saving.UserProfile
+import com.almasb.fxgl.saving.UserProfileSavable
 import com.google.inject.Inject
 
 /**
@@ -23,7 +25,7 @@ import com.google.inject.Inject
  */
 class Gameplay
 @Inject
-private constructor() {
+private constructor() : UserProfileSavable {
 
     val stats = GameplayStats()
 
@@ -38,4 +40,16 @@ private constructor() {
     val cutsceneManager: CutsceneManager by lazy { CutsceneManager() }
 
     val leaderboard: Leaderboard by lazy { Leaderboard() }
+
+    override fun save(profile: UserProfile) {
+        stats.save(profile)
+        achievementManager.save(profile)
+        questManager.save(profile)
+    }
+
+    override fun load(profile: UserProfile) {
+        stats.load(profile)
+        achievementManager.load(profile)
+        questManager.load(profile)
+    }
 }
