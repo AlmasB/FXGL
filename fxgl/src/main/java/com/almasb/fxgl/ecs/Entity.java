@@ -8,6 +8,7 @@ package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -29,6 +30,8 @@ import java.util.Optional;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class Entity {
+
+    private static final Logger log = Logger.get(Entity.class);
 
     private ObjectMap<String, Object> properties = new ObjectMap<>();
 
@@ -171,6 +174,8 @@ public class Entity {
         onNotActive = null;
     }
 
+    private static final Object NULL = new Object();
+
     /**
      * @param key property key
      * @param value property value
@@ -183,18 +188,30 @@ public class Entity {
 
     /**
      * @param key property key
-     * @return property value
-     * @throws IllegalArgumentException if key doesn't exist
+     * @return property value or null if key not present
      */
     @SuppressWarnings("unchecked")
     public final <T> T getProperty(String key) {
         checkValid();
 
-        Object value = properties.get(key, null);
-        if (value == null)
-            throw new IllegalArgumentException("No property with key: " + key);
+        Object value = properties.get(key, NULL);
+        if (value == NULL) {
+            log.warning("Access property with missing key: " + key);
+            return null;
+        }
 
         return (T) value;
+    }
+
+    /**
+     * @param key property key
+     * @return property value or Optional.empty() if value is null or key not present
+     */
+    public final <T> Optional<T> getPropertyOptional(String key) {
+        checkValid();
+
+        Object value = properties.get(key, null);
+        return Optional.ofNullable((T) value);
     }
 
     /**
