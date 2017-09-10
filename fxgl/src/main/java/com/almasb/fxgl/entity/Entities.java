@@ -284,6 +284,14 @@ public final class Entities {
         }
 
         /**
+         * Add a property to entity being built.
+         */
+        public GameEntityBuilder with(String propertyKey, Object propertyValue) {
+            entity.setProperty(propertyKey, propertyValue);
+            return this;
+        }
+
+        /**
          * Finishes building entity.
          *
          * @return entity
