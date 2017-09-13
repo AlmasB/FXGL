@@ -12,6 +12,7 @@ package com.almasb.fxgl.core.math;
 
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
 import java.util.List;
@@ -223,6 +224,15 @@ public final class FXGLMath {
     }
 
     /**
+     * @param start start inclusive value
+     * @param end end exclusive value
+     * @return a random number between start (inclusive) and end (exclusive)
+     */
+    public static double random(double start, double end) {
+        return start + random.nextDouble() * (end - start);
+    }
+
+    /**
      * @return random sign, either -1 or 1
      */
     public static int randomSign() {
@@ -277,6 +287,16 @@ public final class FXGLMath {
             return min + (float) Math.sqrt(u * d * (mode - min));
 
         return max - (float) Math.sqrt((1 - u) * d * (max - mode));
+    }
+
+    /**
+     * @return random point within given bounds (minX <= x < maxX, minY <= y < maxY)
+     */
+    public static Point2D randomPoint(Rectangle2D bounds) {
+        return new Point2D(
+                random(bounds.getMinX(), bounds.getMaxX()),
+                random(bounds.getMinY(), bounds.getMaxY())
+        );
     }
 
     /**
@@ -544,6 +564,17 @@ public final class FXGLMath {
      * @return true if a is nearly equal to b
      */
     public static boolean isEqual(float a, float b, float tolerance) {
+        return Math.abs(a - b) <= tolerance;
+    }
+
+    /**
+     * @param a the first value
+     * @param b the second value
+     * @param tolerance represent an upper bound below which the two values are considered equal
+     *
+     * @return true if a is nearly equal to b
+     */
+    public static boolean isEqual(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
 
