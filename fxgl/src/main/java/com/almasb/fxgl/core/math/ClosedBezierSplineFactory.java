@@ -13,22 +13,18 @@ package com.almasb.fxgl.core.math;
  */
 class ClosedBezierSplineFactory {
 
-    /// <param name="firstControlPoints">
-    /// Output First Control points array of the same
-    /// length as the <paramref name="knots"> array.</param>
-    /// <param name="secondControlPoints">
-    /// Output Second Control points array of the same
-    /// length as the <paramref name="knots"> array.</param>
-
     /**
-     * @param knots Input Knot Bezier spline points
+     * @param knots Input Knot Bezier spline points to pass through
      * @return Closed Bezier Spline Control Points
      */
-    public static BezierSpline newBezierSpline(Vec2[] knots) {
+    static BezierSpline newBezierSpline(Vec2[] knots) {
         int n = knots.length;
 
         // The matrix.
-        double[] a = new double[n], b = new double[n], c = new double[n];
+        double[] a = new double[n];
+        double[] b = new double[n];
+        double[] c = new double[n];
+
         for (int i = 0; i < n; ++i) {
             a[i] = 1;
             b[i] = 4;
@@ -70,55 +66,56 @@ class ClosedBezierSplineFactory {
         return spline;
     }
 
-    /// <summary>
-    /// Solves the cyclic set of linear equations.
-    /// </summary>
-    /// <remarks>
-    /// The cyclic set of equations have the form
-    /// ---------------------------
-    /// b0 c0  0 · · · · · · ß
-    ///	a1 b1 c1 · · · · · · ·
-    ///  · · · · · · · · · · ·
-    ///  · · · a[n-2] b[n-2] c[n-2]
-    /// a  · · · · 0  a[n-1] b[n-1]
-    /// ---------------------------
-    /// This is a tridiagonal system, except for the matrix elements
-    /// a and ß in the corners.
-    /// </remarks>
+    /**
+     * Solves the cyclic set of linear equations.
+     *
+     * The cyclic set of equations have the form
+     * ---------------------------
+     * b0 c0  0 · · · · · · ß
+     * a1 b1 c1 · · · · · · ·
+     * · · · · · · · · · · ·
+     * · · · a[n-2] b[n-2] c[n-2]
+     * a  · · · · 0  a[n-1] b[n-1]
+     * ---------------------------
+     *
+     * This is a tridiagonal system, except for the matrix elements
+     * a and ß in the corners.
+     */
     private static class Cyclic {
-        /// <summary>
-        /// Solves the cyclic set of linear equations.
-        /// </summary>
-        /// <remarks>
-        /// All vectors have size of n although some elements are not used.
-        /// The input is not modified.
-        /// </remarks>
-        /// <param name="a">Lower diagonal vector of size n; a[0] not used.</param>
-        /// <param name="b">Main diagonal vector of size n.</param>
-        /// <param name="c">Upper diagonal vector of size n; c[n-1] not used.</param>
-        /// <param name="alpha">Bottom-left corner value.</param>
-        /// <param name="beta">Top-right corner value.</param>
-        /// <param name="rhs">Right hand side vector.</param>
-        /// <returns>The solution vector of size n.</returns>
-        public static double[] solve(double[] a, double[] b,
-                                     double[] c, double alpha, double beta, double[] rhs) {
+
+        /**
+         * Solves the cyclic set of linear equations.
+         *
+         * All vectors have size of n although some elements are not used.
+         * The input is not modified.
+         *
+         * @param a Lower diagonal vector of size n; a[0] not used
+         * @param b Main diagonal vector of size n
+         * @param c Upper diagonal vector of size n; c[n-1] not used
+         * @param alpha Bottom-left corner value
+         * @param beta Top-right corner value
+         * @param rhs Right hand side vector
+         * @return The solution vector of size n
+         */
+        static double[] solve(double[] a, double[] b, double[] c, double alpha, double beta, double[] rhs) {
+
             // a, b, c and rhs vectors must have the same size.
-            if (a.length != b.length || c.length != b.length ||
-                    rhs.length != b.length)
-                throw new IllegalArgumentException
-                        ("Diagonal and rhs vectors must have the same size.");
+            if (a.length != b.length || c.length != b.length || rhs.length != b.length)
+                throw new IllegalArgumentException("Diagonal and rhs vectors must have the same size");
+
             int n = b.length;
             if (n <= 2)
-                throw new IllegalArgumentException
-                        ("n too small in Cyclic; must be greater than 2.");
+                throw new IllegalArgumentException("n too small in Cyclic; must be greater than 2");
 
             double gamma = -b[0]; // Avoid subtraction error in forming bb[0].
+
             // Set up the diagonal of the modified tridiagonal system.
             double[] bb = new double[n];
             bb[0] = b[0] - gamma;
             bb[n-1] = b[n - 1] - alpha * beta / gamma;
             for (int i = 1; i < n - 1; ++i)
                 bb[i] = b[i];
+
             // Solve A · x = rhs.
             double[] solution = Tridiagonal.solve(a, bb, c, rhs);
             double[] x = new double[n];
@@ -131,6 +128,7 @@ class ClosedBezierSplineFactory {
             u[n-1] = alpha;
             for (int i = 1; i < n - 1; ++i)
                 u[i] = 0.0;
+
             // Solve A · z = u.
             solution = Tridiagonal.solve(a, bb, c, u);
             double[] z = new double[n];
@@ -163,14 +161,15 @@ class ClosedBezierSplineFactory {
          * @param rhs Right hand side vector
          * @return system solution vector
          */
-        public static double[] solve(double[] a, double[] b, double[] c, double[] rhs) {
+        static double[] solve(double[] a, double[] b, double[] c, double[] rhs) {
+
             // a, b, c and rhs vectors must have the same size.
-            if (a.length != b.length || c.length != b.length ||
-                    rhs.length != b.length)
-                throw new IllegalArgumentException
-                        ("Diagonal and rhs vectors must have the same size.");
+            if (a.length != b.length || c.length != b.length || rhs.length != b.length)
+                throw new IllegalArgumentException("Diagonal and rhs vectors must have the same size");
+
             if (b[0] == 0.0)
-                throw new IllegalArgumentException("Singular matrix.");
+                throw new IllegalArgumentException("Singular matrix");
+
             // If this happens then you should rewrite your equations as a set of
             // order N - 1, with u2 trivially eliminated.
 
@@ -181,17 +180,21 @@ class ClosedBezierSplineFactory {
 
             double bet = b[0];
             u[0] = rhs[0] / bet;
-            for (int j = 1;j < n;j++) // Decomposition and forward substitution.
-            {
+
+            // Decomposition and forward substitution
+            for (int j = 1; j < n; j++) {
                 gam[j] = c[j-1] / bet;
                 bet = b[j] - a[j] * gam[j];
+
                 if (bet == 0.0)
-                    // Algorithm fails.
-                    throw new RuntimeException("Singular matrix.");
+                    throw new IllegalArgumentException("Singular matrix");
+
                 u[j] = (rhs[j] - a[j] * u[j - 1]) / bet;
             }
+
+            // Backsubstitution
             for (int j = 1;j < n;j++)
-                u[n - j - 1] -= gam[n - j] * u[n - j]; // Backsubstitution.
+                u[n - j - 1] -= gam[n - j] * u[n - j];
 
             return u;
         }
