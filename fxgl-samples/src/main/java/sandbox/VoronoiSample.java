@@ -6,9 +6,22 @@
 
 package sandbox;
 
+import com.almasb.fxgl.algorithm.VoronoiSubdivision;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
-//import sandbox.voronoi.Voronoi;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
+import javafx.scene.text.Text;
+
+import java.util.Map;
+
+import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.inc;
+import static com.almasb.fxgl.app.DSLKt.onKey;
 
 /**
  *
@@ -30,24 +43,55 @@ public class VoronoiSample extends GameApplication {
     }
 
     @Override
+    protected void initInput() {
+
+        onKey(KeyCode.Q, "dec", () -> inc("hp", -0.01));
+        onKey(KeyCode.E, "inc", () -> inc("hp", +0.01));
+
+        getInput().addAction(new UserAction("Voronoi") {
+            @Override
+            protected void onActionBegin() {
+
+                VoronoiSubdivision.divide(getAppBounds(), 100, 2).forEach(p -> {
+
+                    p.setStrokeWidth(1.5);
+                    p.strokeProperty().bind(getop("stroke"));
+                    p.setFill(Color.RED);
+
+                    p.opacityProperty().bind(
+                            new SimpleDoubleProperty(1).subtract(getdp("hp")).multiply(distance(p) / 500 * 3)
+
+                    );
+
+                    getGameScene().addUINode(p);
+                });
+
+                Text text = getUIFactory().newText("", Color.BLACK, 18.0);
+                text.setTranslateX(50);
+                text.setTranslateY(50);
+                text.textProperty().bind(getdp("hp").asString("%.2f"));
+
+                getGameScene().addUINode(text);
+            }
+        }, KeyCode.F);
+    }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("hp", 1.0);
+        vars.put("stroke", Color.RED);
+    }
+
+    @Override
     protected void initGame() {
-//        Voronoi diagram = new Voronoi(50);
-//        diagram.generateVoronoi(
-//                new double[] { 100, 200, 250, 450 },
-//                new double[] { 100, 5, 33, 400 },
-//                0, 800, 0, 600
-//        ).forEach(edge -> {
-//            getGameScene().addUINode(new Line(edge.x1, edge.y1, edge.x2, edge.y2));
-//
-//            System.out.println(edge.site1 + " " + edge.site2);
-////            getGameScene().getGraphicsContext().setStroke(Color.BLACK);
-////            getGameScene().getGraphicsContext().strokeLine();
-//        });
-//
-//        getGameScene().addUINode(new Circle(100, 100, 5));
-//        getGameScene().addUINode(new Circle(200, 5, 5));
-//        getGameScene().addUINode(new Circle(250, 33, 5));
-//        getGameScene().addUINode(new Circle(450, 400, 5));
+        getdp("hp").addListener((o, oldValue, newValue) -> {
+            if (newValue.doubleValue() <= 1.0 && newValue.doubleValue() >= 0.0)
+                set("stroke", Color.color(1, 0, 0, 1.0 - newValue.doubleValue()));
+        });
+    }
+
+    private double distance(Polygon p) {
+        return new Point2D(400, 300).distance(p.getPoints().get(0), p.getPoints().get(1));
     }
 
     public static void main(String[] args) {
