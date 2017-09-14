@@ -13,7 +13,6 @@ import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.FXGLDefaultMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
-import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
@@ -36,17 +35,7 @@ public class CustomMenuBackgroundSample extends GameApplication {
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
-        settings.addServiceType(new ServiceType<SceneFactory>() {
-            @Override
-            public Class<SceneFactory> service() {
-                return SceneFactory.class;
-            }
-
-            @Override
-            public Class<? extends SceneFactory> serviceProvider() {
-                return MySceneFactory.class;
-            }
-        });
+        settings.setSceneFactory(new MySceneFactory());
     }
 
     public static class MySceneFactory extends SceneFactory {

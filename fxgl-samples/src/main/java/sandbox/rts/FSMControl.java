@@ -6,10 +6,10 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ai.fsm.DefaultStateMachine;
 import com.almasb.fxgl.ai.fsm.State;
+import com.almasb.fxgl.ecs.Control;
+import com.almasb.fxgl.ecs.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

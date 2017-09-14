@@ -42,7 +42,7 @@ public final class AppStateMachine {
 
         log.debug("Initializing application states");
 
-        SceneFactory sceneFactory = FXGL.getInstance(SceneFactory.class);
+        SceneFactory sceneFactory = FXGL.getSettings().getSceneFactory();
 
         // STARTUP is default
         appState = new StartupState(app);

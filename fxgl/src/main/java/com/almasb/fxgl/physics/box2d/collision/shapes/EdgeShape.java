@@ -154,7 +154,7 @@ public class EdgeShape extends Shape {
         // normal.set(normal.y, -normal.x);
         normal.x = v2.y - v1.y;
         normal.y = v1.x - v2.x;
-        normal.normalize();
+        normal.getLengthAndNormalize();
         final float normalx = normal.x;
         final float normaly = normal.y;
 

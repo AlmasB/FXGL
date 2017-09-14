@@ -14,7 +14,6 @@ import com.almasb.fxgl.ecs.component.IrremovableComponent
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.entity.component.IDComponent
 import com.almasb.fxgl.entity.component.PositionComponent
-import com.almasb.fxgl.entity.component.TypeComponent
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox

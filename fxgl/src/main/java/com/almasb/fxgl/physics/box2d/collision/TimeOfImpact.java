@@ -338,7 +338,7 @@ class SeparationFunction {
             Transform.mulToOutUnsafe(xfa, localPointA, pointA);
             Transform.mulToOutUnsafe(xfb, localPointB, pointB);
             m_axis.set(pointB).subLocal(pointA);
-            float s = m_axis.normalize();
+            float s = m_axis.getLengthAndNormalize();
             return s;
         } else if (cache.indexA[0] == cache.indexA[1]) {
             // Two points on B and one on A.
@@ -349,7 +349,7 @@ class SeparationFunction {
 
             temp.set(localPointB2).subLocal(localPointB1);
             Vec2.crossToOutUnsafe(temp, 1f, m_axis);
-            m_axis.normalize();
+            m_axis.getLengthAndNormalize();
 
             Rotation.mulToOutUnsafe(xfb.q, m_axis, normal);
 
@@ -375,7 +375,7 @@ class SeparationFunction {
 
             temp.set(localPointA2).subLocal(localPointA1);
             Vec2.crossToOutUnsafe(temp, 1.0f, m_axis);
-            m_axis.normalize();
+            m_axis.getLengthAndNormalize();
 
             Rotation.mulToOutUnsafe(xfa.q, m_axis, normal);
 

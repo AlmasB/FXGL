@@ -269,6 +269,8 @@ internal constructor(sceneFactory: SceneFactory) : AppState(sceneFactory.newGame
 
         FXGL.getApp().onUpdate(tpf)
         FXGL.getApp().onPostUpdate(tpf)
+
+        FXGL.getGameplay().stats.onUpdate(tpf)
     }
 }
 

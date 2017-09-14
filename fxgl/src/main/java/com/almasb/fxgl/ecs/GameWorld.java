@@ -12,6 +12,7 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.ecs.component.IrremovableComponent;
 import com.almasb.fxgl.ecs.component.TimeComponent;
@@ -360,9 +361,7 @@ public final class GameWorld {
     /* QUERIES */
 
     public <T extends Entity> EntityGroup<T> getGroup(Enum<?>... types) {
-        EntityGroup<T> group = new EntityGroup<T>((List<? extends T>) getEntitiesByType(types), types);
-        addWorldListener(group);
-        return group;
+        return new EntityGroup<T>(this, (List<? extends T>) getEntitiesByType(types), types);
     }
 
     /**
@@ -370,7 +369,7 @@ public final class GameWorld {
      * 
      * @return first occurrence matching given type
      */
-    public Entity getSingleton(Enum<?> type) {
+    public Optional<Entity> getSingleton(Enum<?> type) {
         return getSingleton(e ->
                 e.hasComponent(TypeComponent.class) && e.getComponent(TypeComponent.class).isType(type)
         );
@@ -379,15 +378,27 @@ public final class GameWorld {
     /**
      * @return first occurrence matching given predicate
      */
-    public Entity getSingleton(Predicate<Entity> predicate) {
+    public Optional<Entity> getSingleton(Predicate<Entity> predicate) {
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
             if (predicate.test(e)) {
-                return e;
+                return Optional.of(e);
             }
         }
 
-        throw new IllegalArgumentException("No entity exists matching predicate");
+        return Optional.empty();
+    }
+
+    /**
+     * @param type entity type
+     * @return a random entity with given type
+     */
+    public Optional<Entity> getRandom(Enum<?> type) {
+        return FXGLMath.random(getEntitiesByType(type));
+    }
+
+    public Optional<Entity> getRandom(Predicate<Entity> predicate) {
+        return FXGLMath.random(getEntitiesFiltered(predicate));
     }
 
     /**

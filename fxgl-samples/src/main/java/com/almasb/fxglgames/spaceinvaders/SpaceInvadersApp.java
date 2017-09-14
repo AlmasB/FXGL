@@ -9,8 +9,6 @@ package com.almasb.fxglgames.spaceinvaders;
 import com.almasb.fxgl.annotation.Handles;
 import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.DSLKt;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.ecs.Entity;
@@ -37,7 +35,8 @@ import javafx.util.Duration;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.geti;
+import static com.almasb.fxgl.app.DSLKt.inc;
 import static com.almasb.fxglgames.spaceinvaders.Config.*;
 
 /**

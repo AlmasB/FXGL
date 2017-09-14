@@ -12,9 +12,11 @@ package com.almasb.fxgl.core.math;
 
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -222,6 +224,15 @@ public final class FXGLMath {
     }
 
     /**
+     * @param start start inclusive value
+     * @param end end exclusive value
+     * @return a random number between start (inclusive) and end (exclusive)
+     */
+    public static double random(double start, double end) {
+        return start + random.nextDouble() * (end - start);
+    }
+
+    /**
      * @return random sign, either -1 or 1
      */
     public static int randomSign() {
@@ -279,6 +290,16 @@ public final class FXGLMath {
     }
 
     /**
+     * @return random point within given bounds (minX <= x < maxX, minY <= y < maxY)
+     */
+    public static Point2D randomPoint(Rectangle2D bounds) {
+        return new Point2D(
+                random(bounds.getMinX(), bounds.getMaxX()),
+                random(bounds.getMinY(), bounds.getMaxY())
+        );
+    }
+
+    /**
      * @return new random vector of unit length as Vec2
      */
     public static Vec2 randomVec2() {
@@ -304,17 +325,23 @@ public final class FXGLMath {
     }
 
     /**
-     * @return random element of the given array
+     * @return random element of the given array or Optional.empty() if empty
      */
-    public static <T> T random(T[] array) {
-        return array[random(0, array.length - 1)];
+    public static <T> Optional<T> random(T[] array) {
+        if (array.length == 0)
+            return Optional.empty();
+
+        return Optional.of(array[random(0, array.length - 1)]);
     }
 
     /**
-     * @return random element of the given list
+     * @return random element of the given list or Optional.empty() if empty
      */
-    public static <T> T random(List<T> list) {
-        return list.get(random(0, list.size() - 1));
+    public static <T> Optional<T> random(List<T> list) {
+        if (list.isEmpty())
+            return Optional.empty();
+
+        return Optional.of(list.get(random(0, list.size() - 1)));
     }
 
     /* RANDOM END */
@@ -537,6 +564,17 @@ public final class FXGLMath {
      * @return true if a is nearly equal to b
      */
     public static boolean isEqual(float a, float b, float tolerance) {
+        return Math.abs(a - b) <= tolerance;
+    }
+
+    /**
+     * @param a the first value
+     * @param b the second value
+     * @param tolerance represent an upper bound below which the two values are considered equal
+     *
+     * @return true if a is nearly equal to b
+     */
+    public static boolean isEqual(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
 

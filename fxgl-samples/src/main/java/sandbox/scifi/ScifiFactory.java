@@ -8,19 +8,18 @@ package sandbox.scifi;
 
 import com.almasb.fxgl.annotation.SetEntityFactory;
 import com.almasb.fxgl.annotation.Spawns;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

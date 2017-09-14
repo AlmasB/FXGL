@@ -7,7 +7,6 @@
 package s08ai;
 
 import com.almasb.fxgl.ai.GoalAction;
-import com.almasb.fxgl.app.FXGL;
 import javafx.geometry.Point2D;
 
 /**

@@ -153,7 +153,7 @@ public class CircleShape extends Shape {
             output.fraction = a;
             output.normal.x = rx * a + sx;
             output.normal.y = ry * a + sy;
-            output.normal.normalize();
+            output.normal.getLengthAndNormalize();
             return true;
         }
 

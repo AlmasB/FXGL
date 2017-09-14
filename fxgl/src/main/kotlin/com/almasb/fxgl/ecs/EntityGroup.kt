@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.ecs
 
+import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.Predicate
 import com.almasb.fxgl.entity.component.TypeComponent
@@ -18,13 +19,17 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class EntityGroup<T : Entity>(initialEntities: List<T>, vararg entityTypes: Enum<*>) : EntityWorldListener {
+class EntityGroup<T : Entity>(private val world: GameWorld, initialEntities: List<T>, vararg entityTypes: Enum<*>) : EntityWorldListener, Disposable {
 
     private val types: List<Enum<*>> = entityTypes.toList()
 
     private val entities = Array<T>(initialEntities)
     private val addList = Array<T>()
     private val removeList = Array<T>()
+
+    init {
+        world.addWorldListener(this)
+    }
 
     fun forEach(action: Consumer<T>) {
         update()
@@ -48,7 +53,7 @@ class EntityGroup<T : Entity>(initialEntities: List<T>, vararg entityTypes: Enum
 
     private fun update() {
         entities.addAll(addList)
-        entities.removeAll(removeList, true)
+        entities.removeAllByIdentity(removeList)
         addList.clear()
         removeList.clear()
     }
@@ -71,5 +76,13 @@ class EntityGroup<T : Entity>(initialEntities: List<T>, vararg entityTypes: Enum
                 removeList.add(entity as T)
             }
         }
+    }
+
+    override fun dispose() {
+        world.removeWorldListener(this)
+
+        entities.clear()
+        addList.clear()
+        removeList.clear()
     }
 }

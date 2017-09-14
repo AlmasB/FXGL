@@ -7,21 +7,17 @@
 package s09advanced.state;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.State;
 import com.almasb.fxgl.app.SubState;
 import com.almasb.fxgl.input.UserAction;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

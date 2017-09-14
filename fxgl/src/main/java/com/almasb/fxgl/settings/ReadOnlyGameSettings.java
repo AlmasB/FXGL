@@ -6,14 +6,20 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.service.ServiceType;
+import com.almasb.fxgl.app.FXGLExceptionHandler;
+import com.almasb.fxgl.scene.SceneFactory;
+import com.almasb.fxgl.service.DialogFactory;
+import com.almasb.fxgl.service.ExceptionHandler;
+import com.almasb.fxgl.service.NotificationService;
+import com.almasb.fxgl.service.UIFactory;
+import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
+import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
+import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * A copy of GameSettings with public getters only.
@@ -34,8 +40,16 @@ public class ReadOnlyGameSettings {
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected KeyCode menuKey = KeyCode.ESCAPE;
     protected Credits credits = new Credits(Collections.emptyList());
-    protected List<ServiceType<?> > services = new ArrayList<>();
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
+
+    /* CUSTOMIZABLE SERVICES BELOW */
+
+    // TODO: make these lazy
+    protected SceneFactory sceneFactory = new SceneFactory();
+    protected DialogFactory dialogFactory = new FXGLDialogFactory();
+    protected UIFactory uiFactory = new FXGLUIFactory();
+    protected NotificationService notificationService = new SlidingNotificationService();
+    protected ExceptionHandler exceptionHandler = new FXGLExceptionHandler();
 
     // when adding extra fields, remember to add them to copy constructor
 
@@ -64,8 +78,13 @@ public class ReadOnlyGameSettings {
         this.appMode = copy.appMode;
         this.menuKey = copy.menuKey;
         this.credits = new Credits(copy.credits);
-        this.services = copy.services;
         this.enabledMenuItems = copy.enabledMenuItems;
+
+        this.sceneFactory = copy.sceneFactory;
+        this.dialogFactory = copy.dialogFactory;
+        this.uiFactory = copy.uiFactory;
+        this.notificationService = copy.notificationService;
+        this.exceptionHandler = copy.exceptionHandler;
     }
 
     public final String getTitle() {
@@ -116,12 +135,28 @@ public class ReadOnlyGameSettings {
         return credits;
     }
 
-    public final List<ServiceType<?>> getServices() {
-        return services;
-    }
-
     public final EnumSet<MenuItem> getEnabledMenuItems() {
         return enabledMenuItems;
+    }
+
+    public final SceneFactory getSceneFactory() {
+        return sceneFactory;
+    }
+
+    public final DialogFactory getDialogFactory() {
+        return dialogFactory;
+    }
+
+    public final UIFactory getUIFactory() {
+        return uiFactory;
+    }
+
+    public final NotificationService getNotificationService() {
+        return notificationService;
+    }
+
+    public final ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
     }
 
     @Override
@@ -136,6 +171,10 @@ public class ReadOnlyGameSettings {
                 "Profiling: " + profilingEnabled + '\n' +
                 "App Mode: " + appMode + '\n' +
                 "Menu Key: " + menuKey + '\n' +
-                "Services: " + services;
+                "Scene Factory: " + sceneFactory.getClass() + '\n' +
+                "Dialog Factory: " + dialogFactory.getClass() + '\n' +
+                "UI Factory: " + uiFactory.getClass() + '\n' +
+                "Notification Service: " + notificationService.getClass() + '\n' +
+                "Exception Handler: " + exceptionHandler.getClass();
     }
 }

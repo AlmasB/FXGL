@@ -15,7 +15,6 @@ import com.almasb.fxgl.net.DataParser
 import com.almasb.fxgl.net.NetworkConnection
 import com.almasb.fxgl.net.Server
 import com.almasb.fxgl.service.Net
-import com.google.inject.Inject
 import javafx.beans.value.ChangeListener
 import java.io.InputStreamReader
 import java.io.Serializable
@@ -28,8 +27,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class FXGLNet
-@Inject private constructor() : Net {
+class FXGLNet : Net {
 
     override fun downloadTask(url: String): IOTask<Path> = DownloadTask(url)
 

@@ -212,7 +212,7 @@ public class RopeJoint extends Joint {
         Rotation.mulToOutUnsafe(qB, temp.set(m_localAnchorB).subLocal(m_localCenterB), rB);
         u.set(cB).addLocal(rB).subLocal(cA).subLocal(rA);
 
-        float length = u.normalize();
+        float length = u.getLengthAndNormalize();
         float C = length - m_maxLength;
 
         C = JBoxUtils.clamp(C, 0.0f, JBoxSettings.maxLinearCorrection);

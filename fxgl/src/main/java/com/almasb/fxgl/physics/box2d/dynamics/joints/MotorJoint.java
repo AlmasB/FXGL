@@ -316,7 +316,7 @@ public class MotorJoint extends Joint {
             float maxImpulse = h * maxForce;
 
             if (linearImpulse.lengthSquared() > maxImpulse * maxImpulse) {
-                linearImpulse.normalize();
+                linearImpulse.getLengthAndNormalize();
                 linearImpulse.mulLocal(maxImpulse);
             }
 

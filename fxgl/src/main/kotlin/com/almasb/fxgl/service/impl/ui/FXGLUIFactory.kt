@@ -9,7 +9,6 @@ package com.almasb.fxgl.service.impl.ui
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.service.UIFactory
 import com.almasb.fxgl.ui.*
-import com.google.inject.Inject
 import javafx.collections.ObservableList
 import javafx.scene.control.*
 import javafx.scene.text.Font
@@ -19,9 +18,7 @@ import javafx.scene.text.Font
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class FXGLUIFactory
-@Inject
-private constructor() : UIFactory {
+class FXGLUIFactory : UIFactory {
 
     override fun newFont(size: Double): Font {
         return FXGLAssets.UI_FONT.newFont(size)

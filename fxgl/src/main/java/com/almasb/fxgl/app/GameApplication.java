@@ -290,15 +290,13 @@ public abstract class GameApplication extends Application {
         getEventBus().addEventHandler(SaveEvent.ANY, e -> {
             getAudioPlayer().save(e.getProfile());
             getInput().save(e.getProfile());
-            getGameplay().getAchievementManager().save(e.getProfile());
-            getGameplay().getQuestManager().save(e.getProfile());
+            getGameplay().save(e.getProfile());
         });
 
         getEventBus().addEventHandler(LoadEvent.ANY, e -> {
             getAudioPlayer().load(e.getProfile());
             getInput().load(e.getProfile());
-            getGameplay().getAchievementManager().load(e.getProfile());
-            getGameplay().getQuestManager().load(e.getProfile());
+            getGameplay().load(e.getProfile());
         });
 
         getEventBus().scanForHandlers(this);

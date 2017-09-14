@@ -196,7 +196,7 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
         r.x = p2x - p1x;
         r.y = p2y - p1y;
         assert ((r.x * r.x + r.y * r.y) > 0f);
-        r.normalize();
+        r.getLengthAndNormalize();
         rx = r.x;
         ry = r.y;
 

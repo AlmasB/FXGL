@@ -11,8 +11,6 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.service.NotificationService;
-import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -38,18 +36,7 @@ public class NotificationSample extends GameApplication {
 
         // 2. by default SlidingNotificationService is used
         // but you can provide your own or use another built-in provider, e.g. FXGLNotificationService
-        settings.addServiceType(new ServiceType<NotificationService>() {
-
-            @Override
-            public Class<NotificationService> service() {
-                return NotificationService.class;
-            }
-
-            @Override
-            public Class<? extends NotificationService> serviceProvider() {
-                return FXGLNotificationService.class;
-            }
-        });
+        settings.setNotificationService(new FXGLNotificationService());
 
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }

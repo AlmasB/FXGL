@@ -14,8 +14,8 @@ import com.almasb.fxgl.annotation.AddCollisionHandler
 import com.almasb.fxgl.annotation.AnnotationParser
 import com.almasb.fxgl.annotation.SetEntityFactory
 import org.hamcrest.CoreMatchers.*
-import org.junit.Test
 import org.junit.Assert.*
+import org.junit.Test
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

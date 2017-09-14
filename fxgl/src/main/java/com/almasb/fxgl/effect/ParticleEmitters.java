@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.effect;
 
+import com.almasb.fxgl.animation.Interpolators;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
@@ -51,7 +52,7 @@ public final class ParticleEmitters {
         emitter.setEmissionRate(0.5);
         emitter.setColor(Color.rgb(230, 75, 40));
         emitter.setSize(9, 12);
-        emitter.setVelocityFunction((i, x, y) -> new Point2D(rand(-0.5, 0.5) * 0.25, rand() * -1));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D(rand(-0.5, 0.5) * 0.25 * 60, rand() * -1 * 60));
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y).add(new Point2D(i * (rand() - 0.5), (rand() - 1))));
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand(-0.01, 0.01) * 10, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(1));
@@ -63,17 +64,19 @@ public final class ParticleEmitters {
     /**
      * @return new emitter with explosion configuration
      */
-    public static ParticleEmitter newExplosionEmitter() {
+    public static ParticleEmitter newExplosionEmitter(int explosionRadius) {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.setNumParticles(100);
         emitter.setEmissionRate(0.0166);
+        emitter.setMaxEmissions(1);
         emitter.setSize(5, 20);
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y));
-        emitter.setVelocityFunction((i, x, y) -> new Point2D(Math.cos(i), Math.sin(i)).multiply(0.75));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D(Math.cos(i), Math.sin(i)).multiply(explosionRadius));
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand() * -0.1, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(0.5));
         emitter.setColor(Color.rgb((int) rand(200, 255), 30, 20));
         emitter.setBlendMode(BlendMode.ADD);
+        emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
 
         return emitter;
     }
@@ -94,7 +97,7 @@ public final class ParticleEmitters {
         emitter.setVelocityFunction((i, x, y) -> {
             Point2D vector = new Point2D(Math.cos(i), Math.sin(i));
             Point2D newPos = new Point2D(x, y).add(vector.multiply(25));
-            return newPos.subtract(new Point2D(x, y)).multiply(-0.05);
+            return newPos.subtract(new Point2D(x, y)).multiply(-0.05 * 60);
         });
         emitter.setScaleFunction((i, x, y) -> new Point2D(rand() * -0.1, rand() * -0.1));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(0.5));
@@ -113,8 +116,8 @@ public final class ParticleEmitters {
         emitter.setEmissionRate(0.0166 / 2);
         emitter.setSize(1, 2);
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y));
-        emitter.setVelocityFunction((i, x, y) -> new Point2D(rand(-1, 1), rand(-6, -5)).multiply(0.1));
-        emitter.setGravityFunction(() -> new Point2D(0, rand(0.01, 0.015)));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D(rand(-1, 1), rand(-6, -5)).multiply(0.1 * 60));
+        emitter.setAccelerationFunction(() -> new Point2D(0, rand(0.01, 0.015)));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(2));
         emitter.setColor(Color.rgb(30, 35, (int) rand(200, 255)));
 
@@ -130,8 +133,8 @@ public final class ParticleEmitters {
         emitter.setEmissionRate(1);
         emitter.setSize(9, 10);
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(x, y).add(rand(-1, 1), 0));
-        emitter.setVelocityFunction((i, x, y) -> new Point2D((rand() * 0.1), 0));
-        emitter.setGravityFunction(() -> new Point2D(0, rand() * -0.03));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D((rand() * 0.1 * 60), 0));
+        emitter.setAccelerationFunction(() -> new Point2D(0, rand() * -0.03));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(rand(1, 3)));
         emitter.setColor(Color.rgb(230, 230, 230));
         emitter.setScaleFunction((i, x, y) -> new Point2D(-0.01, -0.05));
@@ -150,8 +153,8 @@ public final class ParticleEmitters {
         emitter.setSize(6, 7);
         emitter.setColor(Color.AQUA);
         emitter.setSpawnPointFunction((i, x, y) -> new Point2D(rand()*width + x, -25 + y));
-        emitter.setVelocityFunction((i, x, y) -> new Point2D(0, (rand() * 15)));
-        emitter.setGravityFunction(() -> new Point2D(0, rand() * 0.03));
+        emitter.setVelocityFunction((i, x, y) -> new Point2D(0, (rand() * 15 * 60)));
+        emitter.setAccelerationFunction(() -> new Point2D(0, rand() * 0.03));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(rand(1, 3)));
         emitter.setScaleFunction((i, x, y) -> new Point2D(-0.02, 0));
 

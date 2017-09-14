@@ -8,7 +8,6 @@ package sandbox.scifi;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.ApplicationMode;
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -31,7 +30,6 @@ import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.ui.InGamePanel;
 import com.almasb.fxgl.ui.LevelText;
 import javafx.geometry.Orientation;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;

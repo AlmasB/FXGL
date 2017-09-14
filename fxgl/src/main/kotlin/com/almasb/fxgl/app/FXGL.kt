@@ -13,7 +13,9 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.service.ServiceType
+import com.almasb.fxgl.service.impl.display.FXGLDisplay
+import com.almasb.fxgl.service.impl.executor.FXGLExecutor
+import com.almasb.fxgl.service.impl.net.FXGLNet
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.google.inject.AbstractModule
@@ -39,8 +41,6 @@ class FXGL private constructor() {
     companion object {
         private lateinit var internalApp: GameApplication
 
-        private lateinit var internalAllServices: List<ServiceType<*>>
-
         private lateinit var internalBundle: Bundle
 
         private val log = Logger.get("FXGL")
@@ -65,8 +65,6 @@ class FXGL private constructor() {
         @JvmStatic fun getAppWidth() = internalApp.width
 
         @JvmStatic fun getAppHeight() = internalApp.height
-
-        @JvmStatic fun getServices() = internalAllServices
 
         /**
          * @return instance of the running game application cast to the actual type
@@ -101,10 +99,6 @@ class FXGL private constructor() {
             allModules.add(appModule)
 
             injector = Guice.createInjector(allModules)
-
-            internalAllServices = appModule.allServices
-
-            initServices()
 
             if (firstRun)
                 loadDefaultSystemData()
@@ -167,13 +161,6 @@ class FXGL private constructor() {
             //internalBundle.put("version.check", LocalDate.now())
         }
 
-        private fun initServices() {
-            internalAllServices.forEach {
-                getInstance(it.service())
-                log.debug("Service <<${it.service().simpleName}>> initialized")
-            }
-        }
-
         /**
          * Destructs FXGL.
          */
@@ -188,17 +175,6 @@ class FXGL private constructor() {
          * Dependency injector.
          */
         private lateinit var injector: Injector
-
-        /**
-         * Obtain an instance of a service.
-         * It may be expensive to use this in a loop.
-         * Store a reference to the instance instead.
-         *
-         * @param serviceType service type
-         *
-         * @return service
-         */
-        @JvmStatic fun <T> getService(serviceType: ServiceType<T>) = injector.getInstance(serviceType.service())
 
         /**
          * Obtain an instance of a type.
@@ -243,23 +219,20 @@ class FXGL private constructor() {
         private val _audioPlayer by lazy { getInstance(AudioPlayer::class.java) }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
 
-        private val _display by lazy { getService(ServiceType.DISPLAY) }
+        private val _display by lazy { FXGLDisplay() }
         @JvmStatic fun getDisplay() = _display
 
-        private val _notification by lazy { getService(ServiceType.NOTIFICATION_SERVICE) }
-        @JvmStatic fun getNotificationService() = _notification
+        @JvmStatic fun getNotificationService() = getSettings().notificationService
 
-        private val _executor by lazy { getService(ServiceType.EXECUTOR) }
+        private val _executor by lazy { FXGLExecutor() }
         @JvmStatic fun getExecutor() = _executor
 
-        private val _net by lazy { getService(ServiceType.NET) }
+        private val _net by lazy { FXGLNet() }
         @JvmStatic fun getNet() = _net
 
-        private val _exceptionHandler by lazy { getService(ServiceType.EXCEPTION_HANDLER) }
-        @JvmStatic fun getExceptionHandler() = _exceptionHandler
+        @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
 
-        private val _uiFactory by lazy { getService(ServiceType.UI_FACTORY) }
-        @JvmStatic fun getUIFactory() = _uiFactory
+        @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
         private val _gameplay by lazy { getInstance(Gameplay::class.java) }
         @JvmStatic fun getGameplay() = _gameplay

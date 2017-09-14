@@ -8,12 +8,12 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.scene.FXGLScene
-import com.almasb.fxgl.service.ServiceType
 import com.almasb.fxgl.util.EmptyRunnable
 import com.sun.javafx.scene.traversal.Algorithm
 import com.sun.javafx.scene.traversal.Direction
 import com.sun.javafx.scene.traversal.ParentTraversalEngine
 import com.sun.javafx.scene.traversal.TraversalContext
+import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.effect.BoxBlur
@@ -35,7 +35,7 @@ import java.util.function.Predicate
 object DialogSubState : SubState() {
 
     private val window = Window()
-    private val dialogFactory = FXGL.getService(ServiceType.DIALOG_FACTORY)
+    private val dialogFactory = FXGL.getSettings().dialogFactory
 
     private val states = ArrayDeque<DialogData>()
 
@@ -213,6 +213,15 @@ object DialogSubState : SubState() {
                 close()
             }
         }
+    }
+
+    internal fun showProgressBox(message: String, observable: DoubleProperty, callback: Runnable) {
+        val dialog = dialogFactory.progressDialog(message, observable, {
+            close()
+            callback.run()
+        })
+
+        show("Progress", dialog)
     }
 
     private class DialogData internal constructor(internal var title: String, internal var contentPane: Pane)

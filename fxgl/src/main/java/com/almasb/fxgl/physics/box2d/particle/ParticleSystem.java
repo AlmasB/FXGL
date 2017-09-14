@@ -1725,7 +1725,7 @@ public class ParticleSystem {
                 final Vec2 n = tempVec;
                 tempVec.x = px + t * vx;
                 tempVec.y = py + t * vy;
-                n.normalize();
+                n.getLengthAndNormalize();
                 final Vec2 point = tempVec2;
                 point.x = point1.x + t * vx;
                 point.y = point1.y + t * vy;

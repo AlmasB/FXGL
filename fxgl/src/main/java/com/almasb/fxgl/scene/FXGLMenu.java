@@ -61,9 +61,6 @@ import java.util.function.Supplier;
  */
 public abstract class FXGLMenu extends FXGLScene {
 
-    /**
-     * The logger.
-     */
     protected static final Logger log = Logger.get("FXGL.Menu");
 
     protected final GameApplication app;
@@ -216,10 +213,14 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
-        return new MenuContent(new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner));
-//                FXGL.getUIFactory().newText("PLAYTIME: " + app.getMasterTimer().getPlaytimeHours() + "H "
-//                    + app.getMasterTimer().getPlaytimeMinutes() + "M "
-//                    + app.getMasterTimer().getPlaytimeSeconds() + "S"));
+        return new MenuContent(
+                new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner),
+                FXGL.getUIFactory().newText("PLAYTIME: "
+                        + app.getGameplay().getStats().getPlaytimeHours() + "H "
+                        + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
+                        + app.getGameplay().getStats().getPlaytimeSeconds() + "S")
+                );
+
     }
 
     /**
@@ -304,15 +305,7 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentVideo() {
         log.debug("createContentVideo()");
 
-        // TODO: refactor
-//        Spinner<SceneDimension> spinner =
-//                new Spinner<>(FXCollections.observableArrayList(app.getDisplay().getSceneDimensions()));
-//
-//        Button btnApply = FXGL.getUIFactory().newButton("Apply");
-//        btnApply.setOnAction(e -> {
-//            SceneDimension dimension = spinner.getValue();
-//            app.getDisplay().setSceneDimension(dimension);
-//        });
+        // nothing to put here at the moment
 
         return new MenuContent();
     }

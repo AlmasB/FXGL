@@ -8,6 +8,7 @@ package com.almasb.fxgl.service;
 
 import com.almasb.fxgl.io.UIDialogHandler;
 import com.almasb.fxgl.util.EmptyRunnable;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
@@ -113,4 +114,11 @@ public interface Display {
      * @return dialog handler
      */
     UIDialogHandler showProgressBox(String message);
+
+    /**
+     * @param message message to show
+     * @param progress [0..1]
+     * @param callback called when dialog is dismissed (when progress >= 1)
+     */
+    void showProgressBox(String message, DoubleProperty progress, Runnable callback);
 }

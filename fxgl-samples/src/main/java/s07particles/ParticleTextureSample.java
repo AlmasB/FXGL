@@ -6,9 +6,11 @@
 
 package s07particles;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -18,10 +20,10 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import static java.lang.Math.*;
 
@@ -54,7 +56,7 @@ public class ParticleTextureSample extends GameApplication {
         getInput().addAction(new UserAction("Change Color") {
             @Override
             protected void onActionBegin() {
-                emitter.setBlendMode(emitter.getBlendMode() == BlendMode.SRC_OVER ? BlendMode.ADD : BlendMode.SRC_OVER);
+                //emitter.setBlendMode(emitter.getBlendMode() == BlendMode.SRC_OVER ? BlendMode.ADD : BlendMode.SRC_OVER);
                 emitter.setSourceImage(getAssetLoader().loadTexture("particleTexture2.png")
                         .multiplyColor(Color.color(FXGLMath.random(), FXGLMath.random(), FXGLMath.random())).getImage());
             }
@@ -67,16 +69,32 @@ public class ParticleTextureSample extends GameApplication {
                 .viewFromNode(new Rectangle(getWidth(), getHeight()))
                 .buildAndAttach(getGameWorld());
 
-        emitter = ParticleEmitters.newFireEmitter();
+        emitter = ParticleEmitters.newExplosionEmitter(100);
         emitter.setSize(5, 20);
-        emitter.setNumParticles(7);
-        emitter.setEmissionRate(1);
+        emitter.setNumParticles(24);
+        emitter.setMaxEmissions(Integer.MAX_VALUE);
+        emitter.setEmissionRate(0.1);
+        emitter.setExpireFunction((i, x, y) -> Duration.seconds(FXGLMath.random(2, 2)));
+        emitter.setVelocityFunction((i, x, y) -> Vec2.fromAngle(360 / 24 *i).toPoint2D().multiply(100));
+        emitter.setAccelerationFunction(() -> new Point2D(0, 30));
         emitter.setSourceImage(getAssetLoader().loadTexture("particleTexture2.png").multiplyColor(Color.rgb(230, 75, 40)).getImage());
+        emitter.setInterpolator(Interpolators.EXPONENTIAL.EASE_OUT());
 
         entity = Entities.builder()
                 .at(getWidth() / 2, getHeight() / 2)
-                .with(new ParticleControl(emitter), new ButterflyControl())
-                .buildAndAttach(getGameWorld());
+                .with(new ParticleControl(emitter))
+                //.with(new ButterflyControl())
+                .buildAndAttach();
+
+//        Entities.builder()
+//                .at(520, 180)
+//                .viewFromNode(new Circle(5, Color.WHITE))
+//                .buildAndAttach();
+//
+//        Entities.builder()
+//                .at(520, 252)
+//                .viewFromNode(new Circle(5, Color.WHITE))
+//                .buildAndAttach();
     }
 
     private class ButterflyControl extends Control {

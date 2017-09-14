@@ -27,7 +27,7 @@ class FileOutput
 
     override fun close() {
         val stamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy-HH.mm.ss"))
-        val file = Paths.get("${logDirectory}$baseFileName-$stamp")
+        val file = Paths.get("${logDirectory}$baseFileName-$stamp.log")
 
         Files.write(file, data)
     }

@@ -6,14 +6,7 @@
 
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.service.ExceptionHandler;
-import com.almasb.fxgl.service.Executor;
-import com.almasb.fxgl.service.NotificationService;
-import com.almasb.fxgl.service.UIFactory;
-import com.almasb.fxgl.service.impl.executor.FXGLExecutor;
-import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.ui.MockUIFactory;
 import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -72,13 +65,6 @@ public class MockApplicationModule extends ApplicationModule {
     @Override
     protected void bindServices() {
         mockProperties();
-        mockTimer();
-        mockLoggerFactory();
-        mockInput();
-        mockExecutor();
-        mockExceptionHandler();
-        mockNotificationService();
-        mockUIFactory();
         mockAssetLoader();
         mockPhysics();
     }
@@ -89,36 +75,6 @@ public class MockApplicationModule extends ApplicationModule {
      */
     private void mockProperties() {
         FXGL.setProperty("dev.showbbox", false);
-    }
-
-    private void mockTimer() {
-        //bind(MasterTimer.class).toInstance(MockMasterTimer.INSTANCE);
-        //bind(StateTimer.class).to(StateTimerImpl.class);
-        //bind(LocalTimer.class).to(FXGLLocalTimer.class);
-    }
-
-    private void mockExceptionHandler() {
-        bind(ExceptionHandler.class).toInstance(MockExceptionHandler.INSTANCE);
-    }
-
-    private void mockLoggerFactory() {
-        //bind(LoggerFactory.class).toInstance(MockLoggerFactory.INSTANCE);
-    }
-
-    private void mockInput() {
-        //bind(Input.class).to(Input.class);
-    }
-
-    private void mockExecutor() {
-        bind(Executor.class).to(FXGLExecutor.class);
-    }
-
-    private void mockNotificationService() {
-        bind(NotificationService.class).to(FXGLNotificationService.class);
-    }
-
-    private void mockUIFactory() {
-        bind(UIFactory.class).toInstance(MockUIFactory.INSTANCE);
     }
 
     private void mockAssetLoader() {

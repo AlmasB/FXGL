@@ -12,7 +12,6 @@ import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.GTAVMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
-import com.almasb.fxgl.service.ServiceType;
 import com.almasb.fxgl.settings.GameSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,17 +31,7 @@ public class MenuStyleSample extends GameApplication {
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
-        settings.addServiceType(new ServiceType<SceneFactory>() {
-            @Override
-            public Class<SceneFactory> service() {
-                return SceneFactory.class;
-            }
-
-            @Override
-            public Class<? extends SceneFactory> serviceProvider() {
-                return MySceneFactory.class;
-            }
-        });
+        settings.setSceneFactory(new SceneFactory());
     }
 
     public static class MySceneFactory extends SceneFactory {

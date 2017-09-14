@@ -369,6 +369,23 @@ public class EntityTest {
 
         entity.setProperty("hp", true);
         assertThat(entity.getProperty("hp"), is(true));
+        assertThat(entity.getPropertyOptional("hp").isPresent(), is(true));
+
+        entity.setProperty("lastTime", null);
+        Optional<?> value = entity.getPropertyOptional("lastTime");
+        assertThat(value.isPresent(), is(false));
+    }
+
+    @Test
+    public void testNoPropertyKey() {
+        Object value = entity.getProperty("no_key");
+        assertThat(value, nullValue());
+    }
+
+    @Test
+    public void testNoPropertyKeyOptional() {
+        Optional<?> value = entity.getPropertyOptional("no_key");
+        assertThat(value.isPresent(), is(false));
     }
 
     @Test
@@ -399,11 +416,6 @@ public class EntityTest {
         world.addEntity(entity);
         entity.setOnActive(() -> hp.value = 99.0);
         assertThat(hp.value, is(99.0));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNoPropertyKey() {
-        entity.getProperty("no_key");
     }
 
     @Test
