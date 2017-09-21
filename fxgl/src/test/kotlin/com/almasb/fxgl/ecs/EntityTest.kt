@@ -393,6 +393,24 @@ class EntityTest {
     }
 
     @Test
+    fun `Module listener is removed correctly`() {
+        val hp = HPComponent(20.0)
+
+        val listener = object : ModuleListener {
+            override fun onAdded(component: Component) {
+                (component as HPComponent).value = 0.0
+            }
+        }
+
+        entity.addModuleListener(listener)
+        entity.removeModuleListener(listener)
+
+        entity.addComponent(hp)
+
+        assertThat(hp.value, `is`(20.0))
+    }
+
+    @Test
     fun `Save and load`() {
         entity.addComponent(GravityComponent(true))
         entity.addComponent(CustomDataComponent("SerializationData"))
@@ -518,6 +536,58 @@ class EntityTest {
     }
 
     @Test
+    fun `Set on active callback does not fire if entity already in world`() {
+        val world = GameWorld()
+        world.addEntity(entity)
+
+        var value = 0
+
+        entity.setOnActive { value = 5 }
+
+        assertThat(value, `is`(0))
+    }
+
+    @Test
+    fun `Set on not active callback does not fire if entity already not in world`() {
+        var value = 0
+
+        entity.setOnNotActive { value = 5 }
+
+        assertThat(value, `is`(0))
+    }
+
+    @Test
+    fun `Active listener fires in the same frame when added to world`() {
+        var value = 0
+
+        entity.activeProperty().addListener { _, _, newValue ->
+            if (newValue)
+                value = 5
+        }
+
+        val world = GameWorld()
+        world.addEntity(entity)
+
+        assertThat(value, `is`(5))
+    }
+
+    @Test
+    fun `Active listener fires in the same frame when removed from world`() {
+        var value = 0
+
+        entity.activeProperty().addListener { _, _, newValue ->
+            if (!newValue)
+                value = 5
+        }
+
+        val world = GameWorld()
+        world.addEntity(entity)
+        world.removeEntity(entity)
+
+        assertThat(value, `is`(5))
+    }
+
+    @Test
     fun `Remove from world`() {
         val world = GameWorld()
 
@@ -525,6 +595,29 @@ class EntityTest {
         entity.removeFromWorld()
 
         assertThat(world.entities, not(hasItem(entity)))
+    }
+
+    @Test
+    fun `Remove from world does not fail when entity is not attached to any world`() {
+        entity.removeFromWorld()
+    }
+
+    @Test
+    fun `Components are removed when entity is cleaned`() {
+        entity.addComponent(TestComponent())
+
+        entity.clean()
+
+        assertThat(entity.components.size(), `is`(0))
+    }
+
+    @Test
+    fun `Controls are removed when entity is cleaned`() {
+        entity.addControl(TestControl())
+
+        entity.clean()
+
+        assertThat(entity.controls.size(), `is`(0))
     }
 
     /* MOCK CLASSES */

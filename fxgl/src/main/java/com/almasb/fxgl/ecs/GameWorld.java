@@ -97,6 +97,11 @@ public final class GameWorld {
         }
     }
 
+    /**
+     * Entity will be removed from world and parties notified of removal in the same frame.
+     * The components and controls of entity will be removed in the next frame to avoid
+     * concurrency issues.
+     */
     public void removeEntity(Entity entity) {
         if (!entity.isActive()) {
             log.warning("Attempted to remove entity which is not active");

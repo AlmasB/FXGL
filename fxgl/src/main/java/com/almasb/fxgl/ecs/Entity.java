@@ -47,7 +47,6 @@ public class Entity {
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
-    private boolean cleaning = false;
     private boolean controlsEnabled = true;
 
     private Runnable onActive = null;
@@ -79,8 +78,6 @@ public class Entity {
      * Resets entity to its "new" state.
      */
     void clean() {
-        cleaning = true;
-
         removeAllControls();
         removeAllComponents();
 
@@ -96,8 +93,6 @@ public class Entity {
         updating = false;
 
         active.set(false);
-
-        cleaning = false;
     }
 
     /**
@@ -127,31 +122,21 @@ public class Entity {
 
     /**
      * Set a callback for when entity is added to world.
-     * The callback will be executed immediately if entity is already in the world.
+     * The callback will NOT be executed if entity is already in the world.
      *
      * @param action callback
      */
     public final void setOnActive(Runnable action) {
-        if (isActive()) {
-            action.run();
-            return;
-        }
-
         onActive = action;
     }
 
     /**
      * Set a callback for when entity is removed from world.
-     * The callback will be executed immediately if entity is already removed from the world.
+     * The callback will NOT be executed if entity is already removed from the world.
      *
      * @param action callback
      */
     public final void setOnNotActive(Runnable action) {
-        if (!isActive()) {
-            action.run();
-            return;
-        }
-
         onNotActive = action;
     }
 
@@ -297,8 +282,6 @@ public class Entity {
     }
 
     private void removeAllControls() {
-        checkNotUpdating("Remove all controls");
-
         for (Control control : controls.values()) {
             removeModule(control);
         }
@@ -369,11 +352,7 @@ public class Entity {
         if (!hasComponent(type))
             return false;
 
-        // if not cleaning, then entity is alive, whether active or not
-        // hence we cannot allow removal if component is required by other components / controls
-        if (!cleaning) {
-            checkNotRequiredByAny(type);
-        }
+        checkNotRequiredByAny(type);
 
         removeModule(getComponent(type));
 
@@ -384,10 +363,6 @@ public class Entity {
 
     private void removeAllComponents() {
         for (Component comp : components.values()) {
-            if (!cleaning) {
-                checkNotRequiredByAny(comp.getClass());
-            }
-
             removeModule(comp);
         }
 

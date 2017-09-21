@@ -6,10 +6,12 @@
 
 package com.almasb.fxgl.ecs
 
+import com.almasb.fxgl.ecs.diff.InjectableComponent
 import com.almasb.fxgl.ecs.diff.InjectableControl
 import com.almasb.fxgl.ecs.diff.SubTypeInjectableControl
 import org.hamcrest.core.Is.`is`
 import org.junit.Assert.assertThat
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -20,13 +22,22 @@ import org.junit.Test
 class InjectionTest {
 
     @Test
-    fun `Component fields are injected`() {
+    fun `Component fields are injected into control`() {
         val entity = Entity()
         entity.addComponent(EntityTest.CustomDataComponent("Inject"))
         entity.addControl(EntityTest.CustomDataControl("InjectControl"))
         entity.addControl(InjectableControl())
 
-        assertThat(entity.hasControl(InjectableControl::class.java), `is`(true))
+        assertTrue(entity.hasControl(InjectableControl::class.java))
+    }
+
+    @Test
+    fun `Component fields are injected into component`() {
+        val entity = Entity()
+        entity.addComponent(EntityTest.CustomDataComponent("Inject"))
+        entity.addComponent(InjectableComponent())
+
+        assertTrue(entity.hasComponent(InjectableComponent::class.java))
     }
 
     @Test
