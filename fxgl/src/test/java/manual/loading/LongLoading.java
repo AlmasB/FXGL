@@ -11,12 +11,14 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.LoadingScene;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.settings.GameSettings;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * This is an example of a basic FXGL game application.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Disabled
 public class LongLoading extends GameApplication {
 
     @Override

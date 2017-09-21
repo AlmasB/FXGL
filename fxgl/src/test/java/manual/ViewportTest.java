@@ -23,7 +23,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled
 public class ViewportTest extends GameApplication {
 
     private PositionComponent playerPosition;

@@ -21,12 +21,14 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.junit.jupiter.api.Disabled;
 
 import java.util.List;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@Disabled
 public class RangeTest extends GameApplication {
 
     private GameEntity player, markers;

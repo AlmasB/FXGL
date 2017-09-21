@@ -11,6 +11,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -18,6 +19,7 @@ import javafx.scene.text.Text;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
+@Disabled
 public class MemoryTest extends GameApplication {
 
     @Override

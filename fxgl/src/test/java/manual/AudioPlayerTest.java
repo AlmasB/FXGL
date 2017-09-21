@@ -16,6 +16,7 @@ import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * This is an example of a basic FXGL game application.
@@ -23,6 +24,7 @@ import javafx.util.Duration;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
+@Disabled
 public class AudioPlayerTest extends GameApplication {
 
     @Override
