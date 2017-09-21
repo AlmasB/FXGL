@@ -6,12 +6,10 @@
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
-import org.junit.jupiter.api.Disabled;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Disabled
 public class NoPackageSample extends GameApplication {
 
     @Override

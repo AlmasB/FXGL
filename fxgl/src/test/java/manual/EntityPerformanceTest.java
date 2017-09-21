@@ -17,7 +17,6 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
-import org.junit.jupiter.api.Disabled;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Disabled
 public class EntityPerformanceTest extends GameApplication {
 
     private static final int NUM_ENTITIES = 10000;

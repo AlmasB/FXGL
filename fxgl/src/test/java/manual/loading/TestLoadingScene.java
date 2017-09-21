@@ -14,12 +14,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import org.junit.jupiter.api.Disabled;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Disabled
 public class TestLoadingScene extends LoadingScene {
 
     public TestLoadingScene() {

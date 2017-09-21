@@ -16,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.Disabled;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +23,6 @@ import java.util.concurrent.Executors;
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Disabled
 public class ReadAppTest extends Application {
 
     private Parent createContent() {

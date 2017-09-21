@@ -7,12 +7,10 @@
 package manual;
 
 import com.almasb.fxgl.io.IOTask;
-import org.junit.jupiter.api.Disabled;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Disabled
 public class ManualTest {
 
     private static void test() {

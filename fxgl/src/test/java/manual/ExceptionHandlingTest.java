@@ -8,14 +8,12 @@ package manual;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
-import org.junit.jupiter.api.Disabled;
 
 /**
  *
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Disabled
 public class ExceptionHandlingTest extends GameApplication {
 
     @Override

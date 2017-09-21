@@ -14,12 +14,10 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.junit.jupiter.api.Disabled;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Disabled
 public class BBoxTest extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
