@@ -7,9 +7,11 @@
 package com.almasb.fxgl.gameplay
 
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -20,7 +22,7 @@ class GameStateTest {
 
     private lateinit var gameState: GameState
 
-    @Before
+    @BeforeEach
     fun setUp() {
         gameState = GameState()
     }
@@ -49,15 +51,19 @@ class GameStateTest {
         assertThat(gameState.getInt("testInt"), `is`(200))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Do not allow duplicates`() {
-        gameState.put("testInt", 1)
-        gameState.put("testInt", 2)
+        assertThrows(IllegalArgumentException::class.java, {
+            gameState.put("testInt", 1)
+            gameState.put("testInt", 2)
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Throw if property name not found`() {
-        gameState.getBoolean("notFound")
+        assertThrows(IllegalArgumentException::class.java, {
+            gameState.getBoolean("notFound")
+        })
     }
 
     @Test

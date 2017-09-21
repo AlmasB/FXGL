@@ -13,10 +13,10 @@ import com.almasb.fxgl.service.NotificationService
 import com.almasb.fxgl.ui.Position.BOTTOM
 import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -28,13 +28,13 @@ class NotificationServiceTest {
     private lateinit var notificationService: NotificationService
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             configure(MockApplicationModule.get())
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         notificationService = FXGL.getNotificationService()
     }

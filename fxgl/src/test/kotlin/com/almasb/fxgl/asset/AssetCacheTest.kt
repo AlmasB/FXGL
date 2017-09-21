@@ -8,9 +8,9 @@ package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.core.Disposable
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -21,7 +21,7 @@ class AssetCacheTest {
 
     private lateinit var cache: AssetCache
 
-    @Before
+    @BeforeEach
     fun setUp() {
         cache = AssetCache(5)
     }

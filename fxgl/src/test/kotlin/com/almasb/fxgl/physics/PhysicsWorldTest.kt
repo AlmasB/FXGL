@@ -13,10 +13,10 @@ import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.component.CollidableComponent
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -26,7 +26,7 @@ import org.junit.Test
 class PhysicsWorldTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
         }

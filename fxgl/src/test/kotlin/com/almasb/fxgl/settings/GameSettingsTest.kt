@@ -13,10 +13,11 @@ import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertThat
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -26,7 +27,7 @@ import org.junit.Test
 class GameSettingsTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             configure(MockApplicationModule.get())
         }

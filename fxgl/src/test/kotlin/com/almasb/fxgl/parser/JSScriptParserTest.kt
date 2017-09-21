@@ -8,9 +8,11 @@ package com.almasb.fxgl.parser
 
 import com.almasb.fxgl.app.FXGL
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -22,7 +24,7 @@ class JSScriptParserTest {
     private val JS_DATA = "function test() {\n" + "    return \"JSTestInline\"\n" + "}\n"
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
         }
@@ -30,7 +32,7 @@ class JSScriptParserTest {
 
     @Test
     fun `Invoke function from external source`() {
-        val jsParser = com.almasb.fxgl.parser.JavaScriptParser("test.js")
+        val jsParser = JavaScriptParser("test.js")
         val returnValue = jsParser.callFunction<String>("test")
 
         assertThat(returnValue, `is`("JSTest"))
@@ -38,14 +40,16 @@ class JSScriptParserTest {
 
     @Test
     fun `Invoke function from internal source`() {
-        val jsParser = com.almasb.fxgl.parser.JavaScriptParser(JS_DATA)
+        val jsParser = JavaScriptParser(JS_DATA)
         val returnValue = jsParser.callFunction<String>("test")
 
         assertThat(returnValue, `is`("JSTestInline"))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Fail if cannot be parsed`() {
-        com.almasb.fxgl.parser.JavaScriptParser("bla-bla-blah() function")
+        assertThrows(IllegalArgumentException::class.java, {
+            JavaScriptParser("bla-bla-blah() function")
+        })
     }
 }

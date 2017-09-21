@@ -12,11 +12,13 @@ import com.almasb.fxgl.ecs.component.Required
 import com.almasb.fxgl.ecs.serialization.SerializableComponent
 import com.almasb.fxgl.ecs.serialization.SerializableControl
 import com.almasb.fxgl.io.serialization.Bundle
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.BeforeEach
+
+import org.junit.jupiter.api.Assertions.*
 
 /**
  *
@@ -27,7 +29,7 @@ class EntityTest {
 
     private lateinit var entity: Entity
 
-    @Before
+    @BeforeEach
     fun setUp() {
         entity = Entity()
     }
@@ -40,20 +42,26 @@ class EntityTest {
         assertThat(entity.components, hasItem(comp))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Add component fails if same type already exists`() {
-        entity.addComponent(TestComponent())
-        entity.addComponent(TestComponent())
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            entity.addComponent(TestComponent())
+            entity.addComponent(TestComponent())
+        }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Add component fails if component is anonymous`() {
-        entity.addComponent(object : Component() {})
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.addComponent(object : Component() {})
+        })
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Add component fails if required component is missing`() {
-        entity.addComponent(RequireTestComponent())
+        assertThrows(IllegalStateException::class.java, {
+            entity.addComponent(RequireTestComponent())
+        })
     }
 
     @Test
@@ -97,20 +105,24 @@ class EntityTest {
         assertFalse(isRemoved)
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Remove component fails if component is required by another component`() {
         entity.addComponent(TestComponent())
         entity.addComponent(RequireTestComponent())
 
-        entity.removeComponent(TestComponent::class.java)
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.removeComponent(TestComponent::class.java)
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Remove component fails if component is required by a control`() {
         entity.addComponent(HPComponent(0.0))
         entity.addControl(HPControl())
 
-        entity.removeComponent(HPComponent::class.java)
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.removeComponent(HPComponent::class.java)
+        })
     }
 
 //    @Test
@@ -134,24 +146,30 @@ class EntityTest {
         assertThat(entity.controls, hasItem(control))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Add control fails if same type exists`() {
         val control = TestControl()
         entity.addControl(control)
 
-        entity.addControl(control)
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `Add control fails if control is anonymous`() {
-        entity.addControl(object : Control() {
-            override fun onUpdate(entity: Entity, tpf: Double) { }
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.addControl(control)
         })
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
+    fun `Add control fails if control is anonymous`() {
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.addControl(object : Control() {
+                override fun onUpdate(entity: Entity, tpf: Double) { }
+            })
+        })
+    }
+
+    @Test
     fun `Add control fails if required module is missing`() {
-        entity.addControl(HPControl())
+        assertThrows(IllegalStateException::class.java, {
+            entity.addControl(HPControl())
+        })
     }
 
     @Test
@@ -162,12 +180,14 @@ class EntityTest {
         assertTrue(entity.hasControl(HPControl::class.java))
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Add control fails if within update of another control`() {
         val control = ControlAddingControl()
         entity.addControl(control)
 
-        entity.update(0.0)
+        assertThrows(IllegalStateException::class.java, {
+            entity.update(0.0)
+        })
     }
 
     @Test
@@ -187,12 +207,14 @@ class EntityTest {
         assertFalse(isRemoved)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Remove control fails if within update of another control`() {
         val control = ControlRemovingControl()
         entity.addControl(control)
 
-        entity.update(0.0)
+        assertThrows(IllegalStateException::class.java, {
+            entity.update(0.0)
+        })
     }
 
     @Test
@@ -232,7 +254,7 @@ class EntityTest {
 //        assertThat(entity.controls, not(hasItems(control, control2)))
 //    }
 
-//    @Test(expected = IllegalStateException::class)
+//    @Test
 //    fun `Remove all controls fails if within update of another control`() {
 //        entity.addControl(AllControlRemovingControl())
 //        entity.update(0.0)

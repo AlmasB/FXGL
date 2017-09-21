@@ -11,12 +11,12 @@ import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.io.FS
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
-import org.junit.AfterClass
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -31,7 +31,7 @@ class SaveLoadManagerTest {
     private lateinit var manager: SaveLoadManager
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
             // save load system relies on these to be present
@@ -44,16 +44,16 @@ class SaveLoadManagerTest {
             cleanUp()
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic fun cleanUp() {
             // ensure previous tests have been cleared
             FS.deleteDirectoryTask("testprofiles/").execute()
 
-            assertTrue("Profiles dir is present before", !Files.exists(Paths.get("testprofiles/")))
+            assertTrue(!Files.exists(Paths.get("testprofiles/")), "Profiles dir is present before")
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         manager = SaveLoadManager("TestProfileName")
     }
@@ -70,24 +70,19 @@ class SaveLoadManagerTest {
     fun `Save new profile`() {
         manager.saveProfileTask(UserProfile("TestApp", "TestVersion")).execute()
 
-        assertTrue("Profiles dir was not created",
-                Files.exists(Paths.get("testprofiles/")))
+        assertTrue(Files.exists(Paths.get("testprofiles/")), "Profiles dir was not created")
 
-        assertTrue("Profile file was not created",
-                Files.exists(Paths.get("testprofiles/TestProfileName/user.profile")))
+        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/user.profile")), "Profile file was not created")
 
-        assertTrue("Saves dir was not created",
-                Files.exists(Paths.get("testprofiles/TestProfileName/saves/")))
+        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/saves/")), "Saves dir was not created")
     }
 
     fun `Save game data`() {
         manager.saveTask(DataFile("TestData"), SaveFile("TestSave", LocalDateTime.now())).execute()
 
-        assertTrue("Save file was not created",
-                Files.exists(Paths.get("testprofiles/TestProfileName/saves/TestSave.sav")))
+        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/saves/TestSave.sav")), "Save file was not created")
 
-        assertTrue("Data file was not created",
-                Files.exists(Paths.get("testprofiles/TestProfileName/saves/TestSave.dat")))
+        assertTrue(Files.exists(Paths.get("testprofiles/TestProfileName/saves/TestSave.dat")), "Data file was not created")
     }
 
     fun `Load game data`() {

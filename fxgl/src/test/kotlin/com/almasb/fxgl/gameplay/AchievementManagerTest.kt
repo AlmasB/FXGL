@@ -11,10 +11,12 @@ import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.saving.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -24,7 +26,7 @@ import org.junit.Test
 class AchievementManagerTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
         }
@@ -32,7 +34,7 @@ class AchievementManagerTest {
 
     private lateinit var achievementManager: AchievementManager
 
-    @Before
+    @BeforeEach
     fun setUp() {
         achievementManager = FXGL.getInstance(AchievementManager::class.java)
     }
@@ -47,21 +49,27 @@ class AchievementManagerTest {
         assertThat(achievementManager.getAchievementByName("TestAchievement"), `is`(a1))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Fail if achievement not found`() {
         val a1 = Achievement("TestAchievement", "TestDescription")
 
         achievementManager.registerAchievement(a1)
-        achievementManager.getAchievementByName("NoSuchAchievement")
+
+        assertThrows(IllegalArgumentException::class.java, {
+            achievementManager.getAchievementByName("NoSuchAchievement")
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Cannot have achievements with same name`() {
         val a1 = Achievement("TestAchievement", "TestDescription")
         val a2 = Achievement("TestAchievement", "TestDescription")
 
         achievementManager.registerAchievement(a1)
-        achievementManager.registerAchievement(a2)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            achievementManager.registerAchievement(a2)
+        })
     }
 
     @Test

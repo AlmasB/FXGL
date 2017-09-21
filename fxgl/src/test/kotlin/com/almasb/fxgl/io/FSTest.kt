@@ -1,10 +1,12 @@
 package com.almasb.fxgl.io
 
 import org.hamcrest.CoreMatchers.hasItems
-import org.junit.AfterClass
-import org.junit.Assert.*
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -14,7 +16,7 @@ import java.nio.file.Paths
 class FSTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             cleanUp()
 
@@ -24,11 +26,11 @@ class FSTest {
             Files.createFile(Paths.get("testdir/testfile.txt"))
             Files.createFile(Paths.get("testdir/testfile.json"))
 
-            assertTrue("test file is not present before", Files.exists(Paths.get("testdir/testfile.txt")))
-            assertTrue("test file is not present before", Files.exists(Paths.get("testdir/testfile.json")))
+            assertTrue(Files.exists(Paths.get("testdir/testfile.txt")), "test file is not present before")
+            assertTrue(Files.exists(Paths.get("testdir/testfile.json")), "test file is not present before")
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic fun cleanUp() {
             // ensure previous tests have been cleared
             Files.deleteIfExists(Paths.get("testdir/testfile.txt"))
@@ -37,7 +39,7 @@ class FSTest {
             Files.deleteIfExists(Paths.get("testdir/somefile"))
             Files.deleteIfExists(Paths.get("testdir"))
 
-            assertTrue("test dir is present before", !Files.exists(Paths.get("testdir")))
+            assertTrue(!Files.exists(Paths.get("testdir")), "test dir is present before")
         }
     }
 

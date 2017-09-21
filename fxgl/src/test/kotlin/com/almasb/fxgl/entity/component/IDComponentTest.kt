@@ -9,9 +9,10 @@ package com.almasb.fxgl.entity.component
 import com.almasb.fxgl.io.serialization.Bundle
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertThat
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Test
 
 /**
  *

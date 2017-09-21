@@ -7,10 +7,11 @@
 package com.almasb.fxgl.app
 
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -20,7 +21,7 @@ import org.junit.Test
 class FXGLTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
         }
@@ -69,12 +70,13 @@ class FXGLTest {
         assertThat(count, `is`(4))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Property key is case sensitive`() {
         FXGL.setProperty("UPPERCASE", "value")
 
-        // must throw
-        FXGL.getString("uppercase")
+        assertThrows(IllegalArgumentException::class.java, {
+            FXGL.getString("uppercase")
+        })
     }
 
     @Test

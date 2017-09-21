@@ -14,10 +14,12 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -27,13 +29,13 @@ class InputTest {
     private lateinit var input: Input
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             configure(MockApplicationModule.get())
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         input = FXGL.getInstance(Input::class.java)
     }
@@ -186,37 +188,52 @@ class InputTest {
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.PRIMARY))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Do not allow UserActions with same name`() {
         input.addAction(object : UserAction("Action1") {}, KeyCode.A)
-        input.addAction(object : UserAction("Action1") {}, KeyCode.B)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            input.addAction(object : UserAction("Action1") {}, KeyCode.B)
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Do not allow bindings to same key`() {
         input.addAction(object : UserAction("Action1") {}, KeyCode.A)
-        input.addAction(object : UserAction("Action2") {}, KeyCode.A)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            input.addAction(object : UserAction("Action2") {}, KeyCode.A)
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Do not allow bindings to same button`() {
         input.addAction(object : UserAction("Action1") {}, MouseButton.PRIMARY)
-        input.addAction(object : UserAction("Action2") {}, MouseButton.PRIMARY)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            input.addAction(object : UserAction("Action2") {}, MouseButton.PRIMARY)
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Do not allow binding to Ctrl`() {
-        input.addAction(object : UserAction("Test") {}, KeyCode.CONTROL)
+        assertThrows(IllegalArgumentException::class.java, {
+            input.addAction(object : UserAction("Test") {}, KeyCode.CONTROL)
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Do not allow binding to Shift`() {
-        input.addAction(object : UserAction("Test") {}, KeyCode.SHIFT)
+        assertThrows(IllegalArgumentException::class.java, {
+            input.addAction(object : UserAction("Test") {}, KeyCode.SHIFT)
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Do not allow binding to Alt`() {
-        input.addAction(object : UserAction("Test") {}, KeyCode.ALT)
+        assertThrows(IllegalArgumentException::class.java, {
+            input.addAction(object : UserAction("Test") {}, KeyCode.ALT)
+        })
     }
 
     @Test

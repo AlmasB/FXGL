@@ -7,8 +7,10 @@
 package com.almasb.fxgl.entity
 
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -28,8 +30,10 @@ class SpawnDataTest {
         assertThat(data.get("testDouble"), `is`(3.0))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Throw if key not found`() {
-        SpawnData(0.0, 0.0).get<Int>("SomeKey")
+        assertThrows(IllegalArgumentException::class.java, {
+            SpawnData(0.0, 0.0).get<Int>("SomeKey")
+        })
     }
 }

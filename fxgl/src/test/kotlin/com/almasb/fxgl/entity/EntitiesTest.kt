@@ -14,11 +14,13 @@ import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.BeforeClass
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+
+import org.hamcrest.MatcherAssert.*
 
 /**
  *
@@ -28,7 +30,7 @@ import org.junit.BeforeClass
 class EntitiesTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
         }

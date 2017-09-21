@@ -14,10 +14,12 @@ import javafx.geometry.VerticalDirection
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -31,7 +33,7 @@ class TextureTest {
     companion object {
         private lateinit var image: Image
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
 
@@ -39,7 +41,7 @@ class TextureTest {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         texture = Texture(image)
     }
@@ -60,9 +62,11 @@ class TextureTest {
         assertThat(sub.image.height, `is`(64.0))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Fail if subtexture larger`() {
-        texture.subTexture(Rectangle2D(0.0, 0.0, 400.0, 400.0))
+        assertThrows(IllegalArgumentException::class.java, {
+            texture.subTexture(Rectangle2D(0.0, 0.0, 400.0, 400.0))
+        })
     }
 
     @Test

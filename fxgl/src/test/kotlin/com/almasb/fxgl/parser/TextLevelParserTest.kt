@@ -19,9 +19,11 @@ import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.Description
-import org.junit.Assert.assertThat
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -38,15 +40,17 @@ class TextLevelParserTest {
         private val BLOCK_WIDTH = 40
         private val BLOCK_HEIGHT = 40
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
         }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Throw if file not found`() {
-        TextLevelParser(' ', BLOCK_WIDTH, BLOCK_HEIGHT).parse("bla-bla")
+        assertThrows(IllegalArgumentException::class.java, {
+            TextLevelParser(' ', BLOCK_WIDTH, BLOCK_HEIGHT).parse("bla-bla")
+        })
     }
 
     @Test

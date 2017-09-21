@@ -23,16 +23,18 @@ import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.util.*
+
+import org.hamcrest.MatcherAssert.*
 
 class GameWorldTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
         }
@@ -52,7 +54,7 @@ class GameWorldTest {
     private lateinit var e4: Entity
     private lateinit var genericEntity: Entity
 
-    @Before
+    @BeforeEach
     fun setUp() {
         gameWorld = GameWorld()
 
@@ -295,12 +297,15 @@ class GameWorldTest {
         assertThat(gameWorld.getEntityByID("e3", 0), `is`<Optional<out Any>>(Optional.empty<Any>()))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Throw if entity already attached`() {
         val e = Entity()
 
         gameWorld.addEntity(e)
-        gameWorld.addEntity(e)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.addEntity(e)
+        })
     }
 
     @Test
@@ -312,14 +317,16 @@ class GameWorldTest {
         assertThat(gameWorld.entities, hasItems(e, ee))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Throw when removing entity not attached to this world`() {
         val e = Entity()
 
         val newWorld = GameWorld()
         newWorld.addEntity(e)
 
-        gameWorld.removeEntity(e)
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.removeEntity(e)
+        })
     }
 
     @Test
@@ -377,9 +384,11 @@ class GameWorldTest {
         assertThat(gameWorld.entities, hasItems(e, ee))
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Throw if spawn with no factory`() {
-        gameWorld.spawn("bla-bla")
+        assertThrows(IllegalStateException::class.java, {
+            gameWorld.spawn("bla-bla")
+        })
     }
 
     @Test
@@ -399,10 +408,13 @@ class GameWorldTest {
         assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(0.0, 0.0)))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Throw if factory has no such spawn method`() {
         gameWorld.setEntityFactory(TestEntityFactory())
-        gameWorld.spawn("bla-bla")
+
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.spawn("bla-bla")
+        })
     }
 
     @Test

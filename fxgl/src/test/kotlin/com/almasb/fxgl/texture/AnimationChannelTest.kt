@@ -13,9 +13,9 @@ import javafx.scene.image.WritableImage
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
-import org.junit.Assert.assertThat
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -27,7 +27,7 @@ class AnimationChannelTest {
     companion object {
         private lateinit var image: Image
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
 

@@ -6,8 +6,11 @@
 
 package com.almasb.fxgl.ecs;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -16,23 +19,21 @@ public class JavaAnonymousClassTest {
 
     private Entity entity;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entity = new Entity();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAnonymousComponent() {
-        entity.addComponent(new Component() {});
+        assertThrows(IllegalArgumentException.class, () -> entity.addComponent(new Component() {}));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAnonymousControl() {
-        entity.addControl(new Control() {
-            @Override
-            public void onUpdate(Entity entity, double tpf) {
-
-            }
-        });
+        assertThrows(IllegalArgumentException.class, () -> entity.addControl(new Control() {
+                @Override
+                public void onUpdate(Entity entity, double tpf) { }
+        }));
     }
 }

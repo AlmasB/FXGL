@@ -11,7 +11,7 @@ package com.almasb.fxgl.core.event;
  */
 public class FXEventBusTest {
 
-//    @Before
+//    @BeforeEach
 //    public void localSetUp() {
 //        bus = new FXEventBus();
 //        calls = 0;

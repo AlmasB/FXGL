@@ -6,22 +6,23 @@
 
 package com.almasb.fxgl.ai.pathfinding;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AStarGridTest {
 
     private static final int GRID_SIZE = 20;
     private AStarGrid grid;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         grid = new AStarGrid(GRID_SIZE, GRID_SIZE);
     }

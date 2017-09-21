@@ -10,10 +10,10 @@ import com.almasb.fxgl.annotation.Handles
 import com.almasb.fxgl.app.FXGL
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -23,7 +23,7 @@ import org.junit.Test
 class EventBusTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
         }
@@ -31,7 +31,7 @@ class EventBusTest {
 
     private lateinit var eventBus: EventBus
 
-    @Before
+    @BeforeEach
     fun setUp() {
         eventBus = FXGL.getInstance(EventBus::class.java)
     }

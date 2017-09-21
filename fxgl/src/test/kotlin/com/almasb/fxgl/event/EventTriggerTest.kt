@@ -8,7 +8,7 @@ package com.almasb.fxgl.event
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockApplicationModule
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 
 /**
  *
@@ -20,7 +20,7 @@ class EventTriggerTest {
     private lateinit var trigger: EventTrigger<TestEvent>
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
             FXGL.configure(MockApplicationModule.get())
         }

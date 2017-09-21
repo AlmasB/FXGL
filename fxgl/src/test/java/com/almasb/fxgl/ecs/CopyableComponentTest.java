@@ -7,12 +7,12 @@
 package com.almasb.fxgl.ecs;
 
 import com.almasb.fxgl.ecs.component.IntegerComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
