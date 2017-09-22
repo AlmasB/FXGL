@@ -20,6 +20,8 @@ import javafx.event.Event
 import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
+import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.*
 import org.junit.jupiter.api.Assertions.*
@@ -152,6 +154,33 @@ class GameWorldTest {
     }
 
     @Test
+    fun `Remove world listener`() {
+        val e = Entity()
+        e.addComponent(PositionComponent(100.0, 100.0))
+
+        var count = 0
+
+        val listener = object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {
+                count++
+            }
+
+            override fun onEntityRemoved(entity: Entity) {
+                count++
+            }
+        }
+
+        gameWorld.addWorldListener(listener)
+        gameWorld.removeWorldListener(listener)
+
+        gameWorld.addEntity(e)
+        assertThat(count, `is`(0))
+
+        gameWorld.removeEntity(e)
+        assertThat(count, `is`(0))
+    }
+
+    @Test
     fun `getEntitiesCopy has all entities`() {
         val e = Entity()
         val e2 = Entity()
@@ -164,6 +193,58 @@ class GameWorldTest {
     @Test
     fun `getEntitiesCopy returns a copy`() {
         assertFalse(gameWorld.entities === gameWorld.entitiesCopy)
+    }
+
+    @Test
+    fun `Selected entity`() {
+        val e1 = GameEntity()
+        e1.addComponent(SelectableComponent(true))
+
+        gameWorld.addEntity(e1)
+
+        val event = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 0,
+                false,
+                false,
+                false,
+                false, false, false, false, false, false, false, null)
+
+        e1.view.fireEvent(event)
+
+        assertThat(gameWorld.selectedEntity.get(), `is`<Entity>(e1))
+    }
+
+    @Test
+    fun `Selected entity property`() {
+        val e1 = GameEntity()
+        e1.addComponent(SelectableComponent(true))
+
+        val e2 = GameEntity()
+        e2.addComponent(SelectableComponent(true))
+
+        gameWorld.addEntities(e1, e2)
+
+        val event = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 0,
+                false,
+                false,
+                false,
+                false, false, false, false, false, false, false, null)
+
+        e1.view.fireEvent(event)
+
+        var count = 0
+
+        gameWorld.selectedEntityProperty().addListener { _, oldValue, newValue ->
+            assertAll(
+                    Executable { assertThat(oldValue, `is`<Entity>(e1)) },
+                    Executable { assertThat(newValue, `is`<Entity>(e2)) }
+            )
+
+            count++
+        }
+
+        e2.view.fireEvent(event)
+
+        assertThat(count, `is`(1))
     }
 
     /* SPAWNS */
@@ -199,9 +280,17 @@ class GameWorldTest {
         val factory = TestEntityFactory()
         gameWorld.setEntityFactory(factory)
 
-        val e = gameWorld.spawn("enemy", 33.0, 40.0)
+        assertAll(
+                Executable {
+                    val e1 = gameWorld.spawn("enemy", 33.0, 40.0)
+                    assertThat(e1.getComponent(PositionComponent::class.java).value, `is`(Point2D(33.0, 40.0)))
+                },
 
-        assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(33.0, 40.0)))
+                Executable {
+                    val e2 = gameWorld.spawn("enemy", Point2D(100.0, 100.0))
+                    assertThat(e2.getComponent(PositionComponent::class.java).value, `is`(Point2D(100.0, 100.0)))
+                }
+        )
     }
 
     @Test
@@ -274,6 +363,26 @@ class GameWorldTest {
         gameWorld.getEntitiesByType(result)
 
         assertThat(result, containsInAnyOrder(e, e2))
+    }
+
+    @Test
+    fun `Singleton`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        val e3 = Entity()
+        e3.addComponent(TypeComponent(TestType.T3))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
+                Executable { assertThat(gameWorld.getSingleton { it.getComponent(TypeComponent::class.java).isType(TestType.T3) }.get(), `is`(e3)) }
+        )
     }
 
     @Test
