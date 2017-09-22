@@ -87,7 +87,7 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
      * @return list of entities colliding with entity
      */
     fun getCollidingEntities(entity: Entity): List<Entity> {
-        val bbox = Entities.getBBox(entity)
+        val bbox = Entities.getBBox(entity) ?: return emptyList()
 
         return entities.filter { it.getComponent(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
     }

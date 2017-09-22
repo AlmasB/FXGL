@@ -547,6 +547,10 @@ public final class GameWorld {
     public void getCollidingEntities(Array<Entity> result, Entity entity) {
         BoundingBoxComponent entityBBox = Entities.getBBox(entity);
 
+        if (entityBBox == null) {
+            return;
+        }
+
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
             BoundingBoxComponent bbox = Entities.getBBox(e);
