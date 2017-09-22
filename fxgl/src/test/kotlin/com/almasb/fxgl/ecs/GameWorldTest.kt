@@ -35,6 +35,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.function.Executable
+import java.util.function.Consumer
 
 class GameWorldTest {
 
@@ -247,6 +248,97 @@ class GameWorldTest {
         assertThat(count, `is`(1))
     }
 
+    /* LEVELS */
+
+    @Test
+    fun `Set level removes previous entities`() {
+        val e1 = Entity()
+
+        gameWorld.addEntity(e1)
+
+        val e2 = Entity()
+        val e3 = Entity()
+
+        val level = Level(100, 50, listOf(e2, e3))
+
+        gameWorld.setLevel(level)
+
+        assertThat(gameWorld.entities, containsInAnyOrder(e2, e3))
+    }
+
+    @Test
+    fun `Set level does not remove Irremovable entities`() {
+        val e1 = Entity()
+        e1.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e1)
+
+        val e2 = Entity()
+        val e3 = Entity()
+
+        val level = Level(100, 50, listOf(e2, e3))
+
+        gameWorld.setLevel(level)
+
+        assertThat(gameWorld.entities, containsInAnyOrder(e1, e2, e3))
+    }
+
+    @Test
+    fun `Clear removes all entities`() {
+        val e = Entity()
+        e.addComponent(IrremovableComponent())
+
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+
+        gameWorld.clear()
+
+        assertTrue(gameWorld.entities.isEmpty())
+    }
+
+    @Test
+    fun `Clear correctly cleans all entities`() {
+        val e = Entity()
+        e.addControl(EntitiesTest.TestControl())
+        gameWorld.addEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        val e2 = Entity()
+        e2.addControl(EntitiesTest.TestControl())
+        gameWorld.addEntity(e2)
+
+        var count = 0
+
+        gameWorld.addWorldListener(object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {}
+
+            override fun onEntityRemoved(entity: Entity) {
+                count++
+            }
+        })
+
+        gameWorld.clear()
+
+        assertAll(
+                Executable { assertThat(count, `is`(2)) },
+                Executable { assertTrue(e.controls.isEmpty) },
+                Executable { assertTrue(e2.controls.isEmpty) }
+        )
+    }
+
+    @Test
+    fun `Do not remove if entity has IrremovableComponent`() {
+        val e = Entity()
+        e.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        assertThat(gameWorld.entities, contains(e))
+    }
+
     /* SPAWNS */
 
     @Test
@@ -381,8 +473,33 @@ class GameWorldTest {
         assertAll(
                 Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
                 Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
-                Executable { assertThat(gameWorld.getSingleton { it.getComponent(TypeComponent::class.java).isType(TestType.T3) }.get(), `is`(e3)) }
+                Executable { assertThat(gameWorld.getSingleton { it.getComponent(TypeComponent::class.java).isType(TestType.T3) }.get(), `is`(e3)) },
+                Executable { assertFalse(gameWorld.getSingleton(TestType.T4).isPresent) },
+                Executable { assertFalse(gameWorld.getSingleton { it.getComponent(TypeComponent::class.java).isType(TestType.T4) }.isPresent) }
         )
+    }
+
+    @Test
+    fun `Entity group`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        val e3 = Entity()
+        e3.addComponent(TypeComponent(TestType.T3))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        var count = 0
+
+        gameWorld.getGroup<Entity>(TestType.T1, TestType.T2).forEach(Consumer {
+            assertTrue(it === e1 || it === e2)
+            count++
+        })
+
+        assertThat(count, `is`(2))
     }
 
     @Test
@@ -708,60 +825,8 @@ class GameWorldTest {
         )
     }
 
-
-
-//
-//    @Test
-//    fun `Do not remove if entity has IrremovableComponent`() {
-//        val e = Entity()
-//        e.addComponent(IrremovableComponent())
-//
-//        gameWorld.addEntity(e)
-//        gameWorld.removeEntity(e)
-//
-//        assertThat(gameWorld.entities, hasItems(e))
-//    }
-//
-
-//
-//    @Test
-//    fun `Reset`() {
-//        assertThat(gameWorld.entities.size, `is`(not(0)))
-//
-//        gameWorld.clear()
-//
-//        assertThat(gameWorld.entities.size, `is`(0))
-//    }
-//
-//    @Test
-//    fun `Reset does not remove if entity has IrremovableComponent`() {
-//        val e = Entity()
-//        e.addComponent(IrremovableComponent())
-//
-//        gameWorld.addEntity(e)
-//        gameWorld.clear()
-//
-//        assertThat(gameWorld.entities, hasItems(e))
-//    }
-//
-//    @Test
-//    fun `Set level`() {
-//        val e = Entity()
-//        val ee = Entity()
-//
-//        val level = Level(100, 50, arrayListOf(e, ee))
-//
-//        assertThat(gameWorld.entities, hasItems(e1, e2))
-//        assertThat(gameWorld.entities, not(hasItems(e, ee)))
-//
-//        gameWorld.setLevel(level)
-//
-//        assertThat(gameWorld.entities, not(hasItems(e1, e2)))
-//        assertThat(gameWorld.entities, hasItems(e, ee))
-//    }
-//
     private enum class TestType {
-        T1, T2, T3
+        T1, T2, T3, T4
     }
 
     class TestEntityFactory : EntityFactory {

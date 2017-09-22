@@ -55,7 +55,7 @@ public class ResetSample extends GameApplication {
                 .with(new IrremovableComponent())
                 .buildAndAttach(getGameWorld());
 
-        getGameWorld().clear();
+        getGameWorld().removeEntity(player);
 
         System.out.println(getGameWorld().getEntities().size());
     }
