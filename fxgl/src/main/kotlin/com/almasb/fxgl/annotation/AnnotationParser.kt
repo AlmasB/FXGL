@@ -11,9 +11,9 @@ class AnnotationParser(appClass: Class<out GameApplication>) {
 
     private val log = Logger.get(javaClass)
 
-    private val packageName = appClass.`package`?.name
+    private val packageName = appClass.packageName
 
-    val isDisabled = packageName?.contains("[A-Z]".toRegex()) ?: true
+    val isDisabled = packageName.isEmpty() || packageName.contains("[A-Z]".toRegex())
 
     private val annotationMap = hashMapOf<Class<*>, List<Class<*>>>()
 

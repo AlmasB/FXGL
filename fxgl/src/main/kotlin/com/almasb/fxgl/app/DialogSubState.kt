@@ -9,10 +9,6 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.io.UIDialogHandler
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.util.EmptyRunnable
-import com.sun.javafx.scene.traversal.Algorithm
-import com.sun.javafx.scene.traversal.Direction
-import com.sun.javafx.scene.traversal.ParentTraversalEngine
-import com.sun.javafx.scene.traversal.TraversalContext
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -61,19 +57,19 @@ object DialogSubState : SubState() {
 
     @Suppress("DEPRECATION")
     private fun initTraversalPolicy() {
-        (view as Pane).impl_traversalEngine = ParentTraversalEngine(view as Pane, object : Algorithm {
-            override fun select(owner: Node, dir: Direction, context: TraversalContext): Node {
-                return window
-            }
-
-            override fun selectFirst(context: TraversalContext): Node {
-                return window
-            }
-
-            override fun selectLast(context: TraversalContext): Node {
-                return window
-            }
-        })
+//        (view as Pane).impl_traversalEngine = ParentTraversalEngine(view as Pane, object : Algorithm {
+//            override fun select(owner: Node, dir: Direction, context: TraversalContext): Node {
+//                return window
+//            }
+//
+//            override fun selectFirst(context: TraversalContext): Node {
+//                return window
+//            }
+//
+//            override fun selectLast(context: TraversalContext): Node {
+//                return window
+//            }
+//        })
     }
 
     val isShowing: Boolean
