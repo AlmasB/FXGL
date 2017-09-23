@@ -23,7 +23,9 @@ import javafx.geometry.Rectangle2D
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
+import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Description
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.BeforeAll
@@ -103,6 +105,38 @@ class GameWorldTest {
         gameWorld.removeEntity(e)
 
         assertThat(gameWorld.entities, not(contains(e)))
+    }
+
+    @Test
+    fun `Removed entity keeps components and controls in that frame`() {
+        val e = Entity()
+        e.addComponent(EntitiesTest.TestComponent())
+        e.addControl(EntitiesTest.TestControl())
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        assertAll(
+                Executable { assertTrue(e.components.isNotEmpty) },
+                Executable { assertTrue(e.controls.isNotEmpty) }
+        )
+    }
+
+    @Test
+    fun `Removed entity is cleaned in next frame`() {
+        val e = Entity()
+        e.addComponent(EntitiesTest.TestComponent())
+        e.addControl(EntitiesTest.TestControl())
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        assertAll(
+                Executable { assertTrue(e.components.isEmpty) },
+                Executable { assertTrue(e.controls.isEmpty) }
+        )
     }
 
     @Test
@@ -273,6 +307,14 @@ class GameWorldTest {
 
         gameWorld.addEntity(e1)
 
+        // move e1 to update list
+        gameWorld.onUpdate(0.0)
+
+        val e4 = Entity()
+        e4.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e4)
+
         val e2 = Entity()
         val e3 = Entity()
 
@@ -280,7 +322,24 @@ class GameWorldTest {
 
         gameWorld.setLevel(level)
 
-        assertThat(gameWorld.entities, containsInAnyOrder(e1, e2, e3))
+        assertThat(gameWorld.entities, containsInAnyOrder(e1, e2, e3, e4))
+    }
+
+    @Test
+    fun `Set level from Tiled map`() {
+        gameWorld.setEntityFactory(TiledMapEntityFactory())
+        gameWorld.setLevelFromMap("test_level1.json")
+
+        assertThat(gameWorld.entities, containsInAnyOrder(
+                // this is "layer" entity
+                EntityMatcher(0, 0),
+
+                // these are "object" entities
+                EntityMatcher(0, 736),
+                EntityMatcher(160, 608),
+                EntityMatcher(1472, 608),
+                EntityMatcher(352, 640)
+        ))
     }
 
     @Test
@@ -326,6 +385,21 @@ class GameWorldTest {
                 Executable { assertTrue(e.controls.isEmpty) },
                 Executable { assertTrue(e2.controls.isEmpty) }
         )
+    }
+
+    @Test
+    fun `Clear correctly cleans entity removed in previous frame`() {
+        val e = Entity()
+        e.addControl(EntitiesTest.TestControl())
+        gameWorld.addEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        gameWorld.removeEntity(e)
+
+        gameWorld.clear()
+
+        assertTrue(e.controls.isEmpty)
     }
 
     @Test
@@ -468,14 +542,32 @@ class GameWorldTest {
         val e3 = Entity()
         e3.addComponent(TypeComponent(TestType.T3))
 
-        gameWorld.addEntities(e1, e2, e3)
+        val e4 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3, e4)
 
         assertAll(
                 Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
                 Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
-                Executable { assertThat(gameWorld.getSingleton { it.getComponent(TypeComponent::class.java).isType(TestType.T3) }.get(), `is`(e3)) },
+                Executable { assertThat(gameWorld.getSingleton { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T3) }.get(), `is`(e3)) },
                 Executable { assertFalse(gameWorld.getSingleton(TestType.T4).isPresent) },
-                Executable { assertFalse(gameWorld.getSingleton { it.getComponent(TypeComponent::class.java).isType(TestType.T4) }.isPresent) }
+                Executable { assertFalse(gameWorld.getSingleton { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T4) }.isPresent) }
+        )
+    }
+
+    @Test
+    fun `Random returns the single item present`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        gameWorld.addEntities(e1, e2)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getRandom(TestType.T1).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getRandom { it.getComponent(TypeComponent::class.java).isType(TestType.T2) }.get(), `is`(e2)) }
         )
     }
 
@@ -825,6 +917,19 @@ class GameWorldTest {
         )
     }
 
+    private class EntityMatcher(val x: Int, val y: Int) : BaseMatcher<Entity>() {
+
+        override fun matches(item: Any): Boolean {
+            val position = Entities.getPosition(item as Entity)
+
+            return position.x.toInt() == x && position.y.toInt() == y
+        }
+
+        override fun describeTo(description: Description) {
+            description.appendText("Entity at $x,$y")
+        }
+    }
+    
     private enum class TestType {
         T1, T2, T3, T4
     }
@@ -833,6 +938,23 @@ class GameWorldTest {
 
         @Spawns("enemy")
         fun makeEnemy(data: SpawnData): Entity {
+            return Entities.builder()
+                    .from(data)
+                    .build()
+        }
+    }
+
+    class TiledMapEntityFactory : EntityFactory {
+
+        @Spawns("player")
+        fun makePlayer(data: SpawnData): Entity {
+            return Entities.builder()
+                    .from(data)
+                    .build()
+        }
+
+        @Spawns("platform")
+        fun makePlatform(data: SpawnData): Entity {
             return Entities.builder()
                     .from(data)
                     .build()
