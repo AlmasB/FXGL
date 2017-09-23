@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.ecs.Component
 import com.almasb.fxgl.ecs.Control
@@ -32,7 +33,7 @@ class EntitiesTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 

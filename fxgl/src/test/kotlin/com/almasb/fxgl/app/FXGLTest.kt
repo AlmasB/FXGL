@@ -23,7 +23,7 @@ class FXGLTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 

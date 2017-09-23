@@ -7,6 +7,7 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
@@ -35,7 +36,7 @@ class TextureTest {
 
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
 
             image = WritableImage(320, 320)
         }

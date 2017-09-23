@@ -9,6 +9,7 @@ package com.almasb.fxgl.settings
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.configure
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
@@ -29,7 +30,7 @@ class GameSettingsTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 

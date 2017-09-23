@@ -7,6 +7,7 @@
 package com.almasb.fxgl.saving
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.io.FS
 import org.hamcrest.CoreMatchers.`is`
@@ -33,7 +34,7 @@ class SaveLoadManagerTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
             // save load system relies on these to be present
             FXGL.setProperty("fs.profiledir", "testprofiles/")
             FXGL.setProperty("fs.profilename", "user.profile")

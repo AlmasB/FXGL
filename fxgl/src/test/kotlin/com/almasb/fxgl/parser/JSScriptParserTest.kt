@@ -6,10 +6,9 @@
 
 package com.almasb.fxgl.parser
 
-import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -26,7 +25,7 @@ class JSScriptParserTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 

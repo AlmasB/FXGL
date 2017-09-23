@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.app.FXGLMock;
 import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -34,7 +35,7 @@ public class BoundingBoxComponentTest {
 
     @BeforeAll
     public static void before() {
-        FXGL.configure(MockApplicationModule.get());
+        FXGLMock.mock();
     }
 
     @BeforeEach

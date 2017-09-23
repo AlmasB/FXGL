@@ -7,6 +7,7 @@
 package com.almasb.fxgl.texture
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
@@ -29,7 +30,7 @@ class AnimationChannelTest {
 
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
 
             image = WritableImage(320, 320)
         }

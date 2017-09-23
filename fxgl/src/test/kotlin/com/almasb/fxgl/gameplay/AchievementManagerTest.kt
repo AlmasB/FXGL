@@ -7,6 +7,7 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.saving.UserProfile
 import org.hamcrest.CoreMatchers.`is`
@@ -28,7 +29,7 @@ class AchievementManagerTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 

@@ -8,6 +8,7 @@ package com.almasb.fxgl.ecs
 
 import com.almasb.fxgl.annotation.Spawns
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.ecs.component.IrremovableComponent
@@ -44,7 +45,7 @@ class GameWorldTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 

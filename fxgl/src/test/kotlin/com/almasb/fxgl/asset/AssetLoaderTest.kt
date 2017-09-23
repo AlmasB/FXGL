@@ -7,6 +7,7 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.GameEntity
 import com.almasb.fxgl.ui.UIController
@@ -50,13 +51,13 @@ class AssetLoaderTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 
     @BeforeEach
     fun setUp() {
-        assetLoader = FXGL.getInstance(AssetLoader::class.java)
+        assetLoader = AssetLoader()
     }
 
     @Test

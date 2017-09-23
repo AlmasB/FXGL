@@ -8,6 +8,7 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGL.Companion.configure
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.service.NotificationService
 import com.almasb.fxgl.ui.Position.BOTTOM
@@ -30,7 +31,7 @@ class NotificationServiceTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 
