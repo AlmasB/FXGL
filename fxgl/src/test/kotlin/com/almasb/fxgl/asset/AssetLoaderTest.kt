@@ -15,6 +15,7 @@ import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import java.util.*
 
 /**
@@ -93,11 +94,10 @@ class AssetLoaderTest {
         assertThat(sound.clip, `is`(notNullValue()))
     }
 
-    @Disabled
     @Test
     fun loadMusic() {
         // setting up potentially missing libavformat for jfxmedia is an overkill, so just skip
-        //assumeThat(System.getProperty("os.name"), not(containsString("Linux")))
+        assumeFalse(System.getProperty("os.name").contains("Linux"))
 
         val music = assetLoader.loadMusic("intro.mp3")
 
