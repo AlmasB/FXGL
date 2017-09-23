@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.app.FXGLMock
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ecs.Component
 import com.almasb.fxgl.ecs.Control
 import com.almasb.fxgl.ecs.Entity
@@ -28,7 +28,7 @@ class EntitiesTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGLMock.mock()
+            FXGL.setProperty("dev.showbbox", false)
         }
     }
 
