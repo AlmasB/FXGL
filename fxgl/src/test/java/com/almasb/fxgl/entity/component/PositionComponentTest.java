@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity.component;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -12,13 +12,11 @@ import com.almasb.fxgl.ecs.component.Required
 import com.almasb.fxgl.ecs.serialization.SerializableComponent
 import com.almasb.fxgl.ecs.serialization.SerializableControl
 import com.almasb.fxgl.io.serialization.Bundle
-import org.junit.jupiter.api.Test
-
 import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.BeforeEach
-
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  *

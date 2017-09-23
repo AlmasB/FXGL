@@ -8,15 +8,14 @@ package com.almasb.fxgl.saving
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.io.FS
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Paths

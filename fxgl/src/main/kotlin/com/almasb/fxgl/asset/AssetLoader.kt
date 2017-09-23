@@ -18,8 +18,6 @@ import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
 import com.almasb.fxgl.ui.UIController
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.Inject
-import com.google.inject.name.Named
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.image.Image

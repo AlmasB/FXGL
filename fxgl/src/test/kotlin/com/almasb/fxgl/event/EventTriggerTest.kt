@@ -6,10 +6,6 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
-import org.junit.jupiter.api.BeforeAll
-
 /**
  *
  *

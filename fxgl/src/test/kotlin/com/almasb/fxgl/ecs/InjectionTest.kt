@@ -9,9 +9,10 @@ package com.almasb.fxgl.ecs
 import com.almasb.fxgl.ecs.diff.InjectableComponent
 import com.almasb.fxgl.ecs.diff.InjectableControl
 import com.almasb.fxgl.ecs.diff.SubTypeInjectableControl
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**

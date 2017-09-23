@@ -7,9 +7,7 @@
 package com.almasb.fxgl.ecs
 
 import com.almasb.fxgl.annotation.Spawns
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.ecs.component.IrremovableComponent
 import com.almasb.fxgl.entity.*
@@ -17,27 +15,23 @@ import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
-import javafx.event.Event
-import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
-import javafx.scene.shape.Rectangle
 import org.hamcrest.BaseMatcher
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import java.util.*
-
-import org.hamcrest.MatcherAssert.*
-import org.hamcrest.Matchers
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.containsInAnyOrder
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
+import java.util.*
 import java.util.function.Consumer
 
 class GameWorldTest {

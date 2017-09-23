@@ -6,15 +6,13 @@
 
 package com.almasb.fxgl.texture
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 

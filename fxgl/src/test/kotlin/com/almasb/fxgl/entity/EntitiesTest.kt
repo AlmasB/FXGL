@@ -6,22 +6,17 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.ecs.Component
 import com.almasb.fxgl.ecs.Control
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
-import org.junit.jupiter.api.Test
-
-import org.hamcrest.CoreMatchers.*
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeAll
-
-import org.hamcrest.MatcherAssert.*
+import org.junit.jupiter.api.Test
 
 /**
  *

@@ -48,11 +48,7 @@ package com.almasb.fxgl.algorithm.voronoi;
  * OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * See http://en.wikipedia.org/wiki/Fortune%27s_algorithm

@@ -16,7 +16,7 @@ import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsWorld
 import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import java.util.function.Consumer
 

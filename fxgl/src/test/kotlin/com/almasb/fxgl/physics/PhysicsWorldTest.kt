@@ -8,14 +8,13 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.component.CollidableComponent
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions.*
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 

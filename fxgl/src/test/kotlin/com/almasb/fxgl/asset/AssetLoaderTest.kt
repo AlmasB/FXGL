@@ -6,16 +6,16 @@
 
 package com.almasb.fxgl.asset
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.entity.GameEntity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.*
 
 /**

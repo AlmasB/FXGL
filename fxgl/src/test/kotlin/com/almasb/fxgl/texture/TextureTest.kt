@@ -6,20 +6,17 @@
 
 package com.almasb.fxgl.texture
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**

@@ -8,7 +8,7 @@ package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.core.Disposable
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

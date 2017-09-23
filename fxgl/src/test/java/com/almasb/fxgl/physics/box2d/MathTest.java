@@ -6,14 +6,6 @@
 
 package com.almasb.fxgl.physics.box2d;
 
-import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
-import com.almasb.fxgl.physics.box2d.common.Mat22;
-import com.almasb.fxgl.physics.box2d.common.Mat33;
-import com.almasb.fxgl.physics.box2d.common.Vec3;
-
-import java.util.Random;
-
 /**
  * @author Daniel Murphy
  */

@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.io.serialization
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**

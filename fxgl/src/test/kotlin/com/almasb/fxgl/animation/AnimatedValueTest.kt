@@ -8,7 +8,7 @@ package com.almasb.fxgl.animation
 
 import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 
 /**

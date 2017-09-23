@@ -7,16 +7,14 @@
 package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGL.Companion.configure
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.service.NotificationService
 import com.almasb.fxgl.ui.Position.BOTTOM
 import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.BeforeEach
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**

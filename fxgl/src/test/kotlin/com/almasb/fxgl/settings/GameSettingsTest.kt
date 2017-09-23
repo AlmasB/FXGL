@@ -8,14 +8,11 @@ package com.almasb.fxgl.settings
 
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGL.Companion.configure
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.input.KeyCode
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
