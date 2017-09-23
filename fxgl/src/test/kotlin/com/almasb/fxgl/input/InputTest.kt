@@ -7,18 +7,13 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.annotation.OnUserAction
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGL.Companion.configure
-import com.almasb.fxgl.app.MockApplicationModule
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**
@@ -28,16 +23,9 @@ class InputTest {
 
     private lateinit var input: Input
 
-    companion object {
-        @BeforeAll
-        @JvmStatic fun before() {
-            configure(MockApplicationModule.get())
-        }
-    }
-
     @BeforeEach
     fun setUp() {
-        input = FXGL.getInstance(Input::class.java)
+        input = Input()
     }
 
     @Test
