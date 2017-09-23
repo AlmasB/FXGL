@@ -6,9 +6,6 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.FXGLMock;
-import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -16,13 +13,12 @@ import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,11 +28,6 @@ public class BoundingBoxComponentTest {
 
     private PositionComponent position;
     private BoundingBoxComponent bbox;
-
-    @BeforeAll
-    public static void before() {
-        FXGLMock.mock();
-    }
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -242,7 +233,7 @@ public class BoundingBoxComponentTest {
 
     @Test
     public void testIsCollidingWith() throws Exception {
-
+        // TODO:
     }
 
     @Test
@@ -263,12 +254,12 @@ public class BoundingBoxComponentTest {
 
     @Test
     public void testIsOutside() throws Exception {
-
+        // TODO:
     }
 
     @Test
     public void testRange() throws Exception {
-
+        // TODO:
     }
 
     @Test
