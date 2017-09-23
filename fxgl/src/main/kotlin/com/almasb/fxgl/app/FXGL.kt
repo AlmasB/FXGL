@@ -210,7 +210,7 @@ class FXGL private constructor() {
 
         /* CONVENIENCE ACCESSORS - SERVICES */
 
-        private val _assetLoader by lazy { getInstance(AssetLoader::class.java) }
+        private val _assetLoader by lazy { AssetLoader() }
         @JvmStatic fun getAssetLoader() = _assetLoader
 
         private val _eventBus by lazy { EventBus() }

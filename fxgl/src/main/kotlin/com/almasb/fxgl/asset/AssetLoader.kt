@@ -66,8 +66,7 @@ import java.util.zip.ZipInputStream
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class AssetLoader
-@Inject private constructor(@Named("asset.cache.size") cacheSize: Int) {
+class AssetLoader {
 
     private val ASSETS_DIR = "/assets/"
     private val TEXTURES_DIR = ASSETS_DIR + "textures/"
@@ -89,10 +88,10 @@ class AssetLoader
 
     private val log = Logger.get(javaClass)
 
-    private val cachedAssets = AssetCache(cacheSize)
+    private val cachedAssets = AssetCache(35)
 
     init {
-        log.debugf("Asset cacheSize=%d", cacheSize)
+        log.debugf("Asset cacheSize=%d", 35)
     }
 
     /**

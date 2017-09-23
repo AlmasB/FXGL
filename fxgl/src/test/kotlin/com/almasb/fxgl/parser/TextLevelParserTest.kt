@@ -7,22 +7,20 @@
 package com.almasb.fxgl.parser
 
 import com.almasb.fxgl.annotation.SpawnSymbol
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.TextEntityFactory
+import com.almasb.fxgl.entity.component.PositionComponent
+import com.almasb.fxgl.entity.component.TypeComponent
 import com.almasb.fxgl.parser.text.TextLevelParser
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.Description
-import org.hamcrest.MatcherAssert.*
-import org.junit.jupiter.api.Assertions
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**
@@ -39,11 +37,6 @@ class TextLevelParserTest {
     companion object {
         private val BLOCK_WIDTH = 40
         private val BLOCK_HEIGHT = 40
-
-        @BeforeAll
-        @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
-        }
     }
 
     @Test
@@ -57,9 +50,24 @@ class TextLevelParserTest {
     fun `Parse text file into level`() {
         val parser = TextLevelParser('0', BLOCK_WIDTH, BLOCK_HEIGHT)
         with(parser) {
-            addEntityProducer('1', EntitySpawner { data -> Entities.builder().type(EntityType.TYPE1).from(data).build() })
-            addEntityProducer('2', EntitySpawner { data -> Entities.builder().type(EntityType.TYPE2).from(data).build() })
-            addEntityProducer('3', EntitySpawner { data -> Entities.builder().type(EntityType.TYPE3).from(data).build() })
+            addEntityProducer('1', EntitySpawner { data ->
+                val e = Entity()
+                e.addComponent(PositionComponent(data.x, data.y))
+                e.addComponent(TypeComponent(EntityType.TYPE1))
+                e
+            })
+            addEntityProducer('2', EntitySpawner { data ->
+                val e = Entity()
+                e.addComponent(PositionComponent(data.x, data.y))
+                e.addComponent(TypeComponent(EntityType.TYPE2))
+                e
+            })
+            addEntityProducer('3', EntitySpawner { data ->
+                val e = Entity()
+                e.addComponent(PositionComponent(data.x, data.y))
+                e.addComponent(TypeComponent(EntityType.TYPE3))
+                e
+            })
         }
 
         val level = parser.parse("test_level.txt")
@@ -118,12 +126,27 @@ class TextLevelParserTest {
         }
 
         @SpawnSymbol('1')
-        fun newType1(data: SpawnData) = Entities.builder().type(EntityType.TYPE1).from(data).build()
+        fun newType1(data: SpawnData): Entity {
+            val e = Entity()
+            e.addComponent(PositionComponent(data.x, data.y))
+            e.addComponent(TypeComponent(EntityType.TYPE1))
+            return e
+        }
 
         @SpawnSymbol('2')
-        fun newType2(data: SpawnData) = Entities.builder().type(EntityType.TYPE2).from(data).build()
+        fun newType2(data: SpawnData): Entity {
+            val e = Entity()
+            e.addComponent(PositionComponent(data.x, data.y))
+            e.addComponent(TypeComponent(EntityType.TYPE2))
+            return e
+        }
 
         @SpawnSymbol('3')
-        fun newType3(data: SpawnData) = Entities.builder().type(EntityType.TYPE3).from(data).build()
+        fun newType3(data: SpawnData): Entity {
+            val e = Entity()
+            e.addComponent(PositionComponent(data.x, data.y))
+            e.addComponent(TypeComponent(EntityType.TYPE3))
+            return e
+        }
     }
 }
