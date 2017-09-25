@@ -154,21 +154,6 @@ class FXGL private constructor() {
             saveSystemData()
         }
 
-        /**
-         * Obtain an instance of a type.
-         * It may be expensive to use this in a loop.
-         * Store a reference to the instance instead.
-         *
-         * @param type type
-         *
-         * @return instance
-         */
-        // TODO: isolate in reflection utils somewhere
-        @Deprecated("ToBeRemoved")
-        @JvmStatic fun <T> getInstance(type: Class<T>): T {
-            return type.getDeclaredConstructor().newInstance()
-        }
-
         @JvmStatic fun getNotificationService() = getSettings().notificationService
         @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
         @JvmStatic fun getUIFactory() = getSettings().uiFactory

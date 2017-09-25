@@ -189,4 +189,17 @@ public final class ReflectionUtils {
             throw new RuntimeException("Cannot inject " + injectionInstance + " into " + field.getName() + " Error: " + e);
         }
     }
+
+    /**
+     * @param type class
+     * @return instance of given class using its no-arg ctor
+     * @throws ReflectionException if cannot be instantiated
+     */
+    public static <T> T newInstance(Class<T> type) {
+        try {
+            return type.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
+    }
 }

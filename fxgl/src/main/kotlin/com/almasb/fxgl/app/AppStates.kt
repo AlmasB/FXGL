@@ -10,6 +10,7 @@ import com.almasb.fxgl.annotation.AddCollisionHandler
 import com.almasb.fxgl.annotation.AnnotationParser
 import com.almasb.fxgl.annotation.SetEntityFactory
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.event.Subscriber
@@ -182,7 +183,7 @@ internal constructor(private val app: GameApplication,
             vars.forEach { name, value -> app.gameState.put(name, value) }
 
             annotationParser.getClasses(SetEntityFactory::class.java).firstOrNull()?.let {
-                app.gameWorld.setEntityFactory(FXGL.getInstance(it) as EntityFactory)
+                app.gameWorld.setEntityFactory(ReflectionUtils.newInstance(it) as EntityFactory)
             }
 
             if (dataFile === DataFile.EMPTY)
@@ -196,7 +197,7 @@ internal constructor(private val app: GameApplication,
             app.initPhysics()
 
             annotationParser.getClasses(AddCollisionHandler::class.java).forEach {
-                app.physicsWorld.addCollisionHandler(FXGL.getInstance(it) as CollisionHandler)
+                app.physicsWorld.addCollisionHandler(ReflectionUtils.newInstance(it) as CollisionHandler)
             }
         }
 
