@@ -7,7 +7,6 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.settings.GameSettings;
-import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -62,26 +61,26 @@ public class MockApplicationModule extends ApplicationModule {
         return MockApplication.stage;
     }
 
-    @Override
-    protected void bindServices() {
-        mockProperties();
-        mockAssetLoader();
-        mockPhysics();
-    }
-
-    /**
-     * Supplies values for properties that would normally be loaded
-     * from the system.properties file.
-     */
-    private void mockProperties() {
-        FXGL.setProperty("dev.showbbox", false);
-    }
-
-    private void mockAssetLoader() {
-        bind(Integer.class).annotatedWith(Names.named("asset.cache.size")).toInstance(35);
-    }
-
-    private void mockPhysics() {
-        bind(Double.class).annotatedWith(Names.named("physics.ppm")).toInstance(50.0);
-    }
+//    @Override
+//    protected void bindServices() {
+//        mockProperties();
+//        mockAssetLoader();
+//        mockPhysics();
+//    }
+//
+//    /**
+//     * Supplies values for properties that would normally be loaded
+//     * from the system.properties file.
+//     */
+//    private void mockProperties() {
+//        FXGL.setProperty("dev.showbbox", false);
+//    }
+//
+//    private void mockAssetLoader() {
+//        bind(Integer.class).annotatedWith(Names.named("asset.cache.size")).toInstance(35);
+//    }
+//
+//    private void mockPhysics() {
+//        bind(Double.class).annotatedWith(Names.named("physics.ppm")).toInstance(50.0);
+//    }
 }

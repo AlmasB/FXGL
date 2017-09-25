@@ -76,7 +76,6 @@
         <!-- dependencies -->
         <kotlin.version>1.1.50</kotlin.version>
         <kotlinx.version>0.17</kotlinx.version>
-        <guice.version>4.1.0</guice.version>
         <jfxtras.version>8.0-r5</jfxtras.version>
         <controlsfx.version>8.40.12</controlsfx.version>
         <jackson.version>2.9.0</jackson.version>

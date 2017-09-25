@@ -18,12 +18,7 @@ import com.almasb.fxgl.service.impl.executor.FXGLExecutor
 import com.almasb.fxgl.service.impl.net.FXGLNet
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
-import com.google.inject.AbstractModule
-import com.google.inject.Guice
-import com.google.inject.Injector
-import com.google.inject.Module
-import com.google.inject.name.Named
-import com.google.inject.name.Names
+
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.function.Consumer
@@ -45,10 +40,10 @@ class FXGL private constructor() {
 
         private val log = Logger.get("FXGL")
 
-        /**
-         * Temporarily holds k-v pairs from system.properties.
-         */
-        private val internalProperties = Properties()
+//        /**
+//         * Temporarily holds k-v pairs from system.properties.
+//         */
+//        private val internalProperties = Properties()
 
         private var configured = false
 
@@ -84,7 +79,7 @@ class FXGL private constructor() {
         /**
          * Constructs FXGL.
          */
-        @JvmStatic fun configure(appModule: ApplicationModule, vararg modules: Module) {
+        @JvmStatic fun configure(appModule: ApplicationModule) {
             if (configured)
                 return
 
@@ -93,12 +88,6 @@ class FXGL private constructor() {
             internalApp = appModule.app
 
             createRequiredDirs()
-
-            val allModules = arrayListOf(*modules)
-            allModules.add(buildPropertiesModule())
-            allModules.add(appModule)
-
-            injector = Guice.createInjector(allModules)
 
             if (firstRun)
                 loadDefaultSystemData()
@@ -172,11 +161,6 @@ class FXGL private constructor() {
         }
 
         /**
-         * Dependency injector.
-         */
-        private lateinit var injector: Injector
-
-        /**
          * Obtain an instance of a type.
          * It may be expensive to use this in a loop.
          * Store a reference to the instance instead.
@@ -188,27 +172,6 @@ class FXGL private constructor() {
         // TODO: isolate in reflection utils somewhere
         @JvmStatic fun <T> getInstance(type: Class<T>): T {
             return type.getDeclaredConstructor().newInstance()
-        }
-
-        private fun buildPropertiesModule(): Module {
-            return object : AbstractModule() {
-
-                override fun configure() {
-                    for ((k, v) in internalProperties.intMap)
-                        bind(Int::class.java).annotatedWith(k).toInstance(v)
-
-                    for ((k, v) in internalProperties.doubleMap)
-                        bind(Double::class.java).annotatedWith(k).toInstance(v)
-
-                    for ((k, v) in internalProperties.booleanMap)
-                        bind(Boolean::class.java).annotatedWith(k).toInstance(v)
-
-                    for ((k, v) in internalProperties.stringMap)
-                        bind(String::class.java).annotatedWith(k).toInstance(v)
-
-                    internalProperties.clear()
-                }
-            }
         }
 
         /* CONVENIENCE ACCESSORS - SERVICES */
@@ -309,36 +272,36 @@ class FXGL private constructor() {
         @JvmStatic fun setProperty(key: String, value: Any) {
             System.setProperty("FXGL.$key", value.toString())
 
-            if (!configured) {
-
-                if (value == "true" || value == "false") {
-                    internalProperties.booleanMap[Names.named(key)] = java.lang.Boolean.parseBoolean(value as String)
-                } else {
-                    try {
-                        internalProperties.intMap[Names.named(key)] = Integer.parseInt(value.toString())
-                    } catch(e: Exception) {
-                        try {
-                            internalProperties.doubleMap[Names.named(key)] = java.lang.Double.parseDouble(value.toString())
-                        } catch(e: Exception) {
-                            internalProperties.stringMap[Names.named(key)] = value.toString()
-                        }
-                    }
-                }
-            }
+//            if (!configured) {
+//
+//                if (value == "true" || value == "false") {
+//                    internalProperties.booleanMap[Names.named(key)] = java.lang.Boolean.parseBoolean(value as String)
+//                } else {
+//                    try {
+//                        internalProperties.intMap[Names.named(key)] = Integer.parseInt(value.toString())
+//                    } catch(e: Exception) {
+//                        try {
+//                            internalProperties.doubleMap[Names.named(key)] = java.lang.Double.parseDouble(value.toString())
+//                        } catch(e: Exception) {
+//                            internalProperties.stringMap[Names.named(key)] = value.toString()
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 
-    private class Properties {
-        val intMap = hashMapOf<Named, Int>()
-        val doubleMap = hashMapOf<Named, Double>()
-        val booleanMap = hashMapOf<Named, Boolean>()
-        val stringMap = hashMapOf<Named, String>()
-
-        fun clear() {
-            intMap.clear()
-            doubleMap.clear()
-            booleanMap.clear()
-            stringMap.clear()
-        }
-    }
+//    private class Properties {
+//        val intMap = hashMapOf<Named, Int>()
+//        val doubleMap = hashMapOf<Named, Double>()
+//        val booleanMap = hashMapOf<Named, Boolean>()
+//        val stringMap = hashMapOf<Named, String>()
+//
+//        fun clear() {
+//            intMap.clear()
+//            doubleMap.clear()
+//            booleanMap.clear()
+//            stringMap.clear()
+//        }
+//    }
 }
