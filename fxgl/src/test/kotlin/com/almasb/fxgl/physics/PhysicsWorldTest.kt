@@ -95,7 +95,7 @@ class PhysicsWorldTest {
         // TODO: we don't need game world, test physics world only
         
         // create game world and add listener
-        val gameWorld = FXGL.getInstance(GameWorld::class.java)
+        val gameWorld = GameWorld()
         gameWorld.addWorldListener(physicsWorld)
 
         gameWorld.addEntity(entity1)

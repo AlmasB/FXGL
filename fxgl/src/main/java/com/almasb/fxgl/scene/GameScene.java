@@ -18,9 +18,6 @@ import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.ui.UI;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -44,7 +41,6 @@ import java.util.List;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 public final class GameScene extends FXGLScene
         implements EntityWorldListener, ModuleListener {
 
@@ -75,9 +71,7 @@ public final class GameScene extends FXGLScene
      */
     private Group uiRoot = new Group();
 
-    @Inject
-    protected GameScene(@Named("appWidth") int width,
-                        @Named("appHeight") int height) {
+    protected GameScene(int width, int height) {
         getContentRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
         initParticlesCanvas(width, height);
