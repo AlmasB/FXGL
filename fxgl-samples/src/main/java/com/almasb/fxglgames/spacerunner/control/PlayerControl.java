@@ -56,9 +56,10 @@ public class PlayerControl extends Control {
     }
 
     public void shoot() {
-        Entity bullet = FXGL.getInstance(SpaceRunnerFactory.class)
-                .newBullet(position.getX() + 40, position.getY() + 20, SpaceRunnerType.PLAYER);
-
-        getEntity().getWorld().addEntity(bullet);
+        // TODO: refactor
+//        Entity bullet = FXGL.getInstance(SpaceRunnerFactory.class)
+//                .newBullet(position.getX() + 40, position.getY() + 20, SpaceRunnerType.PLAYER);
+//
+//        getEntity().getWorld().addEntity(bullet);
     }
 }
