@@ -26,7 +26,7 @@ class Gameplay : UserProfileSavable {
 
     val stats = GameplayStats()
 
-    val clock = FXGL.getInstance(InGameClock::class.java)
+    val clock = InGameClock(FXGL.getInt("gameplay.clock.secondsIn24h"))
 
     val QTE: QTE by lazy { QTEProvider() }
 
