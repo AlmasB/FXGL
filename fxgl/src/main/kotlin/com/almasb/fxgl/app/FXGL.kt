@@ -216,7 +216,7 @@ class FXGL private constructor() {
         private val _eventBus by lazy { EventBus() }
         @JvmStatic fun getEventBus() = _eventBus
 
-        private val _audioPlayer by lazy { getInstance(AudioPlayer::class.java) }
+        private val _audioPlayer by lazy { AudioPlayer() }
         @JvmStatic fun getAudioPlayer() = _audioPlayer
 
         private val _display by lazy { FXGLDisplay() }
@@ -234,7 +234,7 @@ class FXGL private constructor() {
 
         @JvmStatic fun getUIFactory() = getSettings().uiFactory
 
-        private val _gameplay by lazy { getInstance(Gameplay::class.java) }
+        private val _gameplay by lazy { Gameplay() }
         @JvmStatic fun getGameplay() = _gameplay
 
         /* OTHER CONVENIENCE ACCESSORS */

@@ -36,7 +36,7 @@ class PhysicsWorldTest {
         TYPE1, TYPE2
     }
 
-    private val physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
+    private val physicsWorld = PhysicsWorld(600, 50.0)
 
     @Test
     fun `Collision notification`() {

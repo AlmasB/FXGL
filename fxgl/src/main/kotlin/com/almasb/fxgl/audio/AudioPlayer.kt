@@ -12,7 +12,6 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.gameplay.NotificationEvent
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
-import com.google.inject.Inject
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Point2D
@@ -24,9 +23,7 @@ import java.util.*
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-class AudioPlayer
-@Inject
-private constructor() {
+class AudioPlayer {
 
     private val log = Logger.get(javaClass)
 
