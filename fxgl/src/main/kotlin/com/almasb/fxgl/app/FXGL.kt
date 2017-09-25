@@ -185,7 +185,10 @@ class FXGL private constructor() {
          *
          * @return instance
          */
-        @JvmStatic fun <T> getInstance(type: Class<T>) = injector.getInstance(type)
+        // TODO: isolate in reflection utils somewhere
+        @JvmStatic fun <T> getInstance(type: Class<T>): T {
+            return type.getDeclaredConstructor().newInstance()
+        }
 
         private fun buildPropertiesModule(): Module {
             return object : AbstractModule() {
