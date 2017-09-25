@@ -6,14 +6,11 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.saving.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -24,18 +21,11 @@ import org.junit.jupiter.api.Test
  */
 class AchievementManagerTest {
 
-    companion object {
-        @BeforeAll
-        @JvmStatic fun before() {
-            FXGLMock.mock()
-        }
-    }
-
     private lateinit var achievementManager: AchievementManager
 
     @BeforeEach
     fun setUp() {
-        achievementManager = FXGL.getInstance(AchievementManager::class.java)
+        achievementManager = AchievementManager()
     }
 
     @Test
@@ -79,7 +69,7 @@ class AchievementManagerTest {
         achievementManager.getAchievementByName("TestAchievement").setAchieved()
         achievementManager.save(profile)
 
-        val newAchievementManager = FXGL.getInstance(AchievementManager::class.java)
+        val newAchievementManager = AchievementManager()
         newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
         newAchievementManager.load(profile)
 
