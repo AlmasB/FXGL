@@ -58,6 +58,11 @@ public class BasicGameApp extends GameApplication {
 * [Game demos](https://github.com/AlmasB/FXGLGames) (src)
 * [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
 
+## Versions
+
+* Use `0.3.8` for Java 8
+* Use latest version for Java 9
+
 ## Maven
 
 * [Maven](https://github.com/AlmasB/FXGL-Maven) project if you use Java
