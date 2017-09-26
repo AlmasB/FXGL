@@ -77,7 +77,7 @@
         <kotlin.version>1.1.50</kotlin.version>
         <kotlinx.version>0.17</kotlinx.version>
         <jfxtras.version>8.0-r5</jfxtras.version>
-        <controlsfx.version>8.40.12</controlsfx.version>
+        <controlsfx.version>9.0.0</controlsfx.version>
         <jackson.version>2.9.0</jackson.version>
         <apache.http.version>4.5.3</apache.http.version>
         <classpath.scanner.version>2.4.5</classpath.scanner.version>
