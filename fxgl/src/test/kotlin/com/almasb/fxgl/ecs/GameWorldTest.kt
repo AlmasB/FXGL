@@ -10,6 +10,7 @@ import com.almasb.fxgl.annotation.Spawns
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.ecs.component.IrremovableComponent
+import com.almasb.fxgl.ecs.component.TimeComponent
 import com.almasb.fxgl.entity.*
 import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.gameplay.Level
@@ -910,6 +911,31 @@ class GameWorldTest {
                 Executable { assertThat(result1, contains(e1)) },
                 Executable { assertThat(result2, contains(e2)) }
         )
+    }
+
+    /* SPECIAL CASES */
+
+    @Test
+    fun `Time component is honored`() {
+        val e = Entity()
+        e.addComponent(TimeComponent(0.5))
+
+        val control = TimeBasedControl()
+        e.addControl(control)
+
+        gameWorld.addEntity(e)
+        gameWorld.onUpdate(0.016)
+
+        assertTrue(control.assertPassed)
+    }
+
+    private class TimeBasedControl : Control() {
+        var assertPassed = false
+
+        override fun onUpdate(entity: Entity, tpf: Double) {
+            assertThat(tpf, `is`(0.008))
+            assertPassed = true
+        }
     }
 
     private class EntityMatcher(val x: Int, val y: Int) : BaseMatcher<Entity>() {
