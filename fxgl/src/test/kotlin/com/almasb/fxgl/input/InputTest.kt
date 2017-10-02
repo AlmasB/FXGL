@@ -7,14 +7,21 @@
 package com.almasb.fxgl.input
 
 import com.almasb.fxgl.annotation.OnUserAction
+import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.saving.UserProfile
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -278,6 +285,75 @@ class InputTest {
 
         assertThat(trigger is KeyTrigger, `is`(true))
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
+    }
+
+    @Test
+    fun `Trigger name by action`() {
+        val action = object : UserAction("Action") {}
+
+        input.addAction(action, KeyCode.K)
+
+        assertThat(input.getTriggerName(action), `is`("K"))
+    }
+
+    @Test
+    fun `Action by name`() {
+        val action = object : UserAction("Action") {}
+
+        input.addAction(action, KeyCode.K)
+
+        assertThat(input.getActionByName("Action"), `is`<UserAction>(action))
+    }
+
+    @Test
+    fun `Trigger name by action name`() {
+        val action = object : UserAction("Action") {}
+
+        input.addAction(action, KeyCode.K)
+
+        assertThat(input.getTriggerByActionName("Action"), `is`("K"))
+    }
+
+    @Test
+    fun `Fire JavaFX event`() {
+        var count = 0
+
+        val handler = EventHandler<Event> { count++ }
+
+        input.addEventHandler(EventType.ROOT, handler)
+
+        assertAll(
+                Executable {
+                    input.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(1))
+                },
+
+                Executable {
+                    input.removeEventHandler(EventType.ROOT, handler)
+
+                    input.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(1))
+                }
+        )
+    }
+
+    @Test
+    fun `Serialization`() {
+        val action = object : UserAction("Action") {}
+
+        input.addAction(action, KeyCode.A)
+
+        val profile = UserProfile("title", "version")
+
+        input.save(profile)
+
+        val input2 = Input()
+        input2.addAction(action, KeyCode.K)
+        input2.load(profile)
+
+        assertThat(input2.getTriggerName(action), `is`("A"))
     }
 
     @OnUserAction(name = "TestAction", type = ActionType.ON_ACTION_BEGIN)
