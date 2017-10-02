@@ -62,19 +62,19 @@ enum class InputModifier {
 
     fun isTriggered(event: KeyEvent): Boolean {
         return when (this) {
-            CTRL -> event.isControlDown
+            CTRL  -> event.isControlDown
             SHIFT -> event.isShiftDown
-            ALT -> event.isAltDown
-            else -> !(event.isAltDown || event.isShiftDown || event.isControlDown)
+            ALT   -> event.isAltDown
+            else  -> !(event.isAltDown || event.isShiftDown || event.isControlDown)
         }
     }
 
     fun isTriggered(event: MouseEvent): Boolean {
         return when (this) {
-            CTRL -> event.isControlDown
+            CTRL  -> event.isControlDown
             SHIFT -> event.isShiftDown
-            ALT -> event.isAltDown
-            else -> !(event.isAltDown || event.isShiftDown || event.isControlDown)
+            ALT   -> event.isAltDown
+            else  -> !(event.isAltDown || event.isShiftDown || event.isControlDown)
         }
     }
 }
