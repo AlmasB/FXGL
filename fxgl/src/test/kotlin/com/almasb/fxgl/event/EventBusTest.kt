@@ -7,11 +7,17 @@
 package com.almasb.fxgl.event
 
 import com.almasb.fxgl.annotation.Handles
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 /**
  *
@@ -25,6 +31,31 @@ class EventBusTest {
     @BeforeEach
     fun setUp() {
         eventBus = EventBus()
+    }
+
+    @Test
+    fun `Fire event`() {
+        var count = 0
+
+        val handler = EventHandler<Event> { count++ }
+
+        eventBus.addEventHandler(EventType.ROOT, handler)
+
+        assertAll(
+                Executable {
+                    eventBus.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(1))
+                },
+
+                Executable {
+                    eventBus.removeEventHandler(EventType.ROOT, handler)
+
+                    eventBus.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(1))
+                }
+        )
     }
 
     @Test
