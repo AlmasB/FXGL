@@ -10,7 +10,9 @@ import com.almasb.fxgl.saving.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.contains
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -34,16 +36,12 @@ class AchievementManagerTest {
 
         achievementManager.registerAchievement(a1)
 
-        assertThat(achievementManager.getAchievements(), hasItem(a1))
+        assertThat(achievementManager.getAchievements(), contains(a1))
         assertThat(achievementManager.getAchievementByName("TestAchievement"), `is`(a1))
     }
 
     @Test
     fun `Fail if achievement not found`() {
-        val a1 = Achievement("TestAchievement", "TestDescription")
-
-        achievementManager.registerAchievement(a1)
-
         assertThrows(IllegalArgumentException::class.java, {
             achievementManager.getAchievementByName("NoSuchAchievement")
         })
@@ -66,14 +64,17 @@ class AchievementManagerTest {
         val profile = UserProfile("1", "1")
 
         achievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
+        achievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription"))
         achievementManager.getAchievementByName("TestAchievement").setAchieved()
         achievementManager.save(profile)
 
         val newAchievementManager = AchievementManager()
         newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
+        newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription"))
         newAchievementManager.load(profile)
 
-        assertThat(newAchievementManager.getAchievements().size, `is`(1))
-        assertThat(newAchievementManager.getAchievementByName("TestAchievement").isAchieved, `is`(true))
+        assertThat(newAchievementManager.getAchievements().size, `is`(2))
+        assertTrue(newAchievementManager.getAchievementByName("TestAchievement").isAchieved)
+        assertFalse(newAchievementManager.getAchievementByName("TestAchievement2").isAchieved)
     }
 }

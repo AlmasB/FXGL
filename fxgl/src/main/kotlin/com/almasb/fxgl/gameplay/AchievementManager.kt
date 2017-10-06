@@ -8,7 +8,6 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.gameplay.AchievementEvent
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
@@ -27,17 +26,13 @@ class AchievementManager : UserProfileSavable {
 
     /**
      * Registers achievement in the system.
-     * Note: this method can only be called from initAchievements() to function
-     * properly.
+     * Note: this method can only be called from initAchievements() to function properly.
      *
      * @param a the achievement
      */
     fun registerAchievement(a: Achievement) {
-        val count = achievements.filter { it.name == a.name }.size
-
-        if (count > 0)
+        if (achievements.find { it.name == a.name } != null)
             throw IllegalArgumentException("Achievement with name \"${a.name}\" exists")
-
 
         a.setOnAchieved(Runnable { FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a)) })
         achievements.add(a)
@@ -46,17 +41,12 @@ class AchievementManager : UserProfileSavable {
 
     /**
      * @param name achievement name
-     *
      * @return registered achievement
-     *
      * @throws IllegalArgumentException if achievement is not registered
      */
     fun getAchievementByName(name: String): Achievement {
-        for (a in achievements)
-            if (a.name == name)
-                return a
-
-        throw IllegalArgumentException("Achievement with name \"$name\" is not registered!")
+        return achievements.find { it.name == name }
+                ?: throw IllegalArgumentException("Achievement with name \"$name\" is not registered!")
     }
 
     /**
