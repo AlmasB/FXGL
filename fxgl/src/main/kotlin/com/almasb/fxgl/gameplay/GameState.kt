@@ -9,7 +9,6 @@ package com.almasb.fxgl.gameplay
 import com.almasb.fxgl.core.collection.ObjectMap
 import javafx.beans.property.*
 import javafx.beans.value.ObservableValue
-import java.util.*
 
 /**
  * Holds game CVars as JavaFX properties and allows
@@ -31,6 +30,15 @@ class GameState {
      */
     fun gameDifficultyProperty(): ObjectProperty<GameDifficulty> = gameDifficulty
 
+    /**
+     * Value types are one of
+     *
+     * SimpleIntegerProperty,
+     * SimpleDoubleProperty,
+     * SimpleBooleanProperty,
+     * SimpleStringProperty,
+     * SimpleObjectProperty
+     */
     private val properties = ObjectMap<String, Any>(32)
 
     /**
@@ -41,7 +49,7 @@ class GameState {
     /**
      * Ensure that property with such name exists first using [exists].
      *
-     * @return type of a property with [propertyName]
+     * @return type of a property with [propertyName], e.g. SimpleIntegerProperty, SimpleStringProperty
      */
     fun getType(propertyName: String): Class<*> {
         return get(propertyName).javaClass
@@ -51,11 +59,14 @@ class GameState {
      * @return all existing properties in the form (propertyName, rawValue)
      */
     fun getProperties(): Map<String, String> {
-        val map = HashMap<String, String>()
+        return properties.associateBy({ it.key }, { rawValue(it.value).toString() })
+    }
 
-        properties.forEach { map.put(it.key, it.value.toString()) }
-
-        return map
+    private fun rawValue(valueWrapper: Any): Any {
+        return when (valueWrapper) {
+            is ObservableValue<*> -> valueWrapper.value
+            else -> throw IllegalArgumentException("Unsupported value wrapper type: $valueWrapper")
+        }
     }
 
     fun put(propertyName: String, value: Any) {
