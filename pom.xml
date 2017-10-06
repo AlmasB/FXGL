@@ -66,9 +66,9 @@
         <maven.gpg.version>1.6</maven.gpg.version>
         <sonatype.nexus.staging.version>1.6.7</sonatype.nexus.staging.version>
         <maven.compiler.version>3.7.0</maven.compiler.version>
-        <maven.enforcer.version>1.4.1</maven.enforcer.version>
+        <maven.enforcer.version>3.0.0-M1</maven.enforcer.version>
         <maven.source.version>3.0.1</maven.source.version>
-        <maven.javadoc.version>2.10.3</maven.javadoc.version>
+        <maven.javadoc.version>3.0.0-M1</maven.javadoc.version>
         <maven.shade.version>3.0.0</maven.shade.version>
         <jacoco.version>0.7.9</jacoco.version>
         <maven.surefire.version>2.19</maven.surefire.version>
@@ -154,7 +154,7 @@
                     </executions>
                 </plugin>
 
-                <!-- Force check on compiler 1.8.0_101+ -->
+                <!-- Force check on compiler 1.9.0_181+ -->
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven.enforcer.version}</version>
@@ -168,7 +168,7 @@
                                 <rules>
                                     <DependencyConvergence/>
                                     <requireJavaVersion>
-                                        <version>[1.8.0-101,)</version>
+                                        <version>[1.9.0-181,)</version>
                                     </requireJavaVersion>
                                 </rules>
                             </configuration>
