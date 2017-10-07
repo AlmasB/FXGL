@@ -45,4 +45,15 @@ class TriggerTest {
         assertThat(btn.button, `is`(MouseButton.PRIMARY))
         assertThat(btn.getName(), `is`("PRIMARY"))
     }
+
+    @Test
+    fun `Test toString`() {
+        val key = KeyTrigger(KeyCode.A, InputModifier.CTRL)
+        
+        assertThat(key.toString(), `is`("CTRL+A"))
+
+        val btn = MouseTrigger(MouseButton.PRIMARY, InputModifier.ALT)
+
+        assertThat(btn.toString(), `is`("ALT+PRIMARY"))
+    }
 }
