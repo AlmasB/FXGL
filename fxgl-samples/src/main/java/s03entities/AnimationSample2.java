@@ -46,7 +46,7 @@ public class AnimationSample2 extends GameApplication {
                 if (playerTexture != null) {
 
                     // when cleaning first remove the entity using the texture
-                    getGameWorld().getEntities().forEach(Entity::removeFromWorld);
+                    getGameWorld().getEntitiesCopy().forEach(Entity::removeFromWorld);
 
                     // dispose of the texture
                     playerTexture.dispose();
@@ -62,8 +62,8 @@ public class AnimationSample2 extends GameApplication {
 
     @Override
     protected void initAssets() {
-        playerTexture = getAssetLoader().loadTexture("player.png")
-                .toAnimatedTexture(3, Duration.seconds(0.33));
+        playerTexture = getAssetLoader().loadTexture("bird.png")
+                .toAnimatedTexture(2, Duration.seconds(0.33));
     }
 
     @Override
