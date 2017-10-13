@@ -27,7 +27,7 @@ class TimerActionTest {
     fun `Timer action does not run in first onUpdate frame if time not passed`() {
         var count = 0
 
-        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, TimerAction.TimerType.ONCE)
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, 1)
         action.update(0.016)
 
         assertThat(count, `is`(0))
@@ -37,7 +37,7 @@ class TimerActionTest {
     fun `Timer action runs when time passed`() {
         var count = 0
 
-        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, TimerAction.TimerType.ONCE)
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, 1)
         action.update(0.15)
 
         assertThat(count, `is`(1))
@@ -47,7 +47,7 @@ class TimerActionTest {
     fun `Timer action with type once runs once when time passed`() {
         var count = 0
 
-        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, TimerAction.TimerType.ONCE)
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, 1)
         action.update(0.15)
 
         action.update(0.15)
@@ -59,7 +59,7 @@ class TimerActionTest {
     fun `Timer action with type once is expired after run`() {
         var count = 0
 
-        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, TimerAction.TimerType.ONCE)
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, 1)
         action.update(0.15)
 
         assertTrue(action.isExpired)
@@ -69,7 +69,7 @@ class TimerActionTest {
     fun `Timer action with type indefinite does not expire after run`() {
         var count = 0
 
-        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, TimerAction.TimerType.INDEFINITE)
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ })
         action.update(0.15)
 
         assertFalse(action.isExpired)
