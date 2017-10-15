@@ -59,7 +59,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.version>1.9</source.version>
+        <source.version>1.8</source.version>
         <fxgl.version>${project.version}</fxgl.version>
 
         <!-- plugins -->
@@ -154,7 +154,7 @@
                     </executions>
                 </plugin>
 
-                <!-- Force check on compiler 1.9.0_181+ -->
+                <!-- Force check on compiler 1.8.0-101+ -->
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven.enforcer.version}</version>
@@ -168,7 +168,7 @@
                                 <rules>
                                     <DependencyConvergence/>
                                     <requireJavaVersion>
-                                        <version>[1.9.0-181,)</version>
+                                        <version>[1.8.0-101,)</version>
                                     </requireJavaVersion>
                                 </rules>
                             </configuration>

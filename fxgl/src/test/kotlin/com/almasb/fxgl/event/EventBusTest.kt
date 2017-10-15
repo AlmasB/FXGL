@@ -103,7 +103,7 @@ class EventBusTest {
         try {
             eventBus.scanForHandlers(invalidObject4)
         } catch (e: IllegalAccessException) {
-            assertThat(e.message, containsString("cannot access"))
+            assertThat(e.message, containsString("access"))
             count++
         }
 
