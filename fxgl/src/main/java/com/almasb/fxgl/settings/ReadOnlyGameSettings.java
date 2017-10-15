@@ -13,7 +13,7 @@ import com.almasb.fxgl.service.ExceptionHandler;
 import com.almasb.fxgl.service.NotificationService;
 import com.almasb.fxgl.service.UIFactory;
 import com.almasb.fxgl.service.impl.display.FXGLDialogFactory;
-import com.almasb.fxgl.service.impl.notification.SlidingNotificationService;
+import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.service.impl.ui.FXGLUIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
@@ -48,7 +48,7 @@ public class ReadOnlyGameSettings {
     protected SceneFactory sceneFactory = new SceneFactory();
     protected DialogFactory dialogFactory = new FXGLDialogFactory();
     protected UIFactory uiFactory = new FXGLUIFactory();
-    protected NotificationService notificationService = new SlidingNotificationService();
+    protected NotificationService notificationService = new FXGLNotificationService();
     protected ExceptionHandler exceptionHandler = new FXGLExceptionHandler();
 
     // when adding extra fields, remember to add them to copy constructor

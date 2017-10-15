@@ -10,7 +10,6 @@ import com.almasb.fxgl.core.logging.Logger
 import javafx.scene.Node
 import javafx.scene.Parent
 import jfxtras.util.NodeUtil
-import org.controlsfx.tools.Utils
 
 /**
  *
@@ -35,7 +34,7 @@ object DeveloperTools {
     /**
      * @return window in which [node] is located
      */
-    fun getWindow(node: Node) = Utils.getWindow(node)
+    //fun getWindow(node: Node) = Utils.getWindow(node)
 
     /**
      * Remove [node] from its parent.
