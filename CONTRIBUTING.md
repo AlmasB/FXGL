@@ -18,8 +18,7 @@ Any new API or changes to existing API should be discussed to avoid inconsistenc
 
 ## Building
 
-You need to have Oracle JDK 1.9.0_181+ to build FXGL 0.3.9+.
-(For legacy versions, pre 0.3.8, you need Oracle JDK 1.8.0_101+).
+You need to have Oracle JDK 1.8.0_101+ to build FXGL.
 You can build FXGL from sources using [Maven](https://maven.apache.org/):
 ```maven
 mvn clean package
