@@ -7,7 +7,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.3.8</version>
+        <version>0.3.9</version>
     </parent>
 
     <artifactId>fxgl</artifactId>
@@ -34,21 +34,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>${guice.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-window</artifactId>
             <version>${jfxtras.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>${controlsfx.version}</version>
         </dependency>
 
         <dependency>

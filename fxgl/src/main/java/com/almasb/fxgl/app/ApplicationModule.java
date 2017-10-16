@@ -7,15 +7,13 @@
 package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
-import com.google.inject.AbstractModule;
-import com.google.inject.name.Names;
 
 /**
  * Module that binds services with their providers.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class ApplicationModule extends AbstractModule {
+public class ApplicationModule {
 
     private GameApplication app;
     private ReadOnlyGameSettings settings;
@@ -24,29 +22,29 @@ public class ApplicationModule extends AbstractModule {
         this.app = app;
         settings = app.getSettings();
     }
-
+//
     public GameApplication getApp() {
         return app;
     }
-
-    @Override
-    protected final void configure() {
-        // application is the first thing to get ready
-        bindApp();
-
-        bindServices();
-    }
-
-    private void bindApp() {
-        bind(GameApplication.class).toInstance(app);
-        bind(ReadOnlyGameSettings.class).toInstance(settings);
-        bind(ApplicationMode.class).toInstance(settings.getApplicationMode());
-
-        bind(Integer.class).annotatedWith(Names.named("appWidth")).toInstance(app.getWidth());
-        bind(Integer.class).annotatedWith(Names.named("appHeight")).toInstance(app.getHeight());
-    }
-
-    protected void bindServices() {
-        // no-op
-    }
+//
+//    @Override
+//    protected final void configure() {
+//        // application is the first thing to get ready
+//        bindApp();
+//
+//        bindServices();
+//    }
+//
+//    private void bindApp() {
+//        bind(GameApplication.class).toInstance(app);
+//        bind(ReadOnlyGameSettings.class).toInstance(settings);
+//        bind(ApplicationMode.class).toInstance(settings.getApplicationMode());
+//
+//        bind(Integer.class).annotatedWith(Names.named("appWidth")).toInstance(app.getWidth());
+//        bind(Integer.class).annotatedWith(Names.named("appHeight")).toInstance(app.getHeight());
+//    }
+//
+//    protected void bindServices() {
+//        // no-op
+//    }
 }

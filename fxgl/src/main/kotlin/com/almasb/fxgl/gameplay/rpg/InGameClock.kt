@@ -8,8 +8,6 @@ package com.almasb.fxgl.gameplay.rpg
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.listener.StateListener
-import com.google.inject.Inject
-import com.google.inject.name.Named
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyBooleanWrapper
 import javafx.beans.property.ReadOnlyIntegerProperty
@@ -21,8 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class InGameClock
-@Inject constructor(@Named("gameplay.clock.secondsIn24h") secondsIn24h: Int) : StateListener {
+class InGameClock(secondsIn24h: Int) : StateListener {
 
     private var seconds = 0.0
 

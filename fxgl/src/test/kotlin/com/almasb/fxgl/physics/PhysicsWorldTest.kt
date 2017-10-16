@@ -7,16 +7,16 @@
 package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.component.CollidableComponent
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -26,9 +26,9 @@ import org.junit.Test
 class PhysicsWorldTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 
@@ -36,7 +36,7 @@ class PhysicsWorldTest {
         TYPE1, TYPE2
     }
 
-    private val physicsWorld = FXGL.getInstance(PhysicsWorld::class.java)
+    private val physicsWorld = PhysicsWorld(600, 50.0)
 
     @Test
     fun `Collision notification`() {
@@ -95,7 +95,7 @@ class PhysicsWorldTest {
         // TODO: we don't need game world, test physics world only
         
         // create game world and add listener
-        val gameWorld = FXGL.getInstance(GameWorld::class.java)
+        val gameWorld = GameWorld()
         gameWorld.addWorldListener(physicsWorld)
 
         gameWorld.addEntity(entity1)

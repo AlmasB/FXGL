@@ -29,13 +29,10 @@ internal constructor(
         private val action: Runnable,
 
         /**
-         * @param type ONCE or INDEFINITE
+         * @param limit number of times to run before self expiring
+         * @defaltValue indefinite
          */
-        private val type: TimerType) {
-
-    enum class TimerType {
-        ONCE, INDEFINITE
-    }
+        private val limit: Int = Int.MAX_VALUE) {
 
     private val interval = interval.toSeconds()
 
@@ -50,6 +47,8 @@ internal constructor(
 
     private var lastFired = 0.0
     private var currentTime = 0.0
+
+    private var timesFired = 0
 
     /**
      * Updates the state of this timer action.
@@ -68,9 +67,10 @@ internal constructor(
 
         if (currentTime - lastFired >= interval) {
             action.run()
+            timesFired++
             lastFired = currentTime
 
-            if (type == TimerType.ONCE) {
+            if (timesFired == limit) {
                 expire()
             }
         }

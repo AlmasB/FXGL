@@ -15,6 +15,7 @@ JavaFX Game Development Framework
 * No native libraries, no setup required
 * Simple and clean API
 * Brings real-world game development techniques to JavaFX
+* Works with Java 8 and 9 "out of the box"
 
 ## Good for ...
 
@@ -69,7 +70,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.3.8</version>
+    <version>0.3.9</version>
 </dependency>
 ```
 
@@ -86,7 +87,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.3.8'
+    compile 'com.github.almasb:fxgl:0.3.9'
 }
 ```
 

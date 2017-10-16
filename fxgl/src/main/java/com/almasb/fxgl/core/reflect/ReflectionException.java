@@ -10,13 +10,12 @@
 
 package com.almasb.fxgl.core.reflect;
 
-/** Thrown when an exception occurs during reflection.
- * @author nexsoftware */
-public class ReflectionException extends Exception {
-
-    public ReflectionException() {
-        super();
-    }
+/**
+ * Thrown when an exception occurs during reflection.
+ *
+ * @author nexsoftware
+ */
+public class ReflectionException extends RuntimeException {
 
     public ReflectionException(String message) {
         super(message);
@@ -29,5 +28,4 @@ public class ReflectionException extends Exception {
     public ReflectionException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

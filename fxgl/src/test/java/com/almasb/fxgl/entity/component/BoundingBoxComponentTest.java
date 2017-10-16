@@ -6,22 +6,20 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.app.MockApplicationModule;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -31,12 +29,7 @@ public class BoundingBoxComponentTest {
     private PositionComponent position;
     private BoundingBoxComponent bbox;
 
-    @BeforeClass
-    public static void before() {
-        FXGL.configure(MockApplicationModule.get());
-    }
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         position = new PositionComponent();
         bbox = new BoundingBoxComponent();
@@ -61,121 +54,121 @@ public class BoundingBoxComponentTest {
     @Test
     public void testGetWidth() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
-        assertEquals(40, bbox.getWidth(), 0);
+        assertThat(bbox.getWidth(), is(40.0));
 
         bbox.addHitBox(new HitBox("ARM2", new Point2D(50, 0), BoundingShape.box(40, 40)));
-        assertEquals(90, bbox.getWidth(), 0);
+        assertThat(bbox.getWidth(), is(90.0));
 
         bbox.addHitBox(new HitBox("ARM3", BoundingShape.box(100, 40)));
-        assertEquals(100, bbox.getWidth(), 0);
+        assertThat(bbox.getWidth(), is(100.0));
 
         bbox.removeHitBox("ARM");
         bbox.removeHitBox("ARM2");
         bbox.removeHitBox("ARM3");
 
         bbox.addHitBox(new HitBox("ARM", new Point2D(90, 0), BoundingShape.box(100, 40)));
-        assertEquals(100, bbox.getWidth(), 0);
+        assertThat(bbox.getWidth(), is(100.0));
     }
 
     @Test
     public void testGetHeight() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
-        assertEquals(40, bbox.getHeight(), 0);
+        assertThat(bbox.getHeight(), is(40.0));
 
         bbox.addHitBox(new HitBox("ARM2", new Point2D(0, 50), BoundingShape.box(40, 40)));
-        assertEquals(90, bbox.getHeight(), 0);
+        assertThat(bbox.getHeight(), is(90.0));
 
         bbox.addHitBox(new HitBox("ARM3", BoundingShape.box(40, 100)));
-        assertEquals(100, bbox.getHeight(), 0);
+        assertThat(bbox.getHeight(), is(100.0));
 
         bbox.removeHitBox("ARM");
         bbox.removeHitBox("ARM2");
         bbox.removeHitBox("ARM3");
 
         bbox.addHitBox(new HitBox("ARM", new Point2D(0, 90), BoundingShape.box(40, 100)));
-        assertEquals(100, bbox.getHeight(), 0);
+        assertThat(bbox.getHeight(), is(100.0));
     }
 
     @Test
     public void testGetMinXLocal() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
-        assertEquals(0, bbox.getMinXLocal(), 0);
+        assertThat(bbox.getMinXLocal(), is(0.0));
 
         bbox.removeHitBox("ARM");
 
         bbox.addHitBox(new HitBox("ARM2", new Point2D(20, 0), BoundingShape.box(40, 40)));
-        assertEquals(20, bbox.getMinXLocal(), 0);
+        assertThat(bbox.getMinXLocal(), is(20.0));
 
         position.translateX(100);
-        assertEquals(20, bbox.getMinXLocal(), 0);
+        assertThat(bbox.getMinXLocal(), is(20.0));
     }
 
     @Test
     public void testGetMinYLocal() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
-        assertEquals(0, bbox.getMinYLocal(), 0);
+        assertThat(bbox.getMinYLocal(), is(0.0));
 
         bbox.removeHitBox("ARM");
 
         bbox.addHitBox(new HitBox("ARM2", new Point2D(0, 20), BoundingShape.box(40, 40)));
-        assertEquals(20, bbox.getMinYLocal(), 0);
+        assertThat(bbox.getMinYLocal(), is(20.0));
 
         position.translateY(100);
-        assertEquals(20, bbox.getMinYLocal(), 0);
+        assertThat(bbox.getMinYLocal(), is(20.0));
     }
 
     @Test
     public void testGetMinXWorld() throws Exception {
         bbox.addHitBox(new HitBox("ARM", new Point2D(20, 0), BoundingShape.box(40, 40)));
-        assertEquals(20, bbox.getMinXWorld(), 0);
+        assertThat(bbox.getMinXWorld(), is(20.0));
 
         position.translateX(100);
-        assertEquals(120, bbox.getMinXWorld(), 0);
+        assertThat(bbox.getMinXWorld(), is(120.0));
     }
 
     @Test
     public void testGetMinYWorld() throws Exception {
         bbox.addHitBox(new HitBox("ARM", new Point2D(0, 20), BoundingShape.box(40, 40)));
-        assertEquals(20, bbox.getMinYWorld(), 0);
+        assertThat(bbox.getMinYWorld(), is(20.0));
 
         position.translateY(100);
-        assertEquals(120, bbox.getMinYWorld(), 0);
+        assertThat(bbox.getMinYWorld(), is(120.0));
     }
 
     @Test
     public void testGetMaxXWorld() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
-        assertEquals(40, bbox.getMaxXWorld(), 0);
+        assertThat(bbox.getMaxXWorld(), is(40.0));
 
         bbox.addHitBox(new HitBox("ARM2", new Point2D(50, 0), BoundingShape.box(40, 40)));
-        assertEquals(90, bbox.getMaxXWorld(), 0);
+        assertThat(bbox.getMaxXWorld(), is(90.0));
 
         bbox.removeHitBox("ARM");
         bbox.removeHitBox("ARM2");
 
         bbox.addHitBox(new HitBox("ARM", new Point2D(20, 0), BoundingShape.box(40, 40)));
-        assertEquals(60, bbox.getMaxXWorld(), 0);
+        assertThat(bbox.getMaxXWorld(), is(60.0));
 
         position.translateX(100);
-        assertEquals(160, bbox.getMaxXWorld(), 0);
+        assertThat(bbox.getMaxXWorld(), is(160.0));
     }
 
     @Test
     public void testGetMaxYWorld() throws Exception {
         bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 40)));
-        assertEquals(40, bbox.getMaxYWorld(), 0);
+        assertThat(bbox.getMaxYWorld(), is(40.0));
 
         bbox.addHitBox(new HitBox("ARM2", new Point2D(0, 50), BoundingShape.box(40, 40)));
-        assertEquals(90, bbox.getMaxYWorld(), 0);
+        assertThat(bbox.getMaxYWorld(), is(90.0));
 
         bbox.removeHitBox("ARM");
         bbox.removeHitBox("ARM2");
 
         bbox.addHitBox(new HitBox("ARM", new Point2D(0, 20), BoundingShape.box(40, 40)));
-        assertEquals(60, bbox.getMaxYWorld(), 0);
+        assertThat(bbox.getMaxYWorld(), is(60.0));
 
         position.translateY(100);
-        assertEquals(160, bbox.getMaxYWorld(), 0);
+        assertThat(bbox.getMaxYWorld(), is(160.0));
     }
 
     @Test
@@ -240,7 +233,7 @@ public class BoundingBoxComponentTest {
 
     @Test
     public void testIsCollidingWith() throws Exception {
-
+        // TODO:
     }
 
     @Test
@@ -261,12 +254,12 @@ public class BoundingBoxComponentTest {
 
     @Test
     public void testIsOutside() throws Exception {
-
+        // TODO:
     }
 
     @Test
     public void testRange() throws Exception {
-
+        // TODO:
     }
 
     @Test

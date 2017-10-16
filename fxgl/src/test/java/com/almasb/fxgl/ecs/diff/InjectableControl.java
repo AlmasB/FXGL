@@ -21,11 +21,11 @@ public class InjectableControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        if (component == null || !"Inject".equals(component.data)) {
+        if (component == null || !"Inject".equals(component.getData())) {
             throw new RuntimeException("Injection failed!");
         }
 
-        if (control == null || !"InjectControl".equals(control.data)) {
+        if (control == null || !"InjectControl".equals(control.getData())) {
             throw new RuntimeException("Injection failed!");
         }
     }

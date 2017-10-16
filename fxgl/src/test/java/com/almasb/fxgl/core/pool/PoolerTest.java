@@ -6,18 +6,18 @@
 
 package com.almasb.fxgl.core.pool;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class PoolerTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         PoolableObject.objects = 0;
     }

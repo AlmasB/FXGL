@@ -26,9 +26,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.*;
 import com.almasb.fxgl.physics.box2d.dynamics.contacts.Contact;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroup;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -45,7 +42,6 @@ import java.util.Iterator;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Singleton
 public final class PhysicsWorld implements EntityWorldListener, ContactListener {
 
     private static final Logger log = Logger.get("FXGL.PhysicsWorld");
@@ -143,9 +139,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         return -1;
     }
 
-    @Inject
-    public PhysicsWorld(@Named("appHeight") int appHeight,
-                           @Named("physics.ppm") double ppm) {
+    public PhysicsWorld(int appHeight, double ppm) {
         this.appHeight = appHeight;
 
         PIXELS_PER_METER = ppm;

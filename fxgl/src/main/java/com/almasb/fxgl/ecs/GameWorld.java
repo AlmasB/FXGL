@@ -97,6 +97,11 @@ public final class GameWorld {
         }
     }
 
+    /**
+     * Entity will be removed from world and parties notified of removal in the same frame.
+     * The components and controls of entity will be removed in the next frame to avoid
+     * concurrency issues.
+     */
     public void removeEntity(Entity entity) {
         if (!entity.isActive()) {
             log.warning("Attempted to remove entity which is not active");
@@ -113,6 +118,10 @@ public final class GameWorld {
 
         entity.markForRemoval();
         notifyEntityRemoved(entity);
+
+        // we cannot clean entities here because this may been called through a control
+        // while entity is being updated
+        // so, we clean the entity on next frame
     }
 
     public void removeEntities(Entity... entitiesToRemove) {
@@ -134,7 +143,8 @@ public final class GameWorld {
             Entity e = it.next();
 
             if (!e.isActive()) {
-                remove(e);
+                // clean entities removed in the last frame
+                e.clean();
                 it.remove();
             } else {
                 TimeComponent time = e.getComponent(TimeComponent.class);
@@ -147,39 +157,42 @@ public final class GameWorld {
     }
 
     /**
+     * Removes all (including with IrremovableComponent) entities.
      * Does NOT clear state listeners.
+     * Do NOT call this method manually.
+     * It is called automatically by FXGL during initGame().
      */
     public void clear() {
         log.debug("Clearing game world");
 
+        waitingList.clear();
+
+        // we may still have some entities that have been removed but not yet cleaned
         for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            if (canRemove(e)) {
-                remove(e);
-                it.remove();
+            if (!e.isActive()) {
+                e.clean();
             }
+
+            it.remove();
         }
 
-        for (Iterator<Entity> it = waitingList.iterator(); it.hasNext(); ) {
+        // entities list does not contain "not active" entities, so we do full clean
+        for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
             Entity e = it.next();
 
-            if (canRemove(e)) {
-                remove(e);
-                it.remove();
-            }
-        }
+            e.markForRemoval();
+            notifyEntityRemoved(e);
+            e.clean();
 
-        entities.removeIf(this::canRemove);
+            it.remove();
+        }
     }
 
     private void add(Entity entity) {
         entity.init(this);
         notifyEntityAdded(entity);
-    }
-
-    private void remove(Entity entity) {
-        entity.clean();
     }
 
     private boolean canRemove(Entity entity) {
@@ -250,7 +263,7 @@ public final class GameWorld {
      * @param level the level
      */
     public void setLevel(Level level) {
-        clear();
+        clearLevel();
 
         log.debug("Setting level: " + level);
         level.getEntities().forEach(this::addEntity);
@@ -264,7 +277,7 @@ public final class GameWorld {
     }
 
     public void setLevelFromMap(TiledMap map) {
-        clear();
+        clearLevel();
 
         log.debug("Setting level from map");
 
@@ -280,6 +293,44 @@ public final class GameWorld {
                 .filter(l -> l.getType().equals("objectgroup"))
                 .flatMap(l -> l.getObjects().stream())
                 .forEach(obj -> spawn(obj.getType(), new SpawnData(obj)));
+    }
+
+    /**
+     * Removes removable entities.
+     */
+    private void clearLevel() {
+        log.debug("Clearing removable entities");
+
+        waitingList.clear();
+
+        // we may still have some entities that have been removed but not yet cleaned
+        // but we do not want to remove Irremovables
+        for (Iterator<Entity> it = updateList.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+
+            if (canRemove(e)) {
+                if (!e.isActive()) {
+                    // clean it here because "entities" list does not have "e"
+                    e.clean();
+                }
+
+                it.remove();
+            }
+        }
+
+        // entities list does not contain "not active" entities, so we do full clean
+        // but we do not want to remove Irremovables
+        for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+
+            if (canRemove(e)) {
+                e.markForRemoval();
+                notifyEntityRemoved(e);
+                e.clean();
+
+                it.remove();
+            }
+        }
     }
 
     private EntityFactory entityFactory = null;
@@ -541,6 +592,10 @@ public final class GameWorld {
      */
     public void getCollidingEntities(Array<Entity> result, Entity entity) {
         BoundingBoxComponent entityBBox = Entities.getBBox(entity);
+
+        if (entityBBox == null) {
+            return;
+        }
 
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);

@@ -151,6 +151,13 @@ public final class FXGLMath {
     }
 
     /**
+     * @return object used to generate random sequences using given seed
+     */
+    public static Random getRandom(long seed) {
+        return new RandomXS128(seed);
+    }
+
+    /**
      * @param range the end inclusive value
      * @return a random number between 0 (inclusive) and the specified value (inclusive)
      */

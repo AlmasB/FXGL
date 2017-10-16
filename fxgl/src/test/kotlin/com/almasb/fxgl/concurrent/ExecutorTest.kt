@@ -6,20 +6,20 @@
 
 package com.almasb.fxgl.concurrent
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
+import com.almasb.fxgl.service.Executor
+import com.almasb.fxgl.service.impl.executor.FXGLExecutor
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
-import org.junit.BeforeClass
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestRule
-import org.junit.rules.Timeout
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertTimeout
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import java.time.Duration.ofSeconds
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+
 
 /**
  *
@@ -28,52 +28,56 @@ import java.util.concurrent.TimeUnit
  */
 class ExecutorTest {
 
-    private val executor = FXGL.getExecutor()
+    private lateinit var executor: Executor
 
-    companion object {
-        @BeforeClass
-        @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
-        }
-    }
-
-    @Rule
-    @JvmField var globalTimeout: TestRule = Timeout(2, TimeUnit.SECONDS)
-
-    @Test
-    fun `Test that execute() runs in a different thread`() {
-        val id1 = Thread.currentThread().id
-        var id2 = -1L
-
-        val latch = CountDownLatch(1)
-
-        executor.execute {
-            id2 = Thread.currentThread().id
-            latch.countDown()
-        }
-
-        latch.await()
-
-        assertThat(id2, `is`(not(-1L)))
-        assertThat(id2, `is`(not(id1)))
+    @BeforeEach
+    fun `init`() {
+        executor = FXGLExecutor()
     }
 
     @Test
-    fun `Test schedule() runs after given delay`() {
-        val now = System.currentTimeMillis()
-        var diff = -1L
+    fun `Test that execute runs in a different thread`() {
+        assertTimeout(ofSeconds(2)) {
+            val id1 = Thread.currentThread().id
+            var id2 = -1L
 
-        val latch = CountDownLatch(1)
+            val latch = CountDownLatch(1)
 
-        executor.schedule({
-            diff = System.currentTimeMillis() - now
-            latch.countDown()
-        }, Duration.seconds(1.0))
+            executor.execute {
+                id2 = Thread.currentThread().id
+                latch.countDown()
+            }
 
-        latch.await()
+            latch.await()
 
-        assertThat(diff, `is`(not(-1L)))
-        // allow +-200ms error
-        assertTrue(diff > 800 && diff < 1200)
+            assertThat(id2, `is`(not(-1L)))
+            assertThat(id2, `is`(not(id1)))
+        }
+    }
+
+    @Test
+    fun `Test schedule runs after given delay`() {
+        assertTimeout(ofSeconds(2)) {
+            val now = System.currentTimeMillis()
+            var diff = -1L
+
+            val latch = CountDownLatch(1)
+
+            executor.schedule({
+                diff = System.currentTimeMillis() - now
+                latch.countDown()
+            }, Duration.seconds(1.0))
+
+            latch.await()
+
+            assertThat(diff, `is`(not(-1L)))
+            // allow +-200ms error
+            assertTrue(diff > 800 && diff < 1200)
+        }
+    }
+
+    @AfterEach
+    fun `tearDown`() {
+        executor.shutdownNow()
     }
 }

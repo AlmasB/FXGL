@@ -8,9 +8,9 @@ package com.almasb.fxgl.core.math
 
 import com.almasb.fxgl.ecs.Entity
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertThat
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Test
 
 /**
  *

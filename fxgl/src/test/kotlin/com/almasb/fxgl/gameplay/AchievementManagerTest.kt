@@ -6,15 +6,15 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.saving.UserProfile
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.contains
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -23,18 +23,11 @@ import org.junit.Test
  */
 class AchievementManagerTest {
 
-    companion object {
-        @BeforeClass
-        @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
-        }
-    }
-
     private lateinit var achievementManager: AchievementManager
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        achievementManager = FXGL.getInstance(AchievementManager::class.java)
+        achievementManager = AchievementManager()
     }
 
     @Test
@@ -43,25 +36,27 @@ class AchievementManagerTest {
 
         achievementManager.registerAchievement(a1)
 
-        assertThat(achievementManager.getAchievements(), hasItem(a1))
+        assertThat(achievementManager.getAchievements(), contains(a1))
         assertThat(achievementManager.getAchievementByName("TestAchievement"), `is`(a1))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Fail if achievement not found`() {
-        val a1 = Achievement("TestAchievement", "TestDescription")
-
-        achievementManager.registerAchievement(a1)
-        achievementManager.getAchievementByName("NoSuchAchievement")
+        assertThrows(IllegalArgumentException::class.java, {
+            achievementManager.getAchievementByName("NoSuchAchievement")
+        })
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Cannot have achievements with same name`() {
         val a1 = Achievement("TestAchievement", "TestDescription")
         val a2 = Achievement("TestAchievement", "TestDescription")
 
         achievementManager.registerAchievement(a1)
-        achievementManager.registerAchievement(a2)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            achievementManager.registerAchievement(a2)
+        })
     }
 
     @Test
@@ -69,14 +64,17 @@ class AchievementManagerTest {
         val profile = UserProfile("1", "1")
 
         achievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
+        achievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription"))
         achievementManager.getAchievementByName("TestAchievement").setAchieved()
         achievementManager.save(profile)
 
-        val newAchievementManager = FXGL.getInstance(AchievementManager::class.java)
+        val newAchievementManager = AchievementManager()
         newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
+        newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription"))
         newAchievementManager.load(profile)
 
-        assertThat(newAchievementManager.getAchievements().size, `is`(1))
-        assertThat(newAchievementManager.getAchievementByName("TestAchievement").isAchieved, `is`(true))
+        assertThat(newAchievementManager.getAchievements().size, `is`(2))
+        assertTrue(newAchievementManager.getAchievementByName("TestAchievement").isAchieved)
+        assertFalse(newAchievementManager.getAchievementByName("TestAchievement2").isAchieved)
     }
 }

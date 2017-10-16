@@ -27,6 +27,9 @@ import java.util.Optional;
  *     <li>Remove control</li>
  * </ul>
  *
+ * The best practice is to add all controls an entity will use before attaching
+ * the entity to the world and pause the (immediately) unused controls.
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class Entity {
@@ -40,15 +43,16 @@ public class Entity {
 
     private List<ModuleListener> moduleListeners = new ArrayList<>();
 
-    private GameWorld world;
+    private GameWorld world = null;
 
     private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
 
-    private boolean cleaning = false;
     private boolean controlsEnabled = true;
 
     private Runnable onActive = null;
     private Runnable onNotActive = null;
+
+    private boolean updating = false;
 
     /**
      * @return the world this entity is attached to
@@ -70,7 +74,29 @@ public class Entity {
     }
 
     /**
-     * Equivalent to world.removeEntity(this);
+     * Removes all controls and components.
+     * Resets entity to its "new" state.
+     */
+    void clean() {
+        removeAllControls();
+        removeAllComponents();
+
+        properties.clear();
+
+        moduleListeners.clear();
+
+        world = null;
+        onActive = null;
+        onNotActive = null;
+
+        controlsEnabled = true;
+        updating = false;
+
+        active.set(false);
+    }
+
+    /**
+     * Equivalent to world?.removeEntity(this);
      */
     public final void removeFromWorld() {
         if (world != null)
@@ -96,31 +122,21 @@ public class Entity {
 
     /**
      * Set a callback for when entity is added to world.
-     * The callback will be executed immediately if entity is already in the world.
+     * The callback will NOT be executed if entity is already in the world.
      *
      * @param action callback
      */
     public final void setOnActive(Runnable action) {
-        if (isActive()) {
-            action.run();
-            return;
-        }
-
         onActive = action;
     }
 
     /**
      * Set a callback for when entity is removed from world.
-     * The callback will be executed immediately if entity is already removed from the world.
+     * The callback will NOT be executed if entity is already removed from the world.
      *
      * @param action callback
      */
     public final void setOnNotActive(Runnable action) {
-        if (!isActive()) {
-            action.run();
-            return;
-        }
-
         onNotActive = action;
     }
 
@@ -146,6 +162,8 @@ public class Entity {
      * @param tpf time per frame
      */
     void update(double tpf) {
+        updating = true;
+
         if (controlsEnabled) {
             for (Control c : controls.values()) {
                 if (!c.isPaused()) {
@@ -153,25 +171,8 @@ public class Entity {
                 }
             }
         }
-    }
 
-    /**
-     * Removes all controls and components.
-     * After this the entity cannot be used.
-     */
-    void clean() {
-        cleaning = true;
-
-        removeAllControls();
-        removeAllComponents();
-
-        properties.clear();
-
-        moduleListeners.clear();
-
-        world = null;
-        onActive = null;
-        onNotActive = null;
+        updating = false;
     }
 
     private static final Object NULL = new Object();
@@ -181,8 +182,6 @@ public class Entity {
      * @param value property value
      */
     public final void setProperty(String key, Object value) {
-        checkValid();
-
         properties.put(key, value);
     }
 
@@ -192,8 +191,6 @@ public class Entity {
      */
     @SuppressWarnings("unchecked")
     public final <T> T getProperty(String key) {
-        checkValid();
-
         Object value = properties.get(key, NULL);
         if (value == NULL) {
             log.warning("Access property with missing key: " + key);
@@ -208,8 +205,6 @@ public class Entity {
      * @return property value or Optional.empty() if value is null or key not present
      */
     public final <T> Optional<T> getPropertyOptional(String key) {
-        checkValid();
-
         Object value = properties.get(key, null);
         return Optional.ofNullable((T) value);
     }
@@ -255,13 +250,14 @@ public class Entity {
 
     /**
      * Adds behavior to entity.
-     * Cannot add controls within update() of another control.
      *
      * @param control the behavior
      * @throws IllegalArgumentException if control with same type already registered or anonymous
-     * @throws IllegalStateException if components required by the given control are missing
+     * @throws IllegalStateException if components required by the given control are missing or if within update of another control
      */
     public final void addControl(Control control) {
+        checkNotUpdating("Add control");
+
         addModule(control);
 
         controls.put(control.getClass(), control);
@@ -270,8 +266,11 @@ public class Entity {
     /**
      * @param type the control type to remove
      * @return true if removed, false if not found
+     * @throws IllegalStateException if within update of another control
      */
     public final boolean removeControl(Class<? extends Control> type) {
+        checkNotUpdating("Remove control");
+
         if (!hasControl(type))
             return false;
 
@@ -282,7 +281,7 @@ public class Entity {
         return true;
     }
 
-    public final void removeAllControls() {
+    private void removeAllControls() {
         for (Control control : controls.values()) {
             removeModule(control);
         }
@@ -353,11 +352,7 @@ public class Entity {
         if (!hasComponent(type))
             return false;
 
-        // if not cleaning, then entity is alive, whether active or not
-        // hence we cannot allow removal if component is required by other components / controls
-        if (!cleaning) {
-            checkNotRequiredByAny(type);
-        }
+        checkNotRequiredByAny(type);
 
         removeModule(getComponent(type));
 
@@ -366,12 +361,8 @@ public class Entity {
         return true;
     }
 
-    public final void removeAllComponents() {
+    private void removeAllComponents() {
         for (Component comp : components.values()) {
-            if (!cleaning) {
-                checkNotRequiredByAny(comp.getClass());
-            }
-
             removeModule(comp);
         }
 
@@ -387,8 +378,6 @@ public class Entity {
     }
 
     private void addModule(Module module) {
-        checkValid();
-
         checkRequirementsMet(module.getClass());
 
         module.setEntity(this);
@@ -430,8 +419,6 @@ public class Entity {
     }
 
     private void removeModule(Module module) {
-        checkValid();
-
         notifyModuleRemoved(module);
 
         module.onRemoved(this);
@@ -466,14 +453,13 @@ public class Entity {
         }
     }
 
-    private void checkValid() {
-        if (cleaning && world == null)
-            throw new IllegalStateException("Attempted access a cleaned entity!");
+    private void checkNotUpdating(String action) {
+        if (updating)
+            throw new IllegalStateException("Cannot " + action + " during updating");
     }
 
-
     private void checkNotAnonymous(Class<?> type) {
-        if (type.isAnonymousClass()) {
+        if (type.isAnonymousClass() || type.getCanonicalName() == null) {
             throw new IllegalArgumentException("Anonymous types are not allowed: " + type.getName());
         }
     }
@@ -532,8 +518,6 @@ public class Entity {
      * @return copy of this entity
      */
     public Entity copy() {
-        checkValid();
-
         return EntityCopier.INSTANCE.copy(this);
     }
 
@@ -544,8 +528,6 @@ public class Entity {
      * @param bundle the bundle to write to
      */
     public void save(Bundle bundle) {
-        checkValid();
-
         EntitySerializer.INSTANCE.save(this, bundle);
     }
 
@@ -558,8 +540,6 @@ public class Entity {
      * @param bundle bundle to read from
      */
     public void load(Bundle bundle) {
-        checkValid();
-
         EntitySerializer.INSTANCE.load(this, bundle);
     }
 

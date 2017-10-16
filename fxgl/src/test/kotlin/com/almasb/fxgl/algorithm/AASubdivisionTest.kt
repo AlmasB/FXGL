@@ -8,8 +8,8 @@ package com.almasb.fxgl.algorithm
 
 import javafx.geometry.Rectangle2D
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Test
 
 /**
  *

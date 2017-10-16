@@ -7,13 +7,17 @@
 package com.almasb.fxgl.event
 
 import com.almasb.fxgl.annotation.Handles
-import com.almasb.fxgl.app.FXGL
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 /**
  *
@@ -22,18 +26,36 @@ import org.junit.Test
  */
 class EventBusTest {
 
-    companion object {
-        @BeforeClass
-        @JvmStatic fun before() {
-            FXGL.configure(com.almasb.fxgl.app.MockApplicationModule.get())
-        }
-    }
-
     private lateinit var eventBus: EventBus
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        eventBus = FXGL.getInstance(EventBus::class.java)
+        eventBus = EventBus()
+    }
+
+    @Test
+    fun `Fire event`() {
+        var count = 0
+
+        val handler = EventHandler<Event> { count++ }
+
+        eventBus.addEventHandler(EventType.ROOT, handler)
+
+        assertAll(
+                Executable {
+                    eventBus.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(1))
+                },
+
+                Executable {
+                    eventBus.removeEventHandler(EventType.ROOT, handler)
+
+                    eventBus.fireEvent(Event(EventType.ROOT))
+
+                    assertThat(count, `is`(1))
+                }
+        )
     }
 
     @Test
@@ -81,7 +103,7 @@ class EventBusTest {
         try {
             eventBus.scanForHandlers(invalidObject4)
         } catch (e: IllegalAccessException) {
-            assertThat(e.message, containsString("can not access"))
+            assertThat(e.message, containsString("access"))
             count++
         }
 

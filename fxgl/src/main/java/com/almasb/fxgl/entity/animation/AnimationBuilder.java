@@ -76,6 +76,10 @@ public final class AnimationBuilder {
         return this;
     }
 
+    public AnimationBuilder repeatInfinitely() {
+        return repeat(Integer.MAX_VALUE);
+    }
+
     public AnimationBuilder onFinished(Runnable onFinished) {
         this.onFinished = onFinished;
         return this;

@@ -7,9 +7,9 @@
 package com.almasb.fxgl.entity.component
 
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  *
@@ -24,7 +24,7 @@ class RechargeableComponentTest {
 
     private lateinit var hp: HPComponent
 
-    @Before
+    @BeforeEach
     fun setUp() {
         hp = HPComponent()
     }

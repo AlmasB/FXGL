@@ -6,16 +6,16 @@
 
 package com.almasb.fxgl.asset
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.GameEntity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.assertThat
-import org.junit.Assume.assumeThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.*
 
 /**
@@ -50,20 +50,22 @@ class AssetLoaderTest {
     private lateinit var assetLoader: AssetLoader
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGLMock.mock()
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        assetLoader = FXGL.getInstance(AssetLoader::class.java)
+        assetLoader = AssetLoader()
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Exception is thrown if asset not found`() {
-        assetLoader.getStream("nothing.jpg")
+        assertThrows(IllegalArgumentException::class.java, {
+            assetLoader.getStream("nothing.jpg")
+        })
     }
 
     @Test
@@ -95,7 +97,7 @@ class AssetLoaderTest {
     @Test
     fun loadMusic() {
         // setting up potentially missing libavformat for jfxmedia is an overkill, so just skip
-        assumeThat(System.getProperty("os.name"), not(containsString("Linux")))
+        assumeFalse(System.getProperty("os.name").contains("Linux"))
 
         val music = assetLoader.loadMusic("intro.mp3")
 

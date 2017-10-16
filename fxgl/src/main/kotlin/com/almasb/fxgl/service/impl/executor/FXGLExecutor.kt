@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.service.impl.executor
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.service.Executor
 import javafx.util.Duration
@@ -23,13 +22,6 @@ class FXGLExecutor : Executor {
     private val service = Executors.newCachedThreadPool(FXGLThreadFactory)
     private val schedulerService = Executors.newScheduledThreadPool(2)
 
-    init {
-        FXGL.getApp().addExitListener {
-            service.shutdownNow()
-            schedulerService.shutdownNow()
-        }
-    }
-
     override fun execute(task: Runnable) {
         service.submit(task)
     }
@@ -44,6 +36,11 @@ class FXGLExecutor : Executor {
 
     override fun async(func: Runnable): Async<Void> {
         return Async.start(func)
+    }
+
+    override fun shutdownNow() {
+        service.shutdownNow()
+        schedulerService.shutdownNow()
     }
 
     /**

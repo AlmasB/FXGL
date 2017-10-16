@@ -47,4 +47,9 @@ public interface Executor extends java.util.concurrent.Executor {
      * @return async object
      */
     Async<Void> async(Runnable func);
+
+    /**
+     * Shuts down all background threads used by this executor.
+     */
+    void shutdownNow();
 }

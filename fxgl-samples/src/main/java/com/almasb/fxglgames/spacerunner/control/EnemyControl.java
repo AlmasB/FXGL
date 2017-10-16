@@ -50,10 +50,11 @@ public class EnemyControl extends Control {
     }
 
     private void shoot() {
-        Entity bullet = FXGL.getInstance(SpaceRunnerFactory.class)
-                .newBullet(position.getX(), position.getY() + 20, SpaceRunnerType.ENEMY);
-
-        getEntity().getWorld().addEntity(bullet);
+        // TODO: refactor
+//        Entity bullet = FXGL.getInstance(SpaceRunnerFactory.class)
+//                .newBullet(position.getX(), position.getY() + 20, SpaceRunnerType.ENEMY);
+//
+//        getEntity().getWorld().addEntity(bullet);
 
         //audioPlayer.playSound("shoot" + (int)(Math.random() * 4 + 1) + ".wav");
     }

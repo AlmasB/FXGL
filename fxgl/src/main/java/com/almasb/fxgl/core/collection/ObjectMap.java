@@ -29,6 +29,7 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
     private static final int PRIME2 = 0xb4b82e39;
     private static final int PRIME3 = 0xced1c241;
 
+    // TODO: hide
     public int size;
 
     K[] keyTable;

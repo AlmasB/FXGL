@@ -435,6 +435,9 @@ public abstract class GameApplication extends Application {
         log.debug("Exiting game application");
         exitListeners.forEach(ExitListener::onExit);
 
+        log.debug("Shutting down background threads");
+        getExecutor().shutdownNow();
+
         if (getSettings().isProfilingEnabled()) {
             profiler.print();
         }

@@ -6,7 +6,7 @@
     <parent>
         <artifactId>fxgl-framework</artifactId>
         <groupId>com.github.almasb</groupId>
-        <version>0.3.8</version>
+        <version>0.3.9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl-extra</artifactId>
+            <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
 
@@ -49,6 +49,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+
+            <!-- Skip this module from deploying -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${sonatype.nexus.staging.version}</version>
+                <configuration>
+                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+                </configuration>
             </plugin>
         </plugins>
     </build>

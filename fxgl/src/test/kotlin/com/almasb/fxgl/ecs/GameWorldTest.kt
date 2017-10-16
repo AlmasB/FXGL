@@ -8,401 +8,152 @@ package com.almasb.fxgl.ecs
 
 import com.almasb.fxgl.annotation.Spawns
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.ecs.component.IrremovableComponent
+import com.almasb.fxgl.ecs.component.TimeComponent
 import com.almasb.fxgl.entity.*
-import com.almasb.fxgl.entity.component.IDComponent
-import com.almasb.fxgl.entity.component.PositionComponent
+import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.gameplay.Level
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
-import javafx.event.Event
-import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
-import javafx.scene.shape.Rectangle
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
+import org.hamcrest.BaseMatcher
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
+import org.hamcrest.Description
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import java.util.*
+import java.util.function.Consumer
 
 class GameWorldTest {
 
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGL.setProperty("dev.showbbox", false)
         }
-    }
-
-    private enum class TestType {
-        T1, T2, T3, T4
     }
 
     private lateinit var gameWorld: GameWorld
 
-    private lateinit var e1: Entity
-    private lateinit var e10: Entity
-    private lateinit var e11: Entity
-    private lateinit var e2: Entity
-    private lateinit var e3: Entity
-    private lateinit var e4: Entity
-    private lateinit var genericEntity: Entity
-
-    @Before
-    fun setUp() {
+    @BeforeEach
+    fun `init`() {
         gameWorld = GameWorld()
-
-        val view = EntityView(Rectangle(10.0, 10.0))
-        view.renderLayer = object : RenderLayer {
-            override fun name(): String {
-                return "TEST"
-            }
-
-            override fun index(): Int {
-                return 0
-            }
-        }
-
-        e1 = Entities.builder()
-                .type(TestType.T1)
-                .at(100.0, 100.0)
-                .bbox(HitBox("TEST", BoundingShape.box(10.0, 10.0)))
-                .viewFromNode(view)
-                .with(IDComponent("e1", 0))
-                .buildAndAttach(gameWorld)
-
-        e10 = Entities.builder()
-                .type(TestType.T1)
-                .at(100.0, 105.0)
-                .bbox(HitBox("TEST", BoundingShape.box(10.0, 10.0)))
-                .with(IDComponent("e1", 1))
-                .buildAndAttach(gameWorld)
-
-        e11 = Entities.builder()
-                .type(TestType.T1)
-                .at(100.0, 110.0)
-                .bbox(HitBox("TEST", BoundingShape.box(10.0, 10.0)))
-                .with(IDComponent("e1", 2))
-                .buildAndAttach(gameWorld)
-
-        e2 = Entities.builder()
-                .type(TestType.T2)
-                .at(150.0, 100.0)
-                .bbox(HitBox("TEST", BoundingShape.box(10.0, 10.0)))
-                .with(IDComponent("e2", 0))
-                .buildAndAttach(gameWorld)
-
-        e3 = Entities.builder()
-                .type(TestType.T3)
-                .at(200.0, 100.0)
-                .bbox(HitBox("TEST", BoundingShape.box(10.0, 10.0)))
-                .buildAndAttach(gameWorld)
-
-        e4 = Entities.builder()
-                .type(TestType.T4)
-                .at(250.0, 100.0)
-                .bbox(HitBox("TEST", BoundingShape.box(10.0, 10.0)))
-                .buildAndAttach(gameWorld)
-
-        genericEntity = Entity()
-        gameWorld.addEntity(genericEntity)
-
-        gameWorld.onUpdate(0.016)
     }
 
     @Test
-    fun `Add and remove entity`() {
-        val e = Entity()
-        assertThat(gameWorld.entities, not(hasItems(e)))
-        assertFalse(e.isActive)
-
-        gameWorld.addEntity(e)
-        assertThat(gameWorld.entities, hasItems(e))
-        assertTrue(e.isActive)
-
-        gameWorld.removeEntity(e)
-        assertThat(gameWorld.entities, not(hasItems(e)))
-        assertFalse(e.isActive)
-    }
-
-    @Test
-    fun `Double remove entities in same frame does nothing`() {
-        assertThat(gameWorld.entities, hasItem(e1))
-
-        e1.removeFromWorld()
-        assertFalse(e1.isActive)
-
-        e1.removeFromWorld()
-        assertFalse(e1.isActive)
-    }
-
-    @Test
-    fun `getEntitiesCopy() returns a copy`() {
-        assertFalse(gameWorld.entities === gameWorld.entitiesCopy)
-    }
-
-    @Test
-    fun testGetEntitiesByType() {
-        var list = gameWorld.getEntitiesByType()
-        assertThat(list, hasItems<Entity>(e1, e10, e11, e2, e3, e4, genericEntity))
-
-        list = gameWorld.getEntitiesByType(TestType.T1)
-        assertThat(list, `is`(Arrays.asList<Entity>(e1, e10, e11)))
-
-        list = gameWorld.getEntitiesByType(TestType.T2)
-        assertThat(list, `is`(listOf<Entity>(e2)))
-
-        list = gameWorld.getEntitiesByType(TestType.T3)
-        assertThat(list, `is`(listOf<Entity>(e3)))
-
-        list = gameWorld.getEntitiesByType(TestType.T4)
-        assertThat(list, `is`(listOf<Entity>(e4)))
-
-        val result = Array<Entity>(8)
-        gameWorld.getEntitiesByType(result, TestType.T1)
-
-        assertThat(result.size(), `is`(3))
-        assertThat(result, hasItems(e1, e10, e11))
-
-        result.clear()
-        gameWorld.getEntitiesByType(result, TestType.T2)
-
-        assertThat(result.size(), `is`(1))
-        assertThat(result, hasItems(e2))
-
-        result.clear()
-        gameWorld.getEntitiesByType(result, TestType.T3)
-
-        assertThat(result.size(), `is`(1))
-        assertThat(result, hasItems(e3))
-    }
-
-    @Test
-    fun `Given no args, by type query returns all entities`() {
-        val result = Array<Entity>()
-        gameWorld.getEntitiesByType(result)
-
-        assertThat(result, hasItems(e1, e10, e11, e2, e3, e4, genericEntity))
-    }
-
-    @Test
-    fun testGetClosestEntity() {
-        assertThat(gameWorld.getClosestEntity(e1) { e -> Entities.getType(e).isType(TestType.T2) }.get(), `is`<Entity>(e2))
-
-        assertThat(gameWorld.getClosestEntity(e1) { e -> Entities.getType(e).isType(TestType.T1) }.get(), `is`<Entity>(e10))
-
-        assertThat(gameWorld.getClosestEntity(e2) { e -> Entities.getType(e).isType(TestType.T2) }, `is`(Optional.empty()))
-    }
-
-    @Test
-    fun testGetEntitiesFiltered() {
-        assertThat(gameWorld.getEntitiesFiltered { e -> Entities.getPosition(e) != null && Entities.getPosition(e).x > 150 },
-                `is`(Arrays.asList<Entity>(e3, e4)))
-
-        assertThat(gameWorld.getEntitiesFiltered { e -> Entities.getPosition(e) != null && Entities.getPosition(e).y < 105 },
-                `is`(Arrays.asList<Entity>(e1, e2, e3, e4)))
-
-        val result = Array<Entity>(8)
-        gameWorld.getEntitiesFiltered(result) { e -> Entities.getPosition(e) != null && Entities.getPosition(e).x > 150 }
-
-        assertThat(result.size(), `is`(2))
-        assertThat(result, hasItems<Entity>(e3, e4))
-
-        result.clear()
-        gameWorld.getEntitiesFiltered(result) { e -> Entities.getPosition(e) != null && Entities.getPosition(e).y < 105 }
-
-        assertThat(result.size(), `is`(4))
-        assertThat(result, hasItems<Entity>(e1, e2, e3, e4))
-    }
-
-    @Test
-    fun testGetEntitiesInRange() {
-        assertThat(gameWorld.getEntitiesInRange(Rectangle2D(130.0, 50.0, 100.0, 100.0)),
-                `is`(Arrays.asList<Entity>(e2, e3)))
-
-        val result = Array<Entity>(8)
-
-        gameWorld.getEntitiesInRange(result, 130.0, 50.0, (130 + 100).toDouble(), (50 + 100).toDouble())
-        assertThat(result.size(), `is`(2))
-        assertThat(result, hasItems<Entity>(e2, e3))
-    }
-
-    @Test
-    fun testGetCollidingEntities() {
-        assertThat(gameWorld.getCollidingEntities(e1), `is`(Arrays.asList<Entity>(e10, e11)))
-
-        val result = Array<Entity>(8)
-        gameWorld.getCollidingEntities(result, e1)
-
-        assertThat(result.size(), `is`(2))
-        assertThat(result, hasItems<Entity>(e10, e11))
-    }
-
-    @Test
-    fun testGetEntitiesByLayer() {
-        assertThat(gameWorld.getEntitiesByLayer(object : RenderLayer {
-            override fun name(): String {
-                return "TEST"
-            }
-
-            override fun index(): Int {
-                return 0
-            }
-        }), `is`(listOf<Entity>(e1)))
-
-        assertThat(gameWorld.getEntitiesByLayer(RenderLayer.TOP),
-                `is`(Arrays.asList<Entity>(e10, e11, e2, e3, e4)))
-
-        val result = Array<Entity>(8)
-
-        gameWorld.getEntitiesByLayer(result, RenderLayer.TOP)
-        assertThat(result.size(), `is`(5))
-        assertThat(result, hasItems<Entity>(e10, e11, e2, e3, e4))
-    }
-
-    @Test
-    fun `Get entities at`() {
-        assertThat(gameWorld.getEntitiesAt(Point2D(100.0, 100.0)), hasItems(e1))
-        assertThat(gameWorld.getEntitiesAt(Point2D(150.0, 100.0)), hasItems(e2))
-        assertThat(gameWorld.getEntitiesAt(Point2D(200.0, 100.0)), hasItems(e3))
-        assertThat(gameWorld.getEntitiesAt(Point2D(250.0, 100.0)), hasItems(e4))
-
-        assertThat(gameWorld.getEntitiesAt(Point2D(100.5, 100.0)).size, `is`(0))
-
-        val result = Array<Entity>(8)
-
-        val e = Entity()
-        e.addComponent(PositionComponent(250.0, 100.0))
-
-        gameWorld.addEntity(e)
-
-        gameWorld.getEntitiesAt(result, Point2D(250.0, 100.0))
-        assertThat(result.size(), `is`(2))
-        assertThat(result, hasItems(e4, e))
-    }
-
-    @Test
-    fun testGetEntityByID() {
-        assertThat(gameWorld.getEntityByID("e1", 0).get(), `is`<Entity>(e1))
-        assertThat(gameWorld.getEntityByID("e1", 1).get(), `is`<Entity>(e10))
-        assertThat(gameWorld.getEntityByID("e1", 2).get(), `is`<Entity>(e11))
-        assertThat(gameWorld.getEntityByID("e2", 0).get(), `is`<Entity>(e2))
-
-        assertThat(gameWorld.getEntityByID("e3", 0), `is`<Optional<out Any>>(Optional.empty<Any>()))
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `Throw if entity already attached`() {
+    fun `Add entity`() {
         val e = Entity()
 
         gameWorld.addEntity(e)
-        gameWorld.addEntity(e)
+
+        assertThat(gameWorld.entities, contains(e))
     }
 
     @Test
-    fun `Add multiple entities`() {
-        val e = Entity()
-        val ee = Entity()
-
-        gameWorld.addEntities(e, ee)
-        assertThat(gameWorld.entities, hasItems(e, ee))
-    }
-
-    @Test(expected = IllegalArgumentException::class)
     fun `Throw when removing entity not attached to this world`() {
         val e = Entity()
 
         val newWorld = GameWorld()
         newWorld.addEntity(e)
 
-        gameWorld.removeEntity(e)
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.removeEntity(e)
+        })
     }
 
     @Test
-    fun `Do not remove if entity has IrremovableComponent`() {
+    fun `Add multiple entities`() {
         val e = Entity()
-        e.addComponent(IrremovableComponent())
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+
+        assertThat(gameWorld.entities, containsInAnyOrder(e, e2))
+    }
+
+    @Test
+    fun `Throw if entity already attached`() {
+        val e = Entity()
+
+        gameWorld.addEntity(e)
+
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.addEntity(e)
+        })
+    }
+
+    @Test
+    fun `Remove entity`() {
+        val e = Entity()
 
         gameWorld.addEntity(e)
         gameWorld.removeEntity(e)
 
-        assertThat(gameWorld.entities, hasItems(e))
+        assertThat(gameWorld.entities, not(contains(e)))
+    }
+
+    @Test
+    fun `Removed entity keeps components and controls in that frame`() {
+        val e = Entity()
+        e.addComponent(EntitiesTest.TestComponent())
+        e.addControl(EntitiesTest.TestControl())
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        assertAll(
+                Executable { assertTrue(e.components.isNotEmpty) },
+                Executable { assertTrue(e.controls.isNotEmpty) }
+        )
+    }
+
+    @Test
+    fun `Removed entity is cleaned in next frame`() {
+        val e = Entity()
+        e.addComponent(EntitiesTest.TestComponent())
+        e.addControl(EntitiesTest.TestControl())
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        assertAll(
+                Executable { assertTrue(e.components.isEmpty) },
+                Executable { assertTrue(e.controls.isEmpty) }
+        )
     }
 
     @Test
     fun `Remove multiple entities`() {
-        assertThat(gameWorld.entities, hasItems(e1, e2))
-
-        gameWorld.removeEntities(e1, e2)
-        assertThat(gameWorld.entities, not(hasItems(e1, e2)))
-    }
-
-    @Test
-    fun `Reset`() {
-        assertThat(gameWorld.entities.size, `is`(not(0)))
-
-        gameWorld.clear()
-
-        assertThat(gameWorld.entities.size, `is`(0))
-    }
-
-    @Test
-    fun `Reset does not remove if entity has IrremovableComponent`() {
         val e = Entity()
-        e.addComponent(IrremovableComponent())
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+        gameWorld.removeEntities(e, e2)
+
+        assertThat(gameWorld.entities, not(containsInAnyOrder(e, e2)))
+    }
+
+    @Test
+    fun `Removing entity multiple times does not fail`() {
+        val e = Entity()
 
         gameWorld.addEntity(e)
-        gameWorld.clear()
+        gameWorld.removeEntity(e)
 
-        assertThat(gameWorld.entities, hasItems(e))
-    }
-
-    @Test
-    fun `Set level`() {
-        val e = Entity()
-        val ee = Entity()
-
-        val level = Level(100, 50, arrayListOf(e, ee))
-
-        assertThat(gameWorld.entities, hasItems(e1, e2))
-        assertThat(gameWorld.entities, not(hasItems(e, ee)))
-
-        gameWorld.setLevel(level)
-
-        assertThat(gameWorld.entities, not(hasItems(e1, e2)))
-        assertThat(gameWorld.entities, hasItems(e, ee))
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun `Throw if spawn with no factory`() {
-        gameWorld.spawn("bla-bla")
-    }
-
-    @Test
-    fun `Entity factory spawning`() {
-        val factory = TestEntityFactory()
-
-        gameWorld.setEntityFactory(factory)
-        assertThat(gameWorld.getEntityFactory(), `is`(factory))
-
-        var e = gameWorld.spawn("enemy", 33.0, 40.0)
-
-        assertTrue(e.hasComponent(PositionComponent::class.java))
-        assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(33.0, 40.0)))
-
-        e = gameWorld.spawn("enemy")
-
-        assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(0.0, 0.0)))
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `Throw if factory has no such spawn method`() {
-        gameWorld.setEntityFactory(TestEntityFactory())
-        gameWorld.spawn("bla-bla")
+        gameWorld.removeEntity(e)
     }
 
     @Test
@@ -416,14 +167,12 @@ class GameWorldTest {
             override fun onEntityAdded(entity: Entity) {
                 count++
                 assertThat(entity, `is`(e))
-                assertThat(entity.hasComponent(PositionComponent::class.java), `is`(true))
                 assertThat(entity.getComponent(PositionComponent::class.java).value, `is`(Point2D(100.0, 100.0)))
             }
 
             override fun onEntityRemoved(entity: Entity) {
                 count++
                 assertThat(entity, `is`(e))
-                assertThat(entity.hasComponent(PositionComponent::class.java), `is`(true))
                 assertThat(entity.getComponent(PositionComponent::class.java).value, `is`(Point2D(100.0, 100.0)))
             }
         })
@@ -435,43 +184,798 @@ class GameWorldTest {
         assertThat(count, `is`(2))
     }
 
-    //    @Test
-    //    public void testTriggers() {
-    //        IntegerProperty count = new SimpleIntegerProperty(0);
-    //
-    //        FXGL.getEventBus().addEventHandler(MyEvent.ANY, e -> {
-    //            count.set(count.get() + 1);
-    //        });
-    //
-    //        gameWorld.addEventTrigger(new EventTrigger<>(
-    //                () -> gameWorld.getEntities().size() < 6,
-    //                MyEvent::new,
-    //                2, Duration.millis(0)
-    //        ));
-    //
-    //        assertThat(count.get(), is(0));
-    //        gameWorld.onUpdateEvent(new UpdateEvent(2, 0.016));
-    //        assertThat(count.get(), is(1));
-    //
-    //        gameWorld.onUpdateEvent(new UpdateEvent(3, 0.016));
-    //        assertThat(count.get(), is(2));
-    //
-    //        // 2 times only
-    //        gameWorld.onUpdateEvent(new UpdateEvent(3, 0.016));
-    //        assertThat(count.get(), is(2));
-    //    }
+    @Test
+    fun `Remove world listener`() {
+        val e = Entity()
+        e.addComponent(PositionComponent(100.0, 100.0))
 
-    private class MyEvent internal constructor() : Event(GameWorldTest.MyEvent.ANY) {
-        companion object {
+        var count = 0
 
-            val ANY = EventType<MyEvent>(Event.ANY, "MY_EVENT")
+        val listener = object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {
+                count++
+            }
+
+            override fun onEntityRemoved(entity: Entity) {
+                count++
+            }
         }
+
+        gameWorld.addWorldListener(listener)
+        gameWorld.removeWorldListener(listener)
+
+        gameWorld.addEntity(e)
+        assertThat(count, `is`(0))
+
+        gameWorld.removeEntity(e)
+        assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `getEntitiesCopy has all entities`() {
+        val e = Entity()
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+
+        assertThat(gameWorld.entitiesCopy, containsInAnyOrder(e, e2))
+    }
+
+    @Test
+    fun `getEntitiesCopy returns a copy`() {
+        assertFalse(gameWorld.entities === gameWorld.entitiesCopy)
+    }
+
+    @Test
+    fun `Selected entity`() {
+        val e1 = GameEntity()
+        e1.addComponent(SelectableComponent(true))
+
+        gameWorld.addEntity(e1)
+
+        val event = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 0,
+                false,
+                false,
+                false,
+                false, false, false, false, false, false, false, null)
+
+        e1.view.fireEvent(event)
+
+        assertThat(gameWorld.selectedEntity.get(), `is`<Entity>(e1))
+    }
+
+    @Test
+    fun `Selected entity property`() {
+        val e1 = GameEntity()
+        e1.addComponent(SelectableComponent(true))
+
+        val e2 = GameEntity()
+        e2.addComponent(SelectableComponent(true))
+
+        gameWorld.addEntities(e1, e2)
+
+        val event = MouseEvent(MouseEvent.MOUSE_PRESSED, 0.0, 0.0, 0.0, 0.0, MouseButton.PRIMARY, 0,
+                false,
+                false,
+                false,
+                false, false, false, false, false, false, false, null)
+
+        e1.view.fireEvent(event)
+
+        var count = 0
+
+        gameWorld.selectedEntityProperty().addListener { _, oldValue, newValue ->
+            assertAll(
+                    Executable { assertThat(oldValue, `is`<Entity>(e1)) },
+                    Executable { assertThat(newValue, `is`<Entity>(e2)) }
+            )
+
+            count++
+        }
+
+        e2.view.fireEvent(event)
+
+        assertThat(count, `is`(1))
+    }
+
+    /* LEVELS */
+
+    @Test
+    fun `Set level removes previous entities`() {
+        val e1 = Entity()
+
+        gameWorld.addEntity(e1)
+
+        val e2 = Entity()
+        val e3 = Entity()
+
+        val level = Level(100, 50, listOf(e2, e3))
+
+        gameWorld.setLevel(level)
+
+        assertThat(gameWorld.entities, containsInAnyOrder(e2, e3))
+    }
+
+    @Test
+    fun `Set level does not remove Irremovable entities`() {
+        val e1 = Entity()
+        e1.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e1)
+
+        // move e1 to update list
+        gameWorld.onUpdate(0.0)
+
+        val e4 = Entity()
+        e4.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e4)
+
+        val e2 = Entity()
+        val e3 = Entity()
+
+        val level = Level(100, 50, listOf(e2, e3))
+
+        gameWorld.setLevel(level)
+
+        assertThat(gameWorld.entities, containsInAnyOrder(e1, e2, e3, e4))
+    }
+
+    @Test
+    fun `Set level from Tiled map`() {
+        gameWorld.setEntityFactory(TiledMapEntityFactory())
+        gameWorld.setLevelFromMap("test_level1.json")
+
+        assertThat(gameWorld.entities, containsInAnyOrder(
+                // this is "layer" entity
+                EntityMatcher(0, 0),
+
+                // these are "object" entities
+                EntityMatcher(0, 736),
+                EntityMatcher(160, 608),
+                EntityMatcher(1472, 608),
+                EntityMatcher(352, 640)
+        ))
+    }
+
+    @Test
+    fun `Clear removes all entities`() {
+        val e = Entity()
+        e.addComponent(IrremovableComponent())
+
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+
+        gameWorld.clear()
+
+        assertTrue(gameWorld.entities.isEmpty())
+    }
+
+    @Test
+    fun `Clear correctly cleans all entities`() {
+        val e = Entity()
+        e.addControl(EntitiesTest.TestControl())
+        gameWorld.addEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        val e2 = Entity()
+        e2.addControl(EntitiesTest.TestControl())
+        gameWorld.addEntity(e2)
+
+        var count = 0
+
+        gameWorld.addWorldListener(object : EntityWorldListener {
+            override fun onEntityAdded(entity: Entity) {}
+
+            override fun onEntityRemoved(entity: Entity) {
+                count++
+            }
+        })
+
+        gameWorld.clear()
+
+        assertAll(
+                Executable { assertThat(count, `is`(2)) },
+                Executable { assertTrue(e.controls.isEmpty) },
+                Executable { assertTrue(e2.controls.isEmpty) }
+        )
+    }
+
+    @Test
+    fun `Clear correctly cleans entity removed in previous frame`() {
+        val e = Entity()
+        e.addControl(EntitiesTest.TestControl())
+        gameWorld.addEntity(e)
+
+        gameWorld.onUpdate(0.0)
+
+        gameWorld.removeEntity(e)
+
+        gameWorld.clear()
+
+        assertTrue(e.controls.isEmpty)
+    }
+
+    @Test
+    fun `Do not remove if entity has IrremovableComponent`() {
+        val e = Entity()
+        e.addComponent(IrremovableComponent())
+
+        gameWorld.addEntity(e)
+        gameWorld.removeEntity(e)
+
+        assertThat(gameWorld.entities, contains(e))
+    }
+
+    /* SPAWNS */
+
+    @Test
+    fun `Throw if spawn called with no factory`() {
+        assertThrows(IllegalStateException::class.java, {
+            gameWorld.spawn("bla-bla")
+        })
+    }
+
+    @Test
+    fun `Set entity factory`() {
+        val factory = TestEntityFactory()
+
+        gameWorld.setEntityFactory(factory)
+
+        assertThat(gameWorld.getEntityFactory(), `is`(factory))
+    }
+
+    @Test
+    fun `Spawn without initial position`() {
+        val factory = TestEntityFactory()
+        gameWorld.setEntityFactory(factory)
+
+        val e = gameWorld.spawn("enemy")
+
+        assertThat(e.getComponent(PositionComponent::class.java).value, `is`(Point2D(0.0, 0.0)))
+    }
+
+    @Test
+    fun `Spawn with initial position`() {
+        val factory = TestEntityFactory()
+        gameWorld.setEntityFactory(factory)
+
+        assertAll(
+                Executable {
+                    val e1 = gameWorld.spawn("enemy", 33.0, 40.0)
+                    assertThat(e1.getComponent(PositionComponent::class.java).value, `is`(Point2D(33.0, 40.0)))
+                },
+
+                Executable {
+                    val e2 = gameWorld.spawn("enemy", Point2D(100.0, 100.0))
+                    assertThat(e2.getComponent(PositionComponent::class.java).value, `is`(Point2D(100.0, 100.0)))
+                }
+        )
+    }
+
+    @Test
+    fun `Throw if factory has no such spawn method`() {
+        gameWorld.setEntityFactory(TestEntityFactory())
+
+        assertThrows(IllegalArgumentException::class.java, {
+            gameWorld.spawn("bla-bla")
+        })
+    }
+
+    /* QUERIES */
+
+    @Test
+    fun `By Type List`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        val e3 = Entity()
+        e3.addComponent(TypeComponent(TestType.T3))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getEntitiesByType(TestType.T1), contains(e1)) },
+                Executable { assertThat(gameWorld.getEntitiesByType(TestType.T2), contains(e2)) },
+                Executable { assertThat(gameWorld.getEntitiesByType(TestType.T2, TestType.T3), containsInAnyOrder(e2, e3)) }
+        )
+    }
+
+    @Test
+    fun `By Type Array`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        val e3 = Entity()
+        e3.addComponent(TypeComponent(TestType.T3))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        val result1 = Array<Entity>()
+        val result2 = Array<Entity>()
+        val result3 = Array<Entity>()
+
+        gameWorld.getEntitiesByType(result1, TestType.T1)
+        gameWorld.getEntitiesByType(result2, TestType.T2)
+        gameWorld.getEntitiesByType(result3, TestType.T2, TestType.T3)
+
+        assertAll(
+                Executable { assertThat(result1, contains(e1)) },
+                Executable { assertThat(result2, contains(e2)) },
+                Executable { assertThat(result3, containsInAnyOrder(e2, e3)) }
+        )
+    }
+
+    @Test
+    fun `Given no args, byType returns all entities`() {
+        val e = Entity()
+        val e2 = Entity()
+
+        gameWorld.addEntities(e, e2)
+
+        val result = Array<Entity>()
+        gameWorld.getEntitiesByType(result)
+
+        assertThat(result, containsInAnyOrder(e, e2))
+    }
+
+    @Test
+    fun `Singleton`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        val e3 = Entity()
+        e3.addComponent(TypeComponent(TestType.T3))
+
+        val e4 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3, e4)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getSingleton(TestType.T1).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getSingleton(TestType.T2).get(), `is`(e2)) },
+                Executable { assertThat(gameWorld.getSingleton { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T3) }.get(), `is`(e3)) },
+                Executable { assertFalse(gameWorld.getSingleton(TestType.T4).isPresent) },
+                Executable { assertFalse(gameWorld.getSingleton { it.hasComponent(TypeComponent::class.java) && it.getComponent(TypeComponent::class.java).isType(TestType.T4) }.isPresent) }
+        )
+    }
+
+    @Test
+    fun `Random returns the single item present`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        gameWorld.addEntities(e1, e2)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getRandom(TestType.T1).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getRandom { it.getComponent(TypeComponent::class.java).isType(TestType.T2) }.get(), `is`(e2)) }
+        )
+    }
+
+    @Test
+    fun `Entity group`() {
+        val e1 = Entity()
+        e1.addComponent(TypeComponent(TestType.T1))
+
+        val e2 = Entity()
+        e2.addComponent(TypeComponent(TestType.T2))
+
+        val e3 = Entity()
+        e3.addComponent(TypeComponent(TestType.T3))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        var count = 0
+
+        gameWorld.getGroup<Entity>(TestType.T1, TestType.T2).forEach(Consumer {
+            assertTrue(it === e1 || it === e2)
+            count++
+        })
+
+        assertThat(count, `is`(2))
+    }
+
+    @Test
+    fun `Array based queries append to array`() {
+        val e = Entity()
+        val e2 = Entity()
+        val e3 = Entity()
+
+        gameWorld.addEntities(e, e2, e3)
+
+        val result = Array<Entity>()
+        result.add(e3)
+
+        gameWorld.getEntitiesByType(result)
+
+        assertThat(result, containsInAnyOrder(e, e2, e3, e3))
+    }
+
+    @Test
+    fun `Closest entity returns Optional empty if no valid entity found`() {
+        val e = Entity()
+        e.addComponent(PositionComponent(10.0, 10.0))
+
+        gameWorld.addEntity(e)
+
+        assertThat(gameWorld.getClosestEntity(e, { true }), `is`(Optional.empty()))
+    }
+
+    @Test
+    fun `Closest entity`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(10.0, 10.0))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(20.0, 10.0))
+
+        val e3 = Entity()
+        e3.addComponent(PositionComponent(100.0, 10.0))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getClosestEntity(e1, { true }).get(), `is`(e2)) },
+                Executable { assertThat(gameWorld.getClosestEntity(e2, { true }).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getClosestEntity(e3, { true }).get(), `is`(e2)) }
+        )
+    }
+
+    @Test
+    fun `Filtered entities List`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(10.0, 10.0))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(20.0, 10.0))
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getEntitiesFiltered { Entities.getPosition(it) != null && Entities.getPosition(it).x > 15 }, contains(e2)) },
+                Executable { assertThat(gameWorld.getEntitiesFiltered { Entities.getPosition(it) != null && Entities.getPosition(it).y < 30 }, containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(gameWorld.getEntitiesFiltered { true }, containsInAnyOrder(e1, e2, e3)) }
+        )
+    }
+
+    @Test
+    fun `Filtered entities Array`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(10.0, 10.0))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(20.0, 10.0))
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        val result1 = Array<Entity>()
+        val result2 = Array<Entity>()
+        val result3 = Array<Entity>()
+
+        gameWorld.getEntitiesFiltered(result1) { Entities.getPosition(it) != null && Entities.getPosition(it).x > 15 }
+        gameWorld.getEntitiesFiltered(result2) { Entities.getPosition(it) != null && Entities.getPosition(it).y < 30 }
+        gameWorld.getEntitiesFiltered(result3) { true }
+
+        assertAll(
+                Executable { assertThat(result1, contains(e2)) },
+                Executable { assertThat(result2, containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(result3, containsInAnyOrder(e1, e2, e3)) }
+        )
+    }
+
+    @Test
+    fun `Get entities at List`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(10.0, 10.0))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(10.0, 10.0))
+
+        val e3 = Entity()
+        e3.addComponent(PositionComponent(100.0, 10.0))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getEntitiesAt(Point2D(10.0, 10.0)), containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(gameWorld.getEntitiesAt(Point2D(100.0, 10.0)), contains(e3)) }
+        )
+    }
+
+    @Test
+    fun `Get entities at Array`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(10.0, 10.0))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(10.0, 10.0))
+
+        val e3 = Entity()
+        e3.addComponent(PositionComponent(100.0, 10.0))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        val result1 = Array<Entity>()
+        val result2 = Array<Entity>()
+
+        gameWorld.getEntitiesAt(result1, Point2D(10.0, 10.0))
+        gameWorld.getEntitiesAt(result2, Point2D(100.0, 10.0))
+
+        assertAll(
+                Executable { assertThat(result1, containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(result2, contains(e3)) }
+        )
+    }
+
+    @Test
+    fun `By ID`() {
+        val e1 = Entity()
+        e1.addComponent(IDComponent("e", 1))
+
+        val e2 = Entity()
+        e2.addComponent(IDComponent("e", 2))
+
+        val e3 = Entity()
+        e3.addComponent(IDComponent("e", 3))
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getEntityByID("e", 1).get(), `is`(e1)) },
+                Executable { assertThat(gameWorld.getEntityByID("e", 2).get(), `is`(e2)) },
+                Executable { assertThat(gameWorld.getEntityByID("e", 3).get(), `is`(e3)) },
+                Executable { assertThat(gameWorld.getEntityByID("e", 4), `is`<Any>(Optional.empty<Entity>())) }
+        )
+    }
+
+    @Test
+    fun `By range List`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(0.0, 0.0))
+        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(100.0, 0.0))
+        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(90.0, 0.0, 20.0, 20.0)), contains(e2)) }
+        )
+    }
+
+    @Test
+    fun `By range Array`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(0.0, 0.0))
+        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(100.0, 0.0))
+        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        val result1 = Array<Entity>()
+        val result2 = Array<Entity>()
+
+        gameWorld.getEntitiesInRange(result1, 0.0, 0.0, 100.0, 100.0)
+        gameWorld.getEntitiesInRange(result2, 90.0, 0.0, 90 + 20.0, 20.0)
+
+        assertAll(
+                Executable { assertThat(result1, containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(result2, contains(e2)) }
+        )
+    }
+
+    @Test
+    fun `Get colliding entities`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(0.0, 0.0))
+        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(10.0, 0.0))
+        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getCollidingEntities(e1), contains(e2)) },
+                Executable { assertThat(gameWorld.getCollidingEntities(e2), contains(e1)) },
+                Executable { assertTrue(gameWorld.getCollidingEntities(e3).isEmpty()) }
+        )
+    }
+
+    @Test
+    fun `Get colliding entities Array`() {
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(0.0, 0.0))
+        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(10.0, 0.0))
+        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        val result1 = Array<Entity>()
+        val result2 = Array<Entity>()
+        val result3 = Array<Entity>()
+
+        gameWorld.getCollidingEntities(result1, e1)
+        gameWorld.getCollidingEntities(result2, e2)
+        gameWorld.getCollidingEntities(result3, e3)
+
+        assertAll(
+                Executable { assertThat(result1, contains(e2)) },
+                Executable { assertThat(result2, contains(e1)) },
+                Executable { assertTrue(result3.isEmpty) }
+        )
+    }
+
+    @Test
+    fun `By layer List`() {
+        val layer = object : RenderLayer {
+            override fun name(): String {
+                return "TEST"
+            }
+
+            override fun index(): Int {
+                return 0
+            }
+        }
+
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(0.0, 0.0))
+        e1.addComponent(RotationComponent())
+        e1.addComponent(ViewComponent(layer))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(10.0, 0.0))
+        e2.addComponent(RotationComponent())
+        e2.addComponent(ViewComponent())
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        assertAll(
+                Executable { assertThat(gameWorld.getEntitiesByLayer(layer), contains(e1)) },
+                Executable { assertThat(gameWorld.getEntitiesByLayer(RenderLayer.TOP), contains(e2)) }
+        )
+    }
+
+    @Test
+    fun `By layer Array`() {
+        val layer = object : RenderLayer {
+            override fun name(): String {
+                return "TEST"
+            }
+
+            override fun index(): Int {
+                return 0
+            }
+        }
+
+        val e1 = Entity()
+        e1.addComponent(PositionComponent(0.0, 0.0))
+        e1.addComponent(RotationComponent())
+        e1.addComponent(ViewComponent(layer))
+
+        val e2 = Entity()
+        e2.addComponent(PositionComponent(10.0, 0.0))
+        e2.addComponent(RotationComponent())
+        e2.addComponent(ViewComponent())
+
+        val e3 = Entity()
+
+        gameWorld.addEntities(e1, e2, e3)
+
+        val result1 = Array<Entity>()
+        val result2 = Array<Entity>()
+
+        gameWorld.getEntitiesByLayer(result1, layer)
+        gameWorld.getEntitiesByLayer(result2, RenderLayer.TOP)
+
+        assertAll(
+                Executable { assertThat(result1, contains(e1)) },
+                Executable { assertThat(result2, contains(e2)) }
+        )
+    }
+
+    /* SPECIAL CASES */
+
+    @Test
+    fun `Time component is honored`() {
+        val e = Entity()
+        e.addComponent(TimeComponent(0.5))
+
+        val control = TimeBasedControl()
+        e.addControl(control)
+
+        gameWorld.addEntity(e)
+        gameWorld.onUpdate(0.016)
+
+        assertTrue(control.assertPassed)
+    }
+
+    private class TimeBasedControl : Control() {
+        var assertPassed = false
+
+        override fun onUpdate(entity: Entity, tpf: Double) {
+            assertThat(tpf, `is`(0.008))
+            assertPassed = true
+        }
+    }
+
+    private class EntityMatcher(val x: Int, val y: Int) : BaseMatcher<Entity>() {
+
+        override fun matches(item: Any): Boolean {
+            val position = Entities.getPosition(item as Entity)
+
+            return position.x.toInt() == x && position.y.toInt() == y
+        }
+
+        override fun describeTo(description: Description) {
+            description.appendText("Entity at $x,$y")
+        }
+    }
+    
+    private enum class TestType {
+        T1, T2, T3, T4
     }
 
     class TestEntityFactory : EntityFactory {
 
         @Spawns("enemy")
         fun makeEnemy(data: SpawnData): Entity {
+            return Entities.builder()
+                    .from(data)
+                    .build()
+        }
+    }
+
+    class TiledMapEntityFactory : EntityFactory {
+
+        @Spawns("player")
+        fun makePlayer(data: SpawnData): Entity {
+            return Entities.builder()
+                    .from(data)
+                    .build()
+        }
+
+        @Spawns("platform")
+        fun makePlatform(data: SpawnData): Entity {
             return Entities.builder()
                     .from(data)
                     .build()

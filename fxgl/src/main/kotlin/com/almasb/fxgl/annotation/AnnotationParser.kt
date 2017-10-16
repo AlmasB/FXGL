@@ -13,7 +13,7 @@ class AnnotationParser(appClass: Class<out GameApplication>) {
 
     private val packageName = appClass.`package`?.name
 
-    val isDisabled = packageName?.contains("[A-Z]".toRegex()) ?: true
+    val isDisabled = packageName.isNullOrEmpty() || packageName!!.contains("[A-Z]".toRegex())
 
     private val annotationMap = hashMapOf<Class<*>, List<Class<*>>>()
 

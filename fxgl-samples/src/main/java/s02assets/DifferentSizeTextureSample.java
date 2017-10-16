@@ -35,13 +35,15 @@ public class DifferentSizeTextureSample extends GameApplication {
     @Override
     protected void initGame() {
         Entities.builder()
+                .at(200, 300)
                 // 1. tell asset loader to load resized texture
-                .viewFromNode(getAssetLoader().loadTexture("bg.jpg", 128, 128))
+                .viewFromNode(getAssetLoader().loadTexture("brick.png", 32, 32))
                 .buildAndAttach(getGameWorld());
 
         Entities.builder()
                 .at(300, 300)
-                .viewFromNode(getAssetLoader().loadTexture("bg.jpg", 256, 128))
+                // you can also load with different ratio
+                .viewFromNode(getAssetLoader().loadTexture("brick.png", 64, 32))
                 .buildAndAttach(getGameWorld());
     }
 

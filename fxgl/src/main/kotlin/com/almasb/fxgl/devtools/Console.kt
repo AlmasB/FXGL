@@ -20,7 +20,6 @@ import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
-import org.controlsfx.control.textfield.TextFields
 import java.util.function.Consumer
 
 /**
@@ -49,7 +48,7 @@ class Console : Pane() {
 
         initCommands()
 
-        TextFields.bindAutoCompletion(input, commands.keys().toList())
+        //TextFields.bindAutoCompletion(input, commands.keys().toList())
     }
 
     fun isOpen() = scene != null

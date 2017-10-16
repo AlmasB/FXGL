@@ -14,6 +14,7 @@ Any new API or changes to existing API should be discussed to avoid inconsistenc
 * Suggest an API change if you think some calls can be made more concise.
 * [Samples](fxgl-samples) might get outdated quite quickly, see if you can find something weird / not working.
 * Share details about your project based on FXGL (this will go to the showcase section).
+* Write a tutorial on how to use FXGL.
 
 ## Building
 
@@ -36,7 +37,7 @@ your work is complete, pull a request back to `x.y.z`.
 ## Development
 
 Due to use of Kotlin, the only feasible IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/).
-To start developing FXGL you can setup IDEA (2016.3.3+) as follows:
+To start developing FXGL you can setup IDEA (2017.2.5+) as follows:
 
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
 1. `cd` to that directory -> `git checkout -b BRANCH_NAME x.y.z`, where `x.y.z` is next version and `BRANCH_NAME` is your working branch.

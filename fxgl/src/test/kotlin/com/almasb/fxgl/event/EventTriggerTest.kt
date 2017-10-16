@@ -6,10 +6,6 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.MockApplicationModule
-import org.junit.BeforeClass
-
 /**
  *
  *
@@ -18,13 +14,6 @@ import org.junit.BeforeClass
 class EventTriggerTest {
 
     private lateinit var trigger: EventTrigger<TestEvent>
-
-    companion object {
-        @BeforeClass
-        @JvmStatic fun before() {
-            FXGL.configure(MockApplicationModule.get())
-        }
-    }
 
     // do not run until event trigger has been refactored to new model
 //    @Test

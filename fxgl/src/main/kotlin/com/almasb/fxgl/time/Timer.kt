@@ -46,7 +46,21 @@ class Timer {
      * @param interval time
      */
     fun runAtInterval(action: Runnable, interval: Duration): TimerAction {
-        val act = TimerAction(interval, action, TimerAction.TimerType.INDEFINITE)
+        return runAtInterval(action, interval, Int.MAX_VALUE)
+    }
+
+    /**
+     * The Runnable action will be scheduled to start at given interval.
+     * The action will start for the first time after given interval.
+     *
+     * Note: the scheduled action will not start while the game is paused.
+     *
+     * @param action   the action
+     * @param interval time
+     * @param limit number of times to run
+     */
+    fun runAtInterval(action: Runnable, interval: Duration, limit: Int): TimerAction {
+        val act = TimerAction(interval, action, limit)
         timerActions.add(act)
         return act
     }
@@ -67,9 +81,10 @@ class Timer {
      */
     fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
         if (!whileCondition.get()) {
+            // TODO: this is harsh, don't throw, just return
             throw IllegalArgumentException("While condition is false")
         }
-        val act = TimerAction(interval, action, TimerAction.TimerType.INDEFINITE)
+        val act = TimerAction(interval, action)
         timerActions.add(act)
 
         whileCondition.addListener { _, _, isTrue ->
@@ -90,9 +105,7 @@ class Timer {
      * @param delay  delay after which to execute
      */
     fun runOnceAfter(action: Runnable, delay: Duration): TimerAction {
-        val act = TimerAction(delay, action, TimerAction.TimerType.ONCE)
-        timerActions.add(act)
-        return act
+        return runAtInterval(action, delay, 1)
     }
 
     fun runOnceAfter(action: () -> Unit, delay: Duration): TimerAction {

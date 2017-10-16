@@ -15,7 +15,6 @@ import com.almasb.fxgl.gameplay.rpg.quest.QuestManager
 import com.almasb.fxgl.gameplay.rpg.quest.QuestManagerProvider
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
-import com.google.inject.Inject
 
 /**
  * Contains access to various gameplay related managers / services
@@ -23,13 +22,11 @@ import com.google.inject.Inject
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Gameplay
-@Inject
-private constructor() : UserProfileSavable {
+class Gameplay : UserProfileSavable {
 
     val stats = GameplayStats()
 
-    val clock = FXGL.getInstance(InGameClock::class.java)
+    val clock = InGameClock(FXGL.getInt("gameplay.clock.secondsIn24h"))
 
     val QTE: QTE by lazy { QTEProvider() }
 

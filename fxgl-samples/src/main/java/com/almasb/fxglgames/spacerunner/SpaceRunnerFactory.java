@@ -20,14 +20,12 @@ import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxglgames.spacerunner.control.EnemyControl;
 import com.almasb.fxglgames.spacerunner.control.KeepOnScreenControl;
 import com.almasb.fxglgames.spacerunner.control.PlayerControl;
-import com.google.inject.Singleton;
 import javafx.geometry.Point2D;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @SetEntityFactory
-@Singleton
 public class SpaceRunnerFactory implements EntityFactory {
 
     @Spawns("Player")
