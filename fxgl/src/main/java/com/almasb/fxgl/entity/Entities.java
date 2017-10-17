@@ -123,8 +123,8 @@ public final class Entities {
     /**
      * @return new entity builder
      */
-    public static GameEntityBuilder builder() {
-        return new GameEntityBuilder();
+    public static EntityBuilder builder() {
+        return new EntityBuilder();
     }
 
     /**
@@ -137,63 +137,63 @@ public final class Entities {
     /**
      * Provides fluent API for building entities.
      */
-    public static class GameEntityBuilder {
+    public static class EntityBuilder {
         private Entity entity = new Entity();
 
-        public GameEntityBuilder from(SpawnData data) {
+        public EntityBuilder from(SpawnData data) {
             at(data.getX(), data.getY());
             return this;
         }
 
-        public GameEntityBuilder type(Enum<?> type) {
-            entity.getTypeComponent().setValue(type);
+        public EntityBuilder type(Enum<?> type) {
+            entity.setType(type);
             return this;
         }
 
-        public GameEntityBuilder at(double x, double y) {
-            entity.getPositionComponent().setValue(x, y);
+        public EntityBuilder at(double x, double y) {
+            entity.setPosition(x, y);
             return this;
         }
 
-        public GameEntityBuilder at(Point2D position) {
+        public EntityBuilder at(Point2D position) {
             return at(position.getX(), position.getY());
         }
 
-        public GameEntityBuilder at(Vec2 position) {
+        public EntityBuilder at(Vec2 position) {
             return at(position.x, position.y);
         }
 
-        public GameEntityBuilder rotate(double angle) {
-            entity.getRotationComponent().setValue(angle);
+        public EntityBuilder rotate(double angle) {
+            entity.setRotation(angle);
             return this;
         }
 
-        public GameEntityBuilder bbox(HitBox box) {
+        public EntityBuilder bbox(HitBox box) {
             entity.getBoundingBoxComponent().addHitBox(box);
             return this;
         }
 
-        public GameEntityBuilder viewFromNode(Node view) {
+        public EntityBuilder viewFromNode(Node view) {
             entity.getViewComponent().setView(view);
             return this;
         }
 
-        public GameEntityBuilder viewFromNodeWithBBox(Node view) {
+        public EntityBuilder viewFromNodeWithBBox(Node view) {
             entity.getViewComponent().setView(view, true);
             return this;
         }
 
-        public GameEntityBuilder viewFromTexture(String textureName) {
+        public EntityBuilder viewFromTexture(String textureName) {
             entity.getViewComponent().setTexture(textureName);
             return this;
         }
 
-        public GameEntityBuilder viewFromTextureWithBBox(String textureName) {
+        public EntityBuilder viewFromTextureWithBBox(String textureName) {
             entity.getViewComponent().setTexture(textureName, true);
             return this;
         }
 
-        public GameEntityBuilder renderLayer(RenderLayer layer) {
+        public EntityBuilder renderLayer(RenderLayer layer) {
             entity.getViewComponent().setRenderLayer(layer);
             return this;
         }
@@ -205,7 +205,7 @@ public final class Entities {
          * @param layerName layer name as specified by Tiled
          * @return builder
          */
-        public GameEntityBuilder viewFromTiles(TiledMap map, String layerName) {
+        public EntityBuilder viewFromTiles(TiledMap map, String layerName) {
             return viewFromTiles(map, layerName, RenderLayer.TOP);
         }
 
@@ -217,7 +217,7 @@ public final class Entities {
          * @param renderLayer created view will use this render layer
          * @return builder
          */
-        public GameEntityBuilder viewFromTiles(TiledMap map, String layerName, RenderLayer renderLayer) {
+        public EntityBuilder viewFromTiles(TiledMap map, String layerName, RenderLayer renderLayer) {
             entity.getViewComponent().setView(tilesToView(map, layerName), false);
             entity.getViewComponent().setRenderLayer(renderLayer);
 
@@ -267,13 +267,13 @@ public final class Entities {
             return new ImageView(buffer);
         }
 
-        public GameEntityBuilder with(Component... components) {
+        public EntityBuilder with(Component... components) {
             for (Component c : components)
                 entity.addComponent(c);
             return this;
         }
 
-        public GameEntityBuilder with(Control... controls) {
+        public EntityBuilder with(Control... controls) {
             for (Control c : controls)
                 entity.addControl(c);
             return this;
@@ -282,7 +282,7 @@ public final class Entities {
         /**
          * Add a property to entity being built.
          */
-        public GameEntityBuilder with(String propertyKey, Object propertyValue) {
+        public EntityBuilder with(String propertyKey, Object propertyValue) {
             entity.setProperty(propertyKey, propertyValue);
             return this;
         }

@@ -122,6 +122,10 @@ public class Entity {
         this.position.setValue(position);
     }
 
+    public final void setPosition(double x, double y) {
+        this.position.setValue(x, y);
+    }
+
     /**
      * @return top left x
      */
