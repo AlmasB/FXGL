@@ -13,7 +13,7 @@ import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -47,7 +47,7 @@ public class SmokeSample extends GameApplication {
     }
 
     private ParticleEmitter emitter, e;
-    private GameEntity entity;
+    private Entity entity;
 
     @Override
     protected void initInput() {

@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.texture.Texture;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -55,7 +55,7 @@ public class ExhaustParticleControl extends Control {
 
     @Override
     public void onAdded(Entity e) {
-        GameEntity entity = (GameEntity) e;
+        Entity entity = (Entity) e;
         entity.setView(new Texture(coloredImages.get(color)));
     }
 
@@ -66,7 +66,7 @@ public class ExhaustParticleControl extends Control {
 
     @Override
     public void onUpdate(Entity e, double tpf) {
-        GameEntity entity = (GameEntity) e;
+        Entity entity = (Entity) e;
 
         // movement
         entity.translateX(velocity.x * 3 * tpf);

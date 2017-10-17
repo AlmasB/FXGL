@@ -12,7 +12,7 @@ import com.almasb.fxgl.ai.pathfinding.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
@@ -55,7 +55,7 @@ public class PathfindingSample extends GameApplication {
                 final int x = j;
                 final int y = i;
 
-                GameEntity tile = new GameEntity();
+                Entity tile = new Entity();
                 tile.getPositionComponent().setValue(j*40, i*40);
 
                 Rectangle graphics = new Rectangle(38, 38);

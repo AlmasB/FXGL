@@ -284,4 +284,8 @@ public final class HitBox implements Serializable {
     public Point2D centerWorld(double x, double y) {
         return centerLocal().add(x, y);
     }
+
+    public HitBox copy() {
+        return new HitBox(name, new Point2D(bounds.getMinX(), bounds.getMinY()), shape);
+    }
 }

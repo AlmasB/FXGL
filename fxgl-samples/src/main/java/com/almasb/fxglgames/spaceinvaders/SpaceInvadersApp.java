@@ -12,7 +12,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.AchievementManager;
@@ -92,7 +92,7 @@ public class SpaceInvadersApp extends GameApplication {
         playerControl.shoot();
     }
 
-    private GameEntity player;
+    private Entity player;
     private PlayerControl playerControl;
 
     private int highScore;
@@ -156,7 +156,7 @@ public class SpaceInvadersApp extends GameApplication {
     }
 
     private void spawnPlayer() {
-        player = (GameEntity) getGameWorld().spawn("Player", getWidth() / 2 - 20, getHeight() - 40);
+        player = (Entity) getGameWorld().spawn("Player", getWidth() / 2 - 20, getHeight() - 40);
         playerControl = player.getControl(PlayerControl.class);
     }
 

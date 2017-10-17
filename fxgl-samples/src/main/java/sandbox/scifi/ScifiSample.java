@@ -10,6 +10,7 @@ import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
@@ -224,7 +225,7 @@ public class ScifiSample extends GameApplication {
         ParticleEmitter emitter = ParticleEmitters.newRainEmitter(getWidth());
         emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").multiplyColor(Color.LIGHTBLUE).getImage());
 
-        GameEntity rain = Entities.builder()
+        Entity rain = Entities.builder()
                 .with(new ParticleControl(emitter))
                 .buildAndAttach(getGameWorld());
 
@@ -283,7 +284,7 @@ public class ScifiSample extends GameApplication {
         ppComponent.setDefinition(groupDef);
         ppComponent.setColor(Color.BLUE.brighter());
 
-        GameEntity liquid = new GameEntity();
+        Entity liquid = new Entity();
         liquid.setPosition(playerControl.getEntity().getComponent(PositionComponent.class).getValue().subtract(0, 650));
         liquid.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", BoundingShape.circle(55)));
         liquid.addComponent(ppComponent);

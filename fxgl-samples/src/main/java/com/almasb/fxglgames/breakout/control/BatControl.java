@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.physics.PhysicsComponent;
 
 /**
@@ -22,7 +22,7 @@ public class BatControl extends Control {
     private static final float BOUNCE_FACTOR = 1.5f;
     private static final float SPEED_DECAY = 0.66f;
 
-    private GameEntity bat;
+    private Entity bat;
     private PhysicsComponent physics;
     private float speed = 0;
 
@@ -30,7 +30,7 @@ public class BatControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        bat = (GameEntity) entity;
+        bat = (Entity) entity;
         physics = Entities.getPhysics(entity);
     }
 

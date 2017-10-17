@@ -11,6 +11,7 @@ import com.almasb.fxgl.annotation.SetEntityFactory;
 import com.almasb.fxgl.annotation.SpawnSymbol;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.Control;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -35,7 +36,7 @@ import java.util.stream.IntStream;
 public class PacmanFactory implements TextEntityFactory {
 
     @SpawnSymbol('1')
-    public GameEntity newBlock(SpawnData data) {
+    public Entity newBlock(SpawnData data) {
         return Entities.builder()
                 .from(data)
                 .type(PacmanType.BLOCK)
@@ -44,7 +45,7 @@ public class PacmanFactory implements TextEntityFactory {
     }
 
     @SpawnSymbol('0')
-    public GameEntity newCoin(SpawnData data) {
+    public Entity newCoin(SpawnData data) {
         EntityView view = new EntityView(FXGL.getAssetLoader().loadTexture("pacman/coin.png"));
         view.setTranslateX(2.5);
         view.setRenderLayer(RenderLayer.BACKGROUND);
@@ -63,7 +64,7 @@ public class PacmanFactory implements TextEntityFactory {
     }
 
     @SpawnSymbol('P')
-    public GameEntity newPlayer(SpawnData data) {
+    public Entity newPlayer(SpawnData data) {
 
         Rectangle view = new Rectangle(36, 36, Color.BLUE);
         view.setTranslateX(2);
@@ -116,7 +117,7 @@ public class PacmanFactory implements TextEntityFactory {
     }
 
     @SpawnSymbol('E')
-    public GameEntity newEnemy(SpawnData data) {
+    public Entity newEnemy(SpawnData data) {
         return Entities.builder()
                 .from(data)
                 .type(PacmanType.ENEMY)

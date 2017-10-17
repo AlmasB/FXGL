@@ -533,6 +533,7 @@ public class BoundingBoxComponent extends Component
     @Override
     public BoundingBoxComponent copy() {
         // hit boxes are immutable so can safely reuse them
+        // TODO: but we can't use same objects because of bind()
         return new BoundingBoxComponent(hitBoxes.toArray(new HitBox[0]));
     }
 

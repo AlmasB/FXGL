@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -55,7 +55,7 @@ public class ScriptSample2 extends GameApplication {
 
     @Override
     protected void initGame() {
-        GameEntity e = Entities.builder()
+        Entity e = Entities.builder()
                 .type(EntityType.PC)
                 .at(300, 300)
                 .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))

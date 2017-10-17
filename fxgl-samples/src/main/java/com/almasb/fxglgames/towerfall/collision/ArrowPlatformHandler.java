@@ -13,7 +13,7 @@ import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -47,7 +47,7 @@ public class ArrowPlatformHandler extends CollisionHandler {
             arrow.getComponent(CollidableComponent.class).setValue(false);
             arrow.removeControl(ArrowControl.class);
 
-            GameEntity block = (GameEntity) platform;
+            Entity block = (Entity) platform;
 
             Rectangle2D grid = new Rectangle2D(0, 0, 40, 40);
 

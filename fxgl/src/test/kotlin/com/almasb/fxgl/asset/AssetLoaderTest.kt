@@ -7,7 +7,7 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.entity.GameEntity
+import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -204,7 +204,7 @@ class AssetLoaderTest {
 
     @Test
     fun loadBehaviorTree() {
-        val tree = assetLoader.loadBehaviorTree<GameEntity>("test.tree")
+        val tree = assetLoader.loadBehaviorTree<Entity>("test.tree")
 
         assertThat(tree, `is`(notNullValue()))
     }

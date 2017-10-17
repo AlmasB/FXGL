@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -59,7 +59,7 @@ public class JointSample extends GameApplication {
         input.addAction(new UserAction("Spawn Box") {
             @Override
             protected void onActionBegin() {
-                GameEntity box = createPhysicsEntity();
+                Entity box = createPhysicsEntity();
 
                 // 3. set hit box (-es) to specify bounding shape
                 box.getBoundingBoxComponent()
@@ -76,7 +76,7 @@ public class JointSample extends GameApplication {
         input.addAction(new UserAction("Spawn Ball") {
             @Override
             protected void onActionBegin() {
-                GameEntity ball = createPhysicsEntity();
+                Entity ball = createPhysicsEntity();
 
                 // 3. set hit box to specify bounding shape
                 ball.getBoundingBoxComponent()
@@ -96,7 +96,7 @@ public class JointSample extends GameApplication {
 
         PhysicsComponent physics = new PhysicsComponent();
 
-        GameEntity block = Entities.builder()
+        Entity block = Entities.builder()
                 .at(200, 200)
                 .viewFromNodeWithBBox(new Rectangle(50, 50))
                 .with(physics)
@@ -109,7 +109,7 @@ public class JointSample extends GameApplication {
         fd.setDensity(1.0f);
         physics2.setFixtureDef(fd);
 
-        GameEntity ball =Entities.builder()
+        Entity ball =Entities.builder()
                 .at(200, 300)
                 .bbox(new HitBox("main", BoundingShape.circle(15)))
                 .viewFromNode(getAssetLoader().loadTexture("ball.png", 30, 30))
@@ -154,7 +154,7 @@ public class JointSample extends GameApplication {
         }
     }
 
-    private GameEntity createPhysicsEntity() {
+    private Entity createPhysicsEntity() {
         // 1. create and configure physics component
         PhysicsComponent physics = new PhysicsComponent();
 

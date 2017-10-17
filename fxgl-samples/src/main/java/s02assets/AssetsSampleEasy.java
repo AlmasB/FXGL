@@ -7,7 +7,7 @@ package s02assets;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 
 /**
@@ -17,7 +17,7 @@ import com.almasb.fxgl.settings.GameSettings;
  */
 public class AssetsSampleEasy extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -34,7 +34,7 @@ public class AssetsSampleEasy extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = new GameEntity();
+        player = new Entity();
         player.getPositionComponent().setValue(400, 300);
 
         // 1. simply specify texture name to setTexture()

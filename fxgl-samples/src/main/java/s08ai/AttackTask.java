@@ -9,7 +9,7 @@ package s08ai;
 import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.SingleAction;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import javafx.geometry.Point2D;
 
 /**
@@ -19,7 +19,7 @@ public class AttackTask extends SingleAction {
 
     @Override
     public void onUpdate(double tpf) {
-        GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
+        Entity player = ((BehaviorSample) FXGL.getApp()).player;
 
         if (player.distance(getObject()) < 100) {
             getObject().getControl(AIControl.class).setBubbleMessage("Attack");

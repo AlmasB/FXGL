@@ -6,7 +6,7 @@
 
 package sandbox.uno;
 
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -15,17 +15,17 @@ import javafx.collections.ObservableList;
  */
 public class Hand {
 
-    private ObservableList<GameEntity> cards = FXCollections.observableArrayList();
+    private ObservableList<Entity> cards = FXCollections.observableArrayList();
 
-    public ObservableList<GameEntity> cardsProperty() {
+    public ObservableList<Entity> cardsProperty() {
         return FXCollections.unmodifiableObservableList(cards);
     }
 
-    public void addCard(GameEntity card) {
+    public void addCard(Entity card) {
         cards.add(card);
     }
 
-    public void removeCard(GameEntity card) {
+    public void removeCard(Entity card) {
         cards.remove(card);
     }
 }

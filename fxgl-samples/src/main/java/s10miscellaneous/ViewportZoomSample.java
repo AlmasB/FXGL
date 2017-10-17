@@ -9,7 +9,7 @@ package s10miscellaneous;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -24,7 +24,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class ViewportZoomSample extends GameApplication {
 
-    private GameEntity e1, e2, e3;
+    private Entity e1, e2, e3;
 
     @Override
     protected void initSettings(GameSettings settings) {

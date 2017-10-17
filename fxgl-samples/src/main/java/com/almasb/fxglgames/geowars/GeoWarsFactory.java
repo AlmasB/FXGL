@@ -18,7 +18,7 @@ import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityFactory;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
@@ -65,7 +65,7 @@ public class GeoWarsFactory implements EntityFactory {
     }
 
     @Spawns("Player")
-    public GameEntity spawnPlayer(SpawnData data) {
+    public Entity spawnPlayer(SpawnData data) {
         // TODO: move this to proper PlayerControl
         OldPositionComponent oldPosition = new OldPositionComponent();
         oldPosition.valueProperty().addListener((obs, old, newPos) -> {
@@ -82,7 +82,7 @@ public class GeoWarsFactory implements EntityFactory {
     }
 
     @Spawns("Bullet")
-    public GameEntity spawnBullet(SpawnData data) {
+    public Entity spawnBullet(SpawnData data) {
         FXGL.getAudioPlayer().playSound("shoot" + (int) (Math.random() * 8 + 1) + ".wav");
 
         TimeComponent time = new TimeComponent();
@@ -100,7 +100,7 @@ public class GeoWarsFactory implements EntityFactory {
     }
 
     @Spawns("Wanderer")
-    public GameEntity spawnWanderer(SpawnData data) {
+    public Entity spawnWanderer(SpawnData data) {
         boolean red = FXGLMath.randomBoolean((float)config.getRedEnemyChance());
 
         int moveSpeed = red ? config.getRedEnemyMoveSpeed()
@@ -120,7 +120,7 @@ public class GeoWarsFactory implements EntityFactory {
     }
 
     @Spawns("Seeker")
-    public GameEntity spawnSeeker(SpawnData data) {
+    public Entity spawnSeeker(SpawnData data) {
         boolean red = FXGLMath.randomBoolean((float)config.getRedEnemyChance());
 
         int moveSpeed = red ? config.getRedEnemyMoveSpeed()
@@ -140,7 +140,7 @@ public class GeoWarsFactory implements EntityFactory {
     }
 
     @Spawns("Explosion")
-    public GameEntity spawnExplosion(SpawnData data) {
+    public Entity spawnExplosion(SpawnData data) {
         FXGL.getAudioPlayer().playSound("explosion-0" + (int) (Math.random() * 8 + 1) + ".wav");
 
         // explosion particle effect
@@ -170,7 +170,7 @@ public class GeoWarsFactory implements EntityFactory {
     }
 
     @Spawns("Crystal")
-    public GameEntity spawnCrystal(SpawnData data) {
+    public Entity spawnCrystal(SpawnData data) {
         return Entities.builder()
                 .type(GeoWarsType.CRYSTAL)
                 .from(data)

@@ -10,7 +10,7 @@ import com.almasb.fxgl.ai.GoalAction;
 import com.almasb.fxgl.ai.pathfinding.AStarGrid;
 import com.almasb.fxgl.ai.pathfinding.AStarNode;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxglgames.pacman.PacmanApp;
 import com.almasb.fxglgames.pacman.PacmanType;
@@ -28,7 +28,7 @@ public class MoveAction extends GoalAction {
     }
 
     private AStarGrid grid;
-    private GameEntity player;
+    private Entity player;
 
     private List<AStarNode> path = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class MoveAction extends GoalAction {
         position = getObject().getPositionComponent();
 
         grid = ((PacmanApp) FXGL.getApp()).getGrid();
-        player = (GameEntity) FXGL.getApp().getGameWorld().getEntitiesByType(PacmanType.PLAYER).get(0);
+        player = (Entity) FXGL.getApp().getGameWorld().getEntitiesByType(PacmanType.PLAYER).get(0);
 
         int startX = (int)(position.getX() / PacmanApp.BLOCK_SIZE);
         int startY = (int)(position.getY() / PacmanApp.BLOCK_SIZE);

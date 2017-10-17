@@ -8,7 +8,7 @@ package s03entities;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.ColorComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
@@ -38,7 +38,7 @@ public class AnimColorSample extends GameApplication {
     protected void initGame() {
         Rectangle playerView = new Rectangle(40, 40);
 
-        GameEntity player = Entities.builder()
+        Entity player = Entities.builder()
                 .at(100, 100)
                 .viewFromNode(playerView)
                 .with(new ColorComponent())

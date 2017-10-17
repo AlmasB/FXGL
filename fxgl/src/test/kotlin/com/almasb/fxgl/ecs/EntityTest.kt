@@ -462,7 +462,7 @@ class EntityTest {
         // if bundle has no such component coz entity1 did not have it, we ignore it
         entity2.load(bundle)
 
-        assertThat(entity2.components.size(), `is`(1))
+        assertThat(entity2.components.size(), `is`(5 + 1))
     }
 
     @Test

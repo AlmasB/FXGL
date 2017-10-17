@@ -11,7 +11,7 @@ import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -46,12 +46,12 @@ import static com.almasb.fxgl.app.DSLKt.set;
  */
 public class GeoWarsApp extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
     private PlayerControl playerControl;
 
     private Grid grid;
 
-    public GameEntity getPlayer() {
+    public Entity getPlayer() {
         return player;
     }
 
@@ -151,7 +151,7 @@ public class GeoWarsApp extends GameApplication {
         getAudioPlayer().setGlobalMusicVolume(0.1);
 
         initBackground();
-        player = (GameEntity) getGameWorld().spawn("Player");
+        player = (Entity) getGameWorld().spawn("Player");
         playerControl = player.getControl(PlayerControl.class);
 
         getMasterTimer().runAtInterval(() -> getGameWorld().spawn("Wanderer"), Duration.seconds(1));

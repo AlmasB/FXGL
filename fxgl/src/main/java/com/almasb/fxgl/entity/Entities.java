@@ -8,10 +8,7 @@ package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.GameWorld;
+import com.almasb.fxgl.ecs.*;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.parser.tiled.Layer;
@@ -142,7 +139,7 @@ public final class Entities {
      * Provides fluent API for building entities.
      */
     public static class GameEntityBuilder {
-        private GameEntity entity = new GameEntity();
+        private Entity entity = new Entity();
 
         public GameEntityBuilder from(SpawnData data) {
             at(data.getX(), data.getY());
@@ -296,7 +293,7 @@ public final class Entities {
          *
          * @return entity
          */
-        public GameEntity build() {
+        public Entity build() {
             return entity;
         }
 
@@ -305,7 +302,7 @@ public final class Entities {
          *
          * @return entity
          */
-        public GameEntity buildAndAttach() {
+        public Entity buildAndAttach() {
             return buildAndAttach(FXGL.getApp().getGameWorld());
         }
 
@@ -315,7 +312,7 @@ public final class Entities {
          * @param world the world to attach entity to
          * @return entity
          */
-        public GameEntity buildAndAttach(GameWorld world) {
+        public Entity buildAndAttach(GameWorld world) {
             world.addEntity(entity);
             return entity;
         }

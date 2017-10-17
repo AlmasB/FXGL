@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.time.LocalTimer;
@@ -25,14 +25,14 @@ import javafx.scene.paint.Color;
  */
 public class PlayerControl extends Control {
 
-    private GameEntity player;
+    private Entity player;
     private long spawnTime = System.currentTimeMillis();
 
     private LocalTimer weaponTimer = FXGL.newLocalTimer();
 
     @Override
     public void onAdded(Entity entity) {
-        player = (GameEntity) entity;
+        player = (Entity) entity;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PlayerControl extends Control {
             Point2D position = player.getCenter().subtract(14, 4.5);
             Point2D vectorToMouse = shootPoint.subtract(position);
 
-            GameEntity bullet = spawnBullet(position, vectorToMouse);
+            Entity bullet = spawnBullet(position, vectorToMouse);
 
             switch (type) {
                 case RICOCHET:
@@ -83,8 +83,8 @@ public class PlayerControl extends Control {
         }
     }
 
-    private GameEntity spawnBullet(Point2D position, Point2D direction) {
-        return (GameEntity) FXGL.getApp().getGameWorld().spawn("Bullet",
+    private Entity spawnBullet(Point2D position, Point2D direction) {
+        return (Entity) FXGL.getApp().getGameWorld().spawn("Bullet",
                 new SpawnData(position.getX(), position.getY())
                         .put("direction", direction)
         );

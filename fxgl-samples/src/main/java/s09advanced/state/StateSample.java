@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -27,7 +27,7 @@ public class StateSample extends GameApplication {
         PLAYER
     }
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {

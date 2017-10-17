@@ -13,7 +13,7 @@ import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
@@ -32,7 +32,7 @@ import javafx.scene.text.Text;
  */
 public class ParticleSystemSample extends GameApplication {
 
-    private GameEntity particleEntity;
+    private Entity particleEntity;
     private ParticleEmitter emitter;
 
     @Override

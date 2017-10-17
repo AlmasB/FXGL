@@ -9,7 +9,7 @@ package s03entities;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.SelectableComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -30,7 +30,7 @@ public class SelectedEntitySample extends GameApplication {
         PLAYER, ENEMY
     }
 
-    private GameEntity player, enemy;
+    private Entity player, enemy;
 
     @Override
     protected void initSettings(GameSettings settings) {

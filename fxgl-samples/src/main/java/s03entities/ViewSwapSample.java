@@ -9,7 +9,7 @@ package s03entities;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -24,7 +24,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class ViewSwapSample extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {

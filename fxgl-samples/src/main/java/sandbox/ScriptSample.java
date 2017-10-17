@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -60,7 +60,7 @@ public class ScriptSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        GameEntity e = Entities.builder()
+        Entity e = Entities.builder()
                 .type(EntityType.PC)
                 .at(300, 300)
                 .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))

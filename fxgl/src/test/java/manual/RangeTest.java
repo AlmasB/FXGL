@@ -12,7 +12,7 @@ import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.ecs.component.Required;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.input.Input;
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class RangeTest extends GameApplication {
 
-    private GameEntity player, markers;
+    private Entity player, markers;
     private PlayerControl playerControl;
 
     @Override
@@ -84,14 +84,14 @@ public class RangeTest extends GameApplication {
         spawnEntity(400, 500);
         spawnEntity(500, 500);
 
-        player = new GameEntity();
+        player = new Entity();
         player.getPositionComponent().setValue(400, 300);
         player.getViewComponent().setView(new EntityView(new Rectangle(40, 40)), true);
 
         playerControl = new PlayerControl();
         player.addControl(playerControl);
 
-        markers = new GameEntity();
+        markers = new Entity();
 
         EntityView view = new EntityView();
         view.addNode(getMarker(-40, 0));
@@ -148,7 +148,7 @@ public class RangeTest extends GameApplication {
     }
 
     private void spawnEntity(double x, double y) {
-        GameEntity entity = new GameEntity();
+        Entity entity = new Entity();
         entity.getPositionComponent().setValue(x, y);
         entity.getViewComponent().setView(new EntityView(new Rectangle(40, 40)), true);
 

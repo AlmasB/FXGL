@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -52,7 +52,7 @@ public class FlyingKeysSample extends GameApplication {
         input.addAction(new UserAction("Spawn Box") {
             @Override
             protected void onActionBegin() {
-                GameEntity box = createPhysicsEntity();
+                Entity box = createPhysicsEntity();
 
                 // 3. set hit box (-es) to specify bounding shape
                 box.getBoundingBoxComponent()
@@ -83,7 +83,7 @@ public class FlyingKeysSample extends GameApplication {
         }, Duration.seconds(2.5));
     }
 
-    private GameEntity createPhysicsEntity() {
+    private Entity createPhysicsEntity() {
         // 1. create and configure physics component
         PhysicsComponent physics = new PhysicsComponent();
 

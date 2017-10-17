@@ -11,7 +11,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.input.ActionType;
@@ -58,7 +58,7 @@ public class ViewportTest extends GameApplication {
 
     @Override
     protected void initGame() {
-        GameEntity entity = Entities.builder()
+        Entity entity = Entities.builder()
                 .at(100, 100)
                 .viewFromNodeWithBBox(new Rectangle(40, 40))
                 .buildAndAttach(getGameWorld());

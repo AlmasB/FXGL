@@ -11,7 +11,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Control;
 import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import javafx.geometry.Point2D;
 
 /**
@@ -42,7 +42,7 @@ public class WandererControl extends Control {
 
     private float tx = FXGLMath.random(1000, 10000);
 
-    private GameEntity wanderer;
+    private Entity wanderer;
 
     public WandererControl(int moveSpeed) {
         screenWidth = (int) FXGL.getApp().getWidth();
@@ -52,7 +52,7 @@ public class WandererControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        wanderer = (GameEntity) entity;
+        wanderer = (Entity) entity;
     }
 
     @Override

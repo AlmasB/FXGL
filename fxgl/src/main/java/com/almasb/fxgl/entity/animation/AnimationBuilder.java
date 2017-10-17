@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.animation;
 
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.ColorComponent;
 import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.animation.Interpolator;
@@ -31,7 +31,7 @@ public final class AnimationBuilder {
 
     // guaranteed to be initialized before access by specific animation builder
     // see rotate(), scale(), translate(), etc. below
-    private List<GameEntity> entities;
+    private List<Entity> entities;
 
     public Duration getDelay() {
         return delay;
@@ -57,7 +57,7 @@ public final class AnimationBuilder {
         return autoReverse;
     }
 
-    List<GameEntity> getEntities() {
+    List<Entity> getEntities() {
         return entities;
     }
 
@@ -95,38 +95,38 @@ public final class AnimationBuilder {
         return this;
     }
 
-    public RotationAnimationBuilder rotate(GameEntity... entities) {
+    public RotationAnimationBuilder rotate(Entity... entities) {
         return rotate(Arrays.asList(entities));
     }
 
-    public RotationAnimationBuilder rotate(List<GameEntity> entities) {
+    public RotationAnimationBuilder rotate(List<Entity> entities) {
         this.entities = entities;
         return new RotationAnimationBuilder(this);
     }
 
-    public TranslationAnimationBuilder translate(GameEntity... entities) {
+    public TranslationAnimationBuilder translate(Entity... entities) {
         return translate(Arrays.asList(entities));
     }
 
-    public TranslationAnimationBuilder translate(List<GameEntity> entities) {
+    public TranslationAnimationBuilder translate(List<Entity> entities) {
         this.entities = entities;
         return new TranslationAnimationBuilder(this);
     }
 
-    public ScaleAnimationBuilder scale(GameEntity... entities) {
+    public ScaleAnimationBuilder scale(Entity... entities) {
         return scale(Arrays.asList(entities));
     }
 
-    public ScaleAnimationBuilder scale(List<GameEntity> entities) {
+    public ScaleAnimationBuilder scale(List<Entity> entities) {
         this.entities = entities;
         return new ScaleAnimationBuilder(this);
     }
 
-    public ColorAnimationBuilder color(GameEntity... entities) {
+    public ColorAnimationBuilder color(Entity... entities) {
         return color(Arrays.asList(entities));
     }
 
-    public ColorAnimationBuilder color(List<GameEntity> entities) {
+    public ColorAnimationBuilder color(List<Entity> entities) {
         this.entities = entities;
 
         boolean dontHaveColor = this.entities.stream().anyMatch(e -> !e.hasComponent(ColorComponent.class));

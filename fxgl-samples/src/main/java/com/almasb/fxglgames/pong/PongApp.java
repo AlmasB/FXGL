@@ -13,7 +13,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.TypeComponent;
 import com.almasb.fxgl.input.ActionType;
@@ -41,9 +41,9 @@ public class PongApp extends GameApplication {
 
     private PongFactory factory;
 
-    private GameEntity ball;
-    private GameEntity bat1;
-    private GameEntity bat2;
+    private Entity ball;
+    private Entity bat1;
+    private Entity bat2;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -158,7 +158,7 @@ public class PongApp extends GameApplication {
     }
 
     private void initBackground() {
-        GameEntity bg = new GameEntity();
+        Entity bg = new Entity();
         bg.getViewComponent().setView(new Rectangle(getWidth(), getHeight(), Color.rgb(0, 0, 5)));
 
         getGameWorld().addEntity(bg);

@@ -15,6 +15,7 @@ import com.almasb.fxgl.entity.TextEntityFactory
 import com.almasb.fxgl.entity.component.PositionComponent
 import com.almasb.fxgl.entity.component.TypeComponent
 import com.almasb.fxgl.parser.text.TextLevelParser
+import javafx.geometry.Point2D
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
@@ -52,20 +53,20 @@ class TextLevelParserTest {
         with(parser) {
             addEntityProducer('1', EntitySpawner { data ->
                 val e = Entity()
-                e.addComponent(PositionComponent(data.x, data.y))
-                e.addComponent(TypeComponent(EntityType.TYPE1))
+                e.position = Point2D(data.x, data.y)
+                e.type = EntityType.TYPE1
                 e
             })
             addEntityProducer('2', EntitySpawner { data ->
                 val e = Entity()
-                e.addComponent(PositionComponent(data.x, data.y))
-                e.addComponent(TypeComponent(EntityType.TYPE2))
+                e.position = Point2D(data.x, data.y)
+                e.type = EntityType.TYPE2
                 e
             })
             addEntityProducer('3', EntitySpawner { data ->
                 val e = Entity()
-                e.addComponent(PositionComponent(data.x, data.y))
-                e.addComponent(TypeComponent(EntityType.TYPE3))
+                e.position = Point2D(data.x, data.y)
+                e.type = EntityType.TYPE3
                 e
             })
         }
@@ -128,24 +129,24 @@ class TextLevelParserTest {
         @SpawnSymbol('1')
         fun newType1(data: SpawnData): Entity {
             val e = Entity()
-            e.addComponent(PositionComponent(data.x, data.y))
-            e.addComponent(TypeComponent(EntityType.TYPE1))
+            e.position = Point2D(data.x, data.y)
+            e.type = EntityType.TYPE1
             return e
         }
 
         @SpawnSymbol('2')
         fun newType2(data: SpawnData): Entity {
             val e = Entity()
-            e.addComponent(PositionComponent(data.x, data.y))
-            e.addComponent(TypeComponent(EntityType.TYPE2))
+            e.position = Point2D(data.x, data.y)
+            e.type = EntityType.TYPE2
             return e
         }
 
         @SpawnSymbol('3')
         fun newType3(data: SpawnData): Entity {
             val e = Entity()
-            e.addComponent(PositionComponent(data.x, data.y))
-            e.addComponent(TypeComponent(EntityType.TYPE3))
+            e.position = Point2D(data.x, data.y)
+            e.type = EntityType.TYPE3
             return e
         }
     }

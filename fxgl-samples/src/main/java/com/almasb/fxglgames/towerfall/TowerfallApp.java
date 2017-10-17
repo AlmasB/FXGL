@@ -8,7 +8,7 @@ package com.almasb.fxglgames.towerfall;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.gameplay.rpg.quest.Quest;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestObjective;
@@ -30,10 +30,10 @@ import java.util.Map;
  */
 public class TowerfallApp extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
     private CharacterControl playerControl;
 
-    public GameEntity getPlayer() {
+    public Entity getPlayer() {
         return player;
     }
 
@@ -107,7 +107,7 @@ public class TowerfallApp extends GameApplication {
 
         getGameWorld().setLevel(level);
 
-        player = (GameEntity) getGameWorld().getEntitiesByType(EntityType.PLAYER).get(0);
+        player = (Entity) getGameWorld().getEntitiesByType(EntityType.PLAYER).get(0);
         playerControl = player.getControl(CharacterControl.class);
     }
 

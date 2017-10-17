@@ -11,7 +11,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -106,7 +106,7 @@ public class FlappyBirdApp extends GameApplication {
     }
 
     private void initBackground() {
-        GameEntity bg = Entities.builder()
+        Entity bg = Entities.builder()
                 .type(EntityType.BACKGROUND)
                 .viewFromNode(new Rectangle(getWidth(), getHeight(), Color.WHITE))
                 .with(new ColorChangingControl())
@@ -122,7 +122,7 @@ public class FlappyBirdApp extends GameApplication {
         Texture view = getAssetLoader().loadTexture("bird.png")
                 .toAnimatedTexture(2, Duration.seconds(0.5));
 
-        GameEntity player = Entities.builder()
+        Entity player = Entities.builder()
                 .at(100, 100)
                 .type(EntityType.PLAYER)
                 .bbox(new HitBox("BODY", BoundingShape.box(70, 60)))

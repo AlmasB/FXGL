@@ -39,7 +39,7 @@ class EntityGroupTest {
     @Test
     fun `Add`() {
         val e = Entity()
-        e.addComponent(TypeComponent(EntityType.T1))
+        e.type = EntityType.T1
 
         world.addEntity(e)
 
@@ -56,7 +56,7 @@ class EntityGroupTest {
     @Test
     fun `Remove`() {
         val e = Entity()
-        e.addComponent(TypeComponent(EntityType.T1))
+        e.type = EntityType.T1
 
         world.addEntity(e)
         world.removeEntity(e)
@@ -73,7 +73,7 @@ class EntityGroupTest {
     @Test
     fun `Dispose`() {
         val e = Entity()
-        e.addComponent(TypeComponent(EntityType.T1))
+        e.type = EntityType.T1
 
         group.dispose()
 

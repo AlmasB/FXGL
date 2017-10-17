@@ -8,7 +8,7 @@ package s06gameplay;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.input.Input;
@@ -97,7 +97,7 @@ public class AchievementsSample extends GameApplication {
     protected void initGame() {
         playerControl = new PlayerControl();
         
-        GameEntity player = Entities.builder()
+        Entity player = Entities.builder()
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40))
                 .with(playerControl)

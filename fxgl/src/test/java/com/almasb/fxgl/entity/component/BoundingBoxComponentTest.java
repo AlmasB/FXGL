@@ -35,6 +35,10 @@ public class BoundingBoxComponentTest {
         bbox = new BoundingBoxComponent();
 
         Entity entity = new Entity();
+        entity.removeComponent(ViewComponent.class);
+        entity.removeComponent(BoundingBoxComponent.class);
+        entity.removeComponent(PositionComponent.class);
+
         entity.addComponent(position);
         entity.addComponent(bbox);
     }
@@ -211,22 +215,18 @@ public class BoundingBoxComponentTest {
     public void testCheckCollision() throws Exception {
         bbox.addHitBox(new HitBox("TEST", BoundingShape.box(40, 40)));
 
-        BoundingBoxComponent bbox2 = new BoundingBoxComponent();
-        bbox2.addHitBox(new HitBox("TEST2", BoundingShape.box(40, 40)));
+        Entity entity2 = new Entity();
+        entity2.getBoundingBoxComponent().addHitBox(new HitBox("TEST2", BoundingShape.box(40, 40)));
 
-        CollisionResult result = bbox.checkCollision(bbox2);
+        CollisionResult result = bbox.checkCollision(entity2.getBoundingBoxComponent());
         assertThat(result.hasCollided(), is(true));
         assertThat(result.getBoxA(), is(bbox.hitBoxesProperty().get(0)));
-        assertThat(result.getBoxB(), is(bbox2.hitBoxesProperty().get(0)));
+        assertThat(result.getBoxB(), is(entity2.getBoundingBoxComponent().hitBoxesProperty().get(0)));
 
-        BoundingBoxComponent bbox3 = new BoundingBoxComponent();
-        bbox3.addHitBox(new HitBox("TEST3", new Point2D(45, 0), BoundingShape.box(40, 40)));
+        Entity entity3 = new Entity();
+        entity3.getBoundingBoxComponent().addHitBox(new HitBox("TEST3", new Point2D(45, 0), BoundingShape.box(40, 40)));
 
-        Entity entity2 = new Entity();
-        entity2.addComponent(new PositionComponent());
-        entity2.addComponent(bbox3);
-
-        result = bbox.checkCollision(bbox3);
+        result = bbox.checkCollision(entity3.getBoundingBoxComponent());
         assertThat(result.hasCollided(), is(false));
         assertThat(result == CollisionResult.NO_COLLISION, is(true));
     }

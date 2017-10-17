@@ -10,7 +10,7 @@ import com.almasb.fxgl.ai.pathfinding.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.text.TextLevelParser;
@@ -37,10 +37,10 @@ public class PacmanApp extends GameApplication {
 
     private static final int UI_SIZE = 200;
 
-    private GameEntity player;
+    private Entity player;
     private PlayerControl playerControl;
 
-    public GameEntity getPlayer() {
+    public Entity getPlayer() {
         return player;
     }
 
@@ -135,7 +135,7 @@ public class PacmanApp extends GameApplication {
         level.getEntities().clear();
 
         // get references to player and his control
-        player = (GameEntity) getGameWorld().getEntitiesByType(PacmanType.PLAYER).get(0);
+        player = (Entity) getGameWorld().getEntitiesByType(PacmanType.PLAYER).get(0);
         playerControl = player.getControl(PlayerControl.class);
 
         // init the A* underlying grid and mark nodes where blocks are as not walkable

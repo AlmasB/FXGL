@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * Shows how to init a basic game object and attach it to the world
- * using predefined GameEntity.
+ * using predefined Entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */

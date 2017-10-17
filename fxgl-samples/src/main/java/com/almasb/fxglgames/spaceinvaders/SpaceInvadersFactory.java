@@ -11,6 +11,7 @@ import com.almasb.fxgl.annotation.Spawns;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
@@ -84,7 +85,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
             x = random.nextInt((int) w);
         }
 
-        GameEntity meteor = new GameEntity();
+        Entity meteor = new Entity();
         meteor.getPositionComponent().setValue(x, y);
 
         String textureName = "background/meteor" + (random.nextInt(4) + 1) + ".png";
@@ -114,7 +115,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
     }
 
     @Spawns("Player")
-    public GameEntity newPlayer(SpawnData data) {
+    public Entity newPlayer(SpawnData data) {
         Texture texture = assetLoader.loadTexture("player2.png");
         texture.setPreserveRatio(true);
         texture.setFitHeight(40);
@@ -143,9 +144,9 @@ public final class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("Bullet")
     public Entity newBullet(SpawnData data) {
-        GameEntity owner = data.get("owner");
+        Entity owner = data.get("owner");
 
-        GameEntity bullet = new GameEntity();
+        Entity bullet = new Entity();
         bullet.getTypeComponent().setValue(SpaceInvadersType.BULLET);
 
         Point2D center = Entities.getBBox(owner)
@@ -167,9 +168,9 @@ public final class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("Laser")
     public Entity newLaser(SpawnData data) {
-        GameEntity owner = data.get("owner");
+        Entity owner = data.get("owner");
 
-        GameEntity bullet = new GameEntity();
+        Entity bullet = new Entity();
         bullet.getTypeComponent().setValue(SpaceInvadersType.BULLET);
 
         Point2D center = Entities.getBBox(owner)
@@ -235,7 +236,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("Explosion")
     public Entity newExplosion(SpawnData data) {
-        GameEntity explosion = Entities.builder()
+        Entity explosion = Entities.builder()
                 .at(data.getX() - 40, data.getY() - 40)
                 // texture is 256x256, we want smaller, 80x80
                 // it has 48 frames, hence 80 * 48
@@ -263,7 +264,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
 
         pComponent.setFixtureDef(fixtureDef);
 
-        GameEntity levelInfo = Entities.builder()
+        Entity levelInfo = Entities.builder()
                 .at(FXGL.getAppWidth() / 2 - levelText.getLayoutBounds().getWidth() / 2, 0)
                 .viewFromNodeWithBBox(levelText)
                 .with(pComponent)

@@ -11,7 +11,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityEvent;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -34,7 +34,7 @@ public class EventsSample extends GameApplication {
         PLAYER, ENEMY
     }
 
-    private GameEntity player, enemy;
+    private Entity player, enemy;
     private PlayerControl playerControl;
 
     @Override

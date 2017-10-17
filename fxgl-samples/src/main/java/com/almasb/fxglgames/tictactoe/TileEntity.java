@@ -6,15 +6,15 @@
 
 package com.almasb.fxglgames.tictactoe;
 
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxglgames.tictactoe.control.TileControl;
 
 /**
- * Instead of using generic GameEntity we add a few convenience methods.
+ * Instead of using generic Entity we add a few convenience methods.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public class TileEntity extends GameEntity {
+public class TileEntity extends Entity {
 
     public TileEntity(double x, double y) {
         setX(x);

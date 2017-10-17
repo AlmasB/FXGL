@@ -8,13 +8,13 @@ package s01basics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
 /**
  * Shows how to init a basic game object and attach it to the world
- * using predefined GameEntity.
+ * using predefined Entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -27,7 +27,7 @@ public class InitSampleEasy extends GameApplication {
 
     // make the field instance level
     // but do NOT init here for properly functioning save-load system
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -46,7 +46,7 @@ public class InitSampleEasy extends GameApplication {
     @Override
     protected void initGame() {
         // 2. create entity and modify necessary components
-        player = new GameEntity();
+        player = new Entity();
         player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(100, 100);
         player.getViewComponent().setView(new Rectangle(40, 40));

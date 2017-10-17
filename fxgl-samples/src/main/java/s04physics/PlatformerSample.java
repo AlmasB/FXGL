@@ -9,7 +9,7 @@ package s04physics;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -29,7 +29,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class PlatformerSample extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -116,7 +116,7 @@ public class PlatformerSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
     }
 
-    private GameEntity createPlayer(double x, double y, double width, double height) {
+    private Entity createPlayer(double x, double y, double width, double height) {
         PhysicsComponent physics = new PhysicsComponent();
 
         physics.setBodyType(BodyType.DYNAMIC);

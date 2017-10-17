@@ -10,7 +10,7 @@ import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -40,7 +40,7 @@ public class BehaviorSample extends GameApplication {
     }
 
     private PlayerControl playerControl;
-    GameEntity player;
+    Entity player;
 
     @Override
     protected void initInput() {

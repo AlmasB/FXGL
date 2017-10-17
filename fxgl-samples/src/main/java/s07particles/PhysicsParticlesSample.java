@@ -9,7 +9,7 @@ package s07particles;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -50,7 +50,7 @@ public class PhysicsParticlesSample extends GameApplication {
     }
 
     private void initGround() {
-        GameEntity ground = new GameEntity();
+        Entity ground = new Entity();
         ground.getPositionComponent().setValue(100, 500);
         ground.getViewComponent().setView(new EntityView(new Rectangle(800, 100)), true);
         ground.addComponent(new PhysicsComponent());
@@ -69,7 +69,7 @@ public class PhysicsParticlesSample extends GameApplication {
         ppComponent.setColor(Color.DARKGREEN.brighter());
 
         // 3. create entity, place it and specify volume of particles via bounding box
-        GameEntity cloth = new GameEntity();
+        Entity cloth = new Entity();
         cloth.getPositionComponent().setValue(150, 10);
         cloth.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", BoundingShape.box(75, 150)));
 
@@ -87,7 +87,7 @@ public class PhysicsParticlesSample extends GameApplication {
         ppComponent.setDefinition(groupDef);
         ppComponent.setColor(Color.BLUE.brighter());
 
-        GameEntity liquid = new GameEntity();
+        Entity liquid = new Entity();
         liquid.getPositionComponent().setValue(300, 10);
         liquid.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", BoundingShape.circle(35)));
         liquid.addComponent(ppComponent);

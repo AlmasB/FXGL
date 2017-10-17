@@ -159,7 +159,8 @@ class GameWorldTest {
     @Test
     fun `Listeners notified in the same frame`() {
         val e = Entity()
-        e.addComponent(PositionComponent(100.0, 100.0))
+        e.x = 100.0
+        e.y = 100.0
 
         var count = 0
 
@@ -187,7 +188,7 @@ class GameWorldTest {
     @Test
     fun `Remove world listener`() {
         val e = Entity()
-        e.addComponent(PositionComponent(100.0, 100.0))
+        e.position = Point2D(100.0, 100.0)
 
         var count = 0
 
@@ -228,7 +229,7 @@ class GameWorldTest {
 
     @Test
     fun `Selected entity`() {
-        val e1 = GameEntity()
+        val e1 = Entity()
         e1.addComponent(SelectableComponent(true))
 
         gameWorld.addEntity(e1)
@@ -246,10 +247,10 @@ class GameWorldTest {
 
     @Test
     fun `Selected entity property`() {
-        val e1 = GameEntity()
+        val e1 = Entity()
         e1.addComponent(SelectableComponent(true))
 
-        val e2 = GameEntity()
+        val e2 = Entity()
         e2.addComponent(SelectableComponent(true))
 
         gameWorld.addEntities(e1, e2)
@@ -469,13 +470,13 @@ class GameWorldTest {
     @Test
     fun `By Type List`() {
         val e1 = Entity()
-        e1.addComponent(TypeComponent(TestType.T1))
+        e1.type = TestType.T1
 
         val e2 = Entity()
-        e2.addComponent(TypeComponent(TestType.T2))
+        e2.type = TestType.T2
 
         val e3 = Entity()
-        e3.addComponent(TypeComponent(TestType.T3))
+        e3.type = TestType.T3
 
         gameWorld.addEntities(e1, e2, e3)
 
@@ -489,13 +490,13 @@ class GameWorldTest {
     @Test
     fun `By Type Array`() {
         val e1 = Entity()
-        e1.addComponent(TypeComponent(TestType.T1))
+        e1.type = TestType.T1
 
         val e2 = Entity()
-        e2.addComponent(TypeComponent(TestType.T2))
+        e2.type = TestType.T2
 
         val e3 = Entity()
-        e3.addComponent(TypeComponent(TestType.T3))
+        e3.type = TestType.T3
 
         gameWorld.addEntities(e1, e2, e3)
 
@@ -530,13 +531,13 @@ class GameWorldTest {
     @Test
     fun `Singleton`() {
         val e1 = Entity()
-        e1.addComponent(TypeComponent(TestType.T1))
+        e1.type = TestType.T1
 
         val e2 = Entity()
-        e2.addComponent(TypeComponent(TestType.T2))
+        e2.type = TestType.T2
 
         val e3 = Entity()
-        e3.addComponent(TypeComponent(TestType.T3))
+        e3.type = TestType.T3
 
         val e4 = Entity()
 
@@ -554,10 +555,10 @@ class GameWorldTest {
     @Test
     fun `Random returns the single item present`() {
         val e1 = Entity()
-        e1.addComponent(TypeComponent(TestType.T1))
+        e1.type = TestType.T1
 
         val e2 = Entity()
-        e2.addComponent(TypeComponent(TestType.T2))
+        e2.type = TestType.T2
 
         gameWorld.addEntities(e1, e2)
 
@@ -570,13 +571,13 @@ class GameWorldTest {
     @Test
     fun `Entity group`() {
         val e1 = Entity()
-        e1.addComponent(TypeComponent(TestType.T1))
+        e1.type = TestType.T1
 
         val e2 = Entity()
-        e2.addComponent(TypeComponent(TestType.T2))
+        e2.type = TestType.T2
 
         val e3 = Entity()
-        e3.addComponent(TypeComponent(TestType.T3))
+        e3.type = TestType.T3
 
         gameWorld.addEntities(e1, e2, e3)
 
@@ -609,7 +610,8 @@ class GameWorldTest {
     @Test
     fun `Closest entity returns Optional empty if no valid entity found`() {
         val e = Entity()
-        e.addComponent(PositionComponent(10.0, 10.0))
+        e.x = 10.0
+        e.y = 10.0
 
         gameWorld.addEntity(e)
 
@@ -619,13 +621,16 @@ class GameWorldTest {
     @Test
     fun `Closest entity`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(10.0, 10.0))
+        e1.x = 10.0
+        e1.y = 10.0
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(20.0, 10.0))
+        e2.x = 20.0
+        e2.y = 10.0
 
         val e3 = Entity()
-        e3.addComponent(PositionComponent(100.0, 10.0))
+        e3.x = 100.0
+        e3.y = 10.0
 
         gameWorld.addEntities(e1, e2, e3)
 
@@ -639,10 +644,12 @@ class GameWorldTest {
     @Test
     fun `Filtered entities List`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(10.0, 10.0))
+        e1.x = 10.0
+        e1.y = 10.0
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(20.0, 10.0))
+        e2.x = 20.0
+        e2.y = 10.0
 
         val e3 = Entity()
 
@@ -650,7 +657,7 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(gameWorld.getEntitiesFiltered { Entities.getPosition(it) != null && Entities.getPosition(it).x > 15 }, contains(e2)) },
-                Executable { assertThat(gameWorld.getEntitiesFiltered { Entities.getPosition(it) != null && Entities.getPosition(it).y < 30 }, containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(gameWorld.getEntitiesFiltered { Entities.getPosition(it) != null && Entities.getPosition(it).y < 30 }, containsInAnyOrder(e1, e2, e3)) },
                 Executable { assertThat(gameWorld.getEntitiesFiltered { true }, containsInAnyOrder(e1, e2, e3)) }
         )
     }
@@ -658,10 +665,12 @@ class GameWorldTest {
     @Test
     fun `Filtered entities Array`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(10.0, 10.0))
+        e1.x = 10.0
+        e1.y = 10.0
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(20.0, 10.0))
+        e2.x = 20.0
+        e2.y = 10.0
 
         val e3 = Entity()
 
@@ -677,7 +686,7 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(result1, contains(e2)) },
-                Executable { assertThat(result2, containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(result2, containsInAnyOrder(e1, e2, e3)) },
                 Executable { assertThat(result3, containsInAnyOrder(e1, e2, e3)) }
         )
     }
@@ -685,13 +694,16 @@ class GameWorldTest {
     @Test
     fun `Get entities at List`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(10.0, 10.0))
+        e1.x = 10.0
+        e1.y = 10.0
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(10.0, 10.0))
+        e2.x = 10.0
+        e2.y = 10.0
 
         val e3 = Entity()
-        e3.addComponent(PositionComponent(100.0, 10.0))
+        e3.x = 100.0
+        e3.y = 10.0
 
         gameWorld.addEntities(e1, e2, e3)
 
@@ -704,13 +716,16 @@ class GameWorldTest {
     @Test
     fun `Get entities at Array`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(10.0, 10.0))
+        e1.x = 10.0
+        e1.y = 10.0
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(10.0, 10.0))
+        e2.x = 10.0
+        e2.y = 10.0
 
         val e3 = Entity()
-        e3.addComponent(PositionComponent(100.0, 10.0))
+        e3.x = 100.0
+        e3.y = 10.0
 
         gameWorld.addEntities(e1, e2, e3)
 
@@ -750,19 +765,18 @@ class GameWorldTest {
     @Test
     fun `By range List`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(0.0, 0.0))
-        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e1.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(100.0, 0.0))
-        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e2.x = 100.0
+        e2.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e3 = Entity()
 
         gameWorld.addEntities(e1, e2, e3)
 
         assertAll(
-                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), containsInAnyOrder(e1, e2, e3)) },
                 Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(90.0, 0.0, 20.0, 20.0)), contains(e2)) }
         )
     }
@@ -770,12 +784,11 @@ class GameWorldTest {
     @Test
     fun `By range Array`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(0.0, 0.0))
-        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e1.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(100.0, 0.0))
-        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e2.x = 100.0
+        e2.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e3 = Entity()
 
@@ -788,7 +801,7 @@ class GameWorldTest {
         gameWorld.getEntitiesInRange(result2, 90.0, 0.0, 90 + 20.0, 20.0)
 
         assertAll(
-                Executable { assertThat(result1, containsInAnyOrder(e1, e2)) },
+                Executable { assertThat(result1, containsInAnyOrder(e1, e2, e3)) },
                 Executable { assertThat(result2, contains(e2)) }
         )
     }
@@ -796,12 +809,11 @@ class GameWorldTest {
     @Test
     fun `Get colliding entities`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(0.0, 0.0))
-        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e1.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(10.0, 0.0))
-        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e2.x = 10.0
+        e2.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e3 = Entity()
 
@@ -817,12 +829,11 @@ class GameWorldTest {
     @Test
     fun `Get colliding entities Array`() {
         val e1 = Entity()
-        e1.addComponent(PositionComponent(0.0, 0.0))
-        e1.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e1.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(10.0, 0.0))
-        e2.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(20.0, 20.0))))
+        e2.x = 10.0
+        e2.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(20.0, 20.0)))
 
         val e3 = Entity()
 
@@ -856,14 +867,10 @@ class GameWorldTest {
         }
 
         val e1 = Entity()
-        e1.addComponent(PositionComponent(0.0, 0.0))
-        e1.addComponent(RotationComponent())
-        e1.addComponent(ViewComponent(layer))
+        e1.renderLayer = layer
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(10.0, 0.0))
-        e2.addComponent(RotationComponent())
-        e2.addComponent(ViewComponent())
+        e2.x = 10.0
 
         val e3 = Entity()
 
@@ -871,7 +878,7 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(gameWorld.getEntitiesByLayer(layer), contains(e1)) },
-                Executable { assertThat(gameWorld.getEntitiesByLayer(RenderLayer.TOP), contains(e2)) }
+                Executable { assertThat(gameWorld.getEntitiesByLayer(RenderLayer.TOP), contains(e2, e3)) }
         )
     }
 
@@ -888,14 +895,10 @@ class GameWorldTest {
         }
 
         val e1 = Entity()
-        e1.addComponent(PositionComponent(0.0, 0.0))
-        e1.addComponent(RotationComponent())
-        e1.addComponent(ViewComponent(layer))
+        e1.renderLayer = layer
 
         val e2 = Entity()
-        e2.addComponent(PositionComponent(10.0, 0.0))
-        e2.addComponent(RotationComponent())
-        e2.addComponent(ViewComponent())
+        e2.x = 10.0
 
         val e3 = Entity()
 
@@ -909,7 +912,7 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(result1, contains(e1)) },
-                Executable { assertThat(result2, contains(e2)) }
+                Executable { assertThat(result2, contains(e2, e3)) }
         )
     }
 
