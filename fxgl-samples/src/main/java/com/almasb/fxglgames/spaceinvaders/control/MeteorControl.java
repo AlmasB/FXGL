@@ -7,8 +7,8 @@
 package com.almasb.fxglgames.spaceinvaders.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;
 import javafx.geometry.Point2D;

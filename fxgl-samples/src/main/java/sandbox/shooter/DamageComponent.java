@@ -6,7 +6,7 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.ecs.component.IntegerComponent;
+import com.almasb.fxgl.entity.component.IntegerComponent;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

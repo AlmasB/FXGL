@@ -8,7 +8,7 @@ package com.almasb.fxglgames.towerfall;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.gameplay.Level;
 import com.almasb.fxgl.gameplay.rpg.quest.Quest;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestObjective;

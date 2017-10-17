@@ -9,7 +9,7 @@ package com.almasb.fxgl.ai
 import com.almasb.fxgl.ai.btree.LeafTask
 import com.almasb.fxgl.ai.btree.Task
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 
 /**
  * In a behavior tree a goal action is executed until it reaches the goal.

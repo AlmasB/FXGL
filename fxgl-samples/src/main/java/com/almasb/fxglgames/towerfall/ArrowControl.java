@@ -6,8 +6,8 @@
 
 package com.almasb.fxglgames.towerfall;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
 import javafx.geometry.Point2D;
 

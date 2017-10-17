@@ -7,7 +7,7 @@
 package s03entities;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;

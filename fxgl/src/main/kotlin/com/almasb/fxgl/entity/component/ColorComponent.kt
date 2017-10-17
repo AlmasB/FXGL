@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity.component
 
-import com.almasb.fxgl.ecs.component.ObjectComponent
 import javafx.scene.paint.Color
 
 /**

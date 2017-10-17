@@ -8,7 +8,7 @@ package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockState
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.ColorComponent
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color

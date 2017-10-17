@@ -7,9 +7,8 @@ package s04physics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;

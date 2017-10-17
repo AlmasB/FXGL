@@ -8,9 +8,9 @@ package com.almasb.fxglgames.spaceinvaders.control;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.GameWorld;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;

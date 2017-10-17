@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.physics
 
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.effect.ParticleControl
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroup
 import javafx.geometry.Point2D

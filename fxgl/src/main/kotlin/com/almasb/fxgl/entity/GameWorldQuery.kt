@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.ecs.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.entity.component.PositionComponent
 import com.almasb.fxgl.entity.component.ViewComponent

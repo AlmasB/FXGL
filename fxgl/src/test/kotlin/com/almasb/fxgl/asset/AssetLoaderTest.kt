@@ -7,7 +7,7 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat

@@ -8,7 +8,7 @@ package com.almasb.fxglgames.pacman.ai;
 
 import com.almasb.fxgl.ai.SingleAction;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;

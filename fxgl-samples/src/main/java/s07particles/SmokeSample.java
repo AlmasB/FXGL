@@ -13,7 +13,7 @@ import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;

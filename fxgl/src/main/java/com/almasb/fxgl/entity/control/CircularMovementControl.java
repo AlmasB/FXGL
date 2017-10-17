@@ -5,9 +5,9 @@
  */
 package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.component.PositionComponent;
 
 /**

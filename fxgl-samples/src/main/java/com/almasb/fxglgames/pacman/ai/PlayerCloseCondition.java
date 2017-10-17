@@ -8,7 +8,7 @@ package com.almasb.fxglgames.pacman.ai;
 
 import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxglgames.pacman.PacmanApp;
 
 /**

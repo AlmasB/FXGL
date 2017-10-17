@@ -9,7 +9,7 @@ package s08ai;
 import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.ai.SingleAction;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 
 /**

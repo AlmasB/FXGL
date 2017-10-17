@@ -9,7 +9,7 @@ package sandbox.uno;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;

@@ -6,8 +6,8 @@
 
 package com.almasb.fxglgames.geowars.grid;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxglgames.geowars.component.GraphicsComponent;
 import javafx.scene.canvas.GraphicsContext;
 

@@ -8,7 +8,7 @@ package s08ai;
 
 import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

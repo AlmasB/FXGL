@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.physics.box2d.particle.ParticleGroupDef;

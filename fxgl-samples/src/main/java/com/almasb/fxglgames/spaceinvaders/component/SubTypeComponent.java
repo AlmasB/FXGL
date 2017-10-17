@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.spaceinvaders.component;
 
-import com.almasb.fxgl.ecs.component.ObjectComponent;
+import com.almasb.fxgl.entity.component.ObjectComponent;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

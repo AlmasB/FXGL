@@ -7,7 +7,7 @@ package s07particles;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;

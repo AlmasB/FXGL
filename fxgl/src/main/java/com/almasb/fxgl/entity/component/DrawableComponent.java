@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.Entity;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.function.BiConsumer;

@@ -9,8 +9,7 @@ package com.almasb.fxglgames.pacman.control;
 import com.almasb.fxgl.ai.pathfinding.AStarGrid;
 import com.almasb.fxgl.ai.pathfinding.AStarNode;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxglgames.pacman.PacmanApp;
 import com.almasb.fxglgames.pacman.PacmanType;
 

@@ -6,12 +6,9 @@
 
 package com.almasb.fxgl.physics.handler
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.ecs.GameWorld
-import com.almasb.fxgl.entity.component.BoundingBoxComponent
+import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.component.CollidableComponent
-import com.almasb.fxgl.entity.component.PositionComponent
-import com.almasb.fxgl.entity.component.TypeComponent
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsWorld

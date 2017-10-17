@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.core.math
 
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse

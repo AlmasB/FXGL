@@ -8,7 +8,7 @@ package s01basics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.RotationComponent;

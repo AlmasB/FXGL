@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.animation;
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.ColorComponent;
 import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.animation.Interpolator;

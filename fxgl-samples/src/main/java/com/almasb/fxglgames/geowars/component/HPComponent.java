@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.geowars.component;
 
-import com.almasb.fxgl.ecs.component.IntegerComponent;
+import com.almasb.fxgl.entity.component.IntegerComponent;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

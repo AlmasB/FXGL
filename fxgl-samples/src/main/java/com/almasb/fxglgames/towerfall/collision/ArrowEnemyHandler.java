@@ -8,8 +8,8 @@ package com.almasb.fxglgames.towerfall.collision;
 
 import com.almasb.fxgl.annotation.AddCollisionHandler;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.UserDataComponent;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.UserDataComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxglgames.towerfall.EntityType;
 

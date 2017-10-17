@@ -5,7 +5,7 @@
  */
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 
 /**
  * Handler for a collision that occurred between two entities.

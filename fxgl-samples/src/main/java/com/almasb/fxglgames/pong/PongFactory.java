@@ -7,7 +7,7 @@
 package com.almasb.fxglgames.pong;
 
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;

@@ -6,7 +6,7 @@
 
 package com.almasb.fxglgames.tictactoe;
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxglgames.tictactoe.control.TileControl;
 
 /**

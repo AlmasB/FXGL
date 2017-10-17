@@ -7,8 +7,7 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.devtools.DeveloperEditable;
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.component.DoubleComponent;
+import com.almasb.fxgl.entity.CopyableComponent;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
 

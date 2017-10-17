@@ -8,7 +8,7 @@ package com.almasb.fxgl.scene
 
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.Vec2
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.BoundingBoxComponent
 import com.almasb.fxgl.entity.component.PositionComponent
 import javafx.beans.binding.Bindings

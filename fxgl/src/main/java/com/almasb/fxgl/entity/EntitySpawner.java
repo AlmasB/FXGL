@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.entity;
 
-import com.almasb.fxgl.ecs.Entity;
-
 import java.util.function.Function;
 
 /**

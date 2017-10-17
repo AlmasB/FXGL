@@ -12,7 +12,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
 import com.almasb.fxgl.app.FXGL.Companion.getInput
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture

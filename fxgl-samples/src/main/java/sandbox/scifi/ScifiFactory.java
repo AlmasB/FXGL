@@ -8,7 +8,7 @@ package sandbox.scifi;
 
 import com.almasb.fxgl.annotation.SetEntityFactory;
 import com.almasb.fxgl.annotation.Spawns;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;

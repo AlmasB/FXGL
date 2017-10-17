@@ -6,8 +6,8 @@
 
 package com.almasb.fxglgames.pong;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;

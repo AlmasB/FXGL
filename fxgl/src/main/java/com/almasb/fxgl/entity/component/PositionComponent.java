@@ -7,9 +7,9 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.devtools.DeveloperEditable;
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.CopyableComponent;
+import com.almasb.fxgl.entity.serialization.SerializableComponent;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

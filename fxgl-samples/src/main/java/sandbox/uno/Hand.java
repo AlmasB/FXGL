@@ -6,7 +6,7 @@
 
 package sandbox.uno;
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

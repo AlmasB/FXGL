@@ -11,7 +11,7 @@ import com.almasb.fxgl.annotation.AnnotationParser
 import com.almasb.fxgl.annotation.SetEntityFactory
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.ecs.GameWorld
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.EntityFactory
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState

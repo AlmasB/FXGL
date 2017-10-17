@@ -10,7 +10,7 @@ import com.almasb.fxgl.ai.fsm.State;
 import com.almasb.fxgl.ai.msg.Telegram;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

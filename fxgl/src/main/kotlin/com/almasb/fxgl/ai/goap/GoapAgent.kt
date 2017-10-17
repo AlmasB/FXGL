@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.ai.goap
 
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import java.util.*
 
 /**
