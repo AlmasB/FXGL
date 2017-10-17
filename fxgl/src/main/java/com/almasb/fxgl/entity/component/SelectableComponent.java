@@ -9,7 +9,7 @@ package com.almasb.fxgl.entity.component;
 import com.almasb.fxgl.entity.CopyableComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
-import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.view.EntityView;
 
 /**
  * Marks an entity as selectable.

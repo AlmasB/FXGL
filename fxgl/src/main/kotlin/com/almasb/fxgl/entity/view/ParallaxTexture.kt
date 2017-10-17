@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity
+package com.almasb.fxgl.entity.view
 
 import com.almasb.fxgl.texture.Texture
 

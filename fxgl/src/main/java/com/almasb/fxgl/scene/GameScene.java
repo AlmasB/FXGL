@@ -14,6 +14,7 @@ import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;

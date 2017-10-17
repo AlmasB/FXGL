@@ -4,25 +4,35 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.entity
+package com.almasb.fxgl.entity.view
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.entity.RenderLayer
+import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Orientation
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 
 /**
- *
+ * EntityView for scrollable backgrounds.
+ * Ensure that your viewport x, y cannot go < 0.
+ * In other words, limit min x, y to 0.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class ParallaxBackgroundView
-@JvmOverloads constructor(private val textures: List<ParallaxTexture>,
+class ScrollingBackgroundView
+@JvmOverloads constructor(texture: Texture,
                           val orientation: Orientation = Orientation.HORIZONTAL,
+                          val speed: Double = 1.0,
                           renderLayer: RenderLayer = RenderLayer.BACKGROUND) : EntityView(renderLayer) {
 
     private val canvas: Canvas
     private val g: GraphicsContext
+
+    private val image = texture.image
+
+    private var sx = 0.0
+    private var sy = 0.0
 
     init {
         val viewport = FXGL.getApp().gameScene.viewport
@@ -36,8 +46,7 @@ class ParallaxBackgroundView
                 if (x.toInt() < 0)
                     throw IllegalStateException("Background x cannot be < 0")
 
-                textures.forEach { it.sx = x.toDouble() * it.speed % it.texture.image.width }
-
+                sx = (x.toDouble() * speed) % image.width
                 redraw()
             }
 
@@ -48,8 +57,7 @@ class ParallaxBackgroundView
                 if (y.toInt() < 0)
                     throw IllegalStateException("Background y cannot be < 0")
 
-                textures.forEach { it.sy = y.toDouble() * it.speed % it.texture.image.height }
-
+                sy = (y.toDouble() * speed) % image.height
                 redraw()
             }
 
@@ -71,46 +79,41 @@ class ParallaxBackgroundView
         }
     }
 
-    // TODO: isolate in ParallaxTexture
     private fun redrawX() {
-        textures.forEach {
-            var w = canvas.width
-            val h = canvas.height
+        var w = canvas.width
+        val h = canvas.height
 
-            val overflowX = it.sx + w > it.image.width
+        val overflowX = sx + w > image.width
 
-            if (overflowX) {
-                w = it.image.width - it.sx
-            }
+        if (overflowX) {
+            w = image.width - sx
+        }
 
-            g.drawImage(it.image, it.sx, it.sy, w, h,
-                    0.0, 0.0, w, h)
+        g.drawImage(image, sx, sy, w, h,
+                0.0, 0.0, w, h)
 
-            if (overflowX) {
-                g.drawImage(it.image, 0.0, 0.0, canvas.width - w, h,
-                        w, 0.0, canvas.width - w, h)
-            }
+        if (overflowX) {
+            g.drawImage(image, 0.0, 0.0, canvas.width - w, h,
+                    w, 0.0, canvas.width - w, h)
         }
     }
 
     private fun redrawY() {
-        textures.forEach {
-            val w = canvas.width
-            var h = canvas.height
+        val w = canvas.width
+        var h = canvas.height
 
-            val overflowY = it.sy + h > it.image.height
+        val overflowY = sy + h > image.height
 
-            if (overflowY) {
-                h = it.image.height - it.sy
-            }
+        if (overflowY) {
+            h = image.height - sy
+        }
 
-            g.drawImage(it.image, it.sx, it.sy, w, h,
-                    0.0, 0.0, w, h)
+        g.drawImage(image, sx, sy, w, h,
+                0.0, 0.0, w, h)
 
-            if (overflowY) {
-                g.drawImage(it.image, 0.0, 0.0, w, canvas.height - h,
-                        0.0, h, w, canvas.height - h)
-            }
+        if (overflowY) {
+            g.drawImage(image, 0.0, 0.0, w, canvas.height - h,
+                    0.0, h, w, canvas.height - h)
         }
     }
 }

@@ -8,7 +8,7 @@ package com.almasb.fxglgames.spaceinvaders.control;
 
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.entity.component.ViewComponent;
 
 /**
