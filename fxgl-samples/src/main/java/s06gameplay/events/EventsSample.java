@@ -22,6 +22,7 @@ import common.PlayerControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 /**
  * Shows how to use event triggers and fire custom events.
@@ -126,6 +127,8 @@ public class EventsSample extends GameApplication {
         getEventBus().addEventHandler(MyGameEvent.ANY, event -> {
             System.out.println("Code handler: " + event);
         });
+
+        getMasterTimer().runOnceAfter(() -> getEventBus().fireEvent(new MyGameEvent(MyGameEvent.LOW_HP)), Duration.seconds(1));
     }
 
     // 3. add event handler using annotation

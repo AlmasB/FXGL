@@ -13,6 +13,7 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.EntityFactory
+import com.almasb.fxgl.event.SetEventHandler
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
@@ -137,10 +138,17 @@ internal constructor(private val app: GameApplication,
             private val annotationParser = AnnotationParser(FXGL.getApp().javaClass)
 
             init {
+                log.debug("Parsing annotations")
+
                 annotationParser.parse(
                         SetEntityFactory::class.java,
+                        SetEventHandler::class.java,
                         AddCollisionHandler::class.java
                 )
+
+                annotationParser.getClasses(SetEventHandler::class.java).firstOrNull()?.let {
+                    FXGL.getEventBus().scanForHandlers(ReflectionUtils.newInstance(it))
+                }
             }
         }
 

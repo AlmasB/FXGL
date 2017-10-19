@@ -27,7 +27,11 @@ class EventBus {
 
     private val eventTriggers = UnorderedArray<EventTrigger<*>>(32)
 
-    private val eventHandlers = Group()
+    private val eventHandlers = object : Group() {
+        override fun toString(): String {
+            return "FXGL.EventBus"
+        }
+    }
 
     fun onUpdate(tpf: Double) {
         updateTriggers(tpf)
