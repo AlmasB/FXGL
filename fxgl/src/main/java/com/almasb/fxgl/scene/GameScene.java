@@ -296,11 +296,9 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onEntityAdded(Entity entity) {
-        entity.getComponentOptional(ViewComponent.class)
-                .ifPresent(viewComponent -> {
-                    onAdded(viewComponent);
-                });
+        initView(entity.getViewComponent());
 
+        // TODO: how does this integrate with the new ECS model?
         entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.add(entity));
 
@@ -314,10 +312,7 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entity.getComponentOptional(ViewComponent.class)
-                .ifPresent(viewComponent -> {
-                    onRemoved(viewComponent);
-                });
+        destroyView(entity.getViewComponent());
 
         entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.removeValueByIdentity(entity));
@@ -330,29 +325,19 @@ public final class GameScene extends FXGLScene
                 .ifPresent(p -> particles.removeValueByIdentity(p));
     }
 
-    @Override
-    public void onAdded(Component component) {
-        if (component instanceof ViewComponent) {
-            ViewComponent viewComponent = (ViewComponent) component;
+    private void initView(ViewComponent viewComponent) {
+        EntityView view = viewComponent.getView();
+        addGameView(view);
 
-            EntityView view = viewComponent.getView();
-            addGameView(view);
-
-            viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
-                getRenderGroup(oldLayer).getChildren().remove(view);
-                getRenderGroup(newLayer).getChildren().add(view);
-            });
-        }
+        viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
+            getRenderGroup(oldLayer).getChildren().remove(view);
+            getRenderGroup(newLayer).getChildren().add(view);
+        });
     }
 
-    @Override
-    public void onRemoved(Component component) {
-        if (component instanceof ViewComponent) {
-            ViewComponent viewComponent = (ViewComponent) component;
-
-            EntityView view = viewComponent.getView();
-            removeGameView(view);
-        }
+    private void destroyView(ViewComponent viewComponent) {
+        EntityView view = viewComponent.getView();
+        removeGameView(view);
     }
 
     @Override
