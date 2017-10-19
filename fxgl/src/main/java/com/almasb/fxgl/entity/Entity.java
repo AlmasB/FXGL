@@ -22,6 +22,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -802,6 +803,7 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
+        // TODO: rewrite with for each loop to avoid potential extra checks
         ReflectionUtils.findFieldsByTypeRecursive(control, Component.class).forEach(field -> {
             Component comp = getComponent((Class<? extends Component>) field.getType());
             if (comp != null) {
@@ -815,6 +817,18 @@ public class Entity {
                 ReflectionUtils.inject(field, control, ctrl);
             }
         });
+
+        // check if control has conventional name
+        String controlName = control.getClass().getSimpleName();
+        if (controlName.endsWith("Control") && controlName.length() > 8) {
+            // SomeTestControl becomes someTest
+            String fieldName = controlName.substring(1, controlName.length() - 7);
+            fieldName = Character.toLowerCase(controlName.charAt(0)) + fieldName;
+
+            ReflectionUtils.getDeclaredField(fieldName, control).ifPresent(field -> {
+                ReflectionUtils.inject(field, control, this);
+            });
+        }
     }
 
     private void removeModule(Module module) {
