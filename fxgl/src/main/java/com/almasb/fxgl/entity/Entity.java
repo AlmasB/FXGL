@@ -470,6 +470,8 @@ public class Entity {
         this.view.setRenderLayer(layer);
     }
 
+    // TODO: the scale should be a component? and affect the model, not the view?
+
     /**
      * Set view scale X.
      *

@@ -39,7 +39,9 @@ public final class Entities {
      *
      * @param e entity
      * @return position component
+     * @deprecated use entity.getPositionComponent()
      */
+    @Deprecated
     public static PositionComponent getPosition(Entity e) {
         return e.getComponent(PositionComponent.class);
     }
@@ -49,7 +51,9 @@ public final class Entities {
      *
      * @param e entity
      * @return rotation component
+     * @deprecated use entity.getRotationComponent()
      */
+    @Deprecated
     public static RotationComponent getRotation(Entity e) {
         return e.getComponent(RotationComponent.class);
     }
@@ -59,7 +63,9 @@ public final class Entities {
      *
      * @param e entity
      * @return bbox component
+     * @deprecated use entity.getBoundingBoxComponent()
      */
+    @Deprecated
     public static BoundingBoxComponent getBBox(Entity e) {
         return e.getComponent(BoundingBoxComponent.class);
     }
@@ -79,7 +85,9 @@ public final class Entities {
      *
      * @param e entity
      * @return main view component
+     * @deprecated use entity.getViewComponent()
      */
+    @Deprecated
     public static ViewComponent getView(Entity e) {
         return e.getComponent(ViewComponent.class);
     }
@@ -89,7 +97,9 @@ public final class Entities {
      *
      * @param e entity
      * @return type component
+     * @deprecated use entity.getTypeComponent()
      */
+    @Deprecated
     public static TypeComponent getType(Entity e) {
         return e.getComponent(TypeComponent.class);
     }

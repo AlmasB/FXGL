@@ -655,8 +655,8 @@ class GameWorldTest {
         gameWorld.addEntities(e1, e2, e3)
 
         assertAll(
-                Executable { assertThat(gameWorld.getEntitiesFiltered { Entities.getPosition(it) != null && Entities.getPosition(it).x > 15 }, contains(e2)) },
-                Executable { assertThat(gameWorld.getEntitiesFiltered { Entities.getPosition(it) != null && Entities.getPosition(it).y < 30 }, containsInAnyOrder(e1, e2, e3)) },
+                Executable { assertThat(gameWorld.getEntitiesFiltered { it.x > 15 }, contains(e2)) },
+                Executable { assertThat(gameWorld.getEntitiesFiltered { it.y < 30 }, containsInAnyOrder(e1, e2, e3)) },
                 Executable { assertThat(gameWorld.getEntitiesFiltered { true }, containsInAnyOrder(e1, e2, e3)) }
         )
     }
@@ -679,8 +679,8 @@ class GameWorldTest {
         val result2 = Array<Entity>()
         val result3 = Array<Entity>()
 
-        gameWorld.getEntitiesFiltered(result1) { Entities.getPosition(it) != null && Entities.getPosition(it).x > 15 }
-        gameWorld.getEntitiesFiltered(result2) { Entities.getPosition(it) != null && Entities.getPosition(it).y < 30 }
+        gameWorld.getEntitiesFiltered(result1) { it.x > 15 }
+        gameWorld.getEntitiesFiltered(result2) { it.y < 30 }
         gameWorld.getEntitiesFiltered(result3) { true }
 
         assertAll(
@@ -943,7 +943,7 @@ class GameWorldTest {
     private class EntityMatcher(val x: Int, val y: Int) : BaseMatcher<Entity>() {
 
         override fun matches(item: Any): Boolean {
-            val position = Entities.getPosition(item as Entity)
+            val position = (item as Entity).positionComponent
 
             return position.x.toInt() == x && position.y.toInt() == y
         }

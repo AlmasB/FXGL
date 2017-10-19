@@ -100,10 +100,9 @@ class TextLevelParserTest {
     private class EntityMatcher(val x: Int, val y: Int, val entityType: EntityType) : BaseMatcher<Entity>() {
 
         override fun matches(item: Any): Boolean {
-            val position = Entities.getPosition(item as Entity)
-            val type = Entities.getType(item)
+            val position = (item as Entity).positionComponent
 
-            return position.x.toInt() == x*BLOCK_WIDTH && position.y.toInt() == y*BLOCK_HEIGHT && type.isType(entityType)
+            return position.x.toInt() == x*BLOCK_WIDTH && position.y.toInt() == y*BLOCK_HEIGHT && item.isType(entityType)
         }
 
         override fun describeTo(description: Description) {

@@ -26,8 +26,6 @@ class DeveloperWASDControl : Control() {
     private lateinit var position: PositionComponent
 
     override fun onAdded(entity: Entity) {
-        position = Entities.getPosition(entity)
-
         with(FXGL.getInput()) {
             addAction(object : UserAction("Dev_UP") {
                 override fun onAction() = up()

@@ -42,22 +42,16 @@ class GoapControl(private val agent: GoapAgent // this is the implementing class
     private val performActionState: FSMState
 
     private val availableActions = HashSet(actions)
-    private var currentActions: Queue<GoapAction>
+    private var currentActions: Queue<GoapAction> = ArrayDeque<GoapAction>()
 
     private lateinit var position: PositionComponent
 
     init {
-        currentActions = ArrayDeque<GoapAction>()
-
         idleState = createIdleState()
         moveToState = createMoveToState()
         performActionState = createPerformActionState()
 
         stateMachine.pushState(idleState)
-    }
-
-    override fun onAdded(entity: Entity) {
-        position = Entities.getPosition(entity)
     }
 
     private var tpf: Double = 0.0

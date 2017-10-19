@@ -24,10 +24,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -689,8 +686,12 @@ public final class GameWorld {
         if (array.size() == 0)
             return Optional.empty();
 
-        array.sort((e1, e2) -> (int) (Entities.getPosition(e1).distance(Entities.getPosition(entity))
-                        - Entities.getPosition(e2).distance(Entities.getPosition(entity))));
+        array.sort(Comparator.comparingDouble(e -> e.distance(entity)));
+
+//        array.sort((e1, e2) -> (int) (e1.distance(entity) - e2.distance(entity)));
+//
+//        array.sort((e1, e2) -> (int) (Entities.getPosition(e1).distance(Entities.getPosition(entity))
+//                        - Entities.getPosition(e2).distance(Entities.getPosition(entity))));
 
         return Optional.of(array.get(0));
     }
