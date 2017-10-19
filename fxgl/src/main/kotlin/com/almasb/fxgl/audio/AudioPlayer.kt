@@ -184,11 +184,13 @@ class AudioPlayer {
 
     /**
      * @param bgmName name of the background music file to loop
+     * @return the music object that is played in a loop
      */
-    fun loopBGM(bgmName: String) {
+    fun loopBGM(bgmName: String): Music {
         val music = FXGL.getAssetLoader().loadMusic(bgmName)
         music.cycleCount = Integer.MAX_VALUE
         playMusic(music)
+        return music
     }
 
     /**
