@@ -9,10 +9,6 @@ package com.almasb.fxgl.entity.control;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.component.BoundingBoxComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.scene.Viewport;
 
 /**
@@ -22,11 +18,7 @@ import com.almasb.fxgl.scene.Viewport;
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
 public class KeepOnScreenControl extends Control {
-
-    private PositionComponent position;
-    private BoundingBoxComponent bbox;
 
     private Viewport viewport;
 
@@ -49,45 +41,23 @@ public class KeepOnScreenControl extends Control {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        if (bbox == null) {
-            blockWithoutBBox();
-        } else {
-            blockWithBBox();
-        }
-    }
-
-    private void blockWithoutBBox() {
-        if (horizontally) {
-            if (position.getX() < viewport.getX()) {
-                position.setX(viewport.getX());
-            } else if (position.getX() > viewport.getX() + viewport.getWidth()) {
-                position.setX(viewport.getX() + viewport.getWidth());
-            }
-        }
-
-        if (vertically) {
-            if (position.getY() < viewport.getY()) {
-                position.setY(viewport.getY());
-            } else if (position.getY() > viewport.getY() + viewport.getHeight()) {
-                position.setY(viewport.getY() + viewport.getHeight());
-            }
-        }
+        blockWithBBox();
     }
 
     private void blockWithBBox() {
         if (horizontally) {
-            if (bbox.getMinXWorld() < viewport.getX()) {
-                position.setX(viewport.getX());
-            } else if (bbox.getMaxXWorld() > viewport.getX() + viewport.getWidth()) {
-                position.setX(viewport.getX() + viewport.getWidth() - bbox.getWidth());
+            if (getEntity().getX() < viewport.getX()) {
+                getEntity().setX(viewport.getX());
+            } else if (getEntity().getRightX() > viewport.getX() + viewport.getWidth()) {
+                getEntity().setX(viewport.getX() + viewport.getWidth() - getEntity().getWidth());
             }
         }
 
         if (vertically) {
-            if (bbox.getMinYWorld() < viewport.getY()) {
-                position.setY(viewport.getY());
-            } else if (bbox.getMaxYWorld() > viewport.getY() + viewport.getHeight()) {
-                position.setY(viewport.getY() + viewport.getHeight() - bbox.getHeight());
+            if (getEntity().getY() < viewport.getY()) {
+                getEntity().setY(viewport.getY());
+            } else if (getEntity().getBottomY() > viewport.getY() + viewport.getHeight()) {
+                getEntity().setY(viewport.getY() + viewport.getHeight() - getEntity().getHeight());
             }
         }
     }

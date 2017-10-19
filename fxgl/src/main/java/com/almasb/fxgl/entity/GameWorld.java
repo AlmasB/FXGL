@@ -115,7 +115,7 @@ public final class GameWorld {
         entity.markForRemoval();
         notifyEntityRemoved(entity);
 
-        // we cannot clean entities here because this may been called through a control
+        // we cannot clean entities here because this may have been called through a control
         // while entity is being updated
         // so, we clean the entity on next frame
     }

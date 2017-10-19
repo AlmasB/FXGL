@@ -31,10 +31,6 @@ public class PhysicsControl extends Control {
 
     private PhysicsWorld physicsWorld;
 
-    private PositionComponent position;
-    private RotationComponent rotation;
-    private BoundingBoxComponent bbox;
-
     private double appHeight;
 
     PhysicsControl(double appHeight) {
@@ -51,15 +47,15 @@ public class PhysicsControl extends Control {
     public void onUpdate(Entity entity, double tpf) {
         // we round positions so that it's easy for the rest of the world to work with
         // snapped to pixel values
-        position.setX(
-                Math.round(toPixels(body.getPosition().x - toMeters(bbox.getWidth() / 2)))
+        entity.setX(
+                Math.round(toPixels(body.getPosition().x - toMeters(entity.getWidth() / 2)))
         );
 
-        position.setY(
-                Math.round(toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(bbox.getHeight() / 2)))
+        entity.setY(
+                Math.round(toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(entity.getHeight() / 2)))
         );
 
-        rotation.setValue(-Math.toDegrees(body.getAngle()));
+        entity.setRotation(-Math.toDegrees(body.getAngle()));
     }
 
     /**
@@ -69,8 +65,8 @@ public class PhysicsControl extends Control {
      * @param point point in game world coordinates (pixels)
      */
     public void reposition(Point2D point) {
-        double w = bbox.getWidth();
-        double h = bbox.getHeight();
+        double w = getEntity().getWidth();
+        double h = getEntity().getHeight();
 
         body.setTransform(new Vec2(
                 toMeters(point.getX() + w / 2),

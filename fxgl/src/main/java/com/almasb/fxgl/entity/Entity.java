@@ -125,7 +125,6 @@ public class Entity {
             world.removeEntity(this);
     }
 
-
     /**
      * @return type component
      */

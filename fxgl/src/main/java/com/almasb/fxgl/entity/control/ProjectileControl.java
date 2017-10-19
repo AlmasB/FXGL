@@ -19,8 +19,6 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
-@Required(RotationComponent.class)
 public class ProjectileControl extends Control {
 
     private Point2D velocity;

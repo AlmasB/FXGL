@@ -44,7 +44,7 @@ private constructor() : Control() {
             parsedTreesCache[treeName] = tree
         }
 
-        this.behaviorTree = tree!!.cloneTask() as BehaviorTree<Entity>
+        this.behaviorTree = tree.cloneTask() as BehaviorTree<Entity>
     }
 
     companion object {
@@ -57,15 +57,10 @@ private constructor() : Control() {
     }
 
     override fun onAdded(entity: Entity) {
-        if (entity is Entity) {
-            behaviorTree.`object` = entity
+        behaviorTree.`object` = entity
 
-            if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
-                entity.viewComponent.view.addNode(bubble)
-
-        } else {
-            throw IllegalArgumentException("Entity $entity is not Entity")
-        }
+        if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
+            entity.viewComponent.view.addNode(bubble)
     }
 
     override fun onUpdate(entity: Entity, tpf: Double) {

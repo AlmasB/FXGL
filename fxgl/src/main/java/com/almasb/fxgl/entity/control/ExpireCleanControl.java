@@ -54,7 +54,7 @@ public class ExpireCleanControl extends Control {
             timerAction = FXGL.getMasterTimer().runOnceAfter(entity::removeFromWorld, expire);
         } else {
 
-            if (animate && view != null) {
+            if (animate) {
                 updateOpacity(tpf);
             }
         }
@@ -62,12 +62,10 @@ public class ExpireCleanControl extends Control {
 
     private double time = 0;
 
-    private ViewComponent view;
-
     private void updateOpacity(double tpf) {
         time += tpf;
 
-        view.getView().setOpacity(time >= expire.toSeconds() ? 0 : 1 - time / expire.toSeconds());
+        getEntity().getView().setOpacity(time >= expire.toSeconds() ? 0 : 1 - time / expire.toSeconds());
     }
 
     /**
