@@ -41,6 +41,90 @@ import java.util.Optional;
  */
 public class Entity {
 
+    private static final Logger log = Logger.get(Entity.class);
+
+    private ObjectMap<String, Object> properties = new ObjectMap<>();
+
+    private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
+    private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
+
+    private List<ModuleListener> moduleListeners = new ArrayList<>();
+
+    private GameWorld world = null;
+
+    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
+
+    private boolean controlsEnabled = true;
+
+    private Runnable onActive = null;
+    private Runnable onNotActive = null;
+
+    private boolean updating = false;
+
+    private TypeComponent type = new TypeComponent();
+    private PositionComponent position = new PositionComponent();
+    private RotationComponent rotation = new RotationComponent();
+    private BoundingBoxComponent bbox = new BoundingBoxComponent();
+    private ViewComponent view = new ViewComponent();
+
+    public Entity() {
+        addComponent(type);
+        addComponent(position);
+        addComponent(rotation);
+        addComponent(bbox);
+        addComponent(view);
+    }
+
+    /**
+     * @return the world this entity is attached to
+     */
+    public GameWorld getWorld() {
+        return world;
+    }
+
+    /**
+     * Initializes this entity.
+     *
+     * @param world the world to which entity is being attached
+     */
+    void init(GameWorld world) {
+        this.world = world;
+        if (onActive != null)
+            onActive.run();
+        active.set(true);
+    }
+
+    /**
+     * Removes all controls and components.
+     * Resets entity to its "new" state.
+     */
+    void clean() {
+        removeAllControls();
+        removeAllComponents();
+
+        properties.clear();
+
+        moduleListeners.clear();
+
+        world = null;
+        onActive = null;
+        onNotActive = null;
+
+        controlsEnabled = true;
+        updating = false;
+
+        active.set(false);
+    }
+
+    /**
+     * Equivalent to world?.removeEntity(this);
+     */
+    public final void removeFromWorld() {
+        if (world != null)
+            world.removeEntity(this);
+    }
+
+
     /**
      * @return type component
      */
@@ -405,102 +489,6 @@ public class Entity {
     }
 
     // VIEW END
-
-//    @Override
-//    public String toString() {
-//        return "Entity(" + type + "," + position + "," + rotation  + ")";
-//    }
-
-
-
-    private static final Logger log = Logger.get(Entity.class);
-
-    private ObjectMap<String, Object> properties = new ObjectMap<>();
-
-    private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
-    private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
-
-    private List<ModuleListener> moduleListeners = new ArrayList<>();
-
-    private GameWorld world = null;
-
-    private ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false);
-
-    private boolean controlsEnabled = true;
-
-    private Runnable onActive = null;
-    private Runnable onNotActive = null;
-
-    private boolean updating = false;
-
-    private TypeComponent type;
-    private PositionComponent position;
-    private RotationComponent rotation;
-    private BoundingBoxComponent bbox;
-    private ViewComponent view;
-
-    public Entity() {
-        type = new TypeComponent();
-        position = new PositionComponent();
-        rotation = new RotationComponent();
-        bbox = new BoundingBoxComponent();
-        view = new ViewComponent();
-
-        addComponent(type);
-        addComponent(position);
-        addComponent(rotation);
-        addComponent(bbox);
-        addComponent(view);
-    }
-
-    /**
-     * @return the world this entity is attached to
-     */
-    public GameWorld getWorld() {
-        return world;
-    }
-
-    /**
-     * Initializes this entity.
-     *
-     * @param world the world to which entity is being attached
-     */
-    void init(GameWorld world) {
-        this.world = world;
-        if (onActive != null)
-            onActive.run();
-        active.set(true);
-    }
-
-    /**
-     * Removes all controls and components.
-     * Resets entity to its "new" state.
-     */
-    void clean() {
-        removeAllControls();
-        removeAllComponents();
-
-        properties.clear();
-
-        moduleListeners.clear();
-
-        world = null;
-        onActive = null;
-        onNotActive = null;
-
-        controlsEnabled = true;
-        updating = false;
-
-        active.set(false);
-    }
-
-    /**
-     * Equivalent to world?.removeEntity(this);
-     */
-    public final void removeFromWorld() {
-        if (world != null)
-            world.removeEntity(this);
-    }
 
     /**
      * @return active property of this entity
