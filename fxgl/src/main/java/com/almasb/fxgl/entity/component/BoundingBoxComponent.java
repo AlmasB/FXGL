@@ -33,6 +33,7 @@ import java.util.ArrayList;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 @Required(PositionComponent.class)
 public class BoundingBoxComponent extends Component
         implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {

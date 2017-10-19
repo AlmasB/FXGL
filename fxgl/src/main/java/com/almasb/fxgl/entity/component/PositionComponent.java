@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 public class PositionComponent extends Component
         implements SerializableComponent, CopyableComponent<PositionComponent> {
 

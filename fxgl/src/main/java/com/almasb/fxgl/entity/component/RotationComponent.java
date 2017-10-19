@@ -16,6 +16,7 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 public class RotationComponent extends DoubleComponent implements CopyableComponent<RotationComponent> {
 
     /**

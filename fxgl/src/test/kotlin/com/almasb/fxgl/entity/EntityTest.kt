@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.entity.component.BooleanComponent
-import com.almasb.fxgl.entity.component.DoubleComponent
-import com.almasb.fxgl.entity.component.Required
+import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.entity.serialization.SerializableComponent
 import com.almasb.fxgl.entity.serialization.SerializableControl
 import com.almasb.fxgl.io.serialization.Bundle
@@ -123,18 +121,28 @@ class EntityTest {
         })
     }
 
-//    @Test
-//    fun `Remove all components`() {
-//        val comp1 = TestComponent()
-//        entity.addComponent(comp1)
-//
-//        val comp2 = RequireTestComponent()
-//        entity.addComponent(comp2)
-//
-//        entity.removeAllComponents()
-//
-//        assertThat(entity.components, not(hasItems(comp1, comp2)))
-//    }
+    @Test
+    fun `Throws when removing core component`() {
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.removeComponent(TypeComponent::class.java)
+        })
+
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.removeComponent(PositionComponent::class.java)
+        })
+
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.removeComponent(RotationComponent::class.java)
+        })
+
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.removeComponent(BoundingBoxComponent::class.java)
+        })
+
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.removeComponent(ViewComponent::class.java)
+        })
+    }
 
     @Test
     fun `Add control`() {
@@ -238,25 +246,6 @@ class EntityTest {
 
         assertThat(entity.getControlOptional(TestControl::class.java).get(), `is`(control))
     }
-
-//    @Test
-//    fun `Remove all controls`() {
-//        val control = TestControl()
-//        entity.addControl(control)
-//
-//        val control2 = ControlAddingControl()
-//        entity.addControl(control2)
-//
-//        entity.removeAllControls()
-//
-//        assertThat(entity.controls, not(hasItems(control, control2)))
-//    }
-
-//    @Test
-//    fun `Remove all controls fails if within update of another control`() {
-//        entity.addControl(AllControlRemovingControl())
-//        entity.update(0.0)
-//    }
 
     @Test
     fun `Update controls`() {
@@ -657,12 +646,6 @@ class EntityTest {
             entity.removeControl(TestControl::class.java)
         }
     }
-
-//    private inner class AllControlRemovingControl : Control() {
-//        override fun onUpdate(entity: Entity, tpf: Double) {
-//            entity.removeAllControls()
-//        }
-//    }
 
     private inner class EntityRemovingControl : Control() {
         override fun onUpdate(entity: Entity, tpf: Double) {

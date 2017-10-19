@@ -18,6 +18,7 @@ import java.io.Serializable;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 public class TypeComponent extends ObjectComponent<Serializable>
         implements SerializableComponent, CopyableComponent<TypeComponent> {
 

@@ -31,16 +31,10 @@ public class BoundingBoxComponentTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        position = new PositionComponent();
-        bbox = new BoundingBoxComponent();
-
         Entity entity = new Entity();
-        entity.removeComponent(ViewComponent.class);
-        entity.removeComponent(BoundingBoxComponent.class);
-        entity.removeComponent(PositionComponent.class);
 
-        entity.addComponent(position);
-        entity.addComponent(bbox);
+        position = entity.getPositionComponent();
+        bbox = entity.getBoundingBoxComponent();
     }
 
     @Test

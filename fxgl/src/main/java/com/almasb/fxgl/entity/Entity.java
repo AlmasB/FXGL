@@ -742,12 +742,18 @@ public class Entity {
 
     /**
      * Remove a component with given type from this entity.
+     * Core components (type, position, rotation, bbox, view) cannot be removed.
      *
      * @param type type of the component to remove
      * @throws IllegalArgumentException if the component is required by other components / controls
      * @return true if removed, false if not found
      */
     public final boolean removeComponent(Class<? extends Component> type) {
+        if (isCoreComponent(type)) {
+            // this is not allowed by design, hence throw
+            throw new IllegalArgumentException("Removing a core component: " + type + " is not allowed");
+        }
+
         if (!hasComponent(type))
             return false;
 
@@ -758,6 +764,10 @@ public class Entity {
         components.remove(type);
 
         return true;
+    }
+
+    private boolean isCoreComponent(Class<? extends Component> type) {
+        return type.getDeclaredAnnotation(CoreComponent.class) != null;
     }
 
     private void removeAllComponents() {

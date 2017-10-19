@@ -30,6 +30,7 @@ import javafx.scene.shape.Shape;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 @Required(PositionComponent.class)
 @Required(RotationComponent.class)
 public class ViewComponent extends Component {
