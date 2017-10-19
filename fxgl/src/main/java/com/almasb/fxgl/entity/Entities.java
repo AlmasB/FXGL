@@ -105,15 +105,11 @@ public final class Entities {
         double h = FXGL.getSettings().getHeight();
 
         Entity bounds = new Entity();
-        bounds.addComponent(new PositionComponent(0, 0));
-        bounds.addComponent(new RotationComponent(0));
 
-        bounds.addComponent(new BoundingBoxComponent(
-                new HitBox("LEFT",  new Point2D(-thickness, 0), BoundingShape.box(thickness, h)),
-                new HitBox("RIGHT", new Point2D(w, 0), BoundingShape.box(thickness, h)),
-                new HitBox("TOP",   new Point2D(0, -thickness), BoundingShape.box(w, thickness)),
-                new HitBox("BOT",   new Point2D(0, h), BoundingShape.box(w, thickness))
-        ));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("LEFT",  new Point2D(-thickness, 0), BoundingShape.box(thickness, h)));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("RIGHT", new Point2D(w, 0), BoundingShape.box(thickness, h)));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("TOP",   new Point2D(0, -thickness), BoundingShape.box(w, thickness)));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("BOT",   new Point2D(0, h), BoundingShape.box(w, thickness)));
 
         bounds.addComponent(new PhysicsComponent());
 

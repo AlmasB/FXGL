@@ -7,6 +7,7 @@
 package com.almasb.fxgl.entity
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import javafx.geometry.Point2D
@@ -26,6 +27,7 @@ class EntitiesTest {
         @BeforeAll
         @JvmStatic fun before() {
             FXGL.setProperty("dev.showbbox", false)
+            FXGLMock.mock()
         }
     }
 
@@ -59,4 +61,13 @@ class EntitiesTest {
         assertThat(e.boundingBoxComponent.hitBoxesProperty()[0].name, `is`("test"))
         assertThat(e.isType(EntityType.TEST1), `is`(true))
     }
+
+    // TODO: can't do this because NPE because physics world is used via getApp()
+    // which is not inited with MockGameApp
+//    @Test
+//    fun `Make screen bounds`() {
+//        val bounds = Entities.makeScreenBounds(20.0)
+//
+//        assertThat(bounds.boundingBoxComponent.hitBoxesProperty().size, `is`(4))
+//    }
 }
