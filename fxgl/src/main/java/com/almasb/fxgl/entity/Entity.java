@@ -34,6 +34,7 @@ import java.util.Optional;
  *     <li>Remove control</li>
  * </ul>
  *
+ * Entity is guaranteed to have Type, Position, Rotation, BBox, View components.
  * The best practice is to add all controls an entity will use before attaching
  * the entity to the world and pause the (immediately) unused controls.
  *

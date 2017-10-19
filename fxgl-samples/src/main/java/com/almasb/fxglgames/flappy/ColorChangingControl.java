@@ -27,7 +27,7 @@ public class ColorChangingControl extends Control {
     @Override
     public void onAdded(Entity entity) {
         // hacky, assumes that first node is Rectangle
-        view = (Rectangle) Entities.getView(entity).getView().getNodes().get(0);
+        view = (Rectangle) entity.getView().getNodes().get(0);
         timer = FXGL.newLocalTimer();
     }
 

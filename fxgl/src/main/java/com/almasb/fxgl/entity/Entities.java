@@ -75,7 +75,9 @@ public final class Entities {
      *
      * @param e entity
      * @return physics component
+     * @deprecated use entity.getComponent(PhysicsComponent.class)
      */
+    @Deprecated
     public static PhysicsComponent getPhysics(Entity e) {
         return e.getComponent(PhysicsComponent.class);
     }

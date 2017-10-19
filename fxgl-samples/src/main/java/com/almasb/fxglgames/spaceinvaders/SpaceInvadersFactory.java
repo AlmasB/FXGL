@@ -149,7 +149,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
         Entity bullet = new Entity();
         bullet.getTypeComponent().setValue(SpaceInvadersType.BULLET);
 
-        Point2D center = Entities.getBBox(owner)
+        Point2D center = owner.getBoundingBoxComponent()
                 .getCenterWorld()
                 .add(-8, 20 * (owner.isType(SpaceInvadersType.PLAYER) ? -1 : 1));
 
@@ -158,7 +158,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
         bullet.addComponent(new CollidableComponent(true));
         bullet.getViewComponent().setView(new EntityView(assetLoader.loadTexture("tank_bullet.png")), true);
         bullet.addControl(new ProjectileControl(new Point2D(0, owner.isType(SpaceInvadersType.PLAYER) ? -1 : 1), 10 * 60));
-        bullet.addComponent(new OwnerComponent(Entities.getType(owner).getValue()));
+        bullet.addComponent(new OwnerComponent(owner.getTypeComponent().getValue()));
         bullet.addControl(new OffscreenCleanControl());
 
         bullet.setProperty("dead", false);
@@ -173,7 +173,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
         Entity bullet = new Entity();
         bullet.getTypeComponent().setValue(SpaceInvadersType.BULLET);
 
-        Point2D center = Entities.getBBox(owner)
+        Point2D center = owner.getBoundingBoxComponent()
                 .getCenterWorld()
                 .add(-4.5, -20);
 
@@ -181,7 +181,7 @@ public final class SpaceInvadersFactory implements EntityFactory {
 
         bullet.getBoundingBoxComponent().addHitBox(new HitBox("HIT", BoundingShape.box(9, 20)));
         bullet.addComponent(new CollidableComponent(true));
-        bullet.addComponent(new OwnerComponent(Entities.getType(owner).getValue()));
+        bullet.addComponent(new OwnerComponent(owner.getTypeComponent().getValue()));
         bullet.addControl(new OffscreenCleanControl());
         bullet.addControl(new BulletControl(500));
 

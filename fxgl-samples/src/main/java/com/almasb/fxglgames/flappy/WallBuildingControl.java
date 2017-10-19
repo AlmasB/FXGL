@@ -24,11 +24,6 @@ public class WallBuildingControl extends Control {
     private double lastWall = 1000;
 
     @Override
-    public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-    }
-
-    @Override
     public void onUpdate(Entity entity, double tpf) {
         if (lastWall - position.getX() < FXGL.getApp().getWidth()) {
             buildWalls();

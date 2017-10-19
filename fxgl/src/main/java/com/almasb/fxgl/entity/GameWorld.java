@@ -417,9 +417,7 @@ public final class GameWorld {
      * @return first occurrence matching given type
      */
     public Optional<Entity> getSingleton(Enum<?> type) {
-        return getSingleton(e ->
-                e.hasComponent(TypeComponent.class) && e.getComponent(TypeComponent.class).isType(type)
-        );
+        return getSingleton(e -> e.isType(type));
     }
 
     /**
@@ -450,7 +448,7 @@ public final class GameWorld {
 
     /**
      * @param type component type
-     * @return array of entities that have given component (do NOT modify)
+     * @return array of entities that have given component
      */
     public List<Entity> getEntitiesByComponent(Class<? extends Component> type) {
         return entities.stream()
@@ -486,7 +484,6 @@ public final class GameWorld {
     }
 
     /**
-     * This query only works on entities with TypeComponent.
      * If called with no arguments, all entities are returned.
      * Warning: object allocation.
      *
@@ -521,12 +518,9 @@ public final class GameWorld {
     }
 
     private boolean isOfType(Entity e, Enum<?>... types) {
-        TypeComponent entityType = Entities.getType(e);
-        if (entityType != null) {
-            for (Enum<?> type : types) {
-                if (entityType.isType(type)) {
-                    return true;
-                }
+        for (Enum<?> type : types) {
+            if (e.isType(type)) {
+                return true;
             }
         }
 
@@ -537,7 +531,6 @@ public final class GameWorld {
      * Returns a list of entities
      * which are partially or entirely
      * in the specified rectangular selection.
-     * This query only works on entities with BoundingBoxComponent.
      * Warning: object allocation.
      *
      * @param selection Rectangle2D that describes the selection box
@@ -559,8 +552,7 @@ public final class GameWorld {
     public void getEntitiesInRange(Array<Entity> result, double minX, double minY, double maxX, double maxY) {
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
-            BoundingBoxComponent bbox = Entities.getBBox(e);
-            if (bbox != null && bbox.isWithin(minX, minY, maxX, maxY)) {
+            if (e.getBoundingBoxComponent().isWithin(minX, minY, maxX, maxY)) {
                 result.add(e);
             }
         }
@@ -571,7 +563,6 @@ public final class GameWorld {
      * which colliding with given entity.
      *
      * Note: CollidableComponent is not considered.
-     * This query only works on entities with BoundingBoxComponent.
      *
      * @param entity the entity
      * @return new list containing entities that satisfy query filters
@@ -587,16 +578,11 @@ public final class GameWorld {
      * @param entity the entity
      */
     public void getCollidingEntities(Array<Entity> result, Entity entity) {
-        BoundingBoxComponent entityBBox = Entities.getBBox(entity);
-
-        if (entityBBox == null) {
-            return;
-        }
+        BoundingBoxComponent entityBBox = entity.getBoundingBoxComponent();
 
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
-            BoundingBoxComponent bbox = Entities.getBBox(e);
-            if (bbox != null && bbox.isCollidingWith(entityBBox) && e != entity) {
+            if (e.getBoundingBoxComponent().isCollidingWith(entityBBox) && e != entity) {
                 result.add(e);
             }
         }
@@ -604,7 +590,6 @@ public final class GameWorld {
 
     /**
      * Returns a list of entities which have the given render layer index.
-     * This query only works on entities with ViewComponent.
      *
      * @param layer render layer
      * @return new list containing entities that satisfy query filters
@@ -623,9 +608,7 @@ public final class GameWorld {
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
 
-            ViewComponent view = Entities.getView(e);
-
-            if (view != null && view.getRenderLayer().index() == layer.index()) {
+            if (e.getRenderLayer().index() == layer.index()) {
                 result.add(e);
             }
         }
@@ -634,7 +617,6 @@ public final class GameWorld {
     /**
      * Returns a list of entities at given position.
      * The position x and y must equal to entity's position x and y.
-     * This query only works on entities with PositionComponent.
      *
      * @param position point in the world
      * @return entities at given point
@@ -653,9 +635,7 @@ public final class GameWorld {
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
 
-            PositionComponent p = Entities.getPosition(e);
-
-            if (p != null && p.getValue().equals(position)) {
+            if (e.getPosition().equals(position)) {
                 result.add(e);
             }
         }
@@ -677,7 +657,7 @@ public final class GameWorld {
     public Optional<Entity> getClosestEntity(Entity entity, Predicate<Entity> filter) {
         Array<Entity> array = new UnorderedArray<>(64);
 
-        for (Entity e : getEntitiesByComponent(PositionComponent.class)) {
+        for (Entity e : entities) {
             if (filter.test(e) && e != entity) {
                 array.add(e);
             }
@@ -687,11 +667,6 @@ public final class GameWorld {
             return Optional.empty();
 
         array.sort(Comparator.comparingDouble(e -> e.distance(entity)));
-
-//        array.sort((e1, e2) -> (int) (e1.distance(entity) - e2.distance(entity)));
-//
-//        array.sort((e1, e2) -> (int) (Entities.getPosition(e1).distance(Entities.getPosition(entity))
-//                        - Entities.getPosition(e2).distance(Entities.getPosition(entity))));
 
         return Optional.of(array.get(0));
     }

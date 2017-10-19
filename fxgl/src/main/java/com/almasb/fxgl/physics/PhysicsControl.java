@@ -44,10 +44,6 @@ public class PhysicsControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        rotation = Entities.getRotation(entity);
-        bbox = Entities.getBBox(entity);
-
         body = entity.getComponent(PhysicsComponent.class).body;
     }
 

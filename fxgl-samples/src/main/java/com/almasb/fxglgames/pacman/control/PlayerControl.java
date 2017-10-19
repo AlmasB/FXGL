@@ -38,14 +38,6 @@ public class PlayerControl extends Control {
         return moveDir;
     }
 
-    @Override
-    public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        bbox = Entities.getBBox(entity);
-        view = Entities.getView(entity);
-        rotation = Entities.getRotation(entity);
-    }
-
     private double speed = 0;
 
     @Override
@@ -134,7 +126,7 @@ public class PlayerControl extends Control {
             boolean collision = false;
 
             for (int j = 0; j < blocks.size(); j++) {
-                if (Entities.getBBox(blocks.get(j)).isCollidingWith(bbox)) {
+                if (blocks.get(j).getBoundingBoxComponent().isCollidingWith(bbox)) {
                     collision = true;
                     break;
                 }

@@ -98,7 +98,7 @@ class HighlightableComponent : Component() {
     }
 
     override fun onAdded(entity: Entity) {
-        val view = Entities.getView(entity)
+        val view = entity.viewComponent
 
         view.view.setOnMouseEntered {
             if (HIGHLIGHT.scene != null) {

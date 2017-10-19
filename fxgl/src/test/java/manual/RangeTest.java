@@ -167,11 +167,6 @@ public class RangeTest extends GameApplication {
 
         private PositionComponent position;
 
-        @Override
-        public void onAdded(Entity entity) {
-            position = Entities.getPosition(entity);
-        }
-
         private double speed = 0;
 
         @Override

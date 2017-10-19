@@ -23,11 +23,6 @@ public class PlayerControl extends Control {
     private PositionComponent position;
 
     @Override
-    public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-    }
-
-    @Override
     public void onUpdate(Entity entity, double tpf) {
         acceleration.x += tpf * 0.1;
         acceleration.y += tpf * 10;

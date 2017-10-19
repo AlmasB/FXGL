@@ -183,7 +183,7 @@ public class GeoWarsApp extends GameApplication {
                 hp.setValue(hp.getValue() - 1);
 
                 if (hp.getValue() == 0) {
-                    getGameWorld().spawn("Explosion", Entities.getBBox(enemy).getCenterWorld());
+                    getGameWorld().spawn("Explosion", enemy.getCenter());
                     enemy.removeFromWorld();
                     addScoreKill();
                 }
@@ -196,7 +196,7 @@ public class GeoWarsApp extends GameApplication {
         CollisionHandler playerEnemy = new CollisionHandler(GeoWarsType.PLAYER, GeoWarsType.WANDERER) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
-                Entities.getPosition(a).setValue(getRandomPoint());
+                a.setPosition(getRandomPoint());
                 b.removeFromWorld();
                 deductScoreDeath();
             }
@@ -284,7 +284,7 @@ public class GeoWarsApp extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         player.getComponent(OldPositionComponent.class)
-                .setValue(Entities.getPosition(player).getValue());
+                .setValue(player.getPosition());
 
         grid.update();
     }

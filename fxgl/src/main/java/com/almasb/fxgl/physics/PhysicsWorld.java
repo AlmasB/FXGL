@@ -221,7 +221,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (!jboxWorld.isLocked()) {
             destroyBody(entity);
         } else {
-            delayedBodiesRemove.add(Entities.getPhysics(entity).getBody());
+            delayedBodiesRemove.add(entity.getComponent(PhysicsComponent.class).getBody());
         }
     }
 
@@ -365,7 +365,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
                 }
 
                 // check if colliding
-                CollisionResult result = Entities.getBBox(e1).checkCollision(Entities.getBBox(e2));
+                CollisionResult result = e1.getBoundingBoxComponent().checkCollision(e2.getBoundingBoxComponent());
 
                 if (result.hasCollided()) {
 
@@ -487,8 +487,8 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param e physics entity
      */
     private void createBody(Entity e) {
-        BoundingBoxComponent bbox = Entities.getBBox(e);
-        PhysicsComponent physics = Entities.getPhysics(e);
+        BoundingBoxComponent bbox = e.getBoundingBoxComponent();
+        PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
 
         double w = bbox.getWidth();
         double h = bbox.getHeight();
@@ -500,7 +500,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         }
 
         if (physics.bodyDef.getAngle() == 0) {
-            physics.bodyDef.setAngle((float) -Math.toRadians(Entities.getRotation(e).getValue()));
+            physics.bodyDef.setAngle((float) -Math.toRadians(e.getRotation()));
         }
 
         physics.body = jboxWorld.createBody(physics.bodyDef);
@@ -514,9 +514,9 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private void createFixtures(Entity e) {
-        BoundingBoxComponent bbox = Entities.getBBox(e);
-        PhysicsComponent physics = Entities.getPhysics(e);
-        PositionComponent position = Entities.getPosition(e);
+        BoundingBoxComponent bbox = e.getBoundingBoxComponent();
+        PhysicsComponent physics = e.getComponent(PhysicsComponent.class);
+        PositionComponent position = e.getPositionComponent();
 
         Point2D entityCenter = bbox.getCenterWorld();
 
@@ -587,17 +587,17 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     }
 
     private void createPhysicsParticles(Entity e) {
-        double x = Entities.getPosition(e).getX();
-        double y = Entities.getPosition(e).getY();
-        double width = Entities.getBBox(e).getWidth();
-        double height = Entities.getBBox(e).getHeight();
+        double x = e.getX();
+        double y = e.getY();
+        double width = e.getWidth();
+        double height = e.getHeight();
 
         ParticleGroupDef def = e.getComponent(PhysicsParticleComponent.class).getDefinition();
         def.setPosition(toMeters(x + width / 2), toMeters(appHeight - (y + height / 2)));
 
         Shape shape = null;
 
-        BoundingBoxComponent bbox = Entities.getBBox(e);
+        BoundingBoxComponent bbox = e.getBoundingBoxComponent();
 
         if (!bbox.hitBoxesProperty().isEmpty()) {
             if (bbox.hitBoxesProperty().get(0).getShape().type == ShapeType.POLYGON) {
@@ -633,7 +633,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
      * @param e physics entity
      */
     private void destroyBody(Entity e) {
-        jboxWorld.destroyBody(Entities.getPhysics(e).body);
+        jboxWorld.destroyBody(e.getComponent(PhysicsComponent.class).body);
     }
 
     private EdgeCallback raycastCallback = new EdgeCallback();

@@ -233,13 +233,9 @@ public class ViewComponent extends Component {
     }
 
     private void generateBBox() {
-        if (!getEntity().hasComponent(BoundingBoxComponent.class)) {
-            getEntity().addComponent(new BoundingBoxComponent());
-        }
+        getEntity().getBoundingBoxComponent().clearHitBoxes();
 
-        Entities.getBBox(getEntity()).clearHitBoxes();
-
-        Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", BoundingShape.box(
+        getEntity().getBoundingBoxComponent().addHitBox(new HitBox("__VIEW__", BoundingShape.box(
                 getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
         )));
     }
@@ -252,10 +248,7 @@ public class ViewComponent extends Component {
     };
 
     private void addDebugBBox() {
-        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
-
-        if (bbox == null)
-            return;
+        BoundingBoxComponent bbox = getEntity().getBoundingBoxComponent();
 
         // generate view for future boxes
         bbox.hitBoxesProperty().addListener(hitboxListener);
@@ -288,10 +281,7 @@ public class ViewComponent extends Component {
     }
 
     private void removeDebugBBox() {
-        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
-
-        if (bbox == null)
-            return;
+        BoundingBoxComponent bbox = getEntity().getBoundingBoxComponent();
 
         bbox.hitBoxesProperty().removeListener(hitboxListener);
 

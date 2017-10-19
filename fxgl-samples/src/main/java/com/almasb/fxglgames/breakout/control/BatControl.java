@@ -30,7 +30,7 @@ public class BatControl extends Control {
     @Override
     public void onAdded(Entity entity) {
         bat = (Entity) entity;
-        physics = Entities.getPhysics(entity);
+        physics = entity.getComponent(PhysicsComponent.class);
     }
 
     @Override

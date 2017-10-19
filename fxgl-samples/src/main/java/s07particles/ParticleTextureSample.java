@@ -103,7 +103,7 @@ public class ParticleTextureSample extends GameApplication {
 
         @Override
         public void onUpdate(Entity entity, double tpf) {
-            Entities.getPosition(entity).setValue(curveFunction().add(getWidth() / 2, getHeight() / 2));
+            entity.setPosition(curveFunction().add(getWidth() / 2, getHeight() / 2));
 
             t += tpf;
         }

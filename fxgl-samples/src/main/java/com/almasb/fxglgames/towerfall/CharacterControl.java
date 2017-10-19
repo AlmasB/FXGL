@@ -24,12 +24,6 @@ public class CharacterControl extends Control {
     private PhysicsComponent physics;
 
     @Override
-    public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        physics = Entities.getPhysics(entity);
-    }
-
-    @Override
     public void onUpdate(Entity entity, double tpf) {
 
     }

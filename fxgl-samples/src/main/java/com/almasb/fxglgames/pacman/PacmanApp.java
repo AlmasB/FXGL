@@ -142,7 +142,7 @@ public class PacmanApp extends GameApplication {
         grid = new AStarGrid(MAP_SIZE, MAP_SIZE);
         getGameWorld().getEntitiesByType(PacmanType.BLOCK)
                 .stream()
-                .map(e -> Entities.getPosition(e).getValue())
+                .map(e -> e.getPosition())
                 .forEach(point -> {
                     int x = (int) point.getX() / BLOCK_SIZE;
                     int y = (int) point.getY() / BLOCK_SIZE;

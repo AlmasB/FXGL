@@ -140,11 +140,6 @@ public class PlayerControl extends Control {
         private double current = 330;
 
         @Override
-        public void onAdded(Entity entity) {
-            view = Entities.getView(entity);
-        }
-
-        @Override
         public void onUpdate(Entity entity, double tpf) {
             current -= 600 * tpf;
 

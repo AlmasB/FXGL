@@ -27,7 +27,7 @@ public class BulletEnemyHandler extends CollisionHandler {
     protected void onCollisionBegin(Entity bullet, Entity enemy) {
         SpaceRunnerType ownerType = (SpaceRunnerType) bullet.getComponent(UserDataComponent.class).getValue();
 
-        if (!Entities.getType(enemy).isType(ownerType)) {
+        if (!enemy.isType(ownerType)) {
             // TODO: refactor
 //            PositionComponent position = Entities.getPosition(enemy);
 //            enemy.getWorld().addEntity(FXGL.getInstance(SpaceRunnerFactory.class).newEnemy(new SpawnData(position.getX() + 500, 300)));

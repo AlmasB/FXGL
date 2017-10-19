@@ -39,9 +39,6 @@ public class EnemyControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        bbox = Entities.getBBox(entity);
-
         moveDir = MoveDirection.values()[random.nextInt(MoveDirection.values().length)];
     }
 
@@ -116,7 +113,7 @@ public class EnemyControl extends Control {
             position.translate(unit);
 
             boolean collision = blocks.stream()
-                    .map(b -> Entities.getBBox(b))
+                    .map(b -> b.getBoundingBoxComponent())
                     .filter(box -> box.isCollidingWith(bbox))
                     .findAny()
                     .isPresent();
@@ -152,7 +149,7 @@ public class EnemyControl extends Control {
             boolean collision = false;
 
             for (int j = 0; j < blocks.size(); j++) {
-                if (Entities.getBBox(blocks.get(j)).isCollidingWith(bbox)) {
+                if (blocks.get(j).getBoundingBoxComponent().isCollidingWith(bbox)) {
                     collision = true;
                     break;
                 }

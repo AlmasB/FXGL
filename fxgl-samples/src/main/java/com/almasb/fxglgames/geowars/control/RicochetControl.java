@@ -25,11 +25,6 @@ public class RicochetControl extends Control {
     private BoundingBoxComponent bbox;
 
     @Override
-    public void onAdded(Entity entity) {
-        bbox = Entities.getBBox(entity);
-    }
-
-    @Override
     public void onUpdate(Entity entity, double tpf) {
 
         if (bbox.getMinXWorld() < 0 || bbox.getMaxXWorld() > FXGL.getApp().getWidth()

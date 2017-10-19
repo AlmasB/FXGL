@@ -32,9 +32,6 @@ public class PaletteChangingControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        view = Entities.getView(entity);
-
         view.setView(texture);
         view.getView().getTransforms().addAll(new Scale(0.26, 0.26, 0, 0));
     }

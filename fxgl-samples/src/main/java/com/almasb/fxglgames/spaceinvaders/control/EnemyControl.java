@@ -41,9 +41,6 @@ public class EnemyControl extends Control {
 
         moveTimer = FXGL.newLocalTimer();
         moveTimer.capture();
-
-        bbox = Entities.getBBox(entity);
-        position = Entities.getPosition(entity);
     }
 
     @Override

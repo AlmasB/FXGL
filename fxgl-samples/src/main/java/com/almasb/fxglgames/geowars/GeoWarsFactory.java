@@ -21,6 +21,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
+import com.almasb.fxgl.entity.control.KeepOnScreenControl;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
 import com.almasb.fxgl.entity.control.ProjectileControl;
 import com.almasb.fxglgames.geowars.component.HPComponent;
@@ -68,7 +69,7 @@ public class GeoWarsFactory implements EntityFactory {
         // TODO: move this to proper PlayerControl
         OldPositionComponent oldPosition = new OldPositionComponent();
         oldPosition.valueProperty().addListener((obs, old, newPos) -> {
-            Entities.getRotation(oldPosition.getEntity()).rotateToVector(newPos.subtract(old));
+            oldPosition.getEntity().rotateToVector(newPos.subtract(old));
         });
 
         return Entities.builder()

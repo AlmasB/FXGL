@@ -56,12 +56,12 @@ public class BulletEnemyHandler extends CollisionHandler {
 
             //FXGL.getMasterTimer().runOnceAfter(() -> {
                 Entity entity = new Entity();
-                entity.addComponent(new PositionComponent(Entities.getBBox(enemy).getCenterWorld()));
+                enemy.setPosition(enemy.getCenter());
                 entity.addControl(new ParticleControl(new ExplosionEmitter()));
                 entity.addControl(new ExpireCleanControl(Duration.seconds(1)));
                 world.addEntity(entity);
 
-                world.spawn("Explosion", Entities.getBBox(enemy).getCenterWorld());
+                world.spawn("Explosion", enemy.getCenter());
 
                 enemy.removeFromWorld();
             //}, Duration.seconds(0.1));

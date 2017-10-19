@@ -23,7 +23,7 @@ public enum WorkerState implements State<Entity> {
             FXGL.getApp()
                     .getGameWorld()
                     .getClosestEntity(entity, e -> {
-                        return Entities.getType(e).isType(RTSSampleType.GOLD_MINE) &&
+                        return e.isType(RTSSampleType.GOLD_MINE) &&
                                 !e.getComponent(GoldMineComponent.class).getValue().isFull();
                     })
                     .ifPresent(goldMine -> {

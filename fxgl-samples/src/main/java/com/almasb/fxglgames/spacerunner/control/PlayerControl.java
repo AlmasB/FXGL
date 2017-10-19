@@ -23,11 +23,6 @@ public class PlayerControl extends Control {
     private double speed;
 
     @Override
-    public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-    }
-
-    @Override
     public void onUpdate(Entity entity, double tpf) {
         speed = tpf * 300;
 

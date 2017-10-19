@@ -52,7 +52,7 @@ public class ArrowControl extends Control {
 
         velocity = velocity.add(0, 4.3);
 
-        Entities.getRotation(entity).rotateToVector(velocity);
-        Entities.getPosition(entity).translate(velocity.multiply(tpf));
+        entity.rotateToVector(velocity);
+        entity.translate(velocity.multiply(tpf));
     }
 }

@@ -26,7 +26,7 @@ import com.almasb.fxgl.scene.Viewport;
 public class KeepOnScreenControl extends Control {
 
     private PositionComponent position;
-    private BoundingBoxComponent bbox = null;
+    private BoundingBoxComponent bbox;
 
     private Viewport viewport;
 
@@ -44,9 +44,6 @@ public class KeepOnScreenControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        bbox = Entities.getBBox(entity);
-
         viewport = FXGL.getApp().getGameScene().getViewport();
     }
 

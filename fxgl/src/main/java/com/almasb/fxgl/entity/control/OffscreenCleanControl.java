@@ -30,11 +30,6 @@ public class OffscreenCleanControl extends Control {
     }
 
     @Override
-    public void onAdded(Entity entity) {
-        bbox = Entities.getBBox(entity);
-    }
-
-    @Override
     public void onUpdate(Entity entity, double v) {
         if (bbox.isOutside(viewport.getVisibleArea())) {
             entity.removeFromWorld();

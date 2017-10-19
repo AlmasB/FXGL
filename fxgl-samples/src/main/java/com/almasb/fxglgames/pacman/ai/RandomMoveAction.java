@@ -73,8 +73,8 @@ public class RandomMoveAction extends SingleAction {
     public void start() {
         // fxglTODO: is there like init with object?
         if (position == null) {
-            position = Entities.getPosition(getObject());
-            bbox = Entities.getBBox(getObject());
+            position = getObject().getPositionComponent();
+            bbox = getObject().getBoundingBoxComponent();
 
             moveDir = MoveDirection.values()[new Random().nextInt(MoveDirection.values().length)];
         }
@@ -120,7 +120,7 @@ public class RandomMoveAction extends SingleAction {
             position.translate(unit);
 
             boolean collision = blocks.stream()
-                    .map(b -> Entities.getBBox(b))
+                    .map(b -> b.getBoundingBoxComponent())
                     .filter(box -> box.isCollidingWith(bbox))
                     .findAny()
                     .isPresent();
