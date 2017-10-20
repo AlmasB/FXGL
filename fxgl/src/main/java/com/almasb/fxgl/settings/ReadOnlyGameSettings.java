@@ -44,8 +44,7 @@ public class ReadOnlyGameSettings {
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
 
     /* CUSTOMIZABLE SERVICES BELOW */
-
-    // TODO: make these lazy
+    
     protected SceneFactory sceneFactory = new SceneFactory();
     protected DialogFactory dialogFactory = new FXGLDialogFactory();
     protected UIFactory uiFactory = new FXGLUIFactory();

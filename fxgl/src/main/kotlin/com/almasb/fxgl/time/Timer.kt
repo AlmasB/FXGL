@@ -83,7 +83,7 @@ class Timer {
         if (!whileCondition.get()) {
             return TimerAction(interval, action, 0)
         }
-        
+
         val act = TimerAction(interval, action)
         timerActions.add(act)
 
