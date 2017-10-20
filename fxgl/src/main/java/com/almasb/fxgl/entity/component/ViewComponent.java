@@ -9,10 +9,8 @@ package com.almasb.fxgl.entity.component;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.ModuleListener;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ObjectProperty;
@@ -31,8 +29,6 @@ import javafx.scene.shape.Shape;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 @CoreComponent
-@Required(PositionComponent.class)
-@Required(RotationComponent.class)
 public class ViewComponent extends Component {
 
     private static Color showBBoxColor = Color.RED;
@@ -62,25 +58,7 @@ public class ViewComponent extends Component {
             return;
         }
 
-        if (getEntity().hasComponent(BoundingBoxComponent.class)) {
-            addDebugBBox();
-        } else {
-            getEntity().addModuleListener(new ModuleListener() {
-                @Override
-                public void onAdded(Component component) {
-                    if (component instanceof BoundingBoxComponent) {
-                        addDebugBBox();
-                    }
-                }
-
-                @Override
-                public void onRemoved(Component component) {
-                    if (component instanceof BoundingBoxComponent) {
-                        removeDebugBBox();
-                    }
-                }
-            });
-        }
+        addDebugBBox();
     }
 
     /**
@@ -291,6 +269,6 @@ public class ViewComponent extends Component {
 
     @Override
     public String toString() {
-        return "MainView(" + getRenderLayer().name() + ")";
+        return "View(" + getRenderLayer().name() + ")";
     }
 }

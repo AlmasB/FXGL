@@ -12,6 +12,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Marks a component as core.
+ * Core components cannot be removed from an entity.
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @Target(ElementType.TYPE)
