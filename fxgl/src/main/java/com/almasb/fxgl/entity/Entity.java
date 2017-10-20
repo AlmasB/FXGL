@@ -166,13 +166,12 @@ public class Entity {
     /**
      * @return entity type
      */
-    public final Object getType() {
+    public final Serializable getType() {
         return type.getValue();
     }
 
-    public final void setType(Object type) {
-        // TODO: serializable?
-        this.type.setValue((Serializable) type);
+    public final void setType(Serializable type) {
+        this.type.setValue(type);
     }
 
     /**
