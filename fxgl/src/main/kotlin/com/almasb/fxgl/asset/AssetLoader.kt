@@ -10,6 +10,7 @@ import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.ai.btree.utils.BehaviorTreeParser
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.scene.CSS
@@ -86,11 +87,7 @@ class AssetLoader {
 
     private val log = Logger.get(javaClass)
 
-    private val cachedAssets = AssetCache(35)
-
-    init {
-        log.debugf("Asset cacheSize=%d", 35)
-    }
+    private val cachedAssets = ObjectMap<String, Any>()
 
     /**
      * Loads texture with given name from /assets/textures/.
