@@ -17,20 +17,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-/** An unordered map. This implementation is a cuckoo hash map using 3 hashes, random walking, and a small stash for problematic
- * keys. Null keys are not allowed. Null values are allowed. No allocation is done except when growing the table size. <br>
- * <br>
+/**
+ * An unordered map. This implementation is a cuckoo hash map using 3 hashes, random walking, and a small stash for problematic
+ * keys. Null keys are not allowed. Null values are allowed. No allocation is done except when growing the table size.
+ *
  * This map performs very fast get, containsKey, and remove (typically O(1), worst case O(log(n))). Put may be a bit slower,
  * depending on hash collisions. Load factors greater than 0.91 greatly increase the chances the map will have to rehash to the
  * next higher POT size.
- * @author Nathan Sweet */
+ *
+ * @author Nathan Sweet
+ */
 public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
     private static final int PRIME1 = 0xbe1f14b1;
     private static final int PRIME2 = 0xb4b82e39;
     private static final int PRIME3 = 0xced1c241;
 
-    // TODO: hide
-    public int size;
+    private int size;
 
     K[] keyTable;
     V[] valueTable;
@@ -86,6 +88,10 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
         System.arraycopy(map.keyTable, 0, keyTable, 0, map.keyTable.length);
         System.arraycopy(map.valueTable, 0, valueTable, 0, map.valueTable.length);
         size = map.size;
+    }
+
+    public int size() {
+        return size;
     }
 
     /** Returns the old value associated with the specified key, or null. */
