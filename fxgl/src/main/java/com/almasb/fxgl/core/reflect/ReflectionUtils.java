@@ -94,7 +94,7 @@ public final class ReflectionUtils {
         try {
             return (T) method.invoke(instance, args);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot call " + method.getName() + " Error: " + e);
+            throw new ReflectionException("Cannot call " + method.getName() + " Error: " + e);
         }
     }
 
@@ -175,7 +175,7 @@ public final class ReflectionUtils {
         } catch (NoSuchFieldException e) {
             return Optional.empty();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot get declared field: " + fieldName + " of " + instance + " Error: " + e);
+            throw new ReflectionException("Cannot get declared field: " + fieldName + " of " + instance + " Error: " + e);
         }
     }
 
@@ -193,7 +193,7 @@ public final class ReflectionUtils {
             }
             field.set(instance, injectionInstance);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot inject " + injectionInstance + " into " + field.getName() + " Error: " + e);
+            throw new ReflectionException("Cannot inject " + injectionInstance + " into " + field.getName() + " Error: " + e);
         }
     }
 
