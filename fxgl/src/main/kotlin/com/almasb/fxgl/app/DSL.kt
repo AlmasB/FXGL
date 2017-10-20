@@ -9,20 +9,23 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.app.FXGL.Companion.getApp
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
+import com.almasb.fxgl.app.FXGL.Companion.getEventBus
 import com.almasb.fxgl.app.FXGL.Companion.getInput
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
 import com.almasb.fxgl.texture.Texture
 import javafx.beans.property.*
+import javafx.event.Event
 import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseButton
 import java.util.function.BiConsumer
 
 /**
- * This API is experimental.
  * Using this API results in more concise but less readable code.
  * Use with care.
  *
@@ -107,6 +110,30 @@ fun onKeyUp(key: KeyCode, actionName: String, action: Runnable) {
     }, key)
 }
 
+fun onBtnDown(btn: MouseButton, actionName: String, action: Runnable) {
+    getInput().addAction(object : UserAction(actionName) {
+        override fun onActionBegin() {
+            action.run()
+        }
+    }, btn)
+}
+
+fun onBtn(btn: MouseButton, actionName: String, action: Runnable) {
+    getInput().addAction(object : UserAction(actionName) {
+        override fun onAction() {
+            action.run()
+        }
+    }, btn)
+}
+
+fun onBtnUp(btn: MouseButton, actionName: String, action: Runnable) {
+    getInput().addAction(object : UserAction(actionName) {
+        override fun onActionEnd() {
+            action.run()
+        }
+    }, btn)
+}
+
 /* GAME WORLD */
 
 fun spawn(entityName: String): Entity = getApp().gameWorld.spawn(entityName)
@@ -114,6 +141,8 @@ fun spawn(entityName: String): Entity = getApp().gameWorld.spawn(entityName)
 fun spawn(entityName: String, x: Double, y: Double): Entity = getApp().gameWorld.spawn(entityName, x, y)
 
 fun spawn(entityName: String, position: Point2D): Entity = getApp().gameWorld.spawn(entityName, position)
+
+fun spawn(entityName: String, data: SpawnData): Entity = getApp().gameWorld.spawn(entityName, data)
 
 /* PHYSICS */
 
@@ -152,3 +181,7 @@ fun rand(min: Int, max: Int) = random(min, max)
 fun <T> obtain(type: Class<T>): T = Pools.obtain(type)
 
 fun free(instance: Any) = Pools.free(instance)
+
+/* EVENTS */
+
+fun fire(event: Event) = getEventBus().fireEvent(event)
