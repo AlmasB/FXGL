@@ -22,18 +22,9 @@ public final class Constructor {
         this.constructor = constructor;
     }
 
-    /** Returns an array of Class objects that represent the formal parameter types, in declaration order, of the constructor. */
-    public Class[] getParameterTypes() {
-        return constructor.getParameterTypes();
-    }
-
     /** Returns the Class object representing the class or interface that declares the constructor. */
     public Class getDeclaringClass() {
         return constructor.getDeclaringClass();
-    }
-
-    public boolean isAccessible() {
-        return constructor.isAccessible();
     }
 
     public void setAccessible(boolean accessible) {
