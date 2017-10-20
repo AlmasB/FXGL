@@ -11,6 +11,7 @@ import com.almasb.fxgl.service.DialogFactory
 import com.almasb.fxgl.ui.FXGLButton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ChangeListener
+import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -43,17 +44,12 @@ class FXGLDialogFactory : DialogFactory {
      * Creates a rectangular wrapper around the content node.
      */
     private fun wrap(n: Node): Pane {
-        val size = n.userData as Point2D
+        val wrapper = StackPane(n)
+        wrapper.minWidth = 600.0
+        wrapper.padding = Insets(20.0)
+        wrapper.styleClass.add("dialog-border")
 
-        val box = Rectangle()
-        with(box) {
-            width = maxOf(size.x + 200, 600.0)
-            height = size.y + 100
-            translateY = 3.0
-            stroke = Color.AZURE
-        }
-
-        return StackPane(box, n)
+        return wrapper
     }
 
     override fun messageDialog(message: String, callback: Runnable): Pane {
@@ -66,7 +62,6 @@ class FXGLDialogFactory : DialogFactory {
 
         val vbox = VBox(50.0, text, btnOK)
         vbox.setAlignment(Pos.CENTER)
-        vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 200.0), text.layoutBounds.height * 2 + 50))
 
         return wrap(vbox)
     }
@@ -89,7 +84,6 @@ class FXGLDialogFactory : DialogFactory {
 
         val vbox = VBox(50.0, text, hbox)
         vbox.setAlignment(Pos.CENTER)
-        vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 400.0), text.layoutBounds.height * 2 + 50))
 
         return wrap(vbox)
     }
@@ -114,7 +108,6 @@ class FXGLDialogFactory : DialogFactory {
 
         val vbox = VBox(50.0, text, field, btnOK)
         vbox.setAlignment(Pos.CENTER)
-        vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 200.0), text.layoutBounds.height * 3 + 50 * 2))
 
         return wrap(vbox)
     }
@@ -147,7 +140,6 @@ class FXGLDialogFactory : DialogFactory {
 
         val vbox = VBox(50.0, text, field, hBox)
         vbox.setAlignment(Pos.CENTER)
-        vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 200.0), text.layoutBounds.height * 3 + 50 * 2))
 
         return wrap(vbox)
     }
@@ -182,7 +174,6 @@ class FXGLDialogFactory : DialogFactory {
 
         val vbox = VBox(50.0, text, hbox)
         vbox.setAlignment(Pos.CENTER)
-        vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 400.0), text.layoutBounds.height * 2 + 50))
 
         return wrap(vbox)
     }
@@ -209,7 +200,6 @@ class FXGLDialogFactory : DialogFactory {
 
         val vbox = VBox(50.0, text, progress)
         vbox.alignment = Pos.CENTER
-        vbox.userData = Point2D(Math.max(text.layoutBounds.width, 400.0), text.layoutBounds.height * 2 + 50)
 
         return wrap(vbox)
     }
@@ -242,10 +232,6 @@ class FXGLDialogFactory : DialogFactory {
 
         val vbox = VBox(50.0, text, content, hbox)
         vbox.setAlignment(Pos.CENTER)
-
-        // TODO: find a way to properly compute size
-        vbox.setUserData(Point2D(Math.max(text.layoutBounds.width, 200.0),
-                text.layoutBounds.height * 3 + 50 * 2))
 
         return wrap(vbox)
     }

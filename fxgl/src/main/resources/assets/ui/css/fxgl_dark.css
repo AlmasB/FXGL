@@ -157,7 +157,15 @@
     -fx-background-color: white;
 }
 
-
-.spinner.split-arrows-horizontal .increment-arrow-button:pressed .increment-arrow, .spinner.split-arrows-horizontal .decrement-arrow-button:pressed .decrement-arrow{
+.spinner.split-arrows-horizontal .increment-arrow-button:pressed .increment-arrow, .spinner.split-arrows-horizontal .decrement-arrow-button:pressed .decrement-arrow {
     -fx-background-color: white;
+}
+
+/**
+ * Dialogs
+ */
+.dialog-border {
+    -fx-border-color: azure;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
 }
