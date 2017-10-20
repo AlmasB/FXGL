@@ -7,6 +7,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
+import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.service.DialogFactory;
 import com.almasb.fxgl.service.ExceptionHandler;
@@ -51,6 +52,16 @@ public class ReadOnlyGameSettings {
     protected NotificationService notificationService = new FXGLNotificationService();
     protected ExceptionHandler exceptionHandler = new FXGLExceptionHandler();
 
+    private ExceptionHandler exceptionHandlerWrapper = new ExceptionHandler() {
+        private Logger log = Logger.get("ExceptionHandler");
+
+        @Override
+        public void handle(Throwable e) {
+            log.warning("Caught Exception: " + e);
+            exceptionHandler.handle(e);
+        }
+    };
+
     // when adding extra fields, remember to add them to copy constructor
 
     /**
@@ -85,6 +96,8 @@ public class ReadOnlyGameSettings {
         this.uiFactory = copy.uiFactory;
         this.notificationService = copy.notificationService;
         this.exceptionHandler = copy.exceptionHandler;
+
+        this.exceptionHandlerWrapper = copy.exceptionHandlerWrapper;
     }
 
     public final String getTitle() {
@@ -156,7 +169,7 @@ public class ReadOnlyGameSettings {
     }
 
     public final ExceptionHandler getExceptionHandler() {
-        return exceptionHandler;
+        return exceptionHandlerWrapper;
     }
 
     @Override
