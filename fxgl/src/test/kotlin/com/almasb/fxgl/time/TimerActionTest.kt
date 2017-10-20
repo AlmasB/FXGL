@@ -74,4 +74,15 @@ class TimerActionTest {
 
         assertFalse(action.isExpired)
     }
+
+    @Test
+    fun `Timer action with limit 0 does not run`() {
+        var count = 0
+
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, 0)
+        assertTrue(action.isExpired)
+
+        action.update(0.15)
+        assertThat(count, `is`(0))
+    }
 }

@@ -81,9 +81,9 @@ class Timer {
      */
     fun runAtIntervalWhile(action: Runnable, interval: Duration, whileCondition: ReadOnlyBooleanProperty): TimerAction {
         if (!whileCondition.get()) {
-            // TODO: this is harsh, don't throw, just return
-            throw IllegalArgumentException("While condition is false")
+            return TimerAction(interval, action, 0)
         }
+        
         val act = TimerAction(interval, action)
         timerActions.add(act)
 

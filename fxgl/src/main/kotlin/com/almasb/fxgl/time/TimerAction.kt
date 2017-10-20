@@ -39,7 +39,7 @@ internal constructor(
     /**
      * @return true if the timer has expired, false if active
      */
-    var isExpired = false
+    var isExpired = limit == 0
         private set
 
     var isPaused = false
