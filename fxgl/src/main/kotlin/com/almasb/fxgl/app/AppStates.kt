@@ -190,6 +190,9 @@ internal constructor(private val app: GameApplication,
             app.initGameVars(vars)
             vars.forEach { name, value -> app.gameState.put(name, value) }
 
+            // we just created new game state vars, so inform achievement manager about new vars
+            app.gameplay.achievementManager.rebindAchievements()
+
             annotationParser.getClasses(SetEntityFactory::class.java).firstOrNull()?.let {
                 app.gameWorld.setEntityFactory(ReflectionUtils.newInstance(it) as EntityFactory)
             }

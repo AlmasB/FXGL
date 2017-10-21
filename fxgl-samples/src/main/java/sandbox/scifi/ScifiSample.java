@@ -67,10 +67,10 @@ public class ScifiSample extends GameApplication {
 
     private PlayerControl playerControl;
 
-    @Override
-    protected void initAchievements() {
-        getGameplay().getAchievementManager().registerAchievement(new Achievement("Collector", "Collect 10 coins"));
-    }
+//    @Override
+//    protected void initAchievements() {
+//        getGameplay().getAchievementManager().registerAchievement(new Achievement("Collector", "Collect 10 coins"));
+//    }
 
     @Override
     protected void initInput() {
@@ -153,9 +153,9 @@ public class ScifiSample extends GameApplication {
 
         nextLevel();
 
-        getGameplay().getAchievementManager()
-                .getAchievementByName("Collector")
-                .bind(getGameState().intProperty("coins"), 10);
+//        getGameplay().getAchievementManager()
+//                .getAchievementByName("Collector")
+//                .bind(getGameState().intProperty("coins"), 10);
 
         //getMasterTimer().runOnceAfter(this::seerCutscene, Duration.seconds(7));
     }

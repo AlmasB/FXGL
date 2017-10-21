@@ -5,19 +5,18 @@
  */
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.annotation.AnnotationParser;
 import com.almasb.fxgl.app.listener.ExitListener;
 import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.logging.*;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.gameplay.AchievementEvent;
-import com.almasb.fxgl.gameplay.GameState;
-import com.almasb.fxgl.gameplay.Gameplay;
-import com.almasb.fxgl.gameplay.NotificationEvent;
+import com.almasb.fxgl.gameplay.*;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
@@ -341,6 +340,18 @@ public abstract class GameApplication extends Application {
         preInit();
     }
 
+    /**
+     * Finds all @SetAchievementStore classes and registers achievements.
+     */
+    private void initAchievements() {
+        AnnotationParser parser = new AnnotationParser(this.getClass());
+        parser.parse(SetAchievementStore.class);
+        parser.getClasses(SetAchievementStore.class).forEach(storeClass -> {
+            AchievementStore storeObject = (AchievementStore) ReflectionUtils.newInstance(storeClass);
+            storeObject.initAchievements(getGameplay().getAchievementManager());
+        });
+    }
+
     private void generateDefaultProfile() {
         if (getSettings().isMenuEnabled()) {
             menuHandler.generateDefaultProfile();
@@ -515,18 +526,6 @@ public abstract class GameApplication extends Application {
      * @param settings app settings
      */
     protected abstract void initSettings(GameSettings settings);
-
-    /**
-     * Override to register your achievements.
-     *
-     * <pre>
-     * Example:
-     *
-     * AchievementManager am = getAchievementManager();
-     * am.registerAchievement(new Achievement("Score Master", "Score 20000 points"));
-     * </pre>
-     */
-    protected void initAchievements() {}
 
     /**
      * Initialize input, i.e. bind key presses, bind mouse buttons.
