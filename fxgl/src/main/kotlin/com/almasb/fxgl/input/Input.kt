@@ -493,9 +493,11 @@ class Input : UserProfileSavable {
 
         for (binding in bindings) {
 
+            val action = binding.key
+
             // if binding is not present in bundle, then we added some new binding thru code
-            // it will saved on next serialization and will be found in bundle
-            var triggerName: String? = bundle.get<String>("${binding.key}")
+            // it will be saved on next serialization and will be found in bundle
+            var triggerName: String? = bundle.get<String>("$action")
             if (triggerName == null)
                 continue
 
@@ -507,13 +509,17 @@ class Input : UserProfileSavable {
                 triggerName = triggerName.substring(plusIndex + 1)
             }
 
+            // if triggerName was CTRL+A, we end up with:
+            // triggerName = A
+            // modifierName = CTRL
+
             try {
                 val key = KeyCode.getKeyCode(triggerName)
-                rebind(binding.key, key, InputModifier.valueOf(modifierName))
+                rebind(action, key, InputModifier.valueOf(modifierName))
             } catch (ignored: Exception) {
                 try {
-                    val btn = MouseButton.valueOf(triggerName)
-                    rebind(binding.key, btn, InputModifier.valueOf(modifierName))
+                    val btn = MouseTrigger.buttonFromString(triggerName)
+                    rebind(action, btn, InputModifier.valueOf(modifierName))
                 } catch (e: Exception) {
                     log.warning("Undefined trigger name: " + triggerName)
                     throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)

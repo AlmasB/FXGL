@@ -43,7 +43,7 @@ class TriggerTest {
         assertTrue(btn.isButton())
         assertThat(btn.getModifier(), `is`(InputModifier.NONE))
         assertThat(btn.button, `is`(MouseButton.PRIMARY))
-        assertThat(btn.getName(), `is`("PRIMARY"))
+        assertThat(btn.getName(), `is`("LMB"))
     }
 
     @Test
@@ -54,6 +54,6 @@ class TriggerTest {
 
         val btn = MouseTrigger(MouseButton.PRIMARY, InputModifier.ALT)
 
-        assertThat(btn.toString(), `is`("ALT+PRIMARY"))
+        assertThat(btn.toString(), `is`("ALT+LMB"))
     }
 }
