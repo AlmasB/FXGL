@@ -11,7 +11,6 @@
 package com.almasb.fxgl.core.collection;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.reflect.ArrayReflection;
 
 import java.util.*;
 
@@ -67,7 +66,7 @@ public class Array<T> implements Iterable<T> {
      * @param capacity Any elements added beyond this will cause the backing array to be grown. */
     Array(boolean ordered, int capacity, Class arrayType) {
         this.ordered = ordered;
-        items = (T[]) ArrayReflection.newInstance(arrayType, capacity);
+        items = (T[]) newArray(arrayType, capacity);
     }
 
     /** Creates an ordered array with {@link #items} of the specified type and a capacity of 16. */
@@ -514,7 +513,7 @@ public class Array<T> implements Iterable<T> {
      */
     protected T[] resize(int newSize) {
         T[] items = this.items;
-        T[] newItems = (T[]) ArrayReflection.newInstance(items.getClass().getComponentType(), newSize);
+        T[] newItems = (T[]) newArray(items.getClass().getComponentType(), newSize);
         System.arraycopy(items, 0, newItems, 0, Math.min(size, newItems.length));
         this.items = newItems;
         return newItems;
@@ -659,7 +658,7 @@ public class Array<T> implements Iterable<T> {
     }
 
     public <V> V[] toArray(Class type) {
-        V[] result = (V[]) ArrayReflection.newInstance(type, size);
+        V[] result = (V[]) newArray(type, size);
         System.arraycopy(items, 0, result, 0, size);
         return result;
     }
@@ -781,6 +780,13 @@ public class Array<T> implements Iterable<T> {
     /** @see #Array(Object[]) */
     public static <T> Array<T> with(T... array) {
         return new Array(array);
+    }
+
+    /**
+     * Creates a new array with the specified component type and length.
+     */
+    private static Object newArray(Class c, int size) {
+        return java.lang.reflect.Array.newInstance(c, size);
     }
 
     public static class ArrayIterator<T> implements Iterator<T>, Iterable<T> {
