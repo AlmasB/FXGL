@@ -48,12 +48,18 @@ public class DialogsSample extends GameApplication {
         dialogs.put("Confirmation", () -> getDisplay().showConfirmationBox("This is a confirmation box. Agree?", answer -> System.out.println("You pressed yes? " + answer)));
         dialogs.put("Input", () -> getDisplay().showInputBox("This is an input box. You can type stuff...", answer -> System.out.println("You typed: "+ answer)));
         dialogs.put("Custom", () -> {
-            Texture brick = getAssetLoader().loadTexture("brick.png");
+            VBox content = new VBox(
+                    getUIFactory().newText("Line 1"),
+                    getUIFactory().newText("Line 2"),
+                    getAssetLoader().loadTexture("brick.png"),
+                    getUIFactory().newText("Line 3"),
+                    getUIFactory().newText("Line 4")
+            );
 
             Button btnClose = getUIFactory().newButton("Press me to close");
             btnClose.setPrefWidth(300);
 
-            getDisplay().showBox("This is a customizable box", brick, btnClose);
+            getDisplay().showBox("This is a customizable box", content, btnClose);
         });
 
         ChoiceBox<String> cbDialogs = getUIFactory().newChoiceBox(FXCollections.observableArrayList(dialogs.keySet()));
