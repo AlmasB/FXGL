@@ -12,6 +12,8 @@ import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.InputModifier;
+import com.almasb.fxgl.input.Trigger;
+import com.almasb.fxgl.input.TriggerView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
@@ -20,7 +22,9 @@ import com.almasb.fxgl.ui.FXGLSpinner;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -231,17 +235,21 @@ public abstract class FXGLMenu extends FXGLScene {
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.setHgap(50);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.getColumnConstraints().add(new ColumnConstraints(100, 100, 100, Priority.ALWAYS, HPos.LEFT, true));
+        grid.getRowConstraints().add(new RowConstraints(40, 40, 40, Priority.ALWAYS, VPos.CENTER, true));
 
         // row 0
         grid.setUserData(0);
 
-        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, grid));
+        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
 
+        // TODO: use specific style class, i.e. FXGLScrollPane
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-        scroll.setMaxHeight(app.getHeight() / 2);
-        scroll.setStyle("-fx-background: black;");
+        scroll.setMaxHeight(app.getHeight() / 2.5);
 
         HBox hbox = new HBox(scroll);
         hbox.setAlignment(Pos.CENTER);
@@ -249,13 +257,13 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
-    private void addNewInputBinding(UserAction action, GridPane grid) {
-        Text actionName = FXGL.getUIFactory().newText(action.getName());
-        Button triggerName = FXGL.getUIFactory().newButton("");
+    private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
+        Text actionName = FXGL.getUIFactory().newText(action.getName(), Color.WHITE, 18.0);
 
-        triggerName.textProperty().bind(app.getInput().triggerNameProperty(action));
+        TriggerView triggerView = new TriggerView(trigger);
+        triggerView.triggerProperty().bind(app.getInput().triggerProperty(action));
 
-        triggerName.setOnMouseClicked(event -> {
+        triggerView.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
 
@@ -291,12 +299,14 @@ public abstract class FXGLMenu extends FXGLScene {
             stage.show();
         });
 
-        int controlsRow = (int) grid.getUserData();
-        grid.addRow(controlsRow++, actionName, triggerName);
-        grid.setUserData(controlsRow);
+        HBox hBox = new HBox();
+        hBox.setPrefWidth(100);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.getChildren().add(triggerView);
 
-        GridPane.setHalignment(actionName, HPos.RIGHT);
-        GridPane.setHalignment(triggerName, HPos.LEFT);
+        int controlsRow = (int) grid.getUserData();
+        grid.addRow(controlsRow++, actionName, hBox);
+        grid.setUserData(controlsRow);
     }
 
     /**
@@ -450,6 +460,10 @@ public abstract class FXGLMenu extends FXGLScene {
         }
 
         private Line createSeparator(int width) {
+            if (width < 5) {
+                width = 200;
+            }
+
             Line sep = new Line();
             sep.setEndX(width);
             sep.setStroke(Color.DARKGREY);

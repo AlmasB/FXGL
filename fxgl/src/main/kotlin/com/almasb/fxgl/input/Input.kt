@@ -12,6 +12,8 @@ import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.scene.Viewport
+import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
@@ -82,6 +84,12 @@ class Input : UserProfileSavable {
 
     fun getActionByName(actionName: String): UserAction = bindings.keys.find { it.name == actionName }
             ?: throw IllegalArgumentException("Action $actionName not found")
+
+    private val triggers = hashMapOf<UserAction, ReadOnlyObjectWrapper<Trigger>>()
+
+    fun triggerProperty(action: UserAction): ReadOnlyObjectProperty<Trigger> {
+        return triggers[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
+    }
 
     /**
      * Currently active actions.
@@ -288,6 +296,10 @@ class Input : UserProfileSavable {
 
         bindings[action] = trigger
 
+        if (!triggers.containsKey(action)) {
+            triggers[action] = ReadOnlyObjectWrapper(trigger)
+        }
+
         if (!triggerNames.containsKey(action)) {
             triggerNames[action] = ReadOnlyStringWrapper("")
         }
@@ -305,6 +317,7 @@ class Input : UserProfileSavable {
             val newTrigger = KeyTrigger(key, modifier)
 
             bindings[action] = newTrigger
+            triggers[action]?.value = newTrigger
             triggerNames[action]?.value = newTrigger.toString()
             return true
         }
@@ -320,6 +333,7 @@ class Input : UserProfileSavable {
             val newTrigger = MouseTrigger(button, modifier)
 
             bindings[action] = newTrigger
+            triggers[action]?.value = newTrigger
             triggerNames[action]?.value = newTrigger.toString()
             return true
         }

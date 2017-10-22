@@ -55,6 +55,22 @@ class KeyView
                 border.width = size * 1.96
             }
 
+            KeyCode.DOWN -> {
+                text.text = "\u2193"
+            }
+
+            KeyCode.UP -> {
+                text.text = "\u2191"
+            }
+
+            KeyCode.LEFT -> {
+                text.text = "\u2190"
+            }
+
+            KeyCode.RIGHT -> {
+                text.text = "\u2192"
+            }
+
             else -> {}
         }
 

@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.layout.HBox
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 
 /**
@@ -22,11 +23,11 @@ import javafx.scene.paint.Color
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class TriggerView
-@JvmOverloads constructor(trigger: Trigger, var color: Color = Color.ORANGE) : Parent() {
+@JvmOverloads constructor(trigger: Trigger,
+                          var color: Color = Color.ORANGE,
+                          var size: Double = 24.0) : Pane() {
 
     private val triggerProperty = SimpleObjectProperty<Trigger>(trigger)
-
-    var size = 24.0
 
     var trigger: Trigger
         get() = triggerProperty.value
@@ -35,7 +36,7 @@ class TriggerView
         }
 
     init {
-        triggerProperty.addListener { _, _, newTrigger ->
+        triggerProperty.addListener { _, _, _ ->
             updateView()
         }
 
