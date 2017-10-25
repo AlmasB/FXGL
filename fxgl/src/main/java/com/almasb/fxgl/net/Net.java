@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.net;
 
 import com.almasb.fxgl.io.IOTask;
 import com.almasb.fxgl.net.Client;

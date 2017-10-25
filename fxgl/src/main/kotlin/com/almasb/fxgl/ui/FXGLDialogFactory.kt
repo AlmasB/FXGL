@@ -4,15 +4,12 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.display
+package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.service.DialogFactory
-import com.almasb.fxgl.ui.FXGLButton
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Insets
-import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -23,8 +20,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import javafx.scene.text.Text
 import java.util.function.Consumer
 import java.util.function.Predicate

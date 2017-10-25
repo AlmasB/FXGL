@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.service.ExceptionHandler
-
 /**
  * Default exception handler.
  *

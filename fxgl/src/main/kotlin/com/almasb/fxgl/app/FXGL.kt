@@ -13,9 +13,8 @@ import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.service.impl.display.FXGLDisplay
-import com.almasb.fxgl.service.impl.executor.FXGLExecutor
-import com.almasb.fxgl.service.impl.net.FXGLNet
+import com.almasb.fxgl.ui.FXGLDisplay
+import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 

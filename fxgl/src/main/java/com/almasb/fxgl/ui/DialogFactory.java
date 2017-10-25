@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.util.EmptyRunnable;
 import javafx.beans.property.DoubleProperty;

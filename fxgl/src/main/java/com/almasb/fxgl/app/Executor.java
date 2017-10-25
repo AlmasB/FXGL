@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.app;
 
 import com.almasb.fxgl.core.concurrent.Async;
 import javafx.util.Duration;

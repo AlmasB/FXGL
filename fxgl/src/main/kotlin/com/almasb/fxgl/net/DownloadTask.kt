@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.net
+package com.almasb.fxgl.net
 
 import com.almasb.fxgl.io.IOTask
 import java.net.URL

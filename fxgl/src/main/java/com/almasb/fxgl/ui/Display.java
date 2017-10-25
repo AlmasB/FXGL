@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.ui;
 
 import com.almasb.fxgl.io.UIDialogHandler;
 import com.almasb.fxgl.util.EmptyRunnable;
@@ -16,7 +16,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Display service.
  * Provides access to dialogs.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

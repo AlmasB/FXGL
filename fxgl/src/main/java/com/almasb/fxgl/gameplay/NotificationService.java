@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service;
+package com.almasb.fxgl.gameplay;
 
 import com.almasb.fxgl.gameplay.AchievementEvent;
 import com.almasb.fxgl.gameplay.AchievementListener;

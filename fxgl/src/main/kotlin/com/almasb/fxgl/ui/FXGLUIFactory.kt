@@ -4,11 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.ui
+package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.asset.FXGLAssets
-import com.almasb.fxgl.service.UIFactory
-import com.almasb.fxgl.ui.*
 import javafx.collections.ObservableList
 import javafx.scene.control.*
 import javafx.scene.text.Font

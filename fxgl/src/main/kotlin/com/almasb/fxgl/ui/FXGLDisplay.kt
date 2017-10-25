@@ -4,11 +4,11 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.display
+package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.DialogSubState
 import com.almasb.fxgl.io.UIDialogHandler
-import com.almasb.fxgl.service.Display
+import com.almasb.fxgl.ui.Display
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Button

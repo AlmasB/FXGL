@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.almasb.fxgl.util.Credits;
@@ -45,7 +44,6 @@ public class MockGameApplication extends GameApplication {
         settings.setApplicationMode(ApplicationMode.RELEASE);
 
         // mock
-        settings.setNotificationService(new FXGLNotificationService());
         settings.setExceptionHandler(MockExceptionHandler.INSTANCE);
         settings.setUIFactory(MockUIFactory.INSTANCE);
     }

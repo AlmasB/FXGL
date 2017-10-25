@@ -4,10 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.service.impl.executor
+package com.almasb.fxgl.app
 
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.service.Executor
 import javafx.util.Duration
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
