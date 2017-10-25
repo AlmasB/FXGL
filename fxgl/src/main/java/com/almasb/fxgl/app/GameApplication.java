@@ -17,6 +17,8 @@ import com.almasb.fxgl.devtools.profiling.Profiler;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.event.EventBus;
 import com.almasb.fxgl.gameplay.*;
+import com.almasb.fxgl.gameplay.notification.NotificationEvent;
+import com.almasb.fxgl.gameplay.notification.NotificationService;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.physics.PhysicsWorld;

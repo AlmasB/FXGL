@@ -8,6 +8,7 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
+import com.almasb.fxgl.gameplay.notification.NotificationService
 import com.almasb.fxgl.ui.Position.BOTTOM
 import javafx.scene.paint.Color
 import org.hamcrest.CoreMatchers.`is`

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package s06gameplay.achievements;
+package s11achievements;
 
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.AchievementManager;

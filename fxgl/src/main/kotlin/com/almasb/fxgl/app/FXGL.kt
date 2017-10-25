@@ -11,6 +11,7 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
+import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.ui.FXGLDisplay
@@ -153,9 +154,11 @@ class FXGL private constructor() {
             saveSystemData()
         }
 
-        @JvmStatic fun getNotificationService() = getSettings().notificationService
         @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
         @JvmStatic fun getUIFactory() = getSettings().uiFactory
+
+        private val _notificationService by lazy { NotificationServiceProvider() }
+        @JvmStatic fun getNotificationService() = _notificationService
 
         private val _assetLoader by lazy { AssetLoader() }
         @JvmStatic fun getAssetLoader() = _assetLoader

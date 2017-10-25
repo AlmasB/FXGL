@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.gameplay.notification;
 
 import javafx.event.Event;
 import javafx.event.EventType;

@@ -9,7 +9,7 @@ package com.almasb.fxgl.audio
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.gameplay.NotificationEvent
+import com.almasb.fxgl.gameplay.notification.NotificationEvent
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import javafx.beans.property.DoubleProperty

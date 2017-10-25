@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.gameplay;
+package com.almasb.fxgl.gameplay.notification;
 
 import com.almasb.fxgl.gameplay.AchievementEvent;
 import com.almasb.fxgl.gameplay.AchievementListener;
@@ -52,6 +52,18 @@ public interface NotificationService extends AchievementListener {
      * @param backgroundColor the color
      */
     void setBackgroundColor(Color backgroundColor);
+
+    /**
+     * @return current text color for notifications
+     */
+    Color getTextColor();
+
+    /**
+     * Set text color of notifications.
+     *
+     * @param textColor the color
+     */
+    void setTextColor(Color textColor);
 
     @Override
     default void onAchievementEvent(AchievementEvent event) {
