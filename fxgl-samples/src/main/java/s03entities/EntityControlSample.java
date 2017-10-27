@@ -30,7 +30,7 @@ public class EntityControlSample extends GameApplication {
         settings.setFullScreen(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
+        settings.setProfilingEnabled(false);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
@@ -44,13 +44,13 @@ public class EntityControlSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
     }
 
-    // 1. create class that implements Control
+    // 1. create class that extends Control
     private class RotatingControl extends Control {
 
         @Override
         public void onUpdate(Entity entity, double tpf) {
             // 2. specify behavior of the entity enforced by this control
-            entity.getComponent(RotationComponent.class).rotateBy(tpf * 45);
+            entity.rotateBy(tpf * 45);
         }
     }
 

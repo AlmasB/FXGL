@@ -45,7 +45,7 @@ public class ViewSwapSample extends GameApplication {
             @Override
             protected void onActionBegin() {
                 // 1. use main view component to set view at runtime
-                player.getViewComponent().setView(new Rectangle(30, 30, Color.BLUE));
+                player.setView(new Rectangle(30, 30, Color.BLUE));
             }
         }, KeyCode.F);
     }

@@ -65,7 +65,7 @@ public class TimerControlSample extends GameApplication {
 
             double speed = tpf * 60;
 
-            entity.getComponent(PositionComponent.class).translateY(goingUp ? -speed : speed);
+            entity.translateY(goingUp ? -speed : speed);
         }
     }
 
