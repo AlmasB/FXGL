@@ -499,8 +499,8 @@ public class BoundingBoxComponent extends Component
      * @return true iff entity is completely outside given bounds
      */
     public final boolean isOutside(double minX, double minY, double maxX, double maxY) {
-        return getPositionX() + getMinXLocal() + getWidth() < minX || getPositionX() + getMinXLocal() > maxX
-                || getPositionY() + getMinYLocal() + getHeight() < minY || getPositionY() + getMinYLocal() > maxY;
+        return getPositionX() + getMinXLocal() + getWidth() <= minX || getPositionX() + getMinXLocal() >= maxX
+                || getPositionY() + getMinYLocal() + getHeight() <= minY || getPositionY() + getMinYLocal() >= maxY;
     }
 
     /**
@@ -512,8 +512,8 @@ public class BoundingBoxComponent extends Component
      * @return rectangular area
      */
     public final Rectangle2D range(double width, double height) {
-        double minX = getPositionX() - width;
-        double minY = getPositionY() - height;
+        double minX = getMinXWorld() - width;
+        double minY = getMinYWorld() - height;
         double maxX = getMaxXWorld() + width;
         double maxY = getMaxYWorld() + height;
 

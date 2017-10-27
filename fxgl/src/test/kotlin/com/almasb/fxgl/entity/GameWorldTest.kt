@@ -775,7 +775,7 @@ class GameWorldTest {
         gameWorld.addEntities(e1, e2, e3)
 
         assertAll(
-                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), containsInAnyOrder(e1, e2, e3)) },
+                Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(0.0, 0.0, 100.0, 100.0)), contains(e1)) },
                 Executable { assertThat(gameWorld.getEntitiesInRange(Rectangle2D(90.0, 0.0, 20.0, 20.0)), contains(e2)) }
         )
     }
@@ -800,7 +800,7 @@ class GameWorldTest {
         gameWorld.getEntitiesInRange(result2, 90.0, 0.0, 90 + 20.0, 20.0)
 
         assertAll(
-                Executable { assertThat(result1, containsInAnyOrder(e1, e2, e3)) },
+                Executable { assertThat(result1, contains(e1)) },
                 Executable { assertThat(result2, contains(e2)) }
         )
     }
