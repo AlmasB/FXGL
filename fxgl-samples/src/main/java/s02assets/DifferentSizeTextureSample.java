@@ -34,6 +34,8 @@ public class DifferentSizeTextureSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        // the actual size of texture brick is 64x64
+
         Entities.builder()
                 .at(200, 300)
                 // 1. tell asset loader to load resized texture
