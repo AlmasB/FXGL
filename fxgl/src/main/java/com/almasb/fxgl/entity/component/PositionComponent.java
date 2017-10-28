@@ -170,10 +170,10 @@ public class PositionComponent extends Component
 
     /**
      * @param position the point to move towards
-     * @param speed the speed at which to move
+     * @param distance the distance to move
      */
-    public void translateTowards(Point2D position, double speed) {
-        translate(position.subtract(getX(), getY()).normalize().multiply(speed));
+    public void translateTowards(Point2D position, double distance) {
+        translate(position.subtract(getX(), getY()).normalize().multiply(distance));
     }
 
     /**

@@ -10,6 +10,7 @@ import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.entity.serialization.SerializableComponent
 import com.almasb.fxgl.entity.serialization.SerializableControl
 import com.almasb.fxgl.io.serialization.Bundle
+import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.*
@@ -627,6 +628,15 @@ class EntityTest {
         entity.clean()
 
         assertThat(entity.controls.size(), `is`(0))
+    }
+
+    /* CONVENIENCE */
+
+    @Test
+    fun `Translate towards`() {
+        entity.translateTowards(Point2D(100.0, 0.0), 100.0)
+
+        assertThat(entity.x, `is`(100.0))
     }
 
     /* MOCK CLASSES */

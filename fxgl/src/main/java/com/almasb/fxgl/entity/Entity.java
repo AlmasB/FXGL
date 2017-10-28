@@ -291,10 +291,10 @@ public class Entity {
 
     /**
      * @param point the point to move towards
-     * @param speed the speed at which to move
+     * @param distance the distance to move
      */
-    public final void translateTowards(Point2D point, double speed) {
-        position.translateTowards(point, speed);
+    public final void translateTowards(Point2D point, double distance) {
+        position.translateTowards(point, distance);
     }
 
     /**
