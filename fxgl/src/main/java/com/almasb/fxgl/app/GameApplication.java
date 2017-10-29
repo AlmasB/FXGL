@@ -370,13 +370,12 @@ public abstract class GameApplication extends Application {
         mainLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                long frameStart = System.nanoTime();
+                tpf = tpfCompute(now);
 
-                tpf = tickStart(now);
-
-                tick(tpf);
-
-                tickEnd(System.nanoTime() - frameStart);
+                // if we are not in play state run as normal
+                if (!(getStateMachine().isInPlay() && getSettings().isSingleStep())) {
+                    stepLoop();
+                }
             }
         };
         mainLoop.start();
@@ -392,6 +391,20 @@ public abstract class GameApplication extends Application {
         }
     }
 
+    protected void stepLoop() {
+        long frameStart = System.nanoTime();
+
+        tick.set(tick.get() + 1);
+        stateMachine.onUpdate(tpf);
+
+        if (getSettings().isProfilingEnabled()) {
+            long frameTook = System.nanoTime() - frameStart;
+
+            profiler.update(fps.get(), frameTook);
+            profiler.render(getGameScene().getGraphicsContext());
+        }
+    }
+
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
     private ReadOnlyIntegerWrapper fps = new ReadOnlyIntegerWrapper();
 
@@ -399,9 +412,7 @@ public abstract class GameApplication extends Application {
 
     private FPSCounter fpsCounter = new FPSCounter();
 
-    private double tickStart(long now) {
-        tick.set(tick.get() + 1);
-
+    private double tpfCompute(long now) {
         fps.set(fpsCounter.update(now));
 
         // assume that fps is at least 5 to avoid subtle bugs
@@ -412,18 +423,7 @@ public abstract class GameApplication extends Application {
         return 1.0 / fps.get();
     }
 
-    private void tick(double tpf) {
-        stateMachine.onUpdate(tpf);
-    }
-
     private Profiler profiler;
-
-    private void tickEnd(long frameTook) {
-        if (getSettings().isProfilingEnabled()) {
-            profiler.update(fps.get(), frameTook);
-            profiler.render(getGameScene().getGraphicsContext());
-        }
-    }
 
     /**
      * (Re-)initializes the user application as new and starts the game.

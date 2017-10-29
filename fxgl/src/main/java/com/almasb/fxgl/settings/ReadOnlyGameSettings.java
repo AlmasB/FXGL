@@ -38,6 +38,7 @@ public class ReadOnlyGameSettings {
     protected boolean menuEnabled = true;
     protected boolean profilingEnabled = true;
     protected boolean closeConfirmation = true;
+    protected boolean singleStep = false;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected KeyCode menuKey = KeyCode.ESCAPE;
     protected Credits credits = new Credits(Collections.emptyList());
@@ -89,6 +90,7 @@ public class ReadOnlyGameSettings {
         this.menuKey = copy.menuKey;
         this.credits = new Credits(copy.credits);
         this.enabledMenuItems = copy.enabledMenuItems;
+        this.singleStep = copy.singleStep;
 
         this.sceneFactory = copy.sceneFactory;
         this.dialogFactory = copy.dialogFactory;
@@ -129,6 +131,10 @@ public class ReadOnlyGameSettings {
 
     public final boolean isProfilingEnabled() {
         return profilingEnabled;
+    }
+
+    public boolean isSingleStep() {
+        return singleStep;
     }
 
     public final boolean isCloseConfirmation() {
@@ -181,6 +187,7 @@ public class ReadOnlyGameSettings {
                 "Intro: " + introEnabled + '\n' +
                 "Menus: " + menuEnabled + '\n' +
                 "Profiling: " + profilingEnabled + '\n' +
+                "Single step:" + singleStep + '\n' +
                 "App Mode: " + appMode + '\n' +
                 "Menu Key: " + menuKey + '\n' +
                 "Scene Factory: " + sceneFactory.getClass() + '\n' +

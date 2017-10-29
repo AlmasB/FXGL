@@ -131,6 +131,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         closeConfirmation = b;
     }
 
+    public void setSingleStep(boolean b) {
+        singleStep = b;
+    }
+
     /**
      * Sets application run mode. See {@link ApplicationMode} for more info.
      *
