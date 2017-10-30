@@ -6,9 +6,7 @@
 
 package s10miscellaneous;
 
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Pos;
@@ -41,7 +39,7 @@ public class ColoringSample extends GameApplication {
 
     @Override
     protected void initUI() {
-        getGameScene().setBackgroundColor(Color.BLACK);
+        //getGameScene().setBackgroundColor(Color.BLACK);
 
         Texture original = texture("bird.png");
 
@@ -61,12 +59,14 @@ public class ColoringSample extends GameApplication {
         HBox hbox = new HBox(20,
                 makeBox("Original", original),
                 makeBox("Alpha: black", original.transparentColor(Color.BLACK)),
-                makeBox("Grayscale", original.toGrayscale())
+                makeBox("Grayscale", original.toGrayscale()),
+                makeBox("Darker", original.darker()),
+                makeBox("Brighter", original.brighter())
         );
 
         HBox hbox2 = new HBox(20,
                 makeBox("Blend: red", original.blend(new Rectangle(100, 100, Color.RED), BlendMode.ADD)),
-                makeBox("Blend: red", original.blend(new Rectangle(100, 100, Color.BLUE), BlendMode.ADD)),
+                makeBox("Blend: red", original.blend(new Rectangle(200, 100, Color.BLUE), BlendMode.RED)),
                 //makeBox("Colorize: red", original.toColor(Color.RED)),
                 makeBox("Multiply: red", original.multiplyColor(Color.RED))
         );

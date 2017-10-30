@@ -6,22 +6,19 @@
 
 package com.almasb.fxgl.texture
 
-
 import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.concurrent.Async
-import com.almasb.fxgl.core.math.FXGLMath
 import javafx.geometry.HorizontalDirection
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VerticalDirection
-import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.SnapshotParameters
 import javafx.scene.effect.BlendMode
-import javafx.scene.image.*
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
+import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import javafx.util.Duration
-
-import java.lang.Math.min
 
 /**
  * Represents a 2D image which can be set as view for an entity.
@@ -230,20 +227,27 @@ open class Texture
      * @return grayscale version of the texture
      */
     fun toGrayscale(): Texture {
-        val w = image.width.toInt()
-        val h = image.height.toInt()
+        return Texture(image.map { it.copy(it.color.grayscale()) })
+    }
 
-        val reader = image.pixelReader
-        val image = WritableImage(w, h)
-        val writer = image.pixelWriter
+    fun invert(): Texture {
+        return Texture(image.map { it.copy(it.color.invert()) })
+    }
 
-        for (y in 0 until h) {
-            for (x in 0 until w) {
-                writer.setColor(x, y, reader.getColor(x, y).grayscale())
-            }
-        }
+    fun brighter(): Texture {
+        return Texture(image.map { it.copy(it.color.brighter()) })
+    }
 
-        return Texture(image)
+    fun darker(): Texture {
+        return Texture(image.map { it.copy(it.color.darker()) })
+    }
+
+    fun saturate(): Texture {
+        return Texture(image.map { it.copy(it.color.saturate()) })
+    }
+
+    fun desaturate(): Texture {
+        return Texture(image.map { it.copy(it.color.desaturate()) })
     }
 
     /**
@@ -253,21 +257,7 @@ open class Texture
      * @return texture with image discolored
      */
     fun discolor(): Texture {
-        val w = image.width.toInt()
-        val h = image.height.toInt()
-
-        val reader = image.pixelReader
-        val image = WritableImage(w, h)
-        val writer = image.pixelWriter
-
-        for (y in 0 until h) {
-            for (x in 0 until w) {
-                val opacity = reader.getColor(x, y).opacity
-                writer.setColor(x, y, Color.color(1.0, 1.0, 1.0, opacity))
-            }
-        }
-
-        return Texture(image)
+        return Texture(image.map { it.copy(Color.color(1.0, 1.0, 1.0, it.A)) })
     }
 
     /**
@@ -277,29 +267,12 @@ open class Texture
      * @return new colorized texture
      */
     fun multiplyColor(color: Color): Texture {
-        val w = image.width.toInt()
-        val h = image.height.toInt()
-
-        val reader = image.pixelReader
-        val coloredImage = WritableImage(w, h)
-        val writer = coloredImage.pixelWriter
-
-        for (y in 0 until h) {
-            for (x in 0 until w) {
-
-                var c = reader.getColor(x, y)
-                c = Color.color(
-                        c.red * color.red,
-                        c.green * color.green,
-                        c.blue * color.blue,
-                        c.opacity * color.opacity
-                )
-
-                writer.setColor(x, y, c)
-            }
-        }
-
-        return Texture(coloredImage)
+        return Texture(image.map { it.copy(Color.color(
+                it.R * color.red,
+                it.G * color.green,
+                it.B * color.blue,
+                it.A * color.opacity
+        )) })
     }
 
     /**
