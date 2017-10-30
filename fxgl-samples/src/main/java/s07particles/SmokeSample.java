@@ -64,9 +64,7 @@ public class SmokeSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        Entities.builder()
-                .viewFromNode(new Rectangle(getWidth(), getHeight()))
-                .buildAndAttach(getGameWorld());
+        getGameScene().setBackgroundColor(Color.BLACK);
 
         e = ParticleEmitters.newSmokeEmitter();
         e.setBlendMode(BlendMode.SRC_OVER);

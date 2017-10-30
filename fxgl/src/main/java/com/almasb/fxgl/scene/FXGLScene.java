@@ -12,7 +12,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.ImageCursor;
 import javafx.scene.effect.Effect;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Scale;
 
 /**
@@ -146,5 +149,9 @@ public abstract class FXGLScene {
         scale.xProperty().bind(scaleRatio);
         scale.yProperty().bind(scaleRatio);
         root.getTransforms().setAll(scale);
+    }
+
+    public void setBackgroundColor(Paint color) {
+        root.setBackground(new Background(new BackgroundFill(color, null, null)));
     }
 }
