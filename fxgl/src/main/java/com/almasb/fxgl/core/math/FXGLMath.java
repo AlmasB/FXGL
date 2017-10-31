@@ -483,8 +483,20 @@ public final class FXGLMath {
     private static final double BIG_ENOUGH_CEIL = 16384.999999999996;
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
 
-    public static float abs(final float value) {
+    public static float abs(float value) {
         return value > 0 ? value : -value;
+    }
+
+    public static double abs(double value) {
+        return value > 0 ? value : -value;
+    }
+
+    public static double min(double a, double b) {
+        return (a <= b) ? a : b;
+    }
+
+    public static double max(double a, double b) {
+        return (a >= b) ? a : b;
     }
 
     /**
