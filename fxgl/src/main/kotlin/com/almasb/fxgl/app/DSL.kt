@@ -9,8 +9,11 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.app.FXGL.Companion.getApp
 import com.almasb.fxgl.app.FXGL.Companion.getAssetLoader
 import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
+import com.almasb.fxgl.app.FXGL.Companion.getDisplay
 import com.almasb.fxgl.app.FXGL.Companion.getEventBus
 import com.almasb.fxgl.app.FXGL.Companion.getInput
+import com.almasb.fxgl.app.FXGL.Companion.getMasterTimer
+import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.Entity
@@ -24,6 +27,7 @@ import javafx.geometry.Point2D
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import java.util.function.BiConsumer
+import java.util.function.Consumer
 
 /**
  * Using this API results in more concise but less readable code.
@@ -185,3 +189,15 @@ fun free(instance: Any) = Pools.free(instance)
 /* EVENTS */
 
 fun fire(event: Event) = getEventBus().fireEvent(event)
+
+/* NOTIFICATIONS */
+
+fun notify(message: String) = getNotificationService().pushNotification(message)
+
+/* DIALOGS */
+
+fun showMessage(message: String) = getDisplay().showMessageBox(message)
+
+fun showMessage(message: String, callback: Runnable) = getDisplay().showMessageBox(message, callback)
+
+fun showConfirm(message: String, callback: Consumer<Boolean>) = getDisplay().showConfirmationBox(message, callback)
