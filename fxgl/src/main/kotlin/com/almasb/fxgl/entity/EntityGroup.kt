@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity
 import com.almasb.fxgl.core.Disposable
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.core.collection.Predicate
-import com.almasb.fxgl.entity.component.TypeComponent
 import java.util.function.Consumer
 
 /**
@@ -58,23 +57,17 @@ class EntityGroup<T : Entity>(private val world: GameWorld, initialEntities: Lis
         removeList.clear()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onEntityAdded(entity: Entity) {
-        entity.getComponentOptional(TypeComponent::class.java).ifPresent { component ->
-            val isType = types.any { component.isType(it) }
-
-            if (isType) {
-                addList.add(entity as T)
-            }
+        if (types.any { entity.isType(it) }) {
+            addList.add(entity as T)
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onEntityRemoved(entity: Entity) {
-        entity.getComponentOptional(TypeComponent::class.java).ifPresent { component ->
-            val isType = types.any { component.isType(it) }
-
-            if (isType) {
-                removeList.add(entity as T)
-            }
+        if (types.any { entity.isType(it) }) {
+            removeList.add(entity as T)
         }
     }
 
