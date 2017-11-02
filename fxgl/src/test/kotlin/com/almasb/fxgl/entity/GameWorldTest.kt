@@ -456,6 +456,24 @@ class GameWorldTest {
     }
 
     @Test
+    fun `Spawn with initial properties`() {
+        val factory = TestEntityFactory()
+        gameWorld.setEntityFactory(factory)
+
+        assertAll(
+                Executable {
+                    val e1 = gameWorld.spawn("enemy", SpawnData(0.0, 0.0).put("fly", true))
+                    assertTrue(e1.getProperty<Boolean>("fly"))
+                },
+
+                Executable {
+                    val e1 = gameWorld.spawn("enemy", SpawnData(0.0, 0.0).put("gravity", 0.5))
+                    assertThat(e1.getProperty<Double>("gravity"), `is`(0.5))
+                }
+        )
+    }
+
+    @Test
     fun `Throw if factory has no such spawn method`() {
         gameWorld.setEntityFactory(TestEntityFactory())
 

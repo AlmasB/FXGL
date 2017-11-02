@@ -150,6 +150,7 @@ public final class Entities {
 
         public EntityBuilder from(SpawnData data) {
             at(data.getX(), data.getY());
+            data.getData().forEach(entry -> entity.setProperty(entry.key, entry.value));
             return this;
         }
 
