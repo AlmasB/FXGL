@@ -4,10 +4,6 @@
  * See LICENSE for details.
  */
 
-/**
- * Origin: libGDX.
- */
-
 package com.almasb.fxgl.core.math;
 
 import javafx.animation.Interpolator;
@@ -22,6 +18,7 @@ import java.util.Random;
 /**
  * Utility and fast math functions.
  * Thanks to Riven on JavaGaming.org for the basis of sin/cos/floor/ceil.
+ * Some functions also come from jbox2d.
  *
  * @author Nathan Sweet
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -40,6 +37,7 @@ public final class FXGLMath {
     public static final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
     public static final float PI = 3.1415927f;
     public static final float PI2 = PI * 2;
+    public static final float HALF_PI = PI / 2;
 
     public static final float E = 2.7182818f;
 
@@ -103,19 +101,30 @@ public final class FXGLMath {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
+    public static final float reduceAngle(float theta) {
+        theta %= PI2;
+        if (abs(theta) > PI) {
+            theta = theta - PI2;
+        }
+        if (abs(theta) > HALF_PI) {
+            theta = PI - theta;
+        }
+        return theta;
+    }
+
     /**
      * Average error of 0.00231 radians (0.1323 degrees),
      * largest error of 0.00488 radians (0.2796 degrees).
      *
      * @param y y component
      * @param x x component
-     * @return atan2 in radians, faster but less accurate than Math.atan2.
+     * @return atan2 in radians, faster but less accurate than Math.atan2
      */
     public static float atan2(float y, float x) {
         if (x == 0f) {
-            if (y > 0f) return PI / 2;
+            if (y > 0f) return HALF_PI;
             if (y == 0f) return 0f;
-            return -PI / 2;
+            return -HALF_PI;
         }
         final float atan, z = y / x;
         if (Math.abs(z) < 1f) {
@@ -123,7 +132,7 @@ public final class FXGLMath {
             if (x < 0f) return atan + (y < 0f ? -PI : PI);
             return atan;
         }
-        atan = PI / 2 - z / (z * z + 0.28f);
+        atan = HALF_PI - z / (z * z + 0.28f);
         return y < 0f ? atan - PI : atan;
     }
 
@@ -133,7 +142,7 @@ public final class FXGLMath {
      *
      * @param y y component
      * @param x x component
-     * @return atan2 in radians, faster but less accurate than Math.atan2.
+     * @return atan2 in radians, faster but less accurate than Math.atan2
      */
     public static double atan2(double y, double x) {
         return atan2((float) y, (float) x);
@@ -595,6 +604,24 @@ public final class FXGLMath {
      */
     public static boolean isEqual(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
+    }
+
+    private static final float SHIFT23 = 1 << 23;
+    private static final float INV_SHIFT23 = 1.0f / SHIFT23;
+
+    /**
+     * @return a to the power of b
+     * @implNote copied from jbox2d
+     */
+    public static final float pow(float a, float b) {
+        float x = Float.floatToRawIntBits(a);
+        x *= INV_SHIFT23;
+        x -= 127;
+        float y = x - (x >= 0 ? (int) x : (int) x - 1);
+        b *= x + (y - y * y) * 0.346607f;
+        y = b - (b >= 0 ? (int) b : (int) b - 1);
+        y = (y - y * y) * 0.33971f;
+        return Float.intBitsToFloat((int) ((b + 127 - y) * SHIFT23));
     }
 
     /**

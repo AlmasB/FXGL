@@ -25,10 +25,8 @@ public class JBoxSettings {
     // JBox2D specific settings
     public static boolean FAST_ABS = true;
     public static boolean FAST_FLOOR = true;
-    public static boolean FAST_CEIL = true;
     public static boolean FAST_ROUND = true;
     public static boolean FAST_ATAN2 = true;
-    public static boolean FAST_POW = true;
     public static int CONTACT_STACK_INIT_SIZE = 10;
     public static boolean SINCOS_LUT_ENABLED = true;
 
@@ -208,26 +206,4 @@ public class JBoxSettings {
      * The initial size of particle data buffers.
      */
     public static final int minParticleBufferCapacity = 256;
-
-    /**
-     * Friction mixing law. Feel free to customize this.
-     *
-     * @param friction1 friction1
-     * @param friction2 friction2
-     * @return mixed friction
-     */
-    public static float mixFriction(float friction1, float friction2) {
-        return JBoxUtils.sqrt(friction1 * friction2);
-    }
-
-    /**
-     * Restitution mixing law. Feel free to customize this.
-     *
-     * @param restitution1 restitution1
-     * @param restitution2 restitution2
-     * @return mixed restitution
-     */
-    public static float mixRestitution(float restitution1, float restitution2) {
-        return restitution1 > restitution2 ? restitution1 : restitution2;
-    }
 }
