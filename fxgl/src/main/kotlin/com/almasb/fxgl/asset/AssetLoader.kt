@@ -28,6 +28,7 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.*
 import java.net.URL
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -323,8 +324,17 @@ class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     fun loadResourceBundle(name: String): ResourceBundle {
+        val asset = getAssetFromCache(TEXT_DIR + name)
+        if (asset != null) {
+            return asset as ResourceBundle
+        }
+
         try {
-            getStream(PROPERTIES_DIR + name).use { return PropertyResourceBundle(it) }
+            getStream(PROPERTIES_DIR + name).use {
+                val bundle = PropertyResourceBundle(InputStreamReader(it, StandardCharsets.UTF_8))
+                cachedAssets.put(PROPERTIES_DIR + name, bundle)
+                return bundle
+            }
         } catch (e: Exception) {
             throw loadFailed(name, e)
         }
