@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.ProgressDialog
@@ -151,7 +152,7 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
     }
 
     override fun onExit() {
-        app.display.showConfirmationBox("Exit the game?", { yes ->
+        app.display.showConfirmationBox(getLocalizedString("dialog.exitGame"), { yes ->
 
             if (yes)
                 app.exit()
