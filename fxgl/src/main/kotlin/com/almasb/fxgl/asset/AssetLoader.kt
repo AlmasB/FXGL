@@ -324,7 +324,7 @@ class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     fun loadResourceBundle(name: String): ResourceBundle {
-        val asset = getAssetFromCache(TEXT_DIR + name)
+        val asset = getAssetFromCache(PROPERTIES_DIR + name)
         if (asset != null) {
             return asset as ResourceBundle
         }
