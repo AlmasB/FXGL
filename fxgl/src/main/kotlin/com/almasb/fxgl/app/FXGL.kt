@@ -18,9 +18,16 @@ import com.almasb.fxgl.ui.FXGLDisplay
 import com.almasb.fxgl.net.FXGLNet
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
+import javafx.beans.binding.Bindings
+import javafx.beans.binding.StringBinding
+import javafx.beans.property.StringProperty
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
+import java.util.concurrent.Callable
 import java.util.function.Consumer
 
 /**
@@ -238,6 +245,25 @@ class FXGL private constructor() {
          */
         @JvmStatic fun setProperty(key: String, value: Any) {
             System.setProperty("FXGL.$key", value.toString())
+        }
+
+        /**
+         * @return a string translated to the language used by FXGL game
+         */
+        @JvmStatic fun getLocalizedString(key: String): String {
+            val langName = (getApp().menuListener as MenuEventHandler).menuSettings.getLanguage().resourceBundleName()
+
+            val bundle = getAssetLoader().loadResourceBundle("languages/$langName.properties")
+
+            return bundle.getString(key)
+        }
+
+        /**
+         * @return binding to a string translated to the language used by FXGL game
+         */
+        @JvmStatic fun localizedStringProperty(key: String): StringBinding {
+            return Bindings.createStringBinding(Callable { getLocalizedString(key) },
+                    (getApp().menuListener as MenuEventHandler).menuSettings.languageProperty())
         }
     }
 }

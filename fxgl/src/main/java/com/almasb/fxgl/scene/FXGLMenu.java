@@ -8,6 +8,7 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.MenuEventHandler;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
@@ -19,6 +20,7 @@ import com.almasb.fxgl.saving.SaveFile;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLSpinner;
+import com.almasb.fxgl.util.Language;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
@@ -71,7 +73,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected final MenuType type;
 
-    protected MenuEventListener listener;
+    protected MenuEventHandler listener;
 
     protected final Pane menuRoot = new Pane();
     protected final Pane contentRoot = new Pane();
@@ -81,7 +83,7 @@ public abstract class FXGLMenu extends FXGLScene {
     public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
         this.type = type;
-        this.listener = app.getMenuListener();
+        this.listener = (MenuEventHandler) app.getMenuListener();
 
         getContentRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),
@@ -315,9 +317,14 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentVideo() {
         log.debug("createContentVideo()");
 
-        // nothing to put here at the moment
+        ChoiceBox<Language> languageBox = FXGL.getUIFactory().newChoiceBox(FXCollections.observableArrayList(Language.values()));
+        languageBox.setValue(Language.ENGLISH);
 
-        return new MenuContent();
+        listener.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
+
+        return new MenuContent(
+                new HBox(25, FXGL.getUIFactory().newText("LANGUAGE:"), languageBox)
+        );
     }
 
     /**

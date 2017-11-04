@@ -127,6 +127,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
         }
 
         MenuButton itemOptions = new MenuButton("OPTIONS");
+        itemOptions.textProperty().bind(FXGL.localizedStringProperty("menu.options"));
         itemOptions.setChild(createOptionsMenu());
         box.add(itemOptions);
 

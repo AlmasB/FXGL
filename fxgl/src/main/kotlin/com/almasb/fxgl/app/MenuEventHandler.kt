@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.ProgressDialog
 import com.almasb.fxgl.scene.menu.MenuEventListener
+import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.util.InputPredicates
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyBooleanWrapper
@@ -26,9 +27,11 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
+class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
 
     private val log = Logger.get(javaClass)
+
+    val menuSettings = MenuSettings()
 
     private lateinit var saveLoadManager: SaveLoadManager
 

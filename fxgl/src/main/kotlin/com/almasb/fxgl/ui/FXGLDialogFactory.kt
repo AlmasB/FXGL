@@ -7,6 +7,8 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
+import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.geometry.Insets
@@ -50,7 +52,8 @@ class FXGLDialogFactory : DialogFactory {
     override fun messageDialog(message: String, callback: Runnable): Pane {
         val text = createMessage(message)
 
-        val btnOK = FXGL.getUIFactory().newButton("OK")
+        val btnOK = FXGL.getUIFactory().newButton("")
+        btnOK.textProperty().bind(localizedStringProperty("dialog.ok"))
         btnOK.setOnAction {
             callback.run()
         }
@@ -64,12 +67,14 @@ class FXGLDialogFactory : DialogFactory {
     override fun confirmationDialog(message: String, callback: Consumer<Boolean>): Pane {
         val text = createMessage(message)
 
-        val btnYes = FXGLButton("YES")
+        val btnYes = FXGLButton()
+        btnYes.textProperty().bind(localizedStringProperty("dialog.yes"))
         btnYes.setOnAction {
             callback.accept(true)
         }
 
-        val btnNo = FXGLButton("NO")
+        val btnNo = FXGLButton()
+        btnNo.textProperty().bind(localizedStringProperty("dialog.no"))
         btnNo.setOnAction {
             callback.accept(false)
         }
@@ -90,7 +95,8 @@ class FXGLDialogFactory : DialogFactory {
         field.maxWidth = Math.max(text.layoutBounds.width, 200.0)
         field.font = FXGL.getUIFactory().newFont(18.0)
 
-        val btnOK = FXGLButton("OK")
+        val btnOK = FXGLButton("")
+        btnOK.textProperty().bind(localizedStringProperty("dialog.ok"))
 
         field.textProperty().addListener { _, _, newInput ->
             btnOK.isDisable = newInput.isEmpty() || !filter.test(newInput)
@@ -114,7 +120,8 @@ class FXGLDialogFactory : DialogFactory {
         field.maxWidth = Math.max(text.layoutBounds.width, 200.0)
         field.font = FXGL.getUIFactory().newFont(18.0)
 
-        val btnOK = FXGL.getUIFactory().newButton("OK")
+        val btnOK = FXGL.getUIFactory().newButton("")
+        btnOK.textProperty().bind(localizedStringProperty("dialog.ok"))
 
         field.textProperty().addListener {
             _, _, newInput -> btnOK.isDisable = newInput.isEmpty() || !filter.test(newInput)
@@ -125,7 +132,8 @@ class FXGLDialogFactory : DialogFactory {
             callback.accept(field.text)
         }
 
-        val btnCancel = FXGL.getUIFactory().newButton("CANCEL")
+        val btnCancel = FXGL.getUIFactory().newButton("")
+        btnCancel.textProperty().bind(localizedStringProperty("dialog.cancel"))
         btnCancel.setOnAction {
             callback.accept("")
         }
@@ -142,7 +150,8 @@ class FXGLDialogFactory : DialogFactory {
     override fun errorDialog(error: Throwable, callback: Runnable): Pane {
         val text = createMessage(error.toString())
 
-        val btnOK = FXGLButton("OK")
+        val btnOK = FXGLButton("")
+        btnOK.textProperty().bind(localizedStringProperty("dialog.ok"))
         btnOK.setOnAction {
             callback.run()
         }
