@@ -45,14 +45,23 @@ public class PhysicsControl extends Control {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
+
+        // these give us min world coordinates of the overall bbox
+        // but they are not coordinates of the entity
+
+        double minXWorld = toPixels(body.getPosition().x - toMeters(entity.getWidth() / 2));
+        double minYWorld = toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(entity.getHeight() / 2));
+
+        // hence we do the following, as entity.x = minXWorld - minXLocal
+
         // we round positions so that it's easy for the rest of the world to work with
         // snapped to pixel values
         entity.setX(
-                Math.round(toPixels(body.getPosition().x - toMeters(entity.getWidth() / 2)))
+                Math.round(minXWorld - entity.getBoundingBoxComponent().getMinXLocal())
         );
 
         entity.setY(
-                Math.round(toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(entity.getHeight() / 2)))
+                Math.round(minYWorld - entity.getBoundingBoxComponent().getMinYLocal())
         );
 
         entity.setRotation(-Math.toDegrees(body.getAngle()));
