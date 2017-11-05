@@ -93,7 +93,7 @@ public class MarioFactory implements EntityFactory {
                 .from(data)
                 .type(MarioType.ROBOT)
                 .bbox(new HitBox("main", new Point2D(275 / 2 - 105/2, 275 / 2 - 210/2), BoundingShape.box(105, 210)))
-                .bbox(new HitBox("lower", new Point2D(105 / 2 - 5, 125*2), BoundingShape.box(10, 10)))
+                .bbox(new HitBox("lower", new Point2D(275 / 2 - 15, 125*2), BoundingShape.box(30, 10)))
                 .with(physics, new CollidableComponent(true))
                 .with(new RobotControl())
                 .build();
