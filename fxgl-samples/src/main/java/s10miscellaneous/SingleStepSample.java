@@ -13,7 +13,6 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
 /**
- * TODO: scene background color
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
