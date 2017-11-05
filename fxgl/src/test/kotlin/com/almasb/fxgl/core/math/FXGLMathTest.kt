@@ -6,10 +6,12 @@
 
 package com.almasb.fxgl.core.math
 
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.Entity
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**
@@ -18,6 +20,13 @@ import org.junit.jupiter.api.Test
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class FXGLMathTest {
+
+    companion object {
+        @BeforeAll
+        @JvmStatic fun before() {
+            FXGLMock.mock()
+        }
+    }
 
     @Test
     fun `Random array element returns null if array is empty`() {
