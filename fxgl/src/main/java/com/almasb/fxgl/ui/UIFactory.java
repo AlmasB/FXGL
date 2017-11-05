@@ -11,6 +11,7 @@ import com.almasb.fxgl.animation.AnimatedValue;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.util.EmptyRunnable;
+import javafx.beans.binding.StringExpression;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -46,6 +47,12 @@ public interface UIFactory {
         Text text = new Text(message);
         text.setFill(textColor);
         text.setFont(newFont(fontSize));
+        return text;
+    }
+
+    default Text newText(StringExpression textBinding) {
+        Text text = newText(textBinding.get());
+        text.textProperty().bind(textBinding);
         return text;
     }
 

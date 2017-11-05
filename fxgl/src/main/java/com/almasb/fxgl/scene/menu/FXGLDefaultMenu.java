@@ -25,6 +25,8 @@ import javafx.util.Duration;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
+import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
+
 /**
  * This is the default FXGL menu used if the users
  * don't provide their own. This class provides
@@ -109,45 +111,44 @@ public class FXGLDefaultMenu extends FXGLMenu {
         EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
 
         if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
-            MenuButton itemContinue = new MenuButton("CONTINUE");
+            MenuButton itemContinue = new MenuButton("menu.continue");
             itemContinue.setOnAction(e -> fireContinue());
             box.add(itemContinue);
 
             itemContinue.disableProperty().bind(listener.hasSavesProperty().not());
         }
 
-        MenuButton itemNewGame = new MenuButton("NEW GAME");
+        MenuButton itemNewGame = new MenuButton("menu.newGame");
         itemNewGame.setOnAction(e -> fireNewGame());
         box.add(itemNewGame);
 
         if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
-            MenuButton itemLoad = new MenuButton("LOAD");
+            MenuButton itemLoad = new MenuButton("menu.load");
             itemLoad.setMenuContent(this::createContentLoad);
             box.add(itemLoad);
         }
 
-        MenuButton itemOptions = new MenuButton("OPTIONS");
-        itemOptions.textProperty().bind(FXGL.localizedStringProperty("menu.options"));
+        MenuButton itemOptions = new MenuButton("menu.options");
         itemOptions.setChild(createOptionsMenu());
         box.add(itemOptions);
 
         if (enabledItems.contains(MenuItem.EXTRA)) {
-            MenuButton itemExtra = new MenuButton("EXTRA");
+            MenuButton itemExtra = new MenuButton("menu.extra");
             itemExtra.setChild(createExtraMenu());
             box.add(itemExtra);
         }
 
         if (enabledItems.contains(MenuItem.ONLINE)) {
-            MenuButton itemMultiplayer = new MenuButton("ONLINE");
+            MenuButton itemMultiplayer = new MenuButton("menu.online");
             itemMultiplayer.setOnAction(e -> fireMultiplayer());
             box.add(itemMultiplayer);
         }
 
-        MenuButton itemLogout = new MenuButton("LOGOUT");
+        MenuButton itemLogout = new MenuButton("menu.logout");
         itemLogout.setOnAction(e -> fireLogout());
         box.add(itemLogout);
 
-        MenuButton itemExit = new MenuButton("EXIT");
+        MenuButton itemExit = new MenuButton("menu.exit");
         itemExit.setOnAction(e -> fireExit());
         box.add(itemExit);
 
@@ -161,32 +162,32 @@ public class FXGLDefaultMenu extends FXGLMenu {
 
         EnumSet<MenuItem> enabledItems = app.getSettings().getEnabledMenuItems();
 
-        MenuButton itemResume = new MenuButton("RESUME");
+        MenuButton itemResume = new MenuButton("menu.resume");
         itemResume.setOnAction(e -> fireResume());
         box.add(itemResume);
 
         if (enabledItems.contains(MenuItem.SAVE_LOAD)) {
-            MenuButton itemSave = new MenuButton("SAVE");
+            MenuButton itemSave = new MenuButton("menu.save");
             itemSave.setOnAction(e -> fireSave());
 
-            MenuButton itemLoad = new MenuButton("LOAD");
+            MenuButton itemLoad = new MenuButton("menu.load");
             itemLoad.setMenuContent(this::createContentLoad);
 
             box.add(itemSave);
             box.add(itemLoad);
         }
 
-        MenuButton itemOptions = new MenuButton("OPTIONS");
+        MenuButton itemOptions = new MenuButton("menu.options");
         itemOptions.setChild(createOptionsMenu());
         box.add(itemOptions);
 
         if (enabledItems.contains(MenuItem.EXTRA)) {
-            MenuButton itemExtra = new MenuButton("EXTRA");
+            MenuButton itemExtra = new MenuButton("menu.extra");
             itemExtra.setChild(createExtraMenu());
             box.add(itemExtra);
         }
 
-        MenuButton itemExit = new MenuButton("MAIN MENU");
+        MenuButton itemExit = new MenuButton("menu.mainMenu");
         itemExit.setOnAction(e -> fireExitToMainMenu());
         box.add(itemExit);
 
@@ -196,18 +197,18 @@ public class FXGLDefaultMenu extends FXGLMenu {
     protected MenuBox createOptionsMenu() {
         log.debug("createOptionsMenu()");
 
-        MenuButton itemGameplay = new MenuButton("GAMEPLAY");
+        MenuButton itemGameplay = new MenuButton("menu.gameplay");
         itemGameplay.setMenuContent(this::createContentGameplay);
 
-        MenuButton itemControls = new MenuButton("CONTROLS");
+        MenuButton itemControls = new MenuButton("menu.controls");
         itemControls.setMenuContent(this::createContentControls);
 
-        MenuButton itemVideo = new MenuButton("VIDEO");
+        MenuButton itemVideo = new MenuButton("menu.video");
         itemVideo.setMenuContent(this::createContentVideo);
-        MenuButton itemAudio = new MenuButton("AUDIO");
+        MenuButton itemAudio = new MenuButton("menu.audio");
         itemAudio.setMenuContent(this::createContentAudio);
 
-        MenuButton btnRestore = new MenuButton("RESTORE");
+        MenuButton btnRestore = new MenuButton("menu.restore");
         btnRestore.setOnAction(e -> {
             app.getDisplay().showConfirmationBox("Settings will be restored to default", yes -> {
                 if (yes) {
@@ -223,13 +224,13 @@ public class FXGLDefaultMenu extends FXGLMenu {
     protected MenuBox createExtraMenu() {
         log.debug("createExtraMenu()");
 
-        MenuButton itemAchievements = new MenuButton("TROPHIES");
+        MenuButton itemAchievements = new MenuButton("menu.trophies");
         itemAchievements.setMenuContent(this::createContentAchievements);
 
-        MenuButton itemCredits = new MenuButton("CREDITS");
+        MenuButton itemCredits = new MenuButton("menu.credits");
         itemCredits.setMenuContent(this::createContentCredits);
 
-        MenuButton itemFeedback = new MenuButton("FEEDBACK");
+        MenuButton itemFeedback = new MenuButton("menu.feedback");
         itemFeedback.setMenuContent(this::createContentFeedback);
 
         return new MenuBox(200, itemAchievements, itemCredits, itemFeedback);
@@ -292,8 +293,8 @@ public class FXGLDefaultMenu extends FXGLMenu {
         private MenuBox parent;
         private MenuContent cachedContent = null;
 
-        MenuButton(String name) {
-            super(name);
+        MenuButton(String stringKey) {
+            textProperty().bind(localizedStringProperty(stringKey));
         }
 
         public void setParent(MenuBox menu) {
@@ -311,7 +312,7 @@ public class FXGLDefaultMenu extends FXGLMenu {
         }
 
         public void setChild(MenuBox menu) {
-            MenuButton back = new MenuButton("BACK");
+            MenuButton back = new MenuButton("menu.back");
             menu.getChildren().add(0, back);
 
             back.addEventHandler(ActionEvent.ACTION, event -> switchMenuTo(MenuButton.this.parent));

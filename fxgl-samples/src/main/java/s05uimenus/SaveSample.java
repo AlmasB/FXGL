@@ -46,9 +46,9 @@ public class SaveSample extends GameApplication {
         settings.setTitle("SaveSample");
         settings.setVersion("0.1");
         settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
+        settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
-        settings.setEnabledMenuItems(EnumSet.of(MenuItem.SAVE_LOAD));
+        settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
         settings.setProfilingEnabled(true);
         settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }

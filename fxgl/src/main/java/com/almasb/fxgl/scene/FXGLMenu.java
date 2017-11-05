@@ -45,6 +45,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
+
 /**
  * This is a base class for main/game menus. It provides several
  * convenience methods for those who just want to extend an existing menu.
@@ -184,6 +186,7 @@ public abstract class FXGLMenu extends FXGLScene {
         listener.getSaveLoadManager().querySaveFiles();
 
         Button btnLoad = FXGL.getUIFactory().newButton("LOAD");
+        btnLoad.textProperty().bind(localizedStringProperty("menu.load"));
         btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnLoad.setOnAction(e -> {
@@ -193,6 +196,7 @@ public abstract class FXGLMenu extends FXGLScene {
         });
 
         Button btnDelete = FXGL.getUIFactory().newButton("DELETE");
+        btnDelete.textProperty().bind(localizedStringProperty("menu.delete"));
         btnDelete.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnDelete.setOnAction(e -> {
@@ -220,7 +224,7 @@ public abstract class FXGLMenu extends FXGLScene {
         app.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
         return new MenuContent(
-                new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner),
+                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.difficulty").concat(":")), difficultySpinner),
                 FXGL.getUIFactory().newText("PLAYTIME: "
                         + app.getGameplay().getStats().getPlaytimeHours() + "H "
                         + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
@@ -323,7 +327,7 @@ public abstract class FXGLMenu extends FXGLScene {
         listener.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
 
         return new MenuContent(
-                new HBox(25, FXGL.getUIFactory().newText("LANGUAGE:"), languageBox)
+                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox)
         );
     }
 
