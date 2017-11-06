@@ -102,7 +102,7 @@ public class PlayerControl extends Control {
 
     public void jump() {
         if (jumpTimer.elapsed(Duration.seconds(0.25))) {
-            if (canJump) {
+            if (physics.isGrounded()) {
                 physics.setVelocityY(-250);
                 canJump = false;
                 jumpTimer.capture();

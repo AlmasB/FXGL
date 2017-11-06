@@ -270,6 +270,16 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
+        // TODO: some "ground" id for sensor, otherwise may be some other sensor type?
+        // check sensors
+        if (contact.getFixtureA().isSensor()) {
+            e1.getComponent(PhysicsComponent.class).groundedList.add(e2);
+            return;
+        } else if (contact.getFixtureB().isSensor()) {
+            e2.getComponent(PhysicsComponent.class).groundedList.add(e1);
+            return;
+        }
+
         if (!areCollidable(e1, e2))
             return;
 
@@ -302,6 +312,16 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     public void endContact(Contact contact) {
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
+
+        // TODO: some "ground" id for sensor, otherwise may be some other sensor type?
+        // check sensors
+        if (contact.getFixtureA().isSensor()) {
+            e1.getComponent(PhysicsComponent.class).groundedList.remove(e2);
+            return;
+        } else if (contact.getFixtureB().isSensor()) {
+            e2.getComponent(PhysicsComponent.class).groundedList.remove(e1);
+            return;
+        }
 
         if (!areCollidable(e1, e2))
             return;
@@ -507,6 +527,10 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
         createFixtures(e);
 
+        if (physics.isGenerateGroundSensor()) {
+            createGroundSensor(e);
+        }
+
         physics.body.setUserData(e);
         physics.onInitPhysics();
 
@@ -584,6 +608,26 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
             Fixture fixture = physics.body.createFixture(fd);
             fixture.setUserData(box);
         }
+    }
+
+    private void createGroundSensor(Entity e) {
+        // 3 is a good ratio of entity width, since we don't want to occupy the full width
+        // if we want to ban "ledge" jumps
+        double sensorWidth = e.getWidth() / 3;
+        double sensorHeight = 5;
+
+        // center with respect to entity center
+        Point2D sensorCenterLocal = new Point2D(0, e.getHeight() / 2 - sensorHeight / 2);
+
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.setAsBox(toMeters(sensorWidth / 2), toMeters(sensorHeight / 2),
+                new Vec2(toMeters(sensorCenterLocal.getX()), -toMeters(sensorCenterLocal.getY())), 0);
+
+        FixtureDef fd = new FixtureDef()
+                .sensor(true)
+                .shape(polygonShape);
+
+        e.getComponent(PhysicsComponent.class).body.createFixture(fd);
     }
 
     private void createPhysicsParticles(Entity e) {

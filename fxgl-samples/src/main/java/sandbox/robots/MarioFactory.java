@@ -61,6 +61,7 @@ public class MarioFactory implements EntityFactory {
     public Entity newPlayer(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setFixtureDef(new FixtureDef().friction(0).density(0.25f));
+        physics.setGenerateGroundSensor(true);
 
         BodyDef bd = new BodyDef();
         bd.setFixedRotation(true);

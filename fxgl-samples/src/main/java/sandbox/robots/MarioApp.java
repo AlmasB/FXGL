@@ -14,10 +14,12 @@ import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.handler.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 
 /**
@@ -112,7 +114,7 @@ public class MarioApp extends GameApplication {
 
         getGameWorld().setLevelFromMap("mario" + 0 + ".json");
 
-        getGameWorld().spawn("player", 10, 24 * 70 - 768);
+        getGameWorld().spawn("player", 350, 24 * 70 - 768);
 
         Entity player = getGameWorld().getEntitiesByType(MarioType.PLAYER).get(0);
         playerControl = player.getControl(PlayerControl.class);
@@ -146,6 +148,22 @@ public class MarioApp extends GameApplication {
         });
 
         getPhysicsWorld().addCollisionHandler(new CollectibleHandler(MarioType.PLAYER, MarioType.COIN, "drop.wav"));
+    }
+
+    private Text debug;
+
+    @Override
+    protected void initUI() {
+        debug = getUIFactory().newText("");
+        debug.setTranslateX(500);
+        debug.setTranslateY(200);
+
+        getGameScene().addUINode(debug);
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        debug.setText("On Ground: " + playerControl.getEntity().getComponent(PhysicsComponent.class).isGrounded());
     }
 
     private boolean nextLevel = false;
