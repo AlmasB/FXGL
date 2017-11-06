@@ -324,7 +324,7 @@ public abstract class FXGLMenu extends FXGLScene {
         ChoiceBox<Language> languageBox = FXGL.getUIFactory().newChoiceBox(FXCollections.observableArrayList(Language.values()));
         languageBox.setValue(Language.ENGLISH);
 
-        listener.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
+        FXGL.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
 
         return new MenuContent(
                 new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox)

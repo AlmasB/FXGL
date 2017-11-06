@@ -32,8 +32,6 @@ class MenuEventHandler(private val app: GameApplication) : MenuEventListener, Ev
 
     private val log = Logger.get(javaClass)
 
-    val menuSettings = MenuSettings()
-
     private lateinit var saveLoadManager: SaveLoadManager
 
     override fun getSaveLoadManager(): SaveLoadManager {

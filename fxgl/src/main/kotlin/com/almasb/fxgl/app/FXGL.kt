@@ -14,19 +14,15 @@ import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.ui.FXGLDisplay
 import com.almasb.fxgl.net.FXGLNet
+import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
+import com.almasb.fxgl.ui.FXGLDisplay
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
-import javafx.beans.property.StringProperty
-import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
-
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
 import java.util.concurrent.Callable
 import java.util.function.Consumer
 
@@ -53,6 +49,10 @@ class FXGL private constructor() {
          * @return FXGL system settings
          */
         @JvmStatic fun getSettings() = internalApp.settings
+
+        private val _menuSettings = MenuSettings()
+
+        @JvmStatic fun getMenuSettings() = _menuSettings
 
         /**
          * @return instance of the running game application
@@ -251,7 +251,7 @@ class FXGL private constructor() {
          * @return a string translated to the language used by FXGL game
          */
         @JvmStatic fun getLocalizedString(key: String): String {
-            val langName = (getApp().menuListener as MenuEventHandler).menuSettings.getLanguage().resourceBundleName()
+            val langName = _menuSettings.getLanguage().resourceBundleName()
 
             val bundle = getAssetLoader().loadResourceBundle("languages/$langName.properties")
 
@@ -262,8 +262,7 @@ class FXGL private constructor() {
          * @return binding to a string translated to the language used by FXGL game
          */
         @JvmStatic fun localizedStringProperty(key: String): StringBinding {
-            return Bindings.createStringBinding(Callable { getLocalizedString(key) },
-                    (getApp().menuListener as MenuEventHandler).menuSettings.languageProperty())
+            return Bindings.createStringBinding(Callable { getLocalizedString(key) }, _menuSettings.languageProperty())
         }
     }
 }
