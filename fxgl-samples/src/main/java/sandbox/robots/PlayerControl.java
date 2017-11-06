@@ -9,14 +9,12 @@ package sandbox.robots;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.time.LocalTimer;
-import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
 /**
@@ -102,7 +100,7 @@ public class PlayerControl extends Control {
 
     public void jump() {
         if (jumpTimer.elapsed(Duration.seconds(0.25))) {
-            if (physics.isGrounded()) {
+            if (physics.isOnGround()) {
                 physics.setVelocityY(-250);
                 canJump = false;
                 jumpTimer.capture();

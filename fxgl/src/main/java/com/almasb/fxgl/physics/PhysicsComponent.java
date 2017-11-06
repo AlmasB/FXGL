@@ -57,7 +57,13 @@ public class PhysicsComponent extends Component {
         }
     }
 
-    public boolean isGrounded() {
+    /**
+     * Note: only works when {@link #setGenerateGroundSensor(boolean)} was called with value true
+     * before attaching entity to game world.
+     *
+     * @return true if entity is standing on top of another entity with physics component
+     */
+    public boolean isOnGround() {
         return !groundedList.isEmpty();
     }
 

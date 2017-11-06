@@ -67,7 +67,7 @@ public class PlatformerSample extends GameApplication {
             protected void onActionBegin() {
                 PhysicsComponent physics = player.getComponent(PhysicsComponent.class);
 
-                if (physics.isGrounded()) {
+                if (physics.isOnGround()) {
                     double dx = physics.getLinearVelocity().getX();
 
                     physics.setLinearVelocity(new Point2D(dx, -100));
