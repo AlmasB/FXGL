@@ -173,7 +173,7 @@ public abstract class GameApplication extends Application {
         initSystemProperties();
         initUserProperties();
 
-        FXGL.configure(new ApplicationModule(this));
+        FXGL.configure(this);
 
         log.debug("FXGL configuration complete");
 

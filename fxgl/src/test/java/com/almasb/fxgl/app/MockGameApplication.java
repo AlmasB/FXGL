@@ -8,24 +8,52 @@ package com.almasb.fxgl.app;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.MockUIFactory;
 import com.almasb.fxgl.util.Credits;
+import javafx.application.Application;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
 
 import java.util.Arrays;
 
 /**
  * A test game app used to mock the user app.
  *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
+ * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public class MockGameApplication extends GameApplication {
 
-    public static MockGameApplication INSTANCE;
+    private static MockGameApplication INSTANCE;
 
-    public MockGameApplication() {
-        if (INSTANCE != null)
-            throw new IllegalStateException("INSTANCE != null");
+    public static MockGameApplication get() {
+        if (INSTANCE == null) {
+            mockStage();
 
-        INSTANCE = this;
+            GameSettings settings = new GameSettings();
+
+            MockGameApplication app = new MockGameApplication();
+            app.initSettings(settings);
+
+            app.injectSettings(settings.toReadOnly());
+
+            INSTANCE = app;
+        }
+
+        return INSTANCE;
+    }
+
+    private static Stage mockStage() {
+        new Thread(() -> {
+            Application.launch(MockApplication.class);
+        }).start();
+
+        try {
+            MockApplication.Companion.getREADY().await();
+        } catch (InterruptedException e) {
+            System.out.println("Exception during mocking: " + e);
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        return MockApplication.stage;
     }
 
     @Override

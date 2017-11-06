@@ -81,13 +81,13 @@ class FXGL private constructor() {
         /**
          * Constructs FXGL.
          */
-        @JvmStatic fun configure(appModule: ApplicationModule) {
+        @JvmStatic fun configure(app: GameApplication) {
             if (configured)
                 return
 
             configured = true
 
-            internalApp = appModule.app
+            internalApp = app
 
             createRequiredDirs()
 
