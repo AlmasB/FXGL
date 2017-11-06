@@ -65,9 +65,13 @@ public class PlatformerSample extends GameApplication {
         input.addAction(new UserAction("Jump") {
             @Override
             protected void onActionBegin() {
-                double dx = player.getComponent(PhysicsComponent.class).getLinearVelocity().getX();
+                PhysicsComponent physics = player.getComponent(PhysicsComponent.class);
 
-                player.getComponent(PhysicsComponent.class).setLinearVelocity(new Point2D(dx, -100));
+                if (physics.isGrounded()) {
+                    double dx = physics.getLinearVelocity().getX();
+
+                    physics.setLinearVelocity(new Point2D(dx, -100));
+                }
             }
         }, KeyCode.W);
 
@@ -118,7 +122,7 @@ public class PlatformerSample extends GameApplication {
 
     private Entity createPlayer(double x, double y, double width, double height) {
         PhysicsComponent physics = new PhysicsComponent();
-
+        physics.setGenerateGroundSensor(true);
         physics.setBodyType(BodyType.DYNAMIC);
 
         return Entities.builder()
