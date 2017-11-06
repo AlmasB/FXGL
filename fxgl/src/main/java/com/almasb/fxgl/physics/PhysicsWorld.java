@@ -13,7 +13,6 @@ import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityWorldListener;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;

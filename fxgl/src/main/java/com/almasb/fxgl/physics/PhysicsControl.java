@@ -11,10 +11,6 @@ import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.component.BoundingBoxComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.RotationComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import javafx.geometry.Point2D;
 

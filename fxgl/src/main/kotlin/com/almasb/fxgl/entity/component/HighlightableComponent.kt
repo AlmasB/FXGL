@@ -11,7 +11,6 @@ import com.almasb.fxgl.animation.SequentialAnimation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Component
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.Entities
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent

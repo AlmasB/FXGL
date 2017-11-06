@@ -12,7 +12,6 @@ import com.almasb.fxgl.input.view.MouseButtonView
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node
-import javafx.scene.Parent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color

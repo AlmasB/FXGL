@@ -12,11 +12,7 @@ import com.almasb.fxgl.input.view.MouseButtonView
 import javafx.scene.Node
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
-import javafx.scene.paint.*
-import javafx.scene.shape.Line
-import javafx.scene.shape.Rectangle
+import javafx.scene.paint.Color
 import javafx.scene.text.TextFlow
 
 /**

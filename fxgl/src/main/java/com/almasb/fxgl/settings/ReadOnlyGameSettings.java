@@ -6,13 +6,13 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.ExceptionHandler;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.notification.NotificationViewFactory;
 import com.almasb.fxgl.gameplay.notification.XboxNotificationViewFactory;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.ui.DialogFactory;
-import com.almasb.fxgl.app.ExceptionHandler;
 import com.almasb.fxgl.ui.FXGLDialogFactory;
 import com.almasb.fxgl.ui.FXGLUIFactory;
 import com.almasb.fxgl.ui.UIFactory;

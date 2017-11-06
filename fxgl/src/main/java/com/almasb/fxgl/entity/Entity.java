@@ -11,7 +11,6 @@ import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.reflect.ReflectionUtils;
-import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -22,7 +21,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

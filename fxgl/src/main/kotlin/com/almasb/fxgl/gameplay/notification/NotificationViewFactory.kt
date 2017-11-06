@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.gameplay.notification
 
-import javafx.scene.Node
-
 /**
  *
  *

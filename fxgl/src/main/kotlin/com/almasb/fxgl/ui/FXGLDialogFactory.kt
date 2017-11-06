@@ -7,7 +7,6 @@
 package com.almasb.fxgl.ui
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
 import com.almasb.fxgl.app.FXGL.Companion.localizedStringProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ChangeListener

@@ -8,13 +8,9 @@ package com.almasb.fxgl.gameplay.notification
 
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.gameplay.notification.Notification
 import com.almasb.fxgl.ui.Position
-import javafx.animation.ScaleTransition
-import javafx.animation.Transition
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle

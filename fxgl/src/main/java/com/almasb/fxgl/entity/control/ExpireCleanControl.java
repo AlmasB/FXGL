@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity.control;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.ViewComponent;
 import com.almasb.fxgl.time.TimerAction;
 import javafx.util.Duration;
 

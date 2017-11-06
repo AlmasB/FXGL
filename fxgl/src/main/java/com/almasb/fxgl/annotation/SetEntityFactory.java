@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.annotation;
 
-import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.entity.GameWorld;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

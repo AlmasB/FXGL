@@ -8,9 +8,6 @@ package com.almasb.fxgl.entity.control;
 
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.RotationComponent;
 import javafx.geometry.Point2D;
 
 /**

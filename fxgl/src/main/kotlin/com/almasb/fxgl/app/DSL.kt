@@ -12,7 +12,6 @@ import com.almasb.fxgl.app.FXGL.Companion.getAudioPlayer
 import com.almasb.fxgl.app.FXGL.Companion.getDisplay
 import com.almasb.fxgl.app.FXGL.Companion.getEventBus
 import com.almasb.fxgl.app.FXGL.Companion.getInput
-import com.almasb.fxgl.app.FXGL.Companion.getMasterTimer
 import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
