@@ -47,4 +47,7 @@ abstract class NotificationView : Pane() {
         // TODO: when we have superstate, use that
         anim.startInPlayState()
     }
+
+    abstract fun showFirst(notification: Notification)
+    abstract fun showRepeated(notification: Notification)
 }

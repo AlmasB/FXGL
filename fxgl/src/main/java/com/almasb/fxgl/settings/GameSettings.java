@@ -7,7 +7,7 @@ package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.ExceptionHandler;
-import com.almasb.fxgl.gameplay.notification.NotificationViewFactory;
+import com.almasb.fxgl.gameplay.notification.NotificationView;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.ui.DialogFactory;
 import com.almasb.fxgl.ui.UIFactory;
@@ -190,8 +190,8 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Provide a custom notification service.
      */
-    public void setNotificationViewFactory(NotificationViewFactory notificationViewFactory) {
-        this.notificationViewFactory = notificationViewFactory;
+    public void setNotificationViewFactory(Class<? extends NotificationView> notificationViewFactory) {
+        this.notificationViewClass = notificationViewFactory;
     }
 
     /**

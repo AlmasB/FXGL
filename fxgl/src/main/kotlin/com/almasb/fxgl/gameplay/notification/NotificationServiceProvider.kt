@@ -7,9 +7,11 @@
 package com.almasb.fxgl.gameplay.notification
 
 import com.almasb.fxgl.app.FXGL
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
 import javafx.scene.paint.Color
+import javafx.util.Duration
 import java.util.*
 
 /**
@@ -18,23 +20,16 @@ import java.util.*
  */
 class NotificationServiceProvider : NotificationService {
 
-    private lateinit var notificationViewFactory: NotificationViewFactory
-    private lateinit var gameScene: GameScene
+    private val gameScene by lazy { FXGL.getApp().gameScene }
 
-    private val queue = ArrayDeque<NotificationView>()
+    private val notificationView by lazy { ReflectionUtils.newInstance(FXGL.getSettings().notificationViewFactory) }
+
+    private val queue = ArrayDeque<Notification>()
 
     private var position = Position.TOP
 
-    /**
-     * @return notification position
-     */
     override fun getPosition() = position
 
-    /**
-     * Set position of future notifications.
-     *
-     * @param position where to show notification
-     */
     override fun setPosition(position: Position) {
         this.position = position
     }
@@ -56,21 +51,6 @@ class NotificationServiceProvider : NotificationService {
 
     private var showing = false
 
-    private fun popNotification(notificationView: NotificationView) {
-        val removed = gameScene.removeUINode(notificationView)
-
-        // this is called asynchronously so we have to check manually
-        if (!removed) {
-            return
-        }
-
-        if (!queue.isEmpty()) {
-            showNotification(queue.poll())
-        } else {
-            showing = false
-        }
-    }
-
     /**
      * Shows a notification with given text.
      * Only 1 notification can be shown at a time.
@@ -80,25 +60,53 @@ class NotificationServiceProvider : NotificationService {
      * @param text the text to show
      */
     override fun pushNotification(text: String) {
-        notificationViewFactory = FXGL.getSettings().notificationViewFactory
-        gameScene = FXGL.getApp().gameScene
-
         val notification = Notification(text, textColor, backgroundColor, position)
-        val notificationView = notificationViewFactory.newView(notification)
-        notificationView.notification = notification
-        notificationView.onFinished = Runnable { popNotification(notificationView) }
 
         if (showing)
-            queue.add(notificationView)
+            queue.add(notification)
         else
-            showNotification(notificationView)
+            showFirstNotification(notification)
     }
 
-    private fun showNotification(notificationView: NotificationView) {
+    private fun showFirstNotification(notification: Notification) {
         showing = true
         gameScene.addUINode(notificationView)
-        notificationView.show()
 
-        FXGL.getEventBus().fireEvent(NotificationEvent(notificationView.notification))
+        // TODO: showFirstTime
+        notificationView.showFirst(notification)
+
+        FXGL.getEventBus().fireEvent(NotificationEvent(notification))
+
+        // schedule next
+        FXGL.getMasterTimer().runOnceAfter(Runnable {
+            popNotification()
+        }, Duration.seconds(3.0))
+    }
+
+    private fun popNotification() {
+        if (!queue.isEmpty()) {
+            showRepeatedNotification(queue.poll())
+        } else {
+            val removed = gameScene.removeUINode(notificationView)
+
+            showing = false
+
+            // this is called asynchronously so we have to check manually
+//            if (!removed) {
+//                return
+//            }
+        }
+    }
+
+    private fun showRepeatedNotification(notification: Notification) {
+        // TODO: showRepeated
+        notificationView.showRepeated(notification)
+
+        FXGL.getEventBus().fireEvent(NotificationEvent(notification))
+
+        // schedule next
+        FXGL.getMasterTimer().runOnceAfter(Runnable {
+            popNotification()
+        }, Duration.seconds(3.0))
     }
 }

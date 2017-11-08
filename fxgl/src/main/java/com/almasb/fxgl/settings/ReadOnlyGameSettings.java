@@ -9,8 +9,8 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.ExceptionHandler;
 import com.almasb.fxgl.app.FXGLExceptionHandler;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.gameplay.notification.NotificationViewFactory;
-import com.almasb.fxgl.gameplay.notification.XboxNotificationViewFactory;
+import com.almasb.fxgl.gameplay.notification.NotificationView;
+import com.almasb.fxgl.gameplay.notification.XboxNotificationView;
 import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.ui.DialogFactory;
 import com.almasb.fxgl.ui.FXGLDialogFactory;
@@ -49,7 +49,7 @@ public class ReadOnlyGameSettings {
     protected SceneFactory sceneFactory = new SceneFactory();
     protected DialogFactory dialogFactory = new FXGLDialogFactory();
     protected UIFactory uiFactory = new FXGLUIFactory();
-    protected NotificationViewFactory notificationViewFactory = new XboxNotificationViewFactory();
+    protected Class<? extends NotificationView> notificationViewClass = XboxNotificationView.class;
     protected ExceptionHandler exceptionHandler = new FXGLExceptionHandler();
 
     private ExceptionHandler exceptionHandlerWrapper = new ExceptionHandler() {
@@ -96,7 +96,7 @@ public class ReadOnlyGameSettings {
         this.sceneFactory = copy.sceneFactory;
         this.dialogFactory = copy.dialogFactory;
         this.uiFactory = copy.uiFactory;
-        this.notificationViewFactory = copy.notificationViewFactory;
+        this.notificationViewClass = copy.notificationViewClass;
         this.exceptionHandler = copy.exceptionHandler;
 
         this.exceptionHandlerWrapper = copy.exceptionHandlerWrapper;
@@ -170,8 +170,8 @@ public class ReadOnlyGameSettings {
         return uiFactory;
     }
 
-    public final NotificationViewFactory getNotificationViewFactory() {
-        return notificationViewFactory;
+    public final Class<? extends NotificationView> getNotificationViewFactory() {
+        return notificationViewClass;
     }
 
     public final ExceptionHandler getExceptionHandler() {
@@ -194,7 +194,7 @@ public class ReadOnlyGameSettings {
                 "Scene Factory: " + sceneFactory.getClass() + '\n' +
                 "Dialog Factory: " + dialogFactory.getClass() + '\n' +
                 "UI Factory: " + uiFactory.getClass() + '\n' +
-                "Notification Service: " + notificationViewFactory.getClass() + '\n' +
+                "Notification Service: " + notificationViewClass + '\n' +
                 "Exception Handler: " + exceptionHandler.getClass();
     }
 }

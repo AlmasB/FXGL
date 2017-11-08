@@ -22,16 +22,16 @@ import javafx.util.Duration
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-internal class XboxNotificationView(message: String, bgColor: Color, position: Position) : NotificationView() {
+internal class XboxNotificationView : NotificationView() {
 
-    private lateinit var anim2: Animation<*>
-    private lateinit var bgClip: Node
-    private lateinit var bg: Rectangle
-    private lateinit var text: Text
+    override fun showFirst(notification: Notification) {
+        children.clear()
 
-    init {
         var x = 0.0
         var y = 0.0
+
+        val position = notification.position
+        val message = notification.message
 
         when (position) {
             Position.LEFT -> {
@@ -59,9 +59,9 @@ internal class XboxNotificationView(message: String, bgColor: Color, position: P
         scaleY = 0.0
 
 
-        val circle = Circle(30.0, 30.0, 30.0, bgColor)
+        val circle = Circle(30.0, 30.0, 30.0, notification.bgColor)
 
-        bg = Rectangle(400.0, 57.0, bgColor.darker())
+        bg = Rectangle(400.0, 57.0, notification.bgColor.darker())
         bg.arcWidth = 55.0
         bg.arcHeight = 55.0
         bg.translateX = -385.0
@@ -82,22 +82,58 @@ internal class XboxNotificationView(message: String, bgColor: Color, position: P
 
         children.addAll(circle)
 
-        FXGL.getMasterTimer().runOnceAfter({
-            children.add(0, bg)
-            children.add(text)
+        val a = FXGL.getUIFactory().scale(this, Point2D.ZERO, Point2D(1.0, 1.0), Duration.seconds(0.3))
+        a.onFinished = Runnable {
+            FXGL.getMasterTimer().runOnceAfter({
+                children.add(0, bg)
+                children.add(text)
 
-            val anim = FXGL.getUIFactory().translate(this, Point2D(translateX, translateY), Point2D(200.0, 50.0), Duration.seconds(0.33))
-            anim.startInPlayState()
+                val anim = FXGL.getUIFactory().translate(this, Point2D(translateX, translateY), Point2D(200.0, 50.0), Duration.seconds(0.33))
+                anim.startInPlayState()
 
-            anim2 = FXGL.getUIFactory().translate(bg, Point2D(bg.translateX, bg.translateY), Point2D(bg.translateX + 400.0, bg.translateY), Duration.seconds(0.33))
+                anim2 = FXGL.getUIFactory().translate(bg, Point2D(bg.translateX, bg.translateY), Point2D(bg.translateX + 400.0, bg.translateY), Duration.seconds(0.33))
 
-            anim2.onFinished = Runnable {
-                bg.clip = null
-                text.isVisible = true
-            }
-            anim2.startInPlayState()
+                anim2.onFinished = Runnable {
+                    bg.clip = null
+                    text.isVisible = true
+                }
+                anim2.startInPlayState()
 
-        }, Duration.seconds(0.33))
+            }, Duration.seconds(0.33))
+        }
+
+        a.startInPlayState()
+    }
+
+    override fun showRepeated(notification: Notification) {
+        val text2 = FXGL.getUIFactory().newText(notification.message, Color.WHITE, 15.0)
+        text2.translateY = -35.0
+
+        children.add(text2)
+
+        FXGL.getUIFactory().centerTextX(text2, 65.0, 395.0)
+
+        val anim = FXGL.getUIFactory().translate(text2, Point2D(text2.translateX, text2.translateY), Point2D(text2.translateX, 35.0), Duration.seconds(0.33))
+        anim.onFinished = Runnable {
+
+        }
+        anim.startInPlayState()
+
+        val anim2 = FXGL.getUIFactory().translate(text, Point2D(text.translateX, text.translateY), Point2D(text.translateX, text.translateY + 35.0), Duration.seconds(0.33))
+        anim2.onFinished = Runnable {
+            children.remove(text)
+            text = text2
+        }
+        anim2.startInPlayState()
+    }
+
+    private lateinit var anim2: Animation<*>
+    private lateinit var bgClip: Node
+    private lateinit var bg: Rectangle
+    private lateinit var text: Text
+
+    init {
+
     }
 
     override fun inAnimation(): Animation<*> {
