@@ -23,7 +23,18 @@ abstract class NotificationView : Pane() {
     var textColor = Color.WHITE
     var position = Position.TOP
 
-    abstract fun showFirst()
-    abstract fun showRepeated(notification: Notification)
-    abstract fun showLast()
+    /**
+     * Called when view is added to scene.
+     */
+    abstract fun playInAnimation()
+
+    /**
+     * Called when the next notification should be displayed.
+     */
+    abstract fun push(notification: Notification)
+
+    /**
+     * Called when view is being removed from scene.
+     */
+    abstract fun playOutAnimation()
 }

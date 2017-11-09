@@ -47,7 +47,7 @@ internal class XboxNotificationView : NotificationView() {
         bgClip.translateXProperty().bind(bg.translateXProperty().negate().add(30))
     }
 
-    override fun showFirst() {
+    override fun playInAnimation() {
         // reset the view to default so we can play our nice animation
         bg.translateX = -385.0
         bg.translateY = 1.5
@@ -123,7 +123,7 @@ internal class XboxNotificationView : NotificationView() {
         scale.startInPlayState()
     }
 
-    override fun showRepeated(notification: Notification) {
+    override fun push(notification: Notification) {
         text2.text = notification.message
         text2.translateY = -35.0
 
@@ -148,7 +148,7 @@ internal class XboxNotificationView : NotificationView() {
         anim2.startInPlayState()
     }
 
-    override fun showLast() {
+    override fun playOutAnimation() {
         text1.isVisible = false
         bg.clip = bgClip
 

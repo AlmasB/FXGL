@@ -72,11 +72,11 @@ class NotificationServiceProvider : NotificationService {
     private fun nextNotification() {
         if (queue.isNotEmpty()) {
             val n = queue.poll()
-            notificationView.showRepeated(n)
+            notificationView.push(n)
 
             fireAndScheduleNextNotification(n)
         } else {
-            notificationView.showLast()
+            notificationView.playOutAnimation()
 
             FXGL.getMasterTimer().runOnceAfter(Runnable {
                 checkLastPop()
@@ -90,7 +90,7 @@ class NotificationServiceProvider : NotificationService {
             showing = false
         } else {
             // play in animation
-            notificationView.showFirst()
+            notificationView.playInAnimation()
 
             FXGL.getMasterTimer().runOnceAfter(Runnable {
                 nextNotification()
@@ -103,7 +103,7 @@ class NotificationServiceProvider : NotificationService {
         gameScene.addUINode(notificationView)
 
         // play in animation
-        notificationView.showFirst()
+        notificationView.playInAnimation()
 
         FXGL.getMasterTimer().runOnceAfter(Runnable {
             nextNotification()
