@@ -9,7 +9,6 @@ package com.almasb.fxgl.gameplay.notification
 import com.almasb.fxgl.animation.ParallelAnimation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ui.Position
-import com.almasb.fxgl.util.EmptyRunnable
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -18,6 +17,8 @@ import javafx.util.Duration
 
 /**
  * A notification view, inspired by Xbox One achievements.
+ *
+ * TODO: animations don't use position
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -50,16 +51,17 @@ internal class XboxNotificationView : NotificationView() {
         // reset the view to default so we can play our nice animation
         bg.translateX = -385.0
         bg.translateY = 1.5
-        bg.fill = Color.GREEN.darker()
+        bg.fill = backgroundColor.darker()
         bg.clip = bgClip
 
-        circle.fill = Color.GREEN
+        circle.fill = backgroundColor.brighter()
 
         text1.translateY = 35.0
         text1.isVisible = false
+        text1.fill = textColor
         text1.text = ""
 
-        val position = Position.TOP
+        text2.fill = textColor
 
         when (position) {
             Position.LEFT -> {
@@ -150,7 +152,10 @@ internal class XboxNotificationView : NotificationView() {
         text1.isVisible = false
         bg.clip = bgClip
 
-        bgAnimation.onFinished = EmptyRunnable
+        bgAnimation.onFinished = Runnable {
+            children.setAll(circle)
+            FXGL.getUIFactory().scale(this, Point2D(1.0, 1.0), Point2D.ZERO, Duration.seconds(0.3)).startInPlayState()
+        }
         bgAnimation.stop()
         bgAnimation.startReverse(FXGL.getApp().stateMachine.playState)
     }

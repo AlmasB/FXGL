@@ -21,33 +21,31 @@ import java.util.*
  */
 class NotificationServiceProvider : NotificationService {
 
+    private val ANIMATION_DURATION = Duration.seconds(1.0)
+    private val NOTIFICATION_DURATION = Duration.seconds(3.0)
+
     private val gameScene by lazy { FXGL.getApp().gameScene }
 
     private val notificationView by lazy { ReflectionUtils.newInstance(FXGL.getSettings().notificationViewFactory) }
 
     private val queue = ArrayDeque<Notification>()
 
-    private var position = Position.TOP
-
-    override fun getPosition() = position
+    override fun getPosition() = notificationView.position
 
     override fun setPosition(position: Position) {
-        this.position = position
+        notificationView.position = position
     }
 
-    private var backgroundColor = Color.LIGHTGREEN
-    private var textColor = Color.WHITE
-
-    override fun getBackgroundColor() = backgroundColor
+    override fun getBackgroundColor() = notificationView.backgroundColor
 
     override fun setBackgroundColor(backgroundColor: Color) {
-        this.backgroundColor = backgroundColor
+        notificationView.backgroundColor = backgroundColor
     }
 
-    override fun getTextColor(): Color = textColor
+    override fun getTextColor(): Color = notificationView.textColor
 
     override fun setTextColor(textColor: Color) {
-        this.textColor = textColor
+        notificationView.textColor = textColor
     }
 
     private var showing = false
@@ -61,7 +59,7 @@ class NotificationServiceProvider : NotificationService {
      * @param text the text to show
      */
     override fun pushNotification(text: String) {
-        val notification = Notification(text, textColor, backgroundColor, position)
+        val notification = Notification(text)
 
         if (showing) {
             queue.add(notification)
@@ -82,7 +80,7 @@ class NotificationServiceProvider : NotificationService {
 
             FXGL.getMasterTimer().runOnceAfter(Runnable {
                 checkLastPop()
-            }, Duration.seconds(3.0))
+            }, ANIMATION_DURATION)
         }
     }
 
@@ -91,11 +89,12 @@ class NotificationServiceProvider : NotificationService {
             gameScene.removeUINode(notificationView)
             showing = false
         } else {
-            showFirstNotification()
+            // play in animation
+            notificationView.showFirst()
 
             FXGL.getMasterTimer().runOnceAfter(Runnable {
                 nextNotification()
-            }, Duration.seconds(3.0))
+            }, ANIMATION_DURATION)
         }
     }
 
@@ -108,32 +107,15 @@ class NotificationServiceProvider : NotificationService {
 
         FXGL.getMasterTimer().runOnceAfter(Runnable {
             nextNotification()
-        }, Duration.seconds(3.0))
+        }, ANIMATION_DURATION)
     }
 
-//    private fun showRepeatedNotification(notification: Notification) {
-//        notificationView.showRepeated(notification)
-//
-//        fireAndScheduleNextNotification(notification)
-//    }
-//
-//    private fun showLastNotification(notification: Notification) {
-//        notificationView.showLast(notification)
-//
-//        FXGL.getEventBus().fireEvent(NotificationEvent(notification))
-//
-//        // schedule next
-//        FXGL.getMasterTimer().runOnceAfter(Runnable {
-//            checkLastPop()
-//        }, Duration.seconds(3.0))
-//    }
-//
     private fun fireAndScheduleNextNotification(notification: Notification) {
         FXGL.getEventBus().fireEvent(NotificationEvent(notification))
 
         // schedule next
         FXGL.getMasterTimer().runOnceAfter(Runnable {
             nextNotification()
-        }, Duration.seconds(3.0))
+        }, NOTIFICATION_DURATION)
     }
 }
