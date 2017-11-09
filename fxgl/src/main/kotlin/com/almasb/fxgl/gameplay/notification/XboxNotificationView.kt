@@ -6,15 +6,14 @@
 
 package com.almasb.fxgl.gameplay.notification
 
-import com.almasb.fxgl.animation.Animation
+import com.almasb.fxgl.animation.ParallelAnimation
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.ui.Position
+import com.almasb.fxgl.util.EmptyRunnable
 import javafx.geometry.Point2D
-import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
-import javafx.scene.text.Text
 import javafx.util.Duration
 
 /**
@@ -24,141 +23,135 @@ import javafx.util.Duration
  */
 internal class XboxNotificationView : NotificationView() {
 
-    override fun showFirst(notification: Notification) {
-        children.clear()
+    /**
+     * Imitates Xbox One style circle.
+     */
+    private val circle = Circle(30.0, 30.0, 30.0)
 
-        var x = 0.0
-        var y = 0.0
+    private val bg = Rectangle(400.0, 57.0)
+    private val bgClip = Rectangle(bg.width + 15.0, bg.height)
 
-        val position = notification.position
-        val message = notification.message
+    /**
+     * These two will be replacing one another.
+     */
+    private val text1 = FXGL.getUIFactory().newText("", Color.WHITE, 15.0)
+    private val text2 = FXGL.getUIFactory().newText("", Color.WHITE, 15.0)
+
+    private lateinit var bgAnimation: ParallelAnimation
+
+    init {
+        bg.arcWidth = 55.0
+        bg.arcHeight = 55.0
+
+        bgClip.translateXProperty().bind(bg.translateXProperty().negate().add(30))
+    }
+
+    override fun showFirst() {
+        // reset the view to default so we can play our nice animation
+        bg.translateX = -385.0
+        bg.translateY = 1.5
+        bg.fill = Color.GREEN.darker()
+        bg.clip = bgClip
+
+        circle.fill = Color.GREEN
+
+        text1.translateY = 35.0
+        text1.isVisible = false
+        text1.text = ""
+
+        val position = Position.TOP
 
         when (position) {
             Position.LEFT -> {
-                x = 50.0
-                y = FXGL.getAppHeight() / 2 - (heightOf(message, 12.0) + 10) / 2
+                translateX = 50.0
+                translateY = FXGL.getAppHeight() / 2 - (text1.layoutBounds.width + 10) / 2
             }
             Position.RIGHT -> {
-                x = FXGL.getAppWidth()  - (widthOf(message, 12.0) + 20) - 50.0
-                y = FXGL.getAppHeight()  / 2 - (heightOf(message, 12.0) + 10) / 2
+                translateX = FXGL.getAppWidth()  - (text1.layoutBounds.width + 20) - 50.0
+                translateY = FXGL.getAppHeight()  / 2 - (text1.layoutBounds.height + 10) / 2
             }
             Position.TOP -> {
-                x = FXGL.getAppWidth()  / 2 - 30.0
-                y = 50.0
+                translateX = FXGL.getAppWidth() / 2 - 30.0
+                translateY = 50.0
             }
             Position.BOTTOM -> {
-                x = FXGL.getAppWidth()  / 2 - (widthOf(message, 12.0) + 20) / 2
-                y = FXGL.getAppHeight()  - (heightOf(message, 12.0) + 10) - 50.0
+                translateX = FXGL.getAppWidth()  / 2 - (text1.layoutBounds.width + 20) / 2
+                translateY = FXGL.getAppHeight()  - (text1.layoutBounds.height + 10) - 50.0
             }
         }
 
-        translateX = x
-        translateY = y
+        FXGL.getUIFactory().centerTextX(text1, 65.0, 395.0)
 
         scaleX = 0.0
         scaleY = 0.0
 
-
-        val circle = Circle(30.0, 30.0, 30.0, notification.bgColor)
-
-        bg = Rectangle(400.0, 57.0, notification.bgColor.darker())
-        bg.arcWidth = 55.0
-        bg.arcHeight = 55.0
-        bg.translateX = -385.0
-        bg.translateY = 1.5
-        bg.setOnMouseClicked { hide() }
-
-        bgClip = Rectangle(400.0 + 15.0, 57.0)
-        bgClip.translateXProperty().bind(bg.translateXProperty().negate().add(30))
-
-        bg.clip = bgClip
+        // make sure we only have circle for proper centering during the first animation
+        children.setAll(circle)
 
 
-        text = FXGL.getUIFactory().newText(message, Color.WHITE, 15.0)
-        text.translateY = 35.0
-        text.isVisible = false
 
-        FXGL.getUIFactory().centerTextX(text, 65.0, 395.0)
 
-        children.addAll(circle)
+        // move the whole view to left
+        val translateThis = FXGL.getUIFactory().translate(this, Point2D(translateX, translateY), Point2D(FXGL.getAppWidth() / 4.0, translateY), Duration.seconds(0.33))
 
-        val a = FXGL.getUIFactory().scale(this, Point2D.ZERO, Point2D(1.0, 1.0), Duration.seconds(0.3))
-        a.onFinished = Runnable {
+        // but move the BG to right, creating the "slide out" effect
+        val translateBG = FXGL.getUIFactory().translate(bg, Point2D(bg.translateX, bg.translateY), Point2D(bg.translateX + 400.0, bg.translateY), Duration.seconds(0.33))
+
+        bgAnimation = ParallelAnimation(1, translateThis, translateBG)
+        bgAnimation.onFinished = Runnable {
+            bg.clip = null
+            text1.isVisible = true
+        }
+
+
+
+
+
+        val scale = FXGL.getUIFactory().scale(this, Point2D.ZERO, Point2D(1.0, 1.0), Duration.seconds(0.3))
+        scale.onFinished = Runnable {
             FXGL.getMasterTimer().runOnceAfter({
+                // make background appear before the circle
                 children.add(0, bg)
-                children.add(text)
+                children.add(text1)
 
-                val anim = FXGL.getUIFactory().translate(this, Point2D(translateX, translateY), Point2D(200.0, 50.0), Duration.seconds(0.33))
-                anim.startInPlayState()
-
-                anim2 = FXGL.getUIFactory().translate(bg, Point2D(bg.translateX, bg.translateY), Point2D(bg.translateX + 400.0, bg.translateY), Duration.seconds(0.33))
-
-                anim2.onFinished = Runnable {
-                    bg.clip = null
-                    text.isVisible = true
-                }
-                anim2.startInPlayState()
-
+                bgAnimation.startInPlayState()
             }, Duration.seconds(0.33))
         }
 
-        a.startInPlayState()
+        scale.startInPlayState()
     }
 
     override fun showRepeated(notification: Notification) {
-        val text2 = FXGL.getUIFactory().newText(notification.message, Color.WHITE, 15.0)
+        text2.text = notification.message
         text2.translateY = -35.0
 
         children.add(text2)
 
         FXGL.getUIFactory().centerTextX(text2, 65.0, 395.0)
 
+        // move text 2 to replace text 1
         val anim = FXGL.getUIFactory().translate(text2, Point2D(text2.translateX, text2.translateY), Point2D(text2.translateX, 35.0), Duration.seconds(0.33))
-        anim.onFinished = Runnable {
-
-        }
         anim.startInPlayState()
 
-        val anim2 = FXGL.getUIFactory().translate(text, Point2D(text.translateX, text.translateY), Point2D(text.translateX, text.translateY + 35.0), Duration.seconds(0.33))
+        // move text 1 down
+        val anim2 = FXGL.getUIFactory().translate(text1, Point2D(text1.translateX, text1.translateY), Point2D(text1.translateX, text1.translateY + 35.0), Duration.seconds(0.33))
         anim2.onFinished = Runnable {
-            children.remove(text)
-            text = text2
+            // when done, just swap them and keep text2 for next reuse
+            text1.translateX = text2.translateX
+            text1.translateY = text2.translateY
+            text1.text = text2.text
+
+            children.remove(text2)
         }
         anim2.startInPlayState()
     }
 
-    private lateinit var anim2: Animation<*>
-    private lateinit var bgClip: Node
-    private lateinit var bg: Rectangle
-    private lateinit var text: Text
+    override fun showLast() {
+        text1.isVisible = false
+        bg.clip = bgClip
 
-    init {
-
-    }
-
-    override fun inAnimation(): Animation<*> {
-        return FXGL.getUIFactory().scale(this, Point2D.ZERO, Point2D(1.0, 1.0), Duration.seconds(0.3))
-    }
-
-    override fun outAnimation(): Animation<*> {
-        // this can be used for reverse animation, but looks weird if it's not the last notification
-
-//        bg.clip = bgClip
-//        text.isVisible = false
-//        anim2.isReverse = true
-//        return anim2
-        return FXGL.getUIFactory().scale(this, Point2D(1.0, 1.0), Point2D.ZERO, Duration.seconds(0.3))
-    }
-
-    override fun duration(): Duration {
-        return Duration.seconds(3.0)
-    }
-
-    fun widthOf(text: String, fontSize: Double): Double {
-        return FXGL.getUIFactory().newText(text, fontSize).getLayoutBounds().getWidth()
-    }
-
-    fun heightOf(text: String, fontSize: Double): Double {
-        return FXGL.getUIFactory().newText(text, fontSize).getLayoutBounds().getHeight()
+        bgAnimation.onFinished = EmptyRunnable
+        bgAnimation.stop()
+        bgAnimation.startReverse(FXGL.getApp().stateMachine.playState)
     }
 }

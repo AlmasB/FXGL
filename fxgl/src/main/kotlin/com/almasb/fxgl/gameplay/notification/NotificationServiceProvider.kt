@@ -8,13 +8,14 @@ package com.almasb.fxgl.gameplay.notification
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.scene.GameScene
 import com.almasb.fxgl.ui.Position
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import java.util.*
 
 /**
+ * TODO: when we have superstate, use that for adding the notificationView
+ * and scheduling timer events
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -62,51 +63,77 @@ class NotificationServiceProvider : NotificationService {
     override fun pushNotification(text: String) {
         val notification = Notification(text, textColor, backgroundColor, position)
 
-        if (showing)
+        if (showing) {
             queue.add(notification)
-        else
-            showFirstNotification(notification)
-    }
-
-    private fun showFirstNotification(notification: Notification) {
-        showing = true
-        gameScene.addUINode(notificationView)
-
-        // TODO: showFirstTime
-        notificationView.showFirst(notification)
-
-        FXGL.getEventBus().fireEvent(NotificationEvent(notification))
-
-        // schedule next
-        FXGL.getMasterTimer().runOnceAfter(Runnable {
-            popNotification()
-        }, Duration.seconds(3.0))
-    }
-
-    private fun popNotification() {
-        if (!queue.isEmpty()) {
-            showRepeatedNotification(queue.poll())
         } else {
-            val removed = gameScene.removeUINode(notificationView)
-
-            showing = false
-
-            // this is called asynchronously so we have to check manually
-//            if (!removed) {
-//                return
-//            }
+            showFirstNotification()
+            queue.add(notification)
         }
     }
 
-    private fun showRepeatedNotification(notification: Notification) {
-        // TODO: showRepeated
-        notificationView.showRepeated(notification)
+    private fun nextNotification() {
+        if (queue.isNotEmpty()) {
+            val n = queue.poll()
+            notificationView.showRepeated(n)
 
+            fireAndScheduleNextNotification(n)
+        } else {
+            notificationView.showLast()
+
+            FXGL.getMasterTimer().runOnceAfter(Runnable {
+                checkLastPop()
+            }, Duration.seconds(3.0))
+        }
+    }
+
+    private fun checkLastPop() {
+        if (queue.isEmpty()) {
+            gameScene.removeUINode(notificationView)
+            showing = false
+        } else {
+            showFirstNotification()
+
+            FXGL.getMasterTimer().runOnceAfter(Runnable {
+                nextNotification()
+            }, Duration.seconds(3.0))
+        }
+    }
+
+    private fun showFirstNotification() {
+        showing = true
+        gameScene.addUINode(notificationView)
+
+        // play in animation
+        notificationView.showFirst()
+
+        FXGL.getMasterTimer().runOnceAfter(Runnable {
+            nextNotification()
+        }, Duration.seconds(3.0))
+    }
+
+//    private fun showRepeatedNotification(notification: Notification) {
+//        notificationView.showRepeated(notification)
+//
+//        fireAndScheduleNextNotification(notification)
+//    }
+//
+//    private fun showLastNotification(notification: Notification) {
+//        notificationView.showLast(notification)
+//
+//        FXGL.getEventBus().fireEvent(NotificationEvent(notification))
+//
+//        // schedule next
+//        FXGL.getMasterTimer().runOnceAfter(Runnable {
+//            checkLastPop()
+//        }, Duration.seconds(3.0))
+//    }
+//
+    private fun fireAndScheduleNextNotification(notification: Notification) {
         FXGL.getEventBus().fireEvent(NotificationEvent(notification))
 
         // schedule next
         FXGL.getMasterTimer().runOnceAfter(Runnable {
-            popNotification()
+            nextNotification()
         }, Duration.seconds(3.0))
     }
 }

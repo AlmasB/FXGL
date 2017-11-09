@@ -6,48 +6,18 @@
 
 package com.almasb.fxgl.gameplay.notification
 
-import com.almasb.fxgl.animation.Animation
-import com.almasb.fxgl.app.FXGL
 import javafx.scene.layout.Pane
-import javafx.util.Duration
 
 /**
- *
+ * A notification view / pane is added when a notification is pushed and is being
+ * displayed.
+ * Each notification lasts 3 seconds.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class NotificationView : Pane() {
 
-    internal lateinit var onFinished: Runnable
-    internal lateinit var notification: Notification
-
-    abstract fun inAnimation(): Animation<*>
-    abstract fun outAnimation(): Animation<*>
-    abstract fun duration(): Duration
-
-    private var hideCalled = false
-
-    fun show() {
-        val anim = inAnimation()
-        // TODO: when we have superstate, use that
-        anim.onFinished = Runnable {
-            FXGL.getMasterTimer().runOnceAfter({ hide() }, duration())
-        }
-        anim.startInPlayState()
-    }
-
-    fun hide() {
-        if (hideCalled)
-            return
-
-        hideCalled = true
-
-        val anim = outAnimation()
-        anim.onFinished = onFinished
-        // TODO: when we have superstate, use that
-        anim.startInPlayState()
-    }
-
-    abstract fun showFirst(notification: Notification)
+    abstract fun showFirst()
     abstract fun showRepeated(notification: Notification)
+    abstract fun showLast()
 }
