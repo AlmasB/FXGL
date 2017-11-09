@@ -34,10 +34,10 @@ public class ReadOnlyGameSettings {
     protected int width = 800;
     protected int height = 600;
     protected boolean fullScreen = false;
-    protected boolean introEnabled = true;
-    protected boolean menuEnabled = true;
-    protected boolean profilingEnabled = true;
-    protected boolean closeConfirmation = true;
+    protected boolean introEnabled = false;
+    protected boolean menuEnabled = false;
+    protected boolean profilingEnabled = false;
+    protected boolean closeConfirmation = false;
     protected boolean singleStep = false;
     protected ApplicationMode appMode = ApplicationMode.DEVELOPER;
     protected KeyCode menuKey = KeyCode.ESCAPE;
