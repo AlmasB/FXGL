@@ -190,6 +190,17 @@
                  "width":280,
                  "x":2240,
                  "y":1330
+                }, 
+                {
+                 "height":70,
+                 "id":19,
+                 "name":"",
+                 "rotation":0,
+                 "type":"ghost_platform",
+                 "visible":true,
+                 "width":70,
+                 "x":1050,
+                 "y":1400
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -197,7 +208,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":19,
+ "nextobjectid":20,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.1",

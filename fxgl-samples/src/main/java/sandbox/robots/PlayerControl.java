@@ -64,7 +64,7 @@ public class PlayerControl extends Control {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        boolean onGround = canJump;
+        boolean onGround = physics.isOnGround();
 
         if (onGround) {
             if (Math.abs(physics.getVelocityX()) == 0) {
@@ -86,8 +86,6 @@ public class PlayerControl extends Control {
             physics.setVelocityX(0);
     }
 
-    boolean canJump = false;
-
     public void left() {
         view.getView().setScaleX(-1);
         physics.setVelocityX(-150);
@@ -102,7 +100,6 @@ public class PlayerControl extends Control {
         if (jumpTimer.elapsed(Duration.seconds(0.25))) {
             if (physics.isOnGround()) {
                 physics.setVelocityY(-250);
-                canJump = false;
                 jumpTimer.capture();
             }
         }

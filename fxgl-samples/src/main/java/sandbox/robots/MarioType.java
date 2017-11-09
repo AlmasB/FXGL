@@ -10,5 +10,5 @@ package sandbox.robots;
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 public enum MarioType {
-    PLAYER, PLATFORM, ROBOT, COIN, PORTAL
+    PLAYER, GHOST_PLATFORM, PLATFORM, ROBOT, COIN, PORTAL
 }

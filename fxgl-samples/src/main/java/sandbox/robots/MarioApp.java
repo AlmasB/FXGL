@@ -130,12 +130,15 @@ public class MarioApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(MarioType.PLAYER, MarioType.PLATFORM) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(MarioType.PLAYER, MarioType.GHOST_PLATFORM) {
             @Override
-            protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
-                if (boxA.getName().equals("lower")) {
-                    playerControl.canJump = true;
-                }
+            protected void onCollisionBegin(Entity a, Entity platform) {
+                platform.getView().setVisible(true);
+            }
+
+            @Override
+            protected void onCollisionEnd(Entity a, Entity platform) {
+                platform.getView().setVisible(false);
             }
         });
 
