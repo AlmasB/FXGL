@@ -19,14 +19,10 @@ JavaFX Game Development Framework
 
 ## Good for ...
 
-* Desktop 2D / casual games
+* Any 2D genre (side-scroller / platformer / arcade, RPG, etc.)
 * Hobby / academic / commercial projects
 * Learning / improving game development skills
 * Fast prototyping of game ideas
-
-## Not so good for ...
-
-* 3D, mobile or web
 
 ## Features
 
@@ -55,7 +51,7 @@ public class BasicGameApp extends GameApplication {
 
 * [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
-* [Feature demos](fxgl-samples)
+* [Sample code demos](fxgl-samples)
 * [Game demos](https://github.com/AlmasB/FXGLGames) (src)
 * [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
 
@@ -97,8 +93,7 @@ Download latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases
 
 ## Contribution
 
-[Contribute](CONTRIBUTING.md) to FXGL, or support FXGL on [Gratipay](https://gratipay.com/FXGL/).
-Alternatively star the repo to show interest.
+Please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or simply star the repo to show interest.
 
 ## Contact
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
