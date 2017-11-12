@@ -102,6 +102,12 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
 
+            <!-- Attach kotlin sources -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+
             <!-- Create uber jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
