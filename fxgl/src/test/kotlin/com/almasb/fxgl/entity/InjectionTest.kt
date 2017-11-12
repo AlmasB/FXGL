@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity
 
+import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.diff.InjectableComponent
 import com.almasb.fxgl.entity.diff.InjectableControl
 import com.almasb.fxgl.entity.diff.SubTypeInjectableControl
@@ -13,6 +14,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**
@@ -21,6 +23,13 @@ import org.junit.jupiter.api.Test
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class InjectionTest {
+
+    companion object {
+        @BeforeAll
+        @JvmStatic fun before() {
+            FXGLMock.mock()
+        }
+    }
 
     @Test
     fun `Component fields are injected into control`() {
@@ -70,5 +79,20 @@ class InjectionTest {
         assertThrows(RuntimeException::class.java, {
             entity.addControl(InjectableControl())
         })
+    }
+
+    @Test
+    fun `Ignore injection if target field is not Entity`() {
+        val entity = Entity()
+        entity.addControl(NameControl())
+    }
+
+    class NameControl : Control() {
+
+        // we first check that type is Entity before injecting
+        lateinit var name: String
+
+        override fun onUpdate(entity: Entity?, tpf: Double) {
+        }
     }
 }

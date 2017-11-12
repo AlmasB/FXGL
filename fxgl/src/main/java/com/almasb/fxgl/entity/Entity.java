@@ -823,7 +823,9 @@ public class Entity {
             fieldName = Character.toLowerCase(controlName.charAt(0)) + fieldName;
 
             ReflectionUtils.getDeclaredField(fieldName, control).ifPresent(field -> {
-                ReflectionUtils.inject(field, control, this);
+                // check that field type is Entity or subtype of Entity
+                if (Entity.class.isAssignableFrom(field.getType()))
+                    ReflectionUtils.inject(field, control, this);
             });
         }
     }
