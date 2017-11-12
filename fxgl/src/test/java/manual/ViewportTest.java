@@ -6,7 +6,7 @@
 
 package manual;
 
-import com.almasb.fxgl.annotation.OnUserAction;
+import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;

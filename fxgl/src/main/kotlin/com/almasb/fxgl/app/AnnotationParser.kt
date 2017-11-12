@@ -1,6 +1,11 @@
-package com.almasb.fxgl.annotation
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
 
-import com.almasb.fxgl.app.GameApplication
+package com.almasb.fxgl.app
+
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 

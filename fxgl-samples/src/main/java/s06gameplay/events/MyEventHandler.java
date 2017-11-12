@@ -6,7 +6,7 @@
 
 package s06gameplay.events;
 
-import com.almasb.fxgl.annotation.Handles;
+import com.almasb.fxgl.event.Handles;
 import com.almasb.fxgl.event.SetEventHandler;
 
 /**

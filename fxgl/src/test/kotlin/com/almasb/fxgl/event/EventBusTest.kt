@@ -6,14 +6,12 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.fxgl.annotation.Handles
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

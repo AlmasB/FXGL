@@ -7,9 +7,11 @@
 package s10miscellaneous;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -64,9 +66,30 @@ public class ColoringSample extends GameApplication {
                 new Stop(0, Color.RED),
                 new Stop(1, Color.YELLOW));
 
+        EntityView view = new EntityView();
+
+        Texture outline1 = original.toColor(Color.BLACK);
+        view.addNode(outline1);
+        outline1.setTranslateX(1);
+
+        Texture outline2 = original.toColor(Color.BLACK);
+        view.addNode(outline2);
+        outline2.setTranslateX(-1);
+
+        Texture outline3 = original.toColor(Color.BLACK);
+        view.addNode(outline3);
+        outline3.setTranslateY(1);
+
+        Texture outline4 = original.toColor(Color.BLACK);
+        view.addNode(outline4);
+        outline4.setTranslateY(-1);
+
+        view.addNode(original.copy());
+
         HBox hbox = new HBox(20,
                 makeBox("Original", original),
-                makeBox("Grayscale", original.toGrayscale()),
+                makeBox("Outline", view),
+                //makeBox("Grayscale", original.toGrayscale()),
                 makeBox("Darker", original.darker()),
                 makeBox("Brighter", original.brighter()),
                 makeBox("Invert", original.invert()),
@@ -122,7 +145,7 @@ public class ColoringSample extends GameApplication {
         getGameScene().addUINodes(hbox, hbox2, hbox3, t);
     }
 
-    private VBox makeBox(String header, Texture texture) {
+    private VBox makeBox(String header, Node texture) {
         VBox vbox = new VBox(10,
                 getUIFactory().newText(header, Color.BLACK, 24),
                 texture);

@@ -5,7 +5,6 @@
  */
 package com.almasb.fxgl.app;
 
-import com.almasb.fxgl.annotation.AnnotationParser;
 import com.almasb.fxgl.app.listener.ExitListener;
 import com.almasb.fxgl.app.listener.StateListener;
 import com.almasb.fxgl.asset.AssetLoader;

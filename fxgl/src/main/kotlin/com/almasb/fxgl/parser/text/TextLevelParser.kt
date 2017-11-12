@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.parser.text
 
-import com.almasb.fxgl.annotation.SpawnSymbol
+import com.almasb.fxgl.entity.SpawnSymbol
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils

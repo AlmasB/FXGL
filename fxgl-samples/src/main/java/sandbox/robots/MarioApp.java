@@ -31,7 +31,7 @@ public class MarioApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1280);
-        settings.setHeight(768);
+        settings.setHeight(770);
         settings.setTitle("MarioApp");
         settings.setVersion("0.2");
         settings.setIntroEnabled(false);
@@ -113,15 +113,15 @@ public class MarioApp extends GameApplication {
 
         getGameWorld().setLevelFromMap("mario" + 0 + ".json");
 
-        getGameWorld().spawn("player", 350, 24 * 70 - 768);
+        getGameWorld().spawn("player", 350, 0);
 
         Entity player = getGameWorld().getEntitiesByType(MarioType.PLAYER).get(0);
         playerControl = player.getControl(PlayerControl.class);
 
-        getGameScene().getViewport().setBounds(0, 0, 64*70, 24 * 70 - 70);
+        getGameScene().getViewport().setBounds(0, 0, 30*70, 11 * 70);
         getGameScene().getViewport().bindToEntity(player, 500, 0);
 
-        getGameWorld().spawn("robot", 1500, 24 * 70 - 1300);
+        //getGameWorld().spawn("robot", 1500, 24 * 70 - 1300);
 
         level++;
         if (level == 4)

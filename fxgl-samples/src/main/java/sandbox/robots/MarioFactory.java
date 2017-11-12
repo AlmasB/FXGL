@@ -6,8 +6,8 @@
 
 package sandbox.robots;
 
-import com.almasb.fxgl.annotation.SetEntityFactory;
-import com.almasb.fxgl.annotation.Spawns;
+import com.almasb.fxgl.entity.SetEntityFactory;
+import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
@@ -20,8 +20,6 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -44,7 +42,7 @@ public class MarioFactory implements EntityFactory {
         Entity platform =  Entities.builder()
                 .from(data)
                 .type(MarioType.GHOST_PLATFORM)
-                .viewFromNode(new Rectangle(data.<Integer>get("width"), data.<Integer>get("height"), Color.BEIGE))
+                .viewFromTexture("ghost_platform.png")
                 .bbox(new HitBox("main", BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent(), new CollidableComponent(true))
                 .build();

@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.annotation;
+package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.GameWorld;

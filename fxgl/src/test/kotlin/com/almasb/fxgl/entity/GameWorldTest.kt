@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.annotation.Spawns
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.collection.Array
 import com.almasb.fxgl.entity.component.IrremovableComponent

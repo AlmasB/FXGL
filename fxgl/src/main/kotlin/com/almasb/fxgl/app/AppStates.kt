@@ -6,9 +6,8 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.annotation.AddCollisionHandler
-import com.almasb.fxgl.annotation.AnnotationParser
-import com.almasb.fxgl.annotation.SetEntityFactory
+import com.almasb.fxgl.physics.AddCollisionHandler
+import com.almasb.fxgl.entity.SetEntityFactory
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.entity.EntityFactory

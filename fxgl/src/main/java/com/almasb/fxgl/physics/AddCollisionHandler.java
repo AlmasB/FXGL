@@ -4,7 +4,7 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.annotation;
+package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.physics.CollisionHandler;
 
