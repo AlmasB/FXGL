@@ -69,6 +69,14 @@ class AssetLoaderTest {
     }
 
     @Test
+    fun loadImage() {
+        val image = assetLoader.loadImage("brick.png")
+
+        assertThat(image.width, `is`(64.0))
+        assertThat(image.height, `is`(64.0))
+    }
+
+    @Test
     fun loadTexture() {
         val texture = assetLoader.loadTexture("brick.png")
 

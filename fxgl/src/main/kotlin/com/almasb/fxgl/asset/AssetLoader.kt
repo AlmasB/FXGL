@@ -91,6 +91,38 @@ class AssetLoader {
     private val cachedAssets = ObjectMap<String, Any>()
 
     /**
+     * Loads texture as [Image] with given name from /assets/textures/.
+     * Either returns a valid image or throws an exception in case of errors.
+     *
+     * Supported image formats are:
+     *
+     *  * [BMP](http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx)
+     *  * [GIF](http://www.w3.org/Graphics/GIF/spec-gif89a.txt)
+     *  * [JPEG](http://www.ijg.org)
+     *  * [PNG](http://www.libpng.org/pub/png/spec/)
+     *
+     * @param name texture name without the /assets/textures/, e.g. "player.png"
+     * @return image
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    fun loadImage(name: String): Image {
+        val asset = getAssetFromCache(TEXTURES_DIR + name)
+        if (asset != null) {
+            return Image::class.java.cast(asset)
+        }
+
+        try {
+            getStream(TEXTURES_DIR + name).use {
+                val image = Image(it)
+                cachedAssets.put(TEXTURES_DIR + name, image)
+                return image
+            }
+        } catch (e: Exception) {
+            throw loadFailed(name, e)
+        }
+    }
+
+    /**
      * Loads texture with given name from /assets/textures/.
      * Either returns a valid texture or throws an exception in case of errors.
      *

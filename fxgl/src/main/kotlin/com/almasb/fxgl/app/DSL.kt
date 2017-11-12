@@ -23,6 +23,7 @@ import com.almasb.fxgl.texture.Texture
 import javafx.beans.property.*
 import javafx.event.Event
 import javafx.geometry.Point2D
+import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import java.util.function.BiConsumer
@@ -64,6 +65,8 @@ fun inc(varName: String, value: Int) = getApp().gameState.increment(varName, val
 fun inc(varName: String, value: Double) = getApp().gameState.increment(varName, value)
 
 /* ASSET LOADING */
+
+fun image(assetName: String): Image = getAssetLoader().loadImage(assetName)
 
 fun texture(assetName: String): Texture = getAssetLoader().loadTexture(assetName)
 
