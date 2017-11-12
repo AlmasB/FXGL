@@ -35,6 +35,12 @@ open class Texture
  */
 (image: Image) : ImageView(image), Disposable {
 
+    val width: Double
+        get() = image.width
+
+    val height: Double
+        get() = image.height
+
     /**
      * Converts the texture to animated texture using
      * the whole texture as a single animation channel.

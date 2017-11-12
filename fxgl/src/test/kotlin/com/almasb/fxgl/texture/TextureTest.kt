@@ -45,6 +45,12 @@ class TextureTest {
     }
 
     @Test
+    fun `Width and Height`() {
+        assertThat(texture.width, `is`(320.0))
+        assertThat(texture.height, `is`(320.0))
+    }
+
+    @Test
     fun `Copy creates new node with same image`() {
         val copy = texture.copy()
 
