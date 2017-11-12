@@ -39,6 +39,29 @@ public final class HitBox implements Serializable {
     private Bounds bounds;
 
     /**
+     * Creates a hit box with the given shape.
+     * The name of the {@code {@link HitBox}} will be auto generated
+     * based upon the {@code hashCode} of the given {@code {@link BoundingShape}}.
+     *
+     * @param shape bounding shape
+     */
+    public HitBox(BoundingShape shape) {
+        this(String.valueOf(shape.hashCode()), shape);
+    }
+
+    /**
+     * Creates a hit box with the given local origin and shape.
+     * The name of the {@code {@link HitBox}} will be auto generated
+     * based upon the {@code hashCode} of the given {@code {@link BoundingShape}}.
+     *
+     * @param localOrigin origin of hit box
+     * @param shape bounding shape
+     */
+    public HitBox(Point2D localOrigin, BoundingShape shape){
+        this(String.valueOf(shape.hashCode()), localOrigin, shape);
+    }
+
+    /**
      * Creates a hit box with given name and shape.
      * Local origin is set to default (0, 0).
      *
