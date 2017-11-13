@@ -25,7 +25,7 @@ public class BehaviorTree<E> extends Task<E> {
 
     /**
      * Creates a {@code BehaviorTree} with no root task and no blackboard object. Both the root task and the blackboard object must
-     * be set before running this behavior tree, see {@link #addChild(Task) addChild()} and {@link #setObject(Object) setObject()}
+     * be set before running this behavior tree, see {@link #addChild(Task) addChild()} and {@link #setEntity(Object) setObject()}
      * respectively.
      */
     public BehaviorTree() {
@@ -34,7 +34,7 @@ public class BehaviorTree<E> extends Task<E> {
 
     /**
      * Creates a behavior tree with a root task and no blackboard object. Both the root task and the blackboard object must be set
-     * before running this behavior tree, see {@link #addChild(Task) addChild()} and {@link #setObject(Object) setObject()}
+     * before running this behavior tree, see {@link #addChild(Task) addChild()} and {@link #setEntity(Object) setObject()}
      * respectively.
      *
      * @param rootTask the root task of this tree. It can be {@code null}.
@@ -45,7 +45,7 @@ public class BehaviorTree<E> extends Task<E> {
 
     /**
      * Creates a behavior tree with a root task and a blackboard object. Both the root task and the blackboard object must be set
-     * before running this behavior tree, see {@link #addChild(Task) addChild()} and {@link #setObject(Object) setObject()}
+     * before running this behavior tree, see {@link #addChild(Task) addChild()} and {@link #setEntity(Object) setObject()}
      * respectively.
      *
      * @param rootTask the root task of this tree. It can be {@code null}.
@@ -71,7 +71,7 @@ public class BehaviorTree<E> extends Task<E> {
      *
      * @param object the new blackboard
      */
-    public void setObject(E object) {
+    public void setEntity(E object) {
         this.object = object;
     }
 

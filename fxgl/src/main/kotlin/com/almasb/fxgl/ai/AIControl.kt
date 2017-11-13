@@ -57,7 +57,7 @@ private constructor() : Control() {
     }
 
     override fun onAdded(entity: Entity) {
-        behaviorTree.`object` = entity
+        behaviorTree.entity = entity
 
         if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
             entity.viewComponent.view.addNode(bubble)
