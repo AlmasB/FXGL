@@ -65,5 +65,4 @@ public abstract class LoopDecorator<E> extends Decorator<E> {
         super.childRunning(runningTask, reporter);
         loop = false;
     }
-
 }

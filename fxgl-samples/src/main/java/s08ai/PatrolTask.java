@@ -29,9 +29,9 @@ public class PatrolTask extends SingleAction {
 
     @Override
     public void onUpdate(double tpf) {
-        getObject().translateTowards(selectedPoint, 60 * tpf);
+        getEntity().translateTowards(selectedPoint, 60 * tpf);
 
-        if (getObject().getPosition().distance(selectedPoint) < 5) {
+        if (getEntity().getPosition().distance(selectedPoint) < 5) {
             selectedPoint = FXGLMath.random(POINTS).get();
         }
     }

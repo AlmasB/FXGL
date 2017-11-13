@@ -25,7 +25,7 @@ abstract class SingleAction
     abstract fun onUpdate(tpf: Double)
     
     override final fun execute(): Status {
-        `object`.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
+        entity.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
         onUpdate(FXGL.getApp().tpf())
 
         return Status.SUCCEEDED

@@ -9,8 +9,8 @@ package com.almasb.fxgl.ai.btree;
 import com.almasb.fxgl.ai.btree.annotation.TaskConstraint;
 
 /**
- * A {@code Decorator} is a wrapper that provides custom behavior for its child. The child can be of any kind (branch task, leaf
- * task, or another decorator).
+ * A {@code Decorator} is a wrapper that provides custom behavior for its child.
+ * The child can be of any kind (branch task, leaf task, or another decorator).
  *
  * @param <E> type of the blackboard object that tasks use to read or modify game state
  * @author implicit-invocation
@@ -41,7 +41,9 @@ public abstract class Decorator<E> extends Task<E> {
 
     @Override
     protected int addChildToTask(Task<E> child) {
-        if (this.child != null) throw new IllegalStateException("A decorator task cannot have more than one child");
+        if (this.child != null)
+            throw new IllegalStateException("A decorator task cannot have more than one child");
+
         this.child = child;
         return 0;
     }
@@ -53,7 +55,9 @@ public abstract class Decorator<E> extends Task<E> {
 
     @Override
     public Task<E> getChild(int i) {
-        if (i == 0 && child != null) return child;
+        if (i == 0 && child != null)
+            return child;
+
         throw new IndexOutOfBoundsException("index can't be >= size: " + i + " >= " + getChildCount());
     }
 
@@ -95,5 +99,4 @@ public abstract class Decorator<E> extends Task<E> {
 
         return task;
     }
-
 }

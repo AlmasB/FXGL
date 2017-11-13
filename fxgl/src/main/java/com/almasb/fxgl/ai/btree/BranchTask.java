@@ -28,7 +28,7 @@ public abstract class BranchTask<E> extends Task<E> {
      * Create a branch task with no children
      */
     public BranchTask() {
-        this(new Array<Task<E>>());
+        this(new Array<>());
     }
 
     /**
@@ -67,5 +67,4 @@ public abstract class BranchTask<E> extends Task<E> {
 
         return task;
     }
-
 }

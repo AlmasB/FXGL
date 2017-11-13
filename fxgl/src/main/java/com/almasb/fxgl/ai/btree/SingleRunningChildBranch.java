@@ -1,18 +1,8 @@
-/*******************************************************************************
- * Copyright 2014 See AUTHORS file.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+/*
+ * FXGL - JavaFX Game Library. The MIT License (MIT).
+ * Copyright (c) AlmasB (almaslvl@gmail.com).
+ * See LICENSE for details.
+ */
 
 package com.almasb.fxgl.ai.btree;
 
@@ -31,7 +21,7 @@ public abstract class SingleRunningChildBranch<E> extends BranchTask<E> {
     /**
      * The child in the running status or {@code null} if no child is running.
      */
-    protected Task<E> runningChild;
+    private Task<E> runningChild;
 
     /**
      * The index of the child currently processed.
@@ -140,5 +130,4 @@ public abstract class SingleRunningChildBranch<E> extends BranchTask<E> {
         System.arraycopy(children.getItems(), 0, rndChildren, 0, children.size());
         return rndChildren;
     }
-
 }

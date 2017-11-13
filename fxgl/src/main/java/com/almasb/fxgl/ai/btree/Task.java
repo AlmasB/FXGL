@@ -102,10 +102,10 @@ public abstract class Task<E> {
      *
 	 * @throws IllegalStateException if this task has never run
      */
-	public E getObject() {
+	public E getEntity() {
 		if (tree == null)
 		    throw new IllegalStateException("This task has never run");
-		return tree.getObject();
+		return tree.getEntity();
 	}
 
 	/**

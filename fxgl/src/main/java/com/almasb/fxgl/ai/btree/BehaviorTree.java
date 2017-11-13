@@ -62,7 +62,7 @@ public class BehaviorTree<E> extends Task<E> {
      * Returns the blackboard object of this behavior tree.
      */
     @Override
-    public E getObject() {
+    public E getEntity() {
         return object;
     }
 
@@ -97,7 +97,9 @@ public class BehaviorTree<E> extends Task<E> {
 
     @Override
     public Task<E> getChild(int i) {
-        if (i == 0 && rootTask != null) return rootTask;
+        if (i == 0 && rootTask != null)
+            return rootTask;
+
         throw new IndexOutOfBoundsException("index can't be >= size: " + i + " >= " + getChildCount());
     }
 
@@ -152,16 +154,19 @@ public class BehaviorTree<E> extends Task<E> {
     }
 
     public void addListener(Listener<E> listener) {
-        if (listeners == null) listeners = new Array<Listener<E>>();
+        if (listeners == null)
+            listeners = new Array<>();
         listeners.add(listener);
     }
 
     public void removeListener(Listener<E> listener) {
-        if (listeners != null) listeners.removeValueByIdentity(listener);
+        if (listeners != null)
+            listeners.removeValueByIdentity(listener);
     }
 
     public void removeListeners() {
-        if (listeners != null) listeners.clear();
+        if (listeners != null)
+            listeners.clear();
     }
 
     public void notifyStatusUpdated(Task<E> task, Status previousStatus) {
@@ -222,7 +227,6 @@ public class BehaviorTree<E> extends Task<E> {
         protected Task<E> copyTo(Task<E> task) {
             return null;
         }
-
     }
 
     /**
@@ -241,7 +245,7 @@ public class BehaviorTree<E> extends Task<E> {
          * @param task           the task whose status has been set
          * @param previousStatus the task's status before the update
          */
-        public void statusUpdated(Task<E> task, Status previousStatus);
+        void statusUpdated(Task<E> task, Status previousStatus);
 
         /**
          * This method is invoked when a child task is added to the children of a parent task.
@@ -249,6 +253,6 @@ public class BehaviorTree<E> extends Task<E> {
          * @param task  the parent task of the newly added child
          * @param index the index where the child has been added
          */
-        public void childAdded(Task<E> task, int index);
+        void childAdded(Task<E> task, int index);
     }
 }

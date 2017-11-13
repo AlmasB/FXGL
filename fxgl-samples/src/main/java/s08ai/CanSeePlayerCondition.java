@@ -19,6 +19,6 @@ public class CanSeePlayerCondition extends Condition {
     public boolean evaluate() {
         Entity player = ((BehaviorSample) FXGL.getApp()).player;
 
-        return player.distance(getObject()) < 250;
+        return player.distance(getEntity()) < 250;
     }
 }

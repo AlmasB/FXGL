@@ -38,7 +38,9 @@ public abstract class LeafTask<E> extends Task<E> {
     @Override
     public final void run() {
         Status result = execute();
-        if (result == null) throw new IllegalStateException("Invalid status 'null' returned by the execute method");
+        if (result == null)
+            throw new IllegalStateException("Invalid status 'null' returned by the execute method");
+
         switch (result) {
             case SUCCEEDED:
                 success();
@@ -83,5 +85,4 @@ public abstract class LeafTask<E> extends Task<E> {
     @Override
     public final void childSuccess(Task<E> runningTask) {
     }
-
 }
