@@ -122,6 +122,13 @@ public abstract class GameApplication extends Application {
 
     private void initMainWindow(Stage stage) {
         mainWindow = new MainWindow(stage, settings);
+        stage.iconifiedProperty().addListener((o, wasMinimized, isMinimized) -> {
+            if (isMinimized) {
+                pauseMainLoop();
+            } else {
+                resumeMainLoop();
+            }
+        });
     }
 
     /**
@@ -378,6 +385,19 @@ public abstract class GameApplication extends Application {
             }
         };
         mainLoop.start();
+    }
+
+    private void resumeMainLoop() {
+        if (mainLoop != null) {
+            mainLoop.start();
+        }
+    }
+
+    private void pauseMainLoop() {
+        if (mainLoop != null) {
+            mainLoop.stop();
+            fpsCounter.reset();
+        }
     }
 
     /**

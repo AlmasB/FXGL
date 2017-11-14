@@ -6,6 +6,8 @@
 
 package com.almasb.fxgl.time
 
+import java.util.*
+
 /**
  * Convenience class that buffers FPS values and calculates
  * average FPS.
@@ -41,5 +43,12 @@ internal class FPSCounter {
         }
 
         return frameRate
+    }
+
+    fun reset() {
+        Arrays.fill(frameTimes, 0)
+        index = 0
+        arrayFilled = false
+        frameRate = 0
     }
 }
