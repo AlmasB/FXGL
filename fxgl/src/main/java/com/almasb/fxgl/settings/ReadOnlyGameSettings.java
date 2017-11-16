@@ -18,6 +18,7 @@ import com.almasb.fxgl.ui.FXGLUIFactory;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
+import javafx.stage.StageStyle;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -43,6 +44,7 @@ public class ReadOnlyGameSettings {
     protected KeyCode menuKey = KeyCode.ESCAPE;
     protected Credits credits = new Credits(Collections.emptyList());
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
+    protected StageStyle stageStyle = StageStyle.DECORATED;
 
     /* CUSTOMIZABLE SERVICES BELOW */
 
@@ -92,6 +94,7 @@ public class ReadOnlyGameSettings {
         this.credits = new Credits(copy.credits);
         this.enabledMenuItems = copy.enabledMenuItems;
         this.singleStep = copy.singleStep;
+        this.stageStyle = copy.stageStyle;
 
         this.sceneFactory = copy.sceneFactory;
         this.dialogFactory = copy.dialogFactory;
@@ -158,6 +161,10 @@ public class ReadOnlyGameSettings {
         return enabledMenuItems;
     }
 
+    public final StageStyle getStageStyle() {
+        return stageStyle;
+    }
+
     public final SceneFactory getSceneFactory() {
         return sceneFactory;
     }
@@ -191,6 +198,7 @@ public class ReadOnlyGameSettings {
                 "Single step:" + singleStep + '\n' +
                 "App Mode: " + appMode + '\n' +
                 "Menu Key: " + menuKey + '\n' +
+                "Stage Style: " + stageStyle + '\n' +
                 "Scene Factory: " + sceneFactory.getClass() + '\n' +
                 "Dialog Factory: " + dialogFactory.getClass() + '\n' +
                 "UI Factory: " + uiFactory.getClass() + '\n' +

@@ -90,6 +90,8 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
             title = "${settings.title} ${settings.version}"
             isResizable = false
 
+            initStyle(settings.stageStyle)
+
             setOnCloseRequest { e ->
                 e.consume()
 

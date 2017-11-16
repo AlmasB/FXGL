@@ -13,6 +13,7 @@ import com.almasb.fxgl.ui.DialogFactory;
 import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
+import javafx.stage.StageStyle;
 
 import java.util.EnumSet;
 
@@ -164,6 +165,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
 
     public void setEnabledMenuItems(EnumSet<MenuItem> items) {
         this.enabledMenuItems = items;
+    }
+
+    public void setStageStyle(StageStyle stageStyle) {
+        this.stageStyle = stageStyle;
     }
 
     /**
