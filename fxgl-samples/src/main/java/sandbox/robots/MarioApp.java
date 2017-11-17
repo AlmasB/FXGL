@@ -6,10 +6,14 @@
 
 package sandbox.robots;
 
+import com.almasb.fxgl.ai.AIControl;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.control.ExpireCleanControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
@@ -17,8 +21,11 @@ import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.handler.CollectibleHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 
 /**
@@ -39,7 +46,7 @@ public class MarioApp extends GameApplication {
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
         settings.setSingleStep(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setApplicationMode(ApplicationMode.RELEASE);
     }
 
     private PlayerControl playerControl;
@@ -83,6 +90,19 @@ public class MarioApp extends GameApplication {
                 stepLoop();
             }
         }, KeyCode.L);
+
+        getInput().addAction(new UserAction("Drop rectangle") {
+            @Override
+            protected void onActionBegin() {
+                Entities.builder()
+                        .type(MarioType.OBSTACLE)
+                        .at(getInput().getMousePositionWorld())
+                        .viewFromNodeWithBBox(new Rectangle(40, 40))
+                        .with(new CollidableComponent(true))
+                        .with(new ExpireCleanControl(Duration.seconds(2)).animateOpacity())
+                        .buildAndAttach();
+            }
+        }, MouseButton.PRIMARY);
     }
 
     @Override
@@ -117,6 +137,8 @@ public class MarioApp extends GameApplication {
 
         Entity player = getGameWorld().getEntitiesByType(MarioType.PLAYER).get(0);
         playerControl = player.getControl(PlayerControl.class);
+
+        player.addControl(new AIControl("robot.tree"));
 
         getGameScene().getViewport().setBounds(0, 0, 30*70, 11 * 70);
         getGameScene().getViewport().bindToEntity(player, 500, 0);

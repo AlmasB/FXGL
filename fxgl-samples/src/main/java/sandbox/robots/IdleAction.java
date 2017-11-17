@@ -6,9 +6,14 @@
 
 package sandbox.robots;
 
+import com.almasb.fxgl.ai.SingleAction;
+
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public enum MarioType {
-    PLAYER, GHOST_PLATFORM, PLATFORM, ROBOT, COIN, PORTAL, OBSTACLE
+public class IdleAction extends SingleAction {
+    @Override
+    public void onUpdate(double tpf) {
+        getEntity().getControl(PlayerControl.class).stop();
+    }
 }
