@@ -14,8 +14,7 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A generic entity in the Entity-Component-System (Control) model.
+ * A generic entity in the Entity-Component-Control model.
  * During update (or control update) it is not allowed to:
  * <ul>
  *     <li>Add control</li>
@@ -34,7 +33,7 @@ import java.util.Optional;
  * </ul>
  *
  * Entity is guaranteed to have Type, Position, Rotation, BBox, View components.
- * The best practice is to add all controls an entity will use before attaching
+ * The best practice is to add all component and controls to an entity before attaching
  * the entity to the world and pause the (immediately) unused controls.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -124,46 +123,28 @@ public class Entity {
             world.removeEntity(this);
     }
 
-    /**
-     * @return type component
-     */
     public final TypeComponent getTypeComponent() {
         return type;
     }
 
-    /**
-     * @return position component
-     */
     public final PositionComponent getPositionComponent() {
         return position;
     }
 
-    /**
-     * @return rotation component
-     */
     public final RotationComponent getRotationComponent() {
         return rotation;
     }
 
-    /**
-     * @return bounding box component
-     */
     public final BoundingBoxComponent getBoundingBoxComponent() {
         return bbox;
     }
 
-    /**
-     * @return view component
-     */
     public final ViewComponent getViewComponent() {
         return view;
     }
 
     // TYPE BEGIN
 
-    /**
-     * @return entity type
-     */
     public final Serializable getType() {
         return type.getValue();
     }
@@ -185,6 +166,10 @@ public class Entity {
         return this.type.isType(type);
     }
 
+    public final ObjectProperty<Serializable> typeProperty() {
+        return type.valueProperty();
+    }
+
     // TYPE END
 
     // POSITION BEGIN
@@ -198,13 +183,14 @@ public class Entity {
 
     /**
      * Set top left position of this entity in world coordinates.
-     *
-     * @param position point
      */
     public final void setPosition(Point2D position) {
         this.position.setValue(position);
     }
 
+    /**
+     * Set top left position of this entity in world coordinates.
+     */
     public final void setPosition(double x, double y) {
         this.position.setValue(x, y);
     }
@@ -224,27 +210,29 @@ public class Entity {
     }
 
     /**
-     * Set position x of this entity.
-     *
-     * @param x x coordinate
+     * Set position top left x of this entity.
      */
     public final void setX(double x) {
         position.setX(x);
     }
 
     /**
-     * Set position y of this entity.
-     *
-     * @param y y coordinate
+     * Set position top left y of this entity.
      */
     public final void setY(double y) {
         position.setY(y);
     }
 
+    public final DoubleProperty xProperty() {
+        return position.xProperty();
+    }
+
+    public final DoubleProperty yProperty() {
+        return position.yProperty();
+    }
+
     /**
      * Translate x and y by given vector.
-     *
-     * @param vector translate vector
      */
     public final void translate(Point2D vector) {
         position.translate(vector);
@@ -252,8 +240,6 @@ public class Entity {
 
     /**
      * Translate x and y by given vector.
-     *
-     * @param vector translate vector
      */
     public final void translate(Vec2 vector) {
         position.translate(vector.x, vector.y);
@@ -270,24 +256,22 @@ public class Entity {
     }
 
     /**
-     * Translate X by given value.
-     *
-     * @param dx dx
+     * Translate x by given value.
      */
     public final void translateX(double dx) {
         position.translateX(dx);
     }
 
     /**
-     * Translate Y by given value.
-     *
-     * @param dy dy
+     * Translate y by given value.
      */
     public final void translateY(double dy) {
         position.translateY(dy);
     }
 
     /**
+     * Instantly moves this entity distance units towards given point.
+     *
      * @param point the point to move towards
      * @param distance the distance to move
      */
@@ -296,8 +280,7 @@ public class Entity {
     }
 
     /**
-     * @param other the other component
-     * @return distance in pixels from this position to the other
+     * @return distance in pixels from this entity to the other
      */
     public final double distance(Entity other) {
         return position.distance(other.position);
@@ -316,11 +299,13 @@ public class Entity {
 
     /**
      * Set absolute rotation angle.
-     *
-     * @param angle rotation angle
      */
     public final void setRotation(double angle) {
         rotation.setValue(angle);
+    }
+
+    public final DoubleProperty angleProperty() {
+        return rotation.angleProperty();
     }
 
     /**
@@ -341,8 +326,7 @@ public class Entity {
      * between vector and positive X axis.
      * This is useful for projectiles (bullets, arrows, etc)
      * which rotate depending on their current velocity.
-     * Note, this assumes that at 0 angle rotation the scene view is
-     * facing right.
+     * Note, this assumes that at 0 angle rotation the view is facing right.
      *
      * @param vector the rotation vector / velocity vector
      */
@@ -368,22 +352,30 @@ public class Entity {
         return bbox.getHeight();
     }
 
+    public final ReadOnlyDoubleProperty widthProperty() {
+        return bbox.widthProperty();
+    }
+
+    public final ReadOnlyDoubleProperty heightProperty() {
+        return bbox.heightProperty();
+    }
+
     /**
-     * @return the righmost x of this entity in world coordinates
+     * @return the rightmost x of this entity in world coordinates based on bounding box
      */
     public final double getRightX() {
         return bbox.getMaxXWorld();
     }
 
     /**
-     * @return the bottom y of this entity in world coordinates
+     * @return the bottom y of this entity in world coordinates based on bounding box
      */
     public final double getBottomY() {
         return bbox.getMaxYWorld();
     }
 
     /**
-     * @return center point of this entity in world coordinates
+     * @return center point of this entity in world coordinates based on bounding box
      */
     public final Point2D getCenter() {
         return bbox.getCenterWorld();
@@ -409,18 +401,10 @@ public class Entity {
 
     // VIEW BEGIN
 
-    /**
-     * @return entity view
-     */
     public final EntityView getView() {
         return this.view.getView();
     }
 
-    /**
-     * Set view without generating bounding boxes from view.
-     *
-     * @param view the view
-     */
     public final void setView(Node view) {
         this.view.setView(view);
     }
@@ -445,44 +429,28 @@ public class Entity {
 
     /**
      * Set view and generate bounding boxes from view.
-     *
-     * @param view the view
      */
     public final void setViewWithBBox(Node view) {
         this.view.setView(view, true);
     }
 
-    /**
-     * @return render layer
-     */
     public final RenderLayer getRenderLayer() {
         return this.view.getRenderLayer();
     }
 
-    /**
-     * Set render layer.
-     *
-     * @param layer render layer
-     */
     public final void setRenderLayer(RenderLayer layer) {
         this.view.setRenderLayer(layer);
     }
 
-    // TODO: the scale should be a component? and affect the model, not the view?
-
     /**
-     * Set view scale X.
-     *
-     * @param scaleX x value
+     * Scale view x.
      */
     public final void setScaleX(double scaleX) {
         view.getView().setScaleX(scaleX);
     }
 
     /**
-     * Set view scale Y.
-     *
-     * @param scaleY y value
+     * Scale view y.
      */
     public final void setScaleY(double scaleY) {
         view.getView().setScaleY(scaleY);
@@ -490,9 +458,6 @@ public class Entity {
 
     // VIEW END
 
-    /**
-     * @return active property of this entity
-     */
     public final ReadOnlyBooleanProperty activeProperty() {
         return active.getReadOnlyProperty();
     }
@@ -527,6 +492,9 @@ public class Entity {
         onNotActive = action;
     }
 
+    /**
+     * Sets entity to be not active.
+     */
     void markForRemoval() {
         if (onNotActive != null)
             onNotActive.run();
@@ -591,6 +559,7 @@ public class Entity {
      * @param key property key
      * @return property value or Optional.empty() if value is null or key not present
      */
+    @SuppressWarnings("unchecked")
     public final <T> Optional<T> getPropertyOptional(String key) {
         Object value = properties.get(key, null);
         return Optional.ofNullable((T) value);
