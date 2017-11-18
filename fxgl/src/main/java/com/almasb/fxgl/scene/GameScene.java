@@ -7,6 +7,7 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
@@ -23,6 +24,8 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
@@ -70,13 +73,29 @@ public final class GameScene extends FXGLScene
      */
     private Group uiRoot = new Group();
 
+    private Text profilerText = new Text();
+
+    public Text getProfilerText() {
+        return profilerText;
+    }
+
     protected GameScene(int width, int height) {
         getContentRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
+        initProfilerText(0, height - 120);
         initParticlesCanvas(width, height);
         initViewport(width, height);
 
         log.debug("Game scene initialized: " + width + "x" + height);
+    }
+
+    private void initProfilerText(double x, double y) {
+        profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
+        profilerText.setFill(Color.RED);
+        profilerText.setTranslateX(x);
+        profilerText.setTranslateY(y);
+
+        uiRoot.getChildren().add(profilerText);
     }
 
     private void initParticlesCanvas(double w, double h) {
@@ -267,9 +286,16 @@ public final class GameScene extends FXGLScene
     public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
 
-        particlesGC.setGlobalAlpha(1);
-        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
-        particlesGC.clearRect(0, 0, getWidth(), getHeight());
+        boolean dirty = drawables.isNotEmpty() || particles.isNotEmpty();
+
+        if (dirty) {
+            particlesGC.setGlobalAlpha(1);
+            particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
+
+            // TODO: this is very costly, do we know exact dimensions to clear
+            // OR can we do this off the render thread inbetween frames?
+            particlesGC.clearRect(0, 0, getWidth(), getHeight());
+        }
 
         for (Entity e : drawables) {
             DrawableComponent drawable = e.getComponent(DrawableComponent.class);
@@ -292,6 +318,8 @@ public final class GameScene extends FXGLScene
         particles.clear();
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
+
+        uiRoot.getChildren().add(profilerText);
     }
 
     @Override

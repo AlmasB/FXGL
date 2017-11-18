@@ -420,7 +420,7 @@ public abstract class GameApplication extends Application {
             long frameTook = System.nanoTime() - frameStart;
 
             profiler.update(fps.get(), frameTook);
-            profiler.render(getGameScene().getGraphicsContext());
+            profiler.render(getGameScene().getProfilerText());
         }
     }
 
