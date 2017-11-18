@@ -29,11 +29,11 @@ public class TimerActionSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("TimerActionSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override

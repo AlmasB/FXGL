@@ -36,10 +36,10 @@ public class UnoSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("UnoSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+
+
+
+
     }
 
     private Deck deck = new InfiniteDeck();

@@ -34,11 +34,11 @@ public class PathfindingSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PathfindingSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     // 1. Define A* grid

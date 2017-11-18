@@ -38,12 +38,12 @@ public class SmokeSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("SmokeSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     private ParticleEmitter emitter, e;

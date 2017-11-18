@@ -37,11 +37,11 @@ public class PlatformerSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PlatformerSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override

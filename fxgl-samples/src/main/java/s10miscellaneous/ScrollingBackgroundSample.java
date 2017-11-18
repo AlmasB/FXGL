@@ -31,12 +31,12 @@ public class ScrollingBackgroundSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ScrollingBackgroundSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override

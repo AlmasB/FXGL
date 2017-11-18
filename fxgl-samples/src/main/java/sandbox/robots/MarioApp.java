@@ -41,10 +41,10 @@ public class MarioApp extends GameApplication {
         settings.setHeight(770);
         settings.setTitle("MarioApp");
         settings.setVersion("0.2");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
+
+
+
+
         settings.setSingleStep(false);
         settings.setApplicationMode(ApplicationMode.RELEASE);
     }

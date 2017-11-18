@@ -35,12 +35,12 @@ public class StateSample extends GameApplication {
         settings.setHeight(720);
         settings.setTitle("StateSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     private ShopState shopState;

@@ -43,11 +43,11 @@ public class PhysicsSample2 extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PhysicsSample2");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override

@@ -9,9 +9,11 @@ package s05uimenus;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.util.Credits;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -28,11 +30,12 @@ public class CreditsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("CreditsSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
+
+
         settings.setMenuEnabled(true);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
+
+
 
         // 1. create a list of text you want to show
         List<String> list = new ArrayList<>();

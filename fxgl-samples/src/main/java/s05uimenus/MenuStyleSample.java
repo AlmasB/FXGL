@@ -25,11 +25,11 @@ public class MenuStyleSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("MenuStyleSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
+
+
         settings.setMenuEnabled(true);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
 
         //settings.setSceneFactory(new SceneFactory());
     }

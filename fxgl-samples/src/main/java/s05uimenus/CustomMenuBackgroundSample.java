@@ -29,11 +29,11 @@ public class CustomMenuBackgroundSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("BG Sample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
+
+
         settings.setMenuEnabled(true);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
 
         settings.setSceneFactory(new MySceneFactory());
     }

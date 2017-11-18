@@ -27,9 +27,9 @@ public class RaycastSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("RaycastSample");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
+
+
+
     }
 
     private Line laser = new Line();

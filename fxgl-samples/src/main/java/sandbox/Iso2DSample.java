@@ -38,10 +38,10 @@ public class Iso2DSample extends GameApplication {
         settings.setHeight(920);
         settings.setTitle("Iso2DSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+
+
+
+
     }
 
     @Override

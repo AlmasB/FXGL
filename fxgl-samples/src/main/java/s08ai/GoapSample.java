@@ -34,10 +34,10 @@ public class GoapSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("GoapSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
+
+
+
+
     }
 
     private static Entity player, coin, weapon, agent, guard;

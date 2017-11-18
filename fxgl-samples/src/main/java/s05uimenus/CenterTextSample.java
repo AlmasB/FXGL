@@ -26,12 +26,12 @@ public class CenterTextSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("CenterTextSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override

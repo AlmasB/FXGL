@@ -27,9 +27,9 @@ public class RESTClientSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("RESTClientSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
+
+
+
     }
 
     @Override

@@ -40,12 +40,12 @@ public class ParticleTextureSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ParticleTextureSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     private ParticleEmitter emitter;

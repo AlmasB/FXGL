@@ -33,12 +33,12 @@ public class AchievementsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("AchievementsSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+
+
+
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
-        settings.setProfilingEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
     }
 
     @Override

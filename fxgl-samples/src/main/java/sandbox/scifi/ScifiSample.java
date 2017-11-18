@@ -60,9 +60,9 @@ public class ScifiSample extends GameApplication {
         settings.setFullScreen(true);
         settings.setIntroEnabled(true);
         settings.setMenuEnabled(true);
-        settings.setProfilingEnabled(false);
+
         settings.setCloseConfirmation(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
     }
 
     private PlayerControl playerControl;

@@ -26,10 +26,10 @@ public class ClockSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ClockSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+
+
+
+
     }
 
     private InGameClock clock;

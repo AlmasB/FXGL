@@ -27,11 +27,11 @@ public class ThreadingSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ThreadingSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     // 1. isolate code that represents some heavy work

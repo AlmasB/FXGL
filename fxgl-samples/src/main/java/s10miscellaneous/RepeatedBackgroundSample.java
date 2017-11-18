@@ -22,10 +22,10 @@ public class RepeatedBackgroundSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("RepeatedBackgroundSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+
+
+
+
     }
 
     @Override

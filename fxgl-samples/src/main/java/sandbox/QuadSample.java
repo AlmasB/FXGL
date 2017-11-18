@@ -37,11 +37,11 @@ public class QuadSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("QuadSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     private List<Texture> originals = new ArrayList<>();
