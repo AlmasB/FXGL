@@ -31,10 +31,6 @@ public class BasicGameApp2 extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("Basic Game App2");
         settings.setVersion("0.1");
-          // turn off fps
-         // turn off exit dialog
-              // turn off intro
-               // turn off menus
     }
 
     @Override
