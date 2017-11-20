@@ -26,7 +26,6 @@ class EntitiesTest {
     companion object {
         @BeforeAll
         @JvmStatic fun before() {
-            FXGL.setProperty("dev.showbbox", false)
             FXGLMock.mock()
         }
     }
