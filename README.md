@@ -19,9 +19,9 @@ JavaFX Game Development Framework
 
 ## Good for ...
 
-* Any 2D genre (side-scroller / platformer / arcade, RPG, etc.)
+* Any 2D genre (side-scroller / platformer / arcade / RPG)
 * Hobby / academic / commercial projects
-* Learning / improving game development skills
+* Teaching / learning / improving game development skills
 * Fast prototyping of game ideas
 
 ## Features
@@ -96,5 +96,6 @@ Download latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases
 Please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or simply star the repo to show interest.
 
 ## Contact
+
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
