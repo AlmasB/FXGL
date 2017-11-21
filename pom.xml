@@ -78,7 +78,7 @@
         <build.helper.version>3.0.0</build.helper.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.1.51</kotlin.version>
+        <kotlin.version>1.1.60</kotlin.version>
         <kotlinx.version>0.17</kotlinx.version>
         <jfxtras.version>8.0-r5</jfxtras.version>
         <controlsfx.version>9.0.0</controlsfx.version>
