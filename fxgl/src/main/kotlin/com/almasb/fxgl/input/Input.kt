@@ -6,12 +6,13 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.fxgl.annotation.OnUserAction
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import com.almasb.fxgl.scene.Viewport
+import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.ReadOnlyStringWrapper
 import javafx.collections.FXCollections
@@ -82,6 +83,12 @@ class Input : UserProfileSavable {
 
     fun getActionByName(actionName: String): UserAction = bindings.keys.find { it.name == actionName }
             ?: throw IllegalArgumentException("Action $actionName not found")
+
+    private val triggers = hashMapOf<UserAction, ReadOnlyObjectWrapper<Trigger>>()
+
+    fun triggerProperty(action: UserAction): ReadOnlyObjectProperty<Trigger> {
+        return triggers[action]?.readOnlyProperty ?: throw IllegalArgumentException("Action $action not found")
+    }
 
     /**
      * Currently active actions.
@@ -288,6 +295,10 @@ class Input : UserProfileSavable {
 
         bindings[action] = trigger
 
+        if (!triggers.containsKey(action)) {
+            triggers[action] = ReadOnlyObjectWrapper(trigger)
+        }
+
         if (!triggerNames.containsKey(action)) {
             triggerNames[action] = ReadOnlyStringWrapper("")
         }
@@ -305,6 +316,7 @@ class Input : UserProfileSavable {
             val newTrigger = KeyTrigger(key, modifier)
 
             bindings[action] = newTrigger
+            triggers[action]?.value = newTrigger
             triggerNames[action]?.value = newTrigger.toString()
             return true
         }
@@ -320,6 +332,7 @@ class Input : UserProfileSavable {
             val newTrigger = MouseTrigger(button, modifier)
 
             bindings[action] = newTrigger
+            triggers[action]?.value = newTrigger
             triggerNames[action]?.value = newTrigger.toString()
             return true
         }
@@ -493,9 +506,11 @@ class Input : UserProfileSavable {
 
         for (binding in bindings) {
 
+            val action = binding.key
+
             // if binding is not present in bundle, then we added some new binding thru code
-            // it will saved on next serialization and will be found in bundle
-            var triggerName: String? = bundle.get<String>("${binding.key}")
+            // it will be saved on next serialization and will be found in bundle
+            var triggerName: String? = bundle.get<String>("$action")
             if (triggerName == null)
                 continue
 
@@ -507,13 +522,17 @@ class Input : UserProfileSavable {
                 triggerName = triggerName.substring(plusIndex + 1)
             }
 
+            // if triggerName was CTRL+A, we end up with:
+            // triggerName = A
+            // modifierName = CTRL
+
             try {
                 val key = KeyCode.getKeyCode(triggerName)
-                rebind(binding.key, key, InputModifier.valueOf(modifierName))
+                rebind(action, key, InputModifier.valueOf(modifierName))
             } catch (ignored: Exception) {
                 try {
-                    val btn = MouseButton.valueOf(triggerName)
-                    rebind(binding.key, btn, InputModifier.valueOf(modifierName))
+                    val btn = MouseTrigger.buttonFromString(triggerName)
+                    rebind(action, btn, InputModifier.valueOf(modifierName))
                 } catch (e: Exception) {
                     log.warning("Undefined trigger name: " + triggerName)
                     throw IllegalArgumentException("Corrupt or incompatible user profile: " + e.message)

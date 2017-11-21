@@ -6,10 +6,6 @@
 
 package com.almasb.fxgl.entity
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.entity.component.BoundingBoxComponent
-import com.almasb.fxgl.entity.component.PositionComponent
-import com.almasb.fxgl.entity.component.ViewComponent
 import javafx.geometry.Point2D
 import javafx.geometry.Rectangle2D
 import java.util.*
@@ -36,7 +32,6 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
     }
 
     /**
-     * This query only works on entities with TypeComponent.
      * If called with no arguments, all entities are returned.
      * Warning: object allocation.
      *
@@ -51,72 +46,47 @@ internal class GameWorldQuery(private val entities: List<Entity>) {
     }
 
     private fun isOneOfTypes(entity: Entity, vararg types: Enum<*>): Boolean {
-        val entityType = Entities.getType(entity)
-
-        if (entityType != null)
-            return types.any { entityType.isType(it) }
-
-        return false
+        return types.any { entity.isType(it) }
     }
 
     /**
      * Returns a list of entities
      * which are partially or entirely
      * in the specified rectangular selection.
-     * This query only works on entities with BoundingBoxComponent.
      * Warning: object allocation.
 
      * @param selection Rectangle2D that describes the selection box
      * *
-     * @return list of entities in the range (do NOT modify)
+     * @return list of entities in the range
      */
     fun getEntitiesInRange(selection: Rectangle2D): List<Entity> {
-        return entities.filter { it.getComponent(BoundingBoxComponent::class.java)?.isWithin(selection) ?: false }
+        return entities.filter { it.boundingBoxComponent.isWithin(selection) }
     }
-
 
     /**
      * Returns a list of entities
      * which colliding with given entity.
-
+     *
      * Note: CollidableComponent is not considered.
-     * This query only works on entities with BoundingBoxComponent.
-
+     *
      * @param entity the entity
-     * *
      * @return list of entities colliding with entity
      */
     fun getCollidingEntities(entity: Entity): List<Entity> {
-        val bbox = Entities.getBBox(entity) ?: return emptyList()
-
-        return entities.filter { it.getComponent(BoundingBoxComponent::class.java)?.isCollidingWith(bbox) ?: false && it !== entity }
+        return entities.filter { it.isColliding(entity) && it !== entity }
     }
 
     /**
      * Returns a list of entities which have the given render layer index.
-     * This query only works on entities with ViewComponent.
-
+     *
      * @param layer render layer
-     * *
      * @return list of entities in the layer
      */
     fun getEntitiesByLayer(layer: RenderLayer): List<Entity> {
-        return entities.filter {
-            val view = it.getComponent(ViewComponent::class.java)
-
-            if (view != null) {
-                return@filter view.renderLayer.index() == layer.index()
-            }
-
-            return@filter false
-        }
+        return entities.filter { it.renderLayer.index() == layer.index() }
     }
 
     fun getEntitiesAt(position: Point2D): List<Entity> {
-        return entities.filter {
-            val p = it.getComponent(PositionComponent::class.java)?.value ?: return@filter false
-
-            p == position
-        }
+        return entities.filter { it.position == position }
     }
 }

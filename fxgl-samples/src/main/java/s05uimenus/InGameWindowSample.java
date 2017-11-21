@@ -6,7 +6,7 @@
 
 package s05uimenus;
 
-import com.almasb.fxgl.annotation.OnUserAction;
+import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
@@ -31,11 +31,11 @@ public class InGameWindowSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("InGameWindowSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override

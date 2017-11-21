@@ -12,9 +12,8 @@ import com.almasb.fxgl.ai.goap.GoapControl;
 import com.almasb.fxgl.ai.goap.State;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.text.Text;
 
@@ -35,13 +34,13 @@ public class GoapSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("GoapSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
+
+
+
+
     }
 
-    private static GameEntity player, coin, weapon, agent, guard;
+    private static Entity player, coin, weapon, agent, guard;
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {

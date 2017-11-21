@@ -8,19 +8,24 @@ package com.almasb.fxgl.scene;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.MenuEventHandler;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.GameDifficulty;
 import com.almasb.fxgl.input.InputModifier;
+import com.almasb.fxgl.input.Trigger;
+import com.almasb.fxgl.input.TriggerView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.saving.SaveFile;
-import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.ui.FXGLSpinner;
+import com.almasb.fxgl.util.Language;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -38,6 +43,8 @@ import javafx.stage.StageStyle;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
 
 /**
  * This is a base class for main/game menus. It provides several
@@ -67,7 +74,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
     protected final MenuType type;
 
-    protected MenuEventListener listener;
+    protected MenuEventHandler listener;
 
     protected final Pane menuRoot = new Pane();
     protected final Pane contentRoot = new Pane();
@@ -77,7 +84,7 @@ public abstract class FXGLMenu extends FXGLScene {
     public FXGLMenu(GameApplication app, MenuType type) {
         this.app = app;
         this.type = type;
-        this.listener = app.getMenuListener();
+        this.listener = (MenuEventHandler) app.getMenuListener();
 
         getContentRoot().getChildren().addAll(
                 createBackground(app.getWidth(), app.getHeight()),
@@ -178,6 +185,7 @@ public abstract class FXGLMenu extends FXGLScene {
         listener.getSaveLoadManager().querySaveFiles();
 
         Button btnLoad = FXGL.getUIFactory().newButton("LOAD");
+        btnLoad.textProperty().bind(localizedStringProperty("menu.load"));
         btnLoad.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnLoad.setOnAction(e -> {
@@ -187,6 +195,7 @@ public abstract class FXGLMenu extends FXGLScene {
         });
 
         Button btnDelete = FXGL.getUIFactory().newButton("DELETE");
+        btnDelete.textProperty().bind(localizedStringProperty("menu.delete"));
         btnDelete.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
 
         btnDelete.setOnAction(e -> {
@@ -214,7 +223,7 @@ public abstract class FXGLMenu extends FXGLScene {
         app.getGameState().gameDifficultyProperty().bind(difficultySpinner.valueProperty());
 
         return new MenuContent(
-                new HBox(25, FXGL.getUIFactory().newText("DIFFICULTY:"), difficultySpinner),
+                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.difficulty").concat(":")), difficultySpinner),
                 FXGL.getUIFactory().newText("PLAYTIME: "
                         + app.getGameplay().getStats().getPlaytimeHours() + "H "
                         + app.getGameplay().getStats().getPlaytimeMinutes() + "M "
@@ -231,17 +240,21 @@ public abstract class FXGLMenu extends FXGLScene {
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.setHgap(50);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.getColumnConstraints().add(new ColumnConstraints(100, 100, 100, Priority.ALWAYS, HPos.LEFT, true));
+        grid.getRowConstraints().add(new RowConstraints(40, 40, 40, Priority.ALWAYS, VPos.CENTER, true));
 
         // row 0
         grid.setUserData(0);
 
-        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, grid));
+        app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
 
+        // TODO: use specific style class, i.e. FXGLScrollPane
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-        scroll.setMaxHeight(app.getHeight() / 2);
-        scroll.setStyle("-fx-background: black;");
+        scroll.setMaxHeight(app.getHeight() / 2.5);
 
         HBox hbox = new HBox(scroll);
         hbox.setAlignment(Pos.CENTER);
@@ -249,13 +262,13 @@ public abstract class FXGLMenu extends FXGLScene {
         return new MenuContent(hbox);
     }
 
-    private void addNewInputBinding(UserAction action, GridPane grid) {
-        Text actionName = FXGL.getUIFactory().newText(action.getName());
-        Button triggerName = FXGL.getUIFactory().newButton("");
+    private void addNewInputBinding(UserAction action, Trigger trigger, GridPane grid) {
+        Text actionName = FXGL.getUIFactory().newText(action.getName(), Color.WHITE, 18.0);
 
-        triggerName.textProperty().bind(app.getInput().triggerNameProperty(action));
+        TriggerView triggerView = new TriggerView(trigger);
+        triggerView.triggerProperty().bind(app.getInput().triggerProperty(action));
 
-        triggerName.setOnMouseClicked(event -> {
+        triggerView.setOnMouseClicked(event -> {
             Rectangle rect = new Rectangle(250, 100);
             rect.setStroke(Color.AZURE);
 
@@ -291,12 +304,14 @@ public abstract class FXGLMenu extends FXGLScene {
             stage.show();
         });
 
-        int controlsRow = (int) grid.getUserData();
-        grid.addRow(controlsRow++, actionName, triggerName);
-        grid.setUserData(controlsRow);
+        HBox hBox = new HBox();
+        hBox.setPrefWidth(100);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.getChildren().add(triggerView);
 
-        GridPane.setHalignment(actionName, HPos.RIGHT);
-        GridPane.setHalignment(triggerName, HPos.LEFT);
+        int controlsRow = (int) grid.getUserData();
+        grid.addRow(controlsRow++, actionName, hBox);
+        grid.setUserData(controlsRow);
     }
 
     /**
@@ -305,9 +320,14 @@ public abstract class FXGLMenu extends FXGLScene {
     protected final MenuContent createContentVideo() {
         log.debug("createContentVideo()");
 
-        // nothing to put here at the moment
+        ChoiceBox<Language> languageBox = FXGL.getUIFactory().newChoiceBox(FXCollections.observableArrayList(Language.values()));
+        languageBox.setValue(Language.ENGLISH);
 
-        return new MenuContent();
+        FXGL.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
+
+        return new MenuContent(
+                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox)
+        );
     }
 
     /**
@@ -450,6 +470,10 @@ public abstract class FXGLMenu extends FXGLScene {
         }
 
         private Line createSeparator(int width) {
+            if (width < 5) {
+                width = 200;
+            }
+
             Line sep = new Line();
             sep.setEndX(width);
             sep.setStroke(Color.DARKGREY);

@@ -6,12 +6,12 @@
 
 package s06gameplay.events;
 
-import com.almasb.fxgl.annotation.Handles;
+import com.almasb.fxgl.event.Handles;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityEvent;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.event.EventTrigger;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -22,6 +22,7 @@ import common.PlayerControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 /**
  * Shows how to use event triggers and fire custom events.
@@ -34,7 +35,7 @@ public class EventsSample extends GameApplication {
         PLAYER, ENEMY
     }
 
-    private GameEntity player, enemy;
+    private Entity player, enemy;
     private PlayerControl playerControl;
 
     @Override
@@ -43,12 +44,12 @@ public class EventsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("EventsSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override
@@ -126,6 +127,8 @@ public class EventsSample extends GameApplication {
         getEventBus().addEventHandler(MyGameEvent.ANY, event -> {
             System.out.println("Code handler: " + event);
         });
+
+        getMasterTimer().runOnceAfter(() -> getEventBus().fireEvent(new MyGameEvent(MyGameEvent.LOW_HP)), Duration.seconds(1));
     }
 
     // 3. add event handler using annotation

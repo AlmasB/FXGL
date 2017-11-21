@@ -32,7 +32,7 @@ class AchievementManagerTest {
 
     @Test
     fun `Register achievement`() {
-        val a1 = Achievement("TestAchievement", "TestDescription")
+        val a1 = Achievement("TestAchievement", "TestDescription", "", 0)
 
         achievementManager.registerAchievement(a1)
 
@@ -49,8 +49,8 @@ class AchievementManagerTest {
 
     @Test
     fun `Cannot have achievements with same name`() {
-        val a1 = Achievement("TestAchievement", "TestDescription")
-        val a2 = Achievement("TestAchievement", "TestDescription")
+        val a1 = Achievement("TestAchievement", "TestDescription", "", 0)
+        val a2 = Achievement("TestAchievement", "TestDescription", "", 0)
 
         achievementManager.registerAchievement(a1)
 
@@ -63,14 +63,14 @@ class AchievementManagerTest {
     fun `Serialization`() {
         val profile = UserProfile("1", "1")
 
-        achievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
-        achievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription"))
+        achievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription", "", 0))
+        achievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
         achievementManager.getAchievementByName("TestAchievement").setAchieved()
         achievementManager.save(profile)
 
         val newAchievementManager = AchievementManager()
-        newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription"))
-        newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription"))
+        newAchievementManager.registerAchievement(Achievement("TestAchievement", "TestDescription", "", 0))
+        newAchievementManager.registerAchievement(Achievement("TestAchievement2", "TestDescription", "", 0))
         newAchievementManager.load(profile)
 
         assertThat(newAchievementManager.getAchievements().size, `is`(2))

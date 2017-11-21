@@ -6,12 +6,13 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,12 +32,10 @@ public class BoundingBoxComponentTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        position = new PositionComponent();
-        bbox = new BoundingBoxComponent();
-
         Entity entity = new Entity();
-        entity.addComponent(position);
-        entity.addComponent(bbox);
+
+        position = entity.getPositionComponent();
+        bbox = entity.getBoundingBoxComponent();
     }
 
     @Test
@@ -211,29 +210,38 @@ public class BoundingBoxComponentTest {
     public void testCheckCollision() throws Exception {
         bbox.addHitBox(new HitBox("TEST", BoundingShape.box(40, 40)));
 
-        BoundingBoxComponent bbox2 = new BoundingBoxComponent();
-        bbox2.addHitBox(new HitBox("TEST2", BoundingShape.box(40, 40)));
+        Entity entity2 = new Entity();
+        entity2.getBoundingBoxComponent().addHitBox(new HitBox("TEST2", BoundingShape.box(40, 40)));
 
-        CollisionResult result = bbox.checkCollision(bbox2);
+        CollisionResult result = bbox.checkCollision(entity2.getBoundingBoxComponent());
         assertThat(result.hasCollided(), is(true));
         assertThat(result.getBoxA(), is(bbox.hitBoxesProperty().get(0)));
-        assertThat(result.getBoxB(), is(bbox2.hitBoxesProperty().get(0)));
+        assertThat(result.getBoxB(), is(entity2.getBoundingBoxComponent().hitBoxesProperty().get(0)));
 
-        BoundingBoxComponent bbox3 = new BoundingBoxComponent();
-        bbox3.addHitBox(new HitBox("TEST3", new Point2D(45, 0), BoundingShape.box(40, 40)));
+        Entity entity3 = new Entity();
+        entity3.getBoundingBoxComponent().addHitBox(new HitBox("TEST3", new Point2D(45, 0), BoundingShape.box(40, 40)));
 
-        Entity entity2 = new Entity();
-        entity2.addComponent(new PositionComponent());
-        entity2.addComponent(bbox3);
-
-        result = bbox.checkCollision(bbox3);
+        result = bbox.checkCollision(entity3.getBoundingBoxComponent());
         assertThat(result.hasCollided(), is(false));
         assertThat(result == CollisionResult.NO_COLLISION, is(true));
     }
 
     @Test
     public void testIsCollidingWith() throws Exception {
-        // TODO:
+        bbox.addHitBox(new HitBox("ARM", new Point2D(50, 50), BoundingShape.box(40, 60)));
+
+        Entity entity2 = new Entity();
+        entity2.getBoundingBoxComponent().addHitBox(new HitBox("test", BoundingShape.box(50, 50)));
+
+        Entity entity3 = new Entity();
+        entity3.getBoundingBoxComponent().addHitBox(new HitBox("test", BoundingShape.box(51, 51)));
+
+        Entity entity4 = new Entity();
+        entity4.getBoundingBoxComponent().addHitBox(new HitBox("test", BoundingShape.box(49, 49)));
+
+        assertTrue(bbox.isCollidingWith(entity2.getBoundingBoxComponent()));
+        assertTrue(bbox.isCollidingWith(entity3.getBoundingBoxComponent()));
+        assertFalse(bbox.isCollidingWith(entity4.getBoundingBoxComponent()));
     }
 
     @Test
@@ -242,24 +250,36 @@ public class BoundingBoxComponentTest {
 
         assertTrue(bbox.isWithin(50, 50, 60, 60));
         assertTrue(bbox.isWithin(55, 55, 60, 60));
-        assertTrue(bbox.isWithin(0, 0, 50, 60));
+        assertFalse(bbox.isWithin(0, 0, 50, 60));
         assertFalse(bbox.isWithin(100, 50, 140, 60));
         assertFalse(bbox.isWithin(50, 120, 90, 60));
 
         assertTrue(bbox.isWithin(0, 0, 51, 51));
-        assertTrue(bbox.isWithin(0, 0, 50, 50));
+        assertFalse(bbox.isWithin(0, 0, 50, 50));
         assertFalse(bbox.isWithin(0, 0, 49, 49));
         assertFalse(bbox.isWithin(91, 0, 49, 49));
     }
 
     @Test
     public void testIsOutside() throws Exception {
-        // TODO:
+        bbox.addHitBox(new HitBox("ARM", BoundingShape.box(40, 60)));
+
+        assertTrue(bbox.isOutside(-10, -10, 0, 0));
+        assertTrue(bbox.isOutside(40, 60, 100, 100));
+        assertTrue(bbox.isOutside(-10, 0, 0, 60));
+        assertFalse(bbox.isOutside(10, 10, 20, 20));
     }
 
     @Test
     public void testRange() throws Exception {
-        // TODO:
+        bbox.addHitBox(new HitBox("ARM", new Point2D(15, 15), BoundingShape.box(40, 60)));
+
+        Rectangle2D range = bbox.range(10, 10);
+
+        assertThat(range.getMinX(), is(15.0 - 10));
+        assertThat(range.getMinY(), is(15.0 - 10));
+        assertThat(range.getMaxX(), is(15.0 + 40 + 10));
+        assertThat(range.getMaxY(), is(15.0 + 60 + 10));
     }
 
     @Test

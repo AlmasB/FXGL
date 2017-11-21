@@ -11,8 +11,8 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
@@ -40,12 +40,12 @@ public class ParticleTextureSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ParticleTextureSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     private ParticleEmitter emitter;
@@ -103,7 +103,7 @@ public class ParticleTextureSample extends GameApplication {
 
         @Override
         public void onUpdate(Entity entity, double tpf) {
-            Entities.getPosition(entity).setValue(curveFunction().add(getWidth() / 2, getHeight() / 2));
+            entity.setPosition(curveFunction().add(getWidth() / 2, getHeight() / 2));
 
             t += tpf;
         }

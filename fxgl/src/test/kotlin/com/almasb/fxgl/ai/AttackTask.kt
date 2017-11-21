@@ -8,19 +8,20 @@ package com.almasb.fxgl.ai
 
 import com.almasb.fxgl.ai.btree.LeafTask
 import com.almasb.fxgl.ai.btree.Task
+import com.almasb.fxgl.entity.Entity
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class AttackTask : LeafTask<com.almasb.fxgl.entity.GameEntity>() {
+class AttackTask : LeafTask<Entity>() {
 
     override fun execute(): Status {
         return Status.SUCCEEDED
     }
 
-    override fun copyTo(task: Task<com.almasb.fxgl.entity.GameEntity>): Task<com.almasb.fxgl.entity.GameEntity> {
+    override fun copyTo(task: Task<Entity>): Task<Entity> {
         return task
     }
 }

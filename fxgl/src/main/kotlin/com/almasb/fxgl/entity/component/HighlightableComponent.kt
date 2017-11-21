@@ -9,10 +9,8 @@ package com.almasb.fxgl.entity.component
 import com.almasb.fxgl.animation.Animation
 import com.almasb.fxgl.animation.SequentialAnimation
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ecs.Component
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.ecs.component.Required
-import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.Component
+import com.almasb.fxgl.entity.Entity
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -99,7 +97,7 @@ class HighlightableComponent : Component() {
     }
 
     override fun onAdded(entity: Entity) {
-        val view = Entities.getView(entity)
+        val view = entity.viewComponent
 
         view.view.setOnMouseEntered {
             if (HIGHLIGHT.scene != null) {

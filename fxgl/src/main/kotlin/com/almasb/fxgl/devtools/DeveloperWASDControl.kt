@@ -7,11 +7,10 @@
 package com.almasb.fxgl.devtools
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ecs.Control
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.ecs.component.Required
-import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.PositionComponent
+import com.almasb.fxgl.entity.component.Required
 import com.almasb.fxgl.input.UserAction
 import javafx.scene.input.KeyCode
 
@@ -26,8 +25,6 @@ class DeveloperWASDControl : Control() {
     private lateinit var position: PositionComponent
 
     override fun onAdded(entity: Entity) {
-        position = Entities.getPosition(entity)
-
         with(FXGL.getInput()) {
             addAction(object : UserAction("Dev_UP") {
                 override fun onAction() = up()

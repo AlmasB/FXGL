@@ -23,10 +23,10 @@ public class AsyncSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("AsyncSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
+
+
+
+
     }
 
     @Override

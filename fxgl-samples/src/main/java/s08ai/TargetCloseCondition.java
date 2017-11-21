@@ -17,6 +17,6 @@ public class TargetCloseCondition extends Condition {
     @Override
     public boolean evaluate() {
 
-        return new Point2D(400, 300).distance(getObject().getPosition()) < 400;
+        return new Point2D(400, 300).distance(getEntity().getPosition()) < 400;
     }
 }

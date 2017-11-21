@@ -7,11 +7,10 @@ package s07particles;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -29,12 +28,12 @@ public class ParticlesSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ParticlesSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ParticlesSample extends GameApplication {
             protected void onActionBegin() {
                 // 1. create entity
                 Entity explosion = new Entity();
-                explosion.addComponent(new PositionComponent(input.getMousePositionWorld()));
+                explosion.setPosition(input.getMousePositionWorld());
 
                 // 2. create and configure emitter + control
                 ParticleEmitter emitter = ParticleEmitters.newExplosionEmitter(400);

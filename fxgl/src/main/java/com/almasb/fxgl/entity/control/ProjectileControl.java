@@ -6,12 +6,8 @@
 
 package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.RotationComponent;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 
 /**
@@ -20,8 +16,6 @@ import javafx.geometry.Point2D;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
-@Required(RotationComponent.class)
 public class ProjectileControl extends Control {
 
     private Point2D velocity;
@@ -53,7 +47,7 @@ public class ProjectileControl extends Control {
      */
     public void setDirection(Point2D direction) {
         this.velocity = direction.normalize().multiply(speed);
-        Entities.getRotation(getEntity()).rotateToVector(velocity);
+        getEntity().rotateToVector(velocity);
     }
 
     /**
@@ -69,16 +63,16 @@ public class ProjectileControl extends Control {
     public void setSpeed(double speed) {
         this.speed = speed;
         this.velocity = velocity.normalize().multiply(speed);
-        Entities.getRotation(getEntity()).rotateToVector(velocity);
+        getEntity().rotateToVector(velocity);
     }
 
     @Override
     public void onAdded(Entity entity) {
-        Entities.getRotation(entity).rotateToVector(velocity);
+        entity.rotateToVector(velocity);
     }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        Entities.getPosition(entity).translate(velocity.multiply(tpf));
+        entity.translate(velocity.multiply(tpf));
     }
 }

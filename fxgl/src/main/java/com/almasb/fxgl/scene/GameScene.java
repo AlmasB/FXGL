@@ -7,15 +7,15 @@
 package com.almasb.fxgl.scene;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.asset.FXGLAssets;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.UnorderedArray;
 import com.almasb.fxgl.core.logging.Logger;
-import com.almasb.fxgl.ecs.*;
 import com.almasb.fxgl.effect.ParticleControl;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.ViewComponent;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;
@@ -24,6 +24,8 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
@@ -71,13 +73,29 @@ public final class GameScene extends FXGLScene
      */
     private Group uiRoot = new Group();
 
+    private Text profilerText = new Text();
+
+    public Text getProfilerText() {
+        return profilerText;
+    }
+
     protected GameScene(int width, int height) {
         getContentRoot().getChildren().addAll(gameRoot, particlesCanvas, uiRoot);
 
+        initProfilerText(0, height - 120);
         initParticlesCanvas(width, height);
         initViewport(width, height);
 
         log.debug("Game scene initialized: " + width + "x" + height);
+    }
+
+    private void initProfilerText(double x, double y) {
+        profilerText.setFont(FXGLAssets.UI_MONO_FONT.newFont(20));
+        profilerText.setFill(Color.RED);
+        profilerText.setTranslateX(x);
+        profilerText.setTranslateY(y);
+
+        uiRoot.getChildren().add(profilerText);
     }
 
     private void initParticlesCanvas(double w, double h) {
@@ -268,9 +286,16 @@ public final class GameScene extends FXGLScene
     public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
 
-        particlesGC.setGlobalAlpha(1);
-        particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
-        particlesGC.clearRect(0, 0, getWidth(), getHeight());
+        boolean dirty = drawables.isNotEmpty() || particles.isNotEmpty();
+
+        if (dirty) {
+            particlesGC.setGlobalAlpha(1);
+            particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
+
+            // TODO: this is very costly, do we know exact dimensions to clear
+            // OR can we do this off the render thread inbetween frames?
+            particlesGC.clearRect(0, 0, getWidth(), getHeight());
+        }
 
         for (Entity e : drawables) {
             DrawableComponent drawable = e.getComponent(DrawableComponent.class);
@@ -293,15 +318,15 @@ public final class GameScene extends FXGLScene
         particles.clear();
         gameRoot.getChildren().clear();
         uiRoot.getChildren().clear();
+
+        uiRoot.getChildren().add(profilerText);
     }
 
     @Override
     public void onEntityAdded(Entity entity) {
-        entity.getComponentOptional(ViewComponent.class)
-                .ifPresent(viewComponent -> {
-                    onAdded(viewComponent);
-                });
+        initView(entity.getViewComponent());
 
+        // TODO: how does this integrate with the new ECS model?
         entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.add(entity));
 
@@ -315,10 +340,7 @@ public final class GameScene extends FXGLScene
 
     @Override
     public void onEntityRemoved(Entity entity) {
-        entity.getComponentOptional(ViewComponent.class)
-                .ifPresent(viewComponent -> {
-                    onRemoved(viewComponent);
-                });
+        destroyView(entity.getViewComponent());
 
         entity.getComponentOptional(DrawableComponent.class)
                 .ifPresent(c -> drawables.removeValueByIdentity(entity));
@@ -331,29 +353,19 @@ public final class GameScene extends FXGLScene
                 .ifPresent(p -> particles.removeValueByIdentity(p));
     }
 
-    @Override
-    public void onAdded(Component component) {
-        if (component instanceof ViewComponent) {
-            ViewComponent viewComponent = (ViewComponent) component;
+    private void initView(ViewComponent viewComponent) {
+        EntityView view = viewComponent.getView();
+        addGameView(view);
 
-            EntityView view = viewComponent.getView();
-            addGameView(view);
-
-            viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
-                getRenderGroup(oldLayer).getChildren().remove(view);
-                getRenderGroup(newLayer).getChildren().add(view);
-            });
-        }
+        viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
+            getRenderGroup(oldLayer).getChildren().remove(view);
+            getRenderGroup(newLayer).getChildren().add(view);
+        });
     }
 
-    @Override
-    public void onRemoved(Component component) {
-        if (component instanceof ViewComponent) {
-            ViewComponent viewComponent = (ViewComponent) component;
-
-            EntityView view = viewComponent.getView();
-            removeGameView(view);
-        }
+    private void destroyView(ViewComponent viewComponent) {
+        EntityView view = viewComponent.getView();
+        removeGameView(view);
     }
 
     @Override

@@ -7,7 +7,7 @@
 package s03entities;
 
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.DrawableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
@@ -30,16 +30,16 @@ public class DrawableSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("DrawableSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
+
+
+
+
     }
 
     @Override
     protected void initGame() {
         BiConsumer<GraphicsContext, Entity> drawing = (g, entity) -> {
-            Point2D pos = entity.getComponent(PositionComponent.class).getValue();
+            Point2D pos = entity.getPosition();
 
             g.setFill(Color.BLUE);
             g.fillRect(pos.getX(), pos.getY(), 40, 40);
@@ -47,11 +47,11 @@ public class DrawableSample extends GameApplication {
 
 
         Entity entity = new Entity();
-        entity.addComponent(new PositionComponent(400, 300));
+        entity.setPosition(400, 300);
         entity.addComponent(new DrawableComponent(drawing));
 
         Entity entity2 = new Entity();
-        entity2.addComponent(new PositionComponent(750, 300));
+        entity2.setPosition(750, 300);
         entity2.addComponent(new DrawableComponent(drawing));
 
         getGameWorld().addEntities(entity, entity2);

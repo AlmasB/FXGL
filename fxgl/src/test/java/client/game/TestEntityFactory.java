@@ -1,6 +1,6 @@
 package client.game;
 
-import com.almasb.fxgl.annotation.SetEntityFactory;
+import com.almasb.fxgl.entity.SetEntityFactory;
 import com.almasb.fxgl.entity.EntityFactory;
 
 /**

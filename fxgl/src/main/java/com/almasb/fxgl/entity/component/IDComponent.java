@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.serialization.SerializableComponent;
 import com.almasb.fxgl.io.serialization.Bundle;
 import org.jetbrains.annotations.NotNull;
 

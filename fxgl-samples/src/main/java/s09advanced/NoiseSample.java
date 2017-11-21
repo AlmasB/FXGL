@@ -32,9 +32,9 @@ public class NoiseSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("NoiseSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
+
+
+
     }
 
     private Rectangle rect;

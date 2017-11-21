@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.app
 
+import com.almasb.fxgl.app.FXGL.Companion.getLocalizedString
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.saving.*
 import com.almasb.fxgl.scene.ProgressDialog
@@ -26,7 +27,7 @@ import java.util.function.Consumer
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-internal class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
+class MenuEventHandler(private val app: GameApplication) : MenuEventListener, EventHandler<KeyEvent> {
 
     private val log = Logger.get(javaClass)
 
@@ -148,7 +149,7 @@ internal class MenuEventHandler(private val app: GameApplication) : MenuEventLis
     }
 
     override fun onExit() {
-        app.display.showConfirmationBox("Exit the game?", { yes ->
+        app.display.showConfirmationBox(getLocalizedString("dialog.exitGame"), { yes ->
 
             if (yes)
                 app.exit()

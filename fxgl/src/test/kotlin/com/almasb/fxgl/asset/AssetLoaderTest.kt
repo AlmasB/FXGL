@@ -7,7 +7,7 @@
 package com.almasb.fxgl.asset
 
 import com.almasb.fxgl.app.FXGLMock
-import com.almasb.fxgl.entity.GameEntity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.ui.UIController
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -66,6 +66,14 @@ class AssetLoaderTest {
         assertThrows(IllegalArgumentException::class.java, {
             assetLoader.getStream("nothing.jpg")
         })
+    }
+
+    @Test
+    fun loadImage() {
+        val image = assetLoader.loadImage("brick.png")
+
+        assertThat(image.width, `is`(64.0))
+        assertThat(image.height, `is`(64.0))
     }
 
     @Test
@@ -204,7 +212,7 @@ class AssetLoaderTest {
 
     @Test
     fun loadBehaviorTree() {
-        val tree = assetLoader.loadBehaviorTree<GameEntity>("test.tree")
+        val tree = assetLoader.loadBehaviorTree<Entity>("test.tree")
 
         assertThat(tree, `is`(notNullValue()))
     }

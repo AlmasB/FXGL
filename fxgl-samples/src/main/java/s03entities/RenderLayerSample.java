@@ -9,7 +9,7 @@ package s03entities;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
@@ -28,11 +28,11 @@ public class RenderLayerSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("RenderLayerSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override

@@ -7,13 +7,10 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.ModuleListener;
-import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ObjectProperty;
@@ -31,8 +28,7 @@ import javafx.scene.shape.Shape;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
-@Required(RotationComponent.class)
+@CoreComponent
 public class ViewComponent extends Component {
 
     private static Color showBBoxColor = Color.RED;
@@ -60,25 +56,7 @@ public class ViewComponent extends Component {
             return;
         }
 
-        if (getEntity().hasComponent(BoundingBoxComponent.class)) {
-            addDebugBBox();
-        } else {
-            getEntity().addModuleListener(new ModuleListener() {
-                @Override
-                public void onAdded(Component component) {
-                    if (component instanceof BoundingBoxComponent) {
-                        addDebugBBox();
-                    }
-                }
-
-                @Override
-                public void onRemoved(Component component) {
-                    if (component instanceof BoundingBoxComponent) {
-                        removeDebugBBox();
-                    }
-                }
-            });
-        }
+        addDebugBBox();
     }
 
     /**
@@ -231,13 +209,9 @@ public class ViewComponent extends Component {
     }
 
     private void generateBBox() {
-        if (!getEntity().hasComponent(BoundingBoxComponent.class)) {
-            getEntity().addComponent(new BoundingBoxComponent());
-        }
+        getEntity().getBoundingBoxComponent().clearHitBoxes();
 
-        Entities.getBBox(getEntity()).clearHitBoxes();
-
-        Entities.getBBox(getEntity()).addHitBox(new HitBox("__VIEW__", BoundingShape.box(
+        getEntity().getBoundingBoxComponent().addHitBox(new HitBox("__VIEW__", BoundingShape.box(
                 getView().getLayoutBounds().getWidth(), getView().getLayoutBounds().getHeight()
         )));
     }
@@ -250,10 +224,7 @@ public class ViewComponent extends Component {
     };
 
     private void addDebugBBox() {
-        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
-
-        if (bbox == null)
-            return;
+        BoundingBoxComponent bbox = getEntity().getBoundingBoxComponent();
 
         // generate view for future boxes
         bbox.hitBoxesProperty().addListener(hitboxListener);
@@ -286,10 +257,7 @@ public class ViewComponent extends Component {
     }
 
     private void removeDebugBBox() {
-        BoundingBoxComponent bbox = Entities.getBBox(getEntity());
-
-        if (bbox == null)
-            return;
+        BoundingBoxComponent bbox = getEntity().getBoundingBoxComponent();
 
         bbox.hitBoxesProperty().removeListener(hitboxListener);
 
@@ -299,6 +267,6 @@ public class ViewComponent extends Component {
 
     @Override
     public String toString() {
-        return "MainView(" + getRenderLayer().name() + ")";
+        return "View(" + getRenderLayer().name() + ")";
     }
 }

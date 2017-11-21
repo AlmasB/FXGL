@@ -7,7 +7,7 @@
 package com.almasb.fxgl.physics.handler
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.physics.CollisionHandler
 import java.util.function.Consumer
 

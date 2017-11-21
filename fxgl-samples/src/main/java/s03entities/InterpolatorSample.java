@@ -11,7 +11,7 @@ import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.LevelText;
 import javafx.animation.Interpolator;
@@ -33,7 +33,7 @@ import static com.almasb.fxgl.app.DSLKt.set;
  */
 public class InterpolatorSample extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -41,12 +41,12 @@ public class InterpolatorSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("InterpolatorSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override

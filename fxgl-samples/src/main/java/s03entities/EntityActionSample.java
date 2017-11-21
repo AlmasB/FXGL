@@ -8,10 +8,10 @@ package s03entities;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.action.Action;
-import com.almasb.fxgl.ecs.action.ActionControl;
+import com.almasb.fxgl.entity.action.Action;
+import com.almasb.fxgl.entity.action.ActionControl;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
@@ -33,15 +33,15 @@ public class EntityActionSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("EntityActionSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
-    private GameEntity entity;
+    private Entity entity;
 
     @Override
     protected void initInput() {
@@ -80,11 +80,11 @@ public class EntityActionSample extends GameApplication {
         entity = Entities.builder()
                 .at(400, 300)
                 .viewFromNode(new Rectangle(40, 40))
-                .with(new ActionControl<GameEntity>())
+                .with(new ActionControl<Entity>())
                 .buildAndAttach(getGameWorld());
     }
 
-    private ListView<Action<GameEntity>> actionsView;
+    private ListView<Action<Entity>> actionsView;
 
     @Override
     protected void initUI() {
@@ -100,7 +100,7 @@ public class EntityActionSample extends GameApplication {
         getGameScene().addUINode(actionsView);
     }
 
-    private class MoveAction extends Action<GameEntity> {
+    private class MoveAction extends Action<Entity> {
 
         private double x, y;
         private double speed;
@@ -116,7 +116,7 @@ public class EntityActionSample extends GameApplication {
         }
 
         @Override
-        public void onUpdate(GameEntity entity, double tpf) {
+        public void onUpdate(Entity entity, double tpf) {
             speed = 150 * tpf;
 
             entity.translateTowards(new Point2D(x, y), speed);

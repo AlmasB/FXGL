@@ -14,6 +14,8 @@ import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.effect.BoxBlur
 import javafx.scene.effect.Effect
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
@@ -51,25 +53,20 @@ object DialogSubState : SubState() {
 
         children.add(window)
 
-        // this is a workaround to avoid users traversing "through" the dialog to underlying nodes
+        // keep traversal input within this node
         initTraversalPolicy()
     }
 
-    @Suppress("DEPRECATION")
     private fun initTraversalPolicy() {
-//        (view as Pane).impl_traversalEngine = ParentTraversalEngine(view as Pane, object : Algorithm {
-//            override fun select(owner: Node, dir: Direction, context: TraversalContext): Node {
-//                return window
-//            }
-//
-//            override fun selectFirst(context: TraversalContext): Node {
-//                return window
-//            }
-//
-//            override fun selectLast(context: TraversalContext): Node {
-//                return window
-//            }
-//        })
+        window.addEventFilter(KeyEvent.KEY_PRESSED, {
+            if (it.code == KeyCode.TAB
+                    || it.code == KeyCode.UP
+                    || it.code == KeyCode.DOWN
+                    || it.code == KeyCode.LEFT
+                    || it.code == KeyCode.RIGHT) {
+                it.consume()
+            }
+        })
     }
 
     val isShowing: Boolean

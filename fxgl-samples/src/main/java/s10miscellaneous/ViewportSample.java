@@ -12,7 +12,7 @@ import com.almasb.fxgl.core.math.BezierSpline;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.parser.text.TextLevelParser;
 import com.almasb.fxgl.scene.Viewport;
@@ -40,12 +40,12 @@ public class ViewportSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ViewportSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override
@@ -172,7 +172,7 @@ public class ViewportSample extends GameApplication {
         // if open bezier is needed
         path.getElements().remove(path.getElements().size()-1);
 
-        GameEntity camera = Entities.builder()
+        Entity camera = Entities.builder()
                 .build();
 
         viewport.xProperty().bind(camera.getPositionComponent().xProperty().subtract(getWidth() / 2));

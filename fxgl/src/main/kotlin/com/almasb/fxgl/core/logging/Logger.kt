@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.core.logging
 
-import com.almasb.fxgl.core.collection.Array
 import java.time.LocalTime
 
 /**
@@ -19,12 +18,12 @@ private constructor(private val name: String) {
 
     companion object {
 
-        private val outputs = Array<LoggerOutput>()
+        private val outputs = ArrayList<LoggerOutput>()
 
-        private val debug = Array<LoggerOutput>()
-        private val info = Array<LoggerOutput>()
-        private val warning = Array<LoggerOutput>()
-        private val fatal = Array<LoggerOutput>()
+        private val debug = ArrayList<LoggerOutput>()
+        private val info = ArrayList<LoggerOutput>()
+        private val warning = ArrayList<LoggerOutput>()
+        private val fatal = ArrayList<LoggerOutput>()
 
         private var config = LoggerConfig()
         private var configured = false

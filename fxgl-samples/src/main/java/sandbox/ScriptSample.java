@@ -10,9 +10,8 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.gameplay.rpg.quest.QuestPane;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -42,12 +41,12 @@ public class ScriptSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ScriptSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override
@@ -60,7 +59,7 @@ public class ScriptSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        GameEntity e = Entities.builder()
+        Entity e = Entities.builder()
                 .type(EntityType.PC)
                 .at(300, 300)
                 .viewFromNodeWithBBox(new Rectangle(40, 40, Color.BLUE))

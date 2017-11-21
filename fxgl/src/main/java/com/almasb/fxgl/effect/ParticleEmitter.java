@@ -98,16 +98,14 @@ public class ParticleEmitter {
 
             // create gradient image with given color
             Circle ball = new Circle(radius);
-            //Line ball = new Line(0, 0, 0, radius);
 
-            RadialGradient gradient1 = new RadialGradient(0, 0, 0, 0,
+            RadialGradient gradient = new RadialGradient(0, 0, 0, 0,
                     radius, false, CycleMethod.NO_CYCLE,
                     new Stop(0, color.deriveColor(1, 1, 1, 1)),
                     new Stop(1, color.deriveColor(1, 1, 1, 0))
             );
 
-            //ball.setStroke(gradient1);
-            ball.setFill(gradient1);
+            ball.setFill(gradient);
 
             list[i] = createImage(ball);
         }

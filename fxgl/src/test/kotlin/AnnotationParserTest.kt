@@ -10,9 +10,9 @@ import client.game.Uppercase.TestUppercaseGameApplication
 import client.game.collision.TestCollisionHandler
 import client.game.collision.TestCollisionHandler2
 import client.game.collision.TestCollisionHandler3
-import com.almasb.fxgl.annotation.AddCollisionHandler
-import com.almasb.fxgl.annotation.AnnotationParser
-import com.almasb.fxgl.annotation.SetEntityFactory
+import com.almasb.fxgl.physics.AddCollisionHandler
+import com.almasb.fxgl.app.AnnotationParser
+import com.almasb.fxgl.entity.SetEntityFactory
 import org.hamcrest.CoreMatchers.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

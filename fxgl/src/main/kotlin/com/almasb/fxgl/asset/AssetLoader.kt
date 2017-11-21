@@ -10,6 +10,7 @@ import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.ai.btree.utils.BehaviorTreeParser
 import com.almasb.fxgl.audio.Music
 import com.almasb.fxgl.audio.Sound
+import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.scene.CSS
@@ -27,6 +28,7 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.io.*
 import java.net.URL
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -86,10 +88,38 @@ class AssetLoader {
 
     private val log = Logger.get(javaClass)
 
-    private val cachedAssets = AssetCache(35)
+    private val cachedAssets = ObjectMap<String, Any>()
 
-    init {
-        log.debugf("Asset cacheSize=%d", 35)
+    /**
+     * Loads texture as [Image] with given name from /assets/textures/.
+     * Either returns a valid image or throws an exception in case of errors.
+     *
+     * Supported image formats are:
+     *
+     *  * [BMP](http://msdn.microsoft.com/en-us/library/dd183376(v=vs.85).aspx)
+     *  * [GIF](http://www.w3.org/Graphics/GIF/spec-gif89a.txt)
+     *  * [JPEG](http://www.ijg.org)
+     *  * [PNG](http://www.libpng.org/pub/png/spec/)
+     *
+     * @param name texture name without the /assets/textures/, e.g. "player.png"
+     * @return image
+     * @throws IllegalArgumentException if asset not found or loading error
+     */
+    fun loadImage(name: String): Image {
+        val asset = getAssetFromCache(TEXTURES_DIR + name)
+        if (asset != null) {
+            return Image::class.java.cast(asset)
+        }
+
+        try {
+            getStream(TEXTURES_DIR + name).use {
+                val image = Image(it)
+                cachedAssets.put(TEXTURES_DIR + name, image)
+                return image
+            }
+        } catch (e: Exception) {
+            throw loadFailed(name, e)
+        }
     }
 
     /**
@@ -326,8 +356,17 @@ class AssetLoader {
      * @throws IllegalArgumentException if asset not found or loading error
      */
     fun loadResourceBundle(name: String): ResourceBundle {
+        val asset = getAssetFromCache(PROPERTIES_DIR + name)
+        if (asset != null) {
+            return asset as ResourceBundle
+        }
+
         try {
-            getStream(PROPERTIES_DIR + name).use { return PropertyResourceBundle(it) }
+            getStream(PROPERTIES_DIR + name).use {
+                val bundle = PropertyResourceBundle(InputStreamReader(it, StandardCharsets.UTF_8))
+                cachedAssets.put(PROPERTIES_DIR + name, bundle)
+                return bundle
+            }
         } catch (e: Exception) {
             throw loadFailed(name, e)
         }

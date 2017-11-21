@@ -6,9 +6,8 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.component.ObjectComponent;
-import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.entity.CopyableComponent;
+import com.almasb.fxgl.entity.serialization.SerializableComponent;
 import com.almasb.fxgl.io.serialization.Bundle;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +18,7 @@ import java.io.Serializable;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 public class TypeComponent extends ObjectComponent<Serializable>
         implements SerializableComponent, CopyableComponent<TypeComponent> {
 

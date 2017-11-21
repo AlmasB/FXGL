@@ -103,7 +103,7 @@ public class BehaviorTreeLibrary {
 	@SuppressWarnings("unchecked")
 	public <T> BehaviorTree<T> createBehaviorTree (String treeReference, T blackboard) {
 		BehaviorTree<T> bt = (BehaviorTree<T>)retrieveArchetypeTree(treeReference).cloneTask();
-		bt.setObject(blackboard);
+		bt.setEntity(blackboard);
 		return bt;
 	}
 

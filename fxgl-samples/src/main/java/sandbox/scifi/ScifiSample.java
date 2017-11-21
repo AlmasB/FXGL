@@ -9,12 +9,14 @@ package sandbox.scifi;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.view.ParallaxBackgroundView;
+import com.almasb.fxgl.entity.view.ParallaxTexture;
 import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.input.UserAction;
@@ -58,17 +60,17 @@ public class ScifiSample extends GameApplication {
         settings.setFullScreen(true);
         settings.setIntroEnabled(true);
         settings.setMenuEnabled(true);
-        settings.setProfilingEnabled(false);
+
         settings.setCloseConfirmation(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
     }
 
     private PlayerControl playerControl;
 
-    @Override
-    protected void initAchievements() {
-        getGameplay().getAchievementManager().registerAchievement(new Achievement("Collector", "Collect 10 coins"));
-    }
+//    @Override
+//    protected void initAchievements() {
+//        getGameplay().getAchievementManager().registerAchievement(new Achievement("Collector", "Collect 10 coins"));
+//    }
 
     @Override
     protected void initInput() {
@@ -151,9 +153,9 @@ public class ScifiSample extends GameApplication {
 
         nextLevel();
 
-        getGameplay().getAchievementManager()
-                .getAchievementByName("Collector")
-                .bind(getGameState().intProperty("coins"), 10);
+//        getGameplay().getAchievementManager()
+//                .getAchievementByName("Collector")
+//                .bind(getGameState().intProperty("coins"), 10);
 
         //getMasterTimer().runOnceAfter(this::seerCutscene, Duration.seconds(7));
     }
@@ -224,7 +226,7 @@ public class ScifiSample extends GameApplication {
         ParticleEmitter emitter = ParticleEmitters.newRainEmitter(getWidth());
         emitter.setSourceImage(getAssetLoader().loadTexture("rain.png").multiplyColor(Color.LIGHTBLUE).getImage());
 
-        GameEntity rain = Entities.builder()
+        Entity rain = Entities.builder()
                 .with(new ParticleControl(emitter))
                 .buildAndAttach(getGameWorld());
 
@@ -283,7 +285,7 @@ public class ScifiSample extends GameApplication {
         ppComponent.setDefinition(groupDef);
         ppComponent.setColor(Color.BLUE.brighter());
 
-        GameEntity liquid = new GameEntity();
+        Entity liquid = new Entity();
         liquid.setPosition(playerControl.getEntity().getComponent(PositionComponent.class).getValue().subtract(0, 650));
         liquid.getBoundingBoxComponent().addHitBox(new HitBox("MAIN", BoundingShape.circle(55)));
         liquid.addComponent(ppComponent);

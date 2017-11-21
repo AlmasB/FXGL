@@ -7,9 +7,9 @@
 package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.devtools.DeveloperEditable;
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.CopyableComponent;
+import com.almasb.fxgl.entity.serialization.SerializableComponent;
 import com.almasb.fxgl.io.serialization.Bundle;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 public class PositionComponent extends Component
         implements SerializableComponent, CopyableComponent<PositionComponent> {
 
@@ -169,10 +170,10 @@ public class PositionComponent extends Component
 
     /**
      * @param position the point to move towards
-     * @param speed the speed at which to move
+     * @param distance the distance to move
      */
-    public void translateTowards(Point2D position, double speed) {
-        translate(position.subtract(getX(), getY()).normalize().multiply(speed));
+    public void translateTowards(Point2D position, double distance) {
+        translate(position.subtract(getX(), getY()).normalize().multiply(distance));
     }
 
     /**

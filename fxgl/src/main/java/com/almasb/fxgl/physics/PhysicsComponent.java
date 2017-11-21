@@ -8,16 +8,20 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.BoundingBoxComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.entity.component.RotationComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyDef;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adds physics properties to an entity.
@@ -34,7 +38,10 @@ public class PhysicsComponent extends Component {
 
     Body body;
 
+    List<Entity> groundedList = new ArrayList<>();
+
     private boolean raycastIgnored = false;
+    private boolean generateGroundSensor = false;
 
     private Runnable onInitPhysics;
 
@@ -50,6 +57,16 @@ public class PhysicsComponent extends Component {
         }
     }
 
+    /**
+     * Note: only works when {@link #setGenerateGroundSensor(boolean)} was called with value true
+     * before attaching entity to game world.
+     *
+     * @return true if entity is standing on top of another entity with physics component
+     */
+    public boolean isOnGround() {
+        return !groundedList.isEmpty();
+    }
+
     public final Body getBody() {
         if (body == null)
             throw new IllegalStateException("Physics not initialized yet! Use setOnPhysicsInitialized() instead");
@@ -63,6 +80,14 @@ public class PhysicsComponent extends Component {
      */
     public void setOnPhysicsInitialized(Runnable code) {
         onInitPhysics = code;
+    }
+
+    public void setGenerateGroundSensor(boolean generate) {
+        generateGroundSensor = generate;
+    }
+
+    public boolean isGenerateGroundSensor() {
+        return generateGroundSensor;
     }
 
     /**

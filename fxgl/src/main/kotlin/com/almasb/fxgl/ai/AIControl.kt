@@ -9,9 +9,8 @@ package com.almasb.fxgl.ai
 import com.almasb.fxgl.ai.btree.BehaviorTree
 import com.almasb.fxgl.app.ApplicationMode
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ecs.Control
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.entity.GameEntity
+import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Entity
 import java.util.*
 
 /**
@@ -22,14 +21,14 @@ import java.util.*
 class AIControl
 private constructor() : Control() {
 
-    private lateinit var behaviorTree: BehaviorTree<GameEntity>
+    private lateinit var behaviorTree: BehaviorTree<Entity>
 
     val bubble = AIBubble()
 
     /**
      * Constructs AI control with given [behaviorTree].
      */
-    constructor(behaviorTree: BehaviorTree<GameEntity>) : this() {
+    constructor(behaviorTree: BehaviorTree<Entity>) : this() {
         this.behaviorTree = behaviorTree
     }
 
@@ -45,12 +44,12 @@ private constructor() : Control() {
             parsedTreesCache[treeName] = tree
         }
 
-        this.behaviorTree = tree!!.cloneTask() as BehaviorTree<GameEntity>
+        this.behaviorTree = tree.cloneTask() as BehaviorTree<Entity>
     }
 
     companion object {
 
-        private val parsedTreesCache = HashMap<String, BehaviorTree<GameEntity> >()
+        private val parsedTreesCache = HashMap<String, BehaviorTree<Entity> >()
     }
 
     fun setBubbleMessage(message: String) {
@@ -58,15 +57,10 @@ private constructor() : Control() {
     }
 
     override fun onAdded(entity: Entity) {
-        if (entity is GameEntity) {
-            behaviorTree.`object` = entity
+        behaviorTree.entity = entity
 
-            if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
-                entity.viewComponent.view.addNode(bubble)
-
-        } else {
-            throw IllegalArgumentException("Entity $entity is not GameEntity")
-        }
+        if (FXGL.getSettings().applicationMode != ApplicationMode.RELEASE)
+            entity.viewComponent.view.addNode(bubble)
     }
 
     override fun onUpdate(entity: Entity, tpf: Double) {

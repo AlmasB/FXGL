@@ -13,10 +13,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -97,7 +94,7 @@ public final class ReflectionUtils {
         try {
             return (T) method.invoke(instance, args);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot call " + method.getName() + " Error: " + e);
+            throw new ReflectionException("Cannot call " + method.getName() + " Error: " + e);
         }
     }
 
@@ -172,6 +169,16 @@ public final class ReflectionUtils {
         return result;
     }
 
+    public static Optional<Field> getDeclaredField(String fieldName, Object instance) {
+        try {
+            return Optional.of(instance.getClass().getDeclaredField(fieldName));
+        } catch (NoSuchFieldException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            throw new ReflectionException("Cannot get declared field: " + fieldName + " of " + instance + " Error: " + e);
+        }
+    }
+
     /**
      * Injects field of an instance to injectionInstance.
      *
@@ -186,7 +193,7 @@ public final class ReflectionUtils {
             }
             field.set(instance, injectionInstance);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot inject " + injectionInstance + " into " + field.getName() + " Error: " + e);
+            throw new ReflectionException("Cannot inject " + injectionInstance + " into " + field.getName() + " Error: " + e);
         }
     }
 

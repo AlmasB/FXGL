@@ -90,12 +90,14 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
             title = "${settings.title} ${settings.version}"
             isResizable = false
 
+            initStyle(settings.stageStyle)
+
             setOnCloseRequest { e ->
                 e.consume()
 
                 if (settings.isCloseConfirmation) {
                     if (FXGL.getApp().stateMachine.canShowCloseDialog()) {
-                        FXGL.getDisplay().showConfirmationBox("Exit the game?", { yes ->
+                        FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("dialog.exitGame"), { yes ->
                             if (yes)
                                 FXGL.getApp().exit()
                         })

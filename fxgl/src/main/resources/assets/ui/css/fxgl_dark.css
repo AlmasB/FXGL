@@ -157,7 +157,74 @@
     -fx-background-color: white;
 }
 
-
-.spinner.split-arrows-horizontal .increment-arrow-button:pressed .increment-arrow, .spinner.split-arrows-horizontal .decrement-arrow-button:pressed .decrement-arrow{
+.spinner.split-arrows-horizontal .increment-arrow-button:pressed .increment-arrow, .spinner.split-arrows-horizontal .decrement-arrow-button:pressed .decrement-arrow {
     -fx-background-color: white;
+}
+
+/**
+ * Dialogs
+ */
+.dialog-border {
+    -fx-border-color: azure;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+}
+
+/**
+ * Scroll pane
+ */
+.scroll-pane {
+    -fx-background: black;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/**
+ * Adapted from https://farrukhobaid.wordpress.com/2013/01/16/dark-scrollbar-skin-for-javafx/
+ */
+.scroll-bar {
+    -fx-background-color: rgb(96,96,96);
+    -fx-background-radius: 1.5em;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-border-radius: 2em;
+}
+
+.scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2em;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: orange;
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+}
+
+.scroll-bar:vertical:focused,
+.scroll-bar:horizontal:focused {
+    -fx-background-color: transparent,rgb(96,96,96),rgb(96,96,96);
+}
+
+.scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 10 0 0;
+}
+
+.scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 0 10 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding:0;
 }

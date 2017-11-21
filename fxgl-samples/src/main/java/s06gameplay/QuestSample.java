@@ -28,10 +28,10 @@ public class QuestSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("QuestSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+
+
+
+
     }
 
     @Override

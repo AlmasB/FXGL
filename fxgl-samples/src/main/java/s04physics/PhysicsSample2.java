@@ -7,9 +7,8 @@ package s04physics;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -35,7 +34,7 @@ public class PhysicsSample2 extends GameApplication {
         PLAYER, ENEMY
     }
 
-    private GameEntity player, enemy;
+    private Entity player, enemy;
     private PlayerControl playerControl;
 
     @Override
@@ -44,11 +43,11 @@ public class PhysicsSample2 extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PhysicsSample2");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override

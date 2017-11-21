@@ -30,28 +30,13 @@ package com.almasb.fxgl.physics.box2d.common;
 
 import com.almasb.fxgl.core.math.Vec2;
 
-import java.util.Random;
-
 /**
  * A few math methods that don't fit very well anywhere else.
  */
 public class JBoxUtils {
     public static final float PI = (float) Math.PI;
     public static final float TWOPI = (float) (Math.PI * 2);
-    public static final float INV_PI = 1f / PI;
     public static final float HALF_PI = PI / 2;
-    public static final float QUARTER_PI = PI / 4;
-    public static final float THREE_HALVES_PI = TWOPI - HALF_PI;
-
-    /**
-     * Degrees to radians conversion factor
-     */
-    public static final float DEG2RAD = PI / 180;
-
-    /**
-     * Radians to degrees conversion factor
-     */
-    public static final float RAD2DEG = 180 / PI;
 
     public static final float[] sinLUT = new float[JBoxSettings.SINCOS_LUT_LENGTH];
 
@@ -114,10 +99,6 @@ public class JBoxUtils {
         }
     }
 
-    public static final float fastAbs(final float x) {
-        return x > 0 ? x : -x;
-    }
-
     public static final int abs(int x) {
         int y = x >> 31;
         return (x ^ y) - y;
@@ -139,42 +120,12 @@ public class JBoxUtils {
         return y;
     }
 
-    public static final int ceil(final float x) {
-        if (JBoxSettings.FAST_CEIL) {
-            return fastCeil(x);
-        } else {
-            return (int) StrictMath.ceil(x);
-        }
-    }
-
-    public static final int fastCeil(final float x) {
-        int y = (int) x;
-        if (x > y) {
-            return y + 1;
-        }
-        return y;
-    }
-
     public static final int round(final float x) {
         if (JBoxSettings.FAST_ROUND) {
             return floor(x + .5f);
         } else {
             return StrictMath.round(x);
         }
-    }
-
-    /**
-     * Rounds up the value to the nearest higher power^2 value.
-     *
-     * @param x
-     * @return power^2 value
-     */
-    public static final int ceilPowerOf2(int x) {
-        int pow2 = 1;
-        while (pow2 < x) {
-            pow2 <<= 1;
-        }
-        return pow2;
     }
 
     public final static float max(final float a, final float b) {
@@ -214,54 +165,6 @@ public class JBoxUtils {
         return min;
     }
 
-    public final static void clampToOut(final Vec2 a, final Vec2 low, final Vec2 high, final Vec2 dest) {
-        dest.x = a.x < high.x ? a.x : high.x;
-        dest.y = a.y < high.y ? a.y : high.y;
-        dest.x = low.x > dest.x ? low.x : dest.x;
-        dest.y = low.y > dest.y ? low.y : dest.y;
-    }
-
-    /**
-     * Next Largest Power of 2: Given a binary integer value x, the next largest power of 2 can be
-     * computed by a SWAR algorithm that recursively "folds" the upper bits into the lower bits. This
-     * process yields a bit vector with the same most significant 1 as x, but all 1's below it. Adding
-     * 1 to that value yields the next largest power of 2.
-     */
-    public final static int nextPowerOfTwo(int x) {
-        x |= x >> 1;
-        x |= x >> 2;
-        x |= x >> 4;
-        x |= x >> 8;
-        x |= x >> 16;
-        return x + 1;
-    }
-
-    public final static boolean isPowerOfTwo(final int x) {
-        return x > 0 && (x & x - 1) == 0;
-    }
-
-    public static final float pow(float a, float b) {
-        if (JBoxSettings.FAST_POW) {
-            return fastPow(a, b);
-        } else {
-            return (float) StrictMath.pow(a, b);
-        }
-    }
-
-    private static final float SHIFT23 = 1 << 23;
-    private static final float INV_SHIFT23 = 1.0f / SHIFT23;
-
-    public static final float fastPow(float a, float b) {
-        float x = Float.floatToRawIntBits(a);
-        x *= INV_SHIFT23;
-        x -= 127;
-        float y = x - (x >= 0 ? (int) x : (int) x - 1);
-        b *= x + (y - y * y) * 0.346607f;
-        y = b - (b >= 0 ? (int) b : (int) b - 1);
-        y = (y - y * y) * 0.33971f;
-        return Float.intBitsToFloat((int) ((b + 127 - y) * SHIFT23));
-    }
-
     public static final float atan2(final float y, final float x) {
         if (JBoxSettings.FAST_ATAN2) {
             return fastAtan2(y, x);
@@ -289,25 +192,6 @@ public class JBoxUtils {
             if (y < 0.0f) return atan - PI;
         }
         return atan;
-    }
-
-    public static final float reduceAngle(float theta) {
-        theta %= TWOPI;
-        if (abs(theta) > PI) {
-            theta = theta - TWOPI;
-        }
-        if (abs(theta) > HALF_PI) {
-            theta = PI - theta;
-        }
-        return theta;
-    }
-
-    public static final float randomFloat(float argLow, float argHigh) {
-        return (float) Math.random() * (argHigh - argLow) + argLow;
-    }
-
-    public static final float randomFloat(Random r, float argLow, float argHigh) {
-        return r.nextFloat() * (argHigh - argLow) + argLow;
     }
 
     public static final float sqrt(float x) {

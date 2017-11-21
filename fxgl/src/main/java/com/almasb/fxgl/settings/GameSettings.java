@@ -6,13 +6,14 @@
 package com.almasb.fxgl.settings;
 
 import com.almasb.fxgl.app.ApplicationMode;
+import com.almasb.fxgl.app.ExceptionHandler;
+import com.almasb.fxgl.gameplay.notification.NotificationView;
 import com.almasb.fxgl.scene.SceneFactory;
-import com.almasb.fxgl.service.DialogFactory;
-import com.almasb.fxgl.service.ExceptionHandler;
-import com.almasb.fxgl.service.NotificationService;
-import com.almasb.fxgl.service.UIFactory;
+import com.almasb.fxgl.ui.DialogFactory;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Credits;
 import javafx.scene.input.KeyCode;
+import javafx.stage.StageStyle;
 
 import java.util.EnumSet;
 
@@ -130,6 +131,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         closeConfirmation = b;
     }
 
+    public void setSingleStep(boolean b) {
+        singleStep = b;
+    }
+
     /**
      * Sets application run mode. See {@link ApplicationMode} for more info.
      *
@@ -162,6 +167,10 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.enabledMenuItems = items;
     }
 
+    public void setStageStyle(StageStyle stageStyle) {
+        this.stageStyle = stageStyle;
+    }
+
     /**
      * Provide a custom scene factory.
      */
@@ -186,8 +195,8 @@ public final class GameSettings extends ReadOnlyGameSettings {
     /**
      * Provide a custom notification service.
      */
-    public void setNotificationService(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public void setNotificationViewFactory(Class<? extends NotificationView> notificationViewFactory) {
+        this.notificationViewClass = notificationViewFactory;
     }
 
     /**

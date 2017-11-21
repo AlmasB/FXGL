@@ -17,7 +17,7 @@ import javafx.geometry.Point2D
  */
 open class SpawnData(val x: Double, val y: Double) {
 
-    private val data = ObjectMap<String, Any>()
+    val data = ObjectMap<String, Any>()
 
     constructor(position: Point2D) : this(position.x, position.y)
 

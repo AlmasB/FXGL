@@ -6,10 +6,9 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.control.OffscreenCleanControl;
@@ -28,7 +27,7 @@ public class PlayerControl extends Control {
     }
 
     public void shoot(Point2D direction) {
-        GameEntity bullet = new GameEntity();
+        Entity bullet = new Entity();
         bullet.getTypeComponent().setValue(FXShooterApp.EntityType.BULLET);
         bullet.getPositionComponent().setValue(getEntity().getComponent(PositionComponent.class).getValue().add(20, 20));
         bullet.getViewComponent().setView(new EntityView(new Rectangle(10, 2, Color.BLACK)), true);

@@ -112,9 +112,11 @@ class GameStateTest {
 
         var count = 0
 
-        gameState.addListenerKt<Int>("testInt", { prev, now ->
-            assertThat(prev, `is`(10))
-            count += now
+        gameState.addListener<Int>("testInt", object : PropertyChangeListener<Int> {
+            override fun onChange(prev: Int, now: Int) {
+                assertThat(prev, `is`(10))
+                count += now
+            }
         })
 
         gameState.setValue("testInt", 25)

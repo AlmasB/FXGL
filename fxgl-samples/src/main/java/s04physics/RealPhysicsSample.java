@@ -9,7 +9,7 @@ package s04physics;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -39,12 +39,12 @@ public class RealPhysicsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("RealPhysicsSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override
@@ -54,7 +54,7 @@ public class RealPhysicsSample extends GameApplication {
         input.addAction(new UserAction("Spawn Box") {
             @Override
             protected void onActionBegin() {
-                GameEntity box = createPhysicsEntity();
+                Entity box = createPhysicsEntity();
 
                 // 3. set hit box (-es) to specify bounding shape
                 box.getBoundingBoxComponent()
@@ -71,7 +71,7 @@ public class RealPhysicsSample extends GameApplication {
         input.addAction(new UserAction("Spawn Ball") {
             @Override
             protected void onActionBegin() {
-                GameEntity ball = createPhysicsEntity();
+                Entity ball = createPhysicsEntity();
 
                 // 3. set hit box to specify bounding shape
                 ball.getBoundingBoxComponent()
@@ -88,7 +88,7 @@ public class RealPhysicsSample extends GameApplication {
         getGameWorld().addEntity(Entities.makeScreenBounds(50));
     }
 
-    private GameEntity createPhysicsEntity() {
+    private Entity createPhysicsEntity() {
         // 1. create and configure physics component
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);

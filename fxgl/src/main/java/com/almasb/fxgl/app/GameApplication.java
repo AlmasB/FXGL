@@ -11,14 +11,15 @@ import com.almasb.fxgl.asset.AssetLoader;
 import com.almasb.fxgl.audio.AudioPlayer;
 import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.core.logging.*;
+import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.devtools.profiling.Profiler;
-import com.almasb.fxgl.ecs.GameWorld;
+import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.event.EventBus;
-import com.almasb.fxgl.gameplay.AchievementEvent;
-import com.almasb.fxgl.gameplay.GameState;
-import com.almasb.fxgl.gameplay.Gameplay;
-import com.almasb.fxgl.gameplay.NotificationEvent;
+import com.almasb.fxgl.gameplay.*;
+import com.almasb.fxgl.gameplay.notification.NotificationEvent;
+import com.almasb.fxgl.gameplay.notification.NotificationService;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.net.Net;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import com.almasb.fxgl.saving.DataFile;
 import com.almasb.fxgl.saving.LoadEvent;
@@ -27,12 +28,13 @@ import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.PreloadingScene;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
-import com.almasb.fxgl.service.*;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.time.FPSCounter;
 import com.almasb.fxgl.time.Timer;
+import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.ErrorDialog;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -120,6 +122,13 @@ public abstract class GameApplication extends Application {
 
     private void initMainWindow(Stage stage) {
         mainWindow = new MainWindow(stage, settings);
+        stage.iconifiedProperty().addListener((o, wasMinimized, isMinimized) -> {
+            if (isMinimized) {
+                pauseMainLoop();
+            } else {
+                resumeMainLoop();
+            }
+        });
     }
 
     /**
@@ -170,7 +179,7 @@ public abstract class GameApplication extends Application {
         initSystemProperties();
         initUserProperties();
 
-        FXGL.configure(new ApplicationModule(this));
+        FXGL.configure(this);
 
         log.debug("FXGL configuration complete");
 
@@ -341,6 +350,18 @@ public abstract class GameApplication extends Application {
         preInit();
     }
 
+    /**
+     * Finds all @SetAchievementStore classes and registers achievements.
+     */
+    private void initAchievements() {
+        AnnotationParser parser = new AnnotationParser(this.getClass());
+        parser.parse(SetAchievementStore.class);
+        parser.getClasses(SetAchievementStore.class).forEach(storeClass -> {
+            AchievementStore storeObject = (AchievementStore) ReflectionUtils.newInstance(storeClass);
+            storeObject.initAchievements(getGameplay().getAchievementManager());
+        });
+    }
+
     private void generateDefaultProfile() {
         if (getSettings().isMenuEnabled()) {
             menuHandler.generateDefaultProfile();
@@ -355,16 +376,28 @@ public abstract class GameApplication extends Application {
         mainLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                long frameStart = System.nanoTime();
+                tpf = tpfCompute(now);
 
-                tpf = tickStart(now);
-
-                tick(tpf);
-
-                tickEnd(System.nanoTime() - frameStart);
+                // if we are not in play state run as normal
+                if (!(getStateMachine().isInPlay() && getSettings().isSingleStep())) {
+                    stepLoop();
+                }
             }
         };
         mainLoop.start();
+    }
+
+    private void resumeMainLoop() {
+        if (mainLoop != null) {
+            mainLoop.start();
+        }
+    }
+
+    private void pauseMainLoop() {
+        if (mainLoop != null) {
+            mainLoop.stop();
+            fpsCounter.reset();
+        }
     }
 
     /**
@@ -377,6 +410,20 @@ public abstract class GameApplication extends Application {
         }
     }
 
+    protected void stepLoop() {
+        long frameStart = System.nanoTime();
+
+        tick.set(tick.get() + 1);
+        stateMachine.onUpdate(tpf);
+
+        if (getSettings().isProfilingEnabled()) {
+            long frameTook = System.nanoTime() - frameStart;
+
+            profiler.update(fps.get(), frameTook);
+            profiler.render(getGameScene().getProfilerText());
+        }
+    }
+
     private ReadOnlyLongWrapper tick = new ReadOnlyLongWrapper();
     private ReadOnlyIntegerWrapper fps = new ReadOnlyIntegerWrapper();
 
@@ -384,9 +431,7 @@ public abstract class GameApplication extends Application {
 
     private FPSCounter fpsCounter = new FPSCounter();
 
-    private double tickStart(long now) {
-        tick.set(tick.get() + 1);
-
+    private double tpfCompute(long now) {
         fps.set(fpsCounter.update(now));
 
         // assume that fps is at least 5 to avoid subtle bugs
@@ -397,18 +442,7 @@ public abstract class GameApplication extends Application {
         return 1.0 / fps.get();
     }
 
-    private void tick(double tpf) {
-        stateMachine.onUpdate(tpf);
-    }
-
     private Profiler profiler;
-
-    private void tickEnd(long frameTook) {
-        if (getSettings().isProfilingEnabled()) {
-            profiler.update(fps.get(), frameTook);
-            profiler.render(getGameScene().getGraphicsContext());
-        }
-    }
 
     /**
      * (Re-)initializes the user application as new and starts the game.
@@ -515,18 +549,6 @@ public abstract class GameApplication extends Application {
      * @param settings app settings
      */
     protected abstract void initSettings(GameSettings settings);
-
-    /**
-     * Override to register your achievements.
-     *
-     * <pre>
-     * Example:
-     *
-     * AchievementManager am = getAchievementManager();
-     * am.registerAchievement(new Achievement("Score Master", "Score 20000 points"));
-     * </pre>
-     */
-    protected void initAchievements() {}
 
     /**
      * Initialize input, i.e. bind key presses, bind mouse buttons.

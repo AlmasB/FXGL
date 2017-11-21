@@ -24,16 +24,12 @@ public class DifferentSizeTextureSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("DifferentSizeTextureSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
     protected void initGame() {
+        // the actual size of texture brick is 64x64
+
         Entities.builder()
                 .at(200, 300)
                 // 1. tell asset loader to load resized texture

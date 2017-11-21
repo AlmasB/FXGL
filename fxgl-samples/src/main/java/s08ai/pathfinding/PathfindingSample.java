@@ -11,8 +11,7 @@ import com.almasb.fxgl.ai.pathfinding.AStarNode;
 import com.almasb.fxgl.ai.pathfinding.NodeState;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
@@ -35,11 +34,11 @@ public class PathfindingSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PathfindingSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     // 1. Define A* grid
@@ -55,7 +54,7 @@ public class PathfindingSample extends GameApplication {
                 final int x = j;
                 final int y = i;
 
-                GameEntity tile = new GameEntity();
+                Entity tile = new Entity();
                 tile.getPositionComponent().setValue(j*40, i*40);
 
                 Rectangle graphics = new Rectangle(38, 38);

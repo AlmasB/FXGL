@@ -7,8 +7,8 @@
 package com.almasb.fxgl.devtools
 
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.ecs.EntityWorldListener
+import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.EntityWorldListener
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.IntegerProperty

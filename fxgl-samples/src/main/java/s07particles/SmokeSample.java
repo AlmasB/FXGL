@@ -13,7 +13,7 @@ import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.control.CircularMovementControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -38,16 +38,16 @@ public class SmokeSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("SmokeSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     private ParticleEmitter emitter, e;
-    private GameEntity entity;
+    private Entity entity;
 
     @Override
     protected void initInput() {
@@ -64,9 +64,7 @@ public class SmokeSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        Entities.builder()
-                .viewFromNode(new Rectangle(getWidth(), getHeight()))
-                .buildAndAttach(getGameWorld());
+        getGameScene().setBackgroundColor(Color.BLACK);
 
         e = ParticleEmitters.newSmokeEmitter();
         e.setBlendMode(BlendMode.SRC_OVER);

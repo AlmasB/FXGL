@@ -6,8 +6,8 @@
 
 package com.almasb.fxgl.entity.control;
 
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.parser.JavaScriptParser;
 
 /**

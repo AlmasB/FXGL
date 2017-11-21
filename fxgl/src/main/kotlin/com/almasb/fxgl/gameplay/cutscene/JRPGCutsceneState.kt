@@ -15,7 +15,6 @@ import javafx.scene.text.Text
 import java.util.*
 
 /**
- * TODO: reveal full text
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

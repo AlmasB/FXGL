@@ -30,7 +30,7 @@ class FXGLTest {
     @Test
     fun `GameApplication subclass is a singleton across FXGL`() {
         assertTrue(FXGL.getApp() === FXGL.getAppCast<MockGameApplication>())
-        assertTrue(FXGL.getApp() === MockGameApplication.INSTANCE)
+        assertTrue(FXGL.getApp() === MockGameApplication.get())
     }
 
     @Test

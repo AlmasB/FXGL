@@ -12,6 +12,7 @@ import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import com.almasb.fxgl.saving.UserProfileSavable
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 
 /**
  * Responsible for registering and updating achievements.
@@ -23,6 +24,7 @@ class AchievementManager : UserProfileSavable {
     private val log = Logger.get(javaClass)
 
     private val achievements = FXCollections.observableArrayList<Achievement>()
+    private val achievementsReadOnly by lazy { FXCollections.unmodifiableObservableList(achievements) }
 
     /**
      * Registers achievement in the system.
@@ -34,7 +36,6 @@ class AchievementManager : UserProfileSavable {
         if (achievements.find { it.name == a.name } != null)
             throw IllegalArgumentException("Achievement with name \"${a.name}\" exists")
 
-        a.setOnAchieved(Runnable { FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, a)) })
         achievements.add(a)
         log.debug("Registered new achievement \"${a.name}\"")
     }
@@ -52,7 +53,80 @@ class AchievementManager : UserProfileSavable {
     /**
      * @return unmodifiable list of achievements
      */
-    fun getAchievements() = FXCollections.unmodifiableObservableList(achievements)
+    fun getAchievements(): ObservableList<Achievement> = achievementsReadOnly
+
+    internal fun rebindAchievements() {
+        achievements.forEach {
+            when(it.varValue) {
+                is Int -> {
+                    var listener: PropertyChangeListener<Int>? = null
+
+                    listener = object : PropertyChangeListener<Int> {
+                        var halfReached = false
+
+                        override fun onChange(prev: Int, now: Int) {
+
+                            if (!halfReached && now >= it.varValue / 2) {
+                                halfReached = true
+                                FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now.toDouble(), it.varValue.toDouble()))
+                            }
+
+                            if (now >= it.varValue) {
+                                it.setAchieved()
+                                FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+                            }
+                        }
+                    }
+
+                    FXGL.getApp().gameState.addListener<Int>(it.varName, listener)
+                }
+
+                is Double -> {
+                    var listener: PropertyChangeListener<Double>? = null
+
+                    listener = object : PropertyChangeListener<Double> {
+                        var halfReached = false
+
+                        override fun onChange(prev: Double, now: Double) {
+
+                            if (!halfReached && now >= it.varValue / 2) {
+                                halfReached = true
+                                FXGL.getEventBus().fireEvent(AchievementProgressEvent(it, now, it.varValue))
+                            }
+
+                            if (now >= it.varValue) {
+                                it.setAchieved()
+                                FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+                            }
+                        }
+                    }
+
+                    FXGL.getApp().gameState.addListener<Double>(it.varName, listener)
+                }
+
+                is Boolean -> {
+                    var listener: PropertyChangeListener<Boolean>? = null
+
+                    listener = object : PropertyChangeListener<Boolean> {
+
+                        override fun onChange(prev: Boolean, now: Boolean) {
+                            if (now) {
+                                it.setAchieved()
+                                FXGL.getEventBus().fireEvent(AchievementEvent(AchievementEvent.ACHIEVED, it))
+                                FXGL.getApp().gameState.removeListener(it.varName, listener!!)
+                            }
+                        }
+                    }
+
+                    FXGL.getApp().gameState.addListener<Boolean>(it.varName, listener)
+                }
+
+                else -> throw IllegalArgumentException("Unknown value type for achievement: " + it.varValue)
+            }
+        }
+    }
 
     override fun save(profile: UserProfile) {
         log.debug("Saving data to profile")

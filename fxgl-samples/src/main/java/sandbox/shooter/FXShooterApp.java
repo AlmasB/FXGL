@@ -6,12 +6,11 @@
 
 package sandbox.shooter;
 
-import com.almasb.fxgl.annotation.OnUserAction;
+import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.Input;
@@ -32,16 +31,16 @@ public class FXShooterApp extends GameApplication {
         BULLET, ENEMY
     }
 
-    private GameEntity player;
+    private Entity player;
     private PlayerControl playerControl;
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("FXShooterApp");
         settings.setWidth(1200);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
     }
 
     @Override
@@ -116,7 +115,7 @@ public class FXShooterApp extends GameApplication {
     }
 
     private void initTreasure() {
-        GameEntity treasure = new GameEntity();
+        Entity treasure = new Entity();
         treasure.getPositionComponent().setValue(getWidth() / 2, getHeight() / 2);
         treasure.getViewComponent().setView(new Rectangle(40, 40, Color.YELLOW));
 
@@ -124,7 +123,7 @@ public class FXShooterApp extends GameApplication {
     }
 
     private void initPlayer() {
-        player = new GameEntity();
+        player = new Entity();
         player.getPositionComponent().setValue(getWidth() / 2, getHeight() / 2);
         player.getViewComponent().setView(new Rectangle(40, 40, Color.BLUE));
 
@@ -142,7 +141,7 @@ public class FXShooterApp extends GameApplication {
     }
 
     private void spawnEnemy() {
-        GameEntity enemy = new GameEntity();
+        Entity enemy = new Entity();
         enemy.getTypeComponent().setValue(EntityType.ENEMY);
         enemy.getPositionComponent().setValue(getWidth(), 460);
         enemy.getViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)), true);

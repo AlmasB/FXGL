@@ -19,14 +19,10 @@ JavaFX Game Development Framework
 
 ## Good for ...
 
-* Desktop 2D / casual games
+* Any 2D genre (side-scroller / platformer / arcade, RPG, etc.)
 * Hobby / academic / commercial projects
 * Learning / improving game development skills
 * Fast prototyping of game ideas
-
-## Not so good for ...
-
-* 3D, mobile or web
 
 ## Features
 
@@ -55,7 +51,7 @@ public class BasicGameApp extends GameApplication {
 
 * [Wiki & Written tutorials](https://github.com/AlmasB/FXGL/wiki)
 * [YouTube tutorials](https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp)
-* [Feature demos](fxgl-samples)
+* [Sample code demos](fxgl-samples)
 * [Game demos](https://github.com/AlmasB/FXGLGames) (src)
 * [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
 
@@ -70,7 +66,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.3.9</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -87,7 +83,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.3.9'
+    compile 'com.github.almasb:fxgl:0.4.0'
 }
 ```
 
@@ -97,11 +93,8 @@ Download latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases
 
 ## Contribution
 
-[Contribute](CONTRIBUTING.md) to FXGL, or support FXGL on [Gratipay](https://gratipay.com/FXGL/).
-Alternatively star the repo to show interest.
+Please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or simply star the repo to show interest.
 
 ## Contact
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
-[![Survey](https://img.shields.io/badge/Feedback-SurveyMonkey-red.svg)](https://www.surveymonkey.com/r/BH6LLPM)
-[![Survey2](https://img.shields.io/badge/Feedback-Google%20Forms-red.svg)](https://goo.gl/forms/6wrMnOBxTE1fEpOy2)

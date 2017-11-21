@@ -8,6 +8,7 @@ package com.almasb.fxgl.gameplay
 
 import com.almasb.fxgl.core.collection.ObjectMap
 import javafx.beans.property.*
+import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 
 /**
@@ -123,15 +124,26 @@ class GameState {
     @Suppress("UNCHECKED_CAST")
     fun <T> objectProperty(propertyName: String) = get(propertyName) as ObjectProperty<T>
 
+    private val listeners = hashMapOf<PropertyChangeListener<*>, ChangeListener<*> >()
+
     @Suppress("UNCHECKED_CAST")
     fun <T> addListener(propertyName: String, listener: PropertyChangeListener<T>) {
-        (get(propertyName) as ObservableValue<T>).addListener { o, prev, now -> listener.onChange(prev, now) }
+        val internalListener = ChangeListener<T> { _, prev, now -> listener.onChange(prev, now) }
+
+        listeners[listener] = internalListener
+
+        (get(propertyName) as ObservableValue<T>).addListener(internalListener)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> addListenerKt(propertyName: String, listener: (T, T) -> Unit) {
-        (get(propertyName) as ObservableValue<T>).addListener { o, prev, now -> listener.invoke(prev, now) }
+    fun <T> removeListener(propertyName: String, listener: PropertyChangeListener<T>) {
+        (get(propertyName) as ObservableValue<T>).removeListener(listeners[listener] as ChangeListener<in T>)
     }
+
+//    @Suppress("UNCHECKED_CAST")
+//    fun <T> addListenerKt(propertyName: String, listener: (T, T) -> Unit) {
+//        (get(propertyName) as ObservableValue<T>).addListener { o, prev, now -> listener.invoke(prev, now) }
+//    }
 
     fun clear() {
         properties.clear()

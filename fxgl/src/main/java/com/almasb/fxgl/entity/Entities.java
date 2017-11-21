@@ -8,10 +8,6 @@ package com.almasb.fxgl.entity;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.GameWorld;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.parser.tiled.Layer;
@@ -39,66 +35,6 @@ public final class Entities {
     private Entities() {}
 
     /**
-     * Convenient way to obtain position component.
-     *
-     * @param e entity
-     * @return position component
-     */
-    public static PositionComponent getPosition(Entity e) {
-        return e.getComponent(PositionComponent.class);
-    }
-
-    /**
-     * Convenient way to obtain rotation component.
-     *
-     * @param e entity
-     * @return rotation component
-     */
-    public static RotationComponent getRotation(Entity e) {
-        return e.getComponent(RotationComponent.class);
-    }
-
-    /**
-     * Convenient way to obtain bbox component.
-     *
-     * @param e entity
-     * @return bbox component
-     */
-    public static BoundingBoxComponent getBBox(Entity e) {
-        return e.getComponent(BoundingBoxComponent.class);
-    }
-
-    /**
-     * Convenient way to obtain physics component.
-     *
-     * @param e entity
-     * @return physics component
-     */
-    public static PhysicsComponent getPhysics(Entity e) {
-        return e.getComponent(PhysicsComponent.class);
-    }
-
-    /**
-     * Convenient way to obtain main view component.
-     *
-     * @param e entity
-     * @return main view component
-     */
-    public static ViewComponent getView(Entity e) {
-        return e.getComponent(ViewComponent.class);
-    }
-
-    /**
-     * Convenient way to obtain type component.
-     *
-     * @param e entity
-     * @return type component
-     */
-    public static TypeComponent getType(Entity e) {
-        return e.getComponent(TypeComponent.class);
-    }
-
-    /**
      * Create an entity with bounding box around the screen with given thickness.
      *
      * @param thickness thickness of hit boxes around the screen
@@ -109,15 +45,11 @@ public final class Entities {
         double h = FXGL.getSettings().getHeight();
 
         Entity bounds = new Entity();
-        bounds.addComponent(new PositionComponent(0, 0));
-        bounds.addComponent(new RotationComponent(0));
 
-        bounds.addComponent(new BoundingBoxComponent(
-                new HitBox("LEFT",  new Point2D(-thickness, 0), BoundingShape.box(thickness, h)),
-                new HitBox("RIGHT", new Point2D(w, 0), BoundingShape.box(thickness, h)),
-                new HitBox("TOP",   new Point2D(0, -thickness), BoundingShape.box(w, thickness)),
-                new HitBox("BOT",   new Point2D(0, h), BoundingShape.box(w, thickness))
-        ));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("LEFT",  new Point2D(-thickness, 0), BoundingShape.box(thickness, h)));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("RIGHT", new Point2D(w, 0), BoundingShape.box(thickness, h)));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("TOP",   new Point2D(0, -thickness), BoundingShape.box(w, thickness)));
+        bounds.getBoundingBoxComponent().addHitBox(new HitBox("BOT",   new Point2D(0, h), BoundingShape.box(w, thickness)));
 
         bounds.addComponent(new PhysicsComponent());
 
@@ -127,8 +59,8 @@ public final class Entities {
     /**
      * @return new entity builder
      */
-    public static GameEntityBuilder builder() {
-        return new GameEntityBuilder();
+    public static EntityBuilder builder() {
+        return new EntityBuilder();
     }
 
     /**
@@ -141,63 +73,64 @@ public final class Entities {
     /**
      * Provides fluent API for building entities.
      */
-    public static class GameEntityBuilder {
-        private GameEntity entity = new GameEntity();
+    public static class EntityBuilder {
+        private Entity entity = new Entity();
 
-        public GameEntityBuilder from(SpawnData data) {
+        public EntityBuilder from(SpawnData data) {
             at(data.getX(), data.getY());
+            data.getData().forEach(entry -> entity.setProperty(entry.key, entry.value));
             return this;
         }
 
-        public GameEntityBuilder type(Enum<?> type) {
-            entity.getTypeComponent().setValue(type);
+        public EntityBuilder type(Enum<?> type) {
+            entity.setType(type);
             return this;
         }
 
-        public GameEntityBuilder at(double x, double y) {
-            entity.getPositionComponent().setValue(x, y);
+        public EntityBuilder at(double x, double y) {
+            entity.setPosition(x, y);
             return this;
         }
 
-        public GameEntityBuilder at(Point2D position) {
+        public EntityBuilder at(Point2D position) {
             return at(position.getX(), position.getY());
         }
 
-        public GameEntityBuilder at(Vec2 position) {
+        public EntityBuilder at(Vec2 position) {
             return at(position.x, position.y);
         }
 
-        public GameEntityBuilder rotate(double angle) {
-            entity.getRotationComponent().setValue(angle);
+        public EntityBuilder rotate(double angle) {
+            entity.setRotation(angle);
             return this;
         }
 
-        public GameEntityBuilder bbox(HitBox box) {
+        public EntityBuilder bbox(HitBox box) {
             entity.getBoundingBoxComponent().addHitBox(box);
             return this;
         }
 
-        public GameEntityBuilder viewFromNode(Node view) {
+        public EntityBuilder viewFromNode(Node view) {
             entity.getViewComponent().setView(view);
             return this;
         }
 
-        public GameEntityBuilder viewFromNodeWithBBox(Node view) {
+        public EntityBuilder viewFromNodeWithBBox(Node view) {
             entity.getViewComponent().setView(view, true);
             return this;
         }
 
-        public GameEntityBuilder viewFromTexture(String textureName) {
+        public EntityBuilder viewFromTexture(String textureName) {
             entity.getViewComponent().setTexture(textureName);
             return this;
         }
 
-        public GameEntityBuilder viewFromTextureWithBBox(String textureName) {
+        public EntityBuilder viewFromTextureWithBBox(String textureName) {
             entity.getViewComponent().setTexture(textureName, true);
             return this;
         }
 
-        public GameEntityBuilder renderLayer(RenderLayer layer) {
+        public EntityBuilder renderLayer(RenderLayer layer) {
             entity.getViewComponent().setRenderLayer(layer);
             return this;
         }
@@ -209,7 +142,7 @@ public final class Entities {
          * @param layerName layer name as specified by Tiled
          * @return builder
          */
-        public GameEntityBuilder viewFromTiles(TiledMap map, String layerName) {
+        public EntityBuilder viewFromTiles(TiledMap map, String layerName) {
             return viewFromTiles(map, layerName, RenderLayer.TOP);
         }
 
@@ -221,7 +154,7 @@ public final class Entities {
          * @param renderLayer created view will use this render layer
          * @return builder
          */
-        public GameEntityBuilder viewFromTiles(TiledMap map, String layerName, RenderLayer renderLayer) {
+        public EntityBuilder viewFromTiles(TiledMap map, String layerName, RenderLayer renderLayer) {
             entity.getViewComponent().setView(tilesToView(map, layerName), false);
             entity.getViewComponent().setRenderLayer(renderLayer);
 
@@ -271,13 +204,13 @@ public final class Entities {
             return new ImageView(buffer);
         }
 
-        public GameEntityBuilder with(Component... components) {
+        public EntityBuilder with(Component... components) {
             for (Component c : components)
                 entity.addComponent(c);
             return this;
         }
 
-        public GameEntityBuilder with(Control... controls) {
+        public EntityBuilder with(Control... controls) {
             for (Control c : controls)
                 entity.addControl(c);
             return this;
@@ -286,7 +219,7 @@ public final class Entities {
         /**
          * Add a property to entity being built.
          */
-        public GameEntityBuilder with(String propertyKey, Object propertyValue) {
+        public EntityBuilder with(String propertyKey, Object propertyValue) {
             entity.setProperty(propertyKey, propertyValue);
             return this;
         }
@@ -296,7 +229,7 @@ public final class Entities {
          *
          * @return entity
          */
-        public GameEntity build() {
+        public Entity build() {
             return entity;
         }
 
@@ -305,7 +238,7 @@ public final class Entities {
          *
          * @return entity
          */
-        public GameEntity buildAndAttach() {
+        public Entity buildAndAttach() {
             return buildAndAttach(FXGL.getApp().getGameWorld());
         }
 
@@ -315,7 +248,7 @@ public final class Entities {
          * @param world the world to attach entity to
          * @return entity
          */
-        public GameEntity buildAndAttach(GameWorld world) {
+        public Entity buildAndAttach(GameWorld world) {
             world.addEntity(entity);
             return entity;
         }

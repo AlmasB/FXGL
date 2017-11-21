@@ -6,9 +6,9 @@
 
 package s06gameplay.levelparsing;
 
-import com.almasb.fxgl.annotation.SpawnSymbol;
-import com.almasb.fxgl.annotation.Spawns;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.SpawnSymbol;
+import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.TextEntityFactory;

@@ -9,7 +9,7 @@ package s04physics;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -29,7 +29,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class PlatformerSample extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -37,11 +37,11 @@ public class PlatformerSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("PlatformerSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override
@@ -65,9 +65,13 @@ public class PlatformerSample extends GameApplication {
         input.addAction(new UserAction("Jump") {
             @Override
             protected void onActionBegin() {
-                double dx = player.getComponent(PhysicsComponent.class).getLinearVelocity().getX();
+                PhysicsComponent physics = player.getComponent(PhysicsComponent.class);
 
-                player.getComponent(PhysicsComponent.class).setLinearVelocity(new Point2D(dx, -100));
+                if (physics.isOnGround()) {
+                    double dx = physics.getLinearVelocity().getX();
+
+                    physics.setLinearVelocity(new Point2D(dx, -100));
+                }
             }
         }, KeyCode.W);
 
@@ -116,9 +120,9 @@ public class PlatformerSample extends GameApplication {
                 .buildAndAttach(getGameWorld());
     }
 
-    private GameEntity createPlayer(double x, double y, double width, double height) {
+    private Entity createPlayer(double x, double y, double width, double height) {
         PhysicsComponent physics = new PhysicsComponent();
-
+        physics.setGenerateGroundSensor(true);
         physics.setBodyType(BodyType.DYNAMIC);
 
         return Entities.builder()

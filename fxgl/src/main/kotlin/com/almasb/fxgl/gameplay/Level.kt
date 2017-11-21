@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.gameplay
 
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 
 /**
  * Represents a game level.

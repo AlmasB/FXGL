@@ -8,7 +8,7 @@ package s08ai;
 
 import com.almasb.fxgl.ai.Condition;
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
@@ -17,8 +17,8 @@ public class CanSeePlayerCondition extends Condition {
 
     @Override
     public boolean evaluate() {
-        GameEntity player = ((BehaviorSample) FXGL.getApp()).player;
+        Entity player = ((BehaviorSample) FXGL.getApp()).player;
 
-        return player.distance(getObject()) < 250;
+        return player.distance(getEntity()) < 250;
     }
 }

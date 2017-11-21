@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.ui
 
-import com.almasb.fxgl.service.UIFactory
 import javafx.collections.ObservableList
 import javafx.scene.control.*
 import javafx.scene.text.Font

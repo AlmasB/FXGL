@@ -8,7 +8,7 @@ package s04physics;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.RaycastResult;
 import com.almasb.fxgl.settings.GameSettings;
@@ -27,9 +27,9 @@ public class RaycastSample extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("RaycastSample");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
+
+
+
     }
 
     private Line laser = new Line();

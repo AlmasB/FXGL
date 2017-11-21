@@ -22,10 +22,6 @@ public class BasicAppSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("BasicAppSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
     }
 
     public static void main(String[] args) {

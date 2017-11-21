@@ -8,9 +8,9 @@ package sandbox;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.component.IrremovableComponent;
+import com.almasb.fxgl.entity.component.IrremovableComponent;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
@@ -29,7 +29,7 @@ public class ResetSample extends GameApplication {
 
     // make the field instance level
     // but do NOT init here for properly functioning save-load system
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -37,12 +37,12 @@ public class ResetSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ResetSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override

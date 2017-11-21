@@ -6,15 +6,13 @@
 
 package com.almasb.fxgl.parser
 
-import com.almasb.fxgl.annotation.SpawnSymbol
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.SpawnSymbol
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.TextEntityFactory
-import com.almasb.fxgl.entity.component.PositionComponent
-import com.almasb.fxgl.entity.component.TypeComponent
 import com.almasb.fxgl.parser.text.TextLevelParser
+import javafx.geometry.Point2D
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
@@ -52,20 +50,20 @@ class TextLevelParserTest {
         with(parser) {
             addEntityProducer('1', EntitySpawner { data ->
                 val e = Entity()
-                e.addComponent(PositionComponent(data.x, data.y))
-                e.addComponent(TypeComponent(EntityType.TYPE1))
+                e.position = Point2D(data.x, data.y)
+                e.type = EntityType.TYPE1
                 e
             })
             addEntityProducer('2', EntitySpawner { data ->
                 val e = Entity()
-                e.addComponent(PositionComponent(data.x, data.y))
-                e.addComponent(TypeComponent(EntityType.TYPE2))
+                e.position = Point2D(data.x, data.y)
+                e.type = EntityType.TYPE2
                 e
             })
             addEntityProducer('3', EntitySpawner { data ->
                 val e = Entity()
-                e.addComponent(PositionComponent(data.x, data.y))
-                e.addComponent(TypeComponent(EntityType.TYPE3))
+                e.position = Point2D(data.x, data.y)
+                e.type = EntityType.TYPE3
                 e
             })
         }
@@ -101,10 +99,9 @@ class TextLevelParserTest {
     private class EntityMatcher(val x: Int, val y: Int, val entityType: EntityType) : BaseMatcher<Entity>() {
 
         override fun matches(item: Any): Boolean {
-            val position = Entities.getPosition(item as Entity)
-            val type = Entities.getType(item)
+            val position = (item as Entity).positionComponent
 
-            return position.x.toInt() == x*BLOCK_WIDTH && position.y.toInt() == y*BLOCK_HEIGHT && type.isType(entityType)
+            return position.x.toInt() == x*BLOCK_WIDTH && position.y.toInt() == y*BLOCK_HEIGHT && item.isType(entityType)
         }
 
         override fun describeTo(description: Description) {
@@ -128,24 +125,24 @@ class TextLevelParserTest {
         @SpawnSymbol('1')
         fun newType1(data: SpawnData): Entity {
             val e = Entity()
-            e.addComponent(PositionComponent(data.x, data.y))
-            e.addComponent(TypeComponent(EntityType.TYPE1))
+            e.position = Point2D(data.x, data.y)
+            e.type = EntityType.TYPE1
             return e
         }
 
         @SpawnSymbol('2')
         fun newType2(data: SpawnData): Entity {
             val e = Entity()
-            e.addComponent(PositionComponent(data.x, data.y))
-            e.addComponent(TypeComponent(EntityType.TYPE2))
+            e.position = Point2D(data.x, data.y)
+            e.type = EntityType.TYPE2
             return e
         }
 
         @SpawnSymbol('3')
         fun newType3(data: SpawnData): Entity {
             val e = Entity()
-            e.addComponent(PositionComponent(data.x, data.y))
-            e.addComponent(TypeComponent(EntityType.TYPE3))
+            e.position = Point2D(data.x, data.y)
+            e.type = EntityType.TYPE3
             return e
         }
     }

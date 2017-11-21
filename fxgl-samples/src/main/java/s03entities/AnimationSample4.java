@@ -10,7 +10,7 @@ import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.ParallelAnimation;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
@@ -31,7 +31,7 @@ public class AnimationSample4 extends GameApplication {
 
     // make the field instance level
     // but do NOT init here for properly functioning save-load system
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -39,12 +39,12 @@ public class AnimationSample4 extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("AnimationSample4");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override

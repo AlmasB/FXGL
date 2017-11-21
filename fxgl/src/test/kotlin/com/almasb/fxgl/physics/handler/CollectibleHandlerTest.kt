@@ -6,15 +6,13 @@
 
 package com.almasb.fxgl.physics.handler
 
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.ecs.GameWorld
-import com.almasb.fxgl.entity.component.BoundingBoxComponent
+import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.component.CollidableComponent
-import com.almasb.fxgl.entity.component.PositionComponent
-import com.almasb.fxgl.entity.component.TypeComponent
 import com.almasb.fxgl.physics.BoundingShape
 import com.almasb.fxgl.physics.HitBox
 import com.almasb.fxgl.physics.PhysicsWorld
+import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
@@ -39,15 +37,15 @@ class CollectibleHandlerTest {
         gameWorld.addWorldListener(physicsWorld)
 
         val collector = Entity()
-        collector.addComponent(TypeComponent(Type.COLLECTOR))
-        collector.addComponent(PositionComponent(100.0, 100.0))
-        collector.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(40.0, 40.0))))
+        collector.type = Type.COLLECTOR
+        collector.position = Point2D(100.0, 100.0)
+        collector.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(40.0, 40.0)))
         collector.addComponent(CollidableComponent(true))
 
         val collectible = Entity()
-        collectible.addComponent(TypeComponent(Type.COLLECTIBLE))
-        collectible.addComponent(PositionComponent(100.0, 100.0))
-        collectible.addComponent(BoundingBoxComponent(HitBox("main", BoundingShape.box(40.0, 40.0))))
+        collectible.type = Type.COLLECTIBLE
+        collectible.position = Point2D(100.0, 100.0)
+        collectible.boundingBoxComponent.addHitBox(HitBox("main", BoundingShape.box(40.0, 40.0)))
         collectible.addComponent(CollidableComponent(true))
 
         physicsWorld.addCollisionHandler(CollectibleHandler(Type.COLLECTOR, Type.COLLECTIBLE, "", Consumer {

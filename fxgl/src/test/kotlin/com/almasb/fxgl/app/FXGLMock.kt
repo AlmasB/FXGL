@@ -15,7 +15,8 @@ class FXGLMock {
 
     companion object {
         @JvmStatic fun mock() {
-            FXGL.configure(MockApplicationModule.get())
+            FXGL.configure(MockGameApplication.get())
+            FXGL.setProperty("dev.showbbox", false)
         }
     }
 }

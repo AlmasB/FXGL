@@ -6,12 +6,11 @@
 
 package s06gameplay;
 
-import com.almasb.fxgl.annotation.OnUserAction;
+import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
-import com.almasb.fxgl.service.impl.notification.FXGLNotificationService;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
@@ -29,16 +28,12 @@ public class NotificationSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("NotificationSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
 
-        // 2. by default SlidingNotificationService is used
-        // but you can provide your own or use another built-in provider, e.g. FXGLNotificationService
-        settings.setNotificationService(new FXGLNotificationService());
 
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
     }
 
     @Override

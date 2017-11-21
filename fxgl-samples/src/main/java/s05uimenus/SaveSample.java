@@ -8,8 +8,8 @@ package s05uimenus;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.EntityView;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.view.EntityView;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.io.serialization.Bundle;
@@ -33,7 +33,7 @@ public class SaveSample extends GameApplication {
         PLAYER, ENEMY
     }
 
-    private GameEntity player, enemy;
+    private Entity player, enemy;
     private PlayerControl playerControl;
 
     // 1. the data to save/load
@@ -45,12 +45,12 @@ public class SaveSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("SaveSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(true);
+
+
         settings.setMenuEnabled(true);
-        settings.setEnabledMenuItems(EnumSet.of(MenuItem.SAVE_LOAD));
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+        settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
+
+
     }
 
     @Override
@@ -154,7 +154,7 @@ public class SaveSample extends GameApplication {
         playerPosition = playerPos;
         enemyPosition = enemyPos;
 
-        player = new GameEntity();
+        player = new Entity();
         player.getTypeComponent().setValue(Type.PLAYER);
         player.getPositionComponent().setValue(playerPosition);
         player.getViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.BLUE)));
@@ -162,7 +162,7 @@ public class SaveSample extends GameApplication {
         playerControl = new PlayerControl();
         player.addControl(playerControl);
 
-        enemy = new GameEntity();
+        enemy = new Entity();
         enemy.getTypeComponent().setValue(Type.ENEMY);
         enemy.getPositionComponent().setValue(enemyPosition);
         enemy.getViewComponent().setView(new EntityView(new Rectangle(40, 40, Color.RED)));

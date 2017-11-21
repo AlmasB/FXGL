@@ -9,7 +9,7 @@ package sandbox.uno;
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.control.ExpireCleanControl;
@@ -36,15 +36,15 @@ public class UnoSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("UnoSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+
+
+
+
     }
 
     private Deck deck = new InfiniteDeck();
 
-    private GameEntity currentCard;
+    private Entity currentCard;
     private Hand currentHand;
     private Hand nextHand;
 
@@ -61,7 +61,7 @@ public class UnoSample extends GameApplication {
         for (int i = 0; i < BASE_CARDS; i++) {
             Card card = deck.drawCard();
 
-            GameEntity cardEntity = spawn(card, i*130, 450);
+            Entity cardEntity = spawn(card, i*130, 450);
 
             player.addCard(cardEntity);
             enemy.addCard(spawn(deck.drawCard(), 0, -150));
@@ -106,7 +106,7 @@ public class UnoSample extends GameApplication {
             double sizePerCard = 1.0 * getWidth() / player.cardsProperty().size();
 
             int i = 0;
-            for (GameEntity card : player.cardsProperty()) {
+            for (Entity card : player.cardsProperty()) {
                 card.setX(i++ * sizePerCard);
                 card.setY(450);
             }
@@ -115,8 +115,8 @@ public class UnoSample extends GameApplication {
         }
     }
 
-    private GameEntity spawn(Card card, int x, int y) {
-        GameEntity cardEntity = (GameEntity) getGameWorld().spawn("Card", new SpawnData(x, y).put("card", card));
+    private Entity spawn(Card card, int x, int y) {
+        Entity cardEntity = (Entity) getGameWorld().spawn("Card", new SpawnData(x, y).put("card", card));
 
         cardEntity.getView().setOnMouseClicked(e -> {
             if (card.canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
@@ -162,9 +162,9 @@ public class UnoSample extends GameApplication {
 
     private void aiMove() {
 
-        GameEntity chosenCard = null;
+        Entity chosenCard = null;
 
-        for (GameEntity card : enemy.cardsProperty()) {
+        for (Entity card : enemy.cardsProperty()) {
 
             // can we avoid calls like this?
             if (card.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
@@ -185,7 +185,7 @@ public class UnoSample extends GameApplication {
 
         if (chosenCard == null) {
             while (deck.hasCards()) {
-                GameEntity draw = spawn(deck.drawCard(), 0, -150);
+                Entity draw = spawn(deck.drawCard(), 0, -150);
 
                 if (draw.getComponent(CardComponent.class).getValue().canUseOn(currentCard.getComponent(CardComponent.class).getValue())) {
                     currentCard.addControl(new ExpireCleanControl(Duration.seconds(0.5)));

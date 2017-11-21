@@ -20,7 +20,7 @@ public class MoveTask extends GoalAction {
 
     @Override
     public boolean reachedGoal() {
-        return getObject().getPosition().distance(400, 300) < 25;
+        return getEntity().getPosition().distance(400, 300) < 25;
     }
 
     @Override
@@ -28,10 +28,10 @@ public class MoveTask extends GoalAction {
 
         double speed = tpf * 60 * 5;
 
-        Point2D vector = new Point2D(400, 300).subtract(getObject().getPosition())
+        Point2D vector = new Point2D(400, 300).subtract(getEntity().getPosition())
                 .normalize()
                 .multiply(speed);
 
-        getObject().translate(vector);
+        getEntity().translate(vector);
     }
 }

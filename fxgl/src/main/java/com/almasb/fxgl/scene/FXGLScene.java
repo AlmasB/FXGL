@@ -12,8 +12,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.ImageCursor;
 import javafx.scene.effect.Effect;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Scale;
+
+import static com.almasb.fxgl.app.DSLKt.texture;
 
 /**
  * Base class for all FXGL scenes.
@@ -146,5 +150,24 @@ public abstract class FXGLScene {
         scale.xProperty().bind(scaleRatio);
         scale.yProperty().bind(scaleRatio);
         root.getTransforms().setAll(scale);
+    }
+
+    public void setBackgroundColor(Paint color) {
+        root.setBackground(new Background(new BackgroundFill(color, null, null)));
+    }
+
+    /**
+     * Convenience method to load the texture and repeat as often as needed to cover the background.
+     */
+    public void setBackgroundRepeat(String textureName) {
+        setBackgroundRepeat(texture(textureName).getImage());
+    }
+
+    /**
+     * The image is repeated as often as needed to cover the background.
+     */
+    public void setBackgroundRepeat(Image image) {
+        root.setBackground(new Background(new BackgroundImage(image,
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, null, null)));
     }
 }

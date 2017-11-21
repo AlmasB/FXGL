@@ -11,16 +11,19 @@ import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
+import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
 import com.almasb.fxgl.io.FS
 import com.almasb.fxgl.io.serialization.Bundle
-import com.almasb.fxgl.service.impl.display.FXGLDisplay
-import com.almasb.fxgl.service.impl.executor.FXGLExecutor
-import com.almasb.fxgl.service.impl.net.FXGLNet
+import com.almasb.fxgl.net.FXGLNet
+import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
-
+import com.almasb.fxgl.ui.FXGLDisplay
+import javafx.beans.binding.Bindings
+import javafx.beans.binding.StringBinding
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.concurrent.Callable
 import java.util.function.Consumer
 
 /**
@@ -46,6 +49,10 @@ class FXGL private constructor() {
          * @return FXGL system settings
          */
         @JvmStatic fun getSettings() = internalApp.settings
+
+        private val _menuSettings = MenuSettings()
+
+        @JvmStatic fun getMenuSettings() = _menuSettings
 
         /**
          * @return instance of the running game application
@@ -74,13 +81,13 @@ class FXGL private constructor() {
         /**
          * Constructs FXGL.
          */
-        @JvmStatic fun configure(appModule: ApplicationModule) {
+        @JvmStatic fun configure(app: GameApplication) {
             if (configured)
                 return
 
             configured = true
 
-            internalApp = appModule.app
+            internalApp = app
 
             createRequiredDirs()
 
@@ -154,9 +161,11 @@ class FXGL private constructor() {
             saveSystemData()
         }
 
-        @JvmStatic fun getNotificationService() = getSettings().notificationService
         @JvmStatic fun getExceptionHandler() = getSettings().exceptionHandler
         @JvmStatic fun getUIFactory() = getSettings().uiFactory
+
+        private val _notificationService by lazy { NotificationServiceProvider() }
+        @JvmStatic fun getNotificationService() = _notificationService
 
         private val _assetLoader by lazy { AssetLoader() }
         @JvmStatic fun getAssetLoader() = _assetLoader
@@ -236,6 +245,24 @@ class FXGL private constructor() {
          */
         @JvmStatic fun setProperty(key: String, value: Any) {
             System.setProperty("FXGL.$key", value.toString())
+        }
+
+        /**
+         * @return a string translated to the language used by FXGL game
+         */
+        @JvmStatic fun getLocalizedString(key: String): String {
+            val langName = _menuSettings.getLanguage().resourceBundleName()
+
+            val bundle = getAssetLoader().loadResourceBundle("languages/$langName.properties")
+
+            return bundle.getString(key)
+        }
+
+        /**
+         * @return binding to a string translated to the language used by FXGL game
+         */
+        @JvmStatic fun localizedStringProperty(key: String): StringBinding {
+            return Bindings.createStringBinding(Callable { getLocalizedString(key) }, _menuSettings.languageProperty())
         }
     }
 }

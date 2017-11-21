@@ -25,15 +25,15 @@ public class VideoIntroSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("VideoIntroSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
+
 
         // 1. set intro enabled to true
         settings.setIntroEnabled(true);
 
         // 2. set menu enabled to true
         settings.setMenuEnabled(true);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
 
         settings.setSceneFactory(new MySceneFactory());
     }

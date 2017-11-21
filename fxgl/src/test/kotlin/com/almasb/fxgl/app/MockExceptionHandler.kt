@@ -1,7 +1,5 @@
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.service.ExceptionHandler
-
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

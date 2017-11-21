@@ -9,8 +9,8 @@ package s10miscellaneous;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.entity.ScrollingBackgroundView;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.view.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
@@ -23,7 +23,7 @@ import javafx.scene.input.KeyCode;
  */
 public class ScrollingBackgroundSample extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -31,12 +31,12 @@ public class ScrollingBackgroundSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ScrollingBackgroundSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override

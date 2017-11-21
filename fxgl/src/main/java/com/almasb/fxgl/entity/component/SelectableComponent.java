@@ -6,12 +6,10 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.GameWorld;
-import com.almasb.fxgl.ecs.component.BooleanComponent;
-import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.entity.EntityView;
+import com.almasb.fxgl.entity.CopyableComponent;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.GameWorld;
+import com.almasb.fxgl.entity.view.EntityView;
 
 /**
  * Marks an entity as selectable.

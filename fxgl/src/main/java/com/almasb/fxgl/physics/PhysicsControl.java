@@ -8,13 +8,9 @@ package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.component.BoundingBoxComponent;
-import com.almasb.fxgl.entity.component.PositionComponent;
-import com.almasb.fxgl.entity.component.RotationComponent;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Required;
 import com.almasb.fxgl.physics.box2d.dynamics.Body;
 import javafx.geometry.Point2D;
 
@@ -31,10 +27,6 @@ public class PhysicsControl extends Control {
 
     private PhysicsWorld physicsWorld;
 
-    private PositionComponent position;
-    private RotationComponent rotation;
-    private BoundingBoxComponent bbox;
-
     private double appHeight;
 
     PhysicsControl(double appHeight) {
@@ -44,26 +36,31 @@ public class PhysicsControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = Entities.getPosition(entity);
-        rotation = Entities.getRotation(entity);
-        bbox = Entities.getBBox(entity);
-
         body = entity.getComponent(PhysicsComponent.class).body;
     }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
+
+        // these give us min world coordinates of the overall bbox
+        // but they are not coordinates of the entity
+
+        double minXWorld = toPixels(body.getPosition().x - toMeters(entity.getWidth() / 2));
+        double minYWorld = toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(entity.getHeight() / 2));
+
+        // hence we do the following, as entity.x = minXWorld - minXLocal
+
         // we round positions so that it's easy for the rest of the world to work with
         // snapped to pixel values
-        position.setX(
-                Math.round(toPixels(body.getPosition().x - toMeters(bbox.getWidth() / 2)))
+        entity.setX(
+                Math.round(minXWorld - entity.getBoundingBoxComponent().getMinXLocal())
         );
 
-        position.setY(
-                Math.round(toPixels(toMeters(appHeight) - body.getPosition().y - toMeters(bbox.getHeight() / 2)))
+        entity.setY(
+                Math.round(minYWorld - entity.getBoundingBoxComponent().getMinYLocal())
         );
 
-        rotation.setValue(-Math.toDegrees(body.getAngle()));
+        entity.setRotation(-Math.toDegrees(body.getAngle()));
     }
 
     /**
@@ -73,8 +70,8 @@ public class PhysicsControl extends Control {
      * @param point point in game world coordinates (pixels)
      */
     public void reposition(Point2D point) {
-        double w = bbox.getWidth();
-        double h = bbox.getHeight();
+        double w = getEntity().getWidth();
+        double h = getEntity().getHeight();
 
         body.setTransform(new Vec2(
                 toMeters(point.getX() + w / 2),

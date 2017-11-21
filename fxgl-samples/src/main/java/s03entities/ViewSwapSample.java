@@ -9,7 +9,7 @@ package s03entities;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -24,7 +24,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class ViewSwapSample extends GameApplication {
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -32,11 +32,11 @@ public class ViewSwapSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ViewSwapSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ViewSwapSample extends GameApplication {
             @Override
             protected void onActionBegin() {
                 // 1. use main view component to set view at runtime
-                player.getViewComponent().setView(new Rectangle(30, 30, Color.BLUE));
+                player.setView(new Rectangle(30, 30, Color.BLUE));
             }
         }, KeyCode.F);
     }

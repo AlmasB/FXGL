@@ -27,9 +27,6 @@ public class VarsSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("VarsSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
     }
 
     @Override

@@ -9,7 +9,7 @@ package com.almasb.fxgl.ai
 import com.almasb.fxgl.ai.btree.LeafTask
 import com.almasb.fxgl.ai.btree.Task
 import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.entity.GameEntity
+import com.almasb.fxgl.entity.Entity
 
 /**
  * A single action that always succeeds.
@@ -17,7 +17,7 @@ import com.almasb.fxgl.entity.GameEntity
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 abstract class SingleAction
-@JvmOverloads constructor(val name: String = "") : LeafTask<GameEntity>() {
+@JvmOverloads constructor(val name: String = "") : LeafTask<Entity>() {
 
     /**
      * Executed every frame when action is active.
@@ -25,13 +25,13 @@ abstract class SingleAction
     abstract fun onUpdate(tpf: Double)
     
     override final fun execute(): Status {
-        `object`.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
+        entity.getControl(AIControl::class.java).setBubbleMessage(if (name.isNotEmpty()) name else javaClass.simpleName)
         onUpdate(FXGL.getApp().tpf())
 
         return Status.SUCCEEDED
     }
 
-    override fun copyTo(task: Task<GameEntity>): Task<GameEntity> {
+    override fun copyTo(task: Task<Entity>): Task<Entity> {
         return task
     }
 }

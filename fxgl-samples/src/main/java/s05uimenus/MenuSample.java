@@ -21,7 +21,7 @@ public class MenuSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("MenuSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
+
 
         // 1. set intro enabled to true
         settings.setIntroEnabled(true);
@@ -29,8 +29,8 @@ public class MenuSample extends GameApplication {
         // 2. set menu enabled to true
         settings.setMenuEnabled(true);
 
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
     }
 
     public static void main(String[] args) {

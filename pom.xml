@@ -4,7 +4,7 @@
 
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl-framework</artifactId>
-    <version>0.3.9</version>
+    <version>0.4.0</version>
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -75,12 +75,12 @@
         <maven.shade.version>3.0.0</maven.shade.version>
         <jacoco.version>0.7.9</jacoco.version>
         <maven.surefire.version>2.19</maven.surefire.version>
+        <build.helper.version>3.0.0</build.helper.version>
 
         <!-- dependencies -->
-        <kotlin.version>1.1.51</kotlin.version>
-        <kotlinx.version>0.17</kotlinx.version>
+        <kotlin.version>1.1.60</kotlin.version>
+        <kotlinx.version>0.19.3</kotlinx.version>
         <jfxtras.version>8.0-r5</jfxtras.version>
-        <controlsfx.version>9.0.0</controlsfx.version>
         <jackson.version>2.9.0</jackson.version>
         <apache.http.version>4.5.3</apache.http.version>
         <classpath.scanner.version>2.4.5</classpath.scanner.version>
@@ -226,6 +226,26 @@
                                         <head>Warning:</head>
                                     </tag>
                                 </tags>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build.helper.version}</version>
+
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>src/main/kotlin</source>
+                                </sources>
                             </configuration>
                         </execution>
                     </executions>

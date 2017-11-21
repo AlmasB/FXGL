@@ -6,7 +6,7 @@
 
 package com.almasb.fxgl.entity.component
 
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.io.serialization.Bundle
 import javafx.geometry.Point2D
 import org.junit.jupiter.api.BeforeEach
@@ -31,13 +31,12 @@ class PositionComponentTest {
     fun `Grid coordinates`() {
         // mock entity
         val e = Entity()
-        e.addComponent(position)
+        e.position = Point2D(55.0, 35.0)
 
-        position.value = Point2D(55.0, 35.0)
 
         assertAll(
-                Executable { assertThat(position.getGridX(25), `is`(2)) },
-                Executable { assertThat(position.getGridY(25), `is`(1)) }
+                Executable { assertThat(e.positionComponent.getGridX(25), `is`(2)) },
+                Executable { assertThat(e.positionComponent.getGridY(25), `is`(1)) }
         )
     }
 

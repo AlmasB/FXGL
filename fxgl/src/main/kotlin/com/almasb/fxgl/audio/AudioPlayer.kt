@@ -9,7 +9,7 @@ package com.almasb.fxgl.audio
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.gameplay.NotificationEvent
+import com.almasb.fxgl.gameplay.notification.NotificationEvent
 import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import javafx.beans.property.DoubleProperty
@@ -184,11 +184,13 @@ class AudioPlayer {
 
     /**
      * @param bgmName name of the background music file to loop
+     * @return the music object that is played in a loop
      */
-    fun loopBGM(bgmName: String) {
+    fun loopBGM(bgmName: String): Music {
         val music = FXGL.getAssetLoader().loadMusic(bgmName)
         music.cycleCount = Integer.MAX_VALUE
         playMusic(music)
+        return music
     }
 
     /**

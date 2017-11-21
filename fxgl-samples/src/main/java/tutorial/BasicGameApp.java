@@ -8,7 +8,7 @@ package tutorial;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
@@ -32,10 +32,6 @@ public class BasicGameApp extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("Basic Game App");
         settings.setVersion("0.1");
-        settings.setProfilingEnabled(false);  // turn off fps
-        settings.setCloseConfirmation(false); // turn off exit dialog
-        settings.setIntroEnabled(false);      // turn off intro
-        settings.setMenuEnabled(false);       // turn off menus
     }
 
     @Override
@@ -80,7 +76,7 @@ public class BasicGameApp extends GameApplication {
         vars.put("pixelsMoved", 0);
     }
 
-    private GameEntity player;
+    private Entity player;
 
     @Override
     protected void initGame() {

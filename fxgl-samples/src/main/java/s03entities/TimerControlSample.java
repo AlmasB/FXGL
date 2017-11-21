@@ -9,8 +9,8 @@ package s03entities;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.settings.GameSettings;
@@ -31,11 +31,11 @@ public class TimerControlSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("TimerControlSample");
         settings.setVersion("0.2");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
     }
 
     @Override
@@ -65,7 +65,7 @@ public class TimerControlSample extends GameApplication {
 
             double speed = tpf * 60;
 
-            entity.getComponent(PositionComponent.class).translateY(goingUp ? -speed : speed);
+            entity.translateY(goingUp ? -speed : speed);
         }
     }
 

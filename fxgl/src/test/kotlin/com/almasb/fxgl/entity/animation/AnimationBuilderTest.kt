@@ -8,9 +8,7 @@ package com.almasb.fxgl.entity.animation
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.MockState
-import com.almasb.fxgl.app.State
-import com.almasb.fxgl.app.SubState
-import com.almasb.fxgl.entity.GameEntity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.ColorComponent
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
@@ -18,15 +16,11 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.QuadCurve
 import javafx.util.Duration
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.function.Executable
 
 /**
  *
@@ -45,7 +39,7 @@ class AnimationBuilderTest {
 
     @Test
     fun `Translate`() {
-        val e = GameEntity()
+        val e = Entity()
 
         val anim = AnimationBuilder()
                 .duration(Duration.millis(150.0))
@@ -65,7 +59,7 @@ class AnimationBuilderTest {
 
     @Test
     fun `Translate along quad curve`() {
-        val e = GameEntity()
+        val e = Entity()
 
         val curve = QuadCurve(0.0, 0.0, 100.0, 200.0, 300.0, 300.0)
 
@@ -86,7 +80,7 @@ class AnimationBuilderTest {
 
     @Test
     fun `Translate along cubic curve`() {
-        val e = GameEntity()
+        val e = Entity()
 
         val curve = CubicCurve(0.0, 0.0, 20.0, 30.0, 100.0, 200.0, 300.0, 300.0)
 
@@ -108,7 +102,7 @@ class AnimationBuilderTest {
     @Test
     fun `Throw if translate along unknown shape`() {
         assertThrows(IllegalArgumentException::class.java, {
-            val e = GameEntity()
+            val e = Entity()
 
             val curve = Circle()
 
@@ -122,7 +116,7 @@ class AnimationBuilderTest {
 
     @Test
     fun `Rotate`() {
-        val e = GameEntity()
+        val e = Entity()
 
         val anim = AnimationBuilder()
                 .duration(Duration.millis(150.0))
@@ -142,7 +136,7 @@ class AnimationBuilderTest {
 
     @Test
     fun `Scale`() {
-        val e = GameEntity()
+        val e = Entity()
 
         val anim = AnimationBuilder()
                 .duration(Duration.millis(150.0))
@@ -163,7 +157,7 @@ class AnimationBuilderTest {
 
     @Test
     fun `Color animation`() {
-        val e = GameEntity()
+        val e = Entity()
         e.addComponent(ColorComponent())
 
         val endColor = Color.color(0.5, 0.2, 0.33, 0.5)

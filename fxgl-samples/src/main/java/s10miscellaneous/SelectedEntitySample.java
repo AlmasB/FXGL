@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.SelectableComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
@@ -30,19 +30,19 @@ public class SelectedEntitySample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("SelectedEntitySample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override
     protected void initInput() {
         DSLKt.onKey(KeyCode.F, "Move", () ->
                 getGameWorld().getSelectedEntity()
-                        .map(e -> (GameEntity)e)
+                        .map(e -> (Entity)e)
                         .ifPresent(e -> e.translateTowards(getInput().getMousePositionWorld(), 5))
         );
     }
@@ -50,13 +50,13 @@ public class SelectedEntitySample extends GameApplication {
     @Override
     protected void initGame() {
         // 2. create entity and attach to world using fluent API
-        GameEntity e1 = Entities.builder()
+        Entity e1 = Entities.builder()
                 .at(100, 100)
                 .viewFromNode(new Rectangle(40, 40, Color.BLUE))
                 .with(new SelectableComponent(true))
                 .buildAndAttach();
 
-        GameEntity e2 = Entities.builder()
+        Entity e2 = Entities.builder()
                 .at(300, 100)
                 .viewFromNode(new Rectangle(40, 40, Color.RED))
                 .with(new SelectableComponent(true))

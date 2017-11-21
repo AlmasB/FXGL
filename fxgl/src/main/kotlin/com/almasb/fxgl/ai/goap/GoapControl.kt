@@ -6,11 +6,10 @@
 
 package com.almasb.fxgl.ai.goap
 
-import com.almasb.fxgl.ecs.Control
-import com.almasb.fxgl.ecs.Entity
-import com.almasb.fxgl.ecs.component.Required
-import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.Control
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.component.PositionComponent
+import com.almasb.fxgl.entity.component.Required
 import java.util.*
 
 /**
@@ -42,22 +41,16 @@ class GoapControl(private val agent: GoapAgent // this is the implementing class
     private val performActionState: FSMState
 
     private val availableActions = HashSet(actions)
-    private var currentActions: Queue<GoapAction>
+    private var currentActions: Queue<GoapAction> = ArrayDeque<GoapAction>()
 
     private lateinit var position: PositionComponent
 
     init {
-        currentActions = ArrayDeque<GoapAction>()
-
         idleState = createIdleState()
         moveToState = createMoveToState()
         performActionState = createPerformActionState()
 
         stateMachine.pushState(idleState)
-    }
-
-    override fun onAdded(entity: Entity) {
-        position = Entities.getPosition(entity)
     }
 
     private var tpf: Double = 0.0

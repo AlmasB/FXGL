@@ -1,6 +1,6 @@
 package client.game.collision;
 
-import com.almasb.fxgl.annotation.AddCollisionHandler;
+import com.almasb.fxgl.physics.AddCollisionHandler;
 import com.almasb.fxgl.physics.CollisionHandler;
 
 /**

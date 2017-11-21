@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * Shows how to init a basic game object and attach it to the world
- * using predefined GameEntity.
+ * using predefined Entity.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -30,12 +30,12 @@ public class ConsoleSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ConsoleSample");
         settings.setVersion("0.1");
-        settings.setFullScreen(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
+
+
+
+
+
+
     }
 
     @Override

@@ -31,10 +31,10 @@ public class ArcadeShopSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("ArcadeShopSample");
         settings.setVersion("0.1");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setCloseConfirmation(false);
-        settings.setProfilingEnabled(false);
+
+
+
+
     }
 
     private ArcadeShopState shopState;

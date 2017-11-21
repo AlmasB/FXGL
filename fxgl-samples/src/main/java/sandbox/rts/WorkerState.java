@@ -10,20 +10,20 @@ import com.almasb.fxgl.ai.fsm.State;
 import com.almasb.fxgl.ai.msg.Telegram;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.Entity;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-public enum WorkerState implements State<GameEntity> {
+public enum WorkerState implements State<Entity> {
 
     IDLE() {
         @Override
-        public void update(GameEntity entity) {
+        public void update(Entity entity) {
             FXGL.getApp()
                     .getGameWorld()
                     .getClosestEntity(entity, e -> {
-                        return Entities.getType(e).isType(RTSSampleType.GOLD_MINE) &&
+                        return e.isType(RTSSampleType.GOLD_MINE) &&
                                 !e.getComponent(GoldMineComponent.class).getValue().isFull();
                     })
                     .ifPresent(goldMine -> {
@@ -35,8 +35,8 @@ public enum WorkerState implements State<GameEntity> {
 
     WALK() {
         @Override
-        public void update(GameEntity entity) {
-            GameEntity target = entity.getProperty("target");
+        public void update(Entity entity) {
+            Entity target = entity.getProperty("target");
 
             entity.translate(target.getPosition()
                             .subtract(entity.getPosition())
@@ -58,8 +58,8 @@ public enum WorkerState implements State<GameEntity> {
 
     GATHER_GOLD() {
         @Override
-        public void enter(GameEntity entity) {
-            GameEntity target = entity.getProperty("target");
+        public void enter(Entity entity) {
+            Entity target = entity.getProperty("target");
             GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
 
             if (mine.isFull()) {
@@ -72,14 +72,14 @@ public enum WorkerState implements State<GameEntity> {
         }
 
         @Override
-        public void update(GameEntity entity) {
+        public void update(Entity entity) {
             Backpack backpack = entity.getComponent(BackpackComponent.class).getValue();
 
             backpack.addGold(1);
 
             if (backpack.getGold() == 150) {
                 entity.getView().setVisible(true);
-                GameEntity target = entity.getProperty("target");
+                Entity target = entity.getProperty("target");
                 GoldMine mine = target.getComponent(GoldMineComponent.class).getValue();
                 mine.onEndGathering();
 
@@ -91,7 +91,7 @@ public enum WorkerState implements State<GameEntity> {
 
     DEPOSIT_GOLD() {
         @Override
-        public void update(GameEntity entity) {
+        public void update(Entity entity) {
             Backpack backpack = entity.getComponent(BackpackComponent.class).getValue();
 
             FXGL.getApp().getGameState().increment("gold", backpack.getGold());
@@ -102,21 +102,21 @@ public enum WorkerState implements State<GameEntity> {
         }
     };
 
-    void changeState(GameEntity entity, WorkerState state) {
+    void changeState(Entity entity, WorkerState state) {
         entity.getControl(FSMControl.class).changeState(state);
     }
 
     @Override
-    public void enter(GameEntity entity) {}
+    public void enter(Entity entity) {}
 
     @Override
-    public void update(GameEntity entity) {}
+    public void update(Entity entity) {}
 
     @Override
-    public void exit(GameEntity entity) {}
+    public void exit(Entity entity) {}
 
     @Override
-    public boolean onMessage(GameEntity entity, Telegram telegram) {
+    public boolean onMessage(Entity entity, Telegram telegram) {
         return false;
     }
 }

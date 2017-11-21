@@ -8,11 +8,10 @@ package com.almasb.fxgl.entity.component;
 
 import com.almasb.fxgl.core.pool.Pool;
 import com.almasb.fxgl.core.pool.Pools;
-import com.almasb.fxgl.ecs.Component;
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.ecs.serialization.SerializableComponent;
+import com.almasb.fxgl.entity.Component;
+import com.almasb.fxgl.entity.CopyableComponent;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.serialization.SerializableComponent;
 import com.almasb.fxgl.io.serialization.Bundle;
 import com.almasb.fxgl.physics.CollisionResult;
 import com.almasb.fxgl.physics.HitBox;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
+@CoreComponent
 @Required(PositionComponent.class)
 public class BoundingBoxComponent extends Component
         implements SerializableComponent, CopyableComponent<BoundingBoxComponent> {
@@ -499,8 +499,8 @@ public class BoundingBoxComponent extends Component
      * @return true iff entity is completely outside given bounds
      */
     public final boolean isOutside(double minX, double minY, double maxX, double maxY) {
-        return getPositionX() + getMinXLocal() + getWidth() < minX || getPositionX() + getMinXLocal() > maxX
-                || getPositionY() + getMinYLocal() + getHeight() < minY || getPositionY() + getMinYLocal() > maxY;
+        return getPositionX() + getMinXLocal() + getWidth() <= minX || getPositionX() + getMinXLocal() >= maxX
+                || getPositionY() + getMinYLocal() + getHeight() <= minY || getPositionY() + getMinYLocal() >= maxY;
     }
 
     /**
@@ -512,8 +512,8 @@ public class BoundingBoxComponent extends Component
      * @return rectangular area
      */
     public final Rectangle2D range(double width, double height) {
-        double minX = getPositionX() - width;
-        double minY = getPositionY() - height;
+        double minX = getMinXWorld() - width;
+        double minY = getMinYWorld() - height;
         double maxX = getMaxXWorld() + width;
         double maxY = getMaxYWorld() + height;
 
@@ -533,6 +533,7 @@ public class BoundingBoxComponent extends Component
     @Override
     public BoundingBoxComponent copy() {
         // hit boxes are immutable so can safely reuse them
+        // TODO: but we can't use same objects because of bind()
         return new BoundingBoxComponent(hitBoxes.toArray(new HitBox[0]));
     }
 

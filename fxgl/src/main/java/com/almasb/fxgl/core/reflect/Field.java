@@ -10,10 +10,7 @@
 
 package com.almasb.fxgl.core.reflect;
 
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /** Provides information about, and access to, a single field of a class or interface.
  * @author nexsoftware */
@@ -40,17 +37,8 @@ public final class Field {
         return field.getDeclaringClass();
     }
 
-    public boolean isAccessible() {
-        return field.isAccessible();
-    }
-
     public void setAccessible(boolean accessible) {
         field.setAccessible(accessible);
-    }
-
-    /** Return true if the field does not include any of the {@code private}, {@code protected}, or {@code public} modifiers. */
-    public boolean isDefaultAccess() {
-        return !isPrivate() && !isProtected() && !isPublic();
     }
 
     /** Return true if the field includes the {@code final} modifier. */
@@ -76,59 +64,6 @@ public final class Field {
     /** Return true if the field includes the {@code static} modifier. */
     public boolean isStatic() {
         return Modifier.isStatic(field.getModifiers());
-    }
-
-    /** Return true if the field includes the {@code transient} modifier. */
-    public boolean isTransient() {
-        return Modifier.isTransient(field.getModifiers());
-    }
-
-    /** Return true if the field includes the {@code volatile} modifier. */
-    public boolean isVolatile() {
-        return Modifier.isVolatile(field.getModifiers());
-    }
-
-    /** Return true if the field is a synthetic field. */
-    public boolean isSynthetic() {
-        return field.isSynthetic();
-    }
-
-    /** If the type of the field is parameterized, returns the Class object representing the parameter type at the specified index,
-     * null otherwise. */
-    public Class getElementType(int index) {
-        Type genericType = field.getGenericType();
-        if (genericType instanceof ParameterizedType) {
-            Type[] actualTypes = ((ParameterizedType) genericType).getActualTypeArguments();
-            if (actualTypes.length - 1 >= index) {
-                Type actualType = actualTypes[index];
-                if (actualType instanceof Class)
-                    return (Class) actualType;
-                else if (actualType instanceof ParameterizedType)
-                    return (Class) ((ParameterizedType) actualType).getRawType();
-                else if (actualType instanceof GenericArrayType) {
-                    Type componentType = ((GenericArrayType) actualType).getGenericComponentType();
-                    if (componentType instanceof Class)
-                        return ArrayReflection.newInstance((Class) componentType, 0).getClass();
-                }
-            }
-        }
-        return null;
-    }
-
-    /** Returns true if the field includes an annotation of the provided class type. */
-    public boolean isAnnotationPresent(Class<? extends java.lang.annotation.Annotation> annotationType) {
-        return field.isAnnotationPresent(annotationType);
-    }
-
-    /** Returns an array of {@link Annotation} objects reflecting all annotations declared by this field,
-     * or an empty array if there are none. Does not include inherited annotations. */
-    public Annotation[] getDeclaredAnnotations() {
-        java.lang.annotation.Annotation[] annotations = field.getDeclaredAnnotations();
-        Annotation[] result = new Annotation[annotations.length];
-        for (int i = 0; i < annotations.length; i++) {
-            result[i] = new Annotation(annotations[i]);
-        }
-        return result;
     }
 
     /** Returns an {@link Annotation} object reflecting the annotation provided, or null of this field doesn't

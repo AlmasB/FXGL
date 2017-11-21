@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.input
 
+import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
@@ -75,6 +76,15 @@ enum class InputModifier {
             SHIFT -> event.isShiftDown
             ALT   -> event.isAltDown
             else  -> !(event.isAltDown || event.isShiftDown || event.isControlDown)
+        }
+    }
+
+    fun toKeyCode(): KeyCode {
+        return when (this) {
+            CTRL -> KeyCode.CONTROL
+            SHIFT -> KeyCode.SHIFT
+            ALT -> KeyCode.ALT
+            else -> KeyCode.ALPHANUMERIC
         }
     }
 }

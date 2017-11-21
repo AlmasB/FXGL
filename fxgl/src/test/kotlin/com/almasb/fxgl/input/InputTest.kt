@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.input
 
-import com.almasb.fxgl.annotation.OnUserAction
-import com.almasb.fxgl.io.serialization.Bundle
 import com.almasb.fxgl.saving.UserProfile
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -17,8 +15,7 @@ import javafx.scene.input.MouseButton
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
@@ -37,7 +34,7 @@ class InputTest {
 
     @Test
     fun `Test registering input does not affect mocking`() {
-        assertThat(input.registerInput, `is`(true))
+        assertTrue(input.registerInput)
 
         var calls = 0
 
@@ -69,7 +66,7 @@ class InputTest {
 
     @Test
     fun `Test processing input affects mocking`() {
-        assertThat(input.processInput, `is`(true))
+        assertTrue(input.processInput)
 
         var calls = 0
 
@@ -101,20 +98,20 @@ class InputTest {
     @Test
     fun `Mocking must not trigger isHeld`() {
         // keys
-        assertThat(input.isHeld(KeyCode.A), `is`(false))
+        assertFalse(input.isHeld(KeyCode.A))
 
         input.mockKeyPress(KeyCode.A)
 
-        assertThat(input.isHeld(KeyCode.A), `is`(false))
+        assertFalse(input.isHeld(KeyCode.A))
 
         input.mockKeyRelease(KeyCode.A)
 
         // buttons
-        assertThat(input.isHeld(MouseButton.PRIMARY), `is`(false))
+        assertFalse(input.isHeld(MouseButton.PRIMARY))
 
         input.mockButtonPress(MouseButton.PRIMARY, 0.0, 0.0)
 
-        assertThat(input.isHeld(MouseButton.PRIMARY), `is`(false))
+        assertFalse(input.isHeld(MouseButton.PRIMARY))
 
         input.mockButtonRelease(MouseButton.PRIMARY)
     }
@@ -165,7 +162,7 @@ class InputTest {
 
         val trigger = input.bindings[action]
 
-        assertThat(trigger is KeyTrigger, `is`(true))
+        assertTrue(trigger is KeyTrigger)
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
     }
 
@@ -179,7 +176,7 @@ class InputTest {
 
         val trigger = input.bindings[action]
 
-        assertThat(trigger is MouseTrigger, `is`(true))
+        assertTrue(trigger is MouseTrigger)
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.PRIMARY))
     }
 
@@ -247,7 +244,7 @@ class InputTest {
 
         val trigger = input.bindings[action]
 
-        assertThat(trigger is KeyTrigger, `is`(true))
+        assertTrue(trigger is KeyTrigger)
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.C))
     }
 
@@ -267,7 +264,7 @@ class InputTest {
 
         val trigger = input.bindings[action]
 
-        assertThat(trigger is MouseTrigger, `is`(true))
+        assertTrue(trigger is MouseTrigger)
         assertThat((trigger as MouseTrigger).button, `is`(MouseButton.MIDDLE))
     }
 
@@ -283,7 +280,7 @@ class InputTest {
 
         val trigger = input.bindings.values.single()
 
-        assertThat(trigger is KeyTrigger, `is`(true))
+        assertTrue(trigger is KeyTrigger)
         assertThat((trigger as KeyTrigger).key, `is`(KeyCode.A))
     }
 
@@ -342,8 +339,10 @@ class InputTest {
     @Test
     fun `Serialization`() {
         val action = object : UserAction("Action") {}
+        val action2 = object : UserAction("Action2") {}
 
         input.addAction(action, KeyCode.A)
+        input.addAction(action2, MouseButton.PRIMARY)
 
         val profile = UserProfile("title", "version")
 
@@ -351,9 +350,40 @@ class InputTest {
 
         val input2 = Input()
         input2.addAction(action, KeyCode.K)
+        input2.addAction(action2, KeyCode.C)
         input2.load(profile)
 
         assertThat(input2.getTriggerName(action), `is`("A"))
+        assertThat(input2.getTriggerName(action2), `is`("LMB"))
+    }
+
+    @Test
+    fun `Deserialize does not fail if actions are missing`() {
+        assertAll(
+                Executable {
+                    val action = object : UserAction("Action") {}
+
+                    val profile = UserProfile("title", "version")
+
+                    input.save(profile)
+
+                    val input2 = Input()
+                    input2.addAction(action, KeyCode.K)
+                    input2.load(profile)
+                },
+                Executable {
+                    val action = object : UserAction("Action") {}
+
+                    input.addAction(action, KeyCode.A)
+
+                    val profile = UserProfile("title", "version")
+
+                    input.save(profile)
+
+                    val input2 = Input()
+                    input2.load(profile)
+                }
+        )
     }
 
     @OnUserAction(name = "TestAction", type = ActionType.ON_ACTION_BEGIN)

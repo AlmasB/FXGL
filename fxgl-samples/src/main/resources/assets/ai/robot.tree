@@ -1,0 +1,26 @@
+#
+# Patrol tree
+#
+
+# Alias definitions
+
+# Conditions
+import isInDanger? : "sandbox.robots.DangerCondition"
+
+# Actions
+import moveLeft : "sandbox.robots.MoveLeftAction"
+import moveRight : "sandbox.robots.MoveRightAction"
+import idle : "sandbox.robots.IdleAction"
+
+# Tree definition (note that root is optional)
+root
+    selector
+        sequence
+            isInDanger?
+            randomSelector
+                moveRight
+                moveLeft
+        idle
+
+
+

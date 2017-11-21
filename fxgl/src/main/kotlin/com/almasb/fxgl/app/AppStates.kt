@@ -6,13 +6,13 @@
 
 package com.almasb.fxgl.app
 
-import com.almasb.fxgl.annotation.AddCollisionHandler
-import com.almasb.fxgl.annotation.AnnotationParser
-import com.almasb.fxgl.annotation.SetEntityFactory
+import com.almasb.fxgl.physics.AddCollisionHandler
+import com.almasb.fxgl.entity.SetEntityFactory
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.ecs.GameWorld
 import com.almasb.fxgl.entity.EntityFactory
+import com.almasb.fxgl.entity.GameWorld
+import com.almasb.fxgl.event.SetEventHandler
 import com.almasb.fxgl.event.Subscriber
 import com.almasb.fxgl.gameplay.GameState
 import com.almasb.fxgl.input.UserAction
@@ -137,10 +137,17 @@ internal constructor(private val app: GameApplication,
             private val annotationParser = AnnotationParser(FXGL.getApp().javaClass)
 
             init {
+                log.debug("Parsing annotations")
+
                 annotationParser.parse(
                         SetEntityFactory::class.java,
+                        SetEventHandler::class.java,
                         AddCollisionHandler::class.java
                 )
+
+                annotationParser.getClasses(SetEventHandler::class.java).firstOrNull()?.let {
+                    FXGL.getEventBus().scanForHandlers(ReflectionUtils.newInstance(it))
+                }
             }
         }
 
@@ -181,6 +188,9 @@ internal constructor(private val app: GameApplication,
             val vars = hashMapOf<String, Any>()
             app.initGameVars(vars)
             vars.forEach { name, value -> app.gameState.put(name, value) }
+
+            // we just created new game state vars, so inform achievement manager about new vars
+            app.gameplay.achievementManager.rebindAchievements()
 
             annotationParser.getClasses(SetEntityFactory::class.java).firstOrNull()?.let {
                 app.gameWorld.setEntityFactory(ReflectionUtils.newInstance(it) as EntityFactory)

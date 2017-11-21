@@ -6,11 +6,11 @@
 
 package com.almasb.fxgl.parser.text
 
-import com.almasb.fxgl.annotation.SpawnSymbol
+import com.almasb.fxgl.entity.SpawnSymbol
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.reflect.ReflectionUtils
-import com.almasb.fxgl.ecs.Entity
+import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntitySpawner
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.entity.TextEntityFactory

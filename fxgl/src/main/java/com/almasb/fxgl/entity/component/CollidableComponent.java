@@ -6,9 +6,7 @@
 
 package com.almasb.fxgl.entity.component;
 
-import com.almasb.fxgl.ecs.CopyableComponent;
-import com.almasb.fxgl.ecs.component.BooleanComponent;
-import com.almasb.fxgl.ecs.component.Required;
+import com.almasb.fxgl.entity.CopyableComponent;
 
 /**
  * Marks an entity as collidable.

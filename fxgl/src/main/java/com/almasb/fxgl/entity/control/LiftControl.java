@@ -7,10 +7,8 @@
 package com.almasb.fxgl.entity.control;
 
 import com.almasb.fxgl.app.FXGL;
-import com.almasb.fxgl.ecs.Control;
-import com.almasb.fxgl.ecs.Entity;
-import com.almasb.fxgl.ecs.component.Required;
-import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.LocalTimer;
 import javafx.util.Duration;
 
@@ -19,7 +17,6 @@ import javafx.util.Duration;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-@Required(PositionComponent.class)
 public class LiftControl extends Control {
 
     private LocalTimer timer;
@@ -27,8 +24,6 @@ public class LiftControl extends Control {
     private double distance;
     private boolean goingUp;
     private double speed;
-
-    private PositionComponent position;
 
     /**
      * Constructs lift control (moving vertically).
@@ -45,7 +40,6 @@ public class LiftControl extends Control {
 
     @Override
     public void onAdded(Entity entity) {
-        position = entity.getComponent(PositionComponent.class);
         timer = FXGL.newLocalTimer();
         speed = distance / duration.toSeconds();
     }
@@ -57,6 +51,6 @@ public class LiftControl extends Control {
             timer.capture();
         }
 
-        position.translateY(goingUp ? -speed * tpf : speed * tpf);
+        entity.translateY(goingUp ? -speed * tpf : speed * tpf);
     }
 }
