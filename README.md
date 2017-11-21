@@ -66,7 +66,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.3.9</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -83,7 +83,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.3.9'
+    compile 'com.github.almasb:fxgl:0.4.0'
 }
 ```
 
@@ -98,4 +98,3 @@ Please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or si
 ## Contact
 [![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
 [![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
-[![Survey](https://img.shields.io/badge/Feedback-Google%20Forms-red.svg)](https://goo.gl/forms/6wrMnOBxTE1fEpOy2)
