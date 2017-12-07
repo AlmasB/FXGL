@@ -20,8 +20,11 @@ import javafx.event.EventType;
  */
 public final class EntityEvent extends Event {
 
-    public static final EventType<EntityEvent> ANY
-            = new EventType<>(Event.ANY, "ENTITY_EVENT");
+    public static final EventType<EntityEvent> ANY = new EventType<>(Event.ANY, "ENTITY_EVENT");
+
+    public static final EventType<EntityEvent> ACTIVATE = new EventType<>(ANY, "ACTIVATE");
+    public static final EventType<EntityEvent> DEATH = new EventType<>(ANY, "DEATH");
+    public static final EventType<EntityEvent> REVIVE = new EventType<>(ANY, "REVIVE");
 
     private Entity triggerEntity;
     private Entity targetEntity;
