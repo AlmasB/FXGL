@@ -68,4 +68,21 @@ public final class JavaScriptParser {
             throw new IllegalArgumentException("Function call failed: " + e);
         }
     }
+
+    /**
+     * @param name function name
+     * @return true if this script has a function with given name
+     */
+    public boolean hasFunction(String name) {
+
+        // https://stackoverflow.com/questions/20578299/checking-if-a-function-exists-within-java-scriptengine
+
+        try {
+            String test = "typeof " + name
+                    + " === 'function' ? java.lang.Boolean.TRUE : java.lang.Boolean.FALSE";
+            return (Boolean) engine.eval(test);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Function check failed: " + e);
+        }
+    }
 }
