@@ -283,18 +283,22 @@ public final class GameScene extends FXGLScene
         return group;
     }
 
+    private boolean wasDirty = false;
+
     public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
 
         boolean dirty = drawables.isNotEmpty() || particles.isNotEmpty();
 
-        if (dirty) {
+        if (dirty || wasDirty) {
             particlesGC.setGlobalAlpha(1);
             particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
 
             // TODO: this is very costly, do we know exact dimensions to clear
             // OR can we do this off the render thread inbetween frames?
             particlesGC.clearRect(0, 0, getWidth(), getHeight());
+
+            wasDirty = false;
         }
 
         for (Entity e : drawables) {
@@ -308,6 +312,8 @@ public final class GameScene extends FXGLScene
         for (ParticleControl particle : particles) {
             particle.renderParticles(particlesGC, getViewport().getOrigin());
         }
+
+        wasDirty = dirty;
     }
 
     public void clear() {
