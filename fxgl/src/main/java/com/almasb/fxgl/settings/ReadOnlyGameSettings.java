@@ -45,6 +45,7 @@ public class ReadOnlyGameSettings {
     protected Credits credits = new Credits(Collections.emptyList());
     protected EnumSet<MenuItem> enabledMenuItems = EnumSet.noneOf(MenuItem.class);
     protected StageStyle stageStyle = StageStyle.DECORATED;
+    protected boolean manualResizeEnabled = false;
 
     /* CUSTOMIZABLE SERVICES BELOW */
 
@@ -95,6 +96,7 @@ public class ReadOnlyGameSettings {
         this.enabledMenuItems = copy.enabledMenuItems;
         this.singleStep = copy.singleStep;
         this.stageStyle = copy.stageStyle;
+        this.manualResizeEnabled = copy.manualResizeEnabled;
 
         this.sceneFactory = copy.sceneFactory;
         this.dialogFactory = copy.dialogFactory;
@@ -137,12 +139,16 @@ public class ReadOnlyGameSettings {
         return profilingEnabled;
     }
 
-    public boolean isSingleStep() {
+    public final boolean isSingleStep() {
         return singleStep;
     }
 
     public final boolean isCloseConfirmation() {
         return closeConfirmation;
+    }
+
+    public final boolean isManualResizeEnabled() {
+        return manualResizeEnabled;
     }
 
     public final ApplicationMode getApplicationMode() {

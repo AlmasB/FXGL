@@ -167,6 +167,16 @@ public final class GameSettings extends ReadOnlyGameSettings {
         this.enabledMenuItems = items;
     }
 
+    /**
+     * If enabled, users can drag the corner of the main window
+     * to resize it and the game.
+     *
+     * @defaultValue false
+     */
+    public void setManualResizeEnabled(boolean enabled) {
+        this.manualResizeEnabled = enabled;
+    }
+
     public void setStageStyle(StageStyle stageStyle) {
         this.stageStyle = stageStyle;
     }
