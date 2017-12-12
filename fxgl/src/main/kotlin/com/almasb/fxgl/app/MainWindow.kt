@@ -7,10 +7,13 @@ import com.almasb.fxgl.settings.ReadOnlyGameSettings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.geometry.BoundingBox
 import javafx.scene.Scene
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
@@ -38,7 +41,8 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
 
     private val scaledWidth: DoubleProperty = SimpleDoubleProperty()
     private val scaledHeight: DoubleProperty = SimpleDoubleProperty()
-    private val scaleRatio: DoubleProperty = SimpleDoubleProperty()
+    private val scaleRatioX: DoubleProperty = SimpleDoubleProperty()
+    private val scaleRatioY: DoubleProperty = SimpleDoubleProperty()
 
     private val keyHandler = EventHandler<KeyEvent> {
         FXGL.getApp().stateMachine.currentState.input.onKeyEvent(it)
@@ -46,7 +50,8 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
 
     private val mouseHandler = EventHandler<MouseEvent> { e ->
         currentScene.value?.let {
-            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(e, it.viewport, scaleRatio.value)
+            // TODO: scaleRatio x/y
+            FXGL.getApp().stateMachine.currentState.input.onMouseEvent(e, it.viewport, scaleRatioX.value)
         }
     }
 
@@ -81,6 +86,16 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
     }
 
     /**
+     * TODO: compute which is "better": width or height
+     * and then resize to that
+     */
+    fun fixAspectRatio() {
+        val ratio = settings.width.toDouble() / settings.height
+
+        stage.height = stage.width / ratio
+    }
+
+    /**
      * Configure main stage based on user settings.
      */
     private fun initStage() {
@@ -88,7 +103,8 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
             scene = fxScene
 
             title = "${settings.title} ${settings.version}"
-            isResizable = false
+
+            isResizable = settings.isManualResizeEnabled
 
             initStyle(settings.stageStyle)
 
@@ -126,40 +142,64 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
     }
 
     /**
-     * Computes scaled size of the output based on screen and target
+     * Computes scaled size of the output based on stage and target
      * resolutions.
      */
     private fun computeScaledSize() {
         var newW = settings.width.toDouble()
         var newH = settings.height.toDouble()
-        val bounds = if (settings.isFullScreen) Screen.getPrimary().bounds else Screen.getPrimary().visualBounds
 
-        if (newW > bounds.width || newH > bounds.height) {
-            log.debug("App size > screen size")
+        val bounds = BoundingBox(0.0, 0.0, stage.width, stage.height)
 
-            val ratio = newW / newH
+        // TODO: resize stage before computing in case screen size < stage size
 
-            for (newWidth in bounds.width.toInt() downTo 1) {
-                if (newWidth / ratio <= bounds.height) {
-                    newW = newWidth.toDouble()
-                    newH = newWidth / ratio
-                    break
-                }
-            }
-        }
+        //val bounds = if (settings.isFullScreen) Screen.getPrimary().bounds else Screen.getPrimary().visualBounds
+
+//        if (newW > bounds.width || newH > bounds.height) {
+//            log.debug("App size > screen size")
+//
+//            val ratio = newW / newH
+//
+//            for (newWidth in bounds.width.toInt() downTo 1) {
+//                if (newWidth / ratio <= bounds.height) {
+//                    newW = newWidth.toDouble()
+//                    newH = newWidth / ratio
+//                    break
+//                }
+//            }
+//        }
+
+        newW = bounds.width
+        newH = bounds.height
+
+        if (newW.isNaN())
+            newW = settings.width.toDouble()
+
+        if (newH.isNaN())
+            newH = settings.height.toDouble()
 
         scaledWidth.set(newW)
         scaledHeight.set(newH)
-        scaleRatio.set(newW / settings.width)
+        scaleRatioX.set(scaledWidth.value / settings.width)
+        scaleRatioY.set(scaledHeight.value / settings.height)
 
         log.debug("Target size: ${settings.width.toDouble()} x ${settings.height.toDouble()} @ 1.0")
-        log.debug("New size:    $newW x $newH @ ${scaleRatio.value}")
+        log.debug("New size:    $newW x $newH @ ${scaleRatioX.value}")
     }
 
     private fun show() {
         log.debug("Opening main window")
 
         stage.show()
+
+        // platforms offsets
+        val offsetW = stage.width - settings.width
+        val offsetH = stage.height - settings.height
+
+        scaledWidth.bind(stage.widthProperty().subtract(offsetW))
+        scaledHeight.bind(stage.heightProperty().subtract(offsetH))
+        scaleRatioX.bind(scaledWidth.divide(settings.width))
+        scaleRatioY.bind(scaledHeight.divide(settings.height))
 
         log.debug("Root size:  " + stage.scene.root.layoutBounds.width + "x" + stage.scene.root.layoutBounds.height)
         log.debug("Scene size: " + stage.scene.width + "x" + stage.scene.height)
@@ -193,7 +233,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
      * @param scene the scene
      */
     fun registerScene(scene: FXGLScene) {
-        scene.bindSize(scaledWidth, scaledHeight, scaleRatio)
+        scene.bindSize(scaledWidth, scaledHeight, scaleRatioX, scaleRatioY)
         scene.appendCSS(FXGLAssets.UI_CSS)
         scenes.add(scene)
     }

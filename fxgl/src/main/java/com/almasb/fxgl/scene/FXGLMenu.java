@@ -37,6 +37,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -44,6 +45,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static com.almasb.fxgl.app.FXGL.getSettings;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
 
 /**
@@ -325,8 +327,20 @@ public abstract class FXGLMenu extends FXGLScene {
 
         FXGL.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
 
+        HBox boxSettings = new HBox();
+
+        if (getSettings().isManualResizeEnabled()) {
+            Button btnFixRatio = FXGL.getUIFactory().newButton("Fix Ratio");
+            btnFixRatio.setOnAction(e -> {
+                listener.fixAspectRatio();
+            });
+
+            boxSettings.getChildren().add(btnFixRatio);
+        }
+
         return new MenuContent(
-                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox)
+                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox),
+                boxSettings
         );
     }
 
