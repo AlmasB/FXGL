@@ -169,7 +169,7 @@ class Input : UserProfileSavable {
      * @param viewport current viewport where the even occurred
      * @param scaleRatio scale ratio of the display where the event occurred
      */
-    fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport, scaleRatio: Double) {
+    fun onMouseEvent(mouseEvent: MouseEvent, viewport: Viewport, scaleRatioX: Double, scaleRatioY: Double) {
         if (!registerInput)
             return
 
@@ -184,8 +184,8 @@ class Input : UserProfileSavable {
         sceneX = mouseEvent.sceneX
         sceneY = mouseEvent.sceneY
 
-        gameX = sceneX / scaleRatio + viewport.getX()
-        gameY = sceneY / scaleRatio + viewport.getY()
+        gameX = sceneX / scaleRatioX + viewport.getX()
+        gameY = sceneY / scaleRatioY + viewport.getY()
     }
 
     private fun isTriggered(trigger: Trigger, fxEvent: InputEvent): Boolean {
