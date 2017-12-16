@@ -91,6 +91,14 @@ dependencies {
 
 Download latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases)
 
+## Notable Users
+
+* University of Brighton, UK
+* University of Nottingham, UK
+* Walton High School, USA
+
+If your institution wants to use / is using FXGL, drop me an email to discuss how FXGL can aid your course.
+
 ## Contribution
 
 Please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or simply star the repo to show interest.
