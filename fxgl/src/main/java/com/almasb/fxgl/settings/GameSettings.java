@@ -98,13 +98,14 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
-     * Setting to true will start the game in fullscreen mode.
+     * Setting to true will allow the game to be able to enter full screen
+     * from the menu.
      *
      * @param b fullscreen flag
      * @defaultValue false
      */
-    public void setFullScreen(boolean b) {
-        fullScreen = b;
+    public void setFullScreenAllowed(boolean b) {
+        fullScreenAllowed = b;
     }
 
     /**

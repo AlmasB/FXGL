@@ -17,7 +17,7 @@ public class FullscreenTest extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(1920);
         settings.setHeight(1080);
-        settings.setFullScreen(true);
+        settings.setFullScreenAllowed(true);
     }
 
     @Override

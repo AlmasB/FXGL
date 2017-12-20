@@ -7,7 +7,9 @@
 package com.almasb.fxgl.scene.menu
 
 import com.almasb.fxgl.util.Language
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 
 /**
@@ -26,4 +28,8 @@ class MenuSettings {
     fun getLanguage(): Language = language.get()
 
     fun languageProperty(): ObjectProperty<Language> = language
+
+    private val fullScreen = SimpleBooleanProperty(false)
+
+    fun fullScreenProperty(): BooleanProperty = fullScreen
 }

@@ -37,7 +37,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -317,6 +316,8 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
+     * TODO: load default settings from profile
+     *
      * @return menu content with video settings
      */
     protected final MenuContent createContentVideo() {
@@ -327,7 +328,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         FXGL.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
 
-        HBox boxSettings = new HBox();
+        VBox vbox = new VBox();
 
         if (getSettings().isManualResizeEnabled()) {
             Button btnFixRatio = FXGL.getUIFactory().newButton("Fix Ratio");
@@ -335,12 +336,20 @@ public abstract class FXGLMenu extends FXGLScene {
                 listener.fixAspectRatio();
             });
 
-            boxSettings.getChildren().add(btnFixRatio);
+            vbox.getChildren().add(btnFixRatio);
+        }
+
+        if (getSettings().isFullScreenAllowed()) {
+            CheckBox cbFullScreen = FXGL.getUIFactory().newCheckBox();
+            cbFullScreen.setSelected(false);
+            cbFullScreen.selectedProperty().bindBidirectional(FXGL.getMenuSettings().fullScreenProperty());
+
+            vbox.getChildren().add(new HBox(25, FXGL.getUIFactory().newText("Fullscreen: "), cbFullScreen));
         }
 
         return new MenuContent(
                 new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox),
-                boxSettings
+                vbox
         );
     }
 

@@ -30,7 +30,7 @@ public class AudioPlayerTest extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("AudioPlayerTest");
-        settings.setFullScreen(false);
+        settings.setFullScreenAllowed(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(true);

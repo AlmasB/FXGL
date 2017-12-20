@@ -34,7 +34,7 @@ public class ReadOnlyGameSettings {
     protected String version = "0.0";
     protected int width = 800;
     protected int height = 600;
-    protected boolean fullScreen = false;
+    protected boolean fullScreenAllowed = false;
     protected boolean introEnabled = false;
     protected boolean menuEnabled = false;
     protected boolean profilingEnabled = false;
@@ -85,7 +85,7 @@ public class ReadOnlyGameSettings {
         this.version = copy.version;
         this.width = copy.width;
         this.height = copy.height;
-        this.fullScreen = copy.fullScreen;
+        this.fullScreenAllowed = copy.fullScreenAllowed;
         this.introEnabled = copy.introEnabled;
         this.menuEnabled = copy.menuEnabled;
         this.profilingEnabled = copy.profilingEnabled;
@@ -123,8 +123,8 @@ public class ReadOnlyGameSettings {
         return height;
     }
 
-    public final boolean isFullScreen() {
-        return fullScreen;
+    public final boolean isFullScreenAllowed() {
+        return fullScreenAllowed;
     }
 
     public final boolean isIntroEnabled() {
@@ -197,7 +197,7 @@ public class ReadOnlyGameSettings {
                 "Version: " + version + '\n' +
                 "Width: " + width + '\n' +
                 "Height: " + height + '\n' +
-                "Fullscreen: " + fullScreen + '\n' +
+                "Fullscreen: " + fullScreenAllowed + '\n' +
                 "Intro: " + introEnabled + '\n' +
                 "Menus: " + menuEnabled + '\n' +
                 "Profiling: " + profilingEnabled + '\n' +

@@ -4,6 +4,7 @@ import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.scene.FXGLScene
 import com.almasb.fxgl.settings.ReadOnlyGameSettings
+import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.SimpleDoubleProperty
@@ -76,7 +77,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         var newW = settings.width.toDouble()
         var newH = settings.height.toDouble()
 
-        val bounds = if (settings.isFullScreen) Screen.getPrimary().bounds else Screen.getPrimary().visualBounds
+        val bounds = if (settings.isFullScreenAllowed) Screen.getPrimary().bounds else Screen.getPrimary().visualBounds
 
         if (newW > bounds.width || newH > bounds.height) {
             log.debug("Target size > screen size")
@@ -158,11 +159,14 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
 
             icons.add(FXGLAssets.UI_ICON)
 
-            if (settings.isFullScreen) {
+            if (settings.isFullScreenAllowed) {
                 fullScreenExitHint = ""
                 // don't let the user exit FS mode manually
                 fullScreenExitKeyCombination = KeyCombination.NO_MATCH
-                isFullScreen = true
+            }
+
+            FXGL.getMenuSettings().fullScreenProperty().addListener { _, _, fullscreenNow ->
+                isFullScreen = fullscreenNow
             }
 
             sizeToScene()
@@ -182,8 +186,12 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         windowBorderWidth = stage.width - scaledWidth.value
         windowBorderHeight = stage.height - scaledHeight.value
 
-        scaledWidth.bind(stage.widthProperty().subtract(windowBorderWidth))
-        scaledHeight.bind(stage.heightProperty().subtract(windowBorderHeight))
+        scaledWidth.bind(stage.widthProperty().subtract(
+                Bindings.`when`(stage.fullScreenProperty()).then(0).otherwise(windowBorderWidth)
+        ))
+        scaledHeight.bind(stage.heightProperty().subtract(
+                Bindings.`when`(stage.fullScreenProperty()).then(0).otherwise(windowBorderHeight)
+        ))
         scaleRatioX.bind(scaledWidth.divide(settings.width))
         scaleRatioY.bind(scaledHeight.divide(settings.height))
 

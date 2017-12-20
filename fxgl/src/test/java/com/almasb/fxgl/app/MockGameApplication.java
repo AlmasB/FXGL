@@ -64,7 +64,7 @@ public class MockGameApplication extends GameApplication {
         settings.setVersion("0.99");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
-        settings.setFullScreen(false);
+        settings.setFullScreenAllowed(false);
         settings.setProfilingEnabled(false);
         settings.setCloseConfirmation(false);
         settings.setMenuKey(KeyCode.ENTER);
