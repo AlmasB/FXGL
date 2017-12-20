@@ -7,7 +7,6 @@
 package sandbox.scifi;
 
 import com.almasb.fxgl.animation.Animation;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
@@ -17,7 +16,6 @@ import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.view.ParallaxBackgroundView;
 import com.almasb.fxgl.entity.view.ParallaxTexture;
-import com.almasb.fxgl.gameplay.Achievement;
 import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -57,7 +55,7 @@ public class ScifiSample extends GameApplication {
         settings.setHeight(1080);
         settings.setTitle("Feature Showcase");
         settings.setVersion("0.1");
-        settings.setFullScreen(true);
+        settings.setFullScreenAllowed(true);
         settings.setIntroEnabled(true);
         settings.setMenuEnabled(true);
 
