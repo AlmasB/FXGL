@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.core.math;
 
+import com.almasb.fxgl.app.FXGL;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -150,7 +151,7 @@ public final class FXGLMath {
 
     /* RANDOM BEGIN */
 
-    private static final Random random = new RandomXS128();
+    private static final Random random = new RandomXS128(FXGL.getInt("math.random.seed"));
 
     /**
      * @return random object used to generate random sequences
