@@ -151,7 +151,7 @@ public final class FXGLMath {
 
     /* RANDOM BEGIN */
 
-    private static final Random random = new RandomXS128(FXGL.getInt("math.random.seed"));
+    private static final Random random = new RandomXS128();
 
     /**
      * @return random object used to generate random sequences
