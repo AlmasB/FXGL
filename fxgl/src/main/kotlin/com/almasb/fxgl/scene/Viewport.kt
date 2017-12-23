@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.scene
 
+import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.core.math.FXGLMath
 import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
@@ -171,6 +172,13 @@ class Viewport
         this.minY.set(minY)
         this.maxX.set(maxX)
         this.maxY.set(maxY)
+    }
+
+    fun focusOn(entity: Entity) {
+        val newOrigin = entity.center.subtract(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0)
+
+        setX(newOrigin.x)
+        setY(newOrigin.y)
     }
 
     // adapted from https://gamedev.stackexchange.com/questions/1828/realistic-camera-screen-shake-from-explosion
