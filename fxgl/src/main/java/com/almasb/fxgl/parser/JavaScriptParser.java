@@ -69,6 +69,15 @@ public final class JavaScriptParser {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T eval(String script) {
+        try {
+            return (T) engine.eval(script);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Evaluation failed: " + e);
+        }
+    }
+
     /**
      * @param name function name
      * @return true if this script has a function with given name
