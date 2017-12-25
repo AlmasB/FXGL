@@ -6,11 +6,11 @@
 
 package com.almasb.fxgl.event
 
-import com.almasb.fxgl.app.fire
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.parser.JavaScriptParser
+import com.almasb.fxgl.parser.newJSObject
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -80,11 +80,6 @@ class EventBus {
      * Events will be handled on the same thread that fired the event,
      * i.e. synchronous.
      *
-     * <p>
-     *     Note: according to JavaFX doc this must be called on JavaFX Application Thread.
-     *     In reality this doesn't seem to be true.
-     * </p>
-     *
      * @param event the event
      */
     fun fireEvent(event: Event) {
@@ -94,53 +89,24 @@ class EventBus {
     }
 
     /**
+     * Fires the given entity event both as normal Event
+     * and via script handlers.
      *
      * @param eventType e.g. onActivate, onDeath
      */
     fun fireEntityEvent(event: EntityEvent, eventType: String) {
-
-        //val event = EntityEvent(EntityEvent.ACTIVATE, caller, entity)
-
         event.targetEntity.properties.keys()
                 .filter { it.startsWith(eventType) }
                 .forEach { event.setData(it.removePrefix("$eventType."), event.targetEntity.getProperty(it)) }
 
-        fire(event)
+        fireEvent(event)
 
         event.targetEntity.getScriptHandler(eventType).ifPresent {
-            it.callFunction<Void>(eventType, JavaScriptParser.newJSObject(event.data.toMap()))
+            it.callFunction<Void>(eventType, newJSObject(event.data.toMap()
+                    // here we can populate properties common to all events, e.g. entity
+                    .plus("entity".to(event.targetEntity))
+            ))
         }
-
-
-
-//        event.targetEntity.getPropertyOptional<String>(eventType).ifPresent {
-//
-//
-////            if (js == null) {
-////                js = JavaScriptParser(it)
-////            }
-//
-//
-//
-//
-////            var script = "function e() { var obj = {}; "
-////
-////            event.data.forEach {
-////                script += "obj." + it.key + " = " + wrapValue(it.value) + ";"
-////            }
-////
-////            script += "return obj; } e();"
-//
-//
-//
-//            js?.let {
-//
-//            }
-//        }
-    }
-
-    private fun wrapValue(value: Any): String {
-        return if (value is String) "\"$value\"" else "$value"
     }
 
     /**

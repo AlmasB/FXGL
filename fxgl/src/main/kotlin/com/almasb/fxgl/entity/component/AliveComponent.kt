@@ -37,45 +37,7 @@ class AliveComponent
             val event = EntityEvent(EntityEvent.DEATH, killer, entity)
 
             fire(event, "onDeath")
-
-//            entity.properties.keys()
-//                    .filter { it.startsWith("onDeath") }
-//                    .forEach { event.setData(it.removePrefix("onDeath."), entity.getProperty(it)) }
-//
-//            fire(event)
-//
-//
-//
-//
-//            entity.getPropertyOptional<String>("onDeath").ifPresent {
-//
-//                // TODO: check if the same script file name or else load the new one
-//                if (js == null) {
-//                    js = JavaScriptParser(it)
-//                }
-//
-//
-//
-//
-//                var script = "function e() { var obj = {}; "
-//
-//                event.data.forEach {
-//                    script += "obj." + it.key + " = " + wrapValue(it.value) + ";"
-//                }
-//
-//                script += "return obj; } e();"
-//
-//
-//
-//                js?.let {
-//                    it.callFunction<Void>("onDeath", it.eval<Any>(script))
-//                }
-//            }
         }
-    }
-
-    private fun wrapValue(value: Any): String {
-        return if (value is String) "\"$value\"" else "$value"
     }
 
     /**
@@ -85,7 +47,10 @@ class AliveComponent
     fun revive() {
         if (isDead()) {
             value = true
-            fire(EntityEvent(EntityEvent.REVIVE, entity, entity))
+
+            val event = EntityEvent(EntityEvent.REVIVE, entity, entity)
+
+            fire(event, "onRevive")
         }
     }
 
@@ -96,7 +61,10 @@ class AliveComponent
     fun revive(caller: Entity) {
         if (isDead()) {
             value = true
-            fire(EntityEvent(EntityEvent.REVIVE, caller, entity))
+
+            val event = EntityEvent(EntityEvent.REVIVE, caller, entity)
+
+            fire(event, "onRevive")
         }
     }
 }

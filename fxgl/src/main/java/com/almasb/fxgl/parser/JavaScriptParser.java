@@ -7,9 +7,7 @@ package com.almasb.fxgl.parser;
 
 import com.almasb.fxgl.app.FXGL;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import javax.script.*;
 import java.util.Map;
 
 /**
@@ -26,29 +24,6 @@ public final class JavaScriptParser {
         manager.put("APP", FXGL.getApp());
     }
 
-    private static JavaScriptParser cacheParser;
-
-    public static Object newJSObject(Map<String, Object> objectProperties) {
-        if (cacheParser == null)
-            cacheParser = new JavaScriptParser("");
-
-        StringBuilder sb = new StringBuilder( "function e() { var obj = {}; ");
-
-        objectProperties.forEach((key, value) -> {
-            sb.append("obj.").append(key)
-                    .append(" = ")
-                    .append(wrapValue(value)).append(";");
-        });
-
-        sb.append("return obj; } e();");
-
-        return cacheParser.eval(sb.toString());
-    }
-
-    private static String wrapValue(Object value) {
-        return (value instanceof String) ? "\"" + value + "\"" : value.toString();
-    }
-
     private ScriptEngine engine = manager.getEngineByName("nashorn");
     private Invocable invocableEngine;
 
@@ -61,6 +36,9 @@ public final class JavaScriptParser {
      */
     public JavaScriptParser(String scriptFileName) {
         try {
+            // TODO: manage scope ScriptContext.GLOBAL?; do we have to load this every time?
+            // cant we eval this globally just once?
+            // check out BINDINGS, might be an easier way to pass Java objects
             engine.eval(FXGL.getAssetLoader().loadScript("FXGL.js"));
 
             if (scriptFileName.endsWith(".js")) {

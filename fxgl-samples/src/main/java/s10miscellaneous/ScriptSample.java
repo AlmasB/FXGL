@@ -53,6 +53,8 @@ public class ScriptSample extends GameApplication {
 
             getGameWorld().getCollidingEntities(player).forEach(e -> {
                 e.getComponent(AliveComponent.class).kill(player);
+
+                e.getComponent(AliveComponent.class).revive();
             });
         });
     }
@@ -80,6 +82,7 @@ public class ScriptSample extends GameApplication {
                 .with("onActivate.name", "wanderer")
                 .with("onActivate.id", 0)
                 .with("onDeath", "second_script.js")
+                .with("onRevive", "first_script.js")
                 .buildAndAttach(getGameWorld());
 
         Entities.builder()

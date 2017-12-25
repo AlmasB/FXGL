@@ -37,45 +37,9 @@ class ActivatorComponent : BooleanComponent(false) {
      */
     fun activate(caller: Entity) {
         isActivated = true
-//
+
         val event = EntityEvent(EntityEvent.ACTIVATE, caller, entity)
 
         fire(event, "onActivate")
-//
-//        entity.properties.keys()
-//                .filter { it.startsWith("onActivate") }
-//                .forEach { event.setData(it.removePrefix("onActivate."), entity.getProperty(it)) }
-//
-//        fire(event)
-//
-//
-//
-//
-//        entity.getPropertyOptional<String>("onActivate").ifPresent {
-//
-//            // TODO: check if the same script file name or else load the new one
-//            if (js == null) {
-//                js = JavaScriptParser(it)
-//            }
-//
-//
-//
-//
-//            var script = "function e() { var obj = {}; "
-//
-//            event.data.forEach {
-//                script += "obj." + it.key + " = " + wrapValue(it.value) + ";"
-//            }
-//
-//            script += "return obj; } e();"
-//
-//
-//
-//            js?.let {
-//                it.callFunction<Void>("onActivate", it.eval<Any>(script))
-//            }
-//        }
     }
-
-
 }
