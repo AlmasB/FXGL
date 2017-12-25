@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.FXGL;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import java.util.Map;
 
 /**
  * Allows to parse valid javascript source files.
@@ -23,6 +24,29 @@ public final class JavaScriptParser {
         manager.put("HOME_DIR", JavaScriptParser.class.getResource("/assets/scripts/"));
         manager.put("FXGL", FXGL.Companion);
         manager.put("APP", FXGL.getApp());
+    }
+
+    private static JavaScriptParser cacheParser;
+
+    public static Object newJSObject(Map<String, Object> objectProperties) {
+        if (cacheParser == null)
+            cacheParser = new JavaScriptParser("");
+
+        StringBuilder sb = new StringBuilder( "function e() { var obj = {}; ");
+
+        objectProperties.forEach((key, value) -> {
+            sb.append("obj.").append(key)
+                    .append(" = ")
+                    .append(wrapValue(value)).append(";");
+        });
+
+        sb.append("return obj; } e();");
+
+        return cacheParser.eval(sb.toString());
+    }
+
+    private static String wrapValue(Object value) {
+        return (value instanceof String) ? "\"" + value + "\"" : value.toString();
     }
 
     private ScriptEngine engine = manager.getEngineByName("nashorn");

@@ -16,6 +16,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
@@ -194,6 +195,8 @@ fun free(instance: Any) = Pools.free(instance)
 /* EVENTS */
 
 fun fire(event: Event) = getEventBus().fireEvent(event)
+
+fun fire(event: EntityEvent, eventType: String) = getEventBus().fireEntityEvent(event, eventType)
 
 /* NOTIFICATIONS */
 

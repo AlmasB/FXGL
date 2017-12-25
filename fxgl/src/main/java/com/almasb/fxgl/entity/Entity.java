@@ -14,6 +14,7 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
+import com.almasb.fxgl.parser.JavaScriptParser;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -43,6 +44,8 @@ public class Entity {
     private static final Logger log = Logger.get(Entity.class);
 
     private ObjectMap<String, Object> properties = new ObjectMap<>();
+
+    private ObjectMap<String, JavaScriptParser> scripts = new ObjectMap<>();
 
     private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
     private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
@@ -892,6 +895,21 @@ public class Entity {
                 throw new IllegalArgumentException("Required component: [" + required.value().getSimpleName() + "] by: " + requiringType.getSimpleName());
             }
         }
+    }
+
+    // TODO: check if the same script file name or else load the new one
+    public final Optional<JavaScriptParser> getScriptHandler(String scriptType) {
+        if (scripts.containsKey(scriptType)) {
+            return Optional.of(scripts.get(scriptType));
+        }
+
+        return getPropertyOptional(scriptType).flatMap(scriptFile -> {
+            JavaScriptParser scriptParser = new JavaScriptParser((String) scriptFile);
+
+            scripts.put(scriptType, scriptParser);
+
+            return Optional.of(scriptParser);
+        });
     }
 
     /**

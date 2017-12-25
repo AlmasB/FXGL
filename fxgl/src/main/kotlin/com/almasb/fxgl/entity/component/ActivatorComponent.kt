@@ -9,6 +9,7 @@ package com.almasb.fxgl.entity.component
 import com.almasb.fxgl.app.fire
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityEvent
+import com.almasb.fxgl.parser.JSEvents
 import com.almasb.fxgl.parser.JavaScriptParser
 
 /**
@@ -18,6 +19,7 @@ import com.almasb.fxgl.parser.JavaScriptParser
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@JSEvents("onActivate", "onDeactivate")
 class ActivatorComponent : BooleanComponent(false) {
 
     var isActivated: Boolean
@@ -26,6 +28,8 @@ class ActivatorComponent : BooleanComponent(false) {
             value = v
         }
 
+    private var js: JavaScriptParser? = null
+
     /**
      * Also fires [EntityEvent.ACTIVATE].
      *
@@ -33,10 +37,45 @@ class ActivatorComponent : BooleanComponent(false) {
      */
     fun activate(caller: Entity) {
         isActivated = true
-        fire(EntityEvent(EntityEvent.ACTIVATE, caller, entity))
+//
+        val event = EntityEvent(EntityEvent.ACTIVATE, caller, entity)
 
+        fire(event, "onActivate")
+//
+//        entity.properties.keys()
+//                .filter { it.startsWith("onActivate") }
+//                .forEach { event.setData(it.removePrefix("onActivate."), entity.getProperty(it)) }
+//
+//        fire(event)
+//
+//
+//
+//
 //        entity.getPropertyOptional<String>("onActivate").ifPresent {
-//            JavaScriptParser(it).callFunction("onActivate", entity, caller)
+//
+//            // TODO: check if the same script file name or else load the new one
+//            if (js == null) {
+//                js = JavaScriptParser(it)
+//            }
+//
+//
+//
+//
+//            var script = "function e() { var obj = {}; "
+//
+//            event.data.forEach {
+//                script += "obj." + it.key + " = " + wrapValue(it.value) + ";"
+//            }
+//
+//            script += "return obj; } e();"
+//
+//
+//
+//            js?.let {
+//                it.callFunction<Void>("onActivate", it.eval<Any>(script))
+//            }
 //        }
     }
+
+
 }
