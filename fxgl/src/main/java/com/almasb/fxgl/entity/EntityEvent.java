@@ -6,9 +6,12 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.core.collection.ObjectMap;
 import javafx.beans.NamedArg;
 import javafx.event.Event;
 import javafx.event.EventType;
+
+import java.util.Optional;
 
 /**
  * A general entity event. Keeps track of its trigger and target entities.
@@ -25,6 +28,12 @@ public final class EntityEvent extends Event {
     public static final EventType<EntityEvent> ACTIVATE = new EventType<>(ANY, "ACTIVATE");
     public static final EventType<EntityEvent> DEATH = new EventType<>(ANY, "DEATH");
     public static final EventType<EntityEvent> REVIVE = new EventType<>(ANY, "REVIVE");
+
+    private ObjectMap<String, Object> data = new ObjectMap<>();
+
+    public ObjectMap<String, Object> getData() {
+        return data;
+    }
 
     private Entity triggerEntity;
     private Entity targetEntity;
@@ -69,6 +78,40 @@ public final class EntityEvent extends Event {
      */
     public EntityEvent(@NamedArg("eventType") EventType<? extends Event> eventType, Entity triggerEntity) {
         this(eventType, triggerEntity, triggerEntity);
+    }
+
+    private static final Object NULL = new Object();
+
+    /**
+     * @param key property key
+     * @param value property value
+     */
+    public final void setData(String key, Object value) {
+        data.put(key, value);
+    }
+
+    /**
+     * @param key property key
+     * @return property value or null if key not present
+     */
+    @SuppressWarnings("unchecked")
+    public final <T> T getData(String key) {
+        Object value = data.get(key, NULL);
+        if (value == NULL) {
+            return null;
+        }
+
+        return (T) value;
+    }
+
+    /**
+     * @param key property key
+     * @return property value or Optional.empty() if value is null or key not present
+     */
+    @SuppressWarnings("unchecked")
+    public final <T> Optional<T> getDataOptional(String key) {
+        Object value = data.get(key, null);
+        return Optional.ofNullable((T) value);
     }
 
     @Override

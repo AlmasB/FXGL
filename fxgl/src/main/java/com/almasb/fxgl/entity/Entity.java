@@ -532,6 +532,10 @@ public class Entity {
 
     private static final Object NULL = new Object();
 
+    public ObjectMap<String, Object> getProperties() {
+        return properties;
+    }
+
     /**
      * @param key property key
      * @param value property value
