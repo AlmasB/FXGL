@@ -26,6 +26,7 @@ import javafx.geometry.Point2D
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
+import java.util.*
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
@@ -149,6 +150,8 @@ fun spawn(entityName: String, x: Double, y: Double): Entity = getApp().gameWorld
 fun spawn(entityName: String, position: Point2D): Entity = getApp().gameWorld.spawn(entityName, position)
 
 fun spawn(entityName: String, data: SpawnData): Entity = getApp().gameWorld.spawn(entityName, data)
+
+fun byID(name: String, id: Int): Optional<Entity> = getApp().gameWorld.getEntityByID(name, id)
 
 /* PHYSICS */
 

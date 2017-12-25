@@ -48,12 +48,20 @@ function double(varName) {
     return FXGL.getApp().getGameState().getDouble(varName);
 }
 
+function doubleP(varName) {
+    return FXGL.getApp().getGameState().doubleProperty(varName);
+}
+
 function boolean(varName) {
     return FXGL.getApp().getGameState().getBoolean(varName);
 }
 
 function string(varName) {
     return FXGL.getApp().getGameState().getString(varName);
+}
+
+function object(varName) {
+    return FXGL.getApp().getGameState().getObject(varName);
 }
 
 function println(obj) {
@@ -79,4 +87,16 @@ function playerLinesWrap() {
 
 function npcLinesWrap() {
     return Java.to(npcLines())
+}
+
+/* DSL mappings */
+
+var DSLKt = Java.type("com.almasb.fxgl.app.DSLKt")
+
+function byID(name, id) {
+    return DSLKt.byID(name, id)
+}
+
+function showConfirm(message, callback) {
+    DSLKt.showConfirm(message, callback)
 }
