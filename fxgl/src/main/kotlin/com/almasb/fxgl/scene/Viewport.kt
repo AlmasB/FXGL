@@ -192,6 +192,25 @@ class Viewport
     // getPerlinNoise(seed + 1, time, ...);
     // etc. for each random call (instead of getRandomFloatNegativeOnetoOne())
 
+    /*
+    angle = maxAngle * shake * getRandomFloatNegativeOnetoOne();
+    offsetX = maxOffset * shake * getRandomFloatNegativeOnetoOne();
+    offsetY = maxOffset * shake * getRandomFloatNegativeOnetoOne();
+    ```
+    Alternatively,
+
+    ```
+    getPerlinNoise(seed, time, ...);
+    getPerlinNoise(seed + 1, time, ...);
+    // etc. for each random call (instead of getRandomFloatNegativeOnetoOne())
+    ```
+
+    Then (note this will need to be adapted to FXGL viewport)
+    ```
+    newCamera.angle = camera.angle + angle;
+    newCamera.center = camera.center + (offsetX, offsetY);
+     */
+    
     private var shakePowerTranslate = 0.0f
     private var shakePowerRotate = 0.0f
     private var shakeAngle = 0.0f
