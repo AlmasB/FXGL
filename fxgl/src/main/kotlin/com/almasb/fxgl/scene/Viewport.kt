@@ -75,6 +75,11 @@ class Viewport
     val origin: Point2D
         get() = Point2D(getX(), getY())
 
+    private val angle = SimpleDoubleProperty()
+    fun getAngle() = angle.value
+    fun angleProperty() = angle
+    fun setAngle(value: Double) = angleProperty().set(value)
+
     /**
      * Binds the viewport to entity so that it follows the given entity.
      * distX and distY represent bound distance between entity and viewport origin.
@@ -182,38 +187,93 @@ class Viewport
     }
 
     // adapted from https://gamedev.stackexchange.com/questions/1828/realistic-camera-screen-shake-from-explosion
-    private var shakePower = 0.0f
-    private var shakeAngle = 0.0f
-    private val originBeforeShake = Vec2()
-    private val offset = Vec2()
-    private var shake = false
+    // modified with https://www.youtube.com/watch?v=tu-Qe66AvtY
+    // getPerlinNoise(seed, time, ...);
+    // getPerlinNoise(seed + 1, time, ...);
+    // etc. for each random call (instead of getRandomFloatNegativeOnetoOne())
 
+    private var shakePowerTranslate = 0.0f
+    private var shakePowerRotate = 0.0f
+    private var shakeAngle = 0.0f
+
+    private val originBeforeShake = Vec2()
+    private var angleBeforeShake = 0.0
+
+    private val offset = Vec2()
+
+    //private var shake = false
+    private var shakingTranslate = false
+    private var shakingRotate = false
+
+    fun shake(powerTranslate: Double, powerRotate: Double) {
+        shakeTranslational(powerTranslate)
+        shakeRotational(powerRotate)
+    }
+
+    @Deprecated("use shake(double, double)")
     fun shake(power: Double) {
-        shakePower = power.toFloat()
+        shakeTranslational(power)
+    }
+
+    fun shakeTranslational(power: Double) {
+        shakePowerTranslate = power.toFloat()
         shakeAngle = FXGLMath.random() * FXGLMath.PI2
 
         // only record origin if not shaking, so that we don't record 'false' origin
-        if (!shake)
+        if (!shakingTranslate)
             originBeforeShake.set(x.floatValue(), y.floatValue())
 
-        shake = true
+        shakingTranslate = true
     }
 
+    fun shakeRotational(power: Double) {
+        shakePowerRotate = power.toFloat()
+
+        // only record origin if not shaking, so that we don't record 'false' origin
+        if (!shakingRotate)
+            angleBeforeShake = angle.value
+
+        shakingRotate = true
+    }
+
+    private var time = 0.0
+
     fun onUpdate(tpf: Double) {
-        if (!shake)
+        time += tpf
+
+        if (!shakingRotate && !shakingTranslate)
             return
 
-        shakePower *= 0.9f
-        shakeAngle += 180 + FXGLMath.random() * FXGLMath.PI2 / 6
-        offset.set(shakePower * FXGLMath.cos(shakeAngle), shakePower * FXGLMath.sin(shakeAngle))
+        if (shakingTranslate) {
+            shakePowerTranslate *= 0.9f
+            shakeAngle += 180 + FXGLMath.random() * FXGLMath.PI2 / 6
+            offset.set(shakePowerTranslate * FXGLMath.cos(shakeAngle), shakePowerTranslate * FXGLMath.sin(shakeAngle))
 
-        setX(offset.x + originBeforeShake.x.toDouble())
-        setY(offset.y + originBeforeShake.y.toDouble())
+            setX(offset.x + originBeforeShake.x.toDouble())
+            setY(offset.y + originBeforeShake.y.toDouble())
 
-        if (FXGLMath.abs(offset.x) < 0.5 && FXGLMath.abs(offset.y) < 0.5) {
-            setX(originBeforeShake.x.toDouble())
-            setY(originBeforeShake.y.toDouble())
-            shake = false
+            if (FXGLMath.abs(offset.x) < 0.5 && FXGLMath.abs(offset.y) < 0.5) {
+                setX(originBeforeShake.x.toDouble())
+                setY(originBeforeShake.y.toDouble())
+
+                shakingTranslate = false
+            }
+        }
+
+        if (shakingRotate) {
+            val maxAngle = 10.0
+
+            shakePowerRotate *= 0.9f
+
+            // we can't use (FXGLMath.noise1D(time) - 0.5) yet
+            // as it will just "shake" once and get to initial position
+            setAngle(maxAngle * shakePowerRotate * FXGLMath.random(-1.0, 1.0))
+
+            if (FXGLMath.abs(angle.value - angleBeforeShake) < 0.5) {
+                setAngle(0.0)
+
+                shakingRotate = false
+            }
         }
     }
 }

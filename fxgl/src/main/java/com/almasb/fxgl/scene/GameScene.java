@@ -19,6 +19,7 @@ import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -26,6 +27,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
@@ -115,6 +117,12 @@ public final class GameScene extends FXGLScene
         scale.xProperty().bind(viewport.zoomProperty());
         scale.yProperty().bind(viewport.zoomProperty());
         gameRoot.getTransforms().add(scale);
+
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        rotate.pivotXProperty().bind(viewport.xProperty().add(w / 2));
+        rotate.pivotYProperty().bind(viewport.yProperty().add(h / 2));
+        rotate.angleProperty().bind(viewport.angleProperty().negate());
+        gameRoot.getTransforms().add(rotate);
     }
 
 //    /**
