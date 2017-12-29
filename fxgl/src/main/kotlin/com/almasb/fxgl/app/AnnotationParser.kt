@@ -23,6 +23,8 @@ class AnnotationParser(appClass: Class<out GameApplication>) {
     private val annotationMap = hashMapOf<Class<*>, List<Class<*>>>()
 
     init {
+        log.debug("Main app package name: ${packageName ?: "NO PACKAGE"}")
+
         if (isDisabled) {
             log.warning("${appClass.simpleName} has no package or contains uppercase letters. Disabling annotations processing")
         }
