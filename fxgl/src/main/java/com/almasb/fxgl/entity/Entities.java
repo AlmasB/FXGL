@@ -190,15 +190,15 @@ public final class Entities {
                 int x = i % layer.getWidth();
                 int y = i / layer.getWidth();
 
-                int w = tileset.getTilewidth();
-                int h = tileset.getTileheight();
+                int w = map.getTilewidth();
+                int h = map.getTileheight();
 
                 Image sourceImage = loadTilesetImage(tileset);
 
                 buffer.getPixelWriter().setPixels(x * w, y * h,
                         w, h, sourceImage.getPixelReader(),
                         tilex * w + tileset.getMargin() + tilex * tileset.getSpacing(),
-                        tiley * h + tileset.getMargin() + + tiley * tileset.getSpacing());
+                        tiley * h + tileset.getMargin() + tiley * tileset.getSpacing());
             }
 
             return new ImageView(buffer);
