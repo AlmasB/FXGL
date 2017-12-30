@@ -85,4 +85,31 @@ class TimerActionTest {
         action.update(0.15)
         assertThat(count, `is`(0))
     }
+
+    @Test
+    fun `Timer action does not run when paused`() {
+        var count = 0
+
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, 1)
+        action.pause()
+
+        assertTrue(action.isPaused)
+
+        action.update(0.15)
+        assertThat(count, `is`(0))
+    }
+
+    @Test
+    fun `Timer action runs when resumed`() {
+        var count = 0
+
+        val action = TimerAction(Duration.millis(150.0), Runnable { count++ }, 1)
+        action.pause()
+        action.resume()
+
+        assertFalse(action.isPaused)
+
+        action.update(0.15)
+        assertThat(count, `is`(1))
+    }
 }
