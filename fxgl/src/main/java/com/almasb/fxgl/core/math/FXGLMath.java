@@ -6,7 +6,6 @@
 
 package com.almasb.fxgl.core.math;
 
-import com.almasb.fxgl.app.FXGL;
 import javafx.animation.Interpolator;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;

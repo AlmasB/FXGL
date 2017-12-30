@@ -6,13 +6,8 @@
 
 package sandbox.rts;
 
-import com.almasb.fxgl.entity.SetEntityFactory;
-import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityFactory;
-import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;

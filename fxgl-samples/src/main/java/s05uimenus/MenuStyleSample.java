@@ -6,14 +6,10 @@
 
 package s05uimenus;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.scene.FXGLMenu;
-import com.almasb.fxgl.scene.SceneFactory;
-//import com.almasb.fxgl.scene.menu.GTAVMenu;
-import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.settings.GameSettings;
-import org.jetbrains.annotations.NotNull;
+
+//import com.almasb.fxgl.scene.menu.GTAVMenu;
 
 /**
  * Shows how to set different menu styles.

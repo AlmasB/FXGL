@@ -10,18 +10,11 @@ import com.almasb.fxgl.ai.pathfinding.maze.Maze;
 import com.almasb.fxgl.ai.pathfinding.maze.MazeCell;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
-import javafx.scene.ParallelCamera;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Rotate;
-import javafx.util.Duration;
 
 import static com.almasb.fxgl.app.DSLKt.texture;
 

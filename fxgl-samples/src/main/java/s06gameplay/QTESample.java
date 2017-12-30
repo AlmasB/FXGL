@@ -5,7 +5,6 @@
  */
 package s06gameplay;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.gameplay.qte.QTE;
 import com.almasb.fxgl.settings.GameSettings;

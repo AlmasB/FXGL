@@ -19,7 +19,6 @@ import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.PhysicsParticleControl;
 import com.almasb.fxgl.ui.UI;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;

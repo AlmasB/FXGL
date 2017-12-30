@@ -7,8 +7,9 @@ package com.almasb.fxgl.parser;
 
 import com.almasb.fxgl.app.FXGL;
 
-import javax.script.*;
-import java.util.Map;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 /**
  * Allows to parse valid javascript source files.

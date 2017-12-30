@@ -8,11 +8,12 @@ package sandbox.scifi;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
-import com.almasb.fxgl.entity.*;
+import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.RenderLayer;
 import com.almasb.fxgl.entity.component.PositionComponent;
 import com.almasb.fxgl.entity.view.ParallaxBackgroundView;
 import com.almasb.fxgl.entity.view.ParallaxTexture;

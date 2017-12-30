@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.physics;
 
-import com.almasb.fxgl.physics.CollisionHandler;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

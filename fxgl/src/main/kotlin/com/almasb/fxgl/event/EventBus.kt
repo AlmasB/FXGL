@@ -9,7 +9,6 @@ package com.almasb.fxgl.event
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.entity.EntityEvent
-import com.almasb.fxgl.parser.JavaScriptParser
 import com.almasb.fxgl.parser.newJSObject
 import javafx.event.Event
 import javafx.event.EventHandler

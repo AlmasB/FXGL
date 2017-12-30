@@ -6,7 +6,6 @@
 
 package s05uimenus;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.KeyTrigger;
