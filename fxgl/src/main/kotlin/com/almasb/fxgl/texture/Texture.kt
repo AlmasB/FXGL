@@ -296,21 +296,28 @@ open class Texture
     }
 
     /**
-     * @param color transparent color
-     * @return new texture whose pixels with given color are set to transparent
+     * Replaces all [oldColor] pixels with [newColor] pixels.
      */
-    fun transparentColor(color: Color): Texture {
+    fun replaceColor(oldColor: Color, newColor: Color): Texture {
         val newImage = image.map {
-            val newColor = if (it.color == color) {
-                Color.TRANSPARENT
+            val c = if (it.color == oldColor) {
+                newColor
             } else {
                 it.color
             }
 
-            it.copy(newColor)
+            it.copy(c)
         }
 
         return Texture(newImage)
+    }
+
+    /**
+     * @param color transparent color
+     * @return new texture whose pixels with given color are set to transparent
+     */
+    fun transparentColor(color: Color): Texture {
+        return replaceColor(color, Color.TRANSPARENT)
     }
 
     /**
