@@ -1,6 +1,6 @@
 ![promo](https://raw.githubusercontent.com/AlmasB/git-server/master/storage/images/fxgl_promo.jpg)
 
-## What?
+## About
 
 JavaFX Game Development Framework
 
@@ -10,26 +10,26 @@ JavaFX Game Development Framework
 [![Coverage](https://api.codacy.com/project/badge/Coverage/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Coverage)
 [![Codacy](https://api.codacy.com/project/badge/Grade/9603c2522deb42fbb9146bedfcb860b2)](https://www.codacy.com/app/AlmasB/FXGL?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlmasB/FXGL&amp;utm_campaign=Badge_Grade)
 
-## Why?
+### Why FXGL?
 
 * No native libraries, no setup required
 * Simple and clean API
 * Brings real-world game development techniques to JavaFX
 * Works with Java 8 and 9 "out of the box"
 
-## Good for ...
+### Good for:
 
 * Any 2D genre (side-scroller / platformer / arcade / RPG)
 * Hobby / academic / commercial projects
 * Teaching / learning / improving game development skills
 * Fast prototyping of game ideas
 
-## Features
+### Features
 
 * [List of features](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 * [Showcase](http://almasb.github.io/FXGLGames/)
 
-## Minimal Example
+### Minimal Example
 
 ```java
 public class BasicGameApp extends GameApplication {
@@ -55,7 +55,7 @@ public class BasicGameApp extends GameApplication {
 * [Game demos](https://github.com/AlmasB/FXGLGames) (src)
 * [Game demos](https://github.com/AlmasB/FXGLGames/tree/master/binaries) (.jar)
 
-## Maven
+### Maven
 
 * [Maven](https://github.com/AlmasB/FXGL-Maven) project if you use Java
 * [Maven](https://github.com/AlmasB/FXGL-MavenKt) project if you use Kotlin
@@ -66,11 +66,11 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
 </dependency>
 ```
 
-## Gradle
+### Gradle
 
 * [Gradle](https://github.com/AlmasB/FXGL-Gradle) project if you use Java
 * [Gradle](https://github.com/AlmasB/FXGL-GradleKt) project if you use Kotlin
@@ -83,15 +83,15 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.4.0'
+    compile 'com.github.almasb:fxgl:0.4.1'
 }
 ```
 
-## Uber jar
+### Uber jar
 
-Download latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases)
+Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases)
 
-## Notable Users
+## Community
 
 * University of Brighton, UK
 * University of Nottingham, UK
@@ -99,11 +99,11 @@ Download latest uber jar from [Releases](https://github.com/AlmasB/FXGL/releases
 
 If your institution wants to use / is using FXGL, drop me an email to discuss how FXGL can aid your course.
 
-## Contribution
+### Contribution
 
-Please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or simply star the repo to show interest.
+If you want to build FXGL from sources or want to contribute,
+please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or simply star the repo to show interest.
 
-## Contact
+### Contact
 
-[![Chat](https://badges.gitter.im/AlmasB/FXGL.svg)](https://gitter.im/AlmasB/FXGL)
-[![Gmail](https://img.shields.io/badge/Email-almaslvl@gmail.com-red.svg)](https://plus.google.com/+AlmasB0/about)
+[Chat](https://gitter.im/AlmasB/FXGL) with the FXGL community or ![Gmail](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)
