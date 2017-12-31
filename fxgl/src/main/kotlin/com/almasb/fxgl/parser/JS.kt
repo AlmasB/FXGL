@@ -15,10 +15,11 @@ package com.almasb.fxgl.parser
 private var cacheParser: JavaScriptParser? = null
 
 /**
- * // TODO: reword
- * Generates a native JS object by creating evaluating a function
- * that takes map values and assigns to keys in the object.
- * Finally, passes Java objects as arguments to the function.
+ * Generates a native JS object by evaluating a dynamic function with [objectProperties]
+ * as the arguments to that function.
+ *
+ * So if [objectProperties] has (name = "hi") then
+ * the returned JS object will have a property "name" and its value "hi", i.e. obj.name = "hi";
  */
 fun newJSObject(objectProperties: Map<String, Any>): Any {
     if (cacheParser == null)
@@ -31,9 +32,6 @@ fun newJSObject(objectProperties: Map<String, Any>): Any {
     }
 
     sb.append("return obj; }")
-
-    // TODO: add toString() to generated JS object for debugging
-    //println("JS: " + sb.toString())
 
     cacheParser!!.eval<Any>(sb.toString())
 

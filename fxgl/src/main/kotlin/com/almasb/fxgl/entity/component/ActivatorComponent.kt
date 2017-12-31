@@ -10,7 +10,6 @@ import com.almasb.fxgl.app.fire
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.parser.JSEvents
-import com.almasb.fxgl.parser.JavaScriptParser
 
 /**
  * TODO: can be activated? how many times? deactivate?
@@ -27,8 +26,6 @@ class ActivatorComponent : BooleanComponent(false) {
         set(v) {
             value = v
         }
-
-    private var js: JavaScriptParser? = null
 
     /**
      * Also fires [EntityEvent.ACTIVATE].

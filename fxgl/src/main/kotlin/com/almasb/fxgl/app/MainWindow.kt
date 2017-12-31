@@ -202,10 +202,6 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
         log.debug("Stage size: ${stage.width} x ${stage.height}")
     }
 
-    /**
-     * TODO: compute which is "better": width or height
-     * and then resize to that
-     */
     fun fixAspectRatio() {
         log.debug("Fixing aspect ratio")
 
