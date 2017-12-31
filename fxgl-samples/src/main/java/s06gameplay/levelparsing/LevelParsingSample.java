@@ -6,7 +6,6 @@
 
 package s06gameplay.levelparsing;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.gameplay.Level;

@@ -76,6 +76,13 @@ public class BasicGameApp3 extends GameApplication {
                 getGameState().increment("pixelsMoved", +5);
             }
         }, KeyCode.S);
+
+        input.addAction(new UserAction("Play Sound") {
+            @Override
+            protected void onActionBegin() {
+                getAudioPlayer().playSound("drop.wav");
+            }
+        }, KeyCode.F);
     }
 
     @Override
@@ -100,12 +107,6 @@ public class BasicGameApp3 extends GameApplication {
                 .viewFromNodeWithBBox(new Circle(15, Color.YELLOW))
                 .with(new CollidableComponent(true))
                 .buildAndAttach(getGameWorld());
-
-        getGameState().<Integer>addListener("pixelsMoved", (prev, now) -> {
-            if (now % 100 == 0) {
-                getAudioPlayer().playSound("drop.wav");
-            }
-        });
     }
 
     @Override

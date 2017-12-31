@@ -8,7 +8,6 @@ package s03entities;
 
 import com.almasb.fxgl.animation.EasingInterpolator;
 import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -27,7 +26,7 @@ import java.util.Map;
 import static com.almasb.fxgl.app.DSLKt.set;
 
 /**
- *
+ * Shows how to use interpolators.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -40,13 +39,6 @@ public class InterpolatorSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("InterpolatorSample");
-        settings.setVersion("0.1");
-
-
-
-
-
-
     }
 
     @Override

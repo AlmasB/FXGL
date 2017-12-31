@@ -24,7 +24,7 @@ public class BBoxTest extends GameApplication {
         settings.setTitle("BBoxTest");
         settings.setMenuEnabled(false);
         settings.setIntroEnabled(false);
-        settings.setFullScreen(false);
+        settings.setFullScreenAllowed(false);
     }
 
     @Override

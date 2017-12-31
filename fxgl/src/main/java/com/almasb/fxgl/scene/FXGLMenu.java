@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static com.almasb.fxgl.app.FXGL.getSettings;
 import static com.almasb.fxgl.app.FXGL.localizedStringProperty;
 
 /**
@@ -315,6 +316,8 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
+     * TODO: load default settings from profile
+     *
      * @return menu content with video settings
      */
     protected final MenuContent createContentVideo() {
@@ -325,8 +328,28 @@ public abstract class FXGLMenu extends FXGLScene {
 
         FXGL.getMenuSettings().languageProperty().bind(languageBox.valueProperty());
 
+        VBox vbox = new VBox();
+
+        if (getSettings().isManualResizeEnabled()) {
+            Button btnFixRatio = FXGL.getUIFactory().newButton("Fix Ratio");
+            btnFixRatio.setOnAction(e -> {
+                listener.fixAspectRatio();
+            });
+
+            vbox.getChildren().add(btnFixRatio);
+        }
+
+        if (getSettings().isFullScreenAllowed()) {
+            CheckBox cbFullScreen = FXGL.getUIFactory().newCheckBox();
+            cbFullScreen.setSelected(false);
+            cbFullScreen.selectedProperty().bindBidirectional(FXGL.getMenuSettings().fullScreenProperty());
+
+            vbox.getChildren().add(new HBox(25, FXGL.getUIFactory().newText("Fullscreen: "), cbFullScreen));
+        }
+
         return new MenuContent(
-                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox)
+                new HBox(25, FXGL.getUIFactory().newText(localizedStringProperty("menu.language").concat(":")), languageBox),
+                vbox
         );
     }
 

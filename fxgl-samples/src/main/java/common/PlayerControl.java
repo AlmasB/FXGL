@@ -8,9 +8,8 @@ package common;
 
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Required;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.PositionComponent;
+import com.almasb.fxgl.entity.component.Required;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)

@@ -26,6 +26,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
@@ -115,6 +116,12 @@ public final class GameScene extends FXGLScene
         scale.xProperty().bind(viewport.zoomProperty());
         scale.yProperty().bind(viewport.zoomProperty());
         gameRoot.getTransforms().add(scale);
+
+        Rotate rotate = new Rotate(0, Rotate.Z_AXIS);
+        rotate.pivotXProperty().bind(viewport.xProperty().add(w / 2));
+        rotate.pivotYProperty().bind(viewport.yProperty().add(h / 2));
+        rotate.angleProperty().bind(viewport.angleProperty().negate());
+        gameRoot.getTransforms().add(rotate);
     }
 
 //    /**
@@ -283,18 +290,22 @@ public final class GameScene extends FXGLScene
         return group;
     }
 
+    private boolean wasDirty = false;
+
     public void onUpdate(double tpf) {
         getViewport().onUpdate(tpf);
 
         boolean dirty = drawables.isNotEmpty() || particles.isNotEmpty();
 
-        if (dirty) {
+        if (dirty || wasDirty) {
             particlesGC.setGlobalAlpha(1);
             particlesGC.setGlobalBlendMode(BlendMode.SRC_OVER);
 
             // TODO: this is very costly, do we know exact dimensions to clear
             // OR can we do this off the render thread inbetween frames?
             particlesGC.clearRect(0, 0, getWidth(), getHeight());
+
+            wasDirty = false;
         }
 
         for (Entity e : drawables) {
@@ -308,6 +319,8 @@ public final class GameScene extends FXGLScene
         for (ParticleControl particle : particles) {
             particle.renderParticles(particlesGC, getViewport().getOrigin());
         }
+
+        wasDirty = dirty;
     }
 
     public void clear() {

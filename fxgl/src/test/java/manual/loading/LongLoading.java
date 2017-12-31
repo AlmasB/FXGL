@@ -25,7 +25,7 @@ public class LongLoading extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("LongLoading");
         settings.setVersion("0.1developer");
-        settings.setFullScreen(false);
+        settings.setFullScreenAllowed(false);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setProfilingEnabled(true);

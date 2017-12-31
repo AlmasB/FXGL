@@ -65,7 +65,7 @@ class GameSettingsTest {
         assertThat(settings.version, `is`("0.99"))
         assertThat(settings.introEnabled, `is`(false))
         assertThat(settings.menuEnabled, `is`(false))
-        assertThat(settings.fullScreen, `is`(false))
+        assertThat(settings.fullScreenAllowed, `is`(false))
         assertThat(settings.profilingEnabled, `is`(false))
         assertThat(settings.closeConfirmation, `is`(false))
         assertThat(settings.menuKey, `is`(KeyCode.ENTER))

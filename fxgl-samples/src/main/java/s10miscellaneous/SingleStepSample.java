@@ -6,7 +6,6 @@
 
 package s10miscellaneous;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;

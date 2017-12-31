@@ -6,7 +6,6 @@
 
 package s07particles;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.effect.ParticleControl;

@@ -7,7 +7,6 @@
 package s03entities;
 
 import com.almasb.fxgl.animation.Animation;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;

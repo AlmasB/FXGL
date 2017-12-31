@@ -16,6 +16,7 @@ import com.almasb.fxgl.app.FXGL.Companion.getNotificationService
 import com.almasb.fxgl.core.math.FXGLMath.random
 import com.almasb.fxgl.core.pool.Pools
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.entity.SpawnData
 import com.almasb.fxgl.input.UserAction
 import com.almasb.fxgl.physics.CollisionHandler
@@ -26,6 +27,7 @@ import javafx.geometry.Point2D
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
+import java.util.*
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 
@@ -150,6 +152,8 @@ fun spawn(entityName: String, position: Point2D): Entity = getApp().gameWorld.sp
 
 fun spawn(entityName: String, data: SpawnData): Entity = getApp().gameWorld.spawn(entityName, data)
 
+fun byID(name: String, id: Int): Optional<Entity> = getApp().gameWorld.getEntityByID(name, id)
+
 /* PHYSICS */
 
 fun onCollisionBegin(typeA: Enum<*>, typeB: Enum<*>, action: BiConsumer<Entity, Entity>) {
@@ -191,6 +195,8 @@ fun free(instance: Any) = Pools.free(instance)
 /* EVENTS */
 
 fun fire(event: Event) = getEventBus().fireEvent(event)
+
+fun fire(event: EntityEvent, eventType: String) = getEventBus().fireEntityEvent(event, eventType)
 
 /* NOTIFICATIONS */
 

@@ -84,6 +84,10 @@ public abstract class GameApplication extends Application {
     private ReadOnlyGameSettings settings;
     private AppStateMachine stateMachine;
 
+    MainWindow getMainWindow() {
+        return mainWindow;
+    }
+
     /**
      * This is the main entry point as run by the JavaFX platform.
      */

@@ -6,11 +6,10 @@
 
 package s06gameplay;
 
-import com.almasb.fxgl.input.OnUserAction;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.input.ActionType;
 import com.almasb.fxgl.input.InputMapping;
+import com.almasb.fxgl.input.OnUserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 

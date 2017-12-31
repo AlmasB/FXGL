@@ -12,10 +12,7 @@ package com.almasb.fxgl.core.collection;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * An unordered map. This implementation is a cuckoo hash map using 3 hashes, random walking, and a small stash for problematic
@@ -566,6 +563,16 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
             }
         }
         return true;
+    }
+
+    public Map<K, V> toMap() {
+        Map<K, V> map = new HashMap<>(size);
+
+        entries().forEach(e -> {
+            map.put(e.key, e.value);
+        });
+
+        return map;
     }
 
     public String toString(String separator) {

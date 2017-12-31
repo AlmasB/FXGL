@@ -37,6 +37,9 @@ public final class JavaScriptParser {
      */
     public JavaScriptParser(String scriptFileName) {
         try {
+            // TODO: manage scope ScriptContext.GLOBAL?; do we have to load this every time?
+            // cant we eval this globally just once?
+            // check out BINDINGS, might be an easier way to pass Java objects
             engine.eval(FXGL.getAssetLoader().loadScript("FXGL.js"));
 
             if (scriptFileName.endsWith(".js")) {
@@ -66,6 +69,32 @@ public final class JavaScriptParser {
             return (T) invocableEngine.invokeFunction(name, args);
         } catch (Exception e) {
             throw new IllegalArgumentException("Function call failed: " + e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T eval(String script) {
+        try {
+            return (T) engine.eval(script);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Evaluation failed: " + e);
+        }
+    }
+
+    /**
+     * @param name function name
+     * @return true if this script has a function with given name
+     */
+    public boolean hasFunction(String name) {
+
+        // https://stackoverflow.com/questions/20578299/checking-if-a-function-exists-within-java-scriptengine
+
+        try {
+            String test = "typeof " + name
+                    + " === 'function' ? java.lang.Boolean.TRUE : java.lang.Boolean.FALSE";
+            return (Boolean) engine.eval(test);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Function check failed: " + e);
         }
     }
 }

@@ -7,7 +7,6 @@
 package sandbox.robots;
 
 import com.almasb.fxgl.ai.GoalAction;
-import com.almasb.fxgl.ai.SingleAction;
 
 /**
  * @author Almas Baimagambetov (almaslvl@gmail.com)

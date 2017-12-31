@@ -6,8 +6,6 @@
 
 package com.almasb.fxgl.input;
 
-import com.almasb.fxgl.input.ActionType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

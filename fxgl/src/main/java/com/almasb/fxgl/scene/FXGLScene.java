@@ -142,13 +142,13 @@ public abstract class FXGLScene {
         getRoot().getStylesheets().clear();
     }
 
-    public void bindSize(DoubleProperty scaledWidth, DoubleProperty scaledHeight, DoubleProperty scaleRatio) {
+    public void bindSize(DoubleProperty scaledWidth, DoubleProperty scaledHeight, DoubleProperty scaleRatioX, DoubleProperty scaleRatioY) {
         root.prefWidthProperty().bind(scaledWidth);
         root.prefHeightProperty().bind(scaledHeight);
 
         Scale scale = new Scale();
-        scale.xProperty().bind(scaleRatio);
-        scale.yProperty().bind(scaleRatio);
+        scale.xProperty().bind(scaleRatioX);
+        scale.yProperty().bind(scaleRatioY);
         root.getTransforms().setAll(scale);
     }
 

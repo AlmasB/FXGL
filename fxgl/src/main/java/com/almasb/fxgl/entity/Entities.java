@@ -9,7 +9,6 @@ package com.almasb.fxgl.entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
-import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.parser.tiled.Layer;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
@@ -190,15 +189,15 @@ public final class Entities {
                 int x = i % layer.getWidth();
                 int y = i / layer.getWidth();
 
-                int w = tileset.getTilewidth();
-                int h = tileset.getTileheight();
+                int w = map.getTilewidth();
+                int h = map.getTileheight();
 
                 Image sourceImage = loadTilesetImage(tileset);
 
                 buffer.getPixelWriter().setPixels(x * w, y * h,
                         w, h, sourceImage.getPixelReader(),
                         tilex * w + tileset.getMargin() + tilex * tileset.getSpacing(),
-                        tiley * h + tileset.getMargin() + + tiley * tileset.getSpacing());
+                        tiley * h + tileset.getMargin() + tiley * tileset.getSpacing());
             }
 
             return new ImageView(buffer);

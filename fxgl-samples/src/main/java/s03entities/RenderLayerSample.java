@@ -6,11 +6,10 @@
 
 package s03entities;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.entity.RenderLayer;
+import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

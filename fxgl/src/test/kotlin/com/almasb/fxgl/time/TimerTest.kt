@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.time
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.util.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.hasItems
@@ -77,6 +78,38 @@ class TimerTest {
     }
 
     @Test
+    fun `Run at interval while condition is true`() {
+        var count = 0
+
+        val condition = SimpleBooleanProperty(true)
+
+        timer.runAtIntervalWhile(Runnable { count++ }, Duration.seconds(1.0), condition)
+
+        timer.update(1.0)
+        assertThat(count, `is`(1))
+
+        timer.update(1.0)
+        assertThat(count, `is`(2))
+
+        condition.value = false
+
+        timer.update(1.0)
+        assertThat(count, `is`(2))
+    }
+
+    @Test
+    fun `Run at interval does not start if condition is false`() {
+        var count = 0
+
+        val condition = SimpleBooleanProperty(false)
+
+        timer.runAtIntervalWhile(Runnable { count++ }, Duration.seconds(1.0), condition)
+
+        timer.update(1.0)
+        assertThat(count, `is`(0))
+    }
+
+    @Test
     fun `Clear`() {
         var count = 0
 
@@ -92,5 +125,16 @@ class TimerTest {
     fun `Now value`() {
         timer.update(2.0)
         assertThat(timer.now, `is`(2.0))
+    }
+
+    @Test
+    fun `Local timer`() {
+        val local = timer.newLocalTimer()
+        local.capture()
+
+        assertFalse(local.elapsed(Duration.millis(150.0)))
+
+        timer.update(0.150)
+        assertTrue(local.elapsed(Duration.millis(150.0)))
     }
 }

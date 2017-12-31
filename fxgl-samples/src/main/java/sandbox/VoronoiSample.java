@@ -20,8 +20,6 @@ import javafx.scene.text.Text;
 import java.util.Map;
 
 import static com.almasb.fxgl.app.DSLKt.*;
-import static com.almasb.fxgl.app.DSLKt.inc;
-import static com.almasb.fxgl.app.DSLKt.onKey;
 
 /**
  *

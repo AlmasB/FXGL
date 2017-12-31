@@ -6,13 +6,8 @@
 
 package com.almasb.fxgl.devtools.profiling
 
-import com.almasb.fxgl.app.FXGL
-import com.almasb.fxgl.asset.FXGLAssets
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.core.math.FXGLMath
-import javafx.scene.canvas.GraphicsContext
-import javafx.scene.effect.BlendMode
-import javafx.scene.paint.Color
 import javafx.scene.text.Text
 
 /**

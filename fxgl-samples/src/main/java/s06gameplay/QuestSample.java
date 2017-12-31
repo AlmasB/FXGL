@@ -16,7 +16,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import java.util.Arrays;
 
 /**
- *
+ * Shows how to add a quest and its view.
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
@@ -28,10 +28,6 @@ public class QuestSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("QuestSample");
         settings.setVersion("0.1");
-
-
-
-
     }
 
     @Override

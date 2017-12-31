@@ -7,16 +7,15 @@
 package s07particles;
 
 import com.almasb.fxgl.animation.Interpolators;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.entity.Control;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.effect.ParticleControl;
 import com.almasb.fxgl.effect.ParticleEmitter;
 import com.almasb.fxgl.effect.ParticleEmitters;
+import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;

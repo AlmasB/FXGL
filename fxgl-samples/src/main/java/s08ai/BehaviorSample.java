@@ -7,7 +7,6 @@
 package s08ai;
 
 import com.almasb.fxgl.ai.AIControl;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;

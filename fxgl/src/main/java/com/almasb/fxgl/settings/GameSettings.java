@@ -98,13 +98,14 @@ public final class GameSettings extends ReadOnlyGameSettings {
     }
 
     /**
-     * Setting to true will start the game in fullscreen mode.
+     * Setting to true will allow the game to be able to enter full screen
+     * from the menu.
      *
      * @param b fullscreen flag
      * @defaultValue false
      */
-    public void setFullScreen(boolean b) {
-        fullScreen = b;
+    public void setFullScreenAllowed(boolean b) {
+        fullScreenAllowed = b;
     }
 
     /**
@@ -165,6 +166,16 @@ public final class GameSettings extends ReadOnlyGameSettings {
 
     public void setEnabledMenuItems(EnumSet<MenuItem> items) {
         this.enabledMenuItems = items;
+    }
+
+    /**
+     * If enabled, users can drag the corner of the main window
+     * to resize it and the game.
+     *
+     * @defaultValue false
+     */
+    public void setManualResizeEnabled(boolean enabled) {
+        this.manualResizeEnabled = enabled;
     }
 
     public void setStageStyle(StageStyle stageStyle) {

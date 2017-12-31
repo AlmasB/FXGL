@@ -6,7 +6,6 @@
 
 package s05uimenus;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.scene.IntroScene;
 import com.almasb.fxgl.scene.SceneFactory;

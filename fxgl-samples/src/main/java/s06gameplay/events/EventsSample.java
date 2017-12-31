@@ -6,13 +6,12 @@
 
 package s06gameplay.events;
 
-import com.almasb.fxgl.event.Handles;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.EntityEvent;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.EntityEvent;
 import com.almasb.fxgl.event.EventTrigger;
+import com.almasb.fxgl.event.Handles;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.BoundingShape;

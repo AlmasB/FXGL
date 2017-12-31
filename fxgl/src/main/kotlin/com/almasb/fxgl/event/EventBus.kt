@@ -8,6 +8,8 @@ package com.almasb.fxgl.event
 
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.entity.EntityEvent
+import com.almasb.fxgl.parser.newJSObject
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -77,17 +79,33 @@ class EventBus {
      * Events will be handled on the same thread that fired the event,
      * i.e. synchronous.
      *
-     * <p>
-     *     Note: according to JavaFX doc this must be called on JavaFX Application Thread.
-     *     In reality this doesn't seem to be true.
-     * </p>
-     *
      * @param event the event
      */
     fun fireEvent(event: Event) {
         log.debug("Firing event: $event")
 
         eventHandlers.fireEvent(event)
+    }
+
+    /**
+     * Fires the given entity event both as normal Event
+     * and via script handlers.
+     *
+     * @param eventType e.g. onActivate, onDeath
+     */
+    fun fireEntityEvent(event: EntityEvent, eventType: String) {
+        event.targetEntity.properties.keys()
+                .filter { it.startsWith(eventType) }
+                .forEach { event.setData(it.removePrefix("$eventType."), event.targetEntity.getProperty(it)) }
+
+        fireEvent(event)
+
+        event.targetEntity.getScriptHandler(eventType).ifPresent {
+            it.callFunction<Void>(eventType, newJSObject(event.data.toMap()
+                    // here we can populate properties common to all events, e.g. entity
+                    .plus("entity".to(event.targetEntity))
+            ))
+        }
     }
 
     /**

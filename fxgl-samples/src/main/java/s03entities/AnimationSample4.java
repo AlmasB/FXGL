@@ -8,7 +8,6 @@ package s03entities;
 
 import com.almasb.fxgl.animation.Animation;
 import com.almasb.fxgl.animation.ParallelAnimation;
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;

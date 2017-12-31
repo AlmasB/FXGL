@@ -5,11 +5,7 @@
  */
 package sandbox;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Entities;
-import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Rectangle2D;
@@ -17,7 +13,6 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.almasb.fxgl.app.DSLKt.texture;
 
