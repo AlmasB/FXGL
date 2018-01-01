@@ -136,11 +136,11 @@ public class JointSample extends GameApplication {
         rDef.localAnchorB = new Vec2(0, 5);
 
         rDef.enableLimit = true;
-        rDef.lowerAngle = FXGLMath.degreesToRadians * -180.0f;
-        rDef.upperAngle = FXGLMath.degreesToRadians * 180.0f;
+        rDef.lowerAngle = (float) (FXGLMath.degreesToRadians * -180.0f);
+        rDef.upperAngle = (float) (FXGLMath.degreesToRadians * 180.0f);
 
         rDef.enableMotor = true;
-        rDef.motorSpeed = FXGLMath.degreesToRadians * 30;
+        rDef.motorSpeed = (float) (FXGLMath.degreesToRadians * 30);
         rDef.maxMotorTorque = 15.0f;
 
         joint = (RevoluteJoint) getPhysicsWorld().getJBox2DWorld().createJoint(rDef);

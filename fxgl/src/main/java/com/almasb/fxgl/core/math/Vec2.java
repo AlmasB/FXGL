@@ -104,8 +104,8 @@ public final class Vec2 implements Serializable, Poolable {
      * @return this vector
      */
     public Vec2 setFromAngle(double degrees) {
-        this.x = FXGLMath.cosDeg((float)degrees);
-        this.y = FXGLMath.sinDeg((float)degrees);
+        this.x = (float) FXGLMath.cosDeg(degrees);
+        this.y = (float) FXGLMath.sinDeg(degrees);
         return this;
     }
 
@@ -293,7 +293,7 @@ public final class Vec2 implements Serializable, Poolable {
      * @return the length of this vector
      */
     public float length() {
-        return FXGLMath.sqrt(x * x + y * y);
+        return (float) FXGLMath.sqrt(x * x + y * y);
     }
 
     /**

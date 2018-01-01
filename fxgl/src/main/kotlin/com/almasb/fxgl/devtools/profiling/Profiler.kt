@@ -55,28 +55,28 @@ class Profiler {
      */
     fun getAvgMemoryUsage() = memoryUsage / frames / MB
 
-    fun getAvgMemoryUsageRounded() = FXGLMath.roundPositive(getAvgMemoryUsage())
+    fun getAvgMemoryUsageRounded() = FXGLMath.roundPositive(getAvgMemoryUsage().toDouble())
 
     /**
      * @return max (highest peak) memory usage in MB
      */
     fun getMaxMemoryUsage() = memoryUsageMax / MB
 
-    fun getMaxMemoryUsageRounded() = FXGLMath.roundPositive(getMaxMemoryUsage())
+    fun getMaxMemoryUsageRounded() = FXGLMath.roundPositive(getMaxMemoryUsage().toDouble())
 
     /**
      * @return min (lowest peak) memory usage in MB
      */
     fun getMinMemoryUsage() = memoryUsageMin / MB
 
-    fun getMinMemoryUsageRounded() = FXGLMath.roundPositive(getMinMemoryUsage())
+    fun getMinMemoryUsageRounded() = FXGLMath.roundPositive(getMinMemoryUsage().toDouble())
 
     /**
      * @return how much memory is used at this moment in MB
      */
     fun getCurrentMemoryUsage() = memoryUsageCurrent / MB
 
-    fun getCurrentMemoryUsageRounded() = FXGLMath.roundPositive(getCurrentMemoryUsage())
+    fun getCurrentMemoryUsageRounded() = FXGLMath.roundPositive(getCurrentMemoryUsage().toDouble())
 
     private var gcRuns = 0
 

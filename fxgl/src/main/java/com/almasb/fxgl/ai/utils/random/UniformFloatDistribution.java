@@ -34,7 +34,7 @@ public final class UniformFloatDistribution extends FloatDistribution {
 	}
 
 	public float nextFloat () {
-		return FXGLMath.random(low, high);
+		return (float) FXGLMath.random(low, high);
 	}
 
 	public float getLow () {

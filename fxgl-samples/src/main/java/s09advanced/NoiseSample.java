@@ -68,7 +68,7 @@ public class NoiseSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        float n = FXGLMath.noise1D(t);
+        double n = FXGLMath.noise1D(t);
 
         // flickering rect
         rect.setFill(Color.color(1.0, n, n));
