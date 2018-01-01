@@ -670,4 +670,16 @@ public final class FXGLMath {
     public static float noise1D(double t) {
         return PerlinNoiseGenerator.INSTANCE.noise1D((float) t) + 0.5f;
     }
+
+    /**
+     * 2D quality noise generator, twice slower than Noise1D.
+     * A typical usage would be to pass 2d coordinates multiplied by a frequency (lower frequency -> smoother output) value, like:
+     *
+     * double fRes=pNoise->noise2D(fX*fFreq,fY*fFreq)
+     *
+     * @return perlin noise in 1D quality in [0..1)
+     */
+    public static double noise2D(double x, double y) {
+        return PerlinNoiseGenerator.INSTANCE.noise2D(x, y) + 0.5;
+    }
 }
