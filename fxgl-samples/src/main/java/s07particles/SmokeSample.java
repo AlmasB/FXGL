@@ -88,7 +88,7 @@ public class SmokeSample extends GameApplication {
         emitter.setVelocityFunction((i, x, y) -> new Point2D(FXGLMath.random() - 0.5, -FXGLMath.random() * 3));
         emitter.setAccelerationFunction(() -> new Point2D(0, 0.05));
         emitter.setExpireFunction((i, x, y) -> Duration.seconds(3));
-        emitter.setScaleFunction((i, x, y) -> new Point2D(FXGLMath.random(0, 0.01f), FXGLMath.random(-0.05f, 0.05f)));
+        emitter.setScaleFunction((i, x, y) -> new Point2D(FXGLMath.random(0, 0.01), FXGLMath.random(-0.05, 0.05)));
         emitter.setStartColor(Color.YELLOW);
         emitter.setEndColor(Color.RED);
         //emitter.setBlendMode(BlendMode.SRC_OVER);

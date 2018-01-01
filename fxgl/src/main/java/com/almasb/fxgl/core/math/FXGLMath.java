@@ -27,19 +27,18 @@ public final class FXGLMath {
 
     private FXGLMath() {}
 
-    public static final double nanoToSec = 1 / 1000000000d;
-
     /**
      * A "close to zero" double epsilon value for use.
      */
     public static final double EPSILON = 1.1920928955078125E-7;
 
-    public static final double double_ROUNDING_ERROR = 0.000000000001d; // 64bits
-    public static final double PI = 3.141592653589793d;
+    public static final double PI = Math.PI;
     public static final double PI2 = PI * 2;
     public static final double HALF_PI = PI / 2;
 
     public static final double E = Math.E;
+
+    private static final double DOUBLE_ROUNDING_ERROR = 0.000000000001d; // 64bits
 
     private static final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
     private static final int SIN_MASK = ~(-1 << SIN_BITS);
@@ -51,7 +50,7 @@ public final class FXGLMath {
     private static final double degToIndex = SIN_COUNT / degFull;
 
     /** multiply by this to convert from radians to degrees */
-    public static final double radiansToDegrees = 180f / PI;
+    public static final double radiansToDegrees = 180 / PI;
     public static final double radDeg = radiansToDegrees;
 
     /** multiply by this to convert from degrees to radians */
@@ -64,6 +63,7 @@ public final class FXGLMath {
         static {
             for (int i = 0; i < SIN_COUNT; i++)
                 table[i] = Math.sin((i + 0.5f) / SIN_COUNT * radFull);
+
             for (int i = 0; i < 360; i += 90)
                 table[(int) (i * degToIndex) & SIN_MASK] = Math.sin(i * degreesToRadians);
         }
@@ -121,31 +121,23 @@ public final class FXGLMath {
      * @return atan2 in radians, faster but less accurate than Math.atan2
      */
     public static double atan2(double y, double x) {
-        if (x == 0f) {
-            if (y > 0f) return HALF_PI;
-            if (y == 0f) return 0f;
+        if (x == 0.0) {
+            if (y > 0) return HALF_PI;
+            if (y == 0.0) return 0.0;
             return -HALF_PI;
         }
-        final double atan, z = y / x;
-        if (Math.abs(z) < 1f) {
-            atan = z / (1f + 0.28f * z * z);
-            if (x < 0f) return atan + (y < 0f ? -PI : PI);
+
+        final double atan;
+        final double z = y / x;
+
+        if (Math.abs(z) < 1) {
+            atan = z / (1 + 0.28 * z * z);
+            if (x < 0) return atan + (y < 0 ? -PI : PI);
             return atan;
         }
-        atan = HALF_PI - z / (z * z + 0.28f);
-        return y < 0f ? atan - PI : atan;
-    }
 
-    /**
-     * Average error of 0.00231 radians (0.1323 degrees),
-     * largest error of 0.00488 radians (0.2796 degrees).
-     *
-     * @param y y component
-     * @param x x component
-     * @return atan2 in radians, faster but less accurate than Math.atan2
-     */
-    public static float atan2(float y, float x) {
-        return atan2( y, x);
+        atan = HALF_PI - z / (z * z + 0.28);
+        return y < 0 ? atan - PI : atan;
     }
 
     /* RANDOM BEGIN */
@@ -223,6 +215,13 @@ public final class FXGLMath {
     }
 
     /**
+     * @return random number between 0.0 (inclusive) and 1.0 (exclusive)
+     */
+    public static float randomFloat() {
+        return random.nextFloat();
+    }
+
+    /**
      * @param range end exclusive value
      * @return a random number between 0 (inclusive) and the specified value (exclusive)
      */
@@ -236,15 +235,6 @@ public final class FXGLMath {
      * @return a random number between start (inclusive) and end (exclusive)
      */
     public static double random(double start, double end) {
-        return start + random.nextDouble() * (end - start);
-    }
-
-    /**
-     * @param start start inclusive value
-     * @param end end exclusive value
-     * @return a random number between start (inclusive) and end (exclusive)
-     */
-    public static double random(float start, float end) {
         return start + random.nextDouble() * (end - start);
     }
 
@@ -319,15 +309,15 @@ public final class FXGLMath {
      * @return new random vector of unit length as Vec2
      */
     public static Vec2 randomVec2() {
-        return new Vec2(random(-1f, 1f), random(-1f, 1f)).normalizeLocal();
+        return new Vec2(random(-1.0, 1.0), random(-1.0, 1.0)).normalizeLocal();
     }
 
     /**
      * @return new random vector of unit length as Point2D
      */
     public static Point2D randomPoint2D() {
-        double x = random(-1f, 1f);
-        double y = random(-1f, 1f);
+        double x = random(-1.0, 1.0);
+        double y = random(-1.0, 1.0);
 
         double length = Math.sqrt(x * x + y * y);
         if (length < EPSILON)
@@ -563,7 +553,7 @@ public final class FXGLMath {
      * @return true if the value is zero (using the default tolerance as upper bound)
      */
     public static boolean isZero(double value) {
-        return Math.abs(value) <= double_ROUNDING_ERROR;
+        return Math.abs(value) <= DOUBLE_ROUNDING_ERROR;
     }
 
     /**
@@ -581,7 +571,7 @@ public final class FXGLMath {
      * @return true if a is nearly equal to b (using the default error tolerance)
      */
     public static boolean isEqual(double a, double b) {
-        return Math.abs(a - b) <= double_ROUNDING_ERROR;
+        return Math.abs(a - b) <= DOUBLE_ROUNDING_ERROR;
     }
 
     /**
@@ -606,8 +596,8 @@ public final class FXGLMath {
         return Math.abs(a - b) <= tolerance;
     }
 
-    private static final double SHIFT23 = 1 << 23;
-    private static final double INV_SHIFT23 = 1.0f / SHIFT23;
+    private static final float SHIFT23 = 1 << 23;
+    private static final float INV_SHIFT23 = 1.0f / SHIFT23;
 
     /**
      * @return a to the power of b
@@ -623,7 +613,6 @@ public final class FXGLMath {
         y = (y - y * y) * 0.33971f;
         return Float.intBitsToFloat((int) ((b + 127 - y) * SHIFT23));
     }
-
 
     /**
      * @param base the base
@@ -669,7 +658,7 @@ public final class FXGLMath {
      * @return perlin noise in 1D quality in [0..1)
      */
     public static double noise1D(double t) {
-        return PerlinNoiseGenerator.INSTANCE.noise1D(t) + 0.5f;
+        return PerlinNoiseGenerator.INSTANCE.noise1D(t) + 0.5;
     }
 
     /**

@@ -22,8 +22,8 @@ import javafx.util.Duration
 class RandomMoveControl
 @JvmOverloads constructor(
         var speed: Double,
-        var xSeed: Double = FXGLMath.random(100f, 10000f).toDouble(),
-        var ySeed: Double = FXGLMath.random(10000f, 100000f).toDouble(),
+        var xSeed: Double = FXGLMath.random(100, 10000).toDouble(),
+        var ySeed: Double = FXGLMath.random(10000, 100000).toDouble(),
         var bounds: Rectangle2D = FXGL.getApp().appBounds) : Control() {
 
     private lateinit var position: PositionComponent

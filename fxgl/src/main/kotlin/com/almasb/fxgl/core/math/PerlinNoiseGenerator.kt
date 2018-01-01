@@ -57,8 +57,8 @@ internal object PerlinNoiseGenerator {
 
             val v = Vec2()
             // random is in the 0..1 range, so we bring to -0.5..0.5
-            v.x = (FXGLMath.random() - 0.5f).toFloat()
-            v.y = (FXGLMath.random() - 0.5f).toFloat()
+            v.x = FXGLMath.randomFloat() - 0.5f
+            v.y = FXGLMath.randomFloat() - 0.5f
             v.normalizeLocal()
 
             gx[i] = v.x
@@ -75,7 +75,7 @@ internal object PerlinNoiseGenerator {
      */
     fun noise1D(t: Double): Double {
         // Compute what gradients to use
-        var qx0 = Math.floor(t.toDouble()).toInt()
+        var qx0 = Math.floor(t).toInt()
         var qx1 = qx0 + 1
         val tx0 = t - qx0
         val tx1 = tx0 - 1
