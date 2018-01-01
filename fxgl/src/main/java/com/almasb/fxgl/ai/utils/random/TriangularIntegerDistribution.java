@@ -41,12 +41,12 @@ public final class TriangularIntegerDistribution extends IntegerDistribution {
 
 	@Override
 	public int nextInt () {
-		float r;
+		double r;
 		if (-low == high && mode == 0)
 			r = FXGLMath.randomTriangular(high); // It's faster
 		else
 			r = FXGLMath.randomTriangular(low, high, mode);
-		return Math.round(r);
+		return (int) Math.round(r);
 	}
 
 	public int getLow () {
