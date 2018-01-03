@@ -101,16 +101,51 @@ public final class FXGLMath {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
-    public static final double reduceAngle(double theta) {
-        theta %= PI2;
-        if (abs(theta) > PI) {
-            theta = theta - PI2;
-        }
-        if (abs(theta) > HALF_PI) {
-            theta = PI - theta;
-        }
-        return theta;
+    public static double toDegrees(double radians) {
+        return radiansToDegrees * radians;
     }
+
+    public static double toRadians(double degrees) {
+        return degreesToRadians * degrees;
+    }
+
+    /*
+
+        // reduce the angle
+    angle =  angle % 360;
+
+    // force it to be the positive remainder, so that 0 <= angle < 360
+    angle = (angle + 360) % 360;
+
+    // force into the minimum absolute value residue class, so that -180 < angle <= 180
+    if (angle > 180)
+        angle -= 360;
+     */
+    /**
+     * @param theta angle in radians
+     * @return angle in radians normalized to [0..PI / 2]
+     */
+//    public static final double normalizeAngle(double theta) {
+//        theta %= PI2;
+//        if (abs(theta) > PI) {
+//            theta = theta - PI2;
+//        }
+//        if (abs(theta) > HALF_PI) {
+//            theta = PI - theta;
+//        }
+//        return theta;
+//    }
+//
+//    public static final double normalizeAngleDeg(double theta) {
+//        theta %= 360;
+//        if (abs(theta) > 180) {
+//            theta = theta - 360;
+//        }
+//        if (abs(theta) > 90) {
+//            theta = 180 - theta;
+//        }
+//        return theta;
+//    }
 
     /**
      * Average error of 0.00231 radians (0.1323 degrees),
@@ -138,6 +173,18 @@ public final class FXGLMath {
 
         atan = HALF_PI - z / (z * z + 0.28);
         return y < 0 ? atan - PI : atan;
+    }
+
+    /**
+     * Average error of 0.00231 radians (0.1323 degrees),
+     * largest error of 0.00488 radians (0.2796 degrees).
+     *
+     * @param y y component
+     * @param x x component
+     * @return atan2 in degrees, faster but less accurate than Math.atan2
+     */
+    public static double atan2Deg(double y, double x) {
+        return toDegrees(atan2(y, x));
     }
 
     /* RANDOM BEGIN */
