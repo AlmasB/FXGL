@@ -136,11 +136,11 @@ public class JointSample extends GameApplication {
         rDef.localAnchorB = new Vec2(0, 5);
 
         rDef.enableLimit = true;
-        rDef.lowerAngle = (float) (FXGLMath.degreesToRadians * -180.0f);
-        rDef.upperAngle = (float) (FXGLMath.degreesToRadians * 180.0f);
+        rDef.lowerAngle = (float) (FXGLMath.toRadians(-180.0f));
+        rDef.upperAngle = (float) (FXGLMath.toRadians(180.0f));
 
         rDef.enableMotor = true;
-        rDef.motorSpeed = (float) (FXGLMath.degreesToRadians * 30);
+        rDef.motorSpeed = (float) (FXGLMath.toRadians(30));
         rDef.maxMotorTorque = 15.0f;
 
         joint = (RevoluteJoint) getPhysicsWorld().getJBox2DWorld().createJoint(rDef);
@@ -148,7 +148,7 @@ public class JointSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        if (joint != null && FXGLMath.isEqual(FXGLMath.abs(joint.getJointAngle()), FXGLMath.degreesToRadians * 180.0f, 0.05f)) {
+        if (joint != null && FXGLMath.isClose(FXGLMath.abs(joint.getJointAngle()), FXGLMath.toRadians(180), 0.05f)) {
             joint.setMotorSpeed(-joint.getMotorSpeed());
         }
     }

@@ -38,8 +38,6 @@ public final class FXGLMath {
 
     public static final double E = Math.E;
 
-    private static final double DOUBLE_ROUNDING_ERROR = 0.000000000001d; // 64bits
-
     private static final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
     private static final int SIN_MASK = ~(-1 << SIN_BITS);
     private static final int SIN_COUNT = SIN_MASK + 1;
@@ -49,14 +47,6 @@ public final class FXGLMath {
     private static final double radToIndex = SIN_COUNT / radFull;
     private static final double degToIndex = SIN_COUNT / degFull;
 
-    /** multiply by this to convert from radians to degrees */
-    public static final double radiansToDegrees = 180 / PI;
-    public static final double radDeg = radiansToDegrees;
-
-    /** multiply by this to convert from degrees to radians */
-    public static final double degreesToRadians = PI / 180;
-    public static final double degRad = degreesToRadians;
-
     private static class Sin {
         static final double[] table = new double[SIN_COUNT];
 
@@ -65,7 +55,7 @@ public final class FXGLMath {
                 table[i] = Math.sin((i + 0.5f) / SIN_COUNT * radFull);
 
             for (int i = 0; i < 360; i += 90)
-                table[(int) (i * degToIndex) & SIN_MASK] = Math.sin(i * degreesToRadians);
+                table[(int) (i * degToIndex) & SIN_MASK] = Math.sin(toRadians(i));
         }
     }
 
@@ -100,6 +90,10 @@ public final class FXGLMath {
     public static double cosDeg(double degrees) {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
+
+    private static final double radiansToDegrees = 180 / PI;
+
+    private static final double degreesToRadians = PI / 180;
 
     public static double toDegrees(double radians) {
         return radiansToDegrees * radians;
@@ -400,7 +394,7 @@ public final class FXGLMath {
     /* RANDOM END */
 
     public static double sqrt(double x) {
-        return StrictMath.sqrt(x);
+        return Math.sqrt(x);
     }
 
     /**
@@ -592,73 +586,38 @@ public final class FXGLMath {
      * @return the closest integer to the specified double
      */
     public static int roundPositive(double value) {
-        return (int) (value + 0.5f);
+        return (int) (value + 0.5);
     }
 
     /**
-     * @param value the value to check
-     * @return true if the value is zero (using the default tolerance as upper bound)
-     */
-    public static boolean isZero(double value) {
-        return Math.abs(value) <= DOUBLE_ROUNDING_ERROR;
-    }
-
-    /**
+     * Note: prone to floating point errors if the arguments are not doubles.
+     *
      * @param value the value to check
      * @param tolerance represent an upper bound below which the value is considered zero
-     * @return true if the value is zero
+     * @return true if the value is close to zero, i.e. true if difference between value and 0 is less than or equal to tolerance
      */
-    public static boolean isZero(double value, double tolerance) {
+    public static boolean isCloseToZero(double value, double tolerance) {
         return Math.abs(value) <= tolerance;
     }
 
     /**
-     * @param a the first value
-     * @param b the second value
-     * @return true if a is nearly equal to b (using the default error tolerance)
-     */
-    public static boolean isEqual(double a, double b) {
-        return Math.abs(a - b) <= DOUBLE_ROUNDING_ERROR;
-    }
-
-    /**
+     * Note: prone to floating point errors if the arguments are not doubles.
+     *
      * @param a the first value
      * @param b the second value
      * @param tolerance represent an upper bound below which the two values are considered equal
      *
-     * @return true if a is nearly equal to b
+     * @return true if a is nearly equal to b, i.e. true if difference between a and b is less than or equal to tolerance
      */
-    public static boolean isEqual(double a, double b, double tolerance) {
+    public static boolean isClose(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
-
-    /**
-     * @param a the first value
-     * @param b the second value
-     * @param tolerance represent an upper bound below which the two values are considered equal
-     *
-     * @return true if a is nearly equal to b
-     */
-    public static boolean isEqual(float a, float b, float tolerance) {
-        return Math.abs(a - b) <= tolerance;
-    }
-
-    private static final float SHIFT23 = 1 << 23;
-    private static final float INV_SHIFT23 = 1.0f / SHIFT23;
 
     /**
      * @return a to the power of b
-     * @implNote copied from jbox2d
      */
-    public static final float pow(float a, float b) {
-        float x = Float.floatToRawIntBits(a);
-        x *= INV_SHIFT23;
-        x -= 127;
-        float y = x - (x >= 0 ? (int) x : (int) x - 1);
-        b *= x + (y - y * y) * 0.346607f;
-        y = b - (b >= 0 ? (int) b : (int) b - 1);
-        y = (y - y * y) * 0.33971f;
-        return Float.intBitsToFloat((int) ((b + 127 - y) * SHIFT23));
+    public static double pow(double a, double b) {
+        return Math.pow(a, b);
     }
 
     /**
@@ -709,12 +668,12 @@ public final class FXGLMath {
     }
 
     /**
-     * 2D quality noise generator, twice slower than noise1D.
      * A typical usage would be to pass 2d coordinates multiplied by a frequency (lower frequency -> smoother output) value, like:
      *
-     * double fRes=pNoise->noise2D(fX*fFreq,fY*fFreq)
+     * double noise = noise2D(x * freq, y * freq)
      *
-     * @return perlin noise in 1D quality in [0..1)
+     * @return perlin noise in 2D quality in [0..1)
+     * @implNote twice slower than noise1D
      */
     public static double noise2D(double x, double y) {
 

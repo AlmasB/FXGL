@@ -582,10 +582,21 @@ public final class Vec2 implements Serializable, Poolable {
     }
 
     /**
-     * @param p Point2D representation
-     * @return true if vector equals Point2D given default error tolerance for float comparison
+     * @return @return true if distance between this and p is < 0.1
      */
-    public boolean equalsPoint2D(Point2D p) {
-        return FXGLMath.isEqual(x, (float) p.getX()) && FXGLMath.isEqual(y, (float) p.getY());
+    public boolean isNearlyEqualTo(Point2D p) {
+        return isCloseTo(p, 0.1);
+    }
+
+    /**
+     * Note: prone to floating point errors, so if you are checking whether
+     * Vec2(15.01f, 8.99f) is _equal_ to Point2D(15.0, 9.0), use tolerance of 0.1.
+     * In general the decimal place * 10.
+     *
+     * @return true if vector is close Point2D given the error tolerance
+     * (i.e. if distance between two points is less than or equal to tolerance)
+     */
+    public boolean isCloseTo(Point2D p, double tolerance) {
+        return Math.abs(distance(p)) <= tolerance;
     }
 }

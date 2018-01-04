@@ -14,6 +14,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.number.IsCloseTo
 import org.hamcrest.number.IsCloseTo.closeTo
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
@@ -153,5 +154,20 @@ class FXGLMathTest {
         // this is the diff between just "floor"
         assertThat(FXGLMath.floorPositive(-0.5), `is`(0))
         assertThat(FXGLMath.floorPositive(-1.5), `is`(-1))
+    }
+
+    @Test
+    fun `Is close to under tolerance`() {
+        assertTrue(isCloseToZero(0.0, 0.0))
+        assertFalse(isCloseToZero(0.1, 0.0))
+
+        assertTrue(isCloseToZero(0.1, 0.1))
+        assertFalse(isCloseToZero(-0.2, 0.1))
+
+        assertTrue(isCloseToZero(0.01, 0.1))
+
+        assertTrue(isCloseToZero(0.09, 0.1))
+
+        assertFalse(isCloseToZero(0.11, 0.1))
     }
 }
