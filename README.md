@@ -12,13 +12,16 @@ JavaFX Game Development Framework
 
 ### Why FXGL?
 
-* No native libraries, no setup required
+* No native libraries, no installation, no setup required
 * Simple and clean API
+* Superset of JavaFX: no need to learn new API
 * Brings real-world game development techniques to JavaFX
 * Works with Java 8 and 9 "out of the box"
+* Games are easily packaged into a single executable .jar
 
 ### Good for:
 
+* JavaFX programmers
 * Any 2D genre (side-scroller / platformer / arcade / RPG)
 * Hobby / academic / commercial projects
 * Teaching / learning / improving game development skills
@@ -26,7 +29,7 @@ JavaFX Game Development Framework
 
 ### Features
 
-* [List of features](https://github.com/AlmasB/FXGL/wiki/Core-Features)
+* [More than 60 major features](https://github.com/AlmasB/FXGL/wiki/Core-Features)
 * [Showcase](http://almasb.github.io/FXGLGames/)
 
 ### Minimal Example
@@ -99,11 +102,13 @@ Download the latest uber jar from [Releases](https://github.com/AlmasB/FXGL/rele
 
 If your institution wants to use / is using FXGL, drop me an email to discuss how FXGL can aid your course.
 
-### Contribution
+### Contribution & Support
 
 If you want to build FXGL from sources or want to contribute,
-please see the [Contribution Guide](CONTRIBUTING.md) (including non-code), or simply star the repo to show interest.
+please see the [Contribution Guide](CONTRIBUTING.md) (including non-code).
+
+You can support the FXGL development via [PayPal](https://www.paypal.me/FXGL) or simply star the repo to show interest.
 
 ### Contact
 
-[Chat](https://gitter.im/AlmasB/FXGL) with the FXGL community or ![Gmail](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)
+[Chat](https://gitter.im/AlmasB/FXGL) with the friendly FXGL community or ![Gmail](https://img.shields.io/badge/email-almaslvl@gmail.com-red.svg)
