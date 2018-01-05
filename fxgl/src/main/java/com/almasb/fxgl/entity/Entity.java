@@ -588,17 +588,21 @@ public class Entity {
      * @return control
      */
     public final <T extends Control> Optional<T> getControlOptional(Class<T> type) {
-        return Optional.ofNullable(getControl(type));
+        return Optional.ofNullable(type.cast(controls.get(type)));
     }
 
     /**
-     * Returns control of given type or null if no such type is registered.
-     *
      * @param type control type
-     * @return control
+     * @return control of given type
      */
     public final <T extends Control> T getControl(Class<T> type) {
-        return type.cast(controls.get(type));
+        Control control = controls.get(type);
+
+        if (control == null) {
+            throw new IllegalArgumentException("Control " + type.getSimpleName() + " not found!");
+        }
+
+        return type.cast(control);
     }
 
     /**
@@ -668,17 +672,21 @@ public class Entity {
      * @return component
      */
     public final <T extends Component> Optional<T> getComponentOptional(Class<T> type) {
-        return Optional.ofNullable(getComponent(type));
+        return Optional.ofNullable(type.cast(components.get(type)));
     }
 
     /**
-     * Returns component of given type, or null if type not registered.
-     *
      * @param type component type
-     * @return component
+     * @return component of given type
      */
     public final <T extends Component> T getComponent(Class<T> type) {
-        return type.cast(components.get(type));
+        Component component = components.get(type);
+
+        if (component == null) {
+            throw new IllegalArgumentException("Component " + type.getSimpleName() + " not found!");
+        }
+
+        return type.cast(component);
     }
 
     /**

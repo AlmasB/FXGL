@@ -87,17 +87,24 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
 
     private boolean needManualCheck(Entity e1, Entity e2) {
         // if no physics -> check manually
-        PhysicsComponent p1 = e1.getComponent(PhysicsComponent.class);
-        if (p1 == null)
+
+        BodyType type1 = e1.getComponentOptional(PhysicsComponent.class)
+                .map(p -> p.body.getType())
+                .orElse(null);
+
+        if (type1 == null)
             return true;
 
-        PhysicsComponent p2 = e2.getComponent(PhysicsComponent.class);
-        if (p2 == null)
+        BodyType type2 = e2.getComponentOptional(PhysicsComponent.class)
+                .map(p -> p.body.getType())
+                .orElse(null);
+
+        if (type2 == null)
             return true;
 
         // if one is kinematic and the other is static -> check manually
-        return (p1.body.getType() == BodyType.KINEMATIC && p2.body.getType() == BodyType.STATIC)
-                || (p2.body.getType() == BodyType.KINEMATIC && p1.body.getType() == BodyType.STATIC);
+        return (type1 == BodyType.KINEMATIC && type2 == BodyType.STATIC)
+                || (type2 == BodyType.KINEMATIC && type1 == BodyType.STATIC);
     }
 
     /**
