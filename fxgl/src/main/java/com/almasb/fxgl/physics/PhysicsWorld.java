@@ -76,9 +76,9 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         if (!e.isActive())
             return false;
 
-        CollidableComponent collidable = e.getComponent(CollidableComponent.class);
-
-        return collidable != null && collidable.getValue();
+        return e.getComponentOptional(CollidableComponent.class)
+                .map(c -> c.getValue())
+                .orElse(false);
     }
 
     private boolean areCollidable(Entity e1, Entity e2) {
