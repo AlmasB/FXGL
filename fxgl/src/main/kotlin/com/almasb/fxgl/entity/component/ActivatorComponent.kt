@@ -12,14 +12,18 @@ import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.parser.JSEvents
 
 /**
- * TODO: can be activated? how many times? deactivate?
- *
- * When added the component is set to non-activated
+ * When added, the component is set to non-activated.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 @JSEvents("onActivate", "onDeactivate")
-class ActivatorComponent : BooleanComponent(false) {
+class ActivatorComponent
+@JvmOverloads constructor(
+        var canBeDeactivated: Boolean = true,
+        var numTimesCanBeActivated: Int = Int.MAX_VALUE
+): BooleanComponent(false) {
+
+    private var numTimesActivated = 0
 
     var isActivated: Boolean
         get() = value
@@ -33,10 +37,26 @@ class ActivatorComponent : BooleanComponent(false) {
      * @param caller - who activated this entity
      */
     fun activate(caller: Entity) {
-        isActivated = true
+        if (!isActivated && numTimesActivated < numTimesCanBeActivated) {
+            isActivated = true
+            numTimesActivated++
 
-        val event = EntityEvent(EntityEvent.ACTIVATE, caller, entity)
+            val event = EntityEvent(EntityEvent.ACTIVATE, caller, entity)
 
-        fire(event, "onActivate")
+            fire(event, "onActivate")
+
+            if (!canBeDeactivated) {
+                isActivated = false
+            }
+        }
+    }
+
+    /**
+     * Deactivates this component so that it can be activated again.
+     */
+    fun deactivate(caller: Entity) {
+        if (canBeDeactivated && isActivated) {
+            isActivated = false
+        }
     }
 }
