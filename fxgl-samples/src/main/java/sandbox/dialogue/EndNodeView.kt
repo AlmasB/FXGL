@@ -18,17 +18,14 @@ class EndNodeView : NodeView() {
 
     init {
 
-        val text = FXGL.getUIFactory().newText("END", Color.BLACK, 34.0)
-
-
-        contentPane.children.add(text)
-
         val inLink = InLinkPoint()
-        inLink.translateX = -45.0
-        inLink.translateY = 30.0
+        addInPoint(inLink)
 
-        children.add(inLink)
+        val text = FXGL.getUIFactory().newText("END", Color.WHITE, 24.0)
 
-        inPoints.add(inLink)
+
+        //children.add(text)
+
+
     }
 }

@@ -7,17 +7,12 @@
 package sandbox.dialogue
 
 import com.almasb.fxgl.app.FXGL
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
 import javafx.geometry.Pos
-import javafx.geometry.Side
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
-import javafx.scene.shape.Line
-import javafx.stage.WindowEvent
 
 /**
  *
@@ -45,8 +40,13 @@ class DialoguePane : HBox() {
         // start and end
 
         val startNode = StartNodeView()
-
         startNode.relocate(100.0, 100.0)
+
+//        startNode.outPoints.forEach {
+//            it.localToSceneTransformProperty().addListener { _, _, newValue ->
+//                println(newValue)
+//            }
+//        }
 
         val endNode = EndNodeView()
         endNode.relocate(400.0, 100.0)
@@ -57,7 +57,6 @@ class DialoguePane : HBox() {
 
 
 
-        //val line = endNode.connect(startNode, startNode.outLink);
 
 
 
@@ -81,7 +80,7 @@ class DialoguePane : HBox() {
 
         val item2 = MenuItem("Function")
         item2.setOnAction {
-            val fNode = FunctionNodeView()
+            val fNode = ScriptNodeView()
             fNode.relocate(FXGL.getInput().getMouseXUI(), FXGL.getInput().getMouseYUI())
 
             attachMouseHandler(fNode)
@@ -89,7 +88,17 @@ class DialoguePane : HBox() {
             contentPane.children.add(fNode)
         }
 
-        contextMenu.items.addAll(item1, item2)
+        val item3 = MenuItem("Choice")
+        item3.setOnAction {
+            val fNode = ChoiceNodeView()
+            fNode.relocate(FXGL.getInput().getMouseXUI(), FXGL.getInput().getMouseYUI())
+
+            attachMouseHandler(fNode)
+
+            contentPane.children.add(fNode)
+        }
+
+        contextMenu.items.addAll(item1, item2, item3)
 
 
 
@@ -106,17 +115,23 @@ class DialoguePane : HBox() {
 
     private fun attachMouseHandler(nodeView: NodeView) {
         nodeView.outPoints.forEach { p ->
+
+            println("attached out")
+
             p.setOnMouseClicked {
-                selectedOutLink = p
+                selectedOutLink = p as OutLinkPoint
                 selectedNodeView = nodeView
             }
         }
 
         nodeView.inPoints.forEach { p ->
+
+            println("attached in")
+
             p.setOnMouseClicked {
                 selectedOutLink?.let {
 
-                    val line = nodeView.connect(selectedNodeView!!, selectedOutLink!!)
+                    val line = nodeView.connect(selectedNodeView!!, selectedOutLink!!, p as InLinkPoint)
 
                     contentPane.children.add(line)
 

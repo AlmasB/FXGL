@@ -8,6 +8,7 @@ package sandbox.dialogue;
 
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.concurrent.Async;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.MouseButton;
@@ -22,8 +23,8 @@ public class EditorSample extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1440);
-        settings.setHeight(900);
+        settings.setWidth(1280);
+        settings.setHeight(720);
         settings.setTitle("EditorSample");
         settings.setVersion("0.1");
     }
@@ -35,6 +36,11 @@ public class EditorSample extends GameApplication {
 
     @Override
     protected void initGame() {
+
+//        Async<Void> async = getExecutor().async(() -> {
+//            System.out.println("hello");
+//        });
+
 
 
 

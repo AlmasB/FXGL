@@ -6,6 +6,9 @@
 
 package sandbox.dialogue
 
+import javafx.scene.Group
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -15,16 +18,16 @@ import javafx.scene.shape.Circle
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-sealed class LinkPoint : Pane() {
+sealed class LinkPoint : Circle(8.0, 8.0, 8.0) {
     init {
-        val circle = Circle(10.0, 10.0, 10.0)
-        with(circle) {
-            fill = null
-            stroke = Color.BLUE
-            strokeWidth = 2.0
-        }
+        fill = Color.TRANSPARENT
+        stroke = Color.YELLOW
+        strokeWidth = 2.0
 
-        children.add(circle)
+
+//        background = null
+//
+//        children.add(circle)
     }
 }
 

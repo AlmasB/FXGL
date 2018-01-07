@@ -20,17 +20,13 @@ class StartNodeView : NodeView() {
 
     init {
 
-        val text = FXGL.getUIFactory().newText("START", Color.BLACK, 34.0)
 
 
-        contentPane.children.add(text)
+        //children.add(FXGL.getUIFactory().newText("START", Color.WHITE, 24.0))
 
 
-        outLink.translateX = 120.0
-        outLink.translateY = 30.0
 
-        children.add(outLink)
 
-        outPoints.add(outLink)
+        addOutPoint(outLink)
     }
 }
