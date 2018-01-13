@@ -74,6 +74,9 @@ import java.util.*;
  * executed on the JavaFX Application (UI) Thread.
  * By default all callbacks are executed on the JavaFX Application (UI) Thread.
  *
+ * Note: do NOT make any FXGL calls within your APP constructor or to initialize
+ * APP fields during declaration, make these calls in initGame().
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class GameApplication extends Application {
