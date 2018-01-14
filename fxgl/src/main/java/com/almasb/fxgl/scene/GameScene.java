@@ -207,8 +207,13 @@ public final class GameScene extends FXGLScene
      *
      * @param view view to add
      */
+    public void addGameView(EntityView view, RenderLayer layer) {
+        getRenderGroup(layer).getChildren().add(view);
+    }
+
+    // TODO: fix
     public void addGameView(EntityView view) {
-        getRenderGroup(view.getRenderLayer()).getChildren().add(view);
+        getRenderGroup(RenderLayer.BACKGROUND).getChildren().add(view);
     }
 
     /**
@@ -216,8 +221,8 @@ public final class GameScene extends FXGLScene
      *
      * @param view view to remove
      */
-    public void removeGameView(EntityView view) {
-        getRenderGroup(view.getRenderLayer()).getChildren().remove(view);
+    public void removeGameView(EntityView view, RenderLayer layer) {
+        getRenderGroup(layer).getChildren().remove(view);
     }
 
     /**
@@ -368,7 +373,7 @@ public final class GameScene extends FXGLScene
 
     private void initView(ViewComponent viewComponent) {
         EntityView view = viewComponent.getView();
-        addGameView(view);
+        addGameView(view, viewComponent.getRenderLayer());
 
         viewComponent.renderLayerProperty().addListener((o, oldLayer, newLayer) -> {
             getRenderGroup(oldLayer).getChildren().remove(view);
@@ -378,7 +383,7 @@ public final class GameScene extends FXGLScene
 
     private void destroyView(ViewComponent viewComponent) {
         EntityView view = viewComponent.getView();
-        removeGameView(view);
+        removeGameView(view, viewComponent.getRenderLayer());
     }
 
     @Override
