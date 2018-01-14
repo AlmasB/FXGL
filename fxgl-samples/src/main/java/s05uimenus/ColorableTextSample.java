@@ -12,7 +12,6 @@ import com.almasb.fxgl.input.KeyTrigger;
 import com.almasb.fxgl.input.TriggerView;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.ui.FXGLTextFlow;
-import com.almasb.fxgl.ui.TextFlowBuilder;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -21,7 +20,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextFlow;
 
 /**
- * Shows how to use JavaFX UI within FXGL.
+ * Shows how to use Colorable UI texts within FXGL.
+ *
+ * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public class ColorableTextSample extends GameApplication {
 
@@ -30,50 +31,45 @@ public class ColorableTextSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("ColorableTextSample");
-        settings.setVersion("0.1");
-
-
-
-
-
-
     }
 
     @Override
     protected void initUI() {
-        TextFlow uiText = TextFlowBuilder.start()
+
+        TextFlow uiText = getUIFactory().newTextFlow()
                 .append("Press ")
-                .append(KeyCode.V, Color.ORANGE)
+                .append(KeyCode.V, Color.LIGHTYELLOW)
                 .append(" to use ")
-                .append("Enhanced Vision", Color.ORANGE)
-                .build();
+                .append("Enhanced Vision", Color.DARKGREEN);
 
         HBox box = new HBox(5);
 
         char c = 'A';
 
         while (c != 'N') {
-            box.getChildren().add(new TriggerView(new KeyTrigger(KeyCode.getKeyCode("" + c))));
+            box.getChildren().add(new TriggerView(new KeyTrigger(KeyCode.getKeyCode("" + c)), Color.RED, 34));
             c++;
         }
 
         HBox box2 = new HBox(5);
 
         while (c != 'Z' + 1) {
-            box2.getChildren().add(new TriggerView(new KeyTrigger(KeyCode.getKeyCode("" + c))));
+            box2.getChildren().add(new TriggerView(new KeyTrigger(KeyCode.getKeyCode("" + c)), Color.BLUE, 26));
             c++;
         }
 
-        FXGLTextFlow t2 = new FXGLTextFlow();
-        //t2.append("Discovered: ").append("The New Temple", Color.DARKCYAN);
+        FXGLTextFlow t2 = getUIFactory().newTextFlow();
         t2.append(new TriggerView(new KeyTrigger(KeyCode.A, InputModifier.CTRL))).append("   ");
         t2.append(new TriggerView(new KeyTrigger(KeyCode.B, InputModifier.SHIFT))).append("   ");
         t2.append(new TriggerView(new KeyTrigger(KeyCode.C, InputModifier.ALT))).append("   ");
         t2.append(new TriggerView(new KeyTrigger(KeyCode.SPACE, InputModifier.ALT))).append("   ");
 
+        FXGLTextFlow t3 = getUIFactory().newTextFlow();
+        t3.append("Hold: ").append(MouseButton.PRIMARY, Color.DARKSALMON).append(" and ").append(MouseButton.SECONDARY, Color.LIGHTPINK).append(" to shoot");
 
-        FXGLTextFlow t3 = new FXGLTextFlow();
-        t3.append("Hold: ").append(MouseButton.PRIMARY, Color.ORANGE).append(" and ").append(MouseButton.SECONDARY, Color.ORANGE).append(" to shoot");
+        TextFlow t4 = getUIFactory().newTextFlow()
+                .append("Discovered Location: ")
+                .append("The New Temple", Color.DARKCYAN, 34);
 
         VBox vbox = new VBox(20);
         vbox.setTranslateX(0);
@@ -83,7 +79,8 @@ public class ColorableTextSample extends GameApplication {
                 box2,
                 uiText,
                 t2,
-                t3
+                t3,
+                t4
         );
 
         getGameScene().addUINode(vbox);

@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
 /**
@@ -109,6 +110,10 @@ public interface UIFactory {
     <T> ListView<T> newListView(ObservableList<T> items);
 
     <T> ListView<T> newListView();
+
+    default FXGLTextFlow newTextFlow() {
+        return new FXGLTextFlow();
+    }
 
     default Animation<?> translate(Node node, Point2D to, Duration duration) {
         return translate(node, new Point2D(node.getTranslateX(), node.getTranslateY()), to, Duration.ZERO, duration);
