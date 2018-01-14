@@ -27,11 +27,6 @@ public class RenderLayerSample extends GameApplication {
         settings.setHeight(600);
         settings.setTitle("RenderLayerSample");
         settings.setVersion("0.1");
-
-
-
-
-
     }
 
     @Override
@@ -44,7 +39,7 @@ public class RenderLayerSample extends GameApplication {
         EntityView view = new EntityView(new Rectangle(40, 40, Color.RED));
 
         // 1. predefine or create dynamically like below
-        view.setRenderLayer(new RenderLayer() {
+        RenderLayer layer = new RenderLayer() {
             @Override
             public String name() {
                 // 2. specify the unique name for that layer
@@ -56,13 +51,14 @@ public class RenderLayerSample extends GameApplication {
                 // 3. specify layer index, higher values will be drawn above lower values
                 return 1000;
             }
-        });
+        };
 
         // we have added box after player but because of the render layer we specified
         // the red box will be drawn below the player
         Entities.builder()
                 .at(80, 80)
                 .viewFromNode(view)
+                .renderLayer(layer)
                 .buildAndAttach(getGameWorld());
     }
 

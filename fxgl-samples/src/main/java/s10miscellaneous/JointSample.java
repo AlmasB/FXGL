@@ -126,7 +126,7 @@ public class JointSample extends GameApplication {
         line.endXProperty().bind(ball.getPositionComponent().xProperty().add(15));
         line.endYProperty().bind(ball.getPositionComponent().yProperty().add(15));
 
-        getGameScene().addGameView(new EntityView(line, RenderLayer.BACKGROUND));
+        getGameScene().addGameView(new EntityView(line));
 
         RevoluteJointDef rDef = new RevoluteJointDef();
         rDef.bodyA = physics.getBody();

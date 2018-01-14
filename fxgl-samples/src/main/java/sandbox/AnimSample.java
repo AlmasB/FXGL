@@ -15,6 +15,8 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
+import java.util.Map;
+
 /**
  *
  *
@@ -40,9 +42,17 @@ public class AnimSample extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("key", 0);
+    }
+
+    @Override
     protected void initGame() {
-        player = new Entity();
-        player.getComponent(CollidableComponent.class);
+
+
+        getGameState().<Integer>addListener("key", (prev, now) -> {
+            System.out.println(prev + " " + now);
+        });
     }
 
     private void anim() {
