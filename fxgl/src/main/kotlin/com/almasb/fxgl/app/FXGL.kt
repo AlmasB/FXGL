@@ -9,6 +9,7 @@ package com.almasb.fxgl.app
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
@@ -53,6 +54,21 @@ class FXGL private constructor() {
         private val _menuSettings = MenuSettings()
 
         @JvmStatic fun getMenuSettings() = _menuSettings
+
+        private val _gameConfig by lazy {
+            val parser = AnnotationParser(internalApp.javaClass)
+            parser.parse(SetGameConfig::class.java)
+            val config = parser.getClasses(SetGameConfig::class.java)
+                    .map { gameConfigClass ->
+                        getAssetLoader().loadKV("config.kv").to(gameConfigClass)
+                    }
+                    .firstOrNull() ?: throw IllegalStateException("No class annotated @SetGameConfig was found")
+
+            config
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        @JvmStatic fun <T> getGameConfig() = _gameConfig as T
 
         /**
          * @return instance of the running game application
