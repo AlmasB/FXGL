@@ -27,7 +27,7 @@ public class ConfigSample extends GameApplication {
 
     @Override
     protected void initGame() {
-        GameConfig config = FXGL.getGameConfig();
+        GameConfig config = getGameConfig();
 
         System.out.println("Enemy name: " + config.getEnemyName());
         System.out.println("Number of enemies: " + config.getNumEnemies());

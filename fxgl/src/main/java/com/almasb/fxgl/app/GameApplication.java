@@ -691,6 +691,10 @@ public abstract class GameApplication extends Application {
         return FXGL.getGameplay();
     }
 
+    public final <T> T getGameConfig() {
+        return FXGL.getGameConfig();
+    }
+
     /**
      * @return play state input
      */
