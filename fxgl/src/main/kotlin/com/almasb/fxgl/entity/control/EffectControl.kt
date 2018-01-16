@@ -6,19 +6,19 @@
 
 package com.almasb.fxgl.entity.control
 
-import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.Control
 import com.almasb.fxgl.entity.Effect
 import com.almasb.fxgl.entity.Entity
+import com.almasb.fxgl.entity.component.TimeComponent
 
 /**
- *
+ * Allows starting and ending an effect on an entity.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class EffectControl : Control() {
 
-    private val effectTypes = arrayListOf<Class<in Effect>>()
+    private val effectTypes = arrayListOf<Class<out Effect>>()
     private val effects: MutableList<Effect> = arrayListOf()
 
     override fun onUpdate(entity: Entity, tpf: Double) {
@@ -26,9 +26,14 @@ class EffectControl : Control() {
         while (iterator.hasNext()) {
             val effect = iterator.next()
 
-            // we use app tpf because this entity may be under TimeComponent effect
-            // which means effect computation will be affected too and so we avoid that
-            effect.onUpdate(FXGL.getApp().tpf())
+            // we compute the actual tpf because this entity may be under TimeComponent effect
+            // which means tpf might actually be a fraction of TimeComponent, i.e. not real tpf
+            // the issue is that then the effect length is shorter / longer than what it should be
+            val tpfActual = tpf / entity.getComponentOptional(TimeComponent::class.java)
+                    .map { it.value }
+                    .orElse(1.0)
+
+            effect.onUpdate(tpfActual)
 
             if (effect.isFinished) {
                 iterator.remove()
@@ -44,6 +49,7 @@ class EffectControl : Control() {
      */
     fun startEffect(effect: Effect) {
         if (effectTypes.contains(effect.javaClass)) {
+            // we know effect is present
             val oldEffect = effects.find { it.javaClass == effect.javaClass }!!
             oldEffect.onEnd(entity)
             effects.remove(oldEffect)
@@ -56,9 +62,22 @@ class EffectControl : Control() {
     }
 
     fun endEffect(effect: Effect) {
-        effectTypes.remove(effect.javaClass)
+        endEffect(effect.javaClass)
+    }
 
-        effects.remove(effect)
-        effect.onEnd(entity)
+    fun endEffect(effectClass: Class<out Effect>) {
+        effectTypes.remove(effectClass)
+
+        // we don't know if effect is present
+        effects.find { it.javaClass == effectClass }?.let { effect ->
+            effect.onEnd(entity)
+            effects.remove(effect)
+        }
+    }
+
+    fun endAllEffects() {
+        effectTypes.clear()
+        effects.forEach { it.onEnd(entity) }
+        effects.clear()
     }
 }
