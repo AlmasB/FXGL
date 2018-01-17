@@ -90,6 +90,13 @@ class EntityTest {
     }
 
     @Test
+    fun `Get component fails if not present`() {
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.getComponent(TestComponent::class.java)
+        })
+    }
+
+    @Test
     fun `Get component optional`() {
         val comp = TestComponent()
         entity.addComponent(comp)
@@ -269,6 +276,13 @@ class EntityTest {
         entity.addControl(control)
 
         assertThat(entity.getControl(TestControl::class.java), `is`(control))
+    }
+
+    @Test
+    fun `Get control fails if not present`() {
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.getControl(TestControl::class.java)
+        })
     }
 
     @Test
