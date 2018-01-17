@@ -667,12 +667,13 @@ class EntityTest {
     /* CONVENIENCE */
 
     @Test
-    fun `X Y angle Properties`() {
-        assertTrue(entity.xProperty() === (entity.positionComponent.xProperty()))
-        assertTrue(entity.yProperty() === (entity.positionComponent.yProperty()))
-        assertTrue(entity.angleProperty() === (entity.rotationComponent.valueProperty()))
+    fun `X Y angle type properties`() {
+        assertTrue(entity.xProperty() === entity.positionComponent.xProperty())
+        assertTrue(entity.yProperty() === entity.positionComponent.yProperty())
+        assertTrue(entity.angleProperty() === entity.rotationComponent.valueProperty())
         assertTrue(entity.widthProperty() === entity.boundingBoxComponent.widthProperty())
         assertTrue(entity.heightProperty() === entity.boundingBoxComponent.heightProperty())
+        assertTrue(entity.typeProperty() === entity.typeComponent.valueProperty())
     }
 
     @Test
