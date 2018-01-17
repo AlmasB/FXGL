@@ -22,7 +22,7 @@ import java.util.Comparator;
  * @author Nathan Sweet
  */
 public class Sort {
-    static private Sort instance;
+    private static Sort instance;
 
     private TimSort timSort;
     private ComparableTimSort comparableTimSort;

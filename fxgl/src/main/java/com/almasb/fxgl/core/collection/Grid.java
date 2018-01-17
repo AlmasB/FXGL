@@ -6,6 +6,9 @@
 
 package com.almasb.fxgl.core.collection;
 
+import com.almasb.fxgl.util.TriConsumer;
+import com.almasb.fxgl.util.TriFunction;
+
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -50,6 +53,14 @@ public class Grid<T> {
         for (int y = 0; y < data[0].length; y++) {
             for (int x = 0; x < data.length; x++) {
                 function.accept(get(x, y));
+            }
+        }
+    }
+
+    public void forEach(TriConsumer<T, Integer, Integer> function) {
+        for (int y = 0; y < data[0].length; y++) {
+            for (int x = 0; x < data.length; x++) {
+                function.accept(get(x, y), x, y);
             }
         }
     }

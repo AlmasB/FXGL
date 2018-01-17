@@ -6,13 +6,13 @@
 
 package sandbox;
 
-import com.almasb.fxgl.algorithm.Grid;
-import com.almasb.fxgl.algorithm.MapGenerator;
-import com.almasb.fxgl.algorithm.TileType;
+import com.almasb.fxgl.algorithm.procedural.BiomeMapGenerator;
+import com.almasb.fxgl.algorithm.procedural.MapGenerator;
 import com.almasb.fxgl.animation.AnimatedColor;
 import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.collection.Grid;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
@@ -41,7 +41,31 @@ public class MapGenerationSample extends GameApplication {
 
     @Override
     protected void initGame() {
+        int W = getWidth() / 10;
+        int H = getHeight() / 10;
 
+        MapGenerator<BiomeMapGenerator.BiomeData> gen = new BiomeMapGenerator(2.4);
+        Grid<BiomeMapGenerator.BiomeData> map = gen.generate(W, H);
+
+        map.forEach((data, x, y) -> {
+            Texture color;
+
+            if (data.getElevation() < 0.2) {
+                color = new Texture(new WritableImage(10, 10)).replaceColor(Color.TRANSPARENT, Color.BLUE);
+            } else if (data.getElevation() < 0.8) {
+                color = DSLKt.texture("grass.png", 10, 10);
+            } else {
+                color = DSLKt.texture("brick.png", 10, 10);
+            }
+
+            Entities.builder()
+                    .at(x*10, y*10)
+                    .viewFromNode(color)
+                    .buildAndAttach();
+        });
+    }
+
+    private void old() {
         int W = getWidth() / 10;
         int H = getHeight() / 10;
 
