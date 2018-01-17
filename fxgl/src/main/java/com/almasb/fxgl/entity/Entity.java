@@ -765,7 +765,7 @@ public class Entity {
 
         if (module instanceof Control)
             injectFields((Control) module);
-        else if (module instanceof Component)
+        else
             injectFields((Component) module);
 
         module.onAdded(this);
@@ -775,29 +775,30 @@ public class Entity {
     @SuppressWarnings("unchecked")
     private void injectFields(Component component) {
         ReflectionUtils.findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
-            Component comp = getComponent((Class<? extends Component>) field.getType());
-            if (comp != null) {
+            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
                 ReflectionUtils.inject(field, component, comp);
-            }
+            });
         });
     }
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
         ReflectionUtils.findFieldsByTypeRecursive(control, Component.class).forEach(field -> {
-            Component comp = getComponent((Class<? extends Component>) field.getType());
-            if (comp != null) {
+            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
                 ReflectionUtils.inject(field, control, comp);
-            }
+            });
         });
 
         ReflectionUtils.findFieldsByTypeRecursive(control, Control.class).forEach(field -> {
-            Control ctrl = getControl((Class<? extends Control>) field.getType());
-            if (ctrl != null) {
+            getControlOptional((Class<? extends Control>) field.getType()).ifPresent(ctrl -> {
                 ReflectionUtils.inject(field, control, ctrl);
-            }
+            });
         });
 
+        injectEntityField(control);
+    }
+
+    private void injectEntityField(Control control) {
         // check if control has conventional name
         String controlName = control.getClass().getSimpleName();
         if (controlName.endsWith("Control") && controlName.length() > 8) {
