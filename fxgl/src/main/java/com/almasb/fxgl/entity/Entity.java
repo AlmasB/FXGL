@@ -784,7 +784,6 @@ public class Entity {
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
-        // TODO: rewrite with for each loop to avoid potential extra checks
         ReflectionUtils.findFieldsByTypeRecursive(control, Component.class).forEach(field -> {
             Component comp = getComponent((Class<? extends Component>) field.getType());
             if (comp != null) {
