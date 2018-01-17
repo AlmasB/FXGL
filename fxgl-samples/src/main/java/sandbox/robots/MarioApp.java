@@ -186,7 +186,10 @@ public class MarioApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        debug.setText("On Ground: " + playerControl.getEntity().getComponent(PhysicsComponent.class).isOnGround());
+        debug.setText("On Ground: " + playerControl.getEntity().getComponent(PhysicsComponent.class).isOnGround()
+                + " MovingX: " + playerControl.getEntity().getComponent(PhysicsComponent.class).isMovingX()
+                + " MovingY: " + playerControl.getEntity().getComponent(PhysicsComponent.class).isMovingY()
+        );
     }
 
     private boolean nextLevel = false;
