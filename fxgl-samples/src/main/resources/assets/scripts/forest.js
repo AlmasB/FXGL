@@ -5,8 +5,6 @@ function doCall() {
     localVar++
 
     println("localVar: " + localVar)
-
-    callMe()
 }
 
 function inject(value) {

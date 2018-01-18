@@ -1,1 +1,3 @@
-notify("Hello World from JS!");
+function sample() {
+    notify("Hello World from JS!");
+}

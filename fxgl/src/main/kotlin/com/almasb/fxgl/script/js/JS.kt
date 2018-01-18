@@ -61,10 +61,9 @@ class JS(val scriptCode: String) : Script {
     private val context: ScriptContext = SimpleScriptContext()
 
     init {
-        context.setBindings((engine as ScriptEngine).createBindings(), ScriptContext.ENGINE_SCOPE)
+        context.setBindings(scriptEngine.createBindings(), ScriptContext.ENGINE_SCOPE)
 
-        // evaluate the code in local context
-        scriptEngine.eval(scriptCode, context)
+        eval<Void>(scriptCode)
     }
 
     /**
@@ -88,8 +87,12 @@ class JS(val scriptCode: String) : Script {
         }
     }
 
+    /**
+     * evaluate the code in local context
+     */
     override fun <T> eval(script: String): T {
         try {
+            //return (context.getBindings(ScriptContext.ENGINE_SCOPE) as JSObject).eval(script) as T
             return scriptEngine.eval(script, context) as T
         } catch (e: Exception) {
             throw IllegalArgumentException("Evaluation failed: " + e)

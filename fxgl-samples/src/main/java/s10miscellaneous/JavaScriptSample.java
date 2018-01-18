@@ -24,12 +24,6 @@ public class JavaScriptSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("JavaScriptSample");
-        settings.setVersion("0.1");
-
-
-
-
-
     }
 
     @Override
@@ -47,7 +41,7 @@ public class JavaScriptSample extends GameApplication {
                 .with(new JSControl("ccw_spin_control.js"))
                 .buildAndAttach(getGameWorld());
 
-        //JavaScriptParser parser = new JavaScriptParser("sample.js");
+        getAssetLoader().loadScript("sample.js").call("sample");
     }
 
     public static void main(String[] args) {
