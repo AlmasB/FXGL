@@ -141,8 +141,8 @@ class AssetLoaderTest {
     }
 
     @Test
-    fun loadScript() {
-        val script = assetLoader.loadScript("test.js")
+    fun loadScriptRaw() {
+        val script = assetLoader.loadScriptRaw("test.js")
 
         assertThat(script, `is`(JS_DATA))
     }

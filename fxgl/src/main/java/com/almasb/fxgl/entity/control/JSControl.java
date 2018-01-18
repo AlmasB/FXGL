@@ -6,9 +6,10 @@
 
 package com.almasb.fxgl.entity.control;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.parser.JavaScriptParser;
+import com.almasb.fxgl.script.Script;
 
 /**
  * Control that runs scripted entity behavior from a javascript file.
@@ -17,19 +18,19 @@ import com.almasb.fxgl.parser.JavaScriptParser;
  */
 public class JSControl extends Control {
 
-    private JavaScriptParser parser;
+    private Script script;
 
     /**
-     * Constructs new instance with given source, either string or filename.
+     * Constructs new instance with given source filename.
      *
-     * @param script javascript source
+     * @param scriptFileName javascript source
      */
-    public JSControl(String script) {
-        parser = new JavaScriptParser(script);
+    public JSControl(String scriptFileName) {
+        this.script = FXGL.getAssetLoader().loadScript(scriptFileName);
     }
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
-        parser.callFunction("onUpdate", entity, tpf);
+        script.call("onUpdate", entity, tpf);
     }
 }

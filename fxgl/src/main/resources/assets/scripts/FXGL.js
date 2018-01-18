@@ -89,6 +89,13 @@ function npcLinesWrap() {
     return Java.to(npcLines())
 }
 
+var count = 0
+
+function callMe() {
+    count++
+    println(count)
+}
+
 /* DSL mappings */
 
 var DSLKt = Java.type("com.almasb.fxgl.app.DSLKt")

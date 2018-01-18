@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.Logger;
@@ -14,7 +15,7 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
-import com.almasb.fxgl.parser.JavaScriptParser;
+import com.almasb.fxgl.script.Script;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -45,7 +46,7 @@ public class Entity {
 
     private ObjectMap<String, Object> properties = new ObjectMap<>();
 
-    private ObjectMap<String, JavaScriptParser> scripts = new ObjectMap<>();
+    private ObjectMap<String, Script> scripts = new ObjectMap<>();
 
     private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
     private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
@@ -906,13 +907,13 @@ public class Entity {
     }
 
     // TODO: check if the same script file name or else load the new one
-    public final Optional<JavaScriptParser> getScriptHandler(String scriptType) {
+    public final Optional<Script> getScriptHandler(String scriptType) {
         if (scripts.containsKey(scriptType)) {
             return Optional.of(scripts.get(scriptType));
         }
 
         return getPropertyOptional(scriptType).flatMap(scriptFile -> {
-            JavaScriptParser scriptParser = new JavaScriptParser((String) scriptFile);
+            Script scriptParser = FXGL.getAssetLoader().loadScript((String) scriptFile);
 
             scripts.put(scriptType, scriptParser);
 
