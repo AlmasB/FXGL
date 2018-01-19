@@ -13,6 +13,11 @@ import com.almasb.fxgl.scene.FXGLScene;
  */
 abstract class AppState extends State {
 
+    /**
+     * Used instead of a non-present app state.
+     */
+    static final AppState EMPTY = new AppState(new FXGLScene() {}) {};
+
     private FXGLScene scene;
 
     AppState(FXGLScene scene) {

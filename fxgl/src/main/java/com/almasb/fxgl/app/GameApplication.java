@@ -27,6 +27,7 @@ import com.almasb.fxgl.saving.SaveEvent;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.PreloadingScene;
+import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -295,7 +296,43 @@ public abstract class GameApplication extends Application {
     }
 
     private void initStateMachine() {
-        stateMachine = new AppStateMachine(this);
+        log.debug("Initializing state machine and application states");
+
+        SceneFactory sceneFactory = FXGL.getSettings().getSceneFactory();
+
+        // STARTUP is default
+        AppState initial = new StartupState(this);
+
+        AppState loading = new LoadingState(this, sceneFactory);
+        AppState play = new PlayState(sceneFactory);
+
+        // reasonable hack to trigger dialog state init before intro and menus
+        DialogSubState.INSTANCE.getView();
+
+        AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : null;
+        AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : null;
+        AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : null;
+
+        stateMachine = new AppStateMachine(loading, play, DialogSubState.INSTANCE, intro, mainMenu, gameMenu, initial);
+
+        stateMachine.addListener(new StateChangeListener() {
+            @Override
+            public void beforeEnter(State state) {
+                if (state instanceof AppState) {
+                    setScene(((AppState)state).getScene());
+                } else if (state instanceof SubState) {
+                    getScene().getRoot().getChildren().add(((SubState)state).getView());
+                }
+            }
+
+            @Override
+            public void exited(State state) {
+                if (state instanceof SubState) {
+                    getScene().getRoot().getChildren().remove(((SubState)state).getView());
+                }
+            }
+        });
+
         playState = (PlayState) stateMachine.getPlayState();
     }
 

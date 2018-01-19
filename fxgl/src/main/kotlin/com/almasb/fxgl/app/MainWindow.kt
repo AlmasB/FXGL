@@ -142,7 +142,7 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
                 e.consume()
 
                 if (settings.isCloseConfirmation) {
-                    if (FXGL.getApp().stateMachine.canShowCloseDialog()) {
+                    if (canShowCloseDialog()) {
                         FXGL.getDisplay().showConfirmationBox(FXGL.getLocalizedString("dialog.exitGame"), { yes ->
                             if (yes)
                                 FXGL.getApp().exit()
@@ -172,6 +172,21 @@ internal class MainWindow(val stage: Stage, private val settings: ReadOnlyGameSe
             sizeToScene()
             centerOnScreen()
         }
+    }
+
+    /**
+     * @return true if can show close dialog
+     */
+    private fun canShowCloseDialog(): Boolean {
+        val state = FXGL.getApp().stateMachine.currentState
+
+        // do not allow close dialog if
+        // 1. a dialog is shown
+        // 2. we are loading a game
+        // 3. we are showing intro
+        return (state !== DialogSubState
+                && state !== FXGL.getApp().stateMachine.loadingState
+                && (!FXGL.getApp().settings.isIntroEnabled || state !== FXGL.getApp().stateMachine.introState))
     }
 
     private var windowBorderWidth = 0.0
