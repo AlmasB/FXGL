@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.app.FXGLMock
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
@@ -72,5 +72,13 @@ class JSTest {
 
         assertThat(script1.call<Int>("get"), `is`(999))
         assertThat(script2.call<Int>("get"), `is`(-222))
+    }
+
+    @Test
+    fun `Has function`() {
+        val script1 = ScriptFactory.fromCode(JS_DATA)
+
+        assertFalse(script1.hasFunction("hello"))
+        assertTrue(script1.hasFunction("test"))
     }
 }

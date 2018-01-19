@@ -906,18 +906,26 @@ public class Entity {
         }
     }
 
-    // TODO: check if the same script file name or else load the new one
+    /**
+     * Searches for a property with key scriptType and uses its value
+     * to load a script, which is then cached.
+     * The script typically takes an event object, but
+     * custom scripts are allowed.
+     *
+     * @param scriptType e.g. onActivate, onHit, onLevelUp
+     * @return a script that handles a specific event (scriptType)
+     */
     public final Optional<Script> getScriptHandler(String scriptType) {
         if (scripts.containsKey(scriptType)) {
             return Optional.of(scripts.get(scriptType));
         }
 
-        return getPropertyOptional(scriptType).flatMap(scriptFile -> {
-            Script scriptParser = FXGL.getAssetLoader().loadScript((String) scriptFile);
+        return getPropertyOptional(scriptType).map(scriptFile -> {
+            Script script = FXGL.getAssetLoader().loadScript((String) scriptFile);
 
-            scripts.put(scriptType, scriptParser);
+            scripts.put(scriptType, script);
 
-            return Optional.of(scriptParser);
+            return script;
         });
     }
 

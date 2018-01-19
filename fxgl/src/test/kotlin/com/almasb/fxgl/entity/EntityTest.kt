@@ -755,6 +755,19 @@ class EntityTest {
         assertThat(entity.height, `is`(15.0))
     }
 
+    /* SCRIPTS */
+
+    @Test
+    fun `Scripts`() {
+        assertFalse(entity.getScriptHandler("onHit").isPresent)
+
+        entity.setProperty("onHit", "entity_script.js")
+
+        val script = entity.getScriptHandler("onHit").get()
+
+        assertThat(script.call<String>("onHit"), `is`("EntityTest"))
+    }
+
     /* MOCK CLASSES */
 
     private inner class TestControl : Control() {
