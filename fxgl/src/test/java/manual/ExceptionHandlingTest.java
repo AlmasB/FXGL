@@ -5,7 +5,6 @@
  */
 package manual;
 
-import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.settings.GameSettings;
 
@@ -21,12 +20,6 @@ public class ExceptionHandlingTest extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("ExceptionHandlingTest");
-        settings.setVersion("0.1");
-        settings.setFullScreenAllowed(false);
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
-        settings.setProfilingEnabled(true);
-        settings.setApplicationMode(ApplicationMode.DEVELOPER);
 
         //throw new RuntimeException("Exception in initSettings()");
     }
@@ -35,9 +28,6 @@ public class ExceptionHandlingTest extends GameApplication {
     protected void initInput() {
         //throw new RuntimeException("Exception in initInput()");
     }
-
-    @Override
-    protected void initAssets() {}
 
     @Override
     protected void initGame() {
