@@ -16,7 +16,7 @@ install:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
-- if [ "$TRAVIS_BRANCH" != "master" ]; then mvn deploy --settings .travis.settings.xml; fi
+- if [ "$TRAVIS_BRANCH" != "master" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; mvn deploy --settings .travis.settings.xml; fi
 notifications:
   email:
     recipients:
