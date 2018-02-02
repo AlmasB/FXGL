@@ -16,10 +16,11 @@ install:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
+- mvn deploy --settings .travis.settings.xml
 notifications:
   email:
     recipients:
-      - almaslvl@gmail.com
+    - almaslvl@gmail.com
     on_success: change
     on_failure: always
     on_start: never
@@ -31,4 +32,7 @@ notifications:
     on_start: never
 env:
   matrix:
-    secure: fRP4CU2qkv47HOd1PBrkGgwsP6To81AYuzi342fxnNTBv313c5fU+HCLYrYI5xNTYfE2b+Iax+A0ypbBbZ2XU+NtbI4OiAYCcBSiFOxFU/gty5neWvyRKG32qtUSNqdEPmx6EzdAjpFss3fyu6AB+g93SLC6S9IBiOxnS3av7cQ=
+  - secure: fRP4CU2qkv47HOd1PBrkGgwsP6To81AYuzi342fxnNTBv313c5fU+HCLYrYI5xNTYfE2b+Iax+A0ypbBbZ2XU+NtbI4OiAYCcBSiFOxFU/gty5neWvyRKG32qtUSNqdEPmx6EzdAjpFss3fyu6AB+g93SLC6S9IBiOxnS3av7cQ=
+  - secure: KU3KflYaq/91XNw9b5NB/7UskbVKhu6Ik5BTBoalTEqs2Jxw7kQns3jhRBCTrFgbik3B68UG4P+tHtLbz2z/MOnV7btHEm9b+hTi8jsU3BnaXI+V43vP04I6hO2fMAUilymw3lY8kzdmqX8imI6apvHuqVF/IYRS2ln5XGlMo10=
+  - secure: aZQmJuxsNOdAB1G6CqVFIz0xQA8t4lKgT/Q3qvrUlikDhBHj+C6CkGd53VzqaHMwyKgknsHgXd7LKuCSdT4qR0oQbLx7PFJbvFbFiTVS8mLlLTPSVAkSfm9ObJydTEJSPYmENY93PN4QPw13gXHY2rhyE2cJ4O4GGR7pFSFQ5vo=
+  - secure: WTWLgIyWobVidlk1Ucvtomhj3KbkXyqfYqzi2iPLKwS7S8Rju8a6Tfrd+p59hK2jLxR74Fz6rIo+CLsmg324e0H+JKQLOO/QeMty7s4IFk5uLLgfUD5F0gVkQYjBHdfSgJfqdQF+ffcbUpLEV4f0h4c+yLdZIm7kdEG8UONoWkI=
