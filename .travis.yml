@@ -16,7 +16,7 @@ install:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
-- mvn deploy --settings .travis.settings.xml
+- if [ "$TRAVIS_BRANCH" != "master" ]; then mvn deploy --settings .travis.settings.xml; fi
 notifications:
   email:
     recipients:
