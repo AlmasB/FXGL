@@ -6,6 +6,7 @@
 
 package s09advanced.state;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.devtools.DeveloperWASDControl;
 import com.almasb.fxgl.entity.Entities;
@@ -34,12 +35,6 @@ public class StateSample extends GameApplication {
         settings.setHeight(720);
         settings.setTitle("StateSample");
         settings.setVersion("0.1");
-
-
-
-
-
-
     }
 
     private ShopState shopState;
@@ -49,8 +44,8 @@ public class StateSample extends GameApplication {
         getInput().addAction(new UserAction("Open Shop Menu") {
             @Override
             protected void onActionBegin() {
-                getStateMachine().pushState(new LockpickingState());
-                //getStateMachine().pushState(shopState);
+                //getStateMachine().pushState(new LockpickingState());
+                getStateMachine().pushState(shopState);
             }
         }, KeyCode.F);
     }

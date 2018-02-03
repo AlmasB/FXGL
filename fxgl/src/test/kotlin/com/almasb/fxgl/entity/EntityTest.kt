@@ -6,14 +6,27 @@
 
 package com.almasb.fxgl.entity
 
+import com.almasb.fxgl.app.FXGLMock
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.component.*
 import com.almasb.fxgl.entity.serialization.SerializableComponent
 import com.almasb.fxgl.entity.serialization.SerializableControl
 import com.almasb.fxgl.io.serialization.Bundle
+import com.almasb.fxgl.physics.BoundingShape
+import com.almasb.fxgl.physics.HitBox
+import com.almasb.fxgl.texture.Texture
 import javafx.geometry.Point2D
+import javafx.geometry.Rectangle2D
+import javafx.scene.Node
+import javafx.scene.shape.Rectangle
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.hasEntry
+import org.hamcrest.collection.IsIterableContainingInAnyOrder
+import org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -25,6 +38,13 @@ import org.junit.jupiter.api.Test
 class EntityTest {
 
     private lateinit var entity: Entity
+
+    companion object {
+        @BeforeAll
+        @JvmStatic fun before() {
+            FXGLMock.mock()
+        }
+    }
 
     @BeforeEach
     fun setUp() {
@@ -70,11 +90,27 @@ class EntityTest {
     }
 
     @Test
+    fun `Get component fails if not present`() {
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.getComponent(TestComponent::class.java)
+        })
+    }
+
+    @Test
     fun `Get component optional`() {
         val comp = TestComponent()
         entity.addComponent(comp)
 
         assertThat(entity.getComponentOptional(TestComponent::class.java).get(), `is`(comp))
+    }
+
+    @Test
+    fun `Get core components`() {
+        assertThat(entity.positionComponent, `is`(entity.getComponent(PositionComponent::class.java)))
+        assertThat(entity.rotationComponent, `is`(entity.getComponent(RotationComponent::class.java)))
+        assertThat(entity.boundingBoxComponent, `is`(entity.getComponent(BoundingBoxComponent::class.java)))
+        assertThat(entity.viewComponent, `is`(entity.getComponent(ViewComponent::class.java)))
+        assertThat(entity.typeComponent, `is`(entity.getComponent(TypeComponent::class.java)))
     }
 
     @Test
@@ -117,9 +153,11 @@ class EntityTest {
         entity.addComponent(HPComponent(0.0))
         entity.addControl(HPControl())
 
-        assertThrows(IllegalArgumentException::class.java, {
+        val e = assertThrows(IllegalArgumentException::class.java, {
             entity.removeComponent(HPComponent::class.java)
         })
+
+        assertThat(e.message, `is`("Required component: [HPComponent] by: HPControl"))
     }
 
     @Test
@@ -241,6 +279,13 @@ class EntityTest {
     }
 
     @Test
+    fun `Get control fails if not present`() {
+        assertThrows(IllegalArgumentException::class.java, {
+            entity.getControl(TestControl::class.java)
+        })
+    }
+
+    @Test
     fun `Get control optional`() {
         val control = TestControl()
         entity.addControl(control)
@@ -300,6 +345,9 @@ class EntityTest {
         entity.setProperty("hp", 30)
 
         assertThat(entity.getProperty("hp"), `is`(30))
+
+        assertThat(entity.properties.keys(), containsInAnyOrder("hp"))
+        assertThat(entity.properties.values(), containsInAnyOrder<Any>(30))
     }
 
     @Test
@@ -633,10 +681,91 @@ class EntityTest {
     /* CONVENIENCE */
 
     @Test
-    fun `Translate towards`() {
-        entity.translateTowards(Point2D(100.0, 0.0), 100.0)
+    fun `X Y angle type properties`() {
+        assertTrue(entity.xProperty() === entity.positionComponent.xProperty())
+        assertTrue(entity.yProperty() === entity.positionComponent.yProperty())
+        assertTrue(entity.angleProperty() === entity.rotationComponent.valueProperty())
+        assertTrue(entity.widthProperty() === entity.boundingBoxComponent.widthProperty())
+        assertTrue(entity.heightProperty() === entity.boundingBoxComponent.heightProperty())
+        assertTrue(entity.typeProperty() === entity.typeComponent.valueProperty())
+    }
 
+    @Test
+    fun `Translate`() {
+        entity.translateTowards(Point2D(100.0, 0.0), 100.0)
         assertThat(entity.x, `is`(100.0))
+
+        entity.translate(50.0, 50.0)
+        assertThat(entity.position, `is`(Point2D(150.0, 50.0)))
+
+        entity.translate(Point2D(-50.0, 50.0))
+        assertThat(entity.position, `is`(Point2D(100.0, 100.0)))
+
+        entity.translate(Vec2(40.0, -20.0))
+        assertThat(entity.position, `is`(Point2D(140.0, 80.0)))
+
+        entity.translateX(60.0)
+        assertThat(entity.position, `is`(Point2D(200.0, 80.0)))
+
+        entity.translateY(120.0)
+        assertThat(entity.position, `is`(Point2D(200.0, 200.0)))
+    }
+
+    @Test
+    fun `Rotate`() {
+        entity.rotateBy(40.0)
+        assertThat(entity.rotation, `is`(40.0))
+
+        entity.rotateToVector(Point2D(-1.0, 0.0))
+        assertThat(entity.rotation, `is`(180.0))
+    }
+
+    @Test
+    fun `BBox`() {
+        entity.boundingBoxComponent.addHitBox(HitBox(BoundingShape.box(30.0, 40.0)))
+
+        assertThat(entity.width, `is`(30.0))
+        assertThat(entity.height, `is`(40.0))
+        assertThat(entity.rightX, `is`(30.0))
+        assertThat(entity.bottomY, `is`(40.0))
+        assertThat(entity.center, `is`(Point2D(15.0, 20.0)))
+        assertTrue(entity.isWithin(Rectangle2D(20.0, 20.0, 10.0, 10.0)))
+    }
+
+    @Test
+    fun `View`() {
+        val r = Rectangle(40.0, 15.0)
+
+        entity.setView(r)
+
+        assertThat(entity.view.nodes, containsInAnyOrder<Node>(r))
+
+        entity.setViewFromTexture("brick.png")
+
+        assertThat(entity.view.nodes.map { it.javaClass }, containsInAnyOrder<Class<*>>(Texture::class.java))
+
+        entity.setViewFromTextureWithBBox("brick.png")
+
+        assertThat(entity.width, `is`(64.0))
+        assertThat(entity.height, `is`(64.0))
+
+        entity.setViewWithBBox(r)
+
+        assertThat(entity.width, `is`(40.0))
+        assertThat(entity.height, `is`(15.0))
+    }
+
+    /* SCRIPTS */
+
+    @Test
+    fun `Scripts`() {
+        assertFalse(entity.getScriptHandler("onHit").isPresent)
+
+        entity.setProperty("onHit", "entity_script.js")
+
+        val script = entity.getScriptHandler("onHit").get()
+
+        assertThat(script.call<String>("onHit"), `is`("EntityTest"))
     }
 
     /* MOCK CLASSES */

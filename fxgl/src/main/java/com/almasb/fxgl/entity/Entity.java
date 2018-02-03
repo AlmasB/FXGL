@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.collection.ObjectMap;
 import com.almasb.fxgl.core.logging.Logger;
@@ -14,7 +15,7 @@ import com.almasb.fxgl.core.reflect.ReflectionUtils;
 import com.almasb.fxgl.entity.component.*;
 import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.io.serialization.Bundle;
-import com.almasb.fxgl.parser.JavaScriptParser;
+import com.almasb.fxgl.script.Script;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -45,7 +46,7 @@ public class Entity {
 
     private ObjectMap<String, Object> properties = new ObjectMap<>();
 
-    private ObjectMap<String, JavaScriptParser> scripts = new ObjectMap<>();
+    private ObjectMap<String, Script> scripts = new ObjectMap<>();
 
     private ObjectMap<Class<? extends Control>, Control> controls = new ObjectMap<>();
     private ObjectMap<Class<? extends Component>, Component> components = new ObjectMap<>();
@@ -588,17 +589,21 @@ public class Entity {
      * @return control
      */
     public final <T extends Control> Optional<T> getControlOptional(Class<T> type) {
-        return Optional.ofNullable(getControl(type));
+        return Optional.ofNullable(type.cast(controls.get(type)));
     }
 
     /**
-     * Returns control of given type or null if no such type is registered.
-     *
      * @param type control type
-     * @return control
+     * @return control of given type
      */
     public final <T extends Control> T getControl(Class<T> type) {
-        return type.cast(controls.get(type));
+        Control control = controls.get(type);
+
+        if (control == null) {
+            throw new IllegalArgumentException("Control " + type.getSimpleName() + " not found!");
+        }
+
+        return type.cast(control);
     }
 
     /**
@@ -668,17 +673,21 @@ public class Entity {
      * @return component
      */
     public final <T extends Component> Optional<T> getComponentOptional(Class<T> type) {
-        return Optional.ofNullable(getComponent(type));
+        return Optional.ofNullable(type.cast(components.get(type)));
     }
 
     /**
-     * Returns component of given type, or null if type not registered.
-     *
      * @param type component type
-     * @return component
+     * @return component of given type
      */
     public final <T extends Component> T getComponent(Class<T> type) {
-        return type.cast(components.get(type));
+        Component component = components.get(type);
+
+        if (component == null) {
+            throw new IllegalArgumentException("Component " + type.getSimpleName() + " not found!");
+        }
+
+        return type.cast(component);
     }
 
     /**
@@ -757,7 +766,7 @@ public class Entity {
 
         if (module instanceof Control)
             injectFields((Control) module);
-        else if (module instanceof Component)
+        else
             injectFields((Component) module);
 
         module.onAdded(this);
@@ -767,30 +776,30 @@ public class Entity {
     @SuppressWarnings("unchecked")
     private void injectFields(Component component) {
         ReflectionUtils.findFieldsByTypeRecursive(component, Component.class).forEach(field -> {
-            Component comp = getComponent((Class<? extends Component>) field.getType());
-            if (comp != null) {
+            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
                 ReflectionUtils.inject(field, component, comp);
-            }
+            });
         });
     }
 
     @SuppressWarnings("unchecked")
     private void injectFields(Control control) {
-        // TODO: rewrite with for each loop to avoid potential extra checks
         ReflectionUtils.findFieldsByTypeRecursive(control, Component.class).forEach(field -> {
-            Component comp = getComponent((Class<? extends Component>) field.getType());
-            if (comp != null) {
+            getComponentOptional((Class<? extends Component>) field.getType()).ifPresent(comp -> {
                 ReflectionUtils.inject(field, control, comp);
-            }
+            });
         });
 
         ReflectionUtils.findFieldsByTypeRecursive(control, Control.class).forEach(field -> {
-            Control ctrl = getControl((Class<? extends Control>) field.getType());
-            if (ctrl != null) {
+            getControlOptional((Class<? extends Control>) field.getType()).ifPresent(ctrl -> {
                 ReflectionUtils.inject(field, control, ctrl);
-            }
+            });
         });
 
+        injectEntityField(control);
+    }
+
+    private void injectEntityField(Control control) {
         // check if control has conventional name
         String controlName = control.getClass().getSimpleName();
         if (controlName.endsWith("Control") && controlName.length() > 8) {
@@ -897,18 +906,26 @@ public class Entity {
         }
     }
 
-    // TODO: check if the same script file name or else load the new one
-    public final Optional<JavaScriptParser> getScriptHandler(String scriptType) {
+    /**
+     * Searches for a property with key scriptType and uses its value
+     * to load a script, which is then cached.
+     * The script typically takes an event object, but
+     * custom scripts are allowed.
+     *
+     * @param scriptType e.g. onActivate, onHit, onLevelUp
+     * @return a script that handles a specific event (scriptType)
+     */
+    public final Optional<Script> getScriptHandler(String scriptType) {
         if (scripts.containsKey(scriptType)) {
             return Optional.of(scripts.get(scriptType));
         }
 
-        return getPropertyOptional(scriptType).flatMap(scriptFile -> {
-            JavaScriptParser scriptParser = new JavaScriptParser((String) scriptFile);
+        return getPropertyOptional(scriptType).map(scriptFile -> {
+            Script script = FXGL.getAssetLoader().loadScript((String) scriptFile);
 
-            scripts.put(scriptType, scriptParser);
+            scripts.put(scriptType, script);
 
-            return Optional.of(scriptParser);
+            return script;
         });
     }
 

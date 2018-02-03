@@ -6,6 +6,7 @@
 
 package com.almasb.fxgl.entity
 
+import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -32,7 +33,7 @@ class SpawnDataTest {
     @Test
     fun `Throw if key not found`() {
         assertThrows(IllegalArgumentException::class.java, {
-            SpawnData(0.0, 0.0).get<Int>("SomeKey")
+            SpawnData(Point2D.ZERO).get<Int>("SomeKey")
         })
     }
 }

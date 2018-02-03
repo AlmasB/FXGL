@@ -4,14 +4,16 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.algorithm
+package com.almasb.fxgl.algorithm.procedural
+
+import com.almasb.fxgl.core.collection.Grid
 
 /**
  *
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
-class Tile {
+interface MapGenerator<T> {
 
-    lateinit var type: TileType
+    fun generate(width: Int, height: Int): Grid<T>
 }

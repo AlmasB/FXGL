@@ -211,9 +211,9 @@ class Viewport
     newCamera.center = camera.center + (offsetX, offsetY);
      */
     
-    private var shakePowerTranslate = 0.0f
-    private var shakePowerRotate = 0.0f
-    private var shakeAngle = 0.0f
+    private var shakePowerTranslate = 0.0
+    private var shakePowerRotate = 0.0
+    private var shakeAngle = 0.0
 
     private val originBeforeShake = Vec2()
     private var angleBeforeShake = 0.0
@@ -235,7 +235,7 @@ class Viewport
     }
 
     fun shakeTranslational(power: Double) {
-        shakePowerTranslate = power.toFloat()
+        shakePowerTranslate = power
         shakeAngle = FXGLMath.random() * FXGLMath.PI2
 
         // only record origin if not shaking, so that we don't record 'false' origin
@@ -246,7 +246,7 @@ class Viewport
     }
 
     fun shakeRotational(power: Double) {
-        shakePowerRotate = power.toFloat()
+        shakePowerRotate = power
 
         // only record origin if not shaking, so that we don't record 'false' origin
         if (!shakingRotate)
@@ -264,9 +264,10 @@ class Viewport
             return
 
         if (shakingTranslate) {
-            shakePowerTranslate *= 0.9f
+            shakePowerTranslate *= 0.9
             shakeAngle += 180 + FXGLMath.random() * FXGLMath.PI2 / 6
-            offset.set(shakePowerTranslate * FXGLMath.cos(shakeAngle), shakePowerTranslate * FXGLMath.sin(shakeAngle))
+            offset.set((shakePowerTranslate * FXGLMath.cos(shakeAngle)).toFloat(),
+                    (shakePowerTranslate * FXGLMath.sin(shakeAngle)).toFloat())
 
             setX(offset.x + originBeforeShake.x.toDouble())
             setY(offset.y + originBeforeShake.y.toDouble())
@@ -282,7 +283,7 @@ class Viewport
         if (shakingRotate) {
             val maxAngle = 10.0
 
-            shakePowerRotate *= 0.9f
+            shakePowerRotate *= 0.9
 
             // we can't use (FXGLMath.noise1D(time) - 0.5) yet
             // as it will just "shake" once and get to initial position

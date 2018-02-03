@@ -70,7 +70,7 @@ object VoronoiSubdivision {
         edges.forEach { edge ->
 
             // filter "point" sized edges
-            if (!(FXGLMath.isEqual(edge.x1, edge.x2, EDGE_TOLERANCE) && FXGLMath.isEqual(edge.y1, edge.y2, EDGE_TOLERANCE))) {
+            if (!(FXGLMath.isClose(edge.x1, edge.x2, EDGE_TOLERANCE) && FXGLMath.isClose(edge.y1, edge.y2, EDGE_TOLERANCE))) {
 
                 val siteEdges1 = siteMap.getOrDefault(edge.site1, arrayListOf())
                 siteEdges1.add(edge)
@@ -113,8 +113,8 @@ object VoronoiSubdivision {
         val lastPointX = polygon.points[polygon.points.size - 2]
         val lastPointY = polygon.points[polygon.points.size - 1]
 
-        if (!FXGLMath.isEqual(firstEdge.x1, lastPointX, EDGE_TOLERANCE)
-                && !FXGLMath.isEqual(firstEdge.y1, lastPointY, EDGE_TOLERANCE)) {
+        if (!FXGLMath.isClose(firstEdge.x1, lastPointX, EDGE_TOLERANCE)
+                && !FXGLMath.isClose(firstEdge.y1, lastPointY, EDGE_TOLERANCE)) {
 
             val closest = corners.sortedBy { it.distance(lastPointX, lastPointY) }.first()
 
@@ -129,11 +129,11 @@ object VoronoiSubdivision {
 
     private fun nextEdge(next: Point2D, edges: List<GraphEdge>): Pair<Point2D, GraphEdge>? {
         edges.forEach {
-            if (FXGLMath.isEqual(next.x, it.x1, EDGE_TOLERANCE) && FXGLMath.isEqual(next.y, it.y1, EDGE_TOLERANCE)) {
+            if (FXGLMath.isClose(next.x, it.x1, EDGE_TOLERANCE) && FXGLMath.isClose(next.y, it.y1, EDGE_TOLERANCE)) {
                 return Point2D(it.x2, it.y2).to(it)
             }
 
-            if (FXGLMath.isEqual(next.x, it.x2, EDGE_TOLERANCE) && FXGLMath.isEqual(next.y, it.y2, EDGE_TOLERANCE)) {
+            if (FXGLMath.isClose(next.x, it.x2, EDGE_TOLERANCE) && FXGLMath.isClose(next.y, it.y2, EDGE_TOLERANCE)) {
                 return Point2D(it.x1, it.y1).to(it)
             }
         }
@@ -143,11 +143,11 @@ object VoronoiSubdivision {
             // x edge case
 
             edges.forEach {
-                if (FXGLMath.isEqual(next.x, it.x1, EDGE_TOLERANCE)) {
+                if (FXGLMath.isClose(next.x, it.x1, EDGE_TOLERANCE)) {
                     return Point2D(it.x1, it.y1).to(DUMMY_EDGE)
                 }
 
-                if (FXGLMath.isEqual(next.x, it.x2, EDGE_TOLERANCE)) {
+                if (FXGLMath.isClose(next.x, it.x2, EDGE_TOLERANCE)) {
                     return Point2D(it.x2, it.y2).to(DUMMY_EDGE)
                 }
             }
@@ -158,11 +158,11 @@ object VoronoiSubdivision {
             // y edge case
 
             edges.forEach {
-                if (FXGLMath.isEqual(next.y, it.y1, EDGE_TOLERANCE)) {
+                if (FXGLMath.isClose(next.y, it.y1, EDGE_TOLERANCE)) {
                     return Point2D(it.x1, it.y1).to(DUMMY_EDGE)
                 }
 
-                if (FXGLMath.isEqual(next.y, it.y2, EDGE_TOLERANCE)) {
+                if (FXGLMath.isClose(next.y, it.y2, EDGE_TOLERANCE)) {
                     return Point2D(it.x2, it.y2).to(DUMMY_EDGE)
                 }
             }

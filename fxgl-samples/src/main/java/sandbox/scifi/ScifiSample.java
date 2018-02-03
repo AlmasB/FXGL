@@ -148,7 +148,7 @@ public class ScifiSample extends GameApplication {
                 new ParallaxTexture(getAssetLoader().loadTexture("bg_2.png", getWidth(), getHeight()), 0.7),
                 new ParallaxTexture(getAssetLoader().loadTexture("bg_1.png", getWidth(), getHeight()), 0.8),
                 new ParallaxTexture(getAssetLoader().loadTexture("bg_0.png", getWidth(), getHeight()), 0.9)
-        ), Orientation.HORIZONTAL, BG));
+        ), Orientation.HORIZONTAL));
 
         nextLevel();
 

@@ -9,7 +9,7 @@ package com.almasb.fxgl.event
 import com.almasb.fxgl.core.collection.UnorderedArray
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.entity.EntityEvent
-import com.almasb.fxgl.parser.newJSObject
+import com.almasb.fxgl.script.ScriptFactory
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -101,7 +101,7 @@ class EventBus {
         fireEvent(event)
 
         event.targetEntity.getScriptHandler(eventType).ifPresent {
-            it.callFunction<Void>(eventType, newJSObject(event.data.toMap()
+            it.call<Void>(eventType, ScriptFactory.newScriptObject(event.data.toMap()
                     // here we can populate properties common to all events, e.g. entity
                     .plus("entity".to(event.targetEntity))
             ))

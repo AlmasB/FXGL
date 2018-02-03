@@ -14,6 +14,8 @@ import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.scene.CSS
+import com.almasb.fxgl.script.Script
+import com.almasb.fxgl.script.ScriptFactory
 import com.almasb.fxgl.texture.Texture
 import com.almasb.fxgl.ui.FontFactory
 import com.almasb.fxgl.ui.UI
@@ -344,8 +346,13 @@ class AssetLoader {
      * @return script as a String
      * @throws IllegalArgumentException if asset not found or loading error
      */
-    fun loadScript(name: String): String {
+    fun loadScriptRaw(name: String): String {
         return readAllLines(SCRIPTS_DIR + name).joinToString("\n", "", "\n")
+    }
+
+    fun loadScript(name: String): Script {
+        val code = loadScriptRaw(name)
+        return ScriptFactory.fromCode(code)
     }
 
     /**

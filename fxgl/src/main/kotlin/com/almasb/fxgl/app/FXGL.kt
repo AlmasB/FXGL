@@ -8,7 +8,9 @@ package com.almasb.fxgl.app
 
 import com.almasb.fxgl.asset.AssetLoader
 import com.almasb.fxgl.audio.AudioPlayer
+import com.almasb.fxgl.core.concurrent.Async
 import com.almasb.fxgl.core.logging.Logger
+import com.almasb.fxgl.core.reflect.ReflectionUtils
 import com.almasb.fxgl.event.EventBus
 import com.almasb.fxgl.gameplay.Gameplay
 import com.almasb.fxgl.gameplay.notification.NotificationServiceProvider
@@ -19,10 +21,13 @@ import com.almasb.fxgl.scene.menu.MenuSettings
 import com.almasb.fxgl.time.LocalTimer
 import com.almasb.fxgl.time.OfflineTimer
 import com.almasb.fxgl.ui.FXGLDisplay
+import com.almasb.fxgl.util.Version
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 import java.util.concurrent.Callable
 import java.util.function.Consumer
 
@@ -53,6 +58,21 @@ class FXGL private constructor() {
         private val _menuSettings = MenuSettings()
 
         @JvmStatic fun getMenuSettings() = _menuSettings
+
+        private val _gameConfig by lazy {
+            val parser = AnnotationParser(internalApp.javaClass)
+            parser.parse(SetGameConfig::class.java)
+            val config = parser.getClasses(SetGameConfig::class.java)
+                    .map { gameConfigClass ->
+                        getAssetLoader().loadKV("config.kv").to(gameConfigClass)
+                    }
+                    .firstOrNull() ?: throw IllegalStateException("No class annotated @SetGameConfig was found")
+
+            config
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        @JvmStatic fun <T> getGameConfig() = _gameConfig as T
 
         /**
          * @return instance of the running game application
@@ -87,7 +107,12 @@ class FXGL private constructor() {
 
             configured = true
 
+            Version.print()
+
             internalApp = app
+
+            loadSystemProperties()
+            loadUserProperties()
 
             createRequiredDirs()
 
@@ -95,6 +120,35 @@ class FXGL private constructor() {
                 loadDefaultSystemData()
             else
                 loadSystemData()
+
+            runUpdaterAndWait()
+        }
+
+        private fun loadSystemProperties() {
+            loadProperties(ResourceBundle.getBundle("com.almasb.fxgl.app.system"))
+        }
+
+        /**
+         * Load user defined properties to override FXGL system properties.
+         */
+        private fun loadUserProperties() {
+            // services are not ready yet, so load manually
+            try {
+                FXGL::class.java.getResource("/assets/properties/system.properties").openStream().use {
+                    loadProperties(PropertyResourceBundle(it))
+                }
+            } catch (npe: NullPointerException) {
+                // user properties file not found
+            } catch (e: IOException) {
+                log.warning("Loading user properties failed: $e")
+            }
+        }
+
+        private fun loadProperties(props: ResourceBundle) {
+            props.keySet().forEach { key ->
+                val value = props.getObject(key)
+                FXGL.setProperty(key, value)
+            }
         }
 
         private var firstRun = false
@@ -149,6 +203,10 @@ class FXGL private constructor() {
 
             // populate with default info
             internalBundle = Bundle("FXGL")
+        }
+
+        private fun runUpdaterAndWait() {
+            Async.startFX { UpdaterTask().run() }.await()
         }
 
         /**

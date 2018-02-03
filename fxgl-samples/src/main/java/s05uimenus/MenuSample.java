@@ -21,15 +21,11 @@ public class MenuSample extends GameApplication {
         settings.setTitle("MenuSample");
         settings.setVersion("0.1");
 
-
         // 1. set intro enabled to true
         settings.setIntroEnabled(true);
 
         // 2. set menu enabled to true
         settings.setMenuEnabled(true);
-
-
-
     }
 
     public static void main(String[] args) {

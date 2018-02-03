@@ -27,45 +27,35 @@ public final class FXGLMath {
 
     private FXGLMath() {}
 
-    public static final float nanoToSec = 1 / 1000000000f;
-
     /**
-     * A "close to zero" float epsilon value for use.
+     * A "close to zero" double epsilon value for use.
      */
-    public static final float EPSILON = 1.1920928955078125E-7f;
+    public static final double EPSILON = 1.1920928955078125E-7;
 
-    public static final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
-    public static final float PI = 3.1415927f;
-    public static final float PI2 = PI * 2;
-    public static final float HALF_PI = PI / 2;
+    public static final double PI = Math.PI;
+    public static final double PI2 = PI * 2;
+    public static final double HALF_PI = PI / 2;
 
-    public static final float E = 2.7182818f;
+    public static final double E = Math.E;
 
     private static final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
     private static final int SIN_MASK = ~(-1 << SIN_BITS);
     private static final int SIN_COUNT = SIN_MASK + 1;
 
-    private static final float radFull = PI * 2;
-    private static final float degFull = 360;
-    private static final float radToIndex = SIN_COUNT / radFull;
-    private static final float degToIndex = SIN_COUNT / degFull;
-
-    /** multiply by this to convert from radians to degrees */
-    public static final float radiansToDegrees = 180f / PI;
-    public static final float radDeg = radiansToDegrees;
-
-    /** multiply by this to convert from degrees to radians */
-    public static final float degreesToRadians = PI / 180;
-    public static final float degRad = degreesToRadians;
+    private static final double radFull = PI * 2;
+    private static final double degFull = 360;
+    private static final double radToIndex = SIN_COUNT / radFull;
+    private static final double degToIndex = SIN_COUNT / degFull;
 
     private static class Sin {
-        static final float[] table = new float[SIN_COUNT];
+        static final double[] table = new double[SIN_COUNT];
 
         static {
             for (int i = 0; i < SIN_COUNT; i++)
-                table[i] = (float) Math.sin((i + 0.5f) / SIN_COUNT * radFull);
+                table[i] = Math.sin((i + 0.5f) / SIN_COUNT * radFull);
+
             for (int i = 0; i < 360; i += 90)
-                table[(int) (i * degToIndex) & SIN_MASK] = (float) Math.sin(i * degreesToRadians);
+                table[(int) (i * degToIndex) & SIN_MASK] = Math.sin(toRadians(i));
         }
     }
 
@@ -73,7 +63,7 @@ public final class FXGLMath {
      * @param radians angle in radians
      * @return the sine in radians from a lookup table
      */
-    public static float sin(float radians) {
+    public static double sin(double radians) {
         return Sin.table[(int) (radians * radToIndex) & SIN_MASK];
     }
 
@@ -81,7 +71,7 @@ public final class FXGLMath {
      * @param radians angle in radians
      * @return the cosine in radians from a lookup table
      */
-    public static float cos(float radians) {
+    public static double cos(double radians) {
         return Sin.table[(int) ((radians + PI / 2) * radToIndex) & SIN_MASK];
     }
 
@@ -89,7 +79,7 @@ public final class FXGLMath {
      * @param degrees angle in degrees
      * @return the sine in radians from a lookup table
      */
-    public static float sinDeg(float degrees) {
+    public static double sinDeg(double degrees) {
         return Sin.table[(int) (degrees * degToIndex) & SIN_MASK];
     }
 
@@ -97,44 +87,59 @@ public final class FXGLMath {
      * @param degrees angle in degrees
      * @return the cosine in radians from a lookup table
      */
-    public static float cosDeg(float degrees) {
+    public static double cosDeg(double degrees) {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
-    public static final float reduceAngle(float theta) {
-        theta %= PI2;
-        if (abs(theta) > PI) {
-            theta = theta - PI2;
-        }
-        if (abs(theta) > HALF_PI) {
-            theta = PI - theta;
-        }
-        return theta;
+    private static final double radiansToDegrees = 180 / PI;
+
+    private static final double degreesToRadians = PI / 180;
+
+    public static double toDegrees(double radians) {
+        return radiansToDegrees * radians;
     }
 
-    /**
-     * Average error of 0.00231 radians (0.1323 degrees),
-     * largest error of 0.00488 radians (0.2796 degrees).
-     *
-     * @param y y component
-     * @param x x component
-     * @return atan2 in radians, faster but less accurate than Math.atan2
-     */
-    public static float atan2(float y, float x) {
-        if (x == 0f) {
-            if (y > 0f) return HALF_PI;
-            if (y == 0f) return 0f;
-            return -HALF_PI;
-        }
-        final float atan, z = y / x;
-        if (Math.abs(z) < 1f) {
-            atan = z / (1f + 0.28f * z * z);
-            if (x < 0f) return atan + (y < 0f ? -PI : PI);
-            return atan;
-        }
-        atan = HALF_PI - z / (z * z + 0.28f);
-        return y < 0f ? atan - PI : atan;
+    public static double toRadians(double degrees) {
+        return degreesToRadians * degrees;
     }
+
+    /*
+
+        // reduce the angle
+    angle =  angle % 360;
+
+    // force it to be the positive remainder, so that 0 <= angle < 360
+    angle = (angle + 360) % 360;
+
+    // force into the minimum absolute value residue class, so that -180 < angle <= 180
+    if (angle > 180)
+        angle -= 360;
+     */
+    /**
+     * @param theta angle in radians
+     * @return angle in radians normalized to [0..PI / 2]
+     */
+//    public static final double normalizeAngle(double theta) {
+//        theta %= PI2;
+//        if (abs(theta) > PI) {
+//            theta = theta - PI2;
+//        }
+//        if (abs(theta) > HALF_PI) {
+//            theta = PI - theta;
+//        }
+//        return theta;
+//    }
+//
+//    public static final double normalizeAngleDeg(double theta) {
+//        theta %= 360;
+//        if (abs(theta) > 180) {
+//            theta = theta - 360;
+//        }
+//        if (abs(theta) > 90) {
+//            theta = 180 - theta;
+//        }
+//        return theta;
+//    }
 
     /**
      * Average error of 0.00231 radians (0.1323 degrees),
@@ -145,7 +150,35 @@ public final class FXGLMath {
      * @return atan2 in radians, faster but less accurate than Math.atan2
      */
     public static double atan2(double y, double x) {
-        return atan2((float) y, (float) x);
+        if (x == 0.0) {
+            if (y > 0) return HALF_PI;
+            if (y == 0.0) return 0.0;
+            return -HALF_PI;
+        }
+
+        final double atan;
+        final double z = y / x;
+
+        if (Math.abs(z) < 1) {
+            atan = z / (1 + 0.28 * z * z);
+            if (x < 0) return atan + (y < 0 ? -PI : PI);
+            return atan;
+        }
+
+        atan = HALF_PI - z / (z * z + 0.28);
+        return y < 0 ? atan - PI : atan;
+    }
+
+    /**
+     * Average error of 0.00231 radians (0.1323 degrees),
+     * largest error of 0.00488 radians (0.2796 degrees).
+     *
+     * @param y y component
+     * @param x x component
+     * @return atan2 in degrees, faster but less accurate than Math.atan2
+     */
+    public static double atan2Deg(double y, double x) {
+        return toDegrees(atan2(y, x));
     }
 
     /* RANDOM BEGIN */
@@ -211,14 +244,21 @@ public final class FXGLMath {
      * @param chance chance to check
      * @return true if a random value between 0 and 1 is less than the specified value
      */
-    public static boolean randomBoolean(float chance) {
+    public static boolean randomBoolean(double chance) {
         return random() < chance;
     }
 
     /**
      * @return random number between 0.0 (inclusive) and 1.0 (exclusive)
      */
-    public static float random() {
+    public static double random() {
+        return random.nextDouble();
+    }
+
+    /**
+     * @return random number between 0.0 (inclusive) and 1.0 (exclusive)
+     */
+    public static float randomFloat() {
         return random.nextFloat();
     }
 
@@ -226,17 +266,8 @@ public final class FXGLMath {
      * @param range end exclusive value
      * @return a random number between 0 (inclusive) and the specified value (exclusive)
      */
-    public static float random(float range) {
-        return random.nextFloat() * range;
-    }
-
-    /**
-     * @param start start inclusive value
-     * @param end end exclusive value
-     * @return a random number between start (inclusive) and end (exclusive)
-     */
-    public static float random(float start, float end) {
-        return start + random.nextFloat() * (end - start);
+    public static double random(double range) {
+        return random.nextDouble() * range;
     }
 
     /**
@@ -256,35 +287,35 @@ public final class FXGLMath {
     }
 
     /**
-     * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-1, 1, 0)}.
+     * This is an optimized version of {@link #randomTriangular(double, double, double) randomTriangular(-1, 1, 0)}.
      *
      * @return a triangularly distributed random number between -1.0 (exclusive) and 1.0 (exclusive),
      * where values around zero are more likely
      */
-    public static float randomTriangular() {
-        return random.nextFloat() - random.nextFloat();
+    public static double randomTriangular() {
+        return random.nextDouble() - random.nextDouble();
     }
 
     /**
-     * This is an optimized version of {@link #randomTriangular(float, float, float) randomTriangular(-max, max, 0)}.
+     * This is an optimized version of {@link #randomTriangular(double, double, double) randomTriangular(-max, max, 0)}.
      *
      * @param max the upper limit
      * @return a triangularly distributed random number between {@code -max} (exclusive) and {@code max} (exclusive),
      * where values around zero are more likely
      */
-    public static float randomTriangular(float max) {
-        return (random.nextFloat() - random.nextFloat()) * max;
+    public static double randomTriangular(double max) {
+        return (random.nextDouble() - random.nextDouble()) * max;
     }
 
     /**
-     * This method is equivalent of {@link #randomTriangular(float, float, float) randomTriangular(min, max, (min + max) * .5f)}.
+     * This method is equivalent of {@link #randomTriangular(double, double, double) randomTriangular(min, max, (min + max) * .5f)}.
      *
      * @param min the lower limit
      * @param max the upper limit
      * @return a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive),
      * where the {@code mode} argument defaults to the midpoint between the bounds, giving a symmetric distribution
      */
-    public static float randomTriangular(float min, float max) {
+    public static double randomTriangular(double min, double max) {
         return randomTriangular(min, max, (min + max) * 0.5f);
     }
 
@@ -295,14 +326,14 @@ public final class FXGLMath {
      * @return a triangularly distributed random number between {@code min} (inclusive) and {@code max} (exclusive),
      * where values around {@code mode} are more likely
      */
-    public static float randomTriangular(float min, float max, float mode) {
-        float u = random.nextFloat();
-        float d = max - min;
+    public static double randomTriangular(double min, double max, double mode) {
+        double u = random.nextDouble();
+        double d = max - min;
 
         if (u <= (mode - min) / d)
-            return min + (float) Math.sqrt(u * d * (mode - min));
+            return min + Math.sqrt(u * d * (mode - min));
 
-        return max - (float) Math.sqrt((1 - u) * d * (max - mode));
+        return max - Math.sqrt((1 - u) * d * (max - mode));
     }
 
     /**
@@ -319,15 +350,15 @@ public final class FXGLMath {
      * @return new random vector of unit length as Vec2
      */
     public static Vec2 randomVec2() {
-        return new Vec2(random(-1f, 1f), random(-1f, 1f)).normalizeLocal();
+        return new Vec2(random(-1.0, 1.0), random(-1.0, 1.0)).normalizeLocal();
     }
 
     /**
      * @return new random vector of unit length as Point2D
      */
     public static Point2D randomPoint2D() {
-        double x = random(-1f, 1f);
-        double y = random(-1f, 1f);
+        double x = random(-1.0, 1.0);
+        double y = random(-1.0, 1.0);
 
         double length = Math.sqrt(x * x + y * y);
         if (length < EPSILON)
@@ -362,8 +393,8 @@ public final class FXGLMath {
 
     /* RANDOM END */
 
-    public static float sqrt(float x) {
-        return (float) StrictMath.sqrt(x);
+    public static double sqrt(double x) {
+        return Math.sqrt(x);
     }
 
     /**
@@ -409,13 +440,13 @@ public final class FXGLMath {
         return value;
     }
 
-    public static float clamp(float value, float min, float max) {
+    public static double clamp(double value, double min, double max) {
         if (value < min) return min;
         if (value > max) return max;
         return value;
     }
 
-    public static double clamp(double value, double min, double max) {
+    public static float clamp(float value, float min, float max) {
         if (value < min) return min;
         if (value > max) return max;
         return value;
@@ -466,8 +497,8 @@ public final class FXGLMath {
      * @param progress interpolation value in the range [0, 1]
      * @return the interpolated angle in the range [0, PI2[
      */
-    public static float lerpAngle(float fromRadians, float toRadians, float progress) {
-        float delta = ((toRadians - fromRadians + PI2 + PI) % PI2) - PI;
+    public static double lerpAngle(double fromRadians, double toRadians, double progress) {
+        double delta = ((toRadians - fromRadians + PI2 + PI) % PI2) - PI;
         return (fromRadians + delta * progress + PI2) % PI2;
     }
 
@@ -481,8 +512,8 @@ public final class FXGLMath {
      * @param progress interpolation value in the range [0, 1]
      * @return the interpolated angle in the range [0, 360[
      */
-    public static float lerpAngleDeg(float fromDegrees, float toDegrees, float progress) {
-        float delta = ((toDegrees - fromDegrees + 360 + 180) % 360) - 180;
+    public static double lerpAngleDeg(double fromDegrees, double toDegrees, double progress) {
+        double delta = ((toDegrees - fromDegrees + 360 + 180) % 360) - 180;
         return (fromDegrees + delta * progress + 360) % 360;
     }
 
@@ -509,119 +540,84 @@ public final class FXGLMath {
     }
 
     /**
-     * @param value from -(2^14) to (Float.MAX_VALUE - 2^14)
-     * @return the largest integer less than or equal to the specified float
+     * @param value from -(2^14) to (double.MAX_VALUE - 2^14)
+     * @return the largest integer less than or equal to the specified double
      */
-    public static int floor(float value) {
+    public static int floor(double value) {
         return (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
 
     /**
-     * Note: this method simply casts the float to int.
+     * Note: this method simply casts the double to int.
      *
      * @param value a positive value
-     * @return the largest integer less than or equal to the specified float
+     * @return the largest integer less than or equal to the specified double
      */
-    public static int floorPositive(float value) {
+    public static int floorPositive(double value) {
         return (int) value;
     }
 
     /**
-     * @param value from -(2^14) to (Float.MAX_VALUE - 2^14)
-     * @return the smallest integer greater than or equal to the specified float
+     * @param value from -(2^14) to (double.MAX_VALUE - 2^14)
+     * @return the smallest integer greater than or equal to the specified double
      */
-    public static int ceil(float value) {
+    public static int ceil(double value) {
         return (int) (value + BIG_ENOUGH_CEIL) - BIG_ENOUGH_INT;
     }
 
     /**
-     * @param value a positive float
-     * @return the smallest integer greater than or equal to the specified float
+     * @param value a positive double
+     * @return the smallest integer greater than or equal to the specified double
      */
-    public static int ceilPositive(float value) {
+    public static int ceilPositive(double value) {
         return (int) (value + CEIL);
     }
 
     /**
-     * @param value from -(2^14) to (Float.MAX_VALUE - 2^14)
-     * @return the closest integer to the specified float
+     * @param value from -(2^14) to (double.MAX_VALUE - 2^14)
+     * @return the closest integer to the specified double
      */
-    public static int round(float value) {
+    public static int round(double value) {
         return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
     }
 
     /**
-     * @param value a positive float
-     * @return the closest integer to the specified float
+     * @param value a positive double
+     * @return the closest integer to the specified double
      */
-    public static int roundPositive(float value) {
-        return (int) (value + 0.5f);
+    public static int roundPositive(double value) {
+        return (int) (value + 0.5);
     }
 
     /**
-     * @param value the value to check
-     * @return true if the value is zero (using the default tolerance as upper bound)
-     */
-    public static boolean isZero(float value) {
-        return Math.abs(value) <= FLOAT_ROUNDING_ERROR;
-    }
-
-    /**
+     * Note: prone to floating point errors if the arguments are not doubles.
+     *
      * @param value the value to check
      * @param tolerance represent an upper bound below which the value is considered zero
-     * @return true if the value is zero
+     * @return true if the value is close to zero, i.e. true if difference between value and 0 is less than or equal to tolerance
      */
-    public static boolean isZero(float value, float tolerance) {
+    public static boolean isCloseToZero(double value, double tolerance) {
         return Math.abs(value) <= tolerance;
     }
 
     /**
-     * @param a the first value
-     * @param b the second value
-     * @return true if a is nearly equal to b (using the default error tolerance)
-     */
-    public static boolean isEqual(float a, float b) {
-        return Math.abs(a - b) <= FLOAT_ROUNDING_ERROR;
-    }
-
-    /**
+     * Note: prone to floating point errors if the arguments are not doubles.
+     *
      * @param a the first value
      * @param b the second value
      * @param tolerance represent an upper bound below which the two values are considered equal
      *
-     * @return true if a is nearly equal to b
+     * @return true if a is nearly equal to b, i.e. true if difference between a and b is less than or equal to tolerance
      */
-    public static boolean isEqual(float a, float b, float tolerance) {
+    public static boolean isClose(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
-
-    /**
-     * @param a the first value
-     * @param b the second value
-     * @param tolerance represent an upper bound below which the two values are considered equal
-     *
-     * @return true if a is nearly equal to b
-     */
-    public static boolean isEqual(double a, double b, double tolerance) {
-        return Math.abs(a - b) <= tolerance;
-    }
-
-    private static final float SHIFT23 = 1 << 23;
-    private static final float INV_SHIFT23 = 1.0f / SHIFT23;
 
     /**
      * @return a to the power of b
-     * @implNote copied from jbox2d
      */
-    public static final float pow(float a, float b) {
-        float x = Float.floatToRawIntBits(a);
-        x *= INV_SHIFT23;
-        x -= 127;
-        float y = x - (x >= 0 ? (int) x : (int) x - 1);
-        b *= x + (y - y * y) * 0.346607f;
-        y = b - (b >= 0 ? (int) b : (int) b - 1);
-        y = (y - y * y) * 0.33971f;
-        return Float.intBitsToFloat((int) ((b + 127 - y) * SHIFT23));
+    public static double pow(double a, double b) {
+        return Math.pow(a, b);
     }
 
     /**
@@ -629,15 +625,15 @@ public final class FXGLMath {
      * @param value the value
      * @return the logarithm of value with given base
      */
-    public static float log(float base, float value) {
-        return (float) (Math.log(value) / Math.log(base));
+    public static double log(double base, double value) {
+        return Math.log(value) / Math.log(base);
     }
 
     /**
      * @param value the value
      * @return the logarithm of value with base 2
      */
-    public static float log2(float value) {
+    public static double log2(double value) {
         return log(2, value);
     }
 
@@ -667,7 +663,30 @@ public final class FXGLMath {
      * @param t current time * frequency (lower frequency -> smoother output)
      * @return perlin noise in 1D quality in [0..1)
      */
-    public static float noise1D(double t) {
-        return PerlinNoiseGenerator.INSTANCE.noise1D((float) t) + 0.5f;
+    public static double noise1D(double t) {
+        return PerlinNoiseGenerator.INSTANCE.noise1D(t) + 0.5;
+    }
+
+    /**
+     * A typical usage would be to pass 2d coordinates multiplied by a frequency (lower frequency -> smoother output) value, like:
+     *
+     * double noise = noise2D(x * freq, y * freq)
+     *
+     * @return perlin noise in 2D quality in [0..1)
+     * @implNote twice slower than noise1D
+     */
+    public static double noise2D(double x, double y) {
+
+        double noise = PerlinNoiseGenerator.INSTANCE.noise2D(x, y) + 0.5;
+
+        // TODO: fix this, shouldn't happen
+
+        if (noise < 0)
+            return 0;
+
+        if (noise >= 1)
+            return 0.99999999;
+
+        return noise;
     }
 }

@@ -6,9 +6,9 @@
 
 package com.almasb.fxgl.app;
 
+import com.almasb.fxgl.core.collection.Array;
 import com.almasb.fxgl.core.logging.Logger;
 import com.almasb.fxgl.saving.DataFile;
-import com.almasb.fxgl.scene.SceneFactory;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -23,8 +23,11 @@ public final class AppStateMachine {
 
     private static final Logger log = Logger.get(AppStateMachine.class);
 
+    private Array<StateChangeListener> listeners = new Array<>();
+
     private final AppState loading;
     private final AppState play;
+    private final State dialog;
 
     // These 3 states are optional
     private final AppState intro;
@@ -35,47 +38,62 @@ public final class AppStateMachine {
 
     private Deque<SubState> subStates = new ArrayDeque<>();
 
-    private GameApplication app;
+    AppStateMachine(AppState loading,
+                    AppState play,
+                    State dialog,
+                    AppState intro,
+                    AppState mainMenu,
+                    AppState gameMenu,
+                    AppState initial) {
 
-    AppStateMachine(GameApplication app) {
-        this.app = app;
+        this.loading = loading;
+        this.play = play;
+        this.dialog = dialog;
+        this.intro = intro;
+        this.mainMenu = mainMenu;
+        this.gameMenu = gameMenu;
 
-        log.debug("Initializing application states");
+        this.appState = initial;
+    }
 
-        SceneFactory sceneFactory = FXGL.getSettings().getSceneFactory();
+    public void addListener(StateChangeListener listener) {
+        listeners.add(listener);
+    }
 
-        // STARTUP is default
-        appState = new StartupState(app);
-
-        loading = new LoadingState(app, sceneFactory);
-        play = new PlayState(sceneFactory);
-
-        // reasonable hack to trigger dialog state init before intro and menus
-        DialogSubState.INSTANCE.getView();
-
-        intro = app.getSettings().isIntroEnabled() ? new IntroState(app, sceneFactory) : null;
-        mainMenu = app.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : null;
-        gameMenu = app.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : null;
+    public void removeListener(StateChangeListener listener) {
+        listeners.removeValueByIdentity(listener);
     }
 
     /**
      * Can only be called when no substates are present.
      * Can only be called by internal FXGL API.
      */
-    void setState(AppState newState) {
+    private void setState(AppState newState) {
         if (!subStates.isEmpty()) {
             log.warning("Cannot change states with active substates");
             return;
         }
 
         AppState prevState = appState;
+
         prevState.exit();
 
-        log.debug(prevState + " -> " + newState);
+        for (StateChangeListener listener : listeners)
+            listener.beforeExit(prevState);
+
+        for (StateChangeListener listener : listeners)
+            listener.beforeEnter(newState);
 
         // new state
         appState = newState;
-        app.setScene(appState.getScene());
+        log.debug(prevState + " -> " + newState);
+
+        for (StateChangeListener listener : listeners)
+            listener.exited(prevState);
+
+        for (StateChangeListener listener : listeners)
+            listener.entered(newState);
+
         appState.enter(prevState);
     }
 
@@ -92,27 +110,37 @@ public final class AppStateMachine {
 
         log.debug(prevState + " -> " + newState);
 
+        for (StateChangeListener listener : listeners)
+            listener.beforeEnter(newState);
+
         // new state
         subStates.push(newState);
-        app.getScene().getRoot().getChildren().add(newState.getView());
+
+        for (StateChangeListener listener : listeners)
+            listener.entered(newState);
+
         newState.enter(prevState);
     }
 
     public void popState() {
         if (subStates.isEmpty()) {
-            log.warning("Cannot pop state: Substates are empty!");
-            return;
+            throw new IllegalStateException("Cannot pop state: Substates are empty!");
         }
 
-        SubState prevState = subStates.pop();
-
+        SubState prevState = subStates.getFirst();
         log.debug("Pop state: " + prevState);
 
         prevState.exit();
 
-        log.debug(getCurrentState() + " <- " + prevState);
+        for (StateChangeListener listener : listeners)
+            listener.beforeExit(prevState);
 
-        app.getScene().getRoot().getChildren().remove(prevState.getView());
+        subStates.pop();
+
+        for (StateChangeListener listener : listeners)
+            listener.exited(prevState);
+
+        log.debug(getCurrentState() + " <- " + prevState);
     }
 
     public State getCurrentState() {
@@ -149,7 +177,7 @@ public final class AppStateMachine {
     }
 
     public State getDialogState() {
-        return DialogSubState.INSTANCE;
+        return dialog;
     }
 
     void startIntro() {
@@ -157,7 +185,11 @@ public final class AppStateMachine {
     }
 
     void startLoad(DataFile dataFile) {
-        ((LoadingState) loading).setDataFile(dataFile);
+        // TODO: this needs to move, state machine shouldn't care about data files
+        // or know about concrete states
+        if (loading instanceof LoadingState)
+            ((LoadingState) loading).setDataFile(dataFile);
+
         setState(loading);
     }
 
@@ -185,18 +217,5 @@ public final class AppStateMachine {
 
     public boolean isInGameMenu() {
         return getCurrentState() == getGameMenuState();
-    }
-
-    /**
-     * @return true if can show close dialog
-     */
-    public boolean canShowCloseDialog() {
-        // do not allow close dialog if
-        // 1. a dialog is shown
-        // 2. we are loading a game
-        // 3. we are showing intro
-        return getCurrentState() != DialogSubState.INSTANCE
-                && getCurrentState() != getLoadingState()
-                && (!FXGL.getApp().getSettings().isIntroEnabled() || getCurrentState() != getIntroState());
     }
 }

@@ -14,6 +14,7 @@ import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -66,6 +67,8 @@ public class ViewComponent extends Component {
      */
     private final EntityView view = new EntityView();
 
+    private final ObjectProperty<RenderLayer> renderLayer = new SimpleObjectProperty<>(RenderLayer.TOP);
+
     /**
      * Creates view component with no graphics.
      */
@@ -86,7 +89,7 @@ public class ViewComponent extends Component {
      * @param renderLayer render layer to use for view
      */
     public ViewComponent(RenderLayer renderLayer) {
-        view.setRenderLayer(renderLayer);
+        setRenderLayer(renderLayer);
     }
 
     /**
@@ -97,30 +100,37 @@ public class ViewComponent extends Component {
      */
     public ViewComponent(Node graphics, RenderLayer renderLayer) {
         view.addNode(graphics);
-        view.setRenderLayer(renderLayer);
+        setRenderLayer(renderLayer);
     }
 
     /**
      * @return render layer
      */
     public RenderLayer getRenderLayer() {
-        return view.getRenderLayer();
+        return renderLayer.get();
     }
 
     /**
      * @return render layer property
      */
     public ObjectProperty<RenderLayer> renderLayerProperty() {
-        return view.renderLayerProperty();
+        return renderLayer;
     }
 
     /**
-     * Set render layer.
+     * Set render layer for this entity.
+     * Render layer determines how an entity
+     * is rendered relative to other entities.
+     * The layer with higher index()
+     * will be rendered on top of the layer with lower index().
+     * By default an
+     * entity has the very top layer with highest index equal to
+     * [Integer.MAX_VALUE].
      *
-     * @param renderLayer render layer
+     * @param renderLayer the render layer
      */
     public void setRenderLayer(RenderLayer renderLayer) {
-        view.setRenderLayer(renderLayer);
+        this.renderLayer.set(renderLayer);
     }
 
     /**
@@ -153,7 +163,6 @@ public class ViewComponent extends Component {
         EntityView entityView = view instanceof EntityView ? (EntityView) view : new EntityView(view);
 
         this.view.getNodes().setAll(entityView.getNodes());
-        setRenderLayer(entityView.getRenderLayer());
 
         if (showBBox()) {
             this.view.addNode(debugBBox);

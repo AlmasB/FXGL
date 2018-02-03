@@ -37,11 +37,6 @@ open class EntityView : Parent, Disposable {
     val nodes: ObservableList<Node>
         get() = children
 
-    private val renderLayer = SimpleObjectProperty(RenderLayer.TOP)
-
-    /**
-     * Constructs a view with no content.
-     */
     constructor() {}
 
     /**
@@ -51,26 +46,6 @@ open class EntityView : Parent, Disposable {
      */
     constructor(graphics: Node) {
         addNode(graphics)
-    }
-
-    /**
-     * Constructs a view with given render layer.
-     *
-     * @param layer render layer
-     */
-    constructor(layer: RenderLayer) {
-        setRenderLayer(layer)
-    }
-
-    /**
-     * Constructs a view with given graphics and render layer.
-     *
-     * @param graphics content
-     * @param layer render layer
-     */
-    constructor(graphics: Node, layer: RenderLayer) {
-        addNode(graphics)
-        setRenderLayer(layer)
     }
 
     /**
@@ -101,36 +76,6 @@ open class EntityView : Parent, Disposable {
      */
     fun clearChildren() {
         children.clear()
-    }
-
-    /**
-     * Set render layer for this entity.
-     * Render layer determines how an entity
-     * is rendered relative to other entities.
-     * The layer with higher index()
-     * will be rendered on top of the layer with lower index().
-     * By default an
-     * entity has the very top layer with highest index equal to
-     * [Integer.MAX_VALUE].
-     *
-     * @param renderLayer the render layer
-     */
-    fun setRenderLayer(renderLayer: RenderLayer) {
-        this.renderLayer.set(renderLayer)
-    }
-
-    /**
-     * @return render layer
-     */
-    fun getRenderLayer(): RenderLayer {
-        return renderLayer.get()
-    }
-
-    /**
-     * @return render layer property
-     */
-    fun renderLayerProperty(): ObjectProperty<RenderLayer> {
-        return renderLayer
     }
 
     override fun dispose() {

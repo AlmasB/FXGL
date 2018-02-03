@@ -9,7 +9,6 @@ package s10miscellaneous;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.control.JSControl;
-import com.almasb.fxgl.parser.JavaScriptParser;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.shape.Rectangle;
 
@@ -25,12 +24,6 @@ public class JavaScriptSample extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("JavaScriptSample");
-        settings.setVersion("0.1");
-
-
-
-
-
     }
 
     @Override
@@ -48,7 +41,7 @@ public class JavaScriptSample extends GameApplication {
                 .with(new JSControl("ccw_spin_control.js"))
                 .buildAndAttach(getGameWorld());
 
-        JavaScriptParser parser = new JavaScriptParser("sample.js");
+        getAssetLoader().loadScript("sample.js").call("sample");
     }
 
     public static void main(String[] args) {

@@ -126,7 +126,7 @@ public class JointSample extends GameApplication {
         line.endXProperty().bind(ball.getPositionComponent().xProperty().add(15));
         line.endYProperty().bind(ball.getPositionComponent().yProperty().add(15));
 
-        getGameScene().addGameView(new EntityView(line, RenderLayer.BACKGROUND));
+        getGameScene().addGameView(new EntityView(line));
 
         RevoluteJointDef rDef = new RevoluteJointDef();
         rDef.bodyA = physics.getBody();
@@ -136,11 +136,11 @@ public class JointSample extends GameApplication {
         rDef.localAnchorB = new Vec2(0, 5);
 
         rDef.enableLimit = true;
-        rDef.lowerAngle = FXGLMath.degreesToRadians * -180.0f;
-        rDef.upperAngle = FXGLMath.degreesToRadians * 180.0f;
+        rDef.lowerAngle = (float) (FXGLMath.toRadians(-180.0f));
+        rDef.upperAngle = (float) (FXGLMath.toRadians(180.0f));
 
         rDef.enableMotor = true;
-        rDef.motorSpeed = FXGLMath.degreesToRadians * 30;
+        rDef.motorSpeed = (float) (FXGLMath.toRadians(30));
         rDef.maxMotorTorque = 15.0f;
 
         joint = (RevoluteJoint) getPhysicsWorld().getJBox2DWorld().createJoint(rDef);
@@ -148,7 +148,7 @@ public class JointSample extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        if (joint != null && FXGLMath.isEqual(FXGLMath.abs(joint.getJointAngle()), FXGLMath.degreesToRadians * 180.0f, 0.05f)) {
+        if (joint != null && FXGLMath.isClose(FXGLMath.abs(joint.getJointAngle()), FXGLMath.toRadians(180), 0.05f)) {
             joint.setMotorSpeed(-joint.getMotorSpeed());
         }
     }

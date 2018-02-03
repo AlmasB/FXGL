@@ -7,6 +7,7 @@
 package com.almasb.fxgl.physics;
 
 import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Component;
 import com.almasb.fxgl.entity.Entity;
@@ -82,10 +83,19 @@ public class PhysicsComponent extends Component {
         onInitPhysics = code;
     }
 
+    /**
+     * Force this entity to create a ground sensor, so that {@link #isOnGround()} can be used.
+     *
+     * @param generate flag
+     * @defaultValue false
+     */
     public void setGenerateGroundSensor(boolean generate) {
         generateGroundSensor = generate;
     }
 
+    /**
+     * @return does this entity have a ground sensor
+     */
     public boolean isGenerateGroundSensor() {
         return generateGroundSensor;
     }
@@ -118,6 +128,27 @@ public class PhysicsComponent extends Component {
      */
     public void setBodyType(BodyType type) {
         bodyDef.setType(type);
+    }
+
+    /**
+     * @return true if moving in X axis
+     */
+    public boolean isMovingX() {
+        return FXGLMath.abs(getVelocityX()) > 0;
+    }
+
+    /**
+     * @return true if moving in Y axis
+     */
+    public boolean isMovingY() {
+        return FXGLMath.abs(getVelocityY()) > 0;
+    }
+
+    /**
+     * @return true if moving in X or Y axis
+     */
+    public boolean isMoving() {
+        return isMovingX() || isMovingY();
     }
 
     /**

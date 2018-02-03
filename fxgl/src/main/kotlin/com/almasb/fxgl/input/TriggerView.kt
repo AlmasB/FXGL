@@ -17,7 +17,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 
 /**
- *
+ * Trigger view is bound to set trigger.
+ * If trigger changes, the view is automatically updated.
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

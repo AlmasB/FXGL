@@ -41,10 +41,16 @@ public abstract class State {
         listeners.remove(listener);
     }
 
+    /**
+     * Called after entering this state from prevState
+     */
     protected void onEnter(State prevState) {
 
     }
 
+    /**
+     * Called before exit.
+     */
     protected void onExit() {
 
     }

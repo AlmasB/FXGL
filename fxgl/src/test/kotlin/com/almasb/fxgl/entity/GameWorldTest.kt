@@ -499,7 +499,8 @@ class GameWorldTest {
         assertAll(
                 Executable { assertThat(gameWorld.getEntitiesByType(TestType.T1), contains(e1)) },
                 Executable { assertThat(gameWorld.getEntitiesByType(TestType.T2), contains(e2)) },
-                Executable { assertThat(gameWorld.getEntitiesByType(TestType.T2, TestType.T3), containsInAnyOrder(e2, e3)) }
+                Executable { assertThat(gameWorld.getEntitiesByType(TestType.T2, TestType.T3), containsInAnyOrder(e2, e3)) },
+                Executable { assertThat(gameWorld.getEntitiesByType(), contains(e1, e2, e3)) }
         )
     }
 

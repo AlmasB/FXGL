@@ -25,6 +25,7 @@ object SystemActions {
     fun bind(input: Input) {
         input.addAction(screenshot(), KeyCode.P)
         input.addAction(devOptions(), KeyCode.DIGIT0, InputModifier.CTRL)
+        input.addAction(restartGame(), KeyCode.R, InputModifier.CTRL)
     }
 
     private fun screenshot() = object : UserAction("Screenshot") {
@@ -54,6 +55,12 @@ object SystemActions {
                 FXGL.getApp().gameScene.addUI(devUI)
                 devBarOpen = true
             }
+        }
+    }
+
+    private fun restartGame() = object : UserAction("Restart") {
+        override fun onActionBegin() {
+            FXGL.getApp().startNewGame()
         }
     }
 }

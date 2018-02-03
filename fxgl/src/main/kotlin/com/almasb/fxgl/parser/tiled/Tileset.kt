@@ -6,11 +6,14 @@
 
 package com.almasb.fxgl.parser.tiled
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 /**
  * Specification: https://github.com/bjorn/tiled/wiki/JSON-Map-Format
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Tileset(var firstgid: Int = 0,
               var image: String = "",
               var name: String = "",

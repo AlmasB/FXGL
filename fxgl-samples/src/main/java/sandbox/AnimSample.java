@@ -9,9 +9,13 @@ package sandbox;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.control.EffectControl;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
+
+import java.util.Map;
 
 /**
  *
@@ -38,14 +42,20 @@ public class AnimSample extends GameApplication {
     }
 
     @Override
-    protected void initGame() {
-        // 2. create entity and attach to world using fluent API
-//        player = Entities.builder()
-//                .type(Type.PLAYER)
-//                .at(100, 100)
-//                .viewFromNode(new Rectangle(40, 40))
-//                .buildAndAttach(getGameWorld());
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("key", 0);
+    }
 
+    @Override
+    protected void initGame() {
+
+
+        getGameState().<Integer>addListener("key", (prev, now) -> {
+            System.out.println(prev + " " + now);
+        });
+    }
+
+    private void anim() {
         Entity life = Entities.builder()
                 .at(200, 200)
                 .viewFromTexture("life.png")

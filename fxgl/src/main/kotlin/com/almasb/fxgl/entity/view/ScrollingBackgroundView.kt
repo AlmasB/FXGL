@@ -23,8 +23,7 @@ import javafx.scene.canvas.GraphicsContext
 class ScrollingBackgroundView
 @JvmOverloads constructor(texture: Texture,
                           val orientation: Orientation = Orientation.HORIZONTAL,
-                          val speed: Double = 1.0,
-                          renderLayer: RenderLayer = RenderLayer.BACKGROUND) : EntityView(renderLayer) {
+                          val speed: Double = 1.0) : EntityView() {
 
     private val canvas: Canvas
     private val g: GraphicsContext

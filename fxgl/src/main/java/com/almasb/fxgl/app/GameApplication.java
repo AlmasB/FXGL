@@ -27,6 +27,7 @@ import com.almasb.fxgl.saving.SaveEvent;
 import com.almasb.fxgl.scene.FXGLScene;
 import com.almasb.fxgl.scene.GameScene;
 import com.almasb.fxgl.scene.PreloadingScene;
+import com.almasb.fxgl.scene.SceneFactory;
 import com.almasb.fxgl.scene.menu.MenuEventListener;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
@@ -35,18 +36,16 @@ import com.almasb.fxgl.time.Timer;
 import com.almasb.fxgl.ui.Display;
 import com.almasb.fxgl.ui.ErrorDialog;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.Version;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
+import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -74,6 +73,9 @@ import java.util.*;
  * executed on the JavaFX Application (UI) Thread.
  * By default all callbacks are executed on the JavaFX Application (UI) Thread.
  *
+ * Note: do NOT make any FXGL calls within your APP constructor or to initialize
+ * APP fields during declaration, make these calls in initGame().
+ *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
 public abstract class GameApplication extends Application {
@@ -100,9 +102,59 @@ public abstract class GameApplication extends Application {
             initMainWindow(stage);
 
             showPreloadingStage();
-            startFXGL();
+
+            log.debug("Starting FXGL");
+
+            new Thread(new FXGLStartTask(), "FXGL Launcher Thread").start();
+
         } catch (Exception e) {
             handleFatalErrorBeforeLaunch(e);
+        }
+    }
+
+    private class FXGLStartTask extends Task<Void> {
+
+        @Override
+        protected Void call() {
+
+            // after this call all FXGL.* calls are valid.
+            FXGL.configure(GameApplication.this);
+
+            log.debug("FXGL started");
+            log.debug("Logging game settings\n" + settings.toString());
+
+            initFatalExceptionHandler();
+
+            log.debug("Configuring GameApplication");
+
+            long start = System.nanoTime();
+
+            initStateMachine();
+            attachEventHandlers();
+
+            log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
+
+            return null;
+        }
+
+        @Override
+        protected void succeeded() {
+            mainWindow.initAndShow();
+
+            // these things need to be called early before the main loop
+            // so that menus can correctly display input controls, etc.
+            // this is called once per application lifetime
+            runPreInit();
+
+            // attempt to clean any garbage we generated before main loop
+            System.gc();
+
+            startMainLoop();
+        }
+
+        @Override
+        protected void failed() {
+            handleFatalErrorBeforeLaunch(getException());
         }
     }
 
@@ -153,78 +205,6 @@ public abstract class GameApplication extends Application {
         });
     }
 
-    private void startFXGL() {
-        log.debug("Starting FXGL");
-        Version.print();
-
-        new Thread(() -> {
-            try {
-                configureFXGL();
-
-                initFatalExceptionHandler();
-
-                runUpdaterAndWait();
-
-                configureApp();
-
-                launchGame();
-            } catch (Exception e) {
-                handleFatalErrorBeforeLaunch(e);
-            }
-        }, "FXGL Launcher Thread").start();
-    }
-
-    /**
-     * After this call all FXGL.* calls are valid.
-     */
-    private void configureFXGL() {
-        long start = System.nanoTime();
-
-        initSystemProperties();
-        initUserProperties();
-
-        FXGL.configure(this);
-
-        log.debug("FXGL configuration complete");
-
-        log.infof("FXGL configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
-
-        log.debug("Logging game settings\n" + settings.toString());
-    }
-
-    /**
-     * Load FXGL system properties.
-     */
-    private void initSystemProperties() {
-        ResourceBundle props = ResourceBundle.getBundle("com.almasb.fxgl.app.system");
-        props.keySet().forEach(key -> {
-            Object value = props.getObject(key);
-            FXGL.setProperty(key, value);
-        });
-    }
-
-    /**
-     * Load user defined properties to override FXGL system properties.
-     */
-    private void initUserProperties() {
-        // services are not ready yet, so load manually
-        try (InputStream is = getClass().getResource("/assets/properties/system.properties").openStream()) {
-            ResourceBundle props = new PropertyResourceBundle(is);
-            props.keySet().forEach(key -> {
-                Object value = props.getObject(key);
-                FXGL.setProperty(key, value);
-            });
-        } catch (NullPointerException npe) {
-            // User properties not found. Using system
-        } catch (IOException e) {
-            log.warning("Loading user properties failed: " + e);
-        }
-    }
-
-    private void initFatalExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler((t, error) -> handleFatalErrorAfterLaunch(error));
-    }
-
     private void handleFatalErrorBeforeLaunch(Throwable error) {
         if (Logger.isConfigured()) {
             log.fatal("Exception during FXGL configuration:");
@@ -247,6 +227,10 @@ public abstract class GameApplication extends Application {
         // we don't know what exactly has been initialized
         // so to avoid the process hanging just shut down the JVM
         System.exit(-1);
+    }
+
+    private void initFatalExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler((t, error) -> handleFatalErrorAfterLaunch(error));
     }
 
     private boolean handledOnce = false;
@@ -274,25 +258,45 @@ public abstract class GameApplication extends Application {
         exit();
     }
 
-    private void runUpdaterAndWait() {
-        Async.startFX(() -> {
-            new UpdaterTask().run();
-        }).await();
-    }
-
-    private void configureApp() {
-        log.debug("Configuring GameApplication");
-
-        long start = System.nanoTime();
-
-        initStateMachine();
-        attachEventHandlers();
-
-        log.infof("Game configuration took:  %.3f sec", (System.nanoTime() - start) / 1000000000.0);
-    }
-
     private void initStateMachine() {
-        stateMachine = new AppStateMachine(this);
+        log.debug("Initializing state machine and application states");
+
+        SceneFactory sceneFactory = FXGL.getSettings().getSceneFactory();
+
+        // STARTUP is default
+        AppState initial = new StartupState(this);
+
+        AppState loading = new LoadingState(this, sceneFactory);
+        AppState play = new PlayState(sceneFactory);
+
+        // reasonable hack to trigger dialog state init before intro and menus
+        DialogSubState.INSTANCE.getView();
+
+        // TODO: replace nulls with EMPTY
+        AppState intro = this.getSettings().isIntroEnabled() ? new IntroState(this, sceneFactory) : null;
+        AppState mainMenu = this.getSettings().isMenuEnabled() ? new MainMenuState(sceneFactory) : null;
+        AppState gameMenu = this.getSettings().isMenuEnabled() ? new GameMenuState(sceneFactory) : null;
+
+        stateMachine = new AppStateMachine(loading, play, DialogSubState.INSTANCE, intro, mainMenu, gameMenu, initial);
+
+        stateMachine.addListener(new StateChangeListener() {
+            @Override
+            public void beforeEnter(State state) {
+                if (state instanceof AppState) {
+                    setScene(((AppState)state).getScene());
+                } else if (state instanceof SubState) {
+                    getScene().getRoot().getChildren().add(((SubState)state).getView());
+                }
+            }
+
+            @Override
+            public void exited(State state) {
+                if (state instanceof SubState) {
+                    getScene().getRoot().getChildren().remove(((SubState)state).getView());
+                }
+            }
+        });
+
         playState = (PlayState) stateMachine.getPlayState();
     }
 
@@ -313,22 +317,6 @@ public abstract class GameApplication extends Application {
         });
 
         getEventBus().scanForHandlers(this);
-    }
-
-    private void launchGame() {
-        Async.startFX(() -> {
-            mainWindow.initAndShow();
-
-            // these things need to be called early before the main loop
-            // so that menus can correctly display input controls, etc.
-            // this is called once per application lifetime
-            runPreInit();
-
-            // attempt to clean any garbage we generated before main loop
-            System.gc();
-
-            startMainLoop();
-        });
     }
 
     private void runPreInit() {
@@ -579,6 +567,7 @@ public abstract class GameApplication extends Application {
     /**
      * Initialize game assets, such as Texture, Sound, Music, etc.
      */
+    @Deprecated
     protected void initAssets() {}
 
     /**
@@ -686,6 +675,10 @@ public abstract class GameApplication extends Application {
 
     public final Gameplay getGameplay() {
         return FXGL.getGameplay();
+    }
+
+    public final <T> T getGameConfig() {
+        return FXGL.getGameConfig();
     }
 
     /**

@@ -10,6 +10,7 @@ import com.almasb.fxgl.core.collection.ObjectMap
 import javafx.beans.property.*
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import java.util.*
 
 /**
  * Holds game CVars as JavaFX properties and allows
@@ -124,31 +125,58 @@ class GameState {
     @Suppress("UNCHECKED_CAST")
     fun <T> objectProperty(propertyName: String) = get(propertyName) as ObjectProperty<T>
 
-    private val listeners = hashMapOf<PropertyChangeListener<*>, ChangeListener<*> >()
+    /**
+     * We use ListenerKey to capture both property name and property listener.
+     * We can then use property name to find all remaining JavaFX listeners
+     * in case they weren't explicitly removed.
+     */
+    private val listeners = hashMapOf<ListenerKey, ChangeListener<*> >()
 
     @Suppress("UNCHECKED_CAST")
     fun <T> addListener(propertyName: String, listener: PropertyChangeListener<T>) {
         val internalListener = ChangeListener<T> { _, prev, now -> listener.onChange(prev, now) }
 
-        listeners[listener] = internalListener
+        val key = ListenerKey(propertyName, listener)
+
+        listeners[key] = internalListener
 
         (get(propertyName) as ObservableValue<T>).addListener(internalListener)
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T> removeListener(propertyName: String, listener: PropertyChangeListener<T>) {
-        (get(propertyName) as ObservableValue<T>).removeListener(listeners[listener] as ChangeListener<in T>)
+        val key = ListenerKey(propertyName, listener)
+
+        (get(propertyName) as ObservableValue<T>).removeListener(listeners[key] as ChangeListener<in T>)
+        listeners.remove(key)
     }
 
-//    @Suppress("UNCHECKED_CAST")
-//    fun <T> addListenerKt(propertyName: String, listener: (T, T) -> Unit) {
-//        (get(propertyName) as ObservableValue<T>).addListener { o, prev, now -> listener.invoke(prev, now) }
-//    }
-
+    @Suppress("UNCHECKED_CAST")
     fun clear() {
+        listeners.forEach { key, listener ->
+            // clean up all non-removed JavaFX listeners
+            (get(key.propertyName) as ObservableValue<Any>).removeListener(listener as ChangeListener<Any>)
+        }
+        listeners.clear()
+
         properties.clear()
     }
 
     private fun get(propertyName: String) = properties.get(propertyName)
             ?: throw IllegalArgumentException("Property $propertyName does not exist")
+
+    private class ListenerKey(val propertyName: String,
+                              val propertyListener: PropertyChangeListener<*>) {
+
+        override fun hashCode(): Int {
+            return Objects.hash(propertyName, propertyListener)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (other !is ListenerKey)
+                return false
+
+            return propertyName == other.propertyName && propertyListener === other.propertyListener
+        }
+    }
 }

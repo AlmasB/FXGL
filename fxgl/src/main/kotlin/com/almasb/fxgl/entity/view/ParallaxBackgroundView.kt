@@ -19,8 +19,7 @@ import javafx.scene.canvas.GraphicsContext
  */
 class ParallaxBackgroundView
 @JvmOverloads constructor(private val textures: List<ParallaxTexture>,
-                          val orientation: Orientation = Orientation.HORIZONTAL,
-                          renderLayer: RenderLayer = RenderLayer.BACKGROUND) : EntityView(renderLayer) {
+                          val orientation: Orientation = Orientation.HORIZONTAL) : EntityView() {
 
     private val canvas: Canvas
     private val g: GraphicsContext

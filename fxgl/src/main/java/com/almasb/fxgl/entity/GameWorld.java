@@ -143,9 +143,9 @@ public final class GameWorld {
                 e.clean();
                 it.remove();
             } else {
-                TimeComponent time = e.getComponent(TimeComponent.class);
-
-                double tpfRatio = time == null ? 1.0 : time.getValue();
+                double tpfRatio = e.getComponentOptional(TimeComponent.class)
+                        .map(t -> t.getValue())
+                        .orElse(1.0);
 
                 e.update(tpf * tpfRatio);
             }

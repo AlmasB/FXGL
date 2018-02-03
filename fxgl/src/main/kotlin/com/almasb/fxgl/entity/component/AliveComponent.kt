@@ -10,7 +10,6 @@ import com.almasb.fxgl.app.fire
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.EntityEvent
 import com.almasb.fxgl.parser.JSEvents
-import com.almasb.fxgl.parser.JavaScriptParser
 
 /**
  * Adds knowledge about alive / dead state to the entity.
@@ -23,8 +22,6 @@ class AliveComponent
 
     fun isAlive() = value
     fun isDead() = !isAlive()
-
-    private var js: JavaScriptParser? = null
 
     /**
      * If called on an "alive" entity, it will become "dead"
