@@ -17,7 +17,8 @@ after_success:
 - bash <(curl -s https://codecov.io/bash)
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml
   -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
-- if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -K $encrypted_866853ee2390_key -iv $encrypted_866853ee2390_iv -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg --fast-import .travis/sign.asc; mvn deploy --settings .travis.settings.xml;
+- if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -K "$ENC_PASSWORD" -in .travis/sign.asc.enc -out .travis/sign.asc -d;
+  gpg --fast-import .travis/sign.asc; mvn deploy --settings .travis.settings.xml;
   fi
 notifications:
   email:
@@ -39,3 +40,4 @@ env:
   - secure: aZQmJuxsNOdAB1G6CqVFIz0xQA8t4lKgT/Q3qvrUlikDhBHj+C6CkGd53VzqaHMwyKgknsHgXd7LKuCSdT4qR0oQbLx7PFJbvFbFiTVS8mLlLTPSVAkSfm9ObJydTEJSPYmENY93PN4QPw13gXHY2rhyE2cJ4O4GGR7pFSFQ5vo=
   - secure: B+A8Cj6g3VEDXRa1DiKLWNxS4SF+5PnKIdElzqGPQ6Nx9tCr0wkQfM/DoXvUHj87YSSlTsIughSGQ/kdYH59g9ZvvaBAvNBldMQSYPnRasYWE8J25ktcwb4Acm0RXKU8jqDHdFkPOzKBxyyeKsIndclPR0gIZZbOGXoPu+hlmB8=
   - secure: UKqnU//tPPpdLR9KH9ztsiRVKYyhOUKev6RWZ3xPeGK96NFXVOXAVOyXjbvdusb84jjgW2ML3zaSyJq21LH06ovku7mKrpthmMx5lczxVDx+TttSxBGPbDHEANliLLDEQC2uILr8wYEl1qsEsoMRLaRDEwywobN01P5h8J0IFHQ=
+  - secure: iLIk/h78/PMfPtEdcWcidRsBRDs1NdyAzHkPU+riNTvSAYcHhYKKpAck+Gub8LCQevlMVm6g4i1uT8ux7XJrE5rM90mpUP5V5510/4bW4oz+OmFDQLrXGFqh9glL5GxuVrFuDORsuIEPFRlyJ9yo8PLkk0DofCozy4awxv7QDgo=
