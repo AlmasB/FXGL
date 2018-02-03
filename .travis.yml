@@ -18,8 +18,8 @@ after_success:
 - mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=fxgl/target/site/jacoco/jacoco.xml
   -DprojectToken=$CODACY_PROJECT_TOKEN -DapiToken=$CODACY_PROJECT_TOKEN -DcodacyApiBaseUrl=https://api.codacy.com/
 - if [ "$TRAVIS_BRANCH" != "master" ]; then openssl aes-256-cbc -pass pass:$ENC_PASSWORD
-  -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg --fast-import .travis/sign.asc;
-  mvn deploy --settings .travis.settings.xml; fi
+  -in .travis/sign.asc.enc -out .travis/sign.asc -d; gpg -q --fast-import .travis/sign.asc;
+  mvn deploy --settings .travis.settings.xml -DskipTests=true; fi
 notifications:
   email:
     recipients:
@@ -40,4 +40,4 @@ env:
   - secure: aZQmJuxsNOdAB1G6CqVFIz0xQA8t4lKgT/Q3qvrUlikDhBHj+C6CkGd53VzqaHMwyKgknsHgXd7LKuCSdT4qR0oQbLx7PFJbvFbFiTVS8mLlLTPSVAkSfm9ObJydTEJSPYmENY93PN4QPw13gXHY2rhyE2cJ4O4GGR7pFSFQ5vo=
   - secure: B+A8Cj6g3VEDXRa1DiKLWNxS4SF+5PnKIdElzqGPQ6Nx9tCr0wkQfM/DoXvUHj87YSSlTsIughSGQ/kdYH59g9ZvvaBAvNBldMQSYPnRasYWE8J25ktcwb4Acm0RXKU8jqDHdFkPOzKBxyyeKsIndclPR0gIZZbOGXoPu+hlmB8=
   - secure: iLIk/h78/PMfPtEdcWcidRsBRDs1NdyAzHkPU+riNTvSAYcHhYKKpAck+Gub8LCQevlMVm6g4i1uT8ux7XJrE5rM90mpUP5V5510/4bW4oz+OmFDQLrXGFqh9glL5GxuVrFuDORsuIEPFRlyJ9yo8PLkk0DofCozy4awxv7QDgo=
-  - secure: OswwQFAE//HueGAJdsOrlxoTr60O+jfEF0kSs2r4a8QYBTNGBxSIEQslV1VYHJ0omDBXlfwl6A/6a6eDYMPbdDuI1KfIxJNcb702CR1WdDLEnXqkMpkotrRkVmJPb5N7HPnAzkzV8YcXjATebComrmCgVNVSQ2RaZJzvkNr4fbI=
+  - secure: D+l91agoVIm73W9rPnJAR18BqIgxNvGxpCb2SBSzoZGHGBXTFrkffFBqYRJNeFe618h6YrRFYB1LvxFYfj5nKshKeHBjBA5kd29RA7fgcUNZYNJgqswOzpzwJNe9/Itq4Mda5u+m2aw1thYQ3D7GWRQ1Diu1JSRtM2N/3ts4cVA=
