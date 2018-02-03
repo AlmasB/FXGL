@@ -21,8 +21,8 @@ JavaFX Game Development Framework
 
 ### Good for:
 
-* JavaFX programmers
 * Any 2D genre (side-scroller / platformer / arcade / RPG)
+* Complex UI controls
 * Hobby / academic / commercial projects
 * Teaching / learning / improving game development skills
 * Fast prototyping of game ideas
@@ -69,7 +69,7 @@ Already have `pom.xml`? Then add:
 <dependency>
     <groupId>com.github.almasb</groupId>
     <artifactId>fxgl</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
 </dependency>
 ```
 
@@ -86,7 +86,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.almasb:fxgl:0.4.1'
+    compile 'com.github.almasb:fxgl:0.4.2'
 }
 ```
 
