@@ -8,8 +8,8 @@ package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.app.FXGLMock
 import com.almasb.fxgl.entity.Entity
-import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.Entities
+import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.component.CollidableComponent
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -38,6 +38,11 @@ class PhysicsWorldTest {
     private val physicsWorld = PhysicsWorld(600, 50.0)
 
     @Test
+    fun `Jbox world`() {
+        assertThat(physicsWorld.jBox2DWorld.bodyCount, `is`(0))
+    }
+
+    @Test
     fun `Collision notification`() {
         val entity1 = Entities.builder()
                 .type(EntityType.TYPE1)
@@ -52,6 +57,12 @@ class PhysicsWorldTest {
                 .bbox(HitBox("Test2", BoundingShape.box(40.0, 40.0)))
                 .with(CollidableComponent(true))
                 .build()
+
+        // entities that are not part of any world are not active
+        // so we add them to _some_ world
+        val gameWorld = GameWorld()
+        gameWorld.addEntity(entity1)
+        gameWorld.addEntity(entity2)
 
         var hitboxCount = 0
         var collisionBeginCount = 0
@@ -91,15 +102,9 @@ class PhysicsWorldTest {
 
         physicsWorld.addCollisionHandler(handler)
 
-        // TODO: we don't need game world, test physics world only
-        
-        // create game world and add listener
-        val gameWorld = GameWorld()
-        gameWorld.addWorldListener(physicsWorld)
-
-        gameWorld.addEntity(entity1)
-        gameWorld.addEntity(entity2)
-        gameWorld.onUpdate(0.016)
+        physicsWorld.onEntityAdded(entity1)
+        physicsWorld.onEntityAdded(entity2)
+        physicsWorld.onUpdate(0.016)
 
         // no collision happened, entities are apart
         assertThat(hitboxCount, `is`(0))
@@ -110,7 +115,6 @@ class PhysicsWorldTest {
         // move 2nd entity closer to first, colliding with it
         entity2.translateX(-30.0)
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // hit box and collision begin triggered, entities are now colliding
@@ -119,7 +123,6 @@ class PhysicsWorldTest {
         assertThat(collisionCount, `is`(1))
         assertThat(collisionEndCount, `is`(0))
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // collision continues
@@ -128,7 +131,6 @@ class PhysicsWorldTest {
         assertThat(collisionCount, `is`(2))
         assertThat(collisionEndCount, `is`(0))
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // collision continues
@@ -140,7 +142,6 @@ class PhysicsWorldTest {
         // move 2nd entity away from 1st
         entity2.translateX(30.0)
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // collision end
@@ -154,7 +155,6 @@ class PhysicsWorldTest {
         // move 2nd entity closer to 1st, colliding with it
         entity2.translateX(-30.0)
 
-        gameWorld.onUpdate(0.016)
         physicsWorld.onUpdate(0.016)
 
         // no change in collision
