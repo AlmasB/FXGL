@@ -13,6 +13,8 @@ import com.almasb.fxgl.audio.Sound
 import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.parser.KVFile
+import com.almasb.fxgl.parser.tiled.TiledMap
+import com.almasb.fxgl.parser.tiled.tmx.TMXParser
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.script.Script
 import com.almasb.fxgl.script.ScriptFactory
@@ -335,6 +337,12 @@ class AssetLoader {
     fun <T : Any> loadJSON(name: String, type: Class<T>): T {
         getStream(JSON_DIR + name).use {
             return jsonMapper.readValue(it, type)
+        }
+    }
+
+    fun loadTMX(name: String): TiledMap {
+        getStream(ASSETS_DIR + "tmx/" + name).use {
+            return TMXParser().parse(it)
         }
     }
 
