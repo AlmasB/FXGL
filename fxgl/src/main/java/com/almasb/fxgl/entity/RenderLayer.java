@@ -39,6 +39,20 @@ public interface RenderLayer {
     /**
      * Default render layer for entities with no specified
      * render layer.
+     */
+    RenderLayer DEFAULT = new RenderLayer() {
+        @Override
+        public String name() {
+            return "DEFAULT";
+        }
+
+        @Override
+        public int index() {
+            return 100000;
+        }
+    };
+
+    /**
      * Note: this is the highest layer that can be used.
      */
     RenderLayer TOP = new RenderLayer() {
@@ -54,7 +68,22 @@ public interface RenderLayer {
     };
 
     /**
-     * Render layer for background.
+     * Note: this is the lowest layer that can be used.
+     */
+    RenderLayer BOTTOM = new RenderLayer() {
+        @Override
+        public String name() {
+            return "BOTTOM";
+        }
+
+        @Override
+        public int index() {
+            return Integer.MIN_VALUE;
+        }
+    };
+
+    /**
+     * Convenience render layer for background.
      * Note: value of 1000 leaves some scope for using parallax backgrounds.
      */
     RenderLayer BACKGROUND = new RenderLayer() {

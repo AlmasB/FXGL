@@ -135,14 +135,14 @@ public final class Entities {
         }
 
         /**
-         * Generates view from tiles with {@link RenderLayer#TOP}.
+         * Generates view from tiles with {@link RenderLayer#DEFAULT}.
          *
          * @param map parsed Tiled map
          * @param layerName layer name as specified by Tiled
          * @return builder
          */
         public EntityBuilder viewFromTiles(TiledMap map, String layerName) {
-            return viewFromTiles(map, layerName, RenderLayer.TOP);
+            return viewFromTiles(map, layerName, RenderLayer.DEFAULT);
         }
 
         /**

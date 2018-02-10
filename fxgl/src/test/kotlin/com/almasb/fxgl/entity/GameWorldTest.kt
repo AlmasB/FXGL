@@ -895,7 +895,7 @@ class GameWorldTest {
 
         assertAll(
                 Executable { assertThat(gameWorld.getEntitiesByLayer(layer), contains(e1)) },
-                Executable { assertThat(gameWorld.getEntitiesByLayer(RenderLayer.TOP), contains(e2, e3)) }
+                Executable { assertThat(gameWorld.getEntitiesByLayer(RenderLayer.DEFAULT), contains(e2, e3)) }
         )
     }
 
@@ -925,7 +925,7 @@ class GameWorldTest {
         val result2 = Array<Entity>()
 
         gameWorld.getEntitiesByLayer(result1, layer)
-        gameWorld.getEntitiesByLayer(result2, RenderLayer.TOP)
+        gameWorld.getEntitiesByLayer(result2, RenderLayer.DEFAULT)
 
         assertAll(
                 Executable { assertThat(result1, contains(e1)) },
