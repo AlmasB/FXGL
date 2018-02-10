@@ -6,24 +6,39 @@
 
 package com.almasb.fxgl.parser.tiled.tmx
 
+import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.parser.tiled.Layer
 import com.almasb.fxgl.parser.tiled.TiledMap
 import com.almasb.fxgl.parser.tiled.TiledObject
 import com.almasb.fxgl.parser.tiled.Tileset
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.*
+import java.util.zip.*
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.events.StartElement
+
 
 /**
- *
+ * TMX Format version 1.1 reference: http://docs.mapeditor.org/en/latest/reference/tmx-map-format/
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
+
+private const val TILED_VERSION_LATEST = "1.1.2"
+
 class TMXParser {
+
+
+
+    private val log = Logger.get(TMXParser::class.java)
 
     fun parse(inputStream: InputStream): TiledMap {
         try {
-            // First, create a new XMLInputFactory
             val inputFactory = XMLInputFactory.newInstance()
             val eventReader = inputFactory.createXMLEventReader(inputStream)
 
@@ -31,104 +46,55 @@ class TMXParser {
             val layers = arrayListOf<Layer>()
             val tilesets = arrayListOf<Tileset>()
 
-
             // vars
 
             var currentLayer = Layer()
             var currentTileset = Tileset()
 
-
             while (eventReader.hasNext()) {
-                var event = eventReader.nextEvent()
+                val event = eventReader.nextEvent()
 
                 if (event.isStartElement) {
-                    val startElement = event.asStartElement()
+                    val start = event.asStartElement()
 
-                    // If we have an item element, we create a new item
-                    if (startElement.name.localPart == "map") {
+                    when (start.name.localPart) {
+                        "map" -> { parseMap(map, start) }
 
-                        map.width = startElement.getAttributeByName(QName("width")).value.toInt()
-                        map.height = startElement.getAttributeByName(QName("height")).value.toInt()
-                        map.tilewidth = startElement.getAttributeByName(QName("tilewidth")).value.toInt()
-                        map.tileheight = startElement.getAttributeByName(QName("tileheight")).value.toInt()
-                        map.orientation = startElement.getAttributeByName(QName("orientation")).value
-                        map.nextobjectid = startElement.getAttributeByName(QName("nextobjectid")).value.toInt()
-                    }
+                        "tileset" -> {
+                            currentTileset = Tileset()
+                            parseTileset(currentTileset, start)
+                        }
 
-                    if (startElement.name.localPart == "layer") {
+                        "image" -> {
+                            parseImage(currentTileset, start)
+                        }
 
-                        currentLayer = Layer()
-                        currentLayer.type = "tilelayer"
-                        currentLayer.name = startElement.getAttributeByName(QName("name")).value
-                        currentLayer.width = startElement.getAttributeByName(QName("width")).value.toInt()
-                        currentLayer.height = startElement.getAttributeByName(QName("height")).value.toInt()
-                    }
+                        "layer" -> {
+                            currentLayer = Layer()
+                            parseTileLayer(currentLayer, start)
+                        }
 
-                    if (startElement.name.localPart == "data") {
+                        "data" -> {
+                            parseData(currentLayer, eventReader.elementText, start)
+                        }
 
-                        // TODO: parse other encodings than csv
-                        //startElement.getAttributeByName(QName("encoding"))
+                        "objectgroup" -> {
+                            currentLayer = Layer()
+                            parseObjectGroupLayer(currentLayer, start)
+                        }
 
-                        val data = eventReader.elementText
-
-                        currentLayer.data = data.replace("\n", "").split(",").map { it.toInt() }
-                    }
-
-                    if (startElement.name.localPart == "tileset") {
-
-                        currentTileset = Tileset()
-                        currentTileset.firstgid = startElement.getAttributeByName(QName("firstgid")).value.toInt()
-                        currentTileset.name = startElement.getAttributeByName(QName("name")).value
-                        currentTileset.tilewidth = startElement.getAttributeByName(QName("tilewidth")).value.toInt()
-                        currentTileset.tileheight = startElement.getAttributeByName(QName("tileheight")).value.toInt()
-                        currentTileset.spacing = startElement.getAttributeByName(QName("spacing")).value.toInt()
-                        currentTileset.tilecount = startElement.getAttributeByName(QName("tilecount")).value.toInt()
-                        currentTileset.columns = startElement.getAttributeByName(QName("columns")).value.toInt()
-                    }
-
-                    if (startElement.name.localPart == "image") {
-                        currentTileset.image = startElement.getAttributeByName(QName("source")).value
-                        currentTileset.imagewidth = startElement.getAttributeByName(QName("width")).value.toInt()
-                        currentTileset.imageheight = startElement.getAttributeByName(QName("height")).value.toInt()
-                    }
-
-                    if (startElement.name.localPart == "objectgroup") {
-
-                        currentLayer = Layer()
-                        currentLayer.type = "objectgroup"
-                        currentLayer.name = startElement.getAttributeByName(QName("name")).value
-
-
-
-                    }
-
-                    if (startElement.name.localPart == "object") {
-
-                        val obj = TiledObject()
-                        obj.type = startElement.getAttributeByName(QName("type"))?.value.orEmpty()
-                        obj.id = startElement.getAttributeByName(QName("id")).value.toInt()
-                        obj.x = startElement.getAttributeByName(QName("x")).value.toInt()
-                        obj.y = startElement.getAttributeByName(QName("y")).value.toInt()
-                        obj.width = startElement.getAttributeByName(QName("width"))?.value?.toInt() ?: 0
-                        obj.height = startElement.getAttributeByName(QName("height"))?.value?.toInt() ?: 0
-
-                        (currentLayer.objects as MutableList).add(obj)
+                        "object" -> {
+                            parseObject(currentLayer, start)
+                        }
                     }
                 }
 
-                // If we reach the end of an item element, we add it to the list
                 if (event.isEndElement) {
                     val endElement = event.asEndElement()
-                    if (endElement.name.localPart == "tileset") {
-                        tilesets.add(currentTileset)
-                    }
 
-                    if (endElement.name.localPart == "layer") {
-                        layers.add(currentLayer)
-                    }
-
-                    if (endElement.name.localPart == "objectgroup") {
-                        layers.add(currentLayer)
+                    when (endElement.name.localPart) {
+                        "tileset" -> { tilesets.add(currentTileset) }
+                        "layer", "objectgroup" -> { layers.add(currentLayer) }
                     }
                 }
             }
@@ -144,4 +110,120 @@ class TMXParser {
             throw RuntimeException("Cannot parse tmx file: $e")
         }
     }
+
+    private fun parseMap(map: TiledMap, start: StartElement) {
+        map.width = start.getInt("width")
+        map.height = start.getInt("height")
+        map.tilewidth = start.getInt("tilewidth")
+        map.tileheight = start.getInt("tileheight")
+        map.nextobjectid = start.getInt("nextobjectid")
+
+        map.type = "map"
+        map.version = 1
+        map.infinite = start.getInt("infinite") == 1
+        map.backgroundcolor = start.getString("backgroundcolor")
+        map.orientation = start.getString("orientation")
+        map.tiledversion = start.getString("tiledversion")
+
+        if (map.tiledversion != TILED_VERSION_LATEST) {
+            log.warning("TiledMap generated from ${map.tiledversion}. Supported version: $TILED_VERSION_LATEST. Some features may not be parsed fully.")
+        }
+    }
+
+    private fun parseTileset(tileset: Tileset, start: StartElement) {
+        tileset.firstgid = start.getInt("firstgid")
+        tileset.name = start.getString("name")
+        tileset.tilewidth = start.getInt("tilewidth")
+        tileset.tileheight = start.getInt("tileheight")
+        tileset.spacing = start.getInt("spacing")
+        tileset.tilecount = start.getInt("tilecount")
+        tileset.columns = start.getInt("columns")
+    }
+
+    private fun parseImage(tileset: Tileset, start: StartElement) {
+        tileset.image = start.getString("source")
+        tileset.imagewidth = start.getInt("width")
+        tileset.imageheight = start.getInt("height")
+    }
+
+    private fun parseTileLayer(layer: Layer, start: StartElement) {
+        layer.type = "tilelayer"
+        layer.name = start.getString("name")
+        layer.width = start.getInt("width")
+        layer.height = start.getInt("height")
+        layer.opacity = start.getFloat("opacity")
+        layer.visible = start.getInt("visible") == 1
+    }
+
+    private fun parseData(layer: Layer, data: String, start: StartElement) {
+        when (start.getString("encoding")) {
+            "csv" -> {
+                layer.data = data.replace("\n", "").split(",").map { it.toInt() }
+            }
+
+            "base64" -> {
+                var bytes = Base64.getDecoder().decode(data.trim())
+
+                when (start.getString("compression")) {
+                    "zlib" -> {
+                        val baos = ByteArrayOutputStream()
+
+                        InflaterInputStream(ByteArrayInputStream(bytes)).use {
+                            it.copyTo(baos)
+                        }
+
+                        bytes = baos.toByteArray()
+                    }
+
+                    "gzip" -> {
+                        val baos = ByteArrayOutputStream()
+
+                        GZIPInputStream(ByteArrayInputStream(bytes)).use {
+                            it.copyTo(baos)
+                        }
+
+                        bytes = baos.toByteArray()
+                    }
+                }
+
+                val ints = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer()
+
+                val intArray = IntArray(ints.limit())
+                ints.get(intArray)
+
+                layer.data = intArray.toList()
+            }
+        }
+    }
+
+    private fun parseObjectGroupLayer(layer: Layer, start: StartElement) {
+        layer.type = "objectgroup"
+        layer.name = start.getString("name")
+    }
+
+    private fun parseObject(layer: Layer, start: StartElement) {
+        val obj = TiledObject()
+        obj.type = start.getString("type")
+        obj.id = start.getInt("id")
+        obj.x = start.getInt("x")
+        obj.y = start.getInt("y")
+        obj.width = start.getInt("width")
+        obj.height = start.getInt("height")
+
+        (layer.objects as MutableList).add(obj)
+    }
+}
+
+// these retrieve the value if exists or return a default
+
+private fun StartElement.getInt(attrName: String): Int {
+    return this.getString(attrName).toIntOrNull() ?: 0
+}
+
+private fun StartElement.getFloat(attrName: String): Float {
+    return this.getString(attrName).toFloatOrNull() ?: 0.0f
+}
+
+private fun StartElement.getString(attrName: String): String {
+    return this.getAttributeByName(QName(attrName))?.value.orEmpty()
 }
