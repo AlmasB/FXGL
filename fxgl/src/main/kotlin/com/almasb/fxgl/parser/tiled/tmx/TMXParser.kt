@@ -33,8 +33,6 @@ private const val TILED_VERSION_LATEST = "1.1.2"
 
 class TMXParser {
 
-
-
     private val log = Logger.get(TMXParser::class.java)
 
     fun parse(inputStream: InputStream): TiledMap {
@@ -99,8 +97,6 @@ class TMXParser {
                 }
             }
 
-            // DONE
-
             map.layers = layers
             map.tilesets = tilesets
 
@@ -144,6 +140,7 @@ class TMXParser {
         tileset.image = start.getString("source")
         tileset.imagewidth = start.getInt("width")
         tileset.imageheight = start.getInt("height")
+        tileset.transparentcolor = start.getString("trans")
     }
 
     private fun parseTileLayer(layer: Layer, start: StartElement) {
