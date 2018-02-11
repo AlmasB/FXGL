@@ -197,6 +197,7 @@ class TMXParser {
 
     private fun parseObject(layer: Layer, start: StartElement) {
         val obj = TiledObject()
+        obj.name = start.getString("name")
         obj.type = start.getString("type")
         obj.id = start.getInt("id")
         obj.x = start.getInt("x")
