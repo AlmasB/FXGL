@@ -14,7 +14,7 @@ import com.almasb.fxgl.core.collection.ObjectMap
 import com.almasb.fxgl.core.logging.Logger
 import com.almasb.fxgl.parser.KVFile
 import com.almasb.fxgl.parser.tiled.TiledMap
-import com.almasb.fxgl.parser.tiled.tmx.TMXParser
+import com.almasb.fxgl.parser.tiled.TMXParser
 import com.almasb.fxgl.scene.CSS
 import com.almasb.fxgl.script.Script
 import com.almasb.fxgl.script.ScriptFactory

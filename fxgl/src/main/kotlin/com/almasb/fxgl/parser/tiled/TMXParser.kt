@@ -4,13 +4,9 @@
  * See LICENSE for details.
  */
 
-package com.almasb.fxgl.parser.tiled.tmx
+package com.almasb.fxgl.parser.tiled
 
 import com.almasb.fxgl.core.logging.Logger
-import com.almasb.fxgl.parser.tiled.Layer
-import com.almasb.fxgl.parser.tiled.TiledMap
-import com.almasb.fxgl.parser.tiled.TiledObject
-import com.almasb.fxgl.parser.tiled.Tileset
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -119,10 +115,11 @@ class TMXParser {
         map.infinite = start.getInt("infinite") == 1
         map.backgroundcolor = start.getString("backgroundcolor")
         map.orientation = start.getString("orientation")
+        map.renderorder = start.getString("renderorder")
         map.tiledversion = start.getString("tiledversion")
 
         if (map.tiledversion != TILED_VERSION_LATEST) {
-            log.warning("TiledMap generated from ${map.tiledversion}. Supported version: $TILED_VERSION_LATEST. Some features may not be parsed fully.")
+            log.warning("TiledMap generated from ${map.tiledversion}. Supported version: ${TILED_VERSION_LATEST}. Some features may not be parsed fully.")
         }
     }
 
