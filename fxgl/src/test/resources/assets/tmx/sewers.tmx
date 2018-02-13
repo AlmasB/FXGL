@@ -14,7 +14,14 @@
   </data>
  </layer>
  <objectgroup name="Collidables">
-  <object id="1" name="name1" type="type1" x="96" y="0" width="72" height="336"/>
+  <object id="1" name="name1" type="type1" x="96" y="0" width="72" height="336">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+    <property name="someColor" type="color" value="#ff55ff00"/>
+    <property name="someInt" type="int" value="33"/>
+    <property name="someString" value="Text Here"/>
+   </properties>
+  </object>
   <object id="2" name="name2" type="type2" x="504" y="0" width="360" height="168"/>
  </objectgroup>
  <objectgroup name="Group2">

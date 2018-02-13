@@ -88,6 +88,12 @@ class TMXParserTest {
         assertThat(obj1.y, `is`(0))
         assertThat(obj1.width, `is`(72))
         assertThat(obj1.height, `is`(336))
+        assertThat(obj1.properties.size, `is`(4))
+
+        assertThat(obj1.properties["collidable"] as String, `is`("true"))
+        assertThat(obj1.properties["someColor"] as String, `is`("#ff55ff00"))
+        assertThat(obj1.properties["someInt"] as String, `is`("33"))
+        assertThat(obj1.properties["someString"] as String, `is`("Text Here"))
 
         assertThat(obj2.id, `is`(2))
         assertThat(obj2.name, `is`("name2"))

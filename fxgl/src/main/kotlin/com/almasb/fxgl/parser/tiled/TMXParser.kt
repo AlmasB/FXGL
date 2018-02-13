@@ -44,6 +44,7 @@ class TMXParser {
 
             var currentLayer = Layer()
             var currentTileset = Tileset()
+            var currentObject = TiledObject()
 
             while (eventReader.hasNext()) {
                 val event = eventReader.nextEvent()
@@ -78,7 +79,12 @@ class TMXParser {
                         }
 
                         "object" -> {
-                            parseObject(currentLayer, start)
+                            currentObject = TiledObject()
+                            parseObject(currentLayer, currentObject, start)
+                        }
+
+                        "property" -> {
+                            parseObjectProperty(currentObject, start)
                         }
                     }
                 }
@@ -195,8 +201,7 @@ class TMXParser {
         layer.name = start.getString("name")
     }
 
-    private fun parseObject(layer: Layer, start: StartElement) {
-        val obj = TiledObject()
+    private fun parseObject(layer: Layer, obj: TiledObject, start: StartElement) {
         obj.name = start.getString("name")
         obj.type = start.getString("type")
         obj.id = start.getInt("id")
@@ -206,6 +211,11 @@ class TMXParser {
         obj.height = start.getInt("height")
 
         (layer.objects as MutableList).add(obj)
+    }
+
+    private fun parseObjectProperty(obj: TiledObject, start: StartElement) {
+        (obj.properties as MutableMap)[start.getString("name")] = start.getString("value")
+        (obj.propertytypes as MutableMap)[start.getString("name")] = start.getString("type")
     }
 }
 
