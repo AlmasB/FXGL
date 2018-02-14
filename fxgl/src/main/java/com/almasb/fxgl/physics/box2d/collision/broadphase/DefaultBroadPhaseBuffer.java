@@ -6,7 +6,6 @@
 package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.callbacks.DebugDraw;
 import com.almasb.fxgl.physics.box2d.callbacks.PairCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
@@ -114,11 +113,6 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     @Override
     public final int getProxyCount() {
         return m_proxyCount;
-    }
-
-    @Override
-    public void drawTree(DebugDraw argDraw) {
-        m_tree.drawTree(argDraw);
     }
 
     @Override

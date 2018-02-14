@@ -6,7 +6,6 @@
 package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.callbacks.DebugDraw;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
@@ -14,7 +13,6 @@ import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.common.BufferUtils;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
-import javafx.scene.paint.Color;
 
 public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     public static final int MAX_STACK_SIZE = 64;
@@ -819,36 +817,5 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
 
         validateMetrics(child1);
         validateMetrics(child2);
-    }
-
-    @Override
-    public void drawTree(DebugDraw argDraw) {
-        if (m_root == NULL_NODE) {
-            return;
-        }
-        int height = computeHeight();
-        drawTree(argDraw, m_root, 0, height);
-    }
-
-    private final Vec2 textVec = new Vec2();
-
-    public void drawTree(DebugDraw argDraw, int node, int spot, int height) {
-        AABB a = m_aabb[node];
-        a.getVertices(drawVecs);
-
-        Color color = Color.color(1, (height - spot) * 1f / height, (height - spot) * 1f / height);
-        argDraw.drawPolygon(drawVecs, 4, color);
-
-        argDraw.getViewportTranform().getWorldToScreen(a.upperBound, textVec);
-        argDraw.drawString(textVec.x, textVec.y, node + "-" + (spot + 1) + "/" + height, color);
-
-        int c1 = m_child1[node];
-        int c2 = m_child2[node];
-        if (c1 != NULL_NODE) {
-            drawTree(argDraw, c1, spot + 1, height);
-        }
-        if (c2 != NULL_NODE) {
-            drawTree(argDraw, c2, spot + 1, height);
-        }
     }
 }

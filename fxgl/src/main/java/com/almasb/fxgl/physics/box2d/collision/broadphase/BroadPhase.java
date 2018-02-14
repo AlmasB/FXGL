@@ -7,7 +7,6 @@
 package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.callbacks.DebugDraw;
 import com.almasb.fxgl.physics.box2d.callbacks.PairCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
@@ -55,8 +54,6 @@ public interface BroadPhase {
      * @return
      */
     int getProxyCount();
-
-    void drawTree(DebugDraw argDraw);
 
     /**
      * Update the pairs. This results in pair callbacks. This can only add pairs.

@@ -6,14 +6,12 @@
 package com.almasb.fxgl.physics.box2d.collision.broadphase;
 
 import com.almasb.fxgl.core.math.Vec2;
-import com.almasb.fxgl.physics.box2d.callbacks.DebugDraw;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeCallback;
 import com.almasb.fxgl.physics.box2d.callbacks.TreeRayCastCallback;
 import com.almasb.fxgl.physics.box2d.collision.AABB;
 import com.almasb.fxgl.physics.box2d.collision.RayCastInput;
 import com.almasb.fxgl.physics.box2d.common.JBoxSettings;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
-import javafx.scene.paint.Color;
 
 /**
  * A dynamic tree arranges data in a binary tree to accelerate queries such as volume queries and
@@ -832,33 +830,5 @@ public class DynamicTree implements BroadPhaseStrategy {
 
         validateMetrics(child1);
         validateMetrics(child2);
-    }
-
-    @Override
-    public void drawTree(DebugDraw argDraw) {
-        if (m_root == null) {
-            return;
-        }
-        int height = computeHeight();
-        drawTree(argDraw, m_root, 0, height);
-    }
-
-    private final Vec2 textVec = new Vec2();
-
-    public void drawTree(DebugDraw argDraw, DynamicTreeNode node, int spot, int height) {
-        node.aabb.getVertices(drawVecs);
-
-        Color color = Color.color(1, (height - spot) * 1f / height, (height - spot) * 1f / height);
-        argDraw.drawPolygon(drawVecs, 4, color);
-
-        argDraw.getViewportTranform().getWorldToScreen(node.aabb.upperBound, textVec);
-        argDraw.drawString(textVec.x, textVec.y, node.id + "-" + (spot + 1) + "/" + height, color);
-
-        if (node.child1 != null) {
-            drawTree(argDraw, node.child1, spot + 1, height);
-        }
-        if (node.child2 != null) {
-            drawTree(argDraw, node.child2, spot + 1, height);
-        }
     }
 }
