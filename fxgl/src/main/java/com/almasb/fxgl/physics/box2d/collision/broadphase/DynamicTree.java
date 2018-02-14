@@ -22,10 +22,9 @@ import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
  * @author daniel
  */
 public class DynamicTree implements BroadPhaseStrategy {
-    public static final int MAX_STACK_SIZE = 64;
-    public static final int NULL_NODE = -1;
+    private static final int NULL_NODE = -1;
 
-    private DynamicTreeNode m_root;
+    private DynamicTreeNode root;
     private DynamicTreeNode[] m_nodes;
     private int m_nodeCount;
     private int m_nodeCapacity;
@@ -37,7 +36,7 @@ public class DynamicTree implements BroadPhaseStrategy {
     private int nodeStackIndex = 0;
 
     public DynamicTree() {
-        m_root = null;
+        root = null;
         m_nodeCount = 0;
         m_nodeCapacity = 16;
         m_nodes = new DynamicTreeNode[16];
@@ -142,7 +141,7 @@ public class DynamicTree implements BroadPhaseStrategy {
     public final void query(TreeCallback callback, AABB aabb) {
         assert (aabb.isValid());
         nodeStackIndex = 0;
-        nodeStack[nodeStackIndex++] = m_root;
+        nodeStack[nodeStackIndex++] = root;
 
         while (nodeStackIndex > 0) {
             DynamicTreeNode node = nodeStack[--nodeStackIndex];
@@ -218,7 +217,7 @@ public class DynamicTree implements BroadPhaseStrategy {
         // end inline
 
         nodeStackIndex = 0;
-        nodeStack[nodeStackIndex++] = m_root;
+        nodeStack[nodeStackIndex++] = root;
         while (nodeStackIndex > 0) {
             final DynamicTreeNode node = nodeStack[--nodeStackIndex];
             if (node == null) {
@@ -286,7 +285,7 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public final int computeHeight() {
-        return computeHeight(m_root);
+        return computeHeight(root);
     }
 
     private final int computeHeight(DynamicTreeNode node) {
@@ -304,8 +303,8 @@ public class DynamicTree implements BroadPhaseStrategy {
      * Validate this tree. For testing.
      */
     public void validate() {
-        validateStructure(m_root);
-        validateMetrics(m_root);
+        validateStructure(root);
+        validateMetrics(root);
 
         int freeCount = 0;
         DynamicTreeNode freeNode = m_freeList != NULL_NODE ? m_nodes[m_freeList] : null;
@@ -323,10 +322,10 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public int getHeight() {
-        if (m_root == null) {
+        if (root == null) {
             return 0;
         }
-        return m_root.height;
+        return root.height;
     }
 
     @Override
@@ -351,11 +350,11 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     @Override
     public float getAreaRatio() {
-        if (m_root == null) {
+        if (root == null) {
             return 0.0f;
         }
 
-        final DynamicTreeNode root = m_root;
+        final DynamicTreeNode root = this.root;
         float rootArea = root.aabb.getPerimeter();
 
         float totalArea = 0.0f;
@@ -372,75 +371,7 @@ public class DynamicTree implements BroadPhaseStrategy {
         return totalArea / rootArea;
     }
 
-    /**
-     * Build an optimal tree. Very expensive. For testing.
-     */
-    public void rebuildBottomUp() {
-        int[] nodes = new int[m_nodeCount];
-        int count = 0;
-
-        // Build array of leaves. Free the rest.
-        for (int i = 0; i < m_nodeCapacity; ++i) {
-            if (m_nodes[i].height < 0) {
-                // free node in pool
-                continue;
-            }
-
-            DynamicTreeNode node = m_nodes[i];
-            if (node.child1 == null) {
-                node.parent = null;
-                nodes[count] = i;
-                ++count;
-            } else {
-                freeNode(node);
-            }
-        }
-
-        AABB b = new AABB();
-        while (count > 1) {
-            float minCost = Float.MAX_VALUE;
-            int iMin = -1, jMin = -1;
-            for (int i = 0; i < count; ++i) {
-                AABB aabbi = m_nodes[nodes[i]].aabb;
-
-                for (int j = i + 1; j < count; ++j) {
-                    AABB aabbj = m_nodes[nodes[j]].aabb;
-                    b.combine(aabbi, aabbj);
-                    float cost = b.getPerimeter();
-                    if (cost < minCost) {
-                        iMin = i;
-                        jMin = j;
-                        minCost = cost;
-                    }
-                }
-            }
-
-            int index1 = nodes[iMin];
-            int index2 = nodes[jMin];
-            DynamicTreeNode child1 = m_nodes[index1];
-            DynamicTreeNode child2 = m_nodes[index2];
-
-            DynamicTreeNode parent = allocateNode();
-            parent.child1 = child1;
-            parent.child2 = child2;
-            parent.height = 1 + JBoxUtils.max(child1.height, child2.height);
-            parent.aabb.combine(child1.aabb, child2.aabb);
-            parent.parent = null;
-
-            child1.parent = parent;
-            child2.parent = parent;
-
-            nodes[jMin] = nodes[count - 1];
-            nodes[iMin] = parent.id;
-            --count;
-        }
-
-        m_root = m_nodes[nodes[0]];
-
-        validate();
-    }
-
-    private final DynamicTreeNode allocateNode() {
+    private DynamicTreeNode allocateNode() {
         if (m_freeList == NULL_NODE) {
             assert (m_nodeCount == m_nodeCapacity);
 
@@ -473,7 +404,7 @@ public class DynamicTree implements BroadPhaseStrategy {
     /**
      * returns a node to the pool
      */
-    private final void freeNode(DynamicTreeNode node) {
+    private void freeNode(DynamicTreeNode node) {
         assert (node != null);
         assert (0 < m_nodeCount);
         node.parent = m_freeList != NULL_NODE ? m_nodes[m_freeList] : null;
@@ -484,17 +415,17 @@ public class DynamicTree implements BroadPhaseStrategy {
 
     private final AABB combinedAABB = new AABB();
 
-    private final void insertLeaf(int leaf_index) {
+    private void insertLeaf(int leaf_index) {
         DynamicTreeNode leaf = m_nodes[leaf_index];
-        if (m_root == null) {
-            m_root = leaf;
-            m_root.parent = null;
+        if (root == null) {
+            root = leaf;
+            root.parent = null;
             return;
         }
 
         // find the best sibling
         AABB leafAABB = leaf.aabb;
-        DynamicTreeNode index = m_root;
+        DynamicTreeNode index = root;
         while (index.child1 != null) {
             final DynamicTreeNode node = index;
             DynamicTreeNode child1 = node.child1;
@@ -574,7 +505,7 @@ public class DynamicTree implements BroadPhaseStrategy {
             newParent.child2 = leaf;
             sibling.parent = newParent;
             leaf.parent = newParent;
-            m_root = newParent;
+            root = newParent;
         }
 
         // Walk back up the tree fixing heights and AABBs
@@ -596,9 +527,9 @@ public class DynamicTree implements BroadPhaseStrategy {
         // validate();
     }
 
-    private final void removeLeaf(DynamicTreeNode leaf) {
-        if (leaf == m_root) {
-            m_root = null;
+    private void removeLeaf(DynamicTreeNode leaf) {
+        if (leaf == root) {
+            root = null;
             return;
         }
 
@@ -635,7 +566,7 @@ public class DynamicTree implements BroadPhaseStrategy {
                 index = index.parent;
             }
         } else {
-            m_root = sibling;
+            root = sibling;
             sibling.parent = null;
             freeNode(parent);
         }
@@ -688,7 +619,7 @@ public class DynamicTree implements BroadPhaseStrategy {
                     C.parent.child2 = iC;
                 }
             } else {
-                m_root = iC;
+                root = iC;
             }
 
             // Rotate
@@ -738,7 +669,7 @@ public class DynamicTree implements BroadPhaseStrategy {
                     B.parent.child2 = iB;
                 }
             } else {
-                m_root = iB;
+                root = iB;
             }
 
             // Rotate
@@ -774,7 +705,7 @@ public class DynamicTree implements BroadPhaseStrategy {
         }
         assert (node == m_nodes[node.id]);
 
-        if (node == m_root) {
+        if (node == root) {
             assert (node.parent == null);
         }
 
