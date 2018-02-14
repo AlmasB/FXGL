@@ -496,11 +496,11 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
     /**
      * Set global world gravity.
      *
-     * @param x x component
-     * @param y y component
+     * @param x x component (in pixels)
+     * @param y y component (in pixels)
      */
     public void setGravity(double x, double y) {
-        jboxWorld.setGravity(new Vec2(x, -y));
+        jboxWorld.setGravity(toVector(new Point2D(x, y)));
     }
 
     /**

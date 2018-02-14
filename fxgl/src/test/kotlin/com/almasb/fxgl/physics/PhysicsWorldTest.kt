@@ -7,10 +7,12 @@
 package com.almasb.fxgl.physics
 
 import com.almasb.fxgl.app.FXGLMock
+import com.almasb.fxgl.core.math.Vec2
 import com.almasb.fxgl.entity.Entity
 import com.almasb.fxgl.entity.Entities
 import com.almasb.fxgl.entity.GameWorld
 import com.almasb.fxgl.entity.component.CollidableComponent
+import javafx.geometry.Point2D
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -40,6 +42,29 @@ class PhysicsWorldTest {
     @Test
     fun `Jbox world`() {
         assertThat(physicsWorld.jBox2DWorld.bodyCount, `is`(0))
+    }
+
+    @Test
+    fun `Pixels to meters`() {
+        assertThat(physicsWorld.toMeters(100.0), `is`(2.0))
+        assertThat(physicsWorld.toMetersF(100.0), `is`(2.0f))
+        assertThat(physicsWorld.toPoint(Point2D(100.0, 50.0)), `is`(Vec2(2.0, 11.0)))
+        assertThat(physicsWorld.toVector(Point2D(100.0, 50.0)), `is`(Vec2(2.0, -1.0)))
+    }
+
+    @Test
+    fun `Meters to pixels`() {
+        assertThat(physicsWorld.toPixels(2.0), `is`(100.0))
+        assertThat(physicsWorld.toPixelsF(2.0), `is`(100.0f))
+        assertThat(physicsWorld.toPoint(Vec2(2.0, 11.0)), `is`(Point2D(100.0, 50.0)))
+        assertThat(physicsWorld.toVector(Vec2(2.0, -1.0)), `is`(Point2D(100.0, 50.0)))
+    }
+
+    @Test
+    fun `Gravity`() {
+        physicsWorld.setGravity(50.0, 10.0)
+
+        assertThat(physicsWorld.jBox2DWorld.gravity, `is`(Vec2(1.0, -0.2)))
     }
 
     @Test
