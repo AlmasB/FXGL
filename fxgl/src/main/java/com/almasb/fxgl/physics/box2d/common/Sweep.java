@@ -27,14 +27,6 @@ public class Sweep implements Serializable {
     /** Fraction of the current time step in the range [0,1] c0 and a0 are the positions at alpha0. */
     public float alpha0;
 
-    public String toString() {
-        String s = "Sweep:\nlocalCenter: " + localCenter + "\n";
-        s += "c0: " + c0 + ", c: " + c + "\n";
-        s += "a0: " + a0 + ", a: " + a + "\n";
-        s += "alpha0: " + alpha0;
-        return s;
-    }
-
     public Sweep() {
         localCenter = new Vec2();
         c0 = new Vec2();
@@ -96,5 +88,14 @@ public class Sweep implements Serializable {
         c0.y += beta * (c.y - c0.y);
         a0 += beta * (a - a0);
         alpha0 = alpha;
+    }
+
+    @Override
+    public String toString() {
+        String s = "Sweep:\nlocalCenter: " + localCenter + "\n";
+        s += "c0: " + c0 + ", c: " + c + "\n";
+        s += "a0: " + a0 + ", a: " + a + "\n";
+        s += "alpha0: " + alpha0;
+        return s;
     }
 }

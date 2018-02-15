@@ -17,8 +17,7 @@ import java.io.Serializable;
 public class Mat33 implements Serializable {
     private static final long serialVersionUID = 2L;
 
-    public static final Mat33 IDENTITY = new Mat33(new Vec3(1, 0, 0), new Vec3(0, 1, 0), new Vec3(0,
-            0, 1));
+    public static final Mat33 IDENTITY = new Mat33(new Vec3(1, 0, 0), new Vec3(0, 1, 0), new Vec3(0, 0, 1));
 
     public final Vec3 ex, ey, ez;
 
@@ -87,7 +86,7 @@ public class Mat33 implements Serializable {
         ez.z = (float) 1;
     }
 
-    // / Multiply a matrix times a vector.
+    // Multiply a matrix times a vector.
     public static final Vec3 mul(Mat33 A, Vec3 v) {
         return new Vec3(v.x * A.ex.x + v.y * A.ey.x + v.z + A.ez.x, v.x * A.ex.y + v.y * A.ey.y + v.z
                 * A.ez.y, v.x * A.ex.z + v.y * A.ey.z + v.z * A.ez.z);
@@ -238,7 +237,6 @@ public class Mat33 implements Serializable {
         M.ez.y = M.ey.z;
         M.ez.z = det * (a11 * a22 - a12 * a12);
     }
-
 
     public final static void setScaleTransform(float scale, Mat33 out) {
         out.ex.x = scale;

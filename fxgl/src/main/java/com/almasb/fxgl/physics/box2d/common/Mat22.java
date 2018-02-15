@@ -173,7 +173,6 @@ public class Mat22 implements Serializable {
         out.ey.y = det * a;
     }
 
-
     /**
      * Return the matrix composed of the absolute values of all elements. djm: fixed double allocation
      *
@@ -390,8 +389,7 @@ public class Mat22 implements Serializable {
         if (det != 0.0f) {
             det = 1.0f / det;
         }
-        final Vec2 x = new Vec2(det * (a22 * b.x - a12 * b.y), det * (a11 * b.y - a21 * b.x));
-        return x;
+        return new Vec2(det * (a22 * b.x - a12 * b.y), det * (a11 * b.y - a21 * b.x));
     }
 
     public final void solveToOut(final Vec2 b, final Vec2 out) {

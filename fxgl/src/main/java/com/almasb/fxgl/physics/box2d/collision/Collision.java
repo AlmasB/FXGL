@@ -26,18 +26,17 @@ import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
  * @author Daniel Murphy
  */
 public class Collision {
-    public static final int NULL_FEATURE = Integer.MAX_VALUE;
 
     private final IWorldPool pool;
 
-    public Collision(IWorldPool argPool) {
+    public Collision(IWorldPool pool) {
         incidentEdge[0] = new ClipVertex();
         incidentEdge[1] = new ClipVertex();
         clipPoints1[0] = new ClipVertex();
         clipPoints1[1] = new ClipVertex();
         clipPoints2[0] = new ClipVertex();
         clipPoints2[1] = new ClipVertex();
-        pool = argPool;
+        this.pool = pool;
     }
 
     private final DistanceInput input = new DistanceInput();
@@ -838,8 +837,8 @@ public class Collision {
      * Java-specific class for returning edge results
      */
     private static class EdgeResults {
-        public float separation;
-        public int edgeIndex;
+        float separation;
+        int edgeIndex;
     }
 
     /**
@@ -871,7 +870,7 @@ public class Collision {
      *
      * @author Daniel Murphy
      */
-    public static enum PointState {
+    public enum PointState {
         /**
          * point does not exist
          */
@@ -911,7 +910,7 @@ public class Collision {
         final Vec2[] normals = new Vec2[JBoxSettings.maxPolygonVertices];
         int count;
 
-        public TempPolygon() {
+        TempPolygon() {
             for (int i = 0; i < vertices.length; i++) {
                 vertices[i] = new Vec2();
                 normals[i] = new Vec2();
@@ -939,9 +938,6 @@ public class Collision {
      * This class collides and edge and a polygon, taking into account edge adjacency.
      */
     static class EPCollider {
-        enum VertexType {
-            ISOLATED, CONCAVE, CONVEX
-        }
 
         final TempPolygon m_polygonB = new TempPolygon();
 
@@ -956,14 +952,12 @@ public class Collision {
         final Vec2 m_normal2 = new Vec2();
         final Vec2 m_normal = new Vec2();
 
-        VertexType m_type1, m_type2;
-
         final Vec2 m_lowerLimit = new Vec2();
         final Vec2 m_upperLimit = new Vec2();
         float m_radius;
         boolean m_front;
 
-        public EPCollider() {
+        EPCollider() {
             for (int i = 0; i < 2; i++) {
                 ie[i] = new ClipVertex();
                 clipPoints1[i] = new ClipVertex();

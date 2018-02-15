@@ -159,9 +159,7 @@ public class Island {
     public int m_contactCapacity;
     public int m_jointCapacity;
 
-    public void init(int bodyCapacity, int contactCapacity, int jointCapacity,
-                     ContactListener listener) {
-        // System.out.println("Initializing Island");
+    public void init(int bodyCapacity, int contactCapacity, int jointCapacity, ContactListener listener) {
         m_bodyCapacity = bodyCapacity;
         m_contactCapacity = contactCapacity;
         m_jointCapacity = jointCapacity;

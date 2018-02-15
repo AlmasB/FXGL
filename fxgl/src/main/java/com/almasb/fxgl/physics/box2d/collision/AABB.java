@@ -39,7 +39,7 @@ public class AABB {
      * Creates an AABB object using the given bounding vertices.
      *
      * @param lowerVertex the bottom left vertex of the bounding box
-     * @param maxVertex the top right vertex of the bounding box
+     * @param upperVertex the top right vertex of the bounding box
      */
     public AABB(final Vec2 lowerVertex, final Vec2 upperVertex) {
         this.lowerBound = lowerVertex.clone(); // clone to be safe
@@ -74,9 +74,7 @@ public class AABB {
     }
 
     /**
-     * Get the center of the AABB
-     *
-     * @return
+     * @return the center of the AABB
      */
     public final Vec2 getCenter() {
         final Vec2 center = new Vec2(lowerBound);
@@ -91,9 +89,7 @@ public class AABB {
     }
 
     /**
-     * Get the extents of the AABB (half-widths).
-     *
-     * @return
+     * @return the extents of the AABB (half-widths)
      */
     public final Vec2 getExtents() {
         final Vec2 center = new Vec2(upperBound);
@@ -130,9 +126,7 @@ public class AABB {
     }
 
     /**
-     * Gets the perimeter length
-     *
-     * @return
+     * @return the perimeter length
      */
     public final float getPerimeter() {
         return 2.0f * (upperBound.x - lowerBound.x + upperBound.y - lowerBound.y);
@@ -156,13 +150,6 @@ public class AABB {
      * @return
      */
     public final boolean contains(final AABB aabb) {
-    /*
-     * boolean result = true; result = result && lowerBound.x <= aabb.lowerBound.x; result = result
-     * && lowerBound.y <= aabb.lowerBound.y; result = result && aabb.upperBound.x <= upperBound.x;
-     * result = result && aabb.upperBound.y <= upperBound.y; return result;
-     */
-        // djm: faster putting all of them together, as if one is false we leave the logic
-        // early
         return lowerBound.x <= aabb.lowerBound.x && lowerBound.y <= aabb.lowerBound.y
                 && aabb.upperBound.x <= upperBound.x && aabb.upperBound.y <= upperBound.y;
     }
@@ -302,7 +289,6 @@ public class AABB {
 
     @Override
     public final String toString() {
-        final String s = "AABB[" + lowerBound + " . " + upperBound + "]";
-        return s;
+        return "AABB[" + lowerBound + " . " + upperBound + "]";
     }
 }
