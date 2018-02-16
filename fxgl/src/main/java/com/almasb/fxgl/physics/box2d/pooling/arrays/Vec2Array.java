@@ -14,9 +14,9 @@ import java.util.HashMap;
  * @author dmurph
  *
  */
-public class Vec2Array {
+public final class Vec2Array {
 
-    private final HashMap<Integer, Vec2[]> map = new HashMap<Integer, Vec2[]>();
+    private final HashMap<Integer, Vec2[]> map = new HashMap<>();
 
     public Vec2[] get(int argLength) {
         assert (argLength > 0);
