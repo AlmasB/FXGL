@@ -47,8 +47,7 @@ public class EdgeShape extends Shape {
     public boolean m_hasVertex0 = false, m_hasVertex3 = false;
 
     public EdgeShape() {
-        super(ShapeType.EDGE);
-        setRadius(JBoxSettings.polygonRadius);
+        super(ShapeType.EDGE, JBoxSettings.polygonRadius);
     }
 
     @Override
@@ -79,9 +78,6 @@ public class EdgeShape extends Shape {
     public boolean testPoint(Transform xf, Vec2 p) {
         return false;
     }
-
-    // for pooling
-    private final Vec2 normal = new Vec2();
 
     @Override
     public float computeDistanceToOut(Transform xf, Vec2 p, int childIndex, Vec2 normalOut) {
@@ -120,6 +116,9 @@ public class EdgeShape extends Shape {
         }
         return d1;
     }
+
+    // for pooling
+    private final Vec2 normal = new Vec2();
 
     // p = p1 + t * d
     // v = v1 + s * e
@@ -225,10 +224,10 @@ public class EdgeShape extends Shape {
         upperBound.x = v1x > v2x ? v1x : v2x;
         upperBound.y = v1y > v2y ? v1y : v2y;
 
-        lowerBound.x -= radius;
-        lowerBound.y -= radius;
-        upperBound.x += radius;
-        upperBound.y += radius;
+        lowerBound.x -= getRadius();
+        lowerBound.y -= getRadius();
+        upperBound.x += getRadius();
+        upperBound.y += getRadius();
     }
 
     @Override

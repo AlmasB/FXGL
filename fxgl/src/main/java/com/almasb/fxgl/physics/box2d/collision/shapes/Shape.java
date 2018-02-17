@@ -22,12 +22,14 @@ public abstract class Shape {
 
     private final ShapeType type;
 
-    float radius;
+    private float radius;
 
-    public Shape(ShapeType type) {
+    public Shape(ShapeType type, float radius) {
         this.type = type;
+        this.radius = radius;
     }
 
+    @Override
     public abstract Shape clone();
 
     /**
