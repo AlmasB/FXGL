@@ -42,6 +42,8 @@ import java.util.function.Consumer
 
 /* VARS */
 
+fun newVar(varName: String, value: Any) = getApp().gameState.put(varName, value)
+
 fun set(varName: String, value: Any) = getApp().gameState.setValue(varName, value)
 
 fun geti(varName: String): Int = getApp().gameState.getInt(varName)
