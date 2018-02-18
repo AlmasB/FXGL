@@ -27,13 +27,16 @@ import javafx.util.Duration
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  * @apiNote This is essentially a wrapper around [javafx.scene.image.ImageView]
  */
-open class Texture
-/**
- * Constructs new texture from given image.
- *
- * @param image the JavaFX image data
- */
-(image: Image) : ImageView(image), Disposable {
+open class Texture : ImageView, Disposable {
+
+    /**
+     * Constructs new texture from given image.
+     *
+     * @param image the JavaFX image data
+     */
+    constructor(image: Image) : super(image)
+
+    protected constructor() : super()
 
     val width: Double
         get() = image.width
