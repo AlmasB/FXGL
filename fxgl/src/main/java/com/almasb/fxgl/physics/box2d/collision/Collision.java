@@ -1243,7 +1243,7 @@ public final class Collision {
 
             manifold.pointCount = pointCount;
         }
-        
+
         public void computeEdgeSeparation(EPAxis axis) {
             axis.type = EPAxis.Type.EDGE_A;
             axis.index = m_front ? 0 : 1;

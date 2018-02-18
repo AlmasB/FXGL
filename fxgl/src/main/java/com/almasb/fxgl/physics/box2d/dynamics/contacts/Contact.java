@@ -10,7 +10,6 @@ import com.almasb.fxgl.physics.box2d.callbacks.ContactListener;
 import com.almasb.fxgl.physics.box2d.collision.ContactID;
 import com.almasb.fxgl.physics.box2d.collision.Manifold;
 import com.almasb.fxgl.physics.box2d.collision.ManifoldPoint;
-import com.almasb.fxgl.physics.box2d.collision.WorldManifold;
 import com.almasb.fxgl.physics.box2d.collision.shapes.Shape;
 import com.almasb.fxgl.physics.box2d.common.JBoxUtils;
 import com.almasb.fxgl.physics.box2d.common.Transform;
@@ -19,9 +18,9 @@ import com.almasb.fxgl.physics.box2d.dynamics.Fixture;
 import com.almasb.fxgl.physics.box2d.pooling.IWorldPool;
 
 /**
- * The class manages contact between two shapes. A contact exists for each overlapping AABB in the
- * broad-phase (except if filtered). Therefore a contact object may exist that has no contact
- * points.
+ * The class manages contact between two shapes.
+ * A contact exists for each overlapping AABB in the broad-phase (except if filtered).
+ * Therefore a contact object may exist that has no contact points.
  *
  * @author daniel
  */
@@ -118,22 +117,7 @@ public abstract class Contact {
     }
 
     /**
-     * Get the world manifold.
-     */
-    public void getWorldManifold(WorldManifold worldManifold) {
-        final Body bodyA = m_fixtureA.getBody();
-        final Body bodyB = m_fixtureB.getBody();
-        final Shape shapeA = m_fixtureA.getShape();
-        final Shape shapeB = m_fixtureB.getShape();
-
-        worldManifold.initialize(m_manifold, bodyA.getTransform(), shapeA.getRadius(),
-                bodyB.getTransform(), shapeB.getRadius());
-    }
-
-    /**
-     * Is this contact touching
-     *
-     * @return
+     * @return is this contact touching
      */
     public boolean isTouching() {
         return (m_flags & TOUCHING_FLAG) == TOUCHING_FLAG;
@@ -154,27 +138,22 @@ public abstract class Contact {
     }
 
     /**
-     * Has this contact been disabled?
-     *
-     * @return
+     * TODO: wrong doc?
+     * @return has this contact been disabled?
      */
     public boolean isEnabled() {
         return (m_flags & ENABLED_FLAG) == ENABLED_FLAG;
     }
 
     /**
-     * Get the next contact in the world's contact list.
-     *
-     * @return
+     * @return the next contact in the world's contact list
      */
     public Contact getNext() {
         return m_next;
     }
 
     /**
-     * Get the first fixture in this contact.
-     *
-     * @return
+     * @return the first fixture in this contact
      */
     public Fixture getFixtureA() {
         return m_fixtureA;
@@ -185,9 +164,7 @@ public abstract class Contact {
     }
 
     /**
-     * Get the second fixture in this contact.
-     *
-     * @return
+     * @return the second fixture in this contact
      */
     public Fixture getFixtureB() {
         return m_fixtureB;
@@ -259,8 +236,6 @@ public abstract class Contact {
         Body bodyB = m_fixtureB.getBody();
         Transform xfA = bodyA.getTransform();
         Transform xfB = bodyB.getTransform();
-        // log.debug("TransformA: "+xfA);
-        // log.debug("TransformB: "+xfB);
 
         if (sensor) {
             Shape shapeA = m_fixtureA.getShape();
