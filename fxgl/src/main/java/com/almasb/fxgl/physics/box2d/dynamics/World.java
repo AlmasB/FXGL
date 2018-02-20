@@ -532,10 +532,9 @@ public class World {
     public void step(float dt, int velocityIterations, int positionIterations) {
         stepTimer.reset();
         tempTimer.reset();
-        // log.debug("Starting step");
+
         // If new fixtures were added, we need to find the new contacts.
         if (newFixture) {
-            // log.debug("There's a new fixture, lets look for new contacts");
             m_contactManager.findNewContacts();
             newFixture = false;
         }
@@ -587,7 +586,6 @@ public class World {
         }
 
         locked = false;
-        // log.debug("ending step");
 
         profile.step.record(stepTimer.getMilliseconds());
     }
