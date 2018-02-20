@@ -314,11 +314,7 @@ public final class GameScene extends FXGLScene
         }
 
         for (Entity e : drawables) {
-            DrawableComponent drawable = e.getComponent(DrawableComponent.class);
-
-            if (drawable != null) {
-                drawable.draw(particlesGC);
-            }
+            e.getComponentOptional(DrawableComponent.class).ifPresent(d -> d.draw(particlesGC));
         }
 
         for (ParticleControl particle : particles) {
