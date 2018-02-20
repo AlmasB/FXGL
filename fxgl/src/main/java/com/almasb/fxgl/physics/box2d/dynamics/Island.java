@@ -211,7 +211,7 @@ public class Island {
     private final SolverData solverData = new SolverData();
     private final ContactSolverDef solverDef = new ContactSolverDef();
 
-    public void solve(Profile profile, TimeStep step, Vec2 gravity, boolean allowSleep) {
+    public void solve(TimeStep step, Vec2 gravity, boolean allowSleep) {
 
         // System.out.println("Solving Island");
         float h = step.dt;
@@ -284,8 +284,6 @@ public class Island {
             m_joints[i].initVelocityConstraints(solverData);
         }
 
-        profile.solveInit.accum(timer.getMilliseconds());
-
         // Solve velocity constraints
         timer.reset();
         // System.out.println("island solving velocities");
@@ -299,7 +297,6 @@ public class Island {
 
         // Store impulses for warm starting
         contactSolver.storeImpulses();
-        profile.solveVelocity.accum(timer.getMilliseconds());
 
         // Integrate positions
         for (int i = 0; i < m_bodyCount; ++i) {
@@ -364,8 +361,6 @@ public class Island {
             body.m_angularVelocity = m_velocities[i].w;
             body.synchronizeTransform();
         }
-
-        profile.solvePosition.accum(timer.getMilliseconds());
 
         report(contactSolver.m_velocityConstraints);
 

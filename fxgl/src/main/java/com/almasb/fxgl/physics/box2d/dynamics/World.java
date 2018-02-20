@@ -160,8 +160,6 @@ public class World {
 
     private boolean stepComplete = true;
 
-    private Profile profile = new Profile();
-
     private final ParticleSystem particleSystem;
 
     public ParticleSystem getParticleSystem() {
@@ -553,28 +551,23 @@ public class World {
         step.dtRatio = dtInverse * dt;
 
         step.warmStarting = warmStarting;
-        profile.stepInit.record(tempTimer.getMilliseconds());
 
         // Update contacts. This is where some contacts are destroyed.
         tempTimer.reset();
         m_contactManager.collide();
-        profile.collide.record(tempTimer.getMilliseconds());
 
         // Integrate velocities, solve velocity constraints, and integrate positions.
         if (stepComplete && step.dt > 0.0f) {
             tempTimer.reset();
             particleSystem.solve(step); // Particle Simulation
-            profile.solveParticleSystem.record(tempTimer.getMilliseconds());
             tempTimer.reset();
             solve(step);
-            profile.solve.record(tempTimer.getMilliseconds());
         }
 
         // Handle TOI events.
         if (continuousPhysics && step.dt > 0.0f) {
             tempTimer.reset();
             solveTOI(step);
-            profile.solveTOI.record(tempTimer.getMilliseconds());
         }
 
         if (step.dt > 0.0f) {
@@ -586,8 +579,6 @@ public class World {
         }
 
         locked = false;
-
-        profile.step.record(stepTimer.getMilliseconds());
     }
 
     /**
@@ -834,19 +825,11 @@ public class World {
         return m_contactManager;
     }
 
-    public Profile getProfile() {
-        return profile;
-    }
-
     private final Island island = new Island();
     private Body[] stack = new Body[10]; // jbox2dTODO djm find a good initial stack number;
     private final Timer broadphaseTimer = new Timer();
 
     private void solve(TimeStep step) {
-        profile.solveInit.startAccum();
-        profile.solveVelocity.startAccum();
-        profile.solvePosition.startAccum();
-
         // update previous transforms
         for (Body b = m_bodyList; b != null; b = b.m_next) {
             b.m_xf0.set(b.m_xf);
@@ -969,7 +952,7 @@ public class World {
                     other.m_flags |= Body.e_islandFlag;
                 }
             }
-            island.solve(profile, step, m_gravity, allowSleep);
+            island.solve(step, m_gravity, allowSleep);
 
             // Post solve cleanup.
             for (int i = 0; i < island.m_bodyCount; ++i) {
@@ -980,9 +963,6 @@ public class World {
                 }
             }
         }
-        profile.solveInit.endAccum();
-        profile.solveVelocity.endAccum();
-        profile.solvePosition.endAccum();
 
         broadphaseTimer.reset();
         // Synchronize fixtures, check for out of range bodies.
@@ -1002,7 +982,6 @@ public class World {
 
         // Look for new contacts.
         m_contactManager.findNewContacts();
-        profile.broadphase.record(broadphaseTimer.getMilliseconds());
     }
 
     private final Island toiIsland = new Island();
