@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.animation.AnimationBuilder;
 import com.almasb.fxgl.parser.tiled.Layer;
+import com.almasb.fxgl.parser.tiled.TiledLayerView;
 import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.parser.tiled.Tileset;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -157,11 +158,16 @@ public final class Entities {
             entity.getViewComponent().setView(tilesToView(map, layerName), false);
             entity.getViewComponent().setRenderLayer(renderLayer);
 
+            // TODO: deal with this dep on game scene ...
+            //entity.xProperty().bind(FXGL.getApp().getGameScene().getViewport().xProperty());
+            //entity.yProperty().bind(FXGL.getApp().getGameScene().getViewport().yProperty());
             return this;
         }
 
         private Node tilesToView(TiledMap map, String layerName) {
             Layer layer = map.getLayerByName(layerName);
+
+            //return new TiledLayerView(map, layer);
 
             WritableImage buffer = new WritableImage(
                     layer.getWidth() * map.getTilewidth(),

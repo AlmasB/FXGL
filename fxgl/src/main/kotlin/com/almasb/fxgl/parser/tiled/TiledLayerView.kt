@@ -8,29 +8,33 @@ package com.almasb.fxgl.parser.tiled
 
 import com.almasb.fxgl.app.FXGL
 import com.almasb.fxgl.entity.view.EntityView
-import com.almasb.fxgl.physics.box2d.collision.AABB
-import com.almasb.fxgl.texture.Texture
-import javafx.geometry.BoundingBox
-import javafx.geometry.Orientation
+import com.almasb.fxgl.texture.ColoredTexture
 import javafx.geometry.Rectangle2D
-import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
+import javafx.scene.image.ImageView
+import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import kotlin.math.max
 import kotlin.math.min
 
 /**
+ * WIP: do NOT use
+ *
+ *
  * TODO: multiple layers
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
-    private val canvas: Canvas
-    private val g: GraphicsContext
+    //private val canvas: Canvas
+    //private val g: GraphicsContext
 
     private var image: Image? = null
+
+    private val buffer: WritableImage
+
+    private val transparentBuffer: Image
 
     private var sx = 0.0
     private var sy = 0.0
@@ -38,10 +42,11 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
     init {
         val viewport = FXGL.getApp().gameScene.viewport
 
-        canvas = Canvas(viewport.width, viewport.height)
-        g = canvas.graphicsContext2D
+        //canvas = Canvas(viewport.width, viewport.height)
+        //g = canvas.graphicsContext2D
 
-
+        buffer = WritableImage(viewport.width.toInt(), viewport.height.toInt())
+        transparentBuffer = ColoredTexture(viewport.width.toInt(), viewport.height.toInt(), Color.TRANSPARENT).image
 
         viewport.xProperty().addListener { _, _, x ->
 
@@ -53,8 +58,6 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
             redraw()
         }
 
-        //translateXProperty().bind()
-
         viewport.yProperty().addListener { _, _, y ->
 
             if (y.toInt() < 0)
@@ -65,25 +68,22 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
             redraw()
         }
 
-        //translateYProperty().bind(viewport.yProperty())
-
-
-
-
-        addNode(canvas)
+        addNode(ImageView(buffer))
+        //addNode(canvas)
 
         redraw()
     }
 
-    private fun ddd() {
+    private fun doRedraw() {
 
-        //println(sx)
+        val area = FXGL.getApp().gameScene.viewport.visibleArea
+        val writer = buffer.pixelWriter
 
         for (i in 0 until layer.data.size) {
 
             var gid = layer.data.get(i)
 
-            // empty tile
+            // empty tile, TODO: draw transparent block
             if (gid == 0)
                 continue
 
@@ -114,18 +114,10 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
             val offsetX = sx.toInt() % w
             val offsetY = sy.toInt() % h
 
-            val area = FXGL.getApp().gameScene.viewport.visibleArea
-
-            //println(area)
-
-
             if (area.contains(dstX * 1.0, dstY * 1.0) && area.contains(dstX.toDouble() + w, dstY.toDouble())
                     && area.contains(dstX.toDouble() + w, dstY.toDouble() + h) && area.contains(dstX.toDouble(), dstY.toDouble() + h)) {
 
-                //g.drawImage()
-                //println("" + dstX + " $dstY")
-
-                g.getPixelWriter().setPixels(dstX - sx.toInt(), dstY - sy.toInt(),
+                writer.setPixels(dstX - sx.toInt(), dstY - sy.toInt(),
                         w, h, sourceImage.getPixelReader(),
                         tilex * w + tileset.margin + tilex * tileset.spacing,
                         tiley * h + tileset.margin + tiley * tileset.spacing)
@@ -133,14 +125,11 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
                 if (offsetX == 0 && offsetY == 0)
                     continue
 
-
-                // area.contains(dstX.toDouble() + w - 1, dstY.toDouble()) || area.contains(dstX.toDouble() + w - 1, dstY.toDouble() + h - 1) || area.contains(dstX.toDouble(), dstY.toDouble() + h - 1)
-
                 if (area.contains(dstX * 1.0 + 1, dstY * 1.0 + 1)) {
 
                     val result = overlap(area, Rectangle2D(dstX.toDouble(), dstY.toDouble(), w.toDouble(), h.toDouble()))
 
-                    g.getPixelWriter().setPixels(dstX - sx.toInt(), dstY - sy.toInt(),
+                    writer.setPixels(dstX - sx.toInt(), dstY - sy.toInt(),
                             result.width.toInt(), result.height.toInt(), sourceImage.getPixelReader(),
                             tilex * w + tileset.margin + tilex * tileset.spacing,
                             tiley * h + tileset.margin + tiley * tileset.spacing)
@@ -149,7 +138,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
                     val result = overlap(area, Rectangle2D(dstX.toDouble(), dstY.toDouble(), w.toDouble(), h.toDouble()))
 
-                    g.getPixelWriter().setPixels(dstX - sx.toInt() + w - result.width.toInt(), dstY - sy.toInt(),
+                    writer.setPixels(dstX - sx.toInt() + w - result.width.toInt(), dstY - sy.toInt(),
                             result.width.toInt(), result.height.toInt(), sourceImage.getPixelReader(),
                             tilex * w + tileset.margin + tilex * tileset.spacing + w - result.width.toInt(),
                             tiley * h + tileset.margin + tiley * tileset.spacing)
@@ -160,7 +149,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
                     val result = overlap(area, Rectangle2D(dstX.toDouble(), dstY.toDouble(), w.toDouble(), h.toDouble()))
 
-                    g.getPixelWriter().setPixels(dstX - sx.toInt(), dstY - sy.toInt() + h - result.height.toInt(),
+                    writer.setPixels(dstX - sx.toInt(), dstY - sy.toInt() + h - result.height.toInt(),
                             result.width.toInt(), result.height.toInt(), sourceImage.getPixelReader(),
                             tilex * w + tileset.margin + tilex * tileset.spacing,
                             tiley * h + tileset.margin + tiley * tileset.spacing + h - result.height.toInt())
@@ -171,18 +160,12 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
                     val result = overlap(area, Rectangle2D(dstX.toDouble(), dstY.toDouble(), w.toDouble(), h.toDouble()))
 
-                    g.getPixelWriter().setPixels(dstX - sx.toInt() + w - result.width.toInt(), dstY - sy.toInt() + h - result.height.toInt(),
+                    writer.setPixels(dstX - sx.toInt() + w - result.width.toInt(), dstY - sy.toInt() + h - result.height.toInt(),
                             result.width.toInt(), result.height.toInt(), sourceImage.getPixelReader(),
                             tilex * w + tileset.margin + tilex * tileset.spacing + w - result.width.toInt(),
                             tiley * h + tileset.margin + tiley * tileset.spacing + h - result.height.toInt())
                 }
             }
-
-
-
-
-
-
         }
     }
 
@@ -219,17 +202,28 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
     private fun redraw() {
         var start = System.nanoTime()
 
-        g.clearRect(0.0, 0.0, canvas.width, canvas.height)
+        //g.clearRect(0.0, 0.0, canvas.width, canvas.height)
+
+        //buffer.pixelWriter.setPixels(0, 0, buffer.width.toInt(), buffer.height.toInt(), transparentBuffer.pixelReader, 0, 0)
 
         //println("Clear took: " + (System.nanoTime() - start) / 1000000000.0)
 
         start = System.nanoTime()
-        ddd()
+        doRedraw()
 
-        println("Draw took: " + (System.nanoTime() - start) / 1000000000.0)
-//        redrawX()
-//        redrawY()
+        //println("Draw took: " + (System.nanoTime() - start) / 1000000000.0)
     }
+
+
+
+
+
+
+
+
+
+
+
 
 //    private fun redrawX() {
 //        var w = canvas.width
