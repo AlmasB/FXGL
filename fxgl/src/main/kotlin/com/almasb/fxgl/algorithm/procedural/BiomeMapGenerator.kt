@@ -22,7 +22,7 @@ class BiomeMapGenerator
      * Third param is frequency.
      */
     var genFunction: (Double, Double, Double) -> BiomeData = { nx, ny, frequency ->
-        // TODO: use different seeds?
+        // https://github.com/AlmasB/FXGL/issues/473
         BiomeData(FXGLMath.noise2D(frequency * nx, frequency * ny), FXGLMath.noise2D(frequency * nx, frequency * ny))
     }
 
