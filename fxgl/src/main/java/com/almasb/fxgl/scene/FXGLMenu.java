@@ -252,7 +252,7 @@ public abstract class FXGLMenu extends FXGLScene {
 
         app.getInput().getBindings().forEach((action, trigger) -> addNewInputBinding(action, trigger, grid));
 
-        // TODO: use specific style class, i.e. FXGLScrollPane
+        // https://github.com/AlmasB/FXGL/issues/492
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
         scroll.setMaxHeight(app.getHeight() / 2.5);
@@ -316,7 +316,7 @@ public abstract class FXGLMenu extends FXGLScene {
     }
 
     /**
-     * TODO: load default settings from profile
+     * https://github.com/AlmasB/FXGL/issues/493
      *
      * @return menu content with video settings
      */

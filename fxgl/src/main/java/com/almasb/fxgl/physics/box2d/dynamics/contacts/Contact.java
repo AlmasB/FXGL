@@ -137,10 +137,6 @@ public abstract class Contact {
         }
     }
 
-    /**
-     * TODO: wrong doc?
-     * @return has this contact been disabled?
-     */
     public boolean isEnabled() {
         return (m_flags & ENABLED_FLAG) == ENABLED_FLAG;
     }

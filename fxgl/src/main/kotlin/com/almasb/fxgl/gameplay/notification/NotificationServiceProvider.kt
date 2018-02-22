@@ -14,8 +14,7 @@ import javafx.util.Duration
 import java.util.*
 
 /**
- * TODO: when we have superstate, use that for adding the notificationView
- * and scheduling timer events
+ * https://github.com/AlmasB/FXGL/issues/404
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */

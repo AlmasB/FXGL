@@ -23,6 +23,8 @@ import java.util.*
  * the view snapshot.
  * So the effect can't be applied to anything animated.
  *
+ * https://github.com/AlmasB/FXGL/issues/483
+ *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 class WobbleEffect
@@ -48,7 +50,6 @@ class WobbleEffect
             originalTexture = Texture(entity.view.snapshot(params, null))
         }
 
-        // TODO: need to copy render layer
         val newView = EntityView()
 
         val chunkSize = (if (orientation == Orientation.HORIZONTAL)

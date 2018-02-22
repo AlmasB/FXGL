@@ -121,6 +121,8 @@
  *                                                                             *
  ******************************************************************************/
 
+/** https://github.com/AlmasB/FXGL/issues/492 */
+
 .spinner {
     -fx-background-color: white, #4a4a4a;
     -fx-background-insets: 0, 2;
@@ -169,6 +171,8 @@
     -fx-border-width: 1;
     -fx-border-style: solid;
 }
+
+/** https://github.com/AlmasB/FXGL/issues/492 */
 
 /**
  * Scroll pane

@@ -20,9 +20,7 @@ class AttractorControl(var force: Double,
 
     override fun onUpdate(entity: Entity, tpf: Double) {
 
-        // TODO: this is very inefficient, e.g. when multiple attractors
-        // TODO: force based on distance?
-
+        // https://github.com/AlmasB/FXGL/issues/482
         entity.world
                 .getEntitiesByComponent(AttractableComponent::class.java)
                 .filter { it.distance(entity) <= radius }

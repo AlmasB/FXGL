@@ -21,7 +21,7 @@ import kotlin.math.min
  * WIP: do NOT use
  *
  *
- * TODO: multiple layers
+ * https://github.com/AlmasB/FXGL/issues/474
  *
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
@@ -83,7 +83,7 @@ class TiledLayerView(val map: TiledMap, val layer: Layer) : EntityView() {
 
             var gid = layer.data.get(i)
 
-            // empty tile, TODO: draw transparent block
+            // empty tile, https://github.com/AlmasB/FXGL/issues/474
             if (gid == 0)
                 continue
 

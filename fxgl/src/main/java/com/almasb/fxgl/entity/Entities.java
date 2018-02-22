@@ -158,7 +158,7 @@ public final class Entities {
             entity.getViewComponent().setView(tilesToView(map, layerName), false);
             entity.getViewComponent().setRenderLayer(renderLayer);
 
-            // TODO: deal with this dep on game scene ...
+            // https://github.com/AlmasB/FXGL/issues/474
             //entity.xProperty().bind(FXGL.getApp().getGameScene().getViewport().xProperty());
             //entity.yProperty().bind(FXGL.getApp().getGameScene().getViewport().yProperty());
             return this;
@@ -166,6 +166,8 @@ public final class Entities {
 
         private Node tilesToView(TiledMap map, String layerName) {
             Layer layer = map.getLayerByName(layerName);
+
+            // https://github.com/AlmasB/FXGL/issues/474
 
             //return new TiledLayerView(map, layer);
 

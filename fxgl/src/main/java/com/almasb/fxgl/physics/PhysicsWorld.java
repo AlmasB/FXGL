@@ -272,7 +272,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-        // TODO: some "ground" id for sensor, otherwise may be some other sensor type?
+        // https://github.com/AlmasB/FXGL/issues/491
         // check sensors
         if (contact.getFixtureA().isSensor()) {
             e1.getComponent(PhysicsComponent.class).groundedList.add(e2);
@@ -315,7 +315,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         Entity e1 = (Entity) contact.getFixtureA().getBody().getUserData();
         Entity e2 = (Entity) contact.getFixtureB().getBody().getUserData();
 
-        // TODO: some "ground" id for sensor, otherwise may be some other sensor type?
+        // https://github.com/AlmasB/FXGL/issues/491
         // check sensors
         if (contact.getFixtureA().isSensor()) {
             e1.getComponent(PhysicsComponent.class).groundedList.remove(e2);
@@ -625,6 +625,7 @@ public final class PhysicsWorld implements EntityWorldListener, ContactListener 
         polygonShape.setAsBox(toMetersF(sensorWidth / 2), toMetersF(sensorHeight / 2),
                 new Vec2(toMetersF(sensorCenterLocal.getX()), -toMetersF(sensorCenterLocal.getY())), 0);
 
+        // https://github.com/AlmasB/FXGL/issues/491
         FixtureDef fd = new FixtureDef()
                 .sensor(true)
                 .shape(polygonShape);
