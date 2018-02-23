@@ -12,7 +12,7 @@ package com.almasb.fxgl.util
  * @author Almas Baimagambetov (almaslvl@gmail.com)
  */
 enum class Language {
-    ENGLISH, FRENCH, GERMAN, RUSSIAN;
+    ENGLISH, FRENCH, GERMAN, RUSSIAN, HUNGARIAN;
 
     fun resourceBundleName(): String = this.toString().toLowerCase()
 }
